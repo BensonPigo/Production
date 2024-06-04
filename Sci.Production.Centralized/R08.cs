@@ -24,7 +24,6 @@ namespace Sci.Production.Centralized
         private string style;
         private string season;
         private string brand;
-        private string team;
         private string phase;
         private string line;
         private string reportType;
@@ -33,9 +32,10 @@ namespace Sci.Production.Centralized
         private DataTable BrandData;
         private DataTable SeasonData;
         private DataTable StyleData;
+        private DataTable LineData;
 
         /// <summary>
-        /// R07
+        /// R08
         /// </summary>
         /// <param name="menuitem">menuitem</param>
         public R08(ToolStripMenuItem menuitem)
@@ -46,17 +46,16 @@ namespace Sci.Production.Centralized
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Line Mapping,Auto Line Mapping");
             this.comboM.SetDefalutIndex();
             this.comboFty.SetDefalutIndex(string.Empty);
-            this.txtbrand.MultiSelect = true;
 
             this.InitAllRegionData();
         }
 
         private void InitAllRegionData()
         {
-
-            string brandSql = $@"select ID, NameCH, NameEN from Brand where Junk = 0";
-            string seasonSql = $@"select distinct ID from Season WITH (NOLOCK) where Junk = 0";
-            string styleSql = $@"select distinct ID,BrandID,Description from Style WITH (NOLOCK) where Junk = 0 ";
+            string brandSql = $@"select ID, NameCH, NameEN from Brand where Junk = 0 ";
+            string seasonSql = $@"select distinct ID,BrandID from Season WITH (NOLOCK) where Junk = 0";
+            string styleSql = $@"select distinct ID,BrandID,SeasonID,Description from Style WITH (NOLOCK) where Junk = 0 ";
+            string lineSql = $@"Select ID,FactoryID,Description From SewingLine WHERE junk=0 ";
 
             #region --由Factory.PmsPath抓各個連線路徑
             this.SetLoadingText("Load connections... ");
@@ -79,6 +78,11 @@ namespace Sci.Production.Centralized
             #endregion
 
             DualResult result;
+            this.BrandData = new DataTable();
+            this.SeasonData = new DataTable();
+            this.StyleData = new DataTable();
+            this.LineData = new DataTable();
+
             foreach (string conString in connectionString)
             {
                 SqlConnection conn = new SqlConnection(conString);
@@ -98,11 +102,11 @@ namespace Sci.Production.Centralized
                 }
                 else
                 {
-                    this.BrandData.Merge(dtBrand);
+                    this.BrandData.Merge(dtBrand, true);
                 }
 
                 // 全廠區 Season
-                result = DBProxy.Current.SelectByConn(conn, brandSql, null, out DataTable dtSeason);
+                result = DBProxy.Current.SelectByConn(conn, seasonSql, null, out DataTable dtSeason);
 
                 if (!result)
                 {
@@ -116,7 +120,7 @@ namespace Sci.Production.Centralized
                 }
                 else
                 {
-                    this.SeasonData.Merge(dtSeason);
+                    this.SeasonData.Merge(dtSeason, true);
                 }
 
                 // 全廠區 Season
@@ -134,9 +138,28 @@ namespace Sci.Production.Centralized
                 }
                 else
                 {
-                    this.StyleData.Merge(dtStyle);
+                    this.StyleData.Merge(dtStyle, true);
+                }
+
+                // 全廠區 Line
+                result = DBProxy.Current.SelectByConn(conn, lineSql, null, out DataTable dtLine);
+
+                if (!result)
+                {
+                    DBProxy.Current.DefaultTimeout = 300;
+                    this.ShowErr(result);
+                }
+
+                if (dtLine == null)
+                {
+                    this.LineData = dtLine.Clone();
+                }
+                else
+                {
+                    this.LineData.Merge(dtLine, true);
                 }
             }
+
         }
 
         /// <inheritdoc/>
@@ -161,11 +184,11 @@ namespace Sci.Production.Centralized
 
             this.M = this.comboM.Text;
             this.factory = this.comboFty.Text;
-            this.style = this.txtstyle.Text;
+            this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
-            this.brand = this.txtbrand.Text;
+            this.brand = this.txtBrand.Text;
             this.phase = this.comboPhase.Text;
-            this.line = this.txtsewingline.Text;
+            this.line = this.txtLine.Text;
             this.reportType = this.comboReportType.Text;
             this.latestVersion = this.chkLatestVersion.Checked;
 
@@ -636,5 +659,277 @@ where 1 = 1
             cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail ");
             return cmd;
         }
+
+        #region 控制項事件
+        private void TxtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            var filterData = this.BrandData;
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(filterData, "ID,NameCH,NameEN", "10,20,20", this.txtBrand.Text, false, ",", "ID,NameCH,NameEN")
+            {
+                Size = new System.Drawing.Size(690, 555),
+            };
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtBrand.Text = item.GetSelectedString();
+        }
+
+        private void TxtBrand_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.txtBrand.Text))
+            {
+                return;
+            }
+
+            var filterData = this.BrandData;
+
+            this.ShowWaitMessage("Data searching...");
+
+            var tmp = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtBrand.Text);
+            if (tmp == null || tmp.Count() == 0)
+            {
+                filterData = new DataTable();
+                filterData = this.BrandData.Clone();
+            }
+            else
+            {
+                filterData = this.BrandData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtBrand.Text).CopyToDataTable();
+            }
+
+            this.HideWaitMessage();
+
+            if (filterData == null || filterData.Rows.Count == 0)
+            {
+                this.txtBrand.Text = string.Empty;
+                this.txtSeason.Text = string.Empty;
+                this.txtStyle.Text = string.Empty;
+                MyUtility.Msg.InfoBox("Brand not found.");
+            }
+        }
+
+        private void TxtSeason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            var filterData = this.SeasonData;
+
+            this.ShowWaitMessage("Data searching...");
+
+            // 若先選過Brand則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtBrand.Text))
+            {
+                filterData = this.SeasonData.AsEnumerable().Where(o => o["BrandID"].ToString() == this.txtBrand.Text).CopyToDataTable();
+            }
+
+            filterData = filterData.AsEnumerable().Distinct(DataRowComparer.Default).OrderByDescending(o => o["ID"].ToString()).CopyToDataTable();
+
+            this.HideWaitMessage();
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(filterData, "ID,BrandID", "10,10", this.txtSeason.Text, false, ",", "ID,BrandID ")
+            {
+                Size = new System.Drawing.Size(690, 555),
+            };
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSeason.Text = item.GetSelectedString();
+        }
+
+        private void TxtSeason_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.txtSeason.Text))
+            {
+                return;
+            }
+
+            var filterData = this.SeasonData;
+            this.ShowWaitMessage("Data searching...");
+
+            // 若先選過Brand則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtBrand.Text))
+            {
+                filterData = this.SeasonData.AsEnumerable().Where(o => o["BrandID"].ToString() == this.txtBrand.Text).CopyToDataTable();
+            }
+
+            if (!string.IsNullOrEmpty(this.txtSeason.Text))
+            {
+                var tmp = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtSeason.Text);
+                if (tmp == null || tmp.Count() == 0)
+                {
+                    filterData = new DataTable();
+                    filterData = this.SeasonData.Clone();
+                }
+                else
+                {
+                    filterData = tmp.CopyToDataTable();
+                }
+            }
+
+            this.HideWaitMessage();
+
+            if (filterData == null || filterData.Rows.Count == 0)
+            {
+                this.txtSeason.Text = string.Empty;
+                this.txtStyle.Text = string.Empty;
+                MyUtility.Msg.InfoBox("Season not found.");
+            }
+        }
+
+        private void TxtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            var filterData = this.StyleData;
+
+            this.ShowWaitMessage("Data searching...");
+
+            // 若先選過Brand則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtBrand.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["BrandID"].ToString() == this.txtBrand.Text).CopyToDataTable();
+            }
+
+            // 若先選過Season則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtSeason.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["SeasonID"].ToString() == this.txtSeason.Text).CopyToDataTable();
+            }
+
+            filterData = filterData.AsEnumerable().Distinct(DataRowComparer.Default).OrderByDescending(o => o["SeasonID"].ToString()).CopyToDataTable();
+
+            this.HideWaitMessage();
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(filterData, "ID,BrandID,SeasonID,Description", "10,15,15,25", this.txtStyle.Text, false, ",", "ID,BrandID,SeasonID,Description")
+            {
+                Size = new System.Drawing.Size(750, 555),
+            };
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtStyle.Text = item.GetSelectedString();
+        }
+
+        private void TxtStyle_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.txtStyle.Text))
+            {
+                return;
+            }
+
+            var filterData = this.StyleData;
+
+            this.ShowWaitMessage("Data searching...");
+
+            // 若先選過Brand則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtBrand.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["BrandID"].ToString() == this.txtBrand.Text).CopyToDataTable();
+            }
+
+            // 若先選過Season則加入篩選條件
+            if (!string.IsNullOrEmpty(this.txtSeason.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["SeasonID"].ToString() == this.txtSeason.Text).CopyToDataTable();
+            }
+
+            if (!string.IsNullOrEmpty(this.txtStyle.Text))
+            {
+                var tmp = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtStyle.Text);
+                if (tmp == null || tmp.Count() == 0)
+                {
+                    filterData = new DataTable();
+                    filterData = this.StyleData.Clone();
+                }
+                else
+                {
+                    filterData = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtStyle.Text).CopyToDataTable();
+                }
+            }
+
+            this.HideWaitMessage();
+
+            if (filterData == null || filterData.Rows.Count == 0)
+            {
+                this.txtStyle.Text = string.Empty;
+                MyUtility.Msg.InfoBox("Style not found.");
+            }
+        }
+
+        private void TxtLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            var filterData = this.LineData;
+
+            this.ShowWaitMessage("Data searching...");
+
+            // 若先選過FactoryID則加入篩選條件
+            if (!string.IsNullOrEmpty(this.comboFty.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["FactoryID"].ToString() == this.comboFty.Text).CopyToDataTable();
+            }
+
+            filterData = filterData.AsEnumerable().Distinct(DataRowComparer.Default).OrderBy(o => o["ID"].ToString()).CopyToDataTable();
+
+            this.HideWaitMessage();
+
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(filterData, "ID,FactoryID,Description", "10,10,20", this.txtLine.Text, false, ",", "ID,FactoryID,Description")
+            {
+                Size = new System.Drawing.Size(690, 555),
+            };
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtLine.Text = item.GetSelectedString();
+        }
+
+        private void TxtLine_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (string.IsNullOrEmpty(this.txtLine.Text))
+            {
+                return;
+            }
+
+            var filterData = this.LineData;
+
+            // 若先選過Factory則加入篩選條件
+            if (!string.IsNullOrEmpty(this.comboFty.Text))
+            {
+                filterData = filterData.AsEnumerable().Where(o => o["FactoryID"].ToString() == this.comboFty.Text).CopyToDataTable();
+            }
+
+            if (!string.IsNullOrEmpty(this.txtLine.Text))
+            {
+                var tmp = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtLine.Text);
+                if (tmp == null || tmp.Count() == 0)
+                {
+                    filterData = new DataTable();
+                    filterData = this.LineData.Clone();
+                }
+                else
+                {
+                    filterData = filterData.AsEnumerable().Where(o => o["ID"].ToString() == this.txtLine.Text).CopyToDataTable();
+                }
+            }
+
+            if (filterData == null || filterData.Rows.Count == 0)
+            {
+                this.txtLine.Text = string.Empty;
+                MyUtility.Msg.InfoBox("Line not found.");
+            }
+        }
+
+        private void ComboFty_SelectedValueChanged(object sender, EventArgs e)
+        {
+            this.txtLine.Text = string.Empty;
+        }
+        #endregion
     }
 }

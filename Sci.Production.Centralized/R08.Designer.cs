@@ -44,30 +44,30 @@
             this.comboPhase = new Sci.Win.UI.ComboBox();
             this.lbPhase = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.label4 = new Sci.Win.UI.Label();
-            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.label5 = new Sci.Win.UI.Label();
             this.chkLatestVersion = new Sci.Win.UI.CheckBox();
-            this.txtstyle = new Sci.Production.Class.Txtstyle();
             this.comboFty = new Sci.Production.Class.ComboCentralizedFactory(this.components);
-            this.txtSeason = new Sci.Production.Class.Txtseason();
+            this.txtStyle = new Sci.Win.UI.TextBox();
+            this.txtSeason = new Sci.Win.UI.TextBox();
+            this.txtBrand = new Sci.Win.UI.TextBox();
+            this.txtLine = new Sci.Win.UI.TextBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(463, 12);
+            this.print.Location = new System.Drawing.Point(395, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(463, 48);
+            this.toexcel.Location = new System.Drawing.Point(395, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(463, 84);
+            this.close.Location = new System.Drawing.Point(395, 84);
             this.close.TabIndex = 6;
             // 
             // buttonCustomized
@@ -234,7 +234,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(13, 185);
+            this.labelStyle.Location = new System.Drawing.Point(13, 251);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(134, 23);
             this.labelStyle.TabIndex = 157;
@@ -262,21 +262,11 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(13, 252);
+            this.label3.Location = new System.Drawing.Point(13, 184);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(134, 23);
             this.label3.TabIndex = 246;
             this.label3.Text = "Brand";
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(150, 252);
-            this.txtbrand.MyDocumentdName = null;
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(300, 23);
-            this.txtbrand.TabIndex = 247;
             // 
             // label4
             // 
@@ -285,16 +275,6 @@
             this.label4.Size = new System.Drawing.Size(134, 23);
             this.label4.TabIndex = 248;
             this.label4.Text = "Line";
-            // 
-            // txtsewingline
-            // 
-            this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.FactoryobjectName = null;
-            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline.Location = new System.Drawing.Point(151, 320);
-            this.txtsewingline.Name = "txtsewingline";
-            this.txtsewingline.Size = new System.Drawing.Size(60, 23);
-            this.txtsewingline.TabIndex = 249;
             // 
             // comboReportType
             // 
@@ -327,19 +307,6 @@
             this.chkLatestVersion.Text = "Latest Version";
             this.chkLatestVersion.UseVisualStyleBackColor = true;
             // 
-            // txtstyle
-            // 
-            this.txtstyle.BackColor = System.Drawing.Color.White;
-            this.txtstyle.BrandObjectName = this.txtbrand;
-            this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(150, 185);
-            this.txtstyle.Name = "txtstyle";
-            this.txtstyle.SeasonObjectName = null;
-            this.txtstyle.Size = new System.Drawing.Size(130, 23);
-            this.txtstyle.TabIndex = 253;
-            this.txtstyle.TarBrand = null;
-            this.txtstyle.TarSeason = null;
-            // 
             // comboFty
             // 
             this.comboFty.BackColor = System.Drawing.Color.White;
@@ -351,29 +318,64 @@
             this.comboFty.OldText = "";
             this.comboFty.Size = new System.Drawing.Size(80, 24);
             this.comboFty.TabIndex = 254;
+            this.comboFty.SelectedValueChanged += new System.EventHandler(this.ComboFty_SelectedValueChanged);
+            // 
+            // txtStyle
+            // 
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(150, 251);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.Size = new System.Drawing.Size(100, 23);
+            this.txtStyle.TabIndex = 256;
+            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
+            this.txtStyle.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStyle_Validating);
             // 
             // txtSeason
             // 
             this.txtSeason.BackColor = System.Drawing.Color.White;
-            this.txtSeason.BrandObjectName = null;
             this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(150, 218);
+            this.txtSeason.Location = new System.Drawing.Point(151, 218);
             this.txtSeason.Name = "txtSeason";
-            this.txtSeason.Size = new System.Drawing.Size(226, 23);
-            this.txtSeason.TabIndex = 255;
+            this.txtSeason.Size = new System.Drawing.Size(100, 23);
+            this.txtSeason.TabIndex = 257;
+            this.txtSeason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeason_PopUp);
+            this.txtSeason.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeason_Validating);
+            // 
+            // txtBrand
+            // 
+            this.txtBrand.BackColor = System.Drawing.Color.White;
+            this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBrand.Location = new System.Drawing.Point(151, 184);
+            this.txtBrand.Name = "txtBrand";
+            this.txtBrand.Size = new System.Drawing.Size(100, 23);
+            this.txtBrand.TabIndex = 258;
+            this.txtBrand.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBrand_PopUp);
+            this.txtBrand.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBrand_Validating);
+            // 
+            // txtLine
+            // 
+            this.txtLine.BackColor = System.Drawing.Color.White;
+            this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLine.Location = new System.Drawing.Point(151, 320);
+            this.txtLine.Name = "txtLine";
+            this.txtLine.Size = new System.Drawing.Size(100, 23);
+            this.txtLine.TabIndex = 259;
+            this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLine_PopUp);
+            this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLine_Validating);
             // 
             // R08
             // 
             this.ClientSize = new System.Drawing.Size(572, 462);
+            this.Controls.Add(this.txtLine);
+            this.Controls.Add(this.txtBrand);
             this.Controls.Add(this.txtSeason);
+            this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.comboFty);
-            this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.chkLatestVersion);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.comboReportType);
-            this.Controls.Add(this.txtsewingline);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.comboPhase);
             this.Controls.Add(this.lbPhase);
@@ -416,15 +418,15 @@
             this.Controls.SetChildIndex(this.lbPhase, 0);
             this.Controls.SetChildIndex(this.comboPhase, 0);
             this.Controls.SetChildIndex(this.label3, 0);
-            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.txtsewingline, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
             this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.chkLatestVersion, 0);
-            this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.comboFty, 0);
+            this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.txtSeason, 0);
+            this.Controls.SetChildIndex(this.txtBrand, 0);
+            this.Controls.SetChildIndex(this.txtLine, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -447,14 +449,14 @@
         private Win.UI.ComboBox comboPhase;
         private Win.UI.Label lbPhase;
         private Win.UI.Label label3;
-        private Class.Txtbrand txtbrand;
         private Win.UI.Label label4;
-        private Class.Txtsewingline txtsewingline;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.Label label5;
         private Win.UI.CheckBox chkLatestVersion;
-        private Class.Txtstyle txtstyle;
         private Class.ComboCentralizedFactory comboFty;
-        private Class.Txtseason txtSeason;
+        private Win.UI.TextBox txtStyle;
+        private Win.UI.TextBox txtSeason;
+        private Win.UI.TextBox txtBrand;
+        private Win.UI.TextBox txtLine;
     }
 }
