@@ -50,44 +50,57 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"          
-            SELECT
-            [TransferDate] = A.TransferDate
-            ,[FactoryID] = A.FactoryID
-            ,[AvgInspDurInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, ROUND(CAST(SUM(A.SumofDuration) as FLOAT) / A.DataCount, 2))
-            into #tmp
-            FROM
+            DECLARE @Number INT = -7;
+            Create table #tmp
             (
-	            select 
-	            [TransferDate] =  FORMAT(GETDATE(), 'yyyy/MM/dd')
-	            ,[FactoryID] = F.FTYGroup
-	            ,[SumofDuration ] = datediff(day,FORMAT(P.ArriveWHDate, 'yyyy/MM/dd'),FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd'))
-	            ,[DataCount] = op_Count.val
-	            from P_FabricInspLabSummaryReport P
-	            inner join MainServer.Production.dbo.Factory F on P.FactoryID = F.ID AND F.IsProduceFty=1 and F.Junk=0
-                OUTER APPLY
-	            (
-		            SELECT val = count(1) 
-		            FROM P_FabricInspLabSummaryReport op
-                    INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
-		            where 
-		            op.PhysicalInspDate BETWEEN @StartDate and @EndDate
-		            AND opF.FTYGroup = F.FTYGroup
+	            TransferDate VARCHAR(10),
+                FactoryID VARCHAR(10),
+                AvgInspLTInPast7Days FLOAT
+            )
+
+            WHILE @Number <= 0
+            BEGIN
+            INSERT INTO #tmp (TransferDate, FactoryID, AvgInspLTInPast7Days)
+              SELECT
+	            [TransferDate] = A.TransferDate
+	            ,[FactoryID] = A.FactoryID
+	            ,[AvgInspLTInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, ROUND(CAST(SUM(A.SumofDuration) as FLOAT) / A.DataCount, 2))
+              FROM (
+                SELECT 
+                  [TransferDate] = FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                  ,[FactoryID] = F.FTYGroup
+                  ,[SumofDuration] = DATEDIFF(day, FORMAT(P.ArriveWHDate, 'yyyy/MM/dd'), FORMAT(P.PhysicalInspDate, 'yyyy/MM/dd'))
+                  ,[DataCount] = op_Count.val
+                FROM P_FabricInspLabSummaryReport P
+                INNER JOIN MainServer.Production.dbo.Factory F ON P.FactoryID = F.ID AND F.IsProduceFty = 1 AND F.Junk = 0
+                OUTER APPLY (
+                  SELECT val = COUNT(1) 
+                  FROM P_FabricInspLabSummaryReport op
+                  INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
+                  WHERE 
+                    op.PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                    AND opF.FTYGroup = F.FTYGroup
                     AND op.PhysicalInspDate IS NOT NULL 
                     AND op.ArriveWHDate IS NOT NULL
                     AND op.Category = 'Bulk'
                     AND op.NAPhysical <> 'Y'
-	            )op_Count
-	            Where PhysicalInspDate BETWEEN @StartDate and @EndDate
-                AND P.PhysicalInspDate IS NOT NULL 
-                AND P.ArriveWHDate IS NOT NULL
-                AND P.Category = 'Bulk'
-                AND P.NAPhysical <> 'Y'	
-            )A
-            GROUP BY A.TransferDate, A.FactoryID,A.DataCount
+                ) op_Count
+                WHERE 
+                  PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                  AND P.PhysicalInspDate IS NOT NULL 
+                  AND P.ArriveWHDate IS NOT NULL
+                  AND P.Category = 'Bulk'
+                  AND P.NAPhysical <> 'Y'
+              ) A
+              GROUP BY A.TransferDate, A.FactoryID, A.DataCount
+
+              SET @Number = @Number + 1;
+            END;
+
 
             ----更新
             UPDATE P SET
-             P.[AvgInspDurInPast7Days] = ISNULL(T.[AvgInspDurInPast7Days],0)
+             P.[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
             FROM P_FabricInspAvgInspDurInPast7Days P
             INNER JOIN #TMP T ON P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID]
             
@@ -96,12 +109,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             (
 	            [TransferDate]
 	            ,[FactoryID]
-	            ,[AvgInspDurInPast7Days]
+	            ,[AvgInspLTInPast7Days]
             )
             SELECT
              [TransferDate]
             ,[FactoryID] = ISNULL(T.[FactoryID],'')
-            ,[AvgInspDurInPast7Days] = ISNULL(T.[AvgInspDurInPast7Days],0)
+            ,[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspDurInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
 
