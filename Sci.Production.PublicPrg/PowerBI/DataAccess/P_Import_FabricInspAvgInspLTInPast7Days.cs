@@ -8,10 +8,10 @@ using System.Data.SqlClient;
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <inheritdoc/>
-    public class P_Import_FabricInspAvgInspDurInPast7Days
+    public class P_Import_FabricInspAvgInspLTInPast7Days
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricInspAvgInspDurInPast7Days(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_FabricInspAvgInspLTInPast7Days(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
@@ -78,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                   FROM P_FabricInspLabSummaryReport op
                   INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
                   WHERE 
-                    op.PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                    op.PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number -1, @EndDate), 'yyyy/MM/dd')
                     AND opF.FTYGroup = F.FTYGroup
                     AND op.PhysicalInspDate IS NOT NULL 
                     AND op.ArriveWHDate IS NOT NULL
@@ -86,7 +86,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     AND op.NAPhysical <> 'Y'
                 ) op_Count
                 WHERE 
-                  PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                  PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number -1, @EndDate), 'yyyy/MM/dd')
                   AND P.PhysicalInspDate IS NOT NULL 
                   AND P.ArriveWHDate IS NOT NULL
                   AND P.Category = 'Bulk'
@@ -101,11 +101,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ----更新
             UPDATE P SET
              P.[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
-            FROM P_FabricInspAvgInspDurInPast7Days P
+            FROM P_FabricInspAvgInspLTInPast7Days P
             INNER JOIN #TMP T ON P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID]
             
             -----新增
-            INSERT INTO [dbo].[P_FabricInspAvgInspDurInPast7Days]
+            INSERT INTO [dbo].[P_FabricInspAvgInspLTInPast7Days]
             (
 	            [TransferDate]
 	            ,[FactoryID]
@@ -116,26 +116,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[FactoryID] = ISNULL(T.[FactoryID],'')
             ,[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
             from #tmp T
-            Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspDurInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
+            Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspLTInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
 
             ----- 刪除
             DELETE P
-            FROM P_FabricInspAvgInspDurInPast7Days P
+            FROM P_FabricInspAvgInspLTInPast7Days P
             WHERE 
             NOT EXISTS (SELECT 1 FROM #TMP T WHERE T.TransferDate = P.TransferDate AND P.FactoryID = T.FactoryID)
             AND TransferDate NOT BETWEEN  @StartDate AND @EndDate 
 
-            IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_FabricInspAvgInspDurInPast7Days')
+            IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_FabricInspAvgInspLTInPast7Days')
             BEGIN
 	            UPDATE B
 	            SET b.TransferDate = getdate()
 	            FROM BITableInfo B
-	            WHERE B.ID = 'P_FabricInspAvgInspDurInPast7Days'
+	            WHERE B.ID = 'P_FabricInspAvgInspLTInPast7Days'
             END
             ELSE 
             BEGIN
 	            INSERT INTO BITableInfo(Id, TransferDate)
-	            VALUES('P_FabricInspAvgInspDurInPast7Days', GETDATE())
+	            VALUES('P_FabricInspAvgInspLTInPast7Days', GETDATE())
             END
             Drop Table #tmp
             ";

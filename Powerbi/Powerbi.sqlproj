@@ -225,7 +225,7 @@
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
     <Build Include="dbo\Tables\P_OutstandingPOStatus.sql" />
     <Build Include="dbo\Tables\P_RightFirstTimeDailyReport.sql" />
-    <Build Include="dbo\Tables\P_FabricInspAvgInspDurInPast7Days.sql" />
+    <Build Include="dbo\Tables\P_FabricInspAvgInspLTInPast7Days.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
