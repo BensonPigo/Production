@@ -62,9 +62,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 select p.BuyerDelivery
 	, [FactoryID] = f.FTYGroup
-	, [OSTInHauling] = ISNULL(p2.OSTInHauling, 0)
-	, [OSTInScanAndPack] = ISNULL(p3.OSTInScanAndPack, 0)
-	, [OSTInCFA] = ISNULL(p4.OSTInCFA, 0)
+	, [OSTInHauling] = ISNULL(SUM(p2.OSTInHauling), 0)
+	, [OSTInScanAndPack] = ISNULL(SUM(p3.OSTInScanAndPack), 0)
+	, [OSTInCFA] = ISNULL(SUM(p4.OSTInCFA), 0)
 into #tmp_P_OutStandingHPMS
 from (
 	select distinct p.BuyerDelivery, p.Fty 
@@ -93,6 +93,7 @@ outer apply (
 	and p4.Fty = p.fty
 	and p4.Status = 'CFA'
 ) p4
+GROUP BY p.BuyerDelivery, f.FTYGroup
 
 update p
 	set p.[OSTInHauling] = t.[OSTInHauling]
