@@ -4,7 +4,7 @@
     [TicketYds]        NUMERIC (8, 2) CONSTRAINT [DF_CutInsRecord_RollDyelot_TicketYds] DEFAULT ((0)) NOT NULL,
     [Roll]             VARCHAR (8)    CONSTRAINT [DF_CutInsRecord_RollDyelot_Roll] DEFAULT ('') NOT NULL,
     [Dyelot]           VARCHAR (8)    CONSTRAINT [DF_CutInsRecord_RollDyelot_Dyelot] DEFAULT ('') NOT NULL,
-    [CutPartName]      VARCHAR (20)   CONSTRAINT [DF_CutInsRecord_RollDyelot_CutPartName] DEFAULT ('') NOT NULL,
+    [CutPartName]      VARCHAR (100)   CONSTRAINT [DF_CutInsRecord_RollDyelot_CutPartName] DEFAULT ('') NOT NULL,
     [InspRatio]        INT            CONSTRAINT [DF_CutInsRecord_RollDyelot_InspRatio] DEFAULT ((0)) NOT NULL,
     [TMB]              VARCHAR (1)    CONSTRAINT [DF_CutInsRecord_RollDyelot_TMB] DEFAULT ('') NOT NULL,
     [DeviationValue]   VARCHAR (2)    CONSTRAINT [DF_CutInsRecord_RollDyelot_DeviationValue] DEFAULT ('') NOT NULL,
