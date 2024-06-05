@@ -178,8 +178,8 @@ ORDER BY [Group], [SEQ], [NAME]";
             }
 
             var executesOrderBy = from o in executes
-                     orderby o.Group, o.SEQ, o.ClassName
-                     select o;
+                                  orderby o.Group, o.SEQ, o.ClassName
+                                  select o;
             return executesOrderBy.ToList();
         }
 
