@@ -37,5 +37,32 @@ namespace Sci.Production.Cutting
         {
             base.OnDetailGridSetup();
         }
+
+        private void BtnImportMarker_Click(object sender, EventArgs e)
+        {
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe 
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new P02_ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Datas"); // 正常不會發生這狀況
+            }
+        }
     }
 }
