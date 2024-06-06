@@ -327,7 +327,7 @@ select distinct
 	,[Article] = Article.Value
 	,[Color] = Color.Value
 from PO_Supp_Detail psd WITH (NOLOCK)
-inner join po_supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
+inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join Order_BOA ob WITH (NOLOCK) on psd.ID = ob.ID and ob.SCIRefno = psd.SCIRefno and psd.SEQ1 = ob.Seq1 --這邊紀錄一下，有指定色組的料要串SEQ1，不然會發
 inner join Order_BOA_Article oba WITH (NOLOCK) on oba.Order_BoAUkey = ob.Ukey
@@ -359,7 +359,7 @@ outer apply
 		for xml path('')
 	),1,1,'')
 ) Color
-where 1 = 1
+where 1=1
 {where}
 
 ------------------------------------------------------------------------------
@@ -372,10 +372,10 @@ select distinct
 	,Color.Color
 into #tmpFabric
 from PO_Supp_Detail psd WITH (NOLOCK) 
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join Order_BOF ob WITH (NOLOCK) on ob.ID = psd.id and ob.SCIRefno = psd.SCIRefno
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
 inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
+left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
 outer apply(
 	select wkno = stuff((
 		select concat(char(10),ID)
@@ -402,7 +402,7 @@ outer apply
 		for xml path('')
 	),1,1,'')
 ) Color
-where 1 = 1 
+where 1=1
 {where}
 
 ------------------------------------------------------------------
@@ -417,9 +417,9 @@ select distinct
 	,Color.Color
 into #tmpThread
 from PO_Supp_Detail psd WITH (NOLOCK)
+Inner Join Orders o WITH (NOLOCK) on o.ID = psd.ID
 inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-Inner Join Orders o WITH (NOLOCK) on o.ID = psd.ID
 Inner Join Style_ThreadColorCombo tcc WITH (NOLOCK) on tcc.StyleUkey = o.StyleUkey 
 Inner Join dbo.Style_ThreadColorCombo_Detail as tccd WITH (NOLOCK) On tccd.Style_ThreadColorComboUkey = tcc.Ukey and tccd.SCIRefNo = psd.SCIRefno and tccd.ColorID = psdsC.SpecValue
 outer apply
