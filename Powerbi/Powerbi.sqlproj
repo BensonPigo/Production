@@ -233,6 +233,8 @@
     <Build Include="dbo\Tables\P_SubProInsReportMonthlyRate.sql" />
     <Build Include="dbo\Tables\P_WIPBySPLine.sql" />
     <Build Include="dbo\Tables\P_OutStandingHPMS.sql" />
+    <Build Include="dbo\Tables\P_Changeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_Changeover.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
