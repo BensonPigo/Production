@@ -286,9 +286,8 @@ from PO_Supp_Detail psd WITH (NOLOCK)
 inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.id and ps.SEQ1 = psd.SEQ1
 inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join Order_BOA ob WITH (NOLOCK) on ob.Id = psd.ID and ob.SCIRefno = psd.SCIRefno
-inner join Order_Article oa WITH (NOLOCK) on ob.Id = oa.id
 inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.Article = oa.Article and occ.FabricPanelCode = ob.FabricPanelCode and occ.ColorID = psdsC.SpecValue
+inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
 outer apply
 (
 	select wkno = stuff((
@@ -303,7 +302,7 @@ outer apply
 	select Article = stuff((
 		select DISTINCT ',' + Article
 		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.Article = oa.Article and occ.FabricPanelCode = ob.FabricPanelCode and occ.ColorID = psdsC.SpecValue
+		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
 		for xml path('')
 	),1,1,'')
 ) Article
@@ -312,7 +311,7 @@ outer apply
 	select Color = stuff((
 		select DISTINCT ',' + ColorID
 		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.Article = oa.Article and occ.FabricPanelCode = ob.FabricPanelCode and occ.ColorID = psdsC.SpecValue
+		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
 		for xml path('')
 	),1,1,'')
 ) Color
@@ -356,7 +355,7 @@ outer apply
 	select Value = stuff((
 		select DISTINCT ',' + occ.ColorID
 		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.Article = oba.Article and occ.FabricPanelCode = ob.FabricPanelCode and occ.ColorID = psdsc.SpecValue
+		where occ.id = ob.id and occ.ColorID = psdsc.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
 		for xml path('')
 	),1,1,'')
 ) Color
@@ -375,8 +374,7 @@ into #tmpFabric
 from PO_Supp_Detail psd WITH (NOLOCK) 
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 =psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 inner join Order_BOF ob WITH (NOLOCK) on ob.ID = psd.id and ob.SCIRefno = psd.SCIRefno
-inner join Order_Article oa WITH (NOLOCK) on ob.Id = oa.id
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.Article = oa.Article and occ.FabricCode = ob.FabricCode and occ.ColorID = psdsC.SpecValue
+inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
 inner join Orders o WITH (NOLOCK) on o.ID = ob.ID
 outer apply(
 	select wkno = stuff((
@@ -391,7 +389,7 @@ outer apply
 	select Article = stuff((
 		select DISTINCT ',' + Article
 		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and oa.Article = occ.Article and occ.FabricCode = ob.FabricCode and occ.ColorID = psdsC.SpecValue
+		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
 		for xml path('')
 	),1,1,'')
 ) Article
@@ -400,7 +398,7 @@ outer apply
 	select Color = stuff((
 		select DISTINCT ',' + ColorID
 		from Order_ColorCombo occ WITH (NOLOCK) 
-		where occ.id = ob.id and occ.Article = oa.Article and occ.FabricCode = ob.FabricCode and occ.ColorID = psdsC.SpecValue
+		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
 		for xml path('')
 	),1,1,'')
 ) Color
