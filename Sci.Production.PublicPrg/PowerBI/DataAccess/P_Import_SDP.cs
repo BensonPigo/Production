@@ -474,9 +474,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	t.[Country]						=	isnull(s.[Country],'')
 	,t.[KPIGroup]					=	isnull(s.[KPIGroup],'')
 	,t.[Brand]						=	isnull(s.[Brand],'')
-	,t.[BuyerDelivery]				=	isnull(s.[BuyerDelivery],'')
-	,t.[FactoryKPI]					=	isnull(s.[FactoryKPI],'')
-	,t.[Extension]					=	isnull(s.[Extension],'')
+	,t.[BuyerDelivery]				=	s.[BuyerDelivery]
+	,t.[FactoryKPI]					=	s.[FactoryKPI]
+	,t.[Extension]					=	s.[Extension]
 	,t.[DeliveryByShipmode]			=	isnull(s.[DeliveryByShipmode],'')
 	,t.[OrderQty]					=	isnull(s.[OrderQty],0)
 	,t.[OnTimeQty]					=	isnull(s.[OnTimeQty],0)
@@ -628,6 +628,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
 	where f.IsProduceFty = 0
+
+	Delete p
+	from P_SDP p
+	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	where o.Junk = 1
 
 	IF EXISTS (select 1 from BITableInfo b where b.id = 'P_SDP')
 	BEGIN
