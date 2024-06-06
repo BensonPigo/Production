@@ -196,8 +196,8 @@ namespace Sci.Production.Planning
                 IncludeAtworkData = this.checkIncludeArtowkData.Checked,
                 IncludeCancelOrder = this.chkIncludeCancelOrder.Checked,
                 FormParameter = this.formParameter,
-                ArtworkTypes = this.FormParameter == "2" ? artworkTypes_2 : string.Empty,
-                RFIDProcessLocation = this.RFIDProcessLocation,
+                ArtworkTypes = artworkTypes_2,
+                RFIDProcessLocation = this.FormParameter == "2" ? this.RFIDProcessLocation : string.Empty,
                 SubprocessID = this.subprocessID,
                 IsBI = false,
             };
