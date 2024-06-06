@@ -13,9 +13,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_SimilarStyle
     {
+        private DBProxy DBProxy;
+
         /// <inheritdoc/>
         public Base_ViewModel P_SimilarStyle(DateTime? sDate)
         {
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 1800,
+            };
+
             Base_ViewModel finalResult = new Base_ViewModel();
 
             if (!sDate.HasValue)
@@ -284,7 +291,7 @@ ORDER BY s.outputdate DESC
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd.ToString(), paras, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paras, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
