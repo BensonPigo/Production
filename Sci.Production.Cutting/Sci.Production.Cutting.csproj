@@ -381,6 +381,12 @@
     <Compile Include="P10_1_Print.Designer.cs">
       <DependentUpon>P10_1_Print.cs</DependentUpon>
     </Compile>
+    <Compile Include="P09_ActionCutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_ActionCutRef.Designer.cs">
+      <DependentUpon>P09_ActionCutRef.cs</DependentUpon>
+    </Compile>
     <Compile Include="P12_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -750,6 +756,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10_1_Print.resx">
       <DependentUpon>P10_1_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_ActionCutRef.resx">
+      <DependentUpon>P09_ActionCutRef.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Print.resx">
       <DependentUpon>P12_Print.cs</DependentUpon>

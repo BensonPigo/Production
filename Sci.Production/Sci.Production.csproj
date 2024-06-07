@@ -446,6 +446,7 @@
     <None Include="XLT\Cutting_R13.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="XLT\Cuttint_P09. Import Marker Template Download.xltx" />
     <None Include="XLT\IE_P01_History_Print.xltx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

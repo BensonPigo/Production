@@ -28,10 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numConsPC = new Sci.Win.UI.NumericBox();
+            this.displayBoxCons = new Sci.Win.UI.DisplayBox();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label10 = new System.Windows.Forms.Label();
+            this.gridDistributeToSP = new Sci.Win.UI.Grid();
+            this.label11 = new System.Windows.Forms.Label();
+            this.gridQtyBreakDown = new Sci.Win.UI.Grid();
+            this.gridSpreadingFabric = new Sci.Win.UI.Grid();
+            this.label9 = new System.Windows.Forms.Label();
+            this.gridSizeRatio = new Sci.Win.UI.Grid();
+            this.label8 = new System.Windows.Forms.Label();
+            this.displayBoxTtlDistQty = new Sci.Win.UI.DisplayBox();
+            this.label7 = new Sci.Win.UI.Label();
+            this.displayBoxTotalCutQty = new Sci.Win.UI.DisplayBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.displayBoxDescription = new Sci.Win.UI.DisplayBox();
+            this.displayBoxFabricTypeRefno = new Sci.Win.UI.DisplayBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnImportFromWorkOrderForPlanning = new Sci.Win.UI.Button();
             this.btnExcludeSetting = new Sci.Win.UI.Button();
@@ -45,27 +64,6 @@
             this.btnDownload = new Sci.Win.UI.Button();
             this.btnImportMarkerLectra = new Sci.Win.UI.Button();
             this.btnEdit = new Sci.Win.UI.Button();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.displayBoxFabricTypeRefno = new Sci.Win.UI.DisplayBox();
-            this.displayBoxDescription = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
-            this.txtUnitCons1 = new Sci.Win.UI.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtUnitCons2 = new Sci.Win.UI.TextBox();
-            this.displayBoxTotalCutQty = new Sci.Win.UI.DisplayBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.displayBoxTtlDistQty = new Sci.Win.UI.DisplayBox();
-            this.label7 = new Sci.Win.UI.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.gridSizeRatio = new Sci.Win.UI.Grid();
-            this.label9 = new System.Windows.Forms.Label();
-            this.gridSpreadingFabric = new Sci.Win.UI.Grid();
-            this.label10 = new System.Windows.Forms.Label();
-            this.gridDistributeToSP = new Sci.Win.UI.Grid();
-            this.label11 = new System.Windows.Forms.Label();
-            this.gridQtyBreakDown = new Sci.Win.UI.Grid();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.btnAutoRef = new Sci.Win.UI.Button();
             this.btnAutoCut = new Sci.Win.UI.Button();
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
@@ -75,6 +73,11 @@
             this.btnHistory = new Sci.Win.UI.Button();
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnRefresh = new Sci.Win.UI.Button();
+            this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.qtybreakds = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.spreadingfabricbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -88,15 +91,19 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.panel1.SuspendLayout();
-            this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spreadingfabricbs)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -132,6 +139,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(1197, 3);
+            this.refresh.Visible = false;
             // 
             // detailgridcont
             // 
@@ -163,6 +171,7 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnRefresh);
             this.detailbtm.Controls.Add(this.btnToExcel);
             this.detailbtm.Controls.Add(this.btnQtyBreakdown);
             this.detailbtm.Controls.Add(this.btnHistory);
@@ -188,10 +197,11 @@
             this.detailbtm.Controls.SetChildIndex(this.btnHistory, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnRefresh, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1184, 603);
+            this.browse.Size = new System.Drawing.Size(1280, 655);
             // 
             // tabs
             // 
@@ -221,6 +231,8 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.numConsPC);
+            this.panel1.Controls.Add(this.displayBoxCons);
             this.panel1.Controls.Add(this.splitContainer1);
             this.panel1.Controls.Add(this.gridSpreadingFabric);
             this.panel1.Controls.Add(this.label9);
@@ -230,9 +242,7 @@
             this.panel1.Controls.Add(this.label7);
             this.panel1.Controls.Add(this.displayBoxTotalCutQty);
             this.panel1.Controls.Add(this.label6);
-            this.panel1.Controls.Add(this.txtUnitCons2);
             this.panel1.Controls.Add(this.label5);
-            this.panel1.Controls.Add(this.txtUnitCons1);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.displayBoxDescription);
             this.panel1.Controls.Add(this.displayBoxFabricTypeRefno);
@@ -243,6 +253,282 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(344, 614);
             this.panel1.TabIndex = 4;
+            // 
+            // numConsPC
+            // 
+            this.numConsPC.BackColor = System.Drawing.Color.White;
+            this.numConsPC.DecimalPlaces = 4;
+            this.numConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numConsPC.Location = new System.Drawing.Point(129, 102);
+            this.numConsPC.Name = "numConsPC";
+            this.numConsPC.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numConsPC.Size = new System.Drawing.Size(94, 23);
+            this.numConsPC.TabIndex = 33;
+            this.numConsPC.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // displayBoxCons
+            // 
+            this.displayBoxCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxCons.Location = new System.Drawing.Point(245, 102);
+            this.displayBoxCons.Name = "displayBoxCons";
+            this.displayBoxCons.Size = new System.Drawing.Size(96, 23);
+            this.displayBoxCons.TabIndex = 32;
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Location = new System.Drawing.Point(3, 304);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.label10);
+            this.splitContainer1.Panel1.Controls.Add(this.gridDistributeToSP);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.label11);
+            this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
+            this.splitContainer1.Size = new System.Drawing.Size(340, 310);
+            this.splitContainer1.SplitterDistance = 149;
+            this.splitContainer1.TabIndex = 31;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(-1, 0);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(119, 17);
+            this.label10.TabIndex = 27;
+            this.label10.Text = "Distribute To SP#";
+            // 
+            // gridDistributeToSP
+            // 
+            this.gridDistributeToSP.AllowUserToAddRows = false;
+            this.gridDistributeToSP.AllowUserToDeleteRows = false;
+            this.gridDistributeToSP.AllowUserToResizeRows = false;
+            this.gridDistributeToSP.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridDistributeToSP.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDistributeToSP.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDistributeToSP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDistributeToSP.DataSource = this.distributebs;
+            this.gridDistributeToSP.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDistributeToSP.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDistributeToSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDistributeToSP.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDistributeToSP.Location = new System.Drawing.Point(1, 20);
+            this.gridDistributeToSP.Name = "gridDistributeToSP";
+            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDistributeToSP.RowTemplate.Height = 24;
+            this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDistributeToSP.ShowCellToolTips = false;
+            this.gridDistributeToSP.Size = new System.Drawing.Size(338, 130);
+            this.gridDistributeToSP.TabIndex = 28;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(0, 1);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(110, 17);
+            this.label11.TabIndex = 29;
+            this.label11.Text = "Qty Break Down";
+            // 
+            // gridQtyBreakDown
+            // 
+            this.gridQtyBreakDown.AllowUserToAddRows = false;
+            this.gridQtyBreakDown.AllowUserToDeleteRows = false;
+            this.gridQtyBreakDown.AllowUserToResizeRows = false;
+            this.gridQtyBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridQtyBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBreakDown.DataSource = this.qtybreakds;
+            this.gridQtyBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBreakDown.Location = new System.Drawing.Point(1, 21);
+            this.gridQtyBreakDown.Name = "gridQtyBreakDown";
+            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBreakDown.RowTemplate.Height = 24;
+            this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBreakDown.ShowCellToolTips = false;
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(338, 136);
+            this.gridQtyBreakDown.TabIndex = 30;
+            // 
+            // gridSpreadingFabric
+            // 
+            this.gridSpreadingFabric.AllowUserToAddRows = false;
+            this.gridSpreadingFabric.AllowUserToDeleteRows = false;
+            this.gridSpreadingFabric.AllowUserToResizeRows = false;
+            this.gridSpreadingFabric.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSpreadingFabric.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSpreadingFabric.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSpreadingFabric.DataSource = this.spreadingfabricbs;
+            this.gridSpreadingFabric.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSpreadingFabric.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSpreadingFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSpreadingFabric.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSpreadingFabric.Location = new System.Drawing.Point(129, 205);
+            this.gridSpreadingFabric.Name = "gridSpreadingFabric";
+            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSpreadingFabric.RowTemplate.Height = 24;
+            this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSpreadingFabric.ShowCellToolTips = false;
+            this.gridSpreadingFabric.Size = new System.Drawing.Size(212, 95);
+            this.gridSpreadingFabric.TabIndex = 26;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(126, 185);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(116, 17);
+            this.label9.TabIndex = 25;
+            this.label9.Text = "Spreading Fabric";
+            // 
+            // gridSizeRatio
+            // 
+            this.gridSizeRatio.AllowUserToAddRows = false;
+            this.gridSizeRatio.AllowUserToDeleteRows = false;
+            this.gridSizeRatio.AllowUserToResizeRows = false;
+            this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSizeRatio.DataSource = this.sizeRatiobs;
+            this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSizeRatio.Location = new System.Drawing.Point(3, 205);
+            this.gridSizeRatio.Name = "gridSizeRatio";
+            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSizeRatio.RowTemplate.Height = 24;
+            this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSizeRatio.ShowCellToolTips = false;
+            this.gridSizeRatio.Size = new System.Drawing.Size(123, 95);
+            this.gridSizeRatio.TabIndex = 24;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(1, 185);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(72, 17);
+            this.label8.TabIndex = 23;
+            this.label8.Text = "Size Ratio";
+            // 
+            // displayBoxTtlDistQty
+            // 
+            this.displayBoxTtlDistQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxTtlDistQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxTtlDistQty.Location = new System.Drawing.Point(129, 154);
+            this.displayBoxTtlDistQty.Name = "displayBoxTtlDistQty";
+            this.displayBoxTtlDistQty.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxTtlDistQty.TabIndex = 22;
+            // 
+            // label7
+            // 
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label7.Location = new System.Drawing.Point(3, 154);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(123, 23);
+            this.label7.TabIndex = 21;
+            this.label7.Text = "Ttl. Dist. Qty.";
+            // 
+            // displayBoxTotalCutQty
+            // 
+            this.displayBoxTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 128);
+            this.displayBoxTotalCutQty.Name = "displayBoxTotalCutQty";
+            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxTotalCutQty.TabIndex = 20;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label6.Location = new System.Drawing.Point(3, 128);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(123, 23);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Total Cut Qty";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(229, 105);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(12, 17);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "/";
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(3, 102);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(123, 23);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Unit Cons/Cons";
+            // 
+            // displayBoxDescription
+            // 
+            this.displayBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
+            this.displayBoxDescription.Multiline = true;
+            this.displayBoxDescription.Name = "displayBoxDescription";
+            this.displayBoxDescription.Size = new System.Drawing.Size(212, 70);
+            this.displayBoxDescription.TabIndex = 14;
+            // 
+            // displayBoxFabricTypeRefno
+            // 
+            this.displayBoxFabricTypeRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
+            this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxFabricTypeRefno.TabIndex = 13;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label3.Location = new System.Drawing.Point(3, 29);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(123, 23);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Description";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label2.Location = new System.Drawing.Point(3, 3);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(123, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Fabric Type/Refno";
             // 
             // panel2
             // 
@@ -260,6 +546,7 @@
             // 
             // btnImportFromWorkOrderForPlanning
             // 
+            this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(646, 3);
             this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
@@ -267,6 +554,7 @@
             this.btnImportFromWorkOrderForPlanning.TabIndex = 1;
             this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
             this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
+            this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
             // 
             // btnExcludeSetting
             // 
@@ -281,7 +569,6 @@
             // displayBoxStyle
             // 
             this.displayBoxStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxStyle.Location = new System.Drawing.Point(261, 5);
             this.displayBoxStyle.Name = "displayBoxStyle";
@@ -324,6 +611,7 @@
             this.labelMSG.Size = new System.Drawing.Size(318, 22);
             this.labelMSG.TabIndex = 13;
             this.labelMSG.Text = "Marker/EachCons Marker Different";
+            this.labelMSG.Visible = false;
             // 
             // btnBatchAssign
             // 
@@ -348,7 +636,7 @@
             // btnDownload
             // 
             this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
-            this.btnDownload.Location = new System.Drawing.Point(564, 37);
+            this.btnDownload.Location = new System.Drawing.Point(565, 37);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
@@ -366,6 +654,7 @@
             // 
             // btnEdit
             // 
+            this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnEdit.Location = new System.Drawing.Point(772, 34);
             this.btnEdit.Name = "btnEdit";
@@ -373,295 +662,7 @@
             this.btnEdit.TabIndex = 15;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(3, 3);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(123, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Fabric Type/Refno";
-            // 
-            // label3
-            // 
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(3, 29);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(123, 23);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Description";
-            // 
-            // displayBoxFabricTypeRefno
-            // 
-            this.displayBoxFabricTypeRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxFabricTypeRefno.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
-            this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
-            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(212, 23);
-            this.displayBoxFabricTypeRefno.TabIndex = 13;
-            // 
-            // displayBoxDescription
-            // 
-            this.displayBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxDescription.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
-            this.displayBoxDescription.Multiline = true;
-            this.displayBoxDescription.Name = "displayBoxDescription";
-            this.displayBoxDescription.Size = new System.Drawing.Size(212, 70);
-            this.displayBoxDescription.TabIndex = 14;
-            // 
-            // label4
-            // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(3, 102);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(123, 23);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Unit Cons/Cons";
-            // 
-            // txtUnitCons1
-            // 
-            this.txtUnitCons1.BackColor = System.Drawing.Color.White;
-            this.txtUnitCons1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtUnitCons1.Location = new System.Drawing.Point(129, 102);
-            this.txtUnitCons1.Name = "txtUnitCons1";
-            this.txtUnitCons1.Size = new System.Drawing.Size(96, 23);
-            this.txtUnitCons1.TabIndex = 16;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(229, 105);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(12, 17);
-            this.label5.TabIndex = 17;
-            this.label5.Text = "/";
-            // 
-            // txtUnitCons2
-            // 
-            this.txtUnitCons2.BackColor = System.Drawing.Color.White;
-            this.txtUnitCons2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtUnitCons2.Location = new System.Drawing.Point(245, 102);
-            this.txtUnitCons2.Name = "txtUnitCons2";
-            this.txtUnitCons2.Size = new System.Drawing.Size(96, 23);
-            this.txtUnitCons2.TabIndex = 18;
-            // 
-            // displayBoxTotalCutQty
-            // 
-            this.displayBoxTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxTotalCutQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBoxTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 128);
-            this.displayBoxTotalCutQty.Name = "displayBoxTotalCutQty";
-            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(212, 23);
-            this.displayBoxTotalCutQty.TabIndex = 20;
-            // 
-            // label6
-            // 
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(3, 128);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(123, 23);
-            this.label6.TabIndex = 19;
-            this.label6.Text = "Total Cut Qty";
-            // 
-            // displayBoxTtlDistQty
-            // 
-            this.displayBoxTtlDistQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxTtlDistQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-            this.displayBoxTtlDistQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxTtlDistQty.Location = new System.Drawing.Point(129, 154);
-            this.displayBoxTtlDistQty.Name = "displayBoxTtlDistQty";
-            this.displayBoxTtlDistQty.Size = new System.Drawing.Size(212, 23);
-            this.displayBoxTtlDistQty.TabIndex = 22;
-            // 
-            // label7
-            // 
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Location = new System.Drawing.Point(3, 154);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(123, 23);
-            this.label7.TabIndex = 21;
-            this.label7.Text = "Ttl. Dist. Qty.";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(1, 185);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(72, 17);
-            this.label8.TabIndex = 23;
-            this.label8.Text = "Size Ratio";
-            // 
-            // gridSizeRatio
-            // 
-            this.gridSizeRatio.AllowUserToAddRows = false;
-            this.gridSizeRatio.AllowUserToDeleteRows = false;
-            this.gridSizeRatio.AllowUserToResizeRows = false;
-            this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridSizeRatio.DefaultCellStyle = dataGridViewCellStyle5;
-            this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSizeRatio.Location = new System.Drawing.Point(3, 205);
-            this.gridSizeRatio.Name = "gridSizeRatio";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridSizeRatio.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridSizeRatio.RowTemplate.Height = 24;
-            this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(123, 95);
-            this.gridSizeRatio.TabIndex = 24;
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(126, 185);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(116, 17);
-            this.label9.TabIndex = 25;
-            this.label9.Text = "Spreading Fabric";
-            // 
-            // gridSpreadingFabric
-            // 
-            this.gridSpreadingFabric.AllowUserToAddRows = false;
-            this.gridSpreadingFabric.AllowUserToDeleteRows = false;
-            this.gridSpreadingFabric.AllowUserToResizeRows = false;
-            this.gridSpreadingFabric.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridSpreadingFabric.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridSpreadingFabric.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridSpreadingFabric.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridSpreadingFabric.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridSpreadingFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridSpreadingFabric.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSpreadingFabric.Location = new System.Drawing.Point(129, 205);
-            this.gridSpreadingFabric.Name = "gridSpreadingFabric";
-            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridSpreadingFabric.RowTemplate.Height = 24;
-            this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSpreadingFabric.ShowCellToolTips = false;
-            this.gridSpreadingFabric.Size = new System.Drawing.Size(212, 95);
-            this.gridSpreadingFabric.TabIndex = 26;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(-1, 0);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(119, 17);
-            this.label10.TabIndex = 27;
-            this.label10.Text = "Distribute To SP#";
-            // 
-            // gridDistributeToSP
-            // 
-            this.gridDistributeToSP.AllowUserToAddRows = false;
-            this.gridDistributeToSP.AllowUserToDeleteRows = false;
-            this.gridDistributeToSP.AllowUserToResizeRows = false;
-            this.gridDistributeToSP.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridDistributeToSP.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridDistributeToSP.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridDistributeToSP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridDistributeToSP.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridDistributeToSP.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridDistributeToSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridDistributeToSP.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDistributeToSP.Location = new System.Drawing.Point(1, 20);
-            this.gridDistributeToSP.Name = "gridDistributeToSP";
-            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridDistributeToSP.RowTemplate.Height = 24;
-            this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDistributeToSP.ShowCellToolTips = false;
-            this.gridDistributeToSP.Size = new System.Drawing.Size(338, 130);
-            this.gridDistributeToSP.TabIndex = 28;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(0, 1);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(110, 17);
-            this.label11.TabIndex = 29;
-            this.label11.Text = "Qty Break Down";
-            // 
-            // gridQtyBreakDown
-            // 
-            this.gridQtyBreakDown.AllowUserToAddRows = false;
-            this.gridQtyBreakDown.AllowUserToDeleteRows = false;
-            this.gridQtyBreakDown.AllowUserToResizeRows = false;
-            this.gridQtyBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridQtyBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridQtyBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridQtyBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridQtyBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridQtyBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridQtyBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridQtyBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridQtyBreakDown.Location = new System.Drawing.Point(1, 21);
-            this.gridQtyBreakDown.Name = "gridQtyBreakDown";
-            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridQtyBreakDown.RowTemplate.Height = 24;
-            this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(338, 136);
-            this.gridQtyBreakDown.TabIndex = 30;
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.Location = new System.Drawing.Point(3, 304);
-            this.splitContainer1.Name = "splitContainer1";
-            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.label10);
-            this.splitContainer1.Panel1.Controls.Add(this.gridDistributeToSP);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.label11);
-            this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
-            this.splitContainer1.Size = new System.Drawing.Size(340, 310);
-            this.splitContainer1.SplitterDistance = 149;
-            this.splitContainer1.TabIndex = 31;
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnAutoRef
             // 
@@ -753,6 +754,16 @@
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnRefresh.Location = new System.Drawing.Point(1197, 7);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(82, 28);
+            this.btnRefresh.TabIndex = 25;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            // 
             // P09
             // 
             this.ApvChkValue = "New";
@@ -787,18 +798,22 @@
             this.tabs.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            this.panel2.ResumeLayout(false);
-            this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.spreadingfabricbs)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -823,9 +838,7 @@
         private Win.UI.DisplayBox displayBoxFabricTypeRefno;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
-        private Win.UI.TextBox txtUnitCons2;
         private System.Windows.Forms.Label label5;
-        private Win.UI.TextBox txtUnitCons1;
         private Win.UI.Label label4;
         private Win.UI.Grid gridSpreadingFabric;
         private System.Windows.Forms.Label label9;
@@ -849,5 +862,12 @@
         private Win.UI.Button btnCutPartsCheck;
         private Win.UI.Button btnDistributeThisCutRef;
         private Win.UI.Button btnAllSPDistribute;
+        private Win.UI.Button btnRefresh;
+        private Win.UI.DisplayBox displayBoxCons;
+        private Win.UI.NumericBox numConsPC;
+        private Win.UI.ListControlBindingSource sizeRatiobs;
+        private Win.UI.ListControlBindingSource distributebs;
+        private Win.UI.ListControlBindingSource qtybreakds;
+        private Win.UI.ListControlBindingSource spreadingfabricbs;
     }
 }
