@@ -24,6 +24,7 @@
 		[IsCreateByUser] [bit] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_IsCreateByUser] DEFAULT 0,
 		[MarkerName] [varchar] (20) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerName] DEFAULT '',
 		[MarkerNo] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerNo] DEFAULT '',
+		[MarkerVersion] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT '',
 		[MarkerLength] [varchar] (15) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerLength] DEFAULT '',
 		[Order_EachconsUkey] [bigint] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Order_EachconsUkey] DEFAULT 0,
 		[AddName] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_AddName] DEFAULT '',
@@ -87,6 +88,8 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerName'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克號碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerNo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克版本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerVersion'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerLength'
 	GO
