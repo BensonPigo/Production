@@ -626,6 +626,7 @@
             this.btnImportMarkerLectra.TabIndex = 14;
             this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
             this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
+            this.btnImportMarkerLectra.Click += new System.EventHandler(this.BtnImportMarkerLectra_Click);
             // 
             // btnEdit
             // 
