@@ -78,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                   FROM P_FabricInspLabSummaryReport op
                   INNER JOIN MainServer.Production.dbo.Factory opF ON op.FactoryID = opF.ID AND opF.IsProduceFty = 1 AND opF.Junk = 0
                   WHERE 
-                    op.PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                    op.PhysicalInspDate >= FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND op.PhysicalInspDate < FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
                     AND opF.FTYGroup = F.FTYGroup
                     AND op.PhysicalInspDate IS NOT NULL 
                     AND op.ArriveWHDate IS NOT NULL
@@ -86,7 +86,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     AND op.NAPhysical <> 'Y'
                 ) op_Count
                 WHERE 
-                  PhysicalInspDate BETWEEN FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
+                  PhysicalInspDate >= FORMAT(DATEADD(day, @Number, @StartDate), 'yyyy/MM/dd') AND PhysicalInspDate < FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
                   AND P.PhysicalInspDate IS NOT NULL 
                   AND P.ArriveWHDate IS NOT NULL
                   AND P.Category = 'Bulk'
