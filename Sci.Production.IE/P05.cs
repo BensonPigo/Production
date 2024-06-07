@@ -47,9 +47,11 @@ select  ad.*,
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
         [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
 from    AutomatedLineMapping_DetailAuto ad with (nolock) 
+left join AutomatedLineMapping alm on alm.ID = ad.ID
+left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
-where {0}
+where {0} and isnull(md.IsNotShownInP06,0) = 0
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
 
@@ -62,6 +64,7 @@ select  ad.*,
 from    AutomatedLineMapping_DetailTemp ad with (nolock) 
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
+
 where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
@@ -79,7 +82,7 @@ left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA
 left join Operation op with (nolock) on op.ID = ad.OperationID
 inner join AutomatedLineMapping alm on alm.id = ad.ID
 LEFT join MachineType_Detail md on md.ID = ad.MachineTypeID and md.FactoryID = alm.FactoryID
-where {0}
+where {0} and isnull(md.IsNotShownInP05,0) = 0
 order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
         private decimal StandardLBR
@@ -175,7 +178,7 @@ AND ALMCS.Junk = 0
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (dr["OperationID"].ToString() == "PROCIPF00003" ||
+             if (dr["OperationID"].ToString() == "PROCIPF00003" ||
                 dr["OperationID"].ToString() == "PROCIPF00004")
             {
                 this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
@@ -474,6 +477,12 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+
+            if (MyUtility.Msg.InfoBox("Are you sure you want to Confirm?", buttons: MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
+
             decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
@@ -516,12 +525,6 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-
-            if (MyUtility.Msg.InfoBox("Are you sure you want to Confirm?", buttons: MessageBoxButtons.YesNo) == DialogResult.No)
-            {
-                return false;
-            }
-
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
             {
                 MyUtility.Msg.WarningBox("[Factory] cannot be empty.");
@@ -720,8 +723,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(3), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(13));
 
@@ -927,7 +930,7 @@ from #tmp
                 this.centralizedPPAGrids.RefreshSubData();
             }
 
-            this.detailgridbs.Filter = "IsNotShownInP05 = 'False'"; // ISP20240132 隱藏工段
+            this.detailgridbs.Filter = "IsNotShownInP05 = 'False' and No <> '' and No is not null"; // ISP20240132 隱藏工段
         }
 
         private void RefreshAutomatedLineMappingSummary()

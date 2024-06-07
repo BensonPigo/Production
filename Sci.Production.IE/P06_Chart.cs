@@ -41,8 +41,10 @@ namespace Sci.Production.IE
             , ct = count(1)
             from LineMappingBalancing alm
             left join LineMappingBalancing_Detail almd on alm.ID = almd.ID
+            left join MachineType_Detail md on md.ID = almd.MachineTypeID  and md.FactoryID = alm.FactoryID
             where alm.ID  = @ALMID
             and almd.IsNonSewingLine = 0
+            and isnull(md.IsNotShownInP06,0) = 0
             and almd.PPA != 'C'
             group by almd.No, alm.WorkHour, alm.SewerManpower, alm.TotalCycleTime
 
@@ -51,8 +53,11 @@ namespace Sci.Production.IE
             , TotalGSDTime = Round(Sum(almd.GSD * almd.SewerDiffPercentage),2)
             , TotalCycleTime = Round(Sum(almd.Cycle * almd.SewerDiffPercentage),2)
             from LineMappingBalancing_Detail almd
+            left join LineMappingBalancing alm on alm.ID = almd.ID
+            left join MachineType_Detail md on md.ID = almd.MachineTypeID  and md.FactoryID = alm.FactoryID
             where almd.ID = @ALMID
             and almd.IsNonSewingLine = 0
+            and isnull(md.IsNotShownInP06,0) = 0
             and almd.PPA != 'C'
             group by almd.No
 			";
@@ -97,7 +102,7 @@ namespace Sci.Production.IE
             // 傳值進去前面設定的Series
             for (int i = 0; i < this.dataTables[0].Rows.Count; i++)
             {
-                string label = (i + 1).ToString("D2");
+                string label = this.dataTables[0].Rows[i]["No"].ToString();
                 chartArea.AxisX.CustomLabels.Add(i - 0.5, i + 0.5, label); // X軸的文字
 
                 this.chart1.Series[0].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[0].Rows[i]["ActGSDTime"]));
@@ -132,7 +137,7 @@ namespace Sci.Production.IE
             // 傳值進去前面設定的Series
             for (int i = 0; i < this.dataTables[1].Rows.Count; i++)
             {
-                string label = (i + 1).ToString("D2");
+                string label = this.dataTables[1].Rows[i]["No"].ToString();
                 chartArea1.AxisX.CustomLabels.Add(i - 0.5, i + 0.5, label); // X軸的文字
 
                 this.chart2.Series[0].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[1].Rows[i]["TotalGSDTime"]));

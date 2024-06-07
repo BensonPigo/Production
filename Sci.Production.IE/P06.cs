@@ -184,7 +184,7 @@ AND ALMCS.Junk = 0
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            new P06_Print(this.CurrentMaintain["ID"].ToString(), (DataTable)this.gridLineMappingRight.DataSource).ShowDialog();
+            new P06_Print(this.CurrentMaintain["ID"].ToString(), this.oriDataTable).ShowDialog();
             return base.ClickPrint();
         }
 
@@ -254,7 +254,7 @@ AND ALMCS.Junk = 0
 				                ,[Group_Header] = tsd.[location] 
 				                ,[Part] = lmd.SewingMachineAttachmentID
 				                ,[Attachment] = lmd.Attachment
-				                ,Effi_3_year = Effi_3_year.VAL
+				                ,Effi_3_year = CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2))
 				                from Employee eo
 				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
 				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -266,14 +266,6 @@ AND ALMCS.Junk = 0
 						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
 						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
 				                )Operation_P03
-				                OUTER APPLY 
-				                (
-					                SELECT VAL = CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2))
-					                FROM LineMappingBalancing oplm 
-					                inner join LineMappingBalancing_Detail oplmd on oplm.ID = oplmd.ID
-					                WHERE OPLMD.EmployeeID = lmd.EmployeeID
-					                AND ((oplm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.AddDate <= GETDATE()))
-				                )Effi_3_year
 				                WHERE 
 				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
 				                ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
@@ -291,7 +283,7 @@ AND ALMCS.Junk = 0
 				                SELECT 
 				                [ST_MC_Type] =lmd.MachineTypeID
 				                ,[Motion] = Operation_P03.val
-				                ,Effi_90_day = Effi_90_day.VAL
+				                ,Effi_90_day =  FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD / lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
 				                from Employee eo
 				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
 				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -303,14 +295,6 @@ AND ALMCS.Junk = 0
 						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
 						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
 				                )Operation_P03
-				                OUTER APPLY 
-				                (
-					                SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
-					                FROM LineMappingBalancing oplm 
-					                inner join LineMappingBalancing_Detail oplmd on oplm.ID = oplmd.ID
-					                WHERE OPLMD.EmployeeID = lmd.EmployeeID
-					                AND ((oplm.EditDate >= DATEADD(DAY, -90, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -90, GETDATE()) and oplm.AddDate <= GETDATE()))
-				                )Effi_90_day
 				                WHERE 
 				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
 				                ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
@@ -344,6 +328,8 @@ AND ALMCS.Junk = 0
 
             return base.OnRenewDataDetailPost(e);
         }
+
+        private DataTable oriDataTable;
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
@@ -1150,6 +1136,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 this.centralizedPPAGrids.RefreshSubData();
             }
 
+            this.oriDataTable = (DataTable)this.gridLineMappingRight.DataSource;
+            this.listControlBindingSource.DataSource = this.gridLineMappingRight.DataSource;
+            var dt = (DataTable)this.listControlBindingSource.DataSource;
+            foreach (DataRow dr in dt.Rows)
+            {
+                dr["NoCnt"] = MyUtility.Convert.GetInt(dr["NoCnt"]) - MyUtility.Convert.GetInt(dr["IsNotShownInP06Cnt"]);
+            }
+            this.listControlBindingSource.Filter = "NoCnt <> '0'";
             this.detailgridbs.Filter = "IsNotShownInP06 = 'False'"; // ISP20240132 隱藏工段
         }
 

@@ -44,8 +44,10 @@ namespace Sci.Production.IE
 			, ct = count(1)
 			from AutomatedLineMapping alm
 			left join AutomatedLineMapping_Detail almd on alm.ID = almd.ID
+            left join MachineType_Detail md on md.ID = almd.MachineTypeID  and md.FactoryID = alm.FactoryID
 			where alm.ID  = @ALMID
 			and almd.IsNonSewingLine = 0
+            and isnull(md.IsNotShownInP05,0) = 0
 			and almd.PPA != 'C'
 			group by almd.No, alm.WorkHour, alm.SewerManpower, alm.TotalGSDTime
 			";
@@ -88,7 +90,7 @@ namespace Sci.Production.IE
             // 傳值進去前面設定的Series
             for (int i = 0; i < this.dtChart.Rows.Count; i++)
             {
-                string label = (i + 1).ToString("D2");
+                string label = this.dtChart.Rows[i]["No"].ToString();
                 chartArea.AxisX.CustomLabels.Add(i - 0.5, i + 0.5, label); // X軸的文字
 
                 this.chart1.Series[0].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dtChart.Rows[i]["ActGSDTime"]));

@@ -358,7 +358,6 @@
             // chP03
             // 
             this.chP03.AutoSize = true;
-            this.chP03.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IE_P03", true));
             this.chP03.Enabled = false;
             this.chP03.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chP03.IsSupportEditMode = false;
@@ -373,7 +372,6 @@
             // chP06
             // 
             this.chP06.AutoSize = true;
-            this.chP06.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "IE_P06", true));
             this.chP06.Enabled = false;
             this.chP06.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chP06.IsSupportEditMode = false;

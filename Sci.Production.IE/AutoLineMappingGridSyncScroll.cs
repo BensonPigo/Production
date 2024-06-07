@@ -262,6 +262,8 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorEffi", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstTotalCycleTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstOutputHr", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06Cnt", typeof(string)));
             this.dtGridDetailRightSummary.PrimaryKey = new DataColumn[] { this.dtGridDetailRightSummary.Columns["No"] };
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
         }
@@ -542,6 +544,8 @@ namespace Sci.Production.IE
                                         newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) * 100, 2);
                                         newRow["EstTotalCycleTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2));
                                         newRow["EstOutputHr"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2)) == 0 ? 0 : 3600 / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2));
+                                        newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
+                                        newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
                                         return newRow;
                                     }).ToList();
                     break;

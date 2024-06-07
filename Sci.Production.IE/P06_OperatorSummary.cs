@@ -33,7 +33,8 @@ namespace Sci.Production.IE
             ,[ActualEffi] = iif(lmbd.Cycle = 0,0,ROUND(lmbd.GSD/ lmbd.Cycle,2)*100)
             FROM LineMappingBalancing lmb
             INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.ID = lmb.ID
-            where lmb.ID = @LMBID
+            left join MachineType_Detail md on md.ID = lmbd.MachineTypeID and md.FactoryID = lmb.FactoryID
+            where lmb.ID = @LMBID and ISNULL(md.IsNotShownInP06,0) = 0
             Order by lmbd.No";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtChart);

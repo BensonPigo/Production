@@ -457,7 +457,7 @@ group by almd.No
         {
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P06_Print.xltx";
             Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
-            excel.Visible = true;
+            // excel.Visible = true;
             if (excel == null)
             {
                 return false;

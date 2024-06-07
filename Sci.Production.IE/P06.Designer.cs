@@ -58,6 +58,7 @@
             this.tabPageLineMapping = new System.Windows.Forms.TabPage();
             this.splitLineMapping = new System.Windows.Forms.SplitContainer();
             this.gridLineMappingRight = new Sci.Win.UI.Grid();
+            this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPageCentralizedPPA = new System.Windows.Forms.TabPage();
             this.splitCentralizedPPA = new System.Windows.Forms.SplitContainer();
             this.gridCentralizedPPALeft = new Sci.Win.UI.Grid();
@@ -132,6 +133,7 @@
             this.splitLineMapping.Panel2.SuspendLayout();
             this.splitLineMapping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
             this.tabPageCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitCentralizedPPA)).BeginInit();
             this.splitCentralizedPPA.Panel1.SuspendLayout();
@@ -692,6 +694,7 @@
             this.gridLineMappingRight.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridLineMappingRight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridLineMappingRight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLineMappingRight.DataSource = this.listControlBindingSource;
             this.gridLineMappingRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridLineMappingRight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridLineMappingRight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -1474,6 +1477,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitLineMapping)).EndInit();
             this.splitLineMapping.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();
             this.tabPageCentralizedPPA.ResumeLayout(false);
             this.splitCentralizedPPA.Panel1.ResumeLayout(false);
             this.splitCentralizedPPA.Panel2.ResumeLayout(false);
@@ -1574,5 +1578,6 @@
         private Win.UI.Button btnPrintDetail;
         private Win.UI.Label label30;
         private Win.UI.TextBox txtReason;
+        private Win.UI.ListControlBindingSource listControlBindingSource;
     }
 }

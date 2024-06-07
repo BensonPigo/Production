@@ -33,10 +33,10 @@ namespace Sci.Production.IE
             .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10))
             .Numeric("Count", header: "Count", decimal_places: 0, integer_places: 0, iseditingreadonly: true);
 
-            this.Helper.Controls.Grid.Generator(this.grid)
-           .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10))
-           .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10))
-           .Numeric("Count", header: "Count", decimal_places: 0, integer_places: 0, iseditingreadonly: true);
+            this.Helper.Controls.Grid.Generator(this.grid1)
+            .Text("Item", header: "Item", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("No", header: "No.\r\nof Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Detail", header: "Detail", width: Widths.AnsiChars(30), iseditingreadonly: true);
 
             this.txtMachine.Value = MyUtility.Convert.GetInt(this.dataTables[0].AsEnumerable().Select(row => (int)row["Count"]).Sum());
             this.txtAttachment.Value = MyUtility.Convert.GetInt(this.dataTables[1].Rows[0]["AttachmentCount"]);

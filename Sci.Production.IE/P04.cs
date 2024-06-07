@@ -83,7 +83,7 @@ select o.FtyGroup
 ,o.SeasonID
 ,[CPU] = isnull(s.CPU,0)
 ,o.BrandID
-,[LineMapping] = '[IE P03]'
+,[LineMapping] = 'IE P03'
 ,[SewInLine] = MIN(o.SewInLine)
 ,[Version] = isnull(lm.Version,'')
 ,[Phase] = isnull(lm.Phase,'')
@@ -133,7 +133,7 @@ select o.FtyGroup
 ,o.SeasonID
 ,[CPU] = isnull(s.CPU,0)
 ,o.BrandID
-,[LineMapping] = '[IE P06]'
+,[LineMapping] = 'IE P06'
 ,[SewInLine] = MIN(o.SewInLine)
 ,[Version] = isnull(lmb.Version,'')
 ,[Phase] = isnull(lmb.Phase,'')
@@ -182,7 +182,7 @@ select o.FtyGroup
 ,o.SeasonID
 ,[CPU] = isnull(s.CPU,0)
 ,o.BrandID
-,[LineMapping] = '[IE P05]'
+,[LineMapping] = 'IE P05'
 ,[SewInLine] = MIN(o.SewInLine)
 ,[Version] = isnull(alm.Version,'')
 ,[Phase] = isnull(alm.Phase,'')

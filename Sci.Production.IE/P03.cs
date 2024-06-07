@@ -207,7 +207,7 @@ from (
         , [ReasonName] = lbr.Name
         , [EmployeeJunk] = e.junk
         , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
-		,[OperatorEffi] = iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi_90_day.Effi_90_day) 
+		,[OperatorEffi] = iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) 
 		,[TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
@@ -229,44 +229,35 @@ from (
         WHERE ld2.No = ld.No
 	)TotlGSFD
 	OUTER APPLY
-	(
-		SELECT
-		[ST_MC_Type]
-		,[Motion]
-		,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
-		From
-		(
-			SELECT 
-			[ST_MC_Type] =lmd.MachineTypeID
-			,[Motion] = Operation_P03.val
-			,Effi_90_day = Effi_90_day.VAL
-			from Employee eo
-			left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
-			left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
-			left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
-			OUTER APPLY
-			(
-			select val = stuff((select distinct concat(',',Name)
-					from OperationRef a
-					inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-					where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
-			)Operation_P03
-			OUTER APPLY 
-			(
-				SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
-				FROM LineMapping oplm 
-				inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
-				WHERE OPLMD.EmployeeID = Eo.ID
-				AND ((oplm.EditDate >= DATEADD(DAY, -90, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(DAY, -90, GETDATE()) and oplm.AddDate <= GETDATE()))
-			)Effi_90_day
-			WHERE 
-			eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
-			((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
-		)a
-		GROUP BY [ST_MC_Type],[Motion]
-	)Effi_90_day
-	OUTER APPLY
-	(
+    (
+	    SELECT
+	    [ST_MC_Type]
+	    ,[Motion]
+	    ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
+	    From
+	    (
+		    SELECT 
+		    [ST_MC_Type] =lmd.MachineTypeID
+		    ,[Motion] = Operation_P03.val
+		    ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		    from Employee eo
+		    left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
+		    left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
+		    OUTER APPLY
+		    (
+			    select val = stuff((select distinct concat(',',Name)
+			    from OperationRef a
+			    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+			    where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+		    )Operation_P03
+		    WHERE 
+		    eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
+		    ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
+	    )a
+	    GROUP BY [ST_MC_Type],[Motion]
+    )Effi_90_day
+    OUTER APPLY
+    (
         SELECT
         [ST_MC_Type]
         ,[Motion]
@@ -282,7 +273,7 @@ from (
             ,[Group_Header] = tsd.[location] 
             ,[Part] = lmd.SewingMachineAttachmentID
             ,[Attachment] = lmd.Attachment
-            ,Effi_3_year = Effi_3_year.VAL
+            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
             from Employee eo
             left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
             left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -294,20 +285,12 @@ from (
 		            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
 		            where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
             )Operation_P03
-            OUTER APPLY 
-            (
-	            SELECT VAL = FORMAT(CAST(iif(oplmd.Cycle = 0,0,ROUND(oplmd.GSD/ oplmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
-	            FROM LineMapping oplm 
-	            inner join LineMapping_Detail oplmd on oplm.ID = oplmd.ID
-	            WHERE OPLMD.EmployeeID = Eo.ID
-	            AND ((oplm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.EditDate <= GETDATE()) or (oplm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and oplm.AddDate <= GETDATE()))
-            )Effi_3_year
 	        WHERE 
 	        eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
-			((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+		    ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
         )a
         GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
-	)Effi
+    )Effi
     where ld.ID = '{masterID}' 
 )ld
 where ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1)
@@ -2635,9 +2618,21 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             MyUtility.Excel.CopyToXls(selectShett1.ToDataTable(), string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[1]);
             MyUtility.Excel.CopyToXls(selectShett2.ToDataTable(), string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2]);
 
-            objApp.Cells.EntireRow.AutoFit();
-            objApp.Visible = true;
-            Marshal.ReleaseComObject(objApp);
+            objApp.Sheets[1].Columns[1].ColumnWidth = 6;
+            objApp.Sheets[1].Columns[8].ColumnWidth = 20;
+            objApp.Sheets[1].Columns[9].ColumnWidth = 25;
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P03");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
         }
     }
 

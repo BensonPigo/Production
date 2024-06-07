@@ -523,6 +523,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                         dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                         dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                         dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                        dr["IsShow"] = 1;
                                         this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                         dr.EndEdit();
                                     }
@@ -547,48 +548,29 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                     dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                     dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                    dr["IsShow"] = 1;
                                     this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                     dr.EndEdit();
 
                                     foreach (DataRow dataRow in this.DetailDatas)
-                                     {
-                                        if (dataRow == null)
+                                    {
+                                        if (MyUtility.Convert.GetBool(dataRow["IsShow"]) && !MyUtility.Convert.GetString(dataRow["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
                                         {
-                                            continue;
+                                            dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
+                                            sewingSeq++;
                                         }
-
-                                        string operationID = dataRow.Field<string>("OperationID");
-                                        if (operationID == null || MyUtility.Check.Empty(operationID))
-                                        {
-                                            continue;
-                                        }
-
-                                        if (operationID != null && operationID.Contains("--"))
-                                        {
-                                            continue;
-                                        }
-
-                                        dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
-                                        sewingSeq++;
                                     }
                                 }
                                 else
                                 {
+
                                     foreach (DataRow dataRow in this.DetailDatas)
                                     {
-                                        if (dataRow == null)
+                                        if (MyUtility.Convert.GetBool(dataRow["IsShow"]) && !MyUtility.Convert.GetString(dataRow["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
                                         {
-                                            continue;
+                                            dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
+                                            sewingSeq++;
                                         }
-
-                                        string operationID = dataRow.Field<string>("OperationID");
-                                        if (operationID != null && operationID.Contains("--"))
-                                        {
-                                            continue;
-                                        }
-
-                                        dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
-                                        sewingSeq++;
                                     }
 
                                     return;
@@ -621,6 +603,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                             dr["IETMSSMV"] = 0;
                             dr["Annotation"] = string.Empty;
                             dr["MasterPlusGroup"] = string.Empty;
+                            dr["IsShow"] = 1;
                         }
                         else
                         {
@@ -682,6 +665,7 @@ and o.ID = @id";
                                     dr["IsSubprocess"] = opData.Rows[0]["IsSubprocess"];
                                     dr["IsNonSewingLine"] = opData.Rows[0]["IsNonSewingLine"];
                                     dr["MasterPlusGroup"] = opData.Rows[0]["MasterPlusGroup"].ToString();
+                                    dr["IsShow"] = 1;
                                     this.GetMachineType_Detail(opData.Rows[0]["MachineTypeID"].ToString());
                                 }
                             }
@@ -1283,7 +1267,6 @@ and Name = @PPA
                             this.detailgrid.Rows[row.Table.Rows.IndexOf(row)].DefaultCellStyle.BackColor = Color.White;
                         }
                     }
-                
             };
             template.MaxLength = 100;
 
@@ -1329,7 +1312,7 @@ and Name = @PPA
                 .Text("Seq", header: "Ori. Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
-                .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
                 .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
                 .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -1341,7 +1324,7 @@ and Name = @PPA
                 .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
                 .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
-                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), settings: pardID)
+                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(7), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
@@ -1900,8 +1883,11 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             DBProxy.Current.Execute(null, sqlcmd);
             this.p01_OperationList.Clear();
+
+            this.RenewData();
+            this.HideRows();
         }
-                
+
         /// <summary>
         /// OnSaveDetail
         /// </summary>
@@ -2971,12 +2957,11 @@ and s.BrandID = @brandid";
         {
             List<DataRow> listBeforeDrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
             int rowIndex = 1;
-            var sssss = this.detailgrid.SelectedRows;
 
             // 拖移後SewingSeq重新編排，所以使用拖移前keep的detail還原
             foreach (DataRow curRow in this.DetailDatas)
             {
-                if (MyUtility.Convert.GetString(curRow["OperationID"]).StartsWith("--"))
+                if (MyUtility.Check.Empty(curRow["SewingSeq"]))
                 {
                     continue;
                 }
