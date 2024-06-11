@@ -6,6 +6,7 @@
     [InspDate]    DATE           NULL,
     [Inspector]   VARCHAR (10)   CONSTRAINT [DF_FIR_Moisture_Inspector] DEFAULT ('') NOT NULL,
     [Result]      VARCHAR (5)    CONSTRAINT [DF_FIR_Moisture_Result] DEFAULT ('') NOT NULL,
+    [MoistureLevel] [varchar](30) NOT NULL DEFAULT (''),
     [AddName]     VARCHAR (10)   CONSTRAINT [DF_FIR_Moisture_AddName] DEFAULT ('') NOT NULL,
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_FIR_Moisture_EditName] DEFAULT ('') NOT NULL,
@@ -61,3 +62,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'FIR Pkey', 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'濕度檢測', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Moisture';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'MoistureLevel',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FIR_Moisture',
+    @level2type = N'COLUMN',
+    @level2name = N'MoistureLevel'

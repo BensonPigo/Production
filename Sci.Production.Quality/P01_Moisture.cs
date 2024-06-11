@@ -224,6 +224,7 @@ namespace Sci.Production.Quality
                .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
                .Numeric("ActMoisture", header: "Actual Moisture", maximum: 100, decimal_places: 1, settings: actMoisture)
                .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Text("MoistureLevel", header: "Moisture Level", width: Widths.AnsiChars(20), iseditingreadonly: true)
                .Date("InspDate", header: "Insp.Date", width: Widths.AnsiChars(10))
                .CellUser("Inspector", header: "Inspector", width: Widths.AnsiChars(10), userNamePropertyName: "Name")
                .Text("Name", header: "Name", width: Widths.AnsiChars(20), iseditingreadonly: true)
