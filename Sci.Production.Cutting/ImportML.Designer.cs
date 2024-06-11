@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P09_ImportML
+    partial class ImportML
     {
         /// <summary>
         /// Required designer variable.

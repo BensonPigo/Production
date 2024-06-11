@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// 將立克系統產生的檔案匯入
     /// </summary>
-    public partial class P09_ImportML : Sci.Win.Tems.QueryForm
+    public partial class ImportML : Sci.Win.Tems.QueryForm
     {
         private class MarkerItemSet
         {
@@ -100,8 +100,14 @@ namespace Sci.Production.Cutting
 
         private Dictionary<string, string> SizeCodeCaches { get; set; }
 
-        /// <inheritdoc/>
-        public P09_ImportML(string styleUKey, string id, DataRow drSMNotice, DataTable workOrder)
+        /// <summary>
+        /// Cutting P02、P09匯入立克系統產生的檔案，寫入Form表身的資料
+        /// </summary>
+        /// <param name="styleUKey">styleUKey</param>
+        /// <param name="id">WorkOrderForOutput/WorkOrderForPlanning的ID</param>
+        /// <param name="drSMNotice">drSMNotice</param>
+        /// <param name="workOrder">P02或P09的 this.detailgridbs.DataSource</param>
+        public ImportML(string styleUKey, string id, DataRow drSMNotice, DataTable workOrder)
         {
             this.InitializeComponent();
             this.StyleUKey = styleUKey;
@@ -372,7 +378,7 @@ namespace Sci.Production.Cutting
                             row["ImportML"] = true;
                             row["MarkerLength"] = Prgs.MarkerLengthSampleTOTrade(row["MarkerLength"].ToString(), row["MatchFabric"].ToString());
                             row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];
-                            P02.ProcessColumns(row);
+                            this.ProcessColumns(row);
                             row.AcceptChanges();
                             row.SetAdded();
                             this.WorkOrder.ImportRow(row);
@@ -859,6 +865,30 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
             else
             {
                 return "No found";
+            }
+        }
+
+        private void ProcessColumns(DataRow currentRow)
+        {
+            // MarkerLengthY, MarkerLengthE, ActCuttingPerimeterNew, StraightLengthNew, CurvedLengthNew
+            if (!MyUtility.Check.Empty(currentRow["MarkerLength"]))
+            {
+                string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
+                int indexY = markerLength.IndexOf("Ｙ");
+                currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
+                currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
+            }
+
+            this.PadLeftTen("ActCuttingPerimeter", currentRow);
+            this.PadLeftTen("StraightLength", currentRow);
+            this.PadLeftTen("CurvedLength", currentRow);
+        }
+
+        private void PadLeftTen(string columnName, DataRow currentRow)
+        {
+            if (!MyUtility.Check.Empty(currentRow[columnName]))
+            {
+                currentRow[columnName + "New"] = MyUtility.Convert.GetString(currentRow[columnName]).PadLeft(10, '0');
             }
         }
     }

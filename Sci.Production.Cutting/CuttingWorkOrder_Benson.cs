@@ -22,21 +22,45 @@ namespace Sci.Production.Cutting
     /// </summary>
     public partial class CuttingWorkOrder
     {
+        #region 全域變數
+
         /// <summary>
         /// sheet 序號
         /// </summary>
         private int markerSerNo = 1;
         private List<long> listWorkOrderUkey;
+
+        /// <summary>
+        /// 當前要Insert哪一張表，P02的話是 WorkOrderForPlanning；P09的話是 WorkOrderForOutput
+        /// </summary>
         private string TableName = string.Empty;
+
+        /// <summary>
+        /// P02的話是 WorkOrderForPlanningUkey；P09的話是 WorkOrderForOutputUkey
+        /// </summary>
         private string TableMainKeyColName = string.Empty;
+
         private string CuttingPOID = string.Empty;
         private string MDivisionid = string.Empty;
         private string FactoryID = string.Empty;
-        private DataTable dtWorkOrder;
-        private decimal inchToYdsRate = 0;
-        private bool isNoMatchSP;
 
-        private DualResult ImportMarkerExcel(string cuttingID, string mDivisionid, string factoryID, string tableName)
+        /// <summary>
+        /// 碼、英吋換算比例
+        /// </summary>
+        private decimal inchToYdsRate = 0;
+
+        private bool isNoMatchSP;
+        #endregion
+
+        /// <summary>
+        /// 匯入指定格式的Excel，寫入資料庫WorkOrder、SizeRatio、PatternPanel、Distribute四張資料表的資料
+        /// </summary>
+        /// <param name="cuttingID">Cutting.ID</param>
+        /// <param name="mDivisionid">mDivisionid</param>
+        /// <param name="factoryID">factoryID</param>
+        /// <param name="tableName">要寫入的Table</param>
+        /// <returns>Result</returns>
+        public DualResult ImportMarkerExcel(string cuttingID, string mDivisionid, string factoryID, string tableName)
         {
             this.CuttingPOID = cuttingID;
             this.MDivisionid = mDivisionid;
@@ -99,7 +123,7 @@ namespace Sci.Production.Cutting
 
                     foreach (var e in excelWk)
                     {
-                        var firstCompare = compare.Where(o => o.ID == e.ID && o.FabricCode == e.FabricCode && o.Colorid == e.Colorid);
+                        var firstCompare = compare.Where(o => o.ID == e.ID && o.FabricPanelCode == e.FabricPanelCode && o.Colorid == e.Colorid);
                         if (!firstCompare.Any())
                         {
                             return new DualResult(true, $"No data mapping in Order ColorCombo <Fabric Code>,<Color ID>: {e.FabricCode},{e.Colorid}.");
@@ -113,9 +137,10 @@ namespace Sci.Production.Cutting
                         e.FabricPanelCode = firstCompare.FirstOrDefault().FabricPanelCode;
                         e.FabricCombo = firstCompare.FirstOrDefault().FabricCombo;
 
-                        // 確定Excel當前的層數有沒有超過上限
-                        var layer = e.Layer > firstCompare.FirstOrDefault().CuttingLayer ? firstCompare.FirstOrDefault().CuttingLayer : e.Layer;
+                        // 比較Excel填的ColorCombo設定的層數，看Excel填的有沒有超過上限
+                        var layer = e.ExcelLayer > firstCompare.FirstOrDefault().CuttingLayer ? firstCompare.FirstOrDefault().CuttingLayer : e.ExcelLayer;
                         e.Layer = layer;
+                        e.CuttingLayer = firstCompare.FirstOrDefault().CuttingLayer;
 
                         // Cons = garmentCnt * consPc * Layer
                         e.Cons = e.Cons * layer;
@@ -152,7 +177,7 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="filename">檔名</param>
         /// <returns>組合好的物件</returns>
-        public List<WorkOrder> LoadExcel(string filename)
+        private List<WorkOrder> LoadExcel(string filename)
         {
             List<WorkOrder> workOrders = new List<WorkOrder>();
             Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
@@ -178,6 +203,7 @@ namespace Sci.Production.Cutting
                 // 開始檢查Excel
                 string keyWord_FabPanelCode = "Panel Code:";
                 string keyWord_Layer = "Layers";
+                string keyWord_MarkerEnd = "Ttl. Qty.";
                 int curRowIndex = 1;
                 int emptyRowCount = 0;
 
@@ -215,63 +241,68 @@ namespace Sci.Production.Cutting
 
                     // 找到「Panel Code:」欄位，重置
                     emptyRowCount = 0;
-
-                    // 若找到，「Panel Code:」的行數為 curRowIndex
-                    // 計算這個「Panel Code:」到下一個「Panel Code:」距離多少Row，代表User填了幾Row的資料
-                    // A 27
-                    curDataStart_Y += curRowIndex;
-                    while (worksheet.GetCellValue(1, curDataStart_Y) != keyWord_FabPanelCode)
-                    {
-                        curDataStart_Y++;
-                    }
-
-                    // 下一個「Panel Code:」的起點
-                    int nextFabPanelCodeStart = curDataStart_Y;
-
-                    // 6 = 「Panel Code:」到「NK Name」的距離
-                    // 2 = 下一個「Panel Code:」跟上一個最後一筆資料的距離
-                    int markerRowCount = nextFabPanelCodeStart - curRowIndex - 6 - 2;
-
-                    // 重置
                     curDataStart_Y = 1;
 
-                    // 準備好物件存資料
-                    WorkOrder wk = new WorkOrder();
+                    // 若找到，「Panel Code:」的行數為 curRowIndex
+                    // 計算「Panel Code:」到「Ttl. Qty.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
+                    // AA 25
+                    curDataStart_Y += curRowIndex;
+                    string a = worksheet.GetCellValue(27, curDataStart_Y);
+                    while (a != keyWord_MarkerEnd && emptyRowCount < 50)
+                    {
+                        curDataStart_Y++;
+                        emptyRowCount++;
+                        a = worksheet.GetCellValue(27, curDataStart_Y);
+                        continue;
+                    }
+
+                    emptyRowCount = 0;
+
+                    // 下一個「Panel Code:」的起點
+                    int nextFabPanelCodeStart = curDataStart_Y + 2;
+
+                    // 計算Pattern Panel和Marker Name填寫的Row有幾行
+                    // 6 = 「Panel Code:」到「NK Name」的距離
+                    // 1 = 「Ttl. Qty.」跟最後一筆資料的距離
+                    int markerRowCount = curDataStart_Y - curRowIndex - 6;
 
                     // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 curRowIndex
-                    wk.FabricPanelCode = worksheet.GetCellValue(2, curRowIndex + 1);
+                    //wk.FabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
+                    string fabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
 
                     // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
-                    if (MyUtility.Check.Empty(wk.FabricPanelCode))
+                    if (MyUtility.Check.Empty(fabricPanelCode))
                     {
-                        curRowIndex = nextFabPanelCodeStart;
                         continue;
                     }
 
                     // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
                     string[] colorInfo = worksheet.GetCellValue(2, curRowIndex + 1).Split('-');
 
-                    string tmpColorid = colorInfo.Length > 0 ? colorInfo[0] : string.Empty;
-                    string tmpTone = colorInfo.Length >= 2 ? string.Empty : colorInfo[1];
-
-                    // 裁剪母單單號
-                    wk.ID = this.CuttingPOID;
-                    //wk.OrderID = this.OrderID;
-                    wk.FactoryID = this.FactoryID;
-                    wk.MDivisionId = this.MDivisionid;
-                    wk.Colorid = tmpColorid;
-                    wk.Tone = tmpTone;
-                    wk.IsCreateByUser = true;
+                    string tmpColorid = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
+                    string tmpTone = colorInfo.Length >= 2 ? colorInfo[1] : string.Empty;
                     string markername = "MK_" + this.markerSerNo.ToString().PadLeft(3, '0');
-                    wk.Markername = markername;
 
                     // 取得Size Ratio Range (例如：1 ,4 ,28 ,24 )
                     Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, curDataStart_X + 1, nextFabPanelCodeStart - 3);
 
                     // 讀每一個MkName，起點是從A4「Panel Code:」往下數，所以是 = 7；終點是下筆資料「Panel Code:」的Y值 - 3，
                     // 直向往下找
-                    for (int idxMarker = 7; idxMarker <= 7 + markerRowCount; idxMarker++)
+                    for (int idxMarker = 7; idxMarker < 7 + markerRowCount; idxMarker++)
                     {
+                        // 準備好物件存資料
+                        WorkOrder nwk = new WorkOrder()
+                        {
+                            FabricPanelCode = fabricPanelCode,
+                            ID = this.CuttingPOID,
+                            FactoryID = this.FactoryID,
+                            MDivisionId = this.MDivisionid,
+                            Colorid = tmpColorid,
+                            Tone = tmpTone,
+                            Markername = markername,
+                            IsCreateByUser = true,
+
+                        };
                         int idxSize = 3;
                         int totalLayer = 0;
                         int garmentCnt = 0;
@@ -288,9 +319,10 @@ namespace Sci.Production.Cutting
                         {
                             // 找Size，C 5為起點，開始往右
                             string size = rangeSizeRatio.GetCellValue(idxSize, 2);
+                            string totalSize = rangeSizeRatio.GetCellValue(idxSize, 1);
 
                             // 最後面是報表加總了(AB 4)，因此Break
-                            if (size.ToUpper() == "Total Qty.")
+                            if (totalSize == "Total Qty.")
                             {
                                 // AB 10
                                 totalLayer = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
@@ -336,24 +368,27 @@ namespace Sci.Production.Cutting
                         // WorkOrder.ConsPC = 每層Yds / 每層SizeRatio
                         consPc = garmentCnt == 0 ? 0 : layerYDS / garmentCnt;
 
-                        wk.ConsPC = consPc;
+                        nwk.ConsPC = consPc;
 
                         // 這個層數不是最後的結果，等等還會去檢查 Order_ColorCombo.CuttingLayer設定值
-                        wk.Layer = totalLayer;
-                        wk.ImportPatternPanel = importPatternPanel; // FA
-                        wk.SizeRatio = dicSizeRatio; // {Size = 42，Qty = 10}、{Size = 46，Qty = 350}...
+                        nwk.ExcelLayer = totalLayer;
+                        nwk.ImportPatternPanel = importPatternPanel; // FA
+                        nwk.SizeRatio = dicSizeRatio; // {Size = 42，Qty = 10}、{Size = 46，Qty = 350}...
 
                         //int layer = Excel的TotalLayer > Construction.CuttingLayer ? Construction.CuttingLayer : Excel的TotalLayer;
                         // Cons = garmentCnt * consPc Layer
-                        wk.Cons = garmentCnt * consPc; // * wk.Layer;
+                        nwk.Cons = garmentCnt * consPc; // * wk.Layer;
                         //string markername = "MK_" + this.markerSerNo.ToString().PadLeft(3, '0');
                         //wk.Markername = markername;
-                        wk.MarkerLength = markerLength;
-                        wk.MarkerNo = "001";
-                        wk.MarkerVersion = "-1";
+                        nwk.MarkerLength = markerLength;
+                        nwk.MarkerNo = "001";
+                        nwk.MarkerVersion = "-1";
 
-                        workOrders.Add(wk);
+                        workOrders.Add(nwk);
                     }
+
+                    // 當前區域的X Y 範圍已經處理完畢，設定下一個起點
+                    curRowIndex = nextFabPanelCodeStart;
                 }
             }
 
@@ -429,7 +464,7 @@ WHERE rn = 1
 
             foreach (var wk in workOrders)
             {
-                var totalLayer = wk.Layer;
+                var excelLayer = wk.Layer;
                 var cuttingLayer = wk.CuttingLayer;
 
                 // WorkOrder_PatternPanel
@@ -446,7 +481,7 @@ WHERE rn = 1
 
                     sqlInsertWorkOrder_PatternPanel += $@"
 insert into {this.TableName}_PatternPanel(ID, {this.TableMainKeyColName}, PatternPanel, FabricPanelCode) 
-values('{this.CuttingPOID}', (select @@IDENTITY ), '{patternPanel}', '{fabricPanelCode}')";
+values('{this.CuttingPOID}', @newWorkOrderUkey, '{patternPanel}', '{fabricPanelCode}')";
                 }
 
                 // WorkOrder_SizeRatio
@@ -454,8 +489,8 @@ values('{this.CuttingPOID}', (select @@IDENTITY ), '{patternPanel}', '{fabricPan
                 foreach (KeyValuePair<string, int> itemSizeRatio in wk.SizeRatio)
                 {
                     sqlInsertWorkOrder_SizeRatio += $@"
-insert into WorkOrder_SizeRatio ({this.TableMainKeyColName}, ID, SizeCode, Qty)
-values( (select @@IDENTITY ), '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
+insert into {this.TableName}_SizeRatio ({this.TableMainKeyColName}, ID, SizeCode, Qty)
+values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
 ";
                 }
 
@@ -519,10 +554,12 @@ values
 ,1
 )
 
---select [WorkOrderUkey] = @@IDENTITY
+DECLARE @newWorkOrderUkey as bigint = (select @@IDENTITY)
 {sqlInsertWorkOrder_PatternPanel}
 
 {sqlInsertWorkOrder_SizeRatio}
+
+select @newWorkOrderUkey
 ";
                     DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder, sqlParameters, out DataTable dtResult);
                     if (!result)
@@ -533,13 +570,14 @@ values
                     long workOrderUkey = MyUtility.Convert.GetLong(dtResult.Rows[0][0]);
                     listWorkOrderUkey.Add(workOrderUkey);
 
-                    // 累計超過層數上限的資料，便跳出去
-                    if (totalLayer < cuttingLayer)
+                    // 層數如果沒超過上限的資料，便跳出去
+                    if (excelLayer < cuttingLayer)
                     {
                         break;
                     }
 
-                    totalLayer -= cuttingLayer;
+                    // 超過上限，則拆多筆寫入
+                    excelLayer -= cuttingLayer;
                 }
             }
 
@@ -647,6 +685,9 @@ values({itemDistribute["Ukey"]}, '{this.CuttingPOID}', 'EXCESS', '', '{itemDistr
             return result;
         }
 
+        /// <summary>
+        /// 根據WorkOrder資料表建立的類別
+        /// </summary>
         public class WorkOrder
         {
             /// <summary>
@@ -671,6 +712,10 @@ values({itemDistribute["Ukey"]}, '{this.CuttingPOID}', 'EXCESS', '', '{itemDistr
             /// 該布種的層數上限
             /// </summary>
             public decimal CuttingLayer { get; set; } = 0;
+            /// <summary>
+            /// Excel所填的Layer值
+            /// </summary>
+            public decimal ExcelLayer { get; set; } = 0;
             public string Colorid { get; set; } = string.Empty;
             public string Markername { get; set; } = string.Empty;
             public DateTime? EstCutDate { get; set; }

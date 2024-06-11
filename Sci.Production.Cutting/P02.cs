@@ -4213,7 +4213,7 @@ DEALLOCATE CURSOR_
 
         private void BtnKHImportMarker_Click(object sender, EventArgs e)
         {
-            DualResult result = this.ImportKHMarkerExcel();
+            CuttingWorkOrder c = new CuttingWorkOrder();
             if (!result)
             {
                 this.ShowErr(result);
