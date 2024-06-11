@@ -2,6 +2,7 @@
 		[Ukey] [int] IDENTITY(1,1) NOT NULL,
 		[Type] [varchar] (1) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_Type] DEFAULT '',
 		[ID] [varchar] (13) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_ID] DEFAULT '',
+		[OrderID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_OrderID] DEFAULT '',
 		[FactoryID] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FactoryID] DEFAULT '',
 		[MDivisionID] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MDivisionID] DEFAULT '',
 		[Seq1] [varchar] (3) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Seq1] DEFAULT '',
@@ -14,6 +15,7 @@
 		[FabricCombo] [varchar] (2) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricCombo] DEFAULT '',
 		[FabricCode] [varchar] (3) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricCode] DEFAULT '',
 		[FabricPanelCode] [varchar] (2) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricPanelCode] DEFAULT '',
+		[Article] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Article] DEFAULT '',
 		[RefNo] [varchar] (36) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_RefNo] DEFAULT '',
 		[SCIRefNo] [varchar] (30) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_SCIRefNo] DEFAULT '',
 		[ColorID] [varchar] (6) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_ColorID] DEFAULT '',
@@ -24,7 +26,6 @@
 		[IsCreateByUser] [bit] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_IsCreateByUser] DEFAULT 0,
 		[MarkerName] [varchar] (20) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerName] DEFAULT '',
 		[MarkerNo] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerNo] DEFAULT '',
-		[MarkerVersion] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT '',
 		[MarkerLength] [varchar] (15) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerLength] DEFAULT '',
 		[Order_EachconsUkey] [bigint] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Order_EachconsUkey] DEFAULT 0,
 		[AddName] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_AddName] DEFAULT '',
@@ -44,6 +45,8 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'用料轉置方式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Type'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪母單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'ID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'子單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'OrderID'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'FactoryID'
 	GO
@@ -69,6 +72,8 @@
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'部位別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'FabricPanelCode'
 	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'色組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Article'
+	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶物料編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'RefNo'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI物料編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'SCIRefNo'
@@ -88,8 +93,6 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerName'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克號碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerNo'
-	GO
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克版本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerVersion'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'MarkerLength'
 	GO
