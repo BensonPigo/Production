@@ -49,6 +49,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_CuttingBCS,
             P_FabricStatus_And_IssueFabricTracking,
             P_SimilarStyle,
+            P_FabricInspLabSummaryReport,
+            P_FabricInspAvgInspLTInPast7Days,
         }
 
         /// <summary>
@@ -365,6 +367,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_FabricStatus_And_IssueFabricTracking:
                         result = new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
+						break;
+                    case ListName.P_FabricInspLabSummaryReport:
+                        result = new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_FabricInspAvgInspLTInPast7Days:
+                        result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
