@@ -339,6 +339,12 @@
     <Compile Include="P08.Designer.cs">
       <DependentUpon>P08.cs</DependentUpon>
     </Compile>
+    <Compile Include="P09_AutoDistToSP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_AutoDistToSP.designer.cs">
+      <DependentUpon>P09_AutoDistToSP.cs</DependentUpon>
+    </Compile>
     <Compile Include="P10_1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -729,6 +735,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_AutoDistToSP.resx">
+      <DependentUpon>P09_AutoDistToSP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_1.resx">
       <DependentUpon>P10_1.cs</DependentUpon>
