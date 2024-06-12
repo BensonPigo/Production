@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(P01));
             this.labelDate = new Sci.Win.UI.Label();
             this.labelLine = new Sci.Win.UI.Label();
             this.labelShift = new Sci.Win.UI.Label();
@@ -201,7 +200,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 512);
+            this.browse.Size = new System.Drawing.Size(1000, 463);
             // 
             // tabs
             // 
@@ -702,7 +701,6 @@
             this.txtSewingReasonIDForTypeIC.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SewingReasonIDForTypeIC", true));
             this.txtSewingReasonIDForTypeIC.DisplayBox1Binding = "";
             this.txtSewingReasonIDForTypeIC.LinkDB = "Production";
-            this.txtSewingReasonIDForTypeIC.ListFixedID = ((System.Collections.Generic.List<string>)(resources.GetObject("txtSewingReasonIDForTypeIC.ListFixedID")));
             this.txtSewingReasonIDForTypeIC.Location = new System.Drawing.Point(112, 137);
             this.txtSewingReasonIDForTypeIC.Name = "txtSewingReasonIDForTypeIC";
             this.txtSewingReasonIDForTypeIC.Size = new System.Drawing.Size(252, 27);
@@ -723,7 +721,6 @@
             this.txtSewingReasonIDForTypeLO.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "SewingReasonIDForTypeLO", true));
             this.txtSewingReasonIDForTypeLO.DisplayBox1Binding = "";
             this.txtSewingReasonIDForTypeLO.LinkDB = "Production";
-            this.txtSewingReasonIDForTypeLO.ListFixedID = ((System.Collections.Generic.List<string>)(resources.GetObject("txtSewingReasonIDForTypeLO.ListFixedID")));
             this.txtSewingReasonIDForTypeLO.Location = new System.Drawing.Point(507, 137);
             this.txtSewingReasonIDForTypeLO.Name = "txtSewingReasonIDForTypeLO";
             this.txtSewingReasonIDForTypeLO.Size = new System.Drawing.Size(252, 27);
