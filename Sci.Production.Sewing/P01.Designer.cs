@@ -44,8 +44,12 @@
             this.numManhours = new Sci.Win.UI.NumericBox();
             this.numCostingTMS = new Sci.Win.UI.NumericBox();
             this.labelQAOutput = new Sci.Win.UI.Label();
+            this.labelDefectOutput = new Sci.Win.UI.Label();
+            this.labelInLineOutput = new Sci.Win.UI.Label();
             this.labelEff = new Sci.Win.UI.Label();
             this.numQAOutput = new Sci.Win.UI.NumericBox();
+            this.numDefectOutput = new Sci.Win.UI.NumericBox();
+            this.numInLineOutput = new Sci.Win.UI.NumericBox();
             this.numEff = new Sci.Win.UI.NumericBox();
             this.btnRevisedHistory = new Sci.Win.UI.Button();
             this.btnShareWorkingHoursToSP = new Sci.Win.UI.Button();
@@ -98,8 +102,12 @@
             this.masterpanel.Controls.Add(this.btnShareWorkingHoursToSP);
             this.masterpanel.Controls.Add(this.btnRevisedHistory);
             this.masterpanel.Controls.Add(this.numEff);
+            this.masterpanel.Controls.Add(this.numInLineOutput);
+            this.masterpanel.Controls.Add(this.numDefectOutput);
             this.masterpanel.Controls.Add(this.numQAOutput);
             this.masterpanel.Controls.Add(this.labelEff);
+            this.masterpanel.Controls.Add(this.labelInLineOutput);
+            this.masterpanel.Controls.Add(this.labelDefectOutput);
             this.masterpanel.Controls.Add(this.labelQAOutput);
             this.masterpanel.Controls.Add(this.numCostingTMS);
             this.masterpanel.Controls.Add(this.numManhours);
@@ -133,8 +141,12 @@
             this.masterpanel.Controls.SetChildIndex(this.numManhours, 0);
             this.masterpanel.Controls.SetChildIndex(this.numCostingTMS, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelQAOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelDefectOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.labelInLineOutput, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelEff, 0);
             this.masterpanel.Controls.SetChildIndex(this.numQAOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numDefectOutput, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numInLineOutput, 0);
             this.masterpanel.Controls.SetChildIndex(this.numEff, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnRevisedHistory, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnShareWorkingHoursToSP, 0);
@@ -188,7 +200,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 512);
+            this.browse.Size = new System.Drawing.Size(1000, 463);
             // 
             // tabs
             // 
@@ -400,6 +412,22 @@
             this.labelQAOutput.TabIndex = 17;
             this.labelQAOutput.Text = "QA Output";
             // 
+            // labelDefectOutput
+            // 
+            this.labelDefectOutput.Location = new System.Drawing.Point(578, 31);
+            this.labelDefectOutput.Name = "labelDefectOutput";
+            this.labelDefectOutput.Size = new System.Drawing.Size(93, 23);
+            this.labelDefectOutput.TabIndex = 18;
+            this.labelDefectOutput.Text = "Defect Output";
+            // 
+            // labelInLineOutput
+            // 
+            this.labelInLineOutput.Location = new System.Drawing.Point(578, 58);
+            this.labelInLineOutput.Name = "labelInLineOutput";
+            this.labelInLineOutput.Size = new System.Drawing.Size(93, 23);
+            this.labelInLineOutput.TabIndex = 19;
+            this.labelInLineOutput.Text = "In-Line Output";
+            // 
             // labelEff
             // 
             this.labelEff.Location = new System.Drawing.Point(578, 85);
@@ -426,6 +454,52 @@
             this.numQAOutput.TabIndex = 2;
             this.numQAOutput.TabStop = false;
             this.numQAOutput.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numDefectOutput
+            // 
+            this.numDefectOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numDefectOutput.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "DefectQty", true));
+            this.numDefectOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numDefectOutput.IsSupportEditMode = false;
+            this.numDefectOutput.Location = new System.Drawing.Point(675, 31);
+            this.numDefectOutput.Name = "numDefectOutput";
+            this.numDefectOutput.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numDefectOutput.ReadOnly = true;
+            this.numDefectOutput.Size = new System.Drawing.Size(62, 23);
+            this.numDefectOutput.TabIndex = 6;
+            this.numDefectOutput.TabStop = false;
+            this.numDefectOutput.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numInLineOutput
+            // 
+            this.numInLineOutput.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numInLineOutput.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InlineQty", true));
+            this.numInLineOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numInLineOutput.IsSupportEditMode = false;
+            this.numInLineOutput.Location = new System.Drawing.Point(675, 58);
+            this.numInLineOutput.Name = "numInLineOutput";
+            this.numInLineOutput.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numInLineOutput.ReadOnly = true;
+            this.numInLineOutput.Size = new System.Drawing.Size(62, 23);
+            this.numInLineOutput.TabIndex = 9;
+            this.numInLineOutput.TabStop = false;
+            this.numInLineOutput.Value = new decimal(new int[] {
             0,
             0,
             0,
@@ -708,8 +782,12 @@
         private Win.UI.Button btnShareWorkingHoursToSP;
         private Win.UI.Button btnRevisedHistory;
         private Win.UI.NumericBox numEff;
+        private Win.UI.NumericBox numInLineOutput;
+        private Win.UI.NumericBox numDefectOutput;
         private Win.UI.NumericBox numQAOutput;
         private Win.UI.Label labelEff;
+        private Win.UI.Label labelInLineOutput;
+        private Win.UI.Label labelDefectOutput;
         private Win.UI.Label labelQAOutput;
         private Win.UI.NumericBox numCostingTMS;
         private Win.UI.NumericBox numManhours;
