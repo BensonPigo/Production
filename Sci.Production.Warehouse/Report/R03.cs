@@ -473,6 +473,7 @@ select  f.MDivisionID
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
         ,PSD.Refno
+        ,isnull(psdsS.SpecValue, '')
         ,Fabric.WeaveTypeID
         ,mtl.ProductionType
         ,PSD.SEQ1
@@ -526,6 +527,7 @@ left join dbo.MDivisionPoDetail MDPD WITH (NOLOCK)  on MDPD.POID = PSD.ID and MD
 left join dbo.Fabric WITH (NOLOCK) on fabric.SciRefno = psd.SciRefno
 left join dbo.MtlType mtl WITH (NOLOCK)  on mtl.ID = fabric.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 {sqlJoinSeparateByWK}
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
