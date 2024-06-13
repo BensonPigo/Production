@@ -8,6 +8,7 @@
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_MtlLocation_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
     [IsWMS]       BIT           DEFAULT ((0)) NOT NULL,
+	[Capacity]    INT			DEFAULT ((0)),
     CONSTRAINT [PK_MtlLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [StockType] ASC)
 );
 
@@ -49,3 +50,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlLocation', @level2type = N'COLUMN', @level2name = N'EditDate';
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'儲位的總容量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MtlLocation', @level2type = N'COLUMN', @level2name = N'Capacity';

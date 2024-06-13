@@ -37,6 +37,8 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.chkIsWMS = new Sci.Win.UI.CheckBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtCapacity = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,10 +49,13 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(976, 395);
+            this.detail.Location = new System.Drawing.Point(4, 29);
+            this.detail.Size = new System.Drawing.Size(976, 391);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.txtCapacity);
+            this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.chkIsWMS);
             this.detailcont.Controls.Add(this.txtDescription);
             this.detailcont.Controls.Add(this.comboStockType);
@@ -59,15 +64,17 @@
             this.detailcont.Controls.Add(this.labelStockType);
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.checkJunk);
-            this.detailcont.Size = new System.Drawing.Size(976, 357);
+            this.detailcont.Size = new System.Drawing.Size(976, 353);
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 353);
             this.detailbtm.Size = new System.Drawing.Size(976, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(976, 395);
+            this.browse.Location = new System.Drawing.Point(4, 29);
+            this.browse.Size = new System.Drawing.Size(976, 391);
             // 
             // tabs
             // 
@@ -75,12 +82,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(350, 26);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Size = new System.Drawing.Size(350, 26);
             // 
             // lbleditby
             // 
@@ -117,7 +124,7 @@
             this.txtCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCode.Location = new System.Drawing.Point(98, 14);
             this.txtCode.Name = "txtCode";
-            this.txtCode.Size = new System.Drawing.Size(121, 23);
+            this.txtCode.Size = new System.Drawing.Size(121, 26);
             this.txtCode.TabIndex = 7;
             // 
             // comboStockType
@@ -130,7 +137,7 @@
             this.comboStockType.Location = new System.Drawing.Point(98, 49);
             this.comboStockType.Name = "comboStockType";
             this.comboStockType.OldText = "";
-            this.comboStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboStockType.Size = new System.Drawing.Size(121, 28);
             this.comboStockType.TabIndex = 8;
             // 
             // txtDescription
@@ -140,7 +147,7 @@
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDescription.Location = new System.Drawing.Point(98, 84);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(258, 23);
+            this.txtDescription.Size = new System.Drawing.Size(258, 26);
             this.txtDescription.TabIndex = 9;
             // 
             // checkJunk
@@ -150,7 +157,7 @@
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkJunk.Location = new System.Drawing.Point(299, 14);
             this.checkJunk.Name = "checkJunk";
-            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.Size = new System.Drawing.Size(66, 24);
             this.checkJunk.TabIndex = 8;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
@@ -172,10 +179,29 @@
             this.chkIsWMS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkIsWMS.Location = new System.Drawing.Point(299, 49);
             this.chkIsWMS.Name = "chkIsWMS";
-            this.chkIsWMS.Size = new System.Drawing.Size(132, 21);
+            this.chkIsWMS.Size = new System.Drawing.Size(159, 24);
             this.chkIsWMS.TabIndex = 10;
             this.chkIsWMS.Text = "Is WMS Location";
             this.chkIsWMS.UseVisualStyleBackColor = true;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(20, 120);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "Capacity";
+            // 
+            // txtCapacity
+            // 
+            this.txtCapacity.BackColor = System.Drawing.Color.White;
+            this.txtCapacity.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Capacity", true));
+            this.txtCapacity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCapacity.Location = new System.Drawing.Point(98, 119);
+            this.txtCapacity.Name = "txtCapacity";
+            this.txtCapacity.Size = new System.Drawing.Size(79, 26);
+            this.txtCapacity.TabIndex = 13;
+            this.txtCapacity.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCapacity_KeyPress);
             // 
             // B02
             // 
@@ -213,5 +239,7 @@
         private Win.UI.CheckBox checkJunk;
         private Win.UI.Button btnBatchCreate;
         private Win.UI.CheckBox chkIsWMS;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtCapacity;
     }
 }

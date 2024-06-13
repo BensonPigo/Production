@@ -177,5 +177,13 @@ namespace Sci.Production.Warehouse
             form.ShowDialog();
             this.ReloadDatas();
         }
+
+        private void txtCapacity_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }
