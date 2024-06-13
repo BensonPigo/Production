@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             this.lbOutputDate = new Sci.Win.UI.Label();
-            this.lbFormat = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.dtInlineDate = new Sci.Win.UI.DateRange();
@@ -41,13 +40,8 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
-            this.comboPhase = new Sci.Win.UI.ComboBox();
-            this.lbPhase = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.comboReportType = new Sci.Win.UI.ComboBox();
-            this.label5 = new Sci.Win.UI.Label();
-            this.chkLatestVersion = new Sci.Win.UI.CheckBox();
             this.comboFty = new Sci.Production.Class.ComboCentralizedFactory(this.components);
             this.txtStyle = new Sci.Win.UI.TextBox();
             this.txtSeason = new Sci.Win.UI.TextBox();
@@ -57,30 +51,30 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(395, 12);
+            this.print.Location = new System.Drawing.Point(478, 12);
             this.print.TabIndex = 4;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(395, 48);
+            this.toexcel.Location = new System.Drawing.Point(478, 48);
             this.toexcel.TabIndex = 5;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(395, 84);
+            this.close.Location = new System.Drawing.Point(478, 84);
             this.close.TabIndex = 6;
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(338, 313);
+            this.buttonCustomized.Location = new System.Drawing.Point(315, 231);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(364, 322);
+            this.checkUseCustomized.Location = new System.Drawing.Point(341, 240);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(338, 333);
+            this.txtVersion.Location = new System.Drawing.Point(315, 251);
             // 
             // lbOutputDate
             // 
@@ -95,14 +89,6 @@
             this.lbOutputDate.Text = "Sewing Output Date";
             this.lbOutputDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lbOutputDate.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // lbFormat
-            // 
-            this.lbFormat.Location = new System.Drawing.Point(13, 356);
-            this.lbFormat.Name = "lbFormat";
-            this.lbFormat.Size = new System.Drawing.Size(134, 23);
-            this.lbFormat.TabIndex = 143;
-            this.lbFormat.Text = "Report Type";
             // 
             // label1
             // 
@@ -169,7 +155,6 @@
             this.dtOutputDate.DateBox2.Name = "";
             this.dtOutputDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dtOutputDate.DateBox2.TabIndex = 1;
-            this.dtOutputDate.IsRequired = false;
             this.dtOutputDate.Location = new System.Drawing.Point(150, 12);
             this.dtOutputDate.Name = "dtOutputDate";
             this.dtOutputDate.Size = new System.Drawing.Size(280, 23);
@@ -240,26 +225,6 @@
             this.labelStyle.TabIndex = 157;
             this.labelStyle.Text = "Style";
             // 
-            // comboPhase
-            // 
-            this.comboPhase.BackColor = System.Drawing.Color.White;
-            this.comboPhase.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboPhase.FormattingEnabled = true;
-            this.comboPhase.IsSupportUnselect = true;
-            this.comboPhase.Location = new System.Drawing.Point(150, 285);
-            this.comboPhase.Name = "comboPhase";
-            this.comboPhase.OldText = "";
-            this.comboPhase.Size = new System.Drawing.Size(88, 24);
-            this.comboPhase.TabIndex = 245;
-            // 
-            // lbPhase
-            // 
-            this.lbPhase.Location = new System.Drawing.Point(13, 285);
-            this.lbPhase.Name = "lbPhase";
-            this.lbPhase.Size = new System.Drawing.Size(134, 23);
-            this.lbPhase.TabIndex = 244;
-            this.lbPhase.Text = "Phase";
-            // 
             // label3
             // 
             this.label3.Location = new System.Drawing.Point(13, 184);
@@ -270,42 +235,11 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(13, 320);
+            this.label4.Location = new System.Drawing.Point(13, 288);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(134, 23);
             this.label4.TabIndex = 248;
             this.label4.Text = "Line";
-            // 
-            // comboReportType
-            // 
-            this.comboReportType.BackColor = System.Drawing.Color.White;
-            this.comboReportType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboReportType.FormattingEnabled = true;
-            this.comboReportType.IsSupportUnselect = true;
-            this.comboReportType.Location = new System.Drawing.Point(151, 356);
-            this.comboReportType.Name = "comboReportType";
-            this.comboReportType.OldText = "";
-            this.comboReportType.Size = new System.Drawing.Size(118, 24);
-            this.comboReportType.TabIndex = 250;
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(13, 391);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(134, 23);
-            this.label5.TabIndex = 251;
-            this.label5.Text = "Version";
-            // 
-            // chkLatestVersion
-            // 
-            this.chkLatestVersion.AutoSize = true;
-            this.chkLatestVersion.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkLatestVersion.Location = new System.Drawing.Point(151, 393);
-            this.chkLatestVersion.Name = "chkLatestVersion";
-            this.chkLatestVersion.Size = new System.Drawing.Size(118, 21);
-            this.chkLatestVersion.TabIndex = 252;
-            this.chkLatestVersion.Text = "Latest Version";
-            this.chkLatestVersion.UseVisualStyleBackColor = true;
             // 
             // comboFty
             // 
@@ -357,7 +291,7 @@
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(151, 320);
+            this.txtLine.Location = new System.Drawing.Point(151, 288);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(100, 23);
             this.txtLine.TabIndex = 259;
@@ -366,19 +300,14 @@
             // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(572, 462);
+            this.ClientSize = new System.Drawing.Size(570, 350);
             this.Controls.Add(this.txtLine);
             this.Controls.Add(this.txtBrand);
             this.Controls.Add(this.txtSeason);
             this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.comboFty);
-            this.Controls.Add(this.chkLatestVersion);
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.comboPhase);
-            this.Controls.Add(this.lbPhase);
             this.Controls.Add(this.labelSeason);
             this.Controls.Add(this.labelStyle);
             this.Controls.Add(this.labelFactory);
@@ -389,7 +318,6 @@
             this.Controls.Add(this.dtOutputDate);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.lbFormat);
             this.Controls.Add(this.lbOutputDate);
             this.DefaultControl = "dateOutputDate";
             this.DefaultControlForEdit = "dateOutputDate";
@@ -404,7 +332,6 @@
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.lbFormat, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.dtOutputDate, 0);
@@ -415,13 +342,8 @@
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.labelStyle, 0);
             this.Controls.SetChildIndex(this.labelSeason, 0);
-            this.Controls.SetChildIndex(this.lbPhase, 0);
-            this.Controls.SetChildIndex(this.comboPhase, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
-            this.Controls.SetChildIndex(this.comboReportType, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.chkLatestVersion, 0);
             this.Controls.SetChildIndex(this.comboFty, 0);
             this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.txtSeason, 0);
@@ -435,7 +357,6 @@
         #endregion
 
         private Win.UI.Label lbOutputDate;
-        private Win.UI.Label lbFormat;
         private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.DateRange dtInlineDate;
@@ -446,13 +367,8 @@
         private Win.UI.Label labelFactory;
         private Win.UI.Label labelSeason;
         private Win.UI.Label labelStyle;
-        private Win.UI.ComboBox comboPhase;
-        private Win.UI.Label lbPhase;
         private Win.UI.Label label3;
         private Win.UI.Label label4;
-        private Win.UI.ComboBox comboReportType;
-        private Win.UI.Label label5;
-        private Win.UI.CheckBox chkLatestVersion;
         private Class.ComboCentralizedFactory comboFty;
         private Win.UI.TextBox txtStyle;
         private Win.UI.TextBox txtSeason;

@@ -24,10 +24,7 @@ namespace Sci.Production.Centralized
         private string style;
         private string season;
         private string brand;
-        private string phase;
         private string line;
-        private string reportType;
-        private bool latestVersion;
         private DataTable PrintData;
         private DataTable BrandData;
         private DataTable SeasonData;
@@ -42,8 +39,6 @@ namespace Sci.Production.Centralized
             : base(menuitem)
         {
             this.InitializeComponent();
-            MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
-            MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Line Mapping,Auto Line Mapping");
             this.comboM.SetDefalutIndex();
             this.comboFty.SetDefalutIndex(string.Empty);
 
@@ -187,10 +182,7 @@ namespace Sci.Production.Centralized
             this.style = this.txtStyle.Text;
             this.season = this.txtSeason.Text;
             this.brand = this.txtBrand.Text;
-            this.phase = this.comboPhase.Text;
             this.line = this.txtLine.Text;
-            this.reportType = this.comboReportType.Text;
-            this.latestVersion = this.chkLatestVersion.Checked;
 
             return base.ValidateInput();
         }
@@ -203,20 +195,10 @@ namespace Sci.Production.Centralized
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result;
-            StringBuilder cmd = new StringBuilder();
-
-            if (this.reportType == "Line Mapping")
-            {
-                cmd = this.GetSummaryP03();
-            }
-
-            if (this.reportType == "Auto Line Mapping")
-            {
-                cmd = this.GetSummaryP05();
-            }
+            StringBuilder cmd = this.GetSqlCmd();
 
             #region --由Factory.PmsPath抓各個連線路徑
-            this.SetLoadingText("Load connections... ");
+            //this.ShowWaitMessage("Load connections... ");
             XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
             string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
             List<string> connectionString = new List<string>();
@@ -229,14 +211,17 @@ namespace Sci.Production.Centralized
                 }
             }
 
+            //this.HideWaitMessage();
             if (connectionString == null || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
             }
+
             #endregion
 
             DBProxy.Current.DefaultTimeout = 1800;
 
+            //this.ShowWaitMessage("Querry... ");
             foreach (string conString in connectionString)
             {
                 SqlConnection conn = new SqlConnection(conString);
@@ -245,11 +230,12 @@ namespace Sci.Production.Centralized
                 if (!result)
                 {
                     DBProxy.Current.DefaultTimeout = 300;
+                    //this.HideWaitMessage();
                     this.ShowErr(result);
                     return result;
                 }
 
-                if (dt == null)
+                if (this.PrintData == null)
                 {
                     this.PrintData = dt.Clone();
                 }
@@ -257,6 +243,7 @@ namespace Sci.Production.Centralized
                 this.PrintData.Merge(dt);
             }
 
+            //this.HideWaitMessage();
             DBProxy.Current.DefaultTimeout = 300;
 
             return Ict.Result.True;
@@ -305,358 +292,555 @@ namespace Sci.Production.Centralized
             return true;
         }
 
-        private StringBuilder GetSummaryP03()
+        private StringBuilder GetSqlCmd()
         {
             StringBuilder cmd = new StringBuilder();
 
-            #region Inline & Sewing Date is not null
-
-            if (this.dtSewingDate.Value1.HasValue || this.dtSewingDate.Value2.HasValue
-                || this.dtInlineDate.Value1.HasValue || this.dtInlineDate.Value2.HasValue
-                || this.dtOutputDate.Value1.HasValue || this.dtOutputDate.Value2.HasValue)
+            string headQuery = string.Empty;
+            #region headQuery
+            if (this.dtOutputDate.Value1.HasValue && this.dtOutputDate.Value2.HasValue)
             {
-                string dateQuery = string.Empty;
-                if (!MyUtility.Check.Empty(this.dtInlineDate.Value1))
-                {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dtInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (!MyUtility.Check.Empty(this.dtInlineDate.Value2))
-                {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dtInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (!MyUtility.Check.Empty(this.dtSewingDate.Value1))
-                {
-                    dateQuery += $@" 
-and (convert(date,ss.Inline) >= '{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
-                }
-
-                if (!MyUtility.Check.Empty(this.dtSewingDate.Value2))
-                {
-                    dateQuery += $@" 
-and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
-                }
-
-                cmd.Append($@"
-select *
-INTO #LineMapping
-from LineMapping t WITH (NOLOCK) 
-where exists(
-	select 1
-	from SewingSchedule ss
-	join Orders o on ss.OrderID = o.ID
-	where 1=1
-	{dateQuery}
-	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
- )
-
-");
+                headQuery += $@" and a.OutputDate BETWEEN '{this.dtOutputDate.Value1.Value.ToString("yyyy-MM-dd")}' AND '{this.dtOutputDate.Value2.Value.ToString("yyyy-MM-dd")}'" + Environment.NewLine;
             }
-            #endregion
 
             if (!MyUtility.Check.Empty(this.factory))
             {
-                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
+                headQuery += $@"and a.FactoryID = '{this.factory}'" + Environment.NewLine;
             }
 
-            if (!MyUtility.Check.Empty(this.style))
+            if (!MyUtility.Check.Empty(this.M))
             {
-                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
-            }
-
-            if (!MyUtility.Check.Empty(this.season))
-            {
-                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
-            }
-
-            if (!MyUtility.Check.Empty(this.phase))
-            {
-                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
+                headQuery += $@"and a.MDivisionID = '{this.M}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.line))
             {
-                cmd.Append(string.Format(" and t.SewingLineID = '{0}'", this.line));
+                headQuery += $@"and a.SewingLineID = '{this.line}'" + Environment.NewLine;
             }
+            #endregion
 
-            cmd.Append(@"
-select lmd.*
-INTO #LineMapping_Detail
-from #LineMapping lm
-inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
-
-select distinct
-	f.CountryID,
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-	s.Description,
-	lm.Version,
-	lm.SewingLineID,
-	lm.Team,
-
-	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour,
-
-	[Current # of Optrs] = Cast( lm.CurrentOperators as int),
-
-	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
-	[Target/Hr. (100%)] = (3600.0 * lm.CurrentOperators) / lm.TotalCycle,
-
-	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
-	[Takt Time] = ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ),
-
-	[Total GSD Time] = lm.TotalGSD * 1.0,
-	[Total Cycle Time] = lm.TotalCycle * 1.0,
-	
-	---- 公式: [Total Cycle Time] / [Current # of Optrs]
-	[Avg. Cycle Time] = 1.0 * lm.TotalCycle / lm.CurrentOperators,
-
-	[CPU / PC] = s.CPU,
-	[No. of Hours] = lm.Workhour,
-
-    ---- P03 為空
-	[Optrs of Presser] = 0,
-    ---- P03 為空
-	[Optrs of Packer] = 0,
-
-	---- 公式：3600 / [Highest Cycle Time]
-	[EOLR] = 3600.0 / lm.HighestCycle,
-
-	[Efficiency %] = IIF(lm.HighestCycle*lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalGSD / lm.HighestCycle / lm.CurrentOperators ) ,
-
-	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs] * 100
-	[Line Balancing %] = 1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100,
-
-	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
-	[Not Hit Target Type] = ISNULL(i.TypeGroup ,'') ,
-	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
-                    from (
-	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
-	                    from #LineMapping_Detail l2 WITH (NOLOCK)
-	                    where lm.ID = l2.ID
-	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
-                    )a )),
-	[Not Hit Target Reason]=ISNULL(i.Name ,'') ,
-
-	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs] * 100
-	[Lean Line Eff %] = 1.0 * lm.TotalCycle / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour )) / lm.CurrentOperators * 100,
-
-	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
-	[PPH] = ( ( 3600.0 / lm.HighestCycle) * s.CPU ) / lm.CurrentOperators,
-
-	lm.Status,
-	[GSD Status] = lm.TimeStudyPhase,
-	[GSDVersion] = lm.TimeStudyVersion,
-	lm.AddName,
-	lm.AddDate,
-	lm.EditName,
-	lm.EditDate,
-    IsFrom = 'IE P03'
-from #LineMapping lm WITH (NOLOCK) 
-inner join Factory f on f.ID = lm.FactoryID
-inner join Style s on s.Ukey = lm.StyleUKey
-left join IEReasonLBRnotHit_1st i on i.Ukey = lm.IEReasonLBRNotHit_1stUkey
-outer apply(
-	select top 1 c.Target
-	from factory f
-	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID and c.EffectiveDate < iif(lm.Editdate is null,lm.adddate,lm.Editdate) and c. Type ='LBR'
-	where f.id = lm.factoryid
-	order by EffectiveDate desc
-)LinebalancingTarget 
-where 1 = 1
-");
-
-            if (this.latestVersion)
+            string detailQuery = string.Empty;
+            #region detailQuery
+            if (!MyUtility.Check.Empty(this.brand))
             {
-                cmd.Append(@"
- and lm.Version = (
-	select MAX(l.Version)
-	from LineMapping l
-	where l.StyleUKey = lm.StyleUKey
-	and l.FactoryID = lm.FactoryID
-	and l.Phase = lm.Phase
-    and l.SewingLineID = lm.SewingLineID
-	group by l.StyleUKey, l.FactoryID,l.Phase,l.SewingLineID
- )
-");
+                detailQuery += $@"and o.BrandID = '{this.brand}'" + Environment.NewLine;
             }
 
-            cmd.Append(Environment.NewLine + "DROP TABLE #LineMapping,#LineMapping_Detail ");
-            return cmd;
-        }
+            if (!MyUtility.Check.Empty(this.season))
+            {
+                detailQuery += $@"and o.SeasonID = '{this.season}'" + Environment.NewLine;
+            }
 
-        private StringBuilder GetSummaryP05()
-        {
-            StringBuilder cmd = new StringBuilder();
+            if (!MyUtility.Check.Empty(this.style))
+            {
+                detailQuery += $@"and o.StyleID = '{this.style}'" + Environment.NewLine;
+            }
+            #endregion
 
+            string otherDate = string.Empty;
             #region Inline & Sewing Date is not null
-
+            string sewingDateQuery = string.Empty;
             if (this.dtSewingDate.Value1.HasValue || this.dtSewingDate.Value2.HasValue
                 || this.dtInlineDate.Value1.HasValue || this.dtInlineDate.Value2.HasValue
                 || this.dtOutputDate.Value1.HasValue || this.dtOutputDate.Value2.HasValue)
             {
-                string dateQuery = string.Empty;
                 if (!MyUtility.Check.Empty(this.dtInlineDate.Value1))
                 {
-                    dateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dtInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+                    sewingDateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dtInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.dtInlineDate.Value2))
                 {
-                    dateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dtInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+                    sewingDateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dtInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
                 }
 
                 if (!MyUtility.Check.Empty(this.dtSewingDate.Value1))
                 {
-                    dateQuery += $@" 
+                    sewingDateQuery += $@" 
 and (convert(date,ss.Inline) >= '{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
                 }
 
                 if (!MyUtility.Check.Empty(this.dtSewingDate.Value2))
                 {
-                    dateQuery += $@" 
+                    sewingDateQuery += $@" 
 and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
                 }
 
-                cmd.Append($@"
-select *
-INTO #AutomatedLineMapping
-from AutomatedLineMapping t WITH (NOLOCK) 
-where exists(
+                otherDate =$@"
+AND EXISTS (	
 	select 1
 	from SewingSchedule ss
-	join Orders o on ss.OrderID = o.ID
-	where 1=1
-	{dateQuery}
-	and o.StyleID = t.StyleID and o.SeasonID = t.SeasonID and o.BrandID = t.BrandID
- )
+	inner join Orders od on ss.OrderID = od.ID
+	where o.StyleUkey = od.StyleUkey
+	{sewingDateQuery}
+)
 
-");
+";
             }
             #endregion
 
-            if (!MyUtility.Check.Empty(this.factory))
-            {
-                cmd.Append(string.Format(" and t.FactoryID = '{0}'", this.factory));
-            }
+            cmd.Append($@"
+---- 1. 整理出Sewing output有哪些產線，並將 Sewing 需要群組加總的先加一加
+select DISTINCT a.*
+into #SewingOutput
+from SewingOutput a
+where 1=1
+{headQuery}
 
-            if (!MyUtility.Check.Empty(this.style))
-            {
-                cmd.Append(string.Format(" and t.StyleID = '{0}'", this.style));
-            }
+select b.ID
+	,o.StyleUkey
+	,b.ComboType
+	,c.CountryID
+	,o.BrandID
+	,o.StyleID
+	,s.Lining
+	,s.Gender
+	,s.SeasonID
+	,s.CPU
+	,s.ApparelType
+	,s.Construction
+	,WorkHour = SUM(b.WorkHour)
+	,InlineQty = SUM(b.InlineQty)
+	,QAQty = SUM(b.QAQty)
+	,CumulateSimilar = SUM(b.CumulateSimilar)
+INTO #SewingOutput_Detail
+from #SewingOutput a
+inner join SewingOutput_Detail b on a.ID = b.ID
+inner join Factory c on a.FactoryID=c.ID
+inner join Orders o on b.OrderId = o.ID
+inner join Style s on o.StyleUkey = s.Ukey
+where 1=1
+{detailQuery}
+{otherDate}
+GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
+	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.Construction
 
-            if (!MyUtility.Check.Empty(this.season))
-            {
-                cmd.Append(string.Format(" and t.SeasonID = '{0}'", this.season));
-            }
 
-            if (!MyUtility.Check.Empty(this.phase))
-            {
-                cmd.Append(string.Format(" and t.Phase = '{0}'", this.phase));
-            }
+---- 2. 根據Sewing的群組條件，挑出可以拿來篩選Line Mapping的欄位
+----     * Line Mapping有三種資料來源，分別是P03、P05、P06，對應Table為LineMapping、AutomatedLineMapping、LineMappingBalancing
+select DISTINCT b.StyleUKey
+	,a.FactoryID
+	,a.SewingLineID
+	,a.Team
+	,b.ComboType
+	,a.Manpower
+INTO #BaseData
+from #SewingOutput a
+inner join #SewingOutput_Detail b on a.ID = b.ID
 
-            cmd.Append(@"
-select lmd.*
-INTO #AutomatedLineMapping_Detail
-from #AutomatedLineMapping lm
-inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 
-select distinct
-	f.CountryID,
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-	s.Description,
-	lm.Version,
-	SewingLineID = '',
-	Team = '',
+----- 每個產線，會有Before 和 After兩個產線計畫，這兩個產線計畫的資料來源可能來自P03、P05、P06，以下步驟開始找出「這兩筆資料在哪裡」
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Daily Demand / Shift] = 0.0,
 
-	[Current # of Optrs] = Cast( lm.SewerManpower as int),
+---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
+----     *其中 P05 沒有產線和Team的資訊，User說要比對車工人數，人數一致的計畫才能使用
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P03MaxVer ---- P03
+from LineMapping lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Target/Hr. (100%)] = 0.0,
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P06MaxVer ---- P06
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Takt Time] = 0.0,
+select lm.StyleUKey
+	,lm.FactoryID
+	,SewingLineID = ''
+	,Team = ''
+	,lm.ComboType
+	,lm.Phase
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P05MaxVer ---- P05
+from AutomatedLineMapping lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
+	AND a.Manpower = lm.SewerManpower
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
 
-	[Total GSD Time] = lm.TotalGSDTime * 1.0,
-	[Total Cycle Time] = 0.0,
-	
-	---- 公式: P05沒有TotalCycle，所以為0
-	[Avg. Cycle Time] = 0.0,
+---- 4.  開始After Data準備
+---- After Data的找法：
+---- (1) 資料來源只有P03、P06
+---- (2) P03、P06找出Phase = Final的產線計畫
+---- (3) 每筆的Key值為 factory, brand, style, season, combo type, Line, Team，從P03或P06取一個
+---- (4) 取的方式：如果這組只有P03或P06有就直接取；P03、P06 同時有則取 EditDate 大的那邊 (若皆無 EditDate 則比較 AddDate) 
 
-	[CPU / PC] = s.CPU,
-	[No. of Hours] = lm.Workhour,
+--P03有 && P06沒有、P03沒有 && P06有
+select p03.*
+,SourceTable = 'IE P03'
+INTO #AfterData
+from #BaseData a
+INNER join #P03MaxVer p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType 
+where not exists(
+	select 1
+	from #P06MaxVer p06 
+	where p06.StyleUKey = a.StyleUkey and a.FactoryID=p06.FactoryID and p06.SewingLineID = a.SewingLineID and a.Team=p06.Team and a.ComboType=p06.ComboType and p06.Phase='Final'
+) and p03.Phase='Final'
+UNION
+select p06.*
+,SourceTable = 'IE P06'
+from #BaseData a
+INNER join #P06MaxVer p06 on p06.StyleUKey = a.StyleUkey and a.FactoryID=p06.FactoryID and p06.SewingLineID = a.SewingLineID and a.Team=p06.Team and a.ComboType=p06.ComboType
+where not exists(
+	select 1
+	from #P03MaxVer p03 
+	where p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType and p03.Phase='Final'
+)and p06.Phase='Final'
 
-	[Optrs of Presser] = Cast( lm.PresserManpower as int),
-	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
+--P03有 && P06有
+;WITH CombinedTable AS (
+    SELECT *,'IE P03' AS SourceTable
+    FROM #P03MaxVer a
+	where not exists(---- 須排除P03、P06差集，因為差集資料已經加入了
+		select 1 from #AfterData b
+		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
+	) and Phase='Final'
+    UNION ALL
+    SELECT *,'IE P06' AS SourceTabl
+    FROM #P06MaxVer a
+	where not exists(---- 須排除P03、P06差集，因為差集資料已經加入了
+		select 1 from #AfterData b
+		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
+	) and Phase='Final'
+),
+RankedTable AS (
+    SELECT 
+        *,---- P03、P06交集，代表相同Key值有重複，因此判斷EditDate、AddDate
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY 
+            CASE 
+                WHEN EditDate IS NOT NULL THEN EditDate 
+                ELSE AddDate 
+            END DESC) AS RowNum
+    FROM CombinedTable
+)
 
-	---- 公式：P05沒有Cycle，所以為0
-	[EOLR] = 0.0,
+--SELECT * FROM RankedTable WHERE RowNum = 1;
+INSERT INTO #AfterData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID)
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID
+FROM RankedTable
+WHERE RowNum = 1
+ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate 
 
-	---- P05/P06呈現空白
-	[Efficiency %] = 0.0 ,
+---- 5. 開始Before Data準備
+---- Before Data的找法：
+---- (1) 資料來源只有P03、P05
+---- (2) P03、P05找出Phase = Initial 或 Prelim 的產線計畫
+---- (3) P03每筆的Key值為 factory, brand, style, season, combo type, Line, Team，但P05沒有 Line, Team
+---- (4) P03、P05先各自處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
+---- (4) 再從P03或P05取一個，取的方式：如果這組只有P03或P05有就直接取；P03、P05 同時有則取 EditDate 大的那邊 (若皆無 EditDate 則比較 AddDate) 
 
-	---- P05 公式：P05沒有TotalCycle，所以為0
-	[Line Balancing %] = 0.0,
+---- 先處理P03、P05的Prelim、Initial 優先度問題
+;WITH PhaseRankedTableP03 AS (
+	select 
+        *,
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType ORDER BY 
+            CASE 
+                WHEN Phase = 'Prelim' THEN 2
+                ELSE 1
+            END DESC) AS RowNum
+	from #P03MaxVer
+	where Phase IN ('Prelim','Initial')
+)
 
-	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
-	[Not Hit Target Type] = '',
-	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
-                    from (
-	                    select distinct l2.NO, l2.Ukey
-	                    from #AutomatedLineMapping_Detail l2 WITH (NOLOCK)
-	                    where lm.ID = l2.ID
-	                    and ISNULL(l2.Ukey, '') <> ''
-                    )a )),
-	[Not Hit Target Reason] = '',
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
+INTO #P03Rank
+FROM PhaseRankedTableP03
+WHERE RowNum = 1
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Lean Line Eff %] = 0.0,
-	
-	---- 公式：P05沒有Cycle，所以為0
-	[PPH] = 0.0,
+;WITH PhaseRankedTableP05 AS (
+	select 
+        *,
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType ORDER BY 
+            CASE 
+                WHEN Phase = 'Prelim' THEN 2
+                ELSE 1
+            END DESC) AS RowNum
+	from #P05MaxVer
+	where Phase IN ('Prelim','Initial')
+)
 
-	lm.Status,
-	[GSD Status] = lm.TimeStudyStatus,
-	[GSDVersion] = lm.TimeStudyVersion,
-	lm.AddName,
-	lm.AddDate,
-	lm.EditName,
-	lm.EditDate,
-    IsFrom = 'IE P05'
-from #AutomatedLineMapping lm WITH (NOLOCK) 
-inner join Factory f on f.ID = lm.FactoryID
-inner join Style s on s.Ukey = lm.StyleUKey
-where 1 = 1
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
+INTO #P05Rank
+FROM PhaseRankedTableP05
+WHERE RowNum = 1
+
+--P03有 && P05沒有、P03沒有 && p05有
+select p03.*
+,SourceTable = 'IE P03'
+INTO #BeforeData
+from #BaseData a
+INNER join #P03Rank p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType
+where not exists(
+	select 1
+	from #P05Rank p05 ---- P05 沒有Line Team
+	where p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType 
+)
+UNION 
+select p05.*
+,SourceTable = 'IE P05' ---- P05 沒有Line Team
+from #BaseData a
+INNER join #P05Rank p05 on p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType
+where not exists(
+	select 1
+	from #P03Rank p03 
+	where p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and a.ComboType=p03.ComboType --and p03.Phase='Final'
+)
+
+--P03有 && P05有
+;WITH BeforeCombinedTable AS (
+    SELECT 'IE P03' AS SourceTable, *
+    FROM #P03Rank a
+	where not exists(
+		select 1 from #BeforeData b
+		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
+	)
+    UNION ALL
+    SELECT 'IE P05' AS SourceTable, *
+    FROM #P05Rank a
+	where not exists( ---- P05 沒有Line Team
+		select 1 from #BeforeData b
+		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and a.ComboType=b.ComboType
+	) 
+),
+BeforeRankedTable AS (
+    SELECT 
+        *,
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,ComboType,Phase ORDER BY 
+            CASE 
+                WHEN EditDate IS NOT NULL THEN EditDate 
+                ELSE AddDate 
+            END DESC) AS RowNum
+    FROM BeforeCombinedTable
+)
+
+
+--SELECT * FROM BeforeRankedTable WHERE RowNum = 1;
+INSERT INTO #BeforeData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID)
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID
+FROM BeforeRankedTable
+WHERE RowNum = 1
+ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate 
+
+
+
+---- 6. 前面已經鎖定了每一組 factory, brand, style, season, combo type, Line, Team ，對應到的兩個產線計畫(分別是Before和After)，最後可以去P03、P05、P06找出最終的那一筆，並取出需要的欄位就好
+select a.*,b.Status
+	,b.TotalGSD
+	,b.TotalCycle
+	,b.CurrentOperators
+	,b.HighestCycle
+	,b.TaktTime
+	,b.Workhour
+INTO #FinalBeforeData
+from #BeforeData a
+inner join LineMapping b on a.ID = b.ID　---- P03
+UNION 
+select a.*,b.Status
+	,TotalGSD = TotalGSDTime
+	,TotalCycle = 0
+	,CurrentOperators = b.SewerManpower
+	,HighestCycle = 0
+	,TaktTime = 0
+	,b.Workhour
+from #BeforeData a
+inner join AutomatedLineMapping b on a.ID = b.ID　---- P06
+
+select a.*,b.Status
+	,b.TotalGSD
+	,b.TotalCycle
+	,b.CurrentOperators
+	,b.HighestCycle
+	,b.HighestGSD
+INTO #FinalAfterData 
+from #AfterData a
+inner join LineMapping b on a.ID = b.ID ---- P03
+UNION ALL
+select a.*,b.Status
+	,TotalGSD = b.TotalGSDTime
+	,TotalCycle = b.TotalCycleTime
+	,CurrentOperators = b.SewerManpower
+	,HighestCycle = b.HighestCycleTime
+	,HighestGSD = b.HighestGSDTime
+from #AfterData a
+inner join LineMappingBalancing b on a.ID = b.ID ---- P06
+
+
+---- 7. 開始兜報表的欄位
+select 
+	b.CountryID
+    --,b.StyleUkey
+	,a.FactoryID
+	,a.OutputDate
+	,b.BrandID
+	,b.StyleID
+	,b.ComboType
+	,ProductType = r1.Name
+	,FabricType = r2.Name
+	,b.Lining
+	,b.Gender
+	,Construction = ddl.Name
+	,b.SeasonID
+	,a.SewingLineID
+	,a.Team
+	,[Act. Manpower] = a.Manpower
+	,[No.of Hours] = b.WorkHour
+
+	---- 公式 [Act. Manpower] * [No.of Hours]
+	,[Total Manhours] = a.Manpower * b.WorkHour
+	,[CPU/piece] = b.CPU
+	,[Prod. Output] = b.InlineQty
+
+	---- 公式 [CPU/piece] * [Total Output]
+	,[Total CPU] = b.CPU * b.QAQty
+	,[Cumulate Of Days] = b.CumulateSimilar
+	,[Inline Category] = CONCAT(a.SewingReasonIDForTypeIC, '-' + sr.Description) 
+	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
+	------------------------------------------------After ------------------------------------------------
+	,[Phase after inline] = AfterData.Phase
+	,[Version after inline] = AfterData.Version
+	,[Optrs after inline] = AfterData.CurrentOperators
+	,[Cycle Time] = AfterData.TotalCycle
+	,[Avg. Cycle] = AfterData.AvgCycle
+	,[LBR after inline] = AfterData.LBR
+	,[Target LBR] = LinebalancingTarget.Target * 100.0
+	,[After inline Is From] = AfterData.SourceTable
+	,[After inline Status] =  AfterData.Status
+	,[Est. PPH] = AfterData.EstPPH
+	------------------------------------------------After ------------------------------------------------
+
+	------------------------------------------------Before ------------------------------------------------
+	-----------------------------------------------------------------------------------------
+	,[Phase before inline] = ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase)
+	,[Version before inline] = ISNULL(BeforeDataP03.Version, BeforeDataP05.Version)
+	,[Optrs before inline] = ISNULL(BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
+	,[GSD time] = ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
+	,[Takt time] = ISNULL(BeforeDataP03.Takt, BeforeDataP05.Takt)
+
+	,[LBR before inline] = ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
+	,[Before inline Is From] = ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
+	,[Before inline Status] = ISNULL(BeforeDataP03.Status,BeforeDataP05.Status) 
+	------------------------------------------------Before ------------------------------------------------
+
+	,[Optrs Diff] = ISNULL(AfterData.CurrentOperators,0) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
+	,[LBR Diff (%)] = ISNULL(AfterData.LBR,0) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
+	,[Total % Time diff] = IIF(AfterData.TotalCycle = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / AfterData.TotalCycle )
+	,[By style] = IIF(AfterData.Status = 'Confirmed' OR ISNULL(BeforeDataP03.Status,BeforeDataP05.Status)  = 'Confirmed','Y','N')
+	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
+	,[History LBR] = CASE WHEN AfterData.SourceTable = 'IE P03' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
+						  WHEN AfterData.SourceTable = 'IE P06' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
+					 ELSE 0 END
+from #SewingOutput a 
+inner join #SewingOutput_Detail b on a.ID = b.ID
+left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
+left join Reason r2 on r2.ReasonTypeID= 'Fabric_Kind' and r2.ID = b.ApparelType
+left join DropDownList ddl on ddl.Type= 'StyleConstruction' and ddl.ID = b.Construction
+left join SewingReason sr on  sr.ID = a.SewingReasonIDForTypeIC and sr.Type='IC'
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Optrs after inline]
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+				  WHEN lm.SourceTable = 'IE P06' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
+			 ELSE 0 END
+	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
+	--- EOLR公式：3600 / [Highest Cycle Time]
+	,[EstPPH] =  CASE WHEN lm.SourceTable = 'IE P03' THEN IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
+					  WHEN lm.SourceTable = 'IE P06' THEN  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestGSD) * b.CPU / lm.CurrentOperators )
+				 ELSE 0 END	
+	from #FinalAfterData lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
+	--and a.OutputDate = lm.OutputDate
+)AfterData
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	,[Takt] = CASE  WHEN lm.SourceTable = 'IE P03' THEN lm.TaktTime
+				   ELSE 0 END
+	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+			 ELSE 0 END
+	from #FinalBeforeData lm
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
+
+)BeforeDataP03
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	,[Takt] = CASE  WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.CurrentOperators  = 0 OR lm.TotalGSD = 0 OR lm.TotalGSD = 0 OR ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour ) = 0 
+														,0
+														,( 3600 * lm.WorkHour ) / ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour )
+													)
+				   ELSE 0 END
+	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN 0
+			 ELSE 0 END
+	from #FinalBeforeData lm
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID --and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 
+	and b.ComboType=lm.ComboType 
+	and lm.SourceTable = 'IE P05'
+)BeforeDataP05
+outer apply(
+	select top 1 ct.Target
+	from factory f
+	left join ChgOverTarget ct on ct.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and ct. Type ='LBR'
+	where f.id = a.FactoryID
+	order by EffectiveDate desc
+)LinebalancingTarget 
+
+
+drop table #BaseData
+,#P03MaxVer
+,#P05MaxVer
+,#P06MaxVer
+,#P03Rank
+,#P05Rank
+,#AfterData
+,#BeforeData
+,#FinalAfterData
+,#FinalBeforeData
+,#SewingOutput_Detail
+,#SewingOutput
+
 ");
 
-            if (this.latestVersion)
-            {
-                cmd.Append(@"
- and lm.Version = (
-	select MAX(l.Version)
-	from LineMapping l
-	where l.StyleUKey = lm.StyleUKey
-	and l.FactoryID = lm.FactoryID
-	and l.Phase = lm.Phase
-	group by l.StyleUKey, l.FactoryID,l.Phase
- )
-");
-            }
-
-            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail ");
             return cmd;
         }
 
