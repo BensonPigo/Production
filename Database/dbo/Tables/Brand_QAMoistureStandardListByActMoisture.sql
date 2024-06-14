@@ -3,9 +3,9 @@
 	[Category] [varchar](30) NOT NULL,
 	[CategoryValue] [varchar](30) NOT NULL,
 	[MoistureStandardDesc] [nvarchar](10) NOT NULL,
-	[MoistureStandard1] [numeric](4, 0) NOT NULL,
+	[MoistureStandard1] [numeric](4, 1) NOT NULL,
 	[MoistureStandard1_Comparison] [tinyint] NOT NULL,
-	[MoistureStandard2] [numeric](4, 0) NOT NULL,
+	[MoistureStandard2] [numeric](4, 1) NOT NULL,
 	[MoistureStandard2_Comparison] [tinyint] NOT NULL,
  CONSTRAINT [PK_Brand_QAMoistureStandardListByActMoisture] PRIMARY KEY CLUSTERED 
 (
