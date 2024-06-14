@@ -35,6 +35,10 @@
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.displayName = new Sci.Win.UI.DisplayBox();
             this.labelName = new Sci.Win.UI.Label();
+            this.labelManualCuttingMaxLayer = new Sci.Win.UI.Label();
+            this.labelAutoCuttingMaxLayer = new Sci.Win.UI.Label();
+            this.numManualCuttingMaxLayer = new Sci.Win.UI.NumericBox();
+            this.numAutoCuttingMaxLayer = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -49,6 +53,10 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.numAutoCuttingMaxLayer);
+            this.detailcont.Controls.Add(this.numManualCuttingMaxLayer);
+            this.detailcont.Controls.Add(this.labelAutoCuttingMaxLayer);
+            this.detailcont.Controls.Add(this.labelManualCuttingMaxLayer);
             this.detailcont.Controls.Add(this.displayName);
             this.detailcont.Controls.Add(this.labelName);
             this.detailcont.Controls.Add(this.checkJunk);
@@ -86,7 +94,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(70, 57);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(89, 23);
@@ -95,8 +102,7 @@
             // 
             // labelCuttingLayer
             // 
-            this.labelCuttingLayer.Lines = 0;
-            this.labelCuttingLayer.Location = new System.Drawing.Point(70, 167);
+            this.labelCuttingLayer.Location = new System.Drawing.Point(70, 131);
             this.labelCuttingLayer.Name = "labelCuttingLayer";
             this.labelCuttingLayer.Size = new System.Drawing.Size(89, 23);
             this.labelCuttingLayer.TabIndex = 1;
@@ -117,7 +123,7 @@
             this.displayCuttingLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayCuttingLayer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cuttinglayer", true));
             this.displayCuttingLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCuttingLayer.Location = new System.Drawing.Point(162, 167);
+            this.displayCuttingLayer.Location = new System.Drawing.Point(162, 131);
             this.displayCuttingLayer.Name = "displayCuttingLayer";
             this.displayCuttingLayer.Size = new System.Drawing.Size(53, 23);
             this.displayCuttingLayer.TabIndex = 3;
@@ -139,19 +145,74 @@
             this.displayName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Name", true));
             this.displayName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayName.Location = new System.Drawing.Point(162, 112);
+            this.displayName.Location = new System.Drawing.Point(162, 94);
             this.displayName.Name = "displayName";
             this.displayName.Size = new System.Drawing.Size(375, 23);
             this.displayName.TabIndex = 9;
             // 
             // labelName
             // 
-            this.labelName.Lines = 0;
-            this.labelName.Location = new System.Drawing.Point(70, 112);
+            this.labelName.Location = new System.Drawing.Point(70, 94);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(89, 23);
             this.labelName.TabIndex = 8;
             this.labelName.Text = "Name";
+            // 
+            // labelManualCuttingMaxLayer
+            // 
+            this.labelManualCuttingMaxLayer.Location = new System.Drawing.Point(70, 168);
+            this.labelManualCuttingMaxLayer.Name = "labelManualCuttingMaxLayer";
+            this.labelManualCuttingMaxLayer.Size = new System.Drawing.Size(169, 23);
+            this.labelManualCuttingMaxLayer.TabIndex = 10;
+            this.labelManualCuttingMaxLayer.Text = "Manual Cutting Max Layer";
+            // 
+            // labelAutoCuttingMaxLayer
+            // 
+            this.labelAutoCuttingMaxLayer.Location = new System.Drawing.Point(70, 205);
+            this.labelAutoCuttingMaxLayer.Name = "labelAutoCuttingMaxLayer";
+            this.labelAutoCuttingMaxLayer.Size = new System.Drawing.Size(169, 23);
+            this.labelAutoCuttingMaxLayer.TabIndex = 11;
+            this.labelAutoCuttingMaxLayer.Text = "Auto Cutting Max Layer";
+            // 
+            // numManualCuttingMaxLayer
+            // 
+            this.numManualCuttingMaxLayer.BackColor = System.Drawing.Color.White;
+            this.numManualCuttingMaxLayer.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ManualCutLayer", true));
+            this.numManualCuttingMaxLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numManualCuttingMaxLayer.Location = new System.Drawing.Point(242, 168);
+            this.numManualCuttingMaxLayer.Name = "numManualCuttingMaxLayer";
+            this.numManualCuttingMaxLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numManualCuttingMaxLayer.Size = new System.Drawing.Size(89, 23);
+            this.numManualCuttingMaxLayer.TabIndex = 12;
+            this.numManualCuttingMaxLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numAutoCuttingMaxLayer
+            // 
+            this.numAutoCuttingMaxLayer.BackColor = System.Drawing.Color.White;
+            this.numAutoCuttingMaxLayer.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "AutoCutLayer", true));
+            this.numAutoCuttingMaxLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numAutoCuttingMaxLayer.Location = new System.Drawing.Point(242, 205);
+            this.numAutoCuttingMaxLayer.Name = "numAutoCuttingMaxLayer";
+            this.numAutoCuttingMaxLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numAutoCuttingMaxLayer.Size = new System.Drawing.Size(89, 23);
+            this.numAutoCuttingMaxLayer.TabIndex = 13;
+            this.numAutoCuttingMaxLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B03
             // 
@@ -160,10 +221,11 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
+            this.IsSupportEdit = true;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B03";
+            this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B03.Construction";
             this.WorkAlias = "Construction";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
@@ -188,5 +250,9 @@
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelCuttingLayer;
         private Win.UI.Label labelID;
+        private Win.UI.Label labelAutoCuttingMaxLayer;
+        private Win.UI.Label labelManualCuttingMaxLayer;
+        private Win.UI.NumericBox numManualCuttingMaxLayer;
+        private Win.UI.NumericBox numAutoCuttingMaxLayer;
     }
 }
