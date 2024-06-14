@@ -38,7 +38,7 @@
             this.btnBatchCreate = new Sci.Win.UI.Button();
             this.chkIsWMS = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtCapacity = new Sci.Win.UI.TextBox();
+            this.txtCapacity = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -195,13 +195,33 @@
             // txtCapacity
             // 
             this.txtCapacity.BackColor = System.Drawing.Color.White;
-            this.txtCapacity.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Capacity", true));
+            this.txtCapacity.DecimalPlaces = 1;
+            this.txtCapacity.DisplayStyle = Ict.Win.UI.NumericBoxDisplayStyle.ThousandSeparator;
             this.txtCapacity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCapacity.Location = new System.Drawing.Point(98, 119);
+            this.txtCapacity.Location = new System.Drawing.Point(98, 117);
+            this.txtCapacity.Maximum = new decimal(new int[] {
+            -727379969,
+            232,
+            0,
+            0});
+            this.txtCapacity.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.txtCapacity.Name = "txtCapacity";
-            this.txtCapacity.Size = new System.Drawing.Size(79, 26);
-            this.txtCapacity.TabIndex = 13;
-            this.txtCapacity.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtCapacity_KeyPress);
+            this.txtCapacity.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.txtCapacity.Size = new System.Drawing.Size(100, 26);
+            this.txtCapacity.TabIndex = 14;
+            this.txtCapacity.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // B02
             // 
@@ -240,6 +260,6 @@
         private Win.UI.Button btnBatchCreate;
         private Win.UI.CheckBox chkIsWMS;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtCapacity;
+        private Win.UI.NumericBox txtCapacity;
     }
 }
