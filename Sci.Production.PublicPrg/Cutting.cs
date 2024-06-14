@@ -1455,7 +1455,7 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
         /// <param name="tableName">TableName</param>
         /// <param name="columnName">ColumnName</param>
         /// <returns>NextValue</returns>
-        public static string GetCutRefNextValue(string tableName, string columnName)
+        public static string GetColumnValueNo(string tableName, string columnName)
         {
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
