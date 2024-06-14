@@ -25,7 +25,7 @@
     QCIssueTransactionID varchar(13) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_QCIssueTransactionID] DEFAULT (''),
     CutWidth numeric(5, 2) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_CutWidth] DEFAULT (0),
     ActualWidth numeric(5, 2) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_ActualWidth] DEFAULT (0),
-    Speed numeric(8, 2) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_Speed] DEFAULT (0),
+    Speed numeric(10, 2) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_Speed] DEFAULT (0),
     TotalDefectPoints numeric(6, 0) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_TotalDefectPoints] DEFAULT (0),
     Grade varchar(10) NOT NULL CONSTRAINT [CONSTRAINT_P_FabricInspDailyReport_Detail_Grade] DEFAULT (''),
     ActInspTimeStart datetime NULL,

@@ -38,7 +38,7 @@ RETURNS @returntable TABLE
     QCIssueTransactionID varchar(13),
     CutWidth numeric(5, 2),
     ActualWidth numeric(5, 2),
-    Speed numeric(8, 2),
+    Speed numeric(10, 2),
     TotalDefectPoints numeric(6, 0),
     Grade varchar(10),
     ActInspTimeStart datetime,
@@ -139,8 +139,8 @@ BEGIN
 	        ,[QCIssueTransactionID] = isnull(isd.Id, '')
             ,[CutWidth] = isnull(Fabric.width, 0)
             ,[ActualWidth] = FP.ActualWidth
-            ,[Speed] = IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
-	                     Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2))
+            ,[Speed] = convert(numeric(10,2), IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
+	                     Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)))
 	        ,FP.TotalPoint
             ,isnull(FP.Grade, '')
             ,[ActualInspectionTimeStart] = FP.StartTime

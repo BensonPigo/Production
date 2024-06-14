@@ -83,7 +83,7 @@ select m.BrandID
 	,smd.PhaseID
 	,m.MarkerNo
 	,s.ID
-    ,[Colorway] = saArticle.val
+    ,[Colorway] = iif(isnull(ml.Article,'') != '' ,saArticle.val, scArticle.val)
 	,mls.SizeCode
 	,mls.MarkerName
 	,sb.Refno
@@ -147,6 +147,20 @@ outer apply
 	)
 	tmp for xml path('')),1,1,'')
 )saArticle
+outer apply
+(
+	SELECT val = stuff(
+	(
+	select concat(',',Article)
+	FROM
+	(
+		SELECT distinct Article
+		FROM Style_ColorCombo sc  
+		where sc.StyleUkey  = o.StyleUkey
+		and sc.FabricPanelCode = ml.FabricPanelCode
+	)
+	tmp for xml path('')),1,1,'')
+)scArticle
 where smd.PhaseID in ('BULK','SIZE/S','PP SAMPLE')
 {where}
 
@@ -200,6 +214,7 @@ drop table #tmp
         protected override bool OnToExcel(ReportDefinition report)
         {
             // 顯示筆數於PrintForm上Count欄位
+            
             this.SetCount(this.printData.Rows.Count);
             if (this.printData.Rows.Count <= 0)
             {
