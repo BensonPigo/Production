@@ -195,17 +195,16 @@
             // txtCapacity
             // 
             this.txtCapacity.BackColor = System.Drawing.Color.White;
-            this.txtCapacity.DecimalPlaces = 1;
             this.txtCapacity.DisplayStyle = Ict.Win.UI.NumericBoxDisplayStyle.ThousandSeparator;
             this.txtCapacity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCapacity.Location = new System.Drawing.Point(98, 117);
+            this.txtCapacity.Location = new System.Drawing.Point(98, 119);
             this.txtCapacity.Maximum = new decimal(new int[] {
             -727379969,
             232,
             0,
             0});
             this.txtCapacity.Minimum = new decimal(new int[] {
-            1,
+            0,
             0,
             0,
             0});
