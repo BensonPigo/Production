@@ -4,8 +4,10 @@ using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Transactions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1445,6 +1447,87 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             }
 
             return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
+        }
+
+        /// <summary>
+        /// Get CutRef Value
+        /// </summary>
+        /// <param name="tableName">TableName</param>
+        /// <param name="columnName">ColumnName</param>
+        /// <returns>NextValue</returns>
+        public static string GetCutRefNextValue(string tableName, string columnName)
+        {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@TableName", tableName),
+                new SqlParameter("@ColumnName", columnName),
+            };
+
+            string newValue = string.Empty;
+            if (MyUtility.Check.Empty(tableName) || MyUtility.Check.Empty(columnName))
+            {
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName cannot be empty.");
+                return newValue;
+            }
+
+            // Table and Column檢核
+            string chksql = @"
+select 1 from ColumnValue with(nolock) where TableName = @TableName and [Column] = @ColumnName;
+";
+            if (!MyUtility.Check.Seek(chksql, sqlParameters))
+            {
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName not found.");
+                return newValue;
+            }
+
+            using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.Required))
+            {
+                try
+                {
+                    string tabName = tableName;
+                    string colName = columnName;
+
+                    // TableName = WorkOrderForPlanning or WorkOrderForOutput and ColumnName=CutRef
+                    if ((string.Compare(tabName, "WorkOrderForPlanning", ignoreCase: true) == 0 ||
+                        string.Compare(tabName, "WorkOrderForOutput", ignoreCase: true) == 0) &&
+                        string.Compare(colName, "CutRef", ignoreCase: true) == 0)
+                    {
+                        string sqlcmd = @"
+select [Value] 
+from ColumnValue where TableName = @TableName and [Column] = @ColumnName;
+";
+                        string currentValue = MyUtility.GetValue.Lookup(sqlcmd, sqlParameters);
+                        if (MyUtility.Check.Empty(currentValue))
+                        {
+                            transaction.Dispose();
+                            return newValue;
+                        }
+
+                        newValue = MyUtility.GetValue.GetNextValue(currentValue, 0);
+                        sqlParameters.Add(new SqlParameter("@NewValue", newValue));
+                        sqlcmd = $@"
+Update ColumnValue
+set [Value] = @NewValue
+where TableName = @TableName and [Column] = @ColumnName
+";
+                        DualResult result = DBProxy.Current.Execute(string.Empty, sqlcmd, sqlParameters);
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox(result.ToString());
+                            transaction.Dispose();
+                        }
+                    }
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Dispose();
+                    MyUtility.Msg.WarningBox(ex.ToString());
+                }
+            }
+
+            return newValue;
         }
     }
 }
