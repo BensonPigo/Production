@@ -359,7 +359,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             #endregion
 
             // 先清除此 WorkOrder 的 WorkOrder_Distribute
-            P02.DeleteThirdDatas(this.DistqtyTb, MyUtility.Convert.GetLong(this.Detailrow["Ukey"]), MyUtility.Convert.GetLong(this.Detailrow["NewKey"]));
+            P02_Bak.DeleteThirdDatas(this.DistqtyTb, MyUtility.Convert.GetLong(this.Detailrow["Ukey"]), MyUtility.Convert.GetLong(this.Detailrow["NewKey"]));
 
             foreach (DataRow row in processDT.Select($"Qty > 0"))
             {

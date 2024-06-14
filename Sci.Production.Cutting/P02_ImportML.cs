@@ -370,7 +370,7 @@ namespace Sci.Production.Cutting
                             row["ImportML"] = true;
                             row["MarkerLength"] = Prgs.MarkerLengthSampleTOTrade(row["MarkerLength"].ToString(), row["MatchFabric"].ToString());
                             row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];
-                            P02.ProcessColumns(row);
+                            P02_Bak.ProcessColumns(row);
                             row.AcceptChanges();
                             row.SetAdded();
                             this.WorkOrder.ImportRow(row);

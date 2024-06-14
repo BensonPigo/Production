@@ -184,6 +184,12 @@
     <Compile Include="P04_FabricDeleteHistory.Designer.cs">
       <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
     </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
     <Compile Include="P09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -268,11 +274,11 @@
     <Compile Include="P01_Print_OrderList.Designer.cs">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02.cs">
+    <Compile Include="P02_Bak.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02.Designer.cs">
-      <DependentUpon>P02.cs</DependentUpon>
+    <Compile Include="P02_Bak.Designer.cs">
+      <DependentUpon>P02_Bak.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_AutoDistToSP.cs">
       <SubType>Form</SubType>
@@ -646,6 +652,9 @@
     <EmbeddedResource Include="P04_FabricDeleteHistory.resx">
       <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P09.resx">
       <DependentUpon>P09.cs</DependentUpon>
     </EmbeddedResource>
@@ -700,8 +709,8 @@
     <EmbeddedResource Include="P01_Print_OrderList.resx">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02.resx">
-      <DependentUpon>P02.cs</DependentUpon>
+    <EmbeddedResource Include="P02_Bak.resx">
+      <DependentUpon>P02_Bak.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_AutoDistToSP.resx">
       <DependentUpon>P02_AutoDistToSP.cs</DependentUpon>

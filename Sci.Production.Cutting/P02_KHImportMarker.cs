@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
     /// <summary>
     /// P02
     /// </summary>
-    public partial class P02
+    public partial class P02_Bak
     {
         private int markerSerNo = 1;
         private List<long> listWorkOrderUkey;
