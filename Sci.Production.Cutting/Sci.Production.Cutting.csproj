@@ -141,6 +141,18 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="Cutpartcheck.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cutpartcheck.designer.cs">
+      <DependentUpon>Cutpartcheck.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cutpartchecksummary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cutpartchecksummary.designer.cs">
+      <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
+    </Compile>
     <Compile Include="CuttingWorkOrder_Willy.cs" />
     <Compile Include="CuttingWorkOrder_Shrek.cs" />
     <Compile Include="CuttingWorkOrder_Benson.cs" />
@@ -627,6 +639,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Cutpartcheck.resx">
+      <DependentUpon>Cutpartcheck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Cutpartchecksummary.resx">
+      <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
