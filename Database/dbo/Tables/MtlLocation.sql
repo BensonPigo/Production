@@ -8,7 +8,7 @@
     [EditName]    VARCHAR (10)  CONSTRAINT [DF_MtlLocation_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME      NULL,
     [IsWMS]       BIT           DEFAULT ((0)) NOT NULL,
-	[Capacity]    INT			DEFAULT ((0)),
+	[Capacity]    INT			CONSTRAINT [DF_MtlLocation_Capacity] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_MtlLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [StockType] ASC)
 );
 
