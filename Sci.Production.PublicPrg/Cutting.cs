@@ -1436,7 +1436,7 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             string newValue = string.Empty;
             if (MyUtility.Check.Empty(tableName) || MyUtility.Check.Empty(columnName))
             {
-                MyUtility.Msg.WarningBox("Error: TableName or ColumnName cannot be empty.");
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName cannot be empty, Please contact TPE IT for processing.");
                 return newValue;
             }
 
@@ -1446,7 +1446,7 @@ select 1 from ColumnValue with(nolock) where TableName = @TableName and [Column]
 ";
             if (!MyUtility.Check.Seek(chksql, sqlParameters))
             {
-                MyUtility.Msg.WarningBox("Error: TableName or ColumnName not found.");
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName not found, Please contact TPE IT for processing.");
                 return newValue;
             }
 
