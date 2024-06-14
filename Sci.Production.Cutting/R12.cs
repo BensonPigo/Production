@@ -198,8 +198,6 @@ inner join (
 	group by t.StyleUkey, t.SizeGroup
 )t2 on t.StyleUkey = t2.StyleUkey and t.SizeGroup = t2.SizeGroup and t.destRank = t2.destRank
 
-select * into tmpcsa# from #tmp
-
 drop table #tmp
 ");
 
