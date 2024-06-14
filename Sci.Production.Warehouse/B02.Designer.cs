@@ -195,6 +195,7 @@
             // txtCapacity
             // 
             this.txtCapacity.BackColor = System.Drawing.Color.White;
+            this.txtCapacity.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Capacity", true));
             this.txtCapacity.DisplayStyle = Ict.Win.UI.NumericBoxDisplayStyle.ThousandSeparator;
             this.txtCapacity.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtCapacity.Location = new System.Drawing.Point(98, 119);
