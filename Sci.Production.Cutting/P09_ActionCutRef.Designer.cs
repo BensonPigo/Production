@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtSeq1 = new Sci.Win.UI.TextBox();
@@ -58,12 +59,24 @@
             this.dateBoxEstCutDate = new Sci.Win.UI.DateBox();
             this.label17 = new Sci.Win.UI.Label();
             this.label18 = new Sci.Win.UI.Label();
-            this.gridSpreadingFabric = new Sci.Win.UI.Grid();
+            this.gridPatternPanel = new Sci.Win.UI.Grid();
+            this.cmsPatternPanel = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertPatternPanel = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeletePatternPanel = new System.Windows.Forms.ToolStripMenuItem();
+            this.patternpanelbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label19 = new System.Windows.Forms.Label();
             this.gridSizeRatio = new Sci.Win.UI.Grid();
+            this.cmsSizeRatio = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeleteSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
+            this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.gridDistributeToSP = new Sci.Win.UI.Grid();
+            this.cmsDistribute = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertDistribute = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeleteDistribute = new System.Windows.Forms.ToolStripMenuItem();
+            this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnModify = new Sci.Win.UI.Button();
             this.numCutno = new Sci.Win.UI.NumericBox();
@@ -72,9 +85,15 @@
             this.txtCell = new Sci.Production.Class.TxtCell();
             this.txtSpreadingNo = new Sci.Win.UI.TextBox();
             this.numConsPC = new Sci.Win.UI.NumericBox();
-            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).BeginInit();
+            this.cmsPatternPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
+            this.cmsSizeRatio.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).BeginInit();
+            this.cmsDistribute.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -103,6 +122,7 @@
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(96, 23);
             this.txtSeq1.TabIndex = 21;
+            this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label3
             // 
@@ -121,6 +141,7 @@
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(96, 23);
             this.txtSeq2.TabIndex = 23;
+            this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label4
             // 
@@ -230,7 +251,7 @@
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(123, 23);
             this.label10.TabIndex = 34;
-            this.label10.Text = "Marker No.";
+            this.label10.Text = "Pattern No.";
             // 
             // txtMarkerLength
             // 
@@ -261,7 +282,7 @@
             this.txtActCuttingPerimeter.Name = "txtActCuttingPerimeter";
             this.txtActCuttingPerimeter.Size = new System.Drawing.Size(96, 23);
             this.txtActCuttingPerimeter.TabIndex = 39;
-            this.txtActCuttingPerimeter.Validating += new System.ComponentModel.CancelEventHandler(this.TxtActCuttingPerimeter_Validating);
+            this.txtActCuttingPerimeter.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label12
             // 
@@ -281,7 +302,7 @@
             this.txtStraightLength.Name = "txtStraightLength";
             this.txtStraightLength.Size = new System.Drawing.Size(96, 23);
             this.txtStraightLength.TabIndex = 41;
-            this.txtStraightLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtStraightLength_Validating);
+            this.txtStraightLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label13
             // 
@@ -301,7 +322,7 @@
             this.txtCurvedLength.Name = "txtCurvedLength";
             this.txtCurvedLength.Size = new System.Drawing.Size(96, 23);
             this.txtCurvedLength.TabIndex = 43;
-            this.txtCurvedLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCurvedLength_Validating);
+            this.txtCurvedLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label14
             // 
@@ -355,36 +376,60 @@
             this.label18.TabIndex = 51;
             this.label18.Text = "Shift";
             // 
-            // gridSpreadingFabric
+            // gridPatternPanel
             // 
-            this.gridSpreadingFabric.AllowUserToAddRows = false;
-            this.gridSpreadingFabric.AllowUserToDeleteRows = false;
-            this.gridSpreadingFabric.AllowUserToResizeRows = false;
-            this.gridSpreadingFabric.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridSpreadingFabric.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridSpreadingFabric.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridSpreadingFabric.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridSpreadingFabric.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridSpreadingFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridSpreadingFabric.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSpreadingFabric.Location = new System.Drawing.Point(521, 97);
-            this.gridSpreadingFabric.Name = "gridSpreadingFabric";
-            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridSpreadingFabric.RowTemplate.Height = 24;
-            this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridSpreadingFabric.ShowCellToolTips = false;
-            this.gridSpreadingFabric.Size = new System.Drawing.Size(200, 95);
-            this.gridSpreadingFabric.TabIndex = 56;
+            this.gridPatternPanel.AllowUserToAddRows = false;
+            this.gridPatternPanel.AllowUserToDeleteRows = false;
+            this.gridPatternPanel.AllowUserToResizeRows = false;
+            this.gridPatternPanel.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridPatternPanel.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridPatternPanel.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridPatternPanel.ContextMenuStrip = this.cmsPatternPanel;
+            this.gridPatternPanel.DataSource = this.patternpanelbs;
+            this.gridPatternPanel.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridPatternPanel.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridPatternPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridPatternPanel.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridPatternPanel.Location = new System.Drawing.Point(279, 90);
+            this.gridPatternPanel.Name = "gridPatternPanel";
+            this.gridPatternPanel.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridPatternPanel.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridPatternPanel.RowTemplate.Height = 24;
+            this.gridPatternPanel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridPatternPanel.ShowCellToolTips = false;
+            this.gridPatternPanel.Size = new System.Drawing.Size(261, 102);
+            this.gridPatternPanel.TabIndex = 56;
+            // 
+            // cmsPatternPanel
+            // 
+            this.cmsPatternPanel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertPatternPanel,
+            this.MenuItemDeletePatternPanel});
+            this.cmsPatternPanel.Name = "sizeratioMenuStrip";
+            this.cmsPatternPanel.Size = new System.Drawing.Size(182, 48);
+            // 
+            // MenuItemInsertPatternPanel
+            // 
+            this.MenuItemInsertPatternPanel.Name = "MenuItemInsertPatternPanel";
+            this.MenuItemInsertPatternPanel.Size = new System.Drawing.Size(181, 22);
+            this.MenuItemInsertPatternPanel.Text = "Insert Pattern Panel";
+            this.MenuItemInsertPatternPanel.Click += new System.EventHandler(this.MenuItemInsertPatternPanel_Click);
+            // 
+            // MenuItemDeletePatternPanel
+            // 
+            this.MenuItemDeletePatternPanel.Name = "MenuItemDeletePatternPanel";
+            this.MenuItemDeletePatternPanel.Size = new System.Drawing.Size(181, 22);
+            this.MenuItemDeletePatternPanel.Text = "Delete Record";
+            this.MenuItemDeletePatternPanel.Click += new System.EventHandler(this.MenuItemDeletePatternPanel_Click);
             // 
             // label19
             // 
             this.label19.AutoSize = true;
-            this.label19.Location = new System.Drawing.Point(518, 77);
+            this.label19.Location = new System.Drawing.Point(276, 70);
             this.label19.Name = "label19";
-            this.label19.Size = new System.Drawing.Size(116, 17);
+            this.label19.Size = new System.Drawing.Size(94, 17);
             this.label19.TabIndex = 55;
-            this.label19.Text = "Spreading Fabric";
+            this.label19.Text = "Pattern Panel";
             // 
             // gridSizeRatio
             // 
@@ -394,24 +439,48 @@
             this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSizeRatio.ContextMenuStrip = this.cmsSizeRatio;
+            this.gridSizeRatio.DataSource = this.sizeRatiobs;
             this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSizeRatio.Location = new System.Drawing.Point(279, 97);
+            this.gridSizeRatio.Location = new System.Drawing.Point(546, 90);
             this.gridSizeRatio.Name = "gridSizeRatio";
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(236, 95);
+            this.gridSizeRatio.Size = new System.Drawing.Size(175, 102);
             this.gridSizeRatio.TabIndex = 54;
+            // 
+            // cmsSizeRatio
+            // 
+            this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertSizeRatio,
+            this.MenuItemDeleteSizeRatio});
+            this.cmsSizeRatio.Name = "sizeratioMenuStrip";
+            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
+            // 
+            // MenuItemInsertSizeRatio
+            // 
+            this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
+            this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
+            // 
+            // MenuItemDeleteSizeRatio
+            // 
+            this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemDeleteSizeRatio.Text = "Delete Record";
+            this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(277, 77);
+            this.label20.Location = new System.Drawing.Point(543, 70);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(72, 17);
             this.label20.TabIndex = 53;
@@ -437,6 +506,8 @@
             this.gridDistributeToSP.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridDistributeToSP.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridDistributeToSP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDistributeToSP.ContextMenuStrip = this.cmsDistribute;
+            this.gridDistributeToSP.DataSource = this.distributebs;
             this.gridDistributeToSP.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridDistributeToSP.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDistributeToSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -451,8 +522,31 @@
             this.gridDistributeToSP.Size = new System.Drawing.Size(442, 230);
             this.gridDistributeToSP.TabIndex = 58;
             // 
+            // cmsDistribute
+            // 
+            this.cmsDistribute.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertDistribute,
+            this.MenuItemDeleteDistribute});
+            this.cmsDistribute.Name = "contextMenuStrip1";
+            this.cmsDistribute.Size = new System.Drawing.Size(181, 70);
+            // 
+            // MenuItemInsertDistribute
+            // 
+            this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemInsertDistribute.Text = "Insert Distribute";
+            this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
+            // 
+            // MenuItemDeleteDistribute
+            // 
+            this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemDeleteDistribute.Text = "Delete Record";
+            this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
+            // 
             // btnCancel
             // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnCancel.Location = new System.Drawing.Point(639, 451);
             this.btnCancel.Name = "btnCancel";
@@ -464,6 +558,7 @@
             // 
             // btnModify
             // 
+            this.btnModify.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnModify.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnModify.Location = new System.Drawing.Point(546, 451);
             this.btnModify.Name = "btnModify";
@@ -582,7 +677,7 @@
             this.Controls.Add(this.btnModify);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.gridDistributeToSP);
-            this.Controls.Add(this.gridSpreadingFabric);
+            this.Controls.Add(this.gridPatternPanel);
             this.Controls.Add(this.label19);
             this.Controls.Add(this.gridSizeRatio);
             this.Controls.Add(this.label20);
@@ -653,7 +748,7 @@
             this.Controls.SetChildIndex(this.label20, 0);
             this.Controls.SetChildIndex(this.gridSizeRatio, 0);
             this.Controls.SetChildIndex(this.label19, 0);
-            this.Controls.SetChildIndex(this.gridSpreadingFabric, 0);
+            this.Controls.SetChildIndex(this.gridPatternPanel, 0);
             this.Controls.SetChildIndex(this.gridDistributeToSP, 0);
             this.Controls.SetChildIndex(this.label21, 0);
             this.Controls.SetChildIndex(this.btnModify, 0);
@@ -664,9 +759,15 @@
             this.Controls.SetChildIndex(this.txtCell, 0);
             this.Controls.SetChildIndex(this.txtSpreadingNo, 0);
             this.Controls.SetChildIndex(this.numConsPC, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).EndInit();
+            this.cmsPatternPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
+            this.cmsSizeRatio.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).EndInit();
+            this.cmsDistribute.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -704,7 +805,7 @@
         private Win.UI.DateBox dateBoxEstCutDate;
         private Win.UI.Label label17;
         private Win.UI.Label label18;
-        private Win.UI.Grid gridSpreadingFabric;
+        private Win.UI.Grid gridPatternPanel;
         private System.Windows.Forms.Label label19;
         private Win.UI.Grid gridSizeRatio;
         private System.Windows.Forms.Label label20;
@@ -718,5 +819,17 @@
         private Class.TxtCell txtCell;
         private Win.UI.TextBox txtSpreadingNo;
         private Win.UI.NumericBox numConsPC;
+        private Win.UI.ListControlBindingSource patternpanelbs;
+        private Win.UI.ListControlBindingSource sizeRatiobs;
+        private Win.UI.ListControlBindingSource distributebs;
+        private Win.UI.ContextMenuStrip cmsSizeRatio;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemInsertSizeRatio;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteSizeRatio;
+        private Win.UI.ContextMenuStrip cmsPatternPanel;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemInsertPatternPanel;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemDeletePatternPanel;
+        private Win.UI.ContextMenuStrip cmsDistribute;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemInsertDistribute;
+        private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteDistribute;
     }
 }
