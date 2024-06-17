@@ -230,6 +230,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPO.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPOStatus.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ProductionKitsTracking.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MaterialCompletionRateByWeek.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SimilarStyle.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_BatchUpdateRecevingInfoTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />
