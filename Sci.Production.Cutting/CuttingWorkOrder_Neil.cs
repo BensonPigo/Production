@@ -23,29 +23,6 @@ namespace Sci.Production.Cutting
     /// </summary>
     public partial class CuttingWorkOrder
     {
-        /// <summary>
-        /// 取得下一筆CutRef流水號
-        /// </summary>
-        /// <param name="tableName">tableName</param>
-        /// <returns>string</returns>
-        public static string GetNextCutRef(string tableName)
-        {
-            var postBody = new
-            {
-                TableName = tableName,
-                ColumnName = "CutRef",
-            };
-
-            string maxCutRef = string.Empty;
-            WebApiBaseResult webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(PackingA2BWebAPI.GetCurrentWebAPIUrl(), "api/ColumnValue/GetNextValue", postBody, 75);
-            if (webApiBaseResult.isSuccess)
-            {
-                maxCutRef = webApiBaseResult.responseContent.Replace("\"", string.Empty);
-            }
-
-            return maxCutRef;
-        }
-
         /// <inheritdoc/>
         public static void AutoCut(IList<DataRow> detailDatas, string tableMiddleName)
         {
@@ -159,7 +136,7 @@ Begin Transaction [Trans_Name] -- Trans_Name
                 else
                 {
                     string maxref = string.Empty;
-                    maxref = GetNextCutRef($"Workorder{tableMiddleName}");
+                    maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"Workorder{tableMiddleName}", "CutRef");
                     DataRow newdr = cutreftb.NewRow();
                     newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
                     newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
