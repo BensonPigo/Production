@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.Cutting
 {
@@ -12,6 +13,10 @@ namespace Sci.Production.Cutting
     public partial class Cutpartchecksummary : Win.Subs.Base
     {
         private string cutid;
+        private string _sourceTable;
+        private DataTable dt_curDetailData;
+        private DataTable dt_curDistribute;
+        private DataTable dt_curSizeRatio;
 
         private DataTable fabcodetb; // PatternPanel Table
 
@@ -19,11 +24,19 @@ namespace Sci.Production.Cutting
         /// Initializes a new instance of the <see cref="Cutpartchecksummary"/> class.
         /// </summary>
         /// <param name="cID">Cut ID</param>
-        public Cutpartchecksummary(string cID)
+        /// <param name="sourceTable">source Table</param>
+        /// <param name="curDetailData">currrent DetailData</param>
+        /// <param name="curDistribute">P09 當前Distribute資料</param>
+        /// <param name="curSizeRatio">P02 size Ratio Grid的當前資料</param>
+        public Cutpartchecksummary(string cID, string sourceTable, DataTable curDetailData, DataTable curDistribute = null, DataTable curSizeRatio = null)
         {
             this.InitializeComponent();
             this.Text = string.Format("Cut Parts Check Summary<SP:{0}>)", cID);
             this.cutid = cID;
+            this._sourceTable = sourceTable;
+            this.dt_curDetailData = curDetailData;
+            this.dt_curDistribute = curDistribute;
+            this.dt_curSizeRatio = curSizeRatio;
             this.ReQuery();
             this.GridSetup();
             this.gridCutpartchecksummary.AutoResizeColumns();
@@ -49,7 +62,7 @@ namespace Sci.Production.Cutting
 
             #region 建立Grid
             string settbsql = @"
-Select  a.id
+Select  [ID] = b.POID
         ,a.article
         ,a.sizecode
         ,a.qty,'' as complete
@@ -68,7 +81,7 @@ Select  a.id
                     inner join orders b WITH (NOLOCK)  on a.id = b.id 
                     inner join Order_SizeCode c WITH (NOLOCK) on c.id = b.poid and c.SizeCode = a.SizeCode
                     Where b.cuttingsp ='{0}' 
-                    order by a.id, a.article, c.Seq",
+                    order by b.POID, a.article, c.Seq",
                 this.cutid);
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out DataTable gridtb);
             if (!gridResult)
@@ -79,12 +92,87 @@ Select  a.id
             #endregion
 
             #region 寫入部位數量
-            string getqtysql = string.Format(
-                @"
-            Select b.article,b.sizecode,b.qty,c.PatternPanel,b.orderid 
-            from Workorder a WITH (NOLOCK) , workorder_Distribute b WITH (NOLOCK) , Order_fabriccode c WITH (NOLOCK) 
-            Where a.id = '{0}' and a.ukey = b.workorderukey and a.Id  = c.id and a.FabricPanelCode = c.FabricPanelCode 
-            and b.article !=''", this.cutid);
+
+            // 合併當前P02,P09畫面資料
+            DataTable resutTable = new DataTable();
+
+            // 資料來源是WorkOrderForOutput Cutting_P09
+            if (string.Compare(this._sourceTable, "WorkOrderForOutput", true) == 0)
+            {
+                if ((this.dt_curDetailData == null || this.dt_curDetailData.Rows.Count == 0) ||
+                    (this.dt_curDistribute == null || this.dt_curDistribute.Rows.Count == 0))
+                {
+                    return;
+                }
+
+                var query = from t1 in this.dt_curDetailData.AsEnumerable()
+                            join t2 in this.dt_curDistribute.AsEnumerable()
+                            on t1.Field<int>("Ukey") equals t2.Field<int>("WorkOrderForOutputUkey")
+                            select new
+                            {
+                               ID = t1.Field<string>("ID"),
+                               FabricPanelCode = t1.Field<string>("FabricPanelCode"),
+                               OrderID = t2.Field<string>("orderid"),
+                               Article = t2.Field<string>("Article"),
+                               SizeCode = t2.Field<string>("sizecode"),
+                               Qty = t2.Field<int>("Qty"),
+                            };
+
+                resutTable.Columns.Add("ID", typeof(string));
+                resutTable.Columns.Add("FabricPanelCode", typeof(string));
+                resutTable.Columns.Add("OrderID", typeof(string));
+                resutTable.Columns.Add("Article", typeof(string));
+                resutTable.Columns.Add("SizeCode", typeof(string));
+                resutTable.Columns.Add("Qty", typeof(int));
+
+                foreach (var item in query)
+                {
+                    resutTable.Rows.Add(item.ID, item.FabricPanelCode, item.OrderID, item.Article, item.SizeCode, item.Qty);
+                }
+            }
+            else
+            {
+                // 資料來源是WorkOrderForPlanning Cutting_P02
+                if ((this.dt_curDetailData == null || this.dt_curDetailData.Rows.Count == 0) ||
+                   (this.dt_curSizeRatio == null || this.dt_curSizeRatio.Rows.Count == 0))
+                {
+                    return;
+                }
+
+                var query = from t1 in this.dt_curDetailData.AsEnumerable()
+                            join t2 in this.dt_curSizeRatio.AsEnumerable()
+                            on t1.Field<int>("Ukey") equals t2.Field<int>("WorkOrderForPlanningUkey")
+                            select new
+                            {
+                                ID = t1.Field<string>("ID"),
+                                FabricPanelCode = t1.Field<string>("FabricPanelCode"),
+                                OrderID = t1.Field<string>("orderid"),
+                                Article = t1.Field<string>("Article"),
+                                SizeCode = t2.Field<string>("sizecode"),
+                                Qty = t2.Field<int>("TtlQty"), // 取自 P02 Grid SizeRatio Tlt.Qty
+                            };
+
+                resutTable.Columns.Add("ID", typeof(string));
+                resutTable.Columns.Add("FabricPanelCode", typeof(string));
+                resutTable.Columns.Add("OrderID", typeof(string));
+                resutTable.Columns.Add("Article", typeof(string));
+                resutTable.Columns.Add("SizeCode", typeof(string));
+                resutTable.Columns.Add("Qty", typeof(int));
+
+                foreach (var item in query)
+                {
+                    resutTable.Rows.Add(item.ID, item.FabricPanelCode, item.OrderID, item.Article, item.SizeCode, item.Qty);
+                }
+            }
+
+            string getqtysql =
+                $@"
+Select a.article,a.sizecode,a.qty,c.PatternPanel,a.ID 
+from #tmp a WITH (NOLOCK) 
+inner join Order_fabriccode c WITH (NOLOCK) on a.id=c.id and a.FabricPanelCode = c.FabricPanelCode 
+Where a.id = '{this.cutid}' 
+and a.article !=''
+";
             gridResult = DBProxy.Current.Select(null, getqtysql, out DataTable getqtytb);
             if (!gridResult)
             {
@@ -94,7 +182,7 @@ Select  a.id
 
             foreach (DataRow dr in getqtytb.Rows)
             {
-                DataRow[] gridselect = gridtb.Select(string.Format("id = '{0}' and article = '{1}' and sizecode = '{2}'", dr["orderid"], dr["article"], dr["sizecode"], dr["PatternPanel"], dr["Qty"]));
+                DataRow[] gridselect = gridtb.Select($"id = '{dr["ID"]}' and article = '{dr["article"]}' and sizecode = '{dr["sizecode"]}'");
                 if (gridselect.Length != 0)
                 {
                     gridselect[0][dr["PatternPanel"].ToString()] = MyUtility.Convert.GetDecimal(gridselect[0][dr["PatternPanel"].ToString()]) + MyUtility.Convert.GetDecimal(dr["Qty"]);
