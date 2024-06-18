@@ -296,6 +296,7 @@ outer apply(
     and tmpInsp.Line = '{sewingLineID}'
     and tmpInsp.Team = '{team}'
     and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Article = sd.Article
     and tmpInsp.Status in ('Pass','Fixed')
 	and tmpInsp.OrderId = sd.OrderId
     ) InspInfo
@@ -370,6 +371,20 @@ order by a.OrderId,os.Seq",
                 if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
+                    string sqlcmd = $@"    
+                    select DQSOutputCount=count(1) 
+                    from ManufacturingExecution.dbo.Inspection tmpInsp
+                    where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
+                    and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+                    and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
+                    and tmpInsp.Team = '{this.CurrentMaintain["Team"]}'
+                    and tmpInsp.Shift = '{shift}'
+                    and tmpInsp.Article = '{dr["Article"].ToString()}'
+                    and tmpInsp.Status in ('Pass','Fixed')
+	                and tmpInsp.OrderId = '{dr["OrderID"].ToString()}'";
+                    dr["DQSOutput"] = MyUtility.GetValue.Lookup(sqlcmd);
                 }
             };
             #region SP#的Right click & Validating
@@ -1420,17 +1435,20 @@ order by a.OrderId,os.Seq",
                 {
                     DataTable subDt;
                     this.GetSubDetailDatas(dr, out subDt);
-                    subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
-                    subDt.Columns.Add("AutoCreate");
-                    if (dtSubDetail == null)
+                    if(subDt.Rows.Count > 0)
                     {
-                        dtSubDetail = subDt.Clone();
-                    }
+                        subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
+                        subDt.Columns.Add("AutoCreate");
+                        if (dtSubDetail == null)
+                        {
+                            dtSubDetail = subDt.Clone();
+                        }
 
-                    foreach (DataRow subDr in subDt.Rows)
-                    {
-                        subDr["AutoCreate"] = dr["AutoCreate"];
-                        dtSubDetail.ImportRow(subDr);
+                        foreach (DataRow subDr in subDt.Rows)
+                        {
+                            subDr["AutoCreate"] = dr["AutoCreate"];
+                            dtSubDetail.ImportRow(subDr);
+                        }
                     }
                 }
             }
@@ -3542,6 +3560,7 @@ outer apply(
     and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
     and tmpInsp.Team = '{this.CurrentMaintain["Team"]}'
     and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Article = t.Article 
     and tmpInsp.Status in ('Pass','Fixed')
 	and tmpInsp.OrderId = t.OrderId
     ) InspInfo
@@ -3882,6 +3901,7 @@ outer apply(
     and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
     and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
     and tmpInsp.Team = '{this.CurrentMaintain["Team"]}'
+    and tmpInsp.Article = t.Article
     and tmpInsp.Shift = '{shift}'
     and tmpInsp.Status in ('Pass','Fixed')
 	and tmpInsp.OrderId = t.OrderId
