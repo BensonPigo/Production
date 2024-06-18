@@ -38,7 +38,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable detailTable = resultReport.DtArr[0];
+                DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, (DateTime)sDate);
@@ -77,7 +77,9 @@ inner join #tmp t on p.OutputDate = t.OutputDate
                  and p.FactoryID = t.FactoryID 
                  and p.StyleID = t.StyleID
                  and p.BrandID = t.BrandID
-                 and (p.Remark != t.Remark or p.RemarkSimilarStyle != t.RemarkSimilarStyle or p.Type != t.type)
+                 and (isnull(p.Remark,'') != isnull(t.Remark,'') 
+                   or isnull(p.RemarkSimilarStyle,'') != isnull(t.RemarkSimilarStyle,'') 
+                   or p.Type != t.type)
 
 
 Insert into P_SimilarStyle ( OutputDate,
@@ -113,6 +115,8 @@ Where Not exists ( select 1
 				   and P_SimilarStyle.BrandID = t.BrandID 
                 )
 And P_SimilarStyle.OutputDate >= @Date
+
+Select * into tmpc# from #tmp
 
 ";
 
@@ -158,7 +162,8 @@ FROM SewingOutput s
 INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
 INNER JOIN Orders o ON sd.OrderId = o.ID
 INNER JOIN #tmp_SewingDate sdate ON sdate.BrandID = o.BrandID and sdate.FactoryID = s.FactoryID and sdate.StyleID = o.StyleID 
-WHERE  s.OutputDate < sdate.OutputDate
+WHERE s.OutputDate > DATEADD(month, -3, sdate.OutputDate) 
+AND s.OutputDate < sdate.OutputDate
 GROUP BY sdate.OutputDate, o.StyleID, s.FactoryID, o.BrandID
 
 SELECT Distinct
@@ -235,7 +240,6 @@ INNER JOIN Orders o ON sd.OrderId = o.ID
 INNER JOIN #tmp_childMaxDates cs ON o.StyleID = cs.MasterStyleID AND s.FactoryID = cs.FactoryID AND s.OutputDate = cs.MaxOutputDate And cs.MasterBrandID = o.BrandID
 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID, cs.OutputDate
 
-
 SELECT DISTINCT 
         s.Outputdate,
         s.FactoryID,
@@ -243,8 +247,7 @@ SELECT DISTINCT
         s.BrandID,
         Remark = MinSewingID.SewingLineID + '(' +  CONVERT(varchar, MaxDates.MaxOutputDate, 111)  + ')',
         RemarkSimilarStyle = RemarkSimilarStyle.Rr,
-        [Type] = Case When MaxDates.MaxOutputDate between DateADD(MONTH, -3 ,s.OutputDate) and  s.OutputDate then 'Repeat'
-        When isnull(RemarkSimilarStyle.Rr,'') != '' then  'Repeat'
+        [Type] = Case When isnull(RemarkSimilarStyle.Rr,'') != '' or isnull(MaxDates.MaxOutputDate,'') != '' then  'Repeat'
         Else 'New'
         End
 FROM #tmp_SewingDate s
@@ -291,7 +294,7 @@ ORDER BY s.outputdate DESC
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paras, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paras, out DataTable dataTables),
             };
 
             if (!resultReport.Result)
@@ -299,7 +302,7 @@ ORDER BY s.outputdate DESC
                 return resultReport;
             }
 
-            resultReport.DtArr = dataTables;
+            resultReport.Dt = dataTables;
             return resultReport;
         }
     }
