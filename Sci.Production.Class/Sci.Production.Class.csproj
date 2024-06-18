@@ -68,7 +68,6 @@
     </Compile>
     <Compile Include="CartonRefnoCommon.cs" />
     <Compile Include="CellDropDownList.cs" />
-    <Compile Include="CellTextFabricPanelCode.cs" />
     <Compile Include="CellTextDropDownList.cs" />
     <Compile Include="CellTextPackingReason.cs" />
     <Compile Include="ComboCentralizedFactory.cs">

@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Microsoft.SqlServer.Management.Smo;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
@@ -362,11 +361,11 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
         }
         #endregion
 
-        #region Seq1,Seq2 開窗/驗證
+        #region Seq1,Seq2,Refno,Color 開窗/驗證
 
-        public static SelectItem PopupSEQ(string id, string seq1, string colorID)
+        public static SelectItem PopupSEQ(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, bool isColor)
         {
-            DataTable dt = GetSEQ(id);
+            DataTable dt = GetFilterSEQ(id, fabricCode, seq1, seq2, refno, colorID);
             SelectItem selectItem = new SelectItem(dt, "Seq1,Seq2,Refno,ColorID", "3,2,20,3@500,300", seq1, false, ",", headercaptions: "Seq1,Seq2,Refno,Color");
             DialogResult result = selectItem.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -375,7 +374,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             }
 
             string newColor = MyUtility.Convert.GetString(selectItem.GetSelecteds()[0]["ColorID"]);
-            if (!CheckColorSame(colorID, newColor))
+            if (!isColor && !CheckColorSame(colorID, newColor))
             {
                 return null;
             }
@@ -383,15 +382,14 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             return selectItem;
         }
 
-        /// <summary>
-        /// 驗證Seq1,Seq2
-        /// </summary>
-        /// <param name="newvalue">傳入Seq1或Seq2的值</param>
-        /// <param name="seqCloumn">傳入"Seq1"或"Seq2"</param>
-        /// <inheritdoc/>
-        public static bool ValidatingSEQ(string newvalue, string seqCloumn, DataRow detaildr, out DataRow outdr)
+        public static bool ValidatingSEQ(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, out DataTable dt)
         {
-            outdr = null;
+            dt = GetFilterSEQ(id, fabricCode, seq1, seq2, refno, colorID);
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found!");
+                return false;
+            }
 
             return true;
         }
@@ -410,7 +408,34 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             return true;
         }
 
-        public static DataTable GetSEQ(string id)
+        public static DataTable GetFilterSEQ(string id, string fabricCode, string seq1, string seq2, string refno, string colorID)
+        {
+            string filter = "1=1";
+            if (!seq1.IsNullOrWhiteSpace())
+            {
+                filter += $" AND Seq1 = '{seq1}'";
+            }
+
+            if (!seq2.IsNullOrWhiteSpace())
+            {
+                filter += $" AND Seq2 = '{seq2}'";
+            }
+
+            if (!refno.IsNullOrWhiteSpace())
+            {
+                filter += $" AND Refno = '{refno}'";
+            }
+
+            if (!colorID.IsNullOrWhiteSpace())
+            {
+                filter += $" AND ColorID = '{colorID}'";
+            }
+
+            DataTable dt = GetSEQ(id, fabricCode);
+            return dt.Select(filter).TryCopyToDataTable(dt);
+        }
+
+        public static DataTable GetSEQ(string id, string fabricCode)
         {
             string sqlcmd = $@"
 SELECT
@@ -420,30 +445,20 @@ SELECT
    ,ColorID = ISNULL(psdc.SpecValue, '')
    ,psd.SCIRefno
 FROM PO_Supp_Detail psd WITH (NOLOCK)
-LEFT JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
+INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
 WHERE psd.ID = '{id}'
 AND psd.Junk = 0
-AND EXISTS (SELECT 1 FROM Order_BOF WITH (NOLOCK) WHERE ID = psd.ID AND SCIRefno = psd.SCIRefno)
+AND EXISTS (
+    SELECT 1
+    FROM Order_BOF WITH (NOLOCK)
+    INNER JOIN Fabric WITH (NOLOCK) ON Fabric.SCIRefno = Order_BOF.SCIRefno
+    WHERE Order_BOF.FabricCode = '{fabricCode}'
+    AND Order_BOF.Id = psd.ID
+    AND Fabric.BrandRefNo = f.BrandRefNo
+)
 ";
 
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
-
-            return dt;
-        }
-
-        public static DataTable GetPatternPanel(string id, string fabricPanelCode)
-        {
-            string sqlcmd = $@"
-SELECT PatternPanel
-FROM Order_FabricCode WITH (NOLOCK)
-WHERE ID = '{id}'
-AND FabricPanelCode = '{fabricPanelCode}'
-";
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
             if (!result)
             {
@@ -838,20 +853,21 @@ ORDER BY SizeCode
         }
         #endregion
 
-        #region SizeRatio Qty 驗證
+        #region SizeRatio / Distribute Qty 驗證
 
         /// <summary>
         /// return true → 要更新主表資訊
         /// </summary>
         /// <inheritdoc/>
-        public static bool SizeRatioQtyCellValidating(
+        public static bool QtyCellValidating(
             Ict.Win.UI.DataGridViewCellValidatingEventArgs e,
-            Sci.Win.UI.Grid gridSizeRatio,
             DataRow currentDetailData,
+            Sci.Win.UI.Grid grid,
+            DataTable dtSizeRatio,
             DataTable dtDistribute,
             CuttingForm form)
         {
-            DataRow dr = gridSizeRatio.GetDataRow(e.RowIndex);
+            DataRow dr = grid.GetDataRow(e.RowIndex);
             int oldvalue = MyUtility.Convert.GetInt(dr["Qty"]);
             int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
             if (oldvalue == newvalue)
@@ -862,88 +878,97 @@ ORDER BY SizeCode
             dr["Qty"] = newvalue;
             dr.EndEdit();
 
-            UpdateExcess(currentDetailData, (DataTable)gridSizeRatio.DataSource, dtDistribute, form);
+            UpdateExcess(currentDetailData, dtSizeRatio, dtDistribute, form);
 
             return true;
         }
         #endregion
 
-        #region Distribute OrderID 開窗/驗證
+        #region Distribute OrderID, Article, SizeCode 開窗/驗證
 
-        public static DataTable GetDistributeOrderID(string id)
-        {
-            string sqlcmd = $@"
-SELECT DISTINCT
-    oq.ID
-FROM Order_Qty oq WITH (NOLOCK)
-INNER JOIN Orders o WITH (NOLOCK) ON o.id = oq.id
-WHERE o.CuttingSP = '{id}'
-ORDER BY ID
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
-
-            return dt;
-        }
-
-        public static void Distribute3CellEditingMouseDown(Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e, string id, DataTable gridSizeRatio, Sci.Win.UI.Grid gridDistributeToSP)
+        public static bool Distribute3CellEditingMouseDown(
+            Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e,
+            DataRow currentDetailData,
+            DataTable dtSizeRatio,
+            Sci.Win.UI.Grid gridDistributeToSP)
         {
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
-            if (e.Button != MouseButtons.Right ||
-                gridDistributeToSP.IsEditingReadOnly ||
-                dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase))
+            if (e.Button != MouseButtons.Right || gridDistributeToSP.IsEditingReadOnly || dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase))
             {
-                return;
+                return false;
             }
 
-            if (gridSizeRatio.DefaultView.ToTable().Rows.Count == 0)
+            // 正常操作流程不會觸發, 防呆用
+            if (dtSizeRatio.DefaultView.ToTable().Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Please insert size ratio data first!");
-                return;
+                return false;
             }
 
-            DataTable dt = FilterOrder_Qty_By_SizeRatio(id, MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), gridSizeRatio);
-
+            // 開窗篩選條件不包含觸發欄位
             string columnName = gridDistributeToSP.Columns[e.ColumnIndex].Name;
+            string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+            string article = MyUtility.Convert.GetString(dr["Article"]);
+            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            switch (columnName.ToLower())
+            {
+                case "orderid":
+                    orderID = string.Empty;
+                    break;
+                case "article":
+                    article = string.Empty;
+                    break;
+                case "sizecode":
+                    sizeCode = string.Empty;
+                    break;
+            }
+
+            DataTable dt = FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, dtSizeRatio);
             SelectItem selectItem = new SelectItem(dt, "ID,Article,SizeCode", "20,15,10", MyUtility.Convert.GetString(dr[columnName]), false, ",", "SP#,Article,Size");
             DialogResult result = selectItem.ShowDialog();
             if (result == DialogResult.Cancel)
             {
-                return;
+                return false;
             }
 
             dr["OrderID"] = selectItem.GetSelecteds()[0]["OrderID"];
             dr["Article"] = selectItem.GetSelecteds()[0]["Article"];
             dr["SizeCode"] = selectItem.GetSelecteds()[0]["SizeCode"];
             dr.EndEdit();
-            return;
+
+            // 立即帶入 Sewinline
+            dr["Sewinline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+            return true;
         }
 
         /// <summary>
         /// return true → 要更新主表資訊
         /// </summary>
         /// <inheritdoc/>
-        public static bool Distribute3CellValidating(Ict.Win.UI.DataGridViewCellValidatingEventArgs e, string id, DataTable gridSizeRatio, Sci.Win.UI.Grid gridDistributeToSP)
+        public static bool Distribute3CellValidating(
+            Ict.Win.UI.DataGridViewCellValidatingEventArgs e,
+            DataRow currentDetailData,
+            DataTable dtSizeRatio,
+            Sci.Win.UI.Grid gridDistributeToSP,
+            CuttingForm form)
         {
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
             string columnName = gridDistributeToSP.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
             string oldvalue = dr[columnName].ToString();
 
-            if (gridDistributeToSP.IsEditingReadOnly ||
-                dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase) ||
-                oldvalue == newvalue)
+            if (gridDistributeToSP.IsEditingReadOnly || dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase) || oldvalue == newvalue)
             {
                 return false;
             }
 
-            if (gridSizeRatio.DefaultView.ToTable().Rows.Count == 0)
+            // 正常操作流程不會觸發, 防呆用
+            if (dtSizeRatio.DefaultView.ToTable().Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Please insert size ratio data first!");
+                dr[columnName] = string.Empty;
+                dr.EndEdit();
+                e.Cancel = true;
                 return false;
             }
 
@@ -954,31 +979,43 @@ ORDER BY ID
                 return true;
             }
 
-            DataTable dt = FilterOrder_Qty_By_SizeRatio(id, MyUtility.Convert.GetString(dr["OrderID"]), MyUtility.Convert.GetString(dr["Article"]), MyUtility.Convert.GetString(dr["SizeCode"]), gridSizeRatio);
-            if (dt.Rows.Count == 0)
+            string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
+            string article = MyUtility.Convert.GetString(dr["Article"]);
+            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            string msg = string.Empty;
+            switch (columnName.ToLower())
+            {
+                case "orderid":
+                    orderID = newvalue;
+                    msg = $"<SP#>:{newvalue},<Article>:{dr["Article"]},<Size>:{dr["SizeCode"]}";
+                    break;
+                case "article":
+                    article = newvalue;
+                    msg = $"<SP#>:{dr["OrderID"]},<Article>:{newvalue},<Size>:{dr["SizeCode"]}";
+                    break;
+                case "sizecode":
+                    sizeCode = newvalue;
+                    msg = $"<SP#>:{dr["OrderID"]},<Article>:{dr["Article"]},<Size>:{newvalue}";
+                    break;
+            }
+
+            if (FilterOrder_Qty_By_SizeRatio(currentDetailData["ID"].ToString(), orderID, article, sizeCode, dtSizeRatio).Rows.Count == 0)
             {
                 dr[columnName] = string.Empty;
                 dr.EndEdit();
-                MyUtility.Msg.WarningBox($"<{columnName}> : {newvalue} data not found!");
+                MyUtility.Msg.WarningBox(msg + " not exists qty break down");
                 e.Cancel = true;
                 return false;
             }
 
-            // 檢查 Article, SizeCode
-            if (!MyUtility.Check.Empty(dr["SizeCode"]) && !MyUtility.Check.Empty(dr["Article"]))
-            {
-                if (GetOrder_Qty_byCuttingSP(id).Select($"ID = '{newvalue}' AND Article ='{dr["Article"]}' AND SizeCode = '{dr["SizeCode"]}'").Length == 0)
-                {
-                    dr["OrderID"] = string.Empty;
-                    dr.EndEdit();
-                    MyUtility.Msg.WarningBox($"<SP#>:{dr["OrderID"]},<Article>:{dr["Article"]},<Size>:{dr["SizeCode"]} not exists qty break down");
-                    e.Cancel = true;
-                    return false;
-                }
-            }
-
-            dr["OrderID"] = newvalue;
+            dr[columnName] = newvalue;
             dr.EndEdit();
+
+            // 驗證需要重算Excess
+            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)gridDistributeToSP.DataSource, form);
+
+            // 立即帶入 Sewinline
+            dr["SewInline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
             return true;
         }
 
@@ -1013,9 +1050,6 @@ ORDER BY ID
             return dt.Select(filter).TryCopyToDataTable(dt);
         }
 
-        #endregion
-
-        #region Other Function
         public static DataTable GetOrder_Qty_byCuttingSP(string id)
         {
             string sqlcmd = $@"
@@ -1035,6 +1069,102 @@ ORDER BY oq.ID,oq.Article,oq.SizeCode
 
             return dt;
         }
+
+        public static object GetMinSewinline(string orderID, string article, string sizeCode)
+        {
+            string sqlcmd = $@"
+SELECT
+    Sewinline = MIN(SewingSchedule.Inline)
+FROM SewingSchedule WITH (NOLOCK)
+INNER JOIN SewingSchedule_Detail WITH (NOLOCK) ON SewingSchedule_detail.ID = SewingSchedule.ID
+WHERE SewingSchedule_Detail.OrderID = '{orderID}'
+AND SewingSchedule_Detail.Article = '{article}'
+AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt.Rows[0][0];
+        }
+        #endregion
+
+        #region PatternPanel
+        public static void BindPatternPanelEvents(Ict.Win.UI.DataGridViewTextBoxColumn column, string id)
+        {
+            column.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    DataTable dt = GetPatternPanel(id);
+                    DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                    SelectItem sele = new SelectItem(dt, "PatternPanel,FabricPanelCode", "10,10", row["PatternPanel"].ToString(), false, ",", "Pattern Panel,Fabric Panel Code");
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    row["PatternPanel"] = sele.GetSelecteds()[0]["PatternPanel"];
+                    row["FabricPanelCode"] = sele.GetSelecteds()[0]["FabricPanelCode"];
+                }
+            };
+
+            column.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                string columnName = grid.Columns[e.ColumnIndex].Name;
+                DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
+                string oldValue = row[columnName].ToString();
+                string newValue = e.FormattedValue.ToString();
+                if (newValue.IsNullOrWhiteSpace() || oldValue == newValue)
+                {
+                    return;
+                }
+
+                DataTable dt = GetPatternPanel(id);
+                if (dt.Select($"{columnName} = '{newValue}'").Length == 0)
+                {
+                    MyUtility.Msg.WarningBox($"< {columnName} : {newValue} > not found!!!");
+                    row[columnName] = string.Empty;
+                    e.Cancel = true;
+                }
+                else
+                {
+                    row[columnName] = newValue;
+                }
+
+                row.EndEdit();
+            };
+        }
+
+        public static DataTable GetPatternPanel(string id)
+        {
+            string sqlcmd = $@"
+SELECT
+    PatternPanel
+   ,FabricPanelCode
+   ,FabricCode
+FROM Order_FabricCode WITH(NOLOCK)
+WHERE ID = '{id}'
+ORDER BY FabricPanelCode,PatternPanel
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt;
+        }
+        #endregion
+
+        #region Other Function
 
         /// <summary>
         /// 更新 CurrentDetailData 的欄位: SizeCode_CONCAT, TotalCutQty_CONCAT, 因 SizeRatio 的欄位: SizeCode,Qty 調整
@@ -1066,6 +1196,74 @@ ORDER BY oq.ID,oq.Article,oq.SizeCode
         {
             string filter = GetFilter(currentDetailData, form) + " AND (OrderID = 'EXCESS' OR (OrderID <> '' AND Article <> '' AND SizeCode <>''))";
             currentDetailData["TotalDistributeQty"] = dtDistribute.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+        }
+
+        /// <summary>
+        /// 更新 CurrentDetailData 的欄位: Sewinline, 因 Distribute 資訊變動
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdateMinSewinline(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
+        {
+            DateTime? sewinline = dtDistribute.Select(GetFilter(currentDetailData, form)).AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["Sewinline"]));
+            if (sewinline == null)
+            {
+                currentDetailData["Sewinline"] = DBNull.Value;
+            }
+            else
+            {
+                currentDetailData["Sewinline"] = sewinline;
+            }
+        }
+
+        /// <summary>
+        /// 更新 CurrentDetailData 的欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdatebyPatternPanel(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
+        {
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(currentDetailData, dtPatternPanel, form);
+            if (minFabricPanelCode == null)
+            {
+                return;
+            }
+
+            DataTable dt = GetPatternPanel(currentDetailData["ID"].ToString());
+            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
+            if (drs.Length > 0)
+            {
+                // 實體欄位
+                currentDetailData["FabricCombo"] = drs[0]["PatternPanel"];
+                currentDetailData["FabricPanelCode"] = drs[0]["FabricPanelCode"];
+                currentDetailData["FabricCode"] = drs[0]["FabricCode"];
+
+                // 串接字串
+                DataRow[] drsPatternPanel = dtPatternPanel.Select(GetFilter(currentDetailData, form));
+                currentDetailData["PatternPanel_CONCAT"] = drsPatternPanel.AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).Select(row => MyUtility.Convert.GetString(row["PatternPanel"])).JoinToString("+");
+                currentDetailData["FabricPanelCode_CONCAT"] = drsPatternPanel.AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).Select(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).JoinToString("+");
+            }
+        }
+
+        public static DataRow GetMinFabricPanelCode(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
+        {
+           return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
+        }
+
+        public static DataTable GetSCIRefnobyFabricCode(string id, string fabric)
+        {
+            string sqlcmd = $@"
+SELECT SCIRefno
+FROM Order_BOF WITH(NOLOCK)
+WHERE ID = '{id}'
+AND FabricCode = '{fabric}'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt;
         }
 
         /// <summary>
@@ -1141,6 +1339,32 @@ ORDER BY oq.ID,oq.Article,oq.SizeCode
                 default:
                     return string.Empty;
             }
+        }
+
+        /// <summary>
+        /// 計算 ConsPC
+        /// </summary>
+        /// <inheritdoc/>
+        public static decimal CalculateConsPC(string markerLength, DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
+        {
+            if (markerLength == string.Empty || markerLength == "00Y00-0/0+0\"" || markerLength == "Y  - / + \"")
+            {
+                return 0;
+            }
+
+            decimal markerLengthNum = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup($"Select dbo.MarkerLengthToYDS('{markerLength}')"));
+            decimal sizeRatioQty = dtSizeRatio.Select(GetFilter(currentDetailData, form)).AsEnumerable().Sum(row => MyUtility.Convert.GetDecimal(row["Qty"]));
+            return sizeRatioQty == 0 ? 0 : markerLengthNum / sizeRatioQty;
+        }
+
+        /// <summary>
+        /// 計算 Cons, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
+        /// </summary>
+        /// <inheritdoc/>
+        public static decimal CalculateCons(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
+        {
+            decimal sizeRatioQty = dtSizeRatio.Select(GetFilter(currentDetailData, form)).AsEnumerable().Sum(row => MyUtility.Convert.GetDecimal(row["Qty"]));
+            return MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]) * MyUtility.Convert.GetDecimal(currentDetailData["Layer"]) * sizeRatioQty;
         }
 
         #endregion
