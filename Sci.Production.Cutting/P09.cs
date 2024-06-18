@@ -46,7 +46,6 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_SizeRatio; // 弟3層表:新刪修
         private DataTable dtWorkOrderForOutput_Distribute; // 弟3層表:新刪修
         private DataTable dtWorkOrderForOutput_PatternPanel; // 弟3層表:新刪修
-        private DataTable dtWorkOrderForOutput_SpreadingFabric; // 只顯示
 
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
@@ -77,6 +76,30 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+            string querySql = $@"
+SELECT FTYGroup = '' 
+UNION
+SELECT DISTINCT FTYGroup
+FROM Factory WITH (NOLOCK)
+WHERE MDivisionID = '{Sci.Env.User.Keyword}'
+";
+            DBProxy.Current.Select(null, querySql, out DataTable queryDT);
+            MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
+            this.queryfors.SelectedIndex = 0;
+            this.queryfors.SelectedIndexChanged += (s, e) =>
+            {
+                switch (this.queryfors.SelectedIndex)
+                {
+                    case 0:
+                        this.DefaultWhere = string.Empty;
+                        break;
+                    default:
+                        this.DefaultWhere = $"FactoryID = '{this.queryfors.SelectedValue}'";
+                        break;
+                }
+
+                this.ReloadDatas();
+            };
         }
 
         /// <inheritdoc/>
@@ -230,11 +253,55 @@ SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric WIT
             this.dtWorkOrderForOutput_PatternPanel = dts[0];
             this.dtWorkOrderForOutput_SizeRatio = dts[1];
             this.dtWorkOrderForOutput_Distribute = dts[2];
-            this.dtWorkOrderForOutput_SpreadingFabric = dts[3];
 
             this.sizeRatiobs.DataSource = this.dtWorkOrderForOutput_SizeRatio;
             this.distributebs.DataSource = this.dtWorkOrderForOutput_Distribute;
-            this.spreadingfabricbs.DataSource = this.dtWorkOrderForOutput_SpreadingFabric;
+            this.spreadingfabricbs.DataSource = dts[3];
+
+            // 右下角 Qty Break Down
+            sqlcmd = $@"
+SELECT
+    wd.OrderID
+   ,wd.Article
+   ,wd.SizeCode
+   ,wo.FabricCombo
+   ,Qty = SUM(wd.Qty)
+INTO #tmp
+FROM WorkOrderForOutput wo WITH (NOLOCK)
+INNER JOIN WorkOrderForOutput_Distribute wd WITH (NOLOCK) ON wo.ukey = wd.WorkOrderForOutputukey
+WHERE wo.id = '{this.CurrentMaintain["ID"]}'
+GROUP BY wo.FabricCombo
+        ,wd.article
+        ,wd.SizeCode
+        ,wd.OrderID
+
+SELECT
+    oq.ID
+   ,oq.Article
+   ,oq.SizeCode
+   ,oq.Qty
+   ,Balance = ISNULL(balc.minQty - oq.qty, 0)
+FROM Order_Qty oq WITH (NOLOCK)
+INNER JOIN Orders o WITH (NOLOCK) ON oq.id = o.id
+OUTER APPLY (
+    SELECT minQty = MIN(Qty)
+    FROM #tmp t
+    WHERE t.OrderID = oq.ID
+    AND t.article = oq.Article
+    AND t.SizeCode = oq.SizeCode
+) balc
+WHERE o.CuttingSP = '{this.CurrentMaintain["ID"]}'
+ORDER BY ID, Article, SizeCode
+DROP TABLE #tmp
+";
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtQtyBreakDown);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.qtybreakds.DataSource = dtQtyBreakDown;
         }
 
         /// <inheritdoc/>
@@ -293,7 +360,7 @@ SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric WIT
                 .Text("Dyelot", header: "Dyelot", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
-                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
@@ -324,19 +391,7 @@ SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric WIT
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
-
-            if (!MyUtility.Check.Empty(this.CurrentDetailData["Ukey"]))
-            {
-                this.gridDistributeToSP.SelectRowTo(0);
-                for (int i = 0; i < this.gridDistributeToSP.Rows.Count; i++)
-                {
-                    if (this.gridDistributeToSP.Rows[i].Cells["OrderID"].Value.Equals(this.CurrentDetailData["OrderID"]))
-                    {
-                        this.gridDistributeToSP.SelectRowTo(i);
-                        break;
-                    }
-                }
-            }
+            this.gridDistributeToSP.SelectRowToFirst();
 
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
         }
@@ -392,20 +447,25 @@ SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric WIT
             this.ShowDialogActionCutRef(DialogAction.Edit);
         }
 
-        // 按 + 號 Icon
+        // 按 + 或 插入 Icon
         protected override void OnDetailGridInsert(int index = -1)
         {
+            DataRow oldRow = this.CurrentDetailData;
+
+            // 底層插入
             base.OnDetailGridInsert(index);
+
+            // 按+號 = -1, 其它 = 按插入
+            if (index != -1)
+            {
+
+            }
+
             DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
             if (result == DialogResult.Cancel)
             {
                 this.OnDetailGridDelete();
             }
-        }
-
-        protected override void OnDetailGridInsertClick()
-        {
-
         }
 
         private DialogResult ShowDialogActionCutRef(DialogAction action)

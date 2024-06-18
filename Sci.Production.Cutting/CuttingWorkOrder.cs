@@ -1272,6 +1272,11 @@ AND FabricCode = '{fabric}'
         /// <inheritdoc/>
         public static void UpdateDistribute_Size(DataRow currentDetailData, DataTable dtDistribute, string oldvalue, string newvalue, CuttingForm form)
         {
+            if (form == CuttingForm.P02)
+            {
+                return;
+            }
+
             if (newvalue == string.Empty)
             {
                 dtDistribute.Select(GetFilter(currentDetailData, form) + $" AND SizeCode = '{oldvalue}'").Delete();
@@ -1291,6 +1296,11 @@ AND FabricCode = '{fabric}'
         /// <inheritdoc/>
         public static void UpdateExcess(DataRow currentDetailData, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
         {
+            if (form == CuttingForm.P02)
+            {
+                return;
+            }
+
             string filter = GetFilter(currentDetailData, form);
             foreach (DataRow dr in dtSizeRatio.Select(filter))
             {
