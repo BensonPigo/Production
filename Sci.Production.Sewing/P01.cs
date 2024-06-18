@@ -261,7 +261,15 @@ and SunriseNid != 0
             this.DetailSelectCommand = string.Format(
                 $@"
 SET ARITHABORT ON
-select  sd.*
+select   sd.OrderId
+		,sd.ComboType
+		,sd.Article
+		,sd.Color
+		,sd.QAQty
+		,sd.WorkHour
+		,sd.TMS
+		,sd.Remark
+		,sd.AutoCreate
         , [RFT] = concat(convert(decimal(18,2), iif(isnull(rft.InspectQty, 0) = 0, 0.0, round((rft.InspectQty - rft.RejectQty) / rft.InspectQty * 100.0, 2))), '%')
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
