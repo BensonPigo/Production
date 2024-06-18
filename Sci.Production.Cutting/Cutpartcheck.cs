@@ -80,7 +80,7 @@ namespace Sci.Production.Cutting
                                 Article = g.Key.Article,
                                 SizeCode = g.Key.SizeCode,
                                 PatternPanel = g.Key.PatternPanel,
-                                CutQty = g.Sum(x => x.t2.Field<int>("qty")),
+                                CutQty = g.Sum(x => x.t2.Field<decimal>("qty")),
                             };
 
                 resutTable.Columns.Add("OrderID", typeof(string));
@@ -241,7 +241,7 @@ drop table #tmpOrder,#tmpWorkOrder,#tmpC
         private void GridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.gridCutpartcheck)
-                .Text("id", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("POID", header: "SP #", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("SizeCode", header: "SizeCode", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)

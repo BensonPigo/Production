@@ -45,13 +45,12 @@ namespace Sci.Production.Cutting
         private void ReQuery()
         {
             #region 找出有哪些部位
-            string fabcodesql = string.Format(
-                @"
+            string fabcodesql = $@"
             Select distinct a.PatternPanel
             from Order_FabricCode a WITH (NOLOCK) ,Order_EachCons b WITH (NOLOCK) 
-            where a.id = '{0}' and a.FabricCode is not null and a.FabricCode !='' 
-            and b.id = '{0}' and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
-            order by patternpanel", this.cutid);
+            where a.id = '{this.cutid}' and a.FabricCode is not null and a.FabricCode !='' 
+            and b.id = '{this.cutid}' and a.id = b.id and b.cuttingpiece='0' and  b.FabricCombo = a.PatternPanel
+            order by patternpanel";
             DualResult fabresult = DBProxy.Current.Select("Production", fabcodesql, out this.fabcodetb);
             if (!fabresult)
             {
@@ -65,7 +64,8 @@ namespace Sci.Production.Cutting
 Select  [ID] = b.POID
         ,a.article
         ,a.sizecode
-        ,a.qty,'' as complete
+        ,qty = sum(a.qty)
+        ,'' as complete
 "; // 寫SQL建立Table
 
             // 組動態欄位
@@ -74,15 +74,14 @@ Select  [ID] = b.POID
                 settbsql += ", 0 as " + dr["PatternPanel"];
             }
 
-            settbsql += string.Format(
-                @"  
+            settbsql += $@"  
                     ,[IsCancel] = Cast(iif(b.Junk = 1 and b.NeedProduction = 0, 1, 0) as bit)
                     From Order_Qty a WITH (NOLOCK) 
                     inner join orders b WITH (NOLOCK)  on a.id = b.id 
                     inner join Order_SizeCode c WITH (NOLOCK) on c.id = b.poid and c.SizeCode = a.SizeCode
-                    Where b.cuttingsp ='{0}' 
-                    order by b.POID, a.article, c.Seq",
-                this.cutid);
+                    Where b.cuttingsp ='{this.cutid}' 
+                    group by b.POID,a.Article,a.SizeCode ,b.Junk ,b.NeedProduction
+                    order by b.POID, a.article";
             DualResult gridResult = DBProxy.Current.Select(null, settbsql, out DataTable gridtb);
             if (!gridResult)
             {
@@ -115,7 +114,7 @@ Select  [ID] = b.POID
                                OrderID = t2.Field<string>("orderid"),
                                Article = t2.Field<string>("Article"),
                                SizeCode = t2.Field<string>("sizecode"),
-                               Qty = t2.Field<int>("Qty"),
+                               Qty = t2.Field<decimal>("Qty"),
                             };
 
                 resutTable.Columns.Add("ID", typeof(string));
@@ -149,7 +148,7 @@ Select  [ID] = b.POID
                                 OrderID = t1.Field<string>("orderid"),
                                 Article = t1.Field<string>("Article"),
                                 SizeCode = t2.Field<string>("sizecode"),
-                                Qty = t2.Field<int>("TtlQty"), // 取自 P02 Grid SizeRatio Tlt.Qty
+                                Qty = t2.Field<decimal>("TtlQty"), // 取自 P02 Grid SizeRatio Tlt.Qty
                             };
 
                 resutTable.Columns.Add("ID", typeof(string));
@@ -167,13 +166,14 @@ Select  [ID] = b.POID
 
             string getqtysql =
                 $@"
-Select a.article,a.sizecode,a.qty,c.PatternPanel,a.ID 
+Select a.article,a.sizecode,qty = sum(a.qty),c.PatternPanel,a.ID 
 from #tmp a WITH (NOLOCK) 
-inner join Order_fabriccode c WITH (NOLOCK) on a.id=c.id and a.FabricPanelCode = c.FabricPanelCode 
+inner join Order_fabriccode c WITH (NOLOCK) on a.id=c.id and a.FabricPanelCode = c.FabricPanelCode
 Where a.id = '{this.cutid}' 
 and a.article !=''
+group by a.article,a.sizecode,c.PatternPanel,a.id 
 ";
-            gridResult = DBProxy.Current.Select(null, getqtysql, out DataTable getqtytb);
+            gridResult = MyUtility.Tool.ProcessWithDatatable(resutTable, string.Empty, getqtysql, out DataTable getqtytb, "#tmp");
             if (!gridResult)
             {
                 this.ShowErr(gridResult);
@@ -192,8 +192,7 @@ and a.article !=''
 
             #region 判斷是否Complete
             bool complete = true;
-            fabcodesql = string.Format(
-                @"
+            fabcodesql = $@"
 select distinct occ.Article,occ.Patternpanel
 from Orders o WITH (NOLOCK)
 inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
@@ -201,9 +200,9 @@ inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = o.POID and occ.FabricC
 inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0
 inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey and oec.ColorID = occ.ColorID
 inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article --and oeca.ColorID = oec.ColorID
-where o.CuttingSP = '{0}'
+where o.CuttingSP = '{this.cutid}'
 and o.junk = 0
-", this.cutid);
+";
             gridResult = DBProxy.Current.Select(null, fabcodesql, out DataTable panneltb);
             if (!gridResult)
             {
