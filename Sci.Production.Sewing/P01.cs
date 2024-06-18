@@ -37,6 +37,8 @@ namespace Sci.Production.Sewing
         private decimal? oldManHour;
         private DataTable rftDT;
 
+        private DataTable beforeDataTable;
+
         /// <summary>
         /// P01
         /// </summary>
@@ -261,7 +263,8 @@ and SunriseNid != 0
             this.DetailSelectCommand = string.Format(
                 $@"
 SET ARITHABORT ON
-select   sd.OrderId
+select  sd.id
+        ,sd.OrderId
 		,sd.ComboType
 		,sd.Article
 		,sd.Color
@@ -270,6 +273,7 @@ select   sd.OrderId
 		,sd.TMS
 		,sd.Remark
 		,sd.AutoCreate
+        ,sd.ukey
         , [RFT] = concat(convert(decimal(18,2), iif(isnull(rft.InspectQty, 0) = 0, 0.0, round((rft.InspectQty - rft.RejectQty) / rft.InspectQty * 100.0, 2))), '%')
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
@@ -1435,7 +1439,7 @@ order by a.OrderId,os.Seq",
                 {
                     DataTable subDt;
                     this.GetSubDetailDatas(dr, out subDt);
-                    if(subDt.Rows.Count > 0)
+                    if (subDt.Rows.Count > 0)
                     {
                         subDt = subDt.AsEnumerable().Where(row => true).CopyToDataTable();
                         subDt.Columns.Add("AutoCreate");
@@ -2251,8 +2255,32 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
                 }
             }
             #endregion
+
+            if (this.beforeDataTable.Rows.Count > 0)
+            {
+                string sqlcmd = $@"
+                DELETE SewingOutput_Detail
+                from　SewingOutput_Detail sod
+                inner join #tmp t on t.ukey = sod.ukey";
+                var dual = MyUtility.Tool.ProcessWithDatatable(this.beforeDataTable, string.Empty, sqlcmd, out DataTable sewDt1);
+            }
+
             return base.ClickSavePost();
         }
+
+        protected override void OnDetailGridRemoveClick()
+        {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            this.detailgrid.ValidateControl();
+            this.beforeDataTable = this.DetailDatas.CopyToDataTable();
+
+            base.OnDetailGridRemoveClick();
+        }
+
 
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
