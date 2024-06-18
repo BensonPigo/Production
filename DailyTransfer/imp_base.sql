@@ -2291,8 +2291,8 @@ SET
        --a.Id		     =b.Id	
       a.Name		      = isnull(b.Name	               ,'')
       ,a.CuttingLayer		      = isnull(b.CuttingLayer	,0)
-	  ,a.ManualCutLayer   = iif(b.ManualCutLayer = 0, isnull(b.CuttingLayer, 0), b.ManualCutLayer)
-	  ,a.AutoCutLayer     = iif(b.AutoCutLayer = 0, isnull(b.CuttingLayer, 0), b.AutoCutLayer)
+	  ,a.ManualCutLayer   = iif(a.ManualCutLayer = 0, isnull(b.CuttingLayer, 0), a.ManualCutLayer)
+	  ,a.AutoCutLayer     = iif(a.AutoCutLayer = 0, isnull(b.CuttingLayer, 0), a.AutoCutLayer)
       ,a.Junk		      = isnull(b.Junk				   ,0)
       ,a.AddName		      = isnull(b.AddName		   ,'')
       ,a.AddDate		      = b.AddDate		  
@@ -2318,8 +2318,8 @@ select
        isnull(Id           ,'')
       ,isnull(Name		   ,'')
       ,isnull(CuttingLayer ,0)
-	  ,isnull(ManualCutLayer, 0)
-	  ,isnull(AutoCutLayer, 0)
+	  ,isnull(CuttingLayer, 0)
+	  ,isnull(CuttingLayer, 0)
       ,isnull(Junk		   ,0)
       ,isnull(AddName	   ,'')
       ,AddDate	 
