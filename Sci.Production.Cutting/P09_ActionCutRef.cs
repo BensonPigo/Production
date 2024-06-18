@@ -1,11 +1,11 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Data;
 using System.Drawing;
+using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
@@ -20,18 +20,19 @@ namespace Sci.Production.Cutting
         public DataTable dtWorkOrderForOutput_SizeRatio_Ori;
         public DataTable dtWorkOrderForOutput_Distribute_Ori;
         public DataTable dtWorkOrderForOutput_PatternPanel_Ori;
-        public DataTable dtWorkOrderForOutput_SizeRatio;
-        public DataTable dtWorkOrderForOutput_Distribute;
-        public DataTable dtWorkOrderForOutput_PatternPanel;
+        public DataTable dtWorkOrderForOutput_SizeRatio; // 此視窗編輯用
+        public DataTable dtWorkOrderForOutput_Distribute; // 此視窗編輯用
+        public DataTable dtWorkOrderForOutput_PatternPanel; // 此視窗編輯用
 #pragma warning restore SA1401 // Elements should be documented
 #pragma warning restore SA1600 // Elements should be documented
-
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_PatternPanel;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_FabricPanelCode;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_SP;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Size;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Qty;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Distribute_Qty;
 
         private string ID;
         private string SCIRefno = string.Empty;
@@ -44,7 +45,7 @@ namespace Sci.Production.Cutting
             this.cmsPatternPanel.Enabled = true;
             this.cmsSizeRatio.Enabled = true;
             this.cmsDistribute.Enabled = true;
-            this.txtCell.MDivisionID = Sci.Env.User.Keyword;
+            this.txtCell.MDivisionID = Env.User.Keyword;
         }
 
         /// <inheritdoc/>
@@ -80,6 +81,7 @@ namespace Sci.Production.Cutting
                 this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
                 this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
                 this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
+                this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
             }
 
             this.patternpanelbs.DataSource = this.dtWorkOrderForOutput_PatternPanel;
@@ -94,27 +96,32 @@ namespace Sci.Production.Cutting
             this.gridDistributeToSP.IsEditingReadOnly = false;
 
             this.Helper.Controls.Grid.Generator(this.gridPatternPanel)
-                .Text("PatternPanel", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(5), settings: new CellTextFabricPanelCode().GetGridCell(this.ID, 0))
-                .Text("FabricPanelCode", header: "Fabric Panel Code ", width: Ict.Win.Widths.AnsiChars(5), settings: new CellTextFabricPanelCode().GetGridCell(this.ID, 1))
+                .Text("PatternPanel", header: "Pattern Panel", width: Widths.AnsiChars(5)).Get(out this.col_PatternPanel)
+                .Text("FabricPanelCode", header: "Fabric Panel Code ", width: Widths.AnsiChars(5)).Get(out this.col_FabricPanelCode)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
-                .Numeric("Qty", header: "Ratio", width: Ict.Win.Widths.AnsiChars(6), integer_places: 5, maximum: 99999, minimum: 0).Get(out this.col_SizeRatio_Qty)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
+                .Numeric("Qty", header: "Ratio", width: Widths.AnsiChars(6), integer_places: 5, maximum: 99999, minimum: 0).Get(out this.col_SizeRatio_Qty)
                 ;
-            /*
             this.Helper.Controls.Grid.Generator(this.gridDistributeToSP)
-                .Text("OrderID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_dist_sp)
-                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7)).Get(out this.col_dist_article)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_dist_size)
-                .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_dist_qty)
-                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
-                ;*/
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13)).Get(out this.col_Distribute_SP)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(7)).Get(out this.col_Distribute_Article)
+                .Text("SizeCode", header: "Size", width: Widths.AnsiChars(4)).Get(out this.col_Distribute_Size)
+                .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_Distribute_Qty)
+                .Date("SewInline", header: "Inline Date", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                ;
 
+            // 能編輯才能開窗, 直接給 Pink
             this.gridPatternPanel.Columns["PatternPanel"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridPatternPanel.Columns["FabricPanelCode"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.gridSizeRatio.Columns["SizeCode"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridSizeRatio.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
+
+            this.gridDistributeToSP.Columns["OrderID"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDistributeToSP.Columns["Article"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDistributeToSP.Columns["SizeCode"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridDistributeToSP.Columns["Qty"].DefaultCellStyle.BackColor = Color.Pink;
 
             this.GridEventSet();
         }
@@ -122,12 +129,15 @@ namespace Sci.Production.Cutting
         private void BtnModify_Click(object sender, EventArgs e)
         {
             this.UpdateToDetail();
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void UpdateToDetail()
         {
+            this.dtWorkOrderForOutput_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
+            this.dtWorkOrderForOutput_PatternPanel.AcceptChanges();
+
             this.CurrentDetailData["CutNo"] = this.numCutno.Value;
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
@@ -154,18 +164,19 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["SpreadingNoID"] = this.txtSpreadingNo.Text;
             this.CurrentDetailData["CutCellID"] = this.txtCell.Text;
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
-            CuttingWorkOrder.UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-            CuttingWorkOrder.UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-
-            // 沒有顯示的欄位
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            UpdatebyPatternPanel(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
 
             this.CurrentDetailData.EndEdit();
 
             // Edit 先刪除, 再把修改的塞回去
             if (this.Action == DialogAction.Edit)
             {
-                string filter = CuttingWorkOrder.GetFilter(this.CurrentDetailData, CuttingForm.P09);
+                string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
                 this.dtWorkOrderForOutput_SizeRatio_Ori.Select(filter).Delete();
                 this.dtWorkOrderForOutput_Distribute_Ori.Select(filter).Delete();
                 this.dtWorkOrderForOutput_PatternPanel_Ori.Select(filter).Delete();
@@ -178,14 +189,54 @@ namespace Sci.Production.Cutting
 
         private void BtnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表上
+        #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表 this.CurrentDetailData
+
+        private void NumLayers_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            UpdateExcess(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+        }
+
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem selectItem = CuttingWorkOrder.PopupSEQ(this.ID, this.txtSeq1.Text, this.txtColor.Text);
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+            if (minFabricPanelCode == null)
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                return;
+            }
+
+            DataTable dt = GetPatternPanel(this.ID);
+            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
+            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
+            string columnName = ((Win.UI.TextBox)sender).Name;
+            string seq1 = this.txtSeq1.Text;
+            string seq2 = this.txtSeq2.Text;
+            string refno = this.txtRefNo.Text;
+            string colorID = this.txtColor.Text;
+
+            // 觸發的欄位不作為篩選條件
+            switch (columnName)
+            {
+                case "txtSeq1":
+                    seq1 = string.Empty;
+                    break;
+                case "txtSeq2":
+                    seq2 = string.Empty;
+                    break;
+                case "txtRefNo":
+                    refno = string.Empty;
+                    break;
+                case "txtColor":
+                    colorID = string.Empty;
+                    break;
+            }
+
+            bool iscolor = columnName.ToLower() == "txtcolor";
+            SelectItem selectItem = PopupSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, iscolor);
             if (selectItem == null)
             {
                 return;
@@ -198,9 +249,77 @@ namespace Sci.Production.Cutting
             this.SCIRefno = selectItem.GetSelecteds()[0]["SCIRefno"].ToString();
         }
 
+        private void TxtSeq_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+            if (minFabricPanelCode == null)
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                return;
+            }
+
+            DataTable dt = GetPatternPanel(this.ID);
+            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
+            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
+            string columnName = ((Win.UI.TextBox)sender).Name;
+            string seq1 = this.txtSeq1.Text;
+            string seq2 = this.txtSeq2.Text;
+            string refno = this.txtRefNo.Text;
+            string colorID = this.txtColor.Text;
+
+            string newvalue = string.Empty;
+            string oldvalue = ((Win.UI.TextBox)sender).OldValue;
+            switch (columnName)
+            {
+                case "txtSeq1":
+                    newvalue = seq1;
+                    break;
+                case "txtSeq2":
+                    newvalue = seq2;
+                    break;
+                case "txtRefNo":
+                    newvalue = refno;
+                    break;
+                case "txtColor":
+                    newvalue = colorID;
+                    break;
+            }
+
+            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
+            {
+                return;
+            }
+
+            if (!ValidatingSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
+            {
+                switch (columnName)
+                {
+                    case "txtSeq1":
+                        this.txtSeq1.Text = string.Empty;
+                        break;
+                    case "txtSeq2":
+                        this.txtSeq2.Text = string.Empty;
+                        break;
+                    case "txtRefNo":
+                        this.txtRefNo.Text = string.Empty;
+                        break;
+                    case "txtColor":
+                        this.txtColor.Text = string.Empty;
+                        break;
+                }
+            }
+
+            // 唯一值時
+            if (dtValidating.Rows.Count == 1)
+            {
+                this.SCIRefno = dtValidating.Rows[0]["SCIRefno"].ToString();
+            }
+        }
+
         private void TxtSpreadingNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem selectItem = CuttingWorkOrder.PopupSpreadingNo(this.txtSpreadingNo.Text);
+            SelectItem selectItem = PopupSpreadingNo(this.txtSpreadingNo.Text);
             if (selectItem == null)
             {
                 return;
@@ -212,7 +331,7 @@ namespace Sci.Production.Cutting
 
         private void TxtSpreadingNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!CuttingWorkOrder.ValidatingSpreadingNo(this.txtSpreadingNo.Text, out DataRow drV))
+            if (!ValidatingSpreadingNo(this.txtSpreadingNo.Text, out DataRow drV))
             {
                 this.txtSpreadingNo.Text = string.Empty;
                 e.Cancel = true;
@@ -225,7 +344,8 @@ namespace Sci.Production.Cutting
         {
             if (this.txtMarkerLength.Text != "Y  - / + \"")
             {
-                this.txtMarkerLength.Text = CuttingWorkOrder.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+                this.txtMarkerLength.Text = SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+                this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             }
         }
 
@@ -233,13 +353,13 @@ namespace Sci.Production.Cutting
         {
             if (((Sci.Win.UI.TextBox)sender).Text != "Yd  \"")
             {
-                ((Sci.Win.UI.TextBox)sender).Text = CuttingWorkOrder.SetMaskString(((Sci.Win.UI.TextBox)sender).Text);
+                ((Sci.Win.UI.TextBox)sender).Text = SetMaskString(((Sci.Win.UI.TextBox)sender).Text);
             }
         }
 
         private void TxtMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem selectItem = CuttingWorkOrder.PopupMarkerNo(this.ID, this.txtMarkerNo.Text);
+            SelectItem selectItem = PopupMarkerNo(this.ID, this.txtMarkerNo.Text);
             if (selectItem == null)
             {
                 return;
@@ -250,7 +370,7 @@ namespace Sci.Production.Cutting
 
         private void TxtMarkerNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!CuttingWorkOrder.ValidatingMarkerNo(this.ID, this.txtMarkerNo.Text))
+            if (!ValidatingMarkerNo(this.ID, this.txtMarkerNo.Text))
             {
                 this.txtMarkerNo.Text = string.Empty;
                 e.Cancel = true;
@@ -258,32 +378,51 @@ namespace Sci.Production.Cutting
         }
         #endregion
 
-        #region Grid 欄位事件 顏色/開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表上
+        #region Grid 欄位事件 顏色/開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表 this.CurrentDetailData
         private void GridEventSet()
         {
             // "不"更新(CurrentDetailData)，只有在按下 Edit/Create 才更新
+            BindPatternPanelEvents(this.col_PatternPanel, this.ID);
+            BindPatternPanelEvents(this.col_FabricPanelCode, this.ID);
+
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
             {
-                CuttingWorkOrder.SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
-                CuttingWorkOrder.SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             };
-            this.col_SizeRatio_Qty.CellValidating += (s, e) =>
-            {
-                CuttingWorkOrder.SizeRatioQtyCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-            };
+            this.BindQtyEvents(this.col_SizeRatio_Qty);
             #endregion
 
-            this.col_Distribute_SP.EditingMouseDown += (s, e) =>
+            #region Distribute
+            this.BindDistributeEvents(this.col_Distribute_SP);
+            this.BindDistributeEvents(this.col_Distribute_Article);
+            this.BindDistributeEvents(this.col_Distribute_Size);
+            this.BindQtyEvents(this.col_Distribute_Qty);
+            #endregion
+        }
+
+        private void BindQtyEvents(Ict.Win.UI.DataGridViewNumericBoxColumn column)
+        {
+            column.CellValidating += (s, e) =>
             {
-                CuttingWorkOrder.Distribute3CellEditingMouseDown(e, this.CurrentDetailData["ID"].ToString(), this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP);
+                Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                QtyCellValidating(e, this.CurrentDetailData, this.gridDistributeToSP, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             };
-            this.col_Distribute_SP.CellValidating += (s, e) =>
+        }
+
+        private void BindDistributeEvents(Ict.Win.UI.DataGridViewTextBoxColumn column)
+        {
+            column.EditingMouseDown += (s, e) =>
             {
-                CuttingWorkOrder.Distribute3CellValidating(e, this.CurrentDetailData["ID"].ToString(), this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP);
+                Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP);
+            };
+            column.CellValidating += (s, e) =>
+            {
+                Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09);
             };
         }
         #endregion
@@ -330,7 +469,7 @@ namespace Sci.Production.Cutting
 
             // 先刪除 Distribute
             string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
-            string filter = CuttingWorkOrder.GetFilter(this.CurrentDetailData, CuttingForm.P09);
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.dtWorkOrderForOutput_Distribute.Select(filter + $" AND SizeCode = '{sizeCode}'").Delete();
 
             // 後刪除 SizeRatio
@@ -360,7 +499,14 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            ((DataRowView)selectRow[0]).Row.Delete();
+            // Excess 不可刪除
+            DataRow dr = ((DataRowView)selectRow[0]).Row;
+            if (dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            dr.Delete();
         }
         #endregion
     }

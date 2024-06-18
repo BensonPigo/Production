@@ -123,6 +123,7 @@
             this.txtSeq1.Size = new System.Drawing.Size(96, 23);
             this.txtSeq1.TabIndex = 21;
             this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
+            this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq_Validating);
             // 
             // label3
             // 
@@ -160,6 +161,7 @@
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(114, 23);
             this.txtRefNo.TabIndex = 25;
+            this.txtRefNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label5
             // 
@@ -178,6 +180,7 @@
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(96, 23);
             this.txtColor.TabIndex = 27;
+            this.txtColor.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label6
             // 
@@ -466,14 +469,14 @@
             // MenuItemInsertSizeRatio
             // 
             this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
-            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
             this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
             this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
             // 
             // MenuItemDeleteSizeRatio
             // 
             this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
-            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
             this.MenuItemDeleteSizeRatio.Text = "Delete Record";
             this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 
@@ -528,19 +531,19 @@
             this.MenuItemInsertDistribute,
             this.MenuItemDeleteDistribute});
             this.cmsDistribute.Name = "contextMenuStrip1";
-            this.cmsDistribute.Size = new System.Drawing.Size(181, 70);
+            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
             // 
             // MenuItemInsertDistribute
             // 
             this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
-            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
             this.MenuItemInsertDistribute.Text = "Insert Distribute";
             this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
             // 
             // MenuItemDeleteDistribute
             // 
             this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
-            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(180, 22);
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
             this.MenuItemDeleteDistribute.Text = "Delete Record";
             this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
             // 
@@ -612,6 +615,7 @@
             0,
             0,
             0});
+            this.numLayers.Validating += new System.ComponentModel.CancelEventHandler(this.NumLayers_Validating);
             // 
             // txtDropDownList1
             // 
