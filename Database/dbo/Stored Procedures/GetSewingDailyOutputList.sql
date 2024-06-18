@@ -404,7 +404,7 @@ select	MDivisionID
         ,[New Style/Repeat style]
 from(
 	select distinct
-		 MDivisionID,t.FactoryID
+		 t.MDivisionID,t.FactoryID
 		,FtyType = iif(FtyType=''B'',''Bulk'',iif(FtyType=''S'',''Sample'',FtyType))
 		,FtyCountry
         ,t.OutputDate
@@ -449,7 +449,7 @@ from(
 		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
+		,RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 		,CumulateDateSimilar = CONVERT(VARCHAR, CumulateDateSimilar)
 		,DateRange = IIF(CumulateDateSimilar >= 10,''>=10'',CONVERT(VARCHAR,CumulateDateSimilar))
 		,InlineQty'
@@ -512,7 +512,15 @@ from(
                            o.SubconOutFty = t.SubconOutFty and
                            o.SubConOutContractNumber = t.SubConOutContractNumber
 			'
-
+		set @lastSql = @lastSql 
+		+ '
+		left join RFT A WITH (NOLOCK) on A.OrderID=t.OrderId
+										 and A.CDate=t.OutputDate
+										 and A.SewinglineID=t.SewinglineID
+										 and A.FactoryID=t.FactoryID
+										 and A.Shift=t.Shift
+										 and A.Team=t.Team
+		'
 		set @lastSql = @lastSql + '
 		where  1 = 1 '
 		

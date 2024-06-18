@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             O.SewInLine,
 	        B.Sewinglineid,
             SR.Shift,
-	        [RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
+	        [RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
 	        SR.SubProcessID,
 	        SR.BundleNo,
             [Artwork] = Artwork.val,
@@ -92,6 +92,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+            left join Production.dbo.RFT A with (nolock) on A.OrderID=B.OrderId
+								         and A.SewinglineID=B.SewinglineID
+								         and A.FactoryID=SR.FactoryID
+								         and A.Shift=SR.Shift
             Where 1=1
             {itemWhere.Item1}
 
@@ -105,7 +109,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             O.SewInLine,
             BR.Sewinglineid,
             SR.Shift,
-	        [RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
+	        [RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
 	        SR.SubProcessID,
 	        SR.BundleNo,
             [Artwork] = Artwork.val,
@@ -152,6 +156,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+            left join Production.dbo.RFT A with (nolock) on A.OrderID=BR.OrderId
+								         and A.SewinglineID=BR.SewinglineID
+								         and A.FactoryID=SR.FactoryID
+								         and A.Shift=SR.Shift
             Where 1=1
             {itemWhere.Item2}
 

@@ -111,7 +111,7 @@ select t.FirstInspectionDate
 	, t.TtlQty
 	, t.RejectAndFixedQty
 	,[EndlineWFT] = iif(t.TtlQty = 0, 0, ROUND( (t.RejectAndFixedQty *1.0) / (t.TtlQty *1.0) *100,3))
-	,[Endline RFT(%)] = iif(t.TtlQty = 0, 0, ROUND( (t.PassQty *1.0) / (t.TtlQty *1.0) *100,3)) 
+	,[Endline RFT(%)] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 	, t.CDCodeNew
 	, t.ProductType
 	, t.FabricType
@@ -120,6 +120,8 @@ select t.FirstInspectionDate
 	, t.Construction
 into #Final_DQSDefect_Summary
 from #tmp_summy_first t
+left join Production.dbo.RFT A with (nolock) on A.Shift=t.Shift
+											 and A.Team=t.Team
 '
 
 set @SqlCmd2 = '

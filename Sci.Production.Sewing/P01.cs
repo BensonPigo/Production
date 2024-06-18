@@ -3403,7 +3403,7 @@ end
                 return;
             }
             string excelFileNameR04 = string.Empty;
-            R04_ToExcel.ToExcel(false,false,dtR04,dateMaxOutputDate,ref excelFileNameR04);
+            R04_ToExcel.ToExcel(false, false, dtR04, dateMaxOutputDate, ref excelFileNameR04);
             #endregion
 
             #region SendMail
@@ -3470,7 +3470,7 @@ group by InspectionDate, FactoryID, Line, Shift, Team, OrderId, Article, Locatio
                 return Ict.Result.F("DQS Data not found!");
             }
 
-            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"])};
+            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@outputDate", this.CurrentMaintain["OutputDate"]) };
 
             string sqlcmd = $@"
 SET ARITHABORT ON

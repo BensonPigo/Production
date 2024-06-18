@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Sci.Data;
+using Sci.Production.Class;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -160,7 +161,7 @@ WHERE 1=1
                 sqlCmd.Append(@"
 and oq.BuyerDelivery between @Buyerdelivery1 and @Buyerdelivery2
 AND f.IsProduceFty = 1
-AND o.Category IN ('B','G') 
+AND o.Category IN ('B','G','S') 
 " + Environment.NewLine);
             }
             else
@@ -260,54 +261,276 @@ WHERE ID IN(
 CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID],[Stage],[Status]);
 
 ");
-            #region Outstanding WHERE
-            List<string> outstandingWHERE = new List<string>();
-            string colBI = string.Empty;
+			#region PowerBI
+			string sqlBI = $@"
+select nb = ROW_NUMBER() over(Partition by ID order by iif(Stage = 'Final',1,0) desc,AuditDate desc,EditDate desc,AddDate desc)
+,*
+into #tmpFinal
+from 
+(
+	/*-----Final-----*/
+	select [Stage] = 'Final'
+	,c.AuditDate
+	,[InspResult]=CASE WHEN NOT EXISTS(
+					SELECT 1 
+					FROM #CFAInspectionRecord cr 
+					INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+					WHERE cfoq.OrderID = n.ID AND cfoq.Seq = n.Seq AND cr.Stage = 'Final' AND cr.Status = 'Confirmed' ) 
+				THEN ''
+				WHEN EXISTS(						
+					SELECT 1
+					FROM #NeedCkeck a
+					INNER JOIN Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
+					WHERE a.Stage = 'Final' 
+					AND oq.CFAFinalInspectResult  != 'Pass'
+					AND a.Id = n.Id AND a.Seq = n.Seq
+				)THEN 'Fail'
+				ELSE ''
+				END
+	,[NotYetInspCtn#] = ''
+	,[NotYetInspCtn]  = ''
+	,[Notyetinspqty]  = 0
+	,[FailCtn#]=(
+		SELECt TOP 1  cfoq.Carton
+		FROM #CFAInspectionRecord  cr
+		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+		WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+		AND cfoq.OrderID=n.ID AND cfoq.SEQ=n.Seq
+		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+	)
+	,[FailCtn]=(	
+		SELECT COUNT(DISTINCT data)
+		FROM dbo.SplitString((
+						SELECt TOP 1  cfoq.Carton
+						FROM #CFAInspectionRecord  cr
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+						AND cfoq.OrderID=n.ID AND cfoq.SEQ=n.Seq
+						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+		),',')
+	)
+	,[FailQty] = 0
+	,n.MDivisionID
+	,n.FactoryID
+	,n.BuyerDelivery
+	,n.BrandID
+	,n.ID
+	,n.Category 
+	,n.OrderTypeID
+	,n.CustPoNo
+	,n.StyleID
+	,n.StyleName
+	,n.SeasonID
+	,n.[Dest]
+	,n.Customize1
+	,n.CustCDID
+	,n.Seq
+	,n.ShipModeID
+	,n.[ColorWay]
+	,n.SewLine
+	,n.[TtlCtn]
+	,n.[StaggeredCtn]
+	,n.[ClogCtn] 
+	,n.[ClogCtn%]
+	,n.[LastCartonReceivedDate]
+	,n.CFAFinalInspectDate
+	,n.CFA3rdInspectDate
+	,n.CFARemark
+	,c.EditDate ,c.AddDate
+	FROM #tmp n
+	left join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
+	left join #CFAInspectionRecord c on c.id = co.id
+	WHERE c.Stage = 'Final'
 
-            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Stagger" || model.IsPowerBI)
-            {
-                colBI = model.IsPowerBI ? @"
-,[Notyetinspqty] = (
-								SELECT isnull(SUM(pd.ShipQty),0)
-								FROM #PackingList_Detail pd
-								WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
-								AND NOT EXISTS(
-									SELECT 1
-									FROM #CFAInspectionRecord cf
-									INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
-									WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-									AND cf.Stage='Stagger' AND cf.Status='Confirmed'
-									AND (	
-										cfo.Carton = pd.CTNStartNo
-										OR cfo.Carton LIKE  pd.CTNStartNo +',%'
-										OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
-										OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
-									)
-								) 
-							)
-,[FailQty] =(
-					SELECT isnull(sum(pd.ShipQty),0)
-					FROM #PackingList_Detail pd
-					WHERE pd.OrderID=need.ID AND pd.OrderShipmodeSeq=need.Seq
-					AND pd.StaggeredCFAInspectionRecordID = ''
-					AND EXISTS(
+	union all
+
+	/*-----Staggered-----*/
+	select [Stage] = 'Stagger'
+	,c.AuditDate
+	,[InspResult]=CASE WHEN EXISTS(
+						-- Result  - Fail的情況
 						SELECT 1
-						FROM #CFAInspectionRecord cf
-						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
-						WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
-						AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
-						AND (	
-								cfo.Carton = pd.CTNStartNo
-							OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
-							OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
-							OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
-						)
-					) 
+						FROM #NeedCkeck a
+						INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
+						INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
+						WHERE cf.Stage = 'Stagger' AND a.Category != 'Sample' AND cf.Result = 'Fail' AND cf.Status ='Confirmed'
+						AND a.Id = n.Id AND a.Seq = n.Seq
+					)
+				THEN 'Fail'	
+			WHEN NOT EXISTS(
+				-- Result  -  空白的情況
+				SELECT 1
+				FROM #NeedCkeck a
+				INNER JOIN #PackingList_Detail pd ON pd.OrderID = a.Id ANd pd.OrderShipmodeSeq =a.Seq
+				INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cfo.OrderID = pd.OrderID AND cfo.SEQ = pd.OrderShipmodeSeq
+				INNER JOIN #CFAInspectionRecord cf ON cf.ID = cfo.ID
+				WHERE cf.Stage = 'Stagger' AND a.Category != 'Sample' AND  cf.Status ='Confirmed'
+				AND a.Id = n.Id AND a.Seq = n.Seq
+			)
+		THEN ''
+	ELSE ''
+	END
+	,[NotYetInspCtn#]=(SELECT STUFF((
+						SELECT DISTINCT ','+CTNStartNo
+						FROM #PackingList_Detail pd
+						WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+						AND NOT EXISTS(
+							SELECT 1
+							FROM #CFAInspectionRecord cf
+							INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+							WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+							AND cf.Stage='Stagger' AND cf.Status='Confirmed'
+							AND (	
+									cfo.Carton = pd.CTNStartNo
+								OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+							)
+						) 
+						FOR XML PATH('')
+					),1,1,''))
+	,[NotYetInspCtn]=(
+						SELECT COUNT(DISTINCT CTNStartNo)
+						FROM #PackingList_Detail pd
+						WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+						AND NOT EXISTS(
+							SELECT 1
+							FROM #CFAInspectionRecord cf
+							INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+							WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+							AND cf.Stage='Stagger' AND cf.Status='Confirmed'
+							AND (	
+									cfo.Carton = pd.CTNStartNo
+								OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+							)
+						) )
+		,[Notyetinspqty] = (
+		SELECT isnull(SUM(pd.ShipQty),0)
+		FROM #PackingList_Detail pd
+		WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+		AND NOT EXISTS(
+			SELECT 1
+			FROM #CFAInspectionRecord cf
+			INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+			WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+			AND cf.Stage='Stagger' AND cf.Status='Confirmed'
+			AND (	
+				cfo.Carton = pd.CTNStartNo
+				OR cfo.Carton LIKE  pd.CTNStartNo +',%'
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+				OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+			)
+		) 
+	)
+	,[FailCtn#]=(SELECT STUFF((
+						SELECT DISTINCT ','+CTNStartNo
+						FROM #PackingList_Detail pd
+						WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+						AND pd.StaggeredCFAInspectionRecordID = ''
+						AND EXISTS(
+							SELECT 1
+							FROM #CFAInspectionRecord cf
+							INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+							WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+							AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
+							AND (	
+									cfo.Carton = pd.CTNStartNo
+								OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+							)
+						) 
+						FOR XML PATH('')
+					),1,1,''))
+	,[FailCtn]=(
+						SELECT COUNT(DISTINCT CTNStartNo)
+						FROM #PackingList_Detail pd
+						WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+						AND pd.StaggeredCFAInspectionRecordID = ''
+						AND EXISTS(
+							SELECT 1
+							FROM #CFAInspectionRecord cf
+							INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+							WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+							AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
+							AND (	
+									cfo.Carton = pd.CTNStartNo
+								OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+								OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
+							)
+						) )
+	,[FailQty] =(
+			SELECT isnull(sum(pd.ShipQty),0)
+			FROM #PackingList_Detail pd
+			WHERE pd.OrderID=n.ID AND pd.OrderShipmodeSeq=n.Seq
+			AND pd.StaggeredCFAInspectionRecordID = ''
+			AND EXISTS(
+				SELECT 1
+				FROM #CFAInspectionRecord cf
+				INNER JOIN #CFAInspectionRecord_OrderSEQ cfo ON cf.ID = cfo.ID
+				WHERE cfo.OrderID=pd.OrderID AND cfo.SEQ=pd.OrderShipmodeSeq
+				AND cf.Stage='Stagger' AND cf.Status='Confirmed' AND cf.Result='Fail'
+				AND (	
+						cfo.Carton = pd.CTNStartNo
+					OR cfo.Carton LIKE  pd.CTNStartNo +',%' 
+					OR cfo.Carton LIKE '%,'+  pd.CTNStartNo +',%' 
+					OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
 				)
-" : string.Empty;
+			) 
+		)
+	,n.MDivisionID
+	,n.FactoryID
+	,n.BuyerDelivery
+	,n.BrandID
+	,n.ID
+	,n.Category 
+	,n.OrderTypeID
+	,n.CustPoNo
+	,n.StyleID
+	,n.StyleName
+	,n.SeasonID
+	,n.[Dest]
+	,n.Customize1
+	,n.CustCDID
+	,n.Seq
+	,n.ShipModeID
+	,n.[ColorWay]
+	,n.SewLine
+	,n.[TtlCtn]
+	,n.[StaggeredCtn]
+	,n.[ClogCtn] 
+	,n.[ClogCtn%]
+	,n.[LastCartonReceivedDate]
+	,n.CFAFinalInspectDate
+	,n.CFA3rdInspectDate
+	,n.CFARemark 
+	,c.EditDate ,c.AddDate
+	FROM #tmp n
+	left join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
+	left join #CFAInspectionRecord c on c.id = co.id
+	WHERE c.Stage = 'Stagger' AND n.Category != 'Sample'	
+) a
 
+select 
+		[Stage],[InspResult],[NotYetInspCtn#],[NotYetInspCtn],[FailCtn#],[FailCtn],[Notyetinspqty]
+		,[FailQty],MDivisionID,FactoryID,BuyerDelivery,BrandID,ID,Category ,OrderTypeID
+		,CustPoNo,StyleID,StyleName,SeasonID,[Dest],Customize1,CustCDID,Seq,ShipModeID
+		,[ColorWay],SewLine,[TtlCtn],[StaggeredCtn],[ClogCtn] ,[ClogCtn%],[LastCartonReceivedDate]
+		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark 
+		from #tmpFinal
+where nb=1
+";
+			#endregion
+			#region Outstanding WHERE
+			List<string> outstandingWHERE = new List<string>();
+
+            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Stagger")
+            {
                 string stageSql = $@"
-
 /*-----Staggered-----*/
 SELECT need.[Stage]
 	,[InspResult]=CASE WHEN EXISTS(
@@ -408,7 +631,6 @@ SELECT need.[Stage]
 										OR cfo.Carton LIKE '%,'+  pd.CTNStartNo
 									)
 								) )
-	{colBI}
 ,need.MDivisionID
 ,need.FactoryID
 ,need.BuyerDelivery
@@ -463,12 +685,8 @@ WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
                 outstandingWHERE.Add(stageSql);
             }
 
-            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Final" || model.IsPowerBI)
+            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Final")
             {
-                colBI = model.IsPowerBI ? @"
-,[Notyetinspqty]  = 0
-,[FailQty] = 0
-" : string.Empty;
                 string stageSql = $@"
 
 /*-----Final-----*/
@@ -510,7 +728,6 @@ SELECT need.[Stage]
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),',')
 	)
-	{colBI}
 ,need.MDivisionID
 ,need.FactoryID
 ,need.BuyerDelivery
@@ -550,7 +767,7 @@ AND NOT EXISTS (
                 outstandingWHERE.Add(stageSql);
             }
 
-            if ((MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "3rd party") && !model.IsPowerBI)
+            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "3rd party")
             {
                 string stageSql = $@"
 
@@ -631,22 +848,27 @@ AND NOT EXISTS (
 ";
                 outstandingWHERE.Add(stageSql);
             }
-            #endregion
-
-            sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
-
-            Base_ViewModel resultReport = new Base_ViewModel
-            {
-                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable[] dataTables),
-            };
-
-            if (!resultReport.Result)
-            {
-                return resultReport;
+			#endregion
+			if (model.IsPowerBI == true)
+			{
+                 sqlCmd.Append(sqlBI + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ,#tmpFinal");
+            }
+			else
+			{
+                sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
             }
 
-            resultReport.DtArr = dataTables;
-            return resultReport;
+            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
+            using (sqlConn)
+            {
+                Base_ViewModel resultReport = new Base_ViewModel
+                {
+                    Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
+                };
+
+                resultReport.Dt = dt;
+                return resultReport;
+            }
         }
 
         /// <summary>
