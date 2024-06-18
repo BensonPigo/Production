@@ -38,7 +38,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable detailTable = resultReport.DtArr[0];
+                DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, (DateTime)sDate);
@@ -94,7 +94,7 @@ Select  Year,
         TTLSPNo
 From #tmp t
 Where not exists ( select 1 
-				   from P_MaterialCompletionRateByWeek p
+				   from P_MaterialCompletionRateByWeek p with (nolock)
 				   where p.Year = t.Year 
                    and p.WeekNo = t.WeekNo 
 				   and p.FactoryID = t.FactoryID
@@ -139,10 +139,10 @@ Select 	Year = YEAR(inline),
         MaterialCompletionRate = (MTLCMP.MTLCMP_SPNo　/　TTL.TTLSPNo)　*　100 ,
         MTLCMP.MTLCMP_SPNo,
         TTL.TTLSPNo
-From [P_SewingLineScheduleBySP] psb
+From [P_SewingLineScheduleBySP] psb with (nolock)
 Outer Apply(
 	         Select Count(1) As MTLCMP_SPNo
-	         From [P_SewingLineScheduleBySP] psbi
+	         From [P_SewingLineScheduleBySP] psbi with (nolock)
 	         Where Category = 'B'
              And YEAR(psb.inline) = year(psbi.inline)
 	         And DATEPART(WEEK, psb.inline) = DATEPART(WEEK, psbi.inline)
@@ -151,7 +151,7 @@ Outer Apply(
 ) as MTLCMP
 Outer Apply(
 	         Select Count(1) As TTLSPNo
-	         From [P_SewingLineScheduleBySP] psbi
+	         From [P_SewingLineScheduleBySP] psbi with (nolock)
 	         Where Category = 'B'
              And YEAR(psb.inline) = year(psbi.inline)
              And psbi.FactoryID = psb.FactoryID
@@ -169,7 +169,7 @@ Group by  YEAR(psb.inline),DATEPART(WEEK, psb.inline),FactoryID, MTLCMP.MTLCMP_S
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable dataTables),
             };
 
             if (!resultReport.Result)
@@ -177,7 +177,7 @@ Group by  YEAR(psb.inline),DATEPART(WEEK, psb.inline),FactoryID, MTLCMP.MTLCMP_S
                 return resultReport;
             }
 
-            resultReport.DtArr = dataTables;
+            resultReport.Dt = dataTables;
             return resultReport;
         }
     }
