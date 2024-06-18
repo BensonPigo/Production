@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
         private DataRow maindr;
         private DataTable MoistureStandardListDt;
         private DataRow MoistureStandardListdr;
+        private string strBrandID;
 
         /// <inheritdoc/>
         public P01_Moisture(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -42,11 +43,13 @@ namespace Sci.Production.Quality
             {
                 this.displayBrand.Text = order_dr["Brandid"].ToString();
                 this.displayStyle.Text = order_dr["Styleid"].ToString();
+                this.strBrandID = order_dr["Brandid"].ToString();
             }
             else
             {
                 this.displayBrand.Text = string.Empty;
                 this.displayStyle.Text = string.Empty;
+                this.strBrandID = string.Empty;
             }
 
             string po_cmd = $"Select suppid from po_supp WITH (NOLOCK) where id='{this.maindr["POID"]}' and seq1 = '{this.maindr["seq1"]}'";
@@ -207,7 +210,7 @@ namespace Sci.Production.Quality
 
             actMoisture.CellValidating += (s, e) =>
             {
-                if (e.FormattedValue == DBNull.Value)
+                if (e.FormattedValue == DBNull.Value || !this.EditMode)
                 {
                     return;
                 }
@@ -215,7 +218,57 @@ namespace Sci.Production.Quality
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 dr["ActMoisture"] = e.FormattedValue;
                 dr.EndEdit();
-                this.CheckResult();
+
+                // LLL or TNF 則走不同的邏輯
+                if ((string.Compare(this.strBrandID, "LLL", true) == 0) || (string.Compare(this.strBrandID, "N.FACE", true) == 0))
+                {
+                    string drResult = string.Empty;
+                    string sqlcmd = $@"
+declare @P numeric(10,2) = '{dr["ActMoisture"]}'
+select * 
+from [Brand_QAMoistureStandardListByActMoisture] 
+where BrandID ='{this.strBrandID}'
+and @P between MoistureStandard1 and MoistureStandard2
+";
+                    if (MyUtility.Check.Seek(sqlcmd, out DataRow dr2, "Production"))
+                    {
+                        dr["MoistureLevel"] = dr2["CategoryValue"].ToString();
+                        switch (dr2["CategoryValue"].ToString())
+                        {
+                            case "Acceptance Tolerance":
+                                drResult = "Pass";
+                                break;
+                            case "Minor":
+                                drResult = "Pass";
+                                break;
+                            case "Major":
+                                drResult = "Fail";
+                                break;
+                            case "Critical":
+                                drResult = "Fail";
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (string.Compare(this.strBrandID, "N.FACE", true) == 0)
+                        {
+                            drResult = "Pass";
+                        }
+                    }
+                    else
+                    {
+                        drResult = "Fail";
+                    }
+
+                    dr["Result"] = drResult;
+                }
+                else
+                {
+                    this.CheckResult();
+                }
+
+                dr.EndEdit();
             };
             #endregion
 
@@ -236,6 +289,66 @@ namespace Sci.Production.Quality
             this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Name"].DefaultCellStyle.BackColor = Color.MistyRose;
             return true;
+        }
+
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            if (this.gridbs.DataSource == null)
+            {
+                return;
+            }
+
+            // LLL or TNF 則走不同的邏輯
+            if ((string.Compare(this.strBrandID, "LLL", true) == 0) || (string.Compare(this.strBrandID, "N.FACE", true) == 0))
+            {
+                string drResult = string.Empty;
+                foreach (DataRow dr2 in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                {
+                    if (!MyUtility.Check.Empty(dr2["MoistureLevel"]))
+                    {
+                        string sqlcmd = $@"
+declare @P numeric(10,2) = '{dr2["ActMoisture"]}'
+select * 
+from [Brand_QAMoistureStandardListByActMoisture] 
+where BrandID ='{this.strBrandID}'
+and @P between MoistureStandard1 and MoistureStandard2
+";
+                        if (MyUtility.Check.Seek(sqlcmd, out DataRow dr, "Production"))
+                        {
+                            dr2["MoistureLevel"] = dr["CategoryValue"].ToString();
+                            switch (dr["CategoryValue"].ToString())
+                            {
+                                case "Acceptance Tolerance":
+                                    drResult = "Pass";
+                                    break;
+                                case "Minor":
+                                    drResult = "Pass";
+                                    break;
+                                case "Major":
+                                    drResult = "Fail";
+                                    break;
+                                case "Critical":
+                                    drResult = "Fail";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            if (string.Compare(this.strBrandID, "N.FACE", true) == 0)
+                            {
+                                drResult = "Pass";
+                            }
+                        }
+                        else
+                        {
+                            drResult = "Fail";
+                        }
+
+                        dr2["Result"] = drResult;
+                    }
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -455,7 +568,10 @@ where ID = '{this.id}'
             {
                 foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                 {
-                    dr["Result"] = string.Empty;
+                    if ((string.Compare(this.strBrandID, "LLL", true) == 1) || (string.Compare(this.strBrandID, "N.FACE", true) == 1))
+                    {
+                        dr["Result"] = string.Empty;
+                    }
                 }
             }
             else
