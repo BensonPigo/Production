@@ -35,6 +35,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label10 = new System.Windows.Forms.Label();
             this.gridDistributeToSP = new Sci.Win.UI.Grid();
+            this.cmsDistribute = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertDistribute = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeleteDistribute = new System.Windows.Forms.ToolStripMenuItem();
             this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label11 = new System.Windows.Forms.Label();
             this.gridQtyBreakDown = new Sci.Win.UI.Grid();
@@ -43,6 +46,9 @@
             this.spreadingfabricbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label9 = new System.Windows.Forms.Label();
             this.gridSizeRatio = new Sci.Win.UI.Grid();
+            this.cmsSizeRatio = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeleteSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
             this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label8 = new System.Windows.Forms.Label();
             this.displayBoxTtlDistributeQty = new Sci.Win.UI.DisplayBox();
@@ -77,12 +83,6 @@
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnRefresh = new Sci.Win.UI.Button();
-            this.cmsDistribute = new Sci.Win.UI.ContextMenuStrip();
-            this.MenuItemInsertDistribute = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItemDeleteDistribute = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmsSizeRatio = new Sci.Win.UI.ContextMenuStrip();
-            this.MenuItemInsertSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItemDeleteSizeRatio = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -101,16 +101,16 @@
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).BeginInit();
+            this.cmsDistribute.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.distributebs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.spreadingfabricbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
+            this.cmsSizeRatio.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
             this.panel2.SuspendLayout();
-            this.cmsDistribute.SuspendLayout();
-            this.cmsSizeRatio.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -121,7 +121,7 @@
             this.masterpanel.Controls.Add(this.btnImportMarker);
             this.masterpanel.Controls.Add(this.btnBatchAssign);
             this.masterpanel.Controls.Add(this.panel2);
-            this.masterpanel.Size = new System.Drawing.Size(936, 67);
+            this.masterpanel.Size = new System.Drawing.Size(937, 67);
             this.masterpanel.Controls.SetChildIndex(this.panel2, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
@@ -133,13 +133,13 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 67);
-            this.detailpanel.Size = new System.Drawing.Size(936, 547);
+            this.detailpanel.Size = new System.Drawing.Size(937, 547);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gridicon.Location = new System.Drawing.Point(836, 35);
+            this.gridicon.Location = new System.Drawing.Point(837, 35);
             // 
             // refresh
             // 
@@ -148,7 +148,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(936, 547);
+            this.detailgridcont.Size = new System.Drawing.Size(937, 547);
             // 
             // detail2
             // 
@@ -165,14 +165,14 @@
             // detail
             // 
             this.detail.Controls.Add(this.panel1);
-            this.detail.Size = new System.Drawing.Size(1280, 655);
+            this.detail.Size = new System.Drawing.Size(1372, 655);
             this.detail.Controls.SetChildIndex(this.detailbtm, 0);
             this.detail.Controls.SetChildIndex(this.panel1, 0);
             this.detail.Controls.SetChildIndex(this.detailcont, 0);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(936, 614);
+            this.detailcont.Size = new System.Drawing.Size(937, 614);
             // 
             // detailbtm
             // 
@@ -187,7 +187,7 @@
             this.detailbtm.Controls.Add(this.btnAutoCut);
             this.detailbtm.Controls.Add(this.btnAutoRef);
             this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(1280, 41);
+            this.detailbtm.Size = new System.Drawing.Size(1372, 41);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -210,7 +210,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1288, 684);
+            this.tabs.Size = new System.Drawing.Size(1380, 684);
             // 
             // createby
             // 
@@ -254,9 +254,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(936, 0);
+            this.panel1.Location = new System.Drawing.Point(937, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 614);
+            this.panel1.Size = new System.Drawing.Size(435, 614);
             this.panel1.TabIndex = 4;
             // 
             // numConsPC
@@ -285,7 +285,7 @@
             this.displayBoxCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxCons.Location = new System.Drawing.Point(245, 102);
             this.displayBoxCons.Name = "displayBoxCons";
-            this.displayBoxCons.Size = new System.Drawing.Size(96, 23);
+            this.displayBoxCons.Size = new System.Drawing.Size(182, 23);
             this.displayBoxCons.TabIndex = 32;
             // 
             // splitContainer1
@@ -306,7 +306,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label11);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
-            this.splitContainer1.Size = new System.Drawing.Size(340, 310);
+            this.splitContainer1.Size = new System.Drawing.Size(431, 310);
             this.splitContainer1.SplitterDistance = 149;
             this.splitContainer1.TabIndex = 31;
             // 
@@ -343,8 +343,30 @@
             this.gridDistributeToSP.RowTemplate.Height = 24;
             this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributeToSP.ShowCellToolTips = false;
-            this.gridDistributeToSP.Size = new System.Drawing.Size(338, 130);
+            this.gridDistributeToSP.Size = new System.Drawing.Size(429, 130);
             this.gridDistributeToSP.TabIndex = 28;
+            // 
+            // cmsDistribute
+            // 
+            this.cmsDistribute.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertDistribute,
+            this.MenuItemDeleteDistribute});
+            this.cmsDistribute.Name = "contextMenuStrip1";
+            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
+            // 
+            // MenuItemInsertDistribute
+            // 
+            this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemInsertDistribute.Text = "Insert Distribute";
+            this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
+            // 
+            // MenuItemDeleteDistribute
+            // 
+            this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemDeleteDistribute.Text = "Delete Record";
+            this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
             // 
             // label11
             // 
@@ -378,7 +400,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(338, 136);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(429, 136);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric
@@ -394,20 +416,20 @@
             this.gridSpreadingFabric.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSpreadingFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridSpreadingFabric.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridSpreadingFabric.Location = new System.Drawing.Point(146, 205);
+            this.gridSpreadingFabric.Location = new System.Drawing.Point(167, 205);
             this.gridSpreadingFabric.Name = "gridSpreadingFabric";
             this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridSpreadingFabric.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSpreadingFabric.RowTemplate.Height = 24;
             this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSpreadingFabric.ShowCellToolTips = false;
-            this.gridSpreadingFabric.Size = new System.Drawing.Size(195, 95);
+            this.gridSpreadingFabric.Size = new System.Drawing.Size(266, 95);
             this.gridSpreadingFabric.TabIndex = 26;
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(143, 185);
+            this.label9.Location = new System.Drawing.Point(164, 185);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(116, 17);
             this.label9.TabIndex = 25;
@@ -435,8 +457,30 @@
             this.gridSizeRatio.RowTemplate.Height = 24;
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
-            this.gridSizeRatio.Size = new System.Drawing.Size(137, 95);
+            this.gridSizeRatio.Size = new System.Drawing.Size(158, 95);
             this.gridSizeRatio.TabIndex = 24;
+            // 
+            // cmsSizeRatio
+            // 
+            this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertSizeRatio,
+            this.MenuItemDeleteSizeRatio});
+            this.cmsSizeRatio.Name = "sizeratioMenuStrip";
+            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
+            // 
+            // MenuItemInsertSizeRatio
+            // 
+            this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
+            this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
+            // 
+            // MenuItemDeleteSizeRatio
+            // 
+            this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemDeleteSizeRatio.Text = "Delete Record";
+            this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 
             // label8
             // 
@@ -453,7 +497,7 @@
             this.displayBoxTtlDistributeQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxTtlDistributeQty.Location = new System.Drawing.Point(129, 154);
             this.displayBoxTtlDistributeQty.Name = "displayBoxTtlDistributeQty";
-            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(298, 23);
             this.displayBoxTtlDistributeQty.TabIndex = 22;
             // 
             // label7
@@ -471,7 +515,7 @@
             this.displayBoxTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 128);
             this.displayBoxTotalCutQty.Name = "displayBoxTotalCutQty";
-            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(298, 23);
             this.displayBoxTotalCutQty.TabIndex = 20;
             // 
             // label6
@@ -508,7 +552,7 @@
             this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
             this.displayBoxDescription.Multiline = true;
             this.displayBoxDescription.Name = "displayBoxDescription";
-            this.displayBoxDescription.Size = new System.Drawing.Size(212, 70);
+            this.displayBoxDescription.Size = new System.Drawing.Size(298, 70);
             this.displayBoxDescription.TabIndex = 14;
             // 
             // displayBoxFabricTypeRefno
@@ -517,7 +561,7 @@
             this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
             this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
-            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(298, 23);
             this.displayBoxFabricTypeRefno.TabIndex = 13;
             // 
             // label3
@@ -549,7 +593,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(936, 35);
+            this.panel2.Size = new System.Drawing.Size(937, 35);
             this.panel2.TabIndex = 12;
             // 
             // btnImportFromWorkOrderForPlanning
@@ -760,54 +804,10 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             // 
-            // cmsDistribute
-            // 
-            this.cmsDistribute.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItemInsertDistribute,
-            this.MenuItemDeleteDistribute});
-            this.cmsDistribute.Name = "contextMenuStrip1";
-            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
-            // 
-            // MenuItemInsertDistribute
-            // 
-            this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
-            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
-            this.MenuItemInsertDistribute.Text = "Insert Distribute";
-            this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
-            // 
-            // MenuItemDeleteDistribute
-            // 
-            this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
-            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
-            this.MenuItemDeleteDistribute.Text = "Delete Record";
-            this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
-            // 
-            // cmsSizeRatio
-            // 
-            this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItemInsertSizeRatio,
-            this.MenuItemDeleteSizeRatio});
-            this.cmsSizeRatio.Name = "sizeratioMenuStrip";
-            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
-            // 
-            // MenuItemInsertSizeRatio
-            // 
-            this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
-            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
-            this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
-            this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
-            // 
-            // MenuItemDeleteSizeRatio
-            // 
-            this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
-            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
-            this.MenuItemDeleteSizeRatio.Text = "Delete Record";
-            this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
-            // 
             // P09
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1288, 717);
+            this.ClientSize = new System.Drawing.Size(1380, 717);
             this.DefaultOrder = "ID";
             this.ExpressQuery = true;
             this.GridAlias = "WorkOrderForOutput";
@@ -844,17 +844,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).EndInit();
+            this.cmsDistribute.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.distributebs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSpreadingFabric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.spreadingfabricbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
+            this.cmsSizeRatio.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.cmsDistribute.ResumeLayout(false);
-            this.cmsSizeRatio.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
