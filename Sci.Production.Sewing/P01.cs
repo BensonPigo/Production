@@ -240,11 +240,36 @@ and SunriseNid != 0
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
-            string masterID = (e.Master == null) ? string.Empty : MyUtility.Convert.GetString(e.Master["ID"]);
+            string shift = string.Empty;
+            string masterID = string.Empty;
+            string outputDate = string.Empty;
+            string factoryID = string.Empty;
+            string sewingLineID = string.Empty;
+            string team = string.Empty;
+
+            if (e.Master != null)
+            {
+                string shiftValue = e.Master["Shift"].ToString();
+                shift = shiftValue == "D" ? "Day" : shiftValue == "N" ? "Night" : string.Empty;
+                masterID = MyUtility.Convert.GetString(e.Master["ID"]);
+                outputDate = ((DateTime)e.Master["OutputDate"]).ToString("yyyy / MM / dd");
+                factoryID = e.Master["FactoryID"].ToString();
+                sewingLineID = e.Master["SewingLineID"].ToString();
+                team = e.Master["Team"].ToString();
+            }
+
             this.DetailSelectCommand = string.Format(
-                @"
+                $@"
 SET ARITHABORT ON
-select  sd.*
+select   sd.OrderId
+		,sd.ComboType
+		,sd.Article
+		,sd.Color
+		,sd.QAQty
+		,sd.WorkHour
+		,sd.TMS
+		,sd.Remark
+		,sd.AutoCreate
         , [RFT] = concat(convert(decimal(18,2), iif(isnull(rft.InspectQty, 0) = 0, 0.0, round((rft.InspectQty - rft.RejectQty) / rft.InspectQty * 100.0, 2))), '%')
         , [Tips] = iif( (SELECT MAX(ID) FROM SewingSchedule ss WITH (NOLOCK) WHERE ss.OrderID = sd.OrderId and ss.FactoryID = s.FactoryID and ss.SewingLineID = s.SewingLineID)  is null,'Data Migration (not belong to this line#)','') 
         , [QAOutput] = (select t.TEMP+',' from (select sdd.SizeCode+'*'+CONVERT(varchar,sdd.QAQty) AS TEMP from SewingOutput_Detail_Detail SDD WITH (NOLOCK) where SDD.SewingOutput_DetailUKey = sd.UKey) t for xml path(''))
@@ -253,6 +278,7 @@ select  sd.*
         , o.StyleUkey
         , [OrderCategory] = o.Category
         , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput(s.FactoryID, s.OutputDate, s.SewinglineID, s.Team, o.StyleUkey)
+        , [DQSOutput] = InspInfo.DQSOutputCount
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
@@ -262,9 +288,19 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.SewinglineID = s.SewingLineID 
                                and rft.Shift = s.Shift 
                                and rft.Team = s.Team) Rft
-where sd.ID = '{0}'
-order by sd.UKey",
-                masterID);
+outer apply(
+    select DQSOutputCount=count(1) 
+    from dbo.[SciMES_Inspection] tmpInsp
+    where tmpInsp.InspectionDate= '{outputDate}'
+    and tmpInsp.FactoryID = '{factoryID}'
+    and tmpInsp.Line = '{sewingLineID}'
+    and tmpInsp.Team = '{team}'
+    and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Status in ('Pass','Fixed')
+	and tmpInsp.OrderId = sd.OrderId
+    ) InspInfo
+where sd.ID = '{masterID}'
+order by sd.UKey");
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -884,13 +920,14 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("QAOutput", header: "QA Output", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: this.qaoutput)
                 .Numeric("QAQty", header: "QA Ttl Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: this.inlineqty).Get(out numInLineQtySetting)
-                .Numeric("DefectQty", header: "Defect Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                //.Numeric("InlineQty", header: "Prod. Output", width: Widths.AnsiChars(5), settings: this.inlineqty).Get(out numInLineQtySetting)
+                //.Numeric("DefectQty", header: "Defect Q’ty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("DQSOutput", header: "DQS Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Numeric("WorkHour", header: "W’Hours", width: Widths.AnsiChars(5), decimal_places: 3, maximum: 999.999m, minimum: 0m).Get(out numWorkHourSetting)
                 .Numeric("TMS", header: "TMS", width: Widths.AnsiChars(5), iseditingreadonly: true)
 
                 // .Numeric("RFT", header: "RFT(%)", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                //.Text("RFT", header: "RFT(%)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("Tips", header: "Tips", width: Widths.AnsiChars(40), iseditingreadonly: true)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(40), iseditingreadonly: false)
                 .Text("SewingReasonID", header: "Reason ID", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: this.SewingReasonID)
@@ -913,7 +950,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
 
                 bool isAutoCreate = data["AutoCreate"].EqualString("True");
                 textArticleSetting.IsEditingReadOnly = isAutoCreate;
-                numInLineQtySetting.IsEditingReadOnly = isAutoCreate;
+                //numInLineQtySetting.IsEditingReadOnly = isAutoCreate;
                 numWorkHourSetting.IsEditingReadOnly = isAutoCreate;
 
                 this.DoSubForm.IsSupportDelete = !isAutoCreate;
@@ -952,7 +989,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                     }
 
                     dr.Cells["Article"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
-                    dr.Cells["InlineQty"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
+                    // dr.Cells["InlineQty"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     dr.Cells["WorkHour"].Style.ForeColor = isAutoCreate ? Color.Black : Color.Red;
                     index++;
                 }
@@ -3494,8 +3531,20 @@ select t.OrderId
 ,RFT = CONVERT(VARCHAR, convert(Decimal(5, 2), round((t.InlineQty - t.DefectQty) /  cast(t.InlineQty as decimal) * 100.0, 2))) + '%'
 ,ID = '{this.CurrentMaintain["ID"]}'
 , [StyleRepeat] = dbo.IsRepeatStyleBySewingOutput('{this.CurrentMaintain["FactoryID"]}', @outputDate, '{this.CurrentMaintain["SewingLineID"]}', '{this.CurrentMaintain["Team"]}', o.StyleUkey)
+,[DQSOutput] = isnull(InspInfo.DQSOutputCount,0)
 from #tmp t
 left join orders o  with(nolock) on o.id = t.OrderId
+outer apply(
+    select DQSOutputCount=count(1) 
+    from ManufacturingExecution.dbo.Inspection tmpInsp
+    where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
+    and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+    and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
+    and tmpInsp.Team = '{this.CurrentMaintain["Team"]}'
+    and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Status in ('Pass','Fixed')
+	and tmpInsp.OrderId = t.OrderId
+    ) InspInfo
 outer apply(
     select value = ROUND(
     isnull(o.cpu,0) * isnull(o.CPUFactor,0) * 
@@ -3816,7 +3865,7 @@ select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
 	, FactoryID = '{this.CurrentMaintain["FactoryID"]}'
-	, InspectQty= t.InlineQty - DiffInspectQty.Qty
+	, InspectQty= isnull(InspInfo.DQSOutputCount,0) - DiffInspectQty.Qty  --t.InlineQty - DiffInspectQty.Qty --ISP20240563需求更新公式
 	, RejectQty= RejectData.Qty--t.DefectQty
 	, [DefectQty] = DefectData.Qty
 	, Shift='{this.CurrentMaintain["Shift"]}'
@@ -3826,6 +3875,17 @@ select t.OrderId
     ,t.Article,t.ComboType
 INTO #tmp2
 from #tmp t
+outer apply(
+    select DQSOutputCount=count(1) 
+    from ManufacturingExecution.dbo.Inspection tmpInsp
+    where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
+    and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
+    and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
+    and tmpInsp.Team = '{this.CurrentMaintain["Team"]}'
+    and tmpInsp.Shift = '{shift}'
+    and tmpInsp.Status in ('Pass','Fixed')
+	and tmpInsp.OrderId = t.OrderId
+) InspInfo
 outer apply(
 	select Qty=count(*)
 	from Inspection ins with (nolock)
