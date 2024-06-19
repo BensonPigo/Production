@@ -136,7 +136,7 @@ And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
 Select 	Year = YEAR(inline),	
         WeekNO = DATEPART(WEEK, psb.inline) ,
         FactoryID,
-        MaterialCompletionRate = (MTLCMP.MTLCMP_SPNo　/　TTL.TTLSPNo)　*　100 ,
+        MaterialCompletionRate = round((CONVERT(numeric(18, 4),MTLCMP.MTLCMP_SPNo)/(CONVERT(numeric(18, 4),TTL.TTLSPNo)))*　100, 2) ,
         MTLCMP.MTLCMP_SPNo,
         TTL.TTLSPNo
 From [P_SewingLineScheduleBySP] psb with (nolock)
