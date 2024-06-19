@@ -2,7 +2,6 @@
 using Ict.Win;
 using Ict.Win.UI;
 using Sci.Data;
-using Sci.Production.Class;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
@@ -10,17 +9,12 @@ using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
+using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
-using static Ict.Win.WinAPI;
-using static log4net.Appender.ColoredConsoleAppender;
 using static Sci.Production.Cutting.CuttingWorkOrder;
-using static Sci.Win.Tems.Input8;
 
 namespace Sci.Production.Cutting
 {
@@ -102,6 +96,8 @@ WHERE MDivisionID = '{Env.User.Keyword}'
                 this.ReloadDatas();
             };
         }
+
+        #region 大表身相關
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -481,14 +477,373 @@ DROP TABLE #tmp
             }
             #endregion
         }
+        #endregion
+
+        #region Click Save Event
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            #region 檢查
+            #region 檢查 主表身
+
+            // 不可空欄位, 並移動到錯誤列
+            if (!this.ValidateDetailDatas())
+            {
+                return false;
+            }
+
+            if (!this.ValidateMarkerNameAndNo())
+            {
+                return false;
+            }
+
+            if (!this.ValidateMarkerNo())
+            {
+                return false;
+            }
+
+            if (!this.ValidateCutRef())
+            {
+                return false;
+            }
+
             #endregion
 
+            #region 清除 第3層 空值
+            this.dt_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
+            #endregion
+
+            #region 檢查 SizeRatio、PatternPanel 重複 Key
+            if (!this.ValidateSizeRatio())
+            {
+                return false;
+            }
+
+            if (!this.ValidatePatternPanel())
+            {
+                return false;
+            }
+            #endregion
+
+            // 計算CutInLine、CutOffLine
+            this.CurrentMaintain["CutInLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
+            this.CurrentMaintain["CutOffLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null);
+
             return base.ClickSaveBefore();
+        }
+
+        protected override DualResult ClickSavePost()
+        {
+            StringBuilder delsql = new StringBuilder();
+            StringBuilder updatesql = new StringBuilder();
+            StringBuilder insertsql = new StringBuilder();
+
+            #region SizeRatio
+
+            // 刪除
+            var delSizeRatio = this.dt_SizeRatio.AsEnumerable()
+                .Where(x => x.RowState == DataRowState.Deleted)
+                .Select(dr => new
+                {
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(dr["WorkOrderForPlanningUkey", DataRowVersion.Original]),
+                    SizeCode = MyUtility.Convert.GetString(dr["SizeCode", DataRowVersion.Original]),
+                    ID = this.CurrentMaintain["ID"].ToString(),
+                });
+
+            foreach (var s in delSizeRatio)
+            {
+                delsql.AppendLine($@"Delete From WorkOrderForPlanning_SizeRatio Where WorkOrderForPlanningUkey={s.WorkOrderForPlanningUkey} and SizeCode ='{s.SizeCode}' and ID ='{s.ID}';");
+            }
+
+            // 修改
+            var updSizeRatio = this.dt_SizeRatio.AsEnumerable()
+                .Where(x => x.RowState == DataRowState.Modified)
+                .Select(dr => new
+                {
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(dr["WorkOrderForPlanningUkey", DataRowVersion.Original]),
+                    OriSizeCode = MyUtility.Convert.GetString(dr["SizeCode", DataRowVersion.Original]),
+                    NewSizeCode = MyUtility.Convert.GetString(dr["SizeCode"]),
+                    Qty = MyUtility.Convert.GetInt(dr["Qty"]),
+                    ID = this.CurrentMaintain["ID"].ToString(),
+                });
+
+            foreach (var s in updSizeRatio)
+            {
+                updatesql.AppendLine($@"
+Update WorkOrderForPlanning_SizeRatio 
+set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = {s.WorkOrderForPlanningUkey} and SizeCode = '{s.OriSizeCode}' and id ='{s.ID}';
+");
+            }
+
+            // 新增
+            var insSizeRatio = this.dt_SizeRatio.AsEnumerable()
+                .Where(x => x.RowState == DataRowState.Added)
+                .Select(dr => new
+                {
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(dr["WorkOrderForPlanningUkey"]),
+                    SizeCode = MyUtility.Convert.GetString(dr["SizeCode"]),
+                    Qty = MyUtility.Convert.GetInt(dr["Qty"]),
+                    ID = this.CurrentMaintain["ID"].ToString(),
+                });
+            foreach (var s in insSizeRatio)
+            {
+                insertsql.AppendLine($@"Insert into WorkOrderForPlanning_SizeRatio(WorkOrderForPlanningUkey,SizeCode,Qty,ID) values({s.WorkOrderForPlanningUkey},'{s.SizeCode}',{s.Qty},'{s.ID}');");
+            }
+            #endregion
+
+            #region PatternPanel
+
+            // 刪除
+            var delPatternPanel = this.dt_PatternPanel.AsEnumerable()
+                .Where(x => x.RowState == DataRowState.Deleted)
+                .Select(dr => new
+                {
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(dr["WorkOrderForPlanningUkey", DataRowVersion.Original]),
+                    PatternPanel = MyUtility.Convert.GetString(dr["PatternPanel", DataRowVersion.Original]),
+                    FabricPanelCode = MyUtility.Convert.GetString(dr["FabricPanelCode", DataRowVersion.Original]),
+                });
+
+            foreach (var s in delPatternPanel)
+            {
+                delsql.AppendLine($@"Delete From WorkOrderForPlanning_PatternPanel Where WorkOrderForPlanningUkey='{s.WorkOrderForPlanningUkey}' and PatternPanel ='{s.PatternPanel}' and FabricPanelCode ='{s.FabricPanelCode}';");
+            }
+
+            // 新增
+            var insPatternPanel = this.dt_PatternPanel.AsEnumerable()
+                .Where(x => x.RowState == DataRowState.Added)
+                .Select(dr => new
+                {
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(dr["WorkOrderForPlanningUkey"]),
+                    PatternPanel = MyUtility.Convert.GetString(dr["PatternPanel"]),
+                    FabricPanelCode = MyUtility.Convert.GetString(dr["FabricPanelCode"]),
+                    ID = this.CurrentMaintain["ID"].ToString(),
+                });
+            foreach (var s in insPatternPanel)
+            {
+                insertsql.AppendLine($@"Insert into WorkOrderForPlanning_PatternPanel(WorkOrderForPlanningUkey,PatternPanel,FabricPanelCode,ID) values({s.WorkOrderForPlanningUkey},'{s.PatternPanel}','{s.FabricPanelCode}','{s.ID}');");
+            }
+            #endregion
+
+            #region 回寫Orders CutInLine,CutOffLine
+            string cutInLine, cutOffLine;
+
+            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+
+            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+
+            updatesql.AppendLine($@"UPDATE Orders set CutInLine = iif('{cutInLine}' = '',null,'{cutInLine}'),CutOffLine =  iif('{cutOffLine}' = '',null,'{cutOffLine}') where POID = '{this.CurrentMaintain["ID"]}';");
+
+            #endregion
+
+            DualResult upResult;
+            if (!MyUtility.Check.Empty(delsql))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, delsql.ToString())))
+                {
+                    return upResult;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(updatesql))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, updatesql.ToString())))
+                {
+                    return upResult;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(insertsql))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, insertsql.ToString())))
+                {
+                    return upResult;
+                }
+            }
+
+            return base.ClickSavePost();
+        }
+
+        // 檢查 主表身 不可空欄位, 並移動到那列
+        private bool ValidateDetailDatas()
+        {
+            var validationRules = new Dictionary<string, string>
+            {
+                { "MarkerNo", "Marker No cannot be empty." },
+                { "FabricPanelCode", "Fabric Panel Code cannot be empty." },
+                { "MarkerName", "Marker Name cannot be empty." },
+                { "Layer", "Layer cannot be empty." },
+                { "SEQ1", "SEQ1 cannot be empty." },
+                { "SEQ2", "SEQ2 cannot be empty." },
+            };
+
+            foreach (var rule in validationRules)
+            {
+                foreach (DataRow row in this.DetailDatas.Where(row => MyUtility.Check.Empty(row[rule.Key])))
+                {
+                    int index = this.DetailDatas.IndexOf(row);
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox(rule.Value);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // 檢查MarkerName, MarkerNo 的group， Markerlength、EstCutDate 必須一樣
+        private bool ValidateMarkerNameAndNo()
+        {
+            var groupData = this.DetailDatas
+                .Where(x => !MyUtility.Check.Empty(x["MarkerName"]) && !MyUtility.Check.Empty(x["MarkerNo"]))
+                .GroupBy(x => new { MarkerName = x["MarkerName"].ToString(), MarkerNo = x["MarkerNo"].ToString() })
+                .Where(
+                group => group.Select(row => new { Markerlength = row["Markerlength"].ToString(), EstCutDate = MyUtility.Convert.GetDate(row["EstCutDate"]) })
+                               .Distinct()
+                               .Count() > 1)
+                .SelectMany(group => group);
+
+            if (groupData.Any())
+            {
+                string msg = "The following MarkerName, MarkerNo combinations have different Markerlength or EstCutDate:";
+                MsgGridForm m = new MsgGridForm(groupData, msg, "Exists different Markerlength or EstCutDate") { Width = 500 };
+                m.ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        // 檢查MarkerName, CutRef 的group， MarkerNo 必須一樣
+        private bool ValidateMarkerNo()
+        {
+            var groupData = this.DetailDatas
+                .Where(x => !MyUtility.Check.Empty(x["MarkerName"]) && !MyUtility.Check.Empty(x["CutRef"]))
+                .GroupBy(x => new { MarkerName = x["MarkerName"].ToString(), CutRef = x["CutRef"].ToString() })
+                .Where(
+                group => group.Select(row => new { MarkerNo = row["MarkerNo"].ToString() })
+                               .Distinct()
+                               .Count() > 1)
+                .SelectMany(group => group);
+
+            if (groupData.Any())
+            {
+                string msg = "For the following Cutref, MarkerName combinations, different MarkerNo values were found:";
+                MsgGridForm m = new MsgGridForm(groupData, msg, "Exists different MarkerNo") { Width = 500 };
+                m.ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        // 檢查EstCutDate 的group， CutRef 必須一樣
+        private bool ValidateCutRef()
+        {
+            var groupData = this.DetailDatas
+                .Where(x => !MyUtility.Check.Empty(x["EstCutDate"]))
+                .GroupBy(x => new { EstCutDate = MyUtility.Convert.GetDate(x["MarkerName"]) })
+                .Where(
+                group => group.Select(row => new { CutRef = row["CutRef"].ToString() })
+                               .Distinct()
+                               .Count() > 1)
+                .SelectMany(group => group);
+
+            if (groupData.Any())
+            {
+                string msg = "You can't set different [Est.CutDate] in same CutRef#:";
+                MsgGridForm m = new MsgGridForm(groupData, msg, "Exists CutRef#") { Width = 500 };
+                m.ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        // 檢查SizeRatio 重複
+        private bool ValidateSizeRatio()
+        {
+            var groupData = this.dt_SizeRatio.AsEnumerable()
+                .GroupBy(x => new
+                {
+                    SizeCode = MyUtility.Convert.GetString(x["SizeCode"]),
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(x["WorkOrderForPlanningUkey"]),
+                    tmpKey = MyUtility.Convert.GetDate(x["tmpKey"]),
+                })
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            if (groupData.Any())
+            {
+                string msg = "The SizeRatio duplicate ,Please see below:";
+                MsgGridForm m = new MsgGridForm(groupData, msg, "SizeRatio Duplicate") { Width = 700 };
+                m.ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        // 檢查PatternPanel 重複
+        private bool ValidatePatternPanel()
+        {
+            var groupData = this.dt_SizeRatio.AsEnumerable()
+                .GroupBy(x => new
+                {
+                    PatternPanel = MyUtility.Convert.GetString(x["PatternPanel"]),
+                    FabricPanelCode = MyUtility.Convert.GetString(x["FabricPanelCode"]),
+                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(x["WorkOrderForPlanningUkey"]),
+                    tmpKey = MyUtility.Convert.GetDate(x["tmpKey"]),
+                })
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            if (groupData.Any())
+            {
+                string msg = "The PatternPanel data duplicate ,Please see below:";
+                MsgGridForm m = new MsgGridForm(groupData, msg, "PatternPanel Duplicate") { Width = 700 };
+                m.ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        // 表身若沒有第三層 SizeRatio 資料則移除
+        private void DeleteNonSizeRatio()
+        {
+            this.DetailDatas.Where(x => x.RowState != DataRowState.Deleted &&
+                !this.dt_SizeRatio.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted
+                    && o["tmpKey"].ToString() == x["tmpKey"].ToString()
+                    && o["WorkOrderForPlanningUkey"].ToString() == x["Ukey"].ToString())
+                .Any()).Delete();
+        }
+        #endregion
+
+        #region 單筆操作：包含表身三個Icon、彈窗ActionCutRef 新/修/刪
+
+        /// <summary>
+        /// Edit按鈕開啟「單筆編輯視窗」
+        /// </summary>
+        /// <param name="sender">sender</param>
+        /// <param name="e">e</param>
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            #region 校驗
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("There is no Workorder data that can be modified.");
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["CutPlanID"]))
+            {
+                MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
+                return;
+            }
+            #endregion
+
+            // 單筆編輯視窗
+            this.ShowDialogActionCutRef(DialogAction.Edit);
         }
 
         /// <summary>
@@ -511,71 +866,77 @@ DROP TABLE #tmp
             return form.ShowDialog();
         }
 
-        #region MarkerLengt驗證/UnitCons/Cons計算
-        private void Cal_Cons(bool updateConsPC, bool updateCons) // update Cons
+        // 按 + 或 插入 Icon
+        protected override void OnDetailGridInsert(int index = -1)
         {
-            int sizeRatioQty;
-            object comput;
-            comput = this.dt_SizeRatio.Compute("Sum(Qty)", string.Format("WorkOrderUkey = '{0}' and tmpKey = '{1}'", this.CurrentDetailData["Ukey"], this.CurrentDetailData["tmpKey"]));
-            if (comput == DBNull.Value)
-            {
-                sizeRatioQty = 0;
-            }
-            else
-            {
-                sizeRatioQty = Convert.ToInt32(comput);
-            }
+            // 先保留原本, 按插入按鈕時複製用
+            DataRow oldRow = this.CurrentDetailData;
 
-            decimal markerLengthNum, conspc;
-            string markerLengthstr, lenY, lenE;
-            if (MyUtility.Check.Empty(this.CurrentDetailData["MarkerLengthY"]))
-            {
-                lenY = "0";
-            }
-            else
-            {
-                lenY = this.CurrentDetailData["MarkerLengthY"].ToString();
-            }
+            // 底層插入之後 this.CurrentDetailData 是新的那筆
+            base.OnDetailGridInsert(index);
 
-            if (MyUtility.Check.Empty(this.CurrentDetailData["MarkerLengthE"]))
-            {
-                lenE = "0-0/0+0\"";
-            }
-            else
-            {
-                lenE = this.CurrentDetailData["MarkerLengthE"].ToString();
-            }
+            // 先取得當前編輯狀態的最新 tmpKey
+            long tmpKey = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"]));
+            this.CurrentDetailData["tmpKey"] = tmpKey;
+            this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
+            this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
+            this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
 
-            markerLengthstr = lenY + "Y" + lenE;
-            markerLengthNum = Convert.ToDecimal(MyUtility.GetValue.Lookup(string.Format("Select dbo.MarkerLengthToYDS('{0}')", markerLengthstr)));
-            if (sizeRatioQty == 0)
+            // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
+            if (index != -1)
             {
-                conspc = 0;
-            }
-            else
-            {
-                conspc = markerLengthNum / sizeRatioQty;
-            }
-
-            if (updateConsPC)
-            {
-                this.CurrentDetailData["Conspc"] = conspc;
-            }
-
-            if (updateCons)
-            {
-                if (MyUtility.Check.Empty(this.CurrentDetailData["Layer"]))
+                // 不複製 CutRef, CutNo, 以及(這4個底層會自動處理 Addname, AddDate, EditName, EditDate)
+                // 定義不需要複製的欄位名稱列表
+                HashSet<string> excludeColumns = new HashSet<string>
                 {
-                    this.CurrentDetailData["Cons"] = markerLengthNum * 0;
-                }
-                else
+                    "Ukey", // 此表 Pkey 底層處理
+                    "tmpKey", // 上方有填不同值不複製
+                    "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
+                    "CutRef",
+                    "CutNo",
+                    "Addname",
+                    "AddDate",
+                    "EditName",
+                    "EditDate",
+                };
+
+                foreach (DataColumn column in oldRow.Table.Columns)
                 {
-                    this.CurrentDetailData["Cons"] = markerLengthNum * Convert.ToInt32(this.CurrentDetailData["Layer"]);
+                    string columnName = column.ColumnName;
+
+                    // 如果當前欄位名稱不在排除列表中，則進行複製
+                    if (!excludeColumns.Contains(columnName))
+                    {
+                        this.CurrentDetailData[columnName] = oldRow[columnName];
+                    }
                 }
+
+                // 複製第3層資訊,並對應到新的 this.CurrentMaintain
+                AddThirdDatas(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
+                AddThirdDatas(this.CurrentDetailData, this.dt_PatternPanel, CuttingForm.P02);
             }
 
-            //this.txtMarkerLength.Text = markerLengthstr;
-            //this.txtMarkerLength.ValidateControl();
+            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
+            if (result == DialogResult.Cancel)
+            {
+                this.OnDetailGridDelete();
+            }
+        }
+
+        protected override void OnDetailGridDelete()
+        {
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["CutPlanID"]))
+            {
+                MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
+                return;
+            }
+
+            base.OnDetailGridDelete();
         }
         #endregion
 
@@ -1075,26 +1436,8 @@ DROP TABLE #tmp
         #endregion
 
         #region Button Event
-        private void BtnEdit_Click(object sender, EventArgs e)
-        {
-            #region 校驗
-            if (this.DetailDatas.Count == 0)
-            {
-                MyUtility.Msg.WarningBox("There is no Workorder data that can be modified.");
-                return;
-            }
 
-            if (!MyUtility.Check.Empty(this.CurrentDetailData["CutPlanID"]))
-            {
-                MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
-                return;
-            }
-            #endregion
-
-            // 單筆編輯視窗
-            this.ShowDialogActionCutRef(DialogAction.Edit);
-        }
-
+        // 等待整合...
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)
         {
             MyUtility.Check.Seek($@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'", out DataRow dr);
@@ -1102,6 +1445,7 @@ DROP TABLE #tmp
             callNextForm.ShowDialog(this);
         }
 
+        // 等待整合...
         private void BtnRefresh_Click(object sender, EventArgs e)
         {
             this.RenewData();
@@ -1111,6 +1455,7 @@ DROP TABLE #tmp
             this.OnDetailEntered();
         }
 
+        // 等待整合...
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
@@ -1252,31 +1597,37 @@ END";
             frm.ShowDialog(this);
         }
 
+        // 等待整合...
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
 
         }
 
+        // 等待整合...
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
 
         }
 
+        // 等待整合...
         private void BtnDownload_Click(object sender, EventArgs e)
         {
 
         }
 
+        // 等待整合...
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
 
         }
 
+        // 等待整合...
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
 
         }
 
+        // 等待整合...
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
 
