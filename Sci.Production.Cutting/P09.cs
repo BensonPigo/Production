@@ -766,7 +766,7 @@ WHERE ID = ''
                         }
 
                         List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
-                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, "ForOutput", sqlConn);
+                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, CuttingForm.P09, sqlConn);
                         if (!result)
                         {
                             this.ShowErr(result);

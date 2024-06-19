@@ -12,6 +12,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static Ict.Win.UI.DataGridView;
 
 namespace Sci.Production.Cutting
 {
@@ -39,17 +40,18 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="id">Cutting.ID</param>
         /// <param name="listWorkOrderUkey">listWorkOrderUkey</param>
-        /// <param name="tableMiddleName">傳入字串 P02: ForPlanning 或 P09:ForOutput </param>
+        /// <param name="form">CuttingForm.P02/P09 </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
-        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, string tableMiddleName, SqlConnection sqlConnection)
+        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, CuttingForm form, SqlConnection sqlConnection)
         {
+            string tableMiddleName = GetWorkOrderName(form);
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
 select w.Ukey, w.Colorid, w.FabricCombo, ws.SizeCode, [CutQty] = isnull(ws.Qty * w.Layer, 0)
 into #tmpCutting
-from WorkOrder{tableMiddleName} w with (nolock)
-inner join WorkOrder{tableMiddleName}_SizeRatio ws with (nolock) on ws.WorkOrder{tableMiddleName}Ukey = w.Ukey
+from WorkOrderFor{tableMiddleName} w with (nolock)
+inner join WorkOrderFor{tableMiddleName}_SizeRatio ws with (nolock) on ws.WorkOrderFor{tableMiddleName}Ukey = w.Ukey
 where w.Ukey in ({whereWorkOrderUkey})
 order by ukey
 
@@ -109,7 +111,7 @@ Qty > 0
                     drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrder{tableMiddleName}_Distribute(WorkOrder{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDistributeOrderQty["Article"]}', '{itemDistribute["SizeCode"]}', '{distributrQty}')
 ";
                 }
@@ -118,7 +120,7 @@ values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDis
                 if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrder{tableMiddleName}_Distribute(WorkOrder{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCode"]}', '{itemDistribute["CutQty"]}')
 ";
                 }
@@ -447,9 +449,11 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
         /// 檢查 有CutNo & 通過 checkContinue 清單
         /// P09才有 checkContinue, P02直接帶 row => true
         /// 檢查  MarkerName, MarkerNo, CutNo 相同資料的 markerlength, EstCutDate 必須相同
+        /// 顯示訊息
         /// 範例
         /// ValidateCutNoAndFabricCombo(this.DetailDatas, row => true);
         /// ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue);
+        /// 寫完了才發現 P02 GroupBy 欄位不一樣
         /// </summary>
         /// <param name="detailDatas">排除已刪除的表身</param>
         /// <param name="checkContinue">P09 檢查的 Function</param>
@@ -490,6 +494,42 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             return true;
         }
 
+        /// <summary>
+        /// Cutref 相同資料的 MarkerNo 必須相同
+        /// </summary>
+        /// <param name="detailDatas">排除已刪除的表身</param>
+        /// <param name="checkContinue">P09 檢查的 Function</param>
+        /// <returns>bool</returns>
+        public bool ValidateCutrefMarkerNo(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
+        {
+            string checkmsg = string.Empty;
+            var groupedData = detailDatas
+                .Where(row => !MyUtility.Check.Empty(row["Cutref"]) && checkContinue(row))
+                .GroupBy(r => MyUtility.Convert.GetString(r["Cutref"]))
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            foreach (var group in groupedData)
+            {
+                var cutref = group.Key;
+                var markerNoList = group.Select(r => MyUtility.Convert.GetString(r["MarkerNo"])).Distinct().ToList();
+
+                if (markerNoList.Count > 1)
+                {
+                    var firstRow = group.First();
+                    checkmsg += $"\r\n[Cutref]: {cutref}, [CutNo]: {firstRow["cutNo"]}, [MarkerName]: {firstRow["markerName"]} - Different MarkerNo values found: {string.Join(", ", markerNoList)}";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(checkmsg))
+            {
+                checkmsg = "For the following Cutref, CutNo, MarkerName combinations, different MarkerNo values were found:" + checkmsg;
+                MyUtility.Msg.WarningBox(checkmsg);
+                return false;
+            }
+
+            return true;
+        }
 
         #endregion
 
