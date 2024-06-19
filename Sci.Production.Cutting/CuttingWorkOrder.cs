@@ -1068,6 +1068,11 @@ ORDER BY SizeCode
             CuttingForm form)
         {
             DataRow dr = grid.GetDataRow(e.RowIndex);
+            if (dr == null)
+            {
+                return false;
+            }
+
             int oldvalue = MyUtility.Convert.GetInt(dr["Qty"]);
             int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
             if (oldvalue == newvalue)
@@ -1486,7 +1491,7 @@ ORDER BY FabricPanelCode,PatternPanel
             string filter = GetFilter(currentDetailData, form);
             foreach (DataRow dr in dtSizeRatio.Select(filter))
             {
-                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * MyUtility.Convert.GetInt(dr["Layer"]); // 此 SizeCode 總數量
+                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * MyUtility.Convert.GetInt(currentDetailData["Layer"]); // 此 SizeCode 總數量
                 string sizeCode = dr["SizeCode"].ToString();
                 string filterSizeCode = $"{filter} AND SizeCode = '{sizeCode}'";
 

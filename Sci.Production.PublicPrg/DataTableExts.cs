@@ -30,6 +30,7 @@ namespace Sci.Production.PublicPrg
             }
 
             var duplicateKeys = dataTable.AsEnumerable()
+                .Where(row => row.RowState != DataRowState.Deleted)
                 .GroupBy(row => string.Join("|", columnsToCheck.Select(col => row[col].ToString())))
                 .Where(group => group.Count() > 1)
                 .Select(group => group.Key)

@@ -618,6 +618,7 @@
             this.btnExcludeSetting.TabIndex = 0;
             this.btnExcludeSetting.Text = "Exclude Setting";
             this.btnExcludeSetting.UseVisualStyleBackColor = true;
+            this.btnExcludeSetting.Click += new System.EventHandler(this.BtnExcludeSetting_Click);
             // 
             // displayBoxStyle
             // 
@@ -663,6 +664,7 @@
             this.btnBatchAssign.TabIndex = 2;
             this.btnBatchAssign.Text = "Batch Assign";
             this.btnBatchAssign.UseVisualStyleBackColor = true;
+            this.btnBatchAssign.Click += new System.EventHandler(this.BtnBatchAssign_Click);
             // 
             // btnImportMarker
             // 
@@ -673,6 +675,7 @@
             this.btnImportMarker.TabIndex = 3;
             this.btnImportMarker.Text = "Import Marker";
             this.btnImportMarker.UseVisualStyleBackColor = true;
+            this.btnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
             // 
             // btnDownload
             // 
@@ -682,6 +685,7 @@
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
             this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
             // 
             // btnImportMarkerLectra
             // 
@@ -692,6 +696,7 @@
             this.btnImportMarkerLectra.TabIndex = 14;
             this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
             this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
+            this.btnImportMarkerLectra.Click += new System.EventHandler(this.BtnImportMarkerLectra_Click);
             // 
             // btnEdit
             // 
@@ -714,6 +719,7 @@
             this.btnAutoRef.TabIndex = 16;
             this.btnAutoRef.Text = "Auto Ref#";
             this.btnAutoRef.UseVisualStyleBackColor = true;
+            this.btnAutoRef.Click += new System.EventHandler(this.BtnAutoRef_Click);
             // 
             // btnAutoCut
             // 
@@ -724,6 +730,7 @@
             this.btnAutoCut.TabIndex = 17;
             this.btnAutoCut.Text = "Auto Cut#";
             this.btnAutoCut.UseVisualStyleBackColor = true;
+            this.btnAutoCut.Click += new System.EventHandler(this.BtnAutoCut_Click);
             // 
             // btnAllSPDistribute
             // 
@@ -734,6 +741,7 @@
             this.btnAllSPDistribute.TabIndex = 18;
             this.btnAllSPDistribute.Text = "All SP# Distribute";
             this.btnAllSPDistribute.UseVisualStyleBackColor = true;
+            this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
             // 
             // btnDistributeThisCutRef
             // 
@@ -744,6 +752,7 @@
             this.btnDistributeThisCutRef.TabIndex = 19;
             this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
             this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
+            this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
             // 
             // btnCutPartsCheck
             // 
@@ -754,6 +763,7 @@
             this.btnCutPartsCheck.TabIndex = 20;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
             // 
             // btnCutPartsCheckSummary
             // 
@@ -764,6 +774,7 @@
             this.btnCutPartsCheckSummary.TabIndex = 21;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
             // 
             // btnHistory
             // 
@@ -774,6 +785,7 @@
             this.btnHistory.TabIndex = 22;
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
             // 
             // btnQtyBreakdown
             // 
@@ -784,6 +796,7 @@
             this.btnQtyBreakdown.TabIndex = 23;
             this.btnQtyBreakdown.Text = "Qty Breakdown";
             this.btnQtyBreakdown.UseVisualStyleBackColor = true;
+            this.btnQtyBreakdown.Click += new System.EventHandler(this.BtnQtyBreakdown_Click);
             // 
             // btnToExcel
             // 
@@ -794,6 +807,7 @@
             this.btnToExcel.TabIndex = 24;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // btnRefresh
             // 
@@ -804,6 +818,7 @@
             this.btnRefresh.TabIndex = 25;
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
             // BackgroundWorker1
             // 
