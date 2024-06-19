@@ -411,8 +411,7 @@ DROP TABLE #tmp
                 this.dtWorkOrderForOutput_Distribute.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any();
 
             #region 檢查 主表身
-
-            if (!ValidateDetailDatas(this.DetailDatas, this.detailgrid))
+            if (!ValidateDetailDatasEmpty(this.DetailDatas, this.detailgrid))
             {
                 return false;
             }
@@ -422,7 +421,12 @@ DROP TABLE #tmp
                 return false;
             }
 
-            if (!ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue))
+            if (!ValidateCutNoAndMarkerDetails(this.DetailDatas, this.CheckContinue))
+            {
+                return false;
+            }
+
+            if (!ValidateCutref(this.DetailDatas, this.CheckContinue))
             {
                 return false;
             }
@@ -437,7 +441,13 @@ DROP TABLE #tmp
             #endregion
 
             #region 檢查 第3層 重複 Key
-
+            var columnsToCheck = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" };
+            bool hasDuplicates = Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_SizeRatio, columnsToCheck, out DataTable dtCheck);
+            if (hasDuplicates)
+            {
+                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey>");
+                return false;
+            }
 
             #endregion
 

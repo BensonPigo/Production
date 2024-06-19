@@ -386,7 +386,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
         /// <param name="detailDatas">排除已刪除的表身</param>
         /// <param name="detailgrid">detailgrid</param>
         /// <returns>bool</returns>
-        public static bool ValidateDetailDatas(IList<DataRow> detailDatas, Sci.Win.UI.Grid detailgrid)
+        public static bool ValidateDetailDatasEmpty(IList<DataRow> detailDatas, Sci.Win.UI.Grid detailgrid)
         {
             var validationRules = new Dictionary<string, string>
             {
@@ -414,7 +414,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
 
         /// <summary>
         /// 檢查 沒 CutRef,有 CutNo 清單
-        /// 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
+        /// 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo) 必須相同
         /// 並移動到 detailgrid 那列
         /// </summary>
         /// <param name="detailDatas">排除已刪除的表身</param>
@@ -447,18 +447,19 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
 
         /// <summary>
         /// 檢查 有CutNo & 通過 checkContinue 清單
+        /// 相同 (MarkerName,MarkerNo,CutNo) 的 (Markerlength或EstCutDate) 必須相同
         /// P09才有 checkContinue, P02直接帶 row => true
         /// 檢查  MarkerName, MarkerNo, CutNo 相同資料的 markerlength, EstCutDate 必須相同
         /// 顯示訊息
         /// 範例
-        /// ValidateCutNoAndFabricCombo(this.DetailDatas, row => true);
-        /// ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue);
+        /// ValidateCutNoAndMarkerDetails(this.DetailDatas, row => true);
+        /// ValidateCutNoAndMarkerDetails(this.DetailDatas, this.CheckContinue);
         /// 寫完了才發現 P02 GroupBy 欄位不一樣
         /// </summary>
         /// <param name="detailDatas">排除已刪除的表身</param>
         /// <param name="checkContinue">P09 檢查的 Function</param>
         /// <returns>bool</returns>
-        public static bool ValidateCutNoAndFabricCombo(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
+        public static bool ValidateCutNoAndMarkerDetails(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
         {
             // 先找出有 CutNo 且通過檢查的資料
             var groupedData = detailDatas
@@ -495,12 +496,12 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
         }
 
         /// <summary>
-        /// Cutref 相同資料的 MarkerNo 必須相同
+        /// Cutref 相同資料的 CutNo, MarkerName, MarkerNo, Est.CutDate, CutCell, SpreadingNo, Shift 必須相同
         /// </summary>
         /// <param name="detailDatas">排除已刪除的表身</param>
         /// <param name="checkContinue">P09 檢查的 Function</param>
         /// <returns>bool</returns>
-        public bool ValidateCutrefMarkerNo(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
+        public static bool ValidateCutref(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
         {
             string checkmsg = string.Empty;
             var groupedData = detailDatas
@@ -511,13 +512,40 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
 
             foreach (var group in groupedData)
             {
-                var cutref = group.Key;
-                var markerNoList = group.Select(r => MyUtility.Convert.GetString(r["MarkerNo"])).Distinct().ToList();
+                string cutRef = group.Key;
+                var cutNoList = group.Select(r => MyUtility.Convert.GetString(r["CutNo"])).Distinct().ToList();
+                if (cutNoList.Count > 1)
+                {
+                    MyUtility.Msg.WarningBox($"Cannot have different [Cut#] with same CutRef# <{cutRef}>");
+                    return false;
+                }
 
+                var markerNameList = group.Select(r => MyUtility.Convert.GetString(r["MarkerName"])).Distinct().ToList();
+                if (markerNameList.Count > 1)
+                {
+                    MyUtility.Msg.WarningBox($"Cannot have different [Marker Name] with same CutRef# <{cutRef}>");
+                    return false;
+                }
+
+                var distinct1List = group.Select(row => new
+                {
+                    EstCutDate = MyUtility.Convert.GetDate(row["EstCutDate"]),
+                    CutCellID = MyUtility.Convert.GetString(row["CutCellID"]),
+                    SpreadingNoID = MyUtility.Convert.GetString(row["SpreadingNoID"]),
+                    Shift = MyUtility.Convert.GetString(row["Shift"]),
+                }).Distinct().ToList();
+
+                if (distinct1List.Count > 1)
+                {
+                    MyUtility.Msg.WarningBox($"You can't set different [Est.CutDate] or [CutCell] or [Spreading No.] or [Shift] in same CutRef# <{cutRef}>");
+                    return false;
+                }
+
+                var markerNoList = group.Select(r => MyUtility.Convert.GetString(r["MarkerNo"])).Distinct().ToList();
                 if (markerNoList.Count > 1)
                 {
                     var firstRow = group.First();
-                    checkmsg += $"\r\n[Cutref]: {cutref}, [CutNo]: {firstRow["cutNo"]}, [MarkerName]: {firstRow["markerName"]} - Different MarkerNo values found: {string.Join(", ", markerNoList)}";
+                    checkmsg += $"\r\n[Cutref]: {cutRef}, [CutNo]: {firstRow["CutNo"]}, [MarkerName]: {firstRow["MarkerName"]} - Different MarkerNo values found: {string.Join(", ", markerNoList)}";
                 }
             }
 
