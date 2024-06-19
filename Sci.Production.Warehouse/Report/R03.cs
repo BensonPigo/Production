@@ -319,10 +319,12 @@ outer apply
 outer apply 
 (
 	select Color = stuff((
-		select DISTINCT ',' + occ2.ColorID
+		select ',' + occ2.ColorID
 		from Order_ColorCombo occ WITH (NOLOCK) 
         inner join Order_ColorCombo occ2 WITH (NOLOCK) on occ.ID = occ2.ID and occ.Article = occ2.Article and occ2.PatternPanel = 'FA'
 		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricPanelCode = ob.FabricPanelCode 
+        group by occ2.Article, occ2.ColorID
+        order by occ2.Article
 		for xml path('')
 	),1,1,'')
 ) FromColorCombo
@@ -374,10 +376,12 @@ outer apply
 outer apply 
 (
 	select Value = stuff((
-		select DISTINCT ',' + occ.ColorID
+		select ',' + occ.ColorID
 		from Order_BOA_Article oba WITH (NOLOCK) 
         inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = oba.id and occ.Article = oba.Article and occ.PatternPanel = 'FA'
         where oba.Order_BoAUkey = ob.Ukey
+        group by occ.Article, occ.ColorID
+        order by occ.Article
 		for xml path('')
 	),1,1,'')
 ) FromColorCombo
@@ -428,10 +432,12 @@ outer apply
 outer apply 
 (
 	select Color = stuff((
-		select DISTINCT ',' + occ2.ColorID
+		select ',' + occ2.ColorID
 		from Order_ColorCombo occ WITH (NOLOCK) 
         inner join Order_ColorCombo occ2 WITH (NOLOCK) on occ.ID = occ2.ID and occ.Article = occ2.Article and occ2.PatternPanel = 'FA'
 		where occ.id = ob.id and occ.ColorID = psdsC.SpecValue and occ.FabricCode = ob.FabricCode 
+        group by occ2.Article, occ2.ColorID
+        order by occ2.Article
 		for xml path('')
 	),1,1,'')
 ) FromColorCombo
@@ -492,13 +498,15 @@ outer apply
 outer apply 
 (
 	select Color = stuff((
-		select DISTINCT ',' + oc.ColorID 
+		select ',' + oc.ColorID 
 		from Style_ThreadColorCombo tcc2 WITH (NOLOCK) 
 		Inner Join dbo.Style_ThreadColorCombo_Detail as tccd2 with(nolock) On tccd2.Style_ThreadColorComboUkey = tcc2.Ukey and colorid = psdsC.SpecValue
 		Inner Join Orders o2 WITH (NOLOCK) on o2.styleukey = tcc2.StyleUkey 
 		Inner Join Order_ColorCombo oc WITH (NOLOCK) ON o2.POID = oc.ID AND tccd2.Article = oc.Article and oc.PatternPanel = 'FA'
 		where o2.ID = o.ID
 		and tccd2.SCIRefNo = tccd.SCIRefNo
+        group by oc.Article, oc.ColorID 
+        order by oc.Article
 		for xml path('')
 	),1,1,'')
 ) FromColorCombo
