@@ -115,9 +115,6 @@ Where Not exists ( select 1
 				   and P_SimilarStyle.BrandID = t.BrandID 
                 )
 And P_SimilarStyle.OutputDate >= @Date
-
-Select * into tmpc# from #tmp
-
 ";
 
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
@@ -145,52 +142,49 @@ SELECT  o.StyleUkey,
         s.Team,
         sd.ComboType
 INTO #tmp_SewingDate
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 WHERE s.OutputDate >= @DATE
 GROUP BY s.ID, s.OutputDate, o.StyleID, s.FactoryID, o.BrandID, o.StyleUkey,s.Shift,s.Team,sd.ComboType
 
-SELECT  distinct  
-        sdate.OutputDate,
+SELECT  sdate.OutputDate,
         o.StyleID, 
         o.BrandID,
         s.FactoryID,
         MaxOutputDate = max(s.OutputDate)
 into #tmp_MaxDates
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 INNER JOIN #tmp_SewingDate sdate ON sdate.BrandID = o.BrandID and sdate.FactoryID = s.FactoryID and sdate.StyleID = o.StyleID 
 WHERE s.OutputDate > DATEADD(month, -3, sdate.OutputDate) 
 AND s.OutputDate < sdate.OutputDate
 GROUP BY sdate.OutputDate, o.StyleID, s.FactoryID, o.BrandID
 
-SELECT Distinct
-       o.StyleID, 
+SELECT o.StyleID, 
        s.FactoryID,
        o.BrandID,
        md.OutputDate,
        MIN(s.SewingLineID) AS SewingLineID
 INTO #tmp_MinSewingID
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 INNER JOIN #tmp_MaxDates md ON o.StyleID = md.StyleID AND s.FactoryID = md.FactoryID AND s.OutputDate = md.MaxOutputDate AND md.BrandID = o.BrandID
 GROUP BY o.StyleID, s.FactoryID, o.BrandID, md.OutputDate
 
 
-SELECT Distinct
-       sda.OutputDate,
+SELECT dsitinct sda.OutputDate,
        s.FactoryID,
        o.BrandID,
        m.MasterStyleID,
        m.MasterBrandID,
        MainStyleID = o.StyleID
 into #tmp_childstyle
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 INNER JOIN #tmp_SewingDate sda on sda.StyleID = o.StyleID and sda.BrandID = o.BrandID and sda.FactoryID = s.FactoryID and sda.OutputDate = s.OutputDate 
 Outer apply (
                 select distinct MasterBrandID, MasterStyleID 
@@ -221,10 +215,10 @@ SELECT  cs.OutputDate,
         s.FactoryID,
         MaxOutputDate = max(s.OutputDate)
 INTO #tmp_childMaxDates
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
-INNER JOIN #tmp_childstyle cs ON cs.MasterBrandID = o.BrandID and cs.FactoryID = s.FactoryID and cs.MasterStyleID = o.StyleID 
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
+INNER JOIN #tmp_childstyle cs  ON cs.MasterBrandID = o.BrandID and cs.FactoryID = s.FactoryID and cs.MasterStyleID = o.StyleID 
 WHERE s.OutputDate < cs.OutputDate
 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID ,cs.OutputDate 
 
@@ -234,14 +228,13 @@ SELECT  cs.MasterStyleID,
         cs.OutputDate,
         MIN(s.SewingLineID) AS SewingLineID
 INTO #tmp_childMinSewingID
-FROM SewingOutput s
-INNER JOIN SewingOutput_Detail sd ON s.ID = sd.ID
-INNER JOIN Orders o ON sd.OrderId = o.ID
+FROM SewingOutput s with (nolock)
+INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
+INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 INNER JOIN #tmp_childMaxDates cs ON o.StyleID = cs.MasterStyleID AND s.FactoryID = cs.FactoryID AND s.OutputDate = cs.MaxOutputDate And cs.MasterBrandID = o.BrandID
 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID, cs.OutputDate
 
-SELECT DISTINCT 
-        s.Outputdate,
+SELECT  s.Outputdate,
         s.FactoryID,
         ISNULL(s.StyleID, '') AS StyleID,
         s.BrandID,
@@ -284,6 +277,7 @@ OUTER APPLY(
                                 AND cd.MaxOutputDate Between DATEADD(month, -3, cs.OutputDate) AND cs.OutputDate
             FOR XML PATH ('')), 1, 1, '' )
 ) RemarkSimilarStyle
+GROUP BY s.Outputdate, s.FactoryID, s.StyleID, s.BrandID, MinSewingID.SewingLineID, MaxDates.MaxOutputDate, RemarkSimilarStyle.Rr
 ORDER BY s.outputdate DESC
 ");
 
