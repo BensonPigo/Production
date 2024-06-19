@@ -2,7 +2,9 @@
 using Ict.Win;
 using Ict.Win.UI;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Class;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
@@ -13,6 +15,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
@@ -432,26 +435,184 @@ DROP TABLE #tmp
             }
             #endregion
 
-            #region 清除 第3層 空值
+            #region 第3層 處理
+
+            // Step 1. 刪除空值
             this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
-
-            this.dtWorkOrderForOutput_Distribute.Select("OrderID = ''").Delete();
+            this.dtWorkOrderForOutput_Distribute.Select("Qty = 0 OR OrderID = '' OR SizeCode = ''").Delete();
             this.dtWorkOrderForOutput_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
-            this.dtWorkOrderForOutput_Distribute.Select("SizeCode = ''").Delete(); // 不會清除 EXCESS 項,也有 SizeCode
-            #endregion
 
-            #region 檢查 第3層 重複 Key
-            var columnsToCheck = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" };
-            bool hasDuplicates = Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_SizeRatio, columnsToCheck, out DataTable dtCheck);
-            if (hasDuplicates)
+            // 檢查 第3層 重複 Key
+            var checkSizeRatio = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" };
+            if (Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, out DataTable dtCheck))
             {
                 MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey>");
                 return false;
             }
 
+            var checkDistribute = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "OrderID", "Article", "SizeCode" };
+            if (Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_Distribute, checkDistribute, out dtCheck))
+            {
+                MyUtility.Msg.WarningBox("The Distribute duplicate ,Please see below <Ukey>");
+                return false;
+            }
+
+            var checkPatternPanel = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "PatternPanel", "FabricPanelCode" };
+            if (Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, out dtCheck))
+            {
+                MyUtility.Msg.WarningBox("The PatternPanel duplicate ,Please see below <Ukey>");
+                return false;
+            }
+
+            // 檢查第3層  Total distributionQty 是否大於 TotalCutQty 總和
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string filter = GetFilter(dr, CuttingForm.P09);
+                decimal ttlCutQty = this.dtWorkOrderForOutput_SizeRatio.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"])) * MyUtility.Convert.GetDecimal(dr["Layer"]);
+                decimal ttlDisQty = this.dtWorkOrderForOutput_Distribute.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+                if (ttlCutQty < ttlDisQty)
+                {
+                    this.ShowErr($"Key:{dr["Ukey"]} Distribution Qty can not exceed total Cut qty");
+                    return false;
+                }
+            }
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            // Stpe 1. 給第3層填入對應 WorkOrderForOutputUkey
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                long ukey = MyUtility.Convert.GetLong(dr["Ukey"]); // ClickSavePost 時,底層已取得 Key 值
+                string filterAddData = $"tmpkey = {dr["tmpkey"]} and WorkOrderForOutputUkey = 0"; // WorkOrderForOutputUkey = 0 是此次新增
+                this.dtWorkOrderForOutput_SizeRatio.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+                this.dtWorkOrderForOutput_Distribute.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+                this.dtWorkOrderForOutput_PatternPanel.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+            }
+
+            #region Distribute 有要傳到 API
+
+            // API需要 Distribute 新刪修 同時 out 資訊
+            string sqlDeleteDistribute = $@"
+DELETE wd
+OUTPUT DELETED.*
+FROM WorkOrderForOutput_Distribute wd
+LEFT JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND t.WorkOrderForOutputUkey IS NULL
+";
+            string sqlUpdateDistribute = $@"
+UPDATE wd
+SET wd.Qty = t.Qty
+OUTPUT INSERTED.*
+FROM WorkOrderForOutput_Distribute wd
+INNER JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+";
+            string sqlInsertDistribute = $@"
+INSERT INTO WorkOrderForOutput_Distribute (WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
+OUTPUT INSERTED.*
+SELECT
+    t.WorkOrderForOutputUkey
+    ,t.ID
+    ,t.OrderID
+    ,ISNULL(t.Article, '')
+    ,t.SizeCode
+    ,t.Qty
+FROM #tmp t
+LEFT JOIN WorkOrderForOutput_Distribute wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.WorkOrderForOutputUkey IS NULL
+";
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlDeleteDistribute, out DataTable dtDeleteDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlUpdateDistribute, out DataTable dtUpdateDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlInsertDistribute, out DataTable dtInsertDistribute)))
+            {
+                return result;
+            }
+
+            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<long> deleteWorkOrder = new List<long>();
+            foreach (DataRow dr in dtDeleteDistribute.Rows)
+            {
+                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderForOutputUkey"],
+                    SizeCode = (string)dr["SizeCode"],
+                    Article = (string)dr["Article"],
+                    OrderID = (string)dr["OrderID"],
+                });
+            }
+
+            dtUpdateDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
+            dtInsertDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
+            #endregion
+
+            #region sent data to GZ WebAPI
+            string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
+
+            var listChangedDetail = this.DetailDatas
+                .Where(s =>
+                {
+                    return (
+                                s.RowState == DataRowState.Added ||
+                                (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
+                                editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"]))
+                            &&
+                            !MyUtility.Check.Empty(s["CutRef"]);
+                });
+
+            if (listChangedDetail.Any())
+            {
+                DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            // CutRef被清空要傳delete給廠商
+            var cutRefToEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified &&
+                                                             MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
+                                                             !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
+
+            var workOrder_Distribute = this.dtWorkOrderForOutput_Distribute.AsEnumerable();
+            foreach (var item in cutRefToEmpty)
+            {
+                deleteWorkOrder.Add((long)item["Ukey"]);
+                deleteWorkOrder_Distribute.AddRange(
+                    workOrder_Distribute.Where(x => x.RowState != DataRowState.Deleted && (long)x["WorkOrderUkey"] == (long)item["Ukey"]).Select(
+                    s => new Guozi_AGV.WorkOrder_Distribute
+                    {
+                        WorkOrderUkey = (long)s["WorkOrderUkey", DataRowVersion.Original],
+                        SizeCode = (string)s["SizeCode", DataRowVersion.Original],
+                        Article = (string)s["Article", DataRowVersion.Original],
+                        OrderID = (string)s["OrderID", DataRowVersion.Original],
+                    }));
+            }
+
+            deleteWorkOrder.AddRange(
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s => s.RowState == DataRowState.Deleted)
+                .Select(s => (long)s["Ukey", DataRowVersion.Original]));
+
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
+
+            #endregion
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -1325,7 +1486,7 @@ WHERE ID = ''
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
             string oldvalue = this.CurrentMaintain[columnName].ToString();
-            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
+            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
