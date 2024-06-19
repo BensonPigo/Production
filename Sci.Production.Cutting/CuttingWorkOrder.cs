@@ -376,6 +376,123 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
 
         #endregion
 
+        #region Save Before 檢查
+
+        /// <summary>
+        /// 檢查 主表身 不可空欄位, 並移動到 detailgrid 那列
+        /// </summary>
+        /// <param name="detailDatas">排除已刪除的表身</param>
+        /// <param name="detailgrid">detailgrid</param>
+        /// <returns>bool</returns>
+        public static bool ValidateDetailDatas(IList<DataRow> detailDatas, Sci.Win.UI.Grid detailgrid)
+        {
+            var validationRules = new Dictionary<string, string>
+            {
+                { "MarkerNo", "Marker No cannot be empty." },
+                { "FabricPanelCode", "Fabric Panel Code cannot be empty." },
+                { "MarkerName", "Marker Name cannot be empty." },
+                { "Layer", "Layer cannot be empty." },
+                { "SEQ1", "SEQ1 cannot be empty." },
+                { "SEQ2", "SEQ2 cannot be empty." },
+            };
+
+            foreach (var rule in validationRules)
+            {
+                foreach (DataRow row in detailDatas.Where(row => MyUtility.Check.Empty(row[rule.Key])))
+                {
+                    int index = detailDatas.IndexOf(row);
+                    detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox(rule.Value);
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 檢查 沒 CutRef,有 CutNo 清單
+        /// 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
+        /// 並移動到 detailgrid 那列
+        /// </summary>
+        /// <param name="detailDatas">排除已刪除的表身</param>
+        /// <param name="detailgrid">detailgrid</param>
+        /// <returns>bool</returns>
+        public static bool ValidateCutNoAndFabricCombo(IList<DataRow> detailDatas, Sci.Win.UI.Grid detailgrid)
+        {
+            var groupedRows = detailDatas
+                .Where(row => MyUtility.Check.Empty(row["CutRef"]) && !MyUtility.Check.Empty(row["CutNo"]))
+                .GroupBy(row => new { CutNo = row["CutNo"].ToString(), FabricCombo = row["FabricCombo"].ToString() })
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            // 檢查每個分組內的 MarkerName 或 MarkerNo 是否一致
+            foreach (var group in groupedRows)
+            {
+                var firstRow = group.First();
+                if (group.Any(row => row["MarkerName"].ToString() != firstRow["MarkerName"].ToString() ||
+                                     row["MarkerNo"].ToString() != firstRow["MarkerNo"].ToString()))
+                {
+                    int index = detailDatas.IndexOf(firstRow);
+                    detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 檢查 有CutNo & 通過 checkContinue 清單
+        /// P09才有 checkContinue, P02直接帶 row => true
+        /// 檢查  MarkerName, MarkerNo, CutNo 相同資料的 markerlength, EstCutDate 必須相同
+        /// 範例
+        /// ValidateCutNoAndFabricCombo(this.DetailDatas, row => true);
+        /// ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue);
+        /// </summary>
+        /// <param name="detailDatas">排除已刪除的表身</param>
+        /// <param name="checkContinue">P09 檢查的 Function</param>
+        /// <returns>bool</returns>
+        public static bool ValidateCutNoAndFabricCombo(IList<DataRow> detailDatas, Func<DataRow, bool> checkContinue)
+        {
+            // 先找出有 CutNo 且通過檢查的資料
+            var groupedData = detailDatas
+                .Where(row => !MyUtility.Check.Empty(row["CutNo"]) && checkContinue(row))
+                .GroupBy(r => new
+                {
+                    MarkerName = MyUtility.Convert.GetString(r["MarkerName"]),
+                    MarkerNo = MyUtility.Convert.GetString(r["MarkerNo"]),
+                    CutNo = MyUtility.Convert.GetString(r["CutNo"]),
+                })
+                .Where(group => group.Count() > 1)
+                .ToList();
+
+            string checkmsg = string.Empty;
+            foreach (var group in groupedData)
+            {
+                var firstRow = group.First();
+                var markerlength = Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(firstRow["markerlength"]));
+                var estCutDate = MyUtility.Convert.GetDate(firstRow["EstCutDate"]);
+                if (group.Any(row => Prgs.ConvertFullWidthToHalfWidth(MyUtility.Convert.GetString(row["markerlength"])) != markerlength ||
+                                     MyUtility.Convert.GetDate(row["EstCutDate"]) != estCutDate))
+                {
+                    checkmsg += $"\r\nMarkerName: {firstRow["MarkerName"]}, MarkerNo: {firstRow["MarkerNo"]}, CutNo: {firstRow["CutNo"]}";
+                }
+            }
+
+            if (!MyUtility.Check.Empty(checkmsg))
+            {
+                MyUtility.Msg.WarningBox("The following MarkerName, MarkerNo, and CutNo combinations have different Markerlength or EstCutDate:" + checkmsg);
+                return false;
+            }
+
+            return true;
+        }
+
+
+        #endregion
+
         #region Seq1,Seq2,Refno,Color 開窗/驗證
 
         public static SelectItem PopupSEQ(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, bool isColor)

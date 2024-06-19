@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Ict.Win.UI;
-using Microsoft.SqlServer.Management.Smo;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Prg;
@@ -413,17 +412,21 @@ DROP TABLE #tmp
 
             #region 檢查 主表身
 
-            // 不可空欄位, 並移動到那列
-            if (!this.ValidateDetailDatas())
+            if (!ValidateDetailDatas(this.DetailDatas, this.detailgrid))
             {
                 return false;
             }
 
-            // 沒 CutRef,有 CutNo 清單. 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
-            if (!this.ValidateCutNoAndFabricCombo())
+            if (!ValidateCutNoAndFabricCombo(this.DetailDatas, this.detailgrid))
             {
                 return false;
             }
+
+            if (!ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue))
+            {
+                return false;
+            }
+            #endregion
 
             #region 清除 第3層 空值
             this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
@@ -439,64 +442,6 @@ DROP TABLE #tmp
             #endregion
 
             return base.ClickSaveBefore();
-        }
-
-        // 檢查 主表身 不可空欄位, 並移動到那列
-        private bool ValidateDetailDatas()
-        {
-            var validationRules = new Dictionary<string, string>
-            {
-                { "MarkerNo", "Marker No cannot be empty." },
-                { "FabricPanelCode", "Fabric Panel Code cannot be empty." },
-                { "MarkerName", "Marker Name cannot be empty." },
-                { "Layer", "Layer cannot be empty." },
-                { "SEQ1", "SEQ1 cannot be empty." },
-                { "SEQ2", "SEQ2 cannot be empty." },
-            };
-
-            foreach (var rule in validationRules)
-            {
-                foreach (DataRow row in this.DetailDatas.Where(row => MyUtility.Check.Empty(row[rule.Key])))
-                {
-                    int index = this.DetailDatas.IndexOf(row);
-                    this.detailgrid.SelectRowTo(index);
-                    MyUtility.Msg.WarningBox(rule.Value);
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        // 沒 CutRef,有 CutNo 清單. 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
-        private bool ValidateCutNoAndFabricCombo()
-        {
-            // 先找出符合條件的 rowsToCheck
-            var rowsToCheck = this.DetailDatas
-                .Where(x => MyUtility.Check.Empty(x["CutRef"]) && !MyUtility.Check.Empty(x["CutNo"]))
-                .ToList();
-
-            // 分組並篩選出相同 CutNo 和 FabricCombo，且有兩筆以上的清單
-            var groupedRows = rowsToCheck
-                .GroupBy(x => new { CutNo = x["CutNo"].ToString(), FabricCombo = x["FabricCombo"].ToString() })
-                .Where(g => g.Count() > 1)
-                .ToList();
-
-            // 檢查每個分組內的 MarkerName 或 MarkerNo 是否一致
-            foreach (var group in groupedRows)
-            {
-                var firstRow = group.First();
-                if (group.Any(row => row["MarkerName"].ToString() != firstRow["MarkerName"].ToString() ||
-                                     row["MarkerNo"].ToString() != firstRow["MarkerNo"].ToString()))
-                {
-                    int index = this.DetailDatas.IndexOf(firstRow);
-                    this.detailgrid.SelectRowTo(index);
-                    MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         /// <inheritdoc/>
@@ -1535,9 +1480,14 @@ WHERE ID = ''
         #region 4 項檢查 無訊息 & 有訊息
         private bool CanEditData(DataRow dr)
         {
+            return this.EditMode && this.CheckContinue(dr);
+        }
+
+        private bool CheckContinue(DataRow dr)
+        {
             // 此4個欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
-            return this.EditMode &&
-                !(!MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
+            return !(
+                 !MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
                   MyUtility.Convert.GetBool(dr["HasBundle"]) ||
                   MyUtility.Convert.GetBool(dr["HasCuttingOutput"]) ||
                   MyUtility.Convert.GetBool(dr["HasMarkerReq"]));
