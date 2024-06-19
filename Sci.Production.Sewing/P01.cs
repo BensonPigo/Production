@@ -50,6 +50,7 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O' and OutputDate >= '2023/01/01'", Env.User.Factory);
             this.comboSewingTeam1.SetDataSource();
             this.DoSubForm = new P01_QAOutput(this);
+            this.beforeDataTable = new DataTable();
 
             // 當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
             this.detailgrid.StatusNotification += (s, e) =>
