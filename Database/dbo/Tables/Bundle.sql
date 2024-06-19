@@ -17,7 +17,7 @@
     [Qty]             NUMERIC (2)   CONSTRAINT [DF_Bundle_Qty] DEFAULT ((0)) NULL,
     [PrintDate]       DATETIME      NULL,
     [AllPart]         NUMERIC (5)   CONSTRAINT [DF_Bundle_AllPart] DEFAULT ((0)) NULL,
-    [CutRef]          VARCHAR (8)   CONSTRAINT [DF_Bundle_CutRef] DEFAULT ('') NULL,
+    [CutRef]          VARCHAR (10)   CONSTRAINT [DF_Bundle_CutRef] DEFAULT ('') NULL,
     [AddName]         VARCHAR (10)  CONSTRAINT [DF_Bundle_AddName] DEFAULT ('') NULL,
     [AddDate]         DATETIME      NULL,
     [EditName]        VARCHAR (10)  CONSTRAINT [DF_Bundle_EditName] DEFAULT ('') NULL,
