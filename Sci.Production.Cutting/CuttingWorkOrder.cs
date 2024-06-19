@@ -361,6 +361,21 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
         }
         #endregion
 
+        #region 檢查當前這筆 SpreadingStatus
+
+        public static bool CheckSpreadingStatus(DataRow currentDetailData, string msg)
+        {
+            if (currentDetailData["SpreadingStatus"].ToString() != "Ready")
+            {
+                MyUtility.Msg.WarningBox(msg);
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
         #region Seq1,Seq2,Refno,Color 開窗/驗證
 
         public static SelectItem PopupSEQ(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, bool isColor)
@@ -1248,24 +1263,6 @@ ORDER BY FabricPanelCode,PatternPanel
            return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
         }
 
-        public static DataTable GetSCIRefnobyFabricCode(string id, string fabric)
-        {
-            string sqlcmd = $@"
-SELECT SCIRefno
-FROM Order_BOF WITH(NOLOCK)
-WHERE ID = '{id}'
-AND FabricCode = '{fabric}'
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
-
-            return dt;
-        }
-
         /// <summary>
         /// 更新 DataTable Distribute 的欄位: SizeCode, 因 SizeRatio 的欄位: SizeCode 調整
         /// </summary>
@@ -1340,12 +1337,26 @@ AND FabricCode = '{fabric}'
         /// <inheritdoc/>
         public static string GetFilter(DataRow currentDetailData, CuttingForm form)
         {
+            return $@"{GetWorkOrderUkeyName(form)} = {currentDetailData["Ukey"]} AND tmpKey = {currentDetailData["tmpKey"]}";
+        }
+
+        public static string GetWorkOrderUkeyName(CuttingForm form)
+        {
+            return $"WorkOrderFor{GetWorkOrderName(form)}Ukey";
+        }
+
+        /// <summary>
+        /// Cutting P02/P09 資料表名稱的中間字串 WorkOrderFor____
+        /// </summary>
+        /// <inheritdoc/>
+        public static string GetWorkOrderName(CuttingForm form)
+        {
             switch (form)
             {
                 case CuttingForm.P02:
-                    return $@"WorkOrderForPlanningUkey = {currentDetailData["Ukey"]} AND tmpKey = {currentDetailData["tmpKey"]}";
+                    return "Planning";
                 case CuttingForm.P09:
-                    return $@"WorkOrderForOutputUkey = {currentDetailData["Ukey"]} AND tmpKey = {currentDetailData["tmpKey"]}";
+                    return "Output";
                 default:
                     return string.Empty;
             }
@@ -1377,6 +1388,19 @@ AND FabricCode = '{fabric}'
             return MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]) * MyUtility.Convert.GetDecimal(currentDetailData["Layer"]) * sizeRatioQty;
         }
 
+        public static void AddThirdDatas(DataRow currentDetailData, DataTable dtTarget, CuttingForm form)
+        {
+            string filter = GetFilter(currentDetailData, form);
+            DataTable source = dtTarget.Select(filter).TryCopyToDataTable(dtTarget);
+
+            // 複製出來的要填入對應新的 Key
+            foreach (DataRow ddr in source.Rows)
+            {
+                ddr[GetWorkOrderUkeyName(form)] = 0;
+                ddr["tmpKey"] = currentDetailData["tmpKey"];
+                dtTarget.ImportRowAdded(ddr);
+            }
+        }
         #endregion
     }
 #pragma warning restore SA1600 // Elements should be documented

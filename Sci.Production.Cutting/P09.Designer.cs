@@ -83,6 +83,7 @@
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnRefresh = new Sci.Win.UI.Button();
+            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -804,6 +805,12 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             // 
+            // BackgroundWorker1
+            // 
+            this.BackgroundWorker1.WorkerReportsProgress = true;
+            this.BackgroundWorker1.WorkerSupportsCancellation = true;
+            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            // 
             // P09
             // 
             this.ApvChkValue = "New";
@@ -915,5 +922,6 @@
         private Win.UI.ContextMenuStrip cmsSizeRatio;
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertSizeRatio;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteSizeRatio;
+        private System.ComponentModel.BackgroundWorker BackgroundWorker1;
     }
 }

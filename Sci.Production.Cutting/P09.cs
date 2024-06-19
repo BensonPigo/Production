@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Ict.Win.UI;
+using Microsoft.SqlServer.Management.Smo;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Prg;
@@ -46,6 +47,7 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_SizeRatio; // 弟3層表:新刪修
         private DataTable dtWorkOrderForOutput_Distribute; // 弟3層表:新刪修
         private DataTable dtWorkOrderForOutput_PatternPanel; // 弟3層表:新刪修
+        private bool ReUpdateP20 = true;
 
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
@@ -196,7 +198,7 @@ OUTER APPLY (
     SELECT Actcutdate = IIF(SUM(cod.Layer) = wo.Layer, MAX(co.cdate), NULL)
     FROM CuttingOutput co WITH (NOLOCK)
     INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK)ON co.id = cod.id
-    WHERE cod.WorkOrderUkey = wo.Ukey
+    WHERE cod.WorkOrderForOutputUkey = wo.Ukey
     AND co.Status != 'New'
 ) co
 WHERE wo.id = '{masterID}'
@@ -372,6 +374,7 @@ DROP TABLE #tmp
         /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
         {
+            this.GridValidateControl();
             base.OnDetailGridRowChanged();
 
             if (this.CurrentDetailData == null)
@@ -396,92 +399,149 @@ DROP TABLE #tmp
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
         }
 
+        #region Save 一堆東東
+
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            #region 檢查
-            #endregion
+            this.GridValidateControl();
 
-            #region 清除
-            this.dtWorkOrderForOutput_SizeRatio.Select("SizeCode = ''").Delete();
+            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.dtWorkOrderForOutput_SizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.dtWorkOrderForOutput_SizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                this.dtWorkOrderForOutput_Distribute.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any();
+
+            #region 檢查 主表身
+
+            // 不可空欄位, 並移動到那列
+            if (!this.ValidateDetailDatas())
+            {
+                return false;
+            }
+
+            // 沒 CutRef,有 CutNo 清單. 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
+            if (!this.ValidateCutNoAndFabricCombo())
+            {
+                return false;
+            }
+
+            #region 清除 第3層 空值
+            this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
+
             this.dtWorkOrderForOutput_Distribute.Select("OrderID = ''").Delete();
             this.dtWorkOrderForOutput_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
-            this.dtWorkOrderForOutput_Distribute.Select("SizeCode = ''").Delete(); // EXCESS 項 SizeCode 有值
+            this.dtWorkOrderForOutput_Distribute.Select("SizeCode = ''").Delete(); // 不會清除 EXCESS 項,也有 SizeCode
+            #endregion
+
+            #region 檢查 第3層 重複 Key
+
+
             #endregion
 
             return base.ClickSaveBefore();
         }
 
-        private void BtnEdit_Click(object sender, EventArgs e)
+        // 檢查 主表身 不可空欄位, 並移動到那列
+        private bool ValidateDetailDatas()
         {
-            #region 校驗
-            if (this.DetailDatas.Count == 0)
+            var validationRules = new Dictionary<string, string>
             {
-                MyUtility.Msg.WarningBox("There is no Workorder data that can be modified.");
-                return;
+                { "MarkerNo", "Marker No cannot be empty." },
+                { "FabricPanelCode", "Fabric Panel Code cannot be empty." },
+                { "MarkerName", "Marker Name cannot be empty." },
+                { "Layer", "Layer cannot be empty." },
+                { "SEQ1", "SEQ1 cannot be empty." },
+                { "SEQ2", "SEQ2 cannot be empty." },
+            };
+
+            foreach (var rule in validationRules)
+            {
+                foreach (DataRow row in this.DetailDatas.Where(row => MyUtility.Check.Empty(row[rule.Key])))
+                {
+                    int index = this.DetailDatas.IndexOf(row);
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox(rule.Value);
+                    return false;
+                }
             }
 
-            // 1. 存在 P10 Bundle
-            string msg = "The following bundle data exists and cannot be modify. If you need to modify, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
-            if (!CheckBundleAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
-            {
-                return;
-            }
-
-            // 2. 存在 P20 CuttingOutput
-            msg = "The following cutting output data exists and cannot be modify. If you need to delete, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
-            if (!CheckCuttingOutputCuttingOutputAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
-            {
-                return;
-            }
-
-            // 3. 存在 P05 MarkerReq_Detail
-            msg = "The following marker request data exists and cannot be modify. If you need to delete, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-            if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
-            {
-                return;
-            }
-            #endregion
-
-            // 單筆編輯視窗
-            this.ShowDialogActionCutRef(DialogAction.Edit);
+            return true;
         }
 
-        // 按 + 或 插入 Icon
-        protected override void OnDetailGridInsert(int index = -1)
+        // 沒 CutRef,有 CutNo 清單. 相同 (CutNo,FabricCombo) 的 (MarkerName或MarkerNo)必須相同
+        private bool ValidateCutNoAndFabricCombo()
         {
-            DataRow oldRow = this.CurrentDetailData;
+            // 先找出符合條件的 rowsToCheck
+            var rowsToCheck = this.DetailDatas
+                .Where(x => MyUtility.Check.Empty(x["CutRef"]) && !MyUtility.Check.Empty(x["CutNo"]))
+                .ToList();
 
-            // 底層插入
-            base.OnDetailGridInsert(index);
+            // 分組並篩選出相同 CutNo 和 FabricCombo，且有兩筆以上的清單
+            var groupedRows = rowsToCheck
+                .GroupBy(x => new { CutNo = x["CutNo"].ToString(), FabricCombo = x["FabricCombo"].ToString() })
+                .Where(g => g.Count() > 1)
+                .ToList();
 
-            // 按+號 = -1, 其它 = 按插入
-            if (index != -1)
+            // 檢查每個分組內的 MarkerName 或 MarkerNo 是否一致
+            foreach (var group in groupedRows)
             {
-
+                var firstRow = group.First();
+                if (group.Any(row => row["MarkerName"].ToString() != firstRow["MarkerName"].ToString() ||
+                                     row["MarkerNo"].ToString() != firstRow["MarkerNo"].ToString()))
+                {
+                    int index = this.DetailDatas.IndexOf(firstRow);
+                    this.detailgrid.SelectRowTo(index);
+                    MyUtility.Msg.WarningBox("In the same fabric combo, different 'Marker Name' and 'Marker No' cannot cut in one time which means cannot set the same cut#.");
+                    return false;
+                }
             }
 
-            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
-            if (result == DialogResult.Cancel)
-            {
-                this.OnDetailGridDelete();
-            }
+            return true;
         }
 
-        private DialogResult ShowDialogActionCutRef(DialogAction action)
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
         {
-            var form = new P09_ActionCutRef();
-            form.Action = action;
-            form.CurrentDetailData = this.CurrentDetailData;
-            form.dtWorkOrderForOutput_SizeRatio_Ori = this.dtWorkOrderForOutput_SizeRatio;
-            form.dtWorkOrderForOutput_Distribute_Ori = this.dtWorkOrderForOutput_Distribute;
-            form.dtWorkOrderForOutput_PatternPanel_Ori = this.dtWorkOrderForOutput_PatternPanel;
-            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
-            form.dtWorkOrderForOutput_SizeRatio = this.dtWorkOrderForOutput_SizeRatio.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_SizeRatio);
-            form.dtWorkOrderForOutput_Distribute = this.dtWorkOrderForOutput_Distribute.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_Distribute);
-            form.dtWorkOrderForOutput_PatternPanel = this.dtWorkOrderForOutput_PatternPanel.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_PatternPanel);
-            return form.ShowDialog();
+            base.ClickSaveAfter();
+
+            // 更新 P20
+            this.BackgroundWorker1.RunWorkerAsync();
+
+            this.OnDetailEntered();
         }
+
+        private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            if (!this.ReUpdateP20)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                string sqlcmd = $@"
+DECLARE @ID varchar(13),@cDate date,@Manpower  int,@ManHours numeric(5,1)
+DECLARE CURSOR_ CURSOR FOR
+SELECT DISTINCT co.ID,co.cDate,co.Manpower,co.ManHours
+FROM WorkOrderForOutput w WITH (NOLOCK)
+INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderUkey = w.Ukey
+INNER JOIN CuttingOutput co WITH (NOLOCK) ON co.ID = cod.id
+WHERE w.id = '{this.CurrentMaintain["ID"]}'
+ORDER BY co.cDate
+
+OPEN CURSOR_
+FETCH NEXT FROM CURSOR_ INTO  @ID ,@cDate ,@Manpower  ,@ManHours 
+While @@FETCH_STATUS = 0
+Begin
+    EXEC Cutting_P20_CFM_Update @ID,@cDate,@Manpower,@ManHours,'Confirm'
+FETCH NEXT FROM CURSOR_ INTO @ID, @cDate, @Manpower, @ManHours
+END
+CLOSE CURSOR_
+DEALLOCATE CURSOR_
+";
+                DBProxy.Current.Execute(null, sqlcmd);
+            }
+        }
+        #endregion
 
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
         {
@@ -506,18 +566,16 @@ DROP TABLE #tmp
                 {
                     return;
                 }
-            }
 
-            // 3. 存在 P05 MarkerReq_Detail
-            msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-            if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
-            {
-                return;
-            }
+                // 3. 存在 P05 MarkerReq_Detail
+                msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
+                if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
+                {
+                    return;
+                }
 
-            if (this.DetailDatas.Count > 0)
-            {
                 // 4. 欄位 SpreadingStatus
+                // DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
                 sqlcmdCheck = $@"
 SELECT
     [Cut Ref#] = WorkOrderForOutput.CutRef
@@ -791,6 +849,115 @@ WHERE ID = ''
             this.OnDetailEntered();
             MyUtility.Msg.InfoBox("Import successful");
         }
+
+        #region 單筆操作 彈窗ActionCutRef 新/修/刪
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            #region 校驗
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("There is no Workorder data that can be modified.");
+                return;
+            }
+
+            if (!this.CheckAndMsg("modify"))
+            {
+                return;
+            }
+            #endregion
+
+            // 單筆編輯視窗
+            this.ShowDialogActionCutRef(DialogAction.Edit);
+        }
+
+        // 按 + 或 插入 Icon
+        protected override void OnDetailGridInsert(int index = -1)
+        {
+            // 先保留原本, 按插入按鈕時複製用
+            DataRow oldRow = this.CurrentDetailData;
+
+            // 底層插入之後 this.CurrentDetailData 是新的那筆
+            base.OnDetailGridInsert(index);
+
+            // 先取得當前編輯狀態的最新 tmpKey
+            long tmpKey = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"]));
+            this.CurrentMaintain["tmpKey"] = tmpKey;
+            this.CurrentMaintain["FactoryID"] = oldRow["FactoryID"];
+            this.CurrentMaintain["MDivisionId"] = oldRow["MDivisionId"];
+            this.CurrentMaintain["MarkerNo"] = oldRow["MarkerNo"];
+
+            // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
+            if (index != -1)
+            {
+                // 不複製 CutRef, CutNo, 以及(這4個底層會自動處理 Addname, AddDate, EditName, EditDate)
+                // 定義不需要複製的欄位名稱列表
+                HashSet<string> excludeColumns = new HashSet<string>
+                {
+                    "Ukey", // 此表 Pkey 底層處理
+                    "tmpKey", // 上方有填不同值不複製
+                    "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
+                    "CutRef",
+                    "CutNo",
+                    "Addname",
+                    "AddDate",
+                    "EditName",
+                    "EditDate",
+                };
+
+                foreach (DataColumn column in oldRow.Table.Columns)
+                {
+                    string columnName = column.ColumnName;
+
+                    // 如果當前欄位名稱不在排除列表中，則進行複製
+                    if (!excludeColumns.Contains(columnName))
+                    {
+                        this.CurrentDetailData[columnName] = oldRow[columnName];
+                    }
+                }
+
+                // 複製第3層資訊,並對應到新的 this.CurrentMaintain
+                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+            }
+
+            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
+            if (result == DialogResult.Cancel)
+            {
+                this.OnDetailGridDelete();
+            }
+        }
+
+        private DialogResult ShowDialogActionCutRef(DialogAction action)
+        {
+            var form = new P09_ActionCutRef();
+            form.Action = action;
+            form.CurrentDetailData = this.CurrentDetailData;
+            form.dtWorkOrderForOutput_SizeRatio_Ori = this.dtWorkOrderForOutput_SizeRatio;
+            form.dtWorkOrderForOutput_Distribute_Ori = this.dtWorkOrderForOutput_Distribute;
+            form.dtWorkOrderForOutput_PatternPanel_Ori = this.dtWorkOrderForOutput_PatternPanel;
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
+            form.dtWorkOrderForOutput_SizeRatio = this.dtWorkOrderForOutput_SizeRatio.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_SizeRatio);
+            form.dtWorkOrderForOutput_Distribute = this.dtWorkOrderForOutput_Distribute.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_Distribute);
+            form.dtWorkOrderForOutput_PatternPanel = this.dtWorkOrderForOutput_PatternPanel.Select(filter).TryCopyToDataTable(this.dtWorkOrderForOutput_PatternPanel);
+            return form.ShowDialog();
+        }
+
+        protected override void OnDetailGridDelete()
+        {
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            if (!this.CheckAndMsg("delete"))
+            {
+                return;
+            }
+
+            base.OnDetailGridDelete();
+        }
+        #endregion
 
         #region Grid 欄位事件 顏色/開窗/驗證
         private void GridEventSet()
@@ -1307,6 +1474,7 @@ WHERE ID = ''
             newrow["ID"] = this.CurrentDetailData["ID"];
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["Qty"] = 0;
             this.dtWorkOrderForOutput_SizeRatio.Rows.Add(newrow);
         }
 
@@ -1341,6 +1509,7 @@ WHERE ID = ''
             newrow["ID"] = this.CurrentDetailData["ID"];
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["Qty"] = 0;
             this.dtWorkOrderForOutput_Distribute.Rows.Add(newrow);
         }
 
@@ -1363,14 +1532,60 @@ WHERE ID = ''
         }
         #endregion
 
+        #region 4 項檢查 無訊息 & 有訊息
         private bool CanEditData(DataRow dr)
         {
+            // 此4個欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
             return this.EditMode &&
-                !(MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
+                !(!MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
                   MyUtility.Convert.GetBool(dr["HasBundle"]) ||
                   MyUtility.Convert.GetBool(dr["HasCuttingOutput"]) ||
                   MyUtility.Convert.GetBool(dr["HasMarkerReq"]));
         }
+
+        private bool CheckAndMsg(string actrion)
+        {
+            // 前 3 個都是及時去 DB 撈資料判斷, 並彈出訊息
+            // 1. 存在 P10 Bundle
+            string msg = $"The following bundle data exists and cannot be {actrion}. If you need to {actrion}, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
+            if (!CheckBundleAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            {
+                return false;
+            }
+
+            // 2. 存在 P20 CuttingOutput
+            msg = $"The following cutting output data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
+            if (!CheckCuttingOutputCuttingOutputAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            {
+                return false;
+            }
+
+            // 3. 存在 P05 MarkerReq_Detail
+            msg = $"The following marker request data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
+            if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
+            {
+                return false;
+            }
+
+            // 4 檢查欄位 SpreadingStatus
+            if (!CheckSpreadingStatus(this.CurrentDetailData, $"The following digitail spreading data exists and cannot be {actrion}"))
+            {
+                return false;
+            }
+
+            return true;
+        }
+        #endregion
+
+        #region Other
+
+        private void GridValidateControl()
+        {
+            this.detailgrid.ValidateControl();
+            this.gridSizeRatio.ValidateControl();
+            this.gridDistributeToSP.ValidateControl();
+        }
+        #endregion
     }
 #pragma warning restore SA1600 // Elements should be documented
 }
