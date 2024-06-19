@@ -2,7 +2,9 @@
 using Ict.Win;
 using Ict.Win.UI;
 using Sci.Data;
+using Sci.Production.Automation;
 using Sci.Production.Class;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
@@ -13,6 +15,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
@@ -411,8 +414,7 @@ DROP TABLE #tmp
                 this.dtWorkOrderForOutput_Distribute.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any();
 
             #region 檢查 主表身
-
-            if (!ValidateDetailDatas(this.DetailDatas, this.detailgrid))
+            if (!ValidateDetailDatasEmpty(this.DetailDatas, this.detailgrid))
             {
                 return false;
             }
@@ -422,26 +424,206 @@ DROP TABLE #tmp
                 return false;
             }
 
-            if (!ValidateCutNoAndFabricCombo(this.DetailDatas, this.CheckContinue))
+            if (!ValidateCutNoAndMarkerDetails(this.DetailDatas, this.CheckContinue))
+            {
+                return false;
+            }
+
+            if (!ValidateCutref(this.DetailDatas, this.CheckContinue))
             {
                 return false;
             }
             #endregion
 
-            #region 清除 第3層 空值
+            #region 第3層 處理
+
+            // Step 1. 刪除空值
             this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
-
-            this.dtWorkOrderForOutput_Distribute.Select("OrderID = ''").Delete();
+            this.dtWorkOrderForOutput_Distribute.Select("Qty = 0 OR OrderID = '' OR SizeCode = ''").Delete();
             this.dtWorkOrderForOutput_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
-            this.dtWorkOrderForOutput_Distribute.Select("SizeCode = ''").Delete(); // 不會清除 EXCESS 項,也有 SizeCode
-            #endregion
 
-            #region 檢查 第3層 重複 Key
+            // 檢查 第3層 重複 Key
+            var checkSizeRatio = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" };
+            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, out DataTable dtCheck))
+            {
+                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey>");
+                return false;
+            }
 
+            var checkDistribute = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "OrderID", "Article", "SizeCode" };
+            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_Distribute, checkDistribute, out dtCheck))
+            {
+                MyUtility.Msg.WarningBox("The Distribute duplicate ,Please see below <Ukey>");
+                return false;
+            }
 
+            var checkPatternPanel = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "PatternPanel", "FabricPanelCode" };
+            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, out dtCheck))
+            {
+                MyUtility.Msg.WarningBox("The PatternPanel duplicate ,Please see below <Ukey>");
+                return false;
+            }
+
+            // 檢查第3層  Total distributionQty 是否大於 TotalCutQty 總和
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string filter = GetFilter(dr, CuttingForm.P09);
+                decimal ttlCutQty = this.dtWorkOrderForOutput_SizeRatio.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"])) * MyUtility.Convert.GetDecimal(dr["Layer"]);
+                decimal ttlDisQty = this.dtWorkOrderForOutput_Distribute.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+                if (ttlCutQty < ttlDisQty)
+                {
+                    this.ShowErr($"Key:{dr["Ukey"]} Distribution Qty can not exceed total Cut qty");
+                    return false;
+                }
+            }
             #endregion
 
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            // Stpe 1. 給第3層填入對應 WorkOrderForOutputUkey
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                long ukey = MyUtility.Convert.GetLong(dr["Ukey"]); // ClickSavePost 時,底層已取得 Key 值
+                string filterAddData = $"tmpkey = {dr["tmpkey"]} and WorkOrderForOutputUkey = 0"; // WorkOrderForOutputUkey = 0 是此次新增
+                this.dtWorkOrderForOutput_SizeRatio.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+                this.dtWorkOrderForOutput_Distribute.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+                this.dtWorkOrderForOutput_PatternPanel.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
+            }
+
+            #region 處理 SizeRatio
+
+            foreach (DataRow item in this.dtWorkOrderForOutput_SizeRatio.Rows)
+            {
+                
+            }
+
+
+            #endregion
+
+            #region 處理 Distribute 有要傳 API
+
+            // API需要 Distribute 新刪修 同時 out 資訊
+            string sqlDeleteDistribute = $@"
+DELETE wd
+OUTPUT DELETED.*
+FROM WorkOrderForOutput_Distribute wd
+LEFT JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND t.WorkOrderForOutputUkey IS NULL
+";
+            string sqlUpdateDistribute = $@"
+UPDATE wd
+SET wd.Qty = t.Qty
+OUTPUT INSERTED.*
+FROM WorkOrderForOutput_Distribute wd
+INNER JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+";
+            string sqlInsertDistribute = $@"
+INSERT INTO WorkOrderForOutput_Distribute (WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
+OUTPUT INSERTED.*
+SELECT
+    t.WorkOrderForOutputUkey
+    ,t.ID
+    ,t.OrderID
+    ,ISNULL(t.Article, '')
+    ,t.SizeCode
+    ,t.Qty
+FROM #tmp t
+LEFT JOIN WorkOrderForOutput_Distribute wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.WorkOrderForOutputUkey IS NULL
+";
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlDeleteDistribute, out DataTable dtDeleteDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlUpdateDistribute, out DataTable dtUpdateDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlInsertDistribute, out DataTable dtInsertDistribute)))
+            {
+                return result;
+            }
+
+            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<long> deleteWorkOrder = new List<long>();
+            foreach (DataRow dr in dtDeleteDistribute.Rows)
+            {
+                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
+                {
+                    WorkOrderUkey = (long)dr["WorkOrderForOutputUkey"],
+                    SizeCode = (string)dr["SizeCode"],
+                    Article = (string)dr["Article"],
+                    OrderID = (string)dr["OrderID"],
+                });
+            }
+
+            dtUpdateDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
+            dtInsertDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
+            #endregion
+
+            #region sent data to GZ WebAPI
+            string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
+
+            // 此3狀況要傳 1.新增 2.compareCol欄位真的有變動 3.有變動 Distribute
+            var listChangedDetail = this.DetailDatas
+                .Where(s =>
+                {
+                    return !MyUtility.Check.Empty(s["CutRef"]) &&
+                        (s.RowState == DataRowState.Added ||
+                         (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
+                         editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"]));
+                });
+
+            // 傳送變更資訊
+            if (listChangedDetail.Any())
+            {
+                DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
+                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+
+            // CutRef 被清空要傳 Delete 給廠商
+            var cutRefToEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified &&
+                                                             MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
+                                                             !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
+
+            var workOrder_Distribute = this.dtWorkOrderForOutput_Distribute.AsEnumerable();
+            foreach (var item in cutRefToEmpty)
+            {
+                deleteWorkOrder.Add((long)item["Ukey"]);
+                deleteWorkOrder_Distribute.AddRange(
+                    workOrder_Distribute.Where(x => x.RowState != DataRowState.Deleted && (long)x["WorkOrderForOutputUkey"] == (long)item["Ukey"]).Select(
+                    s => new Guozi_AGV.WorkOrder_Distribute
+                    {
+                        WorkOrderUkey = (long)s["WorkOrderForOutputUkey", DataRowVersion.Original],
+                        SizeCode = (string)s["SizeCode", DataRowVersion.Original],
+                        Article = (string)s["Article", DataRowVersion.Original],
+                        OrderID = (string)s["OrderID", DataRowVersion.Original],
+                    }));
+            }
+
+            deleteWorkOrder.AddRange(
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                .Where(s => s.RowState == DataRowState.Deleted)
+                .Select(s => (long)s["Ukey", DataRowVersion.Original]));
+
+            // 傳送刪除
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
+            Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
+
+            #endregion
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -468,7 +650,7 @@ DECLARE @ID varchar(13),@cDate date,@Manpower  int,@ManHours numeric(5,1)
 DECLARE CURSOR_ CURSOR FOR
 SELECT DISTINCT co.ID,co.cDate,co.Manpower,co.ManHours
 FROM WorkOrderForOutput w WITH (NOLOCK)
-INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderUkey = w.Ukey
+INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderForOutputUkey = w.Ukey
 INNER JOIN CuttingOutput co WITH (NOLOCK) ON co.ID = cod.id
 WHERE w.id = '{this.CurrentMaintain["ID"]}'
 ORDER BY co.cDate
@@ -766,7 +948,7 @@ WHERE ID = ''
                         }
 
                         List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
-                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, "ForOutput", sqlConn);
+                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, CuttingForm.P09, sqlConn);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -813,6 +995,7 @@ WHERE ID = ''
 
             // 單筆編輯視窗
             this.ShowDialogActionCutRef(DialogAction.Edit);
+            this.OnDetailGridRowChanged();
         }
 
         // 按 + 或 插入 Icon
@@ -825,11 +1008,15 @@ WHERE ID = ''
             base.OnDetailGridInsert(index);
 
             // 先取得當前編輯狀態的最新 tmpKey
-            long tmpKey = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"]));
-            this.CurrentMaintain["tmpKey"] = tmpKey;
-            this.CurrentMaintain["FactoryID"] = oldRow["FactoryID"];
-            this.CurrentMaintain["MDivisionId"] = oldRow["MDivisionId"];
-            this.CurrentMaintain["MarkerNo"] = oldRow["MarkerNo"];
+            long tmpKey = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
+            this.CurrentDetailData["tmpKey"] = tmpKey;
+            this.CurrentDetailData["SpreadingStatus"] = "Ready";
+            if (oldRow != null)
+            {
+                this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
+                this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
+                this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
+            }
 
             // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
             if (index != -1)
@@ -860,10 +1047,10 @@ WHERE ID = ''
                     }
                 }
 
-                // 複製第3層資訊,並對應到新的 this.CurrentMaintain
-                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                AddThirdDatas(this.CurrentMaintain, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+                // 複製第3層資訊,並對應到新的 this.CurrentDetailData
+                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
             }
 
             DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
@@ -1265,12 +1452,12 @@ WHERE ID = ''
             }
 
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string id = this.CurrentMaintain["ID"].ToString();
-            string fabricCode = this.CurrentMaintain["FabricCode"].ToString();
-            string seq1 = this.CurrentMaintain["SEQ1"].ToString();
-            string seq2 = this.CurrentMaintain["SEQ2"].ToString();
-            string refno = this.CurrentMaintain["Refno"].ToString();
-            string colorID = this.CurrentMaintain["ColorID"].ToString();
+            string id = this.CurrentDetailData["ID"].ToString();
+            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
+            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
+            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
+            string refno = this.CurrentDetailData["Refno"].ToString();
+            string colorID = this.CurrentDetailData["ColorID"].ToString();
 
             // 觸發的欄位不作為篩選條件
             switch (columnName.ToLower())
@@ -1314,18 +1501,18 @@ WHERE ID = ''
 
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
-            string oldvalue = this.CurrentMaintain[columnName].ToString();
-            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
+            string oldvalue = this.CurrentDetailData[columnName].ToString();
+            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
 
-            string id = this.CurrentMaintain["ID"].ToString();
-            string fabricCode = this.CurrentMaintain["FabricCode"].ToString();
-            string seq1 = this.CurrentMaintain["SEQ1"].ToString();
-            string seq2 = this.CurrentMaintain["SEQ2"].ToString();
-            string refno = this.CurrentMaintain["Refno"].ToString();
-            string colorID = this.CurrentMaintain["ColorID"].ToString();
+            string id = this.CurrentDetailData["ID"].ToString();
+            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
+            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
+            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
+            string refno = this.CurrentDetailData["Refno"].ToString();
+            string colorID = this.CurrentDetailData["ColorID"].ToString();
             switch (columnName.ToLower())
             {
                 case "seq1":
@@ -1338,7 +1525,7 @@ WHERE ID = ''
 
             if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
-                this.CurrentMaintain[columnName] = newvalue;
+                this.CurrentDetailData[columnName] = newvalue;
 
                 // 唯一值時
                 if (dtValidating.Rows.Count == 1)
@@ -1348,10 +1535,10 @@ WHERE ID = ''
             }
             else
             {
-                this.CurrentMaintain[columnName] = string.Empty;
+                this.CurrentDetailData[columnName] = string.Empty;
             }
 
-            this.CurrentMaintain.EndEdit();
+            this.CurrentDetailData.EndEdit();
         }
 
         private void MaskedCellValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
@@ -1485,6 +1672,11 @@ WHERE ID = ''
 
         private bool CheckContinue(DataRow dr)
         {
+            if (dr == null)
+            {
+                return false;
+            }
+
             // 此4個欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
             return !(
                  !MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
@@ -1536,6 +1728,81 @@ WHERE ID = ''
             this.gridDistributeToSP.ValidateControl();
         }
         #endregion
+
+        private void BtnExcludeSetting_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnBatchAssign_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnImportMarker_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnAutoRef_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnAutoCut_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnAllSPDistribute_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnDistributeThisCutRef_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnCutPartsCheck_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnHistory_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnQtyBreakdown_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 #pragma warning restore SA1600 // Elements should be documented
 }

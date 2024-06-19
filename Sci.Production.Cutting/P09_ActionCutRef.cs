@@ -135,6 +135,7 @@ namespace Sci.Production.Cutting
 
         private void UpdateToDetail()
         {
+            // 要先清除不完整資訊
             this.dtWorkOrderForOutput_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
             this.dtWorkOrderForOutput_PatternPanel.AcceptChanges();
 
