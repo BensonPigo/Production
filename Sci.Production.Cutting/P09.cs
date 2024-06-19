@@ -1729,6 +1729,16 @@ WHERE ID = ''
         }
         #endregion
 
+        protected override void DoPrint()
+        {
+            base.DoPrint();
+        }
+
+        protected override bool ClickPrint()
+        {
+            return base.ClickPrint();
+        }
+
         private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
 
