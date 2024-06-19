@@ -454,6 +454,7 @@ namespace Sci.Production.Cutting
             newrow["ID"] = this.CurrentDetailData["ID"];
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["Qty"] = 0;
             this.dtWorkOrderForOutput_SizeRatio.Rows.Add(newrow);
         }
 
@@ -488,6 +489,7 @@ namespace Sci.Production.Cutting
             newrow["ID"] = this.CurrentDetailData["ID"];
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["Qty"] = 0;
             this.dtWorkOrderForOutput_Distribute.Rows.Add(newrow);
         }
 
