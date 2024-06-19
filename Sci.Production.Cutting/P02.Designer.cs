@@ -37,9 +37,10 @@
             this.sizeratioMenuStrip = new Sci.Win.UI.ContextMenuStrip();
             this.insertSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.orderList = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.sizeRatioBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label11 = new System.Windows.Forms.Label();
             this.gridOrderList = new Sci.Win.UI.Grid();
+            this.orderListBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.numUnitCons = new Sci.Win.UI.NumericBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new Sci.Win.UI.Label();
@@ -47,7 +48,6 @@
             this.disFabricTypeRefno = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel2 = new System.Windows.Forms.Panel();
             this.numBalanceLayer = new Sci.Win.UI.NumericBox();
             this.numTotalLayer = new Sci.Win.UI.NumericBox();
@@ -68,7 +68,7 @@
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnRefresh = new Sci.Win.UI.Button();
-            this.qtybreakds = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.qtybreakBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -88,11 +88,11 @@
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
             this.sizeratioMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.orderList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatioBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrderList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.orderListBindingSource)).BeginInit();
             this.panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -287,7 +287,7 @@
             this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridSizeRatio.ContextMenuStrip = this.sizeratioMenuStrip;
-            this.gridSizeRatio.DataSource = this.orderList;
+            this.gridSizeRatio.DataSource = this.sizeRatioBindingSource;
             this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -344,7 +344,7 @@
             this.gridOrderList.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridOrderList.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridOrderList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridOrderList.DataSource = this.orderList;
+            this.gridOrderList.DataSource = this.orderListBindingSource;
             this.gridOrderList.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridOrderList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridOrderList.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -707,12 +707,12 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
             this.sizeratioMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.orderList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatioBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrderList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.orderListBindingSource)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -742,10 +742,8 @@
         private Win.UI.Button btnCutPartsCheckSummary;
         private Win.UI.Button btnCutPartsCheck;
         private Win.UI.Button btnRefresh;
-        private Win.UI.ListControlBindingSource sizeRatiobs;
-        //private Win.UI.ListControlBindingSource distributebs;
-        private Win.UI.ListControlBindingSource orderList;
-        //private Win.UI.ListControlBindingSource spreadingfabricbs;
+        private Win.UI.ListControlBindingSource sizeRatioBindingSource;
+        private Win.UI.ListControlBindingSource orderListBindingSource;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Label label6;
         private Win.UI.Grid gridSizeRatio;
@@ -760,6 +758,6 @@
         private System.Windows.Forms.ToolStripMenuItem insertSizeRatioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteSizeRatioToolStripMenuItem;
         private Win.UI.ContextMenuStrip sizeratioMenuStrip;
-        private Win.UI.ListControlBindingSource qtybreakds;
+        private Win.UI.ListControlBindingSource qtybreakBindingSource;
     }
 }
