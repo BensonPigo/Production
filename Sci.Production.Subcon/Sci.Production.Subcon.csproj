@@ -97,6 +97,9 @@
     <Reference Include="Microsoft.VisualBasic.PowerPacks.Vs, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
@@ -502,7 +505,7 @@
     </Compile>
     <Compile Include="R02.designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
-	</Compile>
+    </Compile>
     <Compile Include="R03.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -801,7 +804,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P11_SplitSP.resx">
       <DependentUpon>P11_SplitSP.cs</DependentUpon>
-	</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="P12.resx">
       <DependentUpon>P12.cs</DependentUpon>
     </EmbeddedResource>
@@ -946,7 +949,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
-	</EmbeddedResource>
+    </EmbeddedResource>
     <EmbeddedResource Include="R03.resx">
       <DependentUpon>R03.cs</DependentUpon>
     </EmbeddedResource>
