@@ -74,6 +74,7 @@
             this.label16 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
+            this.txtWKETA = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).BeginInit();
             this.cmsPatternPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).BeginInit();
@@ -519,9 +520,9 @@
             // 
             this.dateBoxWkEta.Location = new System.Drawing.Point(114, 46);
             this.dateBoxWkEta.Name = "dateBoxWkEta";
-            this.dateBoxWkEta.ReadOnly = true;
             this.dateBoxWkEta.Size = new System.Drawing.Size(130, 23);
             this.dateBoxWkEta.TabIndex = 66;
+            this.dateBoxWkEta.Click += new System.EventHandler(this.DateBoxWkEta_Click);
             this.dateBoxWkEta.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DateBoxWkEta_MouseClick);
             // 
             // label16
@@ -553,9 +554,20 @@
             this.txtSP.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSP_PopUp);
             this.txtSP.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSP_Validating);
             // 
+            // txtWKETA
+            // 
+            this.txtWKETA.BackColor = System.Drawing.Color.White;
+            this.txtWKETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtWKETA.Location = new System.Drawing.Point(150, 480);
+            this.txtWKETA.Name = "txtWKETA";
+            this.txtWKETA.Size = new System.Drawing.Size(109, 23);
+            this.txtWKETA.TabIndex = 69;
+            this.txtWKETA.Click += new System.EventHandler(this.txtWKETA_Click);
+            // 
             // P02_ActionCutRef
             // 
             this.ClientSize = new System.Drawing.Size(739, 512);
+            this.Controls.Add(this.txtWKETA);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.dateBoxWkEta);
@@ -632,6 +644,7 @@
             this.Controls.SetChildIndex(this.dateBoxWkEta, 0);
             this.Controls.SetChildIndex(this.label12, 0);
             this.Controls.SetChildIndex(this.txtSP, 0);
+            this.Controls.SetChildIndex(this.txtWKETA, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).EndInit();
             this.cmsPatternPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).EndInit();
@@ -692,5 +705,6 @@
         private Win.UI.Label label16;
         private Win.UI.Label label12;
         private Win.UI.TextBox txtSP;
+        private Win.UI.TextBox txtWKETA;
     }
 }

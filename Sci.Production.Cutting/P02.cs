@@ -865,7 +865,7 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
 
             form.dtWorkOrderForPlanning_SizeRatio = this.dt_SizeRatio.Select(filter).TryCopyToDataTable(this.dt_SizeRatio);
             form.dtWorkOrderForPlanning_PatternPanel = this.dt_PatternPanel.Select(filter).TryCopyToDataTable(this.dt_PatternPanel);
-            form.dtWorkOrderForPlanning_OrderList = this.dt_OrderList.Select(filter).TryCopyToDataTable(this.dt_OrderList);
+            form.dtWorkOrderForPlanning_OrderList = this.dt_OrderList;
             return form.ShowDialog();
         }
 
@@ -1062,6 +1062,25 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                 }
 
                 dr.EndEdit();
+            };
+            this.col_WKETA.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.CanEditData(dr))
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
             };
 
             this.col_MarkerNo.EditingMouseDown += (s, e) =>

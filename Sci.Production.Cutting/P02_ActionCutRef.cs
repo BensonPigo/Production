@@ -190,7 +190,7 @@ namespace Sci.Production.Cutting
 
         private void TxtSP_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) != "2")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
             {
                 string cmd = $@"SELECT ID FROM Orders WHERE POID = '{this.CuttingID}' AND Junk=0";
                 DBProxy.Current.Select(null, cmd, out DataTable dtSP);
@@ -213,7 +213,7 @@ namespace Sci.Production.Cutting
 
         private void TxtSP_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) != "2")
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
             {
                 string cmd = $@"SELECT ID FROM Orders WHERE POID = '{this.CuttingID}' AND Junk=0 AND ID = @ID";
                 DBProxy.Current.Select(null, cmd, new List<SqlParameter>() { new SqlParameter("@ID", this.txtSP.Text) }, out DataTable dtSP);
@@ -478,5 +478,39 @@ namespace Sci.Production.Cutting
         }
 
         #endregion
+
+        private void DateBoxWkEta_Click(object sender, EventArgs e)
+        {
+            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
+            DialogResult result = item.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.Yes:
+                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
+                    break;
+                case DialogResult.No:
+                    this.dateBoxWkEta.Value = null;
+                    break;
+            }
+        }
+
+        private void txtWKETA_Click(object sender, EventArgs e)
+        {
+            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
+            DialogResult result = item.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.Yes:
+                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
+                    break;
+                case DialogResult.No:
+                    this.dateBoxWkEta.Value = null;
+                    break;
+            }
+        }
     }
 }

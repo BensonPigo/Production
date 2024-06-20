@@ -82,7 +82,7 @@ namespace Sci.Production.Cutting
             DataRow dr = srcGrid.GetDataRow(e.RowIndex);
             string oldvalue = dr["OrderID"].ToString();
             string newvalue = e.FormattedValue.ToString();
-            if (oldvalue == newvalue)
+            if (oldvalue == newvalue || string.IsNullOrEmpty(newvalue))
             {
                 return true;
             }
