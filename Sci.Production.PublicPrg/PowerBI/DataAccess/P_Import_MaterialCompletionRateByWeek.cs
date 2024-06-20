@@ -70,7 +70,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = $@" 
 Update p Set MaterialCompletionRate = t.MaterialCompletionRate, 
-             MTLCMP_SPNo = isnull(t.MTLCMP_SPNo, ''),
+             MTLCMP_SPNo = t.MTLCMP_SPNo,
              TTLSPNo = t.TTLSPNo
 From P_MaterialCompletionRateByWeek p
 inner join #tmp t on p.Year = t.Year 
@@ -134,7 +134,7 @@ And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
 Select 	Year = YEAR(inline),	
         WeekNO = DATEPART(WEEK, psb.inline) ,
         FactoryID,
-        MaterialCompletionRate = isnull(round((CONVERT(numeric(5, 2),MTLCMP.MTLCMP_SPNo)/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2), 0) ,
+        MaterialCompletionRate = iif(CONVERT(numeric(5, 2),TTL.TTLSPNo) = 0 ,0, round((CONVERT(numeric(5, 2),isnull(MTLCMP.MTLCMP_SPNo, 0))/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2)) ,
         MTLCMP.MTLCMP_SPNo,
         TTL.TTLSPNo
 From [P_SewingLineScheduleBySP] psb with (nolock)
