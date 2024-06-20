@@ -51,6 +51,8 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_PatternPanel; // 弟3層表:新刪修
         private bool ReUpdateP20 = true;
 
+        private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
+
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -1731,11 +1733,30 @@ WHERE ID = ''
 
         protected override void DoPrint()
         {
+            // 1394: CUTTING_P09_Cutting Work Order Output。KEEP當前的資料。
+            this.drTEMP = this.CurrentDetailData;
             base.DoPrint();
         }
 
         protected override bool ClickPrint()
         {
+            P02_Print callNextForm;
+            if (this.drTEMP != null)
+            {
+                callNextForm = new P02_Print(FromCutting.P09, this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm.ShowDialog(this);
+            }
+            else if (this.drTEMP == null && this.CurrentDetailData != null)
+            {
+                callNextForm = new P02_Print(FromCutting.P09, this.CurrentDetailData, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No datas");
+                return false;
+            }
+
             return base.ClickPrint();
         }
 
@@ -1756,7 +1777,12 @@ WHERE ID = ''
 
         private void BtnDownload_Click(object sender, EventArgs e)
         {
-
+            CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
+            string errMsg;
+            if (!cuttingWorkOrder.DownloadSampleFile(FromCutting.P09, out errMsg))
+            {
+                MyUtility.Msg.ErrorBox(errMsg);
+            }
         }
 
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
@@ -1806,7 +1832,12 @@ WHERE ID = ''
 
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-
+            CuttingWorkOrder excel_P09 = new CuttingWorkOrder();
+            var result = excel_P09.GetExcelData(FromCutting.P09, this.detailgridbs.DataSource);
+            if (!result)
+            {
+                this.ShowErr(result.ToMessages().ToString());
+            }
         }
 
         private void BtnRefresh_Click(object sender, EventArgs e)
