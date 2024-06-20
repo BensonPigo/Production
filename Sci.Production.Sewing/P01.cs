@@ -376,7 +376,7 @@ order by a.OrderId,os.Seq",
                 if (e.Button == MouseButtons.Left)
                 {
                     this.OpenSubDetailPage();
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.detailgrid.GetDataRow(this.detailgridbs.Position);
                     string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
                     string sqlcmd = $@"    
                     select DQSOutputCount=count(1) 
