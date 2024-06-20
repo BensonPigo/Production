@@ -408,11 +408,6 @@ DROP TABLE #tmp
         {
             this.GridValidateControl();
 
-            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                this.dtWorkOrderForOutput_SizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                this.dtWorkOrderForOutput_SizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                this.dtWorkOrderForOutput_Distribute.AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any();
-
             #region 檢查 主表身
             if (!ValidateDetailDatasEmpty(this.DetailDatas, this.detailgrid))
             {
@@ -478,6 +473,10 @@ DROP TABLE #tmp
             }
             #endregion
 
+            // 更新 Cutting 欄位
+            this.CurrentMaintain["CutForOutputInline"] = this.DetailDatas.AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+            this.CurrentMaintain["CutForOutputOffline"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+
             return base.ClickSaveBefore();
         }
 
@@ -485,23 +484,92 @@ DROP TABLE #tmp
         protected override DualResult ClickSavePost()
         {
             // Stpe 1. 給第3層填入對應 WorkOrderForOutputUkey
-            foreach (DataRow dr in this.DetailDatas)
+            foreach (DataRow dr in this.DetailDatas.Where(row => row.RowState == DataRowState.Added))
             {
                 long ukey = MyUtility.Convert.GetLong(dr["Ukey"]); // ClickSavePost 時,底層已取得 Key 值
-                string filterAddData = $"tmpkey = {dr["tmpkey"]} and WorkOrderForOutputUkey = 0"; // WorkOrderForOutputUkey = 0 是此次新增
+                string filterAddData = $"tmpkey = {dr["tmpkey"]}";
                 this.dtWorkOrderForOutput_SizeRatio.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
                 this.dtWorkOrderForOutput_Distribute.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
                 this.dtWorkOrderForOutput_PatternPanel.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForOutputUkey"] = ukey);
             }
 
             #region 處理 SizeRatio
+            string sqlDeleteSizeRatio = $@"
+DELETE wd
+OUTPUT DELETED.*
+FROM WorkOrderForOutput_SizeRatio wd
+LEFT JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND t.WorkOrderForOutputUkey IS NULL
+";
 
-            foreach (DataRow item in this.dtWorkOrderForOutput_SizeRatio.Rows)
+            string sqlUpdateSizeRatio = $@"
+UPDATE wd
+SET wd.Qty = t.Qty
+OUTPUT INSERTED.*
+FROM WorkOrderForOutput_SizeRatio wd
+INNER JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+";
+
+            string sqlInsertSizeRatio = $@"
+
+INSERT INTO WorkOrderForOutput_SizeRatio (WorkOrderForOutputUkey, ID, SizeCode, Qty)
+OUTPUT INSERTED.*
+SELECT
+    t.WorkOrderForOutputUkey
+    ,t.ID
+    ,t.SizeCode
+    ,t.Qty
+FROM #tmp t
+LEFT JOIN WorkOrderForOutput_SizeRatio wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.SizeCode = wd.SizeCode
+WHERE wd.WorkOrderForOutputUkey IS NULL
+";
+            DualResult result;
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_SizeRatio, string.Empty, sqlDeleteSizeRatio, out DataTable dtDeleteSizeRatio)))
             {
-                
+                return result;
             }
 
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_SizeRatio, string.Empty, sqlUpdateSizeRatio, out DataTable dtUpdateSizeRatio)))
+            {
+                return result;
+            }
 
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_SizeRatio, string.Empty, sqlInsertSizeRatio, out DataTable dtInsertSizeRatio)))
+            {
+                return result;
+            }
+            #endregion
+
+            #region 處理 PatternPanel, 沒有 update 因為一定是同 ID
+            string sqlDeletePatternPanel = $@"
+DELETE wd
+FROM WorkOrderForOutput_PatternPanel wd
+LEFT JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.PatternPanel = wd.PatternPanel AND t.FabricPanelCode = wd.FabricPanelCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND t.WorkOrderForOutputUkey IS NULL
+";
+            string sqlInsertPatternPanel = $@"
+INSERT INTO WorkOrderForOutput_PatternPanel (WorkOrderForOutputUkey, ID, PatternPanel, FabricPanelCode)
+SELECT
+    t.WorkOrderForOutputUkey
+    ,t.ID
+    ,t.PatternPanel
+    ,t.FabricPanelCode
+FROM #tmp t
+LEFT JOIN WorkOrderForOutput_PatternPanel wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.PatternPanel = wd.PatternPanel AND t.FabricPanelCode = wd.FabricPanelCode
+WHERE wd.WorkOrderForOutputUkey IS NULL
+";
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_PatternPanel, string.Empty, sqlDeletePatternPanel, out DataTable dtDeletePatternPanel)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_PatternPanel, string.Empty, sqlInsertPatternPanel, out DataTable dtInsertPatternPanel)))
+            {
+                return result;
+            }
             #endregion
 
             #region 處理 Distribute 有要傳 API
@@ -537,7 +605,6 @@ FROM #tmp t
 LEFT JOIN WorkOrderForOutput_Distribute wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
 WHERE wd.WorkOrderForOutputUkey IS NULL
 ";
-            DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlDeleteDistribute, out DataTable dtDeleteDistribute)))
             {
                 return result;
@@ -552,7 +619,9 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             {
                 return result;
             }
+            #endregion
 
+            #region sent data to GZ WebAPI
             List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
             List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
             List<long> deleteWorkOrder = new List<long>();
@@ -560,28 +629,26 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             {
                 deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
                 {
-                    WorkOrderUkey = (long)dr["WorkOrderForOutputUkey"],
-                    SizeCode = (string)dr["SizeCode"],
-                    Article = (string)dr["Article"],
-                    OrderID = (string)dr["OrderID"],
+                    WorkOrderUkey = MyUtility.Convert.GetLong(dr["WorkOrderForOutputUkey"]),
+                    SizeCode = MyUtility.Convert.GetString(dr["SizeCode"]),
+                    Article = MyUtility.Convert.GetString(dr["Article"]),
+                    OrderID = MyUtility.Convert.GetString(dr["OrderID"]),
                 });
             }
 
-            dtUpdateDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
-            dtInsertDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = (long)row["WorkOrderForOutputUkey"] }));
-            #endregion
+            dtUpdateDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]) }));
+            dtInsertDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]) }));
 
-            #region sent data to GZ WebAPI
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
 
-            // 此3狀況要傳 1.新增 2.compareCol欄位真的有變動 3.有變動 Distribute
+            // 準備調整清單, 此3狀況要傳 1.新增 2.compareCol欄位真的有變動 3.有變動 Distribute
             var listChangedDetail = this.DetailDatas
                 .Where(s =>
                 {
                     return !MyUtility.Check.Empty(s["CutRef"]) &&
                         (s.RowState == DataRowState.Added ||
                          (s.RowState == DataRowState.Modified && s.CompareDataRowVersionValue(compareCol)) ||
-                         editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == (long)s["Ukey"]));
+                         editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == MyUtility.Convert.GetLong(s["Ukey"])));
                 });
 
             // 傳送變更資訊
@@ -597,31 +664,37 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
                                                              MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
                                                              !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
 
-            var workOrder_Distribute = this.dtWorkOrderForOutput_Distribute.AsEnumerable();
             foreach (var item in cutRefToEmpty)
             {
-                deleteWorkOrder.Add((long)item["Ukey"]);
+                deleteWorkOrder.Add(MyUtility.Convert.GetLong(item["Ukey"]));
+
                 deleteWorkOrder_Distribute.AddRange(
-                    workOrder_Distribute.Where(x => x.RowState != DataRowState.Deleted && (long)x["WorkOrderForOutputUkey"] == (long)item["Ukey"]).Select(
-                    s => new Guozi_AGV.WorkOrder_Distribute
+                    this.dtWorkOrderForOutput_Distribute.AsEnumerable()
+                    .Where(x => x.RowState != DataRowState.Deleted && (MyUtility.Convert.GetLong(x["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(item["Ukey"])))
+                    .Select(s => new Guozi_AGV.WorkOrder_Distribute
                     {
-                        WorkOrderUkey = (long)s["WorkOrderForOutputUkey", DataRowVersion.Original],
-                        SizeCode = (string)s["SizeCode", DataRowVersion.Original],
-                        Article = (string)s["Article", DataRowVersion.Original],
-                        OrderID = (string)s["OrderID", DataRowVersion.Original],
+                        WorkOrderUkey = MyUtility.Convert.GetLong(s["WorkOrderForOutputUkey", DataRowVersion.Original]),
+                        SizeCode = MyUtility.Convert.GetString(s["SizeCode", DataRowVersion.Original]),
+                        Article = MyUtility.Convert.GetString(s["Article", DataRowVersion.Original]),
+                        OrderID = MyUtility.Convert.GetString(s["OrderID", DataRowVersion.Original]),
                     }));
             }
 
             deleteWorkOrder.AddRange(
                 ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(s => s.RowState == DataRowState.Deleted)
-                .Select(s => (long)s["Ukey", DataRowVersion.Original]));
+                .Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])));
 
             // 傳送刪除
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
 
             #endregion
+
+            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                dtDeleteSizeRatio.AsEnumerable().Any() || dtUpdateSizeRatio.AsEnumerable().Any() || dtInsertSizeRatio.AsEnumerable().Any() ||
+                dtDeleteDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() ||
+                dtDeletePatternPanel.AsEnumerable().Any() || dtInsertPatternPanel.AsEnumerable().Any();
 
             return base.ClickSavePost();
         }
@@ -1058,6 +1131,8 @@ WHERE ID = ''
             {
                 this.OnDetailGridDelete();
             }
+
+            this.OnDetailGridRowChanged();
         }
 
         private DialogResult ShowDialogActionCutRef(DialogAction action)
@@ -1086,6 +1161,10 @@ WHERE ID = ''
             {
                 return;
             }
+
+            this.dtWorkOrderForOutput_SizeRatio.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
+            this.dtWorkOrderForOutput_Distribute.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
+            this.dtWorkOrderForOutput_PatternPanel.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
 
             base.OnDetailGridDelete();
         }

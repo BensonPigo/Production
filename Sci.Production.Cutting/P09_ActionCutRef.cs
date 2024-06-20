@@ -153,20 +153,13 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["ActCuttingPerimeter"] = this.CurrentDetailData["ActCuttingPerimeter_Mask"] = this.txtActCuttingPerimeter.Text == "Yd  \"" ? string.Empty : this.txtActCuttingPerimeter.Text;
             this.CurrentDetailData["StraightLength"] = this.CurrentDetailData["StraightLength_Mask"] = this.txtStraightLength.Text == "Yd  \"" ? string.Empty : this.txtStraightLength.Text;
             this.CurrentDetailData["CurvedLength"] = this.CurrentDetailData["CurvedLength_Mask"] = this.txtCurvedLength.Text == "Yd  \"" ? string.Empty : this.txtCurvedLength.Text;
-            if (this.dateBoxEstCutDate.Value == null)
-            {
-                this.CurrentDetailData["EstCutDate"] = DBNull.Value;
-            }
-            else
-            {
-                this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value;
-            }
-
+            this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value ?? (object)DBNull.Value;
             this.CurrentDetailData["SpreadingNoID"] = this.txtSpreadingNo.Text;
             this.CurrentDetailData["CutCellID"] = this.txtCell.Text;
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);

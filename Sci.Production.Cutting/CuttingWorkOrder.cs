@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static Ict.Win.UI.DataGridView;
@@ -1136,7 +1137,7 @@ ORDER BY SizeCode
                 return false;
             }
 
-            dr["OrderID"] = selectItem.GetSelecteds()[0]["OrderID"];
+            dr["OrderID"] = selectItem.GetSelecteds()[0]["ID"];
             dr["Article"] = selectItem.GetSelecteds()[0]["Article"];
             dr["SizeCode"] = selectItem.GetSelecteds()[0]["SizeCode"];
             dr.EndEdit();
@@ -1372,7 +1373,7 @@ ORDER BY FabricPanelCode,PatternPanel
         #region Other Function
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: SizeCode_CONCAT, TotalCutQty_CONCAT, 因 SizeRatio 的欄位: SizeCode,Qty 調整
+        /// 更新 CurrentDetailData 的非實體欄位: SizeCode_CONCAT, TotalCutQty_CONCAT, 因 SizeRatio 的欄位: SizeCode,Qty 調整
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateConcatString(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
@@ -1394,7 +1395,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: TotalDistributeQty, 因 Distribute 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: TotalDistributeQty, 因 Distribute 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateTotalDistributeQty(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
@@ -1404,24 +1405,17 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: Sewinline, 因 Distribute 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: Sewinline, 因 Distribute 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateMinSewinline(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
         {
             DateTime? sewinline = dtDistribute.Select(GetFilter(currentDetailData, form)).AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["Sewinline"]));
-            if (sewinline == null)
-            {
-                currentDetailData["Sewinline"] = DBNull.Value;
-            }
-            else
-            {
-                currentDetailData["Sewinline"] = sewinline;
-            }
+            currentDetailData["Sewinline"] = sewinline ?? (object)DBNull.Value;
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdatebyPatternPanel(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
@@ -1454,7 +1448,17 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 DataTable Distribute 的欄位: SizeCode, 因 SizeRatio 的欄位: SizeCode 調整
+        /// 更新 CurrentDetailData 的*實體*欄位:OrderID, 取 Distribute 最小 OrderID
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdateMinOrderID(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
+        {
+            string filter = GetFilter(currentDetailData, form) + " AND OrderID <> 'EXCESS'";
+            currentDetailData["OrderID"] = dtDistribute.Select(filter).AsEnumerable().Min(row => MyUtility.Convert.GetString(row["OrderID"]));
+        }
+
+        /// <summary>
+        /// 更新 DataTable Distribute 的*實體*欄位: SizeCode, 因 SizeRatio 的欄位: SizeCode 調整
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateDistribute_Size(DataRow currentDetailData, DataTable dtDistribute, string oldvalue, string newvalue, CuttingForm form)
@@ -1495,7 +1499,7 @@ ORDER BY FabricPanelCode,PatternPanel
                 string sizeCode = dr["SizeCode"].ToString();
                 string filterSizeCode = $"{filter} AND SizeCode = '{sizeCode}'";
 
-                int totalDistributedQty = dtDistribute.Select($"{filterSizeCode} AND OrderID != 'EXCESS'").AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+                int totalDistributedQty = dtDistribute.Select($"{filterSizeCode} AND OrderID <> 'EXCESS'").AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
 
                 // 重算剩餘數,不能小於0
                 int excess = Math.Max(ttlQty_SizeCode - totalDistributedQty, 0);
@@ -1509,8 +1513,9 @@ ORDER BY FabricPanelCode,PatternPanel
                 else
                 {
                     DataRow newExcessRow = dtDistribute.NewRow();
-                    newExcessRow["WorkOrderUKey"] = currentDetailData["Ukey"];
-                    newExcessRow["tmpUkey"] = currentDetailData["tmpUkey"];
+                    newExcessRow["WorkOrderForOutputUKey"] = currentDetailData["Ukey"];
+                    newExcessRow["tmpkey"] = currentDetailData["tmpkey"];
+                    newExcessRow["ID"] = currentDetailData["ID"];
                     newExcessRow["OrderID"] = "EXCESS";
                     newExcessRow["SizeCode"] = sizeCode;
                     newExcessRow["Qty"] = excess;
@@ -1553,7 +1558,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 計算 ConsPC
+        /// 計算 ConsPC *實體*欄位
         /// </summary>
         /// <inheritdoc/>
         public static decimal CalculateConsPC(string markerLength, DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
@@ -1569,7 +1574,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 計算 Cons, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
+        /// 計算 Cons *實體*欄位, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
         /// </summary>
         /// <inheritdoc/>
         public static decimal CalculateCons(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
