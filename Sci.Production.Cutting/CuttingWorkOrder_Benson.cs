@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
         #region Cutting P02 專用
 
         /// <inheritdoc/>
-        public static void SpEditingMouseDown(object sender, DataGridViewEditingControlMouseEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid, string workType)
+        public static void SpEditingMouseDown(DataGridViewEditingControlMouseEventArgs e, Win.Forms.Base srcForm, Grid srcGrid, string poid, string workType)
         {
             if (e.Button == MouseButtons.Right)
             {

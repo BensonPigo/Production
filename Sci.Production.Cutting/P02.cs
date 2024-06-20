@@ -70,7 +70,7 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            //this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.Default;
+
             string querySql = $@"
 SELECT FTYGroup = '' 
 UNION
@@ -110,7 +110,7 @@ SELECT
    ,wp1.PatternPanel_CONCAT
    ,wp2.FabricPanelCode_CONCAT
    ,ws1.SizeCode_CONCAT
-   ,ws2.CutQty_CONCAT
+   ,ws2.TotalCutQty_CONCAT
    ,Fabeta = FabricArrDate.val
    ,MarkerLength_Mask = ''
    ,ActCuttingPerimeter_Mask = ''
@@ -156,7 +156,7 @@ OUTER APPLY (
         FOR XML PATH ('')), 1, 1, '')
 ) ws1
 OUTER APPLY (
-    SELECT CutQty_CONCAT = STUFF((
+    SELECT TotalCutQty_CONCAT = STUFF((
         SELECT CONCAT(', ', Sizecode, '/ ', Qty * wo.Layer)
         FROM WorkOrderForPlanning_SizeRatio WITH (NOLOCK)
         WHERE WorkOrderForPlanningUkey = wo.Ukey
@@ -187,10 +187,61 @@ WHERE wo.id = '{masterID}'
             {
                 row["MarkerLength_Mask"] = FormatMarkerLength(row["MarkerLength"].ToString());
             }
+
+            this.GetAllDetailData();
+
+            #region Fabric Type/ RefNo、Description
+            if (this.DetailDatas.Any())
+            {
+                var d = this.DetailDatas.Select(o => o["FabricTypeRefNo"].ToString()).Distinct().ToList();
+                this.disFabricTypeRefno.Text = string.Join(",", d);
+            }
+
+            if (this.DetailDatas.Any())
+            {
+                var d = this.DetailDatas.Select(o => o["FabricDescription"].ToString()).Distinct().ToList();
+                this.disDescription.Text = string.Join(",", d);
+            }
+            #endregion
+
+            #region Total Layer / Balance Layer
+
+            int sumlayer = 0;
+            int sumlayer2 = 0;
+
+            DataRow[] aA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
+            DataRow[] b = this.dt_Layers.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
+            foreach (DataRow l in aA)
+            {
+                sumlayer += MyUtility.Convert.GetInt(l["layer"]);
+            }
+
+            foreach (DataRow l in b)
+            {
+                sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
+            }
+
+            long order_EachConsTemp = MyUtility.Convert.GetLong(this.CurrentDetailData["Order_EachConsUkey"]);
+            string selectcondition = $@"Order_EachConsUkey = {order_EachConsTemp} and  Colorid = '{this.CurrentDetailData["Colorid"]}'";
+
+            DataRow[] laydr = this.dt_Layers.Select(selectcondition);
+            if (laydr.Length == 0)
+            {
+                this.numTotalLayer.Value = 0;
+                this.numBalanceLayer.Value = 0;
+            }
+            else
+            {
+                this.numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
+                this.numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
+            }
+            #endregion
         }
 
         private void GetAllDetailData()
         {
+            string cuttingID = MyUtility.Check.Empty(this.CurrentMaintain) ? string.Empty : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+
             string sqlcmd = $@"
 SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForPlanning_PatternPanel WHERE ID = '{this.CurrentMaintain["ID"]}'
 
@@ -200,7 +251,7 @@ select b.*
 ,tmpKey = CAST(0 AS BIGINT)
 from WorkOrderForPlanning a  WITH (NOLOCK)
 inner join WorkOrderForPlanning_SizeRatio b  WITH (NOLOCK) on a.Ukey = b.WorkOrderForPlanningUkey
-where  a.id = '{this.CurrentMaintain["ID"]}'
+where  a.id = '{cuttingID}'
 
 Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
 	,layer = isnull(sum(a.layer),0)
@@ -219,7 +270,7 @@ Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
 	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid
     )
 From WorkOrderForPlanning  a WITH (NOLOCK) 
-Where a.id = '{this.CurrentMaintain["ID"]}' 
+Where a.id = '{cuttingID}' 
 group by a.MarkerName,a.Colorid,a.Order_EachconsUkey,a.id 
 Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
 
@@ -229,7 +280,7 @@ SELECT InlineDate = convert(date, Min(SewingSchedule.Inline), 111)
 	,Qty = SUM(SewingSchedule.AlloQty)
 FROM SewingSchedule WITH (nolock)
 INNER JOIN Orders ON SewingSchedule.OrderID=Orders.ID
-WHERE  Orders.POID = '{this.CurrentMaintain["ID"]}'
+WHERE  Orders.POID = '{cuttingID}'
 group by SewingSchedule.OrderID
 order by convert(date, Min(SewingSchedule.Inline), 111) asc
 ";
@@ -349,7 +400,7 @@ DROP TABLE #tmp
                 .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Tone)
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999)
-                .Text("CutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("WKETA", header: "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_EstCutDate)
@@ -390,78 +441,19 @@ DROP TABLE #tmp
 
             this.bindingSourceDetail.SetRow(this.CurrentDetailData);
 
-            this.GetAllDetailData();
-            #region 根據左邊Grid Filter 右邊資訊
-            string filter = $@"WorkOrderForPlanningUkey = {this.CurrentDetailData["Ukey"]} and tmpKey = {this.CurrentDetailData["tmpKey"]}";
-            this.dt_SizeRatio.DefaultView.RowFilter = filter;
-
-            #endregion
-
-            #region 判斷可否開放修改
-            if (this.CanEditData(this.CurrentDetailData))
-            {
-                this.numUnitCons.ReadOnly = false;
-            }
-            else
-            {
-                this.numUnitCons.ReadOnly = true;
-            }
-
-            // WorkOrder.IsCreateByUser = 0 則不能修改編輯
-            if (MyUtility.Check.Empty(this.CurrentDetailData["IsCreateByUser"]))
-            {
-                this.numUnitCons.ReadOnly = true;
-            }
-            #endregion
-
             this.gridSizeRatio.AutoResizeColumns();
 
-            #region Fabric Type/ RefNo、Description
-            if (this.DetailDatas.Any())
-            {
-                var d = this.DetailDatas.Select(o => o["FabricTypeRefNo"].ToString()).Distinct().ToList();
-                this.disFabricTypeRefno.Text = string.Join(",", d);
-            }
+            // 變更子表可否編輯
+            bool canEdit = this.CanEditData(this.CurrentDetailData);
+            this.sizeratioMenuStrip.Enabled = canEdit;
+            this.gridSizeRatio.IsEditingReadOnly = !canEdit;
 
-            if (this.DetailDatas.Any())
-            {
-                var d = this.DetailDatas.Select(o => o["FabricDescription"].ToString()).Distinct().ToList();
-                this.disDescription.Text = string.Join(",", d);
-            }
-            #endregion
+            // 根據左邊Grid Filter 右邊 Size Ratio 資訊
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
+            this.sizeRatioBindingSource.Filter = filter;
 
-            #region Total Layer / Balance Layer
-
-            int sumlayer = 0;
-            int sumlayer2 = 0;
-
-            DataRow[] aA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-            DataRow[] b = this.dt_Layers.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-            foreach (DataRow l in aA)
-            {
-                sumlayer += MyUtility.Convert.GetInt(l["layer"]);
-            }
-
-            foreach (DataRow l in b)
-            {
-                sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
-            }
-
-            long order_EachConsTemp = MyUtility.Convert.GetLong(this.CurrentDetailData["Order_EachConsUkey"]);
-            string selectcondition = $@"Order_EachConsUkey = {order_EachConsTemp} and  Colorid = '{this.CurrentDetailData["Colorid"]}'";
-
-            DataRow[] laydr = this.dt_Layers.Select(selectcondition);
-            if (laydr.Length == 0)
-            {
-                this.numTotalLayer.Value = 0;
-                this.numBalanceLayer.Value = 0;
-            }
-            else
-            {
-                this.numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                this.numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
-            }
-            #endregion
+            // 根據左邊Grid Filter 右邊 Order List 資訊
+            this.orderListBindingSource.Filter = $@"SP = '{this.CurrentDetailData["OrderID"]}' ";
         }
 
         protected override void DoPrint()
@@ -535,6 +527,15 @@ DROP TABLE #tmp
             StringBuilder delsql = new StringBuilder();
             StringBuilder updatesql = new StringBuilder();
             StringBuilder insertsql = new StringBuilder();
+
+            // Stpe 1. 給第3層填入對應 WorkOrderForPlanningUkey
+            foreach (DataRow dr in this.DetailDatas.Where(row => row.RowState == DataRowState.Added))
+            {
+                long ukey = MyUtility.Convert.GetLong(dr["Ukey"]); // ClickSavePost 時,底層已取得 Key 值
+                string filterAddData = $"tmpkey = {dr["tmpkey"]} ";
+                this.dt_SizeRatio.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForPlanningUkey"] = ukey);
+                this.dt_PatternPanel.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForPlanningUkey"] = ukey);
+            }
 
             #region SizeRatio
 
@@ -833,7 +834,7 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                 return;
             }
 
-            if (!MyUtility.Check.Empty(this.CurrentDetailData))
+            if (!this.CanEditData(this.CurrentDetailData))
             {
                 MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
                 return;
@@ -842,6 +843,7 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
 
             // 單筆編輯視窗
             this.ShowDialogActionCutRef(DialogAction.Edit);
+            this.OnDetailGridRowChanged();
         }
 
         /// <summary>
@@ -854,13 +856,16 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
             var form = new P02_ActionCutRef();
             form.Action = action;
             form.CurrentDetailData = this.CurrentDetailData;
+            form.CurrentMaintain = this.CurrentMaintain;
             form.dtWorkOrderForPlanning_SizeRatio_Ori = this.dt_SizeRatio;
             form.dtWorkOrderForPlanning_PatternPanel_Ori = this.dt_PatternPanel;
+            form.dtWorkOrderForPlanning_OrderList_Ori = this.dt_OrderList;
 
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
 
             form.dtWorkOrderForPlanning_SizeRatio = this.dt_SizeRatio.Select(filter).TryCopyToDataTable(this.dt_SizeRatio);
             form.dtWorkOrderForPlanning_PatternPanel = this.dt_PatternPanel.Select(filter).TryCopyToDataTable(this.dt_PatternPanel);
+            form.dtWorkOrderForPlanning_OrderList = this.dt_OrderList.Select(filter).TryCopyToDataTable(this.dt_OrderList);
             return form.ShowDialog();
         }
 
@@ -987,7 +992,7 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                     return;
                 }
 
-                SpEditingMouseDown(s, e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]));
+                SpEditingMouseDown(e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]));
             };
             this.col_SP.CellValidating += (s, e) =>
             {
@@ -1141,17 +1146,35 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                         return;
                     }
 
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
 
-                    if (!this.CanEditData(dr))
+                    if (!this.CanEditData(this.CurrentDetailData))
                     {
                         return;
                     }
 
                     if (SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, null, CuttingForm.P02))
                     {
+                        dr["TotalCutQty_CONCAT"] = this.Cal_CurrentCutQty(dr["WorkOrderForPlanningUkey"], dr["tmpKey"], dr["SizeCode"].ToString());
+                        dr.EndEdit();
                         UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
                     }
+                }
+            };
+            this.col_SizeRatio_Size.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.CanEditData(this.CurrentDetailData))
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
                 }
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
@@ -1161,20 +1184,38 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                     return;
                 }
 
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
 
-                if (!this.CanEditData(dr))
+                if (!this.CanEditData(this.CurrentDetailData))
                 {
                     return;
                 }
 
                 if (SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, null, CuttingForm.P02))
                 {
+                    dr["TotalCutQty_CONCAT"] = this.Cal_CurrentCutQty(dr["WorkOrderForPlanningUkey"], dr["tmpKey"], dr["SizeCode"].ToString());
+                    dr.EndEdit();
                     UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
                 }
             };
 
             this.BindQtyEvents(this.col_SizeRatio_Qty);
+            this.col_SizeRatio_Qty.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                if (this.CanEditData(this.CurrentDetailData))
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                }
+            };
             #endregion
         }
 
@@ -1341,8 +1382,11 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
+                DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
                 if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dt_SizeRatio, null, CuttingForm.P02))
                 {
+                    dr["TotalCutQty_CONCAT"] = this.Cal_CurrentCutQty(dr["WorkOrderForPlanningUkey"], dr["tmpKey"], dr["SizeCode"].ToString());
+                    dr.EndEdit();
                     UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
                 }
             };
@@ -1353,12 +1397,13 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
 
         private void InsertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.CanEditData(this.CurrentDetailData))
+            if (!this.CanEditData(this.CurrentDetailData))
             {
                 return;
             }
 
             DataRow ndr = this.dt_SizeRatio.NewRow();
+            ndr["ID"] = this.CurrentMaintain["ID"];
             ndr["tmpKey"] = this.CurrentDetailData["tmpKey"];
             ndr["WorkOrderForPlanningUkey"] = this.CurrentDetailData["Ukey"];
             ndr["Qty"] = 0;
@@ -1366,7 +1411,7 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
             int layer = MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]);
             ndr["Layer"] = layer;
 
-            ndr["TtlQty"] = string.Empty;
+            ndr["TotalCutQty_CONCAT"] = string.Empty;
             this.dt_SizeRatio.Rows.Add(ndr);
         }
 
@@ -1396,16 +1441,14 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
         /// <returns>cutQtystr</returns>
         private string Cal_CurrentCutQty(object workOrderForPlanningUkey, object tmpKey, string sizeCode)
         {
-            string cutQtystr = string.Empty;
-
             DataRow dr = this.dt_SizeRatio.Select(
                 string.Format(
                     "WorkOrderForPlanningUkey={0} and tmpKey = {1} and SizeCode = '{2}'",
-                    Convert.ToInt32(workOrderForPlanningUkey),
-                    Convert.ToInt64(tmpKey),
+                    MyUtility.Convert.GetInt(workOrderForPlanningUkey),
+                    MyUtility.Convert.GetLong(tmpKey),
                     sizeCode)).FirstOrDefault();
 
-            cutQtystr = dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(dr["Layer"]) ? 0 : dr["Layer"])).ToString();
+            string cutQtystr = dr["SizeCode"].ToString().Trim() + "/" + (Convert.ToDecimal(dr["Qty"]) * Convert.ToDecimal(MyUtility.Check.Empty(dr["Layer"]) ? 0 : dr["Layer"])).ToString();
 
             return cutQtystr;
         }
