@@ -151,6 +151,12 @@
     <Compile Include="P02_ExcludefabriccomboinWIP.Designer.cs">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
     </Compile>
+    <Compile Include="ImportML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportML.Designer.cs">
+      <DependentUpon>ImportML.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_KHImportMarker.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -642,6 +648,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportML.resx">
+      <DependentUpon>ImportML.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_PatternPanel_n.resx">
       <DependentUpon>P02_PatternPanel_n.cs</DependentUpon>
