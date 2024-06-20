@@ -69,7 +69,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-Update p Set MaterialCompletionRate = CONVERT(numeric(5, 2),isnull(t.MaterialCompletionRate, 0)), 
+Update p Set MaterialCompletionRate = t.MaterialCompletionRate, 
              MTLCMP_SPNo = isnull(t.MTLCMP_SPNo, ''),
              TTLSPNo = t.TTLSPNo
 From P_MaterialCompletionRateByWeek p
@@ -113,8 +113,6 @@ And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
 Delete P_MaterialCompletionRateByWeek 
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
-
-
 ";
 
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
@@ -136,7 +134,7 @@ And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
 Select 	Year = YEAR(inline),	
         WeekNO = DATEPART(WEEK, psb.inline) ,
         FactoryID,
-        MaterialCompletionRate = round((CONVERT(numeric(5, 2),MTLCMP.MTLCMP_SPNo)/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2) ,
+        MaterialCompletionRate = isnull(round((CONVERT(numeric(5, 2),MTLCMP.MTLCMP_SPNo)/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2), 0) ,
         MTLCMP.MTLCMP_SPNo,
         TTL.TTLSPNo
 From [P_SewingLineScheduleBySP] psb with (nolock)
