@@ -1218,7 +1218,8 @@ ORDER BY SizeCode
             dr.EndEdit();
 
             // 驗證需要重算Excess
-            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)gridDistributeToSP.DataSource, form);
+            var gridDistributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
+            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)gridDistributeToSPbs.DataSource, form);
 
             // 立即帶入 Sewinline
             dr["SewInline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
