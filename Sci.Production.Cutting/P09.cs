@@ -28,6 +28,7 @@ namespace Sci.Production.Cutting
     {
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2(); // 右上使用,綁主表欄位
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_OrderID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
@@ -135,7 +136,7 @@ SELECT
    ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/SpreadingFabric/Distribute/PatternPanel
    ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM Bundle WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM CuttingOutput_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
-   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE OrderID = wo.ID), 1, 0) AS BIT)
+   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE CutRef = wo.CutRef), 1, 0) AS BIT)
 
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
@@ -319,7 +320,7 @@ DROP TABLE #tmp
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_OrderID)
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -428,7 +429,7 @@ DROP TABLE #tmp
 
                 // 3. 存在 P05 MarkerReq_Detail
                 msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-                if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
+                if (!CheckMarkerReqAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
                 {
                     return;
                 }
@@ -970,6 +971,16 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
                                                              MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
                                                              !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
 
+            deleteWorkOrder_Distribute.AddRange(
+                dtDeleteDistribute.AsEnumerable()
+                .Select(row => new Guozi_AGV.WorkOrder_Distribute
+                {
+                    WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey", DataRowVersion.Original]),
+                    SizeCode = MyUtility.Convert.GetString(row["SizeCode", DataRowVersion.Original]),
+                    Article = MyUtility.Convert.GetString(row["Article", DataRowVersion.Original]),
+                    OrderID = MyUtility.Convert.GetString(row["OrderID", DataRowVersion.Original]),
+                }));
+
             foreach (var item in cutRefToEmpty)
             {
                 deleteWorkOrder.Add(MyUtility.Convert.GetLong(item["Ukey"]));
@@ -1081,20 +1092,22 @@ DEALLOCATE CURSOR_
             base.OnDetailGridInsert(index);
 
             // 先取得當前編輯狀態的最新 tmpKey
-            long tmpKey = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
-            this.CurrentDetailData["tmpKey"] = tmpKey;
+            this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
             this.CurrentDetailData["SpreadingStatus"] = "Ready";
-            if (oldRow != null)
-            {
-                this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
-                this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
-                this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
-            }
-            else
+
+            if (oldRow == null)
             {
                 // 第一筆只能從 Cutting 欄位帶入
                 this.CurrentDetailData["FactoryID"] = this.CurrentMaintain["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = this.CurrentMaintain["MDivisionId"];
+                this.CurrentDetailData["OrderID"] = this.CurrentMaintain["ID"];
+            }
+            else
+            {
+                this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
+                this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
+                this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
+                this.CurrentDetailData["OrderID"] = this.CurrentMaintain["WorkType"].ToString() == "1" ? this.CurrentMaintain["ID"] : oldRow["OrderID"];
             }
 
             // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
@@ -1106,12 +1119,18 @@ DEALLOCATE CURSOR_
                     "Ukey", // 此表 Pkey 底層處理
                     "tmpKey", // 上方有填不同值不複製
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
+                    "OrderID", // 上方處理
                     "CutRef",
                     "CutNo",
+                    "HasBundle",
+                    "HasCuttingOutput",
+                    "HasMarkerReq",
                     "Addname", // 這4欄位 base.OnDetailGridInsert 會自動寫入
                     "AddDate",
+                    "Adduser",
                     "EditName",
                     "EditDate",
+                    "Edituser",
                 };
 
                 foreach (DataColumn column in oldRow.Table.Columns)
@@ -1126,9 +1145,9 @@ DEALLOCATE CURSOR_
                 }
 
                 // 複製第3層資訊,並對應到新的 this.CurrentDetailData
-                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                AddThirdDatas(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
             }
 
             DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
@@ -1144,6 +1163,7 @@ DEALLOCATE CURSOR_
         {
             var form = new P09_ActionCutRef();
             form.Action = action;
+            form.WorkType = this.CurrentMaintain["WorkType"].ToString();
             form.CurrentDetailData = this.CurrentDetailData;
             form.dtWorkOrderForOutput_SizeRatio_Ori = this.dtWorkOrderForOutput_SizeRatio;
             form.dtWorkOrderForOutput_Distribute_Ori = this.dtWorkOrderForOutput_Distribute;
@@ -1207,6 +1227,51 @@ DEALLOCATE CURSOR_
                         e.EditingControl.Text = string.Empty;
                     }
                 }
+            };
+
+            this.col_OrderID.EditingMouseDown += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (!this.CanEditData(dr) || e.Button != MouseButtons.Right || this.CurrentMaintain["WorkType"].ToString() == "1")
+                    {
+                        return;
+                    }
+
+                    DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
+                    SelectItem sele = new SelectItem(dt, "ID", "15@300,400", dr["OrderID"].ToString(), columndecimals: "50");
+                    if (sele.ShowDialog() == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    e.EditingControl.Text = sele.GetSelectedString();
+                }
+            };
+            this.col_OrderID.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string oldvalue = dr["OrderID"].ToString();
+                string newvalue = e.FormattedValue.ToString();
+                if (!this.CanEditData(dr) || this.CurrentMaintain["WorkType"].ToString() == "1" || oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
+                if (dt.Select($"ID = '{newvalue}'").Length == 0)
+                {
+                    dr["OrderID"] = string.Empty;
+                    e.Cancel = true;
+                    MyUtility.Msg.WarningBox($"<SP> : {newvalue} data not found!");
+                }
+                else
+                {
+                    dr["OrderID"] = newvalue;
+                }
+
+                dr.EndEdit();
             };
 
             this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
@@ -1382,22 +1447,19 @@ DEALLOCATE CURSOR_
             this.col_MarkerNo.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
+                if (!this.CanEditData(dr) || e.Button != MouseButtons.Right)
                 {
                     return;
                 }
 
-                if (e.Button == MouseButtons.Right)
+                SelectItem selectItem = PopupMarkerNo(this.CurrentMaintain["ID"].ToString(), dr["MarkerNo"].ToString());
+                if (selectItem == null)
                 {
-                    SelectItem selectItem = PopupMarkerNo(this.CurrentMaintain["ID"].ToString(), dr["MarkerNo"].ToString());
-                    if (selectItem == null)
-                    {
-                        return;
-                    }
-
-                    dr["MarkerNo"] = selectItem.GetSelectedString();
-                    dr.EndEdit();
+                    return;
                 }
+
+                dr["MarkerNo"] = selectItem.GetSelectedString();
+                dr.EndEdit();
             };
             this.col_MarkerNo.CellValidating += (s, e) =>
             {
@@ -1523,7 +1585,7 @@ DEALLOCATE CURSOR_
         private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (!this.CanEditData(dr))
+            if (!this.CanEditData(dr) || e.Button != MouseButtons.Right)
             {
                 return;
             }
@@ -1571,7 +1633,10 @@ DEALLOCATE CURSOR_
         private void SeqCelllValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (!this.CanEditData(dr))
+            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
+            string newvalue = e.FormattedValue.ToString();
+            string oldvalue = this.CurrentDetailData[columnName].ToString();
+            if (!this.CanEditData(dr) || MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
@@ -1580,14 +1645,6 @@ DEALLOCATE CURSOR_
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string newvalue = e.FormattedValue.ToString();
-            string oldvalue = this.CurrentDetailData[columnName].ToString();
-            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
-            {
                 return;
             }
 
@@ -1671,7 +1728,7 @@ DEALLOCATE CURSOR_
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
                     {
-                        UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     }
                 }
             };
@@ -1683,7 +1740,7 @@ DEALLOCATE CURSOR_
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
                     {
-                        UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     }
                 }
             };
@@ -1801,7 +1858,7 @@ DEALLOCATE CURSOR_
 
             // 3. 存在 P05 MarkerReq_Detail
             msg = $"The following marker request data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-            if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
+            if (!CheckMarkerReqAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }

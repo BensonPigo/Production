@@ -317,12 +317,26 @@ ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name
 
         #region 檢查資料庫 P05(MarkerReq_Detail)
 
-        public static bool HasMarkerReq(string id)
+        public static bool HasMarkerReq(string cutRef)
         {
-            return GetMarkerReqbyID(id).AsEnumerable().Any();
+            return GetMarkerReqbyCutRef(cutRef).AsEnumerable().Any();
         }
 
-        private static DataTable GetMarkerReqbyID(string id)
+        public static DataTable GetMarkerReqbyCutRef(IEnumerable<string> cutRefs)
+        {
+            // 將列表轉換為單個字符串，用於SQL查詢
+            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
+            return GetMarkerReqbyID(stringCutref);
+        }
+
+        public static DataTable GetMarkerReqbyCutRef(string cutRef)
+        {
+            // 單個字符串直接用於SQL查詢
+            string stringCutref = $"'{cutRef}'";
+            return GetMarkerReqbyID(stringCutref);
+        }
+
+        private static DataTable GetMarkerReqbyID(string stringCutref)
         {
             string sqlcmd = $@"
 SELECT
@@ -338,7 +352,7 @@ SELECT
 FROM MarkerReq_Detail WITH(NOLOCK)
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
 INNER JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
-WHERE MarkerReq_Detail.OrderID = '{id}'
+WHERE MarkerReq_Detail.CutRef IN ({stringCutref})
 ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
 ";
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
@@ -351,9 +365,27 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             return dtCheck;
         }
 
-        public static bool CheckMarkerReqAndShowData(string id, string msg)
+        /// <summary>
+        /// 顯示提示資訊,並 return 檢查是否通過
+        /// </summary>
+        /// <param name="cutRefs">cutRefs</param>
+        /// <returns>通過:True/不通過:Fasle</returns>
+        /// <inheritdoc/>
+        public static bool CheckMarkerReqAndShowData(IEnumerable<string> cutRefs, string msg)
         {
-            DataTable dtCheck = GetMarkerReqbyID(id);
+            DataTable dtCheck = GetMarkerReqbyCutRef(cutRefs);
+            if (dtCheck.Rows.Count > 0)
+            {
+                new MsgGridForm(dtCheck, msg, "Exists marker request data").ShowDialog();
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool CheckMarkerReqAndShowData(string cutRef, string msg)
+        {
+            DataTable dtCheck = GetMarkerReqbyCutRef(cutRef);
             if (dtCheck.Rows.Count > 0)
             {
                 new MsgGridForm(dtCheck, msg, "Exists marker request data").ShowDialog();
@@ -1450,11 +1482,16 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的*實體*欄位:OrderID, 取 Distribute 最小 OrderID
+        /// 更新 CurrentDetailData 的*實體*欄位:OrderID, 只有Cutting.WorkType = 2(By SP)才執行, 取 Distribute 最小 OrderID
         /// </summary>
         /// <inheritdoc/>
-        public static void UpdateMinOrderID(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
+        public static void UpdateMinOrderID(string workType, DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
         {
+            if (workType != "2")
+            {
+                return;
+            }
+
             string filter = GetFilter(currentDetailData, form) + " AND OrderID <> 'EXCESS'";
             currentDetailData["OrderID"] = dtDistribute.Select(filter).AsEnumerable().Min(row => MyUtility.Convert.GetString(row["OrderID"]));
         }
@@ -1585,9 +1622,9 @@ ORDER BY FabricPanelCode,PatternPanel
             return MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]) * MyUtility.Convert.GetDecimal(currentDetailData["Layer"]) * sizeRatioQty;
         }
 
-        public static void AddThirdDatas(DataRow currentDetailData, DataTable dtTarget, CuttingForm form)
+        public static void AddThirdDatas(DataRow currentDetailData, DataRow oldRow, DataTable dtTarget, CuttingForm form)
         {
-            string filter = GetFilter(currentDetailData, form);
+            string filter = GetFilter(oldRow, form);
             DataTable source = dtTarget.Select(filter).TryCopyToDataTable(dtTarget);
 
             // 複製出來的要填入對應新的 Key

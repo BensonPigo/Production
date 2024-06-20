@@ -15,6 +15,7 @@ namespace Sci.Production.Cutting
     {
 #pragma warning disable SA1600 // Elements should be documented
 #pragma warning disable SA1401 // Elements should be documented
+        public string WorkType;
         public DialogAction Action;
         public DataRow CurrentDetailData;
         public DataTable dtWorkOrderForOutput_SizeRatio_Ori;
@@ -126,6 +127,7 @@ namespace Sci.Production.Cutting
             this.GridEventSet();
         }
 
+        #region 確認或取消 → 關閉視窗
         private void BtnModify_Click(object sender, EventArgs e)
         {
             this.UpdateToDetail();
@@ -159,7 +161,7 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-            UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            UpdateMinOrderID(this.WorkType, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -186,6 +188,8 @@ namespace Sci.Production.Cutting
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        #endregion
 
         #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表 this.CurrentDetailData
 
