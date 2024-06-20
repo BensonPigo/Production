@@ -133,7 +133,8 @@ And P_SimilarStyle.OutputDate >= @Date
 
             // 基本資料
             sqlCmd.Append($@"
-SELECT  o.StyleUkey,
+SELECT Distinct
+        o.StyleUkey,
         o.StyleID, 
         s.FactoryID,
         o.BrandID,
@@ -146,7 +147,6 @@ FROM SewingOutput s with (nolock)
 INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
 INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 WHERE s.OutputDate >= @DATE
-GROUP BY s.ID, s.OutputDate, o.StyleID, s.FactoryID, o.BrandID, o.StyleUkey,s.Shift,s.Team,sd.ComboType
 
 SELECT  sdate.OutputDate,
         o.StyleID, 
