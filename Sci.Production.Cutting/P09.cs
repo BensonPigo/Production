@@ -974,6 +974,7 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             {
                 deleteWorkOrder.Add(MyUtility.Convert.GetLong(item["Ukey"]));
 
+                // 不是刪除的,是被清空CutRef 對應的 Distribute
                 deleteWorkOrder_Distribute.AddRange(
                     this.dtWorkOrderForOutput_Distribute.AsEnumerable()
                     .Where(x => x.RowState != DataRowState.Deleted && (MyUtility.Convert.GetLong(x["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(item["Ukey"])))
@@ -991,7 +992,7 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
                 .Where(s => s.RowState == DataRowState.Deleted)
                 .Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])));
 
-            // 傳送刪除
+            // 傳送刪除資訊
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
 
