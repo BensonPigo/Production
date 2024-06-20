@@ -41,7 +41,6 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="id">Cutting.ID</param>
         /// <param name="listWorkOrderUkey">listWorkOrderUkey</param>
-        /// <param name="form">CuttingForm.P02/P09 </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
         public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, SqlConnection sqlConnection)
