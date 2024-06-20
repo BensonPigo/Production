@@ -62,28 +62,25 @@ namespace Sci.Production.Cutting
         private void SetData()
         {
             this.ID = this.CurrentDetailData["ID"].ToString();
-            if (this.Action == DialogAction.Edit)
-            {
-                this.numCutno.Text = this.CurrentDetailData["CutNo"].ToString();
-                this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
-                this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
-                this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
-                this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
-                this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
-                this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
-                this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
-                this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
-                this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-                this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
-                this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter"].ToString();
-                this.txtStraightLength.Text = this.CurrentDetailData["StraightLength"].ToString();
-                this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength"].ToString();
-                this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
-                this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
-                this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
-                this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
-                this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
-            }
+            this.numCutno.Text = this.CurrentDetailData["CutNo"].ToString();
+            this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
+            this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
+            this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
+            this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
+            this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
+            this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
+            this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
+            this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
+            this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
+            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
+            this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter"].ToString();
+            this.txtStraightLength.Text = this.CurrentDetailData["StraightLength"].ToString();
+            this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength"].ToString();
+            this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
+            this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
+            this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
+            this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
+            this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
 
             this.patternpanelbs.DataSource = this.dtWorkOrderForOutput_PatternPanel;
             this.sizeRatiobs.DataSource = this.dtWorkOrderForOutput_SizeRatio;
@@ -170,13 +167,10 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData.EndEdit();
 
             // Edit 先刪除, 再把修改的塞回去
-            if (this.Action == DialogAction.Edit)
-            {
-                string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
-                this.dtWorkOrderForOutput_SizeRatio_Ori.Select(filter).Delete();
-                this.dtWorkOrderForOutput_Distribute_Ori.Select(filter).Delete();
-                this.dtWorkOrderForOutput_PatternPanel_Ori.Select(filter).Delete();
-            }
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
+            this.dtWorkOrderForOutput_SizeRatio_Ori.Select(filter).Delete();
+            this.dtWorkOrderForOutput_Distribute_Ori.Select(filter).Delete();
+            this.dtWorkOrderForOutput_PatternPanel_Ori.Select(filter).Delete();
 
             this.dtWorkOrderForOutput_SizeRatio_Ori.Merge(this.dtWorkOrderForOutput_SizeRatio);
             this.dtWorkOrderForOutput_Distribute_Ori.Merge(this.dtWorkOrderForOutput_Distribute);

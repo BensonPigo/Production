@@ -136,7 +136,7 @@ SELECT
    ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/SpreadingFabric/Distribute/PatternPanel
    ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM Bundle WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM CuttingOutput_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
-   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE CutRef = wo.CutRef), 1, 0) AS BIT)
+   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
 
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
@@ -1231,23 +1231,20 @@ DEALLOCATE CURSOR_
 
             this.col_OrderID.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == MouseButtons.Right)
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.CanEditData(dr) || this.CurrentMaintain["WorkType"].ToString() == "1" || e.Button != MouseButtons.Right)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    if (!this.CanEditData(dr) || e.Button != MouseButtons.Right || this.CurrentMaintain["WorkType"].ToString() == "1")
-                    {
-                        return;
-                    }
-
-                    DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
-                    SelectItem sele = new SelectItem(dt, "ID", "15@300,400", dr["OrderID"].ToString(), columndecimals: "50");
-                    if (sele.ShowDialog() == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    e.EditingControl.Text = sele.GetSelectedString();
+                    return;
                 }
+
+                DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
+                SelectItem sele = new SelectItem(dt, "ID", "15@300,400", dr["OrderID"].ToString(), columndecimals: "50");
+                if (sele.ShowDialog() == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = sele.GetSelectedString();
             };
             this.col_OrderID.CellValidating += (s, e) =>
             {
@@ -1536,7 +1533,7 @@ DEALLOCATE CURSOR_
             // 可否編輯
             Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
             DataRow dr = grid.GetDataRow(e.RowIndex);
-            bool canEdit = this.CanEditDatByGrid(grid, dr);
+            bool canEdit = this.CanEditDatByGrid(grid, dr, grid.Columns[e.ColumnIndex].Name);
             if (e.Control is Ict.Win.UI.TextBoxBase textBoxBase)
             {
                 textBoxBase.ReadOnly = !canEdit;
@@ -1552,7 +1549,7 @@ DEALLOCATE CURSOR_
             // 粉底紅字
             Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
             DataRow dr = grid.GetDataRow(e.RowIndex);
-            bool canEdit = this.CanEditDatByGrid(grid, dr);
+            bool canEdit = this.CanEditDatByGrid(grid, dr, grid.Columns[e.ColumnIndex].Name);
             if (canEdit)
             {
                 e.CellStyle.BackColor = Color.Pink;
@@ -1565,10 +1562,15 @@ DEALLOCATE CURSOR_
             }
         }
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr)
+        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
             {
+                if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() == "1")
+                {
+                    return false;
+                }
+
                 return this.CanEditData(dr);
             }
             else
@@ -1841,6 +1843,11 @@ DEALLOCATE CURSOR_
 
         private bool CheckAndMsg(string actrion)
         {
+            if (MyUtility.Check.Empty(this.CurrentDetailData["CutRef"]))
+            {
+                return true;
+            }
+
             // 前 3 個都是及時去 DB 撈資料判斷, 並彈出訊息
             // 1. 存在 P10 Bundle
             string msg = $"The following bundle data exists and cannot be {actrion}. If you need to {actrion}, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
