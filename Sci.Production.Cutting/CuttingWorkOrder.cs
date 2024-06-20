@@ -1049,7 +1049,8 @@ ORDER BY SizeCode
             UpdateDistribute_Size(currentDetailData, dtDistribute, oldvalue, newvalue, form);
 
             // 手輸入可以清空,所以要重算 Excess
-            UpdateExcess(currentDetailData, (DataTable)gridSizeRatio.DataSource, dtDistribute, form);
+            var sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
+            UpdateExcess(currentDetailData, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
             return true;
         }
         #endregion
@@ -1069,7 +1070,7 @@ ORDER BY SizeCode
             CuttingForm form)
         {
             DataRow dr = grid.GetDataRow(e.RowIndex);
-            if (dr == null)
+            if (grid.IsEditingReadOnly || dr == null)
             {
                 return false;
             }
@@ -1218,8 +1219,8 @@ ORDER BY SizeCode
             dr.EndEdit();
 
             // 驗證需要重算Excess
-            var gridDistributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
-            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)gridDistributeToSPbs.DataSource, form);
+            var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
+            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
 
             // 立即帶入 Sewinline
             dr["SewInline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());

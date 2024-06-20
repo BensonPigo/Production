@@ -401,7 +401,313 @@ DROP TABLE #tmp
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
         }
 
-        #region Save 一堆東東
+        #region Import 與 Save , 刪除/新增 與 AGV
+        private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
+        {
+            this.OnDetailEntered();
+            #region 校驗
+            string sqlcmdCheck;
+            DataTable dtCheck;
+            DualResult result;
+            string msg;
+            if (this.DetailDatas.Count > 0)
+            {
+                // 1. 存在 P10 Bundle
+                msg = "The following bundle data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
+                if (!CheckBundleAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
+                {
+                    return;
+                }
+
+                // 2. 存在 P20 CuttingOutput
+                msg = "The following cutting output data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
+                if (!CheckCuttingOutputAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
+                {
+                    return;
+                }
+
+                // 3. 存在 P05 MarkerReq_Detail
+                msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
+                if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
+                {
+                    return;
+                }
+
+                // 4. 欄位 SpreadingStatus
+                // DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
+                sqlcmdCheck = $@"
+SELECT
+    [Cut Ref#] = WorkOrderForOutput.CutRef
+   ,[Cut #] = WorkOrderForOutput.CutNo
+   ,[Marker Name] = WorkOrderForOutput.MarkerName
+   ,[Pattern Panel] = PatternPanel.PatternPanel
+   ,[Fabric Panel Code] = FabricPanelCode.FabricPanelCode
+   ,[Spreading Status] = WorkOrderForOutput.SpreadingStatus
+   ,[Spreading Remark] = WorkOrderForOutput.SpreadingRemark
+FROM WorkOrderForOutput WITH (NOLOCK)
+OUTER APPLY (
+    SELECT PatternPanel = STUFF((
+        SELECT ', ' + PatternPanel
+        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
+        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
+        GROUP BY WorkOrderForOutput_PatternPanel.PatternPanel
+        ORDER BY WorkOrderForOutput_PatternPanel.PatternPanel
+        FOR XML PATH ('')), 1, 2, '')
+) PatternPanel
+OUTER APPLY (
+    SELECT FabricPanelCode = STUFF((
+        SELECT ', ' + FabricPanelCode
+        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
+        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
+        GROUP BY WorkOrderForOutput_PatternPanel.FabricPanelCode
+        ORDER BY WorkOrderForOutput_PatternPanel.FabricPanelCode
+        FOR XML PATH ('')), 1, 2, '')
+) FabricPanelCode
+WHERE ID = '{this.CurrentMaintain["ID"]}'
+AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
+";
+                result = DBProxy.Current.Select(string.Empty, sqlcmdCheck, out dtCheck);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (dtCheck.Rows.Count > 0)
+                {
+                    msg = "The following digitail spreading data exists and cannot be imported";
+                    MsgGridForm m = new MsgGridForm(dtCheck, msg, "Exists digitail spreading data") { Width = 950 };
+                    m.grid1.Columns[0].Width = 140;
+                    m.text_Find.Width = 140;
+                    m.btn_Find.Location = new Point(450, 6);
+                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+                    this.FormClosing += (s, args) =>
+                    {
+                        if (m.Visible)
+                        {
+                            m.Close();
+                        }
+                    };
+                    m.Show(this);
+                    return;
+                }
+
+                // 5. 有 WorkOrderForOutput 才跳視窗
+                DialogResult confirmResult = MessageBoxEX.Show("Work order data already exists, do you want to overwrite it?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
+                if (confirmResult != DialogResult.Yes)
+                {
+                    return;
+                }
+            }
+            #endregion
+
+            #region 執行
+
+            // 1. Delete
+            string sqlcmd = $@"
+DELETE WorkOrderForOutput WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutput_Distribute WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutput_PatternPanel WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutput_SizeRatio WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutput_SpreadingFabric WHERE POID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutputHistory WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutputDelete WHERE ID = '{this.CurrentMaintain["ID"]}'
+";
+
+            // 2. WorkOrderForOutput
+            sqlcmd += $@"
+INSERT INTO WorkOrderForOutput (
+    ID,
+    FactoryID,
+    MDivisionID,
+    Seq1,
+    Seq2,
+    CutRef,
+    CutNo,
+    OrderID,
+    RefNo,
+    SCIRefNo,
+    ColorID,
+    Tone,
+    Layer,
+    FabricCombo,
+    FabricCode,
+    FabricPanelCode,
+    EstCutDate,
+    ConsPC,
+    Cons,
+    MarkerNo,
+    MarkerVersion,
+    MarkerName,
+    MarkerLength,
+    ActCuttingPerimeter,
+    StraightLength,
+    CurvedLength,
+    Shift,
+    CutCellID,
+    SpreadingNoID,
+    UnfinishedCuttingReason,
+    IsCreateByUser,
+    SpreadingStatus,
+    SpreadingRemark,
+    GroupID,
+    WorkOrderForPlanningUkey,
+    Order_EachconsUkey,
+    AddName,
+    AddDate,
+    EditName,
+    EditDate
+)
+SELECT
+    WorkOrderForPlanning.ID
+    ,WorkOrderForPlanning.FactoryID
+    ,WorkOrderForPlanning.MDivisionID
+    ,WorkOrderForPlanning.Seq1
+    ,WorkOrderForPlanning.Seq2
+    ,WorkOrderForPlanning.CutRef
+    ,''--CutNo
+    ,''--OrderID 在寫入 WorkOrderForOutput_Distribute 之後,取最小的填入
+    ,WorkOrderForPlanning.RefNo
+    ,WorkOrderForPlanning.SCIRefNo
+    ,WorkOrderForPlanning.ColorID
+    ,WorkOrderForPlanning.Tone
+    ,WorkOrderForPlanning.Layer
+    ,WorkOrderForPlanning.FabricCombo
+    ,WorkOrderForPlanning.FabricCode
+    ,WorkOrderForPlanning.FabricPanelCode
+    ,WorkOrderForPlanning.EstCutDate
+    ,WorkOrderForPlanning.ConsPC
+    ,WorkOrderForPlanning.Cons
+    ,WorkOrderForPlanning.MarkerNo
+    ,WorkOrderForPlanning.MarkerVersion
+    ,WorkOrderForPlanning.MarkerName
+    ,WorkOrderForPlanning.MarkerLength
+    ,Order_EachCons.ActCuttingPerimeter
+    ,Order_EachCons.StraightLength
+    ,Order_EachCons.CurvedLength
+    ,''--Shift
+    ,''--CutCellID
+    ,''--SpreadingNoID
+    ,''--UnfinishedCuttingReason
+    ,WorkOrderForPlanning.IsCreateByUser
+    ,''--SpreadingStatus
+    ,''--SpreadingRemark
+    ,''--GroupID
+    ,WorkOrderForPlanning.Ukey
+    ,WorkOrderForPlanning.Order_EachconsUkey
+    ,'{Env.User.UserID}'
+    ,GETDATE()
+    ,''--EditName
+    ,NULL
+FROM WorkOrderForPlanning
+INNER JOIN Order_EachCons ON WorkOrderForPlanning.Order_EachconsUkey = Order_EachCons.Ukey
+WHERE WorkOrderForPlanning.ID = '{this.CurrentMaintain["ID"]}'
+ORDER BY WorkOrderForPlanning.Ukey
+";
+
+            // 3.WorkOrderForOutput_PatternPanel
+            sqlcmd += $@"
+INSERT INTO WorkOrderForOutput_PatternPanel (
+    WorkOrderForOutputUkey,
+    ID,
+    PatternPanel,
+    FabricPanelCode
+)
+SELECT
+    WorkOrderForOutput.Ukey,
+    WorkOrderForOutput.ID,
+    WorkOrderForPlanning_PatternPanel.PatternPanel,
+    WorkOrderForPlanning_PatternPanel.FabricPanelCode
+FROM WorkOrderForOutput
+JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
+";
+
+            // 4.WorkOrderForOutput_SizeRatio
+            sqlcmd += $@"
+INSERT INTO WorkOrderForOutput_SizeRatio (
+    WorkOrderForOutputUkey,
+    ID,
+    SizeCode,
+    Qty
+)
+SELECT
+    WorkOrderForOutput.Ukey,
+    WorkOrderForPlanning_SizeRatio.ID,
+    WorkOrderForPlanning_SizeRatio.SizeCode,
+    WorkOrderForPlanning_SizeRatio.Qty
+FROM WorkOrderForOutput
+JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
+";
+
+            // 撈出所有 Ukey 後續分配 Distribute
+            sqlcmd += $@"
+SELECT Ukey
+FROM WorkOrderForOutput WITH(NOLOCK)
+WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
+ORDER BY Ukey
+";
+
+            // Distribute 寫入之後才執行
+            string sqlUpdateOrderID = $@"
+UPDATE WorkOrderForOutput
+SET OrderID = (SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS')
+WHERE ID = ''
+";
+
+            result = DBProxy._OpenConnection(null, out SqlConnection sqlConn);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5)))
+            {
+                using (sqlConn)
+                {
+                    try
+                    {
+                        result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out DataTable dtUkey);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        if (dtUkey.Rows.Count == 0)
+                        {
+                            return;
+                        }
+
+                        List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
+                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, CuttingForm.P09, sqlConn);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlUpdateOrderID);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
+                        transactionscope.Complete();
+                    }
+                    catch (Exception ex)
+                    {
+                        this.ShowErr(ex);
+                        return;
+                    }
+                }
+            }
+            #endregion
+
+            this.OnDetailEntered();
+            MyUtility.Msg.InfoBox("Import successful");
+        }
 
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
@@ -743,313 +1049,6 @@ DEALLOCATE CURSOR_
         }
         #endregion
 
-        private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
-        {
-            this.OnDetailEntered();
-            #region 校驗
-            string sqlcmdCheck;
-            DataTable dtCheck;
-            DualResult result;
-            string msg;
-            if (this.DetailDatas.Count > 0)
-            {
-                // 1. 存在 P10 Bundle
-                msg = "The following bundle data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
-                if (!CheckBundleAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
-                {
-                    return;
-                }
-
-                // 2. 存在 P20 CuttingOutput
-                msg = "The following cutting output data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
-                if (!CheckCuttingOutputAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
-                {
-                    return;
-                }
-
-                // 3. 存在 P05 MarkerReq_Detail
-                msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-                if (!CheckMarkerReqAndShowData(msg, this.CurrentMaintain["ID"].ToString()))
-                {
-                    return;
-                }
-
-                // 4. 欄位 SpreadingStatus
-                // DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
-                sqlcmdCheck = $@"
-SELECT
-    [Cut Ref#] = WorkOrderForOutput.CutRef
-   ,[Cut #] = WorkOrderForOutput.CutNo
-   ,[Marker Name] = WorkOrderForOutput.MarkerName
-   ,[Pattern Panel] = PatternPanel.PatternPanel
-   ,[Fabric Panel Code] = FabricPanelCode.FabricPanelCode
-   ,[Spreading Status] = WorkOrderForOutput.SpreadingStatus
-   ,[Spreading Remark] = WorkOrderForOutput.SpreadingRemark
-FROM WorkOrderForOutput WITH (NOLOCK)
-OUTER APPLY (
-    SELECT PatternPanel = STUFF((
-        SELECT ', ' + PatternPanel
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.PatternPanel
-        ORDER BY WorkOrderForOutput_PatternPanel.PatternPanel
-        FOR XML PATH ('')), 1, 2, '')
-) PatternPanel
-OUTER APPLY (
-    SELECT FabricPanelCode = STUFF((
-        SELECT ', ' + FabricPanelCode
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        ORDER BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        FOR XML PATH ('')), 1, 2, '')
-) FabricPanelCode
-WHERE ID = '{this.CurrentMaintain["ID"]}'
-AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
-";
-                result = DBProxy.Current.Select(string.Empty, sqlcmdCheck, out dtCheck);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
-                if (dtCheck.Rows.Count > 0)
-                {
-                    msg = "The following digitail spreading data exists and cannot be imported";
-                    MsgGridForm m = new MsgGridForm(dtCheck, msg, "Exists digitail spreading data") { Width = 950 };
-                    m.grid1.Columns[0].Width = 140;
-                    m.text_Find.Width = 140;
-                    m.btn_Find.Location = new Point(450, 6);
-                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                    this.FormClosing += (s, args) =>
-                    {
-                        if (m.Visible)
-                        {
-                            m.Close();
-                        }
-                    };
-                    m.Show(this);
-                    return;
-                }
-
-                // 5. 有 WorkOrderForOutput 才跳視窗
-                DialogResult confirmResult = MessageBoxEX.Show("Work order data already exists, do you want to overwrite it?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
-                if (confirmResult != DialogResult.Yes)
-                {
-                    return;
-                }
-            }
-            #endregion
-
-            #region 執行
-
-            // 1. Delete
-            string sqlcmd = $@"
-DELETE WorkOrderForOutput WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutput_Distribute WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutput_PatternPanel WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutput_SizeRatio WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutput_SpreadingFabric WHERE POID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutputHistory WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutputDelete WHERE ID = '{this.CurrentMaintain["ID"]}'
-";
-
-            // 2. WorkOrderForOutput
-            sqlcmd += $@"
-INSERT INTO WorkOrderForOutput (
-    ID,
-    FactoryID,
-    MDivisionID,
-    Seq1,
-    Seq2,
-    CutRef,
-    CutNo,
-    OrderID,
-    RefNo,
-    SCIRefNo,
-    ColorID,
-    Tone,
-    Layer,
-    FabricCombo,
-    FabricCode,
-    FabricPanelCode,
-    EstCutDate,
-    ConsPC,
-    Cons,
-    MarkerNo,
-    MarkerVersion,
-    MarkerName,
-    MarkerLength,
-    ActCuttingPerimeter,
-    StraightLength,
-    CurvedLength,
-    Shift,
-    CutCellID,
-    SpreadingNoID,
-    UnfinishedCuttingReason,
-    IsCreateByUser,
-    SpreadingStatus,
-    SpreadingRemark,
-    GroupID,
-    WorkOrderForPlanningUkey,
-    Order_EachconsUkey,
-    AddName,
-    AddDate,
-    EditName,
-    EditDate
-)
-SELECT
-    WorkOrderForPlanning.ID
-    ,WorkOrderForPlanning.FactoryID
-    ,WorkOrderForPlanning.MDivisionID
-    ,WorkOrderForPlanning.Seq1
-    ,WorkOrderForPlanning.Seq2
-    ,WorkOrderForPlanning.CutRef
-    ,''--CutNo
-    ,''--OrderID 在寫入 WorkOrderForOutput_Distribute 之後,取最小的填入
-    ,WorkOrderForPlanning.RefNo
-    ,WorkOrderForPlanning.SCIRefNo
-    ,WorkOrderForPlanning.ColorID
-    ,WorkOrderForPlanning.Tone
-    ,WorkOrderForPlanning.Layer
-    ,WorkOrderForPlanning.FabricCombo
-    ,WorkOrderForPlanning.FabricCode
-    ,WorkOrderForPlanning.FabricPanelCode
-    ,WorkOrderForPlanning.EstCutDate
-    ,WorkOrderForPlanning.ConsPC
-    ,WorkOrderForPlanning.Cons
-    ,WorkOrderForPlanning.MarkerNo
-    ,WorkOrderForPlanning.MarkerVersion
-    ,WorkOrderForPlanning.MarkerName
-    ,WorkOrderForPlanning.MarkerLength
-    ,Order_EachCons.ActCuttingPerimeter
-    ,Order_EachCons.StraightLength
-    ,Order_EachCons.CurvedLength
-    ,''--Shift
-    ,''--CutCellID
-    ,''--SpreadingNoID
-    ,''--UnfinishedCuttingReason
-    ,WorkOrderForPlanning.IsCreateByUser
-    ,''--SpreadingStatus
-    ,''--SpreadingRemark
-    ,''--GroupID
-    ,WorkOrderForPlanning.Ukey
-    ,WorkOrderForPlanning.Order_EachconsUkey
-    ,'{Env.User.UserID}'
-    ,GETDATE()
-    ,''--EditName
-    ,NULL
-FROM WorkOrderForPlanning
-INNER JOIN Order_EachCons ON WorkOrderForPlanning.Order_EachconsUkey = Order_EachCons.Ukey
-WHERE WorkOrderForPlanning.ID = '{this.CurrentMaintain["ID"]}'
-ORDER BY WorkOrderForPlanning.Ukey
-";
-
-            // 3.WorkOrderForOutput_PatternPanel
-            sqlcmd += $@"
-INSERT INTO WorkOrderForOutput_PatternPanel (
-    WorkOrderForOutputUkey,
-    ID,
-    PatternPanel,
-    FabricPanelCode
-)
-SELECT
-    WorkOrderForOutput.Ukey,
-    WorkOrderForOutput.ID,
-    WorkOrderForPlanning_PatternPanel.PatternPanel,
-    WorkOrderForPlanning_PatternPanel.FabricPanelCode
-FROM WorkOrderForOutput
-JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
-";
-
-            // 4.WorkOrderForOutput_SizeRatio
-            sqlcmd += $@"
-INSERT INTO WorkOrderForOutput_SizeRatio (
-    WorkOrderForOutputUkey,
-    ID,
-    SizeCode,
-    Qty
-)
-SELECT
-    WorkOrderForOutput.Ukey,
-    WorkOrderForPlanning_SizeRatio.ID,
-    WorkOrderForPlanning_SizeRatio.SizeCode,
-    WorkOrderForPlanning_SizeRatio.Qty
-FROM WorkOrderForOutput
-JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
-";
-
-            // 撈出所有 Ukey 後續分配 Distribute
-            sqlcmd += $@"
-SELECT Ukey
-FROM WorkOrderForOutput WITH(NOLOCK)
-WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
-ORDER BY Ukey
-";
-
-            // Distribute 寫入之後才執行
-            string sqlUpdateOrderID = $@"
-UPDATE WorkOrderForOutput
-SET OrderID = (SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS')
-WHERE ID = ''
-";
-
-            result = DBProxy._OpenConnection(null, out SqlConnection sqlConn);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5)))
-            {
-                using (sqlConn)
-                {
-                    try
-                    {
-                        result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out DataTable dtUkey);
-                        if (!result)
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        if (dtUkey.Rows.Count == 0)
-                        {
-                            return;
-                        }
-
-                        List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
-                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, CuttingForm.P09, sqlConn);
-                        if (!result)
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlUpdateOrderID);
-                        if (!result)
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
-
-                        transactionscope.Complete();
-                    }
-                    catch (Exception ex)
-                    {
-                        this.ShowErr(ex);
-                        return;
-                    }
-                }
-            }
-            #endregion
-
-            this.OnDetailEntered();
-            MyUtility.Msg.InfoBox("Import successful");
-        }
-
         #region 單筆操作 彈窗ActionCutRef 新/修/刪
         private void BtnEdit_Click(object sender, EventArgs e)
         {
@@ -1090,11 +1089,16 @@ WHERE ID = ''
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
             }
+            else
+            {
+                // 第一筆只能從 Cutting 欄位帶入
+                this.CurrentDetailData["FactoryID"] = this.CurrentMaintain["FactoryID"];
+                this.CurrentDetailData["MDivisionId"] = this.CurrentMaintain["MDivisionId"];
+            }
 
             // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
             if (index != -1)
             {
-                // 不複製 CutRef, CutNo, 以及(這4個底層會自動處理 Addname, AddDate, EditName, EditDate)
                 // 定義不需要複製的欄位名稱列表
                 HashSet<string> excludeColumns = new HashSet<string>
                 {
@@ -1103,7 +1107,7 @@ WHERE ID = ''
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
                     "CutRef",
                     "CutNo",
-                    "Addname",
+                    "Addname", // 這4欄位 base.OnDetailGridInsert 會自動寫入
                     "AddDate",
                     "EditName",
                     "EditDate",
@@ -1648,6 +1652,11 @@ WHERE ID = ''
                 {
                     UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                    if (grid.Name == "gridSizeRatio")
+                    {
+                        DataRow dr = grid.GetDataRow(e.RowIndex);
+                        this.CurrentDetailData["Cons"] = CalculateCons(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                    }
                 }
             };
         }
@@ -1659,6 +1668,10 @@ WHERE ID = ''
                 if (Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP))
                 {
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                    if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                    {
+                        UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                    }
                 }
             };
             column.CellValidating += (s, e) =>
@@ -1667,6 +1680,10 @@ WHERE ID = ''
                 {
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                    if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                    {
+                        UpdateMinOrderID(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                    }
                 }
             };
         }
