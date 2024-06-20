@@ -1,12 +1,17 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
+using System.Security.Cryptography;
 using System.Windows.Forms;
+using static Sci.MyUtility;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
@@ -17,6 +22,7 @@ namespace Sci.Production.Cutting
 #pragma warning disable SA1600 // Elements should be documented
 #pragma warning disable SA1401 // Elements should be documented
         public DialogAction Action;
+        public DataRow CurrentMaintain;
         public DataRow CurrentDetailData;
         public DataTable dtWorkOrderForPlanning_SizeRatio_Ori;
         public DataTable dtWorkOrderForPlanning_OrderList_Ori;
@@ -32,7 +38,8 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
 
-        private string ID;
+        private string CuttingID;
+        private string OrderID;
         private string SCIRefno = string.Empty;
 
         /// <inheritdoc/>
@@ -57,11 +64,13 @@ namespace Sci.Production.Cutting
 
         private void SetData()
         {
-            this.ID = this.CurrentDetailData["ID"].ToString();
+            this.CuttingID = this.CurrentMaintain["ID"].ToString();
+            this.OrderID = this.CurrentDetailData["OrderID"].ToString();
             if (this.Action == DialogAction.Edit)
             {
                 this.numCutno.Text = this.CurrentDetailData["CutNo"].ToString();
                 this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
+                this.txtSP.Text = this.CurrentDetailData["OrderID"].ToString();
                 this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
                 this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
                 this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
@@ -124,6 +133,7 @@ namespace Sci.Production.Cutting
 
             this.CurrentDetailData["CutNo"] = this.numCutno.Value;
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
+            this.CurrentDetailData["OrderID"] = this.txtSP.Text;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
             this.CurrentDetailData["SEQ2"] = this.txtSeq2.Text;
             this.CurrentDetailData["RefNo"] = this.txtRefNo.Text;
@@ -161,12 +171,12 @@ namespace Sci.Production.Cutting
             {
                 string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
                 this.dtWorkOrderForPlanning_SizeRatio_Ori.Select(filter).Delete();
-                this.dtWorkOrderForPlanning_OrderList_Ori.Select(filter).Delete();
+                //this.dtWorkOrderForPlanning_OrderList_Ori.Select(filter).Delete();
                 this.dtWorkOrderForPlanning_PatternPanel_Ori.Select(filter).Delete();
             }
 
             this.dtWorkOrderForPlanning_SizeRatio_Ori.Merge(this.dtWorkOrderForPlanning_SizeRatio);
-            this.dtWorkOrderForPlanning_OrderList_Ori.Merge(this.dtWorkOrderForPlanning_OrderList);
+            //this.dtWorkOrderForPlanning_OrderList_Ori.Merge(this.dtWorkOrderForPlanning_OrderList);
             this.dtWorkOrderForPlanning_PatternPanel_Ori.Merge(this.dtWorkOrderForPlanning_PatternPanel);
         }
 
@@ -177,6 +187,50 @@ namespace Sci.Production.Cutting
         }
 
         #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P02主表上
+
+        private void TxtSP_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
+            {
+                string cmd = $@"SELECT ID FROM Orders WHERE POID = '{this.CuttingID}' AND Junk=0";
+                DBProxy.Current.Select(null, cmd, out DataTable dtSP);
+
+                if (dtSP == null)
+                {
+                    return;
+                }
+
+                SelectItem sele = new SelectItem(dtSP, "ID", "20", this.txtSP.Text, false, ",");
+                DialogResult result = sele.ShowDialog();
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                this.txtSP.Text = MyUtility.Convert.GetString(sele.GetSelecteds()[0]["ID"]);
+            }
+        }
+
+        private void TxtSP_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
+            {
+                string cmd = $@"SELECT ID FROM Orders WHERE POID = '{this.CuttingID}' AND Junk=0 AND ID = @ID";
+                DBProxy.Current.Select(null, cmd, new List<SqlParameter>() { new SqlParameter("@ID", this.txtSP.Text) }, out DataTable dtSP);
+
+                if (dtSP == null)
+                {
+                    return;
+                }
+
+                if (dtSP == null || dtSP.Rows.Count == 0)
+                {
+                    MyUtility.Msg.WarningBox(string.Format("<SP#> : {0} data not found!", this.txtSP.Text));
+                    this.txtSP.Text = string.Empty;
+                }
+            }
+        }
+
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForPlanning_PatternPanel, CuttingForm.P02);
@@ -186,7 +240,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            DataTable dt = GetPatternPanel(this.ID);
+            DataTable dt = GetPatternPanel(this.CuttingID);
             DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
             string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
             string columnName = ((Win.UI.TextBox)sender).Name;
@@ -213,7 +267,7 @@ namespace Sci.Production.Cutting
             }
 
             bool iscolor = columnName.ToLower() == "txtcolor";
-            SelectItem selectItem = PopupSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, iscolor);
+            SelectItem selectItem = PopupSEQ(this.CuttingID, fabricCode, seq1, seq2, refno, colorID, iscolor);
             if (selectItem == null)
             {
                 return;
@@ -235,7 +289,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            DataTable dt = GetPatternPanel(this.ID);
+            DataTable dt = GetPatternPanel(this.CuttingID);
             DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
             string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
             string columnName = ((Win.UI.TextBox)sender).Name;
@@ -267,7 +321,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            if (!ValidatingSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
+            if (!ValidatingSEQ(this.CuttingID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
                 switch (columnName)
                 {
@@ -303,7 +357,7 @@ namespace Sci.Production.Cutting
 
         private void TxtMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem selectItem = PopupMarkerNo(this.ID, this.txtMarkerNo.Text);
+            SelectItem selectItem = PopupMarkerNo(this.CuttingID, this.txtMarkerNo.Text);
             if (selectItem == null)
             {
                 return;
@@ -314,7 +368,7 @@ namespace Sci.Production.Cutting
 
         private void TxtMarkerNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (!ValidatingMarkerNo(this.ID, this.txtMarkerNo.Text))
+            if (!ValidatingMarkerNo(this.CuttingID, this.txtMarkerNo.Text))
             {
                 this.txtMarkerNo.Text = string.Empty;
                 e.Cancel = true;
@@ -343,8 +397,8 @@ namespace Sci.Production.Cutting
         private void GridEventSet()
         {
             // "不"更新(CurrentDetailData)，只有在按下 Edit/Create 才更新
-            BindPatternPanelEvents(this.col_PatternPanel, this.ID);
-            BindPatternPanelEvents(this.col_FabricPanelCode, this.ID);
+            BindPatternPanelEvents(this.col_PatternPanel, this.CuttingID);
+            BindPatternPanelEvents(this.col_FabricPanelCode, this.CuttingID);
 
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
@@ -425,5 +479,38 @@ namespace Sci.Production.Cutting
 
         #endregion
 
+        private void DateBoxWkEta_Click(object sender, EventArgs e)
+        {
+            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
+            DialogResult result = item.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.Yes:
+                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
+                    break;
+                case DialogResult.No:
+                    this.dateBoxWkEta.Value = null;
+                    break;
+            }
+        }
+
+        private void txtWKETA_Click(object sender, EventArgs e)
+        {
+            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
+            DialogResult result = item.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.Yes:
+                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
+                    break;
+                case DialogResult.No:
+                    this.dateBoxWkEta.Value = null;
+                    break;
+            }
+        }
     }
 }

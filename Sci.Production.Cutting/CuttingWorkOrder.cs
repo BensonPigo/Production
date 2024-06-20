@@ -1049,7 +1049,7 @@ ORDER BY SizeCode
             UpdateDistribute_Size(currentDetailData, dtDistribute, oldvalue, newvalue, form);
 
             // 手輸入可以清空,所以要重算 Excess
-            var sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
+            System.Windows.Forms.BindingSource sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
             UpdateExcess(currentDetailData, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
             return true;
         }
