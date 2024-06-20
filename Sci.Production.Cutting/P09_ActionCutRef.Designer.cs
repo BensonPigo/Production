@@ -121,7 +121,7 @@
             this.txtSeq1.Location = new System.Drawing.Point(135, 77);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(96, 23);
-            this.txtSeq1.TabIndex = 21;
+            this.txtSeq1.TabIndex = 2;
             this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq_Validating);
             // 
@@ -141,7 +141,7 @@
             this.txtSeq2.Location = new System.Drawing.Point(135, 111);
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(96, 23);
-            this.txtSeq2.TabIndex = 23;
+            this.txtSeq2.TabIndex = 3;
             this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label4
@@ -160,7 +160,7 @@
             this.txtRefNo.Location = new System.Drawing.Point(135, 145);
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(114, 23);
-            this.txtRefNo.TabIndex = 25;
+            this.txtRefNo.TabIndex = 4;
             this.txtRefNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label5
@@ -179,7 +179,7 @@
             this.txtColor.Location = new System.Drawing.Point(135, 179);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(96, 23);
-            this.txtColor.TabIndex = 27;
+            this.txtColor.TabIndex = 5;
             this.txtColor.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             // 
             // label6
@@ -198,7 +198,7 @@
             this.txtTone.Location = new System.Drawing.Point(135, 213);
             this.txtTone.Name = "txtTone";
             this.txtTone.Size = new System.Drawing.Size(96, 23);
-            this.txtTone.TabIndex = 29;
+            this.txtTone.TabIndex = 6;
             // 
             // label7
             // 
@@ -225,7 +225,7 @@
             this.txtMarkerName.Location = new System.Drawing.Point(135, 281);
             this.txtMarkerName.Name = "txtMarkerName";
             this.txtMarkerName.Size = new System.Drawing.Size(114, 23);
-            this.txtMarkerName.TabIndex = 33;
+            this.txtMarkerName.TabIndex = 8;
             // 
             // label9
             // 
@@ -243,7 +243,7 @@
             this.txtMarkerNo.Location = new System.Drawing.Point(135, 315);
             this.txtMarkerNo.Name = "txtMarkerNo";
             this.txtMarkerNo.Size = new System.Drawing.Size(114, 23);
-            this.txtMarkerNo.TabIndex = 35;
+            this.txtMarkerNo.TabIndex = 9;
             this.txtMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtMarkerNo_PopUp);
             this.txtMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerNo_Validating);
             // 
@@ -264,7 +264,7 @@
             this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
             this.txtMarkerLength.Name = "txtMarkerLength";
             this.txtMarkerLength.Size = new System.Drawing.Size(114, 23);
-            this.txtMarkerLength.TabIndex = 37;
+            this.txtMarkerLength.TabIndex = 10;
             this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // label11
@@ -284,7 +284,7 @@
             this.txtActCuttingPerimeter.Mask = "000Yd00\"00";
             this.txtActCuttingPerimeter.Name = "txtActCuttingPerimeter";
             this.txtActCuttingPerimeter.Size = new System.Drawing.Size(96, 23);
-            this.txtActCuttingPerimeter.TabIndex = 39;
+            this.txtActCuttingPerimeter.TabIndex = 11;
             this.txtActCuttingPerimeter.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label12
@@ -304,7 +304,7 @@
             this.txtStraightLength.Mask = "000Yd00\"00";
             this.txtStraightLength.Name = "txtStraightLength";
             this.txtStraightLength.Size = new System.Drawing.Size(96, 23);
-            this.txtStraightLength.TabIndex = 41;
+            this.txtStraightLength.TabIndex = 12;
             this.txtStraightLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label13
@@ -324,7 +324,7 @@
             this.txtCurvedLength.Mask = "000Yd00\"00";
             this.txtCurvedLength.Name = "txtCurvedLength";
             this.txtCurvedLength.Size = new System.Drawing.Size(96, 23);
-            this.txtCurvedLength.TabIndex = 43;
+            this.txtCurvedLength.TabIndex = 13;
             this.txtCurvedLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMasked_Validating);
             // 
             // label14
@@ -359,7 +359,7 @@
             this.dateBoxEstCutDate.Location = new System.Drawing.Point(385, 9);
             this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
             this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxEstCutDate.TabIndex = 47;
+            this.dateBoxEstCutDate.TabIndex = 14;
             // 
             // label17
             // 
@@ -401,7 +401,7 @@
             this.gridPatternPanel.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPatternPanel.ShowCellToolTips = false;
             this.gridPatternPanel.Size = new System.Drawing.Size(261, 102);
-            this.gridPatternPanel.TabIndex = 56;
+            this.gridPatternPanel.TabIndex = 18;
             // 
             // cmsPatternPanel
             // 
@@ -456,7 +456,7 @@
             this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSizeRatio.ShowCellToolTips = false;
             this.gridSizeRatio.Size = new System.Drawing.Size(175, 102);
-            this.gridSizeRatio.TabIndex = 54;
+            this.gridSizeRatio.TabIndex = 19;
             // 
             // cmsSizeRatio
             // 
@@ -523,7 +523,7 @@
             this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributeToSP.ShowCellToolTips = false;
             this.gridDistributeToSP.Size = new System.Drawing.Size(442, 230);
-            this.gridDistributeToSP.TabIndex = 58;
+            this.gridDistributeToSP.TabIndex = 20;
             // 
             // cmsDistribute
             // 
@@ -554,7 +554,7 @@
             this.btnCancel.Location = new System.Drawing.Point(639, 451);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(82, 28);
-            this.btnCancel.TabIndex = 60;
+            this.btnCancel.TabIndex = 22;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -566,7 +566,7 @@
             this.btnModify.Location = new System.Drawing.Point(546, 451);
             this.btnModify.Name = "btnModify";
             this.btnModify.Size = new System.Drawing.Size(92, 28);
-            this.btnModify.TabIndex = 59;
+            this.btnModify.TabIndex = 21;
             this.btnModify.Text = "Create";
             this.btnModify.UseVisualStyleBackColor = true;
             this.btnModify.Click += new System.EventHandler(this.BtnModify_Click);
@@ -624,7 +624,7 @@
             this.txtDropDownList1.Location = new System.Drawing.Point(591, 43);
             this.txtDropDownList1.Name = "txtDropDownList1";
             this.txtDropDownList1.Size = new System.Drawing.Size(130, 23);
-            this.txtDropDownList1.TabIndex = 61;
+            this.txtDropDownList1.TabIndex = 17;
             this.txtDropDownList1.Type = "Pms_WorkOrderShift";
             // 
             // txtCell
@@ -635,7 +635,7 @@
             this.txtCell.MDivisionID = "";
             this.txtCell.Name = "txtCell";
             this.txtCell.Size = new System.Drawing.Size(130, 23);
-            this.txtCell.TabIndex = 62;
+            this.txtCell.TabIndex = 16;
             // 
             // txtSpreadingNo
             // 
@@ -644,7 +644,7 @@
             this.txtSpreadingNo.Location = new System.Drawing.Point(385, 43);
             this.txtSpreadingNo.Name = "txtSpreadingNo";
             this.txtSpreadingNo.Size = new System.Drawing.Size(130, 23);
-            this.txtSpreadingNo.TabIndex = 63;
+            this.txtSpreadingNo.TabIndex = 15;
             this.txtSpreadingNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSpreadingNo_PopUp);
             this.txtSpreadingNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSpreadingNo_Validating);
             // 
@@ -661,7 +661,7 @@
             0,
             0});
             this.numConsPC.Size = new System.Drawing.Size(94, 23);
-            this.numConsPC.TabIndex = 64;
+            this.numConsPC.TabIndex = 7;
             this.numConsPC.Value = new decimal(new int[] {
             0,
             0,

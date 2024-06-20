@@ -15,6 +15,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -26,6 +27,7 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P09 : Win.Tems.Input6
     {
+        #region 全域變數
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2(); // 右上使用,綁主表欄位
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_OrderID;
@@ -51,6 +53,9 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_Distribute; // 弟3層表:新刪修
         private DataTable dtWorkOrderForOutput_PatternPanel; // 弟3層表:新刪修
         private bool ReUpdateP20 = true;
+        #endregion
+
+        #region 程式開啟時
 
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
@@ -74,9 +79,23 @@ namespace Sci.Production.Cutting
             this.displayBoxFabricTypeRefno.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricTypeRefNo", true));
             this.displayBoxDescription.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricDescription", true));
             this.numConsPC.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "ConsPC", true));
-            this.displayBoxCons.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "Cons", true));
+            this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
             this.displayBoxTotalCutQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalCutQty_CONCAT", true));
             this.displayBoxTtlDistributeQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalDistributeQty", true));
+
+            this.detailgrid.Click += this.Detailgrid_Click;
+        }
+
+        private void Detailgrid_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.detailgrid.CurrentCell))
+            {
+                return;
+            }
+
+            // 游標直接進入 Cell, 才不用點兩下
+            this.detailgrid.CurrentCell = this.detailgrid[this.detailgrid.CurrentCell.ColumnIndex, this.detailgrid.CurrentCell.RowIndex];
+            this.detailgrid.BeginEdit(true);
         }
 
         /// <inheritdoc/>
@@ -108,6 +127,74 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 this.ReloadDatas();
             };
         }
+
+        /// <inheritdoc/>
+        protected override void OnDetailGridSetup()
+        {
+            base.OnDetailGridSetup();
+
+            this.Helper.Controls.Grid.Generator(this.detailgrid)
+                .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true).Get(out this.col_CutRef)
+                .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
+                .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
+                .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_OrderID)
+                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
+                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
+                .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4))
+                .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out this.col_Layer)
+                .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("WKETA", header: "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
+                .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.EstCutDate)
+                .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
+                .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
+                .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
+                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", name: "MarkerLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_MarkerLength)
+                .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting Perimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_ActCuttingPerimeter)
+                .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_StraightLength)
+                .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_CurvedLength)
+                .Text("MarkerNo", header: "Pattern No.", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
+                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
+                ;
+            this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
+                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
+                .Numeric("Qty", header: "Ratio", width: Ict.Win.Widths.AnsiChars(6), integer_places: 5, maximum: 99999, minimum: 0).Get(out this.col_SizeRatio_Qty)
+                ;
+            this.Helper.Controls.Grid.Generator(this.gridDistributeToSP)
+                .Text("OrderID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_Distribute_SP)
+                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7)).Get(out this.col_Distribute_Article)
+                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Distribute_Size)
+                .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_Distribute_Qty)
+                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
+                ;
+            this.Helper.Controls.Grid.Generator(this.gridSpreadingFabric)
+                .Text("Seq1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("Seq2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("Roll", header: "Roll", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("Dyelot", header: "Dyelot", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                ;
+            this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
+                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("Balance", header: "Balance", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true);
+
+            this.GridEventSet();
+        }
+        #endregion
+
+        #region 進入 Detail 撈資料
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -309,72 +396,12 @@ DROP TABLE #tmp
             }
 
             this.qtybreakds.DataSource = dtQtyBreakDown;
+
+            this.ChangeQtyBreakDownRow();
         }
+        #endregion
 
-        /// <inheritdoc/>
-        protected override void OnDetailGridSetup()
-        {
-            base.OnDetailGridSetup();
-
-            this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true).Get(out this.col_CutRef)
-                .Numeric("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
-                .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_OrderID)
-                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
-                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
-                .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4))
-                .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out this.col_Layer)
-                .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("WKETA", header: "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
-                .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.EstCutDate)
-                .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
-                .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
-                .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
-                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", name: "MarkerLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_MarkerLength)
-                .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting Perimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_ActCuttingPerimeter)
-                .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_StraightLength)
-                .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_CurvedLength)
-                .Text("MarkerNo", header: "Pattern No.", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
-                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
-                ;
-            this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
-                .Numeric("Qty", header: "Ratio", width: Ict.Win.Widths.AnsiChars(6), integer_places: 5, maximum: 99999, minimum: 0).Get(out this.col_SizeRatio_Qty)
-                ;
-            this.Helper.Controls.Grid.Generator(this.gridDistributeToSP)
-                .Text("OrderID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_Distribute_SP)
-                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7)).Get(out this.col_Distribute_Article)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Distribute_Size)
-                .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_Distribute_Qty)
-                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
-                ;
-            this.Helper.Controls.Grid.Generator(this.gridSpreadingFabric)
-                .Text("Seq1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("Seq2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("Roll", header: "Roll", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("Dyelot", header: "Dyelot", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                ;
-            this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
-                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7), iseditingreadonly: true)
-                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("Balance", header: "Balance", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true);
-
-            this.GridEventSet();
-        }
+        #region Grid 連動
 
         /// <inheritdoc/>
         protected override void OnDetailGridRowChanged()
@@ -391,6 +418,7 @@ DROP TABLE #tmp
 
             // 變更子表可否編輯
             bool canEdit = this.CanEditData(this.CurrentDetailData);
+            this.numConsPC.ReadOnly = !canEdit;
             this.cmsSizeRatio.Enabled = canEdit;
             this.cmsDistribute.Enabled = canEdit;
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
@@ -399,10 +427,44 @@ DROP TABLE #tmp
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
-            this.gridDistributeToSP.SelectRowToFirst();
 
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
+
+            this.ChangeQtyBreakDownRow();
         }
+
+        private void GridDistributeToSP_SelectionChanged(object sender, EventArgs e)
+        {
+            this.ChangeQtyBreakDownRow();
+        }
+
+        private void ChangeQtyBreakDownRow()
+        {
+            // 更換qtybreakdown index
+            DataRow dr = this.gridDistributeToSP.CurrentDataRow;
+            if (MyUtility.Check.Empty(dr))
+            {
+                return;
+            }
+
+            string article = MyUtility.Convert.GetString(dr["Article"]);
+            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            string spNo = MyUtility.Convert.GetString(dr["Orderid"]);
+
+            if (this.dtWorkOrderForOutput_Distribute.Rows.Count > 1)
+            {
+                var findRow = this.gridQtyBreakDown.Rows
+                    .Cast<DataGridViewRow>()
+                    .Select((row, index) => new { Row = row, Index = index })
+                    .FirstOrDefault(x =>
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["article"]) == article &&
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["SizeCode"]) == sizeCode &&
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["id"]) == spNo)?.Index ?? 0;
+
+                this.gridQtyBreakDown.SelectRowTo(findRow);
+            }
+        }
+        #endregion
 
         #region Import 與 Save 刪除/新增 與 AGV
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
@@ -1306,7 +1368,7 @@ DEALLOCATE CURSOR_
                 }
 
                 dr["Layer"] = newvalue;
-                UpdateExcess(dr, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                UpdateExcess(dr, MyUtility.Convert.GetInt(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
 
                 dr["Cons"] = CalculateCons(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 UpdateConcatString(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
@@ -1502,7 +1564,7 @@ DEALLOCATE CURSOR_
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
-                if (SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09))
+                if (this.CurrentDetailData != null && SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -1563,7 +1625,8 @@ DEALLOCATE CURSOR_
             // 粉底紅字
             Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
             DataRow dr = grid.GetDataRow(e.RowIndex);
-            bool canEdit = this.CanEditDatByGrid(grid, dr, grid.Columns[e.ColumnIndex].Name);
+            string columnName = grid.Columns[e.ColumnIndex].Name.ToLower();
+            bool canEdit = this.CanEditDatByGrid(grid, dr, columnName);
             if (canEdit)
             {
                 e.CellStyle.BackColor = Color.Pink;
@@ -1722,7 +1785,7 @@ DEALLOCATE CURSOR_
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09))
+                if (this.CurrentDetailData != null && QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -1750,7 +1813,7 @@ DEALLOCATE CURSOR_
             };
             column.CellValidating += (s, e) =>
             {
-                if (Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09))
+                if (this.CurrentDetailData != null && Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -1895,7 +1958,6 @@ DEALLOCATE CURSOR_
         #endregion
 
         #region Other
-
         private void GridValidateControl()
         {
             this.detailgrid.ValidateControl();

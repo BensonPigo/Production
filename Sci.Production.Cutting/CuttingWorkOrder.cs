@@ -908,7 +908,7 @@ AND Junk = 0
             {
                 string[] strings = eventString.Split("Yd");
                 string[] strings2 = strings[1].Split("\"");
-                eventString = $"{strings[0].PadLeft(3, '0')}Yd{strings2[0].PadLeft(2, '0')}\"{strings2[1].PadLeft(2, '0')}";
+                eventString = $"{strings[0].PadLeft(3, '0')}Yd{strings2[0].PadLeft(2, '0')}\"{strings2[1].PadRight(2, '0')}"; // 最右邊用 PadRight 因為 TextBox.Text會trim前後空白, \" 右邊要往右補0
             }
             else
             {
@@ -1049,7 +1049,8 @@ ORDER BY SizeCode
             Sci.Win.UI.Grid gridSizeRatio,
             DataRow currentDetailData,
             DataTable dtDistribute,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             if (gridSizeRatio.IsEditingReadOnly)
             {
@@ -1080,7 +1081,7 @@ ORDER BY SizeCode
 
             // 手輸入可以清空,所以要重算 Excess
             System.Windows.Forms.BindingSource sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
-            UpdateExcess(currentDetailData, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
+            UpdateExcess(currentDetailData, layer, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
             return true;
         }
         #endregion
@@ -1097,7 +1098,8 @@ ORDER BY SizeCode
             Sci.Win.UI.Grid grid,
             DataTable dtSizeRatio,
             DataTable dtDistribute,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             DataRow dr = grid.GetDataRow(e.RowIndex);
             if (grid.IsEditingReadOnly || dr == null)
@@ -1115,7 +1117,7 @@ ORDER BY SizeCode
             dr["Qty"] = newvalue;
             dr.EndEdit();
 
-            UpdateExcess(currentDetailData, dtSizeRatio, dtDistribute, form);
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, dtDistribute, form);
 
             return true;
         }
@@ -1187,7 +1189,8 @@ ORDER BY SizeCode
             DataRow currentDetailData,
             DataTable dtSizeRatio,
             Sci.Win.UI.Grid gridDistributeToSP,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
             string columnName = gridDistributeToSP.Columns[e.ColumnIndex].Name;
@@ -1250,7 +1253,7 @@ ORDER BY SizeCode
 
             // 驗證需要重算Excess
             var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
-            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
 
             // 立即帶入 Sewinline
             dr["SewInline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
@@ -1522,7 +1525,7 @@ ORDER BY FabricPanelCode,PatternPanel
         /// 更新 DataTable Distribute 剩餘數:Excess, 因 SizeRatio 的欄位: Qty 調整
         /// </summary>
         /// <inheritdoc/>
-        public static void UpdateExcess(DataRow currentDetailData, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
+        public static void UpdateExcess(DataRow currentDetailData, int layer, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
         {
             if (form == CuttingForm.P02)
             {
@@ -1532,7 +1535,7 @@ ORDER BY FabricPanelCode,PatternPanel
             string filter = GetFilter(currentDetailData, form);
             foreach (DataRow dr in dtSizeRatio.Select(filter))
             {
-                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * MyUtility.Convert.GetInt(currentDetailData["Layer"]); // 此 SizeCode 總數量
+                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * layer; // 此 SizeCode 總數量
                 string sizeCode = dr["SizeCode"].ToString();
                 string filterSizeCode = $"{filter} AND SizeCode = '{sizeCode}'";
 
