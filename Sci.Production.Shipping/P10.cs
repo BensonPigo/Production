@@ -162,8 +162,10 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ID = gd.ID and {ma
 
         continuMain:
             string sqlpullout = $@"
-select t.*,Pullout.SendToTPE from #tmp t
-left join Pullout WITH (NOLOCK)  on Pullout.ID = t.PulloutID and Pullout.Status <> 'NEW'";
+ALTER Table #tmp ALTER Column PulloutID Varchar(13)
+
+Select t.*, Pullout.SendToTPE From #tmp t
+Left join Pullout WITH (NOLOCK)  on Pullout.ID = t.PulloutID and Pullout.Status <> 'NEW'";
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.plData, null, sqlpullout, out this.plData)))
             {
