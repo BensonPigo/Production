@@ -78,7 +78,6 @@ select p.ID
 , p.MDivisionID
 , p.ShipQty
 , p.PulloutID
-, Pullout.SendToTPE
 , [OrderShipmodeSeq] = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
                                 from (
                                     select pd.OrderShipmodeSeq 
@@ -121,7 +120,6 @@ select p.ID
                           ), 1, 1, '') 
 ,[PLFromRgCode] = '{1}'
 from PackingList p WITH (NOLOCK) 
-left join Pullout WITH (NOLOCK)  on Pullout.ID = p.PulloutID and Pullout.Status <> 'NEW'
 where {0} 
 order by p.ID";
             DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, whereDetail, string.Empty), out this.plData);
@@ -163,6 +161,16 @@ where exists(select 1 from GMTBooking g with (nolock) where g.ID = gd.ID and {ma
             }
 
         continuMain:
+            string sqlpullout = $@"
+ALTER Table #tmp ALTER Column PulloutID Varchar(13)
+
+Select t.*, Pullout.SendToTPE From #tmp t
+Left join Pullout WITH (NOLOCK)  on Pullout.ID = t.PulloutID and Pullout.Status <> 'NEW'";
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.plData, null, sqlpullout, out this.plData)))
+            {
+                this.ShowErr(result);
+            }
 
             masterID = (e.Master == null) ? "1=0" : string.Format("g.ShipPlanID ='{0}'", MyUtility.Convert.GetString(e.Master["ID"]));
             this.DetailSelectCommand = string.Format(
