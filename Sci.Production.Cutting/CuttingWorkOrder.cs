@@ -44,15 +44,14 @@ namespace Sci.Production.Cutting
         /// <param name="form">CuttingForm.P02/P09 </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
-        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, CuttingForm form, SqlConnection sqlConnection)
+        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, SqlConnection sqlConnection)
         {
-            string tableMiddleName = GetWorkOrderName(form);
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
 select w.Ukey, w.Colorid, w.FabricCombo, ws.SizeCode, [CutQty] = isnull(ws.Qty * w.Layer, 0)
 into #tmpCutting
-from WorkOrderFor{tableMiddleName} w with (nolock)
-inner join WorkOrderFor{tableMiddleName}_SizeRatio ws with (nolock) on ws.WorkOrderFor{tableMiddleName}Ukey = w.Ukey
+from WorkOrderForOutput w with (nolock)
+inner join WorkOrderForOutput_SizeRatio ws with (nolock) on ws.WorkOrderForOutputUkey = w.Ukey
 where w.Ukey in ({whereWorkOrderUkey})
 order by ukey
 
@@ -112,7 +111,7 @@ Qty > 0
                     drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDistributeOrderQty["Article"]}', '{itemDistribute["SizeCode"]}', '{distributrQty}')
 ";
                 }
@@ -121,7 +120,7 @@ values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDis
                 if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCode"]}', '{itemDistribute["CutQty"]}')
 ";
                 }

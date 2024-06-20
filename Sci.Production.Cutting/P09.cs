@@ -62,11 +62,13 @@ namespace Sci.Production.Cutting
             {
                 this.Text = "P09.WorkOrder For Output";
                 this.IsSupportEdit = true;
+                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 0";
             }
             else
             {
                 this.Text = "P09.WorkOrder For Output(History)";
                 this.IsSupportEdit = false;
+                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
             }
 
             this.displayBoxFabricTypeRefno.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricTypeRefNo", true));
@@ -402,7 +404,7 @@ DROP TABLE #tmp
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
         }
 
-        #region Import 與 Save , 刪除/新增 與 AGV
+        #region Import 與 Save 刪除/新增 與 AGV
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
         {
             this.OnDetailEntered();
@@ -504,10 +506,10 @@ AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
 
             #region 執行
 
-            // 1. Delete
-            string sqlcmd = $@"
-DELETE WorkOrderForOutput WHERE ID = '{this.CurrentMaintain["ID"]}'
-DELETE WorkOrderForOutput_Distribute WHERE ID = '{this.CurrentMaintain["ID"]}'
+            // 1. Delete OUTPUT WorkOrderForOutput_Distribute
+            string sqlcmdDelete = $@"
+DELETE WorkOrderForOutput OUTPUT DELETED.* WHERE ID = '{this.CurrentMaintain["ID"]}'
+DELETE WorkOrderForOutput_Distribute OUTPUT DELETED.* WHERE ID = '{this.CurrentMaintain["ID"]}'
 DELETE WorkOrderForOutput_PatternPanel WHERE ID = '{this.CurrentMaintain["ID"]}'
 DELETE WorkOrderForOutput_SizeRatio WHERE ID = '{this.CurrentMaintain["ID"]}'
 DELETE WorkOrderForOutput_SpreadingFabric WHERE POID = '{this.CurrentMaintain["ID"]}'
@@ -516,7 +518,7 @@ DELETE WorkOrderForOutputDelete WHERE ID = '{this.CurrentMaintain["ID"]}'
 ";
 
             // 2. WorkOrderForOutput
-            sqlcmd += $@"
+            string sqlcmd = $@"
 INSERT INTO WorkOrderForOutput (
     ID,
     FactoryID,
@@ -662,12 +664,20 @@ WHERE ID = ''
                 return;
             }
 
+            DataTable[] dtDelete;
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(5)))
             {
                 using (sqlConn)
                 {
                     try
                     {
+                        result = DBProxy.Current.SelectByConn(sqlConn, sqlcmdDelete, out dtDelete);
+                        if (!result)
+                        {
+                            this.ShowErr(result);
+                            return;
+                        }
+
                         result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out DataTable dtUkey);
                         if (!result)
                         {
@@ -681,7 +691,7 @@ WHERE ID = ''
                         }
 
                         List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
-                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, CuttingForm.P09, sqlConn);
+                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, sqlConn);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -707,6 +717,11 @@ WHERE ID = ''
             #endregion
 
             this.OnDetailEntered();
+
+            List<long> listDeleteUkey = dtDelete[0].AsEnumerable().Where(s => s.RowState == DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])).ToList();
+            this.SentChangeDataToGuozi_AGV(this.dtWorkOrderForOutput_Distribute);
+            this.SentDeleteDataToGuozi_AGV(listDeleteUkey, new List<long>(), dtDelete[1]);
+
             MyUtility.Msg.InfoBox("Import successful");
         }
 
@@ -928,27 +943,29 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             }
             #endregion
 
-            #region sent data to GZ WebAPI
-            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            // sent data to GZ WebAPI
+            dtUpdateDistribute.Merge(dtInsertDistribute);
+            List<long> listDeleteUkey = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])).ToList();
+            List<long> cutRefToEmptyUkey = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified && MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) && !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original])).Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])).ToList();
+            this.SentChangeDataToGuozi_AGV(dtUpdateDistribute);
+            this.SentDeleteDataToGuozi_AGV(listDeleteUkey, cutRefToEmptyUkey, dtDeleteDistribute);
+
+            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
+                dtDeleteSizeRatio.AsEnumerable().Any() || dtUpdateSizeRatio.AsEnumerable().Any() || dtInsertSizeRatio.AsEnumerable().Any() ||
+                dtDeleteDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() ||
+                dtDeletePatternPanel.AsEnumerable().Any() || dtInsertPatternPanel.AsEnumerable().Any();
+
+            return base.ClickSavePost();
+        }
+
+        private void SentChangeDataToGuozi_AGV(DataTable dtChangeDistribute)
+        {
+            // 傳送新增 & 調整資訊
             List<Guozi_AGV.WorkOrder_Distribute> editWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
-            List<long> deleteWorkOrder = new List<long>();
-            foreach (DataRow dr in dtDeleteDistribute.Rows)
-            {
-                deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
-                {
-                    WorkOrderUkey = MyUtility.Convert.GetLong(dr["WorkOrderForOutputUkey"]),
-                    SizeCode = MyUtility.Convert.GetString(dr["SizeCode"]),
-                    Article = MyUtility.Convert.GetString(dr["Article"]),
-                    OrderID = MyUtility.Convert.GetString(dr["OrderID"]),
-                });
-            }
+            dtChangeDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]) }));
 
-            dtUpdateDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]) }));
-            dtInsertDistribute.ExtNotDeletedRowsForeach(row => editWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute() { WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]) }));
-
+            // 準備調整清單, CutRef 有值時, 此3狀況要傳 1.新增 2.compareCol欄位真的有變動 3.有變動 Distribute
             string compareCol = "CutRef,EstCutDate,ID,OrderID,CutCellID";
-
-            // 準備調整清單, 此3狀況要傳 1.新增 2.compareCol欄位真的有變動 3.有變動 Distribute
             var listChangedDetail = this.DetailDatas
                 .Where(s =>
                 {
@@ -958,63 +975,53 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
                          editWorkOrder_Distribute.Any(ed => ed.WorkOrderUkey == MyUtility.Convert.GetLong(s["Ukey"])));
                 });
 
-            // 傳送變更資訊
+            // 傳送
             if (listChangedDetail.Any())
             {
                 DataTable dtWorkOrder = listChangedDetail.CopyToDataTable();
-                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder))
-                    .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkOrder)).ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
             }
+        }
 
-            // CutRef 被清空要傳 Delete 給廠商
-            var cutRefToEmpty = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Modified &&
-                                                             MyUtility.Check.Empty(s["CutRef", DataRowVersion.Current]) &&
-                                                             !MyUtility.Check.Empty(s["CutRef", DataRowVersion.Original]));
+        private void SentDeleteDataToGuozi_AGV(List<long> listDeleteUkey, List<long> cutRefToEmptyUkey, DataTable dtDeleteDistribute)
+        {
+            // 傳送刪除資訊
+            List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
+            List<long> deleteWorkOrder = new List<long>();
 
+            // 加入被刪除的 WorkOrder, Distribute
+            deleteWorkOrder.AddRange(listDeleteUkey);
             deleteWorkOrder_Distribute.AddRange(
                 dtDeleteDistribute.AsEnumerable()
                 .Select(row => new Guozi_AGV.WorkOrder_Distribute
                 {
-                    WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey", DataRowVersion.Original]),
-                    SizeCode = MyUtility.Convert.GetString(row["SizeCode", DataRowVersion.Original]),
-                    Article = MyUtility.Convert.GetString(row["Article", DataRowVersion.Original]),
-                    OrderID = MyUtility.Convert.GetString(row["OrderID", DataRowVersion.Original]),
+                    WorkOrderUkey = MyUtility.Convert.GetLong(row["WorkOrderForOutputUkey"]),
+                    SizeCode = MyUtility.Convert.GetString(row["SizeCode"]),
+                    Article = MyUtility.Convert.GetString(row["Article"]),
+                    OrderID = MyUtility.Convert.GetString(row["OrderID"]),
                 }));
 
-            foreach (var item in cutRefToEmpty)
+            // CutRef 被清空要傳 Delete 給廠商
+            foreach (var ukey in cutRefToEmptyUkey)
             {
-                deleteWorkOrder.Add(MyUtility.Convert.GetLong(item["Ukey"]));
+                deleteWorkOrder.Add(ukey);
 
                 // 不是刪除的,是被清空CutRef 對應的 Distribute
                 deleteWorkOrder_Distribute.AddRange(
                     this.dtWorkOrderForOutput_Distribute.AsEnumerable()
-                    .Where(x => x.RowState != DataRowState.Deleted && (MyUtility.Convert.GetLong(x["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(item["Ukey"])))
+                    .Where(x => x.RowState != DataRowState.Deleted && (MyUtility.Convert.GetLong(x["WorkOrderForOutputUkey"]) == ukey))
                     .Select(s => new Guozi_AGV.WorkOrder_Distribute
                     {
-                        WorkOrderUkey = MyUtility.Convert.GetLong(s["WorkOrderForOutputUkey", DataRowVersion.Original]),
-                        SizeCode = MyUtility.Convert.GetString(s["SizeCode", DataRowVersion.Original]),
-                        Article = MyUtility.Convert.GetString(s["Article", DataRowVersion.Original]),
-                        OrderID = MyUtility.Convert.GetString(s["OrderID", DataRowVersion.Original]),
+                        WorkOrderUkey = MyUtility.Convert.GetLong(s["WorkOrderForOutputUkey"]),
+                        SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
+                        Article = MyUtility.Convert.GetString(s["Article"]),
+                        OrderID = MyUtility.Convert.GetString(s["OrderID"]),
                     }));
             }
 
-            deleteWorkOrder.AddRange(
-                ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                .Where(s => s.RowState == DataRowState.Deleted)
-                .Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])));
-
-            // 傳送刪除資訊
+            // 傳送
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
-
-            #endregion
-
-            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                dtDeleteSizeRatio.AsEnumerable().Any() || dtUpdateSizeRatio.AsEnumerable().Any() || dtInsertSizeRatio.AsEnumerable().Any() ||
-                dtDeleteDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() ||
-                dtDeletePatternPanel.AsEnumerable().Any() || dtInsertPatternPanel.AsEnumerable().Any();
-
-            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -1094,10 +1101,10 @@ DEALLOCATE CURSOR_
             // 先取得當前編輯狀態的最新 tmpKey
             this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
             this.CurrentDetailData["SpreadingStatus"] = "Ready";
-
+            this.CurrentDetailData["Adduser"] = MyUtility.GetValue.Lookup($"SELECT NAME FROM Pass1 WITH (NOLOCK) Where ID = '{this.CurrentDetailData["AddName"]}'");
             if (oldRow == null)
             {
-                // 第一筆只能從 Cutting 欄位帶入
+                // 按 + 或 插入, 無表身時, 第一筆只能從 Cutting 欄位帶入
                 this.CurrentDetailData["FactoryID"] = this.CurrentMaintain["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = this.CurrentMaintain["MDivisionId"];
                 this.CurrentDetailData["OrderID"] = this.CurrentMaintain["ID"];
@@ -1107,7 +1114,15 @@ DEALLOCATE CURSOR_
                 this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
-                this.CurrentDetailData["OrderID"] = this.CurrentMaintain["WorkType"].ToString() == "1" ? this.CurrentMaintain["ID"] : oldRow["OrderID"];
+
+                if (index == -1 || this.CurrentMaintain["WorkType"].ToString() != "2")
+                {
+                    this.CurrentDetailData["OrderID"] = this.CurrentMaintain["ID"];
+                }
+                else
+                {
+                    this.CurrentDetailData["OrderID"] = oldRow["OrderID"];
+                }
             }
 
             // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
@@ -1119,7 +1134,6 @@ DEALLOCATE CURSOR_
                     "Ukey", // 此表 Pkey 底層處理
                     "tmpKey", // 上方有填不同值不複製
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
-                    "OrderID", // 上方處理
                     "CutRef",
                     "CutNo",
                     "HasBundle",
