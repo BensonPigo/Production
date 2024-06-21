@@ -138,7 +138,7 @@ namespace Sci.Production.Cutting
             this.dtWorkOrderForOutput_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
             this.dtWorkOrderForOutput_PatternPanel.AcceptChanges();
 
-            this.CurrentDetailData["CutNo"] = this.numCutno.Value;
+            this.CurrentDetailData["CutNo"] = this.numCutno.Value ?? (object)DBNull.Value;
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
             this.CurrentDetailData["SEQ2"] = this.txtSeq2.Text;
@@ -380,7 +380,7 @@ namespace Sci.Production.Cutting
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
             {
-                SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
@@ -410,7 +410,7 @@ namespace Sci.Production.Cutting
         {
             column.EditingMouseDown += (s, e) =>
             {
-                Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP);
+                Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
             column.CellValidating += (s, e) =>
             {

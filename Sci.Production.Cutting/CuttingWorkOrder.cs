@@ -12,7 +12,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using static Ict.Win.UI.DataGridView;
 
 namespace Sci.Production.Cutting
 {
@@ -326,8 +325,8 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
         public static bool ValidateCutNoAndFabricCombo(IList<DataRow> detailDatas, Sci.Win.UI.Grid detailgrid)
         {
             var groupedRows = detailDatas
-                .Where(row => MyUtility.Check.Empty(row["CutRef"]) && !MyUtility.Check.Empty(row["CutNo"]))
-                .GroupBy(row => new { CutNo = row["CutNo"].ToString(), FabricCombo = row["FabricCombo"].ToString() })
+                .Where(row => MyUtility.Check.Empty(row["CutRef"]) && row["CutNo"] != DBNull.Value)
+                .GroupBy(row => new { CutNo = (int)row["CutNo"], FabricCombo = row["FabricCombo"].ToString() })
                 .Where(group => group.Count() > 1)
                 .ToList();
 
@@ -335,8 +334,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
             foreach (var group in groupedRows)
             {
                 var firstRow = group.First();
-                if (group.Any(row => row["MarkerName"].ToString() != firstRow["MarkerName"].ToString() ||
-                                     row["MarkerNo"].ToString() != firstRow["MarkerNo"].ToString()))
+                if (group.Any(row => row["MarkerName"].ToString() != firstRow["MarkerName"].ToString() || row["MarkerNo"].ToString() != firstRow["MarkerNo"].ToString()))
                 {
                     int index = detailDatas.IndexOf(firstRow);
                     detailgrid.SelectRowTo(index);
@@ -366,12 +364,12 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
         {
             // 先找出有 CutNo 且通過檢查的資料
             var groupedData = detailDatas
-                .Where(row => !MyUtility.Check.Empty(row["CutNo"]) && checkContinue(row))
+                .Where(row => row["CutNo"] != DBNull.Value && checkContinue(row))
                 .GroupBy(r => new
                 {
                     MarkerName = MyUtility.Convert.GetString(r["MarkerName"]),
                     MarkerNo = MyUtility.Convert.GetString(r["MarkerNo"]),
-                    CutNo = MyUtility.Convert.GetString(r["CutNo"]),
+                    CutNo = MyUtility.Convert.GetInt(r["CutNo"]),
                 })
                 .Where(group => group.Count() > 1)
                 .ToList();
@@ -416,7 +414,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
             foreach (var group in groupedData)
             {
                 string cutRef = group.Key;
-                var cutNoList = group.Select(r => MyUtility.Convert.GetString(r["CutNo"])).Distinct().ToList();
+                var cutNoList = group.Select(r => MyUtility.Convert.GetInt(r["CutNo"])).Distinct().ToList();
                 if (cutNoList.Count > 1)
                 {
                     MyUtility.Msg.WarningBox($"Cannot have different [Cut#] with same CutRef# <{cutRef}>");
@@ -889,7 +887,8 @@ ORDER BY SizeCode
             Sci.Win.UI.Grid gridSizeRatio,
             DataRow currentDetailData,
             DataTable dtDistribute,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             if (e.Button != MouseButtons.Right || gridSizeRatio.IsEditingReadOnly)
             {
@@ -909,6 +908,9 @@ ORDER BY SizeCode
             dr.EndEdit();
 
             UpdateDistribute_Size(currentDetailData, dtDistribute, oldvalue, dr["SizeCode"].ToString(), form);
+
+            System.Windows.Forms.BindingSource sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
+            UpdateExcess(currentDetailData, layer, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
             return true;
         }
 
@@ -1001,7 +1003,9 @@ ORDER BY SizeCode
             Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e,
             DataRow currentDetailData,
             DataTable dtSizeRatio,
-            Sci.Win.UI.Grid gridDistributeToSP)
+            Sci.Win.UI.Grid gridDistributeToSP,
+            CuttingForm form,
+            int layer = 0)
         {
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
             if (e.Button != MouseButtons.Right || gridDistributeToSP.IsEditingReadOnly || dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase))
@@ -1049,6 +1053,9 @@ ORDER BY SizeCode
 
             // 立即帶入 Sewinline
             dr["Sewinline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
+
+            var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
             return true;
         }
 
@@ -1064,6 +1071,7 @@ ORDER BY SizeCode
             CuttingForm form,
             int layer = 0)
         {
+            var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
             string columnName = gridDistributeToSP.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
@@ -1088,26 +1096,23 @@ ORDER BY SizeCode
             {
                 dr[columnName] = string.Empty;
                 dr.EndEdit();
+                UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
                 return true;
             }
 
             string orderID = MyUtility.Convert.GetString(dr["OrderID"]);
             string article = MyUtility.Convert.GetString(dr["Article"]);
             string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
-            string msg = string.Empty;
             switch (columnName.ToLower())
             {
                 case "orderid":
                     orderID = newvalue;
-                    msg = $"<SP#>:{newvalue},<Article>:{dr["Article"]},<Size>:{dr["SizeCode"]}";
                     break;
                 case "article":
                     article = newvalue;
-                    msg = $"<SP#>:{dr["OrderID"]},<Article>:{newvalue},<Size>:{dr["SizeCode"]}";
                     break;
                 case "sizecode":
                     sizeCode = newvalue;
-                    msg = $"<SP#>:{dr["OrderID"]},<Article>:{dr["Article"]},<Size>:{newvalue}";
                     break;
             }
 
@@ -1115,16 +1120,16 @@ ORDER BY SizeCode
             {
                 dr[columnName] = string.Empty;
                 dr.EndEdit();
-                MyUtility.Msg.WarningBox(msg + " not exists qty break down");
+                MyUtility.Msg.WarningBox($"<SP#>:{orderID},<Article>:{article},<Size>:{sizeCode} not exists qty break down");
                 e.Cancel = true;
-                return false;
+                UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
+                return true;
             }
 
             dr[columnName] = newvalue;
             dr.EndEdit();
 
             // 驗證需要重算Excess
-            var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
             UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
 
             // 立即帶入 Sewinline

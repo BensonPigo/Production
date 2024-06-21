@@ -1533,7 +1533,7 @@ DEALLOCATE CURSOR_
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
             {
-                if (SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09))
+                if (SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 }
@@ -1778,7 +1778,7 @@ DEALLOCATE CURSOR_
         {
             column.EditingMouseDown += (s, e) =>
             {
-                if (Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP))
+                if (Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
@@ -1836,6 +1836,8 @@ DEALLOCATE CURSOR_
 
             // 後刪除 SizeRatio
             dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
         }
 
         private void MenuItemInsertDistribute_Click(object sender, EventArgs e)
@@ -1870,6 +1872,8 @@ DEALLOCATE CURSOR_
             }
 
             dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
         }
         #endregion
 
