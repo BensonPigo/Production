@@ -779,6 +779,11 @@ AND Junk = 0
         /// <inheritdoc/>
         public static string SetMaskString(string eventString)
         {
+            if (eventString == string.Empty || (int.TryParse(eventString, out int result) && result == 0))
+            {
+                return string.Empty;
+            }
+
             eventString = eventString.Replace(" ", "0");
             if (eventString.Contains("Yd"))
             {
