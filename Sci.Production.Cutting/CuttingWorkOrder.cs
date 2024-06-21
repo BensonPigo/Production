@@ -726,14 +726,20 @@ AND Junk = 0
         /// <inheritdoc/>
         public static string SetMarkerLengthMaskString(string eventString)
         {
+            if (eventString == string.Empty || (int.TryParse(eventString, out int result) && result == 0))
+            {
+                return string.Empty;
+            }
+
             eventString = eventString.Replace(" ", "0");
             if (eventString.Contains("Y"))
             {
                 string[] strings = eventString.Split("Y");
                 string[] strings2 = strings[1].Split("-");
                 string[] strings3 = strings2[1].Split("/");
-                string[] strings4 = strings3[1].Split("\"");
-                eventString = $"{strings[0].PadLeft(2, '0')}Y{strings2[0].PadLeft(2, '0')}-{strings3[0].PadLeft(1, '0')}/{strings4[0].PadLeft(1, '0')}+{strings4[1].PadLeft(1, '0')}\"";
+                string[] strings4 = strings3[1].Split("+");
+                string[] strings5 = strings4[1].Split("\"");
+                eventString = $"{strings[0].PadLeft(2, '0')}Y{strings2[0].PadLeft(2, '0')}-{strings3[0].PadLeft(1, '0')}/{strings4[0].PadLeft(1, '0')}+{strings5[0].PadLeft(1, '0')}\"";
             }
             else
             {
