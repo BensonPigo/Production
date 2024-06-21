@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static Ict.Win.UI.DataGridView;
@@ -133,43 +132,67 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             return result;
         }
 
-        #region 檢查資料庫 P10(Bundle)
-
-        /// <summary>
-        /// 是否已經建立 P10(Bundle)
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>存在:True/無:Fasle</returns>
-        public static bool HasBundle(IEnumerable<string> cutRefs)
+        #region P10/P20/P05 檢查
+        private static string GetCutrefIN(IEnumerable<string> cutRefs)
         {
-            return GetBundlebyCutRef(cutRefs).AsEnumerable().Any();
+            return string.Join(",", cutRefs.Where(cutref => !MyUtility.Check.Empty(cutref)).Select(cutref => $"'{cutref}'"));
         }
 
-        public static bool HasBundle(string cutRef)
+        private static DataTable GetDataByCutRefInternal(string stringCutref, string sqlTemplate)
         {
-            return GetBundlebyCutRef(cutRef).AsEnumerable().Any();
+            if (string.IsNullOrEmpty(stringCutref))
+            {
+                return null;
+            }
+
+            string sqlcmd = string.Format(sqlTemplate, stringCutref);
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dtCheck;
         }
 
-        /// <summary>
-        /// 取得已經建立的 P10(Bundle) 資訊
-        /// </summary>
-        /// <param name="cutRefs">CutRef</param>
-        /// <returns>DataTable</returns>
-        public static DataTable GetBundlebyCutRef(IEnumerable<string> cutRefs)
+        private static bool CheckDataAndShowForm(string tableName, IEnumerable<string> cutRefs, string msg, string sqlTemplate)
         {
-            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
-            return GetBundlebyCutRefInternal(stringCutref);
+            string stringCutref = GetCutrefIN(cutRefs);
+            DataTable dtCheck = GetDataByCutRefInternal(stringCutref, sqlTemplate);
+            if (dtCheck != null && dtCheck.Rows.Count > 0)
+            {
+                var form = new MsgGridForm(dtCheck, msg, $"Exists {tableName} data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
+                return false;
+            }
+
+            return true;
         }
 
-        public static DataTable GetBundlebyCutRef(string cutRef)
+        private static bool CheckDataAndShowForm(string tableName, string cutRef, string msg, string sqlTemplate)
         {
+            if (string.IsNullOrEmpty(cutRef))
+            {
+                return true;
+            }
+
             string stringCutref = $"'{cutRef}'";
-            return GetBundlebyCutRefInternal(stringCutref);
+            DataTable dtCheck = GetDataByCutRefInternal(stringCutref, sqlTemplate);
+            if (dtCheck != null && dtCheck.Rows.Count > 0)
+            {
+                var form = new MsgGridForm(dtCheck, msg, $"Exists {tableName} data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
+                return false;
+            }
+
+            return true;
         }
 
-        private static DataTable GetBundlebyCutRefInternal(string stringCutref)
-        {
-            string sqlcmd = $@"
+        // SQL Templates
+        private static readonly string sqlTemplateBundle = @"
 SELECT
      [Cutting_P10 ID] = Bundle.ID
     ,[Cut Ref#] = Bundle.CutRef
@@ -177,174 +200,23 @@ SELECT
     ,[Create Date] = Format(Bundle.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM  Bundle WITH(NOLOCK)
 INNER JOIN Pass1 WITH(NOLOCK) ON Bundle.AddName = Pass1.ID
-WHERE Bundle.CutRef IN ({stringCutref})
+WHERE Bundle.CutRef IN ({0})
 AND Bundle.CutRef <> ''
-ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name";
 
-            return dtCheck;
-        }
-
-        /// <summary>
-        /// 顯示提示資訊,並 return 檢查是否通過
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <param name="msg">提示訊息</param>
-        /// <returns>通過:True/不通過:False</returns>
-        public static bool CheckBundleAndShowData(IEnumerable<string> cutRefs, string msg)
-        {
-            DataTable dtCheck = GetBundlebyCutRef(cutRefs);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists bundle data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool CheckBundleAndShowData(string cutRef, string msg)
-        {
-            DataTable dtCheck = GetBundlebyCutRef(cutRef);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists bundle data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
-
-        #region 檢查資料庫 P20(CuttingOutput)
-
-        /// <summary>
-        /// 是否已經建立 P20(CuttingOutput) 資訊
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>存在:True/無:Fasle</returns>
-        public static bool HasCuttingOutput(IEnumerable<string> cutRefs)
-        {
-            return GetCuttingOutputbyCutRef(cutRefs).AsEnumerable().Any();
-        }
-
-        public static bool HasCuttingOutput(string cutRef)
-        {
-            return GetCuttingOutputbyCutRef(cutRef).AsEnumerable().Any();
-        }
-
-        /// <summary>
-        /// 取得已經建立的 P10(CuttingOutput) 資訊
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>DataTable</returns>
-        public static DataTable GetCuttingOutputbyCutRef(IEnumerable<string> cutRefs)
-        {
-            // 將列表轉換為單個字符串，用於SQL查詢
-            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
-            return GetCuttingOutputbyCutRefInternal(stringCutref);
-        }
-
-        public static DataTable GetCuttingOutputbyCutRef(string cutRef)
-        {
-            // 單個字符串直接用於SQL查詢
-            string stringCutref = $"'{cutRef}'";
-            return GetCuttingOutputbyCutRefInternal(stringCutref);
-        }
-
-        private static DataTable GetCuttingOutputbyCutRefInternal(string stringCutref)
-        {
-            string sqlcmd = $@"
+        private static readonly string sqlTemplateCuttingOutput = @"
 SELECT
-    [Cutting_P20 ID] = CuttingOutput.ID
+     [Cutting_P20 ID] = CuttingOutput.ID
     ,[Cut Ref#] = CuttingOutput_Detail.CutRef
     ,[Create By] = Pass1.Name
     ,[Create Date] = Format(CuttingOutput.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM CuttingOutput_Detail WITH(NOLOCK)
 INNER JOIN CuttingOutput WITH(NOLOCK) ON CuttingOutput.ID = CuttingOutput_Detail.ID
 INNER JOIN Pass1 WITH(NOLOCK) ON CuttingOutput.AddName = Pass1.ID
-WHERE CuttingOutput_Detail.CutRef IN ({stringCutref})
-ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+WHERE CuttingOutput_Detail.CutRef IN ({0})
+ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name";
 
-            return dtCheck;
-        }
-
-        /// <summary>
-        /// 顯示提示資訊,並 return 檢查是否通過
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>通過:True/不通過:Fasle</returns>
-        /// <inheritdoc/>
-        public static bool CheckCuttingOutputAndShowData(IEnumerable<string> cutRefs, string msg)
-        {
-            DataTable dtCheck = GetCuttingOutputbyCutRef(cutRefs);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists cutting output data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool CheckCuttingOutputCuttingOutputAndShowData(string cutRef, string msg)
-        {
-            DataTable dtCheck = GetCuttingOutputbyCutRef(cutRef);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists cutting output data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
-
-        #region 檢查資料庫 P05(MarkerReq_Detail)
-
-        public static bool HasMarkerReq(string cutRef)
-        {
-            return GetMarkerReqbyCutRef(cutRef).AsEnumerable().Any();
-        }
-
-        public static DataTable GetMarkerReqbyCutRef(IEnumerable<string> cutRefs)
-        {
-            // 將列表轉換為單個字符串，用於SQL查詢
-            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
-            return GetMarkerReqbyID(stringCutref);
-        }
-
-        public static DataTable GetMarkerReqbyCutRef(string cutRef)
-        {
-            // 單個字符串直接用於SQL查詢
-            string stringCutref = $"'{cutRef}'";
-            return GetMarkerReqbyID(stringCutref);
-        }
-
-        private static DataTable GetMarkerReqbyID(string stringCutref)
-        {
-            string sqlcmd = $@"
+        private static readonly string sqlTemplateMarkerReq = @"
 SELECT
     [Cutting_P05 ID] = MarkerReq.ID
    ,[Size Ratio] = MarkerReq_Detail.SizeRatio
@@ -358,52 +230,40 @@ SELECT
 FROM MarkerReq_Detail WITH(NOLOCK)
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
 INNER JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
-WHERE MarkerReq_Detail.CutRef IN ({stringCutref})
-ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+WHERE MarkerReq_Detail.CutRef IN ({0})
+ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
-            return dtCheck;
+        // Public Methods
+        public static bool CheckBundleAndShowData(IEnumerable<string> cutRefs, string msg)
+        {
+            return CheckDataAndShowForm("bundle", cutRefs, msg, sqlTemplateBundle);
         }
 
-        /// <summary>
-        /// 顯示提示資訊,並 return 檢查是否通過
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>通過:True/不通過:Fasle</returns>
-        /// <inheritdoc/>
+        public static bool CheckBundleAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("bundle", cutRef, msg, sqlTemplateBundle);
+        }
+
+        public static bool CheckCuttingOutputAndShowData(IEnumerable<string> cutRefs, string msg)
+        {
+            return CheckDataAndShowForm("cutting output", cutRefs, msg, sqlTemplateCuttingOutput);
+        }
+
+        public static bool CheckCuttingOutputAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("cutting output", cutRef, msg, sqlTemplateCuttingOutput);
+        }
+
         public static bool CheckMarkerReqAndShowData(IEnumerable<string> cutRefs, string msg)
         {
-            DataTable dtCheck = GetMarkerReqbyCutRef(cutRefs);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists marker request data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
+            return CheckDataAndShowForm("marker request", cutRefs, msg, sqlTemplateMarkerReq);
         }
 
         public static bool CheckMarkerReqAndShowData(string cutRef, string msg)
         {
-            DataTable dtCheck = GetMarkerReqbyCutRef(cutRef);
-            if (dtCheck.Rows.Count > 0)
-            {
-                var form = new MsgGridForm(dtCheck, msg, "Exists marker request data");
-                form.grid1.ColumnsAutoSize();
-                form.ShowDialog();
-                return false;
-            }
-
-            return true;
+            return CheckDataAndShowForm("marker request", cutRef, msg, sqlTemplateMarkerReq);
         }
+
         #endregion
 
         #region 檢查當前這筆 SpreadingStatus
@@ -417,49 +277,6 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             }
 
             return true;
-        }
-
-        private static DataTable GetSpreadingStatusNotReady(string id)
-        {
-            string sqlcmd = $@"
-SELECT
-    [Cut Ref#] = WorkOrderForOutput.CutRef
-   ,[Cut #] = WorkOrderForOutput.CutNo
-   ,[Marker Name] = WorkOrderForOutput.MarkerName
-   ,[Pattern Panel] = PatternPanel.PatternPanel
-   ,[Fabric Panel Code] = FabricPanelCode.FabricPanelCode
-   ,[Spreading Status] = WorkOrderForOutput.SpreadingStatus
-   ,[Spreading Remark] = WorkOrderForOutput.SpreadingRemark
-FROM WorkOrderForOutput WITH (NOLOCK)
-OUTER APPLY (
-    SELECT PatternPanel = STUFF((
-        SELECT ', ' + PatternPanel
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.PatternPanel
-        ORDER BY WorkOrderForOutput_PatternPanel.PatternPanel
-        FOR XML PATH ('')), 1, 2, '')
-) PatternPanel
-OUTER APPLY (
-    SELECT FabricPanelCode = STUFF((
-        SELECT ', ' + FabricPanelCode
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        ORDER BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        FOR XML PATH ('')), 1, 2, '')
-) FabricPanelCode
-WHERE ID = '{id}'
-AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
-
-            return dtCheck;
         }
 
         #endregion
@@ -1422,8 +1239,20 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
                     return;
                 }
 
-                DataTable dt = GetPatternPanel(id);
-                if (dt.Select($"{columnName} = '{newValue}'").Length == 0)
+                string patternpanel = MyUtility.Convert.GetString(row["patternpanel"]);
+                string fabricpanelcode = MyUtility.Convert.GetString(row["fabricpanelcode"]);
+                switch (columnName.ToLower())
+                {
+                    case "patternpanel":
+                        patternpanel = newValue;
+                        break;
+                    case "fabricpanelcode":
+                        fabricpanelcode = newValue;
+                        break;
+                }
+
+                DataTable dt = GetFilterPatternPanel(id, patternpanel, fabricpanelcode);
+                if (dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox($"< {columnName} : {newValue} > not found!!!");
                     row[columnName] = string.Empty;
@@ -1436,6 +1265,23 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
 
                 row.EndEdit();
             };
+        }
+
+        public static DataTable GetFilterPatternPanel(string id, string patternpanel, string fabricpanelcode)
+        {
+            string filter = "1=1";
+            if (!patternpanel.IsNullOrWhiteSpace())
+            {
+                filter += $" AND patternpanel = '{patternpanel}'";
+            }
+
+            if (!fabricpanelcode.IsNullOrWhiteSpace())
+            {
+                filter += $" AND fabricpanelcode = '{fabricpanelcode}'";
+            }
+
+            DataTable dt = GetPatternPanel(id);
+            return dt.Select(filter).TryCopyToDataTable(dt);
         }
 
         public static DataTable GetPatternPanel(string id)

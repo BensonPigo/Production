@@ -417,6 +417,12 @@ DROP TABLE #tmp
 
             this.ChangeQtyBreakDownRow();
         }
+
+        private void ReLoadDetail()
+        {
+            this.RenewData();
+            this.OnDetailEntered();
+        }
         #endregion
 
         #region Grid 連動
@@ -487,27 +493,29 @@ DROP TABLE #tmp
         #region Import 與 Save 刪除/新增 與 AGV
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
         {
-            this.OnDetailEntered();
+            this.ReLoadDetail();
+            List<string> listCutref = this.DetailDatas.AsEnumerable().Where(r => !MyUtility.Check.Empty(r["CutRef"])).Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList();
+
             #region 校驗
-            if (this.DetailDatas.Count > 0)
+            if (this.DetailDatas.Count > 0 && listCutref.Count > 0)
             {
                 // 1. 存在 P10 Bundle
                 string msg = "The following bundle data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
-                if (!CheckBundleAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
+                if (!CheckBundleAndShowData(listCutref, msg))
                 {
                     return;
                 }
 
                 // 2. 存在 P20 CuttingOutput
                 msg = "The following cutting output data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
-                if (!CheckCuttingOutputAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
+                if (!CheckCuttingOutputAndShowData(listCutref, msg))
                 {
                     return;
                 }
 
                 // 3. 存在 P05 MarkerReq_Detail
                 msg = "The following marker request data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-                if (!CheckMarkerReqAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
+                if (!CheckMarkerReqAndShowData(listCutref, msg))
                 {
                     return;
                 }
@@ -575,7 +583,6 @@ INSERT INTO WorkOrderForOutput (
     ConsPC,
     Cons,
     MarkerNo,
-    MarkerVersion,
     MarkerName,
     MarkerLength,
     ActCuttingPerimeter,
@@ -617,7 +624,6 @@ SELECT
     ,WorkOrderForPlanning.ConsPC
     ,WorkOrderForPlanning.Cons
     ,WorkOrderForPlanning.MarkerNo
-    ,WorkOrderForPlanning.MarkerVersion
     ,WorkOrderForPlanning.MarkerName
     ,WorkOrderForPlanning.MarkerLength
     ,Order_EachCons.ActCuttingPerimeter
@@ -751,12 +757,11 @@ WHERE ID = ''
             }
             #endregion
 
-            this.OnDetailEntered();
-
             List<long> listDeleteUkey = dtDelete[0].AsEnumerable().Where(s => s.RowState == DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])).ToList();
             this.SentChangeDataToGuozi_AGV(this.dtWorkOrderForOutput_Distribute);
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, new List<long>(), dtDelete[1]);
 
+            this.ReLoadDetail();
             MyUtility.Msg.InfoBox("Import successful");
         }
 
@@ -1066,8 +1071,6 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
 
             // 更新 P20
             this.BackgroundWorker1.RunWorkerAsync();
-
-            this.OnDetailEntered();
         }
 
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -1908,7 +1911,7 @@ DEALLOCATE CURSOR_
 
             // 2. 存在 P20 CuttingOutput
             msg = $"The following cutting output data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
-            if (!CheckCuttingOutputCuttingOutputAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            if (!CheckCuttingOutputAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }

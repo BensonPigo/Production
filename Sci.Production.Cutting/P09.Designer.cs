@@ -705,6 +705,7 @@
             // 
             // btnAutoRef
             // 
+            this.btnAutoRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAutoRef.Location = new System.Drawing.Point(3, 6);
             this.btnAutoRef.Name = "btnAutoRef";
@@ -716,6 +717,7 @@
             // 
             // btnAutoCut
             // 
+            this.btnAutoCut.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAutoCut.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAutoCut.Location = new System.Drawing.Point(95, 6);
             this.btnAutoCut.Name = "btnAutoCut";
@@ -727,6 +729,7 @@
             // 
             // btnAllSPDistribute
             // 
+            this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAllSPDistribute.Location = new System.Drawing.Point(331, 6);
             this.btnAllSPDistribute.Name = "btnAllSPDistribute";
@@ -738,6 +741,7 @@
             // 
             // btnDistributeThisCutRef
             // 
+            this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnDistributeThisCutRef.Location = new System.Drawing.Point(476, 6);
             this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";

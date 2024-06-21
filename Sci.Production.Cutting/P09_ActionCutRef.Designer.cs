@@ -578,11 +578,7 @@
             this.numCutno.IsSupportNegative = false;
             this.numCutno.Location = new System.Drawing.Point(135, 9);
             this.numCutno.Name = "numCutno";
-            this.numCutno.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
+            this.numCutno.NullValue = null;
             this.numCutno.Size = new System.Drawing.Size(100, 23);
             this.numCutno.TabIndex = 0;
             this.numCutno.Value = new decimal(new int[] {
