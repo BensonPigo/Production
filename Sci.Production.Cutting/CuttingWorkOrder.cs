@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win.UI;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -1228,7 +1230,7 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                    System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                     DataTable dt = GetPatternPanel(id);
                     DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                     SelectItem sele = new SelectItem(dt, "PatternPanel,FabricPanelCode", "10,10", row["PatternPanel"].ToString(), false, ",", "Pattern Panel,Fabric Panel Code");
@@ -1245,7 +1247,7 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
 
             column.CellValidating += (s, e) =>
             {
-                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                System.Windows.Forms.DataGridView grid = ((DataGridViewColumn)s).DataGridView;
                 string columnName = grid.Columns[e.ColumnIndex].Name;
                 DataRow row = grid.GetDataRow<DataRow>(e.RowIndex);
                 string oldValue = row[columnName].ToString();
@@ -1319,6 +1321,72 @@ ORDER BY FabricPanelCode,PatternPanel
             }
 
             return dt;
+        }
+        #endregion
+
+        #region Grid Event
+        public delegate bool CanEditDelegate(Sci.Win.UI.Grid grid, DataRow dr, string columnName);
+
+        public static void ConfigureColumnEvents(Sci.Win.UI.Grid grid, CanEditDelegate canEditDelegate)
+        {
+            foreach (var column in grid.Columns)
+            {
+                // 欄位沒設定 IsEditingReadOnly 才作變更
+                if (column is DataGridViewTextBoxBaseColumn textBoxBase && !textBoxBase.IsEditingReadOnly)
+                {
+                    textBoxBase.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
+                    textBoxBase.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
+                }
+                else if (column is DataGridViewTextBoxBase2Column textBoxBase2 && !textBoxBase2.IsEditingReadOnly)
+                {
+                    textBoxBase2.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
+                    textBoxBase2.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
+                }
+                else if (column is DataGridViewMaskedTextBoxBaseColumn maskedtextBoxBase && !maskedtextBoxBase.IsEditingReadOnly)
+                {
+                    maskedtextBoxBase.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
+                    maskedtextBoxBase.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
+                }
+            }
+        }
+
+        private static void CustomEditingControlShowing(object sender, Ict.Win.UI.DataGridViewEditingControlShowingEventArgs e, CanEditDelegate canEditDelegate)
+        {
+            // 可否編輯
+            Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
+            DataRow dr = grid.GetDataRow(e.RowIndex);
+            bool canEdit = canEditDelegate(grid, dr, grid.Columns[e.ColumnIndex].Name);
+            if (e.Control is Ict.Win.UI.TextBoxBase textBoxBase)
+            {
+                textBoxBase.ReadOnly = !canEdit;
+            }
+            else if (e.Control is Ict.Win.UI.TextBoxBase2 textBoxBase2)
+            {
+                textBoxBase2.ReadOnly = !canEdit;
+            }
+            else if (e.Control is Ict.Win.UI.MaskedTextBoxBase textBoxBase3)
+            {
+                textBoxBase3.ReadOnly = !canEdit;
+            }
+        }
+
+        private static void CustomCellFormatting(object sender, DataGridViewCellFormattingEventArgs e, CanEditDelegate canEditDelegate)
+        {
+            // 粉底紅字
+            Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
+            DataRow dr = grid.GetDataRow(e.RowIndex);
+            string columnName = grid.Columns[e.ColumnIndex].Name.ToLower();
+            bool canEdit = canEditDelegate(grid, dr, columnName);
+            if (canEdit)
+            {
+                e.CellStyle.BackColor = Color.Pink;
+                e.CellStyle.ForeColor = Color.Red;
+            }
+            else
+            {
+                e.CellStyle.BackColor = Color.White;
+                e.CellStyle.ForeColor = Color.Black;
+            }
         }
         #endregion
 
