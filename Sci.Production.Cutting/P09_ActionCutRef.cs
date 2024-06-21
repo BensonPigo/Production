@@ -15,6 +15,7 @@ namespace Sci.Production.Cutting
     {
 #pragma warning disable SA1600 // Elements should be documented
 #pragma warning disable SA1401 // Elements should be documented
+        public string WorkType;
         public DialogAction Action;
         public DataRow CurrentDetailData;
         public DataTable dtWorkOrderForOutput_SizeRatio_Ori;
@@ -61,28 +62,25 @@ namespace Sci.Production.Cutting
         private void SetData()
         {
             this.ID = this.CurrentDetailData["ID"].ToString();
-            if (this.Action == DialogAction.Edit)
-            {
-                this.numCutno.Text = this.CurrentDetailData["CutNo"].ToString();
-                this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
-                this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
-                this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
-                this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
-                this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
-                this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
-                this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
-                this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
-                this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-                this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
-                this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter"].ToString();
-                this.txtStraightLength.Text = this.CurrentDetailData["StraightLength"].ToString();
-                this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength"].ToString();
-                this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
-                this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
-                this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
-                this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
-                this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
-            }
+            this.numCutno.Value = (int?)this.CurrentDetailData["CutNo"];
+            this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
+            this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
+            this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
+            this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
+            this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
+            this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
+            this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
+            this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
+            this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
+            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
+            this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter"].ToString();
+            this.txtStraightLength.Text = this.CurrentDetailData["StraightLength"].ToString();
+            this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength"].ToString();
+            this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
+            this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
+            this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
+            this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
+            this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
 
             this.patternpanelbs.DataSource = this.dtWorkOrderForOutput_PatternPanel;
             this.sizeRatiobs.DataSource = this.dtWorkOrderForOutput_SizeRatio;
@@ -126,6 +124,7 @@ namespace Sci.Production.Cutting
             this.GridEventSet();
         }
 
+        #region 確認或取消 → 關閉視窗
         private void BtnModify_Click(object sender, EventArgs e)
         {
             this.UpdateToDetail();
@@ -153,20 +152,13 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["ActCuttingPerimeter"] = this.CurrentDetailData["ActCuttingPerimeter_Mask"] = this.txtActCuttingPerimeter.Text == "Yd  \"" ? string.Empty : this.txtActCuttingPerimeter.Text;
             this.CurrentDetailData["StraightLength"] = this.CurrentDetailData["StraightLength_Mask"] = this.txtStraightLength.Text == "Yd  \"" ? string.Empty : this.txtStraightLength.Text;
             this.CurrentDetailData["CurvedLength"] = this.CurrentDetailData["CurvedLength_Mask"] = this.txtCurvedLength.Text == "Yd  \"" ? string.Empty : this.txtCurvedLength.Text;
-            if (this.dateBoxEstCutDate.Value == null)
-            {
-                this.CurrentDetailData["EstCutDate"] = DBNull.Value;
-            }
-            else
-            {
-                this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value;
-            }
-
+            this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value ?? (object)DBNull.Value;
             this.CurrentDetailData["SpreadingNoID"] = this.txtSpreadingNo.Text;
             this.CurrentDetailData["CutCellID"] = this.txtCell.Text;
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            UpdateMinOrderID(this.WorkType, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -175,13 +167,10 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData.EndEdit();
 
             // Edit 先刪除, 再把修改的塞回去
-            if (this.Action == DialogAction.Edit)
-            {
-                string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
-                this.dtWorkOrderForOutput_SizeRatio_Ori.Select(filter).Delete();
-                this.dtWorkOrderForOutput_Distribute_Ori.Select(filter).Delete();
-                this.dtWorkOrderForOutput_PatternPanel_Ori.Select(filter).Delete();
-            }
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
+            this.dtWorkOrderForOutput_SizeRatio_Ori.Select(filter).Delete();
+            this.dtWorkOrderForOutput_Distribute_Ori.Select(filter).Delete();
+            this.dtWorkOrderForOutput_PatternPanel_Ori.Select(filter).Delete();
 
             this.dtWorkOrderForOutput_SizeRatio_Ori.Merge(this.dtWorkOrderForOutput_SizeRatio);
             this.dtWorkOrderForOutput_Distribute_Ori.Merge(this.dtWorkOrderForOutput_Distribute);
@@ -194,11 +183,13 @@ namespace Sci.Production.Cutting
             this.Close();
         }
 
+        #endregion
+
         #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P09主表 this.CurrentDetailData
 
         private void NumLayers_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            UpdateExcess(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
         }
 
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -253,6 +244,13 @@ namespace Sci.Production.Cutting
         private void TxtSeq_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
+            string newvalue = string.Empty;
+            string oldvalue = ((Win.UI.TextBox)sender).OldValue;
+            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
+            {
+                return;
+            }
+
             DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
             if (minFabricPanelCode == null)
             {
@@ -269,8 +267,6 @@ namespace Sci.Production.Cutting
             string refno = this.txtRefNo.Text;
             string colorID = this.txtColor.Text;
 
-            string newvalue = string.Empty;
-            string oldvalue = ((Win.UI.TextBox)sender).OldValue;
             switch (columnName)
             {
                 case "txtSeq1":
@@ -285,11 +281,6 @@ namespace Sci.Production.Cutting
                 case "txtColor":
                     newvalue = colorID;
                     break;
-            }
-
-            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
-            {
-                return;
             }
 
             if (!ValidatingSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
@@ -393,7 +384,7 @@ namespace Sci.Production.Cutting
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
-                SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
             this.BindQtyEvents(this.col_SizeRatio_Qty);
             #endregion
@@ -411,7 +402,7 @@ namespace Sci.Production.Cutting
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                QtyCellValidating(e, this.CurrentDetailData, this.gridDistributeToSP, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                QtyCellValidating(e, this.CurrentDetailData, this.gridDistributeToSP, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]));
             };
         }
 
@@ -423,7 +414,7 @@ namespace Sci.Production.Cutting
             };
             column.CellValidating += (s, e) =>
             {
-                Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09);
+                Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
         }
         #endregion

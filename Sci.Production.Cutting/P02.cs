@@ -944,8 +944,8 @@ set Qty = {s.Qty},SizeCode = '{s.NewSizeCode}' where WorkOrderForPlanningUkey = 
                 }
 
                 // 複製第3層資訊,並對應到新的 this.CurrentMaintain
-                AddThirdDatas(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
-                AddThirdDatas(this.CurrentDetailData, this.dt_PatternPanel, CuttingForm.P02);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_SizeRatio, CuttingForm.P02);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_PatternPanel, CuttingForm.P02);
             }
 
             DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);

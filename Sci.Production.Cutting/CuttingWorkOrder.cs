@@ -40,18 +40,16 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="id">Cutting.ID</param>
         /// <param name="listWorkOrderUkey">listWorkOrderUkey</param>
-        /// <param name="form">CuttingForm.P02/P09 </param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>DualResult</returns>
-        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, CuttingForm form, SqlConnection sqlConnection)
+        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, SqlConnection sqlConnection)
         {
-            string tableMiddleName = GetWorkOrderName(form);
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
 select w.Ukey, w.Colorid, w.FabricCombo, ws.SizeCode, [CutQty] = isnull(ws.Qty * w.Layer, 0)
 into #tmpCutting
-from WorkOrderFor{tableMiddleName} w with (nolock)
-inner join WorkOrderFor{tableMiddleName}_SizeRatio ws with (nolock) on ws.WorkOrderFor{tableMiddleName}Ukey = w.Ukey
+from WorkOrderForOutput w with (nolock)
+inner join WorkOrderForOutput_SizeRatio ws with (nolock) on ws.WorkOrderForOutputUkey = w.Ukey
 where w.Ukey in ({whereWorkOrderUkey})
 order by ukey
 
@@ -111,7 +109,7 @@ Qty > 0
                     drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDistributeOrderQty["Article"]}', '{itemDistribute["SizeCode"]}', '{distributrQty}')
 ";
                 }
@@ -120,7 +118,7 @@ values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDis
                 if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderFor{tableMiddleName}_Distribute(WorkOrderFor{tableMiddleName}Ukey, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCode"]}', '{itemDistribute["CutQty"]}')
 ";
                 }
@@ -134,43 +132,67 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             return result;
         }
 
-        #region 檢查資料庫 P10(Bundle)
-
-        /// <summary>
-        /// 是否已經建立 P10(Bundle)
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>存在:True/無:Fasle</returns>
-        public static bool HasBundle(IEnumerable<string> cutRefs)
+        #region P10/P20/P05 檢查
+        private static string GetCutrefIN(IEnumerable<string> cutRefs)
         {
-            return GetBundlebyCutRef(cutRefs).AsEnumerable().Any();
+            return string.Join(",", cutRefs.Where(cutref => !MyUtility.Check.Empty(cutref)).Select(cutref => $"'{cutref}'"));
         }
 
-        public static bool HasBundle(string cutRef)
+        private static DataTable GetDataByCutRefInternal(string stringCutref, string sqlTemplate)
         {
-            return GetBundlebyCutRef(cutRef).AsEnumerable().Any();
+            if (string.IsNullOrEmpty(stringCutref))
+            {
+                return null;
+            }
+
+            string sqlcmd = string.Format(sqlTemplate, stringCutref);
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dtCheck;
         }
 
-        /// <summary>
-        /// 取得已經建立的 P10(Bundle) 資訊
-        /// </summary>
-        /// <param name="cutRefs">CutRef</param>
-        /// <returns>DataTable</returns>
-        public static DataTable GetBundlebyCutRef(IEnumerable<string> cutRefs)
+        private static bool CheckDataAndShowForm(string tableName, IEnumerable<string> cutRefs, string msg, string sqlTemplate)
         {
-            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
-            return GetBundlebyCutRefInternal(stringCutref);
+            string stringCutref = GetCutrefIN(cutRefs);
+            DataTable dtCheck = GetDataByCutRefInternal(stringCutref, sqlTemplate);
+            if (dtCheck != null && dtCheck.Rows.Count > 0)
+            {
+                var form = new MsgGridForm(dtCheck, msg, $"Exists {tableName} data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
+                return false;
+            }
+
+            return true;
         }
 
-        public static DataTable GetBundlebyCutRef(string cutRef)
+        private static bool CheckDataAndShowForm(string tableName, string cutRef, string msg, string sqlTemplate)
         {
+            if (string.IsNullOrEmpty(cutRef))
+            {
+                return true;
+            }
+
             string stringCutref = $"'{cutRef}'";
-            return GetBundlebyCutRefInternal(stringCutref);
+            DataTable dtCheck = GetDataByCutRefInternal(stringCutref, sqlTemplate);
+            if (dtCheck != null && dtCheck.Rows.Count > 0)
+            {
+                var form = new MsgGridForm(dtCheck, msg, $"Exists {tableName} data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
+                return false;
+            }
+
+            return true;
         }
 
-        private static DataTable GetBundlebyCutRefInternal(string stringCutref)
-        {
-            string sqlcmd = $@"
+        // SQL Templates
+        private static readonly string sqlTemplateBundle = @"
 SELECT
      [Cutting_P10 ID] = Bundle.ID
     ,[Cut Ref#] = Bundle.CutRef
@@ -178,152 +200,23 @@ SELECT
     ,[Create Date] = Format(Bundle.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM  Bundle WITH(NOLOCK)
 INNER JOIN Pass1 WITH(NOLOCK) ON Bundle.AddName = Pass1.ID
-WHERE Bundle.CutRef IN ({stringCutref})
+WHERE Bundle.CutRef IN ({0})
 AND Bundle.CutRef <> ''
-ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name";
 
-            return dtCheck;
-        }
-
-        /// <summary>
-        /// 顯示提示資訊,並 return 檢查是否通過
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <param name="msg">提示訊息</param>
-        /// <returns>通過:True/不通過:False</returns>
-        public static bool CheckBundleAndShowData(IEnumerable<string> cutRefs, string msg)
-        {
-            DataTable dtCheck = GetBundlebyCutRef(cutRefs);
-            if (dtCheck.Rows.Count > 0)
-            {
-                new MsgGridForm(dtCheck, msg, "Exists bundle data").ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool CheckBundleAndShowData(string cutRef, string msg)
-        {
-            DataTable dtCheck = GetBundlebyCutRef(cutRef);
-            if (dtCheck.Rows.Count > 0)
-            {
-                new MsgGridForm(dtCheck, msg, "Exists bundle data").ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
-
-        #region 檢查資料庫 P20(CuttingOutput)
-
-        /// <summary>
-        /// 是否已經建立 P20(CuttingOutput) 資訊
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>存在:True/無:Fasle</returns>
-        public static bool HasCuttingOutput(IEnumerable<string> cutRefs)
-        {
-            return GetCuttingOutputbyCutRef(cutRefs).AsEnumerable().Any();
-        }
-
-        public static bool HasCuttingOutput(string cutRef)
-        {
-            return GetCuttingOutputbyCutRef(cutRef).AsEnumerable().Any();
-        }
-
-        /// <summary>
-        /// 取得已經建立的 P10(CuttingOutput) 資訊
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>DataTable</returns>
-        public static DataTable GetCuttingOutputbyCutRef(IEnumerable<string> cutRefs)
-        {
-            // 將列表轉換為單個字符串，用於SQL查詢
-            string stringCutref = "'" + string.Join("','", cutRefs) + "'";
-            return GetCuttingOutputbyCutRefInternal(stringCutref);
-        }
-
-        public static DataTable GetCuttingOutputbyCutRef(string cutRef)
-        {
-            // 單個字符串直接用於SQL查詢
-            string stringCutref = $"'{cutRef}'";
-            return GetCuttingOutputbyCutRefInternal(stringCutref);
-        }
-
-        private static DataTable GetCuttingOutputbyCutRefInternal(string stringCutref)
-        {
-            string sqlcmd = $@"
+        private static readonly string sqlTemplateCuttingOutput = @"
 SELECT
-    [Cutting_P20 ID] = CuttingOutput.ID
+     [Cutting_P20 ID] = CuttingOutput.ID
     ,[Cut Ref#] = CuttingOutput_Detail.CutRef
     ,[Create By] = Pass1.Name
     ,[Create Date] = Format(CuttingOutput.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM CuttingOutput_Detail WITH(NOLOCK)
 INNER JOIN CuttingOutput WITH(NOLOCK) ON CuttingOutput.ID = CuttingOutput_Detail.ID
 INNER JOIN Pass1 WITH(NOLOCK) ON CuttingOutput.AddName = Pass1.ID
-WHERE CuttingOutput_Detail.CutRef IN ({stringCutref})
-ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+WHERE CuttingOutput_Detail.CutRef IN ({0})
+ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name";
 
-            return dtCheck;
-        }
-
-        /// <summary>
-        /// 顯示提示資訊,並 return 檢查是否通過
-        /// </summary>
-        /// <param name="cutRefs">cutRefs</param>
-        /// <returns>通過:True/不通過:Fasle</returns>
-        /// <inheritdoc/>
-        public static bool CheckCuttingOutputAndShowData(IEnumerable<string> cutRefs, string msg)
-        {
-            DataTable dtCheck = GetCuttingOutputbyCutRef(cutRefs);
-            if (dtCheck.Rows.Count > 0)
-            {
-                new MsgGridForm(dtCheck, msg, "Exists cutting output data").ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        public static bool CheckCuttingOutputCuttingOutputAndShowData(string cutRef, string msg)
-        {
-            DataTable dtCheck = GetCuttingOutputbyCutRef(cutRef);
-            if (dtCheck.Rows.Count > 0)
-            {
-                new MsgGridForm(dtCheck, msg, "Exists cutting output data").ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-        #endregion
-
-        #region 檢查資料庫 P05(MarkerReq_Detail)
-
-        public static bool HasMarkerReq(string id)
-        {
-            return GetMarkerReqbyID(id).AsEnumerable().Any();
-        }
-
-        private static DataTable GetMarkerReqbyID(string id)
-        {
-            string sqlcmd = $@"
+        private static readonly string sqlTemplateMarkerReq = @"
 SELECT
     [Cutting_P05 ID] = MarkerReq.ID
    ,[Size Ratio] = MarkerReq_Detail.SizeRatio
@@ -337,30 +230,40 @@ SELECT
 FROM MarkerReq_Detail WITH(NOLOCK)
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
 INNER JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
-WHERE MarkerReq_Detail.OrderID = '{id}'
-ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return null;
-            }
+WHERE MarkerReq_Detail.CutRef IN ({0})
+ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
-            return dtCheck;
-        }
-
-        public static bool CheckMarkerReqAndShowData(string id, string msg)
+        // Public Methods
+        public static bool CheckBundleAndShowData(IEnumerable<string> cutRefs, string msg)
         {
-            DataTable dtCheck = GetMarkerReqbyID(id);
-            if (dtCheck.Rows.Count > 0)
-            {
-                new MsgGridForm(dtCheck, msg, "Exists marker request data").ShowDialog();
-                return false;
-            }
-
-            return true;
+            return CheckDataAndShowForm("bundle", cutRefs, msg, sqlTemplateBundle);
         }
+
+        public static bool CheckBundleAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("bundle", cutRef, msg, sqlTemplateBundle);
+        }
+
+        public static bool CheckCuttingOutputAndShowData(IEnumerable<string> cutRefs, string msg)
+        {
+            return CheckDataAndShowForm("cutting output", cutRefs, msg, sqlTemplateCuttingOutput);
+        }
+
+        public static bool CheckCuttingOutputAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("cutting output", cutRef, msg, sqlTemplateCuttingOutput);
+        }
+
+        public static bool CheckMarkerReqAndShowData(IEnumerable<string> cutRefs, string msg)
+        {
+            return CheckDataAndShowForm("marker request", cutRefs, msg, sqlTemplateMarkerReq);
+        }
+
+        public static bool CheckMarkerReqAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("marker request", cutRef, msg, sqlTemplateMarkerReq);
+        }
+
         #endregion
 
         #region 檢查當前這筆 SpreadingStatus
@@ -877,7 +780,7 @@ AND Junk = 0
             {
                 string[] strings = eventString.Split("Yd");
                 string[] strings2 = strings[1].Split("\"");
-                eventString = $"{strings[0].PadLeft(3, '0')}Yd{strings2[0].PadLeft(2, '0')}\"{strings2[1].PadLeft(2, '0')}";
+                eventString = $"{strings[0].PadLeft(3, '0')}Yd{strings2[0].PadLeft(2, '0')}\"{strings2[1].PadRight(2, '0')}"; // 最右邊用 PadRight 因為 TextBox.Text會trim前後空白, \" 右邊要往右補0
             }
             else
             {
@@ -1018,7 +921,8 @@ ORDER BY SizeCode
             Sci.Win.UI.Grid gridSizeRatio,
             DataRow currentDetailData,
             DataTable dtDistribute,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             if (gridSizeRatio.IsEditingReadOnly)
             {
@@ -1047,10 +951,9 @@ ORDER BY SizeCode
 
             UpdateDistribute_Size(currentDetailData, dtDistribute, oldvalue, newvalue, form);
 
-            System.Windows.Forms.BindingSource sizeRatioBs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
-
             // 手輸入可以清空,所以要重算 Excess
-            UpdateExcess(currentDetailData, (DataTable)sizeRatioBs.DataSource, dtDistribute, form);
+            System.Windows.Forms.BindingSource sizeRatiobs = (System.Windows.Forms.BindingSource)gridSizeRatio.DataSource;
+            UpdateExcess(currentDetailData, layer, (DataTable)sizeRatiobs.DataSource, dtDistribute, form);
             return true;
         }
         #endregion
@@ -1067,10 +970,11 @@ ORDER BY SizeCode
             Sci.Win.UI.Grid grid,
             DataTable dtSizeRatio,
             DataTable dtDistribute,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             DataRow dr = grid.GetDataRow(e.RowIndex);
-            if (dr == null)
+            if (grid.IsEditingReadOnly || dr == null)
             {
                 return false;
             }
@@ -1085,7 +989,7 @@ ORDER BY SizeCode
             dr["Qty"] = newvalue;
             dr.EndEdit();
 
-            UpdateExcess(currentDetailData, dtSizeRatio, dtDistribute, form);
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, dtDistribute, form);
 
             return true;
         }
@@ -1138,7 +1042,7 @@ ORDER BY SizeCode
                 return false;
             }
 
-            dr["OrderID"] = selectItem.GetSelecteds()[0]["OrderID"];
+            dr["OrderID"] = selectItem.GetSelecteds()[0]["ID"];
             dr["Article"] = selectItem.GetSelecteds()[0]["Article"];
             dr["SizeCode"] = selectItem.GetSelecteds()[0]["SizeCode"];
             dr.EndEdit();
@@ -1157,7 +1061,8 @@ ORDER BY SizeCode
             DataRow currentDetailData,
             DataTable dtSizeRatio,
             Sci.Win.UI.Grid gridDistributeToSP,
-            CuttingForm form)
+            CuttingForm form,
+            int layer = 0)
         {
             DataRow dr = gridDistributeToSP.GetDataRow(e.RowIndex);
             string columnName = gridDistributeToSP.Columns[e.ColumnIndex].Name;
@@ -1219,7 +1124,8 @@ ORDER BY SizeCode
             dr.EndEdit();
 
             // 驗證需要重算Excess
-            UpdateExcess(currentDetailData, dtSizeRatio, (DataTable)gridDistributeToSP.DataSource, form);
+            var distributeToSPbs = (System.Windows.Forms.BindingSource)gridDistributeToSP.DataSource;
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, (DataTable)distributeToSPbs.DataSource, form);
 
             // 立即帶入 Sewinline
             dr["SewInline"] = GetMinSewinline(dr["OrderID"].ToString(), dr["Article"].ToString(), dr["SizeCode"].ToString());
@@ -1333,8 +1239,20 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
                     return;
                 }
 
-                DataTable dt = GetPatternPanel(id);
-                if (dt.Select($"{columnName} = '{newValue}'").Length == 0)
+                string patternpanel = MyUtility.Convert.GetString(row["patternpanel"]);
+                string fabricpanelcode = MyUtility.Convert.GetString(row["fabricpanelcode"]);
+                switch (columnName.ToLower())
+                {
+                    case "patternpanel":
+                        patternpanel = newValue;
+                        break;
+                    case "fabricpanelcode":
+                        fabricpanelcode = newValue;
+                        break;
+                }
+
+                DataTable dt = GetFilterPatternPanel(id, patternpanel, fabricpanelcode);
+                if (dt.Rows.Count == 0)
                 {
                     MyUtility.Msg.WarningBox($"< {columnName} : {newValue} > not found!!!");
                     row[columnName] = string.Empty;
@@ -1347,6 +1265,23 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
 
                 row.EndEdit();
             };
+        }
+
+        public static DataTable GetFilterPatternPanel(string id, string patternpanel, string fabricpanelcode)
+        {
+            string filter = "1=1";
+            if (!patternpanel.IsNullOrWhiteSpace())
+            {
+                filter += $" AND patternpanel = '{patternpanel}'";
+            }
+
+            if (!fabricpanelcode.IsNullOrWhiteSpace())
+            {
+                filter += $" AND fabricpanelcode = '{fabricpanelcode}'";
+            }
+
+            DataTable dt = GetPatternPanel(id);
+            return dt.Select(filter).TryCopyToDataTable(dt);
         }
 
         public static DataTable GetPatternPanel(string id)
@@ -1374,7 +1309,7 @@ ORDER BY FabricPanelCode,PatternPanel
         #region Other Function
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: SizeCode_CONCAT, TotalCutQty_CONCAT, 因 SizeRatio 的欄位: SizeCode,Qty 調整
+        /// 更新 CurrentDetailData 的非實體欄位: SizeCode_CONCAT, TotalCutQty_CONCAT, 因 SizeRatio 的欄位: SizeCode,Qty 調整
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateConcatString(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
@@ -1396,7 +1331,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: TotalDistributeQty, 因 Distribute 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: TotalDistributeQty, 因 Distribute 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateTotalDistributeQty(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
@@ -1406,24 +1341,17 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: Sewinline, 因 Distribute 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: Sewinline, 因 Distribute 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateMinSewinline(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
         {
             DateTime? sewinline = dtDistribute.Select(GetFilter(currentDetailData, form)).AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["Sewinline"]));
-            if (sewinline == null)
-            {
-                currentDetailData["Sewinline"] = DBNull.Value;
-            }
-            else
-            {
-                currentDetailData["Sewinline"] = sewinline;
-            }
+            currentDetailData["Sewinline"] = sewinline ?? (object)DBNull.Value;
         }
 
         /// <summary>
-        /// 更新 CurrentDetailData 的欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
+        /// 更新 CurrentDetailData 的非實體欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
         /// </summary>
         /// <inheritdoc/>
         public static void UpdatebyPatternPanel(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
@@ -1456,7 +1384,22 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 更新 DataTable Distribute 的欄位: SizeCode, 因 SizeRatio 的欄位: SizeCode 調整
+        /// 更新 CurrentDetailData 的*實體*欄位:OrderID, 只有Cutting.WorkType = 2(By SP)才執行, 取 Distribute 最小 OrderID
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdateMinOrderID(string workType, DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
+        {
+            if (workType != "2")
+            {
+                return;
+            }
+
+            string filter = GetFilter(currentDetailData, form) + " AND OrderID <> 'EXCESS'";
+            currentDetailData["OrderID"] = dtDistribute.Select(filter).AsEnumerable().Min(row => MyUtility.Convert.GetString(row["OrderID"]));
+        }
+
+        /// <summary>
+        /// 更新 DataTable Distribute 的*實體*欄位: SizeCode, 因 SizeRatio 的欄位: SizeCode 調整
         /// </summary>
         /// <inheritdoc/>
         public static void UpdateDistribute_Size(DataRow currentDetailData, DataTable dtDistribute, string oldvalue, string newvalue, CuttingForm form)
@@ -1483,7 +1426,7 @@ ORDER BY FabricPanelCode,PatternPanel
         /// 更新 DataTable Distribute 剩餘數:Excess, 因 SizeRatio 的欄位: Qty 調整
         /// </summary>
         /// <inheritdoc/>
-        public static void UpdateExcess(DataRow currentDetailData, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
+        public static void UpdateExcess(DataRow currentDetailData, int layer, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
         {
             if (form == CuttingForm.P02)
             {
@@ -1493,11 +1436,11 @@ ORDER BY FabricPanelCode,PatternPanel
             string filter = GetFilter(currentDetailData, form);
             foreach (DataRow dr in dtSizeRatio.Select(filter))
             {
-                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * MyUtility.Convert.GetInt(currentDetailData["Layer"]); // 此 SizeCode 總數量
+                int ttlQty_SizeCode = MyUtility.Convert.GetInt(dr["Qty"]) * layer; // 此 SizeCode 總數量
                 string sizeCode = dr["SizeCode"].ToString();
                 string filterSizeCode = $"{filter} AND SizeCode = '{sizeCode}'";
 
-                int totalDistributedQty = dtDistribute.Select($"{filterSizeCode} AND OrderID != 'EXCESS'").AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+                int totalDistributedQty = dtDistribute.Select($"{filterSizeCode} AND OrderID <> 'EXCESS'").AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
 
                 // 重算剩餘數,不能小於0
                 int excess = Math.Max(ttlQty_SizeCode - totalDistributedQty, 0);
@@ -1511,8 +1454,9 @@ ORDER BY FabricPanelCode,PatternPanel
                 else
                 {
                     DataRow newExcessRow = dtDistribute.NewRow();
-                    newExcessRow["WorkOrderUKey"] = currentDetailData["Ukey"];
-                    newExcessRow["tmpUkey"] = currentDetailData["tmpUkey"];
+                    newExcessRow["WorkOrderForOutputUKey"] = currentDetailData["Ukey"];
+                    newExcessRow["tmpkey"] = currentDetailData["tmpkey"];
+                    newExcessRow["ID"] = currentDetailData["ID"];
                     newExcessRow["OrderID"] = "EXCESS";
                     newExcessRow["SizeCode"] = sizeCode;
                     newExcessRow["Qty"] = excess;
@@ -1555,7 +1499,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 計算 ConsPC
+        /// 計算 ConsPC *實體*欄位
         /// </summary>
         /// <inheritdoc/>
         public static decimal CalculateConsPC(string markerLength, DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
@@ -1571,7 +1515,7 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
-        /// 計算 Cons, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
+        /// 計算 Cons *實體*欄位, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
         /// </summary>
         /// <inheritdoc/>
         public static decimal CalculateCons(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
@@ -1580,9 +1524,9 @@ ORDER BY FabricPanelCode,PatternPanel
             return MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]) * MyUtility.Convert.GetDecimal(currentDetailData["Layer"]) * sizeRatioQty;
         }
 
-        public static void AddThirdDatas(DataRow currentDetailData, DataTable dtTarget, CuttingForm form)
+        public static void AddThirdDatas(DataRow currentDetailData, DataRow oldRow, DataTable dtTarget, CuttingForm form)
         {
-            string filter = GetFilter(currentDetailData, form);
+            string filter = GetFilter(oldRow, form);
             DataTable source = dtTarget.Select(filter).TryCopyToDataTable(dtTarget);
 
             // 複製出來的要填入對應新的 Key

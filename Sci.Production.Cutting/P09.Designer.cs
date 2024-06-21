@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
             this.numConsPC = new Sci.Win.UI.NumericBox();
-            this.displayBoxCons = new Sci.Win.UI.DisplayBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label10 = new System.Windows.Forms.Label();
             this.gridDistributeToSP = new Sci.Win.UI.Grid();
@@ -82,8 +81,8 @@
             this.btnHistory = new Sci.Win.UI.Button();
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.btnRefresh = new Sci.Win.UI.Button();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.numCons = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -144,8 +143,8 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(1197, 3);
-            this.refresh.Visible = false;
+            this.refresh.Location = new System.Drawing.Point(1285, 3);
+            this.refresh.TabIndex = 17;
             // 
             // detailgridcont
             // 
@@ -177,7 +176,6 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.btnRefresh);
             this.detailbtm.Controls.Add(this.btnToExcel);
             this.detailbtm.Controls.Add(this.btnQtyBreakdown);
             this.detailbtm.Controls.Add(this.btnHistory);
@@ -203,11 +201,10 @@
             this.detailbtm.Controls.SetChildIndex(this.btnHistory, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnRefresh, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1280, 655);
+            this.browse.Size = new System.Drawing.Size(1372, 655);
             // 
             // tabs
             // 
@@ -215,13 +212,13 @@
             // 
             // createby
             // 
-            this.createby.Location = new System.Drawing.Point(70, 10);
+            this.createby.Location = new System.Drawing.Point(158, 10);
             this.createby.Size = new System.Drawing.Size(350, 23);
             this.createby.Visible = false;
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(471, 10);
+            this.editby.Location = new System.Drawing.Point(559, 10);
             this.editby.Size = new System.Drawing.Size(350, 23);
             this.editby.Visible = false;
             // 
@@ -232,13 +229,13 @@
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(423, 16);
+            this.lbleditby.Location = new System.Drawing.Point(511, 16);
             this.lbleditby.Visible = false;
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.numCons);
             this.panel1.Controls.Add(this.numConsPC);
-            this.panel1.Controls.Add(this.displayBoxCons);
             this.panel1.Controls.Add(this.splitContainer1);
             this.panel1.Controls.Add(this.gridSpreadingFabric);
             this.panel1.Controls.Add(this.label9);
@@ -273,21 +270,12 @@
             0,
             0});
             this.numConsPC.Size = new System.Drawing.Size(94, 23);
-            this.numConsPC.TabIndex = 33;
+            this.numConsPC.TabIndex = 7;
             this.numConsPC.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            // 
-            // displayBoxCons
-            // 
-            this.displayBoxCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxCons.Location = new System.Drawing.Point(245, 102);
-            this.displayBoxCons.Name = "displayBoxCons";
-            this.displayBoxCons.Size = new System.Drawing.Size(182, 23);
-            this.displayBoxCons.TabIndex = 32;
             // 
             // splitContainer1
             // 
@@ -346,6 +334,7 @@
             this.gridDistributeToSP.ShowCellToolTips = false;
             this.gridDistributeToSP.Size = new System.Drawing.Size(429, 130);
             this.gridDistributeToSP.TabIndex = 28;
+            this.gridDistributeToSP.SelectionChanged += new System.EventHandler(this.GridDistributeToSP_SelectionChanged);
             // 
             // cmsDistribute
             // 
@@ -611,6 +600,7 @@
             // 
             // btnExcludeSetting
             // 
+            this.btnExcludeSetting.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnExcludeSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnExcludeSetting.Location = new System.Drawing.Point(505, 3);
             this.btnExcludeSetting.Name = "btnExcludeSetting";
@@ -657,6 +647,7 @@
             // 
             // btnBatchAssign
             // 
+            this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchAssign.Location = new System.Drawing.Point(327, 34);
             this.btnBatchAssign.Name = "btnBatchAssign";
@@ -668,6 +659,7 @@
             // 
             // btnImportMarker
             // 
+            this.btnImportMarker.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
             this.btnImportMarker.Name = "btnImportMarker";
@@ -689,11 +681,12 @@
             // 
             // btnImportMarkerLectra
             // 
+            this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
             this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 30);
-            this.btnImportMarkerLectra.TabIndex = 14;
+            this.btnImportMarkerLectra.TabIndex = 5;
             this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
             this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
             this.btnImportMarkerLectra.Click += new System.EventHandler(this.BtnImportMarkerLectra_Click);
@@ -705,51 +698,55 @@
             this.btnEdit.Location = new System.Drawing.Point(772, 34);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(61, 30);
-            this.btnEdit.TabIndex = 15;
+            this.btnEdit.TabIndex = 6;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
             this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
             // btnAutoRef
             // 
+            this.btnAutoRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAutoRef.Location = new System.Drawing.Point(3, 6);
             this.btnAutoRef.Name = "btnAutoRef";
             this.btnAutoRef.Size = new System.Drawing.Size(92, 30);
-            this.btnAutoRef.TabIndex = 16;
+            this.btnAutoRef.TabIndex = 8;
             this.btnAutoRef.Text = "Auto Ref#";
             this.btnAutoRef.UseVisualStyleBackColor = true;
             this.btnAutoRef.Click += new System.EventHandler(this.BtnAutoRef_Click);
             // 
             // btnAutoCut
             // 
+            this.btnAutoCut.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAutoCut.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnAutoCut.Location = new System.Drawing.Point(95, 6);
             this.btnAutoCut.Name = "btnAutoCut";
             this.btnAutoCut.Size = new System.Drawing.Size(92, 30);
-            this.btnAutoCut.TabIndex = 17;
+            this.btnAutoCut.TabIndex = 9;
             this.btnAutoCut.Text = "Auto Cut#";
             this.btnAutoCut.UseVisualStyleBackColor = true;
             this.btnAutoCut.Click += new System.EventHandler(this.BtnAutoCut_Click);
             // 
             // btnAllSPDistribute
             // 
+            this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAllSPDistribute.Location = new System.Drawing.Point(243, 6);
+            this.btnAllSPDistribute.Location = new System.Drawing.Point(331, 6);
             this.btnAllSPDistribute.Name = "btnAllSPDistribute";
             this.btnAllSPDistribute.Size = new System.Drawing.Size(145, 30);
-            this.btnAllSPDistribute.TabIndex = 18;
+            this.btnAllSPDistribute.TabIndex = 10;
             this.btnAllSPDistribute.Text = "All SP# Distribute";
             this.btnAllSPDistribute.UseVisualStyleBackColor = true;
             this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
             // 
             // btnDistributeThisCutRef
             // 
+            this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(388, 6);
+            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(476, 6);
             this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";
             this.btnDistributeThisCutRef.Size = new System.Drawing.Size(179, 30);
-            this.btnDistributeThisCutRef.TabIndex = 19;
+            this.btnDistributeThisCutRef.TabIndex = 11;
             this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
             this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
             this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
@@ -757,10 +754,10 @@
             // btnCutPartsCheck
             // 
             this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheck.Location = new System.Drawing.Point(568, 6);
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(656, 6);
             this.btnCutPartsCheck.Name = "btnCutPartsCheck";
             this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 30);
-            this.btnCutPartsCheck.TabIndex = 20;
+            this.btnCutPartsCheck.TabIndex = 12;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
             this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
@@ -768,10 +765,10 @@
             // btnCutPartsCheckSummary
             // 
             this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(702, 6);
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(790, 6);
             this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
             this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 30);
-            this.btnCutPartsCheckSummary.TabIndex = 21;
+            this.btnCutPartsCheckSummary.TabIndex = 13;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
             this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
@@ -779,10 +776,10 @@
             // btnHistory
             // 
             this.btnHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnHistory.Location = new System.Drawing.Point(907, 7);
+            this.btnHistory.Location = new System.Drawing.Point(995, 7);
             this.btnHistory.Name = "btnHistory";
             this.btnHistory.Size = new System.Drawing.Size(70, 28);
-            this.btnHistory.TabIndex = 22;
+            this.btnHistory.TabIndex = 14;
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
             this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
@@ -790,10 +787,10 @@
             // btnQtyBreakdown
             // 
             this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQtyBreakdown.Location = new System.Drawing.Point(978, 7);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(1066, 7);
             this.btnQtyBreakdown.Name = "btnQtyBreakdown";
             this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 28);
-            this.btnQtyBreakdown.TabIndex = 23;
+            this.btnQtyBreakdown.TabIndex = 15;
             this.btnQtyBreakdown.Text = "Qty Breakdown";
             this.btnQtyBreakdown.UseVisualStyleBackColor = true;
             this.btnQtyBreakdown.Click += new System.EventHandler(this.BtnQtyBreakdown_Click);
@@ -801,30 +798,41 @@
             // btnToExcel
             // 
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(1104, 7);
+            this.btnToExcel.Location = new System.Drawing.Point(1192, 7);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(92, 28);
-            this.btnToExcel.TabIndex = 24;
+            this.btnToExcel.TabIndex = 16;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnRefresh.Location = new System.Drawing.Point(1197, 7);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(82, 28);
-            this.btnRefresh.TabIndex = 25;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
             // 
             // BackgroundWorker1
             // 
             this.BackgroundWorker1.WorkerReportsProgress = true;
             this.BackgroundWorker1.WorkerSupportsCancellation = true;
             this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            // 
+            // numCons
+            // 
+            this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCons.DecimalPlaces = 4;
+            this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCons.IsSupportEditMode = false;
+            this.numCons.Location = new System.Drawing.Point(247, 102);
+            this.numCons.Name = "numCons";
+            this.numCons.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCons.ReadOnly = true;
+            this.numCons.Size = new System.Drawing.Size(180, 23);
+            this.numCons.TabIndex = 32;
+            this.numCons.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // P09
             // 
@@ -924,8 +932,6 @@
         private Win.UI.Button btnCutPartsCheck;
         private Win.UI.Button btnDistributeThisCutRef;
         private Win.UI.Button btnAllSPDistribute;
-        private Win.UI.Button btnRefresh;
-        private Win.UI.DisplayBox displayBoxCons;
         private Win.UI.NumericBox numConsPC;
         private Win.UI.ListControlBindingSource sizeRatiobs;
         private Win.UI.ListControlBindingSource distributebs;
@@ -938,5 +944,6 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertSizeRatio;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteSizeRatio;
         private System.ComponentModel.BackgroundWorker BackgroundWorker1;
+        private Win.UI.NumericBox numCons;
     }
 }
