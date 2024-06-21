@@ -89,7 +89,7 @@ namespace Sci.Production.Cutting
             string tbDistribute = tableName + "_Distribute";
             string tbSizeRatio = tableName + "_SizeRatio";
             bool isTbPatternPanel = this.CheckTableExist(tbPatternPanel);
-            bool isTbDistribute = this.CheckTableExist(tbDistribute);
+            bool isTbDistribute = this.CheckTableExist(tbDistribute); // 基本上P09(也就是ForOutput才有Distribute表)
             bool isTbSizeRatio = this.CheckTableExist(tbSizeRatio);
             string tbUkey = tableName + "Ukey";
             arrDtType = new DataTable[13];
@@ -111,58 +111,61 @@ namespace Sci.Production.Cutting
             string sqlFabricKind = string.Empty;
             string sqlFabricKindinto = string.Empty;
             string sqlFabricKindjoin = string.Empty;
-            if (printType == "Cutref" && isTbDistribute)
+            if (printType == "Cutref")
             {
                 byType = "Cutref";
                 byType2 = ",shc";
                 strOrderby = "order by " + sortType;
-                sqlFabricKind = $@"
-SELECT distinct w.CutRef, wp.PatternPanel, x.FabricKind
-into #tmp3
-FROM #tmp W
-INNER JOIN {tbPatternPanel} WP ON W.Ukey = WP.{tbUkey}
-outer apply(
-	SELECT  FabricKind=DD.id + '-' + DD.NAME ,Refno
-	FROM dropdownlist DD 
-	OUTER apply(
-			SELECT OB.kind, 
-			OCC.id, 
-			OCC.article, 
-			OCC.colorid, 
-			OCC.fabricpanelcode, 
-			OCC.patternpanel ,
-			Refno
-		FROM order_colorcombo OCC 
-		INNER JOIN order_bof OB ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
-		where exists(select 1 from {tbDistribute} wd where wd.{tbUkey} = W.Ukey and wd.Article = OCC.Article)
-	) LIST 
-	WHERE LIST.id = w.id 
-	AND LIST.patternpanel = wp.patternpanel 
-	AND DD.[type] = 'FabricKind' 
-	AND DD.id = LIST.kind 
-)x
+                if (isTbDistribute)
+                {
+                    sqlFabricKind = $@"
+    SELECT distinct w.CutRef, wp.PatternPanel, x.FabricKind
+    into #tmp3
+    FROM #tmp W
+    INNER JOIN {tbPatternPanel} WP ON W.Ukey = WP.{tbUkey}
+    outer apply(
+	    SELECT  FabricKind=DD.id + '-' + DD.NAME ,Refno
+	    FROM dropdownlist DD 
+	    OUTER apply(
+			    SELECT OB.kind, 
+			    OCC.id, 
+			    OCC.article, 
+			    OCC.colorid, 
+			    OCC.fabricpanelcode, 
+			    OCC.patternpanel ,
+			    Refno
+		    FROM order_colorcombo OCC 
+		    INNER JOIN order_bof OB ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		    where exists(select 1 from {tbDistribute} wd where wd.{tbUkey} = W.Ukey and wd.Article = OCC.Article)
+	    ) LIST 
+	    WHERE LIST.id = w.id 
+	    AND LIST.patternpanel = wp.patternpanel 
+	    AND DD.[type] = 'FabricKind' 
+	    AND DD.id = LIST.kind 
+    )x
 
-select CutRef,ct = count(1) into #tmp4 from(select distinct CutRef,FabricKind from #tmp3)x group by CutRef
+    select CutRef,ct = count(1) into #tmp4 from(select distinct CutRef,FabricKind from #tmp3)x group by CutRef
 
-select t4.CutRef,FabricKind = IIF(t4.ct = 1, x1.FabricKind, x2.FabricKind)
-into #tmp5
-from #tmp4 t4
-outer apply(
-	select distinct t3.FabricKind
-	from #tmp3 t3
-	where t3.CutRef = t4.CutRef and t4.ct = 1
-)x1
-outer apply(
-	select FabricKind = STUFF((
-		select concat(', ', t3.FabricKind, ': ', t3.PatternPanel)
-		from #tmp3 t3
-		where t3.CutRef = t4.CutRef and t4.ct > 1
-		for XML path('')
-	),1,2,'')
-)x2
-";
-                sqlFabricKindinto = $@" , rn=min(rn) into #tmp6 ";
-                sqlFabricKindjoin = $@"select t6.*,t5.FabricKind from #tmp6 t6 inner join #tmp5 t5 on t5.CutRef = t6.CutRef order by rn";
+    select t4.CutRef,FabricKind = IIF(t4.ct = 1, x1.FabricKind, x2.FabricKind)
+    into #tmp5
+    from #tmp4 t4
+    outer apply(
+	    select distinct t3.FabricKind
+	    from #tmp3 t3
+	    where t3.CutRef = t4.CutRef and t4.ct = 1
+    )x1
+    outer apply(
+	    select FabricKind = STUFF((
+		    select concat(', ', t3.FabricKind, ': ', t3.PatternPanel)
+		    from #tmp3 t3
+		    where t3.CutRef = t4.CutRef and t4.ct > 1
+		    for XML path('')
+	    ),1,2,'')
+    )x2
+    ";
+                    sqlFabricKindinto = $@" , rn=min(rn) into #tmp6 ";
+                    sqlFabricKindjoin = $@"select t6.*,t5.FabricKind from #tmp6 t6 inner join #tmp5 t5 on t5.CutRef = t6.CutRef order by rn";
+                }
             }
             else
             {
@@ -230,6 +233,7 @@ and a.id='{drInfoFrom["ID"]}'
                 return dResult;
             }
 
+            // 處理原Distribute相關欄位
             string tbDistributeColumns = string.Empty;
             string tbDistributeJoin = string.Empty;
             string tbDistributeWhere = "1=1";
@@ -237,7 +241,7 @@ and a.id='{drInfoFrom["ID"]}'
             if (isTbDistribute)
             {
                 tbDistributeColumns = @"
-,b.WorkOrderForOutputUkey
+--,b.WorkOrderForOutputUkey
 ,b.ID
 ,b.OrderID
 ,b.Article
@@ -261,8 +265,30 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) s";
-                tbDistributeWhere = $"a.ukey = b.{tbUkey}";
+                //tbDistributeWhere = $"a.ukey = b.{tbUkey}";
                 tbDistributeOrderBy = "order by b.OrderID,b.Article,b.SizeCode";
+            }
+            else if (isTbSizeRatio)
+            {
+                // a = tableName
+                tbDistributeColumns = @"
+--,a.Ukey
+,a.ID 
+,a.OrderID
+,a.Article
+,b.SizeCode
+,Qty = isnull(b.Qty,0) * isnull(a.Layer,0) --ForPlanning_SizeRatio.Qty * ForPlanning.Layer
+,SewLineList = isnull(s.SewLine,'')
+";
+                tbDistributeJoin = $@"
+inner join {tbSizeRatio} b WITH (NOLOCK) on  a.ukey = b.{tbUkey} 
+left join (
+    select d.ID,d.SewLine 
+    from dbo.orders d) as s
+	on s.ID=a.OrderID
+";
+                //tbDistributeWhere = $"a.ukey = b.{tbUkey}";
+                tbDistributeOrderBy = "order by a.OrderID,a.Article,b.SizeCode";
             }
 
             workorder_cmd = $@"
@@ -309,11 +335,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], "SpreadingNoID,CutCellID,Cutref,CutPlanID,estCutDate,shc,ukey,id", sqlCutrefTb, out arrDtType[(int)TableType.CutrefTb]);
             }
 
-            if (isTbDistribute)
-            {
-                // 因要使用的欄位都是在Distribute因此直接不輸出該表<TableType.CutDisOrderIDTb>，引用前皆需判斷isTbDistribute
-                MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderDisTb], $"{sqlColByType},OrderID,SewLineList", $@"Select distinct {sqlColByType},OrderID,SewLineList From #tmp", out arrDtType[(int)TableType.CutDisOrderIDTb]); // 整理sp，此處的OrderID是來自Orders
-            }
+            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderDisTb], $"{sqlColByType},OrderID,SewLineList", $@"Select distinct {sqlColByType},OrderID,SewLineList From #tmp", out arrDtType[(int)TableType.CutDisOrderIDTb]); // 整理sp，此處的OrderID是來自Orders
 
             MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
 
@@ -700,7 +722,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 worksheet.Cells[3, 12] = string.Empty;
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
-                //worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
+                worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
                 //orderDr["Sewline"];
                 for (int nColumn = 3; nColumn <= 21; nColumn += 3)
                 {
@@ -754,7 +776,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                     workorderArry = arrDtType[(int)TableType.WorkorderTb].Select(string.Format("Cutplanid = '{0}'", cutplanid));
                     workorderDisArry = arrDtType[(int)TableType.WorkorderDisTb].Select(string.Format("Cutplanid='{0}'", cutplanid));
                     workorderSizeArry = arrDtType[(int)TableType.WorkorderSizeTb].Select(string.Format("Cutplanid='{0}'", cutplanid));
-                    //workorderOrderIDArry = arrDtType[(int)TableType.CutDisOrderIDTb].Select(string.Format("Cutplanid='{0}'", cutplanid), "Orderid");
+                    workorderOrderIDArry = arrDtType[(int)TableType.CutDisOrderIDTb].Select(string.Format("Cutplanid='{0}'", cutplanid), "Orderid");
                     fabricComboArry = arrDtType[(int)TableType.FabricComboTb].Select(string.Format("Cutplanid='{0}'", cutplanid));
                     sizeCodeArry = arrDtType[(int)TableType.SizeTb].Select(string.Format("Cutplanid='{0}'", cutplanid), "SEQ");
                     markerArry = arrDtType[(int)TableType.MarkerTB].Select(string.Format("Cutplanid = '{0}'", cutplanid));
@@ -825,37 +847,37 @@ WHERE TABLE_NAME = N'{tableName}'";
                         }
                     }
 
-                    //#region OrderSP List, Line List
-                    //if (workorderOrderIDArry.Length > 0)
-                    //{
-                    //    foreach (DataRow disDr in workorderOrderIDArry)
-                    //    {
-                    //        if (disDr["OrderID"].ToString() != "EXCESS")
-                    //        {
-                    //            if (!disDr["OrderID"].ToString().InList(spList, "\\"))
-                    //            {
-                    //                spList = spList + disDr["OrderID"].ToString() + "\\";
-                    //            }
-                    //        }
-                    //        #region SewingLine
-                    //        line = line + MyUtility.GetValue.Lookup("Sewline", disDr["OrderID"].ToString(), "Orders", "ID") + "\\";
-                    //        #endregion
-                    //    }
+                    #region OrderSP List, Line List
+                    if (workorderOrderIDArry.Length > 0)
+                    {
+                        foreach (DataRow disDr in workorderOrderIDArry)
+                        {
+                            if (disDr["OrderID"].ToString() != "EXCESS")
+                            {
+                                if (!disDr["OrderID"].ToString().InList(spList, "\\"))
+                                {
+                                    spList = spList + disDr["OrderID"].ToString() + "\\";
+                                }
+                            }
+                            #region SewingLine
+                            line = line + MyUtility.GetValue.Lookup("Sewline", disDr["OrderID"].ToString(), "Orders", "ID") + "\\";
+                            #endregion
+                        }
 
-                    //    worksheet.Cells[8, 2] = spList;
-                    //    //worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
-                    //    int l = 54;
-                    //    int la = spList.Length / l;
-                    //    for (int i = 1; i <= la; i++)
-                    //    {
-                    //        if (spList.Length > l * i)
-                    //        {
-                    //            Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
-                    //            rangeRow8.RowHeight = 20.25 * (i + 1);
-                    //        }
-                    //    }
-                    //}
-                    //#endregion
+                        worksheet.Cells[8, 2] = spList;
+                        worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
+                        int l = 54;
+                        int la = spList.Length / l;
+                        for (int i = 1; i <= la; i++)
+                        {
+                            if (spList.Length > l * i)
+                            {
+                                Excel.Range rangeRow8 = (Excel.Range)worksheet.Rows[8, Type.Missing];
+                                rangeRow8.RowHeight = 20.25 * (i + 1);
+                            }
+                        }
+                    }
+                    #endregion
 
                     #region Markname
                     int nRow = 11;
@@ -1108,10 +1130,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                 // worksheet.Cells[3, 12] = detDr["CutCellid"];
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
-                if (isTbDistribute)
-                {
-                    worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
-                }
+                worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
 
                 for (int nColumn = 3; nColumn <= 21; nColumn += 3)
                 {
@@ -1153,7 +1172,14 @@ WHERE TABLE_NAME = N'{tableName}'";
                         worksheet.Name = cutrefdr["Cutref"].ToString();
                         worksheet.Cells[3, 18] = cutrefdr["Cutref"].ToString();
                         worksheet.Cells[9, 13] = MyUtility.Check.Empty(cutrefdr["Estcutdate"]) == false ? ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString() : String.Empty;
-                        worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
+                        if (isTbDistribute)
+                        {
+                            worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
+                        }
+                        else
+                        {
+                            worksheet.Cells[14, 14] = "Ref_5";
+                        }
                         nSheet++;
                     }
 
@@ -1200,10 +1226,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                         workorderSizeArry = arrDtType[(int)TableType.WorkorderSizeTb].Select(string.Format("Cutref='{0}'", cutref));
                         workorderPatternArry = arrDtType[(int)TableType.WorkorderPatternTb].Select(string.Format("Cutref='{0}'", cutref), "PatternPanel");
-                        if (isTbDistribute)
-                        {
-                            workorderOrderIDArry = arrDtType[(int)TableType.CutDisOrderIDTb].Select(string.Format("Cutref='{0}'", cutref), "Orderid");
-                        }
+                        workorderOrderIDArry = arrDtType[(int)TableType.CutDisOrderIDTb].Select(string.Format("Cutref='{0}'", cutref), "Orderid");
 
                         sizeArry = arrDtType[(int)TableType.CutSizeTb].DefaultView.ToTable(true, new string[] { "Cutref", "SizeCode" }).Select(string.Format("Cutref='{0}'", cutref));
                         sizeCodeArry = arrDtType[(int)TableType.SizeTb].Select(string.Format("Cutref='{0}'", cutref), "SEQ");
@@ -1212,7 +1235,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                         if (workorderArry.Length > 0)
                         {
                             pattern = string.Empty;
-                            worksheet.Cells[8, 13] = "Ryan超胖";
+                            //worksheet.Cells[8, 13] = "Ryan超胖";
                             worksheet.Cells[13, 2] = workorderArry[0]["FabricPanelCode"].ToString();
                             worksheet.Cells[3, 7] = workorderArry[0]["SpreadingNoID"].ToString();
                             worksheet.Cells[3, 12] = workorderArry[0]["CutCellid"].ToString();
@@ -1345,7 +1368,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                         #endregion
 
                         #region Distribute to SP#
-                        if (isTbDistribute && workorderDisArry.Length > 0)
+                        if (workorderDisArry.Length > 0)
                         {
                             nrow = 16; // 到Distribute ROW
                             nDisCount = workorderDisArry.Length;
@@ -1424,7 +1447,8 @@ Where Cutref = '{cutref}'";
                         int copyrow = 0;
                         totConsRowS = nrow; // 第一個Cons
 
-                        var distinct_CutQtyTb = from r1 in arrDtType[(int)TableType.CutQtyTb].AsEnumerable()
+                        var tmpCutQtyTB = arrDtType[(int)TableType.CutQtyTb].AsEnumerable().Where(r1 => !string.IsNullOrEmpty(r1["Cutno"].ToString()));
+                        var distinct_CutQtyTb = from r1 in tmpCutQtyTB
                                                 group r1 by new
                                                 {
                                                     Cutno = r1.Field<int>("Cutno"),
