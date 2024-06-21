@@ -62,7 +62,7 @@ namespace Sci.Production.Cutting
         private void SetData()
         {
             this.ID = this.CurrentDetailData["ID"].ToString();
-            this.numCutno.Value = (int?)this.CurrentDetailData["CutNo"];
+            this.numCutno.Value = this.CurrentDetailData["CutNo"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(this.CurrentDetailData["CutNo"]);
             this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
             this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
             this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();

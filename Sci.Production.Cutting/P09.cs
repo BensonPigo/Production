@@ -1251,9 +1251,9 @@ DEALLOCATE CURSOR_
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            this.ConfigureColumnEvents(this.detailgrid);
-            this.ConfigureColumnEvents(this.gridSizeRatio);
-            this.ConfigureColumnEvents(this.gridDistributeToSP);
+            ConfigureColumnEvents(this.detailgrid, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDatByGrid);
 
             #region 主表
 
@@ -1557,64 +1557,6 @@ DEALLOCATE CURSOR_
             #endregion
         }
 
-        private void ConfigureColumnEvents(Sci.Win.UI.Grid grid)
-        {
-            foreach (var column in grid.Columns)
-            {
-                // 欄位沒設定 IsEditingReadOnly 才作變更
-                if (column is DataGridViewTextBoxBaseColumn textBoxBase && !textBoxBase.IsEditingReadOnly)
-                {
-                    textBoxBase.EditingControlShowing += this.CustomEditingControlShowing;
-                    textBoxBase.CellFormatting += this.CustomCellFormatting;
-                }
-                else if (column is DataGridViewTextBoxBase2Column textBoxBase2 && !textBoxBase2.IsEditingReadOnly)
-                {
-                    textBoxBase2.EditingControlShowing += this.CustomEditingControlShowing;
-                    textBoxBase2.CellFormatting += this.CustomCellFormatting;
-                }
-                else if (column is DataGridViewMaskedTextBoxBaseColumn maskedtextBoxBase && !maskedtextBoxBase.IsEditingReadOnly)
-                {
-                    maskedtextBoxBase.EditingControlShowing += this.CustomEditingControlShowing;
-                    maskedtextBoxBase.CellFormatting += this.CustomCellFormatting;
-                }
-            }
-        }
-
-        private void CustomEditingControlShowing(object sender, Ict.Win.UI.DataGridViewEditingControlShowingEventArgs e)
-        {
-            // 可否編輯
-            Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
-            DataRow dr = grid.GetDataRow(e.RowIndex);
-            bool canEdit = this.CanEditDatByGrid(grid, dr, grid.Columns[e.ColumnIndex].Name);
-            if (e.Control is Ict.Win.UI.TextBoxBase textBoxBase)
-            {
-                textBoxBase.ReadOnly = !canEdit;
-            }
-            else if (e.Control is Ict.Win.UI.TextBoxBase2 textBoxBase2)
-            {
-                textBoxBase2.ReadOnly = !canEdit;
-            }
-        }
-
-        private void CustomCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            // 粉底紅字
-            Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)sender).DataGridView;
-            DataRow dr = grid.GetDataRow(e.RowIndex);
-            string columnName = grid.Columns[e.ColumnIndex].Name.ToLower();
-            bool canEdit = this.CanEditDatByGrid(grid, dr, columnName);
-            if (canEdit)
-            {
-                e.CellStyle.BackColor = Color.Pink;
-                e.CellStyle.ForeColor = Color.Red;
-            }
-            else
-            {
-                e.CellStyle.BackColor = Color.White;
-                e.CellStyle.ForeColor = Color.Black;
-            }
-        }
-
         private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
@@ -1746,12 +1688,6 @@ DEALLOCATE CURSOR_
             }
 
             string columnName = (sender as DataGridViewColumn)?.Name;
-            if (MyUtility.Check.Empty(e.FormattedValue))
-            {
-                dr[columnName] = dr[columnName + "_Mask"] = string.Empty;
-                return;
-            }
-
             dr[columnName] = dr[columnName + "_Mask"] = SetMaskString(e.FormattedValue.ToString());
             dr.EndEdit();
         }
