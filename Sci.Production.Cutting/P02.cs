@@ -172,6 +172,34 @@ OUTER APPLY (
 WHERE wo.id = '{masterID}'
 ";
 
+            string cmdsql = $@"
+Select a.MarkerName,a.ColorID,a.Order_EachconsUkey
+	,layer = isnull(sum(a.layer),0)
+    ,TotalLayerUkey =             
+    (
+        Select isnull(sum(c.layer),0) as TL
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on c.ID = b.ID and c.Order_EachConsUkey = b.ukey
+	    where b.ID = a.ID and b.Markername = a.MarkerName and c.ColorID = a.ColorID and b.Ukey = a.Order_EachconsUkey 
+    )
+    ,TotalLayerMarker =
+    (
+        Select isnull(sum(c.layer),0) as TL2
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on b.ID = c.ID and c.Order_EachConsUkey = b.ukey
+	    where b.ID = a.ID and b.Markername = a.MarkerName and c.ColorID = a.ColorID
+    )
+From WorkOrderForPlanning a WITH (NOLOCK) 
+Where a.ID = '{masterID}' 
+group by a.MarkerName,a.ColorID,a.Order_EachconsUkey,a.ID 
+Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
+";
+            DualResult r = DBProxy.Current.Select(null, cmdsql, out this.dt_Layers);
+            if (!r)
+            {
+                this.ShowErr(cmdsql, r);
+            }
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -204,38 +232,6 @@ WHERE wo.id = '{masterID}'
             }
             #endregion
 
-            #region Total Layer / Balance Layer
-
-            int sumlayer = 0;
-            int sumlayer2 = 0;
-
-            DataRow[] aA = ((DataTable)this.detailgridbs.DataSource).Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-            DataRow[] b = this.dt_Layers.Select(string.Format("Order_EachconsUkey = '{0}' and Colorid = '{1}'", this.CurrentDetailData["Order_EachConsUkey"], this.CurrentDetailData["Colorid"]));
-            foreach (DataRow l in aA)
-            {
-                sumlayer += MyUtility.Convert.GetInt(l["layer"]);
-            }
-
-            foreach (DataRow l in b)
-            {
-                sumlayer2 += MyUtility.Convert.GetInt(l["layer"]);
-            }
-
-            long order_EachConsTemp = MyUtility.Convert.GetLong(this.CurrentDetailData["Order_EachConsUkey"]);
-            string selectcondition = $@"Order_EachConsUkey = {order_EachConsTemp} and  Colorid = '{this.CurrentDetailData["Colorid"]}'";
-
-            DataRow[] laydr = this.dt_Layers.Select(selectcondition);
-            if (laydr.Length == 0)
-            {
-                this.numTotalLayer.Value = 0;
-                this.numBalanceLayer.Value = 0;
-            }
-            else
-            {
-                this.numTotalLayer.Value = (decimal)laydr[0]["TotalLayerUkey"];
-                this.numBalanceLayer.Value = sumlayer - (decimal)laydr[0]["TotalLayerUkey"];
-            }
-            #endregion
         }
 
         private void GetAllDetailData()
@@ -252,28 +248,6 @@ select b.*
 from WorkOrderForPlanning a  WITH (NOLOCK)
 inner join WorkOrderForPlanning_SizeRatio b  WITH (NOLOCK) on a.Ukey = b.WorkOrderForPlanningUkey
 where  a.id = '{cuttingID}'
-
-Select a.MarkerName,a.Colorid,a.Order_EachconsUkey
-	,layer = isnull(sum(a.layer),0)
-    ,TotallayerUkey =             
-    (
-        Select isnull(sum(c.layer),0) as TL
-	    from Order_EachCons b WITH (NOLOCK) 
-		inner join Order_EachCons_Color c WITH (NOLOCK) on c.id = b.id and c.Order_EachConsUkey = b.ukey
-	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid and b.Ukey = a.Order_EachconsUkey 
-    )
-    ,TotallayerMarker =
-    (
-        Select isnull(sum(c.layer),0) as TL2
-	    from Order_EachCons b WITH (NOLOCK) 
-		inner join Order_EachCons_Color c WITH (NOLOCK) on b.id = c.id and c.Order_EachConsUkey = b.ukey
-	    where b.id = a.id and b.Markername = a.MarkerName and c.Colorid = a.Colorid
-    )
-From WorkOrderForPlanning  a WITH (NOLOCK) 
-Where a.id = '{cuttingID}' 
-group by a.MarkerName,a.Colorid,a.Order_EachconsUkey,a.id 
-Order by a.MarkerName,a.Colorid,a.Order_EachconsUkey
-
 
 SELECT InlineDate = convert(date, Min(SewingSchedule.Inline), 111)
 	,SP = SewingSchedule.OrderID
@@ -293,8 +267,7 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
 
             this.dt_PatternPanel = dts[0];
             this.dt_SizeRatio = dts[1];
-            this.dt_Layers = dts[2];
-            this.dt_OrderList = dts[3];
+            this.dt_OrderList = dts[2];
 
             foreach (DataRow dr in this.dt_SizeRatio.Rows)
             {
@@ -442,6 +415,62 @@ DROP TABLE #tmp
             this.bindingSourceDetail.SetRow(this.CurrentDetailData);
 
             this.gridSizeRatio.AutoResizeColumns();
+
+            #region Total Layer / Balance Layer
+            /*
+                Total Layer計算方式
+                根據CurrentDetailData的Order_EachconsUkey 判斷
+                1. Order_EachconsUkey 為空 => 使用 TotalLayerMarker 
+                2. Order_EachconsUkey 不為空 => 使用 TotalLayerUkey
+
+
+                Balance Layer計算方式
+                群組加總"當前"WorkOrderForPlanning表身的 Layer 欄位，根據CurrentDetailData的Order_EachconsUkey 判斷群組條件
+                1. Order_EachconsUkey 為空  => MarkerName、Colorid
+                2. Order_EachconsUkey 不為空 =>Order_EachconsUkey、Colorid
+             */
+
+            int sumlayer = 0;
+            string filterLayer;
+
+            if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
+            {
+                filterLayer = $"MarkerName = '{this.CurrentDetailData["MarkerName"]}' and Colorid = '{this.CurrentDetailData["Colorid"]}'";
+            }
+            else
+            {
+                filterLayer = $"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and Colorid = '{this.CurrentDetailData["Colorid"]}'";
+            }
+
+            DataRow[] cur = ((DataTable)this.detailgridbs.DataSource).Select(filterLayer);
+            sumlayer = cur.AsEnumerable().Sum(l => MyUtility.Convert.GetInt(l["layer"]));
+
+            DataRow[] laydr;
+            if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
+            {
+                laydr = this.dt_Layers.Select($"MarkerName = '{this.CurrentDetailData["MarkerName"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
+            }
+            else
+            {
+                laydr = this.dt_Layers.Select($"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
+            }
+
+            if (!laydr.Any())
+            {
+                this.numTotalLayer.Value = 0;
+                this.numBalanceLayer.Value = 0;
+            }
+            else
+            {
+                decimal totalLayer = MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"])
+                    ? (decimal)laydr[0]["TotalLayerMarker"]
+                    : (decimal)laydr[0]["TotalLayerUkey"];
+
+                this.numTotalLayer.Value = totalLayer;
+                this.numBalanceLayer.Value = sumlayer - totalLayer;
+            }
+
+            #endregion
 
             // 變更子表可否編輯
             bool canEdit = this.CanEditData(this.CurrentDetailData);
