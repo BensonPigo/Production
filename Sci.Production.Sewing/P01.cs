@@ -124,7 +124,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
 
             string sqlcmd = $@"
 select 1
-from Inspection
+from Inspection WITH(NOLOCK)
 where orderid = '{this.CurrentDetailData["OrderID"]}'
 and Article = '{this.CurrentDetailData["Article"]}'
 and InspectionDate = '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
@@ -287,7 +287,7 @@ select  sd.id
 from SewingOutput_Detail sd WITH (NOLOCK)
 left join Orders o with (nolock) on o.ID = sd.OrderID
 left join SewingOutput s WITH (NOLOCK) on sd.ID = s.ID
-LEFT JOIN SewingReason sr ON sd.SewingReasonID = sr.ID and sr.Type = 'SO'
+LEFT JOIN SewingReason sr WITH(NOLOCK) ON sd.SewingReasonID = sr.ID and sr.Type = 'SO'
 outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderId 
                                and rft.CDate = s.OutputDate 
                                and rft.SewinglineID = s.SewingLineID 
@@ -295,7 +295,7 @@ outer apply( select top 1 * from Rft WITH (NOLOCK) where rft.OrderID = sd.OrderI
                                and rft.Team = s.Team) Rft
 outer apply(
     select DQSOutputCount=count(1) 
-    from dbo.[SciMES_Inspection] tmpInsp
+    from dbo.[SciMES_Inspection] tmpInsp WITH(NOLOCK)
     where tmpInsp.InspectionDate= '{outputDate}'
     and tmpInsp.FactoryID = '{factoryID}'
     and tmpInsp.Line = '{sewingLineID}'
@@ -380,7 +380,7 @@ order by a.OrderId,os.Seq",
                     string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
                     string sqlcmd = $@"    
                     select DQSOutputCount=count(1) 
-                    from ManufacturingExecution.dbo.Inspection tmpInsp
+                    from Inspection tmpInsp WITH(NOLOCK)
                     where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
                     and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
                     and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
@@ -389,7 +389,7 @@ order by a.OrderId,os.Seq",
                     and tmpInsp.Article = '{dr["Article"].ToString()}'
                     and tmpInsp.Status in ('Pass','Fixed')
 	                and tmpInsp.OrderId = '{dr["OrderID"].ToString()}'";
-                    dr["DQSOutput"] = MyUtility.GetValue.Lookup(sqlcmd);
+                    dr["DQSOutput"] = MyUtility.GetValue.Lookup(sqlcmd, "ManufacturingExecution");
                 }
             };
             #region SP#的Right click & Validating
@@ -3583,7 +3583,7 @@ from #tmp t
 left join orders o  with(nolock) on o.id = t.OrderId
 outer apply(
     select DQSOutputCount=count(1) 
-    from ManufacturingExecution.dbo.Inspection tmpInsp
+    from dbo.[SciMES_Inspection] tmpInsp WITH(NOLOCK)
     where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
     and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
     and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
@@ -3925,7 +3925,7 @@ INTO #tmp2
 from #tmp t
 outer apply(
     select DQSOutputCount=count(1) 
-    from ManufacturingExecution.dbo.Inspection tmpInsp
+    from ManufacturingExecution.dbo.Inspection tmpInsp WITH(NOLOCK)
     where tmpInsp.InspectionDate= '{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
     and tmpInsp.FactoryID = '{this.CurrentMaintain["FactoryID"]}'
     and tmpInsp.Line = '{this.CurrentMaintain["SewingLineID"]}'
