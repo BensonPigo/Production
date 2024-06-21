@@ -202,7 +202,9 @@ ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name
             DataTable dtCheck = GetBundlebyCutRef(cutRefs);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists bundle data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists bundle data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -214,7 +216,9 @@ ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name
             DataTable dtCheck = GetBundlebyCutRef(cutRef);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists bundle data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists bundle data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -293,7 +297,9 @@ ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name
             DataTable dtCheck = GetCuttingOutputbyCutRef(cutRefs);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists cutting output data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists cutting output data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -305,7 +311,9 @@ ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name
             DataTable dtCheck = GetCuttingOutputbyCutRef(cutRef);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists cutting output data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists cutting output data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -374,7 +382,9 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             DataTable dtCheck = GetMarkerReqbyCutRef(cutRefs);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists marker request data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists marker request data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -386,7 +396,9 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             DataTable dtCheck = GetMarkerReqbyCutRef(cutRef);
             if (dtCheck.Rows.Count > 0)
             {
-                new MsgGridForm(dtCheck, msg, "Exists marker request data").ShowDialog();
+                var form = new MsgGridForm(dtCheck, msg, "Exists marker request data");
+                form.grid1.ColumnsAutoSize();
+                form.ShowDialog();
                 return false;
             }
 
@@ -405,6 +417,49 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name
             }
 
             return true;
+        }
+
+        private static DataTable GetSpreadingStatusNotReady(string id)
+        {
+            string sqlcmd = $@"
+SELECT
+    [Cut Ref#] = WorkOrderForOutput.CutRef
+   ,[Cut #] = WorkOrderForOutput.CutNo
+   ,[Marker Name] = WorkOrderForOutput.MarkerName
+   ,[Pattern Panel] = PatternPanel.PatternPanel
+   ,[Fabric Panel Code] = FabricPanelCode.FabricPanelCode
+   ,[Spreading Status] = WorkOrderForOutput.SpreadingStatus
+   ,[Spreading Remark] = WorkOrderForOutput.SpreadingRemark
+FROM WorkOrderForOutput WITH (NOLOCK)
+OUTER APPLY (
+    SELECT PatternPanel = STUFF((
+        SELECT ', ' + PatternPanel
+        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
+        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
+        GROUP BY WorkOrderForOutput_PatternPanel.PatternPanel
+        ORDER BY WorkOrderForOutput_PatternPanel.PatternPanel
+        FOR XML PATH ('')), 1, 2, '')
+) PatternPanel
+OUTER APPLY (
+    SELECT FabricPanelCode = STUFF((
+        SELECT ', ' + FabricPanelCode
+        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
+        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
+        GROUP BY WorkOrderForOutput_PatternPanel.FabricPanelCode
+        ORDER BY WorkOrderForOutput_PatternPanel.FabricPanelCode
+        FOR XML PATH ('')), 1, 2, '')
+) FabricPanelCode
+WHERE ID = '{id}'
+AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dtCheck);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dtCheck;
         }
 
         #endregion

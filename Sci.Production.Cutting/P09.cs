@@ -201,6 +201,24 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             this.DetailSelectCommand = $@"
+SELECT wo.Ukey
+INTO #tmpHasBundle
+FROM WorkOrderForOutput wo WITH (NOLOCK)
+INNER JOIN Bundle WITH (NOLOCK) ON Bundle.CutRef = wo.CutRef
+WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
+
+SELECT wo.Ukey
+INTO #tmpHasCuttingOutput
+FROM WorkOrderForOutput wo WITH (NOLOCK)
+INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.CutRef = wo.CutRef
+WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
+
+SELECT wo.Ukey
+INTO #tmpHasMarkerReq
+FROM WorkOrderForOutput wo WITH (NOLOCK)
+INNER JOIN MarkerReq_Detail mrd WITH (NOLOCK) ON mrd.CutRef = wo.CutRef
+WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
+
 SELECT
     wo.*
    ,PatternPanel_CONCAT
@@ -223,9 +241,9 @@ SELECT
 
    --沒有顯示的欄位
    ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/SpreadingFabric/Distribute/PatternPanel
-   ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM Bundle WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
-   ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM CuttingOutput_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
-   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
+   ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasBundle WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
+   ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
+   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
 
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
@@ -471,14 +489,10 @@ DROP TABLE #tmp
         {
             this.OnDetailEntered();
             #region 校驗
-            string sqlcmdCheck;
-            DataTable dtCheck;
-            DualResult result;
-            string msg;
             if (this.DetailDatas.Count > 0)
             {
                 // 1. 存在 P10 Bundle
-                msg = "The following bundle data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
+                string msg = "The following bundle data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
                 if (!CheckBundleAndShowData(this.DetailDatas.AsEnumerable().Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList(), msg))
                 {
                     return;
@@ -499,61 +513,20 @@ DROP TABLE #tmp
                 }
 
                 // 4. 欄位 SpreadingStatus
-                // DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
-                sqlcmdCheck = $@"
-SELECT
-    [Cut Ref#] = WorkOrderForOutput.CutRef
-   ,[Cut #] = WorkOrderForOutput.CutNo
-   ,[Marker Name] = WorkOrderForOutput.MarkerName
-   ,[Pattern Panel] = PatternPanel.PatternPanel
-   ,[Fabric Panel Code] = FabricPanelCode.FabricPanelCode
-   ,[Spreading Status] = WorkOrderForOutput.SpreadingStatus
-   ,[Spreading Remark] = WorkOrderForOutput.SpreadingRemark
-FROM WorkOrderForOutput WITH (NOLOCK)
-OUTER APPLY (
-    SELECT PatternPanel = STUFF((
-        SELECT ', ' + PatternPanel
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.PatternPanel
-        ORDER BY WorkOrderForOutput_PatternPanel.PatternPanel
-        FOR XML PATH ('')), 1, 2, '')
-) PatternPanel
-OUTER APPLY (
-    SELECT FabricPanelCode = STUFF((
-        SELECT ', ' + FabricPanelCode
-        FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK)
-        WHERE WorkOrderForOutput_PatternPanel.WorkOrderForOutputUkey = WorkOrderForOutput.Ukey
-        GROUP BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        ORDER BY WorkOrderForOutput_PatternPanel.FabricPanelCode
-        FOR XML PATH ('')), 1, 2, '')
-) FabricPanelCode
-WHERE ID = '{this.CurrentMaintain["ID"]}'
-AND WorkOrderForOutput.SpreadingStatus <> 'Ready'
-";
-                result = DBProxy.Current.Select(string.Empty, sqlcmdCheck, out dtCheck);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
+                DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
+                DataTable dtCheck = dt.DefaultView.ToTable(true, "CutRef", "CutNo", "MarkerName", "PatternPanel_CONCAT", "FabricPanelCode_CONCAT", "SpreadingStatus", "SpreadingRemark");
                 if (dtCheck.Rows.Count > 0)
                 {
+                    dtCheck.Columns["CutRef"].ColumnName = "Cut Ref#";
+                    dtCheck.Columns["MarkerName"].ColumnName = "Marker Name";
+                    dtCheck.Columns["PatternPanel_CONCAT"].ColumnName = "Pattern Panel";
+                    dtCheck.Columns["FabricPanelCode_CONCAT"].ColumnName = "Fabric Panel Code";
+                    dtCheck.Columns["SpreadingStatus"].ColumnName = "Spreading Status";
+                    dtCheck.Columns["SpreadingRemark"].ColumnName = "Spreading Remark";
                     msg = "The following digitail spreading data exists and cannot be imported";
-                    MsgGridForm m = new MsgGridForm(dtCheck, msg, "Exists digitail spreading data") { Width = 950 };
-                    m.grid1.Columns[0].Width = 140;
-                    m.text_Find.Width = 140;
-                    m.btn_Find.Location = new Point(450, 6);
-                    m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
-                    this.FormClosing += (s, args) =>
-                    {
-                        if (m.Visible)
-                        {
-                            m.Close();
-                        }
-                    };
-                    m.Show(this);
+                    var form = new MsgGridForm(dtCheck, msg, "Exists digitail spreading data");
+                    form.grid1.ColumnsAutoSize();
+                    form.ShowDialog();
                     return;
                 }
 
@@ -719,7 +692,7 @@ SET OrderID = (SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOC
 WHERE ID = ''
 ";
 
-            result = DBProxy._OpenConnection(null, out SqlConnection sqlConn);
+            DualResult result = DBProxy._OpenConnection(null, out SqlConnection sqlConn);
             if (!result)
             {
                 this.ShowErr(result);
@@ -1792,7 +1765,7 @@ DEALLOCATE CURSOR_
                     if (grid.Name == "gridSizeRatio")
                     {
                         DataRow dr = grid.GetDataRow(e.RowIndex);
-                        this.CurrentDetailData["Cons"] = CalculateCons(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                        this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                     }
                 }
             };
