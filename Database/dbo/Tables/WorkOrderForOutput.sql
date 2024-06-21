@@ -6,7 +6,7 @@
 		[Seq1] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Seq1] DEFAULT '',
 		[Seq2] [varchar] (2) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Seq2] DEFAULT '',
 		[CutRef] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CutRef] DEFAULT '',
-		[CutNo] [int] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CutNo] DEFAULT 0,
+		[CutNo] [int] NULL,
 		[OrderID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_OrderID] DEFAULT '',
 		[RefNo] [varchar] (36) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_RefNo] DEFAULT '',
 		[SCIRefNo] [varchar] (30) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SCIRefNo] DEFAULT '',
