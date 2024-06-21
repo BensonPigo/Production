@@ -1594,6 +1594,10 @@ DEALLOCATE CURSOR_
             {
                 textBoxBase2.ReadOnly = !canEdit;
             }
+            else if (e.Control is Ict.Win.UI.MaskedTextBoxBase textBoxBase3)
+            {
+                textBoxBase3.ReadOnly = !canEdit;
+            }
         }
 
         private void CustomCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
