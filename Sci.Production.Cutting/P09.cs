@@ -1746,12 +1746,6 @@ DEALLOCATE CURSOR_
             }
 
             string columnName = (sender as DataGridViewColumn)?.Name;
-            if (MyUtility.Check.Empty(e.FormattedValue))
-            {
-                dr[columnName] = dr[columnName + "_Mask"] = string.Empty;
-                return;
-            }
-
             dr[columnName] = dr[columnName + "_Mask"] = SetMaskString(e.FormattedValue.ToString());
             dr.EndEdit();
         }

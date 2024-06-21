@@ -747,7 +747,7 @@ AND Junk = 0
                 eventString = $"{eventString.Substring(0, 2)}Y{eventString.Substring(2, 2)}-{eventString.Substring(4, 1)}/{eventString.Substring(5, 1)}+{eventString.Substring(6, 1)}\"";
             }
 
-            return eventString;
+            return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
         }
 
         /// <summary>
@@ -797,7 +797,7 @@ AND Junk = 0
                 eventString = $"{eventString.Substring(0, 3)}Yd{eventString.Substring(3, 2)}\"{eventString.Substring(5, 2)}";
             }
 
-            return eventString;
+            return eventString == "000Yd00\"00" ? string.Empty : eventString;
         }
         #endregion
 
