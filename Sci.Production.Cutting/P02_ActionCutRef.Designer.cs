@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtSeq1 = new Sci.Win.UI.TextBox();
             this.label3 = new Sci.Win.UI.Label();
@@ -67,10 +66,8 @@
             this.orderList = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnModify = new Sci.Win.UI.Button();
-            this.numCutno = new Sci.Win.UI.NumericBox();
             this.numLayers = new Sci.Win.UI.NumericBox();
             this.numConsPC = new Sci.Win.UI.NumericBox();
-            this.dateBoxWkEta = new Sci.Win.UI.DateBox();
             this.label16 = new Sci.Win.UI.Label();
             this.label12 = new Sci.Win.UI.Label();
             this.txtSP = new Sci.Win.UI.TextBox();
@@ -85,19 +82,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.orderList)).BeginInit();
             this.SuspendLayout();
             // 
-            // label1
-            // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(9, 81);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(123, 23);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Cut#";
-            // 
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(9, 115);
+            this.label2.Location = new System.Drawing.Point(9, 78);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(123, 23);
             this.label2.TabIndex = 18;
@@ -107,7 +95,7 @@
             // 
             this.txtSeq1.BackColor = System.Drawing.Color.White;
             this.txtSeq1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq1.Location = new System.Drawing.Point(135, 177);
+            this.txtSeq1.Location = new System.Drawing.Point(135, 140);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(96, 23);
             this.txtSeq1.TabIndex = 21;
@@ -117,7 +105,7 @@
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(9, 177);
+            this.label3.Location = new System.Drawing.Point(9, 140);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(123, 23);
             this.label3.TabIndex = 20;
@@ -127,7 +115,7 @@
             // 
             this.txtSeq2.BackColor = System.Drawing.Color.White;
             this.txtSeq2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq2.Location = new System.Drawing.Point(135, 211);
+            this.txtSeq2.Location = new System.Drawing.Point(135, 174);
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(96, 23);
             this.txtSeq2.TabIndex = 23;
@@ -137,7 +125,7 @@
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(9, 211);
+            this.label4.Location = new System.Drawing.Point(9, 174);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(123, 23);
             this.label4.TabIndex = 22;
@@ -147,7 +135,7 @@
             // 
             this.txtRefNo.BackColor = System.Drawing.Color.White;
             this.txtRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefNo.Location = new System.Drawing.Point(135, 245);
+            this.txtRefNo.Location = new System.Drawing.Point(135, 208);
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(114, 23);
             this.txtRefNo.TabIndex = 25;
@@ -156,7 +144,7 @@
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(9, 245);
+            this.label5.Location = new System.Drawing.Point(9, 208);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(123, 23);
             this.label5.TabIndex = 24;
@@ -166,7 +154,7 @@
             // 
             this.txtColor.BackColor = System.Drawing.Color.White;
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor.Location = new System.Drawing.Point(135, 279);
+            this.txtColor.Location = new System.Drawing.Point(135, 242);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(96, 23);
             this.txtColor.TabIndex = 27;
@@ -175,7 +163,7 @@
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(9, 279);
+            this.label6.Location = new System.Drawing.Point(9, 242);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(123, 23);
             this.label6.TabIndex = 26;
@@ -185,7 +173,7 @@
             // 
             this.txtTone.BackColor = System.Drawing.Color.White;
             this.txtTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTone.Location = new System.Drawing.Point(135, 313);
+            this.txtTone.Location = new System.Drawing.Point(135, 276);
             this.txtTone.Name = "txtTone";
             this.txtTone.Size = new System.Drawing.Size(96, 23);
             this.txtTone.TabIndex = 29;
@@ -193,7 +181,7 @@
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Location = new System.Drawing.Point(9, 313);
+            this.label7.Location = new System.Drawing.Point(9, 276);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 28;
@@ -202,7 +190,7 @@
             // label8
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label8.Location = new System.Drawing.Point(9, 347);
+            this.label8.Location = new System.Drawing.Point(9, 310);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(123, 23);
             this.label8.TabIndex = 30;
@@ -212,7 +200,7 @@
             // 
             this.txtMarkerName.BackColor = System.Drawing.Color.White;
             this.txtMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerName.Location = new System.Drawing.Point(135, 381);
+            this.txtMarkerName.Location = new System.Drawing.Point(135, 344);
             this.txtMarkerName.Name = "txtMarkerName";
             this.txtMarkerName.Size = new System.Drawing.Size(114, 23);
             this.txtMarkerName.TabIndex = 33;
@@ -220,7 +208,7 @@
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label9.Location = new System.Drawing.Point(9, 381);
+            this.label9.Location = new System.Drawing.Point(9, 344);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(123, 23);
             this.label9.TabIndex = 32;
@@ -230,7 +218,7 @@
             // 
             this.txtMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerNo.Location = new System.Drawing.Point(135, 415);
+            this.txtMarkerNo.Location = new System.Drawing.Point(135, 378);
             this.txtMarkerNo.Name = "txtMarkerNo";
             this.txtMarkerNo.Size = new System.Drawing.Size(114, 23);
             this.txtMarkerNo.TabIndex = 35;
@@ -240,7 +228,7 @@
             // label10
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label10.Location = new System.Drawing.Point(9, 415);
+            this.label10.Location = new System.Drawing.Point(9, 378);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(123, 23);
             this.label10.TabIndex = 34;
@@ -250,7 +238,7 @@
             // 
             this.txtMarkerLength.BackColor = System.Drawing.Color.White;
             this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(135, 449);
+            this.txtMarkerLength.Location = new System.Drawing.Point(135, 412);
             this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
             this.txtMarkerLength.Name = "txtMarkerLength";
             this.txtMarkerLength.Size = new System.Drawing.Size(114, 23);
@@ -260,7 +248,7 @@
             // label11
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label11.Location = new System.Drawing.Point(9, 449);
+            this.label11.Location = new System.Drawing.Point(9, 412);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(123, 23);
             this.label11.TabIndex = 36;
@@ -424,14 +412,14 @@
             this.gridOrderList.RowTemplate.Height = 24;
             this.gridOrderList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridOrderList.ShowCellToolTips = false;
-            this.gridOrderList.Size = new System.Drawing.Size(442, 266);
+            this.gridOrderList.Size = new System.Drawing.Size(442, 228);
             this.gridOrderList.TabIndex = 58;
             // 
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(639, 475);
+            this.btnCancel.Location = new System.Drawing.Point(639, 437);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(82, 28);
             this.btnCancel.TabIndex = 60;
@@ -443,7 +431,7 @@
             // 
             this.btnModify.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnModify.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnModify.Location = new System.Drawing.Point(546, 475);
+            this.btnModify.Location = new System.Drawing.Point(546, 437);
             this.btnModify.Name = "btnModify";
             this.btnModify.Size = new System.Drawing.Size(92, 28);
             this.btnModify.TabIndex = 59;
@@ -451,32 +439,12 @@
             this.btnModify.UseVisualStyleBackColor = true;
             this.btnModify.Click += new System.EventHandler(this.BtnModify_Click);
             // 
-            // numCutno
-            // 
-            this.numCutno.BackColor = System.Drawing.Color.White;
-            this.numCutno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numCutno.IsSupportNegative = false;
-            this.numCutno.Location = new System.Drawing.Point(135, 81);
-            this.numCutno.Name = "numCutno";
-            this.numCutno.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCutno.Size = new System.Drawing.Size(100, 23);
-            this.numCutno.TabIndex = 0;
-            this.numCutno.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // numLayers
             // 
             this.numLayers.BackColor = System.Drawing.Color.White;
             this.numLayers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numLayers.IsSupportNegative = false;
-            this.numLayers.Location = new System.Drawing.Point(135, 115);
+            this.numLayers.Location = new System.Drawing.Point(135, 78);
             this.numLayers.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -501,7 +469,7 @@
             this.numConsPC.BackColor = System.Drawing.Color.White;
             this.numConsPC.DecimalPlaces = 4;
             this.numConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numConsPC.Location = new System.Drawing.Point(135, 347);
+            this.numConsPC.Location = new System.Drawing.Point(135, 310);
             this.numConsPC.Name = "numConsPC";
             this.numConsPC.NullValue = new decimal(new int[] {
             0,
@@ -516,15 +484,6 @@
             0,
             0});
             // 
-            // dateBoxWkEta
-            // 
-            this.dateBoxWkEta.Location = new System.Drawing.Point(114, 46);
-            this.dateBoxWkEta.Name = "dateBoxWkEta";
-            this.dateBoxWkEta.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxWkEta.TabIndex = 66;
-            this.dateBoxWkEta.Click += new System.EventHandler(this.DateBoxWkEta_Click);
-            this.dateBoxWkEta.MouseClick += new System.Windows.Forms.MouseEventHandler(this.DateBoxWkEta_MouseClick);
-            // 
             // label16
             // 
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
@@ -537,7 +496,7 @@
             // label12
             // 
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label12.Location = new System.Drawing.Point(9, 146);
+            this.label12.Location = new System.Drawing.Point(9, 109);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(123, 23);
             this.label12.TabIndex = 67;
@@ -547,7 +506,7 @@
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(135, 146);
+            this.txtSP.Location = new System.Drawing.Point(135, 109);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(109, 23);
             this.txtSP.TabIndex = 68;
@@ -558,23 +517,21 @@
             // 
             this.txtWKETA.BackColor = System.Drawing.Color.White;
             this.txtWKETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKETA.Location = new System.Drawing.Point(150, 480);
+            this.txtWKETA.Location = new System.Drawing.Point(114, 46);
             this.txtWKETA.Name = "txtWKETA";
             this.txtWKETA.Size = new System.Drawing.Size(109, 23);
             this.txtWKETA.TabIndex = 69;
-            this.txtWKETA.Click += new System.EventHandler(this.txtWKETA_Click);
+            this.txtWKETA.Click += new System.EventHandler(this.TxtWKETA_Click);
             // 
             // P02_ActionCutRef
             // 
-            this.ClientSize = new System.Drawing.Size(739, 512);
+            this.ClientSize = new System.Drawing.Size(739, 477);
             this.Controls.Add(this.txtWKETA);
             this.Controls.Add(this.txtSP);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.dateBoxWkEta);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.numConsPC);
             this.Controls.Add(this.numLayers);
-            this.Controls.Add(this.numCutno);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnModify);
             this.Controls.Add(this.label21);
@@ -603,12 +560,10 @@
             this.Controls.Add(this.txtSeq1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.DefaultControl = "txtCutRef";
             this.Name = "P02_ActionCutRef";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P02 {0} CutRef";
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.txtSeq1, 0);
@@ -637,11 +592,9 @@
             this.Controls.SetChildIndex(this.label21, 0);
             this.Controls.SetChildIndex(this.btnModify, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);
-            this.Controls.SetChildIndex(this.numCutno, 0);
             this.Controls.SetChildIndex(this.numLayers, 0);
             this.Controls.SetChildIndex(this.numConsPC, 0);
             this.Controls.SetChildIndex(this.label16, 0);
-            this.Controls.SetChildIndex(this.dateBoxWkEta, 0);
             this.Controls.SetChildIndex(this.label12, 0);
             this.Controls.SetChildIndex(this.txtSP, 0);
             this.Controls.SetChildIndex(this.txtWKETA, 0);
@@ -659,8 +612,6 @@
         }
 
         #endregion
-
-        private Win.UI.Label label1;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtSeq1;
         private Win.UI.Label label3;
@@ -689,7 +640,6 @@
         private Win.UI.Grid gridOrderList;
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnModify;
-        private Win.UI.NumericBox numCutno;
         private Win.UI.NumericBox numLayers;
         private Win.UI.NumericBox numConsPC;
         private Win.UI.ListControlBindingSource patternpanelbs;
@@ -701,7 +651,6 @@
         private Win.UI.ContextMenuStrip cmsPatternPanel;
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertPatternPanel;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeletePatternPanel;
-        private Win.UI.DateBox dateBoxWkEta;
         private Win.UI.Label label16;
         private Win.UI.Label label12;
         private Win.UI.TextBox txtSP;

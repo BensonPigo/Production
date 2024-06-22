@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 using static Sci.MyUtility;
@@ -56,34 +57,33 @@ namespace Sci.Production.Cutting
         {
             this.Text = $"P02. {this.Action} CutRef";
             this.btnModify.Text = $"{this.Action}";
-            this.dateBoxWkEta.BackColor = Color.White;
             base.OnFormLoaded();
             this.SetData();
             this.GridSetup();
+            this.txtWKETA.ReadOnly = true;
+            this.txtWKETA.BackColor = Color.White;
+            this.txtWKETA.ForeColor = Color.Red;
         }
 
         private void SetData()
         {
             this.CuttingID = this.CurrentMaintain["ID"].ToString();
             this.OrderID = this.CurrentDetailData["OrderID"].ToString();
-            if (this.Action == DialogAction.Edit)
-            {
-                this.numCutno.Text = this.CurrentDetailData["CutNo"].ToString();
-                this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
-                this.txtSP.Text = this.CurrentDetailData["OrderID"].ToString();
-                this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
-                this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
-                this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
-                this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
-                this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
-                this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
-                this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
-                this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-                this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
-                this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
-                this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]);
-                this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
-            }
+            //this.numCutRefNo.Text = this.CurrentDetailData["CutRef"].ToString();
+            this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
+            this.txtSP.Text = this.CurrentDetailData["OrderID"].ToString();
+            this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
+            this.txtSeq2.Text = this.CurrentDetailData["SEQ2"].ToString();
+            this.txtRefNo.Text = this.CurrentDetailData["RefNo"].ToString();
+            this.txtColor.Text = this.CurrentDetailData["ColorID"].ToString();
+            this.txtTone.Text = this.CurrentDetailData["Tone"].ToString();
+            this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
+            this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
+            this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
+            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
+            this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
+            this.txtWKETA.Text = MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).Value.ToString("yyyy/MM/dd") : string.Empty;
+            this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
 
             this.patternpanelbs.DataSource = this.dtWorkOrderForPlanning_PatternPanel;
             this.sizeRatiobs.DataSource = this.dtWorkOrderForPlanning_SizeRatio;
@@ -119,6 +119,7 @@ namespace Sci.Production.Cutting
             this.GridEventSet();
         }
 
+        #region 確認或取消 → 關閉視窗
         private void BtnModify_Click(object sender, EventArgs e)
         {
             this.UpdateToDetail();
@@ -131,7 +132,7 @@ namespace Sci.Production.Cutting
             this.dtWorkOrderForPlanning_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
             this.dtWorkOrderForPlanning_PatternPanel.AcceptChanges();
 
-            this.CurrentDetailData["CutNo"] = this.numCutno.Value;
+            //this.CurrentDetailData["CutRef"] = this.numCutRefNo.Value;
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
             this.CurrentDetailData["OrderID"] = this.txtSP.Text;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
@@ -153,30 +154,38 @@ namespace Sci.Production.Cutting
                 this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value;
             }
 
-            if (this.dateBoxWkEta.Value == null)
+            if (this.txtWKETA.Text == string.Empty)
             {
                 this.CurrentDetailData["WKETA"] = DBNull.Value;
             }
             else
             {
-                this.CurrentDetailData["WKETA"] = this.dateBoxWkEta.Value;
+                this.CurrentDetailData["WKETA"] = MyUtility.Convert.GetDate(this.txtWKETA.Text).Value;
+            }
+
+            // Size Ratio補上Layer和計算Ttl Qty
+            if (this.dtWorkOrderForPlanning_SizeRatio.Rows.Count > 0)
+            {
+                this.dtWorkOrderForPlanning_SizeRatio.Select().ToList<DataRow>().ForEach(row =>
+                {
+                    row["Layer"] = this.numLayers.Value;
+
+                    string cutQtystr = row["SizeCode"].ToString().Trim() + "/" + (MyUtility.Convert.GetDecimal(row["Qty"]) * MyUtility.Convert.GetDecimal(MyUtility.Check.Empty(row["Layer"]) ? 0 : row["Layer"])).ToString();
+                    row["TotalCutQty_CONCAT"] = cutQtystr;
+                });
             }
 
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
+            UpdatebyPatternPanel(this.CurrentDetailData, this.dtWorkOrderForPlanning_PatternPanel, CuttingForm.P02);
 
             this.CurrentDetailData.EndEdit();
 
             // Edit 先刪除, 再把修改的塞回去
-            if (this.Action == DialogAction.Edit)
-            {
-                string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
-                this.dtWorkOrderForPlanning_SizeRatio_Ori.Select(filter).Delete();
-                //this.dtWorkOrderForPlanning_OrderList_Ori.Select(filter).Delete();
-                this.dtWorkOrderForPlanning_PatternPanel_Ori.Select(filter).Delete();
-            }
+            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
+            this.dtWorkOrderForPlanning_SizeRatio_Ori.Select(filter).Delete();
+            this.dtWorkOrderForPlanning_PatternPanel_Ori.Select(filter).Delete();
 
             this.dtWorkOrderForPlanning_SizeRatio_Ori.Merge(this.dtWorkOrderForPlanning_SizeRatio);
-            //this.dtWorkOrderForPlanning_OrderList_Ori.Merge(this.dtWorkOrderForPlanning_OrderList);
             this.dtWorkOrderForPlanning_PatternPanel_Ori.Merge(this.dtWorkOrderForPlanning_PatternPanel);
         }
 
@@ -185,6 +194,8 @@ namespace Sci.Production.Cutting
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
+
+        #endregion
 
         #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P02主表上
 
@@ -209,10 +220,20 @@ namespace Sci.Production.Cutting
 
                 this.txtSP.Text = MyUtility.Convert.GetString(sele.GetSelecteds()[0]["ID"]);
             }
+            else
+            {
+                MyUtility.Msg.WarningBox("Only <By SP#> can use.");
+                this.txtSP.Text = string.Empty;
+            }
         }
 
         private void TxtSP_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            if (MyUtility.Check.Empty(this.txtSP.Text))
+            {
+                return;
+            }
+
             if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
             {
                 string cmd = $@"SELECT ID FROM Orders WHERE POID = '{this.CuttingID}' AND Junk=0 AND ID = @ID";
@@ -228,6 +249,13 @@ namespace Sci.Production.Cutting
                     MyUtility.Msg.WarningBox(string.Format("<SP#> : {0} data not found!", this.txtSP.Text));
                     this.txtSP.Text = string.Empty;
                 }
+
+                this.orderList.DataSource = this.dtWorkOrderForPlanning_OrderList.Select($@" SP = '{this.txtSP.Text}' ").CopyToDataTable();
+            }
+            else
+            {
+                MyUtility.Msg.WarningBox("Only <By SP#> can use.");
+                this.txtSP.Text = string.Empty;
             }
         }
 
@@ -237,6 +265,11 @@ namespace Sci.Production.Cutting
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
                 return;
             }
 
@@ -286,6 +319,11 @@ namespace Sci.Production.Cutting
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
                 return;
             }
 
@@ -375,7 +413,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void DateBoxWkEta_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        private void TxtWKETA_Click(object sender, EventArgs e)
         {
             P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
             DialogResult result = item.ShowDialog();
@@ -384,13 +422,14 @@ namespace Sci.Production.Cutting
                 case DialogResult.Cancel:
                     break;
                 case DialogResult.Yes:
-                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
+                    this.txtWKETA.Text = Itemx.WKETA.HasValue ? Itemx.WKETA.Value.ToString("yyyy/MM/dd") : string.Empty;
                     break;
                 case DialogResult.No:
-                    this.dateBoxWkEta.Value = null;
+                    this.txtWKETA.Text = null;
                     break;
             }
         }
+
         #endregion
 
         #region Grid 欄位事件 顏色/開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P02主表上
@@ -466,51 +505,9 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            DataRow dr = ((DataRowView)selectRow[0]).Row;
-
-            // 先刪除 Distribute
-            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
-            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
-            this.dtWorkOrderForPlanning_OrderList.Select(filter + $" AND SizeCode = '{sizeCode}'").Delete();
-
-            // 後刪除 SizeRatio
-            dr.Delete();
+            ((DataRowView)selectRow[0]).Row.Delete();
         }
 
         #endregion
-
-        private void DateBoxWkEta_Click(object sender, EventArgs e)
-        {
-            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
-            DialogResult result = item.ShowDialog();
-            switch (result)
-            {
-                case DialogResult.Cancel:
-                    break;
-                case DialogResult.Yes:
-                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
-                    break;
-                case DialogResult.No:
-                    this.dateBoxWkEta.Value = null;
-                    break;
-            }
-        }
-
-        private void txtWKETA_Click(object sender, EventArgs e)
-        {
-            P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
-            DialogResult result = item.ShowDialog();
-            switch (result)
-            {
-                case DialogResult.Cancel:
-                    break;
-                case DialogResult.Yes:
-                    this.dateBoxWkEta.Value = MyUtility.Convert.GetDate(Itemx.WKETA);
-                    break;
-                case DialogResult.No:
-                    this.dateBoxWkEta.Value = null;
-                    break;
-            }
-        }
     }
 }

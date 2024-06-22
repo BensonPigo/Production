@@ -54,6 +54,8 @@ namespace Sci.Production.Cutting
                 // Parent form 若是非編輯狀態，且Cutting.WorkType != 2 就 return
                 if (!srcForm.EditMode || workType != "2")
                 {
+                    MyUtility.Msg.WarningBox("Only <By SP#> can use.");
+                    e.EditingControl.Text = string.Empty;
                     return;
                 }
 

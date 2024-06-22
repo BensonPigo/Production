@@ -672,7 +672,7 @@
             this.ClientSize = new System.Drawing.Size(1288, 717);
             this.DefaultOrder = "ID";
             this.ExpressQuery = true;
-            this.GridAlias = "WorkOrderForOutput";
+            this.GridAlias = "WorkOrderForPlanning";
             this.GridNew = 0;
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
