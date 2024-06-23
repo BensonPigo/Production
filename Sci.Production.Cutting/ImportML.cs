@@ -338,7 +338,7 @@ namespace Sci.Production.Cutting
                         }
                     }
 
-                    int maxKey = MyUtility.Convert.GetInt(this.WorkOrder.Compute("Max(newkey)", string.Empty));
+                    int maxKey = MyUtility.Convert.GetInt(this.WorkOrder.Compute("Max(tmpKey)", string.Empty));
                     var mergeInTable = inserts_marker_ML.CopyToDataTable();
 
                     #region 判斷是否已有重複資料，[Fabric Combo]+[Fab_Panel Code]+[Marker No]+[Marker Name]
@@ -365,16 +365,16 @@ namespace Sci.Production.Cutting
                         .ForEach(row =>
                         {
                             row["Ukey"] = 0;
-                            row["NewKey"] = maxKey++;
+                            row["tmpKey"] = maxKey++;
                             row["Type"] = workOrder.Select(s => s["Type"]).FirstOrDefault();
                             row["MDivisionId"] = Sci.Env.User.Keyword;
                             row["FactoryID"] = workOrder.Select(s => s["FactoryID"]).FirstOrDefault();
                             row["OrderID"] = this.WorkOrderID; // 此處不用管 Type，因為用檔案匯入沒有dist
                             row["MarkerNo"] = this.MarkerNo;
-                            row["EachconsMarkerNo"] = this.MarkerNo;
-                            row["EachconsMarkerVersion"] = this.lastVerData["Version"];
-                            row["Cutno"] = DBNull.Value;
-                            row["isbyAdditionalRevisedMarker"] = 0;
+                            //row["EachconsMarkerNo"] = this.MarkerNo;
+                            //row["EachconsMarkerVersion"] = this.lastVerData["Version"];
+                            //row["Cutno"] = DBNull.Value;
+                            //row["isbyAdditionalRevisedMarker"] = 0;
                             row["ImportML"] = true;
                             row["MarkerLength"] = Prgs.MarkerLengthSampleTOTrade(row["MarkerLength"].ToString(), row["MatchFabric"].ToString());
                             row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];

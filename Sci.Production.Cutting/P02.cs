@@ -1679,13 +1679,78 @@ END";
         // 等待整合...
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
+            CuttingWorkOrder cw = new CuttingWorkOrder();
+            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P02);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
+            if (result.Description == "NotImport")
+            {
+                return;
+            }
+
+            this.OnRefreshClick();
         }
 
         // 等待整合...
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Datas"); // 正常不會發生這狀況
+            }
 
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                DataRow drNEW = this.dt_PatternPanel.NewRow();
+                drNEW["id"] = this.CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["tmpKey"] = row["tmpKey"];
+                this.dt_PatternPanel.Rows.Add(drNEW);
+            });
+            #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            if (icount > 0)
+            {
+                for (int i = 0; i < icount; i++)
+                {
+                    if (this.detailgrid.CurrentCell != null)
+                    {
+                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                    }
+                }
+            }
+
+            if (icount > 0)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
+                this.detailgrid.SelectRowTo(0);
+            }
         }
 
         // 等待整合...

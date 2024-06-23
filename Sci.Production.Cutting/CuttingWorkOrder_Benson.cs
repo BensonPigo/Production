@@ -1,6 +1,5 @@
 using Ict;
 using Ict.Win.UI;
-using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
@@ -11,26 +10,10 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Policy;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Sci.Data;
-using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
-using System.Windows.Forms;
-using Ict;
-using Sci.Production.Prg;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Data;
-using System.Security.Cryptography;
-using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
@@ -414,16 +397,6 @@ AND EXISTS (
         private int markerSerNo = 1;
         private List<long> listWorkOrderUkey;
 
-        /// <summary>
-        /// 當前要Insert哪一張表，P02的話是 WorkOrderForPlanning；P09的話是 WorkOrderForOutput
-        /// </summary>
-        private string TableName = string.Empty;
-
-        /// <summary>
-        /// P02的話是 WorkOrderForPlanningUkey；P09的話是 WorkOrderForOutputUkey
-        /// </summary>
-        private string TableMainKeyColName = string.Empty;
-
         private string CuttingPOID = string.Empty;
         private string MDivisionid = string.Empty;
         private string FactoryID = string.Empty;
@@ -433,34 +406,21 @@ AND EXISTS (
         /// </summary>
         private decimal inchToYdsRate = 0;
 
-        private bool isNoMatchSP;
         #endregion
 
         /// <summary>
-        /// 匯入指定格式的Excel，寫入資料庫WorkOrder、SizeRatio、PatternPanel、Distribute四張資料表的資料
+        /// 匯入指定格式的Excel，寫入資料庫WorkOrder、SizeRatio、PatternPanel、Distribute四張資料表的資料 (P02沒有Distribute)
         /// </summary>
         /// <param name="cuttingID">Cutting.ID</param>
         /// <param name="mDivisionid">mDivisionid</param>
         /// <param name="factoryID">factoryID</param>
-        /// <param name="tableName">要寫入的Table</param>
+        /// <param name="form">Import的目標功能(P02或P09)</param>
         /// <returns>Result</returns>
-        public DualResult ImportMarkerExcel(string cuttingID, string mDivisionid, string factoryID, string tableName)
+        public DualResult ImportMarkerExcel(string cuttingID, string mDivisionid, string factoryID, CuttingForm form)
         {
             this.CuttingPOID = cuttingID;
             this.MDivisionid = mDivisionid;
             this.FactoryID = factoryID;
-            this.TableName = tableName;
-
-            if (tableName == "WorkOrderForOutput")
-            {
-                // Cutting P09
-                this.TableMainKeyColName = "WorkOrderForOutputUkey";
-            }
-            else if (tableName == "WorkOrderForPlanning")
-            {
-                // Cutting P02
-                this.TableMainKeyColName = "WorkOrderForPlanningUkey";
-            }
 
             // 取得換算Rate
             this.inchToYdsRate = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup("SELECT dbo.GetUnitRate('Inch','YDS')"));
@@ -477,12 +437,22 @@ AND EXISTS (
 
             string filename = openFileDialog.FileName;
 
-            this.isNoMatchSP = true;
-
             try
             {
-                // 取得所有 WorkOrder 資料
+                // 取得Excel所有 WorkOrder 資料
                 List<WorkOrder> excelWk = this.LoadExcel(filename);
+
+                if (!excelWk.Any())
+                {
+                    MyUtility.Msg.InfoBox($"Excel not contain Cutting SP<{cuttingID}>");
+                    return new DualResult(true, "NotImport");
+                }
+
+                // Excel當中合法資料，可寫入DB
+                List<WorkOrder> validWk = new List<WorkOrder>();
+
+                // Excel當中非法資料，不寫入DB，用於顯示錯誤訊息
+                List<WorkOrder> inValidWk = new List<WorkOrder>();
 
                 if (!excelWk.Any())
                 {
@@ -503,18 +473,21 @@ AND EXISTS (
                     var poids = excelWk.Select(o => o.ID).Distinct().ToList();
                     var fabricPanelCodes = excelWk.Select(o => o.FabricPanelCode).Distinct().ToList();
                     var colorIDs = excelWk.Select(o => o.Colorid).Distinct().ToList();
-                    List<WorkOrder> compare = this.GetOrder_ColorComboInfoList(poids, fabricPanelCodes, colorIDs);
+                    var seq1s = excelWk.Select(o => o.SEQ1).Distinct().ToList();
+                    var seq2s = excelWk.Select(o => o.SEQ2).Distinct().ToList();
+
+                    // 檢查Excel 資料合法性，撈一次資料即可
+                    List<WorkOrder> compare = this.GetOrder_ColorComboInfoList(poids, seq1s, seq2s, fabricPanelCodes, colorIDs);
 
                     foreach (var e in excelWk)
                     {
-                        var firstCompare = compare.Where(o => o.ID == e.ID && o.FabricPanelCode == e.FabricPanelCode && o.Colorid == e.Colorid);
+                        var firstCompare = compare.Where(o => o.ID == e.ID && o.SEQ1 == e.SEQ1 && o.SEQ2 == e.SEQ2 && o.FabricPanelCode == e.FabricPanelCode && o.Colorid == e.Colorid);
                         if (!firstCompare.Any())
                         {
-                            return new DualResult(true, $"No data mapping in Order ColorCombo <Fabric Code>,<Color ID>: {e.FabricCode},{e.Colorid}.");
+                            inValidWk.Add(e);
+                            continue;
                         }
 
-                        e.SEQ1 = firstCompare.FirstOrDefault().SEQ1;
-                        e.SEQ2 = firstCompare.FirstOrDefault().SEQ2;
                         e.Refno = firstCompare.FirstOrDefault().Refno;
                         e.SCIRefno = firstCompare.FirstOrDefault().SCIRefno;
                         e.FabricCode = firstCompare.FirstOrDefault().FabricCode;
@@ -526,26 +499,33 @@ AND EXISTS (
                         e.Layer = layer;
                         e.CuttingLayer = firstCompare.FirstOrDefault().CuttingLayer;
 
-                        // Cons = garmentCnt * consPc * Layer
                         e.Cons = e.Cons * layer;
+
+                        validWk.Add(e);
                     }
 
-                    List<long> newWorkOrderUkey = this.InsertWorkOrder(excelWk, sqlConn);
-                    if (!newWorkOrderUkey.Any())
+                    if (validWk.Any())
                     {
-                        return new DualResult(true, $"Insert data Fail.");
-                    }
+                        // 合法資料開始寫入 WorkOrder、WorkOrder_PatternPanel、WorkOrder_SizeRati
+                        List<long> newWorkOrderUkey = this.InsertWorkOrder(validWk, sqlConn, form);
+                        if (!newWorkOrderUkey.Any())
+                        {
+                            return new DualResult(true, $"Insert data Fail.");
+                        }
 
-                    this.InsertWorkOrder_Distribute(newWorkOrderUkey, sqlConn);
+                        // 開始Distribute，P02則自動跳過
+                        this.InsertWorkOrder_Distribute(newWorkOrderUkey, sqlConn, form);
+                    }
 
                     transactionScope.Complete();
-                    transactionScope.Dispose();
                 }
 
-                if (this.isNoMatchSP)
+                if (inValidWk.Any())
                 {
-                    MyUtility.Msg.InfoBox($"Excel not contain Cutting SP<{cuttingID}>");
-                    return new DualResult(true, "NotImport");
+                    DataTable dt = ListToDataTable.ToDataTable(inValidWk);
+                    var f = new MsgGridForm(dt, "Invalid data in Order ColorCombo", $"Invalid data");
+                    f.grid1.ColumnsAutoSize();
+                    f.ShowDialog();
                 }
 
                 return new DualResult(true);
@@ -581,8 +561,6 @@ AND EXISTS (
                     Marshal.ReleaseComObject(worksheet);
                     continue;
                 }
-
-                this.isNoMatchSP = false;
 
                 // 開始檢查Excel
                 string keyWord_FabPanelCode = "Panel Code:";
@@ -651,8 +629,23 @@ AND EXISTS (
                     int markerRowCount = curDataStart_Y - curRowIndex - 6;
 
                     // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 curRowIndex
-                    //wk.FabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
                     string fabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
+
+                    // 取MarkerNo, Seq，在「Panel Code:」的上一Row
+                    string markerNo = worksheet.GetCellValue(6, curRowIndex - 1);
+                    string seq = worksheet.GetCellValue(11, curRowIndex - 1);
+                    string seq1, seq2;
+
+                    if (seq.Split('-').Length < 2)
+                    {
+                        seq1 = string.Empty;
+                        seq2 = string.Empty;
+                    }
+                    else
+                    {
+                        seq1 = seq.Split('-')[0];
+                        seq2 = seq.Split('-')[1];
+                    }
 
                     // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
                     if (MyUtility.Check.Empty(fabricPanelCode))
@@ -678,6 +671,9 @@ AND EXISTS (
                         WorkOrder nwk = new WorkOrder()
                         {
                             FabricPanelCode = fabricPanelCode,
+                            SEQ1 = seq1,
+                            SEQ2 = seq2,
+                            MarkerNo = markerNo,
                             ID = this.CuttingPOID,
                             FactoryID = this.FactoryID,
                             MDivisionId = this.MDivisionid,
@@ -786,7 +782,7 @@ AND EXISTS (
         /// <param name="fabricPanelCodes">Excel的FabricPanelCode</param>
         /// <param name="colorIDs">Excel的ColorID</param>
         /// <returns>組合好的物件</returns>
-        private List<WorkOrder> GetOrder_ColorComboInfoList(List<string> poIDs, List<string> fabricPanelCodes, List<string> colorIDs)
+        private List<WorkOrder> GetOrder_ColorComboInfoList(List<string> poIDs, List<string> seq1s, List<string> seq2s, List<string> fabricPanelCodes, List<string> colorIDs)
         {
             WorkOrder wk = new WorkOrder();
             string sqlGetWorkOrderInfo = $@"
@@ -808,6 +804,8 @@ WITH RankedOrders AS (
     inner join Fabric f with(nolock) ON ob.SCIRefno=f.SCIRefno
     left join Construction c on c.Id = f.ConstructionID and c.Junk = 0
     where oc.ID IN ('{poIDs.JoinToString("','")}' )
+    and psd.Seq1 IN ('{seq1s.JoinToString("','")}' ) 
+    and psd.Seq2 IN ('{seq2s.JoinToString("','")}' ) 
     and oc.FabricPanelCode IN ('{fabricPanelCodes.JoinToString("','")}' ) 
     and oc.ColorID IN ('{colorIDs.JoinToString("','")}' ) 
 )
@@ -842,9 +840,24 @@ WHERE rn = 1
         /// <param name="workOrders">組合好的物件</param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>新的WorkOrder的Ukey集合</returns>
-        private List<long> InsertWorkOrder(List<WorkOrder> workOrders, SqlConnection sqlConnection)
+        private List<long> InsertWorkOrder(List<WorkOrder> workOrders, SqlConnection sqlConnection, CuttingForm form)
         {
             List<long> listWorkOrderUkey = new List<long>();
+            string tableName = string.Empty;
+            string keyColumn = GetWorkOrderUkeyName(form);
+
+            switch (form)
+            {
+                case CuttingForm.P02:
+                    tableName = "WorkOrderForPlanning";
+                    break;
+                case CuttingForm.P09:
+                    tableName = "WorkOrderForOutput";
+                    break;
+                default:
+                    tableName = string.Empty;
+                    break;
+            }
 
             foreach (var wk in workOrders)
             {
@@ -864,7 +877,7 @@ WHERE rn = 1
                     string fabricPanelCode = itemPatternPanel[1].ToString();
 
                     sqlInsertWorkOrder_PatternPanel += $@"
-insert into {this.TableName}_PatternPanel(ID, {this.TableMainKeyColName}, PatternPanel, FabricPanelCode) 
+insert into {tableName}_PatternPanel(ID, {keyColumn}, PatternPanel, FabricPanelCode) 
 values('{this.CuttingPOID}', @newWorkOrderUkey, '{patternPanel}', '{fabricPanelCode}')";
                 }
 
@@ -873,7 +886,7 @@ values('{this.CuttingPOID}', @newWorkOrderUkey, '{patternPanel}', '{fabricPanelC
                 foreach (KeyValuePair<string, int> itemSizeRatio in wk.SizeRatio)
                 {
                     sqlInsertWorkOrder_SizeRatio += $@"
-insert into {this.TableName}_SizeRatio ({this.TableMainKeyColName}, ID, SizeCode, Qty)
+insert into {tableName}_SizeRatio ({keyColumn}, ID, SizeCode, Qty)
 values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
 ";
                 }
@@ -886,7 +899,7 @@ values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSi
                         new SqlParameter("@Cons",  wk.Cons),
                     };
                     string sqlInsertWorkOrder = $@"
-insert into {this.TableName}(
+insert into {tableName}(
 ID
 ,FactoryID
 ,MDivisionId
@@ -974,14 +987,21 @@ select @newWorkOrderUkey
         /// <param name="listWorkOrderUkey">新的WorkOrder的Ukey集合</param>
         /// <param name="sqlConnection">sqlConnection</param>
         /// <returns>結果</returns>
-        private DualResult InsertWorkOrder_Distribute(List<long> listWorkOrderUkey, SqlConnection sqlConnection)
+        private DualResult InsertWorkOrder_Distribute(List<long> listWorkOrderUkey, SqlConnection sqlConnection, CuttingForm form)
         {
+            // P02 不需要這一part
+            if (form == CuttingForm.P02)
+            {
+                return new DualResult(true);
+            }
+
+            string keyColumn = GetWorkOrderUkeyName(form);
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
 select w.Ukey, w.Colorid, w.FabricCombo, ws.SizeCode, [CutQty] = isnull(ws.Qty * w.Layer, 0)
 into #tmpCutting
-from {this.TableName} w with (nolock)
-inner join {this.TableName}_SizeRatio ws with (nolock) on ws.{this.TableMainKeyColName} = w.Ukey
+from WorkOrderForOutput w with (nolock)
+inner join WorkOrderForOutput_SizeRatio ws with (nolock) on ws.{keyColumn} = w.Ukey
 where w.Ukey in ({whereWorkOrderUkey})
 order by ukey
 
@@ -1046,7 +1066,7 @@ Qty > 0
                     drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
-insert into {this.TableName}_Distribute({this.TableMainKeyColName}, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute({keyColumn}, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{this.CuttingPOID}', '{drDistributeOrderQty["ID"]}', '{drDistributeOrderQty["Article"]}', '{itemDistribute["SizeCode"]}', '{distributrQty}')
 ";
                 }
@@ -1055,7 +1075,7 @@ values({itemDistribute["Ukey"]}, '{this.CuttingPOID}', '{drDistributeOrderQty["I
                 if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
-insert into {this.TableName}_Distribute({this.TableMainKeyColName}, ID, OrderID, Article, SizeCode, Qty)
+insert into WorkOrderForOutput_Distribute({keyColumn}, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{this.CuttingPOID}', 'EXCESS', '', '{itemDistribute["SizeCode"]}', '{itemDistribute["CutQty"]}')
 ";
                 }
