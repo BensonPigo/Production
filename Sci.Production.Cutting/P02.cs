@@ -80,6 +80,7 @@ namespace Sci.Production.Cutting
             this.detailgrid.CurrentCell = this.detailgrid[this.detailgrid.CurrentCell.ColumnIndex, this.detailgrid.CurrentCell.RowIndex];
             this.detailgrid.BeginEdit(true);
         }
+
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
@@ -223,6 +224,8 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             base.OnDetailEntered();
 
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
+
+            this.btnImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1";
 
             // Grid的Marker Length需要格式化後再貼上Grid cell
             foreach (DataRow row in this.DetailDatas)
@@ -506,6 +509,18 @@ DROP TABLE #tmp
         {
             return base.ClickPrint();
         }
+
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+
+            if (this.btnImportMarkerLectra != null)
+            {
+                this.btnImportMarkerLectra.Enabled = this.EditMode;
+            }
+        }
+
         #endregion
 
         #region Click Save Event
@@ -1647,8 +1662,18 @@ END";
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString());
-            frm.ShowDialog(this);
+            var dt = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => MyUtility.Check.Empty(o["CutPlanID"]));
+
+            if (dt.Any())
+            {
+                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString());
+                frm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No editable data.");
+            }
+
         }
 
         // 等待整合...

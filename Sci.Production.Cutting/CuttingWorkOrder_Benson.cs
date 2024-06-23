@@ -252,9 +252,12 @@ SELECT
    ,psd.Refno
    ,ColorID = ISNULL(psdc.SpecValue, '')
    ,psd.SCIRefno
+   ,psd.ID
+   ,obf.FabricCode
 FROM PO_Supp_Detail psd WITH (NOLOCK)
 INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
 INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Order_BOF obf on obf.ID = psd.ID
 WHERE psd.ID = '{id}'
 AND psd.Junk = 0
 AND EXISTS (
@@ -385,16 +388,15 @@ AND EXISTS (
             // 以全域變數的DataTable來校驗，避免多次回DB撈
             dt = dt_AllSeqRefnoColor.Copy();
 
-            dt.AsEnumerable().Where(o => o["ID"].ToString() == id
+            var res = dt.AsEnumerable().Where(o => o["ID"].ToString() == id
             && o["FabricCode"].ToString() == fabricCode
             && o["Seq1"].ToString() == seq1
             && o["Seq2"].ToString() == seq2
             && o["Refno"].ToString() == refno
-            && o["ColorID"].ToString() == colorID).TryCopyToDataTable(dt);
+            && o["ColorID"].ToString() == colorID);
 
-            if (dt.Rows.Count == 0)
+            if (!res.Any())
             {
-                MyUtility.Msg.WarningBox("Data not found!");
                 return false;
             }
 

@@ -547,6 +547,7 @@
             // 
             // btnBatchAssign
             // 
+            this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchAssign.Location = new System.Drawing.Point(327, 34);
             this.btnBatchAssign.Name = "btnBatchAssign";

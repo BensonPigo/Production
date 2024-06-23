@@ -27,6 +27,7 @@ namespace Sci.Production.Cutting
         private DataTable sp;
         private string Poid;
 
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA = new Ict.Win.UI.DataGridViewDateBoxColumn();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
 
@@ -40,7 +41,7 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.Poid = cuttingPoid;
             this.dt_OriDetail = detailTable;
-            this.dt_CurentDetail = detailTable.AsEnumerable().Where(o => MyUtility.Check.Empty(o["CutPlanID"])).CopyToDataTable();
+            this.dt_CurentDetail = detailTable;
             this.dt_CurentDetail.Columns.Add("Sel", typeof(bool));
             this.Gridsetup();
             this.BtnFilter_Click(null, null);  // 1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
@@ -56,7 +57,6 @@ namespace Sci.Production.Cutting
         private void Gridsetup()
         {
             DataGridViewGeneratorDateColumnSettings col_EstCutDate = new DataGridViewGeneratorDateColumnSettings();
-            Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA = new Ict.Win.UI.DataGridViewDateBoxColumn();
             Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength = new Ict.Win.UI.DataGridViewMaskedTextBoxColumn();
             Ict.Win.UI.DataGridViewTextBoxColumn col_MarkerNo = new Ict.Win.UI.DataGridViewTextBoxColumn();
 
@@ -78,72 +78,6 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            #region WKETA
-            // 這是P02的方法，先用原開窗方式試試看
-            //col_WKETA.EditingMouseDown += (s, e) =>
-            //{
-            //    DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-            //    if (e.Button == MouseButtons.Right)
-            //    {
-            //        P02_WKETA item = new P02_WKETA(dr);
-            //        DialogResult result = item.ShowDialog();
-            //        switch (result)
-            //        {
-            //            case DialogResult.Cancel:
-            //                break;
-            //            case DialogResult.Yes:
-            //                dr["WKETA"] = Itemx.WKETA;
-            //                break;
-            //            case DialogResult.No:
-            //                dr["WKETA"] = DBNull.Value;
-            //                break;
-            //        }
-
-            //        dr.EndEdit();
-            //    }
-            //};
-
-            // col_wketa.Width = 97;
-            col_WKETA.EditingControlShowing += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && this.EditMode)
-                {
-                    ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
-                    ((Ict.Win.UI.DateBox)e.Control).Enabled = true;
-                }
-                else
-                {
-                    ((Ict.Win.UI.DateBox)e.Control).ReadOnly = true;
-                    ((Ict.Win.UI.DateBox)e.Control).Enabled = false;
-                }
-            };
-            col_WKETA.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-            };
-            #endregion
-
             col_MarkerLength.CellValidating += (s, e) =>
             {
                 DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
@@ -163,8 +97,8 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            this.gridBatchAssignCellEstCutDate.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
-            this.Helper.Controls.Grid.Generator(this.gridBatchAssignCellEstCutDate)
+            this.gridBatchAssign.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
              .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
              .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
              .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5))
@@ -186,15 +120,15 @@ namespace Sci.Production.Cutting
              .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_MarkerNo);
 
-            this.gridBatchAssignCellEstCutDate.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["MarkerName"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["MarkerName"].DefaultCellStyle.ForeColor = Color.Red;
-            this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.ForeColor = Color.Red;
-            this.gridBatchAssignCellEstCutDate.Columns["EstCutDate"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["EstCutDate"].DefaultCellStyle.ForeColor = Color.Red;
-            this.gridBatchAssignCellEstCutDate.Columns["Tone"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridBatchAssignCellEstCutDate.Columns["Tone"].DefaultCellStyle.ForeColor = Color.Red;
+            //this.gridBatchAssign.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.gridBatchAssign.Columns["MarkerName"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.gridBatchAssign.Columns["MarkerName"].DefaultCellStyle.ForeColor = Color.Red;
+            ////this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.BackColor = Color.Pink;
+            ////this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.ForeColor = Color.Red;
+            //this.gridBatchAssign.Columns["EstCutDate"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.gridBatchAssign.Columns["EstCutDate"].DefaultCellStyle.ForeColor = Color.Red;
+            //this.gridBatchAssign.Columns["Tone"].DefaultCellStyle.BackColor = Color.Pink;
+            //this.gridBatchAssign.Columns["Tone"].DefaultCellStyle.ForeColor = Color.Red;
 
             this.GridEventSet();
             this.Filter();
@@ -211,32 +145,32 @@ namespace Sci.Production.Cutting
             string article = this.txtArticle.Text;
             string markername = this.txtMarkerName.Text;
             string sizecode = this.txtSizeCode.Text;
-            string fabriccombo = this.txtFabricCombo.Text;
+            string fabricpanelcode = this.txtFabricPanelCode.Text;
             string estCutDate = this.txtEstCutDate.Text.ToString();
-            string filter = "(cutref is null or cutref = '') and (cutplanid is null or cutplanid = '') ";
+            string filter = " 1=1 ";
             if (!MyUtility.Check.Empty(sp))
             {
-                filter = filter + string.Format(" and OrderID ='{0}'", sp);
+                filter = filter + string.Format(" and OrderId ='{0}'", sp);
             }
 
             if (!MyUtility.Check.Empty(article))
             {
-                filter = filter + string.Format(" and article like '%{0}%'", article);
+                filter = filter + string.Format(" and Article like '%{0}%'", article);
             }
 
             if (!MyUtility.Check.Empty(markername))
             {
-                filter = filter + string.Format(" and markername ='{0}'", markername);
+                filter = filter + string.Format(" and MarkerName ='{0}'", markername);
             }
 
             if (!MyUtility.Check.Empty(sizecode))
             {
-                filter = filter + string.Format(" and sizecode like '%{0}%'", sizecode);
+                filter = filter + string.Format(" and SizeCode_CONCAT like '%{0}%'", sizecode);
             }
 
-            if (!MyUtility.Check.Empty(fabriccombo))
+            if (!MyUtility.Check.Empty(fabricpanelcode))
             {
-                filter = filter + string.Format(" and fabriccombo ='{0}'", fabriccombo);
+                filter = filter + string.Format(" and FabricPanelCode_CONCAT like'{0}'", fabricpanelcode);
             }
 
             if (!MyUtility.Check.Empty(this.txtEstCutDate.Value))
@@ -250,7 +184,7 @@ namespace Sci.Production.Cutting
             }
 
             this.dt_CurentDetail.DefaultView.RowFilter = filter;
-            this.gridBatchAssignCellEstCutDate.DataSource = this.dt_CurentDetail;
+            this.gridBatchAssign.DataSource = this.dt_CurentDetail;
         }
 
         private void BtnClose_Click(object sender, EventArgs e)
@@ -260,72 +194,47 @@ namespace Sci.Production.Cutting
 
         private void BtnBatchUpdate_Click(object sender, EventArgs e)
         {
-            this.gridBatchAssignCellEstCutDate.ValidateControl();
-            string cdate = string.Empty;
+            this.gridBatchAssign.ValidateControl();
+            string estCutDate = string.Empty;
             if (!MyUtility.Check.Empty(this.txtBatchUpdateEstCutDate.Value))
             {
-                cdate = this.txtBatchUpdateEstCutDate.Text;
+                estCutDate = this.txtBatchUpdateEstCutDate.Text;
             }
 
-            // Est. Cut Date
-            foreach (DataRow dr in this.dt_CurentDetail.Rows)
+            if (!string.IsNullOrEmpty(estCutDate))
             {
-                if (dr.RowState == DataRowState.Deleted)
+                // Est. Cut Date
+                foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    continue;
-                }
-
-                if (dr["Sel"].ToString() == "True")
-                {
-                    if (cdate != string.Empty)
+                    if (dr.RowState == DataRowState.Deleted)
                     {
-                        dr["EstCutDate"] = cdate;
+                        continue;
                     }
-                    else
+
+                    if (dr["Sel"].ToString() == "True")
                     {
-                        dr["EstCutDate"] = DBNull.Value;
+                        if (estCutDate != string.Empty)
+                        {
+                            dr["EstCutDate"] = MyUtility.Convert.GetDate(estCutDate);
+                        }
+                        else
+                        {
+                            dr["EstCutDate"] = DBNull.Value;
+                        }
                     }
                 }
+
             }
 
-            // Wk ETA
-            string wkETA = string.Empty;
-            if (!MyUtility.Check.Empty(this.dateBoxWKETA.Value))
-            {
-                wkETA = this.dateBoxWKETA.Text;
-            }
-
-            DataRow[] drSelect = this.dt_CurentDetail.Select("Sel = 1");
-            foreach (DataRow dr in drSelect)
-            {
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    continue;
-                }
-
-                string sqlcmdChk = $@"
-select 1
-From Export_Detail ED 
-INNER JOIN Export E ON E.ID = ED.ID
-where ED.poid='{dr["id"]}' 
-and ED.seq1 ='{dr["Seq1"]}' and ED.seq2='{dr["seq2"]}'
-and e.ETA = '{wkETA}'
-";
-                if (MyUtility.Check.Seek(sqlcmdChk))
-                {
-                    dr["WKETA"] = wkETA;
-                }
-                else
-                {
-                    dr["WKETA"] = DBNull.Value;
-                }
-            }
-
-            this.gridBatchAssignCellEstCutDate.ValidateControl();
-
-            // Seq
+            // Seq、WK ETA (Seq會影響 WK ETA，因此一併判斷+寫入)
             string seq1 = this.txtSeq1.Text;
             string seq2 = this.txtSeq2.Text;
+            string wkETA = string.Empty;
+            if (!MyUtility.Check.Empty(this.txtWKETA.Text))
+            {
+                wkETA = this.txtWKETA.Text;
+            }
+
             if (!MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2))
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
@@ -335,8 +244,8 @@ and e.ETA = '{wkETA}'
                         continue;
                     }
 
-                    // FabricPanelCode、Refno、Colorid 為空不可新增Seq，同P02 Grid驗證方式
-                    if (!MyUtility.Check.Empty(dr["FabricPanelCode"]) || !MyUtility.Check.Empty(dr["Refno"]) || !MyUtility.Check.Empty(dr["Colorid"]))
+                    // FabricCode、Refno、Colorid 為空不可新增Seq，同P02 Grid驗證方式
+                    if (MyUtility.Check.Empty(dr["FabricCode"]) || MyUtility.Check.Empty(dr["Refno"]) || MyUtility.Check.Empty(dr["Colorid"]))
                     {
                         continue;
                     }
@@ -344,12 +253,17 @@ and e.ETA = '{wkETA}'
                     if (dr["Sel"].ToString() == "True")
                     {
                         // 逐一檢查Seq 正確性
-                        bool isValid = ValidatingSeqWithoutFabricCode(this.Poid, dr["FabricPanelCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
+                        bool isValid = ValidatingSeqWithoutFabricCode(this.Poid, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
 
                         if (isValid)
                         {
                             dr["Seq1"] = seq1;
                             dr["Seq2"] = seq2;
+
+                            if (!string.IsNullOrEmpty(wkETA))
+                            {
+                                dr["WKETA"] = MyUtility.Convert.GetDate(wkETA);
+                            }
                         }
 
                         dr.EndEdit();
@@ -377,7 +291,7 @@ and e.ETA = '{wkETA}'
             }
 
             // Marker Length
-            if (!MyUtility.Check.Empty(markerLength))
+            if (markerLength != "00Y00-0/0+0\"" && markerLength != "Y  - / + \"")
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
@@ -396,7 +310,7 @@ and e.ETA = '{wkETA}'
 
         private void BtnConfirm_Click(object sender, EventArgs e)
         {
-            this.gridBatchAssignCellEstCutDate.ValidateControl();
+            this.gridBatchAssign.ValidateControl();
 
             foreach (DataRow dr in this.dt_CurentDetail.Rows)
             {
@@ -469,6 +383,9 @@ and e.ETA = '{wkETA}'
             {
                 DataTable filter = GetFilterAllSeqRefnoColor(this.Poid, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
 
+                // Seq 會影響WK ETA，因此一併清除
+                this.txtWKETA.Text = string.Empty;
+
                 // 這邊的驗證無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
                 if (MyUtility.Check.Empty(filter) || filter.Rows.Count == 0)
                 {
@@ -491,6 +408,9 @@ and e.ETA = '{wkETA}'
             {
                 DataTable filter = GetFilterAllSeqRefnoColor(this.Poid, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
 
+                // Seq 會影響WK ETA，因此一併清除
+                this.txtWKETA.Text = string.Empty;
+
                 // 這邊的驗證無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
                 if (MyUtility.Check.Empty(filter) || filter.Rows.Count == 0)
                 {
@@ -506,11 +426,13 @@ and e.ETA = '{wkETA}'
         {
             // 這邊的開窗無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
             SelectItem item = PopupAllSeqRefnoColor(this.Poid);
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
+            if (item == null)
             {
                 return;
             }
+
+            // Seq 會影響WK ETA，因此一併清除
+            this.txtWKETA.Text = string.Empty;
 
             this.txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
             this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
@@ -526,6 +448,9 @@ and e.ETA = '{wkETA}'
                 return;
             }
 
+            // Seq 會影響WK ETA，因此一併清除
+            this.txtWKETA.Text = string.Empty;
+
             this.txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
             this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
         }
@@ -538,20 +463,74 @@ and e.ETA = '{wkETA}'
             }
         }
 
+        private void TxtWKETA_Click(object sender, EventArgs e)
+        {
+            DataTable dt = this.dt_CurentDetail.Clone();
+            DataRow dr = dt.NewRow();
+            dr["ID"] = this.Poid;
+            dr["Seq1"] = this.txtSeq1.Text;
+            dr["Seq2"] = this.txtSeq2.Text;
+            P02_WKETA item = new P02_WKETA(dr);
+            DialogResult result = item.ShowDialog();
+            switch (result)
+            {
+                case DialogResult.Cancel:
+                    break;
+                case DialogResult.Yes:
+                    this.txtWKETA.Text = Itemx.WKETA.HasValue ? Itemx.WKETA.Value.ToString("yyyy/MM/dd") : string.Empty;
+                    break;
+                case DialogResult.No:
+                    this.txtWKETA.Text = null;
+                    break;
+            }
+        }
         #endregion
 
-        #region 單筆資料的欄位開窗/驗證
+        #region Grid 單筆資料的欄位開窗/驗證
         private void GridEventSet()
         {
+            // 可否編輯 && 顏色
+            ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDatByGrid);
             this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
             this.col_Seq2.EditingMouseDown += this.SeqCellEditingMouseDown;
             this.col_Seq1.CellValidating += this.SeqCelllValidatingHandler;
             this.col_Seq2.CellValidating += this.SeqCelllValidatingHandler;
+
+            this.col_WKETA.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
+
+                P02_WKETA item = new P02_WKETA(dr);
+                DialogResult result = item.ShowDialog();
+                switch (result)
+                {
+                    case DialogResult.Cancel:
+                        break;
+                    case DialogResult.Yes:
+                        dr["WKETA"] = Itemx.WKETA;
+                        break;
+                    case DialogResult.No:
+                        dr["WKETA"] = DBNull.Value;
+                        break;
+                }
+
+                dr.EndEdit();
+            };
+            this.col_WKETA.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                e.CellStyle.BackColor = Color.Pink;
+                e.CellStyle.ForeColor = Color.Red;
+            };
         }
 
         private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
         {
-            DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+            DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
 
             if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
@@ -559,7 +538,7 @@ and e.ETA = '{wkETA}'
                 return;
             }
 
-            string columnName = this.gridBatchAssignCellEstCutDate.Columns[e.ColumnIndex].Name;
+            string columnName = this.gridBatchAssign.Columns[e.ColumnIndex].Name;
             string id = this.Poid;
             string fabricCode = dr["FabricCode"].ToString();
             string seq1 = string.Empty; // dr["SEQ1"].ToString();
@@ -591,9 +570,9 @@ and e.ETA = '{wkETA}'
 
         private void SeqCelllValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
-            DataRow dr = this.gridBatchAssignCellEstCutDate.GetDataRow(e.RowIndex);
+            DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
 
-            string columnName = this.gridBatchAssignCellEstCutDate.Columns[e.ColumnIndex].Name;
+            string columnName = this.gridBatchAssign.Columns[e.ColumnIndex].Name;
 
             if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
@@ -643,5 +622,11 @@ and e.ETA = '{wkETA}'
             dr.EndEdit();
         }
         #endregion
+
+        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        {
+            return true;
+        }
+
     }
 }
