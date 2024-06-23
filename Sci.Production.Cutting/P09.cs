@@ -1434,7 +1434,11 @@ DEALLOCATE CURSOR_
                 }
 
                 dr["SpreadingNoID"] = e.FormattedValue;
-                dr["CutCellID"] = drV["CutCellID"];
+                if (drV != null)
+                {
+                    dr["CutCellID"] = drV["CutCellID"];
+                }
+
                 dr.EndEdit();
             };
 
