@@ -23,6 +23,7 @@
 		[MarkerNo] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerNo] DEFAULT '',
 		[MarkerName] [varchar] (20) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerName] DEFAULT '',
 		[MarkerLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerLength] DEFAULT '',
+		[MarkerVersion] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerVersion] DEFAULT '',
 		[ActCuttingPerimeter] [nvarchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_ActCuttingPerimeter] DEFAULT '',
 		[StraightLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_StraightLength] DEFAULT '',
 		[CurvedLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CurvedLength] DEFAULT '',
@@ -98,6 +99,8 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerName'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerLength'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克版本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerVersion'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際裁剪碼長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'ActCuttingPerimeter'
 	GO
