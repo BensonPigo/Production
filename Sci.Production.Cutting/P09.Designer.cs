@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.numCons = new Sci.Win.UI.NumericBox();
             this.numConsPC = new Sci.Win.UI.NumericBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label10 = new System.Windows.Forms.Label();
@@ -82,7 +83,6 @@
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.numCons = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -256,6 +256,28 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(435, 614);
             this.panel1.TabIndex = 4;
+            // 
+            // numCons
+            // 
+            this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCons.DecimalPlaces = 4;
+            this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCons.IsSupportEditMode = false;
+            this.numCons.Location = new System.Drawing.Point(247, 102);
+            this.numCons.Name = "numCons";
+            this.numCons.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCons.ReadOnly = true;
+            this.numCons.Size = new System.Drawing.Size(180, 23);
+            this.numCons.TabIndex = 32;
+            this.numCons.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // numConsPC
             // 
@@ -811,28 +833,6 @@
             this.BackgroundWorker1.WorkerReportsProgress = true;
             this.BackgroundWorker1.WorkerSupportsCancellation = true;
             this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-            // 
-            // numCons
-            // 
-            this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numCons.DecimalPlaces = 4;
-            this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numCons.IsSupportEditMode = false;
-            this.numCons.Location = new System.Drawing.Point(247, 102);
-            this.numCons.Name = "numCons";
-            this.numCons.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numCons.ReadOnly = true;
-            this.numCons.Size = new System.Drawing.Size(180, 23);
-            this.numCons.TabIndex = 32;
-            this.numCons.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
             // 
             // P09
             // 

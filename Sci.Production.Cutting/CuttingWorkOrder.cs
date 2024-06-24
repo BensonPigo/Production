@@ -462,6 +462,37 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
             return true;
         }
 
+        public static bool CheckDuplicateAndShowMessage(DataTable checkDt, List<string> columnsToCheck, string msgDt, IList<DataRow> detailDatas)
+        {
+            if (!Prgs.CheckForDuplicateKeys(checkDt, columnsToCheck, out DataTable dtCheck))
+            {
+                var duplicateCutRefs = new HashSet<string>();
+
+                foreach (DataRow row in dtCheck.Rows)
+                {
+                    int workOrderForOutputUkey = MyUtility.Convert.GetInt(row["WorkOrderForOutputUkey"]);
+                    int tmpKey = MyUtility.Convert.GetInt(row["tmpKey"]);
+
+                    var matchingDetailData = detailDatas.FirstOrDefault(dr => MyUtility.Convert.GetInt(dr["WorkOrderForOutputUkey"]) == workOrderForOutputUkey && MyUtility.Convert.GetInt(dr["tmpKey"]) == tmpKey);
+
+                    if (matchingDetailData != null)
+                    {
+                        string cutRef = matchingDetailData["CutRef"].ToString();
+                        duplicateCutRefs.Add(cutRef);
+                    }
+                }
+
+                if (duplicateCutRefs.Any())
+                {
+                    string cutRefs = string.Join(", ", duplicateCutRefs);
+                    MyUtility.Msg.WarningBox($"The {msgDt}} duplicate, Please see below <CutRef>:{cutRefs}");
+                }
+
+                return false;
+            }
+
+            return true;
+        }
         #endregion
 
         #region Seq1,Seq2,Refno,Color 開窗/驗證

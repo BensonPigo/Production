@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Ict.Win.UI;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.Class;
@@ -15,7 +14,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -417,12 +415,6 @@ DROP TABLE #tmp
 
             this.ChangeQtyBreakDownRow();
         }
-
-        private void ReLoadDetail()
-        {
-            this.RenewData();
-            this.OnDetailEntered();
-        }
         #endregion
 
         #region Grid 連動
@@ -493,7 +485,7 @@ DROP TABLE #tmp
         #region Import 與 Save 刪除/新增 與 AGV
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
         {
-            this.ReLoadDetail();
+            this.OnRefreshClick();
             List<string> listCutref = this.DetailDatas.AsEnumerable().Where(r => !MyUtility.Check.Empty(r["CutRef"])).Select(r => MyUtility.Convert.GetString(r["CutRef"])).ToList();
 
             #region 校驗
@@ -610,7 +602,7 @@ SELECT
     ,WorkOrderForPlanning.Seq1
     ,WorkOrderForPlanning.Seq2
     ,WorkOrderForPlanning.CutRef
-    ,''--CutNo
+    ,NULL--CutNo
     ,''--OrderID 在寫入 WorkOrderForOutput_Distribute 之後,取最小的填入
     ,WorkOrderForPlanning.RefNo
     ,WorkOrderForPlanning.SCIRefNo
@@ -634,7 +626,7 @@ SELECT
     ,''--SpreadingNoID
     ,''--UnfinishedCuttingReason
     ,WorkOrderForPlanning.IsCreateByUser
-    ,''--SpreadingStatus
+    ,'Ready'--SpreadingStatus
     ,''--SpreadingRemark
     ,''--GroupID
     ,WorkOrderForPlanning.Ukey
@@ -664,6 +656,7 @@ SELECT
     WorkOrderForPlanning_PatternPanel.FabricPanelCode
 FROM WorkOrderForOutput
 JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
+WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
 
             // 4.WorkOrderForOutput_SizeRatio
@@ -681,6 +674,7 @@ SELECT
     WorkOrderForPlanning_SizeRatio.Qty
 FROM WorkOrderForOutput
 JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
+WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
 
             // 撈出所有 Ukey 後續分配 Distribute
@@ -694,8 +688,8 @@ ORDER BY Ukey
             // Distribute 寫入之後才執行
             string sqlUpdateOrderID = $@"
 UPDATE WorkOrderForOutput
-SET OrderID = (SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS')
-WHERE ID = ''
+SET OrderID = ISNULL((SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS'), '')
+WHERE ID = '{this.CurrentMaintain["ID"]}'
 ";
 
             DualResult result = DBProxy._OpenConnection(null, out SqlConnection sqlConn);
@@ -761,7 +755,7 @@ WHERE ID = ''
             this.SentChangeDataToGuozi_AGV(this.dtWorkOrderForOutput_Distribute);
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, new List<long>(), dtDelete[1]);
 
-            this.ReLoadDetail();
+            this.OnRefreshClick();
             MyUtility.Msg.InfoBox("Import successful");
         }
 
@@ -800,24 +794,21 @@ WHERE ID = ''
             this.dtWorkOrderForOutput_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
 
             // 檢查 第3層 重複 Key
-            var checkSizeRatio = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" };
-            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, out DataTable dtCheck))
+            var checkSizeRatio = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas))
             {
-                MyUtility.Msg.WarningBox("The SizeRatio duplicate ,Please see below <Ukey>");
                 return false;
             }
 
-            var checkDistribute = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "OrderID", "Article", "SizeCode" };
-            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_Distribute, checkDistribute, out dtCheck))
+            var checkDistribute = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "OrderID", "Article", "SizeCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_Distribute, checkDistribute, "Distribute", this.DetailDatas))
             {
-                MyUtility.Msg.WarningBox("The Distribute duplicate ,Please see below <Ukey>");
                 return false;
             }
 
-            var checkPatternPanel = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "PatternPanel", "FabricPanelCode" };
-            if (!Prgs.CheckForDuplicateKeys(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, out dtCheck))
+            var checkPatternPanel = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "PatternPanel", "FabricPanelCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas))
             {
-                MyUtility.Msg.WarningBox("The PatternPanel duplicate ,Please see below <Ukey>");
                 return false;
             }
 
@@ -1840,11 +1831,6 @@ DEALLOCATE CURSOR_
 
         private bool CheckAndMsg(string actrion)
         {
-            if (MyUtility.Check.Empty(this.CurrentDetailData["CutRef"]))
-            {
-                return true;
-            }
-
             // 前 3 個都是及時去 DB 撈資料判斷, 並彈出訊息
             // 1. 存在 P10 Bundle
             string msg = $"The following bundle data exists and cannot be {actrion}. If you need to {actrion}, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";

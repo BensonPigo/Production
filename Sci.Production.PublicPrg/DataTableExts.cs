@@ -23,21 +23,30 @@ namespace Sci.Production.PublicPrg
         /// <returns>bool</returns>
         public static bool CheckForDuplicateKeys(DataTable dataTable, List<string> columnsToCheck, out DataTable dt)
         {
+            dt = dataTable.Clone(); // 先複製結構
+
             if (dataTable == null || columnsToCheck == null || columnsToCheck.Count == 0)
             {
                 dt = null;
                 return false; // 如果 DataTable 或欄位清單為空，直接返回 false, 正常要給,不然呼叫幹啥
             }
 
-            var duplicateKeys = dataTable.AsEnumerable()
+            var duplicateRows = dataTable.AsEnumerable()
                 .Where(row => row.RowState != DataRowState.Deleted)
                 .GroupBy(row => string.Join("|", columnsToCheck.Select(col => row[col].ToString())))
                 .Where(group => group.Count() > 1)
-                .Select(group => group.Key)
+                .SelectMany(group => group) // 選取所有重複的行
                 .ToList();
 
-            dt = duplicateKeys.ToDataTable();
-            return duplicateKeys.Count == 0;
+            if (duplicateRows.Any())
+            {
+                foreach (var row in duplicateRows)
+                {
+                    dt.ImportRow(row); // 將重複的Row加入
+                }
+            }
+
+            return duplicateRows.Count == 0;
         }
     }
 }
