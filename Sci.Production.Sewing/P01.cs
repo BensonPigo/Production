@@ -37,8 +37,6 @@ namespace Sci.Production.Sewing
         private decimal? oldManHour;
         private DataTable rftDT;
 
-        private DataTable beforeDataTable;
-
         /// <summary>
         /// P01
         /// </summary>
@@ -50,7 +48,6 @@ namespace Sci.Production.Sewing
             this.DefaultFilter = string.Format("FactoryID = '{0}' and Category = 'O' and OutputDate >= '2023/01/01'", Env.User.Factory);
             this.comboSewingTeam1.SetDataSource();
             this.DoSubForm = new P01_QAOutput(this);
-            this.beforeDataTable = new DataTable();
 
             // 當Grid目前在最後一筆的最後一欄時，按Enter要自動新增一筆Record
             this.detailgrid.StatusNotification += (s, e) =>
@@ -1467,6 +1464,12 @@ order by a.OrderId,os.Seq",
             // 第3層SewingOutput_Detail_Detail刪除,以當前SewingOutput_DetailUKey為條件
             string sqlcmdD = "Delete SewingOutput_Detail_Detail where SewingOutput_DetailUKey = @K";
             List<SqlParameter> ps = new List<SqlParameter>();
+            if (this.CurrentDetailData == null)
+            {
+                MyUtility.Msg.WarningBox("Cannot delete since Detail is empty. Please inform MIS.");
+                return false;
+            }
+
             ps.Add(new SqlParameter("@K", this.CurrentDetailData["Ukey"]));
             if (!(result = DBProxy.Current.Execute(null, sqlcmdD, ps)))
             {
@@ -2257,31 +2260,24 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
             }
             #endregion
 
-            if (this.beforeDataTable.Rows.Count > 0)
+            DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
+
+
+            string sqlcmd = string.Empty;
+
+            for (int i = 0; i < deleteDataTable.Rows.Count; i++)
             {
-                string sqlcmd = $@"
-                DELETE SewingOutput_Detail
-                from　SewingOutput_Detail sod
-                inner join #tmp t on t.ukey = sod.ukey";
-                var dual = MyUtility.Tool.ProcessWithDatatable(this.beforeDataTable, string.Empty, sqlcmd, out DataTable sewDt1);
+                if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
+                {
+                    var ukey = deleteDataTable.Rows[i]["Ukey", DataRowVersion.Original];
+
+                    sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
+                }
             }
+            var dual = DBProxy.Current.Execute(null, sqlcmd);
 
             return base.ClickSavePost();
         }
-
-        protected override void OnDetailGridRemoveClick()
-        {
-            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
-            {
-                return;
-            }
-
-            this.detailgrid.ValidateControl();
-            this.beforeDataTable = this.DetailDatas.CopyToDataTable();
-
-            base.OnDetailGridRemoveClick();
-        }
-
 
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
