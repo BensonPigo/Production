@@ -100,8 +100,8 @@ namespace Sci.Production.Cutting
             {
                 string size_cmd = $@"
 Select b.sizecode,isnull(sum(b.Qty),0)  as Qty 
-from Workorder a WITH (NOLOCK) 
-inner join Workorder_distribute b WITH (NOLOCK) on a.ukey = b.workorderukey
+from WorkOrderForOutput a WITH (NOLOCK) 
+inner join WorkOrderForOutput_distribute b WITH (NOLOCK) on a.ukey = b.WorkOrderForOutputukey
 where a.cutref='{cutref}' and b.orderid='{maindr["Orderid"]}'
 group by sizeCode
 ";
@@ -488,7 +488,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{this.maindatarow["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.maindatarow["Cutref"]}' )
+and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRef='{this.maindatarow["Cutref"]}' )
 ";
                 SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                 DialogResult result = sele.ShowDialog();

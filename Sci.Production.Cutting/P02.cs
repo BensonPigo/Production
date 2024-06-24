@@ -3903,19 +3903,6 @@ and SEQ1='{this.CurrentDetailData["Seq1"]}' and SEQ2='{this.CurrentDetailData["S
             }
         }
 
-        private void BtnCutplanChangeHistory_Click(object sender, EventArgs e)
-        {
-            if (this.callP07 != null && this.callP07.Visible == true)
-            {
-                this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
-                this.callP07.Activate();
-            }
-            else
-            {
-                this.P07FormOpen();
-            }
-        }
-
         // Quantity Breakdown
         private void Qtybreak_Click(object sender, EventArgs e)
         {
@@ -4104,48 +4091,6 @@ and MDivisionID = '{this.KeyWord}'");
             this.Sorting(this.comboBox1.Text);
         }
 
-        private P07 callP07 = null;
-
-        private void P07FormOpen()
-        {
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form is P07)
-                {
-                    form.Activate();
-                    P07 activateForm = (P07)form;
-                    activateForm.SetTxtSPNo(this.CurrentMaintain["ID"].ToString());
-                    activateForm.Queryable();
-                    return;
-                }
-            }
-
-            ToolStripMenuItem p07MenuItem = null;
-            foreach (ToolStripMenuItem toolMenuItem in Sci.Env.App.MainMenuStrip.Items)
-            {
-                if (toolMenuItem.Text.EqualString("Cutting"))
-                {
-                    foreach (var subMenuItem in toolMenuItem.DropDown.Items)
-                    {
-                        if (subMenuItem.GetType().Equals(typeof(ToolStripMenuItem)))
-                        {
-                            if (((ToolStripMenuItem)subMenuItem).Text.EqualString("P07. Query for Change Est. Cut Date Record"))
-                            {
-                                p07MenuItem = (ToolStripMenuItem)subMenuItem;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            this.callP07 = new P07(p07MenuItem)
-            {
-                MdiParent = this.MdiParent,
-            };
-            this.callP07.Show();
-            this.callP07.P07Data(this.CurrentMaintain["ID"].ToString());
-        }
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {

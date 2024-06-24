@@ -198,7 +198,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{dr["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}' )
+and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}' )
 ";
                 SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                 DialogResult result = sele.ShowDialog();
@@ -942,7 +942,7 @@ Select
 	, w.Ukey
 	, FabricKind.FabricKind
 	, FabricKind.FabricKindID
-	, TTLCutQty = (select SUM(qty) from WorkOrder_Distribute wd with(nolock) where wd.WorkOrderUkey = w.Ukey {distru_where})
+	, TTLCutQty = (select SUM(qty) from WorkOrderForOutput_Distribute wd with(nolock) where wd.WorkOrderForOutputUkey = w.Ukey {distru_where})
 	, CreatedBundleQty = isnull((select SUM(bdq.qty) from Bundle wd with(nolock) inner join bundle_detail_Qty bdq on bdq.id = wd.id where wd.cutref = w.cutref), 0)
     , o.StyleUkey
 	, w.MDivisionId
@@ -950,7 +950,7 @@ Select
     , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
     , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
     , w.Tone
-from  workorder w WITH (NOLOCK) 
+from  WorkOrderForOutput w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	Select item = Reason.Name 
@@ -959,7 +959,7 @@ outer apply(
 	where Reason.Reasontypeid = 'Style_Apparel_Type' 
 	and Style.ukey = o.styleukey 
 )item
-outer apply (SELECT TOP 1 wd.patternpanel FROM workorder_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.workorderukey)wd
+outer apply (SELECT TOP 1 wd.patternpanel FROM WorkOrderForOutput_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.WorkOrderForOutputUkey)wd
 outer apply(
     SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME, FabricKindID = DD.id
     FROM order_colorcombo OCC WITH (NOLOCK)
@@ -1017,19 +1017,19 @@ Select
 	, w.MDivisionId
     , BuyerDelivery = (select BuyerDelivery from orders o2 where o2.id = OrderID.OrderID)
 into #tmp
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
-	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = wd.SizeCode 
+	from WorkOrderForOutput_Distribute wd WITH(NOLOCK)
+	where wd.WorkOrderForOutputUkey = w.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = wd.SizeCode 
 	order by wd.OrderID desc
 )l
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
-	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS'
+	from WorkOrderForOutput_Distribute wd WITH(NOLOCK)
+	where wd.WorkOrderForOutputUkey = w.Ukey and wd.orderid <>'EXCESS'
 	order by wd.OrderID desc
 )l2
 outer apply(select OrderID = iif(wd.OrderID = 'EXCESS', isnull(l.orderid,l2.OrderID), wd.OrderID))OrderID
@@ -1192,10 +1192,10 @@ drop table #tmp, #msfa, #bundleinfo, #bundleSPCreatedQty, #tmp_Bundle ,#tmp_Bund
 
             string sizeRatio = $@"
 Select distinct w.ukey, ws.SizeCode, ws.Qty
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on  o.ID = w.id and o.cuttingsp = w.id
-inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = w.Ukey and ws.SizeCode = wd.SizeCode
+inner join WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderForOutputUkey = w.Ukey and ws.SizeCode = wd.SizeCode
 Where isnull(w.CutRef,'') <> '' 
 and o.mDivisionid = '{this.keyWord}'
 {where}
@@ -1352,7 +1352,7 @@ and o.mDivisionid = '{this.keyWord}'
         {
             // by Article, Size 整理出中上 No of Bundle 的資料表, 並從 1 開始依序給 No 值 (index). 唯一值:Ukey, No
             var result = this.ArticleSizeTb.AsEnumerable()
-                .GroupBy(s => new { Ukey = (long)s["Ukey"], No = (long)s["No"], POID = s["POID"].ToString(), Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
+                .GroupBy(s => new { Ukey = (int)s["Ukey"], No = (long)s["No"] , POID = s["POID"].ToString() , Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
                 .Select((g, i) => new
                 {
                     g.Key.Ukey,
@@ -1371,15 +1371,15 @@ and o.mDivisionid = '{this.keyWord}'
                 .ThenBy(o => o.SizeCode)
                 .ToList();
 
-            return ListToDataTable.ToDataTable(result);
+             return ListToDataTable.ToDataTable(result);
         }
 
         private void ShowExcessDatas(string where)
         {
             string excess_cmd = $@"
 Select distinct w.cutref, w.orderid
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputUkey
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 Where o.mDivisionid = '{this.keyWord}'   
 and isnull(w.CutRef,'') <> '' 

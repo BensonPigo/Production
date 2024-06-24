@@ -34,7 +34,7 @@ namespace Sci.Production.Cutting
             ,[WeaveTypeID] = f.WeaveTypeID
             ,[SCIRefno] = wo.SCIRefno
             ,[Refno] = wo.Refno
-            ,[Article] = Article.val
+            ,[Article] = wo.Article
             ,[ColorID] = cddh.Colorid
             ,[SEQ1] = wo.SEQ1
             ,[SEQ2] = wo.SEQ2
@@ -44,25 +44,15 @@ namespace Sci.Production.Cutting
             ,[Remark] = cddh.Remark
             ,[AddDate] = cddh.Adddate
             from CutPlan_DetailDeletedHistory cddh
-            LEFT JOIN WorkOrder wo WITH(NOLOCK) ON wo.Ukey = cddh.WorkorderUkey
+            LEFT JOIN WorkOrderForPlanning wo WITH(NOLOCK) ON wo.Ukey = cddh.WorkOrderForPlanningUkey
             LEFT JOIN Fabric f WITH(NOLOCK) ON f.SCIRefno = wo.SCIRefno
             OUTER APPLY
             (
 	            select val = stuff(
 	            (
-		            SELECT DISTINCT  CONCAT('/',Article)
-		            FROM dbo.WorkOrder_Distribute b WITH (NOLOCK)
-		            WHERE b.workorderukey = cddh.WorkorderUkey AND b.article != ''
-		            FOR XML PATH('')
-	            ),1,1,'')
-            ) AS Article
-            OUTER APPLY
-            (
-	            select val = stuff(
-	            (
 		            Select CONCAT(',', c.sizecode+'/ '+ convert(varchar(8),c.qty))
-		            From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		            Where  c.WorkOrderUkey = cddh.WorkOrderUkey 
+		            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+		            Where  c.WorkOrderForPlanningUkey = cddh.WorkOrderForPlanningUkey 
 		             For XML path('')
 	            ),1,1,'')
             ) AS Size
@@ -71,8 +61,8 @@ namespace Sci.Production.Cutting
 	            select val = stuff(
 	            (
 		            Select  CONCAT(',', c.sizecode+'/ '+convert(varchar(8),c.qty*wo.layer))
-		            From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		            Where  c.WorkOrderUkey = cddh.WorkOrderUkey and c.WorkOrderUkey = wo.Ukey
+		            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+		            Where  c.WorkOrderForPlanningUkey = cddh.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = wo.Ukey
 		            For XML path('')
 
 	            ),1,1,'')

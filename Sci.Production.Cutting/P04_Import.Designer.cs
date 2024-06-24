@@ -28,22 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridImport = new Sci.Win.UI.Grid();
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            this.labelCutCell = new Sci.Win.UI.Label();
             this.labelEstCutDate = new Sci.Win.UI.Label();
-            this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTop = new Sci.Win.UI.Panel();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
-            this.txtSpreadingNo = new Sci.Production.Class.TxtSpreadingNo();
-            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -65,14 +60,6 @@
             this.gridImport.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridImport.Location = new System.Drawing.Point(0, 0);
             this.gridImport.Name = "gridImport";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridImport.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridImport.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridImport.RowTemplate.Height = 24;
@@ -115,14 +102,6 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // labelCutCell
-            // 
-            this.labelCutCell.Location = new System.Drawing.Point(431, 11);
-            this.labelCutCell.Name = "labelCutCell";
-            this.labelCutCell.Size = new System.Drawing.Size(75, 23);
-            this.labelCutCell.TabIndex = 4;
-            this.labelCutCell.Text = "Cut Cell";
-            // 
             // labelEstCutDate
             // 
             this.labelEstCutDate.Location = new System.Drawing.Point(17, 11);
@@ -130,16 +109,6 @@
             this.labelEstCutDate.Size = new System.Drawing.Size(99, 23);
             this.labelEstCutDate.TabIndex = 5;
             this.labelEstCutDate.Text = "Est. Cut Date";
-            // 
-            // txtCutCell
-            // 
-            this.txtCutCell.BackColor = System.Drawing.Color.White;
-            this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell.Location = new System.Drawing.Point(509, 11);
-            this.txtCutCell.MDivisionID = "";
-            this.txtCutCell.Name = "txtCutCell";
-            this.txtCutCell.Size = new System.Drawing.Size(30, 23);
-            this.txtCutCell.TabIndex = 1;
             // 
             // dateEstCutDate
             // 
@@ -150,15 +119,11 @@
             // 
             // panelTop
             // 
-            this.panelTop.Controls.Add(this.label2);
-            this.panelTop.Controls.Add(this.txtSpreadingNo);
             this.panelTop.Controls.Add(this.txtfactory);
             this.panelTop.Controls.Add(this.label1);
             this.panelTop.Controls.Add(this.labelEstCutDate);
             this.panelTop.Controls.Add(this.dateEstCutDate);
-            this.panelTop.Controls.Add(this.labelCutCell);
             this.panelTop.Controls.Add(this.btnQuery);
-            this.panelTop.Controls.Add(this.txtCutCell);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
@@ -168,17 +133,21 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(636, 11);
+            this.txtfactory.Location = new System.Drawing.Point(336, 11);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 7;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(558, 11);
+            this.label1.Location = new System.Drawing.Point(258, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 6;
@@ -203,25 +172,6 @@
             this.panelMiddle.Size = new System.Drawing.Size(944, 436);
             this.panelMiddle.TabIndex = 8;
             // 
-            // txtSpreadingNo
-            // 
-            this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo.IncludeJunk = true;
-            this.txtSpreadingNo.Location = new System.Drawing.Point(369, 11);
-            this.txtSpreadingNo.MDivision = "";
-            this.txtSpreadingNo.Name = "txtSpreadingNo";
-            this.txtSpreadingNo.Size = new System.Drawing.Size(45, 23);
-            this.txtSpreadingNo.TabIndex = 8;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(267, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(99, 23);
-            this.label2.TabIndex = 9;
-            this.label2.Text = "Spreading No";
-            // 
             // P04_Import
             // 
             this.ClientSize = new System.Drawing.Size(944, 522);
@@ -230,6 +180,7 @@
             this.Controls.Add(this.panelTop);
             this.DefaultControl = "dateEstCutDate";
             this.Name = "P04_Import";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "P04_Import";
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).EndInit();
             this.panelTop.ResumeLayout(false);
@@ -246,16 +197,12 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnImport;
         private Win.UI.Button btnClose;
-        private Win.UI.Label labelCutCell;
         private Win.UI.Label labelEstCutDate;
-        private Class.TxtCell txtCutCell;
         private Win.UI.DateBox dateEstCutDate;
         private Win.UI.Panel panelTop;
         private Win.UI.Panel panelBottom;
         private Win.UI.Panel panelMiddle;
         private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Class.TxtSpreadingNo txtSpreadingNo;
     }
 }

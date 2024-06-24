@@ -1064,7 +1064,7 @@ select distinct sizecode,Seq
             return true;
         }
 
-        private void RandomColor(DataTable dtArticle)
+         private void RandomColor(DataTable dtArticle)
         {
             // dtColor 增加三個欄位 NO=用來隨機取樣的編號, ID=Color識別ID, Name=color顏色
             this.dtColor = new DataTable();

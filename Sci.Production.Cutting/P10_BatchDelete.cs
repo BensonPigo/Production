@@ -137,7 +137,7 @@ left join Orders o on b.Orderid=o.ID
 outer apply
 (
 	Select EstCutDate = MAX(EstCutDate)
-	from workorder w WITH (NOLOCK) 
+	from WorkOrderForOutput w WITH (NOLOCK) 
 	where w.id = b.POID 
 	and w.cutref = b.CutRef
 ) EstCutDate
