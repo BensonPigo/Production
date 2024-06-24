@@ -485,7 +485,7 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
                 if (duplicateCutRefs.Any())
                 {
                     string cutRefs = string.Join(", ", duplicateCutRefs);
-                    MyUtility.Msg.WarningBox($"The {msgDt}} duplicate, Please see below <CutRef>:{cutRefs}");
+                    MyUtility.Msg.WarningBox($"The {msgDt} duplicate, Please see below <CutRef>:{cutRefs}");
                 }
 
                 return false;
