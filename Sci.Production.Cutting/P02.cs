@@ -1762,13 +1762,29 @@ order by p.EditDate desc
         // 等待整合...
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), "WorkOrderForPlanning", dtDetail, null, this.dt_PatternPanel, this.dt_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         // 等待整合...
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForPlanning", dtDetail, null, this.dt_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         // 等待整合...

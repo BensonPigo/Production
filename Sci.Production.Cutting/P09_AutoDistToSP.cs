@@ -2,11 +2,13 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
 {
@@ -32,12 +34,12 @@ namespace Sci.Production.Cutting
             this.PatternPanel_Current = patternPanel.AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted &&
                     MyUtility.Convert.GetLong(w["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(detailrow["Ukey"]) &&
-                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(detailrow["NewKey"]))
+                    MyUtility.Convert.GetLong(w["tmpKey"]) == MyUtility.Convert.GetLong(detailrow["tmpKey"]))
                 .TryCopyToDataTable(patternPanel);
             this.PatternPanel_notCurrent = patternPanel.AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted &&
                     !(MyUtility.Convert.GetLong(w["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(detailrow["Ukey"]) &&
-                      MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(detailrow["NewKey"])))
+                      MyUtility.Convert.GetLong(w["tmpKey"]) == MyUtility.Convert.GetLong(detailrow["tmpKey"])))
                 .TryCopyToDataTable(patternPanel);
         }
 
@@ -45,7 +47,7 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.numDistQty.Value = MyUtility.Convert.GetInt(this.Detailrow["layer"]) * MyUtility.Convert.GetInt(this.SizeratioTb.Compute("Sum(Qty)", $@"WorkOrderForOutputUkey = '{this.Detailrow["ukey"]}' and newkey = {this.Detailrow["newkey"]}"));
+            this.numDistQty.Value = MyUtility.Convert.GetInt(this.Detailrow["layer"]) * MyUtility.Convert.GetInt(this.SizeratioTb.Compute("Sum(Qty)", $@"WorkOrderForOutputUkey = '{this.Detailrow["ukey"]}' and tmpKey = {this.Detailrow["tmpKey"]}"));
             this.GridSetup();
             this.Query();
             this.GridFilter();
@@ -88,12 +90,12 @@ namespace Sci.Production.Cutting
             string sizes = this.SizeratioTb.AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted &&
                     MyUtility.Convert.GetLong(w["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
-                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
+                    MyUtility.Convert.GetLong(w["tmpKey"]) == MyUtility.Convert.GetLong(this.Detailrow["tmpKey"]))
                 .Select(s => MyUtility.Convert.GetString(s["SizeCode"])).ToList().JoinToString("','");
             string fabricPanelCode = this.PatternPanel_Current.AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted &&
                     MyUtility.Convert.GetLong(w["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
-                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
+                    MyUtility.Convert.GetLong(w["tmpKey"]) == MyUtility.Convert.GetLong(this.Detailrow["tmpKey"]))
                 .Select(s => MyUtility.Convert.GetString(s["FabricPanelCode"])).ToList().JoinToString("','");
 
             string sqlcmd = $@"
@@ -111,7 +113,7 @@ SELECT distinct
     -- 分配時才寫入欄位
     Qty = 0,
     WorkOrderForOutputUkey = cast({this.Detailrow["Ukey"]} as bigint),
-    NewKey = cast({this.Detailrow["NewKey"]} as bigint),
+    tmpKey = cast({this.Detailrow["tmpKey"]} as bigint),
 	oc.ColorID,
     ID = '{this.Detailrow["ID"]}',
     o.SewInline
@@ -241,22 +243,22 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 .AsEnumerable().Select(s => new
                 {
                     WorkOrderForOutputUkey = MyUtility.Convert.GetLong(s["WorkOrderForOutputUkey"]),
-                    newkey = MyUtility.Convert.GetLong(s["newkey"]),
+                    tmpKey = MyUtility.Convert.GetLong(s["tmpKey"]),
                     PatternPanel = MyUtility.Convert.GetString(s["PatternPanel"]),
                 }).ToList();
 
             string color = MyUtility.Convert.GetString(this.Detailrow["ColorID"]);
-            var groupWorkorder = notThisPP.Select(s => new { s.WorkOrderForOutputUkey, s.newkey }).Distinct().ToList();
-            var recordWorkorder = notThisPP.Select(s => new { s.WorkOrderForOutputUkey, s.newkey }).Where(w => 1 == 0).ToList();
+            var groupWorkorder = notThisPP.Select(s => new { s.WorkOrderForOutputUkey, s.tmpKey }).Distinct().ToList();
+            var recordWorkorder = notThisPP.Select(s => new { s.WorkOrderForOutputUkey, s.tmpKey }).Where(w => 1 == 0).ToList();
 
             foreach (var item in groupWorkorder)
             {
-                var x = notThisPP.Where(w => w.WorkOrderForOutputUkey == item.WorkOrderForOutputUkey && w.newkey == item.newkey)
+                var x = notThisPP.Where(w => w.WorkOrderForOutputUkey == item.WorkOrderForOutputUkey && w.tmpKey == item.tmpKey)
                     .Select(s => s.PatternPanel).ToList();
 
-                // PatternPanel 組合相同 且 WorkOrder的顏色相同, 紀錄這組 WorkOrderForOutputUkey, newkey
+                // PatternPanel 組合相同 且 WorkOrder的顏色相同, 紀錄這組 WorkOrderForOutputUkey, tmpKey
                 if (x.All(patternPanelList.Contains) && x.Count == patternPanelList.Count &&
-                    this.Detailrow.Table.Select($@"ColorID = '{color}' and Ukey = '{item.WorkOrderForOutputUkey}' and newkey = '{item.newkey}'").Count() > 0)
+                    this.Detailrow.Table.Select($@"ColorID = '{color}' and Ukey = '{item.WorkOrderForOutputUkey}' and tmpKey = '{item.tmpKey}'").Count() > 0)
                 {
                     recordWorkorder.Add(item);
                 }
@@ -274,7 +276,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                     .Select(s => new
                     {
                         WorkOrderForOutputUkey = MyUtility.Convert.GetLong(s["WorkOrderForOutputUkey"]),
-                        newkey = MyUtility.Convert.GetLong(s["newkey"]),
+                        tmpKey = MyUtility.Convert.GetLong(s["tmpKey"]),
                         Qty = MyUtility.Convert.GetInt(s["Qty"]),
                     })
                     .ToList();
@@ -282,8 +284,8 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 // 兩個清單 join 為其它筆 WorkOrderForOutput 的 (PatternPanel 組合), ColorID, OrderID, Article, SizeCode 與這筆相同, 把這些 Distribute.Qty 總和
                 dr["AccuDistQty"] = (from t1 in asList
                                      join t2 in recordWorkorder
-                                     on new { t1.WorkOrderForOutputUkey, t1.newkey }
-                                     equals new { t2.WorkOrderForOutputUkey, t2.newkey }
+                                     on new { t1.WorkOrderForOutputUkey, t1.tmpKey }
+                                     equals new { t2.WorkOrderForOutputUkey, t2.tmpKey }
                                      select t1.Qty).Sum();
                 int bal = MyUtility.Convert.GetInt(dr["OrderQty"]) - MyUtility.Convert.GetInt(dr["AccuDistQty"]);
                 dr["BalQty"] = bal < 0 ? 0 : bal;
@@ -310,7 +312,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
                 .AsEnumerable()
                 .Where(w => w.RowState != DataRowState.Deleted &&
                     MyUtility.Convert.GetLong(w["WorkOrderForOutputUkey"]) == MyUtility.Convert.GetLong(this.Detailrow["Ukey"]) &&
-                    MyUtility.Convert.GetLong(w["newkey"]) == MyUtility.Convert.GetLong(this.Detailrow["NewKey"]))
+                    MyUtility.Convert.GetLong(w["tmpKey"]) == MyUtility.Convert.GetLong(this.Detailrow["tmpKey"]))
                 .Select(s => new
                 {
                     SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
@@ -359,7 +361,7 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
             #endregion
 
             // 先清除此 WorkOrderForOutput 的 WorkOrderForOutput_Distribute
-            CuttingWorkOrder.DeleteThirdDatas(this.DistqtyTb, MyUtility.Convert.GetLong(this.Detailrow["Ukey"]), MyUtility.Convert.GetLong(this.Detailrow["NewKey"]));
+            this.DistqtyTb.Select(GetFilter(this.Detailrow, CuttingForm.P09)).Delete();
 
             foreach (DataRow row in processDT.Select($"Qty > 0"))
             {
@@ -388,10 +390,10 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
         {
             DataRow excessRow = processDT.NewRow();
             excessRow["WorkOrderForOutputUkey"] = this.Detailrow["Ukey"];
-            excessRow["NewKey"] = this.Detailrow["NewKey"];
+            excessRow["tmpKey"] = this.Detailrow["tmpKey"];
             excessRow["ID"] = this.Detailrow["ID"];
             excessRow["OrderID"] = "EXCESS";
-            excessRow["Article"] = article;
+            excessRow["Article"] = "";
             excessRow["SizeCode"] = sizeCode;
             excessRow["Qty"] = qty;
             processDT.Rows.Add(excessRow);

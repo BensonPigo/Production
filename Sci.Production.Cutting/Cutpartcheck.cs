@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
+using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Cutting
 {
@@ -38,7 +40,7 @@ namespace Sci.Production.Cutting
             this._WorkType = workType;
             this._sourceTable = sourceTable;
             this.dt_curDetailData = curDetailData;
-            this.dt_curDistribute = curDistribute;
+            this.dt_curDistribute = curDistribute == null ? null : curDistribute.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curDistribute);
             this.dt_curPatternPanel = curPatternPanel;
             this.dt_curSizeRatio = curSizeRatio;
             this.ReQuery();
@@ -118,12 +120,12 @@ namespace Sci.Production.Cutting
                                 PatternPanel = t3.Field<string>("PatternPanel"),
                             } into g
                             select new
-                            {
+                            { 
                                 OrderID = g.Key.OrderID,
                                 Article = g.Key.Article,
                                 SizeCode = g.Key.SizeCode,
                                 PatternPanel = g.Key.PatternPanel,
-                                CutQty = g.Sum(x => x.t2.Field<int>("TtlQty")), // 取自 P02 Grid SizeRatio Tlt.Qty
+                                CutQty = g.Sum(x => x.t2.Field<decimal>("Qty") * x.t2.Field<int>("Layer")), // 取自 P02 Grid SizeRatio Tlt.Qty
                             };
 
                 resutTable.Columns.Add("OrderID", typeof(string));

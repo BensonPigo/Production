@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Sci.Data;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Cutting
 {
@@ -35,7 +36,7 @@ namespace Sci.Production.Cutting
             this.cutid = cID;
             this._sourceTable = sourceTable;
             this.dt_curDetailData = curDetailData;
-            this.dt_curDistribute = curDistribute;
+            this.dt_curDistribute = curDistribute == null ? null : curDistribute.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curDistribute);
             this.dt_curSizeRatio = curSizeRatio;
             this.ReQuery();
             this.GridSetup();
@@ -148,7 +149,7 @@ Select  [ID] = b.POID
                                 OrderID = t1.Field<string>("orderid"),
                                 Article = t1.Field<string>("Article"),
                                 SizeCode = t2.Field<string>("sizecode"),
-                                Qty = t2.Field<decimal>("TtlQty"), // 取自 P02 Grid SizeRatio Tlt.Qty
+                                Qty = t2.Field<decimal>("Qty") * t2.Field<int>("Layer"), // 取自 P02 Grid SizeRatio Tlt.Qty
                             };
 
                 resutTable.Columns.Add("ID", typeof(string));

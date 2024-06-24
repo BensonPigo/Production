@@ -28,9 +28,9 @@ namespace Sci.Production.Cutting
             }
         }
 
-        /// <summary>
-        /// 這直接複製到P09, 然後用Button[All SP# Distribute]直接呼叫它
-        /// </summary>
+        ///// <summary>
+        ///// 這直接複製到P09, 然後用Button[All SP# Distribute]直接呼叫它
+        ///// </summary>
         //private static void BtnAutoDistributeSPClick()
         //{
         //    if (!this.EditMode)
@@ -75,9 +75,9 @@ namespace Sci.Production.Cutting
         //    }
         //}
 
-        ///// <summary>
-        ///// 這直接複製到P09, 然後用Button[Distribute This CutRef]直接呼叫它
-        ///// </summary>
+        /////// <summary>
+        /////// 這直接複製到P09, 然後用Button[Distribute This CutRef]直接呼叫它
+        /////// </summary>
         //private static void BtnDistClick()
         //{
         //    this.GridValid();
