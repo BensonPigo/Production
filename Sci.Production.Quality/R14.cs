@@ -79,8 +79,8 @@ namespace Sci.Production.Quality
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
                 this.sqlWherelist.Add(@"exists(select 1
-                                       from SciProduction_WorkOrder_Distribute swd
-			                           where swd.WorkOrderUkey=pms_wo.Ukey and swd.orderid = @SP)
+                                       from SciProduction_WorkOrderForOutput_Distribute swd
+			                           where swd.WorkOrderForOutputUkey=pms_wo.Ukey and swd.orderid = @SP)
                                        ");
                 this.lisSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
             }
@@ -161,10 +161,10 @@ namespace Sci.Production.Quality
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_OriCutRef so with(nolock) on s.id = so.id
-                left join SciProduction_WorkOrder pms_wo with(nolock)  on so.WorkOrderUkey=pms_wo.Ukey
+                left join SciProduction_WorkOrderForOutput pms_wo with(nolock)  on so.WorkOrderUkey=pms_wo.Ukey
                 left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
 
-                outer apply(select top 1 * from SciProduction_WorkOrder where so.WorkOrderUkey = Ukey ) m
+                outer apply(select top 1 * from SciProduction_WorkOrderForOutput where so.WorkOrderUkey = Ukey ) m
                 outer apply(select top 1 * from SciProduction_Orders where pms_wo.ID = ID ) sty
                 outer apply(select [count] = count(*) from SpreadingInspection_OriCutRef where  so.ID = ID ) soc
                 outer apply(select [count] = count(*) from SpreadingInspection_InsCutRef where  si.ID = ID  ) sic
@@ -255,9 +255,9 @@ namespace Sci.Production.Quality
 	                select val = dbo.SciProduction_GetSinglelineSP(
 	                (
                         select distinct S.OrderID
-                        from SciProduction_WorkOrder_Distribute S with(nolock)
+                        from SciProduction_WorkOrderForOutput_Distribute S with(nolock)
                         where S.OrderID!='EXCESS'
-                        AND WorkOrderUkey in (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id )
+                        AND WorkOrderForOutputUkey in (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id )
                         order by OrderID
                         for XML RAW)
 	                )
@@ -270,7 +270,7 @@ namespace Sci.Production.Quality
 		                from
 		                (
 			                select distinct w.Colorid 
-			                from SciProduction_WorkOrder w
+			                from SciProduction_WorkOrderForOutput w
 			                where Ukey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id)
 	                )
 	                tmp for xml path('')),1,1,'')
@@ -283,8 +283,8 @@ namespace Sci.Production.Quality
 		                from
 		                (
 			                select distinct [DataList] = concat(S.SizeCode ,'/', S.Qty)
-			                from SciProduction_WorkOrder_SizeRatio S
-			                where  WorkOrderUkey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id)
+			                from SciProduction_WorkOrderForOutput_SizeRatio S
+			                where  WorkOrderForOutputUkey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id)
 	                ) 
 	                tmp for xml path('')),1,1,'')
                 )size
@@ -293,7 +293,7 @@ namespace Sci.Production.Quality
 	                select val = stuff((select concat(';',tmp.Roll)
 	                from
 	                (
-		                select  Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
+		                select  Roll from MainServer.Production.dbo.WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
 	                ) 
 	                tmp for xml path('')),1,1,'')
                 )FabricRoll
@@ -360,14 +360,14 @@ namespace Sci.Production.Quality
                 outer apply 
                 (
 	                select distinct  w.ID,FactoryID,SCIRefno,MDivisionId
-	                from SciProduction_WorkOrder w 
+	                from SciProduction_WorkOrderForOutput w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderUkey
 	                where so.id = si.id
                 )pms_wo
                 left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
                 outer apply( 
 	                select top 1 [MarkerNo] = w.MarkerNo
-	                from SciProduction_WorkOrder w 
+	                from SciProduction_WorkOrderForOutput w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderUkey
 	                where so.id = si.id
                 ) m
@@ -397,9 +397,9 @@ namespace Sci.Production.Quality
 	                select val = dbo.SciProduction_GetSinglelineSP(
 	                (
 		                select distinct S.OrderID
-		                from SciProduction_WorkOrder_Distribute S with(nolock)
+		                from SciProduction_WorkOrderForOutput_Distribute S with(nolock)
 		                where S.OrderID!='EXCESS'
-		                AND WorkOrderUkey in (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id)
+		                AND WorkOrderForOutputUkey in (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id)
 		                order by OrderID
 		                for XML RAW)
 	                )
@@ -412,7 +412,7 @@ namespace Sci.Production.Quality
 	                from
 	                (
 		                select distinct w.Colorid 
-		                from SciProduction_WorkOrder w
+		                from SciProduction_WorkOrderForOutput w
 		                where Ukey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id
 	                )
                 )
@@ -427,8 +427,8 @@ namespace Sci.Production.Quality
 	                from
 	                (
 		                select distinct [DataList] = concat(S.SizeCode ,'/', S.Qty)
-		                from SciProduction_WorkOrder_SizeRatio S
-		                where  WorkOrderUkey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id
+		                from SciProduction_WorkOrderForOutput_SizeRatio S
+		                where  WorkOrderForOutputUkey IN (select WorkOrderUkey from SpreadingInspection_OriCutRef sioc where sioc.id = si.id
 	                )
                 ) 
                 tmp for xml path('')),1,1,'')
@@ -438,7 +438,7 @@ namespace Sci.Production.Quality
                 select val = stuff((select concat(';',tmp.Roll)
                 from
                 (
-	                select  Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
+	                select  Roll from MainServer.Production.dbo.WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
                 ) 
                 tmp for xml path('')),1,1,'')
                 )FabricRoll
