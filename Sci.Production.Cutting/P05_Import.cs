@@ -192,7 +192,7 @@ outer apply (
 		for xml path('')), 1, 1, '')
 	, CuttingWidth = (Select ec.CuttingWidth from Order_EachCons ec with (nolock) where ec.Ukey = step1.Order_EachconsUkey)
 	, PatternPanel = Stuff((
-		select '/' + pp.PatternPanel
+		select '+' + pp.PatternPanel
 		from WorkOrderForOutput_PatternPanel pp with (nolock)
 		where pp.WorkOrderForOutputUkey = step1.WorkOrderForOutputUkey
 		for xml path('')), 1, 1, '')
