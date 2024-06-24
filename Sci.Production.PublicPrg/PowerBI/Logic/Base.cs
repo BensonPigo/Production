@@ -51,6 +51,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SimilarStyle,
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
+            P_MaterialCompletionRateByWeek,
         }
 
         /// <summary>
@@ -367,19 +368,22 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_FabricStatus_And_IssueFabricTracking:
                         result = new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
-						break;
+                        break;
+                    case ListName.P_SimilarStyle:
+                        result = new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
+                        break;
                     case ListName.P_FabricInspLabSummaryReport:
                         result = new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
                         break;
                     case ListName.P_FabricInspAvgInspLTInPast7Days:
                         result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
                         break;
+                    case ListName.P_MaterialCompletionRateByWeek:
+                        result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                        break;
                     default:
                         // Execute all Stored Procedures
                         result = this.ExecuteSP(item);
-                        break;
-                    case ListName.P_SimilarStyle:
-                        result = new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
                         break;
                 }
             }
