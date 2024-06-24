@@ -391,10 +391,6 @@ AND EXISTS (
 
         #region 全域變數
 
-        /// <summary>
-        /// sheet 序號
-        /// </summary>
-        private int markerSerNo = 1;
         private List<long> listWorkOrderUkey;
 
         private string CuttingPOID = string.Empty;
@@ -478,6 +474,7 @@ AND EXISTS (
 
                     // 檢查Excel 資料合法性，撈一次資料即可
                     List<WorkOrder> compare = this.GetOrder_ColorComboInfoList(poids, seq1s, seq2s, fabricPanelCodes, colorIDs);
+                    List<WorkOrder> compareMarkerNo = this.GetOrder_EachConsInfoList(poids);
 
                     foreach (var e in excelWk)
                     {
@@ -493,6 +490,10 @@ AND EXISTS (
                         e.FabricCode = firstCompare.FirstOrDefault().FabricCode;
                         e.FabricPanelCode = firstCompare.FirstOrDefault().FabricPanelCode;
                         e.FabricCombo = firstCompare.FirstOrDefault().FabricCombo;
+                        if (!compareMarkerNo.Any(o => o.MarkerNo == e.MarkerNo))
+                        {
+                            e.MarkerNo = string.Empty;
+                        }
 
                         // 比較Excel填的ColorCombo設定的層數，看Excel填的有沒有超過上限
                         var layer = e.ExcelLayer > firstCompare.FirstOrDefault().CuttingLayer ? firstCompare.FirstOrDefault().CuttingLayer : e.ExcelLayer;
@@ -552,7 +553,6 @@ AND EXISTS (
             for (int i = 1; i <= sheetCnt; i++)
             {
                 Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[i];
-                this.markerSerNo = 1;
 
                 // 檢查裁剪母單單號
                 string poID = worksheet.GetCellValue(2, 2);
@@ -658,7 +658,6 @@ AND EXISTS (
 
                     string tmpColorid = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
                     string tmpTone = colorInfo.Length >= 2 ? colorInfo[1] : string.Empty;
-                    string markername = "MK_" + this.markerSerNo.ToString().PadLeft(3, '0');
 
                     // 取得Size Ratio Range (例如：1 ,4 ,28 ,24 )
                     Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, curDataStart_X + 1, nextFabPanelCodeStart - 3);
@@ -679,7 +678,7 @@ AND EXISTS (
                             MDivisionId = this.MDivisionid,
                             Colorid = tmpColorid,
                             Tone = tmpTone,
-                            Markername = markername,
+                            //Markername = markername,
                             IsCreateByUser = true,
 
                         };
@@ -835,6 +834,40 @@ WHERE rn = 1
         }
 
         /// <summary>
+        /// 根據Excel的POID，取得MarkerNo
+        /// </summary>
+        /// <param name="poIDs">POID</param>
+        /// <returns>組合好的物件</returns>
+        private List<WorkOrder> GetOrder_EachConsInfoList(List<string> poIDs)
+        {
+            WorkOrder wk = new WorkOrder();
+            string sqlGetEachCons = $@"
+SELECT DISTINCT oec.ID, oec.MarkerNo
+FROM Order_EachCons oec WITH(NOLOCK)
+INNER JOIN Orders o WITH(NOLOCK) ON o.ID = oec.ID
+WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
+";
+            DataTable dt;
+            DualResult r = DBProxy.Current.Select(null, sqlGetEachCons, out dt);
+
+            if (!r)
+            {
+                throw r.GetException();
+            }
+
+            var wks = DataTableToList.ConvertToClassList<WorkOrder>(dt);
+
+            if (wks.Any())
+            {
+                return wks.ToList();
+            }
+            else
+            {
+                return new List<WorkOrder>();
+            }
+        }
+
+        /// <summary>
         /// Insert WorkOrder、WorkOrder_PatternPanel、WorkOrder_SizeRatio三張資料表
         /// </summary>
         /// <param name="workOrders">組合好的物件</param>
@@ -863,6 +896,9 @@ WHERE rn = 1
             {
                 var excelLayer = wk.Layer;
                 var cuttingLayer = wk.CuttingLayer;
+
+                // sheet 序號
+                int markerSerNo = 1;
 
                 // WorkOrder_PatternPanel
                 string sqlInsertWorkOrder_PatternPanel = string.Empty;
@@ -898,6 +934,9 @@ values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSi
                         new SqlParameter("@consPc", wk.ConsPC),
                         new SqlParameter("@Cons",  wk.Cons),
                     };
+                    string markername = "MK_" + markerSerNo.ToString().PadLeft(3, '0');
+                    markerSerNo++;
+
                     string sqlInsertWorkOrder = $@"
 insert into {tableName}(
 ID
@@ -933,7 +972,7 @@ values
 ,'{wk.SEQ2}'
 ,'{wk.Layer}'
 ,'{wk.Colorid}'
-,'{wk.Markername}'
+,'{markername}'
 ,'{wk.MarkerLength}' --MarkerLength
 ,@consPc --ConsPC
 ,@Cons --Cons
@@ -968,7 +1007,7 @@ select @newWorkOrderUkey
                     listWorkOrderUkey.Add(workOrderUkey);
 
                     // 層數如果沒超過上限的資料，便跳出去
-                    if (excelLayer < cuttingLayer)
+                    if (excelLayer <= cuttingLayer)
                     {
                         break;
                     }

@@ -371,10 +371,10 @@ namespace Sci.Production.Cutting
                             row["FactoryID"] = workOrder.Select(s => s["FactoryID"]).FirstOrDefault();
                             row["OrderID"] = this.WorkOrderID; // 此處不用管 Type，因為用檔案匯入沒有dist
                             row["MarkerNo"] = this.MarkerNo;
-                            //row["EachconsMarkerNo"] = this.MarkerNo;
-                            //row["EachconsMarkerVersion"] = this.lastVerData["Version"];
-                            //row["Cutno"] = DBNull.Value;
-                            //row["isbyAdditionalRevisedMarker"] = 0;
+                            row["EachconsMarkerNo"] = this.MarkerNo;
+                            row["EachconsMarkerVersion"] = this.lastVerData["Version"];
+                            row["Cutno"] = DBNull.Value;
+                            row["isbyAdditionalRevisedMarker"] = 0;
                             row["ImportML"] = true;
                             row["MarkerLength"] = Prgs.MarkerLengthSampleTOTrade(row["MarkerLength"].ToString(), row["MatchFabric"].ToString());
                             row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];
@@ -668,11 +668,11 @@ namespace Sci.Production.Cutting
                     // 11.當　MarkerName <> ‘K’ 開頭，就利用FabricPanelCode至Style_BOF中帶出最新的MatchFabric, V_Repeat , H_Repeat , HorizontalCutting, OneTwoWay , Pattern Panel , Fabric Code , SCIRefno
                     rowML["MarkerName"] = item.CurrentMarkerName;
                     rowML["ID"] = this.WorkOrderID;
-                    rowML["MarkerVersion"] = this.lastVerData["Version"];
+                    //rowML["MarkerVersion"] = this.lastVerData["Version"];
                     rowML["FabricPanelCode"] = item.Fab_Type;
-                    rowML["StraightLength"] = item.Straight;
-                    rowML["CurvedLength"] = item.Curved;
-                    rowML["ActCuttingPerimeter"] = string.IsNullOrEmpty(item.ActCuttingPerimeter) ? item.Perimeter : item.ActCuttingPerimeter;
+                    rowML["StraightLength"] = item.Straight; // PO9 Only
+                    rowML["CurvedLength"] = item.Curved; // PO9 Only
+                    rowML["ActCuttingPerimeter"] = string.IsNullOrEmpty(item.ActCuttingPerimeter) ? item.Perimeter : item.ActCuttingPerimeter; // PO9 Only
 
                     var isItemK = item.CurrentMarkerName.ToUpper().StartsWith("K");
                     if (isItemK)
@@ -728,6 +728,8 @@ Where bof.StyleUkey = @StyleUkey";
                                 rowML["FabricCode"] = row["FabricCode"];
                                 rowML["SCIRefno"] = row["SCIRefno"];
                                 rowML["Refno"] = row["Refno"];
+
+                                // Not DB Column
                                 rowML["MatchFabric"] = row["MatchFabric"];
                                 rowML["V_Repeat"] = row["VRepeat"];
                             }
@@ -741,7 +743,7 @@ Where bof.StyleUkey = @StyleUkey";
                         #endregion
                     }
 
-                    #region P02 的 TxtFabricPanelCode_Validating
+                    #region TxtFabricPanelCode_Validating
                     string sqlcmd2 = $@"
 select ob.SCIRefno,f.Description ,f.WeaveTypeID,ob.Refno
 from Order_BoF ob 
@@ -753,8 +755,8 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
                     {
                         rowML["Refno"] = dre["Refno"].ToString();
                         rowML["SCIRefno"] = dre["SCIRefno"].ToString();
-                        rowML["MtlTypeID_SCIRefno"] = dre["WeaveTypeID"].ToString() + " / " + dre["SCIRefno"].ToString();
-                        rowML["Description"] = dre["Description"].ToString();
+                        rowML["FabricTypeRefNo"] = dre["WeaveTypeID"].ToString() + " / " + dre["SCIRefno"].ToString();
+                        rowML["FabricDescription"] = dre["Description"].ToString();
                     }
 
                     #endregion
@@ -875,8 +877,9 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
             {
                 string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
                 int indexY = markerLength.IndexOf("Ｙ");
-                currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
-                currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
+                // 新的P09不需要了
+                //currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
+                //currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
             }
 
             this.PadLeftTen("ActCuttingPerimeter", currentRow);
