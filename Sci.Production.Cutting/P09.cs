@@ -242,7 +242,7 @@ SELECT
    ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasBundle WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
-
+   ,ImportML = CAST(0 AS BIT)
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -795,19 +795,19 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
 
             // 檢查 第3層 重複 Key
             var checkSizeRatio = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "SizeCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas))
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas, CuttingForm.P09))
             {
                 return false;
             }
 
             var checkDistribute = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "OrderID", "Article", "SizeCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_Distribute, checkDistribute, "Distribute", this.DetailDatas))
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_Distribute, checkDistribute, "Distribute", this.DetailDatas, CuttingForm.P09))
             {
                 return false;
             }
 
             var checkPatternPanel = new List<string> { "WorkOrderForOutputUkey", "tmpKey", "PatternPanel", "FabricPanelCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas))
+            if (!CheckDuplicateAndShowMessage(this.dtWorkOrderForOutput_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, CuttingForm.P09))
             {
                 return false;
             }

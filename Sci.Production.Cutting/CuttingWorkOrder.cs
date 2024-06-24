@@ -462,30 +462,39 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
             return true;
         }
 
-        public static bool CheckDuplicateAndShowMessage(DataTable checkDt, List<string> columnsToCheck, string msgDt, IList<DataRow> detailDatas)
+        public static bool CheckDuplicateAndShowMessage(DataTable checkDt, List<string> columnsToCheck, string msgDt, IList<DataRow> detailDatas, CuttingForm form)
         {
             if (!Prgs.CheckForDuplicateKeys(checkDt, columnsToCheck, out DataTable dtCheck))
             {
-                var duplicateCutRefs = new HashSet<string>();
+                DataTable duplicateTable = new DataTable();
+                duplicateTable.Columns.Add("CutRef", typeof(string));
+                duplicateTable.Columns.Add("CutNo", typeof(string));
+                duplicateTable.Columns.Add("MarkerName", typeof(string));
 
-                foreach (DataRow row in dtCheck.Rows)
+                // 先去重複
+                var uniqueRows = dtCheck.AsEnumerable().GroupBy(row => string.Join("|", columnsToCheck.Select(col => row[col].ToString()))).Select(group => group.First()).ToList();
+
+                foreach (DataRow row in uniqueRows)
                 {
-                    int workOrderForOutputUkey = MyUtility.Convert.GetInt(row["WorkOrderForOutputUkey"]);
+                    string ukeyName = GetWorkOrderUkeyName(form);
+                    int workOrderForUkey = MyUtility.Convert.GetInt(row[ukeyName]);
                     int tmpKey = MyUtility.Convert.GetInt(row["tmpKey"]);
-
-                    var matchingDetailData = detailDatas.FirstOrDefault(dr => MyUtility.Convert.GetInt(dr["WorkOrderForOutputUkey"]) == workOrderForOutputUkey && MyUtility.Convert.GetInt(dr["tmpKey"]) == tmpKey);
+                    var matchingDetailData = detailDatas.FirstOrDefault(dr => MyUtility.Convert.GetInt(dr["Ukey"]) == workOrderForUkey && MyUtility.Convert.GetInt(dr["tmpKey"]) == tmpKey);
 
                     if (matchingDetailData != null)
                     {
-                        string cutRef = matchingDetailData["CutRef"].ToString();
-                        duplicateCutRefs.Add(cutRef);
+                        DataRow newRow = duplicateTable.NewRow();
+                        newRow["CutRef"] = MyUtility.Convert.GetString(matchingDetailData["CutRef"]);
+                        newRow["CutNo"] = MyUtility.Convert.GetString(matchingDetailData["CutNo"]);
+                        newRow["MarkerName"] = MyUtility.Convert.GetString(matchingDetailData["MarkerName"]);
+                        duplicateTable.Rows.Add(newRow);
                     }
                 }
 
-                if (duplicateCutRefs.Any())
+                if (duplicateTable.AsEnumerable().Any())
                 {
-                    string cutRefs = string.Join(", ", duplicateCutRefs);
-                    MyUtility.Msg.WarningBox($"The {msgDt}} duplicate, Please see below <CutRef>:{cutRefs}");
+                    string msg = $"The {msgDt} duplicate, Please see below";
+                    new MsgGridForm(duplicateTable, msg, "Duplicate Data", "CutRef,CutNo,MarkerName").ShowDialog();
                 }
 
                 return false;
@@ -1495,7 +1504,7 @@ ORDER BY FabricPanelCode,PatternPanel
 
         public static DataRow GetMinFabricPanelCode(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
         {
-           return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
+            return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
         }
 
         /// <summary>
