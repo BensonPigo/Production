@@ -3738,12 +3738,12 @@ where wd.WorkOrderUkey is null
             P02_Print callNextForm;
             if (this.drTEMP != null)
             {
-                callNextForm = new P02_Print(this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new P02_Print(CuttingWorkOrder.FromCutting.P02, this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
                 callNextForm.ShowDialog(this);
             }
             else if (this.drTEMP == null && this.CurrentDetailData != null)
             {
-                callNextForm = new P02_Print(this.CurrentDetailData, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new P02_Print(CuttingWorkOrder.FromCutting.P02, this.CurrentDetailData, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
                 callNextForm.ShowDialog(this);
             }
             else
