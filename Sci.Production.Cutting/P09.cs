@@ -812,7 +812,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
-            // 檢查第3層  Total distributionQty 是否大於 TotalCutQty 總和
+            // 檢查第3層 Total distributionQty 是否大於 TotalCutQty 總和
             foreach (DataRow dr in this.DetailDatas)
             {
                 string filter = GetFilter(dr, CuttingForm.P09);
@@ -820,7 +820,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                 decimal ttlDisQty = this.dtWorkOrderForOutput_Distribute.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
                 if (ttlCutQty < ttlDisQty)
                 {
-                    this.ShowErr($"Key:{dr["Ukey"]} Distribution Qty can not exceed total Cut qty");
+                    MyUtility.Msg.WarningBox($"CutRef:{dr["CutRef"]},CutNo:{dr["CutNo"]},MarkerName:{dr["MarkerName"]} Distribution Qty can not exceed total Cut qty");
                     return false;
                 }
             }
@@ -1107,7 +1107,7 @@ DEALLOCATE CURSOR_
                 return;
             }
 
-            if (!this.CheckAndMsg("modify"))
+            if (!this.CheckAndMsg("modify", this.CurrentDetailData))
             {
                 return;
             }
@@ -1220,19 +1220,27 @@ DEALLOCATE CURSOR_
 
         protected override void OnDetailGridDelete()
         {
-            if (this.CurrentDetailData == null)
+            if (this.detailgrid.SelectedRows.Count == 0 || this.CurrentDetailData == null)
             {
                 return;
             }
 
-            if (!this.CheckAndMsg("delete"))
+            // 選擇多筆刪除時
+            foreach (DataGridViewRow item in this.detailgrid.SelectedRows)
             {
-                return;
-            }
+                if (item.DataBoundItem is DataRowView dataRowView)
+                {
+                    DataRow currentDetailData = dataRowView.Row;
+                    if (!this.CheckAndMsg("delete", currentDetailData))
+                    {
+                        return;
+                    }
 
-            this.dtWorkOrderForOutput_SizeRatio.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
-            this.dtWorkOrderForOutput_Distribute.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
-            this.dtWorkOrderForOutput_PatternPanel.Select(GetFilter(this.CurrentDetailData, CuttingForm.P09)).Delete();
+                    this.dtWorkOrderForOutput_SizeRatio.Select(GetFilter(currentDetailData, CuttingForm.P09)).Delete();
+                    this.dtWorkOrderForOutput_Distribute.Select(GetFilter(currentDetailData, CuttingForm.P09)).Delete();
+                    this.dtWorkOrderForOutput_PatternPanel.Select(GetFilter(currentDetailData, CuttingForm.P09)).Delete();
+                }
+            }
 
             base.OnDetailGridDelete();
         }
@@ -1720,14 +1728,21 @@ DEALLOCATE CURSOR_
             };
             column.CellValidating += (s, e) =>
             {
-                if (this.CurrentDetailData != null && Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                // 多選主表身按刪除會觸發,( this.CurrentDetailData不是 Null, 而是呈現無法執回的錯誤), 只好用 try catch 包住
+                try
                 {
-                    UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                    UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                    if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                    if (this.CurrentDetailData != null && Distribute3CellValidating(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                     {
-                        UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                        {
+                            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        }
                     }
+                }
+                catch (Exception)
+                {
                 }
             };
         }
@@ -1829,32 +1844,32 @@ DEALLOCATE CURSOR_
                   MyUtility.Convert.GetBool(dr["HasMarkerReq"]));
         }
 
-        private bool CheckAndMsg(string actrion)
+        private bool CheckAndMsg(string actrion, DataRow currentDetailData)
         {
             // 前 3 個都是及時去 DB 撈資料判斷, 並彈出訊息
             // 1. 存在 P10 Bundle
             string msg = $"The following bundle data exists and cannot be {actrion}. If you need to {actrion}, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
-            if (!CheckBundleAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            if (!CheckBundleAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
             // 2. 存在 P20 CuttingOutput
             msg = $"The following cutting output data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
-            if (!CheckCuttingOutputAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            if (!CheckCuttingOutputAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
             // 3. 存在 P05 MarkerReq_Detail
             msg = $"The following marker request data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
-            if (!CheckMarkerReqAndShowData(this.CurrentDetailData["CutRef"].ToString(), msg))
+            if (!CheckMarkerReqAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
             // 4 檢查欄位 SpreadingStatus
-            if (!CheckSpreadingStatus(this.CurrentDetailData, $"The following digitail spreading data exists and cannot be {actrion}"))
+            if (!CheckSpreadingStatus(currentDetailData, $"The following digitail spreading data exists and cannot be {actrion}"))
             {
                 return false;
             }
