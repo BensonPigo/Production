@@ -175,7 +175,7 @@ INNER JOIN #tmp_MaxDates md ON o.StyleID = md.StyleID AND s.FactoryID = md.Facto
 GROUP BY o.StyleID, s.FactoryID, o.BrandID, md.OutputDate
 
 
-SELECT dsitinct sda.OutputDate,
+SELECT Distinct sda.OutputDate,
        s.FactoryID,
        o.BrandID,
        m.MasterStyleID,
@@ -187,7 +187,7 @@ INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
 INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
 INNER JOIN #tmp_SewingDate sda on sda.StyleID = o.StyleID and sda.BrandID = o.BrandID and sda.FactoryID = s.FactoryID and sda.OutputDate = s.OutputDate 
 Outer apply (
-                select distinct MasterBrandID, MasterStyleID 
+                select Distinct MasterBrandID, MasterStyleID 
                 from (
                       select MasterBrandID,
                              MasterStyleID 
@@ -259,7 +259,7 @@ LEFT JOIN #tmp_childstyle cs ON cs.OutputDate = s.OutputDate
                              AND cs.MainStyleID = s.StyleID
 OUTER APPLY(
             Select Rr = STUFF((
-                                SELECT distinct ',' + cd.MasterStyleID + '→' + csid.SewingLineID + '(' + CONVERT(varchar, cd.MaxOutputDate, 111) + ')'
+                                SELECT Distinct ',' + cd.MasterStyleID + '→' + csid.SewingLineID + '(' + CONVERT(varchar, cd.MaxOutputDate, 111) + ')'
                                 FROM #tmp_childMaxDates cd
                                 INNER JOIN #tmp_childMinSewingID csid ON cd.OutputDate = csid.OutputDate
                                                                       AND cd.FactoryID = csid.FactoryID 
