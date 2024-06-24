@@ -663,6 +663,7 @@
             0,
             0,
             0});
+            this.numConsPC.Validating += new System.ComponentModel.CancelEventHandler(this.NumConsPC_Validating);
             // 
             // P09_ActionCutRef
             // 

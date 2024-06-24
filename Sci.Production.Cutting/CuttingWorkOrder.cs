@@ -1504,7 +1504,7 @@ ORDER BY FabricPanelCode,PatternPanel
 
         public static DataRow GetMinFabricPanelCode(DataRow currentDetailData, DataTable dtPatternPanel, CuttingForm form)
         {
-            return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
+            return dtPatternPanel.Select(GetFilter(currentDetailData, form)).AsEnumerable().Where(row => !MyUtility.Check.Empty(row["FabricPanelCode"])).OrderBy(row => MyUtility.Convert.GetString(row["FabricPanelCode"])).FirstOrDefault();
         }
 
         /// <summary>
@@ -1639,13 +1639,36 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
+        /// 計算 ConsPC *實體*欄位, 只用在改變 SizeRario.Qty ,不管 MarkerLength 值
+        /// </summary>
+        /// <inheritdoc/>
+        public static decimal CalculateConsPC(DataRow currentDetailData, decimal cons, decimal layer, DataTable dtSizeRatio, CuttingForm form)
+        {
+            decimal sizeRatioQty = dtSizeRatio.Select(GetFilter(currentDetailData, form)).AsEnumerable().Sum(row => MyUtility.Convert.GetDecimal(row["Qty"]));
+            return sizeRatioQty * layer == 0 ? 0 : cons / (sizeRatioQty * layer);
+        }
+
+        /// <summary>
         /// 計算 Cons *實體*欄位, 當改變3個欄位 ConsPC,Layer,SizeRatio.Qty 時
         /// </summary>
         /// <inheritdoc/>
-        public static decimal CalculateCons(DataRow currentDetailData, DataTable dtSizeRatio, CuttingForm form)
+        public static decimal CalculateCons(DataRow currentDetailData, decimal consPC, decimal layer, DataTable dtSizeRatio, CuttingForm form)
         {
             decimal sizeRatioQty = dtSizeRatio.Select(GetFilter(currentDetailData, form)).AsEnumerable().Sum(row => MyUtility.Convert.GetDecimal(row["Qty"]));
-            return MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]) * MyUtility.Convert.GetDecimal(currentDetailData["Layer"]) * sizeRatioQty;
+            return consPC * layer * sizeRatioQty;
+        }
+
+        /// <summary>
+        /// 用於新增 SizeRatio 不輸入 SizeCode 輸入 Qty, 會加總Qty算 ConsPC, 然後存檔, 空白 SizeCode 會刪除
+        /// </summary>
+        /// <inheritdoc/>
+        public static void BeforeSaveCalculateConsPC(IList<DataRow> detailDatas, DataTable dtSizeRatio, CuttingForm form)
+        {
+            dtSizeRatio.AcceptChanges();
+            foreach (DataRow row in detailDatas)
+            {
+                row["ConsPC"] = CalculateConsPC(row, MyUtility.Convert.GetDecimal(row["Cons"]), MyUtility.Convert.GetDecimal(row["Layer"]), dtSizeRatio, form);
+            }
         }
 
         public static void AddThirdDatas(DataRow currentDetailData, DataRow oldRow, DataTable dtTarget, CuttingForm form)

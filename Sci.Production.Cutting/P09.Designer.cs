@@ -298,6 +298,7 @@
             0,
             0,
             0});
+            this.numConsPC.Validated += new System.EventHandler(this.NumConsPC_Validated);
             // 
             // splitContainer1
             // 

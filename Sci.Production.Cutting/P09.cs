@@ -654,7 +654,7 @@ SELECT
     WorkOrderForOutput.ID,
     WorkOrderForPlanning_PatternPanel.PatternPanel,
     WorkOrderForPlanning_PatternPanel.FabricPanelCode
-FROM WorkOrderForOutput
+FROM WorkOrderForOutput WITH(NOLOCK)
 JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
 WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
@@ -672,7 +672,7 @@ SELECT
     WorkOrderForPlanning_SizeRatio.ID,
     WorkOrderForPlanning_SizeRatio.SizeCode,
     WorkOrderForPlanning_SizeRatio.Qty
-FROM WorkOrderForOutput
+FROM WorkOrderForOutput WITH(NOLOCK)
 JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
 WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
@@ -686,9 +686,15 @@ ORDER BY Ukey
 ";
 
             // Distribute 寫入之後才執行
+            string orderID = "ISNULL((SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS'), '')";
+            if (this.CurrentMaintain["WorkType"].ToString() == "1")
+            {
+                orderID = $"ID";
+            }
+
             string sqlUpdateOrderID = $@"
 UPDATE WorkOrderForOutput
-SET OrderID = ISNULL((SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS'), '')
+SET OrderID = {orderID}
 WHERE ID = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -825,6 +831,9 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                 }
             }
             #endregion
+
+            // 刪除 SizeRatio 之後重算 ConsPC
+            BeforeSaveCalculateConsPC(this.DetailDatas, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
 
             // 更新 Cutting 欄位
             this.CurrentMaintain["CutForOutputInline"] = this.DetailDatas.AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
@@ -1055,15 +1064,6 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
         }
 
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
-
-            // 更新 P20
-            this.BackgroundWorker1.RunWorkerAsync();
-        }
-
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             if (!this.ReUpdateP20)
@@ -1125,10 +1125,11 @@ DEALLOCATE CURSOR_
             DataRow oldRow = this.CurrentDetailData;
 
             // 底層插入之後 this.CurrentDetailData 是新的那筆
-            base.OnDetailGridInsert(index);
+            base.OnDetailGridInsert(index == -1 ? 0 : index);
 
             // 先取得當前編輯狀態的最新 tmpKey
             this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
+            this.CurrentDetailData["CutNo"] = DBNull.Value;
             this.CurrentDetailData["SpreadingStatus"] = "Ready";
             this.CurrentDetailData["Adduser"] = MyUtility.GetValue.Lookup($"SELECT NAME FROM Pass1 WITH (NOLOCK) Where ID = '{this.CurrentDetailData["AddName"]}'");
             if (oldRow == null)
@@ -1144,7 +1145,7 @@ DEALLOCATE CURSOR_
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
 
-                if (index == -1 || this.CurrentMaintain["WorkType"].ToString() != "2")
+                if (index == -1 || this.CurrentMaintain["WorkType"].ToString() == "1")
                 {
                     this.CurrentDetailData["OrderID"] = this.CurrentMaintain["ID"];
                 }
@@ -1247,6 +1248,11 @@ DEALLOCATE CURSOR_
         #endregion
 
         #region Grid 欄位事件 顏色/開窗/驗證
+        private void NumConsPC_Validated(object sender, EventArgs e)
+            {
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+        }
+
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
@@ -1345,7 +1351,7 @@ DEALLOCATE CURSOR_
                 dr["Layer"] = newvalue;
                 UpdateExcess(dr, MyUtility.Convert.GetInt(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
 
-                dr["Cons"] = CalculateCons(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 UpdateConcatString(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 dr.EndEdit();
             };
@@ -1489,7 +1495,7 @@ DEALLOCATE CURSOR_
 
                 dr["MarkerLength"] = dr["MarkerLength_Mask"] = SetMarkerLengthMaskString(e.FormattedValue.ToString());
                 dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                dr["Cons"] = CalculateCons(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 dr.EndEdit();
             };
             this.col_ActCuttingPerimeter.CellValidating += this.MaskedCellValidatingHandler;
@@ -1706,8 +1712,7 @@ DEALLOCATE CURSOR_
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     if (grid.Name == "gridSizeRatio")
                     {
-                        DataRow dr = grid.GetDataRow(e.RowIndex);
-                        this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                        this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                     }
                 }
             };
@@ -1762,6 +1767,7 @@ DEALLOCATE CURSOR_
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
             newrow["Qty"] = 0;
+            newrow["SizeCode"] = string.Empty;
             this.dtWorkOrderForOutput_SizeRatio.Rows.Add(newrow);
         }
 
@@ -1799,6 +1805,9 @@ DEALLOCATE CURSOR_
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
             newrow["Qty"] = 0;
+            newrow["OrderID"] = string.Empty;
+            newrow["Article"] = string.Empty;
+            newrow["SizeCode"] = string.Empty;
             this.dtWorkOrderForOutput_Distribute.Rows.Add(newrow);
         }
 

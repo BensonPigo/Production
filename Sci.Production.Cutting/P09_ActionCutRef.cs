@@ -37,6 +37,7 @@ namespace Sci.Production.Cutting
 
         private string ID;
         private string SCIRefno = string.Empty;
+        private decimal Cons = 0;
 
         /// <inheritdoc/>
         public P09_ActionCutRef()
@@ -72,15 +73,16 @@ namespace Sci.Production.Cutting
             this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
             this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
             this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
-            this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter"].ToString();
-            this.txtStraightLength.Text = this.CurrentDetailData["StraightLength"].ToString();
-            this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength"].ToString();
+            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength_Mask"].ToString();
+            this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter_Mask"].ToString();
+            this.txtStraightLength.Text = this.CurrentDetailData["StraightLength_Mask"].ToString();
+            this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength_Mask"].ToString();
             this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
             this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
             this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
             this.txtDropDownList1.Text = this.CurrentDetailData["Shift"].ToString();
             this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
+            this.Cons = MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]);
 
             this.patternpanelbs.DataSource = this.dtWorkOrderForOutput_PatternPanel;
             this.sizeRatiobs.DataSource = this.dtWorkOrderForOutput_SizeRatio;
@@ -157,7 +159,7 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["CutCellID"] = this.txtCell.Text;
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
-            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            this.CurrentDetailData["Cons"] = this.Cons;
             UpdateMinOrderID(this.WorkType, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
@@ -190,6 +192,7 @@ namespace Sci.Production.Cutting
         private void NumLayers_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
         }
 
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -332,12 +335,18 @@ namespace Sci.Production.Cutting
             this.txtCell.Text = drV["CutCellID"].ToString();
         }
 
+        private void NumConsPC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+        }
+
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (this.txtMarkerLength.Text != "Y  - / + \"")
             {
                 this.txtMarkerLength.Text = SetMarkerLengthMaskString(this.txtMarkerLength.Text);
                 this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             }
         }
 
@@ -402,7 +411,13 @@ namespace Sci.Production.Cutting
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                QtyCellValidating(e, this.CurrentDetailData, this.gridDistributeToSP, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]));
+                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                {
+                    if (grid.Name == "gridSizeRatio")
+                    {
+                        this.numConsPC.Value = CalculateConsPC(this.CurrentDetailData, this.Cons, MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+                    }
+                }
             };
         }
 
@@ -426,6 +441,8 @@ namespace Sci.Production.Cutting
             newrow["ID"] = this.CurrentDetailData["ID"];
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["PatternPanel"] = string.Empty;
+            newrow["FabricPanelCode"] = string.Empty;
             this.dtWorkOrderForOutput_PatternPanel.Rows.Add(newrow);
         }
 
@@ -447,6 +464,7 @@ namespace Sci.Production.Cutting
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
             newrow["Qty"] = 0;
+            newrow["SizeCode"] = string.Empty;
             this.dtWorkOrderForOutput_SizeRatio.Rows.Add(newrow);
         }
 
@@ -482,6 +500,9 @@ namespace Sci.Production.Cutting
             newrow["WorkOrderForOutputUkey"] = this.CurrentDetailData["Ukey"];
             newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
             newrow["Qty"] = 0;
+            newrow["OrderID"] = string.Empty;
+            newrow["Article"] = string.Empty;
+            newrow["SizeCode"] = string.Empty;
             this.dtWorkOrderForOutput_Distribute.Rows.Add(newrow);
         }
 
