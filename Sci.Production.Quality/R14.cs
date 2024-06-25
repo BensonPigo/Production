@@ -293,7 +293,7 @@ namespace Sci.Production.Quality
 	                select val = stuff((select concat(';',tmp.Roll)
 	                from
 	                (
-		                select  Roll from MainServer.Production.dbo.WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
+		                select  Roll from SciProduction_WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
 	                ) 
 	                tmp for xml path('')),1,1,'')
                 )FabricRoll
@@ -438,7 +438,7 @@ namespace Sci.Production.Quality
                 select val = stuff((select concat(';',tmp.Roll)
                 from
                 (
-	                select  Roll from MainServer.Production.dbo.WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
+	                select  Roll from SciProduction_WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
                 ) 
                 tmp for xml path('')),1,1,'')
                 )FabricRoll
