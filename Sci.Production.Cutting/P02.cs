@@ -1735,7 +1735,7 @@ order by p.EditDate desc
         // 等待整合...
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null)
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
             {
                 return;
             }
@@ -1749,7 +1749,7 @@ order by p.EditDate desc
         // 等待整合...
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null)
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
             {
                 return;
             }

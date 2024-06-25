@@ -2015,6 +2015,11 @@ DEALLOCATE CURSOR_
 
         private void BtnDistributeThisCutRef_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
             this.detailgrid.ValidateControl();
             var frm = new P09_AutoDistToSP(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
             frm.ShowDialog(this);
@@ -2022,7 +2027,7 @@ DEALLOCATE CURSOR_
 
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null)
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
             {
                 return;
             }
@@ -2035,7 +2040,7 @@ DEALLOCATE CURSOR_
 
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null)
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
             {
                 return;
             }
