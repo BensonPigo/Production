@@ -24,6 +24,7 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P02 : Win.Tems.Input6
     {
+        #region 全域變數
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SP;
@@ -45,6 +46,8 @@ namespace Sci.Production.Cutting
         private DataTable dt_PatternPanel;
 
         private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
+
+        #endregion
 
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem, string history)
@@ -427,14 +430,19 @@ DROP TABLE #tmp
         protected override void OnDetailGridRowChanged()
         {
             this.GridValidateControl();
-            base.OnDetailGridRowChanged();
 
+            this.bindingSourceDetail.SetRow(this.CurrentDetailData);
+
+            // 變更子表可否編輯
+            bool canEdit = this.CanEditData(this.CurrentDetailData);
+            this.sizeratioMenuStrip.Enabled = canEdit;
+            this.gridSizeRatio.IsEditingReadOnly = !canEdit;
+
+            // 避免後面炸掉
             if (this.CurrentDetailData == null)
             {
                 return;
             }
-
-            this.bindingSourceDetail.SetRow(this.CurrentDetailData);
 
             #region Total Layer / Balance Layer
             /*
@@ -492,17 +500,13 @@ DROP TABLE #tmp
 
             #endregion
 
-            // 變更子表可否編輯
-            bool canEdit = this.CanEditData(this.CurrentDetailData);
-            this.sizeratioMenuStrip.Enabled = canEdit;
-            this.gridSizeRatio.IsEditingReadOnly = !canEdit;
-
             // 根據左邊Grid Filter 右邊 Size Ratio 資訊
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
             this.sizeRatioBindingSource.Filter = filter;
 
             // 根據左邊Grid Filter 右邊 Order List 資訊
             this.orderListBindingSource.Filter = $@"SP = '{this.CurrentDetailData["OrderID"]}' ";
+            base.OnDetailGridRowChanged();
         }
 
         protected override void DoPrint()
@@ -545,6 +549,11 @@ DROP TABLE #tmp
             }
         }
 
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            this.RenewData();
+            this.OnDetailEntered();
+        }
         #endregion
 
         #region Click Save Event
@@ -719,6 +728,17 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             #endregion
 
             return base.ClickSavePost();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 更新 P20
+            this.BackgroundWorker1.RunWorkerAsync();
+
+            this.OnDetailEntered();
         }
 
         // 檢查 主表身 不可空欄位, 並移動到那列
@@ -1640,7 +1660,6 @@ END";
             this.OnRefreshClick();
         }
 
-        // 等待整合...
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
             // P02似乎不需要
@@ -1673,7 +1692,7 @@ order by p.EditDate desc
                 DataRow drNEW = this.dt_PatternPanel.NewRow();
                 drNEW["id"] = this.CurrentMaintain["ID"];
                 drNEW["WorkOrderForPlanningUkey"] = 0;  // 新增 WorkOrderForPlanningUkey 塞0
-                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"];
+                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"]; // 這邊只會有一筆，因為資料來源是DB
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
                 drNEW["tmpKey"] = row["tmpKey"];
                 this.dt_PatternPanel.Rows.Add(drNEW);
@@ -1762,7 +1781,7 @@ order by p.EditDate desc
         {
             if (MyUtility.Check.Empty(dr))
             {
-                return this.EditMode;
+                return false;
             }
 
             // 沒有排入裁剪計畫的裁次才可異動
@@ -1775,11 +1794,6 @@ order by p.EditDate desc
             this.gridSizeRatio.ValidateControl();
         }
 
-        private void Refresh_Click(object sender, EventArgs e)
-        {
-            this.RenewData();
-            this.OnDetailEntered();
-        }
     }
 #pragma warning restore SA1401 // Fields should be private
 #pragma warning restore SA1600 // Elements should be documented

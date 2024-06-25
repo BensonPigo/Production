@@ -1947,7 +1947,7 @@ order by p.EditDate desc
                 DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
                 drNEW["id"] = this.CurrentMaintain["ID"];
                 drNEW["WorkOrderForOutputUkey"] = 0;  // 新增 WorkOrderForOutputUkey 塞0
-                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"];
+                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"]; // 這邊只會有一筆，因為資料來源是DB
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
                 drNEW["tmpKey"] = row["tmpKey"];
                 this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
