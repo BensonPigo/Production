@@ -1256,9 +1256,9 @@ DEALLOCATE CURSOR_
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            ConfigureColumnEvents(this.detailgrid, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.detailgrid, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDataByGrid);
 
             #region 主表
 
@@ -1328,10 +1328,8 @@ DEALLOCATE CURSOR_
                 dr.EndEdit();
             };
 
-            this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq2.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq1.CellValidating += this.SeqCelllValidatingHandler;
-            this.col_Seq2.CellValidating += this.SeqCelllValidatingHandler;
+            ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
+            ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
             this.col_Layer.CellValidating += (s, e) =>
             {
@@ -1566,7 +1564,7 @@ DEALLOCATE CURSOR_
             #endregion
         }
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
             {
@@ -1588,6 +1586,7 @@ DEALLOCATE CURSOR_
             }
         }
 
+        /*
         private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1596,20 +1595,19 @@ DEALLOCATE CURSOR_
                 return;
             }
 
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
-            if (minFabricPanelCode == null)
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
             }
 
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string id = this.CurrentDetailData["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
 
             // 觸發的欄位不作為篩選條件
             switch (columnName.ToLower())
@@ -1641,25 +1639,24 @@ DEALLOCATE CURSOR_
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
-            string oldvalue = this.CurrentDetailData[columnName].ToString();
+            string oldvalue = dr[columnName].ToString();
             if (!this.CanEditData(dr) || MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
 
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
-            if (minFabricPanelCode == null)
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
             }
 
-            string id = this.CurrentDetailData["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
             switch (columnName.ToLower())
             {
                 case "seq1":
@@ -1672,7 +1669,7 @@ DEALLOCATE CURSOR_
 
             if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
-                this.CurrentDetailData[columnName] = newvalue;
+                dr[columnName] = newvalue;
 
                 // 唯一值時
                 if (dtValidating.Rows.Count == 1)
@@ -1682,12 +1679,12 @@ DEALLOCATE CURSOR_
             }
             else
             {
-                this.CurrentDetailData[columnName] = string.Empty;
+                dr[columnName] = string.Empty;
             }
 
-            this.CurrentDetailData.EndEdit();
+            dr.EndEdit();
         }
-
+        */
         private void MaskedCellValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1913,7 +1910,17 @@ DEALLOCATE CURSOR_
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
-
+            this.detailgrid.ValidateControl();
+            var dt = this.DetailDatas.Where(row => this.CanEditData(row));
+            if (dt.Any())
+            {
+                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString());
+                frm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No editable data.");
+            }
         }
 
         private void BtnImportMarker_Click(object sender, EventArgs e)

@@ -611,6 +611,111 @@ AND EXISTS (
 
             return dt;
         }
+
+        public static void ConfigureSeqColumnEvents(Ict.Win.UI.DataGridViewTextBoxColumn col_TextBox, Sci.Win.UI.Grid detailgrid, Func<DataRow, bool> canEditData)
+        {
+            col_TextBox.EditingMouseDown += (sender, e) => SeqCellEditingMouseDown(sender, e, detailgrid, canEditData);
+            col_TextBox.CellValidating += (sender, e) => SeqCellValidatingHandler(sender, e, detailgrid, canEditData);
+        }
+
+        private static void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e, Sci.Win.UI.Grid detailgrid, Func<DataRow, bool> canEditData)
+        {
+            DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            if (!canEditData(dr) || e.Button != MouseButtons.Right)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                return;
+            }
+
+            string columnName = detailgrid.Columns[e.ColumnIndex].Name;
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
+
+            // 触发的栏位不作为筛选条件
+            switch (columnName.ToLower())
+            {
+                case "seq1":
+                    seq1 = string.Empty;
+                    break;
+                case "seq2":
+                    seq2 = string.Empty;
+                    break;
+            }
+
+            SelectItem selectItem = PopupSEQ(id, fabricCode, seq1, seq2, refno, colorID, false);
+            if (selectItem == null)
+            {
+                return;
+            }
+
+            dr["SEQ1"] = selectItem.GetSelecteds()[0]["SEQ1"];
+            dr["SEQ2"] = selectItem.GetSelecteds()[0]["SEQ2"];
+            dr["Refno"] = selectItem.GetSelecteds()[0]["Refno"];
+            dr["ColorID"] = selectItem.GetSelecteds()[0]["ColorID"];
+            dr["SCIRefno"] = selectItem.GetSelecteds()[0]["SCIRefno"];
+            dr.EndEdit();
+        }
+
+        private static void SeqCellValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e, Sci.Win.UI.Grid detailgrid, Func<DataRow, bool> canEditData)
+        {
+            DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+            string columnName = detailgrid.Columns[e.ColumnIndex].Name;
+            string newvalue = e.FormattedValue.ToString();
+            string oldvalue = dr[columnName].ToString();
+            if (!canEditData(dr) || MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                return;
+            }
+
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
+            switch (columnName.ToLower())
+            {
+                case "seq1":
+                    seq1 = newvalue;
+                    break;
+                case "seq2":
+                    seq2 = newvalue;
+                    break;
+            }
+
+            if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
+            {
+                dr[columnName] = newvalue;
+
+                // 唯一值时
+                if (dtValidating.Rows.Count == 1)
+                {
+                    dr["SCIRefno"] = dtValidating.Rows[0]["SCIRefno"].ToString();
+                }
+            }
+            else
+            {
+                dr[columnName] = string.Empty;
+            }
+
+            dr.EndEdit();
+        }
+
         #endregion
 
         #region SpreadingNo 開窗/驗證

@@ -1029,8 +1029,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            ConfigureColumnEvents(this.detailgrid, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.detailgrid, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDataByGrid);
 
             #region 主表
 
@@ -1778,7 +1778,7 @@ order by p.EditDate desc
         }
         #endregion
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
             {

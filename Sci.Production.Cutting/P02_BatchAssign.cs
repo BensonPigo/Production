@@ -2,12 +2,10 @@
 using Ict.Win;
 using Sci.Win.Tools;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Linq;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
@@ -113,22 +111,12 @@ namespace Sci.Production.Cutting
              .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
              .Text("SizeCode_CONCAT", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-             .Text("CutQty_CONCAT", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out col_WKETA)
+             .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+             .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
              .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
              .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_EstCutDate)
              .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
              .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_MarkerNo);
-
-            //this.gridBatchAssign.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
-            //this.gridBatchAssign.Columns["MarkerName"].DefaultCellStyle.BackColor = Color.Pink;
-            //this.gridBatchAssign.Columns["MarkerName"].DefaultCellStyle.ForeColor = Color.Red;
-            ////this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.BackColor = Color.Pink;
-            ////this.gridBatchAssignCellEstCutDate.Columns["MarkerLength_Mask"].DefaultCellStyle.ForeColor = Color.Red;
-            //this.gridBatchAssign.Columns["EstCutDate"].DefaultCellStyle.BackColor = Color.Pink;
-            //this.gridBatchAssign.Columns["EstCutDate"].DefaultCellStyle.ForeColor = Color.Red;
-            //this.gridBatchAssign.Columns["Tone"].DefaultCellStyle.BackColor = Color.Pink;
-            //this.gridBatchAssign.Columns["Tone"].DefaultCellStyle.ForeColor = Color.Red;
 
             this.GridEventSet();
             this.Filter();
@@ -223,7 +211,6 @@ namespace Sci.Production.Cutting
                         }
                     }
                 }
-
             }
 
             // Seq、WK ETA (Seq會影響 WK ETA，因此一併判斷+寫入)
@@ -490,11 +477,10 @@ namespace Sci.Production.Cutting
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDatByGrid);
-            this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq2.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq1.CellValidating += this.SeqCelllValidatingHandler;
-            this.col_Seq2.CellValidating += this.SeqCelllValidatingHandler;
+            ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDataByGrid);
+
+            ConfigureSeqColumnEvents(this.col_Seq1, this.gridBatchAssign, this.CanEditData);
+            ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
             this.col_WKETA.EditingMouseDown += (s, e) =>
             {
@@ -527,106 +513,16 @@ namespace Sci.Production.Cutting
                 e.CellStyle.ForeColor = Color.Red;
             };
         }
-
-        private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
-        {
-            DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
-
-            if (MyUtility.Check.Empty(dr["FabricCode"]))
-            {
-                MyUtility.Msg.WarningBox("No Pattern Panel data!");
-                return;
-            }
-
-            string columnName = this.gridBatchAssign.Columns[e.ColumnIndex].Name;
-            string id = this.Poid;
-            string fabricCode = dr["FabricCode"].ToString();
-            string seq1 = string.Empty; // dr["SEQ1"].ToString();
-            string seq2 = string.Empty; // dr["SEQ2"].ToString();
-            string refno = dr["Refno"].ToString();
-            string colorID = dr["ColorID"].ToString();
-
-            // 觸發的欄位不作為篩選條件
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = string.Empty;
-                    break;
-                case "seq2":
-                    seq2 = string.Empty;
-                    break;
-            }
-
-            SelectItem selectItem = PopupSEQ(id, fabricCode, seq1, seq2, refno, colorID, false);
-            if (selectItem == null)
-            {
-                return;
-            }
-
-            dr["SEQ1"] = selectItem.GetSelecteds()[0]["SEQ1"];
-            dr["SEQ2"] = selectItem.GetSelecteds()[0]["SEQ2"];
-            dr.EndEdit();
-        }
-
-        private void SeqCelllValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
-        {
-            DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
-
-            string columnName = this.gridBatchAssign.Columns[e.ColumnIndex].Name;
-
-            if (MyUtility.Check.Empty(dr["FabricCode"]))
-            {
-                dr[columnName] = string.Empty;
-                MyUtility.Msg.WarningBox("No Pattern Panel data!");
-                return;
-            }
-
-            string newvalue = e.FormattedValue.ToString();
-            string oldvalue = dr[columnName].ToString();
-            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
-            {
-                return;
-            }
-
-            string id = this.Poid;
-            string fabricCode = dr["FabricCode"].ToString();
-            string seq1 = dr["SEQ1"].ToString();
-            string seq2 = dr["SEQ2"].ToString();
-            string refno = dr["Refno"].ToString();
-            string colorID = dr["ColorID"].ToString();
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = newvalue;
-                    break;
-                case "seq2":
-                    seq2 = newvalue;
-                    break;
-            }
-
-            if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
-            {
-                dr[columnName] = newvalue;
-
-                // 唯一值時
-                if (dtValidating.Rows.Count == 1)
-                {
-                    dr["SCIRefno"] = dtValidating.Rows[0]["SCIRefno"].ToString();
-                }
-            }
-            else
-            {
-                dr[columnName] = string.Empty;
-            }
-
-            dr.EndEdit();
-        }
         #endregion
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
-            return true;
+            return true; // 能帶進來的資料必定是能編輯的
         }
 
+        private bool CanEditData(DataRow dr)
+        {
+            return true; // 能帶進來的資料必定是能編輯的
+        }
     }
 }
