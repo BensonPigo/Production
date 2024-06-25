@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.ComponentModel;
@@ -24,25 +25,31 @@ namespace Sci.Production.Cutting
         private DataTable dt_CurentDetail;
         private DataTable sp;
         private string Poid;
+        private CuttingForm form;
 
-        private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA = new Ict.Win.UI.DataGridViewDateBoxColumn();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
+        private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P02_BatchAssign"/> class.
         /// </summary>
         /// <param name="detailTable">Detail Table</param>
         /// <param name="cuttingPoid">cuttingPoid</param>
-        public P02_BatchAssign(DataTable detailTable, string cuttingPoid)
+        /// <param name="form">P02或P09</param>
+        public P02_BatchAssign(DataTable detailTable, string cuttingPoid, CuttingForm form)
         {
             this.InitializeComponent();
             this.Poid = cuttingPoid;
             this.dt_OriDetail = detailTable;
-            this.dt_CurentDetail = detailTable;
-            this.dt_CurentDetail.Columns.Add("Sel", typeof(bool));
+            this.dt_CurentDetail = detailTable.Copy();
+            this.dt_CurentDetail.Columns.Add("Selected", typeof(bool));
             this.Gridsetup();
             this.BtnFilter_Click(null, null);  // 1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
+            this.form = form;
 
             MyUtility.Tool.ProcessWithDatatable(this.dt_CurentDetail, "OrderID", $@"select distinct OrderID from #tmp", out this.sp);
             if (this.dt_CurentDetail != null)
@@ -55,7 +62,6 @@ namespace Sci.Production.Cutting
         private void Gridsetup()
         {
             DataGridViewGeneratorDateColumnSettings col_EstCutDate = new DataGridViewGeneratorDateColumnSettings();
-            Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength = new Ict.Win.UI.DataGridViewMaskedTextBoxColumn();
             Ict.Win.UI.DataGridViewTextBoxColumn col_MarkerNo = new Ict.Win.UI.DataGridViewTextBoxColumn();
 
             col_EstCutDate.CellValidating += (s, e) =>
@@ -76,47 +82,46 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            col_MarkerLength.CellValidating += (s, e) =>
-            {
-                DataRow dr = ((Win.UI.Grid)((DataGridViewColumn)s).DataGridView).GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["CutPlanID"]))
-                {
-                    return;
-                }
-
-                string columnName = (s as DataGridViewColumn)?.Name;
-                if (columnName == "MarkerLength")
-                {
-                    dr["MarkerLength"] = dr["MarkerLength_Mask"] = CuttingWorkOrder.SetMarkerLengthMaskString(e.FormattedValue.ToString());
-                }
-                else
-                {
-                    dr[columnName] = dr[columnName + "_Mask"] = CuttingWorkOrder.SetMaskString(e.FormattedValue.ToString());
-                }
-            };
-
             this.gridBatchAssign.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
-             .CheckBox("Sel", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
-             .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5))
-             .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", name: "Marker Length", width: Ict.Win.Widths.AnsiChars(16)).Get(out col_MarkerLength)
-             .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-             .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-             .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
-             .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_Seq1)
-             .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_Seq2)
-             .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
-             .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
-             .Text("SizeCode_CONCAT", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
-             .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
-             .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-             .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_EstCutDate)
-             .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-             .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_MarkerNo);
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5))
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData).Get(out this.col_MarkerLength)
+                .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                ;
+
+            if (this.form == CuttingForm.P09)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
+                    .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
+                    .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
+                    ;
+            }
+
+            this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
+                .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_Seq1)
+                .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_Seq2)
+                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
+                .Text("SizeCode_CONCAT", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Layer", header: "Layers", width: Widths.AnsiChars(5), integer_places: 5, iseditingreadonly: true)
+                .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("WKETA", header: "WK ETA", width: Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
+                .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: false, settings: col_EstCutDate)
+                ;
+            if (this.form == CuttingForm.P02)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
+                    .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true);
+            }
+
+            this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
+                .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_MarkerNo);
 
             this.GridEventSet();
             this.Filter();
@@ -194,12 +199,7 @@ namespace Sci.Production.Cutting
                 // Est. Cut Date
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
-                    if (dr["Sel"].ToString() == "True")
+                    if (dr["Selected"].ToString() == "True")
                     {
                         if (estCutDate != string.Empty)
                         {
@@ -226,18 +226,13 @@ namespace Sci.Production.Cutting
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
                     // FabricCode、Refno、Colorid 為空不可新增Seq，同P02 Grid驗證方式
                     if (MyUtility.Check.Empty(dr["FabricCode"]) || MyUtility.Check.Empty(dr["Refno"]) || MyUtility.Check.Empty(dr["Colorid"]))
                     {
                         continue;
                     }
 
-                    if (dr["Sel"].ToString() == "True")
+                    if (dr["Selected"].ToString() == "True")
                     {
                         // 逐一檢查Seq 正確性
                         bool isValid = ValidatingSeqWithoutFabricCode(this.Poid, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
@@ -265,12 +260,7 @@ namespace Sci.Production.Cutting
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
-                    if (dr["Sel"].ToString() == "True")
+                    if (dr["Selected"].ToString() == "True")
                     {
                         dr["MarkerName"] = markerName;
                     }
@@ -282,12 +272,7 @@ namespace Sci.Production.Cutting
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
-                    if (dr["Sel"].ToString() == "True")
+                    if (dr["Selected"].ToString() == "True")
                     {
                         dr["MarkerLength_Mask"] = markerLength;
                     }
@@ -301,12 +286,7 @@ namespace Sci.Production.Cutting
 
             foreach (DataRow dr in this.dt_CurentDetail.Rows)
             {
-                if (dr.RowState == DataRowState.Deleted)
-                {
-                    continue;
-                }
-
-                if (dr["Sel"].ToString() == "True")
+                if (dr["Selected"].ToString() == "True")
                 {
                     DataRow[] detaildr;
                     if (MyUtility.Check.Empty(dr["Ukey"]))
@@ -446,7 +426,7 @@ namespace Sci.Production.Cutting
         {
             if (this.txtMarkerLength.Text != "Y  - / + \"")
             {
-                this.txtMarkerLength.Text = SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+                this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
             }
         }
 
@@ -479,6 +459,7 @@ namespace Sci.Production.Cutting
             // 可否編輯 && 顏色
             ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDataByGrid);
 
+            // Seq 兩個欄位
             ConfigureSeqColumnEvents(this.col_Seq1, this.gridBatchAssign, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
@@ -512,6 +493,12 @@ namespace Sci.Production.Cutting
                 e.CellStyle.BackColor = Color.Pink;
                 e.CellStyle.ForeColor = Color.Red;
             };
+
+            if (this.form == CuttingForm.P09)
+            {
+                BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditData);
+                BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
+            }
         }
         #endregion
 

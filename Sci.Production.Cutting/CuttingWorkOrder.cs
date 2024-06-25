@@ -780,6 +780,53 @@ AND Junk = 0
 
             return dt;
         }
+
+        public static void BindGridSpreadingNo(Ict.Win.UI.DataGridViewTextBoxColumn column, Sci.Win.UI.Grid detailgrid, Func<DataRow, bool> canEditData)
+        {
+            column.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!canEditData(dr))
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    SelectItem selectItem = PopupSpreadingNo(dr["SpreadingNoID"].ToString());
+                    if (selectItem == null)
+                    {
+                        return;
+                    }
+
+                    dr["SpreadingNoID"] = selectItem.GetSelectedString();
+                    dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
+                    dr.EndEdit();
+                }
+            };
+            column.CellValidating += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!canEditData(dr))
+                {
+                    return;
+                }
+
+                if (!ValidatingSpreadingNo(e.FormattedValue.ToString(), out DataRow drV))
+                {
+                    dr["SpreadingNoID"] = string.Empty;
+                    e.Cancel = true;
+                }
+
+                dr["SpreadingNoID"] = e.FormattedValue;
+                if (drV != null)
+                {
+                    dr["CutCellID"] = drV["CutCellID"];
+                }
+
+                dr.EndEdit();
+            };
+        }
         #endregion
 
         #region CutCell 開窗/驗證
@@ -839,9 +886,50 @@ AND Junk = 0
 
             return dt;
         }
+
+        public static void BindGridCutCell(Ict.Win.UI.DataGridViewTextBoxColumn column, Sci.Win.UI.Grid detailgrid, Func<DataRow, bool> canEditData)
+        {
+            column.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!canEditData(dr))
+                {
+                    return;
+                }
+
+                if (e.Button == MouseButtons.Right)
+                {
+                    SelectItem selectItem = PopupCutCell(dr["CutCellID"].ToString());
+                    if (selectItem == null)
+                    {
+                        return;
+                    }
+
+                    dr["CutCellID"] = selectItem.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+            column.CellValidating += (s, e) =>
+            {
+                DataRow dr = detailgrid.GetDataRow(e.RowIndex);
+                if (!canEditData(dr))
+                {
+                    return;
+                }
+
+                if (!ValidatingCutCell(e.FormattedValue.ToString()))
+                {
+                    dr["CutCellID"] = string.Empty;
+                    e.Cancel = true;
+                }
+
+                dr["CutCellID"] = e.FormattedValue;
+                dr.EndEdit();
+            };
+        }
         #endregion
 
-        #region Masked Text
+        #region Masked Text, 遮罩字串處理, 四個欄位 MarkerLength, (P09: 這3個格式一樣 ActCuttingPerimeter, StraightLength, CurvedLength)
 
         /// <summary>
         /// 處理 MarkerLength
@@ -865,36 +953,6 @@ AND Junk = 0
 
             // 如果不匹配，返回原始输入或根据需求处理
             return input;
-        }
-
-        /// <summary>
-        /// MarkerLength 欄位驗證
-        /// </summary>
-        /// <inheritdoc/>
-        public static string SetMarkerLengthMaskString(string eventString)
-        {
-            if (eventString == string.Empty || (int.TryParse(eventString, out int result) && result == 0))
-            {
-                return string.Empty;
-            }
-
-            eventString = eventString.Replace(" ", "0");
-            if (eventString.Contains("Y"))
-            {
-                string[] strings = eventString.Split("Y");
-                string[] strings2 = strings[1].Split("-");
-                string[] strings3 = strings2[1].Split("/");
-                string[] strings4 = strings3[1].Split("+");
-                string[] strings5 = strings4[1].Split("\"");
-                eventString = $"{strings[0].PadLeft(2, '0')}Y{strings2[0].PadLeft(2, '0')}-{strings3[0].PadLeft(1, '0')}/{strings4[0].PadLeft(1, '0')}+{strings5[0].PadLeft(1, '0')}\"";
-            }
-            else
-            {
-                eventString = eventString.PadRight(8, '0');
-                eventString = $"{eventString.Substring(0, 2)}Y{eventString.Substring(2, 2)}-{eventString.Substring(4, 1)}/{eventString.Substring(5, 1)}+{eventString.Substring(6, 1)}\"";
-            }
-
-            return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
         }
 
         /// <summary>
@@ -1776,6 +1834,13 @@ ORDER BY FabricPanelCode,PatternPanel
             }
         }
 
+        /// <summary>
+        /// 複製資料使用
+        /// </summary>
+        /// <param name="currentDetailData">新增之後Row</param>
+        /// <param name="oldRow">舊的Row包含資訊</param>
+        /// <param name="dtTarget">要複製的DataTable</param>
+        /// <param name="form">P02或P09</param>
         public static void AddThirdDatas(DataRow currentDetailData, DataRow oldRow, DataTable dtTarget, CuttingForm form)
         {
             string filter = GetFilter(oldRow, form);

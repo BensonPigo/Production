@@ -344,7 +344,7 @@ namespace Sci.Production.Cutting
         {
             if (this.txtMarkerLength.Text != "Y  - / + \"")
             {
-                this.txtMarkerLength.Text = SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+                this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
                 this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
             }

@@ -156,7 +156,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
-                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", name: "MarkerLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_MarkerLength)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData).Get(out this.col_MarkerLength)
                 .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting Perimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_ActCuttingPerimeter)
                 .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_StraightLength)
                 .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_CurvedLength)
@@ -580,6 +580,7 @@ INSERT INTO WorkOrderForOutput (
     MarkerNo,
     MarkerName,
     MarkerLength,
+    MarkerVersion,
     ActCuttingPerimeter,
     StraightLength,
     CurvedLength,
@@ -621,6 +622,7 @@ SELECT
     ,WorkOrderForPlanning.MarkerNo
     ,WorkOrderForPlanning.MarkerName
     ,WorkOrderForPlanning.MarkerLength
+    ,WorkOrderForPlanning.MarkerVersion
     ,Order_EachCons.ActCuttingPerimeter
     ,Order_EachCons.StraightLength
     ,Order_EachCons.CurvedLength
@@ -1331,6 +1333,7 @@ DEALLOCATE CURSOR_
                 dr.EndEdit();
             };
 
+            // Seq 兩個欄位
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
@@ -1404,97 +1407,20 @@ DEALLOCATE CURSOR_
                     MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
                 }
             };
-            this.col_SpreadingNoID.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
 
-                if (e.Button == MouseButtons.Right)
-                {
-                    SelectItem selectItem = PopupSpreadingNo(dr["SpreadingNoID"].ToString());
-                    if (selectItem == null)
-                    {
-                        return;
-                    }
-
-                    dr["SpreadingNoID"] = selectItem.GetSelectedString();
-                    dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
-                    dr.EndEdit();
-                }
-            };
-            this.col_SpreadingNoID.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!ValidatingSpreadingNo(e.FormattedValue.ToString(), out DataRow drV))
-                {
-                    dr["SpreadingNoID"] = string.Empty;
-                    e.Cancel = true;
-                }
-
-                dr["SpreadingNoID"] = e.FormattedValue;
-                if (drV != null)
-                {
-                    dr["CutCellID"] = drV["CutCellID"];
-                }
-
-                dr.EndEdit();
-            };
-
-            this.col_CutCellID.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (e.Button == MouseButtons.Right)
-                {
-                    SelectItem selectItem = PopupCutCell(dr["CutCellID"].ToString());
-                    if (selectItem == null)
-                    {
-                        return;
-                    }
-
-                    dr["CutCellID"] = selectItem.GetSelectedString();
-                    dr.EndEdit();
-                }
-            };
-            this.col_CutCellID.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!ValidatingCutCell(e.FormattedValue.ToString()))
-                {
-                    dr["CutCellID"] = string.Empty;
-                    e.Cancel = true;
-                }
-
-                dr["CutCellID"] = e.FormattedValue;
-                dr.EndEdit();
-            };
+            BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditData);
+            BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditData);
 
             this.col_MarkerLength.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
+                string newValue = Prgs.SetMarkerLengthMaskString(e.FormattedValue.ToString());
+                string oldValue = MyUtility.Convert.GetString(dr["MarkerLength"]);
+                if (!this.CanEditData(dr) || newValue == oldValue)
                 {
                     return;
                 }
 
-                dr["MarkerLength"] = dr["MarkerLength_Mask"] = SetMarkerLengthMaskString(e.FormattedValue.ToString());
                 dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 dr.EndEdit();
@@ -1936,7 +1862,7 @@ DEALLOCATE CURSOR_
             var dt = this.DetailDatas.Where(row => this.CanEditData(row));
             if (dt.Any())
             {
-                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString());
+                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
                 frm.ShowDialog(this);
             }
             else

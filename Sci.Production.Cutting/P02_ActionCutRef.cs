@@ -389,7 +389,7 @@ namespace Sci.Production.Cutting
         {
             if (this.txtMarkerLength.Text != "Y  - / + \"")
             {
-                this.txtMarkerLength.Text = SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+                this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
             }
         }
 
