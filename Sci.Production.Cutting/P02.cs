@@ -44,6 +44,8 @@ namespace Sci.Production.Cutting
         private DataTable dt_OrderList;
         private DataTable dt_PatternPanel;
 
+        private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
+
         /// <inheritdoc/>
         public P02(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -135,7 +137,7 @@ SELECT
    ,EditUser = p2.Name
    ,FabricTypeRefNo = CONCAT(f.WeaveTypeID, ' /' + wo.RefNo)
    ,FabricDescription = f.Description
-
+    ,ImportML = cast(0 as bit)
    ,tmpKey = CAST(0 AS BIGINT) --控制新加的資料用,SizeRatio/PatternPanel
    ,EachconsMarkerNo = oe.markerNo
    ,EachconsMarkerVersion = oe.MarkerVersion
@@ -225,7 +227,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
 
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
 
-            this.btnImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1";
+            this.btnImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1" && !this.EditMode;
 
             // Grid的Marker Length需要格式化後再貼上Grid cell
             foreach (DataRow row in this.DetailDatas)
@@ -502,11 +504,30 @@ DROP TABLE #tmp
 
         protected override void DoPrint()
         {
+            // 1394: CUTTING_P02_Cutting Work Order。KEEP當前的資料。
+            this.drTEMP = this.CurrentDetailData;
             base.DoPrint();
         }
 
         protected override bool ClickPrint()
         {
+            Cutting_Print callNextForm;
+            if (this.drTEMP != null)
+            {
+                callNextForm = new Cutting_Print(CuttingForm.P02, this.drTEMP);
+                callNextForm.ShowDialog(this);
+            }
+            else if (this.drTEMP == null && this.CurrentDetailData != null)
+            {
+                callNextForm = new Cutting_Print(CuttingForm.P02, this.CurrentDetailData);
+                callNextForm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No datas");
+                return false;
+            }
+
             return base.ClickPrint();
         }
 
@@ -560,12 +581,15 @@ DROP TABLE #tmp
             #endregion
 
             #region 檢查 SizeRatio、PatternPanel 重複 Key
-            if (!this.ValidateSizeRatio())
+
+            var checkSizeRatio = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "SizeCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dt_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas, CuttingForm.P02))
             {
                 return false;
             }
 
-            if (!this.ValidatePatternPanel())
+            var checkPatternPanel = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "PatternPanel", "FabricPanelCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dt_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, CuttingForm.P09))
             {
                 return false;
             }
@@ -793,63 +817,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
                 string msg = "You can't set different [Est.CutDate] in same CutRef#:";
                 MsgGridForm m = new MsgGridForm(dt, msg, "Exists CutRef#");
-                m.grid1.ColumnsAutoSize();
-                m.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        // 檢查SizeRatio 重複
-        private bool ValidateSizeRatio()
-        {
-            var groupData = this.dt_SizeRatio.AsEnumerable()
-                .Where(x => x.RowState != DataRowState.Deleted)
-                .GroupBy(x => new
-                {
-                    SizeCode = MyUtility.Convert.GetString(x["SizeCode"]),
-                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(x["WorkOrderForPlanningUkey"]),
-                    tmpKey = MyUtility.Convert.GetDate(x["tmpKey"]),
-                })
-                .Where(group => group.Count() > 1)
-                .SelectMany(group => group);
-
-            if (groupData.Any())
-            {
-                DataTable dt = groupData.Select(o => new { SizeRatio = o["SizeRatio"].ToString() }).Distinct().LinqToDataTable();
-
-                string msg = "The SizeRatio duplicate ,Please see below:";
-                MsgGridForm m = new MsgGridForm(dt, msg, "SizeRatio Duplicate");
-                m.grid1.ColumnsAutoSize();
-                m.ShowDialog();
-                return false;
-            }
-
-            return true;
-        }
-
-        // 檢查PatternPanel 重複
-        private bool ValidatePatternPanel()
-        {
-            var groupData = this.dt_PatternPanel.AsEnumerable()
-                .Where(x => x.RowState != DataRowState.Deleted)
-                .GroupBy(x => new
-                {
-                    PatternPanel = MyUtility.Convert.GetString(x["PatternPanel"]),
-                    FabricPanelCode = MyUtility.Convert.GetString(x["FabricPanelCode"]),
-                    WorkOrderForPlanningUkey = MyUtility.Convert.GetInt(x["WorkOrderForPlanningUkey"]),
-                    tmpKey = MyUtility.Convert.GetDate(x["tmpKey"]),
-                })
-                .Where(group => group.Count() > 1)
-                .SelectMany(group => group);
-
-            if (groupData.Any())
-            {
-                DataTable dt = groupData.Select(o => new { PatternPanel = o["PatternPanel"].ToString() }).Distinct().LinqToDataTable();
-
-                string msg = "The PatternPanel data duplicate ,Please see below:";
-                MsgGridForm m = new MsgGridForm(dt, msg, "PatternPanel Duplicate");
                 m.grid1.ColumnsAutoSize();
                 m.ShowDialog();
                 return false;
@@ -1698,6 +1665,7 @@ END";
         // 等待整合...
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
+            // P02似乎不需要
             string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
             string sqlcmd = $@"
 select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
@@ -1718,7 +1686,7 @@ order by p.EditDate desc
             }
             else
             {
-                MyUtility.Msg.InfoBox("Not found SMNotice Datas"); // 正常不會發生這狀況
+                MyUtility.Msg.InfoBox("Not found SMNotice Data."); // 正常不會發生這狀況
             }
 
             #region 產生第3層 PatternPanel 只有一筆
@@ -1756,7 +1724,12 @@ order by p.EditDate desc
         // 等待整合...
         private void BtnDownload_Click(object sender, EventArgs e)
         {
-
+            CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
+            string errMsg;
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P02, out errMsg))
+            {
+                MyUtility.Msg.ErrorBox(errMsg);
+            }
         }
 
         // 等待整合...
@@ -1787,10 +1760,9 @@ order by p.EditDate desc
             frm.ShowDialog(this);
         }
 
-        // 等待整合...
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-
+            this.detailgrid.ToExcel(false);
         }
         #endregion
 

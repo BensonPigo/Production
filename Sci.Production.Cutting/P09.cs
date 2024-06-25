@@ -55,6 +55,8 @@ namespace Sci.Production.Cutting
 
         #region 程式開啟時
 
+        private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
+
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
             : base(menuitem)
@@ -1896,11 +1898,30 @@ DEALLOCATE CURSOR_
 
         protected override void DoPrint()
         {
+            // 1394: CUTTING_P09_Cutting Work Order Output。KEEP當前的資料。
+            this.drTEMP = this.CurrentDetailData;
             base.DoPrint();
         }
 
         protected override bool ClickPrint()
         {
+            Cutting_Print callNextForm;
+            if (this.drTEMP != null)
+            {
+                callNextForm = new Cutting_Print(CuttingForm.P09, this.drTEMP);
+                callNextForm.ShowDialog(this);
+            }
+            else if (this.drTEMP == null && this.CurrentDetailData != null)
+            {
+                callNextForm = new Cutting_Print(CuttingForm.P09, this.CurrentDetailData);
+                callNextForm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No datas");
+                return false;
+            }
+
             return base.ClickPrint();
         }
 
@@ -1931,7 +1952,12 @@ DEALLOCATE CURSOR_
 
         private void BtnDownload_Click(object sender, EventArgs e)
         {
-
+            CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
+            string errMsg;
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, out errMsg))
+            {
+                MyUtility.Msg.ErrorBox(errMsg);
+            }
         }
 
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
@@ -2032,7 +2058,12 @@ DEALLOCATE CURSOR_
 
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-
+            CuttingWorkOrder excel_P09 = new CuttingWorkOrder();
+            var result = excel_P09.GetExcelData(CuttingForm.P09, this.detailgridbs.DataSource);
+            if (!result)
+            {
+                this.ShowErr(result.ToMessages().ToString());
+            }
         }
     }
 #pragma warning restore SA1600 // Elements should be documented
