@@ -120,7 +120,7 @@ And P_SimilarStyle.OutputDate >= @Date
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
-            finalResult.Result = new DualResult(true);
+            finalResult.Result = result;
 
             return finalResult;
         }
