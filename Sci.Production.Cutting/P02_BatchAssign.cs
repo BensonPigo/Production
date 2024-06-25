@@ -138,37 +138,37 @@ namespace Sci.Production.Cutting
             string filter = " 1=1 ";
             if (!MyUtility.Check.Empty(sp))
             {
-                filter = filter + string.Format(" and OrderId ='{0}'", sp);
+                filter += string.Format(" and OrderId ='{0}'", sp);
             }
 
             if (!MyUtility.Check.Empty(article))
             {
-                filter = filter + string.Format(" and Article like '%{0}%'", article);
+                filter += string.Format(" and Article like '%{0}%'", article);
             }
 
             if (!MyUtility.Check.Empty(markername))
             {
-                filter = filter + string.Format(" and MarkerName ='{0}'", markername);
+                filter += string.Format(" and MarkerName ='{0}'", markername);
             }
 
             if (!MyUtility.Check.Empty(sizecode))
             {
-                filter = filter + string.Format(" and SizeCode_CONCAT like '%{0}%'", sizecode);
+                filter += string.Format(" and SizeCode_CONCAT like '%{0}%'", sizecode);
             }
 
             if (!MyUtility.Check.Empty(fabricpanelcode))
             {
-                filter = filter + string.Format(" and FabricPanelCode_CONCAT like'{0}'", fabricpanelcode);
+                filter += string.Format(" and FabricPanelCode_CONCAT like'{0}'", fabricpanelcode);
             }
 
             if (!MyUtility.Check.Empty(this.txtEstCutDate.Value))
             {
-                filter = filter + string.Format(" and EstCutDate ='{0}'", estCutDate);
+                filter += string.Format(" and EstCutDate ='{0}'", estCutDate);
             }
 
             if (this.checkOnlyShowEmptyEstCutDate.Checked)
             {
-                filter = filter + " and EstCutDate is null ";
+                filter += " and EstCutDate is null ";
             }
 
             this.dt_CurentDetail.DefaultView.RowFilter = filter;

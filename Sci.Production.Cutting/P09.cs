@@ -1982,11 +1982,6 @@ DEALLOCATE CURSOR_
         {
 
         }
-
-        private void BtnRefresh_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 #pragma warning restore SA1600 // Elements should be documented
 }
