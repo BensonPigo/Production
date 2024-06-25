@@ -243,6 +243,7 @@ SELECT
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,ImportML = CAST(0 AS BIT)
+   ,CanDoAutoDistribute = cast(0 as bit)
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -1950,22 +1951,73 @@ DEALLOCATE CURSOR_
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
 
+            this.detailgrid.EndEdit();
+
+            // 先將可分配的WorkOrderForOutput 下面的WorkOrderForOutput_Distribute清空
+            foreach (DataRow drWorkOrder in this.DetailDatas)
+            {
+                drWorkOrder["CanDoAutoDistribute"] = false;
+
+                // 有建立bundle不清空
+                if (!MyUtility.Check.Empty(drWorkOrder["CutRef"]) &&
+                    MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
+                {
+                    continue;
+                }
+
+                drWorkOrder["CanDoAutoDistribute"] = true;
+                this.dtWorkOrderForOutput_Distribute.Select(GetFilter(drWorkOrder, CuttingForm.P09)).Delete();
+            }
+
+            // 開始重新分配WorkOrderForOutput_Distribute
+            foreach (DataRow drWorkOrder in this.DetailDatas.Where(s => MyUtility.Convert.GetBool(s["CanDoAutoDistribute"])))
+            {
+                var p09_AutoDistToSP = new P09_AutoDistToSP(drWorkOrder, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
+                DualResult result = p09_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
 
         private void BtnDistributeThisCutRef_Click(object sender, EventArgs e)
         {
-
+            this.detailgrid.ValidateControl();
+            var frm = new P09_AutoDistToSP(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
+            frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         private void BtnHistory_Click(object sender, EventArgs e)
