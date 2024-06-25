@@ -32,6 +32,7 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09
 

@@ -2119,7 +2119,7 @@ END";
 
         private void BtnAutoCut_Click(object sender, EventArgs e)
         {
-
+            AutoCut((DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
         }
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)

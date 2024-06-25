@@ -304,53 +304,6 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
 
             // set Order List data source
             this.orderListBindingSource.DataSource = this.dt_OrderList;
-
-            // 右下角 Qty Break Down待整合...
-            sqlcmd = $@"
-/*
-SELECT
-    wd.OrderID
-   ,wd.Article
-   ,wd.SizeCode
-   ,wo.FabricCombo
-   ,Qty = SUM(wd.Qty)
-INTO #tmp
-FROM WorkOrderForPlanning wo WITH (NOLOCK)
-INNER JOIN WorkOrderForPlanning_Distribute wd WITH (NOLOCK) ON wo.ukey = wd.WorkOrderForPlanningukey
-WHERE wo.id = '{this.CurrentMaintain["ID"]}'
-GROUP BY wo.FabricCombo
-        ,wd.article
-        ,wd.SizeCode
-        ,wd.OrderID
-
-SELECT
-    oq.ID
-   ,oq.Article
-   ,oq.SizeCode
-   ,oq.Qty
-   ,Balance = ISNULL(balc.minQty - oq.qty, 0)
-FROM Order_Qty oq WITH (NOLOCK)
-INNER JOIN Orders o WITH (NOLOCK) ON oq.id = o.id
-OUTER APPLY (
-    SELECT minQty = MIN(Qty)
-    FROM #tmp t
-    WHERE t.OrderID = oq.ID
-    AND t.article = oq.Article
-    AND t.SizeCode = oq.SizeCode
-) balc
-WHERE o.CuttingSP = '{this.CurrentMaintain["ID"]}'
-ORDER BY ID, Article, SizeCode
-DROP TABLE #tmp
-*/
-";
-            //result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtQtyBreakDown);
-            //if (!result)
-            //{
-            //    this.ShowErr(result);
-            //    return;
-            //}
-
-            //this.qtybreakds.DataSource = dtQtyBreakDown;
         }
 
         /// <inheritdoc/>
