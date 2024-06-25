@@ -118,7 +118,7 @@ And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
-            finalResult.Result = new DualResult(true);
+            finalResult.Result = result;
 
             return finalResult;
         }
