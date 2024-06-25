@@ -479,19 +479,19 @@
             this.MenuItemInsertSizeRatio,
             this.MenuItemDeleteSizeRatio});
             this.cmsSizeRatio.Name = "sizeratioMenuStrip";
-            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
+            this.cmsSizeRatio.Size = new System.Drawing.Size(181, 70);
             // 
             // MenuItemInsertSizeRatio
             // 
             this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
-            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(180, 22);
             this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
             this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
             // 
             // MenuItemDeleteSizeRatio
             // 
             this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
-            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(180, 22);
             this.MenuItemDeleteSizeRatio.Text = "Delete Record";
             this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 

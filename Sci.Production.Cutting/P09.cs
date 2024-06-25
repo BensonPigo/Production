@@ -428,11 +428,6 @@ DROP TABLE #tmp
             this.GridValidateControl();
             base.OnDetailGridRowChanged();
 
-            if (this.CurrentDetailData == null)
-            {
-                return;
-            }
-
             this.bindingSourceDetail.SetRow(this.CurrentDetailData);
 
             // 變更子表可否編輯
@@ -443,10 +438,14 @@ DROP TABLE #tmp
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
             this.gridDistributeToSP.IsEditingReadOnly = !canEdit;
 
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
-
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
 
             this.ChangeQtyBreakDownRow();
