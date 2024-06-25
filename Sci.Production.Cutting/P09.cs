@@ -1947,7 +1947,20 @@ DEALLOCATE CURSOR_
 
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
+            CuttingWorkOrder cw = new CuttingWorkOrder();
+            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P09);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
+            if (result.Description == "NotImport")
+            {
+                return;
+            }
+
+            this.OnRefreshClick();
         }
 
         private void BtnDownload_Click(object sender, EventArgs e)
@@ -1962,12 +1975,194 @@ DEALLOCATE CURSOR_
 
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
+            // P02似乎不需要
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Data."); // 正常不會發生這狀況
+            }
 
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
+                drNEW["id"] = this.CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["tmpKey"] = row["tmpKey"];
+                this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
+            });
+            #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            if (icount > 0)
+            {
+                for (int i = 0; i < icount; i++)
+                {
+                    if (this.detailgrid.CurrentCell != null)
+                    {
+                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                    }
+                }
+            }
+
+            if (icount > 0)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
+                this.detailgrid.SelectRowTo(0);
+            }
         }
 
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
+            this.detailgrid.ValidateControl();
+            #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
+            string cmdsql = $@"
+SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
+isnull(MarkerName,'') as MarkerName, estcutdate
+FROM Workorder WITH (NOLOCK) 
+WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
+AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{Env.User.Keyword}'
+GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
+";
+            DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutreftb);
+            if (!cutrefresult)
+            {
+                this.ShowErr(cmdsql, cutrefresult);
+                return;
+            }
+            #endregion
 
+            // 找出空的cutref
+            cmdsql = $@"
+Select * 
+From workorder WITH (NOLOCK) 
+Where (CutNo is not null ) and (cutref is null or cutref ='') 
+and (estcutdate is not null and estcutdate !='' )
+and (CutCellid is not null and CutCellid !='' )
+and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{Env.User.Keyword}'
+order by FabricCombo,cutno
+";
+            cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
+            if (!cutrefresult)
+            {
+                this.ShowErr(cmdsql, cutrefresult);
+                return;
+            }
+
+            string maxref = MyUtility.GetValue.Lookup("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK)"); // 找最大Cutref
+            if (MyUtility.Check.Empty(maxref))
+            {
+                maxref = "000000";
+            }
+
+            string updatecutref = @"
+Create table #tmpWorkorder
+	(
+		Ukey bigint
+	)
+DECLARE @chk tinyint
+SET @chk = 0
+Begin Transaction [Trans_Name] -- Trans_Name 
+";
+
+            // 寫入空的Cutref
+            foreach (DataRow dr in workordertmp.Rows)
+            {
+                DataRow[] findrow = cutreftb.Select(string.Format(@"MarkerName = '{0}' and FabricCombo = '{1}' and Cutno = {2} and estcutdate = '{3}' ", dr["MarkerName"], dr["FabricCombo"], dr["Cutno"], dr["estcutdate"]));
+                string newcutref;
+
+                // 若有找到同馬克同部位同Cutno同裁剪日就寫入同cutref
+                if (findrow.Length != 0)
+                {
+                    newcutref = findrow[0]["cutref"].ToString();
+                }
+                else
+                {
+                    maxref = MyUtility.GetValue.GetNextValue(maxref, 0);
+                    DataRow newdr = cutreftb.NewRow();
+                    newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                    newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
+                    newdr["Cutno"] = dr["Cutno"];
+                    newdr["estcutdate"] = dr["estcutdate"] ?? string.Empty;
+                    newdr["cutref"] = maxref;
+                    cutreftb.Rows.Add(newdr);
+                    newcutref = maxref;
+                }
+
+                updatecutref += string.Format($@"
+    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and id != '{this.CurrentMaintain["id"]}')>0
+	begin
+		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	end
+    Update Workorder set cutref = '{newcutref}' 
+    output	INSERTED.Ukey
+	into #tmpWorkorder
+    where ukey = '{dr["ukey"]}';");
+            }
+
+            updatecutref += @"
+    IF @@Error <> 0 BEGIN SET @chk = 1 END
+IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+    Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+END
+ELSE BEGIN
+    select w.* 
+    from #tmpWorkorder tw
+    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
+
+    Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+END";
+
+            DualResult upResult;
+            DataTable dtWorkorder = new DataTable();
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
+            {
+                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
+                {
+                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
+                    }
+                    else
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                    }
+                }
+                else
+                {
+                    transactionscope.Complete();
+                    if (dtWorkorder.Rows.Count > 0)
+                    {
+                        //Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+                    }
+                }
+            }
+
+            this.RenewData();
+            this.OnDetailEntered();
         }
 
         private void BtnAutoCut_Click(object sender, EventArgs e)
@@ -2058,7 +2253,9 @@ DEALLOCATE CURSOR_
 
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)
         {
-
+            MyUtility.Check.Seek($@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'", out DataRow dr);
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)

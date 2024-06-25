@@ -1482,16 +1482,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         }
 
         // 等待整合...
-        private void BtnRefresh_Click(object sender, EventArgs e)
-        {
-            this.RenewData();
-
-            // 新版P02 沒有該功能，先註解
-            // this.Sorting(this.comboBox1.Text);  // 避免順序亂掉
-            this.OnDetailEntered();
-        }
-
-        // 等待整合...
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();

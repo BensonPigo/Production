@@ -67,7 +67,6 @@
             this.btnCutPartsCheckSummary = new Sci.Win.UI.Button();
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
-            this.btnRefresh = new Sci.Win.UI.Button();
             this.qtybreakBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -126,7 +125,6 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(1197, 3);
-            this.refresh.Visible = false;
             // 
             // detailgridcont
             // 
@@ -158,7 +156,6 @@
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.btnRefresh);
             this.detailbtm.Controls.Add(this.btnToExcel);
             this.detailbtm.Controls.Add(this.btnQtyBreakdown);
             this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
@@ -176,7 +173,6 @@
             this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheckSummary, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnRefresh, 0);
             // 
             // browse
             // 
@@ -656,17 +652,6 @@
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
-            // btnRefresh
-            // 
-            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnRefresh.Location = new System.Drawing.Point(1197, 7);
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(82, 28);
-            this.btnRefresh.TabIndex = 25;
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
-            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
-            // 
             // P02
             // 
             this.ApvChkValue = "New";
@@ -742,7 +727,6 @@
         private Win.UI.Button btnQtyBreakdown;
         private Win.UI.Button btnCutPartsCheckSummary;
         private Win.UI.Button btnCutPartsCheck;
-        private Win.UI.Button btnRefresh;
         private Win.UI.ListControlBindingSource sizeRatioBindingSource;
         private Win.UI.ListControlBindingSource orderListBindingSource;
         private System.Windows.Forms.SplitContainer splitContainer2;
