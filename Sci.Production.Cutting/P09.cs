@@ -245,6 +245,7 @@ SELECT
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,ImportML = CAST(0 AS BIT)
+   ,CanDoAutoDistribute = cast(0 as bit)
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -1258,9 +1259,9 @@ DEALLOCATE CURSOR_
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            ConfigureColumnEvents(this.detailgrid, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.detailgrid, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDataByGrid);
 
             #region 主表
 
@@ -1330,10 +1331,8 @@ DEALLOCATE CURSOR_
                 dr.EndEdit();
             };
 
-            this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq2.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq1.CellValidating += this.SeqCelllValidatingHandler;
-            this.col_Seq2.CellValidating += this.SeqCelllValidatingHandler;
+            ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
+            ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
             this.col_Layer.CellValidating += (s, e) =>
             {
@@ -1568,7 +1567,7 @@ DEALLOCATE CURSOR_
             #endregion
         }
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
             {
@@ -1590,6 +1589,7 @@ DEALLOCATE CURSOR_
             }
         }
 
+        /*
         private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1598,20 +1598,19 @@ DEALLOCATE CURSOR_
                 return;
             }
 
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
-            if (minFabricPanelCode == null)
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
             }
 
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string id = this.CurrentDetailData["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
 
             // 觸發的欄位不作為篩選條件
             switch (columnName.ToLower())
@@ -1643,25 +1642,24 @@ DEALLOCATE CURSOR_
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
             string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
             string newvalue = e.FormattedValue.ToString();
-            string oldvalue = this.CurrentDetailData[columnName].ToString();
+            string oldvalue = dr[columnName].ToString();
             if (!this.CanEditData(dr) || MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
 
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
-            if (minFabricPanelCode == null)
+            if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
             }
 
-            string id = this.CurrentDetailData["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
+            string id = dr["ID"].ToString();
+            string fabricCode = dr["FabricCode"].ToString();
+            string seq1 = dr["SEQ1"].ToString();
+            string seq2 = dr["SEQ2"].ToString();
+            string refno = dr["Refno"].ToString();
+            string colorID = dr["ColorID"].ToString();
             switch (columnName.ToLower())
             {
                 case "seq1":
@@ -1674,7 +1672,7 @@ DEALLOCATE CURSOR_
 
             if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
-                this.CurrentDetailData[columnName] = newvalue;
+                dr[columnName] = newvalue;
 
                 // 唯一值時
                 if (dtValidating.Rows.Count == 1)
@@ -1684,12 +1682,12 @@ DEALLOCATE CURSOR_
             }
             else
             {
-                this.CurrentDetailData[columnName] = string.Empty;
+                dr[columnName] = string.Empty;
             }
 
-            this.CurrentDetailData.EndEdit();
+            dr.EndEdit();
         }
-
+        */
         private void MaskedCellValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1934,12 +1932,35 @@ DEALLOCATE CURSOR_
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
-
+            this.detailgrid.ValidateControl();
+            var dt = this.DetailDatas.Where(row => this.CanEditData(row));
+            if (dt.Any())
+            {
+                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString());
+                frm.ShowDialog(this);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("No editable data.");
+            }
         }
 
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
+            CuttingWorkOrder cw = new CuttingWorkOrder();
+            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P09);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
+            if (result.Description == "NotImport")
+            {
+                return;
+            }
+
+            this.OnRefreshClick();
         }
 
         private void BtnDownload_Click(object sender, EventArgs e)
@@ -1954,12 +1975,194 @@ DEALLOCATE CURSOR_
 
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
+            // P02似乎不需要
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Data."); // 正常不會發生這狀況
+            }
 
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
+                drNEW["id"] = this.CurrentMaintain["ID"];
+                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
+                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["tmpKey"] = row["tmpKey"];
+                this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
+            });
+            #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            if (icount > 0)
+            {
+                for (int i = 0; i < icount; i++)
+                {
+                    if (this.detailgrid.CurrentCell != null)
+                    {
+                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                    }
+                }
+            }
+
+            if (icount > 0)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
+                this.detailgrid.SelectRowTo(0);
+            }
         }
 
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
+            this.detailgrid.ValidateControl();
+            #region 變更先將同d,Cutref, FabricPanelCode, CutNo, MarkerName, estcutdate 且有cutref,Cuno無cutplanid 的cutref值找出來Group by→cutref 會相同
+            string cmdsql = $@"
+SELECT isnull(Cutref,'') as cutref, isnull(FabricCombo,'') as FabricCombo, CutNo,
+isnull(MarkerName,'') as MarkerName, estcutdate
+FROM Workorder WITH (NOLOCK) 
+WHERE (cutplanid is null or cutplanid ='') AND (CutNo is not null )
+AND (cutref is not null and cutref !='') and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{Env.User.Keyword}'
+GROUP BY Cutref, FabricCombo, CutNo, MarkerName, estcutdate
+";
+            DualResult cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutreftb);
+            if (!cutrefresult)
+            {
+                this.ShowErr(cmdsql, cutrefresult);
+                return;
+            }
+            #endregion
 
+            // 找出空的cutref
+            cmdsql = $@"
+Select * 
+From workorder WITH (NOLOCK) 
+Where (CutNo is not null ) and (cutref is null or cutref ='') 
+and (estcutdate is not null and estcutdate !='' )
+and (CutCellid is not null and CutCellid !='' )
+and id = '{this.CurrentMaintain["ID"]}' and mDivisionid = '{Env.User.Keyword}'
+order by FabricCombo,cutno
+";
+            cutrefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
+            if (!cutrefresult)
+            {
+                this.ShowErr(cmdsql, cutrefresult);
+                return;
+            }
+
+            string maxref = MyUtility.GetValue.Lookup("Select isnull(Max(cutref),'000000') from Workorder WITH (NOLOCK)"); // 找最大Cutref
+            if (MyUtility.Check.Empty(maxref))
+            {
+                maxref = "000000";
+            }
+
+            string updatecutref = @"
+Create table #tmpWorkorder
+	(
+		Ukey bigint
+	)
+DECLARE @chk tinyint
+SET @chk = 0
+Begin Transaction [Trans_Name] -- Trans_Name 
+";
+
+            // 寫入空的Cutref
+            foreach (DataRow dr in workordertmp.Rows)
+            {
+                DataRow[] findrow = cutreftb.Select(string.Format(@"MarkerName = '{0}' and FabricCombo = '{1}' and Cutno = {2} and estcutdate = '{3}' ", dr["MarkerName"], dr["FabricCombo"], dr["Cutno"], dr["estcutdate"]));
+                string newcutref;
+
+                // 若有找到同馬克同部位同Cutno同裁剪日就寫入同cutref
+                if (findrow.Length != 0)
+                {
+                    newcutref = findrow[0]["cutref"].ToString();
+                }
+                else
+                {
+                    maxref = MyUtility.GetValue.GetNextValue(maxref, 0);
+                    DataRow newdr = cutreftb.NewRow();
+                    newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                    newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
+                    newdr["Cutno"] = dr["Cutno"];
+                    newdr["estcutdate"] = dr["estcutdate"] ?? string.Empty;
+                    newdr["cutref"] = maxref;
+                    cutreftb.Rows.Add(newdr);
+                    newcutref = maxref;
+                }
+
+                updatecutref += string.Format($@"
+    if (select COUNT(1) from Workorder WITH (NOLOCK) where cutref = '{newcutref}' and id != '{this.CurrentMaintain["id"]}')>0
+	begin
+		RAISERROR ('Duplicate Cutref. Please redo Auto Ref#',12, 1) 
+		Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+	end
+    Update Workorder set cutref = '{newcutref}' 
+    output	INSERTED.Ukey
+	into #tmpWorkorder
+    where ukey = '{dr["ukey"]}';");
+            }
+
+            updatecutref += @"
+    IF @@Error <> 0 BEGIN SET @chk = 1 END
+IF @chk <> 0 BEGIN -- 若是新增資料發生錯誤
+    Rollback Transaction [Trans_Name] -- 復原所有操作所造成的變更
+END
+ELSE BEGIN
+    select w.* 
+    from #tmpWorkorder tw
+    inner join WorkOrder w with (nolock) on tw.Ukey = w.Ukey
+
+    Commit Transaction [Trans_Name] -- 提交所有操作所造成的變更
+END";
+
+            DualResult upResult;
+            DataTable dtWorkorder = new DataTable();
+            TransactionScope transactionscope = new TransactionScope();
+            using (transactionscope)
+            {
+                if (!(upResult = DBProxy.Current.Select(null, updatecutref, out dtWorkorder)))
+                {
+                    if (upResult.ToString().Contains("Duplicate Cutref. Please redo Auto Ref#"))
+                    {
+                        transactionscope.Dispose();
+                        MyUtility.Msg.WarningBox("Duplicate Cutref. Please redo Auto Ref#");
+                    }
+                    else
+                    {
+                        transactionscope.Dispose();
+                        this.ShowErr(upResult);
+                    }
+                }
+                else
+                {
+                    transactionscope.Complete();
+                    if (dtWorkorder.Rows.Count > 0)
+                    {
+                        //Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+                    }
+                }
+            }
+
+            this.RenewData();
+            this.OnDetailEntered();
         }
 
         private void BtnAutoCut_Click(object sender, EventArgs e)
@@ -1969,22 +2172,78 @@ DEALLOCATE CURSOR_
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)
         {
+            if (!this.EditMode)
+            {
+                return;
+            }
 
+            this.detailgrid.EndEdit();
+
+            // 先將可分配的WorkOrderForOutput 下面的WorkOrderForOutput_Distribute清空
+            foreach (DataRow drWorkOrder in this.DetailDatas)
+            {
+                drWorkOrder["CanDoAutoDistribute"] = false;
+
+                // 有建立bundle不清空
+                if (!MyUtility.Check.Empty(drWorkOrder["CutRef"]) &&
+                    MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
+                {
+                    continue;
+                }
+
+                drWorkOrder["CanDoAutoDistribute"] = true;
+                this.dtWorkOrderForOutput_Distribute.Select(GetFilter(drWorkOrder, CuttingForm.P09)).Delete();
+            }
+
+            // 開始重新分配WorkOrderForOutput_Distribute
+            foreach (DataRow drWorkOrder in this.DetailDatas.Where(s => MyUtility.Convert.GetBool(s["CanDoAutoDistribute"])))
+            {
+                var p09_AutoDistToSP = new P09_AutoDistToSP(drWorkOrder, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
+                DualResult result = p09_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
         }
 
         private void BtnDistributeThisCutRef_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
 
+            this.detailgrid.ValidateControl();
+            var frm = new P09_AutoDistToSP(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
+            frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         private void BtnHistory_Click(object sender, EventArgs e)
@@ -1994,7 +2253,9 @@ DEALLOCATE CURSOR_
 
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)
         {
-
+            MyUtility.Check.Seek($@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'", out DataRow dr);
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
+            callNextForm.ShowDialog(this);
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -2005,11 +2266,6 @@ DEALLOCATE CURSOR_
             {
                 this.ShowErr(result.ToMessages().ToString());
             }
-        }
-
-        private void BtnRefresh_Click(object sender, EventArgs e)
-        {
-
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

@@ -998,8 +998,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         private void GridEventSet()
         {
             // 可否編輯 && 顏色
-            ConfigureColumnEvents(this.detailgrid, this.CanEditDatByGrid);
-            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDatByGrid);
+            ConfigureColumnEvents(this.detailgrid, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDataByGrid);
 
             #region 主表
 
@@ -1483,16 +1483,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         }
 
         // 等待整合...
-        private void BtnRefresh_Click(object sender, EventArgs e)
-        {
-            this.RenewData();
-
-            // 新版P02 沒有該功能，先註解
-            // this.Sorting(this.comboBox1.Text);  // 避免順序亂掉
-            this.OnDetailEntered();
-        }
-
-        // 等待整合...
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
@@ -1736,13 +1726,29 @@ order by p.EditDate desc
         // 等待整合...
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), "WorkOrderForPlanning", dtDetail, null, this.dt_PatternPanel, this.dt_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         // 等待整合...
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
 
+            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
+
+            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForPlanning", dtDetail, null, this.dt_SizeRatio);
+            frm.ShowDialog(this);
         }
 
         private void BtnToExcel_Click(object sender, EventArgs e)
@@ -1751,7 +1757,7 @@ order by p.EditDate desc
         }
         #endregion
 
-        private bool CanEditDatByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
             if (grid.Name == "detailgrid")
             {
