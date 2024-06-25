@@ -229,7 +229,7 @@ SELECT
    ,Fabeta
    ,Sewinline
    ,Actcutdate
-   ,MarkerLength_Mask = ''
+   ,MarkerLength_Mask = ''-- 4個_Mask欄位在下方 OnDetailEntered 會把實體欄位資訊格式化後填入
    ,ActCuttingPerimeter_Mask = ''
    ,StraightLength_Mask = ''
    ,CurvedLength_Mask = ''
@@ -1073,6 +1073,17 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
         }
 
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 更新 P20
+            this.BackgroundWorker1.RunWorkerAsync();
+
+            this.OnDetailEntered();
+        }
+
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             if (!this.ReUpdateP20)
@@ -1875,16 +1886,15 @@ DEALLOCATE CURSOR_
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var dt = this.DetailDatas.Where(row => this.CanEditData(row));
-            if (dt.Any())
-            {
-                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
-                frm.ShowDialog(this);
-            }
-            else
+            var detailDatas = this.DetailDatas.Where(row => this.CanEditData(row)).ToList();
+            if (!detailDatas.Any())
             {
                 MyUtility.Msg.InfoBox("No editable data.");
+                return;
             }
+
+            var frm = new P02_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
+            frm.ShowDialog(this);
         }
 
         private void BtnImportMarker_Click(object sender, EventArgs e)
