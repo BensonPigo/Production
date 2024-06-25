@@ -55,11 +55,13 @@ namespace Sci.Production.Cutting
             if (history == "0")
             {
                 this.Text = "P02. WorkOrder For Planning";
+                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 0";
                 this.IsSupportEdit = true;
             }
             else
             {
                 this.Text = "P02. WorkOrder For Planning(History)";
+                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
                 this.IsSupportEdit = false;
             }
 
@@ -1473,7 +1475,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
         #region Button Event
 
-        // 等待整合...
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)
         {
             MyUtility.Check.Seek($@"select isnull([dbo].getPOComboList(o.ID,o.POID),'') as PoList from Orders o WITH (NOLOCK) where ID = '{this.CurrentMaintain["ID"]}'", out DataRow dr);
