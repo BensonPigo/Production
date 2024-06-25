@@ -243,7 +243,7 @@ BEGIN
 	   									  , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   						      									 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   									  , 1) 
-			   , RFT
+			   , RFT = RFTInfo.RFT
 			   , CumulateDate
 			   , InlineQty
 			   , Diff = QAQty - InlineQty
@@ -251,6 +251,16 @@ BEGIN
 			   , LastShift
 		into #tmp
 		from #tmp1stFilter
+		outer apply (
+			select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+			from RFT A with (nolock) 
+			where A.OrderID=#tmp1stFilter.OrderId
+			and A.CDate=#tmp1stFilter.OutputDate
+			and A.SewinglineID=#tmp1stFilter.SewinglineID
+			and A.FactoryID=#tmp1stFilter.FactoryID
+			and A.Shift=#tmp1stFilter.Shift
+			and A.Team=#tmp1stFilter.Team 
+		) as RFTInfo
 		where 1 =1
 		order by LastShift,Team,SewingLineID,OrderId
 		---↓最後Select 

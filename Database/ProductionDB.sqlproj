@@ -2916,6 +2916,7 @@
     <Build Include="dbo\Tables\ColumnValue.sql" />
     <Build Include="dbo\Tables\MtlType_Brand.sql" />
     <Build Include="dbo\Functions\IsSustainableMaterial.sql" />
+    <Build Include="dbo\Tables\Brand_QAMoistureStandardListByActMoisture.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

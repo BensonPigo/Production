@@ -65,6 +65,7 @@ select [FirstInspectionDate] = cast(Ins.AddDate as date)
 	,[Lining] = sty.Lining
 	,[Gender] = sty.Gender
 	,[Construction] = sty.Construction
+	,ord.SewInLine
 into #tmp_summy_first
 from ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK) 
 inner join ['+@current_PMS_ServerName+'].Production.dbo.Orders ord WITH(NOLOCK) on ins.OrderId=ord.id
@@ -90,7 +91,7 @@ where ins.Adddate >= '''+@sDate+'''
 group by cast(Ins.AddDate as date), ins.FactoryID, ord.BrandID, ord.styleid, ord.custpono, 
 ins.OrderId, ins.Article, ins.Size, Cou.Alias, ord.CdCodeID, cdc.ProductionFamilyID,
 ins.Team, ins.AddName, ins.Shift, ins.Line, s.SewingCell, sty.CDCodeNew,
-sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
+sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,ord.SewInLine
 
 select t.FirstInspectionDate
 	, t.Factory
@@ -111,7 +112,7 @@ select t.FirstInspectionDate
 	, t.TtlQty
 	, t.RejectAndFixedQty
 	,[EndlineWFT] = iif(t.TtlQty = 0, 0, ROUND( (t.RejectAndFixedQty *1.0) / (t.TtlQty *1.0) *100,3))
-	,[Endline RFT(%)] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+	,[Endline RFT(%)] =isnull(RftValue.VAL,0)
 	, t.CDCodeNew
 	, t.ProductType
 	, t.FabricType
@@ -120,8 +121,21 @@ select t.FirstInspectionDate
 	, t.Construction
 into #Final_DQSDefect_Summary
 from #tmp_summy_first t
-left join Production.dbo.RFT A with (nolock) on A.Shift=t.Shift
-											 and A.Team=t.Team
+outer apply
+(
+    SELECT 
+    VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+    FROM ['+@current_PMS_ServerName+'].Production.dbo.SewingOutput_Detail sod 
+    inner join ['+@current_PMS_ServerName+'].Production.dbo.SewingOutput so with(nolock) on so.id = sod.id
+    inner join ['+@current_PMS_ServerName+'].Production.dbo.Rft r on r.OrderID = sod.OrderId AND
+											   r.SewinglineID = so.SewingLineID AND
+											   r.Team = so.Team AND
+											   r.Shift = so.Shift AND
+											   r.CDate = so.OutputDate
+    WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory
+	and so.Shift= iif(t.Shift = ''Day'',''D'',''N'') 
+	and r.CDate = t.SewInLine
+)RftValue
 '
 
 set @SqlCmd2 = '
