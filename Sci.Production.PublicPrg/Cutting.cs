@@ -1416,5 +1416,35 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 
             return dt;
         }
+
+        /// <summary>
+        /// MarkerLength 欄位驗證
+        /// </summary>
+        /// <inheritdoc/>
+        public static string SetMarkerLengthMaskString(string eventString)
+        {
+            if (eventString == string.Empty || (int.TryParse(eventString, out int result) && result == 0))
+            {
+                return string.Empty;
+            }
+
+            eventString = eventString.Replace(" ", "0");
+            if (eventString.Contains("Y"))
+            {
+                string[] strings = eventString.Split('Y');
+                string[] strings2 = strings[1].Split('-');
+                string[] strings3 = strings2[1].Split('/');
+                string[] strings4 = strings3[1].Split('+');
+                string[] strings5 = strings4[1].Split('\"');
+                eventString = $"{strings[0].PadLeft(2, '0')}Y{strings2[0].PadLeft(2, '0')}-{strings3[0].PadLeft(1, '0')}/{strings4[0].PadLeft(1, '0')}+{strings5[0].PadLeft(1, '0')}\"";
+            }
+            else
+            {
+                eventString = eventString.PadRight(8, '0');
+                eventString = $"{eventString.Substring(0, 2)}Y{eventString.Substring(2, 2)}-{eventString.Substring(4, 1)}/{eventString.Substring(5, 1)}+{eventString.Substring(6, 1)}\"";
+            }
+
+            return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
+        }
     }
 }

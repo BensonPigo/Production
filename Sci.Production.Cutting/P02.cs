@@ -400,7 +400,7 @@ DROP TABLE #tmp
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_EstCutDate)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", name: "Marker Length", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_MarkerLength)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
                 .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
                 .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1169,17 +1169,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 dr.EndEdit();
             };
 
-            this.col_MarkerLength.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                dr["MarkerLength"] = dr["MarkerLength_Mask"] = SetMarkerLengthMaskString(e.FormattedValue.ToString());
-                dr.EndEdit();
-            };
             this.col_EstCutDate.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1621,18 +1610,16 @@ END";
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var dt = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(o => MyUtility.Check.Empty(o["CutPlanID"]));
-
+            var dt = this.DetailDatas.Where(o => MyUtility.Check.Empty(o["CutPlanID"]));
             if (dt.Any())
             {
-                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString());
+                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString(), CuttingForm.P02);
                 frm.ShowDialog(this);
             }
             else
             {
                 MyUtility.Msg.InfoBox("No editable data.");
             }
-
         }
 
         private void BtnImportMarker_Click(object sender, EventArgs e)

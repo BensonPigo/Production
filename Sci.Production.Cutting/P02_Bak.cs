@@ -2682,7 +2682,7 @@ END";
         {
             this.GridValid();
             this.detailgrid.ValidateControl();
-            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString());
+            var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), CuttingWorkOrder.CuttingForm.P02);
             frm.ShowDialog(this);
         }
 
