@@ -1907,15 +1907,15 @@ DEALLOCATE CURSOR_
 
         protected override bool ClickPrint()
         {
-            P02_Print callNextForm;
+            Cutting_Print callNextForm;
             if (this.drTEMP != null)
             {
-                callNextForm = new P02_Print(FromCutting.P09, this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new Cutting_Print(CuttingForm.P09, this.drTEMP);
                 callNextForm.ShowDialog(this);
             }
             else if (this.drTEMP == null && this.CurrentDetailData != null)
             {
-                callNextForm = new P02_Print(FromCutting.P09, this.CurrentDetailData, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new Cutting_Print(CuttingForm.P09, this.CurrentDetailData);
                 callNextForm.ShowDialog(this);
             }
             else
@@ -1946,7 +1946,7 @@ DEALLOCATE CURSOR_
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(FromCutting.P09, out errMsg))
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
@@ -2000,7 +2000,7 @@ DEALLOCATE CURSOR_
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
             CuttingWorkOrder excel_P09 = new CuttingWorkOrder();
-            var result = excel_P09.GetExcelData(FromCutting.P09, this.detailgridbs.DataSource);
+            var result = excel_P09.GetExcelData(CuttingForm.P09, this.detailgridbs.DataSource);
             if (!result)
             {
                 this.ShowErr(result.ToMessages().ToString());

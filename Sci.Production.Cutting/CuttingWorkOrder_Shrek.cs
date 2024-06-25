@@ -50,18 +50,26 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// For Cutting P02、P09的範本檔下載
         /// </summary>
-        /// <param name="fromCutting">Type FromCutting</param>
+        /// <param name="cuttingForm">Type CuttingForm</param>
         /// <param name="errMsg">錯誤訊息</param>
         /// <returns>成功失敗</returns>
-        public bool DownloadSampleFile(FromCutting fromCutting, out string errMsg)
+        public bool DownloadSampleFile(CuttingForm cuttingForm, out string errMsg)
         {
             errMsg = string.Empty;
-            string xltxName = fromCutting == FromCutting.P02 ? "Cutting_P02. Import Marker Template Download" : "Cutting_P09. Import Marker Template Download";
+            string xltxName = cuttingForm == CuttingForm.P02 ? "Cutting_P02. Import Marker Template Download" : "Cutting_P09. Import Marker Template Download";
+
             try
             {
-                Sci.Utility.Excel.SaveXltReportCls xl = new Sci.Utility.Excel.SaveXltReportCls($"{xltxName}.xltx");
-                xl.BoOpenFile = true;
-                xl.Save();
+                string strXltName = Env.Cfg.XltPathDir + $@"\{xltxName}.xltx";
+                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
+                string strExcelName = Class.MicrosoftFile.GetName(xltxName);
+                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                workbook.SaveAs(strExcelName);
+                workbook.Close();
+                excel.Quit();
+                Marshal.ReleaseComObject(excel);
+                Marshal.ReleaseComObject(workbook);
+                strExcelName.OpenFile();
                 return true;
             }
             catch (Exception ex)
@@ -74,7 +82,7 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// 取得Print資料
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="drInfoFrom">原資料帶入</param>
         /// <param name="s1">參數起</param>
         /// <param name="s2">參數迄</param>
@@ -82,9 +90,9 @@ namespace Sci.Production.Cutting
         /// <param name="sortType">排序，"Cutref"、"SpreadingNoID,CutCellID,Cutref"</param>
         /// <param name="arrDtType">輸出資料表陣列，配合Print的ToExcel時用</param>
         /// <returns>DualResult</returns>
-        public DualResult GetPrintData(FromCutting fromCutting, DataRow drInfoFrom, string s1, string s2, string printType, string sortType, out DataTable[] arrDtType)
+        public DualResult GetPrintData(CuttingForm cuttingForm, DataRow drInfoFrom, string s1, string s2, string printType, string sortType, out DataTable[] arrDtType)
         {
-            string tableName = this.GetTableName(fromCutting);
+            string tableName = this.GetTableName(cuttingForm);
             string tbPatternPanel = tableName + "_PatternPanel";
             string tbDistribute = tableName + "_Distribute";
             string tbSizeRatio = tableName + "_SizeRatio";
@@ -174,8 +182,8 @@ namespace Sci.Production.Cutting
                 strOrderby = "order by cutref";
             }
 
-            string sqlColByType = this.CheckAndGetColumns(fromCutting, byType);
-            string sqlWhereByType = this.CheckTableLostColumns(fromCutting, byType) ? "1=1" : $"{byType}>= @Cutref1 and {byType}<= @Cutref2";
+            string sqlColByType = this.CheckAndGetColumns(cuttingForm, byType);
+            string sqlWhereByType = this.CheckTableLostColumns(cuttingForm, byType) ? "1=1" : $"{byType}>= @Cutref1 and {byType}<= @Cutref2";
 
             string workorder_cmd =
                 $@"
@@ -184,9 +192,9 @@ Select a.AddDate
 ,a.ColorID
 ,a.Cons
 ,a.ConsPC
-,{this.CheckAndGetColumns(fromCutting, "a.CutCellID")}
-,{this.CheckAndGetColumns(fromCutting, "a.CutNo")}
-,{this.CheckAndGetColumns(fromCutting, "a.CutPlanID")}
+,{this.CheckAndGetColumns(cuttingForm, "a.CutCellID")}
+,{this.CheckAndGetColumns(cuttingForm, "a.CutNo")}
+,{this.CheckAndGetColumns(cuttingForm, "a.CutPlanID")}
 , a.CutRef
 ,a.EditDate
 ,a.EditName
@@ -204,12 +212,12 @@ Select a.AddDate
 --,a.MarkerVersion
 ,a.MDivisionID
 ,a.Order_EachconsUkey
-,{this.CheckAndGetColumns(fromCutting, "a.OrderID")}
+,{this.CheckAndGetColumns(cuttingForm, "a.OrderID")}
 , a.RefNo
 ,a.SCIRefNo
 ,a.Seq1
 ,a.Seq2
-,{this.CheckAndGetColumns(fromCutting, "a.SpreadingNoID")}
+,{this.CheckAndGetColumns(cuttingForm, "a.SpreadingNoID")}
 , a.Tone
 ,a.Ukey
 ,a.WKETA
@@ -224,7 +232,7 @@ Left Join Order_EachCons oe with (nolock) on oe.Ukey = a.Order_EachconsUkey
 outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
 Where {sqlWhereByType}
 and a.id='{drInfoFrom["ID"]}'
-{this.OrderByWithCheckColumns(fromCutting, strOrderby)}
+{this.OrderByWithCheckColumns(cuttingForm, strOrderby)}
 ";
 
             DualResult dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out arrDtType[(int)TableType.WorkorderTb]);
@@ -292,7 +300,7 @@ left join (
             }
 
             workorder_cmd = $@"
-Select {sqlColByType},{this.CheckAndGetColumns(fromCutting, "a.Cutno")},a.Colorid,a.Layer,a.Cons
+Select {sqlColByType},{this.CheckAndGetColumns(cuttingForm, "a.Cutno")},a.Colorid,a.Layer,a.Cons
 {tbDistributeColumns}
 from {tableName} a WITH (NOLOCK) 
 {tbDistributeJoin}
@@ -307,7 +315,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 }
             }
 
-            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(fromCutting, "a.Cutno")}, a.colorid,c.seq,a.FabricPanelCode,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq";
+            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(cuttingForm, "a.Cutno")}, a.colorid,c.seq,a.FabricPanelCode,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq";
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out arrDtType[(int)TableType.WorkorderSizeTb]);
             if (!dResult)
             {
@@ -324,7 +332,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
             //if (isTbDistribute)
             {
                 string sqlCutrefTb = $@"
-    Select {sqlColByType},estCutDate{byType2},rn=ROW_NUMBER()over({this.OrderByWithCheckColumns(fromCutting, strOrderby)}) into #tmp2 From #tmp
+    Select {sqlColByType},estCutDate{byType2},rn=ROW_NUMBER()over({this.OrderByWithCheckColumns(cuttingForm, strOrderby)}) into #tmp2 From #tmp
 
     {sqlFabricKind}
 
@@ -345,7 +353,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
 
             MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], $"{sqlColByType},FabricPanelCode,SCIRefno,shc", $"Select distinct {sqlColByType},a.FabricPanelCode,a.SCIRefno,b.Description,b.width,shc  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", out arrDtType[(int)TableType.FabricComboTb]); // 整理FabricPanelCode
 
-            if (fromCutting == FromCutting.P02)
+            if (cuttingForm == CuttingForm.P02)
             {
                 // 已限定是Plan，就不特別處理
                 string issue_cmd = $"Select a.Cutplanid,b.Qty,b.Dyelot,b.Roll,Max(c.yds) as yds,c.Colorid from Issue a WITH (NOLOCK) ,Issue_Detail b WITH (NOLOCK) , #tmp c Where a.id=b.id and c.Cutplanid = a.Cutplanid and c.SEQ1 = b.SEQ1 and c.SEQ2 = b.SEQ2 group by a.Cutplanid,b.Qty,b.Dyelot,b.Roll,c.Colorid order by Dyelot,roll";
@@ -358,12 +366,12 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
         /// <summary>
         /// 取得Excel資料
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="dataSource">detailgridbs.DataSource</param>
         /// <returns>bool</returns>
-        public DualResult GetExcelData(FromCutting fromCutting, object dataSource)
+        public DualResult GetExcelData(CuttingForm cuttingForm, object dataSource)
         {
-            string tableName = this.GetTableName(fromCutting);
+            string tableName = this.GetTableName(cuttingForm);
             string tbDistribute = tableName + "_Distribute";
             string tbUkey = tableName + "Ukey";
             bool isTbDistribute = this.CheckTableExist(tbDistribute);
@@ -430,7 +438,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
 
                 // 對應P02或P09要移除的欄位
                 List<string> listColumnsRemoved = new List<string>();
-                if (fromCutting == FromCutting.P02)
+                if (cuttingForm == CuttingForm.P02)
                 {
                     listColumnsRemoved.Add("[Cut#] = Cutno");
                     listColumnsRemoved.Add("[Spreading No]= SpreadingNoID");
@@ -486,7 +494,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
 )getsp
 "
                     : string.Empty;
-                string strOrderBy = fromCutting == FromCutting.P02
+                string strOrderBy = cuttingForm == CuttingForm.P02
                     ? "Order by Article,MarkerName,Ukey"
                     : "Order by MarkerName,Ukey";
 
@@ -602,12 +610,12 @@ drop table #forPlan,#forOutput
         /// <summary>
         /// 檢查目標Table是否無該欄位
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="column">檢查的Column</param>
         /// <returns>true代表無該欄位</returns>
-        public bool CheckTableLostColumns(FromCutting fromCutting, string column)
+        public bool CheckTableLostColumns(CuttingForm cuttingForm, string column)
         {
-            string tableNameWorkOrder = this.GetTableName(fromCutting);
+            string tableNameWorkOrder = this.GetTableName(cuttingForm);
             return this.DicTableLostColumns.ContainsKey(tableNameWorkOrder)
                 && this.DicTableLostColumns[tableNameWorkOrder].FindIndex(x => x.Equals(column, StringComparison.OrdinalIgnoreCase)) != -1;
         }
@@ -615,22 +623,22 @@ drop table #forPlan,#forOutput
         /// <summary>
         /// 檢查若不存在的欄位則補上設定空字串
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="column">輸入欄位</param>
         /// <returns>回傳欄位</returns>
-        private string CheckAndGetColumns(FromCutting fromCutting, string column)
+        private string CheckAndGetColumns(CuttingForm cuttingForm, string column)
         {
             string checkColumn = column.Contains(".") ? column.Split('.')[1] : column;
-            return this.CheckTableLostColumns(fromCutting, checkColumn) ? checkColumn + "=''" : column;
+            return this.CheckTableLostColumns(cuttingForm, checkColumn) ? checkColumn + "=''" : column;
         }
 
         /// <summary>
         /// 檢查Order By的欄位是否存在，並重組出Order By字串
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="orderBy">整串Order By的字串(輸入檢查)</param>
         /// <returns>整串Order By的字串(輸出回傳)</returns>
-        private string OrderByWithCheckColumns(FromCutting fromCutting, string orderBy)
+        private string OrderByWithCheckColumns(CuttingForm cuttingForm, string orderBy)
         {
             orderBy = Regex.Replace(orderBy, "order by", string.Empty, RegexOptions.IgnoreCase);
             List<string> listOrderByColumns = orderBy.Split(',').ToList();
@@ -640,7 +648,7 @@ drop table #forPlan,#forOutput
                 var column = Regex.Replace(item, "asc", string.Empty, RegexOptions.IgnoreCase);
                 column = Regex.Replace(column, "desc", string.Empty, RegexOptions.IgnoreCase);
                 column = column.Trim();
-                if (!this.CheckTableLostColumns(fromCutting, column))
+                if (!this.CheckTableLostColumns(cuttingForm, column))
                 {
                     listResult.Add(item);
                 }
@@ -652,11 +660,11 @@ drop table #forPlan,#forOutput
         /// <summary>
         /// 取得Table名稱
         /// </summary>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <returns>string</returns>
-        private string GetTableName(FromCutting fromCutting)
+        private string GetTableName(CuttingForm cuttingForm)
         {
-            return fromCutting == FromCutting.P02 ? "WorkOrderForPlanning" : "WorkOrderForOutput";
+            return cuttingForm == CuttingForm.P02 ? "WorkOrderForPlanning" : "WorkOrderForOutput";
         }
 
         private bool CheckTableExist(string tableName)
@@ -672,16 +680,16 @@ WHERE TABLE_NAME = N'{tableName}'";
         /// </summary>
         /// <param name="id">id</param>
         /// <param name="arrDtType">資料表陣列，可由GetPrintData產出</param>
-        /// <param name="fromCutting">From P02、P09</param>
+        /// <param name="cuttingForm">From P02、P09</param>
         /// <param name="printType">列印哪種報表</param>
         /// <param name="errMsg">錯誤訊息</param>
         /// <returns>bool</returns>
-        public bool PrintToExcel(string id, DataTable[] arrDtType, FromCutting fromCutting, string printType, out string errMsg)
+        public bool PrintToExcel(string id, DataTable[] arrDtType, CuttingForm cuttingForm, string printType, out string errMsg)
         {
             bool result;
             if (printType == "Cutref")
             {
-                result = this.ByCutrefExcel(id, arrDtType, fromCutting, out errMsg);
+                result = this.ByCutrefExcel(id, arrDtType, cuttingForm, out errMsg);
             }
             else
             {
@@ -1085,19 +1093,19 @@ WHERE TABLE_NAME = N'{tableName}'";
         /// </summary>
         /// <param name="id">id</param>
         /// <param name="arrDtType">arrDtType</param>
-        /// <param name="fromCutting">fromCutting</param>
+        /// <param name="cuttingForm">CuttingForm</param>
         /// <param name="errMsg">errMsg</param>
         /// <returns>bool</returns>
-        private bool ByCutrefExcel(string id, DataTable[] arrDtType, FromCutting fromCutting, out string errMsg)
+        private bool ByCutrefExcel(string id, DataTable[] arrDtType, CuttingForm cuttingForm, out string errMsg)
         {
             errMsg = string.Empty;
-            string tableName = this.GetTableName(fromCutting);
+            string tableName = this.GetTableName(cuttingForm);
             string tbDistribute = tableName + "_Distribute";
             string tbUkey = tableName + "Ukey";
             bool isTbDistribute = this.CheckTableExist(tbDistribute);
             try
             {
-                bool isP02 = fromCutting == CuttingWorkOrder.FromCutting.P02;
+                bool isP02 = cuttingForm == CuttingWorkOrder.CuttingForm.P02;
                 int nSizeColumn;
                 //if (isTbDistribute)
                 {
@@ -1454,7 +1462,7 @@ Where Cutref = '{cutref}'";
                                                     Cutno = r1.Field<int>("Cutno"),
                                                     Colorid = r1.Field<string>("Colorid"),
                                                     Layer = r1.Field<int>("Layer"),
-                                                    workorderukey_fromCutting = r1.Field<int>(tbUkey),
+                                                    workorderukey_CuttingForm = r1.Field<int>(tbUkey),
                                                     Cons = r1.Field<decimal>("Cons"),
                                                 }
                                                 into g
@@ -1463,7 +1471,7 @@ Where Cutref = '{cutref}'";
                                                     g.Key.Cutno,
                                                     g.Key.Colorid,
                                                     g.Key.Layer,
-                                                    g.Key.workorderukey_fromCutting,
+                                                    g.Key.workorderukey_CuttingForm,
                                                     g.Key.Cons,
                                                 };
 
@@ -1481,7 +1489,7 @@ Where Cutref = '{cutref}'";
                             worksheet.Cells[nrow, 3] = dis_dr.Layer;
                             worksheet.Cells[nrow, 20] = dis_dr.Cons;
 
-                            foreach (DataRow dr in arrDtType[(int)TableType.CutQtyTb].Select($"{tbUkey} = '{dis_dr.workorderukey_fromCutting}'"))
+                            foreach (DataRow dr in arrDtType[(int)TableType.CutQtyTb].Select($"{tbUkey} = '{dis_dr.workorderukey_CuttingForm}'"))
                             {
                                 for (int i = 0; i < sizeArry.Length; i++)
                                 {
@@ -1613,17 +1621,17 @@ Where Cutref = '{cutref}'";
         /// <summary>
         /// 判斷由Cutting的P02、P09哪一個呼叫
         /// </summary>
-        public enum FromCutting
-        {
-            /// <summary>
-            /// From Cutting P02 - Planning
-            /// </summary>
-            P02,
+        //public enum CuttingForm
+        //{
+        //    /// <summary>
+        //    /// From Cutting P02 - Planning
+        //    /// </summary>
+        //    P02,
 
-            /// <summary>
-            /// From Cutting P09 - Output
-            /// </summary>
-            P09,
-        }
+        //    /// <summary>
+        //    /// From Cutting P09 - Output
+        //    /// </summary>
+        //    P09,
+        //}
     }
 }

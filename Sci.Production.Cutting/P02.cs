@@ -511,15 +511,15 @@ DROP TABLE #tmp
 
         protected override bool ClickPrint()
         {
-            P02_Print callNextForm;
+            Cutting_Print callNextForm;
             if (this.drTEMP != null)
             {
-                callNextForm = new P02_Print(FromCutting.P02, this.drTEMP, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new Cutting_Print(CuttingForm.P02, this.drTEMP);
                 callNextForm.ShowDialog(this);
             }
             else if (this.drTEMP == null && this.CurrentDetailData != null)
             {
-                callNextForm = new P02_Print(FromCutting.P02, this.CurrentDetailData, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetInt(this.CurrentMaintain["WorkType"]));
+                callNextForm = new Cutting_Print(CuttingForm.P02, this.CurrentDetailData);
                 callNextForm.ShowDialog(this);
             }
             else
@@ -1726,7 +1726,7 @@ order by p.EditDate desc
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(FromCutting.P02, out errMsg))
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P02, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
@@ -1744,15 +1744,9 @@ order by p.EditDate desc
 
         }
 
-        // 等待整合...
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            CuttingWorkOrder excel_P02 = new CuttingWorkOrder();
-            var result = excel_P02.GetExcelData(FromCutting.P02, this.detailgridbs.DataSource);
-            if (!result)
-            {
-                this.ShowErr(result.ToMessages().ToString());
-            }
+            this.detailgrid.ToExcel(false);
         }
         #endregion
 
