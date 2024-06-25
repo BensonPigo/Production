@@ -842,7 +842,7 @@ from dbo.Issue_detail a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on a
 
                 string sqlcmd = string.Format(
                     @";with cte as
-(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.workorder WITH (NOLOCK) on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
+(Select WorkOrderForPlanning.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.WorkOrderForPlanning WITH (NOLOCK) on WorkOrderForPlanning.Ukey = Cutplan_Detail.WorkorderForPlanningUkey 
 where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a

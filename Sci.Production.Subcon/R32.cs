@@ -239,8 +239,8 @@ LEFT JOIN Orders o ON o.ID=b.Orderid
 OUTER APPLY(
 	SELECT	[EstCutDate] = MAX(w.EstCutDate),
 			[CuttingOutputDate] = MAX(co.cDate)
-	from WorkOrder w WITH (NOLOCK)
-	LEFT JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON w.Ukey = cod.WorkOrderUkey
+	from WorkOrderForOutput w WITH (NOLOCK)
+	LEFT JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON w.Ukey = cod.WorkOrderForOutputUkey
 	LEFT JOIN CuttingOutput co WITH (NOLOCK) ON cod.ID = co.ID
 	where w.CutRef = b.CutRef and w.MDivisionId = b.MDivisionid
 )  EstCut

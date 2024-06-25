@@ -35,13 +35,13 @@ namespace Sci.Production.Warehouse
 ,b.CutRef
 ,c.FabricCombo
 ,b.CutNo
-,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrder_Distribute t WITH (NOLOCK) where t.WorkOrderUkey = c.Ukey) x for xml path('')) article
+,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrderForPlanning t WITH (NOLOCK) where t.Ukey = c.Ukey) x for xml path('')) article
 ,C.Markername
 from dbo.Cutplan a WITH (NOLOCK) 
 inner join dbo.Cutplan_Detail b WITH (NOLOCK) on b.id= a.ID
-inner join dbo.WorkOrder c WITH (NOLOCK) on c.Ukey = b.WorkorderUkey
+inner join dbo.WorkOrderForPlanning c WITH (NOLOCK) on c.Ukey = b.WorkorderForPlanningUkey
 where a.ID = '{0}'
-order by b.POID,c.seq1,c.seq2,c.Cutno
+order by b.POID,c.seq1,c.seq2,b.Cutno
 
 ", this.dr["cutplanid"].ToString()));
 
