@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Forms;
+using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
 {
@@ -97,6 +98,7 @@ namespace Sci.Production.Cutting
         private string MarkerNo = string.Empty;
         private string WorkOrderID = string.Empty;
         private DataTable WorkOrder;
+        private CuttingForm CurrentForm;
 
         private Dictionary<string, string> SizeCodeCaches { get; set; }
 
@@ -107,7 +109,7 @@ namespace Sci.Production.Cutting
         /// <param name="id">WorkOrderForOutput/WorkOrderForPlanning的ID</param>
         /// <param name="drSMNotice">drSMNotice</param>
         /// <param name="workOrder">P02或P09的 this.detailgridbs.DataSource</param>
-        public ImportML(string styleUKey, string id, DataRow drSMNotice, DataTable workOrder)
+        public ImportML(CuttingForm form, string styleUKey, string id, DataRow drSMNotice, DataTable workOrder)
         {
             this.InitializeComponent();
             this.StyleUKey = styleUKey;
@@ -116,6 +118,7 @@ namespace Sci.Production.Cutting
             this.WorkOrder = workOrder;
             this.FileType = "L";
             this.MarkerNo = this.lastVerData["markerNo"].ToString();
+            this.CurrentForm = form;
         }
 
         /// <inheritdoc />
@@ -366,19 +369,30 @@ namespace Sci.Production.Cutting
                         {
                             row["Ukey"] = 0;
                             row["tmpKey"] = maxKey++;
-                            row["Type"] = workOrder.Select(s => s["Type"]).FirstOrDefault();
                             row["MDivisionId"] = Sci.Env.User.Keyword;
                             row["FactoryID"] = workOrder.Select(s => s["FactoryID"]).FirstOrDefault();
                             row["OrderID"] = this.WorkOrderID; // 此處不用管 Type，因為用檔案匯入沒有dist
                             row["MarkerNo"] = this.MarkerNo;
-                            row["EachconsMarkerNo"] = this.MarkerNo;
-                            row["EachconsMarkerVersion"] = this.lastVerData["Version"];
-                            row["Cutno"] = DBNull.Value;
-                            row["isbyAdditionalRevisedMarker"] = 0;
-                            row["ImportML"] = true;
+
+                            if (this.CurrentForm == CuttingForm.P02)
+                            {
+                                row["Type"] = workOrder.Select(s => s["Type"]).FirstOrDefault();
+                            }
+
+                            if (this.CurrentForm == CuttingForm.P09)
+                            {
+                                row["Cutno"] = DBNull.Value;
+                                row["ImportML"] = true;
+                                row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];
+                            }
+
                             row["MarkerLength"] = Prgs.MarkerLengthSampleTOTrade(row["MarkerLength"].ToString(), row["MatchFabric"].ToString());
-                            row["ConsPC"] = MyUtility.Check.Empty(row["ConsPC"]) ? 0 : row["ConsPC"];
-                            this.ProcessColumns(row);
+
+                            if (this.CurrentForm == CuttingForm.P09)
+                            {
+                                this.ProcessColumns(row);
+                            }
+
                             row.AcceptChanges();
                             row.SetAdded();
                             this.WorkOrder.ImportRow(row);
@@ -668,11 +682,15 @@ namespace Sci.Production.Cutting
                     // 11.當　MarkerName <> ‘K’ 開頭，就利用FabricPanelCode至Style_BOF中帶出最新的MatchFabric, V_Repeat , H_Repeat , HorizontalCutting, OneTwoWay , Pattern Panel , Fabric Code , SCIRefno
                     rowML["MarkerName"] = item.CurrentMarkerName;
                     rowML["ID"] = this.WorkOrderID;
-                    //rowML["MarkerVersion"] = this.lastVerData["Version"];
+                    rowML["MarkerVersion"] = this.lastVerData["Version"];
                     rowML["FabricPanelCode"] = item.Fab_Type;
-                    rowML["StraightLength"] = item.Straight; // PO9 Only
-                    rowML["CurvedLength"] = item.Curved; // PO9 Only
-                    rowML["ActCuttingPerimeter"] = string.IsNullOrEmpty(item.ActCuttingPerimeter) ? item.Perimeter : item.ActCuttingPerimeter; // PO9 Only
+
+                    if (this.CurrentForm == CuttingForm.P09)
+                    {
+                        rowML["StraightLength"] = item.Straight;
+                        rowML["CurvedLength"] = item.Curved;
+                        rowML["ActCuttingPerimeter"] = string.IsNullOrEmpty(item.ActCuttingPerimeter) ? item.Perimeter : item.ActCuttingPerimeter;
+                    }
 
                     var isItemK = item.CurrentMarkerName.ToUpper().StartsWith("K");
                     if (isItemK)
@@ -723,7 +741,7 @@ Where bof.StyleUkey = @StyleUkey";
                             if (datatable != null && datatable.Rows.Count > 0)
                             {
                                 var row = datatable.Rows[0];
-                                rowML["PatternPanel"] = row["PatternPanel"];
+                                rowML["PatternPanel_CONCAT"] = row["PatternPanel"];
                                 rowML["FabricCombo"] = row["PatternPanel"];
                                 rowML["FabricCode"] = row["FabricCode"];
                                 rowML["SCIRefno"] = row["SCIRefno"];
@@ -877,9 +895,6 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
             {
                 string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
                 int indexY = markerLength.IndexOf("Ｙ");
-                // 新的P09不需要了
-                //currentRow["markerLengthY"] = markerLength.Substring(0, indexY).PadLeft(2, '0');
-                //currentRow["markerLengthE"] = markerLength.Substring(indexY + 1);
             }
 
             this.PadLeftTen("ActCuttingPerimeter", currentRow);

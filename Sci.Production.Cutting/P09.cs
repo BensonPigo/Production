@@ -233,6 +233,9 @@ SELECT
    ,ActCuttingPerimeter_Mask = ''
    ,StraightLength_Mask = ''
    ,CurvedLength_Mask = ''
+    ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',wo.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + wo.ActCuttingPerimeter, 10),wo.ActCuttingPerimeter)
+	,StraightLengthNew = iif(CHARINDEX('Yd',wo.StraightLength)<4,RIGHT(REPLICATE('0', 10) + wo.StraightLength, 10),wo.StraightLength)
+	,CurvedLengthNew = iif(CHARINDEX('Yd',wo.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + wo.CurvedLength, 10),wo.CurvedLength)
    ,AddUser = p1.Name
    ,EditUser = p2.Name
    ,FabricTypeRefNo = CONCAT(f.WeaveTypeID, ' /' + wo.RefNo)
@@ -323,6 +326,8 @@ WHERE wo.id = '{masterID}'
             base.OnDetailEntered();
 
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
+
+            this.btnImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1" && !this.EditMode;
 
             foreach (DataRow row in this.DetailDatas)
             {
@@ -1925,9 +1930,21 @@ DEALLOCATE CURSOR_
             return base.ClickPrint();
         }
 
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+
+            if (this.btnImportMarkerLectra != null)
+            {
+                this.btnImportMarkerLectra.Enabled = this.EditMode;
+            }
+        }
+
         private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
-
+            var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["ID"].ToString());
+            exwip.ShowDialog();
         }
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
@@ -1991,7 +2008,7 @@ order by p.EditDate desc
             if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
             {
                 string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
-                var form = new ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                var form = new ImportML(CuttingForm.P09, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
                 form.ShowDialog();
             }
             else
@@ -2004,8 +2021,8 @@ order by p.EditDate desc
             {
                 DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
                 drNEW["id"] = this.CurrentMaintain["ID"];
-                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["WorkOrderForOutputUkey"] = 0;  // 新增 WorkOrderForOutputUkey 塞0
+                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"];
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
                 drNEW["tmpKey"] = row["tmpKey"];
                 this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
@@ -2260,12 +2277,7 @@ END";
 
         private void BtnToExcel_Click(object sender, EventArgs e)
         {
-            CuttingWorkOrder excel_P09 = new CuttingWorkOrder();
-            var result = excel_P09.GetExcelData(CuttingForm.P09, this.detailgridbs.DataSource);
-            if (!result)
-            {
-                this.ShowErr(result.ToMessages().ToString());
-            }
+            this.detailgrid.ToExcel(false);
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

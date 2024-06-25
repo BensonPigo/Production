@@ -682,7 +682,6 @@
             // 
             // btnImportMarker
             // 
-            this.btnImportMarker.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
             this.btnImportMarker.Name = "btnImportMarker";
@@ -704,7 +703,7 @@
             // 
             // btnImportMarkerLectra
             // 
-            this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";

@@ -467,13 +467,9 @@ AND EXISTS (
                 using (sqlConn)
                 {
                     var poids = excelWk.Select(o => o.ID).Distinct().ToList();
-                    var fabricPanelCodes = excelWk.Select(o => o.FabricPanelCode).Distinct().ToList();
-                    var colorIDs = excelWk.Select(o => o.Colorid).Distinct().ToList();
-                    var seq1s = excelWk.Select(o => o.SEQ1).Distinct().ToList();
-                    var seq2s = excelWk.Select(o => o.SEQ2).Distinct().ToList();
 
                     // 檢查Excel 資料合法性，撈一次資料即可
-                    List<WorkOrder> compare = this.GetOrder_ColorComboInfoList(poids, seq1s, seq2s, fabricPanelCodes, colorIDs);
+                    List<WorkOrder> compare = this.GetOrderInfoList(poids);
                     List<WorkOrder> compareMarkerNo = this.GetOrder_EachConsInfoList(poids);
 
                     foreach (var e in excelWk)
@@ -775,43 +771,39 @@ AND EXISTS (
         }
 
         /// <summary>
-        /// 根據Excel的POID，FabricPanelCode，ColorID，取得該部位的裁剪層數上限(Order_ColorCombo.CuttingLayer)，但我們不知道他們要裁的料號是誰，所以只能取TOP 1，再傳回去比對Excel上的資料
+        /// 根據Excel的POID，取得Seq、Refno、Color、Refno等欄位清單，包含裁剪層數上限(Construction.CuttingLayer)
         /// </summary>
         /// <param name="poIDs">POID</param>
-        /// <param name="fabricPanelCodes">Excel的FabricPanelCode</param>
-        /// <param name="colorIDs">Excel的ColorID</param>
         /// <returns>組合好的物件</returns>
-        private List<WorkOrder> GetOrder_ColorComboInfoList(List<string> poIDs, List<string> seq1s, List<string> seq2s, List<string> fabricPanelCodes, List<string> colorIDs)
+        private List<WorkOrder> GetOrderInfoList(List<string> poIDs)
         {
-            WorkOrder wk = new WorkOrder();
             string sqlGetWorkOrderInfo = $@"
-WITH RankedOrders AS (
-    select  oc.ID,
-	    oc.FabricPanelCode,
-	    oc.ColorID,
-	    FabricCombo = oc.PatternPanel,
-	    oc.FabricCode,
-	    ob.SCIRefno,
-	    ob.Refno,
-	    psd.SEQ1,
-	    psd.SEQ2,
-	    [CuttingLayer] = iif(isnull(c.CuttingLayer, 100) = 0, 100, isnull(c.CuttingLayer, 100)),
-	    ROW_NUMBER() OVER (PARTITION BY oc.ID, oc.FabricPanelCode, oc.ColorID ORDER BY oc.ID) AS rn
-    from Order_ColorCombo oc with (nolock)
-    inner join Order_BOF ob with (nolock) on ob.Id = oc.id and ob.FabricCode = oc.FabricCode
-    inner join PO_Supp_Detail psd with (nolock) on psd.ID = oc.Id and psd.SCIRefno = ob.SCIRefno
-    inner join Fabric f with(nolock) ON ob.SCIRefno=f.SCIRefno
-    left join Construction c on c.Id = f.ConstructionID and c.Junk = 0
-    where oc.ID IN ('{poIDs.JoinToString("','")}' )
-    and psd.Seq1 IN ('{seq1s.JoinToString("','")}' ) 
-    and psd.Seq2 IN ('{seq2s.JoinToString("','")}' ) 
-    and oc.FabricPanelCode IN ('{fabricPanelCodes.JoinToString("','")}' ) 
-    and oc.ColorID IN ('{colorIDs.JoinToString("','")}' ) 
+SELECT  
+     psd.ID
+    ,psd.SEQ1
+    ,psd.SEQ2
+    ,psd.Refno
+    ,psd.SCIRefno
+    ,ColorID = ISNULL(psdc.SpecValue, '')
+    ,CuttingLayer = iif(isnull(c.CuttingLayer, 100) = 0, 100, isnull(c.CuttingLayer, 100))
+    ,ofc.FabricPanelCode
+    ,FabricCombo = ofc.PatternPanel
+    ,ofc.FabricCode
+FROM PO_Supp_Detail psd WITH (NOLOCK)
+INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
+INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Order_FabricCode ofc on ofc.Id = psd.ID
+LEFT JOIN Construction c on c.Id = f.ConstructionID and c.Junk = 0
+WHERE psd.ID IN ('{poIDs.JoinToString("','")}' )
+AND psd.Junk = 0
+AND EXISTS (
+    SELECT 1
+    FROM Order_BOF WITH (NOLOCK)
+    INNER JOIN Fabric WITH (NOLOCK) ON Fabric.SCIRefno = Order_BOF.SCIRefno
+    WHERE Order_BOF.FabricCode = ofc.FabricCode
+    AND Order_BOF.Id = psd.ID
+    AND Fabric.BrandRefNo = f.BrandRefNo
 )
-
-SELECT *
-FROM RankedOrders
-WHERE rn = 1
 ";
             DataTable drWorkOrderInfo;
             DualResult r = DBProxy.Current.Select(null, sqlGetWorkOrderInfo, out drWorkOrderInfo);

@@ -125,6 +125,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(1197, 3);
+            this.refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // detailgridcont
             // 
@@ -576,6 +577,7 @@
             // 
             // btnImportMarkerLectra
             // 
+            this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";

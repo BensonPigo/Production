@@ -146,6 +146,7 @@ SELECT
    ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM Bundle WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM CuttingOutput_Detail WHERE CutRef <> '' AND CutRef = wo.CutRef), 1, 0) AS BIT)
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM MarkerReq_Detail WHERE OrderID = wo.ID), 1, 0) AS BIT)
+   ,ImportML = CAST(0 AS BIT)
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -1634,7 +1635,6 @@ END";
 
         }
 
-        // 等待整合...
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
             CuttingWorkOrder cw = new CuttingWorkOrder();
@@ -1672,7 +1672,7 @@ order by p.EditDate desc
             if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
             {
                 string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
-                var form = new ImportML(styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                var form = new ImportML(CuttingForm.P02, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
                 form.ShowDialog();
             }
             else
@@ -1685,8 +1685,8 @@ order by p.EditDate desc
             {
                 DataRow drNEW = this.dt_PatternPanel.NewRow();
                 drNEW["id"] = this.CurrentMaintain["ID"];
-                drNEW["WorkOrderUkey"] = 0;  // 新增WorkOrderUkey塞0
-                drNEW["PatternPanel"] = row["PatternPanel"];
+                drNEW["WorkOrderForPlanningUkey"] = 0;  // 新增 WorkOrderForPlanningUkey 塞0
+                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"];
                 drNEW["FabricPanelCode"] = row["FabricPanelCode"];
                 drNEW["tmpKey"] = row["tmpKey"];
                 this.dt_PatternPanel.Rows.Add(drNEW);
@@ -1712,7 +1712,6 @@ order by p.EditDate desc
             }
         }
 
-        // 等待整合...
         private void BtnDownload_Click(object sender, EventArgs e)
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
@@ -1723,7 +1722,6 @@ order by p.EditDate desc
             }
         }
 
-        // 等待整合...
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
@@ -1737,7 +1735,6 @@ order by p.EditDate desc
             frm.ShowDialog(this);
         }
 
-        // 等待整合...
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
@@ -1789,6 +1786,12 @@ order by p.EditDate desc
         {
             this.detailgrid.ValidateControl();
             this.gridSizeRatio.ValidateControl();
+        }
+
+        private void Refresh_Click(object sender, EventArgs e)
+        {
+            this.RenewData();
+            this.OnDetailEntered();
         }
     }
 #pragma warning restore SA1401 // Fields should be private

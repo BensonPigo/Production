@@ -130,7 +130,7 @@
     <value>567, 17</value>
   </metadata>
   <metadata name="sizeratioMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>203, 54</value>
+    <value>1485, 17</value>
   </metadata>
   <metadata name="sizeRatioBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>927, 17</value>
@@ -142,6 +142,6 @@
     <value>739, 17</value>
   </metadata>
   <metadata name="qtybreakBindingSource.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 54</value>
+    <value>1299, 17</value>
   </metadata>
 </root>
