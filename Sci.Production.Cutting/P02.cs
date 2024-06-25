@@ -1080,10 +1080,9 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 }
             };
 
-            this.col_Seq1.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq2.EditingMouseDown += this.SeqCellEditingMouseDown;
-            this.col_Seq1.CellValidating += this.SeqCelllValidatingHandler;
-            this.col_Seq2.CellValidating += this.SeqCelllValidatingHandler;
+            // Seq 兩個欄位
+            ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
+            ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
             this.col_Tone.MaxLength = 15;
 
@@ -1241,127 +1240,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             this.BindQtyEvents(this.col_SizeRatio_Qty);
             #endregion
-        }
-
-        private void CustomCellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-        {
-            // 粉底紅字
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (this.CanEditData(dr))
-            {
-                e.CellStyle.BackColor = Color.Pink;
-                e.CellStyle.ForeColor = Color.Red;
-            }
-            else
-            {
-                e.CellStyle.BackColor = Color.White;
-                e.CellStyle.ForeColor = Color.Black;
-            }
-        }
-
-        private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
-        {
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (!this.CanEditData(dr))
-            {
-                return;
-            }
-
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dt_PatternPanel, CuttingForm.P02);
-            if (minFabricPanelCode == null)
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string id = this.CurrentMaintain["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
-
-            // 觸發的欄位不作為篩選條件
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = string.Empty;
-                    break;
-                case "seq2":
-                    seq2 = string.Empty;
-                    break;
-            }
-
-            SelectItem selectItem = PopupSEQ(id, fabricCode, seq1, seq2, refno, colorID, false);
-            if (selectItem == null)
-            {
-                return;
-            }
-
-            dr["SEQ1"] = selectItem.GetSelecteds()[0]["SEQ1"];
-            dr["SEQ2"] = selectItem.GetSelecteds()[0]["SEQ2"];
-            dr["Refno"] = selectItem.GetSelecteds()[0]["Refno"];
-            dr["ColorID"] = selectItem.GetSelecteds()[0]["ColorID"];
-            dr["SCIRefno"] = selectItem.GetSelecteds()[0]["SCIRefno"];
-            dr.EndEdit();
-        }
-
-        private void SeqCelllValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
-        {
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (!this.CanEditData(dr))
-            {
-                return;
-            }
-
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(dr, this.dt_PatternPanel, CuttingForm.P02);
-            if (minFabricPanelCode == null)
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string newvalue = e.FormattedValue.ToString();
-            string oldvalue = this.CurrentDetailData[columnName].ToString();
-            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
-            {
-                return;
-            }
-
-            string id = this.CurrentMaintain["ID"].ToString();
-            string fabricCode = this.CurrentDetailData["FabricCode"].ToString();
-            string seq1 = this.CurrentDetailData["SEQ1"].ToString();
-            string seq2 = this.CurrentDetailData["SEQ2"].ToString();
-            string refno = this.CurrentDetailData["Refno"].ToString();
-            string colorID = this.CurrentDetailData["ColorID"].ToString();
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = newvalue;
-                    break;
-                case "seq2":
-                    seq2 = newvalue;
-                    break;
-            }
-
-            if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
-            {
-                this.CurrentDetailData[columnName] = newvalue;
-
-                // 唯一值時
-                if (dtValidating.Rows.Count == 1)
-                {
-                    dr["SCIRefno"] = dtValidating.Rows[0]["SCIRefno"].ToString();
-                }
-            }
-            else
-            {
-                this.CurrentDetailData[columnName] = string.Empty;
-            }
-
-            this.CurrentDetailData.EndEdit();
         }
 
         private void BindQtyEvents(Ict.Win.UI.DataGridViewNumericBoxColumn column)
@@ -1610,16 +1488,15 @@ END";
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
             this.detailgrid.ValidateControl();
-            var dt = this.DetailDatas.Where(o => MyUtility.Check.Empty(o["CutPlanID"]));
-            if (dt.Any())
-            {
-                var frm = new P02_BatchAssign(dt.CopyToDataTable(), this.CurrentMaintain["ID"].ToString(), CuttingForm.P02);
-                frm.ShowDialog(this);
-            }
-            else
+            var detailDatas = this.DetailDatas.Where(row => this.CanEditData(row)).ToList();
+            if (!detailDatas.Any())
             {
                 MyUtility.Msg.InfoBox("No editable data.");
+                return;
             }
+
+            var frm = new P02_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P02);
+            frm.ShowDialog(this);
         }
 
         private void BtnImportMarker_Click(object sender, EventArgs e)

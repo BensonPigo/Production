@@ -3,9 +3,11 @@ using Ict.Win;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
@@ -17,20 +19,19 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// 原始Detail
         /// </summary>
-        private DataTable dt_OriDetail;
+        private List<DataRow> dt_OriDetail;
 
         /// <summary>
-        /// 原始Detail排除不可修改
+        /// 用來修改的 DataTable
         /// </summary>
         private DataTable dt_CurentDetail;
         private DataTable sp;
-        private string Poid;
+        private string ID;
         private CuttingForm form;
 
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA;
-        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09
 
@@ -38,25 +39,24 @@ namespace Sci.Production.Cutting
         /// Initializes a new instance of the <see cref="P02_BatchAssign"/> class.
         /// </summary>
         /// <param name="detailTable">Detail Table</param>
-        /// <param name="cuttingPoid">cuttingPoid</param>
+        /// <param name="id">cutting ID</param>
         /// <param name="form">P02或P09</param>
-        public P02_BatchAssign(DataTable detailTable, string cuttingPoid, CuttingForm form)
+        public P02_BatchAssign(List<DataRow> detailTable, string id, CuttingForm form)
         {
             this.InitializeComponent();
-            this.Poid = cuttingPoid;
+
+            this.panel_P09.Visible = form == CuttingForm.P09;
+            this.Text = CuttingForm.P09.ToString() + ".Batch Assign Cell/Est. Cut Date";
+            this.ID = id;
+            this.form = form;
             this.dt_OriDetail = detailTable;
-            this.dt_CurentDetail = detailTable.Copy();
+            this.dt_CurentDetail = detailTable.CopyToDataTable();
             this.dt_CurentDetail.Columns.Add("Selected", typeof(bool));
+
             this.Gridsetup();
             this.BtnFilter_Click(null, null);  // 1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
-            this.form = form;
 
-            MyUtility.Tool.ProcessWithDatatable(this.dt_CurentDetail, "OrderID", $@"select distinct OrderID from #tmp", out this.sp);
-            if (this.dt_CurentDetail != null)
-            {
-                DataTable dtcopy = this.dt_CurentDetail.Copy();
-                dtcopy.AcceptChanges();
-            }
+            this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID");
         }
 
         private void Gridsetup()
@@ -82,7 +82,8 @@ namespace Sci.Production.Cutting
                 }
             };
 
-            this.gridBatchAssign.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
+            #region Helper.Controls.Grid
+            this.gridBatchAssign.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -122,6 +123,7 @@ namespace Sci.Production.Cutting
 
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
                 .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out col_MarkerNo);
+            #endregion
 
             this.GridEventSet();
             this.Filter();
@@ -235,7 +237,7 @@ namespace Sci.Production.Cutting
                     if (dr["Selected"].ToString() == "True")
                     {
                         // 逐一檢查Seq 正確性
-                        bool isValid = ValidatingSeqWithoutFabricCode(this.Poid, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
+                        bool isValid = ValidatingSeqWithoutFabricCode(this.ID, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
 
                         if (isValid)
                         {
@@ -274,8 +276,17 @@ namespace Sci.Production.Cutting
                 {
                     if (dr["Selected"].ToString() == "True")
                     {
-                        dr["MarkerLength_Mask"] = markerLength;
+                        dr["MarkerLength"] = dr["MarkerLength_Mask"] = markerLength;
                     }
+                }
+            }
+
+            if (this.form == CuttingForm.P09)
+            {
+                foreach (DataRow dr in this.dt_CurentDetail.Select($"Selected = 1"))
+                {
+                    dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
+                    dr["CutCellID"] = this.txtCell.Text;
                 }
             }
         }
@@ -284,32 +295,28 @@ namespace Sci.Production.Cutting
         {
             this.gridBatchAssign.ValidateControl();
 
-            foreach (DataRow dr in this.dt_CurentDetail.Rows)
+            foreach (DataRow dr in this.dt_CurentDetail.Select($"Selected = 1"))
             {
-                if (dr["Selected"].ToString() == "True")
+                // 更新回表身, 1對1
+                var detaildr = this.dt_OriDetail.Where(row => MyUtility.Convert.GetInt(row["Ukey"]) == MyUtility.Convert.GetInt(dr["Ukey"]) && MyUtility.Convert.GetInt(row["tmpKey"]) == MyUtility.Convert.GetInt(dr["tmpKey"])).First();
+
+                detaildr["EstCutDate"] = dr["EstCutDate"];
+                detaildr["WKETA"] = dr["WKETA"];
+                detaildr["Tone"] = dr["Tone"];
+                detaildr["MarkerName"] = dr["MarkerName"];
+                detaildr["MarkerLength_Mask"] = dr["MarkerLength_Mask"];
+
+                // FabricPanelCode 為空不可新增Seq，同P02 Grid驗證方式
+                if (!MyUtility.Check.Empty(detaildr["FabricPanelCode"]))
                 {
-                    DataRow[] detaildr;
-                    if (MyUtility.Check.Empty(dr["Ukey"]))
-                    {
-                        detaildr = this.dt_OriDetail.Select(string.Format("tmpKey = '{0}'", dr["tmpKey"]));
-                    }
-                    else
-                    {
-                        detaildr = this.dt_OriDetail.Select(string.Format("Ukey = '{0}'", dr["Ukey"]));
-                    }
+                    detaildr["Seq1"] = dr["Seq1"];
+                    detaildr["Seq2"] = dr["Seq2"];
+                }
 
-                    detaildr[0]["EstCutDate"] = dr["EstCutDate"];
-                    detaildr[0]["WKETA"] = dr["WKETA"];
-                    detaildr[0]["Tone"] = dr["Tone"];
-                    detaildr[0]["MarkerName"] = dr["MarkerName"];
-                    detaildr[0]["MarkerLength_Mask"] = dr["MarkerLength_Mask"];
-
-                    // FabricPanelCode 為空不可新增Seq，同P02 Grid驗證方式
-                    if (!MyUtility.Check.Empty(detaildr[0]["FabricPanelCode"]))
-                    {
-                        detaildr[0]["Seq1"] = dr["Seq1"];
-                        detaildr[0]["Seq2"] = dr["Seq2"];
-                    }
+                if (this.form == CuttingForm.P09)
+                {
+                    detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
+                    detaildr["CutCellID"] = dr["CutCellID"];
                 }
             }
 
@@ -348,7 +355,7 @@ namespace Sci.Production.Cutting
             string seq1 = this.txtSeq1.Text;
             if (!MyUtility.Check.Empty(seq1))
             {
-                DataTable filter = GetFilterAllSeqRefnoColor(this.Poid, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
+                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
 
                 // Seq 會影響WK ETA，因此一併清除
                 this.txtWKETA.Text = string.Empty;
@@ -373,7 +380,7 @@ namespace Sci.Production.Cutting
             string seq2 = this.txtSeq2.Text;
             if (!MyUtility.Check.Empty(seq2))
             {
-                DataTable filter = GetFilterAllSeqRefnoColor(this.Poid, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
+                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
 
                 // Seq 會影響WK ETA，因此一併清除
                 this.txtWKETA.Text = string.Empty;
@@ -392,7 +399,7 @@ namespace Sci.Production.Cutting
         private void TxtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             // 這邊的開窗無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            SelectItem item = PopupAllSeqRefnoColor(this.Poid);
+            SelectItem item = PopupAllSeqRefnoColor(this.ID);
             if (item == null)
             {
                 return;
@@ -408,7 +415,7 @@ namespace Sci.Production.Cutting
         private void TxtSeq2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             // 這邊的開窗無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            SelectItem item = PopupAllSeqRefnoColor(this.Poid);
+            SelectItem item = PopupAllSeqRefnoColor(this.ID);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -434,7 +441,7 @@ namespace Sci.Production.Cutting
         {
             DataTable dt = this.dt_CurentDetail.Clone();
             DataRow dr = dt.NewRow();
-            dr["ID"] = this.Poid;
+            dr["ID"] = this.ID;
             dr["Seq1"] = this.txtSeq1.Text;
             dr["Seq2"] = this.txtSeq2.Text;
             P02_WKETA item = new P02_WKETA(dr);
