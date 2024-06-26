@@ -2680,10 +2680,10 @@ END";
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
         {
-            this.GridValid();
+            /*this.GridValid();
             this.detailgrid.ValidateControl();
             var frm = new P02_BatchAssign((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["ID"].ToString(), CuttingWorkOrder.CuttingForm.P02);
-            frm.ShowDialog(this);
+            frm.ShowDialog(this);*/
         }
 
         // grid新增一筆的btn

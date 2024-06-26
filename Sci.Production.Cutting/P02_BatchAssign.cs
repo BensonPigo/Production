@@ -275,13 +275,14 @@ namespace Sci.Production.Cutting
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Rows)
                 {
-                    if (dr["Selected"].ToString() == "True")
+                    if (MyUtility.Convert.GetBool(dr["Selected"]))
                     {
                         dr["MarkerLength"] = dr["MarkerLength_Mask"] = markerLength;
                     }
                 }
             }
 
+            // P09 才有欄位
             if (this.form == CuttingForm.P09)
             {
                 foreach (DataRow dr in this.dt_CurentDetail.Select($"Selected = 1"))
