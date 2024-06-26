@@ -28,12 +28,9 @@ namespace Sci.Production.Cutting
         #region 全域變數
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2(); // 右上使用,綁主表欄位
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_OrderID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
-        private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA;
-        private Ict.Win.UI.DataGridViewDateBoxColumn EstCutDate;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
@@ -139,7 +136,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_OrderID)
+                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -148,10 +145,10 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out this.col_Layer)
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("WKETA", header: "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
+                .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.EstCutDate)
+                .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
@@ -1306,48 +1303,6 @@ DEALLOCATE CURSOR_
                 }
             };
 
-            this.col_OrderID.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr) || this.CurrentMaintain["WorkType"].ToString() == "1" || e.Button != MouseButtons.Right)
-                {
-                    return;
-                }
-
-                DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
-                SelectItem sele = new SelectItem(dt, "ID", "15@300,400", dr["OrderID"].ToString(), columndecimals: "50");
-                if (sele.ShowDialog() == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                e.EditingControl.Text = sele.GetSelectedString();
-            };
-            this.col_OrderID.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                string oldvalue = dr["OrderID"].ToString();
-                string newvalue = e.FormattedValue.ToString();
-                if (!this.CanEditData(dr) || this.CurrentMaintain["WorkType"].ToString() == "1" || oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                DataTable dt = ((DataTable)this.qtybreakds.DataSource).DefaultView.ToTable(true, "ID");
-                if (dt.Select($"ID = '{newvalue}'").Length == 0)
-                {
-                    dr["OrderID"] = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox($"<SP> : {newvalue} data not found!");
-                }
-                else
-                {
-                    dr["OrderID"] = newvalue;
-                }
-
-                dr.EndEdit();
-            };
-
             // Seq 兩個欄位
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
@@ -1373,54 +1328,6 @@ DEALLOCATE CURSOR_
                 dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 UpdateConcatString(dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
                 dr.EndEdit();
-            };
-            this.col_WKETA.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (e.Button == MouseButtons.Right)
-                {
-                    P02_WKETA item = new P02_WKETA(dr);
-                    DialogResult result = item.ShowDialog();
-                    switch (result)
-                    {
-                        case DialogResult.Cancel:
-                            break;
-                        case DialogResult.Yes:
-                            dr["WKETA"] = Itemx.WKETA;
-                            break;
-                        case DialogResult.No:
-                            dr["WKETA"] = DBNull.Value;
-                            break;
-                    }
-
-                    dr.EndEdit();
-                }
-            };
-            this.EstCutDate.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                DateTime? oldvalue = MyUtility.Convert.GetDate(dr["EstCutDate"]);
-                DateTime? newvalue = MyUtility.Convert.GetDate(e.FormattedValue);
-                if (MyUtility.Check.Empty(e.FormattedValue) || oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
-                }
             };
 
             BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditData);
@@ -1530,105 +1437,6 @@ DEALLOCATE CURSOR_
             }
         }
 
-        /*
-        private void SeqCellEditingMouseDown(object sender, Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e)
-        {
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (!this.CanEditData(dr) || e.Button != MouseButtons.Right)
-            {
-                return;
-            }
-
-            if (MyUtility.Check.Empty(dr["FabricCode"]))
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string id = dr["ID"].ToString();
-            string fabricCode = dr["FabricCode"].ToString();
-            string seq1 = dr["SEQ1"].ToString();
-            string seq2 = dr["SEQ2"].ToString();
-            string refno = dr["Refno"].ToString();
-            string colorID = dr["ColorID"].ToString();
-
-            // 觸發的欄位不作為篩選條件
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = string.Empty;
-                    break;
-                case "seq2":
-                    seq2 = string.Empty;
-                    break;
-            }
-
-            SelectItem selectItem = PopupSEQ(id, fabricCode, seq1, seq2, refno, colorID, false);
-            if (selectItem == null)
-            {
-                return;
-            }
-
-            dr["SEQ1"] = selectItem.GetSelecteds()[0]["SEQ1"];
-            dr["SEQ2"] = selectItem.GetSelecteds()[0]["SEQ2"];
-            dr["Refno"] = selectItem.GetSelecteds()[0]["Refno"];
-            dr["ColorID"] = selectItem.GetSelecteds()[0]["ColorID"];
-            dr["SCIRefno"] = selectItem.GetSelecteds()[0]["SCIRefno"];
-            dr.EndEdit();
-        }
-
-        private void SeqCelllValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
-        {
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            string columnName = this.detailgrid.Columns[e.ColumnIndex].Name;
-            string newvalue = e.FormattedValue.ToString();
-            string oldvalue = dr[columnName].ToString();
-            if (!this.CanEditData(dr) || MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
-            {
-                return;
-            }
-
-            if (MyUtility.Check.Empty(dr["FabricCode"]))
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            string id = dr["ID"].ToString();
-            string fabricCode = dr["FabricCode"].ToString();
-            string seq1 = dr["SEQ1"].ToString();
-            string seq2 = dr["SEQ2"].ToString();
-            string refno = dr["Refno"].ToString();
-            string colorID = dr["ColorID"].ToString();
-            switch (columnName.ToLower())
-            {
-                case "seq1":
-                    seq1 = newvalue;
-                    break;
-                case "seq2":
-                    seq2 = newvalue;
-                    break;
-            }
-
-            if (ValidatingSEQ(id, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
-            {
-                dr[columnName] = newvalue;
-
-                // 唯一值時
-                if (dtValidating.Rows.Count == 1)
-                {
-                    dr["SCIRefno"] = dtValidating.Rows[0]["SCIRefno"].ToString();
-                }
-            }
-            else
-            {
-                dr[columnName] = string.Empty;
-            }
-
-            dr.EndEdit();
-        }
-        */
         private void MaskedCellValidatingHandler(object sender, Ict.Win.UI.DataGridViewCellValidatingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1834,6 +1642,12 @@ DEALLOCATE CURSOR_
             this.detailgrid.ValidateControl();
             this.gridSizeRatio.ValidateControl();
             this.gridDistributeToSP.ValidateControl();
+        }
+
+        // 用在傳入 Column 使用, 因為 gridset 是一開啟就會跑完, 直接傳 WorkType 字串, 換筆資料就不會變動了
+        private string GetWorkType()
+        {
+            return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
         }
         #endregion
 

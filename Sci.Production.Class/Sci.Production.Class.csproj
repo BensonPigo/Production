@@ -255,6 +255,12 @@
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
     </Compile>
+    <Compile Include="DateEstCutDate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DateEstCutDate.Designer.cs">
+      <DependentUpon>DateEstCutDate.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtMtlType.cs">
       <SubType>Component</SubType>
     </Compile>

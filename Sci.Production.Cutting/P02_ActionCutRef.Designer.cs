@@ -1,4 +1,6 @@
-﻿namespace Sci.Production.Cutting
+﻿using Sci.Production.Class;
+
+namespace Sci.Production.Cutting
 {
     partial class P02_ActionCutRef
     {
@@ -48,7 +50,7 @@
             this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.label11 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
-            this.dateBoxEstCutDate = new Sci.Win.UI.DateBox();
+            this.dateBoxEstCutDate = new Sci.Production.Class.DateEstCutDate();
             this.gridPatternPanel = new Sci.Win.UI.Grid();
             this.cmsPatternPanel = new Sci.Win.UI.ContextMenuStrip();
             this.MenuItemInsertPatternPanel = new System.Windows.Forms.ToolStripMenuItem();
@@ -519,9 +521,10 @@
             this.txtWKETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtWKETA.Location = new System.Drawing.Point(114, 46);
             this.txtWKETA.Name = "txtWKETA";
+            this.txtWKETA.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtWKETA.Size = new System.Drawing.Size(109, 23);
             this.txtWKETA.TabIndex = 69;
-            this.txtWKETA.Click += new System.EventHandler(this.TxtWKETA_Click);
+            this.txtWKETA.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtWKETA_PopUp);
             // 
             // P02_ActionCutRef
             // 
@@ -631,7 +634,6 @@
         private Win.UI.TextBox txtMarkerLength;
         private Win.UI.Label label11;
         private Win.UI.Label label15;
-        private Win.UI.DateBox dateBoxEstCutDate;
         private Win.UI.Grid gridPatternPanel;
         private System.Windows.Forms.Label label19;
         private Win.UI.Grid gridSizeRatio;
@@ -655,5 +657,6 @@
         private Win.UI.Label label12;
         private Win.UI.TextBox txtSP;
         private Win.UI.TextBox txtWKETA;
+        private DateEstCutDate dateBoxEstCutDate;
     }
 }

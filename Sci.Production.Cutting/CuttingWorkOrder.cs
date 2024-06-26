@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win;
 using Ict.Win.UI;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
@@ -626,7 +627,7 @@ AND EXISTS (
                 return;
             }
 
-            if (MyUtility.Check.Empty(dr["FabricCode"]))
+            if (MyUtility.Check.Empty(dr["FabricPanelCode"]))
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
@@ -1550,6 +1551,12 @@ ORDER BY FabricPanelCode,PatternPanel
                     maskedtextBoxBase.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
                     maskedtextBoxBase.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
                 }
+                else if (column is DataGridViewTextBoxBase2Column textBoxBaseEX && textBoxBaseEX.DataPropertyName == "WKETA")
+                {
+                    // 特別處理 WKETA
+                    textBoxBaseEX.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
+                    textBoxBaseEX.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
+                }
             }
         }
 
@@ -1646,6 +1653,11 @@ ORDER BY FabricPanelCode,PatternPanel
             DataRow minFabricPanelCode = GetMinFabricPanelCode(currentDetailData, dtPatternPanel, form);
             if (minFabricPanelCode == null)
             {
+                currentDetailData["FabricCombo"] = string.Empty;
+                currentDetailData["FabricPanelCode"] = string.Empty;
+                currentDetailData["FabricCode"] = string.Empty;
+                currentDetailData["PatternPanel_CONCAT"] = string.Empty;
+                currentDetailData["FabricPanelCode_CONCAT"] = string.Empty;
                 return;
             }
 

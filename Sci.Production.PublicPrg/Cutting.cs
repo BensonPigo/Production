@@ -5,7 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Transactions;
 
@@ -1420,12 +1422,12 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
         }
 
         /// <summary>
-        /// MarkerLength 欄位驗證
+        /// MarkerLength 欄位格式化
         /// </summary>
         /// <inheritdoc/>
         public static string SetMarkerLengthMaskString(string eventString)
         {
-            if (eventString == string.Empty || (int.TryParse(eventString, out int result) && result == 0))
+            if (eventString == string.Empty || eventString == "Y  - / + \"" || (int.TryParse(eventString, out int result) && result == 0))
             {
                 return string.Empty;
             }
@@ -1447,6 +1449,18 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
             }
 
             return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
+        }
+
+        /// <summary>
+        /// 取得 Order_Qty by cuttingID
+        /// </summary>
+        /// <param name="poID">poID</param>
+        /// <param name="dt">DataTable</param>
+        /// <returns>DualResult</returns>
+        public static DualResult GetAllOrderID(string poID, out DataTable dt)
+        {
+            string sqlcmd = $@"SELECT ID FROM Orders WITH(NOLOCK) WHERE POID = '{poID}' AND Junk=0 ORDER BY ID";
+            return DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
         }
 
         /// <summary>

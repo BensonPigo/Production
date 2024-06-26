@@ -140,6 +140,17 @@ namespace Sci.Production.Cutting
             this.dtWorkOrderForOutput_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
             this.dtWorkOrderForOutput_PatternPanel.AcceptChanges();
 
+            // 把 PatternPanel 刪光, 這些要清空
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+            if (minFabricPanelCode == null)
+            {
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
+            }
+
             this.CurrentDetailData["CutNo"] = this.numCutno.Value ?? (object)DBNull.Value;
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
@@ -201,6 +212,11 @@ namespace Sci.Production.Cutting
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
                 return;
             }
 
@@ -246,24 +262,8 @@ namespace Sci.Production.Cutting
 
         private void TxtSeq_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-
             string newvalue = string.Empty;
             string oldvalue = ((Win.UI.TextBox)sender).OldValue;
-            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
-            {
-                return;
-            }
-
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
-            if (minFabricPanelCode == null)
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                return;
-            }
-
-            DataTable dt = GetPatternPanel(this.ID);
-            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
-            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
             string columnName = ((Win.UI.TextBox)sender).Name;
             string seq1 = this.txtSeq1.Text;
             string seq2 = this.txtSeq2.Text;
@@ -286,6 +286,27 @@ namespace Sci.Production.Cutting
                     break;
             }
 
+            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
+            {
+                return;
+            }
+
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);
+            if (minFabricPanelCode == null)
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
+                return;
+            }
+
+            DataTable dt = GetPatternPanel(this.ID);
+            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
+            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
+
             if (!ValidatingSEQ(this.ID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
                 switch (columnName)
@@ -303,6 +324,8 @@ namespace Sci.Production.Cutting
                         this.txtColor.Text = string.Empty;
                         break;
                 }
+
+                this.SCIRefno = string.Empty;
             }
 
             // 唯一值時
@@ -342,12 +365,10 @@ namespace Sci.Production.Cutting
 
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (this.txtMarkerLength.Text != "Y  - / + \"")
-            {
-                this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
-                this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-            }
+            string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+            this.txtMarkerLength.Text = markerLength;
+            this.numConsPC.Value = CalculateConsPC(markerLength, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
         }
 
         private void TxtMasked_Validating(object sender, System.ComponentModel.CancelEventArgs e)

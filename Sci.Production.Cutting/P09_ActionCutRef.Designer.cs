@@ -1,4 +1,6 @@
-﻿namespace Sci.Production.Cutting
+﻿using Sci.Production.Class;
+
+namespace Sci.Production.Cutting
 {
     partial class P09_ActionCutRef
     {
@@ -56,7 +58,7 @@
             this.label14 = new Sci.Win.UI.Label();
             this.label15 = new Sci.Win.UI.Label();
             this.label16 = new Sci.Win.UI.Label();
-            this.dateBoxEstCutDate = new Sci.Win.UI.DateBox();
+            this.dateBoxEstCutDate = new Sci.Production.Class.DateEstCutDate();
             this.label17 = new Sci.Win.UI.Label();
             this.label18 = new Sci.Win.UI.Label();
             this.gridPatternPanel = new Sci.Win.UI.Grid();
@@ -143,6 +145,7 @@
             this.txtSeq2.Size = new System.Drawing.Size(96, 23);
             this.txtSeq2.TabIndex = 3;
             this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
+            this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq_Validating);
             // 
             // label4
             // 
@@ -803,7 +806,6 @@
         private Win.UI.Label label14;
         private Win.UI.Label label15;
         private Win.UI.Label label16;
-        private Win.UI.DateBox dateBoxEstCutDate;
         private Win.UI.Label label17;
         private Win.UI.Label label18;
         private Win.UI.Grid gridPatternPanel;
@@ -832,5 +834,6 @@
         private Win.UI.ContextMenuStrip cmsDistribute;
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertDistribute;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteDistribute;
+        private DateEstCutDate dateBoxEstCutDate;
     }
 }

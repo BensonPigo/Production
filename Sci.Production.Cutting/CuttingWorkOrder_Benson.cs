@@ -22,11 +22,6 @@ namespace Sci.Production.Cutting
     /// </summary>
     public partial class CuttingWorkOrder
     {
-        /// <summary>
-        /// 根據Cutting Poid，取得所有可用的Seq、Refno、Color
-        /// </summary>
-        //public DataTable dt_AllSeqRefnoColor;
-
         #region Cutting P02 專用
 
         /// <inheritdoc/>

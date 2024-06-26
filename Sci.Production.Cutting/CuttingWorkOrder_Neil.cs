@@ -208,10 +208,11 @@ END";
             #endregion
 
             // 執行SQL & Call API
+            DualResult result;
             DataTable dtWorkorder = new DataTable();
             using (TransactionScope transactionscope = new TransactionScope())
             {
-                DualResult result = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder);
+                result = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder);
                 if (!result)
                 {
                     if (result.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))

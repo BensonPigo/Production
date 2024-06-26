@@ -27,15 +27,11 @@ namespace Sci.Production.Cutting
         #region 全域變數
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_SP;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
-        private Ict.Win.UI.DataGridViewDateBoxColumn col_WKETA;
-        private Ict.Win.UI.DataGridViewDateBoxColumn col_EstCutDate;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_MarkerNo;
-        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
 
@@ -343,7 +339,7 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderId", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_SP)
+                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_Article)
@@ -352,9 +348,9 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999)
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("WKETA", header: "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_WKETA)
+                .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("EstCutDate", header: "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_EstCutDate)
+                .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
                 .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
@@ -1005,30 +1001,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 }
             };
 
-            this.col_SP.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                SpEditingMouseDown(e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]));
-            };
-            this.col_SP.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!SpCellValidating(s, e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"])))
-                {
-                    e.Cancel = true;
-                }
-            };
-
             this.col_Article.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1058,50 +1030,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
             this.col_Tone.MaxLength = 15;
-
-            this.col_WKETA.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                P02_WKETA item = new P02_WKETA(dr);
-                DialogResult result = item.ShowDialog();
-                switch (result)
-                {
-                    case DialogResult.Cancel:
-                        break;
-                    case DialogResult.Yes:
-                        dr["WKETA"] = Itemx.WKETA;
-                        break;
-                    case DialogResult.No:
-                        dr["WKETA"] = DBNull.Value;
-                        break;
-                }
-
-                dr.EndEdit();
-            };
-            this.col_WKETA.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-            };
 
             this.col_MarkerNo.EditingMouseDown += (s, e) =>
             {
@@ -1139,28 +1067,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
                 dr["MarkerNo"] = e.FormattedValue;
                 dr.EndEdit();
-            };
-
-            this.col_EstCutDate.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                DateTime? oldvalue = MyUtility.Convert.GetDate(dr["EstCutDate"]);
-                DateTime? newvalue = MyUtility.Convert.GetDate(e.FormattedValue);
-                if (MyUtility.Check.Empty(e.FormattedValue) || oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(e.FormattedValue)) > 0)
-                {
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox("[Est. Cut Date] can not be passed !!");
-                }
             };
             #endregion
 
@@ -1497,6 +1403,11 @@ order by p.EditDate desc
             this.gridSizeRatio.ValidateControl();
         }
 
+        // 用在傳入 Column 使用, 因為 gridset 是一開啟就會跑完, 直接傳 WorkType 字串, 換筆資料就不會變動了
+        private string GetWorkType()
+        {
+            return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
+        }
     }
 #pragma warning restore SA1401 // Fields should be private
 #pragma warning restore SA1600 // Elements should be documented

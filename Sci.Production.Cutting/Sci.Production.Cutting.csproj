@@ -153,6 +153,7 @@
     <Compile Include="Cutpartchecksummary.designer.cs">
       <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </Compile>
+    <Compile Include="CuttingWorkOrderExtensions.cs" />
     <Compile Include="CuttingWorkOrder_Neil.cs" />
     <Compile Include="CuttingWorkOrder_Willy.cs" />
     <Compile Include="CuttingWorkOrder_Shrek.cs" />
@@ -184,6 +185,10 @@
     </Compile>
     <Compile Include="P02_ImportML.Designer.cs">
       <DependentUpon>P02_ImportML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_WKETA.cs" />
+    <Compile Include="P02_WKETA.Designer.cs">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </Compile>
     <Compile Include="P04_EditFabricCutDate.cs">
       <SubType>Form</SubType>
@@ -329,10 +334,6 @@
     </Compile>
     <Compile Include="P02_OriginalData.Designer.cs">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_WKETA.cs" />
-    <Compile Include="P02_WKETA.Designer.cs">
-      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </Compile>
     <Compile Include="P04.cs">
       <SubType>Form</SubType>
@@ -683,6 +684,9 @@
     <EmbeddedResource Include="P02_ImportML.resx">
       <DependentUpon>P02_ImportML.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P02_WKETA.resx">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P04_EditFabricCutDate.resx">
       <DependentUpon>P04_EditFabricCutDate.cs</DependentUpon>
     </EmbeddedResource>
@@ -766,9 +770,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02_OriginalData.resx">
       <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_WKETA.resx">
-      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>

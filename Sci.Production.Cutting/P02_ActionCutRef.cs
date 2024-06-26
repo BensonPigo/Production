@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Class;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
@@ -10,9 +9,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Windows.Forms;
-using static Sci.MyUtility;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
@@ -40,7 +37,6 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
 
         private string CuttingID;
-        private string OrderID;
         private string SCIRefno = string.Empty;
 
         /// <inheritdoc/>
@@ -68,8 +64,6 @@ namespace Sci.Production.Cutting
         private void SetData()
         {
             this.CuttingID = this.CurrentMaintain["ID"].ToString();
-            this.OrderID = this.CurrentDetailData["OrderID"].ToString();
-            //this.numCutRefNo.Text = this.CurrentDetailData["CutRef"].ToString();
             this.numLayers.Text = this.CurrentDetailData["Layer"].ToString();
             this.txtSP.Text = this.CurrentDetailData["OrderID"].ToString();
             this.txtSeq1.Text = this.CurrentDetailData["SEQ1"].ToString();
@@ -132,7 +126,17 @@ namespace Sci.Production.Cutting
             this.dtWorkOrderForPlanning_PatternPanel.Select("PatternPanel = '' OR FabricPanelCode = ''").Delete();
             this.dtWorkOrderForPlanning_PatternPanel.AcceptChanges();
 
-            //this.CurrentDetailData["CutRef"] = this.numCutRefNo.Value;
+            // 把 PatternPanel 刪光, 這些要清空
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForPlanning_PatternPanel, CuttingForm.P02);
+            if (minFabricPanelCode == null)
+            {
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
+            }
+
             this.CurrentDetailData["Layer"] = this.numLayers.Value;
             this.CurrentDetailData["OrderID"] = this.txtSP.Text;
             this.CurrentDetailData["SEQ1"] = this.txtSeq1.Text;
@@ -145,14 +149,7 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["MarkerNo"] = this.txtMarkerNo.Text;
             this.CurrentDetailData["MarkerLength"] = this.CurrentDetailData["MarkerLength_Mask"] = this.txtMarkerLength.Text == "Y  - / + \"" ? string.Empty : this.txtMarkerLength.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
-            if (this.dateBoxEstCutDate.Value == null)
-            {
-                this.CurrentDetailData["EstCutDate"] = DBNull.Value;
-            }
-            else
-            {
-                this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value;
-            }
+            this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value ?? (object)DBNull.Value;
 
             if (this.txtWKETA.Text == string.Empty)
             {
@@ -198,7 +195,6 @@ namespace Sci.Production.Cutting
         #endregion
 
         #region 欄位 開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P02主表上
-
         private void TxtSP_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             if (MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) == "2")
@@ -315,29 +311,14 @@ namespace Sci.Production.Cutting
 
         private void TxtSeq_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForPlanning_PatternPanel, CuttingForm.P02);
-            if (minFabricPanelCode == null)
-            {
-                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
-                this.txtSeq1.Text = string.Empty;
-                this.txtSeq2.Text = string.Empty;
-                this.txtRefNo.Text = string.Empty;
-                this.txtColor.Text = string.Empty;
-                this.SCIRefno = string.Empty;
-                return;
-            }
-
-            DataTable dt = GetPatternPanel(this.CuttingID);
-            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
-            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
+            string newvalue = string.Empty;
+            string oldvalue = ((Win.UI.TextBox)sender).OldValue;
             string columnName = ((Win.UI.TextBox)sender).Name;
             string seq1 = this.txtSeq1.Text;
             string seq2 = this.txtSeq2.Text;
             string refno = this.txtRefNo.Text;
             string colorID = this.txtColor.Text;
 
-            string newvalue = string.Empty;
-            string oldvalue = ((Win.UI.TextBox)sender).OldValue;
             switch (columnName)
             {
                 case "txtSeq1":
@@ -354,10 +335,26 @@ namespace Sci.Production.Cutting
                     break;
             }
 
-            if (newvalue.IsNullOrWhiteSpace() || newvalue == oldvalue)
+            if (MyUtility.Check.Empty(newvalue) || newvalue == oldvalue)
             {
                 return;
             }
+
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData, this.dtWorkOrderForPlanning_PatternPanel, CuttingForm.P02);
+            if (minFabricPanelCode == null)
+            {
+                MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
+                this.txtSeq1.Text = string.Empty;
+                this.txtSeq2.Text = string.Empty;
+                this.txtRefNo.Text = string.Empty;
+                this.txtColor.Text = string.Empty;
+                this.SCIRefno = string.Empty;
+                return;
+            }
+
+            DataTable dt = GetPatternPanel(this.CuttingID);
+            DataRow[] drs = dt.Select($"FabricPanelCode = '{minFabricPanelCode["FabricPanelCode"]}'");
+            string fabricCode = drs[0]["FabricCode"].ToString(); // 一定找的到
 
             if (!ValidatingSEQ(this.CuttingID, fabricCode, seq1, seq2, refno, colorID, out DataTable dtValidating))
             {
@@ -376,6 +373,8 @@ namespace Sci.Production.Cutting
                         this.txtColor.Text = string.Empty;
                         break;
                 }
+
+                this.SCIRefno = string.Empty;
             }
 
             // 唯一值時
@@ -387,10 +386,8 @@ namespace Sci.Production.Cutting
 
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (this.txtMarkerLength.Text != "Y  - / + \"")
-            {
-                this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
-            }
+            string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+            this.txtMarkerLength.Text = markerLength;
         }
 
         private void TxtMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -413,7 +410,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private void TxtWKETA_Click(object sender, EventArgs e)
+        private void TxtWKETA_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             P02_WKETA item = new P02_WKETA(this.CurrentDetailData);
             DialogResult result = item.ShowDialog();
@@ -429,7 +426,6 @@ namespace Sci.Production.Cutting
                     break;
             }
         }
-
         #endregion
 
         #region Grid 欄位事件 顏色/開窗/驗證 PS:編輯後"只顯示", 按下 Edit/Create 才將值更新到P02主表上
