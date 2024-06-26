@@ -56,54 +56,56 @@ namespace Sci.Production.Cutting
         /// 自動編碼CutRef，並Call API傳給廠商
         /// </summary>
         /// <param name="cuttingID">Cutting.ID</param>
-        /// <param name="keyword">MDivision</param>
+        /// <param name="mDivision">MDivision</param>
         /// <param name="form">form</param>
         /// <returns>result</returns>
-        public static DualResult AutoRef(string cuttingID, string keyword, CuttingForm form)
+        public static DualResult AutoRef(string cuttingID, string mDivision, CuttingForm form)
         {
-            // 根據功能區分TableName，Pkey column name
-            string colName, where, cmdWhere;
+            // 根據功能區分 TableName，Pkey Column Name
+            string colName = string.Empty;
+            string where = string.Empty;
+            string cmdWhere = string.Empty;
 
-            string tableMiddleName = $@"Workorder{GetWorkOrderName(form)}";
+            string workOrder_tableName = $@"WorkorderFor{GetWorkOrderName(form)}";
             string tableKey = GetWorkOrderUkeyName(form);
+
+            // 額外條件
             switch (form)
             {
+
                 case CuttingForm.P02:
                     colName = "CutPlanID";
                     where = string.Empty;
                     cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '')";
                     break;
+
+                // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready' & WorkorderForOutput.SourceFrom != 1
                 case CuttingForm.P09:
                     colName = "CutNo";
-                    where = "AND (CutCellid IS NOT NULL AND CutCellid != '')";
+                    where = "";
                     cmdWhere = "AND CutNo IS NOT NULL";
-                    break;
-                default:
-                    colName = string.Empty;
-                    where = string.Empty;
-                    cmdWhere = string.Empty;
                     break;
             }
 
             #region 找出相同 CutRef 的群組
             string cmdsql = $@"
-        SELECT ISNULL(w.CutRef, '') AS CutRef, ISNULL(w.FabricCombo, '') AS FabricCombo, w.{colName},
-               ISNULL(w.MarkerName, '') AS MarkerName, w.EstCutDate, ws.SizeRatio
-        FROM {tableMiddleName} w WITH (NOLOCK) 
-        OUTER APPLY (
-            SELECT STUFF((
-                SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
-                FROM (
-                    SELECT SizeCode, Qty 
-                    FROM {tableMiddleName}_SizeRatio ws 
-                    WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
-                ) b FOR XML PATH('')
-            ), 1, 1, '') AS SizeRatio
-        ) ws
-        WHERE w.CutRef IS NOT NULL AND w.CutRef != '' 
-              AND w.id = '{cuttingID}' AND w.mDivisionid = '{keyword}'
-              {cmdWhere}
-        GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate, ws.SizeRatio";
+SELECT ISNULL(w.CutRef, '') AS CutRef, ISNULL(w.FabricCombo, '') AS FabricCombo, w.{colName},
+        ISNULL(w.MarkerName, '') AS MarkerName, w.EstCutDate, ws.SizeRatio
+FROM {workOrder_tableName} w WITH (NOLOCK) 
+OUTER APPLY (
+    SELECT STUFF((
+        SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
+        FROM (
+            SELECT SizeCode, Qty 
+            FROM {workOrder_tableName}_SizeRatio ws 
+            WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
+        ) b FOR XML PATH('')
+    ), 1, 1, '') AS SizeRatio
+) ws
+WHERE w.CutRef IS NOT NULL AND w.CutRef != '' 
+        AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
+        {cmdWhere}
+GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate, ws.SizeRatio";
 
             DualResult cutRefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutReftb);
             if (!cutRefresult)
@@ -114,24 +116,24 @@ namespace Sci.Production.Cutting
 
             #region 找出空的CutRef
             cmdsql = $@"
-        SELECT * 
-        FROM {tableMiddleName} w WITH (NOLOCK) 
-        OUTER APPLY (
-            SELECT STUFF((
-                SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
-                FROM (
-                    SELECT SizeCode, Qty 
-                    FROM {tableMiddleName}_SizeRatio ws 
-                    WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
-                ) b FOR XML PATH('')
-            ), 1, 1, '') AS SizeRatio
-        ) ws
-        WHERE w.{colName} IS NOT NULL 
-              AND (w.CutRef IS NULL OR w.CutRef = '') 
-              AND (w.EstCutDate IS NOT NULL AND w.EstCutDate != '')
-              {where}
-              AND w.id = '{cuttingID}' AND w.mDivisionid = '{keyword}'
-        ORDER BY w.FabricCombo, w.{colName}";
+SELECT * 
+FROM {workOrder_tableName} w WITH (NOLOCK) 
+OUTER APPLY (
+    SELECT STUFF((
+        SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
+        FROM (
+            SELECT SizeCode, Qty 
+            FROM {workOrder_tableName}_SizeRatio ws 
+            WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
+        ) b FOR XML PATH('')
+    ), 1, 1, '') AS SizeRatio
+) ws
+WHERE w.{colName} IS NOT NULL 
+        AND (w.CutRef IS NULL OR w.CutRef = '') 
+        AND (w.EstCutDate IS NOT NULL AND w.EstCutDate != '')
+        {where}
+        AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
+ORDER BY w.FabricCombo, w.{colName}";
 
             cutRefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
             if (!cutRefresult)
@@ -143,9 +145,9 @@ namespace Sci.Production.Cutting
             #region 組合SQL：寫入空的CutRef
 
             string updateCutRef = $@"
-        CREATE TABLE #tmp{tableMiddleName} (Ukey BIGINT);
-        DECLARE @chk TINYINT = 0;
-        BEGIN TRANSACTION [Trans_Name];";
+CREATE TABLE #tmp{workOrder_tableName} (Ukey BIGINT);
+DECLARE @chk TINYINT = 0;
+BEGIN TRANSACTION [Trans_Name];";
 
             foreach (DataRow dr in workordertmp.Rows)
             {
@@ -158,7 +160,7 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
-                    string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"{tableMiddleName}", "CutRef");
+                    string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"{workOrder_tableName}", "CutRef");
                     DataRow newdr = cutReftb.NewRow();
                     newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
                     newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
@@ -179,62 +181,57 @@ namespace Sci.Production.Cutting
                 }
 
                 updateCutRef += $@"
-            IF (SELECT COUNT(1) FROM {tableMiddleName} WITH (NOLOCK) WHERE CutRef = '{newCutRef}' AND id != '{cuttingID}') > 0
-            BEGIN
-                RAISERROR ('Duplicate CutRef. Please redo Auto Ref#', 12, 1);
-                ROLLBACK TRANSACTION [Trans_Name];
-            END
-            UPDATE {tableMiddleName} SET CutRef = '{newCutRef}' 
-            OUTPUT INSERTED.Ukey INTO #tmp{tableMiddleName}
-            WHERE ukey = '{dr["ukey"]}';";
+    IF (SELECT COUNT(1) FROM {workOrder_tableName} WITH (NOLOCK) WHERE CutRef = '{newCutRef}' AND id != '{cuttingID}') > 0
+    BEGIN
+        RAISERROR ('Duplicate CutRef. Please redo Auto Ref#', 12, 1);
+        ROLLBACK TRANSACTION [Trans_Name];
+    END
+    UPDATE {workOrder_tableName} SET CutRef = '{newCutRef}' 
+    OUTPUT INSERTED.Ukey INTO #tmp{workOrder_tableName}
+    WHERE ukey = '{dr["ukey"]}';";
             }
 
             updateCutRef += $@"
-        IF @@ERROR <> 0 SET @chk = 1;
-        IF @chk <> 0
-        BEGIN
-            ROLLBACK TRANSACTION [Trans_Name];
-        END
-        ELSE
-        BEGIN
-            SELECT w.* 
-            FROM #tmp{tableMiddleName} tw
-            INNER JOIN {tableMiddleName} w WITH (NOLOCK) ON tw.Ukey = w.Ukey;
-            COMMIT TRANSACTION [Trans_Name];
-        END";
+IF @@ERROR <> 0 SET @chk = 1;
+IF @chk <> 0
+BEGIN
+    ROLLBACK TRANSACTION [Trans_Name];
+END
+ELSE
+BEGIN
+    SELECT w.* 
+    FROM #tmp{workOrder_tableName} tw
+    INNER JOIN {workOrder_tableName} w WITH (NOLOCK) ON tw.Ukey = w.Ukey;
+    COMMIT TRANSACTION [Trans_Name];
+END";
 
             #endregion
 
             // 執行SQL & Call API
-            DualResult upResult;
             DataTable dtWorkorder = new DataTable();
             using (TransactionScope transactionscope = new TransactionScope())
             {
-                if (!(upResult = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder)))
+                DualResult result = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder);
+                if (!result)
                 {
-                    if (upResult.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))
+                    if (result.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))
                     {
-                        transactionscope.Dispose();
                         MyUtility.Msg.WarningBox("Duplicate CutRef. Please redo Auto Ref#");
+                        return result;
                     }
                     else
                     {
-                        transactionscope.Dispose();
-                        return upResult;
-                    }
-                }
-                else
-                {
-                    transactionscope.Complete();
-                    if (dtWorkorder.Rows.Count > 0)
-                    {
-                        Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+                        return result;
                     }
                 }
             }
 
-            return upResult;
-        }
+            if (dtWorkorder.Rows.Count > 0)
+            {
+                Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
+            }
 
+            return result;
+        }
     }
 }
