@@ -35,6 +35,7 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09
+        private DataTable dt_AllSeqRefnoColor;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P02_BatchAssign"/> class.
@@ -57,6 +58,7 @@ namespace Sci.Production.Cutting
             this.Gridsetup();
             this.BtnFilter_Click(null, null);  // 1390: CUTTING_P02_BatchAssignCellCutDate，當進去此功能時應直接預帶資料。
 
+            this.dt_AllSeqRefnoColor = GetAllSeqRefnoColor(id);
             this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID");
         }
 
@@ -238,7 +240,7 @@ namespace Sci.Production.Cutting
                     if (dr["Selected"].ToString() == "True")
                     {
                         // 逐一檢查Seq 正確性
-                        bool isValid = ValidatingSeqWithoutFabricCode(this.ID, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), out DataTable dtValidating);
+                        bool isValid = ValidatingSeqWithoutFabricCode(this.ID, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), this.dt_AllSeqRefnoColor);
 
                         if (isValid)
                         {
@@ -357,7 +359,7 @@ namespace Sci.Production.Cutting
             string seq1 = this.txtSeq1.Text;
             if (!MyUtility.Check.Empty(seq1))
             {
-                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
+                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dt_AllSeqRefnoColor);
 
                 // Seq 會影響WK ETA，因此一併清除
                 this.txtWKETA.Text = string.Empty;
@@ -382,7 +384,7 @@ namespace Sci.Production.Cutting
             string seq2 = this.txtSeq2.Text;
             if (!MyUtility.Check.Empty(seq2))
             {
-                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty);
+                DataTable filter = GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dt_AllSeqRefnoColor);
 
                 // Seq 會影響WK ETA，因此一併清除
                 this.txtWKETA.Text = string.Empty;
@@ -401,7 +403,7 @@ namespace Sci.Production.Cutting
         private void TxtSeq1_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             // 這邊的開窗無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            SelectItem item = PopupAllSeqRefnoColor(this.ID);
+            SelectItem item = PopupAllSeqRefnoColor(this.ID, this.dt_AllSeqRefnoColor);
             if (item == null)
             {
                 return;
@@ -417,7 +419,7 @@ namespace Sci.Production.Cutting
         private void TxtSeq2_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             // 這邊的開窗無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            SelectItem item = PopupAllSeqRefnoColor(this.ID);
+            SelectItem item = PopupAllSeqRefnoColor(this.ID, this.dt_AllSeqRefnoColor);
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
             {

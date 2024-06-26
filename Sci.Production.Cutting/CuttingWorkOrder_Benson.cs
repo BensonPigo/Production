@@ -25,7 +25,7 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// 根據Cutting Poid，取得所有可用的Seq、Refno、Color
         /// </summary>
-        private static DataTable dt_AllSeqRefnoColor;
+        //public DataTable dt_AllSeqRefnoColor;
 
         #region Cutting P02 專用
 
@@ -265,33 +265,16 @@ AND EXISTS (
             }
 
             // 撈過一次之後存進全域變數
-            if (MyUtility.Check.Empty(dt_AllSeqRefnoColor) || dt_AllSeqRefnoColor.Rows.Count == 0)
+           /* if (MyUtility.Check.Empty(this.dt_AllSeqRefnoColor) || dt_AllSeqRefnoColor.Rows.Count == 0)
             {
                 dt_AllSeqRefnoColor = dt.Copy();
             }
             else if (!dt.AsEnumerable().Where(o => o["ID"].ToString() == id).Any())
             {
                 dt_AllSeqRefnoColor = dt.Copy();
-            }
+            }*/
 
             return dt;
-        }
-
-        /// <summary>
-        /// 設定 所有可用的Seq、Refno、Color 的全域變數DataTable
-        /// </summary>
-        /// <param name="id">Cutting.ID</param>
-        public static void SetGolobalAllSeqRefnoColor(string id)
-        {
-            // 根據POID，找出所有 Seq、fabricCode、refno、colorID
-            if (MyUtility.Check.Empty(dt_AllSeqRefnoColor) || dt_AllSeqRefnoColor.Rows.Count == 0)
-            {
-                GetAllSeqRefnoColor(id);
-            }
-            else if (!dt_AllSeqRefnoColor.AsEnumerable().Where(o => o["ID"].ToString() == id).Any())
-            {
-                GetAllSeqRefnoColor(id);
-            }
         }
 
         /// <summary>
@@ -299,12 +282,9 @@ AND EXISTS (
         /// </summary>
         /// <param name="id">Cutting.ID</param>
         /// <returns>SelectItem</returns>
-        public static SelectItem PopupAllSeqRefnoColor(string id)
+        public static SelectItem PopupAllSeqRefnoColor(string id, DataTable dt)
         {
             // 根據POID，找出所有 Seq、fabricCode、refno、colorID
-            SetGolobalAllSeqRefnoColor(id);
-
-            DataTable dt = dt_AllSeqRefnoColor.Copy();
             SelectItem selectItem = new SelectItem(dt, "Seq1,Seq2,Refno,ColorID", "3,2,20,3@500,300", string.Empty, false, ",", headercaptions: "Seq1,Seq2,Refno,Color");
             DialogResult result = selectItem.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -324,7 +304,7 @@ AND EXISTS (
         /// <param name="refno">refno</param>
         /// <param name="colorID">colorID</param>
         /// <returns>DataTable</returns>
-        public static DataTable GetFilterAllSeqRefnoColor(string id, string seq1, string seq2, string refno, string colorID)
+        public static DataTable GetFilterAllSeqRefnoColor(string id, string seq1, string seq2, string refno, string colorID, DataTable dt)
         {
             string filter = "1=1";
             if (!seq1.IsNullOrWhiteSpace())
@@ -347,9 +327,6 @@ AND EXISTS (
                 filter += $" AND ColorID = '{colorID}'";
             }
 
-            SetGolobalAllSeqRefnoColor(id);
-            DataTable dt = dt_AllSeqRefnoColor.Copy();
-
             return dt.Select(filter).TryCopyToDataTable(dt);
         }
 
@@ -364,13 +341,8 @@ AND EXISTS (
         /// <param name="colorID">當前DateRow的colorID</param>
         /// <param name="dt">dt</param>
         /// <returns>結果</returns>
-        public static bool ValidatingSeqWithoutFabricCode(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, out DataTable dt)
+        public static bool ValidatingSeqWithoutFabricCode(string id, string fabricCode, string seq1, string seq2, string refno, string colorID, DataTable dt)
         {
-            SetGolobalAllSeqRefnoColor(id);
-
-            // 以全域變數的DataTable來校驗，避免多次回DB撈
-            dt = dt_AllSeqRefnoColor.Copy();
-
             var res = dt.AsEnumerable().Where(o => o["ID"].ToString() == id
             && o["FabricCode"].ToString() == fabricCode
             && o["Seq1"].ToString() == seq1
