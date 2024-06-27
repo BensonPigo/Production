@@ -57,14 +57,19 @@ namespace Sci.Production.Cutting
         /// </summary>
         /// <param name="cuttingID">Cutting.ID</param>
         /// <param name="mDivision">MDivision</param>
+        /// <param name="detailDatas">表身</param>
         /// <param name="form">form</param>
         /// <returns>result</returns>
-        public static DualResult AutoRef(string cuttingID, string mDivision, CuttingForm form)
+        public static DualResult AutoRef(string cuttingID, string mDivision, DataTable detailDatas, CuttingForm form)
         {
+            DataTable dtWorkOrder = detailDatas.AsEnumerable().CopyToDataTable();
+
             // 根據功能區分 TableName，Pkey Column Name
             string colName = string.Empty;
             string where = string.Empty;
             string cmdWhere = string.Empty;
+            string outerApply = string.Empty;
+            string nColumn = string.Empty;
 
             string workOrder_tableName = $@"WorkorderFor{GetWorkOrderName(form)}";
             string tableKey = GetWorkOrderUkeyName(form);
@@ -72,26 +77,21 @@ namespace Sci.Production.Cutting
             // 額外條件
             switch (form)
             {
-
                 case CuttingForm.P02:
                     colName = "CutPlanID";
                     where = string.Empty;
                     cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '')";
+                    nColumn = string.Empty;
+                    outerApply = string.Empty;
                     break;
 
                 // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready' & WorkorderForOutput.SourceFrom != 1
                 case CuttingForm.P09:
                     colName = "CutNo";
-                    where = "";
+                    where = "And HasBundle = 0 And HasCuttingOutput = 0 And HasMarkerReq = 0 And SpreadingStatus = 'Ready' And SourceFrom != 1";
                     cmdWhere = "AND CutNo IS NOT NULL";
-                    break;
-            }
-
-            #region 找出相同 CutRef 的群組
-            string cmdsql = $@"
-SELECT ISNULL(w.CutRef, '') AS CutRef, ISNULL(w.FabricCombo, '') AS FabricCombo, w.{colName},
-        ISNULL(w.MarkerName, '') AS MarkerName, w.EstCutDate, ws.SizeRatio
-FROM {workOrder_tableName} w WITH (NOLOCK) 
+                    nColumn = ", ws.SizeRatio";
+                    outerApply = $@"
 OUTER APPLY (
     SELECT STUFF((
         SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
@@ -101,13 +101,22 @@ OUTER APPLY (
             WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
         ) b FOR XML PATH('')
     ), 1, 1, '') AS SizeRatio
-) ws
+) ws";
+                    break;
+            }
+
+            #region 找出相同 CutRef 的群組
+            string cmdsql = $@"
+SELECT ISNULL(w.CutRef, '') AS CutRef, ISNULL(w.FabricCombo, '') AS FabricCombo, w.{colName},
+        ISNULL(w.MarkerName, '') AS MarkerName, w.EstCutDate {nColumn}
+FROM #tmpWorkOrder w WITH (NOLOCK) 
+{outerApply}
 WHERE w.CutRef IS NOT NULL AND w.CutRef != '' 
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
         {cmdWhere}
-GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate, ws.SizeRatio";
+GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate {nColumn}";
 
-            DualResult cutRefresult = DBProxy.Current.Select(null, cmdsql, out DataTable cutReftb);
+            DualResult cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable cutReftb, "#tmpWorkOrder");
             if (!cutRefresult)
             {
                 return cutRefresult;
@@ -117,25 +126,16 @@ GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate, ws.Si
             #region 找出空的CutRef
             cmdsql = $@"
 SELECT * 
-FROM {workOrder_tableName} w WITH (NOLOCK) 
-OUTER APPLY (
-    SELECT STUFF((
-        SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
-        FROM (
-            SELECT SizeCode, Qty 
-            FROM {workOrder_tableName}_SizeRatio ws 
-            WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
-        ) b FOR XML PATH('')
-    ), 1, 1, '') AS SizeRatio
-) ws
-WHERE w.{colName} IS NOT NULL 
-        AND (w.CutRef IS NULL OR w.CutRef = '') 
+FROM #tmpWorkOrder w WITH (NOLOCK) 
+{outerApply}
+WHERE (w.CutRef IS NULL OR w.CutRef = '') 
         AND (w.EstCutDate IS NOT NULL AND w.EstCutDate != '')
         {where}
+        {cmdWhere}
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
 ORDER BY w.FabricCombo, w.{colName}";
 
-            cutRefresult = DBProxy.Current.Select(null, cmdsql, out DataTable workordertmp);
+            cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
             {
                 return cutRefresult;
@@ -151,33 +151,31 @@ BEGIN TRANSACTION [Trans_Name];";
 
             foreach (DataRow dr in workordertmp.Rows)
             {
-                DataRow[] findrow = cutReftb.Select($@"MarkerName = '{dr["MarkerName"]}' AND FabricCombo = '{dr["FabricCombo"]}' AND {colName} = {dr["Cutno"]} AND EstCutDate = '{dr["EstCutDate"]}' AND SizeRatio = '{dr["SizeRatio"]}'");
                 string newCutRef = string.Empty;
-
-                if (findrow.Length != 0 && form == CuttingForm.P02)
+                string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"{workOrder_tableName}", "CutRef");
+                if (form == CuttingForm.P02)
                 {
-                    newCutRef = findrow[0]["CutRef"].ToString();
+                    newCutRef = maxref;
                 }
                 else
                 {
-                    string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"{workOrder_tableName}", "CutRef");
-                    DataRow newdr = cutReftb.NewRow();
-                    newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
-                    newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
-                    if (form == CuttingForm.P02)
+                    DataRow[] findrow = cutReftb.Select($@"MarkerName = '{dr["MarkerName"]}' AND FabricCombo = '{dr["FabricCombo"]}' AND CutNo = {dr["CutNo"]} AND EstCutDate = '{dr["EstCutDate"]}' AND SizeRatio = '{dr["SizeRatio"]}'");
+                    if (findrow.Length != 0)
                     {
-                        newdr["CutPlanID"] = dr["CutPlanID"];
+                        newCutRef = findrow[0]["CutRef"].ToString();
                     }
                     else
                     {
+                        DataRow newdr = cutReftb.NewRow();
+                        newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
+                        newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
                         newdr["Cutno"] = dr["Cutno"];
+                        newdr["EstCutDate"] = dr["EstCutDate"] ?? string.Empty;
+                        newdr["CutRef"] = maxref;
+                        newdr["SizeRatio"] = dr["SizeRatio"];
+                        cutReftb.Rows.Add(newdr);
+                        newCutRef = maxref;
                     }
-
-                    newdr["EstCutDate"] = dr["EstCutDate"] ?? string.Empty;
-                    newdr["CutRef"] = maxref;
-                    newdr["SizeRatio"] = dr["SizeRatio"];
-                    cutReftb.Rows.Add(newdr);
-                    newCutRef = maxref;
                 }
 
                 updateCutRef += $@"
@@ -210,20 +208,17 @@ END";
             // 執行SQL & Call API
             DualResult result;
             DataTable dtWorkorder = new DataTable();
-            using (TransactionScope transactionscope = new TransactionScope())
+            result = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder);
+            if (!result)
             {
-                result = DBProxy.Current.Select(null, updateCutRef, out dtWorkorder);
-                if (!result)
+                if (result.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))
                 {
-                    if (result.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))
-                    {
-                        MyUtility.Msg.WarningBox("Duplicate CutRef. Please redo Auto Ref#");
-                        return result;
-                    }
-                    else
-                    {
-                        return result;
-                    }
+                    MyUtility.Msg.WarningBox("Duplicate CutRef. Please redo Auto Ref#");
+                    return result;
+                }
+                else
+                {
+                    return result;
                 }
             }
 

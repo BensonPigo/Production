@@ -1231,7 +1231,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
-            AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, CuttingForm.P02);
+            AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
 
             this.RenewData();
             this.OnDetailEntered();
