@@ -53,6 +53,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspAvgInspLTInPast7Days,
             P_MaterialCompletionRateByWeek,
             P_InventoryStockListReport,
+            P_RecevingInfoTrackingSummary,
         }
 
         /// <summary>
@@ -384,6 +385,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_InventoryStockListReport:
                         result = new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_RecevingInfoTrackingSummary:
+                        result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
