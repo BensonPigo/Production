@@ -19,14 +19,12 @@ namespace Sci.Production.Cutting
         private DataTable dt_CurentDetail; // 用來修改的 DataTable
         private DataTable sp; // 用在 Filter 開窗選項
         private string ID;
-        private string Refno;
-        private string ColorID;
         private CuttingForm form;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09 才有
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09 才有
-        private DataTable dt_AllSeqRefnoColor;
+        private DataTable dtAllSEQ_FabricCode;
 
         /// <summary>
         /// Batch Assign
@@ -46,14 +44,14 @@ namespace Sci.Production.Cutting
             this.detailDatas_Ori = detailDatas;
             this.dt_CurentDetail = detailDatas.CopyToDataTable();
             this.dt_CurentDetail.Columns.Add("Selected", typeof(bool));
-            this.Gridsetup();
+            this.GridSetup();
             this.detailgridbs.DataSource = this.dt_CurentDetail;
 
-            this.dt_AllSeqRefnoColor = GetAllSeqRefnoColor(id); // 先準備用來驗證 Seq 全部資訊, 避免逐筆去DB撈資料驗證會很卡
+            this.dtAllSEQ_FabricCode = GetAllSEQ_FabricCode(id); // 先準備用來驗證 Seq 全部資訊, 避免逐筆去DB撈資料驗證會很卡
             this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID"); // 用在 Filter 開窗選項
         }
 
-        private void Gridsetup()
+        private void GridSetup()
         {
             this.gridBatchAssign.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
@@ -173,45 +171,91 @@ namespace Sci.Production.Cutting
                 }
             }
 
-            // Seq、WK ETA (Seq會影響 WK ETA，因此一併判斷+寫入)
-            string seq1 = this.txtSeq1.Text;
-            string seq2 = this.txtSeq2.Text;
-            string wkETA = string.Empty;
+            // 驗證用
+            DataTable dtWKETA = GetWKETA(this.ID);
 
-            // Seq 部分一定要先有填過第3層 PatternPanel 資料,也就是有 FabricCode 註:ID + FabricCode 是找 SEQ 不發散的必要條件
+            // Seq, 有 FabricCode 才能填入 Seq
             foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1 AND FabricCode <> ''"))
             {
-
-            }
-
-                if (!MyUtility.Check.Empty(seq1) && !MyUtility.Check.Empty(seq2))
-            {
-                foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1"))
+                // 先填入再驗證
+                if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                 {
-                    // FabricCode、Refno、Colorid 為空不可新增Seq，同P02 Grid驗證方式
-                    if (MyUtility.Check.Empty(dr["FabricCode"]) || MyUtility.Check.Empty(dr["Refno"]) || MyUtility.Check.Empty(dr["Colorid"]))
+                    dr["Seq1"] = this.txtSeq1.Text;
+                }
+
+                if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                {
+                    dr["Seq2"] = this.txtSeq2.Text;
+                }
+
+                if (!MyUtility.Check.Empty(this.dateWKETA.Value))
+                {
+                    dr["WKETA"] = this.dateWKETA.Value;
+                }
+
+                // 驗證存在 dtAllSEQ_FabricCode
+                string seq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                string seq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                string refno = MyUtility.Convert.GetString(dr["Refno"]);
+                string colorID = MyUtility.Convert.GetString(dr["ColorID"]);
+                string filter = "1=1";
+                if (!seq1.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND Seq1 = '{seq1}'";
+                }
+
+                if (!seq2.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND Seq2 = '{seq2}'";
+                }
+
+                if (!refno.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND Refno = '{refno}'";
+                }
+
+                if (!colorID.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND ColorID = '{colorID}'";
+                }
+
+                // 驗證失敗, 清空
+                if (this.dtAllSEQ_FabricCode.Select(filter + $" AND FabricCode = '{dr["FabricCode"]}'").Length == 0)
+                {
+                    if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                     {
-                        continue;
+                        dr["Seq1"] = string.Empty;
                     }
 
-                    // 逐一檢查Seq 正確性
-                    bool isValid = ValidatingSeqWithoutFabricCode(this.ID, dr["FabricCode"].ToString(), seq1, seq2, dr["Refno"].ToString(), dr["Colorid"].ToString(), this.dt_AllSeqRefnoColor);
-
-                    if (isValid)
+                    if (!MyUtility.Check.Empty(this.txtSeq2.Text))
                     {
-                        dr["Seq1"] = seq1;
-                        dr["Seq2"] = seq2;
-                        /*dr["SCIRefno"] = ;
-                        dr["Refno"] = ;
-                        dr["ColorID"] = ;*/
-
-                        if (!string.IsNullOrEmpty(wkETA))
-                        {
-                            dr["WKETA"] = MyUtility.Convert.GetDate(wkETA);
-                        }
+                        dr["Seq2"] = string.Empty;
                     }
+                }
 
-                    dr.EndEdit();
+                // 再 Seq 之後驗證 WKETA
+                seq1 = MyUtility.Convert.GetString(dr["Seq1"]);
+                seq2 = MyUtility.Convert.GetString(dr["Seq2"]);
+                filter = "1=1";
+                if (!seq1.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND Seq1 = '{seq1}'";
+                }
+
+                if (!seq2.IsNullOrWhiteSpace())
+                {
+                    filter += $" AND Seq2 = '{seq2}'";
+                }
+
+                if (!MyUtility.Check.Empty(dr["WKETA"]))
+                {
+                    filter += $" AND WKETA = '{dr["WKETA"]}'";
+                }
+
+                // 更新 SEQ, 沒更新 WKETA, 驗證失敗也要清空
+                if (dtWKETA.Select(filter).Length == 0)
+                {
+                    dr["WKETA"] = DBNull.Value;
                 }
             }
         }
@@ -271,7 +315,7 @@ namespace Sci.Production.Cutting
         // 用在多選更新區塊
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = PopupAllSeqRefnoColor(this.ID, this.dt_AllSeqRefnoColor);
+            SelectItem item = PopupAllSeqRefnoColor(this.ID, this.dtAllSEQ_FabricCode);
             if (item == null)
             {
                 return;
@@ -291,7 +335,7 @@ namespace Sci.Production.Cutting
             }
 
             // 這邊的驗證無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            if (GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dt_AllSeqRefnoColor).Rows.Count == 0)
+            if (GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dtAllSEQ_FabricCode).Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox($@"Seq: {seqValue} data not found!");
                 txtSeq.Text = string.Empty;

@@ -36,7 +36,6 @@
             this.btnConfirm = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.dateBoxEstCutDate = new Sci.Production.Class.DateEstCutDate();
-            this.dateWKETA = new Sci.Win.UI.DateBox();
             this.panel_P09 = new System.Windows.Forms.Panel();
             this.label5 = new Sci.Win.UI.Label();
             this.txtCell = new Sci.Production.Class.TxtCell();
@@ -68,6 +67,7 @@
             this.DateEstCutDate = new Sci.Win.UI.DateBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelFabricCombo = new Sci.Win.UI.Label();
+            this.dateWKETA = new Sci.Production.Class.DateEstCutDate();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssign)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -139,8 +139,8 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.dateBoxEstCutDate);
             this.panel1.Controls.Add(this.dateWKETA);
+            this.panel1.Controls.Add(this.dateBoxEstCutDate);
             this.panel1.Controls.Add(this.panel_P09);
             this.panel1.Controls.Add(this.txtMarkerLength);
             this.panel1.Controls.Add(this.txtMakerName);
@@ -164,13 +164,6 @@
             this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
             this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.dateBoxEstCutDate.TabIndex = 77;
-            // 
-            // dateWKETA
-            // 
-            this.dateWKETA.Location = new System.Drawing.Point(102, 34);
-            this.dateWKETA.Name = "dateWKETA";
-            this.dateWKETA.Size = new System.Drawing.Size(130, 23);
-            this.dateWKETA.TabIndex = 76;
             // 
             // panel_P09
             // 
@@ -470,6 +463,13 @@
             this.labelFabricCombo.TabIndex = 5;
             this.labelFabricCombo.Text = "Fabric Panel Code";
             // 
+            // dateWKETA
+            // 
+            this.dateWKETA.Location = new System.Drawing.Point(102, 34);
+            this.dateWKETA.Name = "dateWKETA";
+            this.dateWKETA.Size = new System.Drawing.Size(130, 23);
+            this.dateWKETA.TabIndex = 78;
+            // 
             // P02_BatchAssign
             // 
             this.ClientSize = new System.Drawing.Size(1012, 679);
@@ -536,7 +536,7 @@
         private Class.TxtCell txtCell;
         private Win.UI.Label label17;
         private System.Windows.Forms.Panel panel_P09;
-        private Win.UI.DateBox dateWKETA;
         private Class.DateEstCutDate dateBoxEstCutDate;
+        private Class.DateEstCutDate dateWKETA;
     }
 }

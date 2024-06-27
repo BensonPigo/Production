@@ -590,7 +590,7 @@ SELECT
    ,psd.SCIRefno
 FROM PO_Supp_Detail psd WITH (NOLOCK)
 INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
-INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
 WHERE psd.ID = '{id}'
 AND psd.Junk = 0
 AND EXISTS (
@@ -601,6 +601,36 @@ AND EXISTS (
     AND Order_BOF.Id = psd.ID
     AND Fabric.BrandRefNo = f.BrandRefNo
 )
+";
+
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt;
+        }
+
+        public static DataTable GetAllSEQ_FabricCode(string id)
+        {
+            string sqlcmd = $@"
+SELECT
+    psd.SEQ1
+   ,psd.SEQ2
+   ,psd.Refno
+   ,ColorID = ISNULL(psdc.SpecValue, '')
+   ,psd.SCIRefno
+   ,bof.FabricCode--展開相同 BrandRefNo 有多個 SCIRefno 對應的 FabricCode
+FROM PO_Supp_Detail psd WITH (NOLOCK)
+INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
+INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Fabric f2 WITH (NOLOCK) ON f2.BrandRefNo = f.BrandRefNo--這展開,相同 BrandRefNo 有多個 SCIRefno
+INNER JOIN Order_BOF bof WITH (NOLOCK) on bof.ID = psd.ID AND bof.SCIRefno = f2.SCIRefno -- 再找到 FabricCode
+WHERE psd.ID = '{id}'
+AND psd.Junk = 0
+AND EXISTS (SELECT 1 from Order_FabricCode WITH (NOLOCK) WHERE ID = '{id}' AND FabricCode = bof.FabricCode)
 ";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
@@ -717,6 +747,27 @@ AND EXISTS (
             dr.EndEdit();
         }
 
+        #endregion
+
+        #region WKETA
+
+        public static DataTable GetWKETA(string poid)
+        {
+            string sqlcmd = $@"
+SELECT WKETA = E.ETA, ED.Seq1, ED.Seq2
+FROM Export_Detail ED WITH(NOLOCK)
+INNER JOIN Export E WITH(NOLOCK) ON E.ID = ED.ID
+WHERE ED.POID = '{poid}'
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt;
+        }
         #endregion
 
         #region SpreadingNo 開窗/驗證
@@ -1427,7 +1478,7 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
         }
         #endregion
 
-        #region PatternPanel
+        #region Grid PatternPanel
         public static void BindPatternPanelEvents(Ict.Win.UI.DataGridViewTextBoxColumn column, string id)
         {
             column.EditingMouseDown += (s, e) =>
