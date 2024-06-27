@@ -1985,7 +1985,7 @@ order by p.EditDate desc
 
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
-            AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, CuttingForm.P09);
+            AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
             this.RenewData();
             this.OnDetailEntered();
         }
