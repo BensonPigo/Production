@@ -170,7 +170,7 @@ BEGIN TRANSACTION [Trans_Name];";
                         newdr["MarkerName"] = dr["MarkerName"] ?? string.Empty;
                         newdr["FabricCombo"] = dr["FabricCombo"] ?? string.Empty;
                         newdr["Cutno"] = dr["Cutno"];
-                        newdr["EstCutDate"] = dr["EstCutDate"] ?? string.Empty;
+                        newdr["EstCutDate"] = dr["EstCutDate"] ?? DBNull.Value;
                         newdr["CutRef"] = maxref;
                         newdr["SizeRatio"] = dr["SizeRatio"];
                         cutReftb.Rows.Add(newdr);
