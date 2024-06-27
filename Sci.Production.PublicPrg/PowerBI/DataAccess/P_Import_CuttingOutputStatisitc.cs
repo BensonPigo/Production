@@ -75,19 +75,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-Update p Set CutRateByDate = isnull(t.CutRateByDate,0) ,
-             CutRateByMonth = isnull(t.CutRateByMonth, 0),
-             CutOutputByDate = isnull(t.CutOutputByDate,0),
-             CutOutputIn7Days = isnull(t.CutOutputIn7Days, 0),
-             CutDelayIn7Days = isnull(t.CutDelayIn7Days, 0)
+Update p Set CutRateByDate = t.CutRateByDate,
+             CutRateByMonth = t.CutRateByMonth,
+             CutOutputByDate = t.CutOutputByDate,
+             CutOutputIn7Days = t.CutOutputIn7Days,
+             CutDelayIn7Days = t.CutDelayIn7Days
 From P_CuttingOutputStatisitc p
 inner join #tmp t on p.TransferDate = t.TransferDate 
                  and p.FactoryID = t.FactoryID
-                 and (isnull(p.CutRateByDate ,0) != isnull(t.CutRateByDate, 0) 
-                      or isnull(p.CutRateByMonth, 0) != isnull(t.CutRateByMonth,0) 
-                      or isnull(p.CutOutputByDate, 0) != isnull(t.CutOutputByDate, 0)
-                      or isnull(p.CutOutputIn7Days, 0) != isnull(t.CutOutputIn7Days, 0)
-                      or isnull(p.CutDelayIn7Days, 0) != isnull(t.CutDelayIn7Days,0) )
+                 and (p.CutRateByDate != t.CutRateByDate
+                      or p.CutRateByMonth != t.CutRateByMonth
+                      or p.CutOutputByDate != t.CutOutputByDate
+                      or p.CutOutputIn7Days != t.CutOutputIn7Days
+                      or p.CutDelayIn7Days != t.CutDelayIn7Days )
 
 
 Insert into P_CuttingOutputStatisitc ( TransferDate,
@@ -142,34 +142,51 @@ And P_CuttingOutputStatisitc.TransferDate Between @sDate and @eDate
             sqlCmd.Append($@"
 Select  FactoryID = psol.FactoryID
 	  , TransferDate = psol.EstCuttingDate
-	  , CutRateByDate = SUM(psol.ActConsOutput) / SUM(psol.Consumption)
-	  , CutRateByMonth = iif((select sum(P_CuttingScheduleOutputList.Consumption)
+
+	  , CutRateByDate = isnull((select sum(P_CuttingScheduleOutputList.ActConsOutput)
+					            from P_CuttingScheduleOutputList 
+						        where EstCuttingDate = DateADD(DAY, -1, psol.EstCuttingDate)
+						        and ActCuttingDate <= DateADD(DAY, -1, psol.EstCuttingDate))
+						        /
+						       (select sum(P_CuttingScheduleOutputList.Consumption)
+						        from P_CuttingScheduleOutputList 
+						        where EstCuttingDate = DateADD(DAY, -1, psol.EstCuttingDate)),0)
+
+	  , CutRateByMonth = iif(
+                              (select sum(P_CuttingScheduleOutputList.Consumption)
 						       from P_CuttingScheduleOutputList  with(nolock)
 						       where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
 						       and FactoryID = psol.FactoryID ) = 0,
                                0, 
-                               ( --ActConsOutput
-                                 (select sum(P_CuttingScheduleOutputList.ActConsOutput)
-					             from P_CuttingScheduleOutputList  with(nolock)
-					             where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
-					             and ActCuttingDate < DATEADD(DAY, -1, psol.EstCuttingDate)
-					             and FactoryID = psol.FactoryID
-					            )
-					            /  
+                               isnull(
+                                 ( 
+                                --ActConsOutput
+                                  (select sum(P_CuttingScheduleOutputList.ActConsOutput)
+					               from P_CuttingScheduleOutputList  with(nolock)
+					               where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
+					               and ActCuttingDate < DATEADD(DAY, -1, psol.EstCuttingDate)
+					               and FactoryID = psol.FactoryID
+					              )
+					              /  
 					            --Consumption
-					            (select sum(P_CuttingScheduleOutputList.Consumption)
-						         from P_CuttingScheduleOutputList  with(nolock)
-						         where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
-						         and FactoryID = psol.FactoryID
-					             )
-                               )
-                             )
-	  , CutOutputByDate = SUM(isnull(psol.ActConsOutput,0))
+					              (select sum(P_CuttingScheduleOutputList.Consumption)
+						           from P_CuttingScheduleOutputList  with(nolock)
+						           where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
+						           and FactoryID = psol.FactoryID
+					              )
+                                ), 0)
+                              )
+
+	  , CutOutputByDate = 	(select sum(P_CuttingScheduleOutputList.Consumption)
+						     from P_CuttingScheduleOutputList 
+							 where P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate)
+
       , CutOutputIn7Days = isnull((select sum(P_CuttingScheduleOutputList.ActConsOutput) 
 						           from P_CuttingScheduleOutputList  with(nolock)
 						           where ActCuttingDate between DATEADD(DAY,-7,psol.EstCuttingDate ) and psol.EstCuttingDate
 						           and FactoryID = psol.FactoryID)
                                  ,0)
+
 	  , CutDelayIn7Days = isnull((select sum(P_CuttingScheduleOutputList.BalanceCons) 
                                   from P_CuttingScheduleOutputList  with(nolock)
 						          where ActCuttingDate between DATEADD(DAY,-7,psol.EstCuttingDate ) and psol.EstCuttingDate
@@ -178,12 +195,12 @@ Select  FactoryID = psol.FactoryID
 From (
 		Select psol.EstCuttingDate
 			 , psol.FactoryID
-			 , psol.ActConsOutput
-			 , psol.Consumption
+			 , psol.ActCuttingDate
 		From P_CuttingScheduleOutputList psol with(nolock)
 		Where psol.EstCuttingDate between @SDate and @EDate
 ) psol
-Group By psol.EstCuttingDate, psol.FactoryID
+Group By  psol.FactoryID ,psol.EstCuttingDate 
+Order by  psol.FactoryID ,psol.EstCuttingDate  asc
 
 ");
 
