@@ -67,7 +67,7 @@
             this.DateEstCutDate = new Sci.Win.UI.DateBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelFabricCombo = new Sci.Win.UI.Label();
-            this.dateWKETA = new Sci.Production.Class.DateEstCutDate();
+            this.dateWKETA = new Sci.Win.UI.DateBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssign)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -468,7 +468,7 @@
             this.dateWKETA.Location = new System.Drawing.Point(102, 34);
             this.dateWKETA.Name = "dateWKETA";
             this.dateWKETA.Size = new System.Drawing.Size(130, 23);
-            this.dateWKETA.TabIndex = 78;
+            this.dateWKETA.TabIndex = 7;
             // 
             // P02_BatchAssign
             // 
@@ -537,6 +537,6 @@
         private Win.UI.Label label17;
         private System.Windows.Forms.Panel panel_P09;
         private Class.DateEstCutDate dateBoxEstCutDate;
-        private Class.DateEstCutDate dateWKETA;
+        private Win.UI.DateBox dateWKETA;
     }
 }

@@ -6,7 +6,6 @@ using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
-using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -157,7 +156,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting Perimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_ActCuttingPerimeter)
                 .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_StraightLength)
                 .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_CurvedLength)
-                .Text("MarkerNo", header: "Pattern No.", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
+                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1266,7 +1265,7 @@ DEALLOCATE CURSOR_
 
         #region Grid 欄位事件 顏色/開窗/驗證
         private void NumConsPC_Validated(object sender, EventArgs e)
-            {
+        {
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
         }
 
@@ -1350,41 +1349,6 @@ DEALLOCATE CURSOR_
             this.col_ActCuttingPerimeter.CellValidating += this.MaskedCellValidatingHandler;
             this.col_StraightLength.CellValidating += this.MaskedCellValidatingHandler;
             this.col_CurvedLength.CellValidating += this.MaskedCellValidatingHandler;
-
-            this.col_MarkerNo.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr) || e.Button != MouseButtons.Right)
-                {
-                    return;
-                }
-
-                SelectItem selectItem = PopupMarkerNo(this.CurrentMaintain["ID"].ToString(), dr["MarkerNo"].ToString());
-                if (selectItem == null)
-                {
-                    return;
-                }
-
-                dr["MarkerNo"] = selectItem.GetSelectedString();
-                dr.EndEdit();
-            };
-            this.col_MarkerNo.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!ValidatingMarkerNo(this.CurrentMaintain["ID"].ToString(), e.FormattedValue.ToString()))
-                {
-                    dr["MarkerNo"] = string.Empty;
-                    e.Cancel = true;
-                }
-
-                dr["MarkerNo"] = e.FormattedValue;
-                dr.EndEdit();
-            };
 
             #endregion
 

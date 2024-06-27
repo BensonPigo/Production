@@ -709,6 +709,8 @@ AND EXISTS (SELECT 1 from Order_FabricCode WITH (NOLOCK) WHERE ID = '{id}' AND F
 
             if (MyUtility.Check.Empty(dr["FabricCode"]))
             {
+                dr[columnName] = string.Empty;
+                dr.EndEdit();
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
                 return;
             }
@@ -1604,8 +1606,7 @@ ORDER BY FabricPanelCode,PatternPanel
                 }
                 else if (column is DataGridViewTextBoxBase2Column textBoxBaseEX && textBoxBaseEX.DataPropertyName == "WKETA")
                 {
-                    // 特別處理 WKETA
-                    textBoxBaseEX.EditingControlShowing += (sender, e) => CustomEditingControlShowing(sender, e, canEditDelegate);
+                    // 特別處理 WKETA 變色
                     textBoxBaseEX.CellFormatting += (sender, e) => CustomCellFormatting(sender, e, canEditDelegate);
                 }
             }

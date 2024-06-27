@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using System;
 using System.Data;
 using System.Windows.Forms;
@@ -51,6 +53,59 @@ namespace Sci.Production.Cutting
             };
 
             return generator.Date(propertyName, header, null, width, settings, iseditingreadonly: iseditingreadonly);
+        }
+
+        /// <summary>
+        /// 所有子單 OrderID For WorkOrder Grid使用
+        /// </summary>
+        /// <inheritdoc/>
+        public static IDataGridViewGenerator MarkerNo(
+            this IDataGridViewGenerator generator,
+            string propertyName,
+            string header,
+            IWidth width,
+            Func<DataRow, bool> canEditData)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.EditingMouseDown += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                if (!canEditData(dr) || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                SelectItem selectItem = CuttingWorkOrder.PopupMarkerNo(dr["ID"].ToString(), dr[propertyName].ToString());
+                if (selectItem == null)
+                {
+                    return;
+                }
+
+                e.EditingControl.Text = selectItem.GetSelectedString();
+            };
+            settings.CellValidating += (s, e) =>
+            {
+                DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                DataRow dr = grid.GetDataRow(e.RowIndex);
+                string newValue = e.FormattedValue.ToString();
+                string oldValue = MyUtility.Convert.GetString(dr[propertyName]);
+                if (!canEditData(dr) || newValue == oldValue)
+                {
+                    return;
+                }
+
+                if (!CuttingWorkOrder.ValidatingMarkerNo(dr["ID"].ToString(), e.FormattedValue.ToString()))
+                {
+                    dr[propertyName] = string.Empty;
+                    e.Cancel = true;
+                }
+
+                dr[propertyName] = e.FormattedValue;
+                dr.EndEdit();
+            };
+
+            return generator.Text(propertyName, header, null, width, settings);
         }
     }
 }

@@ -1,11 +1,9 @@
 ﻿using Ict;
 using Ict.Win;
-using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
-using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -13,7 +11,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Transactions;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
@@ -31,7 +28,6 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_MarkerNo;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
 
@@ -353,7 +349,7 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
-                .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_MarkerNo)
+                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -565,7 +561,6 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
 
         protected override DualResult ClickSavePost()
         {
-
             // Stpe 1. 給第3層填入對應 WorkOrderForPlanningUkey
             foreach (DataRow dr in this.DetailDatas.Where(row => row.RowState == DataRowState.Added))
             {
@@ -683,10 +678,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-
-            // 更新 P20
-            this.BackgroundWorker1.RunWorkerAsync();
-
             this.OnDetailEntered();
         }
 
@@ -724,9 +715,11 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 .Where(x => x.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(x["MarkerName"]) && !MyUtility.Check.Empty(x["MarkerNo"]))
                 .GroupBy(x => new { MarkerName = x["MarkerName"].ToString(), MarkerNo = x["MarkerNo"].ToString() })
                 .Where(
-                group => group.Select(row => new { Markerlength = row["Markerlength"].ToString(), EstCutDate = MyUtility.Convert.GetDate(row["EstCutDate"]) })
-                               .Distinct()
-                               .Count() > 1)
+                    group => group.Select(row => new
+                    {
+                        Markerlength = Prgs.ConvertFullWidthToHalfWidth(row["Markerlength"].ToString()),
+                        EstCutDate = MyUtility.Convert.GetDate(row["EstCutDate"]),
+                    }).Distinct().Count() > 1)
                 .SelectMany(group => group);
 
             if (groupData.Any())
@@ -1030,44 +1023,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
             this.col_Tone.MaxLength = 15;
-
-            this.col_MarkerNo.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (e.Button == MouseButtons.Right)
-                {
-                    SelectItem selectItem = PopupMarkerNo(this.CurrentMaintain["ID"].ToString(), dr["MarkerNo"].ToString());
-                    if (selectItem == null)
-                    {
-                        return;
-                    }
-
-                    dr["MarkerNo"] = selectItem.GetSelectedString();
-                    dr.EndEdit();
-                }
-            };
-            this.col_MarkerNo.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!ValidatingMarkerNo(this.CurrentMaintain["ID"].ToString(), e.FormattedValue.ToString()))
-                {
-                    dr["MarkerNo"] = string.Empty;
-                    return;
-                }
-
-                dr["MarkerNo"] = e.FormattedValue;
-                dr.EndEdit();
-            };
             #endregion
 
             #region SizeRatio

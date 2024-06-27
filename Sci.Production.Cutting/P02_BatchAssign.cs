@@ -92,7 +92,7 @@ namespace Sci.Production.Cutting
             }
 
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
-                .Text("MarkerNo", header: "Pattern No", width: Ict.Win.Widths.AnsiChars(10));
+                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData);
 
             this.GridEventSet();
         }
@@ -149,7 +149,7 @@ namespace Sci.Production.Cutting
 
             foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1"))
             {
-                if (MyUtility.Check.Empty(this.dateBoxEstCutDate.Value))
+                if (!MyUtility.Check.Empty(this.dateBoxEstCutDate.Value))
                 {
                     dr["EstCutDate"] = MyUtility.Convert.GetDate(this.dateBoxEstCutDate.Value);
                 }
@@ -166,17 +166,24 @@ namespace Sci.Production.Cutting
 
                 if (this.form == CuttingForm.P09)
                 {
-                    dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
-                    dr["CutCellID"] = this.txtCell.Text;
+                    if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
+                    {
+                        dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
+                    }
+
+                    if (!MyUtility.Check.Empty(this.txtCell.Text))
+                    {
+                        dr["CutCellID"] = this.txtCell.Text;
+                    }
                 }
             }
 
             // 驗證用
             DataTable dtWKETA = GetWKETA(this.ID);
 
-            // Seq, 有 FabricCode 才能填入 Seq
-            foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1 AND FabricCode <> ''"))
+            foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1"))
             {
+                #region 驗證 Seq
                 // 先填入再驗證
                 if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                 {
@@ -219,8 +226,8 @@ namespace Sci.Production.Cutting
                     filter += $" AND ColorID = '{colorID}'";
                 }
 
-                // 驗證失敗, 清空
-                if (this.dtAllSEQ_FabricCode.Select(filter + $" AND FabricCode = '{dr["FabricCode"]}'").Length == 0)
+                // 驗證失敗, 清空, Seq, 有 FabricCode 才能填入 Seq
+                if (this.dtAllSEQ_FabricCode.Select(filter + $" AND FabricCode = '{dr["FabricCode"]}'").Length == 0 || MyUtility.Check.Empty(dr["FabricCode"]))
                 {
                     if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                     {
@@ -232,28 +239,10 @@ namespace Sci.Production.Cutting
                         dr["Seq2"] = string.Empty;
                     }
                 }
+                #endregion
 
-                // 再 Seq 之後驗證 WKETA
-                seq1 = MyUtility.Convert.GetString(dr["Seq1"]);
-                seq2 = MyUtility.Convert.GetString(dr["Seq2"]);
-                filter = "1=1";
-                if (!seq1.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND Seq1 = '{seq1}'";
-                }
-
-                if (!seq2.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND Seq2 = '{seq2}'";
-                }
-
-                if (!MyUtility.Check.Empty(dr["WKETA"]))
-                {
-                    filter += $" AND WKETA = '{dr["WKETA"]}'";
-                }
-
-                // 更新 SEQ, 沒更新 WKETA, 驗證失敗也要清空
-                if (dtWKETA.Select(filter).Length == 0)
+                // 再 Seq 之後驗證 WKETA, 更新 SEQ, 沒更新 WKETA, 驗證失敗也要清空
+                if (!MyUtility.Check.Empty(dr["WKETA"]) && dtWKETA.Select($"Seq1 = '{dr["Seq1"]}' AND Seq2 = '{dr["Seq2"]}' AND WKETA = '{dr["WKETA"]}'").Length == 0)
                 {
                     dr["WKETA"] = DBNull.Value;
                 }
@@ -273,14 +262,11 @@ namespace Sci.Production.Cutting
                 detaildr["WKETA"] = dr["WKETA"];
                 detaildr["Tone"] = dr["Tone"];
                 detaildr["MarkerName"] = dr["MarkerName"];
+                detaildr["MarkerLength"] = dr["MarkerLength"];
                 detaildr["MarkerLength_Mask"] = dr["MarkerLength_Mask"];
-
-                // FabricPanelCode 為空不可新增Seq，同P02 Grid驗證方式
-                if (!MyUtility.Check.Empty(detaildr["FabricPanelCode"]))
-                {
-                    detaildr["Seq1"] = dr["Seq1"];
-                    detaildr["Seq2"] = dr["Seq2"];
-                }
+                detaildr["MarkerNo"] = dr["MarkerNo"];
+                detaildr["Seq1"] = dr["Seq1"];
+                detaildr["Seq2"] = dr["Seq2"];
 
                 if (this.form == CuttingForm.P09)
                 {
@@ -342,8 +328,6 @@ namespace Sci.Production.Cutting
                 e.Cancel = true;
                 return;
             }
-
-            this.txtSeq1.Text = string.Empty;
         }
 
         private void TxtMakerLength_Validating(object sender, CancelEventArgs e)
