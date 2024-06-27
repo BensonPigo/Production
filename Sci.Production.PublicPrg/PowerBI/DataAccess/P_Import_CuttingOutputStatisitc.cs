@@ -127,7 +127,7 @@ And P_CuttingOutputStatisitc.TransferDate Between @sDate and @eDate
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
-            finalResult.Result = new DualResult(true);
+            finalResult.Result = result;
 
             return finalResult;
         }
@@ -177,9 +177,10 @@ Select  FactoryID = psol.FactoryID
                                 ), 0)
                               )
 
-	  , CutOutputByDate = 	(select sum(P_CuttingScheduleOutputList.Consumption)
-						     from P_CuttingScheduleOutputList 
-							 where P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate)
+	  , CutOutputByDate = isnull((select sum(P_CuttingScheduleOutputList.Consumption)
+						          from P_CuttingScheduleOutputList 
+							      where P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate)
+                                ,0)
 
       , CutOutputIn7Days = isnull((select sum(P_CuttingScheduleOutputList.ActConsOutput) 
 						           from P_CuttingScheduleOutputList  with(nolock)
