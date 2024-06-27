@@ -592,6 +592,7 @@ INSERT INTO WorkOrderForOutput (
     SpreadingStatus,
     SpreadingRemark,
     GroupID,
+    SourceFrom,
     WorkOrderForPlanningUkey,
     Order_EachconsUkey,
     AddName,
@@ -634,6 +635,7 @@ SELECT
     ,'Ready'--SpreadingStatus
     ,''--SpreadingRemark
     ,''--GroupID
+    ,1--SourceFrom
     ,WorkOrderForPlanning.Ukey
     ,WorkOrderForPlanning.Order_EachconsUkey
     ,'{Env.User.UserID}'
@@ -768,6 +770,92 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
 
             this.OnRefreshClick();
             MyUtility.Msg.InfoBox("Import successful");
+        }
+
+        private void BtnImportMarker_Click(object sender, EventArgs e)
+        {
+            CuttingWorkOrder cw = new CuttingWorkOrder();
+            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P09);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (result.Description == "NotImport")
+            {
+                return;
+            }
+
+            this.OnRefreshClick();
+        }
+
+        private void BtnDownload_Click(object sender, EventArgs e)
+        {
+            CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
+            string errMsg;
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, out errMsg))
+            {
+                MyUtility.Msg.ErrorBox(errMsg);
+            }
+        }
+
+        private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
+        {
+            // 寫入表身, 不是寫入DB
+            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            string sqlcmd = $@"
+select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
+from Order_EachCons oe
+inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
+inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
+inner join Pattern p with(nolock)on p.id = sd.id
+where oe.ID = '{id}'
+and sd.PhaseID = 'Bulk'
+and p.Status='Completed'
+order by p.EditDate desc
+";
+            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
+            {
+                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
+                var form = new ImportML(CuttingForm.P09, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                form.ShowDialog();
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Not found SMNotice Data."); // 正常不會發生這狀況
+            }
+
+            #region 產生第3層 PatternPanel 只有一筆
+            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
+            {
+                DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
+                drNEW["id"] = this.CurrentMaintain["ID"];
+                drNEW["WorkOrderForOutputUkey"] = 0;  // 新增 WorkOrderForOutputUkey 塞0
+                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"]; // 這邊只會有一筆，因為資料來源是DB
+                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
+                drNEW["tmpKey"] = row["tmpKey"];
+                this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
+            });
+            #endregion
+
+            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
+            if (icount > 0)
+            {
+                for (int i = 0; i < icount; i++)
+                {
+                    if (this.detailgrid.CurrentCell != null)
+                    {
+                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
+                    }
+                }
+            }
+
+            if (icount > 0)
+            {
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
+                this.detailgrid.SelectRowTo(0);
+            }
         }
 
         /// <inheritdoc/>
@@ -1076,8 +1164,7 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
 
             // 更新 P20
             this.BackgroundWorker1.RunWorkerAsync();
-
-            this.OnDetailEntered();
+            this.OnRefreshClick();
         }
 
         private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
@@ -1113,7 +1200,7 @@ DEALLOCATE CURSOR_
         }
         #endregion
 
-        #region 單筆操作 彈窗ActionCutRef 新/修/刪
+        #region 單筆操作 彈窗ActionCutRef 新/修/刪 & 批次更新視窗
         private void BtnEdit_Click(object sender, EventArgs e)
         {
             #region 校驗
@@ -1147,6 +1234,7 @@ DEALLOCATE CURSOR_
             this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
             this.CurrentDetailData["CutNo"] = DBNull.Value;
             this.CurrentDetailData["SpreadingStatus"] = "Ready";
+            this.CurrentDetailData["SourceFrom"] = 2;
             this.CurrentDetailData["Adduser"] = MyUtility.GetValue.Lookup($"SELECT NAME FROM Pass1 WITH (NOLOCK) Where ID = '{this.CurrentDetailData["AddName"]}'");
             if (oldRow == null)
             {
@@ -1182,6 +1270,7 @@ DEALLOCATE CURSOR_
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
                     "CutRef",
                     "CutNo",
+                    "SourceFrom",
                     "HasBundle",
                     "HasCuttingOutput",
                     "HasMarkerReq",
@@ -1260,6 +1349,20 @@ DEALLOCATE CURSOR_
             }
 
             base.OnDetailGridDelete();
+        }
+
+        private void BtnBatchAssign_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ValidateControl();
+            var detailDatas = this.DetailDatas.Where(row => this.CanEditData(row)).ToList();
+            if (!detailDatas.Any())
+            {
+                MyUtility.Msg.InfoBox("No editable data.");
+                return;
+            }
+
+            var frm = new P02_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
+            frm.ShowDialog(this);
         }
         #endregion
 
@@ -1600,26 +1703,17 @@ DEALLOCATE CURSOR_
         }
         #endregion
 
-        #region Other
-        private void GridValidateControl()
-        {
-            this.detailgrid.ValidateControl();
-            this.gridSizeRatio.ValidateControl();
-            this.gridDistributeToSP.ValidateControl();
-        }
-
-        // 用在傳入 Column 使用, 因為 gridset 是一開啟就會跑完, 直接傳 WorkType 字串, 換筆資料就不會變動了
-        private string GetWorkType()
-        {
-            return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
-        }
-        #endregion
-
+        #region 列印
         protected override void DoPrint()
         {
             // 1394: CUTTING_P09_Cutting Work Order Output。KEEP當前的資料。
             this.drTEMP = this.CurrentDetailData;
             base.DoPrint();
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ToExcel(false);
         }
 
         protected override bool ClickPrint()
@@ -1643,129 +1737,45 @@ DEALLOCATE CURSOR_
 
             return base.ClickPrint();
         }
+        #endregion
 
-        /// <inheritdoc/>
-        protected override void OnEditModeChanged()
-        {
-            base.OnEditModeChanged();
-
-            if (this.btnImportMarkerLectra != null)
-            {
-                this.btnImportMarkerLectra.Enabled = this.EditMode;
-            }
-        }
-
+        #region Other
         private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
             var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["ID"].ToString());
             exwip.ShowDialog();
         }
 
-        private void BtnBatchAssign_Click(object sender, EventArgs e)
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+
+            if (this.btnImportMarker != null)
+            {
+                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode;
+            }
+        }
+
+        private void GridValidateControl()
         {
             this.detailgrid.ValidateControl();
-            var detailDatas = this.DetailDatas.Where(row => this.CanEditData(row)).ToList();
-            if (!detailDatas.Any())
-            {
-                MyUtility.Msg.InfoBox("No editable data.");
-                return;
-            }
-
-            var frm = new P02_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
-            frm.ShowDialog(this);
+            this.gridSizeRatio.ValidateControl();
+            this.gridDistributeToSP.ValidateControl();
         }
 
-        private void BtnImportMarker_Click(object sender, EventArgs e)
+        // 用在傳入 Column 使用, 因為 gridset 是一開啟就會跑完, 直接傳 WorkType 字串, 換筆資料就不會變動了
+        private string GetWorkType()
         {
-            CuttingWorkOrder cw = new CuttingWorkOrder();
-            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P09);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            if (result.Description == "NotImport")
-            {
-                return;
-            }
-
-            this.OnRefreshClick();
+            return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
         }
+        #endregion
 
-        private void BtnDownload_Click(object sender, EventArgs e)
-        {
-            CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
-            string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, out errMsg))
-            {
-                MyUtility.Msg.ErrorBox(errMsg);
-            }
-        }
-
-        private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
-        {
-            // P02似乎不需要
-            string id = MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
-            string sqlcmd = $@"
-select top 1 s.SizeGroup, s.PatternNo, oe.markerNo, s.ID, p.Version
-from Order_EachCons oe
-inner join dbo.SMNotice s on oe.SMNoticeID = s.ID
-inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
-inner join Pattern p with(nolock)on p.id = sd.id
-where oe.ID = '{id}'
-and sd.PhaseID = 'Bulk'
-and p.Status='Completed'
-order by p.EditDate desc
-";
-            if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
-            {
-                string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
-                var form = new ImportML(CuttingForm.P09, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
-                form.ShowDialog();
-            }
-            else
-            {
-                MyUtility.Msg.InfoBox("Not found SMNotice Data."); // 正常不會發生這狀況
-            }
-
-            #region 產生第3層 PatternPanel 只有一筆
-            this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).ToList().ForEach(row =>
-            {
-                DataRow drNEW = this.dtWorkOrderForOutput_PatternPanel.NewRow();
-                drNEW["id"] = this.CurrentMaintain["ID"];
-                drNEW["WorkOrderForOutputUkey"] = 0;  // 新增 WorkOrderForOutputUkey 塞0
-                drNEW["PatternPanel"] = row["PatternPanel_CONCAT"]; // 這邊只會有一筆，因為資料來源是DB
-                drNEW["FabricPanelCode"] = row["FabricPanelCode"];
-                drNEW["tmpKey"] = row["tmpKey"];
-                this.dtWorkOrderForOutput_PatternPanel.Rows.Add(drNEW);
-            });
-            #endregion
-
-            int icount = this.DetailDatas.AsEnumerable().Where(w => MyUtility.Convert.GetBool(w["ImportML"])).Count();
-            if (icount > 0)
-            {
-                for (int i = 0; i < icount; i++)
-                {
-                    if (this.detailgrid.CurrentCell != null)
-                    {
-                        this.detailgrid.CurrentCell = this.detailgrid.Rows[i].Cells["Layer"]; // 移動到指定cell 觸發 Con 計算
-                    }
-                }
-            }
-
-            if (icount > 0)
-            {
-                this.detailgrid.CurrentCell = this.detailgrid.Rows[0].Cells["Layer"];
-                this.detailgrid.SelectRowTo(0);
-            }
-        }
-
+        #region 自動 編碼 / 分配
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
+            this.OnRefreshClick();
             AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
-            this.RenewData();
-            this.OnDetailEntered();
+            this.OnRefreshClick();
         }
 
         private void BtnAutoCut_Click(object sender, EventArgs e)
@@ -1822,7 +1832,9 @@ order by p.EditDate desc
             var frm = new P09_AutoDistToSP(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
             frm.ShowDialog(this);
         }
+        #endregion
 
+        #region 就看看
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
@@ -1860,11 +1872,7 @@ order by p.EditDate desc
             PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
-
-        private void BtnToExcel_Click(object sender, EventArgs e)
-        {
-            this.detailgrid.ToExcel(false);
-        }
+        #endregion
     }
 #pragma warning restore SA1600 // Elements should be documented
 }

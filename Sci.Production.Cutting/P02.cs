@@ -493,12 +493,6 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
                 this.btnImportMarkerLectra.Enabled = this.EditMode;
             }
         }
-
-        private void Refresh_Click(object sender, EventArgs e)
-        {
-            this.RenewData();
-            this.OnDetailEntered();
-        }
         #endregion
 
         #region Click Save Event
@@ -678,7 +672,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            this.OnDetailEntered();
+            this.OnRefreshClick();
         }
 
         // 檢查 主表身 不可空欄位, 並移動到那列
@@ -1186,10 +1180,9 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
+            this.OnRefreshClick();
             AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
-
-            this.RenewData();
-            this.OnDetailEntered();
+            this.OnRefreshClick();
         }
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)

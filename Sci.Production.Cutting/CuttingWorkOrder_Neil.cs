@@ -85,10 +85,10 @@ namespace Sci.Production.Cutting
                     outerApply = string.Empty;
                     break;
 
-                // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready' & WorkorderForOutput.SourceFrom != 1
+                // 不存在 P10 & 不存在 P20 & 不存在 P05 & WorkorderForOutput.SpreadingStatus = 'Ready'
                 case CuttingForm.P09:
                     colName = "CutNo";
-                    where = "And HasBundle = 0 And HasCuttingOutput = 0 And HasMarkerReq = 0 And SpreadingStatus = 'Ready' And SourceFrom != 1";
+                    where = "And HasBundle = 0 And HasCuttingOutput = 0 And HasMarkerReq = 0 And SpreadingStatus = 'Ready'";
                     cmdWhere = "AND CutNo IS NOT NULL";
                     nColumn = ", ws.SizeRatio";
                     outerApply = $@"
@@ -107,15 +107,19 @@ OUTER APPLY (
 
             #region 找出相同 CutRef 的群組
             string cmdsql = $@"
-SELECT ISNULL(w.CutRef, '') AS CutRef, ISNULL(w.FabricCombo, '') AS FabricCombo, w.{colName},
-        ISNULL(w.MarkerName, '') AS MarkerName, w.EstCutDate {nColumn}
+SELECT
+    w.CutRef,
+    w.FabricCombo,
+    w.MarkerName, 
+    w.EstCutDate,
+    w.{colName}
+    {nColumn}
 FROM #tmpWorkOrder w WITH (NOLOCK) 
 {outerApply}
-WHERE w.CutRef IS NOT NULL AND w.CutRef != '' 
-        AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
-        {cmdWhere}
+WHERE w.CutRef <> '' 
+AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
+{cmdWhere}
 GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate {nColumn}";
-
             DualResult cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable cutReftb, "#tmpWorkOrder");
             if (!cutRefresult)
             {

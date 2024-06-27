@@ -102,7 +102,7 @@
             this.masterpanel.Controls.Add(this.btnImportMarker);
             this.masterpanel.Controls.Add(this.btnBatchAssign);
             this.masterpanel.Controls.Add(this.panel2);
-            this.masterpanel.Size = new System.Drawing.Size(548, 65);
+            this.masterpanel.Size = new System.Drawing.Size(936, 65);
             this.masterpanel.Controls.SetChildIndex(this.panel2, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
@@ -114,22 +114,21 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 65);
-            this.detailpanel.Size = new System.Drawing.Size(548, 281);
+            this.detailpanel.Size = new System.Drawing.Size(936, 549);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gridicon.Location = new System.Drawing.Point(448, 35);
+            this.gridicon.Location = new System.Drawing.Point(836, 35);
             // 
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(1197, 3);
-            this.refresh.Click += new System.EventHandler(this.Refresh_Click);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(548, 281);
+            this.detailgridcont.Size = new System.Drawing.Size(936, 549);
             // 
             // detail2
             // 
@@ -146,13 +145,14 @@
             // detail
             // 
             this.detail.Controls.Add(this.panel1);
+            this.detail.Size = new System.Drawing.Size(1280, 655);
             this.detail.Controls.SetChildIndex(this.detailbtm, 0);
             this.detail.Controls.SetChildIndex(this.panel1, 0);
             this.detail.Controls.SetChildIndex(this.detailcont, 0);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(548, 346);
+            this.detailcont.Size = new System.Drawing.Size(936, 614);
             // 
             // detailbtm
             // 
@@ -161,8 +161,8 @@
             this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
             this.detailbtm.Controls.Add(this.btnCutPartsCheck);
             this.detailbtm.Controls.Add(this.btnAutoRef);
-            this.detailbtm.Location = new System.Drawing.Point(0, 346);
-            this.detailbtm.Size = new System.Drawing.Size(892, 41);
+            this.detailbtm.Location = new System.Drawing.Point(0, 614);
+            this.detailbtm.Size = new System.Drawing.Size(1280, 41);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -216,9 +216,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(548, 0);
+            this.panel1.Location = new System.Drawing.Point(936, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 346);
+            this.panel1.Size = new System.Drawing.Size(344, 614);
             this.panel1.TabIndex = 4;
             // 
             // numCons
@@ -443,7 +443,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(548, 35);
+            this.panel2.Size = new System.Drawing.Size(936, 35);
             this.panel2.TabIndex = 12;
             // 
             // numBalanceLayer
