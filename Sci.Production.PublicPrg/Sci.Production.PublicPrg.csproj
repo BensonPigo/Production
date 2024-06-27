@@ -222,6 +222,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_FabricStatusAndIssueFabricTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspAvgInspLTInPast7Days.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspLabSummaryReport.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_InventoryStockListReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RightFirstTimeDailyReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_InlineDefec.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_IssueFabricByCuttingTransactionList.cs" />
@@ -270,6 +271,7 @@
     <Compile Include="PowerBI\Logic\PPIC_R03.cs" />
     <Compile Include="PowerBI\Logic\Planning_R15.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R01.cs" />
+    <Compile Include="PowerBI\Logic\Warehouse_R21.cs" />
     <Compile Include="PowerBI\Logic\Warehouse_R40.cs" />
     <Compile Include="PowerBI\Logic\QA_R01.cs" />
     <Compile Include="PowerBI\Logic\QA_R20.cs" />
@@ -289,6 +291,7 @@
     <Compile Include="PowerBI\Model\Planning_R15_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\Warehouse_R21_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Warehouse_R40_ViewModel.cs" />
     <Compile Include="PowerBI\Model\QA_R20_ViewModel.cs" />

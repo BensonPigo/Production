@@ -1,5 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -438,401 +440,54 @@ namespace Sci.Production.Warehouse
             this.sqlcmd.Clear();
             this.sqlcmd_fin.Clear();
             this.parameters.Clear();
-
-            if (this._reportType == 0)
+            #region 與BI共用Data Logic
+            Warehouse_R21 biModel = new Warehouse_R21();
+            Warehouse_R21_ViewModel warehouse_R21 = new Warehouse_R21_ViewModel()
             {
-                #region 主要sql Detail
-                this.sqlcmd.Append($@" 
-from View_WH_Orders o with (nolock)
-inner join PO p with (nolock) on o.id = p.id
-inner join PO_Supp ps with (nolock) on p.id = ps.id
-inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
-left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
-left join Supp on Supp.id = ps.SuppID 
-left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
-outer apply
-(
-	select MtlLocationID = stuff(
-	(
-		select concat(',',MtlLocationID)
-		from FtyInventory_Detail fid with (nolock) 
-		where fid.Ukey = fi.Ukey
-		for xml path('')
-	),1,1,'')
-)f
-outer apply
-(
-	select Description ,WeaveTypeID
-	from Fabric f with (nolock)
-	where f.SCIRefno = psd.SCIRefno
-)d
-outer apply(
-	select CustPONoList = Stuff((
-		select concat(',',CustPONo)
-		from (
-				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
-				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) VID
-where 1=1
-");
-                #endregion
-            }
-            else
-            {
-                #region 主要sql summary
-                this.sqlcmd.Append($@"
-from View_WH_Orders o with (nolock)
-inner join PO p with (nolock) on o.id = p.id
-inner join PO_Supp ps with (nolock) on p.id = ps.id
-inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(this.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{this.WorkNo}'" : string.Empty)}
-left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
-left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
-left join Supp on Supp.id = ps.SuppID 
-outer apply
-(
-	select Description ,WeaveTypeID
-	from Fabric f with (nolock)
-	where f.SCIRefno = psd.SCIRefno
-)d
-outer apply
-(
-	select RateValue = IIF(Denominator = 0,0, Numerator / Denominator)
-	from Unit_Rate WITH (NOLOCK) 
-	where UnitFrom = psd.PoUnit and UnitTo = psd.StockUnit
-)r
-outer apply(
-	select CustPONoList = Stuff((
-		select concat(',',CustPONo)
-		from (
-				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
-				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
-			) s
-		for xml path ('')
-	) , 1, 1, '')
-) VID
-where 1=1
-");
-                #endregion
-            }
-
-            #region where條件
-            if (!MyUtility.Check.Empty(this.StartSPNo))
-            {
-                this.sqlcmd.Append(string.Format(" and psd.id >= '{0}'", this.StartSPNo));
-            }
-
-            if (!MyUtility.Check.Empty(this.EndSPNo))
-            {
-                this.sqlcmd.Append(string.Format(" and (psd.id <= '{0}' or psd.id like '{0}%')", this.EndSPNo));
-            }
-
-            if (!MyUtility.Check.Empty(this.MDivision))
-            {
-                this.sqlcmd.Append(string.Format(" and o.MDivisionID = '{0}'", this.MDivision));
-            }
-
-            if (!MyUtility.Check.Empty(this.Factory))
-            {
-                this.sqlcmd.Append(string.Format(" and o.FtyGroup = '{0}'", this.Factory));
-            }
-
-            if (!MyUtility.Check.Empty(this.StartRefno))
-            {
-                this.sqlcmd.Append(string.Format(" and psd.Refno >= '{0}'", this.StartRefno));
-            }
-
-            if (!MyUtility.Check.Empty(this.EndRefno))
-            {
-                this.sqlcmd.Append(string.Format(" and (psd.Refno <= '{0}' or psd.Refno like '{0}%')", this.EndRefno));
-            }
-
-            if (!MyUtility.Check.Empty(this.Color))
-            {
-                this.sqlcmd.Append(string.Format(" and psdsC.SpecValue = '{0}'", this.Color));
-            }
-
-            if (!MyUtility.Check.Empty(this.MT))
-            {
-                if (this.MT != "All")
-                {
-                    this.sqlcmd.Append(string.Format(" and psd.FabricType = '{0}'", this.MT));
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.MtlTypeID))
-            {
-                this.sqlcmd.Append(string.Format(" and fabric.MtlTypeID = '{0}'", this.MtlTypeID));
-            }
-
-            if (!MyUtility.Check.Empty(this.ST))
-            {
-                if (this.ST != "All")
-                {
-                    if (this._reportType == 0)
-                    {
-                        {
-                            this.sqlcmd.Append(string.Format(" and fi.StockType = '{0}'", this.ST));
-                        }
-                    }
-                    else
-                    {
-                        if (this.ST == "B")
-                        {
-                            this.sqlcmd.Append(" and (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.ReturnQty,2) - round(mpd.LInvQty,2)>0");
-                        }
-                        else if (this.ST == "I")
-                        {
-                            this.sqlcmd.Append(" and round(mpd.LInvQty,2) > 0");
-                        }
-                        else if (this.ST == "O")
-                        {
-                            this.sqlcmd.Append(" and round(mpd.LObQty ,2) > 0");
-                        }
-                    }
-                }
-            }
-
-            if (this.boolCheckQty)
-            {
-                if (this._reportType == 0)
-                {
-                    this.sqlcmd.Append(" and (round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2)) - round(fi.ReturnQty,2) > 0");
-                }
-                else
-                {
-                    this.sqlcmd.Append(" and ((round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2) - round(mpd.ReturnQty,2) > 0) or mpd.LInvQty >0 or mpd.LObQty >0)  ");
-                }
-            }
-
-            if (!MyUtility.Check.Empty(this.BuyerDelivery1))
-            {
-                this.sqlcmd.Append($" and o.BuyerDelivery >='{((DateTime)this.BuyerDelivery1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.BuyerDelivery2))
-            {
-                this.sqlcmd.Append($" and o.BuyerDelivery <='{((DateTime)this.BuyerDelivery2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.ETA1))
-            {
-                this.sqlcmd.Append($" and psd.FinalETA >='{((DateTime)this.ETA1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.ETA2))
-            {
-                this.sqlcmd.Append($" and psd.FinalETA <='{((DateTime)this.ETA2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery1))
-            {
-                this.sqlcmd.Append($" and o.OrigBuyerDelivery >='{((DateTime)this.OrigBuyerDelivery1).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (!MyUtility.Check.Empty(this.OrigBuyerDelivery2))
-            {
-                this.sqlcmd.Append($" and o.OrigBuyerDelivery <='{((DateTime)this.OrigBuyerDelivery2).ToString("yyyy/MM/dd")}'");
-            }
-
-            if (this.bulk || this.sample || this.material || this.smtl)
-            {
-                this.sqlcmd.Append(" and (1=0");
-                if (this.bulk)
-                {
-                    this.sqlcmd.Append(" or o.Category = 'B'");
-                }
-
-                if (this.sample)
-                {
-                    this.sqlcmd.Append(" or o.Category = 'S'");
-                }
-
-                if (this.material)
-                {
-                    this.sqlcmd.Append(" or o.Category = 'M'");
-                }
-
-                if (this.smtl)
-                {
-                    this.sqlcmd.Append(" or o.Category = 'T'");
-                }
-
-                this.sqlcmd.Append(")");
-            }
-
-            if (this.complete)
-            {
-                this.sqlcmd.Append(" and psd.Complete = '1'");
-            }
-
-            if (this.chkNoLocation.Checked)
-            {
-                this.sqlcmd.Append(@"
-and not exists(
-    select 1
-    from FtyInventory_Detail fid with (nolock) 
-    where fid.Ukey = fi.Ukey and isnull(fid.MtlLocationID, '') <> ''
-)
-");
-            }
-
-            if (!MyUtility.Check.Empty(this.arriveWH1) && !MyUtility.Check.Empty(this.arriveWH2))
-            {
-                this.sqlcmd.Append($@" 
- and (
-	exists (
-	select 1 from Export_Detail with (nolock) 
-	inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' )
-or
-	exists (	
-	select 1
-	from TransferIn ts with (nolock) 
-	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
-	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-	and ts.Status='Confirmed'
-	and ts.IssueDate between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}') 
-or 
-    exists ( 
-	select 1 
-    from Receiving r with (nolock) 
-    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival between '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' and '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}'
-    and r.Status = 'Confirmed' 
-    and r.Type = 'B' 
-	and rd.POID = psd.ID 
-	and rd.Seq1 = psd.Seq1 
-	and rd.Seq2 = psd.Seq2 )
-)
-");
-            }
-            else if (!MyUtility.Check.Empty(this.arriveWH1))
-            {
-                this.sqlcmd.Append($@" 
- and (
-	exists (
-	select 1 from Export_Detail with (nolock) 
-	inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' )
-or
-	exists (	
-	select 1
-	from TransferIn ts with (nolock) 
-	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
-	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-	and ts.Status='Confirmed'
-	and ts.IssueDate >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}' ) 
-or 
-    exists ( 
-	select 1 
-    from Receiving r with (nolock) 
-    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival >= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}'
-    and r.Status = 'Confirmed' 
-    and r.Type = 'B' 
-	and rd.POID = psd.ID 
-	and rd.Seq1 = psd.Seq1 
-	and rd.Seq2 = psd.Seq2 )
-)
-");
-            }
-            else if (!MyUtility.Check.Empty(this.arriveWH2))
-            {
-                this.sqlcmd.Append($@" 
- and (
-	exists (
-	select 1 from Export_Detail with (nolock) 
-	inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	where   POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-	and Export.whsearrival <= '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' )
-or
-	exists (	
-	select 1
-	from TransferIn ts with (nolock) 
-	inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
-	where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-	and ts.Status='Confirmed'
-	and ts.IssueDate <= '{((DateTime)this.arriveWH2).ToString("yyyy/MM/dd")}' ) 
-or 
-    exists ( 
-	select 1 
-    from Receiving r with (nolock) 
-    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	where r.WhseArrival <= '{((DateTime)this.arriveWH1).ToString("yyyy/MM/dd")}'
-    and r.Status = 'Confirmed' 
-    and r.Type = 'B' 
-	and rd.POID = psd.ID 
-	and rd.Seq1 = psd.Seq1 
-	and rd.Seq2 = psd.Seq2 )
-)
-");
-            }
-
-            if (!MyUtility.Check.Empty(this.location1) && !MyUtility.Check.Empty(this.location2))
-            {
-                this.parameters.Add(new SqlParameter("@location1", this.location1));
-                this.parameters.Add(new SqlParameter("@location2", this.location2));
-                this.sqlcmd.Append(
-                    @" 
-        and exists ( select ukey 
-                        from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where fi.ukey = ukey
-                        and mtllocationid >= @location1
-                        and mtllocationid <= @location2 ) " + Environment.NewLine);
-            }
-            else if (!MyUtility.Check.Empty(this.location1))
-            {
-                this.parameters.Add(new SqlParameter("@location1", this.location1));
-                this.sqlcmd.Append(
-                    @" 
-        and exists ( select ukey 
-                        from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where fi.ukey = ukey
-                        and mtllocationid = @location1) " + Environment.NewLine);
-            }
-            else if (!MyUtility.Check.Empty(this.location2))
-            {
-                this.parameters.Add(new SqlParameter("@location2", this.location2));
-                this.sqlcmd.Append(
-                    @" 
-        and exists ( select ukey 
-                        from dbo.ftyinventory_detail WITH (NOLOCK) 
-                        where fi.ukey = ukey
-                        and mtllocationid = @location2) " + Environment.NewLine);
-            }
-            #endregion
-
+                ReportType = this._reportType,
+                StartSPNo = this.StartSPNo,
+                EndSPNo = this.EndSPNo,
+                MDivision = this.MDivision,
+                Factory = this.Factory,
+                StartRefno = this.StartRefno,
+                EndRefno = this.EndRefno,
+                Color = this.Color,
+                MT = this.MT,
+                MtlTypeID = this.MtlTypeID,
+                ST = this.ST,
+                BoolCheckQty = this.boolCheckQty,
+                BuyerDeliveryFrom = this.BuyerDelivery1,
+                BuyerDeliveryTo = this.BuyerDelivery2,
+                ETAFrom = this.ETA1,
+                ETATo = this.ETA2,
+                OrigBuyerDeliveryFrom = this.OrigBuyerDelivery1,
+                OrigBuyerDeliveryTo = this.OrigBuyerDelivery2,
+                Bulk = this.bulk,
+                Sample = this.sample,
+                Material = this.material,
+                Smtl = this.smtl,
+                Complete = this.complete,
+                NoLocation = this.chkNoLocation.Checked,
+                ArriveWHFrom = this.arriveWH1,
+                ArriveWHTo = this.arriveWH2,
+                WorkNo = this.WorkNo,
+                StartLocation = this.location1,
+                EndLocation = this.location2,
+                IsPowerBI = false,
+            };
             #region Get Data
-            DualResult result;
-
-            // 先抓出資料筆數 大於100萬筆需另外處理(按年出多excel)
-            if (result = DBProxy.Current.Select(null, this.sql_cnt + this.sqlcmd.ToString(), this.parameters, out this.printData_cnt))
+            Base_ViewModel resultReport = biModel.GetWarehouse_R21Data(warehouse_R21, out this.sqlcmd, out this.parameters);
+            if (!resultReport.Result)
             {
-                this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
-
-                return result;
+                return resultReport.Result;
             }
 
-            #endregion
+            this.printData_cnt = resultReport.Dt;
+            this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
+
             return Ict.Result.True;
+            #endregion
+            #endregion
         }
 
         /// <inheritdoc/>
