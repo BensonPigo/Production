@@ -101,11 +101,11 @@ Insert into P_CuttingOutputStatisitc ( TransferDate,
                                      )
 Select TransferDate,
        FactoryID, 
-       isnull(CutRateByDate, 0), 
-       isnull(CutRateByMonth, 0), 
-       isnull(CutOutputByDate, 0), 
-       isnull(CutOutputIn7Days, 0),
-       isnull(CutDelayIn7Days, 0)
+       CutRateByDate, 
+       CutRateByMonth, 
+       CutOutputByDate, 
+       CutOutputIn7Days,
+       CutDelayIn7Days
 From #tmp t
 Where not exists ( select 1 
 				   from P_CuttingOutputStatisitc p
