@@ -124,14 +124,14 @@ BEGIN
 
 	CREATE TABLE #NewWorkOrder_Distribute
 	(	
-		WorkOrderUkey BIGINT NOT NULL,
-		ID  VARCHAR(13) NOT NULL,
-		OrderID VARCHAR(13) NOT NULL,
-		Article VARCHAR(8) NOT NULL,
-		SizeCode VARCHAR(8) NOT NULL,
-		Qty    NUMERIC(6,0) NOT NULL,
-		ColorID VARCHAR(6) NOT NULL,
-		newKey INT NOT NULL
+		WorkOrderUkey BIGINT ,
+		ID  VARCHAR(13)  ,
+		OrderID VARCHAR(13)  ,
+		Article VARCHAR(8)  ,
+		SizeCode VARCHAR(8)  ,
+		Qty    NUMERIC(6,0)  ,
+		ColorID VARCHAR(50)  ,
+		newKey INT 
 	)
 	--Select a.*,0 as newKey InTo #NewWorkOrder_Distribute From WorkOrder_Distribute a  WITH (NOLOCK)  Where 1 = 0
 	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatio From WorkOrderForPlanning_SizeRatio a  WITH (NOLOCK)  Where 1 = 0
@@ -139,14 +139,14 @@ BEGIN
 	
 	CREATE TABLE #NewWorkOrder_Distributetmp
 	(	
-		WorkOrderUkey BIGINT NOT NULL,
-		ID  VARCHAR(13) NOT NULL,
-		OrderID VARCHAR(13) NOT NULL,
-		Article VARCHAR(8) NOT NULL,
-		SizeCode VARCHAR(8) NOT NULL,
-		Qty    NUMERIC(6,0) NOT NULL,
-		ColorID VARCHAR(6) NOT NULL,
-		newKey INT NOT NULL
+		WorkOrderUkey BIGINT,
+		ID  VARCHAR(13),
+		OrderID VARCHAR(13),
+		Article VARCHAR(8),
+		SizeCode VARCHAR(8) ,
+		Qty    NUMERIC(6,0) ,
+		ColorID VARCHAR(50) ,
+		newKey INT
 	)
 	--Select a.*,0 as newKey InTo #NewWorkOrder_Distributetmp From WorkOrder_Distribute a  WITH (NOLOCK)  Where 1 = 0
 	Select a.*,0 as newKey InTo #NewWorkOrder_SizeRatiotmp From WorkOrderForPlanning_SizeRatio a  WITH (NOLOCK)  Where 1 = 0
@@ -171,7 +171,7 @@ BEGIN
 	Declare @SCIRefno varchar(30)
 	Declare @Refno varchar(36)
 	Declare @MarkerNo varchar(10)
-	Declare @MarkerVerion varchar(3) --ISP20240588移除掉
+	Declare @MarkerVersion varchar(3) --ISP20240588移除掉
 	Declare @FabricCombo varchar(2)
 	Declare @PatternPanel varchar(2)
 	-- Declare @MarkerDownLoadid varchar(25)  --ISP20240588移除掉
@@ -278,7 +278,7 @@ BEGIN
 			@FabricCode = FabricCode,
 			@FabricPanelCode = a.FabricPanelCode,
 			@TotalLayer = TotalLayer,
-			@MarkerVerion = MarkerVersion,  --ISP20240588移除掉
+			@MarkerVersion = MarkerVersion,  --ISP20240588移除掉
 			@ukey = ukey,
 			@Type = '1',
 			-- @MarkerDownLoadId = MarkerDownloadID,  --ISP20240588移除掉
@@ -376,8 +376,8 @@ BEGIN
 					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 					if(@oldWorkerordernum != @newWorkerordernum)
 					Begin--byworkorder��Group�P�e�@�����@��,�h�s�W�@��
-						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerVerion,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,Article)
-						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerVerion,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@Type,@username,GETDATE(),@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@Article)
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerVersion,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,Article)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerVersion,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@Type,@username,GETDATE(),@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@Article)
 						SET @NewKey += 1--�o��N���[�F,�U���P��insert���n��1�~�|������
 						set @oldWorkerordernum = @newWorkerordernum
 					End						
@@ -431,7 +431,7 @@ BEGIN
 								if(@WorkOrder_DisQty>0)
 								Begin
 									insert into #NewWorkOrder_Distributetmp(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)
-									Values(@Cuttingid, @WorkOrder_DisOrderID,@Article,@SizeCode,@WorkOrder_DisQty,@NewKey-1,0)
+									Values(isnull(@Cuttingid,''), isnull(@WorkOrder_DisOrderID,''),isnull(@Article,''),isnull(@SizeCode,''),isnull(@WorkOrder_DisQty,''),isnull(@NewKey-1,0),0)
 								End
 							End;
 
@@ -502,7 +502,7 @@ BEGIN
 	End;
 
 	Insert into #NewWorkOrder_Distribute(ID,OrderID,Article,SizeCode,Qty,NewKey,WorkOrderUkey)							
-	select ID,OrderID,Article,SizeCode,sum(Qty),NewKey,WorkOrderUkey
+	select isnull(ID,''),isnull(OrderID,''),isnull(Article,''),isnull(SizeCode,''),isnull(sum(Qty),0),NewKey,WorkOrderUkey
 	from #NewWorkOrder_Distributetmp
 	group by ID,OrderID,Article,SizeCode,NewKey,WorkOrderUkey
 
