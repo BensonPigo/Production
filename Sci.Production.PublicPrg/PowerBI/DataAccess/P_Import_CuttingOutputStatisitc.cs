@@ -145,41 +145,39 @@ SELECT
     FactoryID = psol.FactoryID,
     TransferDate = psol.EstCuttingDate,
     CutRateByDate = IIF(ISNULL(psConsumption.Value, 0) = 0, 0,
-                        ISNULL((
-                            SELECT SUM(P_CuttingScheduleOutputList.ActConsOutput)
-                            FROM P_CuttingScheduleOutputList
-                            WHERE EstCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
-                              AND ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
-                        ) / psConsumption.Value, 0)),
+                        ISNULL(psConsumptionMol.Value / psConsumption.Value, 0)),
     CutRateByMonth = IIF(ISNULL(psConsumptionByMonth.value, 0) = 0, 0,
-                         ISNULL((
-                             SELECT SUM(P_CuttingScheduleOutputList.ActConsOutput)
-                             FROM P_CuttingScheduleOutputList WITH (NOLOCK)
-                             WHERE EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
-                                                    AND DATEADD(DAY, -1, psol.EstCuttingDate)
-                               AND ActCuttingDate < DATEADD(DAY, -1, psol.EstCuttingDate)
-                               AND FactoryID = psol.FactoryID
-                         ) / psConsumptionByMonth.value, 0)),
-    CutOutputByDate = ISNULL((
-                             SELECT SUM(P_CuttingScheduleOutputList.Consumption)
-                             FROM P_CuttingScheduleOutputList
-                             WHERE P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate
-                         ), 0),
+                         ISNULL(psConsumptionByMonthMol.value / psConsumptionByMonth.value, 0)),
+    CutOutputByDate = ISNULL(psCutOutputByDate.value, 0),
     CutOutputIn7Days = ISNULL(psByWeek.ActConsOutput, 0),
     CutDelayIn7Days = ISNULL(psByWeek.BalanceCons, 0)
 FROM (
-    SELECT DISTINCT
-        psol.EstCuttingDate,
-        psol.FactoryID,
-        psol.ActCuttingDate
+    SELECT distinct  psol.EstCuttingDate,
+        psol.FactoryID
     FROM P_CuttingScheduleOutputList psol WITH (NOLOCK)
     WHERE psol.EstCuttingDate BETWEEN @SDate AND @EDate
 ) psol
 OUTER APPLY (
-    SELECT value = SUM(pso.Consumption)
-    FROM P_CuttingScheduleOutputList pso
+	SELECT value = SUM(pso.ActConsOutput)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
     WHERE pso.EstCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
+    AND pso.ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
+	AND pso.FactoryID = psol.FactoryID
+) psConsumptionMol
+OUTER APPLY (
+    SELECT value = SUM(pso.Consumption)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
+    WHERE pso.EstCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
+	AND pso.FactoryID = psol.FactoryID
 ) psConsumption
+OUTER APPLY (
+    SELECT value = SUM(pso.ActConsOutput)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
+    WHERE pso.EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
+                        AND DATEADD(DAY, -1, psol.EstCuttingDate)
+    AND pso.ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
+    AND pso.FactoryID = psol.FactoryID
+) psConsumptionByMonthMol
 OUTER APPLY (
     SELECT value = SUM(pso.Consumption)
     FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
@@ -188,22 +186,20 @@ OUTER APPLY (
       AND FactoryID = psol.FactoryID
 ) psConsumptionByMonth
 OUTER APPLY (
-    SELECT ActConsOutput = SUM(P_CuttingScheduleOutputList.ActConsOutput),
-           BalanceCons = SUM(P_CuttingScheduleOutputList.BalanceCons)
-    FROM P_CuttingScheduleOutputList WITH (NOLOCK)
-    WHERE ActCuttingDate BETWEEN DATEADD(DAY, -7, psol.EstCuttingDate) AND psol.EstCuttingDate
-      AND FactoryID = psol.FactoryID
+	SELECT value = SUM(pso.Consumption)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
+    WHERE pso.ActCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
+	AND pso.FactoryID = psol.FactoryID
+) psCutOutputByDate
+OUTER APPLY (
+    SELECT ActConsOutput = SUM(pso.ActConsOutput),
+           BalanceCons = SUM(pso.BalanceCons)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
+    WHERE pso.ActCuttingDate BETWEEN DATEADD(DAY, -10, psol.EstCuttingDate) AND psol.EstCuttingDate
+	AND pso.EstCuttingDate = psol.EstCuttingDate
+    AND pso.FactoryID = psol.FactoryID
 ) psByWeek
-GROUP BY
-    psol.FactoryID,
-    psol.EstCuttingDate,
-	psConsumption.value,
-	psConsumptionByMonth.value,
-	psByWeek.ActConsOutput,
-	psByWeek.BalanceCons
-ORDER BY
-    psol.FactoryID,
-    psol.EstCuttingDate ASC;
+ORDER BY psol.FactoryID, psol.EstCuttingDate ASC
 
 ");
 
