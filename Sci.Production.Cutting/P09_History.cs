@@ -13,6 +13,8 @@ namespace Sci.Production.Cutting
     public partial class P09_History : Sci.Win.Tems.QueryForm
     {
         private readonly string id;
+        private DataTable dtAlloriginalCutref;
+        private DataTable dtAllcurrentCutref;
 
         /// <inheritdoc/>
         public P09_History(string id)
@@ -31,7 +33,7 @@ namespace Sci.Production.Cutting
 
         private void GridSetup()
         {
-            this.Helper.Controls.Grid.Generator(this.gridOriCutRef)
+            this.Helper.Controls.Grid.Generator(this.gridOriginalCutRef)
                 .Text("CutRef", header: "CutRef", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Layer", header: "Layer", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("GroupID", header: "Group", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -62,27 +64,21 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                 return;
             }
 
-            this.oriCutRefbs.DataSource = dts[0];
+            this.originalCutRefbs.DataSource = dts[0];
             this.currentCutRefbs.DataSource = dts[1];
             this.removeListbs.DataSource = dts[2];
 
             DataTable oridt = dts[0].DefaultView.ToTable(true, "CutRef");
             DataTable curdt = dts[1].DefaultView.ToTable(true, "CutRef");
 
-            DataTable oridt2 = this.AddEmptyItem(oridt);
-            DataTable curdt2 = this.AddEmptyItem(curdt);
+            this.dtAlloriginalCutref = this.AddEmptyItem(oridt);
+            this.dtAllcurrentCutref = this.AddEmptyItem(curdt);
 
-            MyUtility.Tool.SetupCombox(this.cmbOriCutRef, 1, oridt2);
-            MyUtility.Tool.SetupCombox(this.cmbCurrentCutRef, 1, curdt2);
-
-            this.displayBox1.Text = dts[0].AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
-            this.displayBox2.Text = dts[1].AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
-            this.displayBox3.Text = dts[2].AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
+            this.SetupCombobox();
 
             // 綁定 DataSource 後加事件
-            this.gridOriCutRef.RowEnter += this.Grid_RowEnter;
-            this.gridCurrentCutRef.RowEnter += this.Grid_RowEnter;
-            this.gridRemoveList.RowEnter += this.Grid_RowEnter;
+            this.AddRowEnterEvent();
+            this.Cal3TTLQty();
         }
 
         private DataTable AddEmptyItem(DataTable dt)
@@ -95,18 +91,41 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             return dt2;
         }
 
-        private void BtnClean_Click(object sender, EventArgs e)
+        private void SetupCombobox()
         {
-            this.cmbOriCutRef.SelectedIndex = 0;
-            this.cmbCurrentCutRef.SelectedIndex = 0;
-            this.ResetRowColors(this.gridOriCutRef);
-            this.ResetRowColors(this.gridCurrentCutRef);
-            this.ResetRowColors(this.gridRemoveList);
+            MyUtility.Tool.SetupCombox(this.cmbOriginalCutRef, 1, this.dtAlloriginalCutref);
+            MyUtility.Tool.SetupCombox(this.cmbCurrentCutRef, 1, this.dtAllcurrentCutref);
         }
 
-        private void BtnClose_Click(object sender, EventArgs e)
+        private void AddRowEnterEvent()
         {
-            this.Close();
+            this.gridOriginalCutRef.RowEnter += this.Grid_RowEnter;
+            this.gridCurrentCutRef.RowEnter += this.Grid_RowEnter;
+            this.gridRemoveList.RowEnter += this.Grid_RowEnter;
+        }
+
+        private void RemoveRowEnterEvent()
+        {
+            this.gridOriginalCutRef.RowEnter -= this.Grid_RowEnter;
+            this.gridCurrentCutRef.RowEnter -= this.Grid_RowEnter;
+            this.gridRemoveList.RowEnter -= this.Grid_RowEnter;
+        }
+
+        private void Cal3TTLQty()
+        {
+            this.displayBox1.Text = ((DataView)this.originalCutRefbs.List).ToTable().AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
+            this.displayBox2.Text = ((DataView)this.currentCutRefbs.List).ToTable().AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
+            this.displayBox3.Text = ((DataView)this.removeListbs.List).ToTable().AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])).ToString();
+        }
+
+        private void BtnClean_Click(object sender, EventArgs e)
+        {
+            this.SetupCombobox();
+            this.cmbOriginalCutRef.SelectedIndex = 0;
+            this.cmbCurrentCutRef.SelectedIndex = 0;
+            this.ResetRowColors(this.gridOriginalCutRef);
+            this.ResetRowColors(this.gridCurrentCutRef);
+            this.ResetRowColors(this.gridRemoveList);
         }
 
         private void Grid_RowEnter(object sender, DataGridViewCellEventArgs e)
@@ -120,7 +139,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             string groupID = MyUtility.Convert.GetString(clickedGrid.Rows[e.RowIndex].Cells["GroupID"].Value);
 
             // Highlight and scroll to matching rows in all grids
-            this.HighlightAndScrollToRows(this.gridOriCutRef, clickedGrid, groupID);
+            this.HighlightAndScrollToRows(this.gridOriginalCutRef, clickedGrid, groupID);
             this.HighlightAndScrollToRows(this.gridCurrentCutRef, clickedGrid, groupID);
             this.HighlightAndScrollToRows(this.gridRemoveList, clickedGrid, groupID);
         }
@@ -158,13 +177,15 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
         private void CmbOriCutRef_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string filter = $"CutRef = '{this.cmbOriCutRef.SelectedValue}'";
-            if (MyUtility.Check.Empty(this.cmbOriCutRef.SelectedValue))
+            string filter = $"CutRef = '{this.cmbOriginalCutRef.SelectedValue}'";
+            if (MyUtility.Check.Empty(this.cmbOriginalCutRef.SelectedValue))
             {
                 filter = string.Empty;
             }
 
-            this.oriCutRefbs.Filter = filter;
+            this.originalCutRefbs.Filter = filter;
+
+            this.FilterBasedOnGroupID(this.originalCutRefbs, this.currentCutRefbs, this.removeListbs);
         }
 
         private void CmbCurrentCutRef_SelectedIndexChanged(object sender, EventArgs e)
@@ -176,6 +197,24 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             }
 
             this.currentCutRefbs.Filter = filter;
+
+            this.FilterBasedOnGroupID(this.currentCutRefbs, this.originalCutRefbs, this.removeListbs);
+        }
+
+        private void FilterBasedOnGroupID(BindingSource sourceBs, BindingSource targetBs1, BindingSource targetBs2)
+        {
+            DataTable sourceTable = ((DataView)sourceBs.List).ToTable();
+            string groupIDFilter = string.Join(",", sourceTable.AsEnumerable().Select(row => $"'{row["GroupID"]}'").Distinct());
+
+            targetBs1.Filter = $"GroupID IN ({groupIDFilter})";
+            targetBs2.Filter = $"GroupID IN ({groupIDFilter})";
+
+            this.Cal3TTLQty();
+        }
+
+        private void BtnClose_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -393,9 +393,8 @@ order by convert(date, Min(SewingSchedule.Inline), 111) asc
             /*
                 Total Layer計算方式
                 根據CurrentDetailData的Order_EachconsUkey 判斷
-                1. Order_EachconsUkey 為空 => 使用 TotalLayerMarker 
+                1. Order_EachconsUkey 為空 => 使用 TotalLayerMarker
                 2. Order_EachconsUkey 不為空 => 使用 TotalLayerUkey
-
 
                 Balance Layer計算方式
                 群組加總"當前"WorkOrderForPlanning表身的 Layer 欄位，根據CurrentDetailData的Order_EachconsUkey 判斷群組條件

@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
 using System.Data;

@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.oriCutRefbs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.originalCutRefbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.currentCutRefbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.removeListbs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.labelSPNo = new Sci.Win.UI.Label();
-            this.cmbOriCutRef = new Sci.Win.UI.ComboBox();
+            this.cmbOriginalCutRef = new Sci.Win.UI.ComboBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label2 = new System.Windows.Forms.Label();
-            this.gridOriCutRef = new Sci.Win.UI.Grid();
+            this.gridOriginalCutRef = new Sci.Win.UI.Grid();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label3 = new System.Windows.Forms.Label();
             this.gridCurrentCutRef = new Sci.Win.UI.Grid();
@@ -52,14 +52,14 @@
             this.displayBox3 = new Sci.Win.UI.DisplayBox();
             this.btnClean = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.oriCutRefbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originalCutRefbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.currentCutRefbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.removeListbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridOriCutRef)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridOriginalCutRef)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -78,17 +78,17 @@
             // 
             // cmbOriCutRef
             // 
-            this.cmbOriCutRef.BackColor = System.Drawing.Color.White;
-            this.cmbOriCutRef.EditMode = Sci.Win.UI.AdvEditModes.None;
-            this.cmbOriCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbOriCutRef.FormattingEnabled = true;
-            this.cmbOriCutRef.IsSupportUnselect = true;
-            this.cmbOriCutRef.Location = new System.Drawing.Point(116, 8);
-            this.cmbOriCutRef.Name = "cmbOriCutRef";
-            this.cmbOriCutRef.OldText = "";
-            this.cmbOriCutRef.Size = new System.Drawing.Size(121, 24);
-            this.cmbOriCutRef.TabIndex = 4;
-            this.cmbOriCutRef.SelectedIndexChanged += new System.EventHandler(this.CmbOriCutRef_SelectedIndexChanged);
+            this.cmbOriginalCutRef.BackColor = System.Drawing.Color.White;
+            this.cmbOriginalCutRef.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.cmbOriginalCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cmbOriginalCutRef.FormattingEnabled = true;
+            this.cmbOriginalCutRef.IsSupportUnselect = true;
+            this.cmbOriginalCutRef.Location = new System.Drawing.Point(116, 8);
+            this.cmbOriginalCutRef.Name = "cmbOriCutRef";
+            this.cmbOriginalCutRef.OldText = "";
+            this.cmbOriginalCutRef.Size = new System.Drawing.Size(121, 24);
+            this.cmbOriginalCutRef.TabIndex = 4;
+            this.cmbOriginalCutRef.SelectedIndexChanged += new System.EventHandler(this.CmbOriCutRef_SelectedIndexChanged);
             // 
             // splitContainer1
             // 
@@ -101,7 +101,7 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.label2);
-            this.splitContainer1.Panel1.Controls.Add(this.gridOriCutRef);
+            this.splitContainer1.Panel1.Controls.Add(this.gridOriginalCutRef);
             // 
             // splitContainer1.Panel2
             // 
@@ -122,29 +122,29 @@
             // 
             // gridOriCutRef
             // 
-            this.gridOriCutRef.AllowUserToAddRows = false;
-            this.gridOriCutRef.AllowUserToDeleteRows = false;
-            this.gridOriCutRef.AllowUserToResizeRows = false;
-            this.gridOriCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridOriginalCutRef.AllowUserToAddRows = false;
+            this.gridOriginalCutRef.AllowUserToDeleteRows = false;
+            this.gridOriginalCutRef.AllowUserToResizeRows = false;
+            this.gridOriginalCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridOriCutRef.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridOriCutRef.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridOriCutRef.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridOriCutRef.DataSource = this.oriCutRefbs;
-            this.gridOriCutRef.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridOriCutRef.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridOriCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridOriCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridOriCutRef.Location = new System.Drawing.Point(0, 23);
-            this.gridOriCutRef.Name = "gridOriCutRef";
-            this.gridOriCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridOriCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridOriCutRef.RowTemplate.Height = 24;
-            this.gridOriCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridOriCutRef.ShowCellToolTips = false;
-            this.gridOriCutRef.Size = new System.Drawing.Size(350, 489);
-            this.gridOriCutRef.TabIndex = 0;
+            this.gridOriginalCutRef.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridOriginalCutRef.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridOriginalCutRef.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridOriginalCutRef.DataSource = this.originalCutRefbs;
+            this.gridOriginalCutRef.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridOriginalCutRef.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridOriginalCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridOriginalCutRef.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridOriginalCutRef.Location = new System.Drawing.Point(0, 23);
+            this.gridOriginalCutRef.Name = "gridOriCutRef";
+            this.gridOriginalCutRef.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridOriginalCutRef.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridOriginalCutRef.RowTemplate.Height = 24;
+            this.gridOriginalCutRef.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridOriginalCutRef.ShowCellToolTips = false;
+            this.gridOriginalCutRef.Size = new System.Drawing.Size(350, 489);
+            this.gridOriginalCutRef.TabIndex = 0;
             // 
             // splitContainer2
             // 
@@ -357,13 +357,13 @@
             this.Controls.Add(this.cmbCurrentCutRef);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.splitContainer1);
-            this.Controls.Add(this.cmbOriCutRef);
+            this.Controls.Add(this.cmbOriginalCutRef);
             this.Controls.Add(this.labelSPNo);
             this.Name = "P09_History";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P09.History";
             this.Controls.SetChildIndex(this.labelSPNo, 0);
-            this.Controls.SetChildIndex(this.cmbOriCutRef, 0);
+            this.Controls.SetChildIndex(this.cmbOriginalCutRef, 0);
             this.Controls.SetChildIndex(this.splitContainer1, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.cmbCurrentCutRef, 0);
@@ -375,7 +375,7 @@
             this.Controls.SetChildIndex(this.displayBox3, 0);
             this.Controls.SetChildIndex(this.btnClean, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
-            ((System.ComponentModel.ISupportInitialize)(this.oriCutRefbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.originalCutRefbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.currentCutRefbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.removeListbs)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -383,7 +383,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridOriCutRef)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridOriginalCutRef)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
@@ -398,14 +398,14 @@
         }
 
         #endregion
-        private Win.UI.ListControlBindingSource oriCutRefbs;
+        private Win.UI.ListControlBindingSource originalCutRefbs;
         private Win.UI.ListControlBindingSource currentCutRefbs;
         private Win.UI.ListControlBindingSource removeListbs;
         private Win.UI.Label labelSPNo;
-        private Win.UI.ComboBox cmbOriCutRef;
+        private Win.UI.ComboBox cmbOriginalCutRef;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.SplitContainer splitContainer2;
-        private Win.UI.Grid gridOriCutRef;
+        private Win.UI.Grid gridOriginalCutRef;
         private Win.UI.Grid gridCurrentCutRef;
         private Win.UI.Grid gridRemoveList;
         private Win.UI.ComboBox cmbCurrentCutRef;

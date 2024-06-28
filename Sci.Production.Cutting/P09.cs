@@ -36,7 +36,6 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeter;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLength;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLength;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_MarkerNo;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_SP;
