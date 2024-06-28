@@ -184,6 +184,7 @@ AND ALMCS.Junk = 0
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
+            //new P06_Print(this.CurrentMaintain["ID"].ToString());
             new P06_Print(this.CurrentMaintain["ID"].ToString(), this.oriDataTable).ShowDialog();
             return base.ClickPrint();
         }
@@ -237,69 +238,81 @@ AND ALMCS.Junk = 0
                         LEFT JOIN Employee e WITH (NOLOCK) ON e.FactoryID = '{factoryID}' AND e.ID = ad.EmployeeID
                         INNER JOIN LineMappingBalancing lmb ON lmb.ID = ad.ID
                         LEFT JOIN MachineType_Detail md ON md.ID = ad.MachineTypeID AND md.FactoryID = lmb.FactoryID
+                        OUTER APPLY
+	                    (
+		                    select val = stuff((select distinct concat(',',Name)
+		                    from OperationRef a
+		                    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		                    where a.CodeType = '00007' and a.id = ad.OperationID  for xml path('') ),1,1,'')
+	                    )Motion
 		                OUTER APPLY
 		                (
 			                SELECT
-			                [ST_MC_Type]
-			                ,[Motion]
-			                ,[Group_Header]
-			                ,[Part]
-			                ,[Attachment]
-			                ,[Effi_3_year] = AVG(CAST([Effi_3_year] AS DECIMAL(10, 2)))
-			                From
-			                (
-				                SELECT 
-				                [ST_MC_Type] =lmd.MachineTypeID
-				                ,[Motion] = Operation_P03.val
-				                ,[Group_Header] = tsd.[location] 
-				                ,[Part] = lmd.SewingMachineAttachmentID
-				                ,[Attachment] = lmd.Attachment
-				                ,Effi_3_year = CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2))
-				                from Employee eo
-				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
-				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
-				                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
-				                OUTER APPLY
-				                (
-				                select val = stuff((select distinct concat(',',Name)
-						                from OperationRef a
-						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
-				                )Operation_P03
-				                WHERE 
-				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
-				                ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+                            [ST_MC_Type]
+                            ,[Motion]
+                            ,[Group_Header]
+                            ,[Part]
+                            ,[Attachment]
+                            ,[Effi_3_year] =isnull(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'),'0.00')
+                            From
+                            (
+                                SELECT 
+                                [ST_MC_Type] =lmd.MachineTypeID
+                                ,[Motion] = Operation_P03.val
+                                ,[Group_Header] = tsd.[location] 
+                                ,[Part] = lmd.SewingMachineAttachmentID
+                                ,[Attachment] = lmd.Attachment
+                                ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+                                from Employee eo
+                                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
+                                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
+                                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+                                OUTER APPLY
+                                (
+                                select val = stuff((select distinct concat(',',Name)
+		                                from OperationRef a
+		                                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		                                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+                                )Operation_P03
+	                            WHERE 
+	                            eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
+			                    lmd.MachineTypeID = ad.MachineTypeID and
+			                    Operation_P03.val = Motion.val AND
+			                    lmd.Attachment = ad.Attachment AND
+			                    lmd.SewingMachineAttachmentID = ad.SewingMachineAttachmentID AND
+		                        ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
 			                )a
 			                GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
 		                )Effi
 		                OUTER APPLY
 		                (
 			                SELECT
-			                [ST_MC_Type]
-			                ,[Motion]
-			                ,[Effi_90_day] =AVG(CAST([Effi_90_day] AS DECIMAL(10, 2)))
-			                From
-			                (
-				                SELECT 
-				                [ST_MC_Type] =lmd.MachineTypeID
-				                ,[Motion] = Operation_P03.val
-				                ,Effi_90_day =  FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD / lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
-				                from Employee eo
-				                left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
-				                left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
-				                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
-				                OUTER APPLY
-				                (
-				                select val = stuff((select distinct concat(',',Name)
-						                from OperationRef a
-						                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-						                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
-				                )Operation_P03
-				                WHERE 
-				                eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
-				                ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
-			                )a
-			                GROUP BY [ST_MC_Type],[Motion]
+	                        [ST_MC_Type]
+	                        ,[Motion]
+	                        ,[Effi_90_day] =isnull(FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00'),'0')
+	                        From
+	                        (
+		                        SELECT 
+		                        [ST_MC_Type] =lmd.MachineTypeID
+		                        ,[Motion] = Operation_P03.val
+		                        ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+		                        from Employee eo
+		                        left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eO.ID　
+		                        left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
+		                        OUTER APPLY
+		                        (
+			                        select val = stuff((select distinct concat(',',Name)
+			                        from OperationRef a
+			                        inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+			                        where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+		                        )Operation_P03
+		                        WHERE 
+		                        eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
+			                    lmd.MachineTypeID = ad.MachineTypeID and
+			                    Operation_P03.val = Motion.val AND
+		                        ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
+	                        )a
+	                        GROUP BY [ST_MC_Type],[Motion]
 		                )Effi_90_day
                         WHERE ad.ID = '{masterID}'
                     ) a
@@ -1063,7 +1076,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true);
+               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1276,57 +1289,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             string sqlWhere = string.Empty;
 
-            string strDept = string.Empty;
-            string strPosition = string.Empty;
-            string strWhere = string.Empty;
-            switch (factoryID)
-            {
-                case "MAI":
-                case "MA2":
-                case "MA3":
-                case "MW2":
-                case "FIT":
-                case "MWI":
-                case "FAC":
-                case "FA2":
-                case "PSR":
-                case "VT1":
-                case "VT2":
-                case "GMM":
-                case "GM2":
-                case "GMI":
-                case "PS2":
-                case "ALA":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-                case "ESP":
-                case "ES2":
-                case "ES3":
-                case "VSP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-                case "SPT":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-                case "SNP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-                case "SPS":
-                case "SPR":
-                    strDept = $"'SEW'";
-                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-            }
-
             if (!MyUtility.Check.Empty(iD))
             {
                 sqlWhere += $" and e.ID = '{iD}' ";
@@ -1352,7 +1314,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         and e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}')
                         and eas.P06 = 1"
                 + sqlWhere
-                + strWhere
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : $@" and FirstName = '{firstName}'");
 

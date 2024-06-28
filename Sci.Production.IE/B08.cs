@@ -28,12 +28,12 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.Helper.Controls.Grid.Generator(this.gridDetail)
-            .Text("ST_MC_Type", header: "ST/MC Type", width: Widths.AnsiChars(25), iseditingreadonly: true)
-            .Text("Motion", header: "Motion", width: Widths.AnsiChars(35), iseditingreadonly: true)
-            .Text("Effi_90_day", header: "90D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Effi_180_day", header: "180D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Effi_270_day", header: "270D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Effi_360_day", header: "360D Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("ST_MC_Type", header: "ST/MC Type", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Motion", header: "Motion", width: Widths.AnsiChars(25), iseditingreadonly: true)
+            .Text("Effi_90_day", header: "90D Effi %", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Effi_180_day", header: "180D Effi %", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Effi_270_day", header: "270D Effi %", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Text("Effi_360_day", header: "360D Effi %", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
         }
 
@@ -114,7 +114,7 @@ namespace Sci.Production.IE
 	            SELECT 
 	            [ST_MC_Type] = lmbd.MachineTypeID
 	            ,[Motion] =  Operation_P06.val
-	            ,[Group_Header] = lmbd.[location]
+	            ,[Group_Header] = REPLACE(lmbd.[location], '--', '')
 	            ,[Part] = lmbd.SewingMachineAttachmentID
 	            ,[Attachment] =  lmbd.Attachment
 	            ,Effi_3_year = FORMAT(CAST(iif(lmbd.Cycle = 0,0,ROUND(lmbd.GSD/ lmbd.Cycle*100,2)) AS DECIMAL(10, 2)), '0.00')
@@ -147,39 +147,36 @@ namespace Sci.Production.IE
             SELECT
             [ST_MC_Type]
             ,[Motion]
-            ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_180_day] =FORMAT(AVG(CAST([Effi_180_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_270_day] =FORMAT(AVG(CAST([Effi_270_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_360_day] =FORMAT(AVG(CAST([Effi_360_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_90_day] =FORMAT(iif(sum([90cnt])=0,0,sum(CAST([Effi_90_day] AS DECIMAL(10, 2)))/sum([90cnt])), '0.00')
+            ,[Effi_180_day] =FORMAT(iif(sum([180cnt])=0,0,sum(CAST([Effi_180_day] AS DECIMAL(10, 2)))/sum([180cnt])), '0.00')
+            ,[Effi_270_day] =FORMAT(iif(sum([270cnt])=0,0,sum(CAST([Effi_270_day] AS DECIMAL(10, 2)))/sum([270cnt])), '0.00')
+            ,[Effi_360_day] =FORMAT(iif(sum([360cnt])=0,0,sum(CAST([Effi_360_day] AS DECIMAL(10, 2)))/sum([360cnt])), '0.00')
             From
             (
-                SELECT 
-                [ST_MC_Type] = ISNULL(lmd_360_Day.MachineTypeID,'')
-                ,[Motion] = ISNULL(Operation_P03.val,'')
-                ,Effi_90_day = FORMAT(CAST(iif(lmd_90_Day.Cycle = 0,0,ROUND(lmd_90_Day.GSD/ lmd_90_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_180_day = FORMAT(CAST(iif(lmd_180_Day.Cycle = 0,0,ROUND(lmd_180_Day.GSD/ lmd_180_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_270_day = FORMAT(CAST(iif(lmd_270_Day.Cycle = 0,0,ROUND(lmd_270_Day.GSD/ lmd_270_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_360_day = FORMAT(CAST(iif(lmd_360_Day.Cycle = 0,0,ROUND(lmd_360_Day.GSD/ lmd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
-                from Employee e
-				left JOIN LineMapping_Detail lmd_360_Day WITH(NOLOCK) on lmd_360_Day.EmployeeID = e.ID
-                left JOIN LineMapping lm_360_Day WITH(NOLOCK) on lm_360_Day.id = lmd_360_Day.ID AND ((lm_360_Day.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm_360_Day.EditDate <= GETDATE()) or (lm_360_Day.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm_360_Day.AddDate <= GETDATE()))
-
-				left JOIN LineMapping_Detail lmd_270_Day WITH(NOLOCK) on lmd_270_Day.EmployeeID = e.ID AND lmd_270_Day.MachineTypeID = lmd_360_Day.MachineTypeID
-                left JOIN LineMapping lm_270_Day WITH(NOLOCK) on lm_270_Day.id = lmd_270_Day.ID AND ((lm_270_Day.EditDate >= DATEADD(DAY, -270, GETDATE()) and lm_270_Day.EditDate <= GETDATE()) or (lm_270_Day.AddDate >= DATEADD(DAY, -270, GETDATE()) and lm_270_Day.AddDate <= GETDATE()))
-
-				left JOIN LineMapping_Detail lmd_180_Day WITH(NOLOCK) on lmd_180_Day.EmployeeID = e.ID  AND lmd_180_Day.MachineTypeID = lmd_360_Day.MachineTypeID
-                left JOIN LineMapping lm_180_Day WITH(NOLOCK) on lm_180_Day.id = lmd_180_Day.ID AND ((lm_180_Day.EditDate >= DATEADD(DAY, -180, GETDATE()) and lm_180_Day.EditDate <= GETDATE()) or (lm_180_Day.AddDate >= DATEADD(DAY, -180, GETDATE()) and lm_180_Day.AddDate <= GETDATE()))
-
-
-                left JOIN LineMapping_Detail lmd_90_Day WITH(NOLOCK) on lmd_90_Day.EmployeeID = e.ID　AND lmd_90_Day.MachineTypeID = lmd_360_Day.MachineTypeID
-                left JOIN LineMapping lm_90_Day WITH(NOLOCK) on lm_90_Day.id = lmd_90_Day.ID AND ((lm_90_Day.EditDate >= DATEADD(DAY, -90, GETDATE()) and lm_90_Day.EditDate <= GETDATE()) or (lm_90_Day.AddDate >= DATEADD(DAY, -90, GETDATE()) and lm_90_Day.AddDate <= GETDATE()))
-                OUTER APPLY
-                (
-                select val = stuff((select distinct concat(',',Name)
-		                from OperationRef a
-		                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-		                where a.CodeType = '00007' and a.id = lmd_360_Day.OperationID  for xml path('') ),1,1,'')
-                )Operation_P03
+	            SELECT 
+	            [ST_MC_Type] = ISNULL(lmd_360_Day.MachineTypeID,'')
+	            ,[Motion] = ISNULL(Operation_P03.val,'')
+	            ,Effi_90_day = FORMAT(CAST(iif(lm_90_Day.ID is null or lmd_360_Day.Cycle = 0,0,ROUND(lmd_360_Day.GSD/ lmd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[90cnt] = iif(lm_90_Day.ID is null,0,1)
+	            ,Effi_180_day = FORMAT(CAST(iif(lm_180_Day.ID is null or lmd_360_Day.Cycle = 0,0,ROUND(lmd_360_Day.GSD/ lmd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[180cnt] = iif(lm_180_Day.ID is null,0,1)
+	            ,Effi_270_day = FORMAT(CAST(iif(lm_270_Day.ID is null or lmd_360_Day.Cycle = 0,0,ROUND(lmd_360_Day.GSD/ lmd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[270cnt] = iif(lm_270_Day.ID is null,0,1)
+	            ,Effi_360_day = FORMAT(CAST(iif(lm_360_Day.ID is null or lmd_360_Day.Cycle = 0,0,ROUND(lmd_360_Day.GSD/ lmd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[360cnt] = iif(lm_360_Day.ID is null,0,1)
+	            from Employee e WITH(NOLOCK)
+	            INNER JOIN LineMapping_Detail lmd_360_Day WITH(NOLOCK) on lmd_360_Day.EmployeeID = e.ID
+	            INNER JOIN LineMapping lm_360_Day WITH(NOLOCK) on  lm_360_Day.id = lmd_360_Day.ID AND ((lm_360_Day.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm_360_Day.EditDate <= GETDATE()) or (lm_360_Day.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm_360_Day.AddDate <= GETDATE()))
+	            left JOIN LineMapping lm_270_Day WITH(NOLOCK) on lm_270_Day.id = lmd_360_Day.ID AND ((lm_270_Day.EditDate >= DATEADD(DAY, -270, GETDATE()) and lm_270_Day.EditDate <= GETDATE()) or (lm_270_Day.AddDate >= DATEADD(DAY, -270, GETDATE()) and lm_270_Day.AddDate <= GETDATE()))
+	            left JOIN LineMapping lm_180_Day WITH(NOLOCK) on lm_180_Day.id = lmd_360_Day.ID AND ((lm_180_Day.EditDate >= DATEADD(DAY, -180, GETDATE()) and lm_180_Day.EditDate <= GETDATE()) or (lm_180_Day.AddDate >= DATEADD(DAY, -180, GETDATE()) and lm_180_Day.AddDate <= GETDATE()))
+	            left JOIN LineMapping lm_90_Day WITH(NOLOCK) on lm_90_Day.id = lmd_360_Day.ID AND ((lm_90_Day.EditDate >= DATEADD(DAY, -90, GETDATE()) and lm_90_Day.EditDate <= GETDATE()) or (lm_90_Day.AddDate >= DATEADD(DAY, -90, GETDATE()) and lm_90_Day.AddDate <= GETDATE()))
+	            OUTER APPLY
+	            (
+	            select val = stuff((select distinct concat(',',Name)
+			            from OperationRef a WITH(NOLOCK)
+			            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+			            where a.CodeType = '00007' and a.id = lmd_360_Day.OperationID  for xml path('') ),1,1,'')
+	            )Operation_P03
 	            WHERE 
 	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}'
             )a
@@ -191,31 +188,29 @@ namespace Sci.Production.IE
             SELECT
             [ST_MC_Type]
             ,[Motion]
-            ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_180_day] =FORMAT(AVG(CAST([Effi_180_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_270_day] =FORMAT(AVG(CAST([Effi_270_day] AS DECIMAL(10, 2))), '0.00')
-            ,[Effi_360_day] =FORMAT(AVG(CAST([Effi_360_day] AS DECIMAL(10, 2))), '0.00')
+            ,[Effi_90_day] =FORMAT(iif(sum([90cnt])=0,0,sum(CAST([Effi_90_day] AS DECIMAL(10, 2)))/sum([90cnt])), '0.00')
+            ,[Effi_180_day] =FORMAT(iif(sum([180cnt])=0,0,sum(CAST([Effi_180_day] AS DECIMAL(10, 2)))/sum([180cnt])), '0.00')
+            ,[Effi_270_day] =FORMAT(iif(sum([270cnt])=0,0,sum(CAST([Effi_270_day] AS DECIMAL(10, 2)))/sum([270cnt])), '0.00')
+            ,[Effi_360_day] =FORMAT(iif(sum([360cnt])=0,0,sum(CAST([Effi_360_day] AS DECIMAL(10, 2)))/sum([360cnt])), '0.00')
             From
             (
                 SELECT 
-                [ST_MC_Type] = lmbd_360_Day.MachineTypeID
-                ,[Motion] =  Operation_P06.val
-                ,Effi_90_day = FORMAT(CAST(iif(lmbd_90_Day.Cycle = 0,0,ROUND(lmbd_90_Day.GSD/ lmbd_90_Day.Cycle *100 ,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_180_day = FORMAT(CAST(iif(lmbd_180_Day.Cycle = 0,0,ROUND(lmbd_180_Day.GSD/ lmbd_180_Day.Cycle *100 ,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_270_day = FORMAT(CAST(iif(lmbd_270_Day.Cycle = 0,0,ROUND(lmbd_270_Day.GSD/ lmbd_270_Day.Cycle *100 ,2)) AS DECIMAL(10, 2)), '0.00')
-                ,Effi_360_day = FORMAT(CAST(iif(lmbd_360_Day.Cycle = 0,0,ROUND(lmbd_360_Day.GSD/ lmbd_360_Day.Cycle *100 ,2)) AS DECIMAL(10, 2)), '0.00')
+	            [ST_MC_Type] = ISNULL(lmbd_360_Day.MachineTypeID,'')
+	            ,[Motion] = ISNULL(Operation_P06.val,'')
+	            ,Effi_90_day = FORMAT(CAST(iif(lmb_90_Day.ID is null or lmbd_360_Day.Cycle = 0,0,ROUND(lmbd_360_Day.GSD/ lmbd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[90cnt] = iif(lmb_90_Day.ID is null,0,1)
+	            ,Effi_180_day = FORMAT(CAST(iif(lmb_180_Day.ID is null or lmbd_360_Day.Cycle = 0,0,ROUND(lmbd_360_Day.GSD/ lmbd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[180cnt] = iif(lmb_180_Day.ID is null,0,1)
+	            ,Effi_270_day = FORMAT(CAST(iif(lmb_270_Day.ID is null or lmbd_360_Day.Cycle = 0,0,ROUND(lmbd_360_Day.GSD/ lmbd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[270cnt] = iif(lmb_270_Day.ID is null,0,1)
+	            ,Effi_360_day = FORMAT(CAST(iif(lmb_360_Day.ID is null or lmbd_360_Day.Cycle = 0,0,ROUND(lmbd_360_Day.GSD/ lmbd_360_Day.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+	            ,[360cnt] = iif(lmb_360_Day.ID is null,0,1)
                 from Employee e
                 INNER JOIN LineMappingBalancing_Detail lmbd_360_Day on lmbd_360_Day.EmployeeID = e.ID
                 INNER JOIN LineMappingBalancing lmb_360_Day on lmb_360_Day.id = lmbd_360_Day.ID AND ((lmb_360_Day.EditDate >= DATEADD(DAY, -360, GETDATE()) and lmb_360_Day.EditDate <= GETDATE()) or (lmb_360_Day.AddDate >= DATEADD(DAY, -360, GETDATE()) and lmb_360_Day.AddDate <= GETDATE()))
-
-                INNER JOIN LineMappingBalancing_Detail lmbd_270_Day on lmbd_270_Day.EmployeeID = e.ID AND lmbd_270_Day.MachineTypeID = lmbd_360_Day.MachineTypeID
-                INNER JOIN LineMappingBalancing lmb_270_Day on lmb_270_Day.id = lmbd_270_Day.ID AND ((lmb_270_Day.EditDate >= DATEADD(DAY, -270, GETDATE()) and lmb_270_Day.EditDate <= GETDATE()) or (lmb_270_Day.AddDate >= DATEADD(DAY, -270, GETDATE()) and lmb_270_Day.AddDate <= GETDATE()))
-
-                INNER JOIN LineMappingBalancing_Detail lmbd_180_Day on lmbd_180_Day.EmployeeID = e.ID AND lmbd_180_Day.MachineTypeID = lmbd_360_Day.MachineTypeID
-                INNER JOIN LineMappingBalancing lmb_180_Day on lmb_180_Day.id = lmbd_180_Day.ID AND ((lmb_180_Day.EditDate >= DATEADD(DAY, -180, GETDATE()) and lmb_180_Day.EditDate <= GETDATE()) or (lmb_180_Day.AddDate >= DATEADD(DAY, -180, GETDATE()) and lmb_180_Day.AddDate <= GETDATE()))
-
-                INNER JOIN LineMappingBalancing_Detail lmbd_90_Day on lmbd_90_Day.EmployeeID = e.ID AND lmbd_90_Day.MachineTypeID = lmbd_360_Day.MachineTypeID
-                INNER JOIN LineMappingBalancing lmb_90_Day on lmb_90_Day.id = lmbd_90_Day.ID AND ((lmb_90_Day.EditDate >= DATEADD(DAY, -90, GETDATE()) and lmb_90_Day.EditDate <= GETDATE()) or (lmb_90_Day.AddDate >= DATEADD(DAY, -90, GETDATE()) and lmb_90_Day.AddDate <= GETDATE()))
+                INNER JOIN LineMappingBalancing lmb_270_Day on lmb_270_Day.id = lmbd_360_Day.ID AND ((lmb_270_Day.EditDate >= DATEADD(DAY, -270, GETDATE()) and lmb_270_Day.EditDate <= GETDATE()) or (lmb_270_Day.AddDate >= DATEADD(DAY, -270, GETDATE()) and lmb_270_Day.AddDate <= GETDATE()))
+                INNER JOIN LineMappingBalancing lmb_180_Day on lmb_180_Day.id = lmbd_360_Day.ID AND ((lmb_180_Day.EditDate >= DATEADD(DAY, -180, GETDATE()) and lmb_180_Day.EditDate <= GETDATE()) or (lmb_180_Day.AddDate >= DATEADD(DAY, -180, GETDATE()) and lmb_180_Day.AddDate <= GETDATE()))
+                INNER JOIN LineMappingBalancing lmb_90_Day on lmb_90_Day.id = lmbd_360_Day.ID AND ((lmb_90_Day.EditDate >= DATEADD(DAY, -90, GETDATE()) and lmb_90_Day.EditDate <= GETDATE()) or (lmb_90_Day.AddDate >= DATEADD(DAY, -90, GETDATE()) and lmb_90_Day.AddDate <= GETDATE()))
                 OUTER APPLY
                 (
                 select val = stuff((select distinct concat(',',Name)

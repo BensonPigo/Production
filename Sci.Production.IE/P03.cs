@@ -166,9 +166,9 @@ select *
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
-    ,[EstCycleTime] = ld.GSD / ld.OperatorEffi
-	,[EstTotalCycleTime] = ld.TotalGSDNO / ld.OperatorEffi
-	,[EstOutputHr] =  3600 / ld.TotalGSDNO / ld.OperatorEffi
+    ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi)
+	,[EstTotalCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.TotalGSDNO / ld.OperatorEffi)
+	,[EstOutputHr] = iif(ld.OperatorEffi = '0.00','0.00', 3600 / ld.TotalGSDNO / ld.OperatorEffi)
 from (
     select  ld.OriNO
 	    , ld.No
@@ -207,13 +207,21 @@ from (
         , [ReasonName] = lbr.Name
         , [EmployeeJunk] = e.junk
         , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
-		,[OperatorEffi] = iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) 
-		,[TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
+		, [OperatorEffi] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) ,'0.00')
+		, [TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
+		, [Motion] = Motion.val
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
     left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on ld.IEReasonLBRNotHit_DetailUkey = lbr.Ukey
     left join DropDownList d (NOLOCK) on d.ID=ld.PPA AND d.Type = 'PMS_IEPPA'
+    OUTER APPLY
+	(
+		select val = stuff((select distinct concat(',',Name)
+		from OperationRef a
+		inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		where a.CodeType = '00007' and a.id = ld.OperationID  for xml path('') ),1,1,'')
+	)Motion
     outer apply (
 	    select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03 ,0) = 0, 1, 0)
 		    , IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
@@ -233,15 +241,15 @@ from (
 	    SELECT
 	    [ST_MC_Type]
 	    ,[Motion]
-	    ,[Effi_90_day] =FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00')
+	    ,[Effi_90_day] =isnull(FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00'),'0')
 	    From
 	    (
 		    SELECT 
 		    [ST_MC_Type] =lmd.MachineTypeID
 		    ,[Motion] = Operation_P03.val
-		    ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+		    ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
 		    from Employee eo
-		    left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
+		    left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
 		    left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
 		    OUTER APPLY
 		    (
@@ -252,6 +260,8 @@ from (
 		    )Operation_P03
 		    WHERE 
 		    eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
+			lmd.MachineTypeID = ld.MachineTypeID and
+			Operation_P03.val = Motion.val AND
 		    ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
 	    )a
 	    GROUP BY [ST_MC_Type],[Motion]
@@ -264,7 +274,7 @@ from (
         ,[Group_Header]
         ,[Part]
         ,[Attachment]
-        ,[Effi_3_year] =FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00')
+        ,[Effi_3_year] =isnull(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'),'0.00')
         From
         (
             SELECT 
@@ -273,7 +283,7 @@ from (
             ,[Group_Header] = tsd.[location] 
             ,[Part] = lmd.SewingMachineAttachmentID
             ,[Attachment] = lmd.Attachment
-            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)*100) AS DECIMAL(10, 2)), '0.00')
+            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
             from Employee eo
             left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
             left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -287,6 +297,10 @@ from (
             )Operation_P03
 	        WHERE 
 	        eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
+			lmd.MachineTypeID = ld.MachineTypeID and
+			Operation_P03.val = Motion.val AND
+			lmd.Attachment = ld.Attachment AND
+			lmd.SewingMachineAttachmentID = ld.SewingMachineAttachmentID AND
 		    ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
         )a
         GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
@@ -983,7 +997,7 @@ and Name = @PPA
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(14), settings: notice)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
-            .Text("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
             ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -1084,11 +1098,11 @@ and Name = @PPA
             .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Text("ReasonName", header: "LBR not\r\nhit target\r\nreason.", width: Widths.AnsiChars(10), iseditable: true, iseditingreadonly: true, settings: reasonName)
-            .Text("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true,decimal_places: 0)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Text("EstTotalCycleTime", header: "Est. Total\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true)
+            .Numeric("EstTotalCycleTime", header: "Est. Total\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places : 2)
             ;
             this.grid1.Columns["No"].Frozen = true;
         }
@@ -1103,57 +1117,6 @@ and Name = @PPA
                 string[] nameParts = name.Split(',');
                 lastName = nameParts[0];
                 firstName = nameParts[1];
-            }
-
-            string strDept = string.Empty;
-            string strPosition = string.Empty;
-            string strWhere = string.Empty;
-            switch (Env.User.Factory)
-            {
-                case "MAI":
-                case "MA2":
-                case "MA3":
-                case "MW2":
-                case "FIT":
-                case "MWI":
-                case "FAC":
-                case "FA2":
-                case "PSR":
-                case "VT1":
-                case "VT2":
-                case "GMM":
-                case "GM2":
-                case "GMI":
-                case "PS2":
-                case "ALA":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and  e.Dept in({strDept})  and  e.Position in({strPosition})";
-                    break;
-                case "ESP":
-                case "ES2":
-                case "ES3":
-                case "VSP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and  e.Dept in({strDept})  and  e.Position in({strPosition})";
-                    break;
-                case "SPT":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and  e.Dept in({strDept})  and  e.Position in({strPosition})";
-                    break;
-                case "SNP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and e.Dept in({strDept})  and e.Position in({strPosition})";
-                    break;
-                case "SPS":
-                case "SPR":
-                    strDept = $"'SEW'";
-                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
-                    strWhere = $@" and  e.Dept in({strDept})  and  e.Position in({strPosition})";
-                    break;
             }
 
             string sqlCmd;
@@ -1183,8 +1146,6 @@ and Name = @PPA
                 new SqlParameter("@FirstName", firstName),
             };
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
-            {
                 sqlCmd = $@"
                 select 
                 e.ID
@@ -1195,42 +1156,15 @@ and Name = @PPA
                 ,SewingLineID 
                 , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  
                 ,e.FactoryID
+                , eas.P03
                 from Employee e WITH (NOLOCK) 
                 left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
                 where 
-                (ResignationDate > GETDATE() or ResignationDate is null) 
-                and e.Junk = 0 
-                and eas.P03 = 1
-                 {strWhere} "//+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
+                (ResignationDate is null or ResignationDate > GETDATE()) 
+                and e.Junk = 0 "
                 + (iD == null ? string.Empty : " and ID = @id ")
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
-            }
-            else
-            {
-                sqlCmd = $@"
-                select 
-                e.ID
-                ,FirstName
-                ,LastName
-                ,Section
-                ,Skill
-                ,SewingLineID 
-                , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  
-                ,e.FactoryID
-                from Employee e WITH (NOLOCK) 
-                left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
-                where 
-                (ResignationDate > GETDATE() or ResignationDate is null) 
-                and e.Junk = 0 
-                and e.FactoryID IN (select ID from Factory where FTYGroup = @factoryid)
-                and eas.P03 = 1
-                 {strWhere}"
-                + (iD == null ? string.Empty : " and ID = @id ")
-                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
-                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName")
-                + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
-            }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
             if (!result)
@@ -2594,7 +2528,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                                 ThreadColor = row.Field<string>("ThreadColor"),
                                 Notice = row.Field<string>("Notice"),
                                 Efficiency = row.Field<decimal>("Efficiency"),
-                                EstCycleTime = row.Field<string>("EstCycleTime"),
+                                EstCycleTime = row.Field<decimal>("EstCycleTime"),
                             }).ToList();
 
             DataTable dtSheet2 = (DataTable)this.listControlBindingSource1.DataSource;
@@ -2607,11 +2541,11 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                                     TotalCycle = row.Field<decimal>("TotalCycle"),
                                     TotalGSD = row.Field<decimal>("TotalGSD"),
                                     ReasonName = row.Field<string>("ReasonName"),
-                                    EstOutputHr = row.Field<string>("EstOutputHr"),
+                                    EstOutputHr = row.Field<decimal>("EstOutputHr"),
                                     EmployeeID = row.Field<string>("EmployeeID"),
                                     EmployeeName = row.Field<string>("EmployeeName"),
                                     EmployeeSkill = row.Field<string>("EmployeeSkill"),
-                                    EstTotalCycleTime = row.Field<string>("EstTotalCycleTime"),
+                                    EstTotalCycleTime = row.Field<decimal>("EstTotalCycleTime"),
                                 }).ToList();
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
@@ -2633,6 +2567,15 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 
             strExcelName.OpenFile();
             #endregion
+        }
+
+        /// <inheritdoc/>
+        private void TxtFactory_Validated(object sender, EventArgs e)
+        {
+            this.txtSewingLine.Text = string.Empty;
+            this.comboSewingTeam1.SelectedIndex = 0;
+            this.comboSewingTeam1.Text = string.Empty;
+            this.comboSewingTeam1.SelectedValue = string.Empty;
         }
     }
 

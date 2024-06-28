@@ -159,7 +159,7 @@ select o.FtyGroup
 								order by lmb.Version desc)
 from Orders o
 inner join factory f on f.id=o.FactoryID
-left join LineMappingBalancing lmb on lmb.StyleUKey = o.StyleUkey
+inner join LineMappingBalancing lmb on lmb.StyleUKey = o.StyleUkey
 LEFT join Style s on s.Ukey = lmb.StyleUKey
 Outer Apply (
     select IdAndNameAndExt
@@ -206,7 +206,7 @@ select o.FtyGroup
 								order by alm.Version desc)
 from Orders o
 inner join factory f on f.id=o.FactoryID
-left join AutomatedLineMapping alm on alm.StyleUKey = o.StyleUkey
+inner join AutomatedLineMapping alm on alm.StyleUKey = o.StyleUkey
 LEFT join Style s on s.Ukey = alm.StyleUKey
 Outer Apply (
     select IdAndNameAndExt

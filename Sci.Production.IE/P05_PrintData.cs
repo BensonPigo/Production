@@ -418,7 +418,7 @@ group by almd.No
             };
 
             DataTable[] dtResults;
-            DualResult result = DBProxy.Current.Select(null, sql, paras, out dtResults);
+             DualResult result = DBProxy.Current.Select(null, sql, paras, out dtResults);
 
             if (!result)
             {
@@ -962,6 +962,9 @@ group by almd.No
                     int nocolumn = leftDirection ? 14 : 18;
                     int stmcColumn = leftDirection ? 13 : 19;
 
+                    int MG = leftDirection ? 12 : 20;
+                    int tc = leftDirection ? 11 : 21;
+
                     if (reverse)
                     {
                         loadingPctcolumn = leftDirection ? 28 : 1;
@@ -969,6 +972,9 @@ group by almd.No
                         seqcolumn = leftDirection ? 22 : 5;
                         nocolumn = leftDirection ? 18 : 14;
                         stmcColumn = leftDirection ? 19 : 13;
+
+                        MG = leftDirection ? 20 : 12;
+                        tc = leftDirection ? 21 : 11;
                     }
 
                     // Operator loading (%)
@@ -979,17 +985,35 @@ group by almd.No
 
                     DataRow[] nodrs = dtSewingData.Select($@"No = '{MyUtility.Convert.GetString(nodr["No"])}'").OrderBy(x => MyUtility.Convert.GetInt(x["Seq"])).ToArray();
                     int ridx = 2;
-                    foreach (DataRow item in nodrs)
+
+                    for (int x = 0; x < nodrs.Length; x++)
                     {
                         // 將公式填入對應的格子中
                         this.AddLineMappingFormula(sheet, norow + ridx, alias);
 
                         // Seq.
-                        sheet.Cells[norow + ridx, seqcolumn] = item["Seq"].ToString();
+                        sheet.Cells[norow + ridx, seqcolumn] = nodrs[x]["Seq"].ToString();
+
+                        // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                        if (x > 0)
+                        {
+                            if (nodrs[x]["MachineTypeID"].ToString() == nodrs[x - 1]["MachineTypeID"].ToString() &&
+                                nodrs[x]["Attachment"].ToString() == nodrs[x - 1]["Attachment"].ToString() &&
+                                nodrs[x]["MasterPlusGroup"].ToString() == nodrs[x - 1]["MasterPlusGroup"].ToString() &&
+                                nodrs[x]["ThreadComboId"].ToString() == nodrs[x - 1]["ThreadComboId"].ToString() &&
+                                nodrs[x]["Template"].ToString() == nodrs[x - 1]["Template"].ToString())
+                            {
+
+                                    sheet.Cells[norow + ridx, tc] = string.Empty;
+                                    sheet.Cells[norow + ridx, MG] = string.Empty;
+                                    sheet.Cells[norow + ridx, stmcColumn] = string.Empty;
+
+                            }
+                        }
 
                         /******* ISP20240132：字形大小切換 *******/
                         Excel.Range cell = sheet.Cells[norow + ridx, stmcColumn];
-                        var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(item["Seq"])).ToList();
+                        var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[x]["Seq"])).ToList();
                         int i = list.AsEnumerable().Where(row =>
                                                         (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
                                                         (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
@@ -1147,14 +1171,30 @@ group by almd.No
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        foreach (DataRow item in nodrs)
+
+                        for(int i = 0; i < nodrs.Length; i++)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 5] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 5] = nodrs[i]["Seq"].ToString();
+
+                            // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                            if (i > 0)
+                            {
+                                if (nodrs[i]["MachineTypeID"].ToString() == nodrs[i - 1]["MachineTypeID"].ToString() &&
+                                    nodrs[i]["Attachment"].ToString() == nodrs[i - 1]["Attachment"].ToString() &&
+                                    nodrs[i]["MasterPlusGroup"].ToString() == nodrs[i - 1]["MasterPlusGroup"].ToString() &&
+                                    nodrs[i]["ThreadComboId"].ToString() == nodrs[i - 1]["ThreadComboId"].ToString() &&
+                                    nodrs[i]["Template"].ToString() == nodrs[i - 1]["Template"].ToString())
+                                {
+                                    sheet.Cells[norow + ridx, 11] = string.Empty;
+                                    sheet.Cells[norow + ridx, 12] = string.Empty;
+                                    sheet.Cells[norow + ridx, 13] = string.Empty;
+                                }
+                            }
 
                             /******* ISP20240132：字形大小切換 *******/
                             Excel.Range cell = sheet.Cells[norow + ridx, 13];
-                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(item["Seq"])).ToList();
+                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[i]["Seq"])).ToList();
                             list = list.AsEnumerable().Where(row =>
                                                             (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
                                                             (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
@@ -1198,14 +1238,29 @@ group by almd.No
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        foreach (DataRow item in nodrs)
+                        for (int i = 0; i < nodrs.Length; i++)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 22] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 22] = nodrs[i]["Seq"].ToString();
+
+                            // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                            if (i > 0)
+                            {
+                                if (nodrs[i]["MachineTypeID"].ToString() == nodrs[i - 1]["MachineTypeID"].ToString() &&
+                                    nodrs[i]["Attachment"].ToString() == nodrs[i - 1]["Attachment"].ToString() &&
+                                    nodrs[i]["MasterPlusGroup"].ToString() == nodrs[i - 1]["MasterPlusGroup"].ToString() &&
+                                    nodrs[i]["ThreadComboId"].ToString() == nodrs[i - 1]["ThreadComboId"].ToString() &&
+                                    nodrs[i]["Template"].ToString() == nodrs[i - 1]["Template"].ToString())
+                                {
+                                    sheet.Cells[norow + ridx, 19] = string.Empty;
+                                    sheet.Cells[norow + ridx, 20] = string.Empty;
+                                    sheet.Cells[norow + ridx, 21] = string.Empty;
+                                }
+                            }
 
                             /******* ISP20240132：字形大小切換 *******/
                             Excel.Range cell = sheet.Cells[norow + ridx, 19];
-                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(item["Seq"])).ToList();
+                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[i]["Seq"])).ToList();
                             list = list.AsEnumerable().Where(row =>
                                                             (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
                                                             (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
@@ -1275,8 +1330,13 @@ group by almd.No
 
             // ST/MC
             worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},4,0)),\"\",VLOOKUP(E{rownum},{alias},4,0) & IF(VLOOKUP(E{rownum},{alias},6,0) =\"\", \"\", CHAR(10) & VLOOKUP(E{rownum},{alias},6,0)) & IF(VLOOKUP(E{rownum},{alias},8,0) =\"\" , \"\", CHAR(10) & VLOOKUP(E{rownum},{alias},8,0)))";
-
             worksheet.Cells[rownum, 19] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},4,0)),\"\",VLOOKUP(V{rownum},{alias},4,0) & IF(VLOOKUP(V{rownum},{alias},6,0) =\"\", \"\", CHAR(10) & VLOOKUP(V{rownum},{alias},6,0)) & IF(VLOOKUP(V{rownum},{alias},8,0) =\"\" , \"\", CHAR(10) & VLOOKUP(V{rownum},{alias},8,0)))";
+
+            //worksheet.Cells[rownum, 13] = $"=IF(OR(ISNA(VLOOKUP(E{rownum},{alias},4,0)), VLOOKUP(E{rownum},{alias},4,0)=IF(ISNA(VLOOKUP(INDIRECT(\"E\" & ROW()-1),{alias},4,0)), \"\", VLOOKUP(INDIRECT(\"E\" & ROW()-1),{alias},4,0))), \"\", VLOOKUP(E{rownum},{alias},4,0))";
+            //worksheet.Cells[rownum, 19] = $"=IF(OR(ISNA(VLOOKUP(V{rownum},{alias},4,0)), VLOOKUP(V{rownum},{alias},4,0)=IF(ISNA(VLOOKUP(INDIRECT(\"V\" & ROW()-1),{alias}, 4,0)), \"\",VLOOKUP(INDIRECT(\"V\" & ROW()-1),{alias},4,0))), \"\", VLOOKUP(V{rownum},{alias},4,0))";
+
+       
+
         }
     }
 }

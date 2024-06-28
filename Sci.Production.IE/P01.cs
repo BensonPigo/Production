@@ -24,6 +24,7 @@ using static Ict.Win.UI.DataGridView;
 using System.Windows.Forms.DataVisualization.Charting;
 using Microsoft.SqlServer.Management.Smo;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
+using System.Runtime.Remoting;
 
 namespace Sci.Production.IE
 {
@@ -37,6 +38,9 @@ namespace Sci.Production.IE
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings frequency = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings smvsec = new DataGridViewGeneratorNumericColumnSettings();
+
+        private DataTable testTable;
+
         private string styleID;
         private string seasonID;
         private string brandID;
@@ -173,7 +177,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">PrepareDetailSelectCommandEventArgs</param>
         /// <returns>DualResult</returns>
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e) 
         {
             this.strTimeStudtID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
@@ -239,6 +243,8 @@ namespace Sci.Production.IE
             ,[IsNonSewingLineEditable] = cast(case    when isnull(md.IsSubprocess, 0) = 1 then 1
                                                     when isnull(md.IsNonSewingLine, 0) = 1 then 1
                                                     else 0 end as bit)
+            ,[Sort] = iif(td.Sort = 0 , ROW_NUMBER() OVER (ORDER BY  td.seq ASC),td.Sort)
+            into #tmp
             from TimeStudy_Detail td WITH (NOLOCK) 
             LEFT join tmp on tmp.ukey =td.ukey
             INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
@@ -262,7 +268,11 @@ namespace Sci.Production.IE
 	            ORDER BY t1.Seq asc
             )t1
             where td.ID = '{this.strTimeStudtID}'
-            order by td.Seq";
+            order by td.seq
+
+            Select * from #tmp order by sort
+            drop table #tmp
+            ";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -406,6 +416,8 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             {
                 ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
             }
+
+            this.testTable = this.DetailDatas.CopyToDataTable();
         }
 
         private void HideRows()
@@ -475,6 +487,8 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                         dr["SewingSeq"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
                         dr.EndEdit();
                     }
+
+
                 }
             };
             #endregion
@@ -1310,7 +1324,7 @@ and Name = @PPA
                 .Text("DesignateSeq", header: "Designate Seq", width: Widths.AnsiChars(4), settings: DSeq)
                 .Text("SewingSeq", header: "Sewing Seq", width: Widths.AnsiChars(4), settings: seq)
                 .Text("Seq", header: "Ori. Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7))
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
@@ -1338,6 +1352,33 @@ and Name = @PPA
             {
                 this.HideRows();
             };
+
+            this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
+        }
+
+        private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
+        {
+            if (e.RowIndex < 0)
+            {
+                return;
+            }
+
+            DataRow sourceRow = this.detailgrid.GetDataRow(e.RowIndex);
+
+            if (sourceRow.RowState == DataRowState.Added)
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["Location"].ReadOnly = false;
+
+                for (int i = e.RowIndex; i < this.detailgrid.RowCount; i++)
+                {
+                    this.detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.White;
+                    this.detailgrid.Rows[i].Cells["DesignateSeq"].Value = string.Empty;
+                }
+            }
+            else
+            {
+                this.detailgrid.Rows[e.RowIndex].Cells["Location"].ReadOnly = true;
+            }
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -2509,8 +2550,8 @@ and s.BrandID = @brandid ", Env.User.Factory,
                                     .Max();
 
                 DataRow nextDataRow = oriDt.Rows[index];
-                nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + 10).PadLeft(4, '0');
 
+                nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + 10).PadLeft(4, '0');
                 this.detailgridbs.DataSource = oriDt;
             }
             else if (index == -1)
@@ -2533,7 +2574,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
             int sewingSeq = 0;
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
 
             if (dt.Rows.Count >= 0)
@@ -2569,20 +2609,23 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     #endregion SewingSeq
 
                     #region OriSeq
-                    if (MyUtility.Convert.GetInt(seq) != 0 && MyUtility.Convert.GetInt(dr["Seq"]) != 0)
-                    {
-                        if (MyUtility.Convert.GetInt(dr["Seq"]) != 0)
-                        {
-                            if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
-                            {
-                                seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                            }
-                        }
-                    }
 
-                    dr["Seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
-                    dr["IsShow"] = 1;
-                    seq += 10;
+                    DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+                    this.detailgrid.AllowUserToAddRows = false;
+
+
+                    if (MyUtility.Check.Empty(dr["Seq"]))
+                    {
+                        string maxSewingSeq = oriDt.AsEnumerable()
+                        .Select(row => row.Field<string>("Seq"))
+                        .Max();
+
+                        var maxSeq = MyUtility.Convert.GetInt(maxSewingSeq) + 10;
+                        dr["Seq"] = MyUtility.Convert.GetString(maxSeq).PadLeft(4, '0');
+                        dr["IsShow"] = 1;
+                        // seq += 10;
+                    }
+                    
                     #endregion OirSeq
                 }
             }
@@ -2957,10 +3000,12 @@ and s.BrandID = @brandid";
         {
             List<DataRow> listBeforeDrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
             int rowIndex = 1;
-
+            int sort = 1;
             // 拖移後SewingSeq重新編排，所以使用拖移前keep的detail還原
             foreach (DataRow curRow in this.DetailDatas)
             {
+                curRow["Sort"] = sort;
+                sort++;
                 if (MyUtility.Check.Empty(curRow["SewingSeq"]))
                 {
                     continue;

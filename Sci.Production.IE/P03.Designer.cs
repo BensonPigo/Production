@@ -1375,6 +1375,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 21);
             this.txtFactory.TabIndex = 75;
+            this.txtFactory.Validated += new System.EventHandler(this.TxtFactory_Validated);
             // 
             // lbGSDVersion
             // 

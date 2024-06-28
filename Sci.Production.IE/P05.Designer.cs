@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -1068,8 +1068,8 @@
             // 
             this.chartLBR.Location = new System.Drawing.Point(845, 8);
             this.chartLBR.Name = "chartLBR";
-            series1.Name = "Series1";
-            this.chartLBR.Series.Add(series1);
+            series2.Name = "Series1";
+            this.chartLBR.Series.Add(series2);
             this.chartLBR.Size = new System.Drawing.Size(270, 173);
             this.chartLBR.TabIndex = 51;
             // 

@@ -23,6 +23,7 @@
     [Location]      VARCHAR(20)         CONSTRAINT [DF_TimeStudy_Detail_Location]    NOT NULL DEFAULT (''), 
     [SewingSeq]     VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_SewingSeq]    NOT NULL DEFAULT (''), 
     [DesignateSeq]  VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_DesignateSeq]    NOT NULL DEFAULT (''), 
+    [Sort] INT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -127,3 +128,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TimeStudy_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Location'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'排序',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Sort'

@@ -38,7 +38,7 @@ namespace Sci.Production.IE
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString(), rightDataTable: this.rightDataTable);
+            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString(),this.cbDirection.SelectedValue.ToString(), rightDataTable: this.rightDataTable);
 
             return base.ValidateInput();
         }

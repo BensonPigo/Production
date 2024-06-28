@@ -31,16 +31,16 @@
             this.components = new System.ComponentModel.Container();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.panel4 = new Sci.Win.UI.Panel();
-            this.btnCancel = new Sci.Win.UI.Button();
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.btnCancel = new Sci.Win.UI.Button();
+            this.panel4 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
-            this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // gridDetail
@@ -48,11 +48,13 @@
             this.gridDetail.AllowUserToAddRows = false;
             this.gridDetail.AllowUserToDeleteRows = false;
             this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gridDetail.DataSource = this.listControlBindingSource1;
-            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -65,29 +67,9 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(1060, 440);
+            this.gridDetail.Size = new System.Drawing.Size(1060, 397);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
-            // 
-            // panel4
-            // 
-            this.panel4.Controls.Add(this.btnCancel);
-            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(10, 405);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1060, 45);
-            this.panel4.TabIndex = 13;
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(318, 7);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(80, 30);
-            this.btnCancel.TabIndex = 2;
-            this.btnCancel.Text = "Close";
-            this.btnCancel.UseVisualStyleBackColor = true;
             // 
             // panel5
             // 
@@ -122,6 +104,26 @@
             this.panel3.Size = new System.Drawing.Size(1080, 10);
             this.panel3.TabIndex = 12;
             // 
+            // btnCancel
+            // 
+            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(974, 7);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(80, 30);
+            this.btnCancel.TabIndex = 2;
+            this.btnCancel.Text = "Close";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            // 
+            // panel4
+            // 
+            this.panel4.Controls.Add(this.btnCancel);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel4.Location = new System.Drawing.Point(10, 406);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1060, 44);
+            this.panel4.TabIndex = 13;
+            // 
             // B08_Operation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -137,8 +139,8 @@
             this.Text = "B08_Operation";
             ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
-            this.panel4.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -147,11 +149,11 @@
 
         private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
-        private Win.UI.Panel panel4;
-        private Win.UI.Button btnCancel;
         private Win.UI.Panel panel5;
         private Win.UI.Panel panel2;
         private Win.UI.Panel panel1;
         private Win.UI.Panel panel3;
+        private Win.UI.Button btnCancel;
+        private Win.UI.Panel panel4;
     }
 }

@@ -182,12 +182,12 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(902, 450);
+            this.DefaultOrder = "FactoryID,Dept,Position";
             this.EnableGridJunkColor = true;
             this.ExpressQuery = true;
             this.Name = "B17";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
             this.Text = "B17. Employee Allocation Setting";
-            this.UniqueExpress = "FactoryID,Dept,Position";
             this.WorkAlias = "EmployeeAllocationSetting";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();

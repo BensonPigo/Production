@@ -69,7 +69,7 @@ namespace Sci.Production.IE
             else
             {
                 bool isEmptySewingLine = MyUtility.Check.Empty(this.strSewingLineID);
-                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}')";
+                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}') and P03 = 1";
                 this.dt = this.dtDeful.Select(strSewingWhere).TryCopyToDataTable(this.dtDeful);
                 this.listControlBindingSource1.DataSource = this.dt;
             }

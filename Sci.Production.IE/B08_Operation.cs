@@ -35,7 +35,7 @@ namespace Sci.Production.IE
             .Text("Group_Header", header: "Group Header", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Part", header: "Part", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Attachment", header: "Attachment", width: Widths.AnsiChars(15), iseditingreadonly: true)
-            .Text("Effi_3_year", header: "Effi %", width: Widths.AnsiChars(15), iseditingreadonly: true)
+            .Text("Effi_3_year", header: "Effi %", width: Widths.AnsiChars(12), iseditingreadonly: true)
             ;
             this.listControlBindingSource1.DataSource = this.dt;
         }
