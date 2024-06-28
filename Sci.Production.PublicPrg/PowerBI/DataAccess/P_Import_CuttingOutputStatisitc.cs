@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Sci.Data;
-using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -27,12 +26,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/dd"));
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
@@ -68,9 +67,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@sDate", sdate.ToString("yyyy-MM-dd")));
-            lisSqlParameter.Add(new SqlParameter("@eDate", edate.ToString("yyyy-MM-dd")));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@sDate", sdate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@eDate", edate.ToString("yyyy-MM-dd")),
+            };
 
             using (sqlConn)
             {
@@ -140,76 +141,79 @@ And P_CuttingOutputStatisitc.TransferDate Between @sDate and @eDate
 
             // 基本資料
             sqlCmd.Append($@"
-Select  FactoryID = psol.FactoryID
-	  , TransferDate = psol.EstCuttingDate
-
-	  , CutRateByDate = isnull((select sum(P_CuttingScheduleOutputList.ActConsOutput)
-					            from P_CuttingScheduleOutputList 
-						        where EstCuttingDate = DateADD(DAY, -1, psol.EstCuttingDate)
-						        and ActCuttingDate <= DateADD(DAY, -1, psol.EstCuttingDate))
-						        /
-						       (select sum(P_CuttingScheduleOutputList.Consumption)
-						        from P_CuttingScheduleOutputList 
-						        where EstCuttingDate = DateADD(DAY, -1, psol.EstCuttingDate)),0)
-
-	  , CutRateByMonth = iif(
-                              (select sum(P_CuttingScheduleOutputList.Consumption)
-						       from P_CuttingScheduleOutputList  with(nolock)
-						       where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
-						       and FactoryID = psol.FactoryID ) = 0,
-                               0, 
-                               isnull(
-                                 ( 
-                                --ActConsOutput
-                                  (select sum(P_CuttingScheduleOutputList.ActConsOutput)
-					               from P_CuttingScheduleOutputList  with(nolock)
-					               where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
-					               and ActCuttingDate < DATEADD(DAY, -1, psol.EstCuttingDate)
-					               and FactoryID = psol.FactoryID
-					              )
-					              /  
-					            --Consumption
-					              (select sum(P_CuttingScheduleOutputList.Consumption)
-						           from P_CuttingScheduleOutputList  with(nolock)
-						           where EstCuttingDate between DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1) and DATEADD(DAY, -1, psol.EstCuttingDate)
-						           and FactoryID = psol.FactoryID
-					              )
-                                ), 0)
-                              )
-
-	  , CutOutputByDate = isnull((select sum(P_CuttingScheduleOutputList.Consumption)
-						          from P_CuttingScheduleOutputList 
-							      where P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate)
-                                ,0)
-
-      , CutOutputIn7Days = isnull((select sum(P_CuttingScheduleOutputList.ActConsOutput) 
-						           from P_CuttingScheduleOutputList  with(nolock)
-						           where ActCuttingDate between DATEADD(DAY,-7,psol.EstCuttingDate ) and psol.EstCuttingDate
-						           and FactoryID = psol.FactoryID)
-                                 ,0)
-
-	  , CutDelayIn7Days = isnull((select sum(P_CuttingScheduleOutputList.BalanceCons) 
-                                  from P_CuttingScheduleOutputList  with(nolock)
-						          where ActCuttingDate between DATEADD(DAY,-7,psol.EstCuttingDate ) and psol.EstCuttingDate
-						          and FactoryID = psol.FactoryID)
-                                ,0)
-From (
-		Select psol.EstCuttingDate
-			 , psol.FactoryID
-			 , psol.ActCuttingDate
-		From P_CuttingScheduleOutputList psol with(nolock)
-		Where psol.EstCuttingDate between @SDate and @EDate
+SELECT
+    FactoryID = psol.FactoryID,
+    TransferDate = psol.EstCuttingDate,
+    CutRateByDate = IIF(ISNULL(psConsumption.Value, 0) = 0, 0,
+                        ISNULL((
+                            SELECT SUM(P_CuttingScheduleOutputList.ActConsOutput)
+                            FROM P_CuttingScheduleOutputList
+                            WHERE EstCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
+                              AND ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
+                        ) / psConsumption.Value, 0)),
+    CutRateByMonth = IIF(ISNULL(psConsumptionByMonth.value, 0) = 0, 0,
+                         ISNULL((
+                             SELECT SUM(P_CuttingScheduleOutputList.ActConsOutput)
+                             FROM P_CuttingScheduleOutputList WITH (NOLOCK)
+                             WHERE EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
+                                                    AND DATEADD(DAY, -1, psol.EstCuttingDate)
+                               AND ActCuttingDate < DATEADD(DAY, -1, psol.EstCuttingDate)
+                               AND FactoryID = psol.FactoryID
+                         ) / psConsumptionByMonth.value, 0)),
+    CutOutputByDate = ISNULL((
+                             SELECT SUM(P_CuttingScheduleOutputList.Consumption)
+                             FROM P_CuttingScheduleOutputList
+                             WHERE P_CuttingScheduleOutputList.EstCuttingDate = psol.EstCuttingDate
+                         ), 0),
+    CutOutputIn7Days = ISNULL(psByWeek.ActConsOutput, 0),
+    CutDelayIn7Days = ISNULL(psByWeek.BalanceCons, 0)
+FROM (
+    SELECT DISTINCT
+        psol.EstCuttingDate,
+        psol.FactoryID,
+        psol.ActCuttingDate
+    FROM P_CuttingScheduleOutputList psol WITH (NOLOCK)
+    WHERE psol.EstCuttingDate BETWEEN @SDate AND @EDate
 ) psol
-Group By  psol.FactoryID ,psol.EstCuttingDate 
-Order by  psol.FactoryID ,psol.EstCuttingDate  asc
+OUTER APPLY (
+    SELECT value = SUM(pso.Consumption)
+    FROM P_CuttingScheduleOutputList pso
+    WHERE pso.EstCuttingDate = DATEADD(DAY, -1, psol.EstCuttingDate)
+) psConsumption
+OUTER APPLY (
+    SELECT value = SUM(pso.Consumption)
+    FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
+    WHERE pso.EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
+                                  AND DATEADD(DAY, -1, psol.EstCuttingDate)
+      AND FactoryID = psol.FactoryID
+) psConsumptionByMonth
+OUTER APPLY (
+    SELECT ActConsOutput = SUM(P_CuttingScheduleOutputList.ActConsOutput),
+           BalanceCons = SUM(P_CuttingScheduleOutputList.BalanceCons)
+    FROM P_CuttingScheduleOutputList WITH (NOLOCK)
+    WHERE ActCuttingDate BETWEEN DATEADD(DAY, -7, psol.EstCuttingDate) AND psol.EstCuttingDate
+      AND FactoryID = psol.FactoryID
+) psByWeek
+GROUP BY
+    psol.FactoryID,
+    psol.EstCuttingDate,
+	psConsumption.value,
+	psConsumptionByMonth.value,
+	psByWeek.ActConsOutput,
+	psByWeek.BalanceCons
+ORDER BY
+    psol.FactoryID,
+    psol.EstCuttingDate ASC;
 
 ");
 
             #endregion
 
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@SDate", sdate.ToString("yyyy-MM-dd")));
-            paras.Add(new SqlParameter("@EDate", edate.ToString("yyyy-MM-dd")));
+            List<SqlParameter> paras = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", sdate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@EDate", edate.ToString("yyyy-MM-dd")),
+            };
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
