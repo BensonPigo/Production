@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Ict.Win.Tools;
 using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Andy.ExtensionMethods;
@@ -840,16 +841,16 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
         #region Auto CutRef / Cutno
 
         /// <summary>
-        /// 自動編碼CutRef，並Call API傳給廠商
+        /// 非編輯模式下,自動編碼CutRef，並Call API傳給廠商
+        /// 有空的話把準備資料階段改成Linq, 大量資料編碼時傳到DB會卡卡
         /// </summary>
         /// <param name="cuttingID">Cutting.ID</param>
         /// <param name="mDivision">MDivision</param>
         /// <param name="detailDatas">表身</param>
         /// <param name="form">form</param>
-        /// <returns>result</returns>
-        public static DualResult AutoRef(string cuttingID, string mDivision, DataTable detailDatas, CuttingForm form)
+        public static void AutoCutRef(string cuttingID, string mDivision, DataTable detailDatas, CuttingForm form)
         {
-            DataTable dtWorkOrder = detailDatas.AsEnumerable().CopyToDataTable();
+            DataTable dtWorkOrder = detailDatas.Copy();
 
             // 根據功能區分 TableName，Pkey Column Name
             string colName = string.Empty;
@@ -910,7 +911,8 @@ GROUP BY w.CutRef, w.FabricCombo, w.{colName}, w.MarkerName, w.EstCutDate {nColu
             DualResult cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable cutReftb, "#tmpWorkOrder");
             if (!cutRefresult)
             {
-                return cutRefresult;
+                MyUtility.Msg.ErrorBox(cutRefresult.ToString());
+                return;
             }
             #endregion
 
@@ -929,7 +931,8 @@ ORDER BY w.FabricCombo, w.{colName}";
             cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
             {
-                return cutRefresult;
+                MyUtility.Msg.ErrorBox(cutRefresult.ToString());
+                return;
             }
             #endregion
 
@@ -1005,11 +1008,12 @@ END";
                 if (result.ToString().Contains("Duplicate CutRef. Please redo Auto Ref#"))
                 {
                     MyUtility.Msg.WarningBox("Duplicate CutRef. Please redo Auto Ref#");
-                    return result;
+                    return;
                 }
                 else
                 {
-                    return result;
+                    MyUtility.Msg.ErrorBox(cutRefresult.ToString());
+                    return;
                 }
             }
 
@@ -1017,48 +1021,35 @@ END";
             {
                 Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
             }
-
-            return result;
         }
 
         /// <summary>
-        /// 自動編碼CutNo。當前行的 "CutNo" 是空的並且 "EstCutDate" 不為空，根據 "FabricCombo" 計算當前最大 "CutNo"
+        /// 自動編碼 CutNo。當前行的 "CutNo" 是空的並且 "EstCutDate" 不為空，by "FabricCombo" 群組遞增
         /// </summary>
         /// <param name="detailDatas">表身</param>
-        /// <param name="form">來源Form</param>
-        public static void AutoCut(DataTable detailDatas, CuttingForm form)
+        public static void AutoCut(IList<DataRow> detailDatas)
         {
-            if (form == CuttingForm.P02)
+            // 需要編碼的資料群
+            var groupedData = detailDatas
+                .Where(row => row["CutNo"] == DBNull.Value && !MyUtility.Check.Empty(row["EstCutDate"]))
+                .GroupBy(row => row["FabricCombo"].ToString());
+
+            foreach (var group in groupedData)
             {
-                return;
-            }
+                string fabricCombo = group.Key;
 
-            foreach (DataRow dr in detailDatas.Rows)
-            {
-                if (dr.RowState == DataRowState.Deleted)
+                int maxCutNo = detailDatas
+                    .Where(row => row["FabricCombo"].ToString() == fabricCombo && row["CutNo"] != DBNull.Value)
+                    .Select(row => MyUtility.Convert.GetInt(row["CutNo"]))
+                    .DefaultIfEmpty(0)
+                    .Max();
+
+                foreach (DataRow dr in group)
                 {
-                    continue;
-                }
-
-                if (MyUtility.Check.Empty(dr["CutNo"]) && !MyUtility.Check.Empty(dr["EstCutDate"]))
-                {
-                    string maxCutNoStr = detailDatas.Compute($"Max(CutNo)", $@"FabricCombo ='{dr["FabricCombo"]}'").ToString();
-                    int maxcutno;
-
-                    if (MyUtility.Check.Empty(maxCutNoStr) || !int.TryParse(maxCutNoStr, out maxcutno))
-                    {
-                        maxcutno = 1;
-                    }
-                    else
-                    {
-                        maxcutno += 1;
-                    }
-
-                    dr["CutNo"] = maxcutno;
+                    dr["CutNo"] = ++maxCutNo;
                 }
             }
         }
-
         #endregion
 
         #region P10/P20/P05 檢查

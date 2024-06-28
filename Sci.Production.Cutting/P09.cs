@@ -1737,6 +1737,7 @@ DEALLOCATE CURSOR_
         private void GridValidateControl()
         {
             // 若 Cell 還在編輯中, 即游標還在 Cell 中, 進行此 Cell 驗證事件, 並結束編輯
+            // 例如 P09:在最大值的 Cutno:5 按下 Backspace 此 cell 還沒結束編輯, 直接點 Auto CutNo 功能, 下一筆會編碼成 6, 且原本 5 這筆會是空白, 所以要先結束 Cell 編輯狀態
             this.detailgrid.ValidateControl();
             this.gridSizeRatio.ValidateControl();
             this.gridDistributeToSP.ValidateControl();
@@ -1753,13 +1754,14 @@ DEALLOCATE CURSOR_
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
             this.OnRefreshClick();
-            AutoRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
+            AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
             this.OnRefreshClick();
         }
 
         private void BtnAutoCut_Click(object sender, EventArgs e)
         {
-            AutoCut((DataTable)this.detailgridbs.DataSource, CuttingForm.P09);
+            this.GridValidateControl();
+            AutoCut(this.DetailDatas);
         }
 
         private void BtnAllSPDistribute_Click(object sender, EventArgs e)
