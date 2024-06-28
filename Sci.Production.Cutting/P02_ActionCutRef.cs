@@ -23,11 +23,10 @@ namespace Sci.Production.Cutting
         public DataRow CurrentMaintain;
         public DataRow CurrentDetailData;
         public DataTable dtWorkOrderForPlanning_SizeRatio_Ori;
-        public DataTable dtWorkOrderForPlanning_OrderList_Ori;
         public DataTable dtWorkOrderForPlanning_PatternPanel_Ori;
         public DataTable dtWorkOrderForPlanning_SizeRatio;
-        public DataTable dtWorkOrderForPlanning_OrderList;
         public DataTable dtWorkOrderForPlanning_PatternPanel;
+        public DataTable dtWorkOrderForPlanning_OrderList;
 #pragma warning restore SA1401 // Elements should be documented
 #pragma warning restore SA1600 // Elements should be documented
 

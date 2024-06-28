@@ -105,6 +105,7 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// Cutting P02、P09匯入立克系統產生的檔案，寫入Form表身的資料
         /// </summary>
+        /// <param name="form">P02 / P09</param>
         /// <param name="styleUKey">styleUKey</param>
         /// <param name="id">WorkOrderForOutput/WorkOrderForPlanning的ID</param>
         /// <param name="drSMNotice">drSMNotice</param>
@@ -390,7 +391,7 @@ namespace Sci.Production.Cutting
 
                             if (this.CurrentForm == CuttingForm.P09)
                             {
-                                this.ProcessColumns(row);
+                                Format4LengthColumn(row);
                             }
 
                             row.AcceptChanges();
@@ -636,7 +637,7 @@ namespace Sci.Production.Cutting
                         if (markerItemSet.CheckItemComplete() == true)
                         {
                             System.Diagnostics.Debug.WriteLine(linesAtThisItemSet.JoinToString("\r\n"));
-                            this.SingleMarkerItem(inserts_marker_ML, inserts_marker_SizeCode, inserts_marker_qty, markerItemSet, allError);
+                            this.SingleMarkerItem(inserts_marker_ML, inserts_marker_qty, markerItemSet, allError);
                             markerItemSet.SizeCode = null; // 將這個欄位值清空，回到UnComplete的狀態，準備讓也許下一行直接又是尺碼接數量
                             markerItemSet.Qty = null;
                         }
@@ -646,7 +647,7 @@ namespace Sci.Production.Cutting
                 if (markerItemSet.CheckItemComplete() == true)
                 {
                     System.Diagnostics.Debug.WriteLine(linesAtThisItemSet.JoinToString("\r\n"));
-                    this.SingleMarkerItem(inserts_marker_ML, inserts_marker_SizeCode, inserts_marker_qty, markerItemSet, allError);
+                    this.SingleMarkerItem(inserts_marker_ML, inserts_marker_qty, markerItemSet, allError);
 
                     markerItemSet.SizeCode = null; // 將這個欄位值清空，準備讓也許下一行直接又是尺碼接數量
                     markerItemSet.Qty = null;
@@ -668,7 +669,7 @@ namespace Sci.Production.Cutting
             }
         }
 
-        private bool SingleMarkerItem(List<DataRow> inserts_marker_ML, List<DataRow> inserts_marker_SizeCode, List<DataRow> inserts_marker_qty, MarkerItemSet item, List<string> allError)
+        private bool SingleMarkerItem(List<DataRow> inserts_marker_ML, List<DataRow> inserts_marker_qty, MarkerItemSet item, List<string> allError)
         {
             DataTable tableSchema_WorkOrder = this.WorkOrder.Clone();
             tableSchema_WorkOrder.Columns.Add("MatchFabric", typeof(string));
@@ -885,28 +886,6 @@ and ofa.id = ob.id and ofa.FabricCode = ob.FabricCode)
             else
             {
                 return "No found";
-            }
-        }
-
-        private void ProcessColumns(DataRow currentRow)
-        {
-            // MarkerLengthY, MarkerLengthE, ActCuttingPerimeterNew, StraightLengthNew, CurvedLengthNew
-            if (!MyUtility.Check.Empty(currentRow["MarkerLength"]))
-            {
-                string markerLength = MyUtility.Convert.GetString(currentRow["MarkerLength"]);
-                int indexY = markerLength.IndexOf("Ｙ");
-            }
-
-            this.PadLeftTen("ActCuttingPerimeter", currentRow);
-            this.PadLeftTen("StraightLength", currentRow);
-            this.PadLeftTen("CurvedLength", currentRow);
-        }
-
-        private void PadLeftTen(string columnName, DataRow currentRow)
-        {
-            if (!MyUtility.Check.Empty(currentRow[columnName]))
-            {
-                currentRow[columnName + "New"] = MyUtility.Convert.GetString(currentRow[columnName]).PadLeft(10, '0');
             }
         }
     }

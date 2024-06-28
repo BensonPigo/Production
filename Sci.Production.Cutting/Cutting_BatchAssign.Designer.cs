@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P02_BatchAssign
+    partial class Cutting_BatchAssign
     {
         /// <summary>
         /// 設計工具所需的變數。

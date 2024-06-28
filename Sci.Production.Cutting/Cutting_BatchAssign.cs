@@ -13,7 +13,7 @@ using static Sci.Production.Cutting.CuttingWorkOrder;
 namespace Sci.Production.Cutting
 {
     /// <inheritdoc/>
-    public partial class P02_BatchAssign : Win.Subs.Base
+    public partial class Cutting_BatchAssign : Win.Subs.Base
     {
         private List<DataRow> detailDatas_Ori; // 原始Detail
         private DataTable dt_CurentDetail; // 用來修改的 DataTable
@@ -33,7 +33,7 @@ namespace Sci.Production.Cutting
         /// <param name="id">cutting ID</param>
         /// <param name="form">P02或P09</param>
         /// <inheritdoc/>
-        public P02_BatchAssign(List<DataRow> detailDatas, string id, CuttingForm form)
+        public Cutting_BatchAssign(List<DataRow> detailDatas, string id, CuttingForm form)
         {
             this.InitializeComponent();
 

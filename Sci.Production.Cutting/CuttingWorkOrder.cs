@@ -1959,7 +1959,7 @@ AND Junk = 0
         /// 處理 ActCuttingPerimeter, StraightLength, CurvedLength
         /// </summary>
         /// <inheritdoc/>
-        public static string FormatData(string input)
+        public static string FormatLengthData(string input)
         {
             // 正則表達式匹配格式 "數字Yd數字"數字"
             var match = Regex.Match(input, @"(\d+)Yd(\d+)\""(\d+)");
@@ -2003,6 +2003,14 @@ AND Junk = 0
             }
 
             return eventString == "000Yd00\"00" ? string.Empty : eventString;
+        }
+
+        public static void Format4LengthColumn(DataRow row)
+        {
+            row["MarkerLength_Mask"] = FormatMarkerLength(row["MarkerLength"].ToString());
+            row["ActCuttingPerimeter_Mask"] = FormatLengthData(row["ActCuttingPerimeter"].ToString());
+            row["StraightLength_Mask"] = FormatLengthData(row["StraightLength"].ToString());
+            row["CurvedLength_Mask"] = FormatLengthData(row["CurvedLength"].ToString());
         }
         #endregion
 
@@ -2644,6 +2652,19 @@ ORDER BY FabricPanelCode,PatternPanel
         #endregion
 
         #region Grid Event
+        public static void Grid_ClickBeginEdit(object sender, EventArgs e)
+        {
+            Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)sender;
+            if (MyUtility.Check.Empty(grid.CurrentCell))
+            {
+                return;
+            }
+
+            // 游標直接進入 Cell, 才不用點兩下
+            grid.CurrentCell = grid[grid.CurrentCell.ColumnIndex, grid.CurrentCell.RowIndex];
+            grid.BeginEdit(true);
+        }
+
         public delegate bool CanEditDelegate(Sci.Win.UI.Grid grid, DataRow dr, string columnName);
 
         public static void ConfigureColumnEvents(Sci.Win.UI.Grid grid, CanEditDelegate canEditDelegate)

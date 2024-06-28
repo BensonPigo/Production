@@ -34,18 +34,18 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.label6 = new System.Windows.Forms.Label();
             this.gridSizeRatio = new Sci.Win.UI.Grid();
-            this.sizeratioMenuStrip = new Sci.Win.UI.ContextMenuStrip();
+            this.cmsSizeRatio = new Sci.Win.UI.ContextMenuStrip();
             this.insertSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sizeRatioBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label11 = new System.Windows.Forms.Label();
             this.gridOrderList = new Sci.Win.UI.Grid();
             this.orderListBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.numUnitCons = new Sci.Win.UI.NumericBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new Sci.Win.UI.Label();
-            this.disDescription = new Sci.Win.UI.DisplayBox();
-            this.disFabricTypeRefno = new Sci.Win.UI.DisplayBox();
+            this.displayBoxDescription = new Sci.Win.UI.DisplayBox();
+            this.displayBoxFabricTypeRefno = new Sci.Win.UI.DisplayBox();
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
@@ -86,8 +86,8 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
-            this.sizeratioMenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.sizeRatioBindingSource)).BeginInit();
+            this.cmsSizeRatio.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrderList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.orderListBindingSource)).BeginInit();
             this.panel2.SuspendLayout();
@@ -211,8 +211,8 @@
             this.panel1.Controls.Add(this.numUnitCons);
             this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.label4);
-            this.panel1.Controls.Add(this.disDescription);
-            this.panel1.Controls.Add(this.disFabricTypeRefno);
+            this.panel1.Controls.Add(this.displayBoxDescription);
+            this.panel1.Controls.Add(this.displayBoxFabricTypeRefno);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
@@ -282,8 +282,8 @@
             this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridSizeRatio.ContextMenuStrip = this.sizeratioMenuStrip;
-            this.gridSizeRatio.DataSource = this.sizeRatioBindingSource;
+            this.gridSizeRatio.ContextMenuStrip = this.cmsSizeRatio;
+            this.gridSizeRatio.DataSource = this.sizeRatiobs;
             this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -300,11 +300,11 @@
             // 
             // sizeratioMenuStrip
             // 
-            this.sizeratioMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.insertSizeRatioToolStripMenuItem,
             this.deleteSizeRatioToolStripMenuItem});
-            this.sizeratioMenuStrip.Name = "sizeratioMenuStrip";
-            this.sizeratioMenuStrip.Size = new System.Drawing.Size(164, 48);
+            this.cmsSizeRatio.Name = "sizeratioMenuStrip";
+            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
             // 
             // insertSizeRatioToolStripMenuItem
             // 
@@ -393,24 +393,24 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "Unit Cons/Cons";
             // 
-            // disDescription
+            // displayBoxDescription
             // 
-            this.disDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disDescription.Location = new System.Drawing.Point(129, 29);
-            this.disDescription.Multiline = true;
-            this.disDescription.Name = "disDescription";
-            this.disDescription.Size = new System.Drawing.Size(212, 70);
-            this.disDescription.TabIndex = 14;
+            this.displayBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
+            this.displayBoxDescription.Multiline = true;
+            this.displayBoxDescription.Name = "displayBoxDescription";
+            this.displayBoxDescription.Size = new System.Drawing.Size(212, 70);
+            this.displayBoxDescription.TabIndex = 14;
             // 
-            // disFabricTypeRefno
+            // displayBoxFabricTypeRefno
             // 
-            this.disFabricTypeRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.disFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
-            this.disFabricTypeRefno.Name = "disFabricTypeRefno";
-            this.disFabricTypeRefno.Size = new System.Drawing.Size(212, 23);
-            this.disFabricTypeRefno.TabIndex = 13;
+            this.displayBoxFabricTypeRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
+            this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(212, 23);
+            this.displayBoxFabricTypeRefno.TabIndex = 13;
             // 
             // label3
             // 
@@ -555,6 +555,7 @@
             // 
             // btnImportMarker
             // 
+            this.btnImportMarker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
             this.btnImportMarker.Name = "btnImportMarker";
@@ -693,8 +694,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
-            this.sizeratioMenuStrip.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.sizeRatioBindingSource)).EndInit();
+            this.cmsSizeRatio.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridOrderList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.orderListBindingSource)).EndInit();
             this.panel2.ResumeLayout(false);
@@ -717,8 +718,8 @@
         private Win.UI.Button btnDownload;
         private Win.UI.Button btnImportMarkerLectra;
         private Win.UI.Button btnEdit;
-        private Win.UI.DisplayBox disDescription;
-        private Win.UI.DisplayBox disFabricTypeRefno;
+        private Win.UI.DisplayBox displayBoxDescription;
+        private Win.UI.DisplayBox displayBoxFabricTypeRefno;
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private System.Windows.Forms.Label label5;
@@ -728,7 +729,7 @@
         private Win.UI.Button btnQtyBreakdown;
         private Win.UI.Button btnCutPartsCheckSummary;
         private Win.UI.Button btnCutPartsCheck;
-        private Win.UI.ListControlBindingSource sizeRatioBindingSource;
+        private Win.UI.ListControlBindingSource sizeRatiobs;
         private Win.UI.ListControlBindingSource orderListBindingSource;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Label label6;
@@ -743,7 +744,7 @@
         private Win.UI.NumericBox numCons;
         private System.Windows.Forms.ToolStripMenuItem insertSizeRatioToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteSizeRatioToolStripMenuItem;
-        private Win.UI.ContextMenuStrip sizeratioMenuStrip;
+        private Win.UI.ContextMenuStrip cmsSizeRatio;
         private Win.UI.ListControlBindingSource qtybreakBindingSource;
     }
 }

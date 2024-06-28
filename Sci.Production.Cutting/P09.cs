@@ -42,15 +42,14 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Distribute_Qty;
-        private DataTable dtWorkOrderForOutput_SizeRatio; // 弟3層表:新刪修
-        private DataTable dtWorkOrderForOutput_Distribute; // 弟3層表:新刪修
-        private DataTable dtWorkOrderForOutput_PatternPanel; // 弟3層表:新刪修
+        private DataTable dtWorkOrderForOutput_SizeRatio; // 第3層表:新刪修
+        private DataTable dtWorkOrderForOutput_Distribute; // 第3層表:新刪修
+        private DataTable dtWorkOrderForOutput_PatternPanel; // 第3層表:新刪修
         private bool ReUpdateP20 = true;
+        private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
         #endregion
 
-        #region 程式開啟時
-
-        private DataRow drTEMP;  // 紀錄目前表身選擇的資料，避免按列印時模組會重LOAD資料，導致永遠只能印到第一筆資料
+        #region 程式開啟時, 只會執行一次
 
         /// <inheritdoc/>
         public P09(ToolStripMenuItem menuitem, string history)
@@ -78,19 +77,7 @@ namespace Sci.Production.Cutting
             this.displayBoxTotalCutQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalCutQty_CONCAT", true));
             this.displayBoxTtlDistributeQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalDistributeQty", true));
 
-            this.detailgrid.Click += this.Detailgrid_Click;
-        }
-
-        private void Detailgrid_Click(object sender, EventArgs e)
-        {
-            if (MyUtility.Check.Empty(this.detailgrid.CurrentCell))
-            {
-                return;
-            }
-
-            // 游標直接進入 Cell, 才不用點兩下
-            this.detailgrid.CurrentCell = this.detailgrid[this.detailgrid.CurrentCell.ColumnIndex, this.detailgrid.CurrentCell.RowIndex];
-            this.detailgrid.BeginEdit(true);
+            this.detailgrid.Click += Grid_ClickBeginEdit;
         }
 
         /// <inheritdoc/>
@@ -228,9 +215,6 @@ SELECT
    ,ActCuttingPerimeter_Mask = ''
    ,StraightLength_Mask = ''
    ,CurvedLength_Mask = ''
-    ,ActCuttingPerimeterNew = iif(CHARINDEX('Yd',wo.ActCuttingPerimeter)<4,RIGHT(REPLICATE('0', 10) + wo.ActCuttingPerimeter, 10),wo.ActCuttingPerimeter)
-	,StraightLengthNew = iif(CHARINDEX('Yd',wo.StraightLength)<4,RIGHT(REPLICATE('0', 10) + wo.StraightLength, 10),wo.StraightLength)
-	,CurvedLengthNew = iif(CHARINDEX('Yd',wo.CurvedLength)<4,RIGHT(REPLICATE('0', 10) + wo.CurvedLength, 10),wo.CurvedLength)
    ,AddUser = p1.Name
    ,EditUser = p2.Name
    ,FabricTypeRefNo = CONCAT(f.WeaveTypeID, ' /' + wo.RefNo)
@@ -238,12 +222,12 @@ SELECT
    ,TotalDistributeQty = (SELECT SUM(Qty) FROM WorkOrderForOutput_Distribute WITH (NOLOCK) WHERE WorkOrderForOutputUkey = wo.Ukey)
 
    --沒有顯示的欄位
-   ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/SpreadingFabric/Distribute/PatternPanel
+   ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/Distribute/PatternPanel
    ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasBundle WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,ImportML = CAST(0 AS BIT)
-   ,CanDoAutoDistribute = cast(0 as bit)
+   ,CanDoAutoDistribute = CAST(0 AS BIT)
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -319,19 +303,9 @@ WHERE wo.id = '{masterID}'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-
+            this.BtnImportMarkerEnabled();
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
-
-            this.btnImportMarker.Enabled = this.CurrentMaintain["WorkType"].ToString() == "1" && !this.EditMode;
-
-            foreach (DataRow row in this.DetailDatas)
-            {
-                row["MarkerLength_Mask"] = FormatMarkerLength(row["MarkerLength"].ToString());
-                row["ActCuttingPerimeter_Mask"] = FormatData(row["ActCuttingPerimeter"].ToString());
-                row["StraightLength_Mask"] = FormatData(row["StraightLength"].ToString());
-                row["CurvedLength_Mask"] = FormatData(row["CurvedLength"].ToString());
-            }
-
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
         }
 
@@ -426,7 +400,7 @@ DROP TABLE #tmp
         protected override void OnDetailGridRowChanged()
         {
             this.GridValidateControl();
-            base.OnDetailGridRowChanged();
+            base.OnDetailGridRowChanged(); // 此後 CurrentDetailData 才會是新的
 
             this.bindingSourceDetail.SetRow(this.CurrentDetailData);
 
@@ -438,11 +412,13 @@ DROP TABLE #tmp
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
             this.gridDistributeToSP.IsEditingReadOnly = !canEdit;
 
+            // 避免後面炸掉, 即使 0 筆上面也要執行
             if (this.CurrentDetailData == null)
             {
                 return;
             }
 
+            // 根據左邊Grid Filter 右邊資訊
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
@@ -1360,7 +1336,7 @@ DEALLOCATE CURSOR_
                 return;
             }
 
-            var frm = new P02_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
+            var frm = new Cutting_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P09);
             frm.ShowDialog(this);
         }
         #endregion
@@ -1416,8 +1392,8 @@ DEALLOCATE CURSOR_
                     return;
                 }
 
-                string oldvalue = dr["Layer"].ToString();
-                string newvalue = e.FormattedValue.ToString();
+                int oldvalue = MyUtility.Convert.GetInt(dr["Layer"]);
+                int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
                 if (oldvalue == newvalue)
                 {
                     return;
@@ -1705,25 +1681,19 @@ DEALLOCATE CURSOR_
         #region 列印
         protected override void DoPrint()
         {
-            // 1394: CUTTING_P09_Cutting Work Order Output。KEEP當前的資料。
-            this.drTEMP = this.CurrentDetailData;
-            base.DoPrint();
-        }
-
-        private void BtnToExcel_Click(object sender, EventArgs e)
-        {
-            this.detailgrid.ToExcel(false);
+            this.drBeforeDoPrintDetailData = this.CurrentDetailData;
+            base.DoPrint(); // 會重新載入資訊,並將this.CurrentDetailData移動到第一筆
         }
 
         protected override bool ClickPrint()
         {
             Cutting_Print callNextForm;
-            if (this.drTEMP != null)
+            if (this.drBeforeDoPrintDetailData != null)
             {
-                callNextForm = new Cutting_Print(CuttingForm.P09, this.drTEMP);
+                callNextForm = new Cutting_Print(CuttingForm.P09, this.drBeforeDoPrintDetailData);
                 callNextForm.ShowDialog(this);
             }
-            else if (this.drTEMP == null && this.CurrentDetailData != null)
+            else if (this.drBeforeDoPrintDetailData == null && this.CurrentDetailData != null)
             {
                 callNextForm = new Cutting_Print(CuttingForm.P09, this.CurrentDetailData);
                 callNextForm.ShowDialog(this);
@@ -1735,6 +1705,11 @@ DEALLOCATE CURSOR_
             }
 
             return base.ClickPrint();
+        }
+
+        private void BtnToExcel_Click(object sender, EventArgs e)
+        {
+            this.detailgrid.ToExcel(false);
         }
         #endregion
 
@@ -1748,7 +1723,11 @@ DEALLOCATE CURSOR_
         protected override void OnEditModeChanged()
         {
             base.OnEditModeChanged();
+            this.BtnImportMarkerEnabled();
+        }
 
+        private void BtnImportMarkerEnabled()
+        {
             if (this.btnImportMarker != null)
             {
                 this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode;
@@ -1757,6 +1736,7 @@ DEALLOCATE CURSOR_
 
         private void GridValidateControl()
         {
+            // 若 Cell 還在編輯中, 即游標還在 Cell 中, 進行此 Cell 驗證事件, 並結束編輯
             this.detailgrid.ValidateControl();
             this.gridSizeRatio.ValidateControl();
             this.gridDistributeToSP.ValidateControl();
@@ -1833,7 +1813,7 @@ DEALLOCATE CURSOR_
         }
         #endregion
 
-        #region 就看看
+        #region 打開看看的視窗
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
