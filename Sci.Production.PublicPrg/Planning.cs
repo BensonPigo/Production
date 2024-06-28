@@ -131,7 +131,7 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string sqlcmd = $@"
 -- 成套標準：
 -- 找出組成一件成衣，需要哪些裁片
--- ISP20201886 改成以 WorkOrder 為基本資料
+-- ISP20240579 改成以 WorkOrderForOutput 為基本資料
 select distinct
 	wd.OrderID,
 	POID = w.ID,
@@ -143,9 +143,9 @@ select distinct
 	wp.FabricPanelCode,
 	w.Colorid
 into #beforeAllO1
-from WorkOrder w with(nolock)
-inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
-inner join WorkOrder_PatternPanel wp with(nolock) on wp.WorkOrderUkey = w.Ukey
+from WorkOrderForOutput w with(nolock)
+inner join WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w.Ukey
+inner join WorkOrderForOutput_PatternPanel wp with(nolock) on wp.WorkOrderForOutputUkey = w.Ukey
 where exists (select 1 from Orders o with(nolock) where wd.OrderID  = o.ID and exists(select 1 from {tempTable} t where t.orderid = o.id and o.LocalOrder = 0)) --非local單 
 and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
 and(((select WIP_ByShell from system) = 1
