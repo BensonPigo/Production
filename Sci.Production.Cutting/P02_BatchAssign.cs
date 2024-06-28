@@ -56,7 +56,7 @@ namespace Sci.Production.Cutting
             this.gridBatchAssign.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5))
                 .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
@@ -205,29 +205,9 @@ namespace Sci.Production.Cutting
                 string seq2 = MyUtility.Convert.GetString(dr["Seq2"]);
                 string refno = MyUtility.Convert.GetString(dr["Refno"]);
                 string colorID = MyUtility.Convert.GetString(dr["ColorID"]);
-                string filter = "1=1";
-                if (!seq1.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND Seq1 = '{seq1}'";
-                }
 
-                if (!seq2.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND Seq2 = '{seq2}'";
-                }
-
-                if (!refno.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND Refno = '{refno}'";
-                }
-
-                if (!colorID.IsNullOrWhiteSpace())
-                {
-                    filter += $" AND ColorID = '{colorID}'";
-                }
-
-                // 驗證失敗, 清空, Seq, 有 FabricCode 才能填入 Seq
-                if (this.dtAllSEQ_FabricCode.Select(filter + $" AND FabricCode = '{dr["FabricCode"]}'").Length == 0 || MyUtility.Check.Empty(dr["FabricCode"]))
+                // 驗證失敗, 清空, Seq, 此筆 FabricCode 為空=沒有PatternPanel資訊, 也要清空
+                if (GetFilterSEQ(seq1, seq2, refno, colorID, this.dtAllSEQ_FabricCode).Rows.Count == 0 || MyUtility.Check.Empty(dr["FabricCode"]))
                 {
                     if (!MyUtility.Check.Empty(this.txtSeq1.Text))
                     {
@@ -301,7 +281,7 @@ namespace Sci.Production.Cutting
         // 用在多選更新區塊
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            SelectItem item = PopupAllSeqRefnoColor(this.ID, this.dtAllSEQ_FabricCode);
+            SelectItem item = PopupAllSeqRefnoColor(this.dtAllSEQ_FabricCode);
             if (item == null)
             {
                 return;
@@ -320,8 +300,8 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            // 這邊的驗證無法取得詳細資訊，採用最低限度的條件，後續Confirm再詳細檢驗
-            if (GetFilterAllSeqRefnoColor(this.ID, this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dtAllSEQ_FabricCode).Rows.Count == 0)
+            // 這邊的驗證只先驗證 Seq1 + Seq2, Confirm 會再詳細驗證
+            if (GetFilterSEQ(this.txtSeq1.Text, this.txtSeq2.Text, string.Empty, string.Empty, this.dtAllSEQ_FabricCode).Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox($@"Seq: {seqValue} data not found!");
                 txtSeq.Text = string.Empty;

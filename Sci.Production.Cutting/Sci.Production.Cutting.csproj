@@ -157,7 +157,6 @@
     <Compile Include="CuttingWorkOrder_Neil.cs" />
     <Compile Include="CuttingWorkOrder_Willy.cs" />
     <Compile Include="CuttingWorkOrder_Shrek.cs" />
-    <Compile Include="CuttingWorkOrder_Benson.cs" />
     <Compile Include="CuttingWorkOrder.cs" />
     <Compile Include="P09_History.cs">
       <SubType>Form</SubType>

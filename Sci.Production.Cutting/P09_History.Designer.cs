@@ -79,6 +79,7 @@
             // cmbOriCutRef
             // 
             this.cmbOriCutRef.BackColor = System.Drawing.Color.White;
+            this.cmbOriCutRef.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.cmbOriCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbOriCutRef.FormattingEnabled = true;
             this.cmbOriCutRef.IsSupportUnselect = true;
@@ -87,6 +88,7 @@
             this.cmbOriCutRef.OldText = "";
             this.cmbOriCutRef.Size = new System.Drawing.Size(121, 24);
             this.cmbOriCutRef.TabIndex = 4;
+            this.cmbOriCutRef.SelectedIndexChanged += new System.EventHandler(this.CmbOriCutRef_SelectedIndexChanged);
             // 
             // splitContainer1
             // 
@@ -143,7 +145,6 @@
             this.gridOriCutRef.ShowCellToolTips = false;
             this.gridOriCutRef.Size = new System.Drawing.Size(350, 489);
             this.gridOriCutRef.TabIndex = 0;
-            this.gridOriCutRef.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid_RowEnter);
             // 
             // splitContainer2
             // 
@@ -200,7 +201,6 @@
             this.gridCurrentCutRef.ShowCellToolTips = false;
             this.gridCurrentCutRef.Size = new System.Drawing.Size(526, 229);
             this.gridCurrentCutRef.TabIndex = 1;
-            this.gridCurrentCutRef.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid_RowEnter);
             // 
             // label4
             // 
@@ -234,13 +234,13 @@
             this.gridRemoveList.RowTemplate.Height = 24;
             this.gridRemoveList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridRemoveList.ShowCellToolTips = false;
-            this.gridRemoveList.Size = new System.Drawing.Size(526, 225);
+            this.gridRemoveList.Size = new System.Drawing.Size(526, 231);
             this.gridRemoveList.TabIndex = 2;
-            this.gridRemoveList.RowEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.Grid_RowEnter);
             // 
             // cmbCurrentCutRef
             // 
             this.cmbCurrentCutRef.BackColor = System.Drawing.Color.White;
+            this.cmbCurrentCutRef.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.cmbCurrentCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cmbCurrentCutRef.FormattingEnabled = true;
             this.cmbCurrentCutRef.IsSupportUnselect = true;
@@ -249,6 +249,7 @@
             this.cmbCurrentCutRef.OldText = "";
             this.cmbCurrentCutRef.Size = new System.Drawing.Size(121, 24);
             this.cmbCurrentCutRef.TabIndex = 7;
+            this.cmbCurrentCutRef.SelectedIndexChanged += new System.EventHandler(this.CmbCurrentCutRef_SelectedIndexChanged);
             // 
             // label1
             // 

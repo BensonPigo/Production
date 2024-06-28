@@ -130,7 +130,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
             base.OnDetailGridSetup();
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true).Get(out this.col_CutRef)
+                .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
@@ -739,7 +739,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                         }
 
                         List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
-                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, sqlConn);
+                        result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, sqlConn, CuttingForm.P09);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -1863,7 +1863,7 @@ DEALLOCATE CURSOR_
 
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-
+            new P09_History(this.CurrentMaintain["ID"].ToString()).ShowDialog();
         }
 
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)
