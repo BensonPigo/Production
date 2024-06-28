@@ -38,6 +38,11 @@ namespace Sci.Production.Prg.PowerBI.Model
         public string StyleIDSimple { get; set; }
 
         public string StyleIDTooltip { get; set; }
-        public string ColorType { get; set; }
+
+        public int AlloQty { get; set; }
+
+        public DateTime? Inline { get; set; }
+
+        public DateTime? Offline { get; set; }
     }
 }
