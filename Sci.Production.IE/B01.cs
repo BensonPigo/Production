@@ -1,4 +1,14 @@
-﻿using System.ComponentModel;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Prg;
+using Sci.Win.Tools;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Transactions;
 using System.Windows.Forms;
 
 namespace Sci.Production.IE
@@ -24,17 +34,92 @@ namespace Sci.Production.IE
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            MyUtility.Tool.SetupCombox(this.comboNewRepeatAll, 2, 1, "A,All,N,New,R,Repeat");
+
+            MyUtility.Tool.SetupCombox(this.cboStyleType, 2, 1, "N,New,R,Repeat");
+
+            this.gridBase.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridBase)
+                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("CheckList", header: "Check List Base", width: Widths.AnsiChars(28), iseditingreadonly: true)
+                .CheckBox("Sel", header: "Sel", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
+                ;
+
+            DataGridViewGeneratorTextColumnSettings col_ResponseDep = new DataGridViewGeneratorTextColumnSettings();
+            col_ResponseDep.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr = this.gridDetail.GetDataRow(e.RowIndex);
+                    string sqlitem = "select DISTINCT Dept from Employee where dept <> '' order by Dept";
+                    SelectItem2 item = new SelectItem2(sqlitem, "Dept", "10", dr["ResponseDep"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["ResponseDep"] = item.GetSelectedString();
+                    dr.EndEdit();
+                }
+            };
+
+            this.gridDetail.IsEditingReadOnly = false;
+            this.Helper.Controls.Grid.Generator(this.gridDetail)
+                .CheckBox("Sel", header: "Sel", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
+                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("CheckList", header: "Check List Base", width: Widths.AnsiChars(28), iseditingreadonly: true)
+                .EditText("ResponseDep", header: "Response Dep.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: col_ResponseDep)
+                .Numeric("LeadTime", header: "Lead Time", width: Widths.AnsiChars(8), iseditingreadonly: false)
+                ;
         }
 
-        /// <summary>
-        /// ClickNewAfter()
-        /// </summary>
-        protected override void ClickNewAfter()
+        /// <inheritdoc/>
+        protected override void OnDetailEntered()
         {
-            base.ClickNewAfter();
-            this.CurrentMaintain["UseFor"] = "A";
-            this.CurrentMaintain["BaseOn"] = 1;
+            base.OnDetailEntered();
+
+            string sqlcmd = $@"
+Select Sel = Cast(0 as bit)
+, cb.ID
+, cb.No
+, cb.CheckList
+From ChgOverCheckListBase cb with (nolock)
+where cb.No not in (select ChgOverCheckListBaseID from ChgOverCheckList_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}')
+order by No
+";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtBase);
+            if (!result)
+            {
+                this.ShowErr(result);
+                this.gridBaseBs.DataSource = null;
+                return;
+            }
+
+            this.gridBaseBs.DataSource = dtBase;
+
+            sqlcmd = $@"
+Select Sel = Cast(0 as bit)
+, cd.*
+, cb.CheckList
+, cb.No
+From ChgOverCheckList_Detail cd with (nolock)
+inner join ChgOverCheckListBase cb with (nolock) on cd.ChgOverCheckListBaseID = cb.ID
+where cd.ID = '{this.CurrentMaintain["ID"]}'
+order by No
+";
+            result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtDetail);
+            if (!result)
+            {
+                this.ShowErr(result);
+                this.gridDetailBs.DataSource = null;
+                return;
+            }
+
+            this.gridDetailBs.DataSource = dtDetail;
+
+            // 預設No欄位Asc排序
+            this.gridBase.Sort(this.gridBase.Columns["No"], ListSortDirection.Ascending);
+            this.gridDetail.Sort(this.gridDetail.Columns["No"], ListSortDirection.Ascending);
         }
 
         /// <summary>
@@ -43,8 +128,8 @@ namespace Sci.Production.IE
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
-            this.txtCode.ReadOnly = true;
-            this.txtBrand.ReadOnly = true;
+            this.txtCategory.ReadOnly = true;
+            this.cboStyleType.ReadOnly = true;
         }
 
         /// <summary>
@@ -53,66 +138,192 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Code"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Category"]))
             {
-                MyUtility.Msg.WarningBox("< Code > can not be empty!");
-                this.txtCode.Focus();
+                MyUtility.Msg.WarningBox("< Category > can not be empty!");
+                this.txtCategory.Focus();
                 return false;
             }
 
-            // 移除BrandID必填，避免無BrandID的舊資料無法更新
-            // if (MyUtility.Check.Empty(CurrentMaintain["BrandID"]))
-            // {
-            //    MyUtility.Msg.WarningBox("< Brand > can not be empty!");
-            //    textBox4.Focus();
-            //    return false;
-            // }
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Description"]))
+            if (MyUtility.Check.Empty(this.CurrentMaintain["StyleType"]))
             {
-                MyUtility.Msg.WarningBox("< Activities > can not be empty!");
-                this.txtActivities.Focus();
+                MyUtility.Msg.WarningBox("< Style Type > can not be empty!");
+                this.cboStyleType.Focus();
                 return false;
             }
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["UseFor"]))
+            // 檢查<Category> + <Style Type> 是否已存在於DB
+            if (this.IsDetailInserting)
             {
-                MyUtility.Msg.WarningBox("< New/Repeat > can not be empty!");
-                this.comboNewRepeatAll.Focus();
+                List<SqlParameter> paras = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Category", this.CurrentMaintain["Category"].ToString()),
+                    new SqlParameter("@StyleType", this.CurrentMaintain["StyleType"].ToString()),
+                };
+
+                string sql = "select 1 from ChgOverCheckList WITH (NOLOCK) WHERE Category = @Category AND StyleType = @StyleType";
+
+                if (MyUtility.Check.Seek(sql, paras))
+                {
+                    MyUtility.Msg.WarningBox("This <Category> + <Style Type> already exists!");
+                    return false;
+                }
+            }
+
+            // 檢查Detail<Response Dep.>和<Lead Time>不可空白
+            var dtDetail = (DataTable)this.gridDetailBs.DataSource;
+            if (dtDetail.Rows.Count > 0
+                && dtDetail.AsEnumerable().Where(r => VFP.Empty(r["ResponseDep"]) || VFP.Empty(r["LeadTime"])).Any())
+            {
+                MyUtility.Msg.WarningBox("Please enter <Response Dep.> and <Lead Time> on the right side of the table.");
                 return false;
             }
 
             return base.ClickSaveBefore();
         }
 
-        // Brand
-        private void TxtBrand_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
         {
-            string sqlWhere = "SELECT Id,NameCH,NameEN FROM Brand WITH (NOLOCK)	WHERE Junk=0  ORDER BY Id";
-            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlWhere, "10,30,30", this.txtBrand.Text, false, ",")
+            var dtDetail = (DataTable)this.gridDetailBs.DataSource;
+
+            if (this.IsDetailInserting)
             {
-                Size = new System.Drawing.Size(750, 500),
-            };
-            DialogResult result = item.ShowDialog();
-            if (result == DialogResult.Cancel)
-            {
-                return;
+                dtDetail.AsEnumerable().ToList().ForEach(r => r["ID"] = this.CurrentMaintain["ID"]);
             }
 
-            this.txtBrand.Text = item.GetSelectedString();
+            // 更新ChgOverCheckList_Detail
+            using (TransactionScope transactionscope = new TransactionScope())
+            {
+                string updSql = $@"
+Merge dbo.ChgOverCheckList_Detail as t
+Using #tmp as s
+on t.ID = s.ID and t.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
+	when matched then
+		update set t.ResponseDep = iif(t.ResponseDep != s.ResponseDep, s.ResponseDep, t.ResponseDep)
+		, t.LeadTime = iif(t.LeadTime != s.LeadTime, s.LeadTime, t.LeadTime)
+		, t.EditName = iif(t.ResponseDep != s.ResponseDep or t.LeadTime != s.LeadTime, @UserID, t.EditName)
+		, t.EditDate = iif(t.ResponseDep != s.ResponseDep or t.LeadTime != s.LeadTime, GETDATE(), t.EditDate)
+	when not matched by target then
+		insert (ID, ChgOverCheckListBaseID, ResponseDep, LeadTime,AddName, AddDate) 
+		values (s.ID, s.ChgOverCheckListBaseID, s.ResponseDep, s.LeadTime, @UserID, GETDATE())
+	when not matched by source and t.ID = @ID then
+		delete;
+";
+
+                List<SqlParameter> paras = new List<SqlParameter>();
+                paras.Add(new SqlParameter("@UserID", Env.User.UserID));
+                paras.Add(new SqlParameter("@ID", this.CurrentMaintain["ID"]));
+
+                DualResult upResult;
+                if (!(upResult = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, updSql, out DataTable dt, paramters: paras)))
+                {
+                    transactionscope.Dispose();
+                    return upResult;
+                }
+
+                transactionscope.Complete();
+            }
+
+            return base.ClickSavePost();
         }
 
-        private void TxtBrand_Validating(object sender, CancelEventArgs e)
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
         {
-            string textValue = this.txtBrand.Text;
-            if (!string.IsNullOrWhiteSpace(textValue) && textValue != this.txtBrand.OldValue)
+            base.ClickSaveAfter();
+
+            // 更新ChgOver_Check
+            var sqlUpdate = @"
+declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime)
+
+-- 找出ChgOver中ChgOver_Check皆尚未Check的資料
+insert into @ChgOver (ID, FactoryID, Inline)
+select co.ID, co.FactoryID, co.Inline
+from ChgOver co with (nolock)
+where co.Category = @Category
+and co.Type = @StyleType
+and exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
+and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Check] = 1)
+
+-- 刪除並重新寫入ChgOver_Check資料
+if @@RowCount > 0
+begin
+	delete ChgOver_Check where ID in (select ID from @ChgOver)
+
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.No, ckd.LeadTime
+	from @ChgOver co
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType
+	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+end
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
             {
-                if (!MyUtility.Check.Seek(string.Format(@"SELECT Id FROM Brand WITH (NOLOCK) WHERE Junk=0 AND id = '{0}'", textValue)))
+                new SqlParameter("@Category", this.CurrentMaintain["Category"]),
+                new SqlParameter("@StyleType", this.CurrentMaintain["StyleType"]),
+            };
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate, listPar);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+        }
+
+        private void BtnAdd_Click(object sender, System.EventArgs e)
+        {
+            var dtBase = (DataTable)this.gridBaseBs.DataSource;
+            var selBase = dtBase.AsEnumerable().Where(r => !VFP.Empty(r["Sel"]));
+
+            if (selBase.Count() > 0)
+            {
+                this.SuspendLayout(); // 暫停更新畫面，以避免閃爍
+
+                var dtDetail = (DataTable)this.gridDetailBs.DataSource;
+                foreach (DataRow dr in selBase)
                 {
-                    this.txtBrand.Text = string.Empty;
-                    e.Cancel = true;
-                    MyUtility.Msg.WarningBox(string.Format("< Brand: {0} > not found!!!", textValue));
-                    return;
+                    var newRow = dtDetail.NewRow();
+                    newRow["Sel"] = false;
+                    newRow["No"] = dr["No"];
+                    newRow["CheckList"] = dr["CheckList"];
+                    newRow["ResponseDep"] = string.Empty;
+                    newRow["LeadTime"] = 0;
+                    newRow["ID"] = this.CurrentMaintain["ID"];
+                    newRow["ChgOverCheckListBaseID"] = dr["ID"];
+                    dtDetail.Rows.Add(newRow);
                 }
+
+                selBase.ToList().ForEach(r => dtBase.Rows.Remove(r));
+
+                this.ResumeLayout(false);   // 恢復更新畫面
+            }
+        }
+
+        private void BtnDelete_Click(object sender, System.EventArgs e)
+        {
+            var dtDetail = (DataTable)this.gridDetailBs.DataSource;
+            var selDetail = dtDetail.AsEnumerable().Where(r => !VFP.Empty(r["Sel"]));
+
+            if (selDetail.Count() > 0)
+            {
+                this.SuspendLayout(); // 暫停更新畫面，以避免閃爍
+
+                var dtBase = (DataTable)this.gridBaseBs.DataSource;
+                foreach (DataRow dr in selDetail)
+                {
+                    var newRow = dtBase.NewRow();
+                    newRow["Sel"] = false;
+                    newRow["No"] = dr["No"];
+                    newRow["CheckList"] = dr["CheckList"];
+                    newRow["ID"] = dr["ChgOverCheckListBaseID"];
+                    dtBase.Rows.Add(newRow);
+                }
+
+                selDetail.ToList().ForEach(r => dtDetail.Rows.Remove(r));
+
+                this.ResumeLayout(false);   // 恢復更新畫面
             }
         }
     }
