@@ -7,25 +7,16 @@
 );
 
 
+	GO
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForPlanning_SizeRatio', @level2type = N'COLUMN', @level2name = N'Qty';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForPlanning_SizeRatio', @level2type = N'COLUMN', @level2name = N'SizeCode';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForPlanning_SizeRatio', @level2type = N'COLUMN', @level2name = N'ID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'發料裁剪工單主鍵', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForPlanning_SizeRatio', @level2type = N'COLUMN', @level2name = N'WorkOrderForPlanningUkey';
-
-
-GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'發料裁剪工單主鍵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning_SizeRatio', @level2type=N'COLUMN',@level2name=N'WorkOrderForPlanningUkey'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪母單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning_SizeRatio', @level2type=N'COLUMN',@level2name=N'ID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'尺寸' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning_SizeRatio', @level2type=N'COLUMN',@level2name=N'SizeCode'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning_SizeRatio', @level2type=N'COLUMN',@level2name=N'Qty'
+	GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_SizeRatio_ID]
     ON [dbo].[WorkOrderForPlanning_SizeRatio]([ID] ASC)
     INCLUDE([WorkOrderForPlanningUkey], [SizeCode], [Qty]);

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[WorkOrderForOutput] (
+CREATE TABLE [dbo].[WorkOrderForOutput] (
     [Ukey]                     INT             IDENTITY (1, 1) NOT NULL,
     [ID]                       VARCHAR (13)    CONSTRAINT [DF_WorkOrderForOutput_ID] DEFAULT ('') NOT NULL,
     [FactoryID]                VARCHAR (8)     CONSTRAINT [DF_WorkOrderForOutput_FactoryID] DEFAULT ('') NOT NULL,
@@ -48,6 +48,112 @@
 );
 
 
+	GO
+
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'流水號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪母單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'ID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'FactoryID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MDivisionID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購大項' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Seq1'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購小項' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Seq2'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁次' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'CutRef'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁次號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'CutNo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'OrderID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶物料編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'RefNo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI物料編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'SCIRefNo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顏色' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'ColorID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Tone色差' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Tone'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'層數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Layer'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'船表預計到達時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'WKETA'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'部位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'FabricCombo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'布料種類' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'FabricCode'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'部位別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'FabricPanelCode'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'預計裁剪日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'EstCutDate'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'單件用量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'ConsPC'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'用量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Cons'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克號碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerNo'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克名' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerName'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerLength'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克版本' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'MarkerVersion'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'實際裁剪碼長' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'ActCuttingPerimeter'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克直徑長度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'StraightLength'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'馬克曲線長度' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'CurvedLength'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'班別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Shift'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁桌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'CutCellID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'拉布桌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'SpreadingNoID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'未裁剪原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'UnfinishedCuttingReason'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'未裁剪註記' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'UnfinishedCuttingRemark'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否由使用者建立' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'IsCreateByUser'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Ready,Spreading,Finished
+	用於M360 Digital Spreading' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'SpreadingStatus'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'拉布人員在拉布時的備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'SpreadingRemark'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Digital Spreading 合併與拆分的群組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'GroupID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'WorkOrderForPlanning主鍵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'WorkOrderForPlanningUkey'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'1>Cutting_P02. WorkOrder For Planning
+2>Cutting_P09. WorkOrder For Output
+3>M360_Digital Spreading' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'SourceFrom'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'手裁 Manual (0) 還是機裁 Auto (1)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'CuttingMethod'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單用料主鍵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Order_EachconsUkey'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增者' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'AddName'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'AddDate'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯者' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'EditName'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'EditDate'
+	GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_OrderID]
+    ON [dbo].[WorkOrderForOutput]([OrderID] ASC)
+    INCLUDE([CutRef], [CutNo], [EstCutDate], [Ukey]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_MDivisionId]
+    ON [dbo].[WorkOrderForOutput]([MDivisionID] ASC)
+    INCLUDE([CutRef]);
+
+
 GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_EstCutDate_CutCellid]
     ON [dbo].[WorkOrderForOutput]([EstCutDate] ASC, [CutCellID] ASC);
@@ -59,206 +165,11 @@ CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_EstCutDate]
 
 
 GO
-CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_BundleESCDate]
-    ON [dbo].[WorkOrderForOutput]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);
-
-
-GO
-CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_MDivisionId]
-    ON [dbo].[WorkOrderForOutput]([MDivisionID] ASC)
-    INCLUDE([CutRef]);
-
-
-GO
-CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_OrderID]
-    ON [dbo].[WorkOrderForOutput]([OrderID] ASC)
-    INCLUDE([CutRef], [CutNo], [EstCutDate], [Ukey]);
-
-
-GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_CutRef]
     ON [dbo].[WorkOrderForOutput]([CutRef] ASC);
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克版本', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'MarkerVersion';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'EditDate';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'EditName';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'AddDate';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增者', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'AddName';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單用料主鍵', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Order_EachconsUkey';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'手裁 Manual (0) 還是機裁 Auto (1)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CuttingMethod';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'1>Cutting_P02. WorkOrder For Planning
-2>Cutting_P09. WorkOrder For Output
-3>M360_Digital Spreading', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'SourceFrom';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrderForPlanning主鍵', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'WorkOrderForPlanningUkey';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Digital Spreading 合併與拆分的群組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'GroupID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'拉布人員在拉布時的備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'SpreadingRemark';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Ready,Spreading,Finished
-	用於M360 Digital Spreading', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'SpreadingStatus';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否由使用者建立', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'IsCreateByUser';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'未裁剪註記', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'UnfinishedCuttingRemark';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'未裁剪原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'UnfinishedCuttingReason';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'拉布桌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'SpreadingNoID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁桌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CutCellID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'班別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Shift';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克曲線長度', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CurvedLength';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克直徑長度', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'StraightLength';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'實際裁剪碼長', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'ActCuttingPerimeter';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克長', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'MarkerLength';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克名', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'MarkerName';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克號碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'MarkerNo';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Cons';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單件用量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'ConsPC';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'預計裁剪日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'EstCutDate';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'FabricPanelCode';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'布料種類', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'FabricCode';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'部位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'FabricCombo';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'船表預計到達時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'WKETA';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'層數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Layer';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Tone色差', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Tone';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'顏色', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'ColorID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'SCI物料編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'SCIRefNo';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'客戶物料編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'RefNo';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'OrderID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁次號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CutNo';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁次', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CutRef';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Seq2';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購大項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Seq1';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'MDivisionID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'FactoryID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'ID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'流水號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'Ukey';
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_BundleESCDate]
+    ON [dbo].[WorkOrderForOutput]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);
 

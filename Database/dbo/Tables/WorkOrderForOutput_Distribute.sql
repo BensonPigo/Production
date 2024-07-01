@@ -9,33 +9,20 @@
 );
 
 
+	GO
 
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'數量', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'Qty';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'尺寸', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'SizeCode';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'色組', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'Article';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'OrderID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪母單單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'ID';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產出裁剪工單主鍵', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput_Distribute', @level2type = N'COLUMN', @level2name = N'WorkOrderForOutputUkey';
-
-
-GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出裁剪工單主鍵' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'WorkOrderForOutputUkey'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪母單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'ID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'OrderID'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'色組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'Article'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'尺寸' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'SizeCode'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_Distribute', @level2type=N'COLUMN',@level2name=N'Qty'
+	GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_Distribute_SPUkey]
     ON [dbo].[WorkOrderForOutput_Distribute]([OrderID] ASC, [WorkOrderForOutputUkey] ASC);
 
