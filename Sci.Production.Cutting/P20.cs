@@ -84,8 +84,8 @@ where Mdivisionid = '{0}'", Env.User.Keyword);
 Select a.* , e.FabricCombo, e.FabricPanelCode, 
     (
         Select DISTINCT Orderid+'/' 
-        From WorkOrder_Distribute d WITH (NOLOCK) 
-        Where d.WorkOrderUkey =a.WorkOrderUkey and Orderid!='EXCESS'
+        From WorkOrderForOutput_Distribute d WITH (NOLOCK) 
+        Where d.WorkOrderForOutputUkey =a.WorkOrderForOutputUkey and Orderid!='EXCESS'
         For XML path('')
     ) as OrderID,
     (
@@ -101,10 +101,10 @@ Select a.* , e.FabricCombo, e.FabricPanelCode,
     , e.ConsPC,SRQ.SizeRatioQty
     , o.StyleID
 From cuttingoutput_Detail a WITH (NOLOCK)
-left join WorkOrder e WITH (NOLOCK) on a.WorkOrderUkey = e.Ukey
+left join WorkOrderForOutput e WITH (NOLOCK) on a.WorkOrderForOutputUkey = e.Ukey
 left join Orders o WITH (NOLOCK) on o.ID = e.ID 
-outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderUkey = e.Ukey and id <> '{0}')acc
-outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = e.Ukey)SRQ
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa where aa.WorkOrderForOutputUkey = e.Ukey and id <> '{0}')acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrderForOutput_SizeRatio b where b.WorkOrderForOutputUkey = e.Ukey)SRQ
 where a.id = '{0}' 
 ORDER BY CutRef
             ", masterID);
@@ -180,14 +180,14 @@ Select
 	,Cuttingid = a.id
 	,OrderID = stuff((
 		Select orderid+'/' 
-		From WorkOrder_Distribute c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =a.Ukey and orderid!='EXCESS'
+		From WorkOrderForOutput_Distribute c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =a.Ukey and orderid!='EXCESS'
 		For XML path('')
     ),1,1,'')
 	,SizeRatio = stuff((
         Select  '/ '+SizeCode+'*'+convert(varchar,Qty ) 
-		From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =a.Ukey 
+		From WorkOrderForOutput_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =a.Ukey 
 		For XML path('')
     ),1,1,'')
 	,WorkOderLayer = a.Layer
@@ -201,10 +201,10 @@ Select
 	,SRQ.SizeRatioQty
     ,o.StyleID
 	,a.Layer
-from WorkOrder a WITH (NOLOCK)
+from WorkOrderForOutput a WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on o.ID = a.ID 
-outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey and id <> '{this.CurrentMaintain["ID"]}')acc
-outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
+outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderForOutputUkey = a.Ukey and id <> '{this.CurrentMaintain["ID"]}')acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrderForOutput_SizeRatio b where b.WorkOrderForOutputUkey = a.Ukey)SRQ
 outer apply(
 	select Qty = min(x2.Qty) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
 	from(
@@ -216,7 +216,7 @@ outer apply(
 			where b.CutRef = a.CutRef
 			group by bd.SizeCode, bd.Patterncode, bd.PatternDesc
 		)x
-		left join WorkOrder_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderUkey = a.Ukey
+		left join WorkOrderForOutput_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderForOutputUkey = a.Ukey
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3
@@ -244,7 +244,7 @@ and a.CutRef != ''
                 dr["LackingLayers"] = 0;
                 dr["Cons"] = 0;
                 dr["FabricPanelCode"] = string.Empty;
-                dr["Workorderukey"] = 0;
+                dr["WorkOrderForOutputUkey"] = 0;
                 dr["SizeRatio"] = string.Empty;
                 dr["ConsPC"] = 0;
                 dr["SizeRatioQty"] = 0;
@@ -283,8 +283,8 @@ and a.CutRef != ''
                         cutrefsql =
                             $@"select [Cutting Output ID] = b.ID
                                         , b.Layer
-                                    from WorkOrder a WITH (NOLOCK)
-                                    inner join cuttingoutput_Detail b WITH (NOLOCK) on b.WorkOrderUkey = a.Ukey
+                                    from WorkOrderForOutput a WITH (NOLOCK)
+                                    inner join cuttingoutput_Detail b WITH (NOLOCK) on b.WorkOrderForOutputUkey = a.Ukey
                                     where a.CutRef =  '{e.FormattedValue}'
                                     and a.CutRef != ''";
                         result = DBProxy.Current.Select(null, cutrefsql, out dt);
@@ -324,7 +324,7 @@ and a.CutRef != ''
 
                         e.FormattedValue = sele.GetSelectedString();
                         seldr = sele.GetSelecteds()[0];
-                        if (((DataTable)this.detailgridbs.DataSource).Select($"Workorderukey = '{seldr["Ukey"]}'").Length > 0)
+                        if (((DataTable)this.detailgridbs.DataSource).Select($"WorkOrderForOutputUkey = '{seldr["Ukey"]}'").Length > 0)
                         {
                             MyUtility.Msg.WarningBox($"CutRefno：{seldr["cutref"]}, WorkOrderUkey：{seldr["Ukey"]} can't duplicate");
                             dr["cutref"] = DBNull.Value;
@@ -351,7 +351,7 @@ and a.CutRef != ''
                     dr["cutno"] = seldr["cutno"];
                     dr["MarkerLength"] = seldr["MarkerLength"];
                     dr["colorID"] = seldr["colorID"];
-                    dr["Workorderukey"] = seldr["Ukey"];
+                    dr["WorkOrderForOutputUkey"] = seldr["Ukey"];
                     dr["SizeRatio"] = seldr["SizeRatio"];
                     dr["ConsPC"] = seldr["ConsPC"];
                     dr["SizeRatioQty"] = seldr["SizeRatioQty"];
@@ -505,7 +505,7 @@ and a.CutRef != ''
                 return false;
             }
 
-            MyUtility.Tool.ProcessWithDatatable(dt, "Layer,cutref,workorderukey,cuttingid,id", "Select sum(Layer) as tlayer,cutref,workorderukey,cuttingid,id from #tmp group by cutref,workorderukey,cuttingid,id", out DataTable sumTb);
+            MyUtility.Tool.ProcessWithDatatable(dt, "Layer,cutref,WorkOrderForOutputUkey,cuttingid,id", "Select sum(Layer) as tlayer,cutref,WorkOrderForOutputUkey,cuttingid,id from #tmp group by cutref,WorkOrderForOutputUkey,cuttingid,id", out DataTable sumTb);
             string cutref, id, cuttingid, sumsql;
             int layer_cutting, layer_work;
             foreach (DataRow dr in sumTb.Rows)
@@ -513,7 +513,7 @@ and a.CutRef != ''
                 cutref = dr["Cutref"].ToString();
                 id = dr["id"].ToString();
                 cuttingid = dr["cuttingid"].ToString();
-                sumsql = string.Format("Select sum(Layer) as tlayer from Workorder WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref);
+                sumsql = string.Format("Select sum(Layer) as tlayer from WorkOrderForOutput WITH (NOLOCK) where id='{0}' and cutref = '{1}'", cuttingid, cutref);
                 string str = MyUtility.GetValue.Lookup(sumsql, null);
                 if (MyUtility.Check.Empty(str))
                 {
@@ -552,7 +552,7 @@ and a.CutRef != ''
             }
             #region 掃表身找出有改變的寫入第三層
             DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
-            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkorderUkey", "Select b.* from #tmp a, workorder_SizeRatio b WITH (NOLOCK) where a.workorderukey = b.workorderukey", out DataTable sizeTb);
+            MyUtility.Tool.ProcessWithDatatable(detailTb, "WorkOrderForOutputUkey", "Select b.* from #tmp a, WorkOrderForOutput_SizeRatio b WITH (NOLOCK) where a.WorkOrderForOutputUkey = b.WorkOrderForOutputukey", out DataTable sizeTb);
             DataRow[] dray;
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -570,7 +570,7 @@ and a.CutRef != ''
                 // 新增與變更需增加第三層
                 if ((dr.RowState == DataRowState.Added) || (dr.RowState == DataRowState.Modified))
                 {
-                    dray = sizeTb.Select(string.Format("WorkorderUkey ='{0}'", dr["WorkorderUkey"]));
+                    dray = sizeTb.Select(string.Format("WorkOrderForOutputUkey ='{0}'", dr["WorkOrderForOutputUkey"]));
                     if (dray.Length != 0)
                     {
                         foreach (DataRow dr2 in dray)

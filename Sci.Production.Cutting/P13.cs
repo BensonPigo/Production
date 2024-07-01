@@ -103,9 +103,9 @@ select Sel = 0
 	   , b.CutNo
 	   , CreateDate = b.CDate
 	   , EstCutDate = (Select Max(estcutdate)
-					   from workorder WITH (NOLOCK) 
-					   where workorder.id = b.POID 
-							 and workorder.cutref = b.CutRef)
+					   from WorkOrderForOutput WITH (NOLOCK) 
+					   where WorkOrderForOutput.id = b.POID 
+							 and WorkOrderForOutput.cutref = b.CutRef)
 	   , LineID = b.Sewinglineid
 	   , b.Item
 	   , b.SewingCell
@@ -486,7 +486,7 @@ order by x.[Bundle]";
                 worksheet.Cells[3, 1] = "To Line: " + printDr["LineID"].ToString();
                 worksheet.Cells[3, 3] = "Cell: " + printDr["SewingCell"].ToString();
                 worksheet.Cells[3, 4] = "Comb: " + printDr["PatternPanel"].ToString();
-                string sqlcmd = $"select top 1 MarkerNo from WorkOrder where CutRef='{printDr["CutRefNo"]}'";
+                string sqlcmd = $"select top 1 MarkerNo from WorkOrderForOutput where CutRef='{printDr["CutRefNo"]}'";
                 worksheet.Cells[3, 5] = "Marker No: " + (MyUtility.Check.Empty(printDr["CutRefNo"]) ? string.Empty : MyUtility.GetValue.Lookup(sqlcmd));
                 worksheet.Cells[3, 7] = "Item: " + printDr["Item"].ToString();
                 worksheet.Cells[3, 9] = "Article/Color: " + printDr["Article"].ToString() + "/ " + printDr["Color"].ToString();

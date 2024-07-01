@@ -16,9 +16,25 @@ Declare @POID varchar(13)
 Declare @FactoryID varchar(8) 
 Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and (Junk=0 or (Junk=1 and NeedProduction=1))
 
+
+
+CREATE TABLE #tmp_WorkOrder_Distribute
+(	
+	WorkOrderUkey BIGINT NOT NULL,
+	ID  VARCHAR(13) NOT NULL,
+	OrderID VARCHAR(13) NOT NULL,
+	Article VARCHAR(8) NOT NULL,
+	SizeCode VARCHAR(8) NOT NULL,
+	Qty    NUMERIC(6,0) NOT NULL,
+	Order_EachConsUkey INT NOT NULL,
+	ColorID VARCHAR(6) NOT NULL,
+	newKey INT NOT NULL
+)
+/*
 select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
 alter table #tmp_WorkOrder_Distribute add newKey int
+*/
 select	ID,
 		FactoryID,
 		MDivisionid,
@@ -34,22 +50,25 @@ select	ID,
 		Refno,
 		SCIRefno,
 		Markerno,
-		MarkerVersion,
+		MarkerVersion, --ISP20240588移除掉
 		Type,
 		AddName,
 		AddDate,
-		MarkerDownLoadId,
+		-- MarkerDownLoadId, --ISP20240588移除掉
 		FabricCombo,
 		FabricCode,
 		FabricPanelCode,
 		Order_eachconsUkey,
+		Article,
+		/* --ISP20240588移除掉
 		ActCuttingPerimeter,
 		StraightLength,
 		CurvedLength,
-		[newKey]=0 into #tmp_Workorder from WorkOrder where 1=0
-select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrder_SizeRatio where 1=0
-select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrder_PatternPanel where 1=0
-Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrder_PatternPanel WITH (NOLOCK) Where 1 = 0
+		*/
+		[newKey]=0 into #tmp_Workorder from WorkOrderForPlanning where 1=0
+select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrderForPlanning_SizeRatio where 1=0
+select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrderForPlanning_PatternPanel where 1=0
+Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrderForPlanning_PatternPanel WITH (NOLOCK) Where 1 = 0
 --�D�n���
 Select MixedSizeMarker,	oe.id,	[FactoryID] = @FactoryID,	[MDivisionid] = @MDivisionid,
 	[Seq1] = isnull(iif(isnull(s.SEQ2,'')='',s2.seq1,s.SEQ1),''),--�YSEQ2 ���ŴN��70�j��
@@ -128,12 +147,20 @@ Declare @MixedSizeMarker varchar(2),@id varchar(13),@SizeCode varchar(8),@FirstS
 @MarkerNo varchar(10),@MarkerVersion varchar(3),@type int,@AddDate datetime,
 @MarkerDownloadID varchar(25),@FabricCombo varchar(2),@FabricCode varchar(3),@FabricPanelCode varchar(2),@Order_EachConsUkey bigint,
 @Orderqty int,@ThisMarkerColor_Layer int,@ThisMarkerColor_MaxLayer int,@rowid int,@FirstRatio int,@SumRatio int,@SizeRatio int, @tmpUkey int = 0, @tmpUkey2 int = 0,
-@ActCuttingPerimeter nvarchar(15),@StraightLength varchar(15),@CurvedLength varchar(15)
+@ActCuttingPerimeter nvarchar(15),@StraightLength varchar(15),@CurvedLength varchar(15),@Article varchar(8)
 --�D�n��ưj��
-DECLARE CURSOR_WorkOrder CURSOR FOR select * from #WorkOrderMix order by Rowid
+DECLARE CURSOR_WorkOrder CURSOR FOR 
+select * , [Article] = Article.Article from #WorkOrderMix a
+OUTER APPLY
+(
+	Select top 1 Article
+	from #_tmpdisQty b 
+	where a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno and a.FabricPanelCode = b.FabricPanelCode
+)Article
+order by Rowid
 OPEN CURSOR_WorkOrder
 FETCH NEXT FROM CURSOR_WorkOrder INTO @MixedSizeMarker,@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Refno,@SCIRefno,@MarkerNo,@MarkerVersion,@type,@username,@AddDate,
-@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid,@ActCuttingPerimeter,@StraightLength,@CurvedLength
+@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@Order_EachConsUkey,@Orderqty,@ThisMarkerColor_Layer,@ThisMarkerColor_MaxLayer,@rowid,@ActCuttingPerimeter,@StraightLength,@CurvedLength,@Article
 While @@FETCH_STATUS = 0
 Begin	
 	select oes.SizeCode,qty ,IDENTITY(int,1,1) as Rowid 
@@ -151,7 +178,7 @@ Begin
 		Declare @ThisTotalCutQty int,@ThisLayerCount int,@mQty float,@ForSameID_AccuQty int,@ForSameID_Qty int,@maxLayerQty int,
 		@nextQty int = 0,@bQty int,@OldOrderID varchar(13)='',@ThisCutlayer int,@thiscutQty float,@Drowid int,@nextQtyC int,
 		@OldArticle  varchar(8),@identRowid int,@Order_Eachcons_ColorUkey int,
-		@orderid varchar(13),@Article varchar(8),@Size_orderqty float--�n�몺��
+		@orderid varchar(13),@Article1 varchar(8),@Size_orderqty float--�n�몺��
 		----��즹marker color size��ڭn�����`�ƶq
 		select @ThisTotalCutQty = sum(oeca.Orderqty) 
 		from Order_EachCons_Color_Article oeca WITH (NOLOCK)
@@ -177,12 +204,12 @@ Begin
 		IF @FirstSizeCode = @sizecode
 		begin
 		OPEN Distribute
-		FETCH NEXT FROM Distribute INTO @SizeRatio,@identRowid,@id,@orderid,@Article,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
+		FETCH NEXT FROM Distribute INTO @SizeRatio,@identRowid,@id,@orderid,@Article1,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
 		While @@FETCH_STATUS = 0
 		Begin
 			set @maxLayerQty = @ThisMarkerColor_MaxLayer * @SizeRatio
 			--�P�e�@��orderid�ۦP�n���b�P�@��worker�Aorderid���P�~ukey�[1
-			if @OldOrderID != @orderid or(@OldOrderID = @orderid and @OldArticle != @Article)
+			if @OldOrderID != @orderid or(@OldOrderID = @orderid and @OldArticle != @Article1)
 			Begin
 				if @nextQty = 0
 				Begin
@@ -212,7 +239,7 @@ Begin
 				set @mQty = (@ForSameID_AccuQty-@nextQty) % @maxLayerQty
 			end
 			
-			if (@nextQty > 0 and @OldOrderID != @orderid)or(@nextQty > 0 and @OldOrderID = @orderid and @OldArticle!=@Article)
+			if (@nextQty > 0 and @OldOrderID != @orderid)or(@nextQty > 0 and @OldOrderID = @orderid and @OldArticle!=@Article1)
 			Begin
 				if @ForSameID_AccuQty >= @maxLayerQty and @mQty < @nextQty
 				begin
@@ -224,7 +251,8 @@ Begin
 					select @nextQtyC = min(i)from(select i= @ThisTotalCutQty union all select @nextQty union all select @mQty)i
 				end
 
-				insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@nextQtyC,@Order_EachConsUkey,@colorid,@tmpUkey)
+				-- insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@nextQtyC,@Order_EachConsUkey,@colorid,@tmpUkey) 
+
 				update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @nextQtyC where identRowid = @identRowid--��h�ϥΪ�
 				set @ThisTotalCutQty = @ThisTotalCutQty - @nextQtyC
 
@@ -251,7 +279,7 @@ Begin
 				begin
 					set @ForSameID_Qty = @ThisTotalCutQty
 				end
-				insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@ForSameID_Qty,@Order_EachConsUkey,@colorid,@tmpUkey)
+				--insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article1,@SizeCode,@ForSameID_Qty,@Order_EachConsUkey,@colorid,@tmpUkey) --ISP20240588移除掉
 				update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @ForSameID_Qty where identRowid = @identRowid--��h�ϥΪ�
 				set @ThisTotalCutQty = @ThisTotalCutQty - @ForSameID_Qty
 				set @tmpUkey = @tmpUkey + 1
@@ -264,10 +292,10 @@ Begin
 			end
 			if @mQty > 0
 			Begin
-				insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@mQty,@Order_EachConsUkey,@colorid,@tmpUkey)
+				--insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article1,@SizeCode,@mQty,@Order_EachConsUkey,@colorid,@tmpUkey) --ISP20240588移除掉
 				update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @mQty where identRowid = @identRowid--��h�ϥΪ�
 				set @ThisTotalCutQty = @ThisTotalCutQty - @mQty
-				if @OldOrderID != @orderid or(@OldOrderID = @orderid and @OldArticle != @Article)
+				if @OldOrderID != @orderid or(@OldOrderID = @orderid and @OldArticle != @Article1)
 				Begin
 					set @nextQty = ceiling(@mQty / @SizeRatio) * @SizeRatio - @mQty
 				End
@@ -282,7 +310,8 @@ Begin
 
 			Delete #_tmpdisQty where identRowid = @identRowid and [Size_orderqty] = 0--��ϥΧ����R��
 			set @OldOrderID = @orderid
-			set @OldArticle = @Article
+			set @OldArticle = @Article1
+			/* --ISP20240588移除掉
 			if @ThisTotalCutQty = 0--�B�z���_EXCESS
 			Begin
 				if @nextQty > 0
@@ -291,10 +320,11 @@ Begin
 				end
 				break
 			end
-		FETCH NEXT FROM Distribute INTO @SizeRatio,@identRowid,@id,@orderid,@Article,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
+			*/
+		FETCH NEXT FROM Distribute INTO @SizeRatio,@identRowid,@id,@orderid,@Article1,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
 		End
-		CLOSE Distribute
-		DEALLOCATE Distribute
+			CLOSE Distribute
+			DEALLOCATE Distribute
 		end
 		else
 		begin--�ھڲĤ@��size���t��Layer�h���t�䥦mixsize
@@ -309,19 +339,19 @@ Begin
 				set @thiscutQty = @FLayer * @SizeRatio
 				DECLARE Distribute2 CURSOR FOR select * from #DistributeSource order by Rowid
 				OPEN Distribute2
-				FETCH NEXT FROM Distribute2 INTO @SizeRatio,@identRowid,@id,@orderid,@Article,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
+				FETCH NEXT FROM Distribute2 INTO @SizeRatio,@identRowid,@id,@orderid,@Article1,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
 				While @@FETCH_STATUS = 0
 				Begin
 					if @thiscutQty>=@Size_orderqty
 					begin
-					insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@Size_orderqty,@Order_EachConsUkey,@colorid,@tmpUkey2)
+					insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article1,@SizeCode,@Size_orderqty,@Order_EachConsUkey,@colorid,@tmpUkey2)
 						update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @Size_orderqty where identRowid = @identRowid--��h�ϥΪ�
 						update #DistributeSource set [Size_orderqty] = [Size_orderqty] - @Size_orderqty where rowid = @Drowid--��h�ϥΪ�
 						set @thiscutQty = @thiscutQty - @Size_orderqty
 					end
 					else
 					begin
-						insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article,@SizeCode,@thiscutQty,@Order_EachConsUkey,@colorid,@tmpUkey2)
+						insert into #tmp_WorkOrder_Distribute values(0,@id,@orderid,@Article1,@SizeCode,@thiscutQty,@Order_EachConsUkey,@colorid,@tmpUkey2)
 						update #_tmpdisQty set [Size_orderqty] = [Size_orderqty] - @thiscutQty where identRowid = @identRowid--��h�ϥΪ�
 						update #DistributeSource set [Size_orderqty] = [Size_orderqty] - @thiscutQty where rowid = @Drowid--��h�ϥΪ�
 						set @thiscutQty = 0
@@ -332,7 +362,7 @@ Begin
 					begin
 						break
 					end
-				FETCH NEXT FROM Distribute2 INTO @SizeRatio,@identRowid,@id,@orderid,@Article,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
+				FETCH NEXT FROM Distribute2 INTO @SizeRatio,@identRowid,@id,@orderid,@Article1,@SizeCode,@Size_orderqty,@ThisMarkerColor_MaxLayer,@Drowid
 				End
 				CLOSE Distribute2
 				DEALLOCATE Distribute2
@@ -348,7 +378,7 @@ Begin
 		drop table #DistributeSource
 		IF CURSOR_STATUS('global','Distribute')>=-1
 		BEGIN
-		DEALLOCATE Distribute
+			DEALLOCATE Distribute
 		END
 	FETCH NEXT FROM Size INTO @SizeCode,@SizeRatio
 	End
@@ -368,10 +398,10 @@ Begin
 		select top 1 @orderid = orderid from #tmp_WorkOrder_Distribute 
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
 		set @Cons = @FLayer * @SumRatio * @ConsPC
-		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
-		Markerno,MarkerVersion,Type,AddName,AddDate,MarkerDownLoadId,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,ActCuttingPerimeter,StraightLength,CurvedLength)
-		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,
-		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@MarkerDownloadID,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey,@ActCuttingPerimeter,@StraightLength,@CurvedLength)
+		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,MarkerVersion,ConsPC,Cons,Refno,SCIRefno,
+		Markerno,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
+		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@MarkerVersion,@ConsPC,@Cons,@Refno,@SCIRefno,
+		@MarkerNo,@type,@username,@AddDate,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey)
 		--SizeRatio
 		DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
 		OPEN Size
@@ -412,8 +442,8 @@ End
 CLOSE CURSOR_WorkOrder
 DEALLOCATE CURSOR_WorkOrder
 
-Insert into #tmp_WorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey)							
-select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderUkey
+Insert into #tmp_WorkOrder_PatternPanel(ID,PatternPanel,FabricPanelCode,newKey,WorkOrderForPlanningUkey)							
+select distinct ID,PatternPanel,FabricPanelCode,newKey,WorkOrderForPlanningUkey
 from #tmp_WorkOrder_PatternPaneltmp
 --select * from #tmp_Workorder order by newkey
 --select newkey,orderid,Article,sizecode from #tmp_WorkOrder_Distribute group by newkey,orderid,Article,sizecode having count(1)>1
@@ -428,33 +458,33 @@ OPEN insertALL
 FETCH NEXT FROM insertALL INTO @insertRow
 While @@FETCH_STATUS = 0
 Begin
-	insert into WorkOrder(	ID,
-							FactoryID,
-							MDivisionid,
-							SEQ1,
-							SEQ2,
-							OrderID,
-							Layer,
-							Colorid,
-							MarkerName,
-							MarkerLength,
-							ConsPC,
-							Cons,
-							Refno,
-							SCIRefno,
-							Markerno,
-							MarkerVersion,
-							Type,
-							AddName,
-							AddDate,
-							MarkerDownLoadId,
-							FabricCombo,
-							FabricCode,
-							FabricPanelCode,
-							Order_eachconsUkey,
-							ActCuttingPerimeter,
-							StraightLength,
-							CurvedLength)
+	insert into WorkOrderForPlanning(	ID,
+										FactoryID,
+										MDivisionid,
+										SEQ1,
+										SEQ2,
+										OrderID,
+										Layer,
+										Colorid,
+										MarkerName,
+										MarkerLength,
+										ConsPC,
+										Cons,
+										Refno,
+										SCIRefno,
+										Markerno,
+										MarkerVersion, --ISP20240588移除掉
+										Type,
+										AddName,
+										AddDate,
+										-- MarkerDownLoadId, --ISP20240588移除掉
+										FabricCombo,
+										FabricCode,
+										FabricPanelCode,
+										Order_eachconsUkey)
+										-- ActCuttingPerimeter, --ISP20240588移除掉
+										-- StraightLength,	    --ISP20240588移除掉
+										-- CurvedLength)	    --ISP20240588移除掉
 	Select	ID,
 			FactoryID,
 			MDivisionid,
@@ -470,33 +500,35 @@ Begin
 			Refno,
 			SCIRefno,
 			Markerno,
-			MarkerVersion,
+			MarkerVersion, --ISP20240588移除掉
 			Type,
 			AddName,
 			AddDate,
-			MarkerDownLoadId,
+			-- MarkerDownLoadId, --ISP20240588移除掉
 			FabricCombo,
 			FabricCode,
 			FabricPanelCode,
-			Order_eachconsUkey,
-			ActCuttingPerimeter,
-			StraightLength,
-			CurvedLength
+			Order_eachconsUkey
+			-- ActCuttingPerimeter, --ISP20240588移除掉
+			-- StraightLength, --ISP20240588移除掉
+			-- CurvedLength --ISP20240588移除掉
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------�N���X��Ident �g�J----------
 	update #tmp_WorkOrder_Distribute set WorkOrderUkey = @iden Where newkey = @insertRow
-	update #tmp_WorkOrder_PatternPanel set WorkOrderUkey = @iden Where newkey = @insertRow
-	update #tmp_WorkOrder_SizeRatio set WorkOrderUkey = @iden Where newkey = @insertRow
+	update #tmp_WorkOrder_PatternPanel set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
+	update #tmp_WorkOrder_SizeRatio set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	------Insert into �lTable-------------
+	/*--ISP20240588移除掉
 	insert into WorkOrder_Distribute(WorkOrderUkey,id,Orderid,Article,SizeCode,Qty)
 		(Select WorkOrderUkey,id,Orderid,Article,SizeCode,Qty
 		From #tmp_WorkOrder_Distribute Where newkey=@insertRow)
-	insert into WorkOrder_PatternPanel(WorkOrderUkey,ID,FabricPanelCode,PatternPanel)
-		(Select WorkOrderUkey,ID,FabricPanelCode,PatternPanel
+	*/
+	insert into WorkOrderForPlanning_PatternPanel(WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel)
+		(Select WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel
 		From #tmp_WorkOrder_PatternPanel Where newkey=@insertRow)
-	insert into WorkOrder_SizeRatio(WorkOrderUkey,ID,SizeCode,Qty)
-		(Select WorkOrderUkey,ID,SizeCode,Qty
+	insert into WorkOrderForPlanning_SizeRatio(WorkOrderForPlanningUkey,ID,SizeCode,Qty)
+		(Select WorkOrderForPlanningUkey,ID,SizeCode,Qty
 		From #tmp_WorkOrder_SizeRatio Where newkey=@insertRow)
 		Set @insertRow+=1
 FETCH NEXT FROM insertALL INTO @insertRow
