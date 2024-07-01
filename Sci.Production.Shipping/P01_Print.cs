@@ -7,6 +7,10 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Office.Interop.Excel;
+using Sci.Production.CallPmsAPI;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using static Ict.BaseResult;
 
 namespace Sci.Production.Shipping
 {
@@ -52,6 +56,19 @@ namespace Sci.Production.Shipping
         {
             if (this.reportType == "2")
             {
+                var result = this.GetExcelData();
+                if (result)
+                {
+                    return Ict.Result.True;
+                }
+                else
+                {
+                    this.BeginInvoke(() =>
+                    {
+                        MyUtility.Msg.WarningBox(result.Messages.ToString());
+                    });
+                }
+
                 string sqlcmd = $@"
 select pd.OrderID, pd.OrderShipmodeSeq, p.INVNo
 into #tmp
@@ -71,12 +88,17 @@ where exists
 and g.ShipModeID like '%P%'
 
 
-select se.Description,a.Qty,se.UnitID,a.CurrencyID,a.Price
-, Amount = a.Qty * a.Price, a.Rate, a.PayCurrency, PayAmount= a.Amount
+declare @CurrencyID varchar(4)
+Set @CurrencyID = (Select CurrencyID From System)
+select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID,a.Price
+, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) * dbo.getRate('KP',a.CurrencyID,'USD',a.CDate),a.Qty * a.Price)
+, Rate = iif(a.CurrencyID != 'USD', dbo.getRate('KP', 'USD', @CurrencyID,a.CDate), a.Rate)
+, a.PayCurrency
+, PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
 , a.CW
 into #table1
 from (
-	select sd.*,s.CurrencyID as PayCurrency,s.CW
+	select sd.*,s.CurrencyID as PayCurrency,s.CW,s.CDate
 	from ShippingAP s
 	inner join ShippingAP_Detail sd on s.ID = sd.ID
 	where exists(
@@ -141,6 +163,207 @@ drop TABLE #tmp,#table1
             }
 
             return Ict.Result.True;
+        }
+
+        private DualResult GetExcelData()
+        {
+            string sqlGetA2BPack = $@"
+select distinct  p.INVNo
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+where   pd.OrderID = '{this.masterData["OrderID"]}' and
+        pd.OrderShipmodeSeq = '{this.masterData["OrderShipmodeSeq"]}'
+";
+            System.Data.DataTable dtA2BInvNo;
+            DualResult result = DBProxy.Current.Select(null, sqlGetA2BPack, out dtA2BInvNo);
+            if (!result)
+            {
+                return result;
+            }
+
+            if (dtA2BInvNo.Rows.Count == 0)
+            {
+                return new DualResult(false, new MessageInfo("InvoiceNo not find!"));
+            }
+
+            string targetFty = MyUtility.GetValue.Lookup(string.Format(
+                @"
+select NegoRegion from Factory 
+where ID in (select FactoryID from Orders where Id = '{0}') 
+and IsProduceFty = 1 
+and NegoRegion <> (select RgCode from System)"
+, this.masterData["OrderID"].ToString()));
+            if (targetFty.Empty())
+            {
+                return new DualResult(false, new MessageInfo("It's not A2B!"));
+            }
+
+            string whereInvNo = dtA2BInvNo.AsEnumerable().Select(s => $"'{s["INVNo"]}'").JoinToString(",");
+            string sqlGetGMTBookingByBL = $@"
+select  g.ID
+from GMTBooking g with (nolock)
+where   exists( select 1 from GMTBooking g2 with (nolock) where
+                g2.ID in ({whereInvNo}) and (g2.BLNo = g.BLNo or g2.BL2No = g.BL2No)
+                )
+        and g.ShipModeID like '%P%'
+";
+
+            System.Data.DataTable dtTargetInvNo;
+            result = PackingA2BWebAPI.GetDataBySql(targetFty, sqlGetGMTBookingByBL, out dtTargetInvNo);
+            if (!result)
+            {
+                return result;
+            }
+
+            string whereTargetInvNo = dtTargetInvNo.AsEnumerable().Select(s => $"'{s["ID"]}'").JoinToString(",");
+            string sqlTargetPackingList = $@"
+select pd.ID, pd.OrderID, pd.OrderShipmodeSeq, p.INVNo, pd.ShipQty, p.GW, pd.NWPerPcs
+from PackingList p
+inner join PackingList_Detail pd on p.ID = pd.ID
+where p.INVNo in ({whereTargetInvNo})";
+            System.Data.DataTable dtPackingList = new System.Data.DataTable();
+            List<string> listPLFromRgCode = PackingA2BWebAPI.GetAllPLFromRgCode();
+            foreach (string plFromRgCode in listPLFromRgCode)
+            {
+                System.Data.DataTable dtTargetPackingList;
+                result = PackingA2BWebAPI.GetDataBySql(plFromRgCode, sqlTargetPackingList, out dtTargetPackingList);
+                if (!result)
+                {
+                    return result;
+                }
+
+                dtTargetPackingList.MergeTo(ref dtPackingList);
+            }
+
+            System.Data.DataTable dtOwnPackingList;
+            result = DBProxy.Current.Select(null, sqlTargetPackingList, out dtOwnPackingList);
+            if (!result)
+            {
+                return result;
+            }
+
+            dtOwnPackingList.MergeTo(ref dtPackingList);
+
+            string sqlGetShippAP = $@"
+declare @CurrencyID varchar(4)
+Select @CurrencyID = CurrencyID From System
+select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID,a.Price
+, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) * dbo.getRate('KP',a.CurrencyID,'USD',a.CDate),a.Qty * a.Price)
+, Rate = iif(a.CurrencyID != 'USD', dbo.getRate('KP', 'USD', @CurrencyID,a.CDate), a.Rate)
+, a.PayCurrency
+, PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
+, a.CW
+into #table1
+from (
+	select sd.*,s.CurrencyID as PayCurrency,s.CW,s.CDate
+	from ShippingAP s
+	inner join ShippingAP_Detail sd on s.ID = sd.ID
+	where exists(
+		select 1
+		from GMTBooking g
+		where g.ID in ({whereTargetInvNo})
+		and (g.BLNo = s.BLNo  or g.BL2No = s.BLNo)
+	)
+) a
+left join ShipExpense se on se.ID = a.ShipExpenseID
+
+select Description,Qty,UnitID,CurrencyID,Price,Amount,Rate,PayCurrency,PayAmount,CW from #table1
+";
+            System.Data.DataTable dtShippAP;
+            result = PackingA2BWebAPI.GetDataBySql(targetFty, sqlGetShippAP, out dtShippAP);
+            if (!result)
+            {
+                return result;
+            }
+
+            string sqlShareExpenseAPP = $@"
+select se.AirPPID,total = round(sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate),2)
+	from ShareExpense_APP se
+	left join ShippingAP sap on sap.ID = se.ShippingAPID
+	where se.AirPPID = '{this.masterData["ID"]}'
+    group by se.AirPPID
+";
+            System.Data.DataTable dtShareExpenseAPP;
+            result = PackingA2BWebAPI.GetDataBySql(targetFty, sqlShareExpenseAPP, out dtShareExpenseAPP);
+            if (!result)
+            {
+                return result;
+            }
+
+            SqlConnection conn;
+            DBProxy._OpenConnection("Production", out conn);
+            using (conn)
+            {
+                result = MyUtility.Tool.ProcessWithDatatable(dtShippAP, null, "select * from #ShippAP", out dtShippAP, "#ShippAP", conn);
+                if (!result)
+                {
+                    return result;
+                }
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtShareExpenseAPP, null, "select * from #ShareExpenseAPP", out dtShareExpenseAPP, "#ShareExpenseAPP", conn);
+                if (!result)
+                {
+                    return result;
+                }
+
+                result = MyUtility.Tool.ProcessWithDatatable(dtPackingList, null, "select * from #PackingList", out dtPackingList, "#PackingList", conn);
+                if (!result)
+                {
+                    return result;
+                }
+
+                string sqlcmd = $@"
+select Description,Qty,UnitID,CurrencyID,Price,Amount,Rate,PayCurrency,PayAmount from #ShippAP
+
+Alter Table #PackingList Alter Column ID Varchar(13)
+Alter Table #PackingList Alter Column OrderID Varchar(13)
+Alter Table #PackingList Alter Column OrderShipmodeSeq Varchar(2)
+
+select p.INVNo
+,p.OrderID
+,o.CustPONo
+,[APPID] = ap.ID
+,[Qty] = sum(p.ShipQty)
+,[GW] = p.GW * gw.value
+,[CW] = (select min(isnull(cw,0)) from #ShippAP) * gw.value
+,[Air_FREIGHT] = af.total
+,[EQV] = ap.Additional
+from #PackingList p
+left join Orders o on o.ID = p.OrderID
+left join AirPP ap on ap.OrderID= p.OrderID and ap.OrderShipmodeSeq = p.OrderShipmodeSeq
+outer apply (
+	select value = sum(p1.ShipQty * p1.NWPerPcs) / (p2.value)
+	from #PackingList p1
+	outer apply(
+		select value = sum(pp.ShipQty * pp.NWPerPcs) 
+		from #PackingList pp
+		where pp.id=p1.id
+	)p2
+	GROUP by p2.value
+)gw
+outer apply(
+	select total from #ShareExpenseAPP se
+	where se.AirPPID = ap.id
+)af
+group by p.INVNo
+,p.OrderID
+,o.CustPONo
+,ap.ID
+,p.GW ,gw.value
+,af.total
+,ap.Additional
+order by p.INVNo,p.OrderID
+
+drop TABLE #PackingList,#ShippAP,#ShareExpenseAPP
+";
+                result = DBProxy.Current.SelectByConn(conn, sqlcmd, out this.dts);
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return new DualResult(true);
         }
 
         /// <inheritdoc/>
@@ -335,6 +558,9 @@ where ID in (
 
                 // Excel SUM USD_AMOUNT
                 worksheet.Cells[startRow01 + this.dts[0].Rows.Count, 6].Value = $"=SUM(F{startRow01}:F{startRow01 + this.dts[0].Rows.Count - 1}";
+
+                // Excel PayCurreny
+                worksheet.Cells[startRow01 + this.dts[0].Rows.Count, 7].Value = MyUtility.GetValue.Lookup("Select CurrencyID From System");
 
                 // Excel SUM PHP_AMOUNT
                 worksheet.Cells[startRow01 + this.dts[0].Rows.Count, 9].Value = $"=SUM(I{startRow01}:I{startRow01 + this.dts[0].Rows.Count - 1}";
