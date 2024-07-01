@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P02_AutoDistToSP
+    partial class P09_AutoDistToSP
     {
         /// <summary>
         /// Required designer variable.
@@ -173,7 +173,7 @@
             this.Chknotyetallocation.UseVisualStyleBackColor = true;
             this.Chknotyetallocation.CheckedChanged += new System.EventHandler(this.Chknotyetallocation_CheckedChanged);
             // 
-            // P02_AutoDistToSP
+            // P09_AutoDistToSP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -186,9 +186,9 @@
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "P02_AutoDistToSP";
+            this.Name = "P09_AutoDistToSP";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P02. Auto Distribute to SP#";
+            this.Text = "P09. Auto Distribute to SP#";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
