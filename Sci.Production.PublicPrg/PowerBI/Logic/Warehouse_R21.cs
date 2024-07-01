@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
     public class Warehouse_R21
     {
         private DBProxy DBProxy;
-        private readonly string sqlcolumn = @"
+        private string sqlcolumn = @"
     select
 	 [MDivisionID] = isnull(o.MDivisionID, '')
 	,[FactoryID] = isnull(o.FactoryID, '')
@@ -173,11 +173,153 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
     ,[Supplier] = isnull(concat(Supp.ID, '-' + Supp.AbbEN), '')
     ,[VID] = isnull(VID.CustPONoList,'')
-	,[AddDate] = o.AddDate
-	,[EditDate] =o.EditDate
     ";
 
-        private string sql_cnt = @"select count(*) as datacnt";
+        private string sqlcolumn_sum = @"select
+	[M] = o.MDivisionID
+	,[Factory] = o.FactoryID
+	,[SP#] = psd.id
+	,[OrderType] = o.OrderTypeID
+	,[WeaveType] = d.WeaveTypeID
+    ,[BuyerDelivery]=o.BuyerDelivery
+    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
+    ,[ETA] = psd.FinalETA
+    ,[ArriveWHDate] = stuff((
+                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
+                    from (
+	                    select date = Export.whsearrival
+	                    from Export_Detail with (nolock) 
+	                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
+	                    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+
+	                    union all
+
+	                    select date = ts.IssueDate
+	                    from TransferIn ts with (nolock) 
+	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
+	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+	                    and ts.Status='Confirmed'
+
+                        union all
+
+                        select date = r.WhseArrival
+                        from Receiving r with (nolock) 
+                        inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+	                    where r.Status = 'Confirmed' 
+	                    and r.Type = 'B' 
+	                    and rd.POID = psd.ID 
+	                    and rd.Seq1 = psd.Seq1 
+	                    and rd.Seq2 = psd.Seq2
+                    )a
+                    for xml path('')
+	            ),1,1,'')
+    ,[WK] = stuff((
+	            	select concat(';',ID)
+	            	from Export_Detail with (nolock) 
+	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
+	            	for xml path('')
+	            ),1,1,'')
+    ,[Packages] =concat(
+        stuff((
+            select concat(';',Packages)
+            from(
+                select e2.Blno,Packages = sum(e2.Packages)
+                from Export e2 with (nolock) 
+                where exists (
+                    select 1
+	                from Export_Detail ed with (nolock)
+                    inner join Export e with (nolock) on e.id = ed.id
+	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+                    and e.blno = e2.Blno)
+                group by e2.Blno
+            )x
+	        for xml path('')
+        ),1,1,'')
+        ,
+        iif(exists (
+                select 1
+	            from Export_Detail ed with (nolock)
+                inner join Export e with (nolock) on e.id = ed.id
+	            where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2)                
+            and
+            exists(select 1
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID))
+            ,';','')
+        ,
+        stuff((
+            select concat(';',Packages)
+            from(
+	            select ts.id,Packages = sum(Packages)
+                from TransferIn ts with (nolock) 
+	            where ts.Status='Confirmed'
+                and exists(
+                    select 1 from TransferIn_Detail tsd with (nolock)
+                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
+                    and tsd.ID = ts.ID)
+                group by ts.id
+            )x
+	        for xml path('')
+        ),1,1,'')
+		)
+    ,ContainerNo = stuff((
+        select concat(';' , ContainerNo)
+        from(
+            select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
+	        from Export_Detail ed with (nolock)
+            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_DetailUkey = ed.Ukey
+	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
+            and esc.ContainerType <> '' and esc.ContainerNo  <> ''
+        )x
+        for xml path('')
+    ),1,1,'')
+	,[Brand] = o.BrandID
+	,[Style] = o.StyleID
+	,[Season] = o.SeasonID
+	,[Project] = o.ProjectID
+	,[Program] = o.ProgramID
+	,[Seq1] = psd.SEQ1
+	,[Seq2] = psd.SEQ2
+	,[Material Type] = concat(case when psd.FabricType = 'F' then 'Fabric'
+                            when psd.FabricType = 'A' then 'Accessory'
+                            when psd.FabricType = 'O' then 'Orher'
+                            else psd.FabricType end,
+                       '-' + Fabric.MtlTypeID)
+    ,[stock sp]=psd.StockPOID
+    ,[StockSeq1]=psd.StockSeq1
+    ,[StockSeq2]=psd.StockSeq2
+	,[Refno] = psd.Refno
+	,[SCI Refno] = psd.SCIRefno
+    ,[Description] = d.Description
+	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
+				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
+				    ELSE isnull(psdsC.SpecValue, '')  
+			   END
+	,[Size] = isnull(psdsS.SpecValue, '')
+	,[Stock Unit] = psd.StockUnit
+	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
+    ,[Order Qty] = o.Qty
+	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
+	,[In Qty] = round(mpd.InQty,2)
+	,[Out Qty] = round(mpd.OutQty,2)
+	,[Adjust Qty] = round(mpd.AdjustQty,2)
+    ,[Return Qty] = round(mpd.ReturnQty,2)
+	,[Balance Qty] = round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2) - round(mpd.ReturnQty,2)
+	,[Bulk Qty] = (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.ReturnQty,2) - round(mpd.LInvQty,2)
+	,[Inventory Qty] = round(mpd.LInvQty,2)
+	,[Scrap Qty] = round(mpd.LObQty ,2)
+	,[Bulk Location] = mpd.ALocation
+	,[Inventory Location] = mpd.BLocation
+    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
+	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
+	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
+    ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
+    ,[VID] = isnull(VID.CustPONoList,'')
+    ";
 
         /// <inheritdoc/>
         public Warehouse_R21()
@@ -592,11 +734,25 @@ or
             string sql = string.Empty;
             if (model.IsPowerBI)
             {
-                sql = this.sqlcolumn + sqlcmd.ToString();
+                string columns = @"
+	, [AddDate] = o.AddDate
+	, [EditDate] =o.EditDate
+";
+                sql = this.sqlcolumn + columns + sqlcmd.ToString();
             }
             else
             {
-                sql = this.sql_cnt + sqlcmd.ToString();
+                string columns = @"
+, left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY
+";
+                if (model.ReportType == 0)
+                {
+                    sql = this.sqlcolumn + columns + sqlcmd.ToString();
+                }
+                else
+                {
+                    sql = this.sqlcolumn_sum + columns + sqlcmd.ToString();
+                }
             }
 
             cmd = sqlcmd;

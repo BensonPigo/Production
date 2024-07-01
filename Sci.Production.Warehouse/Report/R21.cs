@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -43,316 +44,6 @@ namespace Sci.Production.Warehouse
         private DateTime? OrigBuyerDelivery2;
         private DateTime? arriveWH1;
         private DateTime? arriveWH2;
-        private string sqlcolumn = @"
-    select
-	[M] = o.MDivisionID
-	,[Factory] = o.FactoryID
-    ,[SewLine] = o.SewLine
-	,[SP#] = psd.id
-    ,[Category] = case when o.Category='B'then'Bulk'
-						when o.Category='G'then'Garment'
-						when o.Category='M'then'Material'
-						when o.Category='S'then'Sample'
-						when o.Category='T'then'Sample mtl.'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='' then'Bulk fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='D' then'Dev. sample fc'
-						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
-					end
-	,[OrderType] = o.OrderTypeID
-	,[WeaveType] = d.WeaveTypeID
-    ,[BuyerDelivery]=o.BuyerDelivery
-    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
-    ,[MaterialComplete] = case when psd.Complete = 1 then 'Y' else '' end
-    ,[ETA] = psd.FinalETA
-    ,[ArriveWHDate] = stuff((
-                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
-                    from (
-	                    select date = Export.whsearrival
-	                    from Export_Detail with (nolock) 
-	                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	                    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-
-	                    union all
-
-	                    select date = ts.IssueDate
-	                    from TransferIn ts with (nolock) 
-	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
-	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-	                    and ts.Status='Confirmed'
-
-                        union all
-
-                        select date = r.WhseArrival
-                        from Receiving r with (nolock) 
-                        inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	                    where r.Status = 'Confirmed' 
-	                    and r.Type = 'B' 
-	                    and rd.POID = psd.ID 
-	                    and rd.Seq1 = psd.Seq1 
-	                    and rd.Seq2 = psd.Seq2
-                    )a
-                    for xml path('')
-	            ),1,1,'')
-    ,[WK] = stuff((
-	            	select concat(';',ID)
-	            	from Export_Detail with (nolock) 
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
-	            	for xml path('')
-	            ),1,1,'')
-    ,[Packages] =concat(
-        stuff((
-            select concat(';',Packages)
-            from(
-                select e2.Blno,Packages = sum(e2.Packages)
-                from Export e2 with (nolock) 
-                where exists (
-                    select 1
-	                from Export_Detail ed with (nolock)
-                    inner join Export e with (nolock) on e.id = ed.id
-	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-                    and e.blno = e2.Blno)
-                group by e2.Blno
-            )x
-	        for xml path('')
-        ),1,1,'')
-        ,
-        iif(exists (
-                select 1
-	            from Export_Detail ed with (nolock)
-                inner join Export e with (nolock) on e.id = ed.id
-	            where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2)                
-            and
-            exists(select 1
-                from TransferIn ts with (nolock) 
-	            where ts.Status='Confirmed'
-                and exists(
-                    select 1 from TransferIn_Detail tsd with (nolock)
-                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                    and tsd.ID = ts.ID))
-            ,';','')
-        ,
-        stuff((
-            select concat(';',Packages)
-            from(
-	            select ts.id,Packages = sum(Packages)
-                from TransferIn ts with (nolock) 
-	            where ts.Status='Confirmed'
-                and exists(
-                    select 1 from TransferIn_Detail tsd with (nolock)
-                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                    and tsd.ID = ts.ID)
-                group by ts.id
-            )x
-	        for xml path('')
-        ),1,1,'')
-		)
-    ,ContainerNo = stuff((
-        select concat(';' , ContainerNo)
-        from(
-            select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
-	        from Export_Detail ed with (nolock)
-            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_DetailUkey = ed.Ukey
-	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-            and esc.ContainerType <> '' and esc.ContainerNo  <> ''
-        )x
-        for xml path('')
-    ),1,1,'')
-	,[Brand] = o.BrandID
-	,[Style] = o.StyleID
-	,[Season] = o.SeasonID
-	,[Project] = o.ProjectID
-	,[Program] = o.ProgramID
-	,[Seq1] = psd.SEQ1
-	,[Seq2] = psd.SEQ2
-	,[Material Type] = concat(case when psd.FabricType = 'F' then 'Fabric'
-                            when psd.FabricType = 'A' then 'Accessory'
-                            when psd.FabricType = 'O' then 'Orher'
-                            else psd.FabricType end
-                       , '-' + Fabric.MtlTypeID)
-    ,[stock sp]=psd.StockPOID
-    ,[StockSeq1]=psd.StockSeq1
-    ,[StockSeq2]=psd.StockSeq2
-	,[Refno] = psd.Refno
-	,[SCI Refno] = psd.SCIRefno
-	,[Description] = d.Description
-	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
-				    ELSE isnull(psdsC.SpecValue, '')  
-			   END
-    ,[ColorName] = c.Name
-	,[Size] = isnull(psdsS.SpecValue, '')
-	,[Stock Unit] = psd.StockUnit
-	,[Purchase Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.Qty)
-    ,[Order Qty] = o.Qty
-	,[Ship Qty] = dbo.GetUnitQty(psd.PoUnit, psd.StockUnit, psd.ShipQty)
-	,[Roll] = fi.Roll
-	,[Dyelot] = fi.Dyelot
-	,[Stock Type] = case when fi.StockType = 'B' then 'Bulk'
-						 when fi.StockType = 'I' then 'Inventory'
-						 when fi.StockType = 'O' then 'Scrap'
-						 end
-	,[In Qty] = round(fi.InQty,2)
-	,[Out Qty] = round(fi.OutQty,2)
-	,[Adjust Qty] = round(fi.AdjustQty,2)
-    ,[Return Qty] = round(fi.ReturnQty,2)
-	,[Balance Qty] = round(fi.InQty,2) - round(fi.OutQty,2) + round(fi.AdjustQty,2) - round(fi.ReturnQty,2)
-	,[Location] = f.MtlLocationID
-    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
-	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
-	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
-    ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
-    ,[VID] = isnull(VID.CustPONoList,'')
-    ";
-
-        private string sqlcolumn_sum = @"select
-	[M] = o.MDivisionID
-	,[Factory] = o.FactoryID
-	,[SP#] = psd.id
-	,[OrderType] = o.OrderTypeID
-	,[WeaveType] = d.WeaveTypeID
-    ,[BuyerDelivery]=o.BuyerDelivery
-    ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
-    ,[ETA] = psd.FinalETA
-    ,[ArriveWHDate] = stuff((
-                    select distinct concat(';',isnull(Format(a.date,'yyyy/MM/dd'),'　'))
-                    from (
-	                    select date = Export.whsearrival
-	                    from Export_Detail with (nolock) 
-	                    inner join Export with (nolock) on Export.ID = Export_Detail.ID
-	                    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-
-	                    union all
-
-	                    select date = ts.IssueDate
-	                    from TransferIn ts with (nolock) 
-	                    inner join TransferIn_Detail tsd with (nolock) on tsd.ID = ts.ID
-	                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-	                    and ts.Status='Confirmed'
-
-                        union all
-
-                        select date = r.WhseArrival
-                        from Receiving r with (nolock) 
-                        inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-	                    where r.Status = 'Confirmed' 
-	                    and r.Type = 'B' 
-	                    and rd.POID = psd.ID 
-	                    and rd.Seq1 = psd.Seq1 
-	                    and rd.Seq2 = psd.Seq2
-                    )a
-                    for xml path('')
-	            ),1,1,'')
-    ,[WK] = stuff((
-	            	select concat(';',ID)
-	            	from Export_Detail with (nolock) 
-	            	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2 order by Export_Detail.ID
-	            	for xml path('')
-	            ),1,1,'')
-    ,[Packages] =concat(
-        stuff((
-            select concat(';',Packages)
-            from(
-                select e2.Blno,Packages = sum(e2.Packages)
-                from Export e2 with (nolock) 
-                where exists (
-                    select 1
-	                from Export_Detail ed with (nolock)
-                    inner join Export e with (nolock) on e.id = ed.id
-	                where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-                    and e.blno = e2.Blno)
-                group by e2.Blno
-            )x
-	        for xml path('')
-        ),1,1,'')
-        ,
-        iif(exists (
-                select 1
-	            from Export_Detail ed with (nolock)
-                inner join Export e with (nolock) on e.id = ed.id
-	            where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2)                
-            and
-            exists(select 1
-                from TransferIn ts with (nolock) 
-	            where ts.Status='Confirmed'
-                and exists(
-                    select 1 from TransferIn_Detail tsd with (nolock)
-                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                    and tsd.ID = ts.ID))
-            ,';','')
-        ,
-        stuff((
-            select concat(';',Packages)
-            from(
-	            select ts.id,Packages = sum(Packages)
-                from TransferIn ts with (nolock) 
-	            where ts.Status='Confirmed'
-                and exists(
-                    select 1 from TransferIn_Detail tsd with (nolock)
-                    where tsd.POID = psd.id and tsd.Seq1 = psd.SEQ1 and tsd.Seq2 = psd.SEQ2
-                    and tsd.ID = ts.ID)
-                group by ts.id
-            )x
-	        for xml path('')
-        ),1,1,'')
-		)
-    ,ContainerNo = stuff((
-        select concat(';' , ContainerNo)
-        from(
-            select distinct ContainerNo = esc.ContainerType + '-' + esc.ContainerNo
-	        from Export_Detail ed with (nolock)
-            inner join Export_ShipAdvice_Container esc with (nolock) on esc.Export_DetailUkey = ed.Ukey
-	        where ed.POID = psd.id and ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2
-            and esc.ContainerType <> '' and esc.ContainerNo  <> ''
-        )x
-        for xml path('')
-    ),1,1,'')
-	,[Brand] = o.BrandID
-	,[Style] = o.StyleID
-	,[Season] = o.SeasonID
-	,[Project] = o.ProjectID
-	,[Program] = o.ProgramID
-	,[Seq1] = psd.SEQ1
-	,[Seq2] = psd.SEQ2
-	,[Material Type] = concat(case when psd.FabricType = 'F' then 'Fabric'
-                            when psd.FabricType = 'A' then 'Accessory'
-                            when psd.FabricType = 'O' then 'Orher'
-                            else psd.FabricType end,
-                       '-' + Fabric.MtlTypeID)
-    ,[stock sp]=psd.StockPOID
-    ,[StockSeq1]=psd.StockSeq1
-    ,[StockSeq2]=psd.StockSeq2
-	,[Refno] = psd.Refno
-	,[SCI Refno] = psd.SCIRefno
-    ,[Description] = d.Description
-	,[Color] = CASE WHEN Fabric.MtlTypeID = 'EMB THREAD' OR Fabric.MtlTypeID = 'SP THREAD' OR Fabric.MtlTypeID = 'THREAD' 
-				    THEN IIF(psd.SuppColor = '',dbo.GetColorMultipleID(o.BrandID, isnull(psdsC.SpecValue, '')) , psd.SuppColor)
-				    ELSE isnull(psdsC.SpecValue, '')  
-			   END
-	,[Size] = isnull(psdsS.SpecValue, '')
-	,[Stock Unit] = psd.StockUnit
-	,[Purchase Qty] = round(ISNULL(r.RateValue,1) * psd.Qty,2)
-    ,[Order Qty] = o.Qty
-	,[Ship Qty] = round(ISNULL(r.RateValue,1) * psd.ShipQty,2)
-	,[In Qty] = round(mpd.InQty,2)
-	,[Out Qty] = round(mpd.OutQty,2)
-	,[Adjust Qty] = round(mpd.AdjustQty,2)
-    ,[Return Qty] = round(mpd.ReturnQty,2)
-	,[Balance Qty] = round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2) - round(mpd.ReturnQty,2)
-	,[Bulk Qty] = (round(mpd.InQty,2) - round(mpd.OutQty,2) + round(mpd.AdjustQty,2)) - round(mpd.ReturnQty,2) - round(mpd.LInvQty,2)
-	,[Inventory Qty] = round(mpd.LInvQty,2)
-	,[Scrap Qty] = round(mpd.LObQty ,2)
-	,[Bulk Location] = mpd.ALocation
-	,[Inventory Location] = mpd.BLocation
-    ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
-	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
-	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'') 
-    ,[Supplier] = concat(Supp.ID, '-' + Supp.AbbEN)
-    ,[VID] = isnull(VID.CustPONoList,'')
-    ";
-
-        private string sql_yyyy = @"select distinct left(CONVERT(CHAR(8),o.SciDelivery, 112),4) as SciYYYY";
-
-        private string sql_cnt = @"select count(*) as datacnt";
 
         private int _reportType;
         private bool boolCheckQty;
@@ -360,8 +51,6 @@ namespace Sci.Production.Warehouse
         private StringBuilder sqlcmd = new StringBuilder();
         private StringBuilder sqlcmd_fin = new StringBuilder();
         private DataTable printData;
-        private DataTable printData_cnt;
-        private DataTable printData_yyyy;
         private List<SqlParameter> parameters = new List<SqlParameter>();
 
         /// <summary>
@@ -482,8 +171,8 @@ namespace Sci.Production.Warehouse
                 return resultReport.Result;
             }
 
-            this.printData_cnt = resultReport.Dt;
-            this.data_cnt = (int)this.printData_cnt.Rows[0]["datacnt"];
+            this.printData = resultReport.Dt;
+            this.data_cnt = this.printData.Rows.Count;
 
             return Ict.Result.True;
             #endregion
@@ -503,42 +192,34 @@ namespace Sci.Production.Warehouse
             this.SetCount(this.data_cnt);
             this.ShowWaitMessage("Excel Processing");
             #region To Excel
-            DualResult result;
             string reportname = string.Empty;
             if (this._reportType == 0)
             {
-                this.sqlcmd_fin.Append(this.sqlcolumn + this.sqlcmd.ToString());
                 reportname = "Warehouse_R21_Detail.xltx";
             }
             else
             {
-                this.sqlcmd_fin.Append(this.sqlcolumn_sum + this.sqlcmd.ToString());
                 reportname = "Warehouse_R21_Summary.xltx";
             }
 
             if (this.data_cnt > 1000000)
             {
-                string sqlcmd_dtail;
                 Excel.Application objApp;
                 Excel.Worksheet tmpsheep = null;
                 Utility.Report.ExcelCOM com;
                 string strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary");
                 int sheet_cnt = 1;
                 int split_cnt = 500000;
-                result = DBProxy.Current.Select(null, this.sql_yyyy + this.sqlcmd, this.parameters, out this.printData_yyyy);
-                if (!result)
-                {
-                    this.HideWaitMessage();
-                    MyUtility.Msg.ErrorBox(result.Messages.ToString());
-                    return result;
-                }
 
-                string[] exl_name = new string[this.printData_yyyy.Rows.Count];
+                var sciYYYY = this.printData.AsEnumerable()
+                       .Select(x => x["SciYYYY"].ToString())
+                       .Distinct()
+                       .ToList();
+                string[] exl_name = new string[sciYYYY.Count];
                 DataTable tmpTb;
-                for (int i = 0; i < this.printData_yyyy.Rows.Count; i++)
+                for (int i = 0; i < sciYYYY.Count; i++)
                 {
-                    sqlcmd_dtail = this.sqlcmd_fin.ToString() + string.Format("  and o.SciDelivery >= '{0}' and  o.SciDelivery < = '{1}' ", this.printData_yyyy.Rows[i][0].ToString() + "0101", this.printData_yyyy.Rows[i][0].ToString() + "1231");
-                    strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + this.printData_yyyy.Rows[i][0].ToString());
+                    strExcelName = Class.MicrosoftFile.GetName((this._reportType == 0) ? "Warehouse_R21_Detail" : "Warehouse_R21_Summary" + sciYYYY[i].ToString());
                     exl_name[i] = strExcelName;
                     com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + reportname, null);
                     objApp = com.ExcelApp;
@@ -546,67 +227,52 @@ namespace Sci.Production.Warehouse
                     com.ColumnsAutoFit = false;
                     sheet_cnt = 1;
 
-                    if (DBProxy.Current.Select(null, sqlcmd_dtail, this.parameters, out this.printData))
+                    var dt_yyyy = this.printData.Select($"SciYYYY = '{sciYYYY[i]}'").TryCopyToDataTable(this.printData);
+                    dt_yyyy.Columns.Remove("SciYYYY");
+
+                    // 如果筆數超過split_cnt再拆一次sheet
+                    if (dt_yyyy.Rows.Count > split_cnt)
                     {
-                        // 如果筆數超過split_cnt再拆一次sheet
-                        if (this.printData.Rows.Count > split_cnt)
+                        int max_sheet_cnt = (int)Math.Floor((decimal)(dt_yyyy.Rows.Count / split_cnt));
+                        for (int j = 0; j <= max_sheet_cnt; j++)
                         {
-                            int max_sheet_cnt = (int)Math.Floor((decimal)(this.printData.Rows.Count / split_cnt));
-                            for (int j = 0; j <= max_sheet_cnt; j++)
+                            if (j < max_sheet_cnt)
                             {
-                                if (j < max_sheet_cnt)
-                                {
-                                    ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]).Copy(objApp.Workbooks[1].Worksheets[sheet_cnt]);
-                                }
+                                ((Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt]).Copy(objApp.Workbooks[1].Worksheets[sheet_cnt]);
+                            }
 
-                                tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
-                                tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString() + "-" + (j + 1).ToString();
-                                ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
-                                tmpTb = this.printData.AsEnumerable().Skip(j * split_cnt).Take(split_cnt).CopyToDataTable();
+                            tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
+                            tmpsheep.Name = sciYYYY[i].ToString() + "-" + (j + 1).ToString();
+                            ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
+                            tmpTb = dt_yyyy.AsEnumerable().Skip(j * split_cnt).Take(split_cnt).CopyToDataTable();
 
-                                DualResult ok = com.WriteTable(tmpTb, 2);
+                            DualResult ok = com.WriteTable(tmpTb, 2);
 
-                                sheet_cnt++;
-                                if (tmpTb != null)
-                                {
-                                    tmpTb.Rows.Clear();
-                                    tmpTb.Constraints.Clear();
-                                    tmpTb.Columns.Clear();
-                                    tmpTb.ExtendedProperties.Clear();
-                                    tmpTb.ChildRelations.Clear();
-                                    tmpTb.ParentRelations.Clear();
-                                    tmpTb.Dispose();
+                            sheet_cnt++;
+                            if (tmpTb != null)
+                            {
+                                tmpTb.Rows.Clear();
+                                tmpTb.Constraints.Clear();
+                                tmpTb.Columns.Clear();
+                                tmpTb.ExtendedProperties.Clear();
+                                tmpTb.ChildRelations.Clear();
+                                tmpTb.ParentRelations.Clear();
+                                tmpTb.Dispose();
 
-                                    GC.Collect();
-                                    GC.WaitForPendingFinalizers();
-                                    GC.Collect();
-                                }
+                                GC.Collect();
+                                GC.WaitForPendingFinalizers();
+                                GC.Collect();
                             }
                         }
-                        else
-                        {
-                            // 複製sheet
-                            tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
-                            tmpsheep.Name = this.printData_yyyy.Rows[i][0].ToString();
-                            ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
-                            com.WriteTable(this.printData, 2);
-                            sheet_cnt++;
-                        }
-
-                        if (this.printData != null)
-                        {
-                            this.printData.Rows.Clear();
-                            this.printData.Constraints.Clear();
-                            this.printData.Columns.Clear();
-                            this.printData.ExtendedProperties.Clear();
-                            this.printData.ChildRelations.Clear();
-                            this.printData.ParentRelations.Clear();
-                            this.printData.Dispose();
-
-                            GC.Collect();
-                            GC.WaitForPendingFinalizers();
-                            GC.Collect();
-                        }
+                    }
+                    else
+                    {
+                        // 複製sheet
+                        tmpsheep = (Excel.Worksheet)objApp.Workbooks[1].Worksheets[sheet_cnt];
+                        tmpsheep.Name = sciYYYY[i].ToString();
+                        ((Excel.Worksheet)objApp.ActiveWorkbook.Sheets[sheet_cnt]).Select();
+                        com.WriteTable(dt_yyyy, 2);
+                        sheet_cnt++;
                     }
 
                     // 刪除多餘sheet
@@ -644,14 +310,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
-                result = DBProxy.Current.Select(null, this.sqlcmd_fin.ToString(), this.parameters, out this.printData);
-                if (!result)
-                {
-                    this.HideWaitMessage();
-                    MyUtility.Msg.ErrorBox(result.Messages.ToString());
-                    return result;
-                }
-
+                this.printData.Columns.Remove("SciYYYY");
                 Utility.Report.ExcelCOM com = new Utility.Report.ExcelCOM(Env.Cfg.XltPathDir + "\\" + reportname, null);
                 Excel.Application objApp = com.ExcelApp;
 
