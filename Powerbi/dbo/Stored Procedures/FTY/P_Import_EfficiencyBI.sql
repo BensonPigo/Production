@@ -188,6 +188,7 @@ select t.*
 	,[FtyType] = f.Type
 	,[FtyCountry] = f.CountryID
 	,[CumulateDate] = CumulateDate.val
+	,[RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
 into #tmp1stFilter
 from #tmpSewingGroup t
 left join Production.dbo.Factory f on t.FactoryID = f.ID
@@ -215,6 +216,12 @@ outer apply (	select val = IIF(Count(1)=0, 1, Count(1))
 												w.Date <= t.OutputDate
 									)
 ) CumulateDate
+left join Production.dbo.RFT A with (nolock) on A.OrderID=t.OrderId
+								 and A.CDate=t.OutputDate
+								 and A.SewinglineID=t.SewinglineID
+								 and A.FactoryID=t.FactoryID
+								 and A.Shift=t.Shift
+								 and A.Team=t.Team 
 where t.OrderCategory in ('B','S')-----Artwork
  
 -----by orderid & all ArtworkTypeID
@@ -263,7 +270,7 @@ select * INTO #Final from(
 		,TotalCPU = ROUND(IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category='M',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = IIF(t.ori_InlineQty = 0, 0, ROUND(t.ori_QAQty* 1.0 / t.ori_InlineQty * 1.0 * 100 ,2))
+		,RFT
 		,CumulateDate
 		,DateRange = IIF(CumulateDate>=10,'>=10',CONVERT(VARCHAR,CumulateDate))
 		,InlineQty,Diff = t.QAQty-InlineQty

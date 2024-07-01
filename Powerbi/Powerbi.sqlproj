@@ -223,6 +223,7 @@
     <Build Include="dbo\Tables\P_FabricDispatchRate.sql" />
     <Build Include="dbo\Tables\P_CFAMasterListRelatedrate.sql" />
     <Build Include="dbo\Tables\P_AdiCompReport.sql" />
+    <Build Include="dbo\Tables\P_SimilarStyle.sql" />
     <Build Include="dbo\Tables\P_OutstandingPOStatus.sql" />
     <Build Include="dbo\Tables\P_RightFirstTimeDailyReport.sql" />
     <Build Include="dbo\Tables\P_SubprocessBCSByDays.sql" />
@@ -232,6 +233,10 @@
     <Build Include="dbo\Tables\P_SubProInsReportMonthlyRate.sql" />
     <Build Include="dbo\Tables\P_WIPBySPLine.sql" />
     <Build Include="dbo\Tables\P_OutStandingHPMS.sql" />
+    <Build Include="dbo\Tables\P_Changeover.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_Changeover.sql" />
+    <Build Include="dbo\Tables\P_FabricInspAvgInspLTInPast7Days.sql" />
+    <Build Include="dbo\Tables\P_MaterialCompletionRateByWeek.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

@@ -185,6 +185,7 @@ BEGIN
 							 ELSE t.Shift END
 			   , FtyType = f.Type
 			   , FtyCountry = f.CountryID
+			   , RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
 			   , CumulateDate = isnull(c.cumulate,1)
 		into #tmp1stFilter
 		from #tmpSewingGroup t
@@ -196,6 +197,12 @@ BEGIN
 						   and c.OrderId = t.OrderId 
 						   and c.ComboType = t.ComboType
 		left join Factory f WITH (NOLOCK) on t.FactoryID = f.ID
+		left join RFT A WITH (NOLOCK) on A.OrderID=t.OrderId
+										 and A.CDate=t.OutputDate
+										 and A.SewinglineID=t.SewinglineID
+										 and A.FactoryID=t.FactoryID
+										 and A.Shift=t.Shift
+										 and A.Team=t.Team
 		---↓最後組成
 		select Shift =    CASE    WHEN LastShift='D' then 'Day'
 								  WHEN LastShift='N' then 'Night'
@@ -236,15 +243,24 @@ BEGIN
 	   									  , (ROUND(IIF(Category = 'M', MockupCPU * MockupCPUFactor
 	   						      									 , OrderCPU * OrderCPUFactor * Rate) * QAQty, 2) / (ROUND(ActManPower * WorkHour, 2) * 3600 / StdTMS)) * 100, 0)
 	   									  , 1) 
-			   , RFT = IIF(ori_InlineQty = 0, 0, ROUND(ori_QAQty* 1.0 / ori_InlineQty * 1.0 * 100 ,2))
+			   , RFT = RFTInfo.RFT
 			   , CumulateDate
 			   , InlineQty
 			   , Diff = QAQty - InlineQty
-				,FactoryID 
+			   , FactoryID 
 			   , LastShift
-			   , ComboType
 		into #tmp
 		from #tmp1stFilter
+		outer apply (
+			select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+			from RFT A with (nolock) 
+			where A.OrderID=#tmp1stFilter.OrderId
+			and A.CDate=#tmp1stFilter.OutputDate
+			and A.SewinglineID=#tmp1stFilter.SewinglineID
+			and A.FactoryID=#tmp1stFilter.FactoryID
+			and A.Shift=#tmp1stFilter.Shift
+			and A.Team=#tmp1stFilter.Team 
+		) as RFTInfo
 		where 1 =1
 		order by LastShift,Team,SewingLineID,OrderId
 		---↓最後Select 

@@ -37,16 +37,35 @@ namespace Sci.Production.Quality
 
         private void GridSetup()
         {
-            this.Helper.Controls.Grid.Generator(this.grid1)
+            if (string.Compare(this.BrandID, "LLL", true) == 0)
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
+                .Text("CategoryValue", header: "Moisture Level", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("MoistureStandardDesc", header: "Moisture Standard", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                ;
+            }
+            else
+            {
+                this.Helper.Controls.Grid.Generator(this.grid1)
                 .Text("MaterialCompositionGrp", header: "Material Composition Group", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("MaterialCompositionItem", header: "Material Composition Item", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("MoistureStandardDesc", header: "Moisture Standard", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 ;
+            }
         }
 
         private void Query()
         {
-            string sqlcmd = $@"select *from Brand_QAMoistureStandardList b where BrandID = '{this.BrandID}'";
+            string sqlcmd = string.Empty;
+            if (string.Compare(this.BrandID, "LLL", true) == 0)
+            {
+                sqlcmd = @"select * from Brand_QAMoistureStandardListByActMoisture where BrandID = 'LLL' and category = 'MoistureLevel'";
+            }
+            else
+            {
+                sqlcmd = $@"select * from Brand_QAMoistureStandardList b where BrandID = '{this.BrandID}'";
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {

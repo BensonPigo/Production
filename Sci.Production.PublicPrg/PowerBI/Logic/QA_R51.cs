@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             O.SewInLine,
 	        B.Sewinglineid,
             SR.Shift,
-	        [RFT] = iif(isnull(BD.Qty, 0) = 0, 0, round((isnull(BD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BD.Qty as float),2)),
+	        [RFT] = isnull(RftValue.val,0),
 	        SR.SubProcessID,
 	        SR.BundleNo,
             [Artwork] = Artwork.val,
@@ -92,6 +92,21 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+            outer apply
+            (
+                SELECT 
+                VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+                FROM SewingOutput_Detail sod 
+                inner join SewingOutput so with(nolock) on so.id = sod.id
+                inner join Rft r on r.OrderID = sod.OrderId AND
+					                r.SewinglineID = so.SewingLineID AND
+					                r.Team = so.Team AND
+					                r.Shift = so.Shift AND
+					                r.CDate = so.OutputDate
+                WHERE sod.OrderId = O.ID and so.SewinglineID = B.SewinglineID and so.FactoryID=SR.FactoryID 
+	            and so.Shift= iif(SR.Shift = 'Day','D','N') 
+	            and r.CDate = O.SewInLine
+            )RftValue
             Where 1=1
             {itemWhere.Item1}
 
@@ -105,7 +120,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             O.SewInLine,
             BR.Sewinglineid,
             SR.Shift,
-	        [RFT] = iif(isnull(BRD.Qty, 0) = 0, 0, round((isnull(BRD.Qty, 0)- isnull(SR.RejectQty, 0)) / Cast(BRD.Qty as float),2)),
+	        [RFT] = isnull(RftValue.val,0),
 	        SR.SubProcessID,
 	        SR.BundleNo,
             [Artwork] = Artwork.val,
@@ -152,6 +167,21 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
+            outer apply
+            (
+                SELECT 
+                VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+                FROM SewingOutput_Detail sod 
+                inner join SewingOutput so with(nolock) on so.id = sod.id
+                inner join Rft r on r.OrderID = sod.OrderId AND
+					                r.SewinglineID = so.SewingLineID AND
+					                r.Team = so.Team AND
+					                r.Shift = so.Shift AND
+					                r.CDate = so.OutputDate
+                WHERE sod.OrderId = O.ID and so.SewinglineID = B.SewinglineID and so.FactoryID=SR.FactoryID 
+	            and so.Shift= iif(SR.Shift = 'Day','D','N') 
+	            and r.CDate = O.SewInLine
+            )RftValue
             Where 1=1
             {itemWhere.Item2}
 
