@@ -63,10 +63,10 @@ namespace Sci.Production.Shipping
                 }
                 else
                 {
-                    this.BeginInvoke(() =>
+                    if (!result.Description.Empty())
                     {
-                        MyUtility.Msg.WarningBox(result.Messages.ToString());
-                    });
+                        return result;
+                    }
                 }
 
                 string sqlcmd = $@"
@@ -183,7 +183,7 @@ where   pd.OrderID = '{this.masterData["OrderID"]}' and
 
             if (dtA2BInvNo.Rows.Count == 0)
             {
-                return new DualResult(false, new MessageInfo("InvoiceNo not find!"));
+                return new DualResult(false, description: "InvoiceNo not find!");
             }
 
             string targetFty = MyUtility.GetValue.Lookup(string.Format(
@@ -195,7 +195,7 @@ and NegoRegion <> (select RgCode from System)"
 , this.masterData["OrderID"].ToString()));
             if (targetFty.Empty())
             {
-                return new DualResult(false, new MessageInfo("It's not A2B!"));
+                return new DualResult(false, description: string.Empty);
             }
 
             string whereInvNo = dtA2BInvNo.AsEnumerable().Select(s => $"'{s["INVNo"]}'").JoinToString(",");
@@ -255,7 +255,15 @@ select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID,a.Price
 , a.CW
 into #table1
 from (
-	select sd.*,s.CurrencyID as PayCurrency,s.CW,s.CDate
+	select sd.Qty
+    ,sd.Price
+    ,sd.CurrencyID
+    ,sd.Amount
+    ,sd.Rate
+    ,sd.ShipExpenseID
+    ,s.CurrencyID as PayCurrency
+    ,s.CW
+    ,s.CDate
 	from ShippingAP s
 	inner join ShippingAP_Detail sd on s.ID = sd.ID
 	where exists(
