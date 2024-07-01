@@ -29,9 +29,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                StringBuilder sqlcmd = new StringBuilder();
-                List<SqlParameter> parameters = new List<SqlParameter>();
-
                 Warehouse_R21_ViewModel warehouse_R21 = new Warehouse_R21_ViewModel()
                 {
                     AddEditDateStart = sDate,
@@ -42,7 +39,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     IsPowerBI = true,
                 };
 
-                Base_ViewModel resultReport = biModel.GetWarehouse_R21Data(warehouse_R21,out sqlcmd, out parameters);
+                Base_ViewModel resultReport = biModel.GetWarehouse_R21Data(warehouse_R21);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();

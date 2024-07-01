@@ -331,7 +331,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel GetWarehouse_R21Data(Warehouse_R21_ViewModel model, out StringBuilder cmd, out List<SqlParameter> paras)
+        public Base_ViewModel GetWarehouse_R21Data(Warehouse_R21_ViewModel model)
         {
             StringBuilder sqlcmd = new StringBuilder();
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -755,8 +755,6 @@ or
                 }
             }
 
-            cmd = sqlcmd;
-            paras = parameters;
             Base_ViewModel resultReport = new Base_ViewModel
             {
                 Result = this.DBProxy.Select("Production", sql, parameters, out DataTable dataTable),

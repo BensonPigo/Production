@@ -48,10 +48,7 @@ namespace Sci.Production.Warehouse
         private int _reportType;
         private bool boolCheckQty;
         private int data_cnt = 0;
-        private StringBuilder sqlcmd = new StringBuilder();
-        private StringBuilder sqlcmd_fin = new StringBuilder();
         private DataTable printData;
-        private List<SqlParameter> parameters = new List<SqlParameter>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R21"/> class.
@@ -126,9 +123,6 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            this.sqlcmd.Clear();
-            this.sqlcmd_fin.Clear();
-            this.parameters.Clear();
             #region 與BI共用Data Logic
             Warehouse_R21 biModel = new Warehouse_R21();
             Warehouse_R21_ViewModel warehouse_R21 = new Warehouse_R21_ViewModel()
@@ -165,7 +159,7 @@ namespace Sci.Production.Warehouse
                 IsPowerBI = false,
             };
             #region Get Data
-            Base_ViewModel resultReport = biModel.GetWarehouse_R21Data(warehouse_R21, out this.sqlcmd, out this.parameters);
+            Base_ViewModel resultReport = biModel.GetWarehouse_R21Data(warehouse_R21);
             if (!resultReport.Result)
             {
                 return resultReport.Result;
