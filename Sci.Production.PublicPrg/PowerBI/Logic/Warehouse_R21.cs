@@ -427,19 +427,7 @@ where 1=1
                 #endregion
             }
 
-            if (model.IsPowerBI)
-            {
-                if (MyUtility.Check.Seek("SELECT TOP 1 1 FROM dbo.P_InventoryStockListReport", "PowerBI"))
-                {
-                    sqlcmd.Append(@"
-and (o.AddDate >= @stratDate or o.EditDate >= @stratDate)
-and(o.AddDate <= @endDate or o.EditDate <= @endDate)");
-                }
-
-                parameters.Add(new SqlParameter("@stratDate", model.AddEditDateStart));
-                parameters.Add(new SqlParameter("@endDate", model.AddEditDateEnd));
-            }
-            else
+            if (!model.IsPowerBI)
             {
                 #region where條件
                 if (!MyUtility.Check.Empty(model.StartSPNo))
