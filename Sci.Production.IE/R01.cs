@@ -190,6 +190,8 @@ namespace Sci.Production.IE
             }
             else
             {
+                this.printData_Detail_Station = new DataTable();
+                this.printData_Detail_Operation = new DataTable();
                 cmdP03_Station = this.GetDetailP03_Station();
                 cmdP05_Station = this.GetDetailP05_Station();
                 cmdP06_Station = this.GetDetailP06_Station();
@@ -787,7 +789,6 @@ select distinct
 	ActTimeDiffAvg = IIF((DetailSum.TotalCycle / lm. SewerManpower) = 0, 0, ( (DetailSum.TotalCycle / lm. SewerManpower) - DetailSum.TotalCycle ) / (DetailSum.TotalCycle / lm. SewerManpower)),　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = '',
     IsFrom = 'IE P06'
-into #tmp
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 outer apply (
@@ -1005,7 +1006,7 @@ select
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
 	CycleTime = DetailSum.TotalCycle ,
-	Eff= iif(DetailSum.TotalCycle = 0,0,ROUND(DetailSum.TotalGSD/ DetailSum.TotalCycle,2)*100),
+	Eff= iif(DetailSum.TotalCycle = 0,0,DetailSum.TotalGSD/ DetailSum.TotalCycle),
     t.IsFrom
 from #tmp t
 OUTER APPLY(
@@ -1128,7 +1129,6 @@ from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 
 select distinct
-	t.ID,
 	t.FactoryID,
 	t.StyleID,
 	t.ComboType,
@@ -1368,7 +1368,7 @@ select
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
 	CycleTime = DetailSum.TotalCycle ,
-	Eff= iif(DetailSum.TotalCycle = 0,0,ROUND(DetailSum.TotalGSD/ DetailSum.TotalCycle,2)*100),
+	Eff= iif(DetailSum.TotalCycle = 0,0,DetailSum.TotalGSD/ DetailSum.TotalCycle),
     t.IsFrom
 from #tmp t
 OUTER APPLY(
@@ -1509,23 +1509,22 @@ select distinct
 	lm.Version,
 	lm.SewingLineID,
 	lm.Team,
-
 	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour,
+	[Daily Demand / Shift] = IIF(lm.TotalCycle=0, 0,  ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour),
 
 	[Current # of Optrs] = Cast( lm.CurrentOperators as int),
 
 	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
-	[Target/Hr. (100%)] = (3600.0 * lm.CurrentOperators) / lm.TotalCycle,
+	[Target/Hr. (100%)] = IIF(lm.TotalCycle=0, 0, (3600.0 * lm.CurrentOperators) / lm.TotalCycle),
 
 	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
-	[Takt Time] = ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ),
+	[Takt Time] = CEILING( IIF(lm.TotalCycle=0 OR lm.Workhour = 0,0, ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ) )),
 
 	[Total GSD Time] = lm.TotalGSD * 1.0,
 	[Total Cycle Time] = lm.TotalCycle * 1.0,
 	
 	---- 公式: [Total Cycle Time] / [Current # of Optrs]
-	[Avg. Cycle Time] = 1.0 * lm.TotalCycle / lm.CurrentOperators,
+	[Avg. Cycle Time] =   IIF(lm.TotalCycle=0 OR lm.CurrentOperators = 0,0, 1.0 * lm.TotalCycle / lm.CurrentOperators),
 
 	[CPU / PC] = s.CPU,
 	[No. of Hours] = lm.Workhour,
@@ -1536,14 +1535,14 @@ select distinct
 	[Optrs of Packer] = 0,
 
 	---- 公式：3600 / [Highest Cycle Time]
-	[EOLR] = 3600.0 / lm.HighestCycle,
+	[EOLR] = IIF(lm.TotalCycle=0 ,0 ,3600.0 / lm.HighestCycle),
 
-	[Efficiency %] = IIF(lm.HighestCycle*lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalGSD / lm.HighestCycle / lm.CurrentOperators ) ,
+	[Efficiency %] = IIF(lm.HighestCycle = 0 OR lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalGSD / lm.HighestCycle / lm.CurrentOperators ) ,
 
-	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs] * 100
-	[Line Balancing %] = 1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100,
+	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs]
+	[Line Balancing %] = IIF( lm.HighestCycle =0 or lm.CurrentOperators=0 ,0 , 1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators),
 
-	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100 ,
 	[Not Hit Target Type] = ISNULL(i.TypeGroup ,'') ,
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
@@ -1554,11 +1553,14 @@ select distinct
                     )a )),
 	[Not Hit Target Reason]=ISNULL(i.Name ,'') ,
 
-	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs] * 100
-	[Lean Line Eff %] = 1.0 * lm.TotalCycle / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour )) / lm.CurrentOperators * 100,
+	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs]
+	[Lean Line Eff %] = IIF(lm.Workhour = 0 OR lm.TotalCycle =0 OR lm.CurrentOperators = 0 ,0,
+        1.0 * lm.TotalCycle 
+        / CEILING( IIF(lm.TotalCycle=0 OR lm.Workhour = 0,0, ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ) )) 
+        / lm.CurrentOperators ),
 
 	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
-	[PPH] = ( ( 3600.0 / lm.HighestCycle) * s.CPU ) / lm.CurrentOperators,
+	[PPH] =IIF(lm.HighestCycle =0 OR lm.CurrentOperators =0,0,  ( ( 3600.0 / lm.HighestCycle) * s.CPU ) / lm.CurrentOperators),
 
 	lm.Status,
 	[GSD Status] = lm.TimeStudyPhase,
@@ -1728,7 +1730,7 @@ select distinct
 	---- P05 公式：P05沒有TotalCycle，所以為0
 	[Line Balancing %] = 0.0,
 
-	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100,
 	[Not Hit Target Type] = '',
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
@@ -1880,7 +1882,7 @@ select distinct
 	[Target/Hr. (100%)] = (3600.0 * lm.SewerManpower) / lm.TotalCycleTime,
 
 	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
-	[Takt Time] = ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour ),
+	[Takt Time] = CEILING( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour ) ),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
@@ -1899,12 +1901,12 @@ select distinct
 	---- 公式：3600 / [Highest Cycle Time]
 	[EOLR] = 3600.0 / lm.HighestCycleTime,
 
-	[Efficiency %] = IIF(lm.HighestCycleTime*lm.SewerManpower = 0 ,0 , 1.0 * lm.TotalGSDTime / lm.HighestCycleTime / lm.SewerManpower ) ,
+	[Efficiency %] = IIF(lm.HighestCycleTime = 0 OR lm.SewerManpower = 0 ,0 , 1.0 * lm.TotalGSDTime / lm.HighestCycleTime / lm.SewerManpower ) ,
 
-	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs] * 100
-	[Line Balancing %] = 1.0 * lm.TotalCycleTime / lm.HighestCycleTime / lm.SewerManpower * 100,
+	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs]
+	[Line Balancing %] = 1.0 * lm.TotalCycleTime / lm.HighestCycleTime / lm.SewerManpower,
 
-	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') ,
+	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100,
 	[Not Hit Target Type] = '',
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
@@ -1915,8 +1917,12 @@ select distinct
                     )a )),
 	[Not Hit Target Reason]='',
 
-	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs] * 100
-	[Lean Line Eff %] = 1.0 * lm.TotalCycleTime / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour )) / lm.SewerManpower * 100,
+	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs]
+	[Lean Line Eff %] = IIF(lm.Workhour = 0 or lm.SewerManpower = 0 or lm.TotalCycleTime = 0 , 0,
+            1.0 * lm.TotalCycleTime 
+            / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour )) 
+            / lm.SewerManpower
+            ),
 
 	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
 	[PPH] = ( ( 3600.0 / lm.HighestCycleTime) * s.CPU ) / lm.SewerManpower,
@@ -1928,7 +1934,7 @@ select distinct
 	lm.AddDate,
 	lm.EditName,
 	lm.EditDate,
-    IsFrom = 'IE P03'
+    IsFrom = 'IE P06'
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey

@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Data;
 using System.Configuration;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sci.Production.Class
 {
@@ -36,6 +38,7 @@ namespace Sci.Production.Class
         /// <param name="ftygroup">Fty group</param>
         public void SetDefalutIndex(string defalutValue = null, bool ftygroup = false)
         {
+            List<string> existsList = new List<string>();
             DataTable dtFty = new DataTable();
             DataRow dr;
             dtFty.Columns.Add("Factory", typeof(string));
@@ -50,6 +53,12 @@ namespace Sci.Production.Class
                 string[] factorys = strServer.Split(new char[] { ':', ',' });
                 for (int i = 1; i < factorys.Length; i++)
                 {
+                    if (existsList.Any(x => x == factorys[i]))
+                    {
+                        continue;
+                    }
+
+                    existsList.Add(factorys[i]);
                     dr = dtFty.NewRow();
                     dr["Factory"] = factorys[i];
                     dtFty.Rows.Add(dr);

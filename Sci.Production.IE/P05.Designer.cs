@@ -280,7 +280,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1271, 670);
+            this.browse.Size = new System.Drawing.Size(1252, 670);
             // 
             // tabs
             // 
@@ -454,6 +454,7 @@
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(383, 8);

@@ -195,6 +195,7 @@ namespace Sci.Production.Centralized
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             DualResult result;
+            this.PrintData = new DataTable();
             StringBuilder cmd = this.GetSqlCmd();
 
             #region --由Factory.PmsPath抓各個連線路徑
@@ -366,7 +367,7 @@ and (convert(date,ss.Inline) >= '{this.dtSewingDate.Value1.Value.ToString("yyyy/
 and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
                 }
 
-                otherDate =$@"
+                otherDate = $@"
 AND EXISTS (	
 	select 1
 	from SewingSchedule ss
@@ -668,6 +669,7 @@ select a.*,b.Status
 INTO #FinalBeforeData
 from #BeforeData a
 inner join LineMapping b on a.ID = b.ID　---- P03
+WHERE a.SourceTable='IE P03'
 UNION 
 select a.*,b.Status
 	,TotalGSD = TotalGSDTime
@@ -677,7 +679,8 @@ select a.*,b.Status
 	,TaktTime = 0
 	,b.Workhour
 from #BeforeData a
-inner join AutomatedLineMapping b on a.ID = b.ID　---- P06
+inner join AutomatedLineMapping b on a.ID = b.ID　---- P05
+WHERE a.SourceTable='IE P05'
 
 select a.*,b.Status
 	,b.TotalGSD
@@ -688,6 +691,7 @@ select a.*,b.Status
 INTO #FinalAfterData 
 from #AfterData a
 inner join LineMapping b on a.ID = b.ID ---- P03
+WHERE a.SourceTable='IE P03'
 UNION ALL
 select a.*,b.Status
 	,TotalGSD = b.TotalGSDTime
@@ -697,6 +701,7 @@ select a.*,b.Status
 	,HighestGSD = b.HighestGSDTime
 from #AfterData a
 inner join LineMappingBalancing b on a.ID = b.ID ---- P06
+WHERE a.SourceTable='IE P06'
 
 
 ---- 7. 開始兜報表的欄位
@@ -736,7 +741,7 @@ select
 	,[Cycle Time] = AfterData.TotalCycle
 	,[Avg. Cycle] = AfterData.AvgCycle
 	,[LBR after inline] = AfterData.LBR
-	,[Target LBR] = LinebalancingTarget.Target * 100.0
+	,[Target LBR] = LinebalancingTarget.Target
 	,[After inline Is From] = AfterData.SourceTable
 	,[After inline Status] =  AfterData.Status
 	,[Est. PPH] = AfterData.EstPPH
@@ -760,9 +765,12 @@ select
 	,[Total % Time diff] = IIF(AfterData.TotalCycle = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / AfterData.TotalCycle )
 	,[By style] = IIF(AfterData.Status = 'Confirmed' OR ISNULL(BeforeDataP03.Status,BeforeDataP05.Status)  = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
+	,[Last Version From] = ISNULL(AfterData.SourceTable, ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) )
+	,[Last Version Phase] = ISNULL(AfterData.Phase, ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase))
+	,[Last Version Status] = ISNULL(AfterData.Status ,ISNULL(BeforeDataP03.Status,BeforeDataP05.Status) )
 	,[History LBR] = CASE WHEN AfterData.SourceTable = 'IE P03' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
 						  WHEN AfterData.SourceTable = 'IE P06' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
-					 ELSE 0 END
+					 ELSE NULL END
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
 left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
@@ -789,8 +797,8 @@ Outer Apply(
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
-	,[Takt] = CASE  WHEN lm.SourceTable = 'IE P03' THEN lm.TaktTime
-				   ELSE 0 END
+	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P03' THEN lm.TaktTime
+				   ELSE 0 END AS DECIMAL(7,2))
 	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
 			 ELSE 0 END
@@ -801,11 +809,11 @@ Outer Apply(
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
-	,[Takt] = CASE  WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.CurrentOperators  = 0 OR lm.TotalGSD = 0 OR lm.TotalGSD = 0 OR ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour ) = 0 
+	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.CurrentOperators  = 0 OR lm.TotalGSD = 0 OR lm.TotalGSD = 0 OR ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour ) = 0 
 														,0
 														,( 3600 * lm.WorkHour ) / ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour )
 													)
-				   ELSE 0 END
+				   ELSE 0 END AS DECIMAL(7,2))
 	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN 0
 			 ELSE 0 END
