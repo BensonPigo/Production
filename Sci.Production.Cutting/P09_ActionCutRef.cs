@@ -171,8 +171,9 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["Shift"] = this.txtDropDownList1.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
             this.CurrentDetailData["Cons"] = this.Cons;
-            UpdateMinOrderID(this.WorkType, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateConcatString(this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            UpdateMinOrderID(this.WorkType, this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+            UpdateArticle_CONCAT(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
             UpdatebyPatternPanel(this.CurrentDetailData, this.dtWorkOrderForOutput_PatternPanel, CuttingForm.P09);

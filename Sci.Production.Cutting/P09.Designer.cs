@@ -143,7 +143,8 @@
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(1285, 3);
+            this.refresh.Location = new System.Drawing.Point(1285, 5);
+            this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             // 
             // detailgridcont
@@ -613,9 +614,9 @@
             // 
             this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(646, 3);
+            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(646, 2);
             this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
-            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(290, 30);
+            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(290, 32);
             this.btnImportFromWorkOrderForPlanning.TabIndex = 1;
             this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
             this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
@@ -625,9 +626,9 @@
             // 
             this.btnExcludeSetting.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnExcludeSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnExcludeSetting.Location = new System.Drawing.Point(505, 3);
+            this.btnExcludeSetting.Location = new System.Drawing.Point(505, 2);
             this.btnExcludeSetting.Name = "btnExcludeSetting";
-            this.btnExcludeSetting.Size = new System.Drawing.Size(137, 30);
+            this.btnExcludeSetting.Size = new System.Drawing.Size(137, 32);
             this.btnExcludeSetting.TabIndex = 0;
             this.btnExcludeSetting.Text = "Exclude Setting";
             this.btnExcludeSetting.UseVisualStyleBackColor = true;
@@ -672,9 +673,9 @@
             // 
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchAssign.Location = new System.Drawing.Point(327, 34);
+            this.btnBatchAssign.Location = new System.Drawing.Point(327, 35);
             this.btnBatchAssign.Name = "btnBatchAssign";
-            this.btnBatchAssign.Size = new System.Drawing.Size(113, 30);
+            this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
             this.btnBatchAssign.TabIndex = 2;
             this.btnBatchAssign.Text = "Batch Assign";
             this.btnBatchAssign.UseVisualStyleBackColor = true;
@@ -683,9 +684,9 @@
             // btnImportMarker
             // 
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
+            this.btnImportMarker.Location = new System.Drawing.Point(441, 35);
             this.btnImportMarker.Name = "btnImportMarker";
-            this.btnImportMarker.Size = new System.Drawing.Size(124, 30);
+            this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
             this.btnImportMarker.TabIndex = 3;
             this.btnImportMarker.Text = "Import Marker";
             this.btnImportMarker.UseVisualStyleBackColor = true;
@@ -694,7 +695,7 @@
             // btnDownload
             // 
             this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
-            this.btnDownload.Location = new System.Drawing.Point(565, 37);
+            this.btnDownload.Location = new System.Drawing.Point(565, 38);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
@@ -705,9 +706,9 @@
             // 
             this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
+            this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 35);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
-            this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 30);
+            this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
             this.btnImportMarkerLectra.TabIndex = 5;
             this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
             this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
@@ -717,9 +718,9 @@
             // 
             this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnEdit.Location = new System.Drawing.Point(772, 34);
+            this.btnEdit.Location = new System.Drawing.Point(772, 35);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(61, 30);
+            this.btnEdit.Size = new System.Drawing.Size(61, 32);
             this.btnEdit.TabIndex = 6;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -729,9 +730,9 @@
             // 
             this.btnAutoRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAutoRef.Location = new System.Drawing.Point(3, 6);
+            this.btnAutoRef.Location = new System.Drawing.Point(3, 4);
             this.btnAutoRef.Name = "btnAutoRef";
-            this.btnAutoRef.Size = new System.Drawing.Size(92, 30);
+            this.btnAutoRef.Size = new System.Drawing.Size(92, 34);
             this.btnAutoRef.TabIndex = 8;
             this.btnAutoRef.Text = "Auto Ref#";
             this.btnAutoRef.UseVisualStyleBackColor = true;
@@ -741,9 +742,9 @@
             // 
             this.btnAutoCut.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAutoCut.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAutoCut.Location = new System.Drawing.Point(95, 6);
+            this.btnAutoCut.Location = new System.Drawing.Point(95, 4);
             this.btnAutoCut.Name = "btnAutoCut";
-            this.btnAutoCut.Size = new System.Drawing.Size(92, 30);
+            this.btnAutoCut.Size = new System.Drawing.Size(92, 34);
             this.btnAutoCut.TabIndex = 9;
             this.btnAutoCut.Text = "Auto Cut#";
             this.btnAutoCut.UseVisualStyleBackColor = true;
@@ -753,9 +754,9 @@
             // 
             this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAllSPDistribute.Location = new System.Drawing.Point(331, 6);
+            this.btnAllSPDistribute.Location = new System.Drawing.Point(331, 4);
             this.btnAllSPDistribute.Name = "btnAllSPDistribute";
-            this.btnAllSPDistribute.Size = new System.Drawing.Size(145, 30);
+            this.btnAllSPDistribute.Size = new System.Drawing.Size(145, 34);
             this.btnAllSPDistribute.TabIndex = 10;
             this.btnAllSPDistribute.Text = "All SP# Distribute";
             this.btnAllSPDistribute.UseVisualStyleBackColor = true;
@@ -765,9 +766,9 @@
             // 
             this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(476, 6);
+            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(476, 4);
             this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";
-            this.btnDistributeThisCutRef.Size = new System.Drawing.Size(179, 30);
+            this.btnDistributeThisCutRef.Size = new System.Drawing.Size(179, 34);
             this.btnDistributeThisCutRef.TabIndex = 11;
             this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
             this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
@@ -776,9 +777,9 @@
             // btnCutPartsCheck
             // 
             this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheck.Location = new System.Drawing.Point(656, 6);
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(656, 4);
             this.btnCutPartsCheck.Name = "btnCutPartsCheck";
-            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 30);
+            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 34);
             this.btnCutPartsCheck.TabIndex = 12;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
@@ -787,9 +788,9 @@
             // btnCutPartsCheckSummary
             // 
             this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(790, 6);
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(790, 4);
             this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
-            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 30);
+            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 34);
             this.btnCutPartsCheckSummary.TabIndex = 13;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
@@ -798,9 +799,9 @@
             // btnHistory
             // 
             this.btnHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnHistory.Location = new System.Drawing.Point(995, 7);
+            this.btnHistory.Location = new System.Drawing.Point(995, 5);
             this.btnHistory.Name = "btnHistory";
-            this.btnHistory.Size = new System.Drawing.Size(70, 28);
+            this.btnHistory.Size = new System.Drawing.Size(70, 32);
             this.btnHistory.TabIndex = 14;
             this.btnHistory.Text = "History";
             this.btnHistory.UseVisualStyleBackColor = true;
@@ -809,9 +810,9 @@
             // btnQtyBreakdown
             // 
             this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQtyBreakdown.Location = new System.Drawing.Point(1066, 7);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(1066, 5);
             this.btnQtyBreakdown.Name = "btnQtyBreakdown";
-            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 28);
+            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 32);
             this.btnQtyBreakdown.TabIndex = 15;
             this.btnQtyBreakdown.Text = "Qty Breakdown";
             this.btnQtyBreakdown.UseVisualStyleBackColor = true;
@@ -820,9 +821,9 @@
             // btnToExcel
             // 
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(1192, 7);
+            this.btnToExcel.Location = new System.Drawing.Point(1192, 5);
             this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(92, 28);
+            this.btnToExcel.Size = new System.Drawing.Size(92, 32);
             this.btnToExcel.TabIndex = 16;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;

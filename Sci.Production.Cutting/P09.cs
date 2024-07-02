@@ -119,7 +119,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
@@ -138,15 +138,15 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData).Get(out this.col_MarkerLength)
-                .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting Perimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_ActCuttingPerimeter)
-                .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_StraightLength)
-                .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(16)).Get(out this.col_CurvedLength)
-                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
-                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(20), iseditingreadonly: true)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
+                .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting\r\nPerimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_ActCuttingPerimeter)
+                .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_StraightLength)
+                .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_CurvedLength)
+                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
+                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
+                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
@@ -1355,7 +1355,6 @@ DEALLOCATE CURSOR_
             ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDataByGrid);
 
             #region 主表
-
             this.col_CutRef.CellFormatting += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1383,7 +1382,6 @@ DEALLOCATE CURSOR_
             // Seq 兩個欄位
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
-
             this.col_Layer.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -1519,6 +1517,7 @@ DEALLOCATE CURSOR_
                     if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
                     {
                         UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        UpdateArticle_CONCAT(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                     }
                 }
             };
@@ -1531,9 +1530,15 @@ DEALLOCATE CURSOR_
                     {
                         UpdateTotalDistributeQty(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
                         UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                        if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                        string columnName = ((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower();
+                        switch (columnName)
                         {
-                            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                            case "orderid":
+                                UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                                break;
+                            case "article":
+                                UpdateArticle_CONCAT(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                                break;
                         }
                     }
                 }
@@ -1825,7 +1830,7 @@ DEALLOCATE CURSOR_
 
             DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
 
-            var frm = new Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio);
+            var frm = new Cutpartcheck(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), dtDetail, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
             frm.ShowDialog(this);
         }
 

@@ -2771,6 +2771,16 @@ ORDER BY FabricPanelCode,PatternPanel
         }
 
         /// <summary>
+        /// 更新 CurrentDetailData 的*非實體*欄位:Article_CONCAT, 因 Distribute 資訊變動
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UpdateArticle_CONCAT(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
+        {
+            string filter = GetFilter(currentDetailData, form) + " AND Article <> ''";
+            currentDetailData["Article_CONCAT"] = dtDistribute.Select(filter).AsEnumerable().Select(row => row["Article"].ToString()).Distinct().OrderBy(a => a).JoinToString("/");
+        }
+
+        /// <summary>
         /// 更新 CurrentDetailData 的非實體欄位: FabricCombo,FabricCode,FabricPanelCode,PatternPanel_CONCAT,FabricPanelCode_CONCAT 因 PatternPanel 資訊變動
         /// </summary>
         /// <inheritdoc/>
