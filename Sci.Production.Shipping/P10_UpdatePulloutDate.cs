@@ -263,7 +263,6 @@ where p.ShipPlanID = '{0}'";
                   item.Key,
                   cnt = item.Count(),
               })
-              .Where(item => item.cnt > 1)
               .Select(item => item);
             if (duplicItem.Count() > 1)
             {

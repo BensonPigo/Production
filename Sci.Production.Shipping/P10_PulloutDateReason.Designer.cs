@@ -50,7 +50,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(5, 507);
+            this.panel1.Size = new System.Drawing.Size(5, 257);
             this.panel1.TabIndex = 0;
             // 
             // panel2
@@ -58,7 +58,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(843, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(5, 507);
+            this.panel2.Size = new System.Drawing.Size(5, 257);
             this.panel2.TabIndex = 1;
             // 
             // panel3
@@ -74,7 +74,7 @@
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Controls.Add(this.btnSave);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(5, 464);
+            this.panel4.Location = new System.Drawing.Point(5, 214);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(838, 43);
             this.panel4.TabIndex = 3;
@@ -109,7 +109,7 @@
             this.panel5.Controls.Add(this.grid);
             this.panel5.Location = new System.Drawing.Point(5, 27);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(838, 437);
+            this.panel5.Size = new System.Drawing.Size(838, 187);
             this.panel5.TabIndex = 4;
             // 
             // grid
@@ -134,7 +134,7 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(838, 437);
+            this.grid.Size = new System.Drawing.Size(838, 187);
             this.grid.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.grid.TabIndex = 0;
             this.grid.TabStop = false;
@@ -152,7 +152,7 @@
             // P10_PulloutDateReason
             // 
             this.AcceptButton = this.btnSave;
-            this.ClientSize = new System.Drawing.Size(848, 507);
+            this.ClientSize = new System.Drawing.Size(848, 257);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);

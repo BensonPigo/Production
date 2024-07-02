@@ -62,8 +62,8 @@ namespace Sci.Production.Shipping
                 .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pullout Date", iseditingreadonly: true)
-                .Text("ShippingReasonIDForTypeCO", header: "Reason", width: Widths.AnsiChars(20), settings: ressonID, iseditable: true)
-                .Text("Description", header: "Reason Desc", width: Widths.AnsiChars(40), iseditingreadonly: true);
+                .Text("ShippingReasonIDForTypeCO", header: "Reason ID", width: Widths.AnsiChars(20), settings: ressonID, iseditable: true)
+                .Text("Description", header: "Reason Desc.", width: Widths.AnsiChars(90), iseditingreadonly: true);
 
             this.grid.Sorted += (s, e) =>
             {
