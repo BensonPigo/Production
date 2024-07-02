@@ -90,9 +90,10 @@ and g.ShipModeID like '%P%'
 
 declare @CurrencyID varchar(4)
 Set @CurrencyID = (Select CurrencyID From System)
-select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID,a.Price
-, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) * dbo.getRate('KP',a.CurrencyID,'USD',a.CDate),a.Qty * a.Price)
-, Rate = iif(a.CurrencyID != 'USD', dbo.getRate('KP', 'USD', @CurrencyID,a.CDate), a.Rate)
+select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
+, Price = iif(a.CurrencyID != 'USD', a.Price / dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Price) 
+, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / dbo.getRate('KP','USD', @CurrencyID,a.CDate),a.Qty * a.Price)
+, Rate = iif(a.CurrencyID != 'USD', a.Rate * dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Rate)
 , a.PayCurrency
 , PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
 , a.CW
@@ -247,9 +248,10 @@ where p.INVNo in ({whereTargetInvNo})";
             string sqlGetShippAP = $@"
 declare @CurrencyID varchar(4)
 Select @CurrencyID = CurrencyID From System
-select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID,a.Price
-, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) * dbo.getRate('KP',a.CurrencyID,'USD',a.CDate),a.Qty * a.Price)
-, Rate = iif(a.CurrencyID != 'USD', dbo.getRate('KP', 'USD', @CurrencyID,a.CDate), a.Rate)
+select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
+, Price = iif(a.CurrencyID != 'USD', a.Price / dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Price) 
+, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / dbo.getRate('KP','USD', @CurrencyID,a.CDate),a.Qty * a.Price)
+, Rate = iif(a.CurrencyID != 'USD', a.Rate * dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Rate)
 , a.PayCurrency
 , PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
 , a.CW
