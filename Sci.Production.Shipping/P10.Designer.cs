@@ -58,6 +58,8 @@
             this.numericBoxCFSCBM = new Sci.Win.UI.NumericBox();
             this.numericBoxAIRGW = new Sci.Win.UI.NumericBox();
             this.btnDeleteGBHistory = new Sci.Win.UI.Button();
+            this.lblPolloutDate = new Sci.Win.UI.Label();
+            this.disPulloutDate = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -83,6 +85,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.disPulloutDate);
+            this.masterpanel.Controls.Add(this.lblPolloutDate);
             this.masterpanel.Controls.Add(this.btnDeleteGBHistory);
             this.masterpanel.Controls.Add(this.numericBoxAIRGW);
             this.masterpanel.Controls.Add(this.numericBoxCFSCBM);
@@ -129,6 +133,8 @@
             this.masterpanel.Controls.SetChildIndex(this.numericBoxCFSCBM, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBoxAIRGW, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDeleteGBHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblPolloutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.disPulloutDate, 0);
             // 
             // detailpanel
             // 
@@ -547,6 +553,23 @@
             this.btnDeleteGBHistory.UseVisualStyleBackColor = true;
             this.btnDeleteGBHistory.Click += new System.EventHandler(this.BtnDeleteGBHistory_Click);
             // 
+            // lblPolloutDate
+            // 
+            this.lblPolloutDate.Location = new System.Drawing.Point(186, 4);
+            this.lblPolloutDate.Name = "lblPolloutDate";
+            this.lblPolloutDate.Size = new System.Drawing.Size(83, 23);
+            this.lblPolloutDate.TabIndex = 83;
+            this.lblPolloutDate.Text = "Pullout Date";
+            // 
+            // disPulloutDate
+            // 
+            this.disPulloutDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.disPulloutDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.disPulloutDate.Location = new System.Drawing.Point(272, 3);
+            this.disPulloutDate.Name = "disPulloutDate";
+            this.disPulloutDate.Size = new System.Drawing.Size(148, 23);
+            this.disPulloutDate.TabIndex = 84;
+            // 
             // P10
             // 
             this.ApvChkValue = "Checked";
@@ -625,5 +648,7 @@
         private Win.UI.NumericBox numericBoxTTLGW;
         private Win.UI.NumericBox numericBoxTTLCBM;
         private Win.UI.Button btnDeleteGBHistory;
+        private Win.UI.DisplayBox disPulloutDate;
+        private Win.UI.Label lblPolloutDate;
     }
 }
