@@ -172,4 +172,72 @@ BEGIN
 		) b
 	) c
 	where c.ID = ChgOver.ID
+
+	----------------ChgOver_Check-------------------------------
+
+	UPDATE ChgOver_Check SET
+	--SElect
+	 [DayBe4Inline] = 0
+	,[BaseOn] = 0
+	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
+	,[CompletionDate] = NULL
+	,[Remark] = ''
+	,[Check] = 0
+	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
+	,[EditName] = ''
+	,[EditDate] = NULL
+	FROM ChgOver CO WITH(NOLOCK)
+	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
+	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
+	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
+	WHERE 
+	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Check] = 1 AND ID = CO.ID) = 0
+	AND EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	
+	INSERT INTO ChgOver_Check
+	(
+		[ID]
+		,[DayBe4Inline]
+		,[BaseOn]
+		,[ChgOverCheckListID]
+		,[DeadLine]
+		,[CompletionDate]
+		,[Remark]
+		,[No]
+		,[Check]
+		,[LeadTime]
+		,[EditName]
+		,[EditDate]
+	)
+	SELECT
+	[ID] = CO.ID
+	,[DayBe4Inline] = 0
+	,[BaseOn] = 0
+	,[ChgOverCheckListID] = ISNULL(CCL.ID,0) 
+	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
+	,[CompletionDate] = NULL
+	,[Remaek] = ''
+	,[No] = ISNULL(CCLD.ChgOverCheckListBaseID,0)
+	,[Check] = 0
+	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
+	,[EditName] = ''
+	,[EditDate] = NULL
+	FROM ChgOver CO WITH(NOLOCK)
+	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
+	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
+	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
+	WHERE 
+	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Check] = 1 AND ID = CO.ID) = 0
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+
+
+	DELETE ChgOver_Check
+	--Select*
+	FROM ChgOver CO WITH(NOLOCK)
+	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
+	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
+	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
+	WHERE 
+	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Check] = 1 AND ID = CO.ID) = 0
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
 END
