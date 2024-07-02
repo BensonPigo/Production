@@ -15,7 +15,6 @@ namespace Sci.Production.Cutting
     {
         CuttingForm form;
         private string _cutid;
-        private string _WorkType;
         private DataTable dt_curDetailData;
         private DataTable dt_curDistribute;
         private DataTable dt_curPatternPanel;
@@ -32,14 +31,13 @@ namespace Sci.Production.Cutting
         /// <param name="curPatternPanel">currrent PatternPanel</param>
         /// <param name="curSizeRatio">P02 size Ratio Grid的當前資料</param>
         /// <param name="form">P02 / P09</param>
-        public Cutpartcheck(CuttingForm form, string cID, string workType, DataTable curDetailData, DataTable curPatternPanel = null, DataTable curSizeRatio = null, DataTable curDistribute = null)
+        public Cutpartcheck(CuttingForm form, string cID, DataTable curDetailData, DataTable curPatternPanel = null, DataTable curSizeRatio = null, DataTable curDistribute = null)
         {
             this.InitializeComponent();
 
             this.form = form;
             this.Text = string.Format("Cut Parts Check<SP:{0}>)", cID);
             this._cutid = cID;
-            this._WorkType = workType;
             this.dt_curDetailData = curDetailData;
             this.dt_curPatternPanel = curPatternPanel == null ? null : curPatternPanel.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curPatternPanel);
             this.dt_curSizeRatio = curSizeRatio == null ? null : curSizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curSizeRatio);

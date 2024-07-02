@@ -1194,7 +1194,7 @@ order by p.EditDate desc
 
             DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
 
-            var frm = new Cutpartcheck(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), dtDetail, this.dt_PatternPanel, this.dt_SizeRatio);
+            var frm = new Cutpartcheck(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), dtDetail, this.dt_PatternPanel, this.dt_SizeRatio);
             frm.ShowDialog(this);
         }
 

@@ -1830,7 +1830,7 @@ DEALLOCATE CURSOR_
 
             DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
 
-            var frm = new Cutpartcheck(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString(), dtDetail, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
+            var frm = new Cutpartcheck(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), dtDetail, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
             frm.ShowDialog(this);
         }
 
