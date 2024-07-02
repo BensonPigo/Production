@@ -42,12 +42,18 @@ namespace Sci.Production.IE
         protected override bool OnGridSetup()
         {
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("DayBe4Inline", header: "Days before", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("BaseOnDesc", header: "Base On", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ChkListDesc", header: "Activities", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Date("ScheduleDate", header: "Schedule Date")
-                .Date("ActualDate", header: "Actual Date")
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+                .Numeric("No", header: "No", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Dep", header: "Dep", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Date("LeadTime", header: "Lead Time")
+                .Date("DaysLeft", header: "Days Left")
+                .Text("Deadline", header: "Deadline", width: Widths.AnsiChars(30))
+                .Text("Check", header: "Check", width: Widths.AnsiChars(30))
+                .Text("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(30))
+                .Text("OverDays", header: "Over Days", width: Widths.AnsiChars(30))
+                .Text("LateReason", header: "Late Reason", width: Widths.AnsiChars(30))
+                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(30))
+                .Text("EditDate", header: "Edit Date", width: Widths.AnsiChars(30));
 
             this.grid.Columns["ScheduleDate"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid.Columns["ActualDate"].DefaultCellStyle.BackColor = Color.Pink;
@@ -61,12 +67,42 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override DualResult OnRequery()
         {
-            string selectCommand = string.Format(
-                @"select cc.*,iif(cc.BaseOn = 1,'Change Over','SCI Delivery') as BaseOnDesc,
-cl.Description as ChkListDesc
-     from ChgOver_Check cc WITH (NOLOCK) 
-left join ChgOverCheckList cl WITH (NOLOCK) on cc.ChgOverCheckListID = cl.ID
-where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
+            string selectCommand = $@"
+            SELECT 
+            [No] = CB.No
+            ,[CHECKLISTS]  = CB.CheckList
+            ,[Dep] = CKD.ResponseDep
+            ,[LeadTime] = CKD.LeadTime
+            ,[DaysLeft] = ''
+            ,[Deadline] = CC.Deadline
+            ,[Check] = CC.[Check]
+            ,[CompletionDate] = CC.ActualDate
+            ,[OverDays] = iif(CC.[Check] = 0 , OverDay_Check_0.VAL,OverDay_Check_1.VAL)
+            ,[LateReason] = CC.Remark
+            ,[EditName] = CC.EditName
+            ,[EditDate] = CC.EditDate
+            FROM ChgOver_Check CC
+            LEFT JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
+            LEFT join ChgOverCheckList_Detail CKD WITH(NOLOCK) ON  CKD.ID = CK.ID
+            LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.ID = CKD.ChgOverCheckListBaseID
+            OUTER APPLY
+            (
+	            SELECT VAL = COUNT(1)
+	            FROM Holiday 
+	            WHERE FactoryID = 'FAC' and
+                HolidayDate >= GETDATE() and 
+                HolidayDate <= CC.Deadline
+            )OverDay_Check_0
+            OUTER APPLY
+            (
+	            SELECT VAL = COUNT(1)
+	            FROM Holiday 
+	            WHERE FactoryID = 'FAC' 
+	            and HolidayDate >= CC.ActualDate 
+	            and HolidayDate <= CC.Deadline
+            )OverDay_Check_1
+            WHERE CC.id = {this.KeyValue1}
+            order by cc.ChgOverCheckListID";
             DualResult returnResult;
             DataTable chgOverChkList = new DataTable();
             returnResult = DBProxy.Current.Select(null, selectCommand, out chgOverChkList);
@@ -89,34 +125,6 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
             this.append.Visible = false;
             this.revise.Visible = false;
             this.delete.Visible = false;
-        }
-
-        /// <summary>
-        /// To Excel
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
-        private void BtnToExcel_Click(object sender, EventArgs e)
-        {
-            DataTable excelTable;
-            try
-            {
-                if (MyUtility.Check.Empty(((DataTable)this.gridbs.DataSource).Rows.Count))
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
-
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.gridbs.DataSource, "DayBe4Inline,BaseOnDesc,ChkListDesc,ScheduleDate,ActualDate,Remark", "select * from #tmp", out excelTable);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
-                return;
-            }
-
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\IE_P02_ChkListNew.xltx");
-            MyUtility.Excel.CopyToXls(excelTable, string.Empty, "IE_P02_ChkListNew.xltx", 2, true, string.Empty, objApp);
         }
     }
 }

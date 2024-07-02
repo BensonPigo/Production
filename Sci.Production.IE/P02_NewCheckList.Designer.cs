@@ -28,21 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnToExcel = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btmcont
-            // 
-            this.btmcont.Controls.Add(this.btnToExcel);
-            this.btmcont.Controls.SetChildIndex(this.delete, 0);
-            this.btmcont.Controls.SetChildIndex(this.revise, 0);
-            this.btmcont.Controls.SetChildIndex(this.undo, 0);
-            this.btmcont.Controls.SetChildIndex(this.save, 0);
-            this.btmcont.Controls.SetChildIndex(this.append, 0);
-            this.btmcont.Controls.SetChildIndex(this.btnToExcel, 0);
             // 
             // append
             // 
@@ -62,25 +51,13 @@
             // 
             this.save.Click += new System.EventHandler(this.Save_Click);
             // 
-            // btnToExcel
-            // 
-            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToExcel.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.btnToExcel.Location = new System.Drawing.Point(575, 5);
-            this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnToExcel.TabIndex = 95;
-            this.btnToExcel.Text = "To Excel";
-            this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
-            // 
             // P02_NewCheckList
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P02_NewCheckList";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Check List - New";
             this.WorkAlias = "ChgOver_Check";
             this.Controls.SetChildIndex(this.btmcont, 0);
@@ -93,7 +70,5 @@
         }
 
         #endregion
-
-        private Win.UI.Button btnToExcel;
     }
 }
