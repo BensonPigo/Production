@@ -36,8 +36,8 @@ namespace Sci.Production.Cutting
             this.cutid = cID;
             this._sourceTable = sourceTable;
             this.dt_curDetailData = curDetailData;
+            this.dt_curSizeRatio = curSizeRatio == null ? null : curSizeRatio.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curSizeRatio);
             this.dt_curDistribute = curDistribute == null ? null : curDistribute.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(curDistribute);
-            this.dt_curSizeRatio = curSizeRatio;
             this.ReQuery();
             this.GridSetup();
             this.gridCutpartchecksummary.AutoResizeColumns();
