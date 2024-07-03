@@ -158,6 +158,12 @@
     </Compile>
     <Compile Include="CuttingWorkOrderExtensions.cs" />
     <Compile Include="CuttingWorkOrder.cs" />
+    <Compile Include="Cutting_Print_P09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Cutting_Print_P09.Designer.cs">
+      <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </Compile>
     <Compile Include="P09_History.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -294,11 +300,11 @@
     <Compile Include="Cutting_BatchAssign.Designer.cs">
       <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cutting_Print.cs">
+    <Compile Include="Cutting_Print_P02.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutting_Print.Designer.cs">
-      <DependentUpon>Cutting_Print.cs</DependentUpon>
+    <Compile Include="Cutting_Print_P02.Designer.cs">
+      <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </Compile>
     <Compile Include="B08.cs">
       <SubType>Form</SubType>
@@ -637,6 +643,9 @@
     <EmbeddedResource Include="Cutpartchecksummary.resx">
       <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Cutting_Print_P09.resx">
+      <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P09_History.resx">
       <DependentUpon>P09_History.cs</DependentUpon>
     </EmbeddedResource>
@@ -718,8 +727,8 @@
     <EmbeddedResource Include="Cutting_BatchAssign.resx">
       <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutting_Print.resx">
-      <DependentUpon>Cutting_Print.cs</DependentUpon>
+    <EmbeddedResource Include="Cutting_Print_P02.resx">
+      <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>

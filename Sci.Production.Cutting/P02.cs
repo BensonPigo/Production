@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Data;
 using Sci.Production.Prg;
@@ -27,6 +28,8 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
+        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
         private DataTable dt_SizeRatio; // 第3層表:新刪修
@@ -205,8 +208,9 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             base.OnDetailEntered();
             this.BtnImportMarkerEnabled();
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
-            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = FormatMarkerLength(row["MarkerLength"].ToString())); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()))); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
+            this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
         private void GetAllDetailData()
@@ -225,15 +229,23 @@ FROM WorkOrderForPlanning wp WITH (NOLOCK)
 INNER JOIN WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) ON wp.Ukey = ws.WorkOrderForPlanningUkey
 WHERE wp.ID = '{cuttingID}'
 
+---- Date有值的話，然後根據Date ASC、OrderID ASC排序
+---- Date沒有值的話排最後面，然後根據OrderID ASC排序
 SELECT
-    InlineDate = CONVERT(DATE, MIN(SewingSchedule.Inline), 111)
-   ,SP = SewingSchedule.OrderID
-   ,Qty = SUM(SewingSchedule.AlloQty)
-FROM SewingSchedule WITH (NOLOCK)
-INNER JOIN Orders WITH (NOLOCK) ON SewingSchedule.OrderID = Orders.ID
-WHERE Orders.POID = '{cuttingID}'
-GROUP BY SewingSchedule.OrderID
-ORDER BY InlineDate
+    InlineDate = CONVERT(DATE, MIN(s.Inline), 111)
+   ,SP = o.ID
+   ,Qty = SUM(ISNULL(s.AlloQty,0))
+FROM Orders o WITH (NOLOCK)
+LEFT JOIN SewingSchedule s WITH (NOLOCK) ON s.OrderID = o.ID
+WHERE o.POID = '{cuttingID}'
+GROUP BY o.ID
+ORDER BY 
+    CASE 
+        WHEN CONVERT(DATE, MIN(s.Inline), 111) IS NULL THEN 1 
+        ELSE 0 
+    END, 
+    InlineDate ASC,
+    SP ASC;
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dts);
             if (!result)
@@ -266,27 +278,27 @@ ORDER BY InlineDate
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
+                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(12), this.GetWorkType, this.CanEditData)
                 .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_Article)
                 .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Tone)
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999)
+                .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out this.col_Layer)
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
-                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
+                .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(13), this.CanEditData).Get(out this.col_MarkerLength)
                 .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
-                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
             this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
@@ -315,6 +327,7 @@ ORDER BY InlineDate
             // 變更子表可否編輯
             bool canEdit = this.CanEditData(this.CurrentDetailData);
             this.cmsSizeRatio.Enabled = canEdit;
+            this.numUnitCons.ReadOnly = !canEdit;
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
 
             // 避免後面炸掉, 即使 0 筆上面也要執行
@@ -394,15 +407,15 @@ ORDER BY InlineDate
 
         protected override bool ClickPrint()
         {
-            Cutting_Print callNextForm;
+            Cutting_Print_P02 callNextForm;
             if (this.drBeforeDoPrintDetailData != null)
             {
-                callNextForm = new Cutting_Print(CuttingForm.P02, this.drBeforeDoPrintDetailData);
+                callNextForm = new Cutting_Print_P02(this.drBeforeDoPrintDetailData);
                 callNextForm.ShowDialog(this);
             }
             else if (this.drBeforeDoPrintDetailData == null && this.CurrentDetailData != null)
             {
-                callNextForm = new Cutting_Print(CuttingForm.P02, this.CurrentDetailData);
+                callNextForm = new Cutting_Print_P02(this.CurrentDetailData);
                 callNextForm.ShowDialog(this);
             }
             else
@@ -476,11 +489,14 @@ ORDER BY InlineDate
             }
 
             var checkPatternPanel = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "PatternPanel", "FabricPanelCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dt_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, CuttingForm.P09))
+            if (!CheckDuplicateAndShowMessage(this.dt_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, CuttingForm.P02))
             {
                 return false;
             }
             #endregion
+
+            // 刪除 SizeRatio 之後重算 ConsPC
+            BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, CuttingForm.P02);
 
             // 計算CutInLine、CutOffLine
             this.CurrentMaintain["CutForPlanningInline"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
@@ -949,6 +965,49 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
+            this.col_Layer.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!this.CanEditData(dr))
+                {
+                    return;
+                }
+
+                int oldvalue = MyUtility.Convert.GetInt(dr["Layer"]);
+                int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
+                if (oldvalue == newvalue)
+                {
+                    return;
+                }
+
+                dr["Layer"] = newvalue;
+
+                // 更新右邊的Size Ratio Grid
+                var workOrderForPlanningUkey = MyUtility.Convert.GetLong(dr["Ukey"]);
+                var tmpKey = MyUtility.Convert.GetLong(dr["tmpKey"]);
+
+                this.dt_SizeRatio.AsEnumerable()
+                .Where(o => MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
+                .ToList()
+                .ForEach(o =>
+                {
+                    o["Layer"] = newvalue;
+                    o["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(o);
+                });
+
+                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
+                UpdateConcatString(dr, this.dt_SizeRatio, CuttingForm.P02);
+                dr.EndEdit();
+            };
+
+            this.col_MarkerLength.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dt_SizeRatio, CuttingForm.P02);
+                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
+                dr.EndEdit();
+            };
             this.col_Tone.MaxLength = 15;
             #endregion
 
@@ -1008,12 +1067,17 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dt_SizeRatio, null, CuttingForm.P02))
+
+                if (this.CurrentDetailData != null && QtyCellValidating(e, this.CurrentDetailData, grid, this.dt_SizeRatio, null, CuttingForm.P02, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     DataRow dr = grid.GetDataRow(e.RowIndex);
                     dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
                     dr.EndEdit();
                     UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
+                    if (grid.Name == "gridSizeRatio")
+                    {
+                        this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
+                    }
                 }
             };
         }
@@ -1257,6 +1321,11 @@ order by p.EditDate desc
         private string GetWorkType()
         {
             return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
+        }
+
+        private void NumUnitCons_Validated(object sender, EventArgs e)
+        {
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
         }
     }
 #pragma warning restore SA1600 // Elements should be documented
