@@ -435,6 +435,7 @@ SELECT
             FOR XML PATH (''))
         , 1, 1, '')
    ,ShipmodeID = o.ShipModeList
+   ,o.GMTComplete
 INTO #tmpOqs_Step
 FROM #tmpPOComboStep s
 INNER JOIN Orders o ON s.ID = o.ID
@@ -884,6 +885,7 @@ GROUP BY s.OrderID
    ,[SewQtyOuter] = SewQtyOuter
    ,[Dest] = o.Dest
    ,[Country] = Country.Alias
+   ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
 ";
             }
             else
@@ -1123,6 +1125,13 @@ LEFT JOIN TPEPass1 tp3 WITH (NOLOCK) ON PO.POSMR = tp3.ID
 LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
 LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
 LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
+outer apply (
+  select Qty=sum(pd.ShipQty)
+  from PackingList p, PackingList_Detail pd
+  where p.ID = pd.ID
+  and p.PulloutID <> ''
+  and pd.OrderID = o.ID
+) GetPulloutData 
 
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
