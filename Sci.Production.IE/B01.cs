@@ -196,19 +196,32 @@ order by No
             using (TransactionScope transactionscope = new TransactionScope())
             {
                 string updSql = $@"
-Merge dbo.ChgOverCheckList_Detail as t
-Using #tmp as s
-on t.ID = s.ID and t.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
-	when matched then
-		update set t.ResponseDep = iif(t.ResponseDep != s.ResponseDep, s.ResponseDep, t.ResponseDep)
-		, t.LeadTime = iif(t.LeadTime != s.LeadTime, s.LeadTime, t.LeadTime)
-		, t.EditName = iif(t.ResponseDep != s.ResponseDep or t.LeadTime != s.LeadTime, @UserID, t.EditName)
-		, t.EditDate = iif(t.ResponseDep != s.ResponseDep or t.LeadTime != s.LeadTime, GETDATE(), t.EditDate)
-	when not matched by target then
-		insert (ID, ChgOverCheckListBaseID, ResponseDep, LeadTime,AddName, AddDate) 
-		values (s.ID, s.ChgOverCheckListBaseID, s.ResponseDep, s.LeadTime, @UserID, GETDATE())
-	when not matched by source and t.ID = @ID then
-		delete;
+DELETE FROM dbo.ChgOverCheckList_Detail
+WHERE ID = @ID AND NOT EXISTS (
+    SELECT 1
+    FROM #tmp s
+    WHERE dbo.ChgOverCheckList_Detail.ID = s.ID 
+    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
+);
+
+UPDATE dbo.ChgOverCheckList_Detail
+SET ResponseDep = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep, s.ResponseDep, dbo.ChgOverCheckList_Detail.ResponseDep),
+    LeadTime = IIF(dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, s.LeadTime, dbo.ChgOverCheckList_Detail.LeadTime),
+    EditName = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, @UserID, dbo.ChgOverCheckList_Detail.EditName),
+    EditDate = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, GETDATE(), dbo.ChgOverCheckList_Detail.EditDate)
+FROM dbo.ChgOverCheckList_Detail
+JOIN #tmp s ON dbo.ChgOverCheckList_Detail.ID = s.ID 
+    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID;
+
+INSERT INTO dbo.ChgOverCheckList_Detail (ID, ChgOverCheckListBaseID, ResponseDep, LeadTime, AddName, AddDate)
+SELECT s.ID, s.ChgOverCheckListBaseID, s.ResponseDep, s.LeadTime, @UserID, GETDATE()
+FROM #tmp s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.ChgOverCheckList_Detail t
+    WHERE t.ID = s.ID 
+    AND t.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
+);
 ";
 
                 List<SqlParameter> paras = new List<SqlParameter>();
