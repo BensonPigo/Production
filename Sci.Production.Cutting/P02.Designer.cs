@@ -615,6 +615,7 @@
             // btnCutPartsCheck
             // 
             this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
             this.btnCutPartsCheck.Location = new System.Drawing.Point(640, 3);
             this.btnCutPartsCheck.Name = "btnCutPartsCheck";
             this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 32);
@@ -626,6 +627,7 @@
             // btnCutPartsCheckSummary
             // 
             this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
             this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(774, 3);
             this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
             this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 32);
