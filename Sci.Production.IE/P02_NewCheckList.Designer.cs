@@ -35,7 +35,6 @@
             // 
             // append
             // 
-            this.append.Location = new System.Drawing.Point(170, 5);
             this.append.Visible = false;
             // 
             // revise
@@ -44,12 +43,7 @@
             // 
             // delete
             // 
-            this.delete.Location = new System.Drawing.Point(10, 5);
             this.delete.Visible = false;
-            // 
-            // save
-            // 
-            this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // P02_NewCheckList
             // 
@@ -58,7 +52,7 @@
             this.KeyField1 = "ID";
             this.Name = "P02_NewCheckList";
             this.OnLineHelpID = "Sci.Win.Subs.Input4";
-            this.Text = "Check List - New";
+            this.Text = "Check List";
             this.WorkAlias = "ChgOver_Check";
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.gridcont, 0);
