@@ -2,16 +2,11 @@
 using Sci.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Sci.MyUtility;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.IE
@@ -24,6 +19,11 @@ namespace Sci.Production.IE
         private string iDate1;
         private string iDate2;
         private string strStyle;
+        private string productType;
+        private string strSP;
+        private string strCategory;
+        private string strCell;
+        private string strRD;
         private DataTable[] printData;
 
         /// <inheritdoc/>
@@ -31,14 +31,15 @@ namespace Sci.Production.IE
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.cbProductType.SetDataSource();
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (!this.dtAddEdit.HasValue1 && !this.dtAddEdit.HasValue2 && !this.dtInline.HasValue1 && !this.dtInline.HasValue2)
+            if (!this.dtAddEdit.HasValue1 && !this.dtAddEdit.HasValue2 && !this.dtInline.HasValue1 && !this.dtInline.HasValue2 && this.txtSPNO.Text == string.Empty)
             {
-                MyUtility.Msg.InfoBox("Please input <Deadline> or <Inline Date>.");
+                MyUtility.Msg.InfoBox("Please fill in at least one：<Deadline> or <Inline Date> or <SP>!");
                 return false;
             }
 
@@ -54,7 +55,7 @@ namespace Sci.Production.IE
             }
             else if (this.dtAddEdit.HasValue && (!this.dtAddEdit.HasValue1 || !this.dtAddEdit.HasValue2))
             {
-                MyUtility.Msg.InfoBox("DeadLine must have begin date and end date!");
+                MyUtility.Msg.InfoBox("Please fill in both Dates!");
                 return false;
             }
 
@@ -65,9 +66,16 @@ namespace Sci.Production.IE
             }
             else if (this.dtInline.HasValue && (!this.dtInline.HasValue1 || !this.dtInline.HasValue2))
             {
-                MyUtility.Msg.InfoBox("Inline Date must have begin date and end date!");
+                MyUtility.Msg.InfoBox("Please fill in both Dates!");
                 return false;
             }
+
+            this.productType = this.cbProductType.Text;
+            this.strStyle = this.txtStyle.Text;
+            this.strSP = this.txtSPNO.Text;
+            this.strCategory = this.txtCategory.Text;
+            this.strCell = this.txtCell.Text;
+            this.strRD = this.txtRD.Text;
 
             return base.ValidateInput();
         }
@@ -93,34 +101,34 @@ namespace Sci.Production.IE
                 sqlWhere += $@"and co.Inline between @date1 and @date2 ";
             }
 
-            if (!MyUtility.Check.Empty(this.txtSPNO.Text))
+            if (!MyUtility.Check.Empty(this.strSP))
             {
-                sqlWhere += string.Format($" and co.OrderID in ( {string.Join(",", this.txtSPNO.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and co.OrderID in ( {string.Join(",", this.strSP.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtStyle.Text))
+            if (!MyUtility.Check.Empty(this.strStyle))
             {
-                sqlWhere += string.Format($" and co.StyleID in ( {string.Join(",", this.txtStyle.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and co.StyleID in ( {string.Join(",", this.strStyle.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtProductType.Text))
+            if (!MyUtility.Check.Empty(this.productType))
             {
-                sqlWhere += string.Format($" and r.Name in ( {string.Join(",", this.txtProductType.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and r.Name = '{this.productType}'");
             }
 
-            if (!MyUtility.Check.Empty(this.txtCategory.Text))
+            if (!MyUtility.Check.Empty(this.strCategory))
             {
-                sqlWhere += string.Format($" and co.Category in ( {string.Join(",", this.txtCategory.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and co.Category in ( {string.Join(",", this.strCategory.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtCell.Text))
+            if (!MyUtility.Check.Empty(this.strCell))
             {
-                sqlWhere += string.Format($" and sl.SewingCell in ( {string.Join(",", this.txtCell.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and sl.SewingCell in ( {string.Join(",", this.strCell.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
-            if (!MyUtility.Check.Empty(this.txtRD.Text))
+            if (!MyUtility.Check.Empty(this.strRD))
             {
-                sqlWhere += string.Format($" and ccld.ResponseDep in ( {string.Join(",", this.txtRD.Text.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and ccld.ResponseDep in ( {string.Join(",", this.strRD.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
             if (this.chkOutstanding.Checked)
@@ -281,7 +289,7 @@ WHERE 1 = 1
             return true;
         }
 
-        private void txtSPNO_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtSPNO_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand = "select OrderID from Production.dbo.ChgOver WITH (NOLOCK) order by ID";
 
@@ -300,26 +308,7 @@ WHERE 1 = 1
             this.ValidateControl();
         }
 
-        private void txtProductType_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string selectCommand = "Select [Product Type] = Name from  Reason where ReasonTypeID= 'Style_Apparel_Type' and Junk = 0";
-
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(selectCommand, string.Empty, this.txtProductType.Text)
-            {
-                Size = new System.Drawing.Size(300, 330),
-            };
-            DialogResult returnResult = item.ShowDialog();
-
-            if (returnResult == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtProductType.Text = item.GetSelectedString();
-            this.ValidateControl();
-        }
-
-        private void txtCell_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCell_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand = "Select DISTINCT Cell = SewingCell from  SewingLine where SewingCell <> '' order by SewingCell ASC";
 
@@ -338,7 +327,7 @@ WHERE 1 = 1
             this.ValidateControl();
         }
 
-        private void txtCategory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtCategory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand = "select DISTINCT Category from ChgOver where Category <> '' order by Category ASC";
 
@@ -357,7 +346,7 @@ WHERE 1 = 1
             this.ValidateControl();
         }
 
-        private void txtRD_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        private void TxtRD_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
             string selectCommand = "select DISTINCT Dept from Employee where dept <> '' order by Dept ASC";
 
@@ -373,25 +362,6 @@ WHERE 1 = 1
             }
 
             this.txtRD.Text = item.GetSelectedString();
-            this.ValidateControl();
-        }
-
-        private void txtStyle_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
-        {
-            string selectCommand = "select DISTINCT StyleID from ChgOver where StyleID != '' order by StyleID ASC";
-
-            Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(selectCommand, "Style", "30", this.txtStyle.Text)
-            {
-                Size = new System.Drawing.Size(400, 430),
-            };
-            DialogResult returnResult = item.ShowDialog();
-
-            if (returnResult == DialogResult.Cancel)
-            {
-                return;
-            }
-
-            this.txtStyle.Text = item.GetSelectedString();
             this.ValidateControl();
         }
     }

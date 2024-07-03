@@ -28,23 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.txtRD = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
             this.dtInline = new Sci.Win.UI.DateRange();
-            this.txtCell = new Sci.Win.UI.TextBox();
             this.label2 = new Sci.Win.UI.Label();
             this.txtCategory = new Sci.Win.UI.TextBox();
-            this.txtProductType = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.txtSPNO = new Sci.Win.UI.TextBox();
-            this.txtStyle = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.chkOutstanding = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
-            this.lbl1 = new Sci.Win.UI.Label();
             this.lblAddEditDate = new Sci.Win.UI.Label();
             this.dtAddEdit = new Sci.Win.UI.DateRange();
+            this.txtStyle = new Sci.Production.Class.Txtstyle();
+            this.txtCell = new Sci.Production.Class.TxtCell();
+            this.label7 = new Sci.Win.UI.Label();
+            this.cbProductType = new Sci.Production.Class.ComboProductType(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -80,7 +81,7 @@
             this.txtRD.Name = "txtRD";
             this.txtRD.Size = new System.Drawing.Size(166, 26);
             this.txtRD.TabIndex = 203;
-            this.txtRD.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtRD_PopUp);
+            this.txtRD.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRD_PopUp);
             // 
             // label4
             // 
@@ -126,16 +127,6 @@
             this.dtInline.Size = new System.Drawing.Size(280, 26);
             this.dtInline.TabIndex = 200;
             // 
-            // txtCell
-            // 
-            this.txtCell.BackColor = System.Drawing.Color.White;
-            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(116, 195);
-            this.txtCell.Name = "txtCell";
-            this.txtCell.Size = new System.Drawing.Size(166, 26);
-            this.txtCell.TabIndex = 199;
-            this.txtCell.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCell_PopUp);
-            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(9, 197);
@@ -152,17 +143,7 @@
             this.txtCategory.Name = "txtCategory";
             this.txtCategory.Size = new System.Drawing.Size(166, 26);
             this.txtCategory.TabIndex = 197;
-            this.txtCategory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtCategory_PopUp);
-            // 
-            // txtProductType
-            // 
-            this.txtProductType.BackColor = System.Drawing.Color.White;
-            this.txtProductType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtProductType.Location = new System.Drawing.Point(116, 133);
-            this.txtProductType.Name = "txtProductType";
-            this.txtProductType.Size = new System.Drawing.Size(166, 26);
-            this.txtProductType.TabIndex = 196;
-            this.txtProductType.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtProductType_PopUp);
+            this.txtCategory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCategory_PopUp);
             // 
             // label1
             // 
@@ -180,17 +161,7 @@
             this.txtSPNO.Name = "txtSPNO";
             this.txtSPNO.Size = new System.Drawing.Size(166, 26);
             this.txtSPNO.TabIndex = 194;
-            this.txtSPNO.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtSPNO_PopUp);
-            // 
-            // txtStyle
-            // 
-            this.txtStyle.BackColor = System.Drawing.Color.White;
-            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStyle.Location = new System.Drawing.Point(116, 103);
-            this.txtStyle.Name = "txtStyle";
-            this.txtStyle.Size = new System.Drawing.Size(166, 26);
-            this.txtStyle.TabIndex = 193;
-            this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.txtStyle_PopUp);
+            this.txtSPNO.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSPNO_PopUp);
             // 
             // label5
             // 
@@ -220,17 +191,9 @@
             this.label6.TabIndex = 190;
             this.label6.Text = "Style";
             // 
-            // lbl1
-            // 
-            this.lbl1.Location = new System.Drawing.Point(9, 75);
-            this.lbl1.Name = "lbl1";
-            this.lbl1.Size = new System.Drawing.Size(104, 23);
-            this.lbl1.TabIndex = 189;
-            this.lbl1.Text = "SP";
-            // 
             // lblAddEditDate
             // 
-            this.lblAddEditDate.Location = new System.Drawing.Point(9, 9);
+            this.lblAddEditDate.Location = new System.Drawing.Point(9, 10);
             this.lblAddEditDate.Name = "lblAddEditDate";
             this.lblAddEditDate.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.lblAddEditDate.RectStyle.BorderWidth = 1F;
@@ -264,26 +227,77 @@
             this.dtAddEdit.Size = new System.Drawing.Size(280, 26);
             this.dtAddEdit.TabIndex = 187;
             // 
+            // txtStyle
+            // 
+            this.txtStyle.BackColor = System.Drawing.Color.White;
+            this.txtStyle.BrandObjectName = null;
+            this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtStyle.Location = new System.Drawing.Point(116, 103);
+            this.txtStyle.Name = "txtStyle";
+            this.txtStyle.SeasonObjectName = null;
+            this.txtStyle.Size = new System.Drawing.Size(166, 26);
+            this.txtStyle.TabIndex = 204;
+            this.txtStyle.TarBrand = null;
+            this.txtStyle.TarSeason = null;
+            // 
+            // txtCell
+            // 
+            this.txtCell.BackColor = System.Drawing.Color.White;
+            this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell.Location = new System.Drawing.Point(116, 195);
+            this.txtCell.MDivisionID = "";
+            this.txtCell.Name = "txtCell";
+            this.txtCell.Size = new System.Drawing.Size(166, 26);
+            this.txtCell.TabIndex = 206;
+            // 
+            // label7
+            // 
+            this.label7.Location = new System.Drawing.Point(10, 75);
+            this.label7.Name = "label7";
+            this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.RectStyle.BorderWidth = 1F;
+            this.label7.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label7.RectStyle.ExtBorderWidth = 1F;
+            this.label7.Size = new System.Drawing.Size(104, 23);
+            this.label7.TabIndex = 207;
+            this.label7.Text = "SP";
+            this.label7.TextStyle.BorderColor = System.Drawing.Color.Black;
+            this.label7.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // cbProductType
+            // 
+            this.cbProductType.BackColor = System.Drawing.Color.White;
+            this.cbProductType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbProductType.FormattingEnabled = true;
+            this.cbProductType.IsJunk = false;
+            this.cbProductType.IsSupportUnselect = true;
+            this.cbProductType.Location = new System.Drawing.Point(116, 132);
+            this.cbProductType.Name = "cbProductType";
+            this.cbProductType.OldText = "";
+            this.cbProductType.Size = new System.Drawing.Size(166, 28);
+            this.cbProductType.StyleApparelType = "";
+            this.cbProductType.TabIndex = 208;
+            // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(526, 383);
+            this.Controls.Add(this.cbProductType);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.txtCell);
+            this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.txtRD);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.dtInline);
-            this.Controls.Add(this.txtCell);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCategory);
-            this.Controls.Add(this.txtProductType);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtSPNO);
-            this.Controls.Add(this.txtStyle);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.chkOutstanding);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.lbl1);
             this.Controls.Add(this.lblAddEditDate);
             this.Controls.Add(this.dtAddEdit);
             this.Name = "R22";
@@ -297,21 +311,21 @@
             this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.dtAddEdit, 0);
             this.Controls.SetChildIndex(this.lblAddEditDate, 0);
-            this.Controls.SetChildIndex(this.lbl1, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
             this.Controls.SetChildIndex(this.label5, 0);
-            this.Controls.SetChildIndex(this.txtStyle, 0);
             this.Controls.SetChildIndex(this.txtSPNO, 0);
             this.Controls.SetChildIndex(this.label1, 0);
-            this.Controls.SetChildIndex(this.txtProductType, 0);
             this.Controls.SetChildIndex(this.txtCategory, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.txtCell, 0);
             this.Controls.SetChildIndex(this.dtInline, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.txtRD, 0);
+            this.Controls.SetChildIndex(this.txtStyle, 0);
+            this.Controls.SetChildIndex(this.txtCell, 0);
+            this.Controls.SetChildIndex(this.label7, 0);
+            this.Controls.SetChildIndex(this.cbProductType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -323,18 +337,18 @@
         private Win.UI.Label label4;
         private Win.UI.Label label3;
         private Win.UI.DateRange dtInline;
-        private Win.UI.TextBox txtCell;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtCategory;
-        private Win.UI.TextBox txtProductType;
         private Win.UI.Label label1;
         private Win.UI.TextBox txtSPNO;
-        private Win.UI.TextBox txtStyle;
         private Win.UI.Label label5;
         private Win.UI.CheckBox chkOutstanding;
         private Win.UI.Label label6;
-        private Win.UI.Label lbl1;
         private Win.UI.Label lblAddEditDate;
         private Win.UI.DateRange dtAddEdit;
+        private Class.Txtstyle txtStyle;
+        private Class.TxtCell txtCell;
+        private Win.UI.Label label7;
+        private Class.ComboProductType cbProductType;
     }
 }
