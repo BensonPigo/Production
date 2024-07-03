@@ -31,13 +31,11 @@
             this.labelCutplanID = new Sci.Win.UI.Label();
             this.labelPONo = new Sci.Win.UI.Label();
             this.labelCuttingDate = new Sci.Win.UI.Label();
-            this.labelBulkMarkerReqNo = new Sci.Win.UI.Label();
             this.labelCuttingSPNo = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.displayCutplanID = new Sci.Win.UI.DisplayBox();
             this.displayPONo = new Sci.Win.UI.DisplayBox();
             this.displayCuttingSPNo = new Sci.Win.UI.DisplayBox();
-            this.displayBulkMarkerReqNo = new Sci.Win.UI.DisplayBox();
             this.dateCuttingDate = new Sci.Win.UI.DateBox();
             this.btnimport = new Sci.Win.UI.Button();
             this.displayM = new Sci.Win.UI.DisplayBox();
@@ -70,13 +68,11 @@
             this.masterpanel.Controls.Add(this.displayM);
             this.masterpanel.Controls.Add(this.btnimport);
             this.masterpanel.Controls.Add(this.dateCuttingDate);
-            this.masterpanel.Controls.Add(this.displayBulkMarkerReqNo);
             this.masterpanel.Controls.Add(this.displayCuttingSPNo);
             this.masterpanel.Controls.Add(this.displayPONo);
             this.masterpanel.Controls.Add(this.displayCutplanID);
             this.masterpanel.Controls.Add(this.labelM);
             this.masterpanel.Controls.Add(this.labelCuttingSPNo);
-            this.masterpanel.Controls.Add(this.labelBulkMarkerReqNo);
             this.masterpanel.Controls.Add(this.labelCuttingDate);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.labelCutplanID);
@@ -84,13 +80,11 @@
             this.masterpanel.Controls.SetChildIndex(this.labelCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelBulkMarkerReqNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCuttingSPNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBulkMarkerReqNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCuttingDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnimport, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
@@ -188,14 +182,6 @@
             this.labelCuttingDate.TabIndex = 3;
             this.labelCuttingDate.Text = "Cutting Date";
             // 
-            // labelBulkMarkerReqNo
-            // 
-            this.labelBulkMarkerReqNo.Location = new System.Drawing.Point(465, 13);
-            this.labelBulkMarkerReqNo.Name = "labelBulkMarkerReqNo";
-            this.labelBulkMarkerReqNo.Size = new System.Drawing.Size(148, 23);
-            this.labelBulkMarkerReqNo.TabIndex = 5;
-            this.labelBulkMarkerReqNo.Text = "Bulk Marker Req#";
-            // 
             // labelCuttingSPNo
             // 
             this.labelCuttingSPNo.Location = new System.Drawing.Point(247, 15);
@@ -241,16 +227,6 @@
             this.displayCuttingSPNo.Name = "displayCuttingSPNo";
             this.displayCuttingSPNo.Size = new System.Drawing.Size(108, 23);
             this.displayCuttingSPNo.TabIndex = 13;
-            // 
-            // displayBulkMarkerReqNo
-            // 
-            this.displayBulkMarkerReqNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBulkMarkerReqNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "markerreqid", true));
-            this.displayBulkMarkerReqNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBulkMarkerReqNo.Location = new System.Drawing.Point(618, 13);
-            this.displayBulkMarkerReqNo.Name = "displayBulkMarkerReqNo";
-            this.displayBulkMarkerReqNo.Size = new System.Drawing.Size(108, 23);
-            this.displayBulkMarkerReqNo.TabIndex = 14;
             // 
             // dateCuttingDate
             // 
@@ -375,8 +351,6 @@
         }
 
         #endregion
-
-        private Win.UI.Label labelBulkMarkerReqNo;
         private Win.UI.Label labelCuttingDate;
         private Win.UI.Label labelPONo;
         private Win.UI.Label labelCutplanID;
@@ -384,7 +358,6 @@
         private Win.UI.DisplayBox displayM;
         private Win.UI.Button btnimport;
         private Win.UI.DateBox dateCuttingDate;
-        private Win.UI.DisplayBox displayBulkMarkerReqNo;
         private Win.UI.DisplayBox displayCuttingSPNo;
         private Win.UI.DisplayBox displayPONo;
         private Win.UI.DisplayBox displayCutplanID;

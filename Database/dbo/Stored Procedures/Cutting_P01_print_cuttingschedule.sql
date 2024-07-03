@@ -15,14 +15,14 @@ BEGIN
 	,[Cutting Qty]=format(tmp2.cut_qty,'#,0.')
 	,[Ttl. Cons] = tmp3.TTLCons
 	,[Ttl. Layer] = tmp3.ttlLayer
-	,[ETA]=O.LETA
-	,[Earliest Sewing Inline] = O.SewInLine
-	,[Earliest Sewing offline] = O.SewOffLine
-	,[Cutting in-Line] = C.CutForOutputInline
-	,[Cutting off-line] = C.CutForOutputOffLine
+	,[ETA]= FORMAT(O.LETA, 'yyyy/MM/dd')
+	,[Earliest Sewing Inline] = FORMAT(O.SewInLine, 'yyyy/MM/dd')  
+	,[Earliest Sewing offline] = FORMAT(O.SewOffLine, 'yyyy/MM/dd')  
+	,[Cutting in-Line] =  FORMAT(c.CutForOutputInline, 'yyyy/MM/dd')
+	,[Cutting off-line] = FORMAT(c.CutForOutputOffLine, 'yyyy/MM/dd')
 	,[No. of CutPlanID]=tmp.count_CutplanID
-	,[First Cut Date]=C.FirstCutDate
-	,[Last Cut Date]=C.LastCutDate
+	,[First Cut Date] =FORMAT(c.FirstCutDate, 'yyyy/MM/dd')
+	,[Last Cut Date]=FORMAT(c.LastCutDate, 'yyyy/MM/dd')
 	,[Remark]=C.Remark
 	FROM Cutting C
 	LEFT JOIN Orders O on C.ID=O.ID

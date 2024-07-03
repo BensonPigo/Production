@@ -76,7 +76,7 @@
             // 
             this.label2.Location = new System.Drawing.Point(9, 37);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(101, 23);
+            this.label2.Size = new System.Drawing.Size(147, 23);
             this.label2.TabIndex = 157;
             this.label2.Text = "Factory";
             // 
@@ -84,7 +84,7 @@
             // 
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(101, 23);
+            this.label1.Size = new System.Drawing.Size(147, 23);
             this.label1.TabIndex = 156;
             this.label1.Text = "M";
             // 
@@ -92,7 +92,7 @@
             // 
             this.label6.Location = new System.Drawing.Point(10, 151);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 23);
+            this.label6.Size = new System.Drawing.Size(146, 23);
             this.label6.TabIndex = 154;
             this.label6.Text = "Style";
             // 
@@ -103,7 +103,7 @@
             this.comboMDivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboMDivision.FormattingEnabled = true;
             this.comboMDivision.IsSupportUnselect = true;
-            this.comboMDivision.Location = new System.Drawing.Point(113, 9);
+            this.comboMDivision.Location = new System.Drawing.Point(159, 9);
             this.comboMDivision.Name = "comboMDivision";
             this.comboMDivision.OldText = "";
             this.comboMDivision.Size = new System.Drawing.Size(95, 24);
@@ -118,7 +118,7 @@
             this.comboFactory.FormattingEnabled = true;
             this.comboFactory.IssupportJunk = false;
             this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(113, 37);
+            this.comboFactory.Location = new System.Drawing.Point(159, 37);
             this.comboFactory.Name = "comboFactory";
             this.comboFactory.OldText = "";
             this.comboFactory.Size = new System.Drawing.Size(95, 24);
@@ -129,8 +129,9 @@
             this.txtstyle.BackColor = System.Drawing.Color.White;
             this.txtstyle.BrandObjectName = null;
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtstyle.Location = new System.Drawing.Point(114, 151);
+            this.txtstyle.Location = new System.Drawing.Point(159, 151);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 150;
             this.txtstyle.TarBrand = null;

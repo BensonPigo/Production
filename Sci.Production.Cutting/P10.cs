@@ -952,8 +952,8 @@ Select a.*
 (
     Select Top(1) Article
     From WorkOrderForOutput_Distribute f WITH (NOLOCK) 
-    Where a.ukey =f.WorkOrderForOutputukey --and a.orderid=f.orderid
-) as article,
+    Where a.ukey =f.WorkOrderForOutputukey --and a.orderid=f.orderid    
+) as article,   
 (
     Select count(id)
     From WorkOrderForOutput_Distribute g WITH (NOLOCK) 

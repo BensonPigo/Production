@@ -114,11 +114,11 @@ namespace Sci.Production.Cutting
                 .Numeric("BalanceCons", header: "Balance Cons.", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnfinishedCuttingReasonDesc", width: Widths.AnsiChars(30), header: "Reason", settings: unfinishedCuttingReasonSetting)
-                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
+                .EditText("UnfinishedCuttingRemark", header: "Remark", width: Widths.AnsiChars(30))
                 ;
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridCuttingReasonInput.Columns["UnfinishedCuttingRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void Query()
@@ -169,7 +169,7 @@ select
     [BalanceCons] = SUM(w.Cons - [ActConsOutput]),
     o.BuyerDelivery,
     [UnfinishedCuttingReasonDesc] = dw.Name,
-    [Remark] = w.UnfinishedCuttingRemark
+    w.UnfinishedCuttingRemark
 from WorkOrderForOutput w WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = w.ID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
@@ -273,7 +273,7 @@ order by w.EstCutDate asc,w.ID asc,w.FabricCombo asc";
             foreach (var needSaveItem in needSaveData)
             {
                 sqlUpdate += $@"
-update WorkOrderForOutput set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where CutRef = '{needSaveItem["CutRef"]}' and ID = '{needSaveItem["ID"]}'
+update WorkOrderForOutput set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', UnfinishedCuttingRemark = '{needSaveItem["UnfinishedCuttingRemark"]}' where CutRef = '{needSaveItem["CutRef"]}' and ID = '{needSaveItem["ID"]}'
 ";
             }
 

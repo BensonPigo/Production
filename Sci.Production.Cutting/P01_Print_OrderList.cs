@@ -265,7 +265,7 @@ select [SP] =
                 // 自動欄位寬度
                 dt.BoAutoFitColumn = true;
                 dt.HeaderColor = Color.LawnGreen;
-                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(10) { ColumnWidth = (decimal)10 });
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(20) { ColumnWidth = (decimal)20 });
 
                 // 凍結窗格
                 dt.BoFreezePanes = true;
