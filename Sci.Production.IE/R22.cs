@@ -37,7 +37,7 @@ namespace Sci.Production.IE
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            if (!this.dtAddEdit.HasValue1 && !this.dtAddEdit.HasValue2 && !this.dtInline.HasValue1 && !this.dtInline.HasValue2 && this.txtSPNO.Text == string.Empty)
+            if (!this.dtAddEdit.HasValue1 && !this.dtAddEdit.HasValue2 && !this.dtInline.HasValue1 && !this.dtInline.HasValue2 && string.IsNullOrEmpty(this.txtSPNO.Text))
             {
                 MyUtility.Msg.InfoBox("Please fill in at least one：<Deadline> or <Inline Date> or <SP>!");
                 return false;
@@ -53,21 +53,11 @@ namespace Sci.Production.IE
                 this.dDate1 = this.dtAddEdit.Value1.Value.ToString("yyyy-MM-dd");
                 this.dDate2 = this.dtAddEdit.Value2.Value.ToString("yyyy-MM-dd");
             }
-            else if (this.dtAddEdit.HasValue && (!this.dtAddEdit.HasValue1 || !this.dtAddEdit.HasValue2))
-            {
-                MyUtility.Msg.InfoBox("Please fill in both Dates!");
-                return false;
-            }
 
             if (this.dtInline.HasValue1 && this.dtInline.HasValue2)
             {
                 this.iDate1 = this.dtInline.Value1.Value.ToString("yyyy-MM-dd");
                 this.iDate2 = this.dtInline.Value2.Value.ToString("yyyy-MM-dd");
-            }
-            else if (this.dtInline.HasValue && (!this.dtInline.HasValue1 || !this.dtInline.HasValue2))
-            {
-                MyUtility.Msg.InfoBox("Please fill in both Dates!");
-                return false;
             }
 
             this.productType = this.cbProductType.Text;
@@ -155,15 +145,15 @@ LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type' 
 LEFT JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
-LEFT JOIN ChgOverCheckList ccl ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckList_Detail ccld ON ccl.ID = ccld.ID
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccl.ID = ccld.ID
 OUTER APPLY 
 (
     SELECT TOP 1 b.OrderID, b.StyleID, b.ComboType
     FROM ChgOver b
     WHERE b.Inline = (
                         SELECT MAX(c.Inline) 
-                        FROM ChgOver c 
+                        FROM ChgOver c WITH(NOLOCK)
                         WHERE c.FactoryID = co.FactoryID 
                           AND c.SewingLineID = co.SewingLineID 
                           AND c.Inline < co.Inline
@@ -195,9 +185,9 @@ LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
-LEFT JOIN ChgOverCheckList ccl ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckListBase colb ON colb.ID = ccl.ID
-LEFT JOIN ChgOverCheckList_Detail ccld on ccld.ID = ccl.ID
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.ID = ccl.ID
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccld.ID = ccl.ID
 OUTER APPLY
 (
 	select ResponseDep = Stuff((
@@ -205,7 +195,7 @@ OUTER APPLY
 			from (
 					select 	distinct
 						d.ResponseDep
-					from dbo.ChgOverCheckList_Detail d
+					from dbo.ChgOverCheckList_Detail d WITH(NOLOCK)
 					where ID = ccl.ID
 				) s
 			for xml path ('')
@@ -223,7 +213,7 @@ OUTER APPLY
     WHERE DATEPART(WEEKDAY, DateInPeriod) <> 1
       AND NOT EXISTS (
           SELECT 1
-          FROM Holiday h
+          FROM Holiday h WITH(NOLOCK)
           WHERE h.HolidayDate = DateInPeriod
             AND h.FactoryID = co.FactoryID
       )
@@ -240,7 +230,7 @@ OUTER APPLY
     WHERE DATEPART(WEEKDAY, DateInPeriod) <> 1
       AND NOT EXISTS (
           SELECT 1
-          FROM Holiday h
+          FROM Holiday h WITH(NOLOCK)
           WHERE h.HolidayDate = DateInPeriod
             AND h.FactoryID = co.FactoryID
       )

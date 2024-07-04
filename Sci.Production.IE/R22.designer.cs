@@ -32,7 +32,6 @@
             this.txtRD = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
-            this.dtInline = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.txtCategory = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
@@ -41,11 +40,12 @@
             this.chkOutstanding = new Sci.Win.UI.CheckBox();
             this.label6 = new Sci.Win.UI.Label();
             this.lblAddEditDate = new Sci.Win.UI.Label();
-            this.dtAddEdit = new Sci.Win.UI.DateRange();
             this.txtStyle = new Sci.Production.Class.Txtstyle();
             this.txtCell = new Sci.Production.Class.TxtCell();
             this.label7 = new Sci.Win.UI.Label();
             this.cbProductType = new Sci.Production.Class.ComboProductType(this.components);
+            this.dtAddEdit = new Sci.Win.UI.DateRange();
+            this.dtInline = new Sci.Win.UI.DateRange();
             this.SuspendLayout();
             // 
             // print
@@ -104,28 +104,6 @@
             this.label3.Text = "Inline Date";
             this.label3.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // dtInline
-            // 
-            // 
-            // 
-            // 
-            this.dtInline.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dtInline.DateBox1.Name = "";
-            this.dtInline.DateBox1.Size = new System.Drawing.Size(127, 26);
-            this.dtInline.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dtInline.DateBox2.Location = new System.Drawing.Point(153, 0);
-            this.dtInline.DateBox2.Name = "";
-            this.dtInline.DateBox2.Size = new System.Drawing.Size(127, 26);
-            this.dtInline.DateBox2.TabIndex = 1;
-            this.dtInline.IsRequired = false;
-            this.dtInline.Location = new System.Drawing.Point(116, 42);
-            this.dtInline.Name = "dtInline";
-            this.dtInline.Size = new System.Drawing.Size(280, 26);
-            this.dtInline.TabIndex = 200;
             // 
             // label2
             // 
@@ -205,28 +183,6 @@
             this.lblAddEditDate.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.lblAddEditDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // dtAddEdit
-            // 
-            // 
-            // 
-            // 
-            this.dtAddEdit.DateBox1.Location = new System.Drawing.Point(0, 0);
-            this.dtAddEdit.DateBox1.Name = "";
-            this.dtAddEdit.DateBox1.Size = new System.Drawing.Size(127, 26);
-            this.dtAddEdit.DateBox1.TabIndex = 0;
-            // 
-            // 
-            // 
-            this.dtAddEdit.DateBox2.Location = new System.Drawing.Point(153, 0);
-            this.dtAddEdit.DateBox2.Name = "";
-            this.dtAddEdit.DateBox2.Size = new System.Drawing.Size(127, 26);
-            this.dtAddEdit.DateBox2.TabIndex = 1;
-            this.dtAddEdit.IsRequired = false;
-            this.dtAddEdit.Location = new System.Drawing.Point(116, 9);
-            this.dtAddEdit.Name = "dtAddEdit";
-            this.dtAddEdit.Size = new System.Drawing.Size(280, 26);
-            this.dtAddEdit.TabIndex = 187;
-            // 
             // txtStyle
             // 
             this.txtStyle.BackColor = System.Drawing.Color.White;
@@ -278,11 +234,55 @@
             this.cbProductType.StyleApparelType = "";
             this.cbProductType.TabIndex = 208;
             // 
+            // dtAddEdit
+            // 
+            // 
+            // 
+            // 
+            this.dtAddEdit.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dtAddEdit.DateBox1.Name = "";
+            this.dtAddEdit.DateBox1.Size = new System.Drawing.Size(127, 26);
+            this.dtAddEdit.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dtAddEdit.DateBox2.Location = new System.Drawing.Point(153, 0);
+            this.dtAddEdit.DateBox2.Name = "";
+            this.dtAddEdit.DateBox2.Size = new System.Drawing.Size(127, 26);
+            this.dtAddEdit.DateBox2.TabIndex = 1;
+            this.dtAddEdit.Location = new System.Drawing.Point(116, 10);
+            this.dtAddEdit.Name = "dtAddEdit";
+            this.dtAddEdit.Size = new System.Drawing.Size(280, 26);
+            this.dtAddEdit.TabIndex = 209;
+            // 
+            // dtInline
+            // 
+            // 
+            // 
+            // 
+            this.dtInline.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dtInline.DateBox1.Name = "";
+            this.dtInline.DateBox1.Size = new System.Drawing.Size(127, 26);
+            this.dtInline.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dtInline.DateBox2.Location = new System.Drawing.Point(153, 0);
+            this.dtInline.DateBox2.Name = "";
+            this.dtInline.DateBox2.Size = new System.Drawing.Size(127, 26);
+            this.dtInline.DateBox2.TabIndex = 1;
+            this.dtInline.Location = new System.Drawing.Point(116, 41);
+            this.dtInline.Name = "dtInline";
+            this.dtInline.Size = new System.Drawing.Size(280, 26);
+            this.dtInline.TabIndex = 210;
+            // 
             // R22
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(526, 383);
+            this.Controls.Add(this.dtInline);
+            this.Controls.Add(this.dtAddEdit);
             this.Controls.Add(this.cbProductType);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.txtCell);
@@ -290,7 +290,6 @@
             this.Controls.Add(this.txtRD);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.dtInline);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtCategory);
             this.Controls.Add(this.label1);
@@ -299,7 +298,6 @@
             this.Controls.Add(this.chkOutstanding);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.lblAddEditDate);
-            this.Controls.Add(this.dtAddEdit);
             this.Name = "R22";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R22. Changeover CheckList Report";
@@ -309,7 +307,6 @@
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.dtAddEdit, 0);
             this.Controls.SetChildIndex(this.lblAddEditDate, 0);
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.chkOutstanding, 0);
@@ -318,7 +315,6 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.txtCategory, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.dtInline, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.txtRD, 0);
@@ -326,6 +322,8 @@
             this.Controls.SetChildIndex(this.txtCell, 0);
             this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.cbProductType, 0);
+            this.Controls.SetChildIndex(this.dtAddEdit, 0);
+            this.Controls.SetChildIndex(this.dtInline, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -336,7 +334,6 @@
         private Win.UI.TextBox txtRD;
         private Win.UI.Label label4;
         private Win.UI.Label label3;
-        private Win.UI.DateRange dtInline;
         private Win.UI.Label label2;
         private Win.UI.TextBox txtCategory;
         private Win.UI.Label label1;
@@ -345,10 +342,11 @@
         private Win.UI.CheckBox chkOutstanding;
         private Win.UI.Label label6;
         private Win.UI.Label lblAddEditDate;
-        private Win.UI.DateRange dtAddEdit;
         private Class.Txtstyle txtStyle;
         private Class.TxtCell txtCell;
         private Win.UI.Label label7;
         private Class.ComboProductType cbProductType;
+        private Win.UI.DateRange dtAddEdit;
+        private Win.UI.DateRange dtInline;
     }
 }
