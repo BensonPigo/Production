@@ -2456,7 +2456,8 @@ else
 				t.AddName				= isnull( s.AddName,             ''),
 				t.AddDate				=  s.AddDate,      
 				t.EditName				= isnull( s.EditName,            ''),
-				t.EditDate				= s.EditDate
+				t.EditDate				= s.EditDate,
+				t.MarkerType     		= isnull( s.MarkerType,           0)
 		when not matched by target then
 			insert (
 				Id					, Ukey					, Seq				, MarkerName		, FabricCode
@@ -2465,7 +2466,7 @@ else
 				, Remark			, MixedSizeMarker		, MarkerNo			, MarkerUpdate		, MarkerUpdateName
 				, AllSize			, PhaseID				, SMNoticeID		, MarkerVersion		, Direction
 				, CuttingWidth		, Width					, Type				, AddName			, AddDate
-				, EditName			, EditDate
+				, EditName			, EditDate              , MarkerType
 			)
            VALUES
            (
@@ -2500,7 +2501,8 @@ else
                   isnull(s.addname ,             ''),
                   s.adddate ,
                   isnull(s.editname ,            ''),
-                  s.editdate
+                  s.editdate,
+				  isnull( s.MarkerType,           0)
            )
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
@@ -2674,7 +2676,8 @@ else
 				t.EditName				= isnull( s.EditName,           ''),
 				t.EditDate				=  s.EditDate, 
 				t.isQT					= isnull( s.isQT,               0),
-				t.MarkerDownloadID		= isnull( s.MarkerDownloadID,   '')
+				t.MarkerDownloadID		= isnull( s.MarkerDownloadID,   ''),
+				t.MarkerType		    = isnull( s.MarkerType,          0)
 		when not matched by target then 
 			insert (
 				Id					, Ukey				, Seq				, MarkerName			, FabricCombo
@@ -2683,7 +2686,7 @@ else
 				, Remark			, MixedSizeMarker	, MarkerNo			, MarkerUpdate			, MarkerUpdateName
 				, AllSize			, PhaseID			, SMNoticeID		, MarkerVersion			, Direction
 				, CuttingWidth		, Width				, TYPE				, AddName				, AddDate
-				, EditName			, EditDate			, isQT				, MarkerDownloadID		
+				, EditName			, EditDate			, isQT				, MarkerDownloadID		, MarkerType
 			) 
            VALUES
            (
@@ -2720,7 +2723,8 @@ else
                   isnull(s.editname ,           ''),
                   s.editdate ,
                   isnull(s.isqt ,               0),
-                  isnull(s.markerdownloadid ,   '')
+                  isnull(s.markerdownloadid ,   ''),
+				  isnull(s.MarkerType,          0)
            )
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;
