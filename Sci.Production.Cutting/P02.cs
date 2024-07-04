@@ -268,6 +268,12 @@ ORDER BY
 
             // set Order List data source
             this.orderListBindingSource.DataSource = this.dt_OrderList;
+            this.ChangeBtnColor();
+        }
+
+        private void ChangeBtnColor()
+        {
+            this.btnQtyBreakdown.ForeColor = MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Order_Qty", "ID") ? Color.Blue : Color.Black;
         }
 
         /// <inheritdoc/>
