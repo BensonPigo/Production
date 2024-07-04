@@ -13,7 +13,8 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P02_NewCheckList : Win.Subs.Input4
     {
-        DataTable copyDt;
+        private DataTable copyDt;
+        private DataTable chgOverChkList;
         /// <summary>
         /// P02_NewCheckList
         /// </summary>
@@ -51,20 +52,24 @@ namespace Sci.Production.IE
 
             cbs.CellValidating += (s, e) =>
             {
-                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
-                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<string>("No") == MyUtility.Convert.GetString(dr["No"])).FirstOrDefault();
+                DataRow row = this.chgOverChkList.Rows[e.RowIndex];
+                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
 
-                if (MyUtility.Convert.GetBool(e.FormattedValue) != MyUtility.Convert.GetBool(oridr["Checked"]))
+                if (! MyUtility.Convert.GetBool(oridr["Checked"]))
                 {
                     if ((bool)e.FormattedValue)
                     {
-                        dr["DaysLeft"] = '-';
-                        dr["OverDays"] = dr["OverDay_Check_1"];
+                        row["Checked"] = true;
+                        row["DaysLeft"] = '-';
+                        row["OverDays"] = row["OverDay_Check_1"];
+                        row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
                     }
                     else
                     {
-                        dr["DaysLeft"] = dr["DaysLeft1"];
-                        dr["OverDays"] = dr["OverDay_Check_0"];
+                        row["Checked"] = false;
+                        row["DaysLeft"] = row["DaysLeft1"];
+                        row["OverDays"] = row["OverDay_Check_0"];
+                        row["CompletionDate"] = DBNull.Value;
                     }
                 }
             };
@@ -74,9 +79,9 @@ namespace Sci.Production.IE
                 .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Dep", header: "Dep", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Numeric("LeadTime", header: "Lead Time", iseditingreadonly: true)
-                .Numeric("DaysLeft", header: "Days Left", iseditingreadonly: true)
+                .Text("DaysLeft", header: "Days Left", iseditingreadonly: true)
                 .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(15), trueValue: 1, falseValue: 0)
+                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(15), trueValue: 1, falseValue: 0, settings: cbs)
                 .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(30), iseditingreadonly: true)
                 .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(30))
@@ -102,7 +107,7 @@ namespace Sci.Production.IE
             ,[CHECKLISTS]  = CB.CheckList
             ,[Dep] = CKD.ResponseDep
             ,[LeadTime] = CKD.LeadTime
-            ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val ))
+            ,[DaysLeft] = CONVERT( VARCHAR(10), iif(CC.[Checked] = 1 ,'-' ,  iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )))
             ,[Deadline] = CC.Deadline
             ,CC.[Checked]
             ,[CompletionDate] = CC.CompletionDate
@@ -139,16 +144,15 @@ namespace Sci.Production.IE
             WHERE CC.id = {this.KeyValue1}
             order by cc.ChgOverCheckListID";
             DualResult returnResult;
-            DataTable chgOverChkList = new DataTable();
-            returnResult = DBProxy.Current.Select(null, selectCommand, out chgOverChkList);
+            returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
             if (!returnResult)
             {
                 return returnResult;
             }
 
-            this.gridbs.DataSource = chgOverChkList;
+            this.gridbs.DataSource = this.chgOverChkList;
 
-            this.copyDt = chgOverChkList.Copy();
+            this.copyDt = this.chgOverChkList.Copy();
             return Ict.Result.True;
         }
 
