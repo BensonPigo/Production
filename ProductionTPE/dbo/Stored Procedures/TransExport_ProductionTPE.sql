@@ -184,6 +184,10 @@ BEGIN
 	-------------SewingMachineAttachment-------------------
 	RAISERROR('SewingMachineAttachment  - Starts',0,0)
 	select * into dbo.SewingMachineAttachment from (select * from ProductionTPE.dbo.SewingMachineAttachment ) as tmp
+	
+	-------------ChgOverCheckListBase-------------------
+	RAISERROR('ChgOverCheckListBase  - Starts',0,0)
+	select * into dbo.ChgOverCheckListBase from (select * from ProductionTPE.dbo.ChgOverCheckListBase ) as tmp
 
 	set transaction isolation level read committed
 END
