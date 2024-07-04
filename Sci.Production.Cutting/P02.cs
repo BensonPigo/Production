@@ -1187,27 +1187,23 @@ order by p.EditDate desc
 
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
-
-            var frm = new Cutpartcheck(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), dtDetail, this.dt_PatternPanel, this.dt_SizeRatio);
+            var frm = new Cutpartcheck(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio);
             frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
-
-            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForPlanning", dtDetail, null, this.dt_SizeRatio);
+            var frm = new Cutpartchecksummary(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio);
             frm.ShowDialog(this);
         }
 

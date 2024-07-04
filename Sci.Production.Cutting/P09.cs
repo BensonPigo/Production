@@ -45,6 +45,7 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_SizeRatio; // 第3層表:新刪修
         private DataTable dtWorkOrderForOutput_Distribute; // 第3層表:新刪修
         private DataTable dtWorkOrderForOutput_PatternPanel; // 第3層表:新刪修
+        private DataTable[] dtsHistory; // 要判斷按鈕顏色, 進表身就先撈, 還要用在傳入 History
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
         #endregion
@@ -176,7 +177,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
         }
         #endregion
 
-        #region 進入 Detail 撈資料
+        #region 進入 Detail 撈資料, By 主表 Pkey
 
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
@@ -390,7 +391,29 @@ DROP TABLE #tmp
 
             this.qtybreakds.DataSource = dtQtyBreakDown;
 
+            // Histyoy 資訊
+            sqlcmd = $@"
+SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputHistory WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND GroupID <> '' ORDER BY GroupID, CutRef
+SELECT CutRef, Layer, GroupID FROM WorkOrderForOutput WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND GroupID <> '' ORDER BY GroupID, CutRef
+SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}' AND GroupID <> '' ORDER BY GroupID, CutRef
+";
+            result = DBProxy.Current.Select(null, sqlcmd, out this.dtsHistory);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
             this.ChangeQtyBreakDownRow();
+            this.ChangeBtnColor();
+        }
+
+        private void ChangeBtnColor()
+        {
+            this.btnQtyBreakdown.ForeColor = this.qtybreakds.Count > 0 ? Color.Blue : Color.Black;
+
+            bool hasHistory = this.dtsHistory[0].AsEnumerable().Any() || this.dtsHistory[1].AsEnumerable().Any() || this.dtsHistory[2].AsEnumerable().Any();
+            this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
         }
         #endregion
 
@@ -406,6 +429,8 @@ DROP TABLE #tmp
 
             // 變更子表可否編輯
             bool canEdit = this.CanEditData(this.CurrentDetailData);
+            this.btnEdit.Enabled = canEdit;
+            this.btnDistributeThisCutRef.Enabled = canEdit;
             this.numConsPC.ReadOnly = !canEdit;
             this.cmsSizeRatio.Enabled = canEdit;
             this.cmsDistribute.Enabled = canEdit;
@@ -530,7 +555,7 @@ DELETE WorkOrderForOutputHistory WHERE ID = '{this.CurrentMaintain["ID"]}'
 DELETE WorkOrderForOutputDelete WHERE ID = '{this.CurrentMaintain["ID"]}'
 ";
 
-            // 2. WorkOrderForOutput
+            // 2. WorkOrderForOutput, 並 OutPut 欄位 Ukey 後續分配 Distribute  , 欄位 CutNo,EstCutDate,FabricCombo 用於編碼 CutNo
             string sqlcmd = $@"
 INSERT INTO WorkOrderForOutput (
     ID,
@@ -575,6 +600,7 @@ INSERT INTO WorkOrderForOutput (
     EditName,
     EditDate
 )
+OUTPUT INSERTED.Ukey,INSERTED.CutNo,INSERTED.EstCutDate,INSERTED.FabricCombo
 SELECT
     WorkOrderForPlanning.ID
     ,WorkOrderForPlanning.FactoryID
@@ -659,24 +685,17 @@ JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUk
 WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
 
-            // 撈出所有 Ukey 後續分配 Distribute
-            sqlcmd += $@"
-SELECT Ukey
-FROM WorkOrderForOutput WITH(NOLOCK)
-WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
-ORDER BY Ukey
-";
-
-            // Distribute 寫入之後才執行
+            // 5.CutNo 編碼完後更新 CutNo , 以及 Distribute 寫入之後更新 OrderID
             string orderID = "ISNULL((SELECT MIN(OrderID) FROM WorkOrderForOutput_Distribute WITH(NOLOCK) WHERE WorkOrderForOutputUkey = WorkOrderForOutput.Ukey AND OrderID <> 'EXCESS'), '')";
             if (this.CurrentMaintain["WorkType"].ToString() == "1")
             {
                 orderID = $"ID";
             }
 
-            string sqlUpdateOrderID = $@"
-UPDATE WorkOrderForOutput
-SET OrderID = {orderID}
+            string sqlUpdate = $@"
+UPDATE WorkOrderForOutput 
+SET CutNo = (SELECT CutNo FROM #tmp WHERE Ukey = WorkOrderForOutput.Ukey)
+   ,OrderID = {orderID}
 WHERE ID = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -701,19 +720,19 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                             return;
                         }
 
-                        result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out DataTable dtUkey);
+                        result = DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out DataTable dtInsertData);
                         if (!result)
                         {
                             this.ShowErr(result);
                             return;
                         }
 
-                        if (dtUkey.Rows.Count == 0)
+                        if (dtInsertData.Rows.Count == 0)
                         {
                             return;
                         }
 
-                        List<long> listWorkOrderUkey = dtUkey.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
+                        List<long> listWorkOrderUkey = dtInsertData.AsEnumerable().Select(x => MyUtility.Convert.GetLong(x["Ukey"])).ToList();
                         result = InsertWorkOrder_Distribute(this.CurrentMaintain["ID"].ToString(), listWorkOrderUkey, sqlConn, CuttingForm.P09);
                         if (!result)
                         {
@@ -721,7 +740,8 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
                             return;
                         }
 
-                        result = DBProxy.Current.ExecuteByConn(sqlConn, sqlUpdateOrderID);
+                        AutoCut(dtInsertData.AsEnumerable().ToList()); // 編碼 dtInsertData 中的 CutNo
+                        result = MyUtility.Tool.ProcessWithDatatable(dtInsertData, "UKey,CutNo", sqlUpdate, out DataTable odt);
                         if (!result)
                         {
                             this.ShowErr(result);
@@ -744,6 +764,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, new List<long>(), dtDelete[1]);
 
             this.OnRefreshClick();
+
             MyUtility.Msg.InfoBox("Import successful");
         }
 
@@ -775,6 +796,7 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        // 編輯模式下使用
         private void BtnImportMarkerLectra_Click(object sender, EventArgs e)
         {
             // 寫入表身, 不是寫入DB
@@ -1779,23 +1801,14 @@ DEALLOCATE CURSOR_
             this.detailgrid.EndEdit();
 
             // 先將可分配的WorkOrderForOutput 下面的WorkOrderForOutput_Distribute清空
-            foreach (DataRow drWorkOrder in this.DetailDatas)
+            var canEditDetailDatas = this.DetailDatas.Where(row => this.CheckContinue(row));
+            foreach (DataRow drWorkOrder in canEditDetailDatas)
             {
-                drWorkOrder["CanDoAutoDistribute"] = false;
-
-                // 有建立bundle不清空
-                if (!MyUtility.Check.Empty(drWorkOrder["CutRef"]) &&
-                    MyUtility.Check.Seek($"select 1 from Bundle with (nolock) where CutRef = '{drWorkOrder["CutRef"]}' and POID = '{this.CurrentMaintain["ID"]}'"))
-                {
-                    continue;
-                }
-
-                drWorkOrder["CanDoAutoDistribute"] = true;
                 this.dtWorkOrderForOutput_Distribute.Select(GetFilter(drWorkOrder, CuttingForm.P09)).Delete();
             }
 
             // 開始重新分配WorkOrderForOutput_Distribute
-            foreach (DataRow drWorkOrder in this.DetailDatas.Where(s => MyUtility.Convert.GetBool(s["CanDoAutoDistribute"])))
+            foreach (DataRow drWorkOrder in canEditDetailDatas)
             {
                 var p09_AutoDistToSP = new P09_AutoDistToSP(drWorkOrder, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_PatternPanel);
                 DualResult result = p09_AutoDistToSP.DoAutoDistribute();
@@ -1823,33 +1836,29 @@ DEALLOCATE CURSOR_
         #region 打開看看的視窗
         private void BtnCutPartsCheck_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
-
-            var frm = new Cutpartcheck(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), dtDetail, this.dtWorkOrderForOutput_PatternPanel, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
+            var frm = new Cutpartcheck(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
             frm.ShowDialog(this);
         }
 
         private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            if (this.CurrentMaintain == null)
             {
                 return;
             }
 
-            DataTable dtDetail = this.DetailDatas.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).CopyToDataTable();
-
-            var frm = new Cutpartchecksummary(this.CurrentMaintain["ID"].ToString(), "WorkOrderForOutput", dtDetail, this.dtWorkOrderForOutput_Distribute, this.dtWorkOrderForOutput_SizeRatio);
+            var frm = new Cutpartchecksummary(CuttingForm.P09, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute);
             frm.ShowDialog(this);
         }
 
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            new P09_History(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+            new P09_History(this.dtsHistory).ShowDialog();
         }
 
         private void BtnQtyBreakdown_Click(object sender, EventArgs e)

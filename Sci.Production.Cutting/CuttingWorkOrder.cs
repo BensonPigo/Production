@@ -1,5 +1,4 @@
 ﻿using Ict;
-using Ict.Win.Tools;
 using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Andy.ExtensionMethods;
@@ -1119,7 +1118,7 @@ SELECT
     ,[Create By] = Pass1.Name
     ,[Create Date] = Format(Bundle.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM  Bundle WITH(NOLOCK)
-INNER JOIN Pass1 WITH(NOLOCK) ON Bundle.AddName = Pass1.ID
+LEFT JOIN Pass1 WITH(NOLOCK) ON Bundle.AddName = Pass1.ID
 WHERE Bundle.CutRef IN ({0})
 AND Bundle.CutRef <> ''
 ORDER BY Bundle.ID, Bundle.CutRef, Pass1.Name";
@@ -1132,7 +1131,7 @@ SELECT
     ,[Create Date] = Format(CuttingOutput.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM CuttingOutput_Detail WITH(NOLOCK)
 INNER JOIN CuttingOutput WITH(NOLOCK) ON CuttingOutput.ID = CuttingOutput_Detail.ID
-INNER JOIN Pass1 WITH(NOLOCK) ON CuttingOutput.AddName = Pass1.ID
+LEFT JOIN Pass1 WITH(NOLOCK) ON CuttingOutput.AddName = Pass1.ID
 WHERE CuttingOutput_Detail.CutRef IN ({0})
 ORDER BY CuttingOutput.ID, CuttingOutput_Detail.CutRef, Pass1.Name";
 
@@ -1149,7 +1148,7 @@ SELECT
    ,[Create Date] = Format(MarkerReq.AddDate, 'yyyy/MM/dd HH:mm:ss')
 FROM MarkerReq_Detail WITH(NOLOCK)
 INNER JOIN MarkerReq WITH(NOLOCK) ON MarkerReq.ID = MarkerReq_Detail.ID
-INNER JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
+LEFT JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
 WHERE MarkerReq_Detail.CutRef IN ({0})
 ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
@@ -3004,6 +3003,215 @@ ORDER BY FabricPanelCode,PatternPanel
         }
         #endregion
 
+        #region CutPartCheck
+
+        /// <summary>
+        /// CutPartCheck 使用,總和 非編輯數據 或 編輯中尚未存檔的數據, P02 by POID, P09 by OrderID 總和
+        /// </summary>
+        /// <param name="form">P02/P09</param>
+        /// <param name="detailDatas">表身</param>
+        /// <param name="dtSizeRatio">dtSizeRatio</param>
+        /// <param name="dtDistribute">dtDistribute</param>
+        /// <returns>DataTable</returns>
+        public static DataTable ProcessWorkOrder_CutPartCheck(CuttingForm form, IList<DataRow> detailDatas, DataTable dtSizeRatio, DataTable dtDistribute)
+        {
+            string ukeyName = GetWorkOrderUkeyName(form);
+            var query = from t1 in detailDatas.AsEnumerable()
+                        join t2 in (form == CuttingForm.P02 ? dtSizeRatio : dtDistribute).AsEnumerable()
+                        on new
+                        {
+                            ukey = MyUtility.Convert.GetInt(t1["Ukey"]),
+                            tmpkey = MyUtility.Convert.GetInt(t1["tmpkey"]),
+                        }
+                        equals new
+                        {
+                            ukey = MyUtility.Convert.GetInt(t2[ukeyName]),
+                            tmpkey = MyUtility.Convert.GetInt(t2["tmpkey"]),
+                        }
+                        group new { t1, t2 } by new
+                        {
+                            ID = MyUtility.Convert.GetString(form == CuttingForm.P02 ? t1["ID"] : t2["OrderID"]), // P02 By POID 加總
+                            Article = MyUtility.Convert.GetString(form == CuttingForm.P02 ? t1["Article"] : t2["Article"]),
+                            SizeCode = MyUtility.Convert.GetString(t2["SizeCode"]),
+                            PatternPanel = MyUtility.Convert.GetString(t1["FabricCombo"]),
+                        }
+                        into g
+                        select new
+                        {
+                            g.Key.ID,
+                            g.Key.Article,
+                            g.Key.SizeCode,
+                            g.Key.PatternPanel,
+                            CutQty = g.Sum(x => MyUtility.Convert.GetInt(x.t2["Qty"]) * (form == CuttingForm.P02 ? MyUtility.Convert.GetInt(x.t2["Layer"]) : 1)),
+                        };
+            return query.ToList().ToDataTable();
+        }
+
+        /// <summary>
+        /// Order 資訊為基底
+        /// </summary>
+        /// <param name="form">P02/P09</param>
+        /// <param name="cuttingID">cuttingID</param>
+        /// <param name="dtWorkOrder">ProcessWorkOrder_CutPartCheck 出來的資訊</param>
+        /// <param name="dt">Order整理後 Left join dtWorkOrder</param>
+        /// <returns>DualResult</returns>
+        public static DualResult GetBase_CutPartCheck(CuttingForm form, string cuttingID, DataTable dtWorkOrder, out DataTable dt)
+        {
+            string columnID = form == CuttingForm.P02 ? string.Empty : ",o.ID";
+            string sqlcmd = $@"
+--基本資訊 Order_Qty 
+SELECT o.POID, oq.ID, oq.Article, oq.SizeCode, oq.Qty
+   ,IsCancel = CAST(IIF(o.Junk = 1 AND o.NeedProduction = 0, 1, 0) AS BIT)
+INTO #tmpOrder_Qty
+FROM Orders o WITH (NOLOCK)
+INNER JOIN Order_Qty oq WITH (NOLOCK) ON o.ID = oq.ID
+WHERE o.CuttingSP = '{cuttingID}'
+
+--P02 by POID 總和的訂單數量
+--P09 by OrderID 的訂單數量
+SELECT o.POID{columnID}, o.Article, o.SizeCode, IsCancel, Qty = SUM(o.Qty)
+INTO #tmpGroup
+FROM #tmpOrder_Qty o
+GROUP BY o.POID{columnID},o.Article, o.SizeCode, IsCancel -- P02 可能會有一個子單 IsCancel 無法 Group
+
+--完成準備資訊 展開 PKey: FabricPanelCode
+SELECT DISTINCT
+    o.POID
+   {columnID}
+   ,o.Article
+   ,o.SizeCode
+   ,o.Qty
+   ,o.IsCancel
+   ,occ.ColorID
+   ,occ.PatternPanel
+INTO #tmpOrder
+FROM #tmpGroup o
+INNER JOIN Order_ColorCombo occ WITH (NOLOCK) ON occ.id = o.POID AND occ.Article = o.Article
+WHERE occ.FabricCode <> ''
+AND EXISTS (SELECT 1 FROM Order_EachCons WITH (NOLOCK) WHERE ID = o.POID AND FabricPanelCode = occ.FabricPanelCode AND CuttingPiece = 0)  --排除外裁 FabricPanelCode
+
+-- 將 WorkOrder 裁剪數 CutQty
+SELECT
+   o.POID
+   {columnID}
+   ,o.Article
+   ,o.SizeCode
+   ,o.Qty
+   ,o.ColorID
+   ,o.PatternPanel
+   ,o.IsCancel
+   ,w.CutQty
+   ,Variance = w.CutQty - o.Qty
+INTO #tmpFinal
+FROM #tmpOrder o
+LEFT JOIN #tmp w ON w.ID = {(form == CuttingForm.P02 ? "o.POID" : "o.ID")} -- 此處 P09 會把 EXCESS 排除, P02 用 POID
+                AND w.Article = o.Article
+                AND w.SizeCode = o.SizeCode
+                AND w.PatternPanel = o.PatternPanel
+UNION ALL
+SELECT
+    o.POID
+   {columnID}
+   ,o.Article
+   ,o.SizeCode
+   ,o.Qty
+   ,ColorID = ''
+   ,Patternpanel = '='
+   ,o.IsCancel
+   ,CutQty = NULL
+   ,Variance = NULL
+FROM #tmpGroup o WITH (NOLOCK)
+
+-- 取 SizeCode 排序
+SELECT    
+   {(form == CuttingForm.P02 ? "ID = o.POID" : "o.ID")}
+   , o.Article, o.SizeCode, o.Qty, o.ColorID, o.Patternpanel, o.IsCancel, o.CutQty, o.Variance
+FROM #tmpFinal o
+INNER JOIN Order_SizeCode os WITH (NOLOCK) ON os.ID = o.POID AND os.SizeCode = o.SizeCode
+ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel    
+";
+            return MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, sqlcmd, out dt);
+        }
+
+        /// <summary>
+        /// 將 CutPartCheck 樞紐
+        /// </summary>
+        /// <param name="dtCutPartCheck">CutPartCheck</param>
+        /// <returns>DataTable</returns>
+        public static DataTable ProcessCutpartCheckSummary(DataTable dtCutPartCheck)
+        {
+            // 排除 Patternpanel='=' 的行
+            var filteredRows = dtCutPartCheck.AsEnumerable().Where(row => MyUtility.Convert.GetString(row["Patternpanel"]) != "=");
+
+            // 唯一的 ID, Article, SizeCode, Qty 組合
+            var uniqueKeys = filteredRows
+                .GroupBy(row => new
+                {
+                    ID = MyUtility.Convert.GetString(row["ID"]),
+                    Article = MyUtility.Convert.GetString(row["Article"]),
+                    SizeCode = MyUtility.Convert.GetString(row["SizeCode"]),
+                    Qty = MyUtility.Convert.GetInt(row["Qty"]),
+                    IsCancel = MyUtility.Convert.GetBool(row["IsCancel"]),
+                })
+                .Select(group => group.Key)
+                .ToList();
+
+            // 創建新的 DataTable 並添加相應的列
+            DataTable resultTable = new DataTable();
+            resultTable.Columns.Add("ID", typeof(string));
+            resultTable.Columns.Add("Article", typeof(string));
+            resultTable.Columns.Add("SizeCode", typeof(string));
+            resultTable.Columns.Add("Qty", typeof(int));
+            resultTable.Columns.Add("IsCancel", typeof(bool));
+            resultTable.Columns.Add("Complete", typeof(string));
+
+            // 動態添加 Patternpanel 作為列
+            var listPatternPanels = filteredRows.Select(row => MyUtility.Convert.GetString(row["Patternpanel"])).Distinct().ToList();
+
+            foreach (var panel in listPatternPanels)
+            {
+                resultTable.Columns.Add(panel, typeof(int));
+            }
+
+            // 填充數據
+            foreach (var key in uniqueKeys)
+            {
+                var newRow = resultTable.NewRow();
+                newRow["ID"] = key.ID;
+                newRow["Article"] = key.Article;
+                newRow["SizeCode"] = key.SizeCode;
+                newRow["Qty"] = key.Qty;
+                newRow["IsCancel"] = key.IsCancel;
+
+                bool isComplete = true;
+
+                foreach (var panel in listPatternPanels)
+                {
+                    var matchRow = filteredRows
+                        .FirstOrDefault(row =>
+                            MyUtility.Convert.GetString(row["ID"]) == key.ID &&
+                            MyUtility.Convert.GetString(row["Article"]) == key.Article &&
+                            MyUtility.Convert.GetString(row["SizeCode"]) == key.SizeCode &&
+                            MyUtility.Convert.GetInt(row["Qty"]) == key.Qty &&
+                            MyUtility.Convert.GetString(row["Patternpanel"]) == panel);
+
+                    int cutQty = matchRow != null ? MyUtility.Convert.GetInt(matchRow["CutQty"]) : 0;
+                    newRow[panel] = cutQty;
+
+                    if (cutQty < key.Qty)
+                    {
+                        isComplete = false;
+                    }
+                }
+
+                newRow["Complete"] = isComplete ? "Y" : string.Empty;
+
+                resultTable.Rows.Add(newRow);
+            }
+
+            return resultTable;
+        }
+        #endregion
         #region 列印
 
         /// <summary>

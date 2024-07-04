@@ -12,15 +12,15 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P09_History : Sci.Win.Tems.QueryForm
     {
-        private readonly string id;
+        private DataTable[] dtsHistory;
         private DataTable dtAlloriginalCutref;
         private DataTable dtAllcurrentCutref;
 
         /// <inheritdoc/>
-        public P09_History(string id)
+        public P09_History(DataTable[] dtsHistory)
         {
             this.InitializeComponent();
-            this.id = id;
+            this.dtsHistory = dtsHistory;
         }
 
         /// <inheritdoc/>
@@ -52,24 +52,12 @@ namespace Sci.Production.Cutting
 
         private void Query()
         {
-            string sqlcmd = $@"
-SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputHistory WITH (NOLOCK) WHERE ID = '{this.id}' AND GroupID <> '' ORDER BY GroupID, CutRef
-SELECT CutRef, Layer, GroupID FROM WorkOrderForOutput WITH (NOLOCK) WHERE ID = '{this.id}' AND GroupID <> '' ORDER BY GroupID, CutRef
-SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE ID = '{this.id}' AND GroupID <> '' ORDER BY GroupID, CutRef
-";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dts);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
+            this.originalCutRefbs.DataSource = this.dtsHistory[0];
+            this.currentCutRefbs.DataSource = this.dtsHistory[1];
+            this.removeListbs.DataSource = this.dtsHistory[2];
 
-            this.originalCutRefbs.DataSource = dts[0];
-            this.currentCutRefbs.DataSource = dts[1];
-            this.removeListbs.DataSource = dts[2];
-
-            DataTable oridt = dts[0].DefaultView.ToTable(true, "CutRef");
-            DataTable curdt = dts[1].DefaultView.ToTable(true, "CutRef");
+            DataTable oridt = this.dtsHistory[0].DefaultView.ToTable(true, "CutRef");
+            DataTable curdt = this.dtsHistory[1].DefaultView.ToTable(true, "CutRef");
 
             this.dtAlloriginalCutref = this.AddEmptyItem(oridt);
             this.dtAllcurrentCutref = this.AddEmptyItem(curdt);
@@ -206,8 +194,16 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             DataTable sourceTable = ((DataView)sourceBs.List).ToTable();
             string groupIDFilter = string.Join(",", sourceTable.AsEnumerable().Select(row => $"'{row["GroupID"]}'").Distinct());
 
-            targetBs1.Filter = $"GroupID IN ({groupIDFilter})";
-            targetBs2.Filter = $"GroupID IN ({groupIDFilter})";
+            if (MyUtility.Check.Empty(groupIDFilter))
+            {
+                targetBs1.Filter = string.Empty;
+                targetBs2.Filter = string.Empty;
+            }
+            else
+            {
+                targetBs1.Filter = $"GroupID IN ({groupIDFilter})";
+                targetBs2.Filter = $"GroupID IN ({groupIDFilter})";
+            }
 
             this.Cal3TTLQty();
         }
