@@ -12,6 +12,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P02_NewCheckList : Win.Subs.Input4
     {
+        DataTable copyDt;
         /// <summary>
         /// P02_NewCheckList
         /// </summary>
@@ -44,6 +45,29 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool OnGridSetup()
         {
+            // DataGridViewGeneratorTextColumnSettings
+            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
+
+            cbs.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.grid.GetDataRow<DataRow>(e.RowIndex);
+                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<string>("No") == MyUtility.Convert.GetString(dr["No"])).FirstOrDefault();
+
+                if (MyUtility.Convert.GetBool(e.FormattedValue) != MyUtility.Convert.GetBool(oridr["Checked"]))
+                {
+                    if ((bool)e.FormattedValue)
+                    {
+                        dr["DaysLeft"] = '-';
+                        dr["OverDays"] = dr["OverDay_Check_1"];
+                    }
+                    else
+                    {
+                        dr["DaysLeft"] = dr["DaysLeft1"];
+                        dr["OverDays"] = dr["OverDay_Check_0"];
+                    }
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -85,6 +109,9 @@ namespace Sci.Production.IE
             ,CC.Remark
             ,[EditName] = CC.EditName
             ,[EditDate] = CC.EditDate
+            ,[OverDay_Check_0] = OverDay_Check_0.val
+            ,[OverDay_Check_1] = OverDay_Check_1.val
+            ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )
             FROM ChgOver_Check CC
             INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
             LEFT JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
@@ -119,7 +146,35 @@ namespace Sci.Production.IE
             }
 
             this.gridbs.DataSource = chgOverChkList;
+
+            this.copyDt = chgOverChkList.Copy();
             return Ict.Result.True;
+        }
+
+        /// <inheritdoc/>
+        protected override bool OnSaveBefore()
+        {
+            this.grid.ValidateControl();
+            this.gridbs.EndEdit();
+            string strErrorMes = string.Empty;
+
+            foreach (DataRow dr in this.Datas)
+            {
+                if (MyUtility.Convert.GetBool(dr["Checked"]) && 
+                    MyUtility.Convert.GetInt(dr["OverDays"]) > 0 &&
+                    MyUtility.Check.Empty(dr["Remark"]))
+                {
+                    strErrorMes += $@"Please fill in [Late Reason] since NO.<{dr["No"]}> already passed the Deadline." + Environment.NewLine;
+                }
+            }
+
+            if (!MyUtility.Check.Empty(strErrorMes))
+            {
+                MyUtility.Msg.WarningBox(strErrorMes);
+                return false;
+            }
+
+            return base.OnSaveBefore();
         }
     }
 }
