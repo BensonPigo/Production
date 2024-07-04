@@ -384,7 +384,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
                         break;
                     case ListName.P_CuttingOutputStatistic:
-                        result = new P_Import_CuttingOutputStatisitc().P_CuttingOutputStatistic(item.SDate, item.EDate);
+                        result = new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
                         break;
                     case ListName.P_MaterialCompletionRateByWeek:
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
