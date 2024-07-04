@@ -4,6 +4,7 @@ using System.Drawing;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
 
 namespace Sci.Production.IE
 {
