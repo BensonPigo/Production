@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridPhysicalInspection = new Sci.Win.UI.Grid();
             this.btnOK = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridPhysicalInspection)).BeginInit();
@@ -39,7 +38,6 @@
             this.gridPhysicalInspection.AllowUserToAddRows = false;
             this.gridPhysicalInspection.AllowUserToDeleteRows = false;
             this.gridPhysicalInspection.AllowUserToResizeRows = false;
-            this.gridPhysicalInspection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.gridPhysicalInspection.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridPhysicalInspection.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridPhysicalInspection.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -49,14 +47,6 @@
             this.gridPhysicalInspection.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridPhysicalInspection.Location = new System.Drawing.Point(6, 12);
             this.gridPhysicalInspection.Name = "gridPhysicalInspection";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridPhysicalInspection.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridPhysicalInspection.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridPhysicalInspection.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridPhysicalInspection.RowTemplate.Height = 24;
