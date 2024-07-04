@@ -86,7 +86,8 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelSeqNo = new Sci.Win.UI.Label();
             this.labelSizeRatio = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
+            this.displayBoxMarkerType = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -571,7 +572,7 @@
             this.txtEfficiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtEfficiency.Location = new System.Drawing.Point(487, 176);
             this.txtEfficiency.Name = "txtEfficiency";
-            this.txtEfficiency.Size = new System.Drawing.Size(57, 21);
+            this.txtEfficiency.Size = new System.Drawing.Size(60, 21);
             this.txtEfficiency.TabIndex = 156;
             // 
             // displayStraight
@@ -713,7 +714,7 @@
             this.txtPatternPanel.Location = new System.Drawing.Point(339, 122);
             this.txtPatternPanel.Name = "txtPatternPanel";
             this.txtPatternPanel.ReadOnly = true;
-            this.txtPatternPanel.Size = new System.Drawing.Size(61, 21);
+            this.txtPatternPanel.Size = new System.Drawing.Size(48, 21);
             this.txtPatternPanel.TabIndex = 139;
             // 
             // txtFabPanelCode
@@ -724,7 +725,7 @@
             this.txtFabPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFabPanelCode.Location = new System.Drawing.Point(339, 148);
             this.txtFabPanelCode.Name = "txtFabPanelCode";
-            this.txtFabPanelCode.Size = new System.Drawing.Size(61, 21);
+            this.txtFabPanelCode.Size = new System.Drawing.Size(48, 21);
             this.txtFabPanelCode.TabIndex = 171;
             // 
             // labelTotal
@@ -765,19 +766,31 @@
             this.labelSizeRatio.Text = "Size Ratio";
             this.labelSizeRatio.TextStyle.Color = System.Drawing.Color.White;
             // 
-            // label1
+            // displayBoxMarkerType
             // 
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(402, 122);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(82, 22);
-            this.label1.TabIndex = 176;
-            this.label1.Text = "MarkerType";
+            this.displayBoxMarkerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerTypeName", true));
+            this.displayBoxMarkerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBoxMarkerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.Location = new System.Drawing.Point(467, 122);
+            this.displayBoxMarkerType.Name = "displayBoxMarkerType";
+            this.displayBoxMarkerType.Size = new System.Drawing.Size(77, 21);
+            this.displayBoxMarkerType.TabIndex = 183;
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(390, 122);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 22);
+            this.label4.TabIndex = 182;
+            this.label4.Text = "MarkerType";
             // 
             // P01_MarkerList
             // 
             this.ClientSize = new System.Drawing.Size(855, 600);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.displayBoxMarkerType);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelSizeRatio);
             this.Controls.Add(this.labelSeqNo);
             this.Controls.Add(this.displayTotal);
@@ -904,15 +917,16 @@
             this.Controls.SetChildIndex(this.displayType, 0);
             this.Controls.SetChildIndex(this.txtForArticle, 0);
             this.Controls.SetChildIndex(this.txtFabPanelCode, 0);
-            this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.detailgridcont, 0);
-            this.Controls.SetChildIndex(this.detailgridicon, 0);
             this.Controls.SetChildIndex(this.labelTotal, 0);
             this.Controls.SetChildIndex(this.displayTotal, 0);
             this.Controls.SetChildIndex(this.labelSeqNo, 0);
             this.Controls.SetChildIndex(this.labelSizeRatio, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.displayBoxMarkerType, 0);
+            this.Controls.SetChildIndex(this.btmcont, 0);
+            this.Controls.SetChildIndex(this.gridcont, 0);
+            this.Controls.SetChildIndex(this.detailgridcont, 0);
+            this.Controls.SetChildIndex(this.detailgridicon, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -982,6 +996,7 @@
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label labelSeqNo;
         private Win.UI.Label labelSizeRatio;
-        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBoxMarkerType;
+        private Win.UI.Label label4;
     }
 }
