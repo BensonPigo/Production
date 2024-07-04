@@ -2223,9 +2223,11 @@ select
 							else 'New style' end,
 	apm.StyleSeason,
 	apm.AddDate,
-	apm.EditDate
+	apm.EditDate,
+    fac.LastDownloadAPSDate
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
+left join Factory fac on fac.ID = apm.FactoryID
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用
