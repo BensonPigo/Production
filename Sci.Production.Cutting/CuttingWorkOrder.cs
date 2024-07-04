@@ -172,7 +172,7 @@ namespace Sci.Production.Cutting
 
                 if (inValidWk.Any())
                 {
-                    DataTable dt = ListToDataTable.ToDataTable(inValidWk);
+                    DataTable dt = ListToDataTable.ToDataTable(inValidWk.Select(o => new { o.ID, o.SEQ1, o.SEQ2, o.Markername, o.FabricPanelCode }).Distinct().ToList());
                     var f = new MsgGridForm(dt, "Invalid data in Order ColorCombo", $"Invalid data");
                     f.grid1.ColumnsAutoSize();
                     f.ShowDialog();
@@ -194,225 +194,247 @@ namespace Sci.Production.Cutting
         private List<WorkOrder> LoadExcel(string filename)
         {
             List<WorkOrder> workOrders = new List<WorkOrder>();
+
             Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
+            Excel.Workbook workbook = null;
+            Excel.Worksheet worksheet = null;
 
-            excel.Workbooks.Open(MyUtility.Convert.GetString(filename));
-            int sheetCnt = excel.ActiveWorkbook.Worksheets.Count;
-
-            for (int i = 1; i <= sheetCnt; i++)
+            try
             {
-                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[i];
+                workbook = excel.Workbooks.Open(MyUtility.Convert.GetString(filename));
+                int sheetCnt = excel.ActiveWorkbook.Worksheets.Count;
 
-                // 檢查裁剪母單單號
-                string poID = worksheet.GetCellValue(2, 2);
-                if (poID != this.CuttingPOID)
+                for (int i = 1; i <= sheetCnt; i++)
                 {
-                    Marshal.ReleaseComObject(worksheet);
-                    continue;
-                }
+                    worksheet = workbook.Worksheets[i];
 
-                // 開始檢查Excel
-                string keyWord_FabPanelCode = "Panel Code:";
-                string keyWord_Layer = "Layers";
-                string keyWord_MarkerEnd = "Ttl. Qty.";
-                int curRowIndex = 1;
-                int emptyRowCount = 0;
-
-                // 紀錄這一區資料有幾Row，到哪一個Index
-                int curDataStart_Y = 1;
-
-                // 紀錄這一區資料有幾Column，到哪一個Index
-                int curDataStart_X = 0;
-
-                // 橫向開始找「Layers」欄位(對應 範本Excel的col = AB, Row = 8 )，但是User可能自己複製column，所以動態抓，整個Sheet的Column是一起的，所以一張Sheet找一次就好
-                if (curDataStart_X == 0)
-                {
-                    while (worksheet.GetCellValue(curDataStart_X + 1, 8) != keyWord_Layer)
+                    // 檢查裁剪母單單號
+                    string poID = worksheet.GetCellValue(2, 2);
+                    if (poID != this.CuttingPOID)
                     {
-                        curDataStart_X++;
-                    }
-                }
-
-                // 開始找這一區的表格
-                while (true)
-                {
-                    // 如果讀取超過20行都沒有「Panel Code:」，就當作此sheet已經沒資料
-                    if (emptyRowCount > 20)
-                    {
-                        break;
-                    }
-
-                    // 開始找「Panel Code:」欄位(對應 Excel的col = A, Row = 4 )
-                    if (worksheet.GetCellValue(1, curRowIndex) != keyWord_FabPanelCode)
-                    {
-                        curRowIndex++;
-                        emptyRowCount++;
+                        Marshal.ReleaseComObject(worksheet);
                         continue;
                     }
 
-                    // 找到「Panel Code:」欄位，重置
-                    emptyRowCount = 0;
-                    curDataStart_Y = 1;
+                    // 開始檢查Excel
+                    string keyWord_FabPanelCode = "Panel Code:";
+                    string keyWord_Layer = "Layers";
+                    string keyWord_MarkerEnd = "Ttl. Qty.";
+                    int curRowIndex = 1;
+                    int emptyRowCount = 0;
 
-                    // 若找到，「Panel Code:」的行數為 curRowIndex
-                    // 計算「Panel Code:」到「Ttl. Qty.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
-                    // AA 25
-                    curDataStart_Y += curRowIndex;
-                    string a = worksheet.GetCellValue(27, curDataStart_Y);
-                    while (a != keyWord_MarkerEnd && emptyRowCount < 50)
+                    // 紀錄這一區資料有幾Row，到哪一個Index
+                    int curDataStart_Y = 1;
+
+                    // 紀錄這一區資料有幾Column，到哪一個Index
+                    int curDataStart_X = 0;
+
+                    // 橫向開始找「Layers」欄位(對應 範本Excel的col = AB, Row = 8 )，但是User可能自己複製column，所以動態抓，整個Sheet的Column是一起的，所以一張Sheet找一次就好
+                    if (curDataStart_X == 0)
                     {
-                        curDataStart_Y++;
-                        emptyRowCount++;
-                        a = worksheet.GetCellValue(27, curDataStart_Y);
-                        continue;
-                    }
-
-                    emptyRowCount = 0;
-
-                    // 下一個「Panel Code:」的起點
-                    int nextFabPanelCodeStart = curDataStart_Y + 2;
-
-                    // 計算Pattern Panel和Marker Name填寫的Row有幾行
-                    // 6 = 「Panel Code:」到「NK Name」的距離
-                    // 1 = 「Ttl. Qty.」跟最後一筆資料的距離
-                    int markerRowCount = curDataStart_Y - curRowIndex - 6;
-
-                    // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 curRowIndex
-                    string fabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
-
-                    // 取MarkerNo, Seq，在「Panel Code:」的上一Row
-                    string markerNo = worksheet.GetCellValue(6, curRowIndex - 1);
-                    string seq = worksheet.GetCellValue(11, curRowIndex - 1);
-                    string seq1, seq2;
-
-                    if (seq.Split('-').Length < 2)
-                    {
-                        seq1 = string.Empty;
-                        seq2 = string.Empty;
-                    }
-                    else
-                    {
-                        seq1 = seq.Split('-')[0];
-                        seq2 = seq.Split('-')[1];
-                    }
-
-                    // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
-                    if (MyUtility.Check.Empty(fabricPanelCode))
-                    {
-                        continue;
-                    }
-
-                    // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
-                    string[] colorInfo = worksheet.GetCellValue(2, curRowIndex + 1).Split('-');
-
-                    string tmpColorid = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
-                    string tmpTone = colorInfo.Length >= 2 ? colorInfo[1] : string.Empty;
-
-                    // 取得Size Ratio Range (例如：1 ,4 ,28 ,24 )
-                    Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, curDataStart_X + 1, nextFabPanelCodeStart - 3);
-
-                    // 讀每一個MkName，起點是從A4「Panel Code:」往下數，所以是 = 7；終點是下筆資料「Panel Code:」的Y值 - 3，
-                    // 直向往下找
-                    for (int idxMarker = 7; idxMarker < 7 + markerRowCount; idxMarker++)
-                    {
-                        // 準備好物件存資料
-                        WorkOrder nwk = new WorkOrder()
+                        while (worksheet.GetCellValue(curDataStart_X + 1, 8) != keyWord_Layer)
                         {
-                            FabricPanelCode = fabricPanelCode,
-                            SEQ1 = seq1,
-                            SEQ2 = seq2,
-                            MarkerNo = markerNo,
-                            ID = this.CuttingPOID,
-                            FactoryID = this.FactoryID,
-                            MDivisionId = this.MDivisionid,
-                            Colorid = tmpColorid,
-                            Tone = tmpTone,
-                            IsCreateByUser = true,
-                        };
+                            curDataStart_X++;
+                        }
+                    }
 
-                        int idxSize = 3;
-                        int totalLayer = 0;
-                        int garmentCnt = 0;
-                        decimal consPc = 0;
-                        decimal layerYDS = 0;
-                        decimal layerInch = 0;
-                        string importPatternPanel = string.Empty;
-                        string markerLength = string.Empty;
-
-                        Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
-
-                        // 橫向往右找
-                        while (true)
+                    // 開始找這一區的表格
+                    while (true)
+                    {
+                        // 如果讀取超過20行都沒有「Panel Code:」，就當作此sheet已經沒資料
+                        if (emptyRowCount > 20)
                         {
-                            // 找Size，C 5為起點，開始往右
-                            string size = rangeSizeRatio.GetCellValue(idxSize, 2);
-                            string totalSize = rangeSizeRatio.GetCellValue(idxSize, 1);
-
-                            // 最後面是報表加總了(AB 4)，因此Break
-                            if (totalSize == "Total Qty.")
-                            {
-                                // AB 10
-                                totalLayer = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
-
-                                // AD 10
-                                layerYDS = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 2, idxMarker));
-
-                                // AE 10
-                                layerInch = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 3, idxMarker));
-
-                                // 計算剩餘英吋數、碼等等
-                                decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
-                                string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
-                                markerLength = $"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2";
-                                layerYDS += layerInch * this.inchToYdsRate;
-                                break;
-                            }
-
-                            // 找Size對應的數量，C 10 開始往右找
-                            int sizeQty = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
-                            if (sizeQty == 0)
-                            {
-                                idxSize++;
-                                continue;
-                            }
-
-                            // 存下結果
-                            dicSizeRatio.Add(size, sizeQty);
-                            idxSize++;
+                            break;
                         }
 
-                        if (dicSizeRatio.Count == 0 || totalLayer == 0)
+                        // 開始找「Panel Code:」欄位(對應 Excel的col = A, Row = 4 )
+                        if (worksheet.GetCellValue(1, curRowIndex) != keyWord_FabPanelCode)
+                        {
+                            curRowIndex++;
+                            emptyRowCount++;
+                            continue;
+                        }
+
+                        // 找到「Panel Code:」欄位，重置
+                        emptyRowCount = 0;
+                        curDataStart_Y = 1;
+
+                        // 若找到，「Panel Code:」的行數為 curRowIndex
+                        // 計算「Panel Code:」到「Ttl. Qty.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
+                        // AA 25
+                        curDataStart_Y += curRowIndex;
+                        string a = worksheet.GetCellValue(27, curDataStart_Y);
+                        while (a != keyWord_MarkerEnd && emptyRowCount < 50)
+                        {
+                            curDataStart_Y++;
+                            emptyRowCount++;
+                            a = worksheet.GetCellValue(27, curDataStart_Y);
+                            continue;
+                        }
+
+                        emptyRowCount = 0;
+
+                        // 下一個「Panel Code:」的起點
+                        int nextFabPanelCodeStart = curDataStart_Y + 2;
+
+                        // 計算Pattern Panel和Marker Name填寫的Row有幾行
+                        // 6 = 「Panel Code:」到「NK Name」的距離
+                        // 1 = 「Ttl. Qty.」跟最後一筆資料的距離
+                        int markerRowCount = curDataStart_Y - curRowIndex - 6;
+
+                        // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 curRowIndex
+                        string fabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
+
+                        // 取MarkerNo, Seq，在「Panel Code:」的上一Row
+                        string markerNo = worksheet.GetCellValue(6, curRowIndex - 1);
+                        string seq = worksheet.GetCellValue(11, curRowIndex - 1);
+                        string seq1, seq2;
+
+                        if (seq.Split('-').Length < 2)
+                        {
+                            seq1 = string.Empty;
+                            seq2 = string.Empty;
+                        }
+                        else
+                        {
+                            seq1 = seq.Split('-')[0];
+                            seq2 = seq.Split('-')[1];
+                        }
+
+                        // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
+                        if (MyUtility.Check.Empty(fabricPanelCode))
                         {
                             continue;
                         }
 
-                        // 開始找Pattern Panel，起點A 10
-                        importPatternPanel = rangeSizeRatio.GetCellValue(1, idxMarker);
+                        // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
+                        string[] colorInfo = worksheet.GetCellValue(2, curRowIndex + 1).Split('-');
 
-                        // 計算這個Pattern Panel的所有尺寸總和
-                        garmentCnt = dicSizeRatio.Sum(s => s.Value);
+                        string tmpColorid = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
+                        string tmpTone = colorInfo.Length >= 2 ? colorInfo[1] : string.Empty;
 
-                        // WorkOrder.ConsPC = 每層Yds / 每層SizeRatio
-                        consPc = garmentCnt == 0 ? 0 : layerYDS / garmentCnt;
+                        // 取得Size Ratio Range (例如：1 ,4 ,28 ,24 )
+                        Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, curDataStart_X + 1, nextFabPanelCodeStart - 3);
 
-                        nwk.ConsPC = consPc;
+                        // 讀每一個MkName，起點是從A4「Panel Code:」往下數，所以是 = 7；終點是下筆資料「Panel Code:」的Y值 - 3，
+                        // 直向往下找
+                        for (int idxMarker = 7; idxMarker < 7 + markerRowCount; idxMarker++)
+                        {
+                            // 準備好物件存資料
+                            WorkOrder nwk = new WorkOrder()
+                            {
+                                FabricPanelCode = fabricPanelCode,
+                                SEQ1 = seq1,
+                                SEQ2 = seq2,
+                                MarkerNo = markerNo,
+                                ID = this.CuttingPOID,
+                                FactoryID = this.FactoryID,
+                                MDivisionId = this.MDivisionid,
+                                Colorid = tmpColorid,
+                                Tone = tmpTone,
+                                IsCreateByUser = true,
+                            };
 
-                        // 這個層數不是最後的結果，等等還會去檢查 Order_ColorCombo.CuttingLayer設定值
-                        nwk.ExcelLayer = totalLayer;
-                        nwk.ImportPatternPanel = importPatternPanel; // FA
-                        nwk.SizeRatio = dicSizeRatio; // {Size = 42，Qty = 10}、{Size = 46，Qty = 350}...
+                            int idxSize = 3;
+                            int totalLayer = 0;
+                            int garmentCnt = 0;
+                            decimal consPc = 0;
+                            decimal layerYDS = 0;
+                            decimal layerInch = 0;
+                            string importPatternPanel = string.Empty;
+                            string markerLength = string.Empty;
 
-                        nwk.Cons = garmentCnt * consPc; // * wk.Layer; 這邊先不撈DB Layer 資訊, 之後才撈取 * Layer
-                        nwk.MarkerLength = markerLength;
-                        nwk.MarkerNo = "001";
-                        nwk.MarkerVersion = "-1";
+                            Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
 
-                        workOrders.Add(nwk);
+                            // 橫向往右找
+                            while (true)
+                            {
+                                // 找Size，C 5為起點，開始往右
+                                string size = rangeSizeRatio.GetCellValue(idxSize, 2);
+                                string totalSize = rangeSizeRatio.GetCellValue(idxSize, 1);
+
+                                // 最後面是報表加總了(AB 4)，因此Break
+                                if (totalSize == "Total Qty.")
+                                {
+                                    // AB 10
+                                    totalLayer = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
+
+                                    // AD 10
+                                    layerYDS = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 2, idxMarker));
+
+                                    // AE 10
+                                    layerInch = MyUtility.Convert.GetDecimal(rangeSizeRatio.GetCellValue(idxSize + 3, idxMarker));
+
+                                    // 計算剩餘英吋數、碼等等
+                                    decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
+                                    string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
+                                    markerLength = $"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2";
+                                    layerYDS += layerInch * this.inchToYdsRate;
+                                    break;
+                                }
+
+                                // 找Size對應的數量，C 10 開始往右找
+                                int sizeQty = MyUtility.Convert.GetInt(rangeSizeRatio.GetCellValue(idxSize, idxMarker));
+                                if (sizeQty == 0)
+                                {
+                                    idxSize++;
+                                    continue;
+                                }
+
+                                // 存下結果
+                                dicSizeRatio.Add(size, sizeQty);
+                                idxSize++;
+                            }
+
+                            if (dicSizeRatio.Count == 0 || totalLayer == 0)
+                            {
+                                continue;
+                            }
+
+                            // 開始找Pattern Panel，起點A 10
+                            importPatternPanel = rangeSizeRatio.GetCellValue(1, idxMarker);
+
+                            // 計算這個Pattern Panel的所有尺寸總和
+                            garmentCnt = dicSizeRatio.Sum(s => s.Value);
+
+                            // WorkOrder.ConsPC = 每層Yds / 每層SizeRatio
+                            consPc = garmentCnt == 0 ? 0 : layerYDS / garmentCnt;
+
+                            nwk.ConsPC = consPc;
+
+                            // 這個層數不是最後的結果，等等還會去檢查 Order_ColorCombo.CuttingLayer設定值
+                            nwk.ExcelLayer = totalLayer;
+                            nwk.ImportPatternPanel = importPatternPanel; // FA
+                            nwk.SizeRatio = dicSizeRatio; // {Size = 42，Qty = 10}、{Size = 46，Qty = 350}...
+
+                            nwk.Cons = garmentCnt * consPc; // * wk.Layer; 這邊先不撈DB Layer 資訊, 之後才撈取 * Layer
+                            nwk.MarkerLength = markerLength;
+                            nwk.MarkerNo = "001";
+                            nwk.MarkerVersion = "-1";
+
+                            workOrders.Add(nwk);
+                        }
+
+                        // 當前區域的X Y 範圍已經處理完畢，設定下一個起點
+                        curRowIndex = nextFabPanelCodeStart;
                     }
 
-                    // 當前區域的X Y 範圍已經處理完畢，設定下一個起點
-                    curRowIndex = nextFabPanelCodeStart;
+                    Marshal.ReleaseComObject(worksheet);
+                    worksheet = null;
                 }
+
+                workbook.Close(false);
+                Marshal.ReleaseComObject(workbook);
+                workbook = null;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                excel.Quit();
+                MyUtility.Excel.KillExcelProcess(excel);
             }
 
             return workOrders;
@@ -1997,10 +2019,10 @@ AND Junk = 0
 
         public static void Format4LengthColumn(DataRow row)
         {
-            row["MarkerLength_Mask"] = FormatMarkerLength(row["MarkerLength"].ToString());
-            row["ActCuttingPerimeter_Mask"] = FormatLengthData(row["ActCuttingPerimeter"].ToString());
-            row["StraightLength_Mask"] = FormatLengthData(row["StraightLength"].ToString());
-            row["CurvedLength_Mask"] = FormatLengthData(row["CurvedLength"].ToString());
+            row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()));
+            row["ActCuttingPerimeter_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(row["ActCuttingPerimeter"].ToString()));
+            row["StraightLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(row["StraightLength"].ToString()));
+            row["CurvedLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(row["CurvedLength"].ToString()));
         }
         #endregion
 
@@ -2440,28 +2462,31 @@ AND SewingSchedule_Detail.SizeCode = '{sizeCode}'
                 DataRow dr = srcGrid.GetDataRow(e.RowIndex);
                 SelectItem sele;
 
-                string cmd = string.Empty;
+                // 先判斷有沒有Order_EachCons_Article
+                string cmd = $@"SELECT Article FROM Order_EachCons_Article WHERE Order_EachConsUkey = {dr["Order_EachconsUkey"]}";
 
-                if (MyUtility.Convert.GetString(dr["Order_EachconsUkey"]) != "0" && !MyUtility.Check.Empty(dr["Order_EachconsUkey"]))
+                DBProxy.Current.Select(null, cmd, out DataTable dtArticle);
+
+                if (dtArticle == null || dtArticle.Rows.Count == 0)
                 {
-                    cmd = $@"SELECT Article FROM Order_EachCons_Article WHERE Order_EachConsUkey = {dr["Order_EachconsUkey"]}";
-                }
-                else if (workType == "2")
-                {
-                    cmd = $@"SELECT Article FROM Order_Article WHERE ID='{dr["OrderID"]}' GROUP BY Article";
-                }
-                else if (workType == "1")
-                {
-                    cmd = $@"
+                    // 沒有 Order_EachCons_Article的話則從 套用以下規則找 Article
+                    if (workType == "2")
+                    {
+                        cmd = $@"SELECT Article FROM Order_Article WHERE ID='{dr["OrderID"]}' GROUP BY Article";
+                    }
+                    else if (workType == "1")
+                    {
+                        cmd = $@"
 SELECT Article 
 FROM Order_Article
 INNER JOIN Orders ON Orders.ID= Order_Article.ID
 WHERE 1=1
 AND Orders.POID = '{poid}'
 GROUP BY Article";
-                }
+                    }
 
-                DBProxy.Current.Select(null, cmd, out DataTable dtArticle);
+                    DBProxy.Current.Select(null, cmd, out dtArticle);
+                }
 
                 if (dtArticle == null)
                 {
@@ -3731,11 +3756,16 @@ WHERE TABLE_NAME = N'{tableName}'";
                 #region 寫入共用欄位
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
+
+                // P02 不會有Spreading No、Cut Cell
+                worksheet.Cells[3, 5] = string.Empty;
+                worksheet.Cells[3, 10] = string.Empty;
                 worksheet.Cells[3, 7] = string.Empty;
                 worksheet.Cells[3, 12] = string.Empty;
+
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
-                worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
+                worksheet.Cells[9, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
 
                 for (int nColumn = 3; nColumn <= 21; nColumn += 3)
                 {
@@ -3773,7 +3803,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                     worksheet.Select();
                     worksheet.Name = cutrefdr1["Cutplanid"].ToString();
                     worksheet.Cells[3, 19] = cutrefdr1["Cutplanid"].ToString();
-                    worksheet.Cells[9, 13] = ((DateTime)MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"])).ToShortDateString();
+                    worksheet.Cells[8, 13] = ((DateTime)MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"])).ToShortDateString();
                     nSheet++;
                 }
 
@@ -3877,7 +3907,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                         }
 
                         worksheet.Cells[8, 2] = spList;
-                        worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
+                        worksheet.Cells[9, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
                         int l = 54;
                         int la = spList.Length / l;
                         for (int i = 1; i <= la; i++)
@@ -4133,11 +4163,15 @@ WHERE TABLE_NAME = N'{tableName}'";
                 worksheet.Cells[1, 6] = orderDr["factoryid"];
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
-                // worksheet.Cells[3, 7] = detDr["SpreadingNoID"];
-                // worksheet.Cells[3, 12] = detDr["CutCellid"];
+                if (isP02)
+                {
+                    worksheet.Cells[3, 5] = string.Empty;
+                    worksheet.Cells[3, 10] = string.Empty;
+                }
+
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
-                worksheet.Cells[10, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
+                worksheet.Cells[9, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
 
                 for (int nColumn = 3; nColumn <= 21; nColumn += 3)
                 {
@@ -4177,19 +4211,16 @@ WHERE TABLE_NAME = N'{tableName}'";
                     worksheet.Select();
                     worksheet.Name = cutrefdr["Cutref"].ToString();
                     worksheet.Cells[3, 18] = cutrefdr["Cutref"].ToString();
-                    worksheet.Cells[9, 13] = MyUtility.Check.Empty(cutrefdr["Estcutdate"]) == false ? ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString() : string.Empty;
+                    worksheet.Cells[8, 13] = MyUtility.Check.Empty(cutrefdr["Estcutdate"]) == false ? ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString() : string.Empty;
                     if (isTbDistribute)
                     {
                         worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
-                    }
-                    else
-                    {
-                        worksheet.Cells[14, 14] = "Ref_5";
                     }
 
                     nSheet++;
                 }
 
+                // 右上角QR Code
                 nSheet = 1;
                 foreach (DataRow cutrefdr1 in arrDtType[(int)TableType.CutrefTb].Rows)
                 {
@@ -4450,11 +4481,10 @@ Where Cutref = '{cutref}'";
                     int copyrow = 0;
                     totConsRowS = nrow; // 第一個Cons
 
-                    var tmpCutQtyTB = arrDtType[(int)TableType.CutQtyTb].AsEnumerable().Where(r1 => !string.IsNullOrEmpty(r1["Cutno"].ToString()));
+                    var tmpCutQtyTB = arrDtType[(int)TableType.CutQtyTb].AsEnumerable();
                     var distinct_CutQtyTb = from r1 in tmpCutQtyTB
                                             group r1 by new
                                             {
-                                                Cutno = r1.Field<int>("Cutno"),
                                                 Colorid = r1.Field<string>("Colorid"),
                                                 Layer = r1.Field<int>("Layer"),
                                                 workorderukey_CuttingForm = r1.Field<int>(tbUkey),
@@ -4463,7 +4493,6 @@ Where Cutref = '{cutref}'";
                                             into g
                                             select new
                                             {
-                                                g.Key.Cutno,
                                                 g.Key.Colorid,
                                                 g.Key.Layer,
                                                 g.Key.workorderukey_CuttingForm,
@@ -4479,8 +4508,7 @@ Where Cutref = '{cutref}'";
                             r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
                         }
 
-                        worksheet.Cells[nrow, 1] = dis_dr.Cutno;
-                        worksheet.Cells[nrow, 2] = dis_dr.Colorid;
+                        worksheet.Cells[nrow, 1] = dis_dr.Colorid;
                         worksheet.Cells[nrow, 3] = dis_dr.Layer;
                         worksheet.Cells[nrow, 20] = dis_dr.Cons;
 

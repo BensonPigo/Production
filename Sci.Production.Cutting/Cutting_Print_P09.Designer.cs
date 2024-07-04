@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class Cutting_Print
+    partial class Cutting_Print_P09
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -29,14 +29,13 @@
         private void InitializeComponent()
         {
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.txtCutRefNoEnd = new Sci.Win.UI.TextBox();
             this.txtCutRefNoStart = new Sci.Win.UI.TextBox();
             this.labelCutRefNo = new Sci.Win.UI.Label();
-            this.radioByCutplanId = new Sci.Win.UI.RadioButton();
-            this.radioByCutRefNo = new Sci.Win.UI.RadioButton();
-            this.label1 = new Sci.Win.UI.Label();
-            this.cmbSort = new Sci.Win.UI.ComboBox();
+            this.rdoSortCutRef = new Sci.Win.UI.RadioButton();
+            this.rdoSnCc = new Sci.Win.UI.RadioButton();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,24 +56,31 @@
             // 
             // radioGroup1
             // 
-            this.radioGroup1.Controls.Add(this.cmbSort);
+            this.radioGroup1.Controls.Add(this.rdoSnCc);
+            this.radioGroup1.Controls.Add(this.rdoSortCutRef);
             this.radioGroup1.Controls.Add(this.label1);
             this.radioGroup1.Controls.Add(this.label2);
             this.radioGroup1.Controls.Add(this.txtCutRefNoEnd);
             this.radioGroup1.Controls.Add(this.txtCutRefNoStart);
             this.radioGroup1.Controls.Add(this.labelCutRefNo);
-            this.radioGroup1.Controls.Add(this.radioByCutplanId);
-            this.radioGroup1.Controls.Add(this.radioByCutRefNo);
             this.radioGroup1.Location = new System.Drawing.Point(12, 12);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(412, 166);
+            this.radioGroup1.Size = new System.Drawing.Size(412, 135);
             this.radioGroup1.TabIndex = 0;
             this.radioGroup1.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(18, 53);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Sheets Sort By";
             // 
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(232, 104);
+            this.label2.Location = new System.Drawing.Point(232, 23);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 23);
             this.label2.TabIndex = 5;
@@ -85,7 +91,7 @@
             // 
             this.txtCutRefNoEnd.BackColor = System.Drawing.Color.White;
             this.txtCutRefNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefNoEnd.Location = new System.Drawing.Point(254, 104);
+            this.txtCutRefNoEnd.Location = new System.Drawing.Point(254, 23);
             this.txtCutRefNoEnd.Name = "txtCutRefNoEnd";
             this.txtCutRefNoEnd.Size = new System.Drawing.Size(108, 23);
             this.txtCutRefNoEnd.TabIndex = 3;
@@ -94,77 +100,54 @@
             // 
             this.txtCutRefNoStart.BackColor = System.Drawing.Color.White;
             this.txtCutRefNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutRefNoStart.Location = new System.Drawing.Point(121, 104);
+            this.txtCutRefNoStart.Location = new System.Drawing.Point(121, 23);
             this.txtCutRefNoStart.Name = "txtCutRefNoStart";
             this.txtCutRefNoStart.Size = new System.Drawing.Size(108, 23);
             this.txtCutRefNoStart.TabIndex = 2;
             // 
             // labelCutRefNo
             // 
-            this.labelCutRefNo.Location = new System.Drawing.Point(43, 104);
+            this.labelCutRefNo.Location = new System.Drawing.Point(18, 23);
             this.labelCutRefNo.Name = "labelCutRefNo";
-            this.labelCutRefNo.Size = new System.Drawing.Size(75, 23);
+            this.labelCutRefNo.Size = new System.Drawing.Size(100, 23);
             this.labelCutRefNo.TabIndex = 4;
             this.labelCutRefNo.Text = "Cut RefNo";
             // 
-            // radioByCutplanId
+            // rdoSortCutRef
             // 
-            this.radioByCutplanId.AutoSize = true;
-            this.radioByCutplanId.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioByCutplanId.Location = new System.Drawing.Point(44, 77);
-            this.radioByCutplanId.Name = "radioByCutplanId";
-            this.radioByCutplanId.Size = new System.Drawing.Size(109, 21);
-            this.radioByCutplanId.TabIndex = 1;
-            this.radioByCutplanId.Text = "By Cutplan Id";
-            this.radioByCutplanId.UseVisualStyleBackColor = true;
-            this.radioByCutplanId.CheckedChanged += new System.EventHandler(this.RadioByCutplanId_CheckedChanged);
+            this.rdoSortCutRef.AutoSize = true;
+            this.rdoSortCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdoSortCutRef.Location = new System.Drawing.Point(121, 55);
+            this.rdoSortCutRef.Name = "rdoSortCutRef";
+            this.rdoSortCutRef.Size = new System.Drawing.Size(69, 21);
+            this.rdoSortCutRef.TabIndex = 8;
+            this.rdoSortCutRef.Text = "CutRef";
+            this.rdoSortCutRef.UseVisualStyleBackColor = true;
             // 
-            // radioByCutRefNo
+            // rdoSnCc
             // 
-            this.radioByCutRefNo.AutoSize = true;
-            this.radioByCutRefNo.Checked = true;
-            this.radioByCutRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioByCutRefNo.Location = new System.Drawing.Point(44, 22);
-            this.radioByCutRefNo.Name = "radioByCutRefNo";
-            this.radioByCutRefNo.Size = new System.Drawing.Size(111, 21);
-            this.radioByCutRefNo.TabIndex = 0;
-            this.radioByCutRefNo.TabStop = true;
-            this.radioByCutRefNo.Text = "By Cut RefNo";
-            this.radioByCutRefNo.UseVisualStyleBackColor = true;
+            this.rdoSnCc.AutoSize = true;
+            this.rdoSnCc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.rdoSnCc.Location = new System.Drawing.Point(121, 82);
+            this.rdoSnCc.Name = "rdoSnCc";
+            this.rdoSnCc.Size = new System.Drawing.Size(169, 21);
+            this.rdoSnCc.TabIndex = 9;
+            this.rdoSnCc.Text = "Spreading No, Cut Cell";
+            this.rdoSnCc.UseVisualStyleBackColor = true;
             // 
-            // label1
+            // Cutting_Print_P09
             // 
-            this.label1.Location = new System.Drawing.Point(62, 46);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(93, 23);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Sheets sort by";
-            // 
-            // cmbSort
-            // 
-            this.cmbSort.BackColor = System.Drawing.Color.White;
-            this.cmbSort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.cmbSort.FormattingEnabled = true;
-            this.cmbSort.IsSupportUnselect = true;
-            this.cmbSort.Items.AddRange(new object[] {
-            "CutRef#",
-            "SpreadingNo, CutCell"});
-            this.cmbSort.Location = new System.Drawing.Point(158, 46);
-            this.cmbSort.Name = "cmbSort";
-            this.cmbSort.OldText = "";
-            this.cmbSort.Size = new System.Drawing.Size(155, 24);
-            this.cmbSort.TabIndex = 7;
-            // 
-            // P02_Print
-            // 
-            this.ClientSize = new System.Drawing.Size(531, 220);
+            this.ClientSize = new System.Drawing.Size(531, 187);
             this.Controls.Add(this.radioGroup1);
             this.DefaultControl = "txtCutRefNoStart";
             this.DefaultControlForEdit = "txtCutRefNoStart";
             this.IsSupportToPrint = false;
-            this.Name = "P02_Print";
+            this.Name = "Cutting_Print_P09";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "Spreading Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -183,9 +166,8 @@
         private Win.UI.TextBox txtCutRefNoEnd;
         private Win.UI.TextBox txtCutRefNoStart;
         private Win.UI.Label labelCutRefNo;
-        private Win.UI.RadioButton radioByCutplanId;
-        private Win.UI.RadioButton radioByCutRefNo;
-        private Win.UI.ComboBox cmbSort;
         private Win.UI.Label label1;
+        private Win.UI.RadioButton rdoSortCutRef;
+        private Win.UI.RadioButton rdoSnCc;
     }
 }

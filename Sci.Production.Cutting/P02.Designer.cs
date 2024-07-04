@@ -125,6 +125,7 @@
             // refresh
             // 
             this.refresh.Location = new System.Drawing.Point(1197, 3);
+            this.refresh.Size = new System.Drawing.Size(80, 32);
             // 
             // detailgridcont
             // 
@@ -298,7 +299,7 @@
             this.gridSizeRatio.Size = new System.Drawing.Size(332, 148);
             this.gridSizeRatio.TabIndex = 34;
             // 
-            // sizeratioMenuStrip
+            // cmsSizeRatio
             // 
             this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.insertSizeRatioToolStripMenuItem,
@@ -374,6 +375,7 @@
             0,
             0,
             0});
+            this.numUnitCons.Validated += new System.EventHandler(this.NumUnitCons_Validated);
             // 
             // label5
             // 
@@ -547,7 +549,7 @@
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnBatchAssign.Location = new System.Drawing.Point(327, 34);
             this.btnBatchAssign.Name = "btnBatchAssign";
-            this.btnBatchAssign.Size = new System.Drawing.Size(113, 30);
+            this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
             this.btnBatchAssign.TabIndex = 2;
             this.btnBatchAssign.Text = "Batch Assign";
             this.btnBatchAssign.UseVisualStyleBackColor = true;
@@ -559,7 +561,7 @@
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
             this.btnImportMarker.Name = "btnImportMarker";
-            this.btnImportMarker.Size = new System.Drawing.Size(124, 30);
+            this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
             this.btnImportMarker.TabIndex = 3;
             this.btnImportMarker.Text = "Import Marker";
             this.btnImportMarker.UseVisualStyleBackColor = true;
@@ -581,7 +583,7 @@
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
-            this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 30);
+            this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
             this.btnImportMarkerLectra.TabIndex = 14;
             this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
             this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
@@ -593,7 +595,7 @@
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnEdit.Location = new System.Drawing.Point(772, 34);
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(61, 30);
+            this.btnEdit.Size = new System.Drawing.Size(61, 32);
             this.btnEdit.TabIndex = 15;
             this.btnEdit.Text = "Edit";
             this.btnEdit.UseVisualStyleBackColor = true;
@@ -602,9 +604,9 @@
             // btnAutoRef
             // 
             this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAutoRef.Location = new System.Drawing.Point(3, 6);
+            this.btnAutoRef.Location = new System.Drawing.Point(3, 3);
             this.btnAutoRef.Name = "btnAutoRef";
-            this.btnAutoRef.Size = new System.Drawing.Size(92, 30);
+            this.btnAutoRef.Size = new System.Drawing.Size(92, 32);
             this.btnAutoRef.TabIndex = 16;
             this.btnAutoRef.Text = "Auto Ref#";
             this.btnAutoRef.UseVisualStyleBackColor = true;
@@ -613,9 +615,10 @@
             // btnCutPartsCheck
             // 
             this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheck.Location = new System.Drawing.Point(640, 6);
+            this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(640, 3);
             this.btnCutPartsCheck.Name = "btnCutPartsCheck";
-            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 30);
+            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 32);
             this.btnCutPartsCheck.TabIndex = 20;
             this.btnCutPartsCheck.Text = "Cut Parts Check";
             this.btnCutPartsCheck.UseVisualStyleBackColor = true;
@@ -624,9 +627,10 @@
             // btnCutPartsCheckSummary
             // 
             this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(774, 6);
+            this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(774, 3);
             this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
-            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 30);
+            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 32);
             this.btnCutPartsCheckSummary.TabIndex = 21;
             this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
             this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
@@ -635,9 +639,9 @@
             // btnQtyBreakdown
             // 
             this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQtyBreakdown.Location = new System.Drawing.Point(978, 7);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(978, 3);
             this.btnQtyBreakdown.Name = "btnQtyBreakdown";
-            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 28);
+            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 32);
             this.btnQtyBreakdown.TabIndex = 23;
             this.btnQtyBreakdown.Text = "Qty Breakdown";
             this.btnQtyBreakdown.UseVisualStyleBackColor = true;
@@ -646,9 +650,9 @@
             // btnToExcel
             // 
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(1104, 7);
+            this.btnToExcel.Location = new System.Drawing.Point(1104, 3);
             this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(92, 28);
+            this.btnToExcel.Size = new System.Drawing.Size(92, 32);
             this.btnToExcel.TabIndex = 24;
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;

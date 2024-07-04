@@ -1714,15 +1714,15 @@ DEALLOCATE CURSOR_
 
         protected override bool ClickPrint()
         {
-            Cutting_Print callNextForm;
+            Cutting_Print_P09 callNextForm;
             if (this.drBeforeDoPrintDetailData != null)
             {
-                callNextForm = new Cutting_Print(CuttingForm.P09, this.drBeforeDoPrintDetailData);
+                callNextForm = new Cutting_Print_P09(this.drBeforeDoPrintDetailData);
                 callNextForm.ShowDialog(this);
             }
             else if (this.drBeforeDoPrintDetailData == null && this.CurrentDetailData != null)
             {
-                callNextForm = new Cutting_Print(CuttingForm.P09, this.CurrentDetailData);
+                callNextForm = new Cutting_Print_P09(this.CurrentDetailData);
                 callNextForm.ShowDialog(this);
             }
             else

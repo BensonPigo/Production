@@ -13,14 +13,15 @@ using ZXing;
 using ZXing.QrCode.Internal;
 using ZXing.QrCode;
 using System.Text.RegularExpressions;
+using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
 {
     /// <inheritdoc/>
-    public partial class Cutting_Print : Win.Tems.PrintForm
+    public partial class Cutting_Print_P02 : Win.Tems.PrintForm
     {
-        private string CutRefNo_S;
-        private string CutRefNo_E;
+        private string Range_S;
+        private string Range_E;
         private string CutplanID;
         private string CutRef;
         private DataRow detDr;
@@ -28,7 +29,6 @@ namespace Sci.Production.Cutting
         /// <summary>
         /// Key = Table名稱，Value = 無欄位的清單
         /// </summary>
-        private CuttingWorkOrder.CuttingForm fromCutting;
         private DataTable[] arrDtType;
         private CuttingWorkOrder cuttingWorkOrder;
         private string printType;
@@ -41,10 +41,10 @@ namespace Sci.Production.Cutting
         /// <param name="workorderDr">workorder Dr，基於fromCutting參數，會有兩種：WorkOrderForPlanning、WorkOrderForOutput</param>
         /// <param name="poid">POID</param>
         /// <param name="worktype">Work Type</param>
-        public Cutting_Print(CuttingWorkOrder.CuttingForm fromCutting, DataRow workorderDr, bool isTest = false)
+        public Cutting_Print_P02(DataRow workorderDr, bool isTest = false)
         {
             this.InitializeComponent();
-            this.fromCutting = fromCutting;
+
             this.cuttingWorkOrder = new CuttingWorkOrder();
 
             this.detDr = workorderDr;
@@ -64,53 +64,46 @@ namespace Sci.Production.Cutting
             }
 
             this.radioByCutRefNo.Checked = true;
-            this.txtCutRefNoStart.Text = this.detDr["CutRef"].ToString();
-            this.txtCutRefNoEnd.Text = this.detDr["CutRef"].ToString();
+
             this.CutRef = this.detDr["CutRef"].ToString();
-            this.CutplanID = this.cuttingWorkOrder.CheckTableLostColumns(this.fromCutting, "CutplanID") ? string.Empty : this.detDr["CutplanID"].ToString();
+            this.txtCutRefNoStart.Text = this.CutRef;
+            this.txtCutRefNoEnd.Text = this.CutRef;
             this.txtCutRefNoStart.Select();
-            this.cmbSort.SelectedIndex = 0;
-        }
 
-        /// <inheritdoc/>
-        protected override void OnFormLoaded()
-        {
-            base.OnFormLoaded();
-
-            // 僅P02可用
-            this.radioByCutplanId.Visible = this.fromCutting == CuttingWorkOrder.CuttingForm.P02;
+            this.CutplanID = this.cuttingWorkOrder.CheckTableLostColumns(CuttingForm.P02, "CutplanID") ? string.Empty : this.detDr["CutplanID"].ToString();
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.CutRefNo_S = this.txtCutRefNoStart.Text;
-            this.CutRefNo_E = this.txtCutRefNoEnd.Text;
+            this.printType = this.radioByCutRefNo.Checked ? "Cutref" : "Cutplanid";
+            this.sortType = "Cutref";
 
-            if (MyUtility.Check.Empty(this.CutRefNo_S) || MyUtility.Check.Empty(this.CutRefNo_E))
+            if (this.printType == "Cutref")
+            {
+                this.Range_S = this.txtCutRefNoStart.Text;
+                this.Range_E = this.txtCutRefNoEnd.Text;
+            }
+            else
+            {
+                this.Range_S = this.txtCutPlanStart.Text;
+                this.Range_E = this.txtCutPlanEnd.Text;
+            }
+
+            if (MyUtility.Check.Empty(this.Range_S) || MyUtility.Check.Empty(this.Range_E))
             {
                 MyUtility.Msg.WarningBox("<Range> can not be empty", "Warning");
                 return false;
             }
 
-            this.printType = this.radioByCutRefNo.Checked ? "Cutref" : "Cutplanid";
-            this.sortType = this.cmbSort.Text == "CutRef#" ? "Cutref" : "SpreadingNoID,CutCellID,Cutref";
-
             return base.ValidateInput();
-        }
-
-        private void RadioByCutplanId_CheckedChanged(object sender, EventArgs e)
-        {
-            this.txtCutRefNoStart.Text = this.radioByCutplanId.Checked ? this.CutplanID : this.CutRef;
-            this.txtCutRefNoEnd.Text = this.radioByCutplanId.Checked ? this.CutplanID : this.CutRef;
-            this.labelCutRefNo.Text = this.radioByCutplanId.Checked ? "Cutplan ID" : "Cut RefNo";
         }
 
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
             this.arrDtType = new DataTable[] { };
-            DualResult dualResult = this.cuttingWorkOrder.GetPrintData(this.fromCutting, this.detDr, this.CutRefNo_S, this.CutRefNo_E, this.printType, this.sortType, out this.arrDtType);
+            DualResult dualResult = this.cuttingWorkOrder.GetPrintData(CuttingForm.P02, this.detDr, this.Range_S, this.Range_E, this.printType, this.sortType, out this.arrDtType);
             return dualResult;
         }
 
@@ -118,7 +111,7 @@ namespace Sci.Production.Cutting
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             string errMsg;
-            bool result = this.cuttingWorkOrder.PrintToExcel(this.detDr["ID"].ToString(), this.arrDtType, this.fromCutting, this.printType, out errMsg);
+            bool result = this.cuttingWorkOrder.PrintToExcel(this.detDr["ID"].ToString(), this.arrDtType, CuttingForm.P02, this.printType, out errMsg);
             if (!result && !string.IsNullOrEmpty(errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
@@ -126,6 +119,22 @@ namespace Sci.Production.Cutting
             }
 
             return true;
+        }
+
+        private void RadioByCutRefNo_CheckedChanged(object sender, EventArgs e)
+        {
+            this.txtCutRefNoStart.Text = this.CutRef;
+            this.txtCutRefNoEnd.Text = this.CutRef;
+            this.txtCutPlanStart.Text = string.Empty;
+            this.txtCutPlanEnd.Text = string.Empty;
+        }
+
+        private void RadioByCutplanId_CheckedChanged(object sender, EventArgs e)
+        {
+            this.txtCutRefNoStart.Text = string.Empty;
+            this.txtCutRefNoEnd.Text = string.Empty;
+            this.txtCutPlanStart.Text = this.CutplanID;
+            this.txtCutPlanEnd.Text = this.CutplanID;
         }
     }
 }
