@@ -10,12 +10,12 @@ using System.Text;
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <inheritdoc/>
-    public class P_Import_CuttingOutputStatisitc
+    public class P_Import_CuttingOutputStatistic
     {
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CuttingOutputStatisitc(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CuttingOutputStatistic(DateTime? sDate, DateTime? eDate)
         {
             this.DBProxy = new DBProxy()
             {
@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                Base_ViewModel resultReport = this.GetCuttingOutputStatisitc((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetCuttingOutputStatistic((DateTime)sDate, (DateTime)eDate);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -81,7 +81,7 @@ Update p Set CutRateByDate = t.CutRateByDate,
              CutOutputByDate = t.CutOutputByDate,
              CutOutputIn7Days = t.CutOutputIn7Days,
              CutDelayIn7Days = t.CutDelayIn7Days
-From P_CuttingOutputStatisitc p
+From P_CuttingOutputStatistic p
 inner join #tmp t on p.TransferDate = t.TransferDate 
                  and p.FactoryID = t.FactoryID
                  and (p.CutRateByDate != t.CutRateByDate
@@ -91,7 +91,7 @@ inner join #tmp t on p.TransferDate = t.TransferDate
                       or p.CutDelayIn7Days != t.CutDelayIn7Days )
 
 
-Insert into P_CuttingOutputStatisitc ( TransferDate,
+Insert into P_CuttingOutputStatistic ( TransferDate,
                                        FactoryID, 
                                        CutRateByDate, 
                                        CutRateByMonth, 
@@ -108,19 +108,19 @@ Select TransferDate,
        CutDelayIn7Days
 From #tmp t
 Where not exists ( select 1 
-				   from P_CuttingOutputStatisitc p
+				   from P_CuttingOutputStatistic p
 				   where p.TransferDate = t.TransferDate 
 				   and p.FactoryID = t.FactoryID
                 )
 
 
-Delete P_CuttingOutputStatisitc 
+Delete P_CuttingOutputStatistic 
 Where Not exists ( select 1 
 				   from #tmp t
-			       where P_CuttingOutputStatisitc.TransferDate = t.TransferDate 
-				   and P_CuttingOutputStatisitc.FactoryID = t.FactoryID
+			       where P_CuttingOutputStatistic.TransferDate = t.TransferDate 
+				   and P_CuttingOutputStatistic.FactoryID = t.FactoryID
                 )
-And P_CuttingOutputStatisitc.TransferDate Between @sDate and @eDate
+And P_CuttingOutputStatistic.TransferDate Between @sDate and @eDate
 
 
 ";
@@ -133,7 +133,7 @@ And P_CuttingOutputStatisitc.TransferDate Between @sDate and @eDate
             return finalResult;
         }
 
-        private Base_ViewModel GetCuttingOutputStatisitc(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetCuttingOutputStatistic(DateTime sdate, DateTime edate)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
