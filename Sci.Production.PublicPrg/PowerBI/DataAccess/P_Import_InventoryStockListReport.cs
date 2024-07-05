@@ -251,9 +251,11 @@ where not exists (
 
 delete t 
 from dbo.P_InventoryStockListReport t
+Outer Apply (
+    Select Data From SplitString(t.[ArriveWHDate], ';')
+)getArriveWHDate
 where 
-(t.AddDate >= @SDate or t.EditDate >= @SDate)
-and (t.AddDate <= @eDate or t.EditDate <= @eDate)
+getArriveWHDate.Date Between @SDate and @eDate
 and not exists (
     select 1 from #tmp s 
     where t.[POID] = s.[POID] 
