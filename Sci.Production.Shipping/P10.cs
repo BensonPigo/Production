@@ -12,7 +12,9 @@ using Ict;
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
+using Sci.Production.Class.Command;
 using Sci.Production.PublicPrg;
+using Sci.Win.UI;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -119,7 +121,12 @@ select p.ID
                             for xml path('')
                           ), 1, 1, '') 
 ,[PLFromRgCode] = '{1}'
-from PackingList p WITH (NOLOCK) 
+, CutOffDate = cast(g.CutOffDate as Date)
+, p.ShippingReasonIDForTypeCO
+, Description = s.Description
+from PackingList p WITH (NOLOCK)
+left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
+left join ShippingReason s WITH (NOLOCK) on s.Type = 'CO' and s.ID = p.ShippingReasonIDForTypeCO
 where {0} 
 order by p.ID";
             DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, whereDetail, string.Empty), out this.plData);
@@ -327,6 +334,9 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 this.btnDeleteGBHistory.Enabled = true;
                 this.btnDeleteGBHistory.ForeColor = Color.Red;
             }
+
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            this.disPulloutDate.Text = MyUtility.Convert.GetDate(dt.Compute("MIN(PulloutDate)", string.Empty)).ToStringEx("yyyy/MM/dd");
         }
 
         private void SumData()
@@ -408,12 +418,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             this.detailgrid.SelectionChanged += (s, e) =>
             {
                 this.gridDetailPackingList.ValidateControl();
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
-                if (dr != null && this.plData != null)
-                {
-                    string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
-                    this.plData.DefaultView.RowFilter = filter;
-                }
+                this.DetailFilter();
             };
 
             this.gridDetailPackingList.DataSource = this.listControlBindingSource1;
@@ -434,7 +439,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 .Date("InspDate", header: "Est. Inspection Date").Get(out this.col_inspdate)
                 .Text("InspStatus", header: "Inspection Status", width: Widths.AnsiChars(10))
                 .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulloutdate)
-                .Text("PulloutID", header: "Pullout ID#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("PulloutID", header: "Pullout ID#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("SendToTPE", header: "Send to SCI", iseditingreadonly: true)
                 ;
             #region 欄位值檢查
@@ -442,6 +447,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             {
                 if (this.EditMode)
                 {
+                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
                     DataRow dr = this.gridDetailPackingList.GetDataRow<DataRow>(e.RowIndex);
                     if (this.gridDetailPackingList.Columns[e.ColumnIndex].DataPropertyName == this.col_inspdate.DataPropertyName)
                     {
@@ -481,6 +487,19 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                                 return;
                             }
                         }
+                    }
+                }
+            };
+            this.gridDetailPackingList.CellValidated += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+ 
+                    // 輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
+                    if (this.gridDetailPackingList.Columns[e.ColumnIndex].DataPropertyName == this.col_pulloutdate.DataPropertyName)
+                    {
+                        this.disPulloutDate.Text = MyUtility.Convert.GetDate(dt.Compute("MIN(PulloutDate)", string.Empty)).ToStringEx("yyyy/MM/dd");
                     }
                 }
             };
@@ -593,7 +612,83 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 }
             }
 
+            DataTable dt = this.plData;
+            DataTable disp = new DataTable();
+            disp.Columns.Add("GB#");
+            disp.Columns.Add("Packing No.");
+            disp.Columns.Add("SP#");
+            disp.Columns.Add("Seq");
+            disp.Columns.Add("Pullout Date");
+
+            // PulloutDate日期重複判斷
+            var duplicItem = dt.ExtNotDeletedRows()
+              .GroupBy(item => new
+              {
+                  pulloutDate = item["PulloutDate"],
+              })
+              .Select(item => new
+              {
+                  item.Key,
+                  cnt = item.Count(),
+              })
+              .Select(item => item);
+            if (duplicItem.Count() > 1)
+            {
+                foreach (DataRow dr2 in dt.Rows)
+                {
+                    DataRow dispdr = disp.NewRow();
+                    dispdr["GB#"] = dr2["InvNo"];
+                    dispdr["Packing No."] = dr2["ID"];
+                    dispdr["SP#"] = dr2["OrderID"];
+                    dispdr["Seq"] = dr2["OrderShipmodeSeq"];
+                    dispdr["Pullout Date"] = MyUtility.Convert.GetDate(dr2["PulloutDate"]).ToYYYYMMDD();
+                    disp.Rows.Add(dispdr);
+                }
+
+                var m = new Win.UI.MsgGridForm(disp, "The following Pullout Date needs to be the same", "Pullout Date needs to be the same", null, MessageBoxButtons.OK)
+                {
+                    Width = 650,
+                };
+                m.grid1.Columns[0].Width = 170;
+                m.grid1.Columns[1].Width = 120;
+                m.grid1.Columns[2].Width = 130;
+                m.grid1.Columns[3].Width = 60;
+                m.grid1.Columns[4].Width = 130;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+
+                m.ShowDialog();
+
+                return false;
+            }
+
+            bool needReason = dt.Select("CutOffDate > PulloutDate").Any();
+
+            if (needReason)
+            {
+                var frm = new P10_PulloutDateReason(dt);
+                DialogResult returnResult = frm.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    this.DetailFilter();
+
+                    return false;
+                }
+            }
+
             return base.ClickSaveBefore();
+        }
+
+        /// <inheritdoc/>
+        private void DetailFilter()
+        {
+            DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
+            if (dr != null && this.plData != null)
+            {
+                string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
+                this.plData.DefaultView.RowFilter = filter;
+            }
         }
 
         /// <inheritdoc/>
@@ -680,7 +775,7 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
 
                     // DB可能已經被修改，因此回DB撈出GMTBooking底下最新的PackingList
                     DataTable packingListDt_new;
-                    string sqlCmd = "SELECT ID, InspDate, InspStatus, PulloutDate, [PLFromRgCode] = '{1}' FROM PackingList WHERE INVNo='{0}' ";
+                    string sqlCmd = "SELECT ID, InspDate, InspStatus, PulloutDate, ShippingReasonIDForTypeCO, [PLFromRgCode] = '{1}' FROM PackingList WHERE INVNo='{0}' ";
                     DualResult result = DBProxy.Current.Select(null, string.Format(sqlCmd, invNo, string.Empty), out packingListDt_new);
 
                     if (!result)
@@ -735,6 +830,7 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                             pldatarow["InspDate"] = packingList_Merge.Rows[0]["InspDate"];
                             pldatarow["InspStatus"] = packingList_Merge.Rows[0]["InspStatus"];
                             pldatarow["PulloutDate"] = packingList_Merge.Rows[0]["PulloutDate"];
+                            pldatarow["ShippingReasonIDForTypeCO"] = packingList_Merge.Rows[0]["ShippingReasonIDForTypeCO"];
                             string updatePlSql = this.UpdatePLCmd(pldatarow, MyUtility.Convert.GetString(dr["ID"]));
                             if (MyUtility.Check.Empty(pldatarow["PLFromRgCode"]))
                             {
@@ -1072,13 +1168,14 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
             string updateCmd = string.Empty;
 
             updateCmd += string.Format(
-            "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3} where ID = '{4}' AND INVno='{5}';",
+            "update PackingList set ShipPlanID = '{0}', InspDate = {1}, InspStatus = '{2}', PulloutDate = {3}, ShippingReasonIDForTypeCO = '{6}' where ID = '{4}' AND INVno='{5}';",
             MyUtility.Convert.GetString(this.CurrentMaintain["ID"]),
             MyUtility.Check.Empty(pldatarow["InspDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["InspDate"]).ToString("yyyy/MM/dd") + "'",
             MyUtility.Convert.GetString(pldatarow["InspStatus"]),
             MyUtility.Check.Empty(pldatarow["PulloutDate"]) ? "null" : "'" + Convert.ToDateTime(pldatarow["PulloutDate"]).ToString("yyyy/MM/dd") + "'",
             MyUtility.Convert.GetString(pldatarow["ID"]),
-            iNVno);
+            iNVno,
+            MyUtility.Convert.GetString(pldatarow["ShippingReasonIDForTypeCO"]));
 
             return updateCmd;
         }

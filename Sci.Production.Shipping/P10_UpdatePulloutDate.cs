@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Automation;
 using Sci.Production.CallPmsAPI;
+using Sci.Production.Class.Command;
 using Sci.Production.PublicPrg;
 using static Sci.Production.PublicPrg.Prgs;
 
@@ -45,8 +48,8 @@ namespace Sci.Production.Shipping
             this.gridUpdatePulloutDate.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.gridUpdatePulloutDate)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Text("GMTBookingID", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("PackingListID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("INVNo", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pullout Date").Get(out this.col_pulldate)
                 .Date("BuyerDelivery", header: "Buyer Delivery", iseditingreadonly: true)
@@ -90,8 +93,8 @@ namespace Sci.Production.Shipping
 
             string sqlCmd = @"select 
 0 as Selected,
-p.INVNo as GMTBookingID,
-p.ID as PackingListID,
+p.INVNo,
+p.ID,
 iif(p.OrderID='',(select cast(a.OrderID as nvarchar) +',' from (select distinct OrderID from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.id) a for xml path('')),p.OrderID) as OrderID,
 iif(p.type = 'B',(select BuyerDelivery from Order_QtyShip WITH (NOLOCK) where ID = p.OrderID and Seq = p.OrderShipmodeSeq),(select oq.BuyerDelivery from (select top 1 OrderID, OrderShipmodeSeq from PackingList_Detail pd WITH (NOLOCK) where pd.ID = p.ID) a, Order_QtyShip oq WITH (NOLOCK) where a.OrderID = oq.Id and a.OrderShipmodeSeq = oq.Seq)) as BuyerDelivery,
 p.PulloutDate,
@@ -107,8 +110,24 @@ p.MDivisionID,
                             where pd.ID = p.id and oqs.IDD is not null
                             for xml path('')
                           ), 1, 1, ''),
+[OrderShipmodeSeq] = STUFF ((select CONCAT (',', cast (a.OrderShipmodeSeq as nvarchar)) 
+                                from (
+                                    select pd.OrderShipmodeSeq 
+                                    from PackingList_Detail pd WITH (NOLOCK) 
+                                    left join AirPP ap With (NoLock) on pd.OrderID = ap.OrderID
+                                                                        and pd.OrderShipmodeSeq = ap.OrderShipmodeSeq
+                                    where pd.ID = p.id
+                                    group by pd.OrderID, pd.OrderShipmodeSeq, ap.ID
+                                ) a 
+                                for xml path('')
+                            ), 1, 1, ''),
 [PLFromRgCode] = '{1}'
+, CutOffDate = cast(g.CutOffDate as Date)
+, p.ShippingReasonIDForTypeCO
+, Description = s.Description
 from PackingList p WITH (NOLOCK) 
+left join GMTBooking g WITH (NOLOCK) on p.INVNo = g.ID
+left join ShippingReason s WITH (NOLOCK) on s.Type = 'CO' and s.ID = p.ShippingReasonIDForTypeCO
 where p.ShipPlanID = '{0}'";
             DataTable gridData;
             string shipPlanID = MyUtility.Convert.GetString(this.masterDate["ID"]);
@@ -191,13 +210,13 @@ where p.ShipPlanID = '{0}'";
 
                 if (!MyUtility.Check.Empty(dr["PulloutDate"]) && this.CheckPullout(Convert.ToDateTime(dr["PulloutDate"]), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {
-                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
+                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["INVNo"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
                     continue;
                 }
 
                 if (!MyUtility.Check.Empty(this.datePulloutDate.Value) && this.CheckPullout(Convert.ToDateTime(this.datePulloutDate.Value), MyUtility.Convert.GetString(dr["MDivisionID"])))
                 {
-                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["GMTBookingID"]), MyUtility.Convert.GetString(dr["PackingListID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
+                    warningMsg.Append(string.Format("GB#: {0},  Packing No.: {1},  SP#: {2}, Pullout Date:{3}\r\n", MyUtility.Convert.GetString(dr["INVNo"]), MyUtility.Convert.GetString(dr["ID"]), MyUtility.Convert.GetString(dr["OrderID"]), drPulloutDate));
                     continue;
                 }
 
@@ -226,21 +245,84 @@ where p.ShipPlanID = '{0}'";
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
             Dictionary<string, List<string>> dicUpdCmdA2B = new Dictionary<string, List<string>>();
 
+            DataTable disp = new DataTable();
+            disp.Columns.Add("GB#");
+            disp.Columns.Add("Packing No.");
+            disp.Columns.Add("SP#");
+            disp.Columns.Add("Seq");
+            disp.Columns.Add("Pullout Date");
+
+            // PulloutDate日期重複判斷
+            var duplicItem = dt.ExtNotDeletedRows()
+              .GroupBy(item => new
+              {
+                  pulloutDate = item["PulloutDate"],
+              })
+              .Select(item => new
+              {
+                  item.Key,
+                  cnt = item.Count(),
+              })
+              .Select(item => item);
+            if (duplicItem.Count() > 1)
+            {
+                foreach (DataRow dr2 in dt.Rows)
+                {
+                    DataRow dispdr = disp.NewRow();
+                    dispdr["GB#"] = dr2["INVNo"];
+                    dispdr["Packing No."] = dr2["ID"];
+                    dispdr["SP#"] = dr2["OrderID"];
+                    dispdr["Seq"] = dr2["OrderShipmodeSeq"];
+                    dispdr["Pullout Date"] = MyUtility.Convert.GetDate(dr2["PulloutDate"]).ToYYYYMMDD();
+                    disp.Rows.Add(dispdr);
+                }
+
+                var m = new Win.UI.MsgGridForm(disp, "The following Pullout Date needs to be the same", "Pullout Date needs to be the same", null, MessageBoxButtons.OK)
+                {
+                    Width = 650,
+                };
+                m.grid1.Columns[0].Width = 170;
+                m.grid1.Columns[1].Width = 120;
+                m.grid1.Columns[2].Width = 130;
+                m.grid1.Columns[3].Width = 60;
+                m.grid1.Columns[4].Width = 130;
+                m.text_Find.Width = 140;
+                m.btn_Find.Location = new Point(150, 6);
+                m.btn_Find.Anchor = AnchorStyles.Left | AnchorStyles.Top;
+
+                m.ShowDialog();
+
+                return;
+            }
+
             this.CheckPulloutputIDD(dt);
+
+            bool needReason = dt.Select("CutOffDate > PulloutDate").Any();
+
+            if (needReason)
+            {
+                var frm = new P10_PulloutDateReason(dt);
+                DialogResult returnResult = frm.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
 
             foreach (DataRow dr in dt.Rows)
             {
                 string updatePackingListCmd = string.Empty;
                 string updateGMT_DetailCmd = string.Empty;
+                string updateShippingReason = needReason ? string.Format(",ShippingReasonIDForTypeCO = '{0}'", MyUtility.Convert.GetString(dr["ShippingReasonIDForTypeCO"])) : string.Empty;
                 if (MyUtility.Check.Empty(dr["PulloutDate"]))
                 {
-                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"]));
-                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = null where PackingListID = '{0}';", MyUtility.Convert.GetString(dr["PackingListID"]));
+                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = null where ID = '{0}';", MyUtility.Convert.GetString(dr["ID"]));
+                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = null where PackingListID = '{0}';", MyUtility.Convert.GetString(dr["ID"]));
                 }
                 else
                 {
-                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = '{0}' where ID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["PackingListID"]));
-                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["PackingListID"]));
+                    updatePackingListCmd = string.Format("update PackingList set PulloutDate = '{0}' {2} where ID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["ID"]), updateShippingReason);
+                    updateGMT_DetailCmd = string.Format("update GMTBooking_Detail set PulloutDate = '{0}' where PackingListID = '{1}';", Convert.ToDateTime(dr["PulloutDate"]).ToString("yyyyMMdd"), MyUtility.Convert.GetString(dr["ID"]));
                 }
 
                 string plFromRgCode = dr["PLFromRgCode"].ToString();
@@ -290,7 +372,7 @@ where p.ShipPlanID = '{0}'";
                     transactionScope.Complete();
                 }
 
-                string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["PackingListID"])).JoinToString(",");
+                string listID = dt.AsEnumerable().Select(s => MyUtility.Convert.GetString(s["ID"])).JoinToString(",");
                 Task.Run(() => new Sunrise_FinishingProcesses().SentPackingToFinishingProcesses(listID, string.Empty))
                            .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
 
@@ -301,12 +383,11 @@ where p.ShipPlanID = '{0}'";
                     if (Gensong_FinishingProcesses.IsGensong_FinishingProcessesEnable)
                     {
                         // 不透過Call API的方式，自己組合，傳送API
-                        Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["PackingListID"]), string.Empty))
+                        Task.Run(() => new Gensong_FinishingProcesses().SentPackingListToFinishingProcesses(MyUtility.Convert.GetString(dr["ID"]), string.Empty))
                             .ContinueWith(UtilityAutomation.AutomationExceptionHandler, System.Threading.CancellationToken.None, TaskContinuationOptions.OnlyOnFaulted, TaskScheduler.FromCurrentSynchronizationContext());
                     }
                     #endregion
                 }
-
             }
 
             this.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -320,14 +401,14 @@ where p.ShipPlanID = '{0}'";
             }
 
             string sqlGetSPAndSeq = $@"
-alter table #tmp alter column PackingListID varchar(13)
+alter table #tmp alter column ID varchar(13)
 
 select  distinct pd.OrderID, pd.OrderShipmodeSeq, t.PulloutDate
 from PackingList_Detail pd with (nolock)
-inner join #tmp t on t.PackingListID = pd.ID
+inner join #tmp t on t.ID = pd.ID
 ";
             DataTable dtResult;
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtCheck, "PackingListID,PulloutDate", sqlGetSPAndSeq, out dtResult);
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(dtCheck, "ID,PulloutDate", sqlGetSPAndSeq, out dtResult);
 
             if (!result)
             {
@@ -351,7 +432,7 @@ inner join #tmp t on t.PackingListID = pd.ID
                     {
                         SqlString = sqlGetSPAndSeq,
                         TmpTable = plFromRgCodeItem.TmpTable,
-                        TmpCols = "PackingListID,PulloutDate",
+                        TmpCols = "ID,PulloutDate",
                     };
 
                     result = PackingA2BWebAPI.GetDataBySql(plFromRgCodeItem.PLFromRgCode, dataBySql, out DataTable dtResultA2B);
