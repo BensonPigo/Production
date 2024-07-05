@@ -190,6 +190,18 @@ where ID = @ID and Confirm != 1
                     warningmsg.Append($@"SP#: {row["poid"]} Seq#: {row["seq1"]}-{row["seq2"]} Roll#:{row["roll"]} Dyelot:{row["dyelot"]} Transfer In Qty can't be empty" + Environment.NewLine);
                 }
 
+                if (row["FabricType"].ToString() == "F" && MyUtility.Check.Empty(row["dyelot"]))
+                {
+                    MyUtility.Msg.WarningBox("Detail <Dyelot> [Fabric Type] is Fabric,can't be empty");
+                    return false;
+                }
+
+                if (row["FabricType"].ToString() == "F" && MyUtility.Check.Empty(row["roll"]))
+                {
+                    MyUtility.Msg.WarningBox("Detail <Roll> [Fabric Type] is Fabric,can't be empty");
+                    return false;
+                }
+
                 // check 相同CombineBarcode, Refno, Color 是否一致
                 if (!MyUtility.Check.Empty(row["CombineBarcode"]) && row["FabricType"].ToString() == "F")
                 {
