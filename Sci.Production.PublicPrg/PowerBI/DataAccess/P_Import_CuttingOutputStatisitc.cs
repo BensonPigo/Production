@@ -175,7 +175,8 @@ OUTER APPLY (
     FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
     WHERE pso.EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
                         AND DATEADD(DAY, -1, psol.EstCuttingDate)
-    AND pso.ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
+    AND pso.ActCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
+                        AND DATEADD(DAY, -1, psol.EstCuttingDate)
     AND pso.FactoryID = psol.FactoryID
 ) psConsumptionByMonthMol
 OUTER APPLY (
