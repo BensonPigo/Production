@@ -185,7 +185,7 @@ BEGIN
 							 ELSE t.Shift END
 			   , FtyType = f.Type
 			   , FtyCountry = f.CountryID
-			   , RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
+			   , RFT = IIF(isnull(A.InspectQty,0) = 0, 0, round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2))
 			   , CumulateDate = isnull(c.cumulate,1)
 		into #tmp1stFilter
 		from #tmpSewingGroup t
@@ -252,7 +252,7 @@ BEGIN
 		into #tmp
 		from #tmp1stFilter
 		outer apply (
-			select RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+			select RFT = IIF(isnull(A.InspectQty,0) = 0, 0, round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2)) 
 			from RFT A with (nolock) 
 			where A.OrderID=#tmp1stFilter.OrderId
 			and A.CDate=#tmp1stFilter.OutputDate

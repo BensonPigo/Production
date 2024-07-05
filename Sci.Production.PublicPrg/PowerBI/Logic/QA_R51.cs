@@ -95,7 +95,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply
             (
                 SELECT 
-                VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+                VAL = IIF(isnull(R.InspectQty,0) = 0, 0, round(((R.InspectQty-R.RejectQty) / R.InspectQty)*100,2))
                 FROM SewingOutput_Detail sod 
                 inner join SewingOutput so with(nolock) on so.id = sod.id
                 inner join Rft r on r.OrderID = sod.OrderId AND
@@ -170,7 +170,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply
             (
                 SELECT 
-                VAL = isnull(Convert(float(50),Convert(FLOAT(50), round(((R.InspectQty-R.RejectQty)/ nullif(R.InspectQty, 0))*100,2))),0)
+                VAL = IIF(isnull(R.InspectQty,0) = 0, 0, round(((R.InspectQty-R.RejectQty) / R.InspectQty)*100,2))
                 FROM SewingOutput_Detail sod 
                 inner join SewingOutput so with(nolock) on so.id = sod.id
                 inner join Rft r on r.OrderID = sod.OrderId AND

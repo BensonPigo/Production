@@ -1210,7 +1210,7 @@ and SunriseNid = 0
             cmds.Add(sp5);
 
             string sqlCmd = @"
-select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
+select iif(isnull(rft.InspectQty,0)=0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
 from RFT WITH (NOLOCK) 
 where OrderID = @orderid
 and CDate = @cdate
