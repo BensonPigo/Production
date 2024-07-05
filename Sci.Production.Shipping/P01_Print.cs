@@ -88,14 +88,8 @@ where exists
 and g.ShipModeID like '%P%'
 
 
-declare @CurrencyID varchar(4)
-Set @CurrencyID = (Select CurrencyID From System)
-select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
-, Price = iif(a.CurrencyID != 'USD', a.Price / dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Price) 
-, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / dbo.getRate('KP','USD', @CurrencyID,a.CDate),a.Qty * a.Price)
-, Rate = iif(a.CurrencyID != 'USD', a.Rate * dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Rate)
-, a.PayCurrency
-, PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
+select se.Description,a.Qty,se.UnitID,a.CurrencyID,a.Price
+, Amount = a.Qty * a.Price, a.Rate, a.PayCurrency, PayAmount= a.Amount
 , a.CW
 into #table1
 from (
@@ -250,7 +244,7 @@ declare @CurrencyID varchar(4)
 Select @CurrencyID = CurrencyID From System
 select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
 , Price = iif(a.CurrencyID != 'USD', a.Price / a.APPExchageRate, a.Price) 
-, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / a.APPExchageRate,a.Qty * a.Price)
+, Amount = Round(iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / a.APPExchageRate,a.Qty * a.Price),2)
 , Rate = iif(a.CurrencyID != 'USD', a.APPExchageRate, a.Rate)
 , a.PayCurrency
 , PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * a.APPExchageRate, a.Amount)
@@ -299,7 +293,7 @@ Drop Table #table1
             }
 
             string sqlShareExpenseAPP = $@"
-select se.AirPPID,total = round(sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate),2)
+select se.AirPPID,total = sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate)
 	from ShareExpense_APP se
 	left join ShippingAP sap on sap.ID = se.ShippingAPID
 	where se.AirPPID = '{this.masterData["ID"]}'
