@@ -15,6 +15,7 @@ namespace Sci.Production.IE
     {
         private DataTable copyDt;
         private DataTable chgOverChkList;
+
         /// <summary>
         /// P02_NewCheckList
         /// </summary>
@@ -30,15 +31,7 @@ namespace Sci.Production.IE
             this.append.Visible = false;
             this.revise.Visible = false;
             this.delete.Visible = false;
-
-            if (changeoverType == "R")
-            {
-                this.Text = "Check List";
-            }
-            else
-            {
-                this.Text = "Check List";
-            }
+            this.Text = "Check List";
         }
 
         /// <summary>
@@ -71,6 +64,10 @@ namespace Sci.Production.IE
                         row["OverDays"] = row["OverDay_Check_0"];
                         row["CompletionDate"] = DBNull.Value;
                     }
+                }
+                else
+                {
+                    row["Checked"] = true;
                 }
             };
 
@@ -107,17 +104,17 @@ namespace Sci.Production.IE
             ,[CHECKLISTS]  = CB.CheckList
             ,[Dep] = CKD.ResponseDep
             ,[LeadTime] = CKD.LeadTime
-            ,[DaysLeft] = CONVERT( VARCHAR(10), iif(CC.[Checked] = 1 ,'-' ,  iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )))
+            ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  iif(DaysLefCnt.val < 0 ,CONVERT( VARCHAR(10), 0) ,CONVERT( VARCHAR(10),DaysLefCnt.val )))
             ,[Deadline] = CC.Deadline
             ,CC.[Checked]
             ,[CompletionDate] = CC.CompletionDate
-            ,[OverDays] = iif(CC.[Checked] = 0 , OverDay_Check_0.VAL,OverDay_Check_1.VAL)
+            ,[OverDays] = iif(CC.[Checked] = 0 , iif(isnull(OverDay_Check_0.VAL,0) < 0,0, isnull(OverDay_Check_0.VAL,0)) ,iif(isnull(OverDay_Check_1.VAL,0) < 0,0, isnull(OverDay_Check_1.VAL,0)))
             ,CC.Remark
             ,[EditName] = CC.EditName
             ,[EditDate] = CC.EditDate
-            ,[OverDay_Check_0] = OverDay_Check_0.val
-            ,[OverDay_Check_1] = OverDay_Check_1.val
-            ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )
+            ,[OverDay_Check_0] = iif(isnull(OverDay_Check_0.VAL,0) < 0,0, isnull(OverDay_Check_0.VAL,0))
+            ,[OverDay_Check_1] = iif(isnull(OverDay_Check_1.VAL,0) < 0,0, isnull(OverDay_Check_1.VAL,0))
+            ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
             FROM ChgOver_Check CC
             INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
             LEFT JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
@@ -137,7 +134,7 @@ namespace Sci.Production.IE
             )OverDay_Check_0
             OUTER APPLY
             (
-		            SELECT val = DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -( COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE()))
+		        SELECT val = iif(CC.CompletionDate IS NULL, 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -( COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate)))
 	            FROM Holiday
 	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
             )OverDay_Check_1
@@ -163,9 +160,9 @@ namespace Sci.Production.IE
             this.gridbs.EndEdit();
             string strErrorMes = string.Empty;
 
-            foreach (DataRow dr in this.Datas)
+            foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
             {
-                if (MyUtility.Convert.GetBool(dr["Checked"]) && 
+                if (MyUtility.Convert.GetBool(dr["Checked"]) &&
                     MyUtility.Convert.GetInt(dr["OverDays"]) > 0 &&
                     MyUtility.Check.Empty(dr["Remark"]))
                 {
