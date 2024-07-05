@@ -249,11 +249,11 @@ where p.INVNo in ({whereTargetInvNo})";
 declare @CurrencyID varchar(4)
 Select @CurrencyID = CurrencyID From System
 select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
-, Price = iif(a.CurrencyID != 'USD', a.Price / dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Price) 
-, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / dbo.getRate('KP','USD', @CurrencyID,a.CDate),a.Qty * a.Price)
-, Rate = iif(a.CurrencyID != 'USD', a.Rate * dbo.getRate('KP','USD', @CurrencyID,a.CDate), a.Rate)
+, Price = iif(a.CurrencyID != 'USD', a.Price / a.APPExchageRate, a.Price) 
+, Amount = iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / a.APPExchageRate,a.Qty * a.Price)
+, Rate = iif(a.CurrencyID != 'USD', a.APPExchageRate, a.Rate)
 , a.PayCurrency
-, PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * dbo.getRate('KP',a.PayCurrency, @CurrencyID,a.CDate), a.Amount)
+, PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * a.APPExchageRate, a.Amount)
 , a.CW
 into #table1
 from (
@@ -266,18 +266,30 @@ from (
     ,s.CurrencyID as PayCurrency
     ,s.CW
     ,s.CDate
+	,s.APPExchageRate
 	from ShippingAP s
 	inner join ShippingAP_Detail sd on s.ID = sd.ID
 	where exists(
 		select 1
 		from GMTBooking g
+		inner join ShipMode sm with (nolock) on g.ShipModeID = sm.ID
 		where g.ID in ({whereTargetInvNo})
 		and (g.BLNo = s.BLNo  or g.BL2No = s.BLNo)
+		and sm.NeedCreateAPP = 1
 	)
+    and s.Reason <> 'AP007'
+	and (SELECT IsFreightForwarder From LocalSupp where ID = s.LocalSuppID) = 1
 ) a
 left join ShipExpense se on se.ID = a.ShipExpenseID
+where not (
+			dbo.GetAccountNoExpressType(se.AccountID,'Vat') = 1 
+			or dbo.GetAccountNoExpressType(se.AccountID,'SisFty') = 1
+		)
+		and dbo.GetAccountNoExpressType(se.AccountID,'IsApp') = 1 
+		and se.Junk = 0
 
 select Description,Qty,UnitID,CurrencyID,Price,Amount,Rate,PayCurrency,PayAmount,CW from #table1
+Drop Table #table1
 ";
             System.Data.DataTable dtShippAP;
             result = PackingA2BWebAPI.GetDataBySql(targetFty, sqlGetShippAP, out dtShippAP);
