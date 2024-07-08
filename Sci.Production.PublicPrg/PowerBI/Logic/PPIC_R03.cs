@@ -885,7 +885,6 @@ GROUP BY s.OrderID
    ,[SewQtyOuter] = SewQtyOuter
    ,[Dest] = o.Dest
    ,[Country] = Country.Alias
-   ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
 ";
             }
             else
@@ -995,6 +994,7 @@ SELECT
    ,[Qty] = O.Qty
    ,[FOC Qty] = o.FOCQty
    ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+   ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
    ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
    ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
    ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
