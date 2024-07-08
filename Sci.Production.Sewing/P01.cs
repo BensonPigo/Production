@@ -2735,7 +2735,7 @@ drop table #Child, #updateChild
 
             string strStatus = MyUtility.GetValue.Lookup(strSQL);
 
-            if (strStatus == "Locked")
+            if (strStatus != "Locked")
             {
                 MyUtility.Msg.WarningBox("Please Refresh this page since someone already change the status.");
                 return;
