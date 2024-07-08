@@ -175,8 +175,7 @@ OUTER APPLY (
     FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
     WHERE pso.EstCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
                         AND DATEADD(DAY, -1, psol.EstCuttingDate)
-    AND pso.ActCuttingDate BETWEEN DATEFROMPARTS(YEAR(psol.EstCuttingDate), MONTH(psol.EstCuttingDate), 1)
-                        AND DATEADD(DAY, -1, psol.EstCuttingDate)
+    AND pso.ActCuttingDate <= DATEADD(DAY, -1, psol.EstCuttingDate)
     AND pso.FactoryID = psol.FactoryID
 ) psConsumptionByMonthMol
 OUTER APPLY (
@@ -197,7 +196,6 @@ OUTER APPLY (
            BalanceCons = SUM(pso.BalanceCons)
     FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
     WHERE pso.ActCuttingDate BETWEEN DATEADD(DAY, -7, psol.EstCuttingDate) AND psol.EstCuttingDate
-	AND pso.EstCuttingDate = psol.EstCuttingDate
     AND pso.FactoryID = psol.FactoryID
 ) psByWeek
 ORDER BY psol.FactoryID, psol.EstCuttingDate ASC
