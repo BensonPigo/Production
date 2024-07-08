@@ -2731,6 +2731,16 @@ drop table #Child, #updateChild
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            string strSQL = $@"select Status from SewingOutput where FactoryID = '{Env.User.Factory}' and OutputDate = '{MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.ToString("yyyy/MM/dd")}' and SewingLineID = '{this.CurrentMaintain["SewingLineID"]}'";
+
+            string strStatus = MyUtility.GetValue.Lookup(strSQL);
+
+            if (strStatus != "Locked")
+            {
+                MyUtility.Msg.WarningBox("Please Refresh this page since someone already change the status.");
+                return;
+            }
+
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == DialogResult.OK)
