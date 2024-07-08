@@ -130,7 +130,7 @@ namespace Sci.Production.IE
 --Summary
 SELECT Distinct 
      [Inline] = CONVERT(varchar, co.Inline, 23),
-     [Ready (all checked)] = IIF(coc.[Check] = 1, 'V', ''),
+     [Ready (all checked)] = IIF(coc.Checked = 1, 'V', ''),
      [SewingLine] = co.SewingLineID,
      [OldSP] = oldco.OrderID,
      [OldStyle] = oldco.StyleID,
@@ -173,16 +173,16 @@ SELECT Distinct
     [Cell] = sl.SewingCell,
     [Days Left] = DaysLeft.value,
     [Inline Date] = CONVERT(varchar, co.Inline, 23),
-    [Over Days] = IIF(coc.[Check] = 0, DaysLeft.Value, OverDays.Value),
-    [Check] = IIF(coc.[Check] = 0, '', 'V'),
+    [Over Days] = IIF(coc.Checked = 0, DaysLeft.Value, OverDays.Value),
+    [Check] = IIF(coc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, coc.CompletionDate, 23),
     [Response Dep.] = cod.ResponseDep,
-    [Check List No] = colb.No,
+    [Check List No] = coc.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = co.Remark
-FROM ChgOver co WITH (NOLOCK)
+FROM ChgOver_Check coc WITH (NOLOCK)
+LEFT JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
-LEFT JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
