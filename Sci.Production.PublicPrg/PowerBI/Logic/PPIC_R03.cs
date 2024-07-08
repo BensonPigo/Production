@@ -435,7 +435,6 @@ SELECT
             FOR XML PATH (''))
         , 1, 1, '')
    ,ShipmodeID = o.ShipModeList
-   ,o.GMTComplete
 INTO #tmpOqs_Step
 FROM #tmpPOComboStep s
 INNER JOIN Orders o ON s.ID = o.ID
@@ -529,6 +528,7 @@ SELECT
    ,o.StyleUnit
    ,o.SubconInType
    ,o.isForecast
+   ,o.GMTComplete
 INTO #tmpOrders
 FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
