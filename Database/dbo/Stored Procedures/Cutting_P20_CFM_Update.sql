@@ -17,9 +17,9 @@ BEGIN
 		--find all PatternPanel
 		Select distinct orderid = wd.OrderID,wd.SizeCode,wd.article,wp.PatternPanel,w.MDivisionID
 		into #tmp1
-		from WorkOrder w WITH (NOLOCK)
-		inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
-		inner join WorkOrder_PatternPanel wp  WITH (NOLOCK) on wp.WorkOrderUkey = w.Ukey
+		from WorkOrderForOutput w WITH (NOLOCK)
+		inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w.Ukey
+		inner join WorkOrderForOutput_PatternPanel wp  WITH (NOLOCK) on wp.WorkOrderForOutputUkey = w.Ukey
 		inner join CuttingOutput_Detail cud WITH (NOLOCK) on cud.CuttingID = w.ID
 		where cud.id = @ID
 		and wd.OrderID <>'EXCESS'
@@ -75,8 +75,8 @@ BEGIN
 		select a.OrderID, a.SizeCode, a.Article, a.PatternPanel, a.MDivisionid,[cutqty] = c.cutQty,pre_cutqty=b.cutqty, WIP_Qty = a.cutqty
 		into #tmp2
 		from #tmp2_WIP_Qty a
-		left join #tmp2_B b on a.Article=b.Article and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
-		left join #tmp2_A c on a.Article=c.Article and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
+		left join #tmp2_B b on a.Article=b.Article and a.MDivisionid=b.MDivisionid and a.OrderID = b.OrderID and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+		left join #tmp2_A c on a.Article=c.Article and a.MDivisionid=c.MDivisionid and a.OrderID = c.OrderID and a.PatternPanel = c.PatternPanel and a.SizeCode = c.SizeCode
 
         Select o.poid,a.orderid,a.article,a.sizecode,
 			order_cpu = isnull(ot.Price, 0),
@@ -107,14 +107,14 @@ BEGIN
 			select w.ID, w.Ukey, wd.Article, wd.SizeCode, w.FabricCombo,
 				w.ConsPC
 			into #tmpAllworkorder
-			from WorkOrder w WITH (NOLOCK)
-			inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey and wd.OrderID <> 'EXCESS' 
+			from WorkOrderForOutput w WITH (NOLOCK)
+			inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w.Ukey and wd.OrderID <> 'EXCESS' 
 			where exists(
 				--先找到 CuttingOutput_Detail 對應的 WorkOrder Article,SizeCode
 				select 1
 				from  CuttingOutput_Detail cod WITH (NOLOCK) 
-				inner join WorkOrder_Distribute wd2 WITH (NOLOCK) on wd2.WorkOrderUkey = cod.WorkOrderUkey and wd.OrderID <> 'EXCESS'
-				inner join WorkOrder w2 WITH (NOLOCK) on w2.Ukey = cod.WorkOrderUkey
+				inner join WorkOrderForOutput_Distribute wd2 WITH (NOLOCK) on wd2.WorkOrderForOutputUkey = cod.WorkOrderForOutputUkey and wd.OrderID <> 'EXCESS'
+				inner join WorkOrderForOutput w2 WITH (NOLOCK) on w2.Ukey = cod.WorkOrderForOutputUkey
 				where cod.id = @ID
 				and w2.id = w.id and wd2.Article = wd.Article and wd2.SizeCode = wd.SizeCode
 			)
@@ -144,10 +144,10 @@ BEGIN
 				--ot.price, -- CPU/PC
 				@ActTTCPU = ROUND(sum( (cod.Layer * ws.SizeRatio) * t.ConsRate * ot.price), 3) -- TotalCPU
 			from  CuttingOutput_Detail cod WITH (NOLOCK) 
-			inner join WorkOrder w WITH (NOLOCK) on w.Ukey = cod.WorkOrderUkey
-			inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.WorkOrderUkey = cod.WorkOrderUkey and wd.OrderID <> 'EXCESS'
+			inner join WorkOrderForOutput w WITH (NOLOCK) on w.Ukey = cod.WorkOrderForOutputUkey
+			inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = cod.WorkOrderForOutputUkey and wd.OrderID <> 'EXCESS'
 			inner join #tmpConsRate t on t.id = w.ID and t.FabricCombo = w.FabricCombo and t.Article = wd.Article and t.SizeCode = wd.SizeCode
-			outer apply(select SizeRatio = sum(Qty) from WorkOrder_SizeRatio ws  WITH (NOLOCK) where ws.WorkOrderUkey = cod.WorkOrderUkey and ws.SizeCode = t.SizeCode)ws
+			outer apply(select SizeRatio = sum(Qty) from WorkOrderForOutput_SizeRatio ws  WITH (NOLOCK) where ws.WorkOrderForOutputUkey = cod.WorkOrderForOutputUkey and ws.SizeCode = t.SizeCode)ws
 			inner join Order_TmsCost ot WITH (NOLOCK) on ot.artworktypeid = 'CUTTING' and ot.id = w.ID-- 抓母單
 			where cod.id = @ID
 
@@ -199,3 +199,5 @@ BEGIN
 		EXEC usp_GetErrorInfo;
 	END CATCH
 END
+
+

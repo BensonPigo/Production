@@ -43,10 +43,10 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'BrandID'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顯示該款示最近一次產出之日期&最小的產線名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'Remark'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顯示該款示三個月內最近一次產出之日期&最小的產線名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'Remark'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顯示該款示之相似母款, 以及最近一次產出之日期&最小的產線名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'RemarkSimilarStyle'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顯示該款示之相似母款, 以及最近三個月內最後一次產出之日期&最小的產線名稱' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'RemarkSimilarStyle'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'如果Remark一欄有值 & 且最後產出日期落在當日往前算三個月內 (動態計算), 或是Remark(Similar style) 一欄有值 & 且最後產出日期落在當日往前算三個月內 (動態計算),  顯示"Repeat", 否則顯示"New Style"' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SimilarStyle', @level2type=N'COLUMN',@level2name=N'Type'

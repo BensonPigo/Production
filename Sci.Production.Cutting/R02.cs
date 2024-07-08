@@ -40,7 +40,7 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
 
             // Set ComboM
-            DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out DataTable workOrder);
+            DBProxy.Current.Select(null, @"Select Distinct MDivisionID from WorkOrderForPlanning WITH (NOLOCK) ", out DataTable workOrder);
             MyUtility.Tool.SetupCombox(this.comboM, 1, workOrder);
             this.comboM.Text = Env.User.Keyword;
 
@@ -82,84 +82,10 @@ namespace Sci.Production.Cutting
                 return false;
             }
 
-            switch (this.selected_splitWorksheet)
-            {
-                case "CutCell":
-                    if (MyUtility.Check.Empty(this.txtCutCellStart.Text.Trim()) && MyUtility.Check.Empty(this.txtCutCellEnd.Text.Trim()))
-                    {
-                        MyUtility.Msg.WarningBox("Cut Cell can't empty!!");
-                        return false;
-                    }
-
-                    break;
-                case "SpreadingNo":
-                    if (MyUtility.Check.Empty(this.txtSpreadingNoStart.Text.Trim()) && MyUtility.Check.Empty(this.txtSpreadingNoEnd.Text.Trim()))
-                    {
-                        MyUtility.Msg.WarningBox("Spreading No. can't empty!!");
-                        return false;
-                    }
-
-                    break;
-                default:
-                    break;
-            }
-
             this.Factory = this.comboFactory.Text;
             this.MD = this.comboM.Text;
             this.dateR_CuttingDate1 = this.dateCuttingDate.Value1;
             this.dateR_CuttingDate2 = this.dateCuttingDate.Value2;
-
-            // select distinct cutcellid from cutplan order by cutcellid 不只有數字,where條件要''單引號,且mask是00
-
-            // 避免1、2這樣的條件再>=、<=的篩選有誤，因此補0成01、02
-            // 若包含文字符號則不處理
-            int cell1, cell2, spreading1, spreading2;
-            bool isCell1Number, isCell2Number, isSpreading1Number, isSpreading2Number;
-
-            // this.CutCell1
-            isCell1Number = int.TryParse(this.txtCutCellStart.Text.Trim(), out cell1);
-            if (isCell1Number)
-            {
-                this.CutCell1 = cell1.ToString("D2");
-            }
-            else
-            {
-                this.CutCell1 = this.txtCutCellStart.Text.Trim();
-            }
-
-            // this.CutCell2
-            isCell2Number = int.TryParse(this.txtCutCellEnd.Text.Trim(), out cell2);
-            if (isCell2Number)
-            {
-                this.CutCell2 = cell2.ToString("D2");
-            }
-            else
-            {
-                this.CutCell2 = this.txtCutCellEnd.Text.Trim();
-            }
-
-            // SpreadingNo1
-            isSpreading1Number = int.TryParse(this.txtSpreadingNoStart.Text.Trim(), out spreading1);
-            if (isSpreading1Number)
-            {
-                this.SpreadingNo1 = spreading1.ToString("D2");
-            }
-            else
-            {
-                this.SpreadingNo1 = this.txtSpreadingNoStart.Text.Trim();
-            }
-
-            // SpreadingNo2
-            isSpreading2Number = int.TryParse(this.txtSpreadingNoEnd.Text.Trim(), out spreading2);
-            if (isSpreading2Number)
-            {
-                this.SpreadingNo2 = spreading2.ToString("D2");
-            }
-            else
-            {
-                this.SpreadingNo2 = this.txtSpreadingNoEnd.Text.Trim();
-            }
-
             return base.ValidateInput();
         }
 
@@ -263,86 +189,77 @@ where   Cutplan.MDivisionID ='{this.MD}'";
                 {
                     sqlCmd.Append(string.Format("IF OBJECT_ID('tempdb.dbo.#tmpall{0}','U')IS NOT NULL DROP TABLE #tmpall{0}", i));
                     sqlCmd.Append(@"
-select distinct
-	[Request#] = Cutplan.ID,
-	[Cutting Date] = Cutplan.EstCutdate,
-	[Line#] = Cutplan_Detail.SewingLineID,
-	[SP#] = Cutplan_Detail.OrderID,
-	[Seq#] = CONCAT(WorkOrder.Seq1, '-', WorkOrder.Seq2),
-	[Style#] = o.StyleID,
-    [FabRef#] = WorkOrder.refno,
-	[Ref#] = Cutplan_Detail.CutRef,
-	[Cut#] = Cutplan_Detail.CutNo,
-	[Comb.] = WorkOrder.FabricCombo,
-	[Fab_Code] = fab.fab,
-	[Size Ratio] = sr.SizeCode,
-	[Colorway] = woda.ac,
-	[Color] = Cutplan_Detail.ColorID,
-	[Cut Qty] = cq.SizeCode,
-	[Fab Cons.] = Cutplan_Detail.Cons,
-    [Layer] = WorkOrder.Layer,
-    [FabLength] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
-	[Fab Desc] = [Production].dbo.getMtlDesc(Cutplan_Detail.POID, WorkOrder.Seq1, WorkOrder.Seq2,2,0),
-    [Shift]=WorkOrder.Shift,
-	[Remark] = Cutplan_Detail.Remark,
-	[SCI Delivery] = o.SciDelivery,
-	[ms] = ms.Seq,
-    [total_qty] = sum(WorkOrder_SizeRatio.qty * WorkOrder.Layer) over(partition by Cutplan_Detail.WorkOrderUkey)
-into #tmpall");
+                    select distinct
+	                [Request#] = Cutplan.ID,
+	                [Cutting Date] = Cutplan.EstCutdate,
+	                [Line#] = cd.SewingLineID,
+	                [SP#] = cd.OrderID,
+	                [Seq#] = CONCAT(wofp.Seq1, '-', wofp.Seq2),
+	                [Style#] = o.StyleID,
+                    [FabRef#] = wofp.refno,
+	                [Ref#] = cd.CutRef,
+	                [Cut#] = cd.CutNo,
+	                [Comb.] = wofp.FabricCombo,
+	                [Fab_Code] = fab.fab,
+	                [Size Ratio] = sr.SizeCode,
+	                [Colorway] = wofp.Article,
+	                [Color] = cd.ColorID,
+	                [Cut Qty] = cq.SizeCode,
+	                [Fab Cons.] = cd.Cons,
+                    [Layer] = wofp.Layer,
+                    [FabLength] = iif(wofp.Layer = 0, '', STR(cd.Cons / wofp.Layer, 12, 2) ),
+	                [Fab Desc] = [Production].dbo.getMtlDesc(cd.POID, wofp.Seq1, wofp.Seq2,2,0),
+                    [Shift]='',
+	                [Remark] = cd.Remark,
+	                [SCI Delivery] = o.SciDelivery,
+	                [ms] = ms.Seq,
+                    [total_qty] = sum(wofps.qty * wofp.Layer) over(partition by cd.WorkOrderForPlanningUkey)
+                    into #tmpall");
                     sqlCmd.Append(string.Format("{0}", i));
                     sqlCmd.Append(@"
-from Cutplan WITH (NOLOCK) 
-inner join Cutting cut on Cutplan.CuttingID = cut.ID
-inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
-inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
-inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Orders o WITH (NOLOCK) on o.ID = Cutplan_Detail.OrderID
-outer apply(
-	select fab = 
-	STUFF((
-		select concat('+',wp.PatternPanel)
-		from WorkOrder_PatternPanel wp
-		where wp.WorkOrderUkey = WorkOrder.Ukey
-		for xml path('')
-	),1,1,'')
-) fab
-outer apply(
-	select SizeCode = 
-	STUFF((
-		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
-		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
-		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		ORDER BY Order_SizeCode.Seq
-		for xml path('')
-	 ),1,1,'')
-) as sr
-outer apply(
-	 select AC= 
-	 STUFF((
-		 Select distinct concat('/', wod.Article)
-		 from WorkOrder_Distribute wod WITH (NOLOCK) 
-		 where WorkOrderUKey = Cutplan_Detail.WorkOrderUKey and Article != ''
-		 for xml path('')
-	 ),1,1,'')
-) as woda
-outer apply(
-	select SizeCode= 
-	STUFF((
-		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio  WITH (NOLOCK) where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		for xml path('')
-	 ),1,1,'')
-) as cq
-outer apply(
-	select Seq= (
-		Select min(Order_SizeCode.Seq)
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
-		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
-		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-	 )
-) as ms
-where 1 = 1
+                    from Cutplan WITH (NOLOCK) 
+                    inner join Cutting cut on Cutplan.CuttingID = cut.ID
+                    inner join Cutplan_Detail cd WITH (NOLOCK) on Cutplan.ID = cd.ID
+                    inner join WorkOrderForPlanning wofp WITH (NOLOCK) on cd.WorkOrderForPlanningUkey = wofp.Ukey and cd.ID = wofp.CutplanID
+                    inner join WorkOrderForPlanning_SizeRatio wofps WITH (NOLOCK) on cd.WorkOrderForPlanningUkey = wofps.WorkOrderForPlanningUkey
+                    left join Orders o WITH (NOLOCK) on o.ID = cd.OrderID
+                    outer apply(
+	                    select fab = 
+	                    STUFF((
+		                    select concat('+',wp.PatternPanel)
+		                    from WorkOrderForPlanning_PatternPanel wp
+		                    where wp.WorkOrderForPlanningUkey = wofp.Ukey
+		                    for xml path('')
+	                    ),1,1,'')
+                    ) fab
+                   outer apply(
+	                    select SizeCode = 
+	                    STUFF((
+		                    Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
+		                    from WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) 
+		                    left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
+		                    where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUkey
+		                    ORDER BY Order_SizeCode.Seq
+		                    for xml path('')
+	                     ),1,1,'')
+                    ) as sr
+                    outer apply(
+	                    select SizeCode= 
+	                    STUFF((
+		                    Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrderForPlanning WITH (NOLOCK) where UKey = cd.WorkOrderForPlanningUKey))) 
+		                    from WorkOrderForPlanning_SizeRatio  WITH (NOLOCK) where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
+		                    for xml path('')
+	                     ),1,1,'')
+                    ) as cq
+                    outer apply(
+	                    select Seq= (
+		                    Select min(Order_SizeCode.Seq)
+		                    from WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) 
+		                    left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
+		                    where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
+	                     )
+                    ) as ms
+                    where 1 = 1
 ");
                     if (!MyUtility.Check.Empty(this.dateR_CuttingDate1))
                     {
@@ -414,8 +331,7 @@ select
 [Fab Desc1] = case when ((Row_number() over (partition by [Line#],[Request#],[Cutting Date],[SP#],[Seq#],[Style#],[Fab Desc],[Colorway],[Color],[Fab Desc]
 	order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#])) >1 
 	and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[Cutting Date],[SP#],[Comb.],[ms] desc,[Seq#]))then '' else [Fab Desc] end,
-
-[Shift]=[Shift],
+--[Shift]=[Shift],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
 [total_qty1] = [total_qty]
@@ -440,52 +356,52 @@ drop table #tmpall");
 select	distinct
 	[Request#] = Cutplan.ID,
 	[Fab ETA] = fe.ETA,
-	[Line#] = Cutplan_Detail.SewingLineID,
-	[SP#] = Cutplan_Detail.OrderID,
-	[Seq#] = CONCAT(WorkOrder.Seq1, '-', WorkOrder.Seq2),
+	[Line#] = cd.SewingLineID,
+	[SP#] = cd.OrderID,
+	[Seq#] = CONCAT(wofp.Seq1, '-', wofp.Seq2),
 	[Style#] = o.StyleID,
-    [FabRef#] = WorkOrder.Refno,
-	[Ref#] = Cutplan_Detail.CutRef,
-	[Cut#] = Cutplan_Detail.CutNo,
-	[Comb.] = WorkOrder.FabricCombo,
+    [FabRef#] = wofp.Refno,
+	[Ref#] = cd.CutRef,
+	[Cut#] = cd.CutNo,
+	[Comb.] = wofp.FabricCombo,
 	[Fab_Code] = fab.fab,
 	[Size Ratio] = sr.SizeCode,
-	[Colorway] = woda.ac,
-	[Color] = Cutplan_Detail.ColorID,
+	[Colorway] = wofp.Article,
+	[Color] = cd.ColorID,
 	[Cut Qty] = cq.SizeCode,
     [OrderQty] = SizeQty.SizeCode,
-	[ExcessQty] = ExcessQty.SizeCode,
-	[Fab Cons.] = Cutplan_Detail.Cons,
-    [Layer] = WorkOrder.Layer,
-    [Length] = iif(WorkOrder.Layer = 0, '', STR(Cutplan_Detail.Cons / WorkOrder.Layer, 12, 2) ),
+	--[ExcessQty] = ExcessQty.SizeCode,
+	[Fab Cons.] = cd.Cons,
+    [Layer] = wofp.Layer,
+    [Length] = iif(wofp.Layer = 0, '', STR(cd.Cons / wofp.Layer, 12, 2) ),
 	[Fab Refno] = FabRefno.Refno,
-    [Shift]=WorkOrder.Shift,
-	[Remark] = Cutplan_Detail.Remark,
+    --[Shift]=wofp.Shift,
+	[Remark] = cd.Remark,
 	[SCI Delivery] = o.SciDelivery,
 	[ms] = ms.Seq,    
-    [total_qty] = sum(WorkOrder_SizeRatio.qty * WorkOrder.Layer) over(partition by Cutplan_Detail.WorkOrderUkey)
+    [total_qty] = sum(wofps.qty * wofp.Layer) over(partition by cd.WorkOrderForPlanningUkey)
 into #tmpall");
                     sqlCmd.Append(string.Format("{0}", i));
                     sqlCmd.Append(@"
 from Cutplan WITH (NOLOCK) 
 inner join Cutting cut on Cutplan.CuttingID = cut.ID
-inner join Cutplan_Detail WITH (NOLOCK) on Cutplan.ID = Cutplan_Detail.ID
-inner join WorkOrder WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder.Ukey and Cutplan_Detail.ID = WorkOrder.CutplanID
-inner join WorkOrder_SizeRatio WITH (NOLOCK) on Cutplan_Detail.WorkOrderUkey = WorkOrder_SizeRatio.WorkOrderUkey
-left join Orders o WITH (NOLOCK) on o.ID = Cutplan_Detail.OrderID
+inner join Cutplan_Detail cd WITH (NOLOCK) on Cutplan.ID = cd.ID
+inner join WorkOrderForPlanning wofp WITH (NOLOCK) on cd.WorkOrderForPlanningUkey = wofp.Ukey and cd.ID = wofp.CutplanID
+inner join WorkOrderForPlanning_SizeRatio wofps WITH (NOLOCK) on cd.WorkOrderForPlanningUkey = wofps.WorkOrderForPlanningUkey
+left join Orders o WITH (NOLOCK) on o.ID = cd.OrderID
 outer apply(
 	select ETA = iif(FinalETA='',iif(RevisedETA='',CfmETA,RevisedETA),FinalETA)
 	from PO_Supp_Detail WITH (NOLOCK) 
-	where PO_Supp_Detail.ID = Cutplan_Detail.POID 
-	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
-	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2 
+	where PO_Supp_Detail.ID = cd.POID 
+	and PO_Supp_Detail.Seq1 = wofp.Seq1 
+	and PO_Supp_Detail.Seq2 = wofp.Seq2 
 ) as fe
 outer apply(
 	select fab = 
 	STUFF((
 		select concat('+',wp.PatternPanel)
-		from WorkOrder_PatternPanel wp
-		where wp.WorkOrderUkey = WorkOrder.Ukey
+		from WorkOrderForPlanning_PatternPanel wp
+		where wp.WorkOrderForPlanningUkey = wofp.Ukey
 		for xml path('')
 	),1,1,'')
 ) fab
@@ -493,9 +409,9 @@ outer apply(
 	select SizeCode = 
 	STUFF((
 		Select concat(',',(ws.SizeCode+'/'+Convert(varchar,Qty))) 
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		from WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) 
 		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
-		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
 		ORDER BY Order_SizeCode.Seq
 		for xml path('')
 	 ),1,1,'')
@@ -503,57 +419,34 @@ outer apply(
 outer apply(
 	select SizeCode = 
 	STUFF((
-		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
-		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
-		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		and wd.OrderID !='EXCESS'
+		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(ws.Qty)))) 
+		from WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) 
+		where ws.WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
         group by ws.SizeCode
 		for xml path('')
 	 ),1,1,'')
 ) as SizeQty
 outer apply(
-	select SizeCode = 
-	STUFF((
-		Select concat(',',(ws.SizeCode+'/'+Convert(varchar, sum(wd.Qty)))) 
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
-		left join Workorder_distribute wd on ws.WorkOrderUkey=wd.WorkOrderUkey and ws.SizeCode=wd.SizeCode
-		where ws.WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
-		and wd.OrderID ='EXCESS'
-        group by ws.SizeCode
-		for xml path('')
-	 ),1,1,'')
-) as ExcessQty
-outer apply(
-	 select AC= 
-	 STUFF((
-		 Select distinct concat('/', wod.Article)
-		 from WorkOrder_Distribute wod WITH (NOLOCK) 
-		 where WorkOrderUKey = Cutplan_Detail.WorkOrderUKey and Article != ''
-		 for xml path('')
-	 ),1,1,'')
-) as woda
-outer apply(
 	select SizeCode= 
 	STUFF((
-		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrder WITH (NOLOCK) where UKey = Cutplan_Detail.WorkOrderUKey))) 
-		from WorkOrder_SizeRatio  WITH (NOLOCK) where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		Select concat(',',SizeCode+'/'+Convert(varchar,Qty*(select Layer from WorkOrderForPlanning WITH (NOLOCK) where UKey = cd.WorkOrderForPlanningUKey))) 
+		from WorkOrderForPlanning_SizeRatio  WITH (NOLOCK) where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
 		for xml path('')
 	 ),1,1,'')
 ) as cq
 outer apply(
 	select PO_Supp_Detail.RefNo
 	from PO_Supp_Detail WITH (NOLOCK) 
-	where PO_Supp_Detail.ID = Cutplan_Detail.POID
-	and PO_Supp_Detail.Seq1 = WorkOrder.Seq1 
-	and PO_Supp_Detail.Seq2 = WorkOrder.Seq2
+	where PO_Supp_Detail.ID = cd.POID
+	and PO_Supp_Detail.Seq1 = wofp.Seq1 
+	and PO_Supp_Detail.Seq2 = wofp.Seq2
 ) as FabRefno
 outer apply(
 	select Seq= (
 		Select min(Seq)
-		from WorkOrder_SizeRatio ws WITH (NOLOCK) 
+		from WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) 
 		left join Order_SizeCode on ws.ID = Order_SizeCode.ID AND ws.SizeCode = Order_SizeCode.SizeCode
-		where WorkOrderUkey = Cutplan_Detail.WorkOrderUKey
+		where WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUKey
 	 )
 ) as ms
 where 1 = 1 --??? AND fe.ETA IS NOT NULL
@@ -619,11 +512,11 @@ select
     and	[Seq#] = lag([Seq#],1,[Seq#]) over(order by [Line#],[Request#],[SP#],[Seq#],[Fab ETA],[Comb.],[ms] desc))then '' else [Color] end,
 [Cut Qty] = [Cut Qty],
 [OrderQty] = [OrderQty],
-[ExcessQty] = [ExcessQty],
+--[ExcessQty] = [ExcessQty],
 [Fab Cons.] = [Fab Cons.],
 [Layer] = [Layer],
 [Length] = [Length],
-[Shift]=[Shift],
+--[Shift]=[Shift],
 [Remark] = [Remark],
 [SCI Delivery] = [SCI Delivery],
 [total_qty1] = [total_qty]
@@ -659,9 +552,9 @@ select distinct
 	[Cut#] = cutno.cutno,
 	[Size Ratio] =sr.SizeCode,
 	[Cut Qty] = cq.SizeCode,
-	[Colorway] = woda.ac,
+	[Colorway] = w.Article,
 	[Total Fab Cons] =sum(cd.Cons) over(partition by c.ID,cd.SewingLineID,cd.OrderID,w.Seq1,w.Seq2,w.FabricCombo),
-    [Shift]=w.Shift,
+    --[Shift]=w.Shift,
 	[Remark] = Remark.Remark,
 	p.patternUKey,
 	w.FabricPanelCode
@@ -669,15 +562,15 @@ into #tmp{i}
 from Cutplan c WITH (NOLOCK)
 inner join Cutting cut on c.CuttingID = cut.ID 
 inner join Cutplan_Detail cd WITH (NOLOCK) on c.ID = cd.ID
-inner join WorkOrder w WITH (NOLOCK) on cd.WorkOrderUkey = w.Ukey
+inner join WorkOrderForPlanning w WITH (NOLOCK) on cd.WorkOrderForPlanningUkey = w.Ukey
 inner join Orders o WITH (NOLOCK) on o.ID = cd.OrderID
 inner join PO_Supp_Detail pd WITH (NOLOCK) on pd.ID = cd.POID and pd.Seq1 = w.Seq1 and pd.Seq2 = w.Seq2
 outer apply(
 	select fab =
 	stuff((
 		select concat('+',wp.PatternPanel)
-		from WorkOrder_PatternPanel wp
-		where wp.WorkOrderUkey = w.Ukey
+		from WorkOrderForPlanning_PatternPanel wp
+		where wp.WorkOrderForPlanningUkey = w.Ukey
 		for xml path('')
 	),1,1,'')
 ) fab
@@ -685,7 +578,8 @@ outer apply(
 select cutno = 
 	stuff((
 		Select distinct concat('/', cd2.CutNo)
-		from Cutplan_Detail cd2 WITH (NOLOCK) inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
+		from Cutplan_Detail cd2 WITH (NOLOCK) 
+		inner join WorkOrderForPlanning w2 on cd2.WorkOrderForPlanningUkey = w2.Ukey
 		where cd2.ID = c.ID
 		and cd2.SewingLineID = cd.SewingLineID
 		and cd2.OrderID = cd.OrderID
@@ -699,8 +593,8 @@ outer apply(
 	stuff((
 		Select distinct concat(',',(SizeCode+'/'+ Convert(varchar,Qty))) 
 		from Cutplan_Detail cd2 WITH (NOLOCK) 		
-		inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
-		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		inner join WorkOrderForPlanning w2 on cd2.WorkOrderForPlanningUkey = w2.Ukey
+		inner join WorkOrderForPlanning_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderForPlanningUKey = ws2.WorkOrderForPlanningUkey
 		where cd2.ID = c.ID
 		and cd2.SewingLineID = cd.SewingLineID
 		and cd2.OrderID = cd.OrderID
@@ -714,8 +608,8 @@ select SizeCode =
 stuff((
 		Select distinct concat(',',ws2.SizeCode+'/'+ Convert(varchar,ws2.Qty * w2.Layer)) 
 		from Cutplan_Detail cd2 WITH (NOLOCK)
-		inner join WorkOrder w2 WITH (NOLOCK) on cd2.WorkorderUkey = w2.Ukey
-		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		inner join WorkOrderForPlanning w2 WITH (NOLOCK) on cd2.WorkOrderForPlanningUkey = w2.Ukey
+		inner join WorkOrderForPlanning_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderForPlanningUKey = ws2.WorkOrderForPlanningUkey
 		where cd2.ID = c.ID
 		and cd2.SewingLineID = cd.SewingLineID
 		and cd2.OrderID = cd.OrderID
@@ -724,22 +618,6 @@ stuff((
 		for xml path('')
 	),1,1,'')
 ) as cq
-outer apply(
-select AC =
-	stuff((
-		Select distinct concat('/', wd2.Article)
-		from Cutplan_Detail cd2 WITH (NOLOCK)
-		inner join WorkOrder w2 WITH (NOLOCK) on cd2.WorkorderUkey = w2.Ukey
-		inner join WorkOrder_Distribute wd2 WITH (NOLOCK) on wd2.WorkOrderUKey = cd2.WorkOrderUKey
-		where wd2.Article != ''
-		and cd2.ID = c.ID
-		and cd2.SewingLineID = cd.SewingLineID
-		and cd2.OrderID = cd.OrderID
-		and w2.SEQ1 = w.SEQ1
-		and w2.SEQ2 = w.SEQ2
-		for xml path('')
-	),1,1,'')
-) as woda
 outer apply(
 	select remark =stuff((
 		select concat(char(10),Remark)
@@ -755,8 +633,8 @@ outer apply(
 	(
 		Select distinct SizeCode
 		from Cutplan_Detail cd2 WITH (NOLOCK) 		
-		inner join WorkOrder w2 on cd2.WorkorderUkey = w2.Ukey
-		inner join WorkOrder_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderUKey = ws2.WorkOrderUkey
+		inner join WorkOrderForPlanning w2 on cd2.WorkOrderForPlanningUkey = w2.Ukey
+		inner join WorkOrderForPlanning_SizeRatio ws2 WITH (NOLOCK) on cd2.WorkOrderForPlanningUKey = ws2.WorkOrderForPlanningUkey
 		where cd2.ID = c.ID
 		and cd2.SewingLineID = cd.SewingLineID
 		and cd2.OrderID = cd.OrderID
@@ -801,7 +679,7 @@ where 1 = 1
                     sqlCmd.Append($@"
 select 	
 	[Request#],[Factory],[Line#],[SP#],[SewInline],[Seq#],[Style#],[FabRef#],[Fab Desc],[Color],Artwork.Artwork
-	,[Comb.],[Fab_Code],[Cut#],[Size Ratio],[Cut Qty],[Colorway],[Total Fab Cons],[Shift],[Remark]
+	,[Comb.],[Fab_Code],[Cut#],[Size Ratio],[Cut Qty],[Colorway],[Total Fab Cons],[Remark]
 from #tmp{i} t
 outer apply(
 	select Artwork=stuff((
@@ -1023,7 +901,7 @@ drop table #tmp{i}
                         }
                     }
 
-                    objSheets.Columns["V"].Clear();
+                    objSheets.Columns["U"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd") + "~" + Convert.ToDateTime(this.dateR_CuttingDate2).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
@@ -1115,7 +993,7 @@ drop table #tmp{i}
                         }
                     }
 
-                    objSheets.Columns["X"].Clear();
+                    objSheets.Columns["U"].Clear();
                     objSheets.Name = (this.selected_splitWorksheet == "CutCell" ? "Cell" : "SpreadingNo") + this.Maintb.Rows[i][0].ToString(); // 工作表名稱
                     objSheets.Cells[3, 2] = Convert.ToDateTime(this.dateR_CuttingDate1).ToString("yyyy/MM/dd"); // 查詢日期
                     objSheets.Cells[3, 5] = this.selected_splitWorksheet == "CutCell" ? "Cut" : "Spreading No"; // CutCell或SpreadingNo
@@ -1325,16 +1203,6 @@ where   junk = 0
             this.SetComboFactory();
         }
 
-        private void RadioByCutCell_CheckedChanged(object sender, EventArgs e)
-        {
-            this.ByCutCell_SpreadingNo_change();
-        }
-
-        private void RadioBySpreadingNo_CheckedChanged(object sender, EventArgs e)
-        {
-            this.ByCutCell_SpreadingNo_change();
-        }
-
         private void RadioGroup1_Paint(object sender, PaintEventArgs e)
         {
             // 把GroupBox的框線改成透明
@@ -1377,43 +1245,6 @@ where   junk = 0
 
                 // Top2
                 g.DrawLine(borderPen, new Point(rect.X + box.Padding.Left + (int)strSize.Width, rect.Y), new Point(rect.X + rect.Width, rect.Y));
-            }
-        }
-
-        private void ByCutCell_SpreadingNo_change()
-        {
-            if (this.radioByCutCell.Checked)
-            {
-                this.txtCutCellStart.ReadOnly = false;
-                this.txtCutCellEnd.ReadOnly = false;
-                this.txtCutCellStart.IsSupportEditMode = true;
-                this.txtCutCellStart.IsSupportEditMode = true;
-
-                this.txtSpreadingNoStart.Text = string.Empty;
-                this.txtSpreadingNoEnd.Text = string.Empty;
-                this.txtSpreadingNoStart.ReadOnly = true;
-                this.txtSpreadingNoEnd.ReadOnly = true;
-                this.txtSpreadingNoStart.IsSupportEditMode = false;
-                this.txtSpreadingNoEnd.IsSupportEditMode = false;
-
-                this.selected_splitWorksheet = "CutCell";
-            }
-
-            if (this.radioBySpreadingNo.Checked)
-            {
-                this.txtCutCellStart.ReadOnly = true;
-                this.txtCutCellEnd.ReadOnly = true;
-                this.txtCutCellStart.IsSupportEditMode = false;
-                this.txtCutCellStart.IsSupportEditMode = false;
-
-                this.txtCutCellStart.Text = string.Empty;
-                this.txtCutCellEnd.Text = string.Empty;
-
-                this.txtSpreadingNoStart.ReadOnly = false;
-                this.txtSpreadingNoEnd.ReadOnly = false;
-                this.txtSpreadingNoStart.IsSupportEditMode = true;
-                this.txtSpreadingNoEnd.IsSupportEditMode = true;
-                this.selected_splitWorksheet = "SpreadingNo";
             }
         }
     }

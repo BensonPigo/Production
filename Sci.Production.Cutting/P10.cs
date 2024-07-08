@@ -175,7 +175,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{this.CurrentMaintain["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.CurrentMaintain["Cutref"]}')
+and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRef='{this.CurrentMaintain["Cutref"]}')
 ";
                  SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                  DialogResult result = sele.ShowDialog();
@@ -292,7 +292,7 @@ order by bundlegroup,bundleno";
                 this.displayStyle.Text = string.Empty;
             }
 
-            string estcutdate = MyUtility.GetValue.Lookup($"Select estcutdate from workorder WITH (NOLOCK) where id='{cuttingid}' and cutref = '{cutref}'", null);
+            string estcutdate = MyUtility.GetValue.Lookup($"Select estcutdate from WorkOrderForOutput WITH (NOLOCK) where id='{cuttingid}' and cutref = '{cutref}'", null);
             if (!MyUtility.Check.Empty(estcutdate))
             {
                 this.displayEstCutDate.Text = Convert.ToDateTime(estcutdate).ToString("yyyy/MM/dd");
@@ -933,33 +933,33 @@ Select a.*
 ,b.poid,b.seasonid,b.styleid,b.styleukey,b.factoryid,
 (
     Select Top(1) OrderID
-    From Workorder_Distribute WD WITH (NOLOCK) 
-    Where a.ukey =WD.workorderukey --and a.orderid=WD.orderid
+    From WorkOrderForOutput_Distribute WD WITH (NOLOCK) 
+    Where a.ukey =WD.WorkOrderForOutputukey --and a.orderid=WD.orderid
 ) as Workorder_Distribute_OrderID,
 
     (
     Select d.SizeCode+'/' 
-    From Workorder_SizeRatio d WITH (NOLOCK) 
-    Where a.ukey =d.workorderukey
+    From WorkOrderForOutput_SizeRatio d WITH (NOLOCK) 
+    Where a.ukey =d.WorkOrderForOutputukey
     For XML path('')
 ) as SizeCode,
     (
     Select convert(varchar,Qty)+'/' 
-    From Workorder_SizeRatio e WITH (NOLOCK) 
-    Where a.ukey =e.workorderukey
+    From WorkOrderForOutput_SizeRatio e WITH (NOLOCK) 
+    Where a.ukey =e.WorkOrderForOutputukey
     For XML path('')
 ) as Ratio,
 (
     Select Top(1) Article
-    From Workorder_Distribute f WITH (NOLOCK) 
-    Where a.ukey =f.workorderukey --and a.orderid=f.orderid
-) as article,
+    From WorkOrderForOutput_Distribute f WITH (NOLOCK) 
+    Where a.ukey =f.WorkOrderForOutputukey --and a.orderid=f.orderid    
+) as article,   
 (
     Select count(id)
-    From Workorder_Distribute g WITH (NOLOCK) 
-    Where a.ukey =g.workorderukey and g.OrderID=(Select Top(1) OrderID From Workorder_Distribute WD WITH (NOLOCK) Where a.ukey =WD.workorderukey)
+    From WorkOrderForOutput_Distribute g WITH (NOLOCK) 
+    Where a.ukey =g.WorkOrderForOutputukey and g.OrderID=(Select Top(1) OrderID From WorkOrderForOutput_Distribute WD WITH (NOLOCK) Where a.ukey =WD.WorkOrderForOutputukey)
 ) as Qty
-From workorder a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
+From WorkOrderForOutput a WITH (NOLOCK) ,orders b WITH (NOLOCK) 
 Where a.cutref = '{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' and a.orderid = b.id";
             if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
             {
@@ -1024,8 +1024,8 @@ Where a.cutref = '{this.txtCutRef.Text}' and a.mDivisionid = '{this.keyword}' an
 
             string selectCommand = $@"
 select distinct wd.orderid 
-from workorder w WITH (NOLOCK)
-inner join workorder_distribute wd WITH (NOLOCK) on wd.workorderukey = w.ukey
+from WorkOrderForOutput w WITH (NOLOCK)
+inner join WorkOrderForOutput_distribute wd WITH (NOLOCK) on wd.WorkOrderForOutputukey = w.ukey
 inner join orders o with(nolock) on o.Cuttingsp = w.id
 where  wd.orderid <> 'EXCESS'
 and w.cutref = '{this.CurrentMaintain["Cutref"]}'
@@ -1056,7 +1056,7 @@ and o.id = '{this.CurrentMaintain["POID"]}'
             string cuttingsp = MyUtility.GetValue.Lookup("Cuttingsp", newvalue, "Orders", "ID");
             if (!MyUtility.Check.Empty(this.CurrentMaintain["Cutref"]))
             {
-                string findcuttingid = $@"select id from workorder where cutref = '{this.CurrentMaintain["Cutref"]}' ";
+                string findcuttingid = $@"select id from WorkOrderForOutput where cutref = '{this.CurrentMaintain["Cutref"]}' ";
                 string cuttingid = MyUtility.GetValue.Lookup(findcuttingid);
                 if (cuttingsp.Trim() != cuttingid.Trim())
                 {
@@ -1066,7 +1066,7 @@ and o.id = '{this.CurrentMaintain["POID"]}'
                     return;
                 }
 
-                string work_cmd = $"Select * from workorder a WITH (NOLOCK) ,workorder_Distribute b WITH (NOLOCK) Where a.ukey = b.workorderukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and b.orderid <> 'EXCESS'";
+                string work_cmd = $"Select * from WorkOrderForOutput a WITH (NOLOCK) ,WorkOrderForOutput_Distribute b WITH (NOLOCK) Where a.ukey = b.WorkOrderForOutputukey and a.cutref = '{this.CurrentMaintain["Cutref"]}' and b.orderid ='{newvalue}' and b.orderid <> 'EXCESS'";
                 if (DBProxy.Current.Select(null, work_cmd, out DataTable articleTb))
                 {
                     if (articleTb.Rows.Count == 0)
@@ -1234,8 +1234,8 @@ where b.poid = '{poid}'
             {
                 selectCommand = $@"
 select distinct Article ,w.Colorid
-from workorder w WITH (NOLOCK) 
-inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkOrderForOutputUkey
 where Article!='' and w.cutref='{this.CurrentMaintain["cutref"]}' {sqlwhere}";
                 item = new Win.Tools.SelectItem(selectCommand, "20", this.Text);
                 DialogResult returnResult = item.ShowDialog();
@@ -1253,16 +1253,16 @@ where Article!='' and w.cutref='{this.CurrentMaintain["cutref"]}' {sqlwhere}";
                 {
                     string scount = $@"
 select distinct count(Article)
-from workorder w WITH (NOLOCK) 
-inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkOrderForOutputUkey
 where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
                     string count = MyUtility.GetValue.Lookup(scount, null);
                     if (count != "0")
                     {
                         selectCommand = $@"
 select distinct Article ,w.Colorid
-from workorder w WITH (NOLOCK) 
-inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkOrderForOutputUkey
 where Article!='' and w.OrderID = '{this.CurrentMaintain["Orderid"]}' and w.mDivisionid = '{this.keyword}' {sqlwhere}";
                         this.at = 1;
                     }
@@ -1309,8 +1309,8 @@ ORDER BY Seq";
             {
                 sql = $@"
 select Article 
-from Workorder_Distribute WITH (NOLOCK) 
-where Article!='' and WorkorderUkey in ({(MyUtility.Check.Empty(this.WorkOrder_Ukey) ? string.Empty : this.WorkOrder_Ukey.Trim().Substring(0, this.WorkOrder_Ukey.Length - 1))}) and Article='{newvalue}'";
+from WorkOrderForOutput_Distribute WITH (NOLOCK) 
+where Article!='' and WorkOrderForOutputUkey in ({(MyUtility.Check.Empty(this.WorkOrder_Ukey) ? string.Empty : this.WorkOrder_Ukey.Trim().Substring(0, this.WorkOrder_Ukey.Length - 1))}) and Article='{newvalue}'";
                 if (DBProxy.Current.Select(null, sql, out dtTEMP))
                 {
                     if (dtTEMP.Rows.Count == 0)

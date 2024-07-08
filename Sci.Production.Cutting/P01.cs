@@ -254,17 +254,6 @@ where CuttingSp = '{0}'",
                 this.btnGarmentList.ForeColor = Color.Black;
             }
 
-            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
-            {
-                this.btnCutPartsCheckSummary.ForeColor = Color.Blue;
-                this.btnCutPartsCheck.ForeColor = Color.Blue;
-            }
-            else
-            {
-                this.btnCutPartsCheckSummary.ForeColor = Color.Black;
-                this.btnCutPartsCheck.ForeColor = Color.Black;
-            }
-
             if (MyUtility.Check.Empty(this.StyleUkey))
             {
                 this.btnProductionkit.ForeColor = Color.Black;
@@ -323,18 +312,6 @@ where CuttingSp = '{0}'",
             }
 
             var frm = new P01_Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString());
-            frm.ShowDialog(this);
-        }
-
-        // Cutpart Check Summary
-        private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain == null)
-            {
-                return;
-            }
-
-            var frm = new P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
 

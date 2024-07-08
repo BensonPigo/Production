@@ -236,6 +236,7 @@
     <Build Include="dbo\Tables\P_Changeover.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Changeover.sql" />
     <Build Include="dbo\Tables\P_FabricInspAvgInspLTInPast7Days.sql" />
+    <Build Include="dbo\Tables\P_MaterialCompletionRateByWeek.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

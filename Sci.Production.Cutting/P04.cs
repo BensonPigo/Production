@@ -69,23 +69,18 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string cmdsql = string.Format(
             @"
             Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,e.Refno,
-            (
-                Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-			    Where b.workorderukey = a.WorkOrderUkey and b.article!=''
-                For XML path('')
-            ) as article,
+            e.Article,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =a.WorkOrderUkey 
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =a.WorkOrderForPlanningUkey 
                 
                 For XML path('')
             ) as SizeCode,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty*e.layer)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =a.WorkOrderUkey and c.WorkOrderUkey = e.Ukey
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =a.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = e.Ukey
                
                 For XML path('')
             ) as CutQty,
@@ -113,7 +108,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
             From Cutplan_Detail a 
             inner join Cutplan b WITH(NOLOCK) on a.id = b.ID
-			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
+			INNER JOIN WorkOrderForPlanning e WITH (NOLOCK) ON a.WorkOrderForPlanningUkey = e.Ukey
 			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
             LEFT JOIN CutPlan_IssueCutDate ci WITH (NOLOCK) on ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
             LEFT JOIN CutReason Reason with (nolock) ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
@@ -172,8 +167,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
-            #region 清空WorkOrder 的Cutplanid
-            string clearCutplanidSql = string.Format("Update WorkOrder set cutplanid ='' where cutplanid ='{0}'", this.CurrentMaintain["ID"]);
+            #region 清空WorkOrderForPlanning 的Cutplanid
+            string clearCutplanidSql = string.Format("Update WorkOrderForPlanning set cutplanid ='' where cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             #endregion
             DualResult upResult;
             if (!(upResult = DBProxy.Current.Execute(null, clearCutplanidSql)))
@@ -194,7 +189,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
                         from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
-                        where a.id='{0}' and a.workorderukey = b.Ukey 
+                        where a.id='{0}' and a.WorkOrderForPlanningUkey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", this.CurrentMaintain["ID"]);
             #endregion
             string insertmk = string.Empty;
@@ -230,13 +225,13 @@ Select distinct o.POID as OrderID
 ,b.fabricCombo
 ,(
     Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where a.WorkOrderUkey =c.WorkOrderUkey            
+    From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+    Where a.WorkOrderForPlanningUkey =c.WorkOrderForPlanningUkey            
     For XML path('')
 ) as SizeRatio
 ,c.Width
-From WorkOrder b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK), orders o with(nolock) 
-Where a.workorderukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey
+From WorkOrderForPlanning b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK), orders o with(nolock) 
+Where a.WorkOrderForPlanningukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey
 and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             #endregion
 
@@ -378,7 +373,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
-            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
+            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkOrderForPlanningUkey");
             Gensong_AutoWHFabric.SentCutplan_Detail(true, dtDetail, isConfirmed);
         }
 
@@ -433,21 +428,16 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =cd.WorkOrderUkey 
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey 
                 
                 For XML path('')
             ) as SizeCode,
-            (
-                Select distinct Article+'/ ' 
-	            From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-	            Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
-                For XML path('')
-            ) as article,cd.colorid,
+            w.article,cd.colorid,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = w.Ukey
                
                 For XML path('')
             ) as CutQty,
@@ -464,7 +454,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             ,cd.remark 
             from Cutplan_Detail cd WITH (NOLOCK) 
             inner join Cutplan b WITH(NOLOCK) on cd.id = b.ID
-            inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
+            inner join WorkOrderForPlanning w on cd.WorkOrderForPlanningUkey = w.Ukey
             left join Fabric f on f.SCIRefno = w.SCIRefno
             OUTER APPLY
             (

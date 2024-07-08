@@ -1158,17 +1158,7 @@
 			this.lbshc.Size = new System.Drawing.Size(199, 13);
 			this.lbshc.TabIndex = 60;
 			this.lbshc.Text = "WWWWWWWWWWWWWWWW";
-			// 
-			// btnCutplanChangeHistory
-			// 
-			this.btnCutplanChangeHistory.Enabled = false;
-			this.btnCutplanChangeHistory.Location = new System.Drawing.Point(813, 3);
-			this.btnCutplanChangeHistory.Name = "btnCutplanChangeHistory";
-			this.btnCutplanChangeHistory.Size = new System.Drawing.Size(195, 30);
-			this.btnCutplanChangeHistory.TabIndex = 1;
-			this.btnCutplanChangeHistory.Text = "Cutplan Change History";
-			this.btnCutplanChangeHistory.UseVisualStyleBackColor = true;
-			this.btnCutplanChangeHistory.Click += new System.EventHandler(this.BtnCutplanChangeHistory_Click);
+
 			// 
 			// btnDist
 			// 

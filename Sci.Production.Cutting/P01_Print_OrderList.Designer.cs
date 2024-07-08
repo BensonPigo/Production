@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioGroupTTLConsumption = new Sci.Win.UI.RadioGroup();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
+            this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.label1 = new Sci.Win.UI.Label();
             this.comboTapeSort = new Sci.Win.UI.ComboBox();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
@@ -47,12 +50,9 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.label5 = new Sci.Win.UI.Label();
-            this.radioGroupTTLConsumption = new Sci.Win.UI.RadioGroup();
-            this.radioButton1 = new Sci.Win.UI.RadioButton();
-            this.radioButton2 = new Sci.Win.UI.RadioButton();
             this.groupBox1.SuspendLayout();
-            this.radioGroup1.SuspendLayout();
             this.radioGroupTTLConsumption.SuspendLayout();
+            this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -76,6 +76,43 @@
             this.groupBox1.Size = new System.Drawing.Size(410, 379);
             this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
+            // 
+            // radioGroupTTLConsumption
+            // 
+            this.radioGroupTTLConsumption.Controls.Add(this.radioButton1);
+            this.radioGroupTTLConsumption.Controls.Add(this.radioButton2);
+            this.radioGroupTTLConsumption.Location = new System.Drawing.Point(29, 162);
+            this.radioGroupTTLConsumption.Name = "radioGroupTTLConsumption";
+            this.radioGroupTTLConsumption.Size = new System.Drawing.Size(337, 36);
+            this.radioGroupTTLConsumption.TabIndex = 186;
+            this.radioGroupTTLConsumption.TabStop = false;
+            this.radioGroupTTLConsumption.Value = "S";
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton1.Location = new System.Drawing.Point(1, 12);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(156, 21);
+            this.radioButton1.TabIndex = 188;
+            this.radioButton1.Text = "Trade system format";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Value = "T";
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
+            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButton2.Location = new System.Drawing.Point(163, 12);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(157, 21);
+            this.radioButton2.TabIndex = 189;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Segmentation format";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.Value = "S";
             // 
             // label1
             // 
@@ -178,10 +215,10 @@
             this.radioCuttingWorkOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.radioCuttingWorkOrder.Location = new System.Drawing.Point(6, 20);
             this.radioCuttingWorkOrder.Name = "radioCuttingWorkOrder";
-            this.radioCuttingWorkOrder.Size = new System.Drawing.Size(163, 24);
+            this.radioCuttingWorkOrder.Size = new System.Drawing.Size(244, 24);
             this.radioCuttingWorkOrder.TabIndex = 0;
             this.radioCuttingWorkOrder.TabStop = true;
-            this.radioCuttingWorkOrder.Text = "Cutting Work Order";
+            this.radioCuttingWorkOrder.Text = "Cutting Work Order For Output";
             this.radioCuttingWorkOrder.UseVisualStyleBackColor = true;
             // 
             // radioEachConsumption
@@ -287,43 +324,6 @@
             this.label5.TextStyle.BorderColor = System.Drawing.Color.Transparent;
             this.label5.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // radioGroupTTLConsumption
-            // 
-            this.radioGroupTTLConsumption.Controls.Add(this.radioButton1);
-            this.radioGroupTTLConsumption.Controls.Add(this.radioButton2);
-            this.radioGroupTTLConsumption.Location = new System.Drawing.Point(29, 162);
-            this.radioGroupTTLConsumption.Name = "radioGroupTTLConsumption";
-            this.radioGroupTTLConsumption.Size = new System.Drawing.Size(337, 36);
-            this.radioGroupTTLConsumption.TabIndex = 186;
-            this.radioGroupTTLConsumption.TabStop = false;
-            this.radioGroupTTLConsumption.Value = "S";
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton1.Location = new System.Drawing.Point(1, 12);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(156, 21);
-            this.radioButton1.TabIndex = 188;
-            this.radioButton1.Text = "Trade system format";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Value = "T";
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Checked = true;
-            this.radioButton2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioButton2.Location = new System.Drawing.Point(163, 12);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(157, 21);
-            this.radioButton2.TabIndex = 189;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Segmentation format";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.Value = "S";
-            // 
             // P01_Print_OrderList
             // 
             this.ClientSize = new System.Drawing.Size(558, 400);
@@ -340,10 +340,10 @@
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.radioGroup1.ResumeLayout(false);
-            this.radioGroup1.PerformLayout();
             this.radioGroupTTLConsumption.ResumeLayout(false);
             this.radioGroupTTLConsumption.PerformLayout();
+            this.radioGroup1.ResumeLayout(false);
+            this.radioGroup1.PerformLayout();
             this.ResumeLayout(false);
 
         }

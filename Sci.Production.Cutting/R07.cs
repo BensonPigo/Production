@@ -16,10 +16,6 @@ namespace Sci.Production.Cutting
         private string Factory;
         private DateTime? EstCutDate1;
         private DateTime? EstCutDate2;
-        private string SpreadingNo1;
-        private string SpreadingNo2;
-        private string CutCell1;
-        private string CutCell2;
         private string CuttingSP;
         private decimal? WorkHoursDay;
 
@@ -40,10 +36,6 @@ namespace Sci.Production.Cutting
             this.Factory = this.txtfactory1.Text;
             this.EstCutDate1 = this.dateEstCutDate.Value1;
             this.EstCutDate2 = this.dateEstCutDate.Value2;
-            this.SpreadingNo1 = this.txtSpreadingNo1.Text;
-            this.SpreadingNo2 = this.txtSpreadingNo2.Text;
-            this.CutCell1 = this.txtCell1.Text;
-            this.CutCell2 = this.txtCell2.Text;
             this.CuttingSP = this.txtCuttingSp.Text;
             this.WorkHoursDay = this.numWorkHourDay.Value;
             return base.ValidateInput();
@@ -75,26 +67,6 @@ namespace Sci.Production.Cutting
                 where += $" and w.EstCutDate <=  '{((DateTime)this.EstCutDate2).ToString("yyyy/MM/dd")}' ";
             }
 
-            if (!MyUtility.Check.Empty(this.SpreadingNo1))
-            {
-                where += $" and w.SpreadingNoID >= '{this.SpreadingNo1}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.SpreadingNo2))
-            {
-                where += $" and w.SpreadingNoID <= '{this.SpreadingNo2}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.CutCell1))
-            {
-                where += $" and w.CutCellid >= '{this.CutCell1}' ";
-            }
-
-            if (!MyUtility.Check.Empty(this.CutCell2))
-            {
-                where += $" and w.CutCellid <= '{this.CutCell2}' ";
-            }
-
             if (!MyUtility.Check.Empty(this.CuttingSP))
             {
                 where += $" and w.ID = '{this.CuttingSP}' ";
@@ -103,14 +75,14 @@ namespace Sci.Production.Cutting
             sqlcmd = $@"
 select w.id,w.CutRef,w.MDivisionId,Layer=sum(w.Layer),Cons=sum(w.Cons)
 into #tmp2a
-from WorkOrder w with(nolock) 
+from WorkOrderForOutput w with(nolock) 
 where isnull(w.CutRef,'') <> ''
 {where}
 group by w.id,w.CutRef,w.MDivisionID
 
 select *
 into #tmp2a2
-from WorkOrder w with(nolock) 
+from WorkOrderForOutput w with(nolock) 
 where isnull(w.CutRef,'') = ''
 {where}
 
@@ -119,8 +91,8 @@ select t.id,t.CutRef,t.MDivisionId,t.Layer,t.Cons,
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
 from #tmp2a t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.id = t.id
-inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
+inner join WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef and w.id = t.id
+inner join WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w.Ukey
 group by t.id,t.CutRef,t.MDivisionId,t.Layer,t.Cons
 
 select distinct
@@ -129,7 +101,7 @@ select distinct
 	w.EstCutDate,
 	CutCellid=isnull(w.CutCellid,''),
 	SpreadingNoID=isnull(w.SpreadingNoID,''),
-	CutplanID=isnull(w.CutplanID,''),
+	CutplanID=isnull(wofp.CutplanID,''),
 	CutRef=isnull(w.CutRef,''),
 	ID=isnull(w.ID,''),
 	SubSP=isnull(subSp.SubSP,''),
@@ -162,7 +134,8 @@ select distinct
 	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
-inner join WorkOrder w with(nolock) on w.CutRef = t.CutRef and w.id = t.id
+inner join WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef and w.id = t.id
+LEFT join WorkOrderForPlanning wofp WITH(NOLOCK) on w.WorkOrderForPlanningUkey = wofp.Ukey
 inner join orders o with(nolock) on o.id = w.ID
 left join Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -172,8 +145,8 @@ left join CuttingTime ct WITH (NOLOCK) on ct.WeaveTypeID = f.WeaveTypeID
 outer apply(
 	select SubSP = stuff((
 		select distinct concat(',',wd.OrderID)
-		from WorkOrder w2 with(nolock)
-		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		from WorkOrderForOutput w2 with(nolock)
+		inner join WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w2.Ukey
 		where w2.CutRef = t.CutRef and w2.id = t.id
 		For XML path('')
 	),1,1,'')
@@ -181,8 +154,8 @@ outer apply(
 outer apply(
 	select Size = stuff((
 		select distinct concat(',',wd.SizeCode)
-		from WorkOrder w2 with(nolock)
-		inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		from WorkOrderForOutput w2 with(nolock)
+		inner join WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w2.Ukey
 		where w2.CutRef = t.CutRef and w2.id = t.id
 		For XML path('')
 	),1,1,'')
@@ -192,8 +165,8 @@ outer apply
 	select SizeCode = stuff(
 	(
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
-		From WorkOrder w2 with(nolock)
-		inner join WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
+		From WorkOrderForOutput w2 with(nolock)
+		inner join WorkOrderForOutput_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w2.Ukey
 		Where w2.CutRef = t.CutRef and w2.id = t.id
 		For XML path('')
 	),1,1,'')
@@ -214,6 +187,7 @@ outer apply(
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
 
+
 union all
 
 select t.MDivisionid,
@@ -221,7 +195,7 @@ select t.MDivisionid,
 	t.EstCutDate,
 	CutCellid=isnull(t.CutCellid,''),
 	SpreadingNoID=isnull(t.SpreadingNoID,''),
-	CutplanID=isnull(t.CutplanID,''),
+	CutplanID=isnull(wofp.CutplanID,''),
 	CutRef=isnull(t.CutRef,''),
 	ID=isnull(t.ID,''),
 	SubSP=isnull(subSp.SubSP,''),
@@ -253,6 +227,7 @@ select t.MDivisionid,
 	Refno=isnull(t.Refno,''),
 	WindowLength=isnull(ct.WindowLength,0)
 from #tmp2a2 t
+left join WorkOrderForPlanning wofp WITH(NOLOCK) on t.WorkOrderForPlanningUkey = wofp.Ukey
 inner join orders o with(nolock) on o.id = t.ID
 left join Fabric f with(nolock) on f.SCIRefno = t.SCIRefno
 left join SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -263,22 +238,22 @@ outer apply(
 	select 
 		noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
 		EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
-	from WorkOrder_Distribute wd with(nolock)
-	where wd.WorkOrderUkey = t.Ukey
+	from WorkOrderForOutput_Distribute wd with(nolock)
+	where wd.WorkOrderForOutputUkey = t.Ukey
 )EQ
 outer apply(
 	select SubSP = stuff((
 		select distinct concat(',',wd.OrderID)
-		from WorkOrder_Distribute wd with(nolock)
-		where wd.WorkOrderUkey = t.Ukey
+		from WorkOrderForOutput_Distribute wd with(nolock)
+		where wd.WorkOrderForOutputUkey = t.Ukey
 		For XML path('')
 	),1,1,'')
 )subSp
 outer apply(
 	select Size = stuff((
 		select distinct concat(',',wd.SizeCode)
-		from WorkOrder_Distribute wd with(nolock)
-		where wd.WorkOrderUkey = t.Ukey
+		from WorkOrderForOutput_Distribute wd with(nolock)
+		where wd.WorkOrderForOutputUkey = t.Ukey
 		For XML path('')
 	),1,1,'')
 )size
@@ -287,8 +262,8 @@ outer apply
 	select SizeCode = stuff(
 	(
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
-		From WorkOrder_SizeRatio wd WITH (NOLOCK)
-		Where wd.WorkOrderUkey = t.Ukey
+		From WorkOrderForOutput_SizeRatio wd WITH (NOLOCK)
+		Where wd.WorkOrderForOutputUkey = t.Ukey
 		For XML path('')
 	),1,1,'')
 )SizeCode
@@ -307,8 +282,6 @@ outer apply(
 	and t.Layer between cmd.LayerLowerBound and cmd.LayerUpperBound
 	and cmd.WeaveTypeID = f.WeaveTypeID 
 )ActSpd
-
-
 
 select MDivisionID,FactoryID,EstCutDate,CutCellid,SpreadingNoID,CutplanID,CutRef,ID,SubSP,StyleID,Size,noEXCESSqty,Description,WeaveTypeID,FabricCombo,
 	MarkerLength,PerimeterYd,Layer,SizeCode,Cons,EXCESSqty,NoofRoll,NoofWindow,ActualSpeed,
