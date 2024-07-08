@@ -189,7 +189,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
                         from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
-                        where a.id='{0}' and a.workorderukey = b.Ukey 
+                        where a.id='{0}' and a.WorkOrderForPlanningUkey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", this.CurrentMaintain["ID"]);
             #endregion
             string insertmk = string.Empty;
@@ -373,7 +373,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
-            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
+            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkOrderForPlanningUkey");
             Gensong_AutoWHFabric.SentCutplan_Detail(true, dtDetail, isConfirmed);
         }
 
