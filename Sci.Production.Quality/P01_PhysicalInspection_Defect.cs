@@ -60,10 +60,9 @@ namespace Sci.Production.Quality
             // 每5碼為一組
             for (int i = 0; i < actyds; i = i + 5)
             {
-                // 最後超過需-0.01的整數當做最後碼長
                 if (i + 5 >= actyds)
                 {
-                    cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(MyUtility.Convert.GetInt(Math.Floor(actyds - 0.01)), 3);
+                    cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(MyUtility.Convert.GetInt(Math.Floor(actyds)), 3);
                 }
                 else
                 {
