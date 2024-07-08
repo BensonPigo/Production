@@ -90,10 +90,10 @@ select [WK#] = kid.ExportID
      , [Type] = kcdp.CustomsType 
      , kcdp.CDCCode
      , [Customs Description] = kcdp.CDCName
-     , [CDC Qty] = Kid.Qty*kcdp2.Ratio
+     , [CDC Qty] = Kid.CDCQty
      , [CDC Unit] = kid.CDCUnit 
      , [CDC Unit Price] = kid.CDCUnitPrice 
-     , [CDC Amount] = CDCAmount.value
+     , [CDC Amount] = Kid.CDCQty * Kid.CDCUnitPrice
      , [Act.NW] = kid.ActNetKg 
      , [Act.GW] = kid.ActWeightKg 
 	 , [Act.Amount] = kid.ActAmount 
@@ -104,15 +104,9 @@ select [WK#] = kid.ExportID
  inner join KHCustomsItem kc on kc.Refno=Kid.Refno and kc.ukey= kid.KHCustomsItemUkey
  inner join KHCustomsItem_Detail kcd on kc.ukey=kcd.KHCustomsItemUkey and kcd.Port=Ki.ImportPort
  inner join KHCustomsDescription kcdp on kc.KHCustomsDescriptionCDCName = kcdp.CDCName
-  left join KHCustomsDescription_Detail kcdp2 on kcdp2.CDCName = kcdp.CDCName and kcdp2.PurchaseUnit = kid.UnitId
  outer apply (
 	select value = count(*) from FtyExport fe where fe.id=kid.exportid
  )IsLocalShipment
- outer apply(
-	select value = sum(t.Qty * t.CDCUnitPrice) * kcdp2.Ratio 
-	from KHImportDeclaration_Detail t
-	where t.Ukey = kid.ukey
- )CDCAmount
  where 1=1
 ";
 
