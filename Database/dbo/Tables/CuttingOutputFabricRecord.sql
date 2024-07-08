@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[CuttingOutputFabricRecord] (
     [Ukey]        BIGINT          IDENTITY (1, 1) NOT NULL,
-    [CutRef]      VARCHAR (6)     CONSTRAINT [DF_CuttingOutputFabricRecord_CutRef] DEFAULT ('') NOT NULL,
+    [CutRef]      VARCHAR (10)    CONSTRAINT [DF_CuttingOutputFabricRecord_CutRef] DEFAULT ('') NOT NULL,
     [MDivisionId] VARCHAR (8)     CONSTRAINT [DF_CuttingOutputFabricRecord_MDivisionId] DEFAULT ('') NOT NULL,
     [Seq1]        VARCHAR (3)     CONSTRAINT [DF_CuttingOutputFabricRecord_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]        VARCHAR (2)     CONSTRAINT [DF_CuttingOutputFabricRecord_Seq2] DEFAULT ('') NOT NULL,

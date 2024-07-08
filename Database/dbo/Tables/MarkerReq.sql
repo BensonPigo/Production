@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[MarkerReq] (
     [ID]          VARCHAR (13) CONSTRAINT [DF_MarkerReq_ID] DEFAULT ('') NOT NULL,
     [EstCutdate]  DATE         NULL,
-    [MDivisionid] VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionid] VARCHAR (8)  CONSTRAINT [DF_MarkerReq_MDivisionid] DEFAULT ('') NOT NULL,
     [CutCellID]   VARCHAR (2)  CONSTRAINT [DF_MarkerReq_CutCellID] DEFAULT ('') NOT NULL,
     [Status]      VARCHAR (15) CONSTRAINT [DF_MarkerReq_Status] DEFAULT ('') NULL,
     [Cutplanid]   VARCHAR (13) CONSTRAINT [DF_MarkerReq_Cutplanid] DEFAULT ('') NOT NULL,
@@ -10,6 +10,7 @@
     [EditName]    VARCHAR (10) CONSTRAINT [DF_MarkerReq_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME     NULL,
     [SendDate]    DATETIME     NULL,
+    [FactoryID]   VARCHAR (8)  CONSTRAINT [DF_MarkerReq_FactoryID] DEFAULT　('') NOT NULL
     CONSTRAINT [PK_MarkerReq] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -58,4 +59,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯者',
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq', @level2type = N'COLUMN', @level2name = N'EditDate';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'廠代' , @level0type = N'SCHEMA',@level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq', @level2type = N'COLUMN', @level2name = N'FactoryID'
 

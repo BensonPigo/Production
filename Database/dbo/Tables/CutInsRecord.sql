@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[CutInsRecord] (
     [Ukey]             BIGINT         IDENTITY (1, 1) NOT NULL,
-    [CutRef]           VARCHAR (6)    CONSTRAINT [DF_CutInsRecord_CutRef] DEFAULT ('') NOT NULL,
+    [CutRef]           VARCHAR (10)    CONSTRAINT [DF_CutInsRecord_CutRef] DEFAULT ('') NOT NULL,
     [MDivisionID]      VARCHAR (8)    NOT NULL,
     [ActualWidth]      NUMERIC (5, 2) NULL,
     [Description]      NVARCHAR (300) NULL,
