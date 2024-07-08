@@ -265,6 +265,7 @@ update p
 		, p.[FtyToClogTransit] = ISNULL(t.[Fty To Clog Transit], 0)
 		, p.[ClogToCFATansit] = ISNULL(t.[Clog To CFA Tansit], 0)
 		, p.[CFAToClogTransit] = ISNULL(t.[CFA To Clog Transit], 0)
+		, p.[Shortage] = ISNULL(t.[Shortage],0)
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -289,7 +290,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
-	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit])
+	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[FactoryID], '')
 	, [Delivery]
@@ -467,6 +468,7 @@ select ISNULL(t.[M], '')
 	, ISNULL([Fty To Clog Transit], 0)
     , ISNULL([Clog To CFA Tansit], 0)
     , ISNULL([CFA To Clog Transit], 0)
+	, ISNULL([Shortage],0)
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
