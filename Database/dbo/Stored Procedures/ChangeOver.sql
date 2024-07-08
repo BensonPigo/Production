@@ -191,8 +191,8 @@ BEGIN
 	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
 	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
 	WHERE 
-	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Checked] = 1 AND ID = CO.ID) = 0   AND CO.Inline > '2024-07-01'
-	AND EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
+	AND EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
 	
 	INSERT INTO ChgOver_Check
 	(
@@ -228,8 +228,8 @@ BEGIN
 	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
 	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CB.NO
 	WHERE
-	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
 
 
 	DELETE ChgOver_Check
@@ -239,6 +239,7 @@ BEGIN
 	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
 	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
 	WHERE 
-	(SELECT COUNT(1) FROM ChgOver_Check WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+
 END

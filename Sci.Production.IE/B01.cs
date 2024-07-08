@@ -256,8 +256,7 @@ select co.ID, co.FactoryID, co.Inline
 from ChgOver co with (nolock)
 where co.Category = @Category
 and co.Type = @StyleType
-and exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
-and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1)
+and exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.checked <> 1) 
 
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0

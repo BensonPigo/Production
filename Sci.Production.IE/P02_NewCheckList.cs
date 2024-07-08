@@ -104,38 +104,38 @@ namespace Sci.Production.IE
             ,[CHECKLISTS]  = CB.CheckList
             ,[Dep] = CKD.ResponseDep
             ,[LeadTime] = CKD.LeadTime
-            ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  iif(DaysLefCnt.val < 0 ,CONVERT( VARCHAR(10), 0) ,CONVERT( VARCHAR(10),DaysLefCnt.val )))
+            ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  CONVERT( VARCHAR(10),iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )))
             ,[Deadline] = CC.Deadline
             ,CC.[Checked]
             ,[CompletionDate] = CC.CompletionDate
-            ,[OverDays] = iif(CC.[Checked] = 0 , iif(isnull(OverDay_Check_0.VAL,0) < 0,0, isnull(OverDay_Check_0.VAL,0)) ,iif(isnull(OverDay_Check_1.VAL,0) < 0,0, isnull(OverDay_Check_1.VAL,0)))
+            ,[OverDays] = iif(CC.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL))
             ,CC.Remark
             ,[EditName] = CC.EditName
             ,[EditDate] = CC.EditDate
-            ,[OverDay_Check_0] = iif(isnull(OverDay_Check_0.VAL,0) < 0,0, isnull(OverDay_Check_0.VAL,0))
-            ,[OverDay_Check_1] = iif(isnull(OverDay_Check_1.VAL,0) < 0,0, isnull(OverDay_Check_1.VAL,0))
+            ,[OverDay_Check_0] = iif(OverDay_Check_0.VAL < 0,0, OverDay_Check_0.VAL)
+            ,[OverDay_Check_1] = iif(OverDay_Check_1.VAL < 0,0, OverDay_Check_1.VAL)
             ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
-            FROM ChgOver_Check CC
+            FROM ChgOver_Check CC WITH(NOLOCK)
             INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
-            LEFT JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
-            LEFT join ChgOverCheckList_Detail CKD WITH(NOLOCK) ON  CKD.ID = CK.ID
+            INNER JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
+            INNER join ChgOverCheckList_Detail CKD WITH(NOLOCK) ON  CKD.ID = CK.ID
             INNER JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.ID = CKD.ChgOverCheckListBaseID AND CB.[NO] = CC.[NO]
             OUTER APPLY
             (
-	            SELECT val = DATEDIFF(day,GETDATE(),CC.DeadLine) -( COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE()))
-	            FROM Holiday
+	            SELECT val = isnull(DATEDIFF(day,GETDATE(),CC.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
+	            FROM Holiday WITH(NOLOCK)
 	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
             )DaysLefCnt
             OUTER APPLY
             (
-	            SELECT val = DATEDIFF(day,CC.DeadLine,GETDATE()) -( COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE()))
-	            FROM Holiday
+	            SELECT val = isnull(DATEDIFF(day,CC.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
+	            FROM Holiday WITH(NOLOCK)
 	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
             )OverDay_Check_0
             OUTER APPLY
             (
-		        SELECT val = iif(CC.CompletionDate IS NULL, 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -( COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate)))
-	            FROM Holiday
+	            SELECT val = isnull(iif(CC.CompletionDate IS NULL, 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate))),0)
+	            FROM Holiday WITH(NOLOCK)
 	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
             )OverDay_Check_1
             WHERE CC.id = {this.KeyValue1}
