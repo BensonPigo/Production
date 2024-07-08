@@ -252,7 +252,7 @@ where not exists (
 delete t 
 from dbo.P_InventoryStockListReport t
 Outer Apply (
-    Select Data From SplitString(t.[ArriveWHDate], ';')
+    Select Date = cast(Data as Date) From SplitString(t.[ArriveWHDate], ';') WHERE Data <> ''
 )getArriveWHDate
 where 
 getArriveWHDate.Date Between @SDate and @eDate
