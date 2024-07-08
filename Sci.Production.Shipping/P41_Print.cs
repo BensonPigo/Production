@@ -229,9 +229,10 @@ and c.VNContractID = FirstStepFilterData.VNContractID) as CMP from FirstStepFilt
 ),
 tmpDetail
 as (
-select distinct e.InvNo,ed.OrderID,ed.StyleID,ed.SizeCode,ed.CustomSP,ed.ExportQty,[dbo].getOrderUnitPrice(2,ed.StyleUKey,ed.OrderID,ed.Article,ed.SizeCode) as FOB
+select e.InvNo,ed.OrderID,ed.StyleID,ed.SizeCode,ed.CustomSP,ExportQty = SUM(ed.ExportQty),[dbo].getOrderUnitPrice(2,ed.StyleUKey,ed.OrderID,ed.Article,ed.SizeCode) as FOB
 from SecondStepFilterData e
 inner join VNExportDeclaration_Detail ed WITH (NOLOCK) on e.ID = ed.ID
+Group by e.InvNo,ed.OrderID,ed.StyleID,ed.SizeCode,ed.CustomSP,ed.StyleUKey,ed.Article
 ),
 tmpSumDetail
 as (

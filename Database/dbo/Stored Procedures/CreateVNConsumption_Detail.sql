@@ -2,14 +2,6 @@
 	@ID varchar(15)
 AS
 begin
-Declare @StyleUKey bigint
-Declare @Article varchar(8)
-
-select top 1 @StyleUKey = StyleUKey,@Article = va.Article
-from VNConsumption v 
-left join VNConsumption_Article va WITH (NOLOCK) on va.ID = v.ID
-where v.ID = @ID
-
 DELETE VNConsumption_Detail where id = @ID
 
 select 
