@@ -157,23 +157,24 @@ select
 	ki.DeclareNo
 	, ki.Cdate
 	, x.ActHSCode
-    , kc.CustomsType as [Customs Type]
-	, kc.CDCName as [Customs Description]
-	, kc.CDCCode as [CDC Code]
+    , kid.CustomsType as [Customs Type]
+    , kid.CDCName as [Customs Description]
+    , kid.CDCCode as [CDC Code]
 	, kc.CDCUnit as [CDC Unit]
 	, kdQty.Value as [Total Qty]
-	, ks.OriTtlNetKg as [Ori Ttl N.W.]
-	, ks.OriTtlWeightKg as [Ori Ttl G.W.]
-	, ks.OriTtlCDCAmount as [Ori Ttl CDC Amount]
-    , ks.ActCDCQty as [ActCDCQty]
-	, ks.ActTtlNetKg as [Act. Ttl N.W.]
-	, ks.ActTtlWeightKg as [Act. Ttl G.W.]
-	, ks.ActTtlAmount as [Act. Ttl Amount]
+    , sum(ks.OriTtlNetKg) as [Ori Ttl N.W.]
+    , sum(ks.OriTtlWeightKg) as [Ori Ttl G.W.]
+    , sum(ks.OriTtlCDCAmount) as [Ori Ttl CDC Amount]
+    , sum(ks.ActCDCQty) as [ActCDCQty]
+    , sum(ks.ActTtlNetKg) as [Act. Ttl N.W.]
+    , sum(ks.ActTtlWeightKg) as [Act. Ttl G.W.]
+    , sum(ks.ActTtlAmount) as [Act. Ttl Amount]
 	, diffNW.Value as [N.W. Diff]
 	, diffGW.Value as [G.W. Diff]
 from KHImportDeclaration_ShareCDCExpense ks
 inner join KHImportDeclaration ki on ki.id = ks.id
 inner join KHCustomsDescription kc on ks.KHCustomsDescriptionCDCName=kc.CDCName
+outer apply (select distinct CustomsType,CDCName,CDCCode from KHImportDeclaration_Detail where ID = ki.ID and CDCName = kc.CDCName ) kid
 outer apply(
 	select ActHSCode =  stuff((
 		select distinct concat(',', ActHSCode)
@@ -244,6 +245,20 @@ and kc.CustomsType in ('Fabric','Accessory','Machine')
                 }
 
                 #endregion
+
+                sqlcmd += @"
+group by
+ki.DeclareNo
+, ki.Cdate
+, x.ActHSCode
+, kid.CustomsType
+, kid.CDCName
+, kid.CDCCode
+, kc.CDCUnit
+, kdQty.Value
+, diffNW.Value
+, diffGW.Value
+order by ki.cdate, ki.DeclareNo";
             }
 
             if (!(this.result = DBProxy.Current.Select(null, sqlcmd, out this.printData)))
