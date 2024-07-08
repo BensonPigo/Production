@@ -140,10 +140,10 @@ SELECT Distinct
      [NewComboType] = co.ComboType,
      [Style Type] = co.Type,
      [Category] = co.Category
-FROM ChgOver co
+FROM ChgOver co WITH (NOLOCK)
+INNER JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type' 
-LEFT JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
 LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccl.ID = ccld.ID
@@ -181,7 +181,7 @@ SELECT Distinct
     [Check List Item] = colb.CheckList,
     [Late Reason] = co.Remark
 FROM ChgOver_Check coc WITH (NOLOCK)
-LEFT JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
+INNER JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
@@ -300,7 +300,7 @@ WHERE 1 = 1
 
         private void TxtCell_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string selectCommand = "Select DISTINCT Cell = SewingCell from  SewingLine where SewingCell <> '' order by SewingCell ASC";
+            string selectCommand = "Select DISTINCT Cell = SewingCell from  SewingLine WITH (NOLOCK) where SewingCell <> '' order by SewingCell ASC";
 
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(selectCommand, string.Empty, this.txtCell.Text)
             {
@@ -319,7 +319,7 @@ WHERE 1 = 1
 
         private void TxtCategory_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string selectCommand = "select DISTINCT Category from ChgOver where Category <> '' order by Category ASC";
+            string selectCommand = "select DISTINCT Category from ChgOver WITH (NOLOCK) where Category <> '' order by Category ASC";
 
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(selectCommand, string.Empty, this.txtCategory.Text)
             {
@@ -338,7 +338,7 @@ WHERE 1 = 1
 
         private void TxtRD_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            string selectCommand = "select DISTINCT Dept from Employee where dept <> '' order by Dept ASC";
+            string selectCommand = "select DISTINCT Dept from Employee WITH (NOLOCK) where dept <> '' order by Dept ASC";
 
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(selectCommand, "Response Dep.", "20", this.txtCategory.Text)
             {
