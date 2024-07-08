@@ -477,6 +477,7 @@ where b.id is null and (c.poid is null or c.InQty = 0)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID = a.ID)
 and a.ShipQty = 0
 and not exists(select 1 from Production.dbo.Invtrans i where i.InventoryPOID = a.ID and i.InventorySeq1 = a.Seq1 and InventorySeq2 = a.Seq2 and i.Type = '1')
+and not exists (select 1 from Production.dbo.TransferExport_Detail ted where a.id = ted.poid and a.Seq1 = ted.Seq1 and a.Seq2 = ted.Seq2)
 
 UPDATE a
 SET  
@@ -598,6 +599,7 @@ where id in (select POID from Trade_To_Pms.dbo.PO_Delete)
 and (MDPoDetail.ttlQty+fty.ttlQty) = 0
 and po3.ShipQty  = 0
 and not exists(select 1 from Production.dbo.Invtrans i where i.InventoryPOID = po3.ID and i.InventorySeq1 = po3.Seq1 and InventorySeq2 = po3.Seq2 and i.Type = '1')
+and not exists (select 1 from Production.dbo.TransferExport_Detail ted where po3.id = ted.poid and po3.Seq1 = ted.Seq1 and po3.Seq2 = ted.Seq2)
 
 CREATE CLUSTERED INDEX IDX_PO3_index ON #deletePo3
 (
