@@ -72,6 +72,7 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[StyleSeason] [nvarchar](max) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
+    [LastDownloadAPSDate] [datetime] NULL
  CONSTRAINT [PK_P_SewingLineSchedule] PRIMARY KEY CLUSTERED 
 (
 	[APSNo] ASC,
