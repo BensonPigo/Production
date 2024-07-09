@@ -82,6 +82,84 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EDate", eDate),
                 };
                 string sql = @"	
+
+
+select t.*
+into #Update
+from P_SewingLineSchedule t 
+inner join #tmp s on t.APSNo = s.APSNo 
+				AND t.SewingDay = s.SewingDay 
+				AND t.SewingLineID = s.SewingLineID  
+				AND t.Sewer = s.Sewer 
+				AND t.FactoryID = s.FactoryID
+where t.SewingStartTime <>  s.SewingStartTime
+   or t.SewingEndTime <>  s.SewingEndTime
+   or t.MDivisionID <>  s.MDivisionID
+   or t.PO <>  s.PO
+   or t.POCount <>  s.POCount
+   or t.SP <>  s.SP
+   or t.SPCount <>  s.SPCount
+   or t.EarliestSCIdelivery <>  s.EarliestSCIdelivery 
+   or t.LatestSCIdelivery <>  s.LatestSCIdelivery 
+   or t.EarliestBuyerdelivery <>  s.EarliestBuyerdelivery 
+   or t.LatestBuyerdelivery <>  s.LatestBuyerdelivery 
+   or t.Category <>  s.Category 
+   or t.Colorway <>  s.Colorway 
+   or t.ColorwayCount <>  s.ColorwayCount 
+   or t.CDCode <>  s.CDCode 
+   or t.ProductionFamilyID <>  s.ProductionFamilyID 
+   or t.Style <>  s.Style 
+   or t.StyleCount <>  s.StyleCount 
+   or t.OrderQty <>  s.OrderQty 
+   or t.AlloQty <>  s.AlloQty 
+   or t.StardardOutputPerDay <>  s.StardardOutputPerDay 
+   or t.CPU <>  s.CPU 
+   or t.WorkHourPerDay <>  s.New_WorkHourPerDay 
+   or t.StardardOutputPerHour <>  s.StardardOutputPerHour 
+   or t.Efficienycy <>  s.Efficienycy 
+   or t.ScheduleEfficiency <>  s.ScheduleEfficiency 
+   or t.LineEfficiency <>  s.LineEfficiency 
+   or t.LearningCurve <>  s.LearningCurve 
+   or t.SewingInline <>  s.SewingInline 
+   or t.SewingOffline <>  s.SewingOffline 
+   or t.PFRemark <>  s.PFRemark 
+   or t.MTLComplete <>  s.MTLComplete 
+   or t.KPILETA <>  s.KPILETA 
+   or t.MTLETA <>  s.MTLETA 
+   or t.ArtworkType <>  s.ArtworkType 
+   or t.InspectionDate <>  s.InspectionDate 
+   or t.Remarks <>  s.Remarks 
+   or t.CuttingOutput <>  s.CuttingOutput 
+   or t.SewingOutput <>  s.SewingOutput 
+   or t.ScannedQty <>  s.ScannedQty 
+   or t.ClogQty <>  s.ClogQty 
+   or t.SewingCPU <>  s.SewingCPU 
+   or t.BrandID <>  s.BrandID 
+   or t.Orig_WorkHourPerDay <>  s.Orig_WorkHourPerDay 
+   or t.New_SwitchTime <>  s.New_SwitchTime 
+   or t.FirststCuttingOutputDate <>  s.FirststCuttingOutputDate 
+   or t.CDCodeNew <> s.CDCodeNew 
+   or t.ProductType <> s.ProductType 
+   or t.FabricType <> s.FabricType 
+   or t.Lining <> s.Lining 
+   or t.Gender <> s.Gender 
+   or t.Construction <> s.Construction 
+   or t.[TTL_PRINTING (PCS)] <> s.[TTL_PRINTING (PCS)] 
+   or t.[TTL_PRINTING PPU (PPU)] <> s.[TTL_PRINTING PPU (PPU)] 
+   or t.SubCon <> s.SubCon 
+   or t.[Subcon Qty] <> s.[Subcon Qty] 
+   or t.[Std Qty for printing] <> s.[Std Qty for printing] 
+   or t.StyleName <> s.StyleName 
+   or t.StdQtyEMB <> s.StdQtyEMB 
+   or t.EMBStitch <> s.EMBStitch 
+   or t.EMBStitchCnt <> s.EMBStitchCnt 
+   or t.TtlQtyEMB <> s.TtlQtyEMB 
+   or t.PrintPcs <> s.PrintPcs 
+   or t.InlineCategory <> s.InlineCategory 
+   or t.StyleSeason <> s.StyleSeason 
+   or t.AddDate <> s.AddDate 
+   or t.EditDate <> s.EditDate
+
 delete t
 from P_SewingLineSchedule t
 where exists (select 1 from #tmp s where t.APSNo = s.APSNo 
@@ -170,13 +248,18 @@ UPDATE t
 		t.StyleSeason = s.StyleSeason,
 		t.AddDate = s.AddDate,
 		t.EditDate = s.EditDate,
-		t.LastDownloadAPSDate = s.LastDownloadAPSDate
+		t.LastDownloadAPSDate = iif(u.LastDownloadAPSDate is not null, u.LastDownloadAPSDate, t.LastDownloadAPSDate)
 from P_SewingLineSchedule t 
 inner join #tmp s on t.APSNo = s.APSNo 
 				AND t.SewingDay = s.SewingDay 
 				AND t.SewingLineID = s.SewingLineID  
 				AND t.Sewer = s.Sewer 
 				AND t.FactoryID = s.FactoryID
+Left join #Update u on t.APSNo = u.APSNo 
+				AND t.SewingDay = u.SewingDay 
+				AND t.SewingLineID = u.SewingLineID  
+				AND t.Sewer = u.Sewer 
+				AND t.FactoryID = u.FactoryID
 
 
 insert into P_SewingLineSchedule ([APSNo], [SewingLineID], [SewingDay], [SewingStartTime], [SewingEndTime]
