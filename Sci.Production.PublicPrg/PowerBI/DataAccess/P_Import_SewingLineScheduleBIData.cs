@@ -84,7 +84,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = @"	
 
 
-select t.*
+select s.*
 into #Update
 from P_SewingLineSchedule t 
 inner join #tmp s on t.APSNo = s.APSNo 
