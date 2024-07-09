@@ -336,7 +336,10 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             }
 
             DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
-            this.disPulloutDate.Text = MyUtility.Convert.GetDate(dt.Compute("MIN(PulloutDate)", string.Empty)).ToStringEx("yyyy/MM/dd");
+            if (dt != null)
+            {
+                this.disPulloutDate.Text = MyUtility.Convert.GetDate(dt.Compute("MIN(PulloutDate)", string.Empty)).ToStringEx("yyyy/MM/dd");
+            }
         }
 
         private void SumData()
@@ -495,7 +498,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 if (this.EditMode)
                 {
                     DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
- 
+
                     // 輸入的Pullout date或原本的Pullout date的Pullout Report如果已經Confirmed的話，就不可以被修改
                     if (this.gridDetailPackingList.Columns[e.ColumnIndex].DataPropertyName == this.col_pulloutdate.DataPropertyName)
                     {
