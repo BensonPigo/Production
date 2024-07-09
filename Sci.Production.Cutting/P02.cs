@@ -52,12 +52,18 @@ namespace Sci.Production.Cutting
                 this.Text = "P02. WorkOrder For Planning";
                 this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 0";
                 this.IsSupportEdit = true;
+                this.btnAutoRef.Enabled = true;
+                this.insertSizeRatioToolStripMenuItem.Enabled = true;
+                this.deleteSizeRatioToolStripMenuItem.Enabled = true;
             }
             else
             {
                 this.Text = "P02. WorkOrder For Planning(History)";
                 this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
                 this.IsSupportEdit = false;
+                this.btnAutoRef.Enabled = false;
+                this.insertSizeRatioToolStripMenuItem.Enabled = false;
+                this.deleteSizeRatioToolStripMenuItem.Enabled = false;
             }
 
             this.displayBoxFabricTypeRefno.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricTypeRefNo", true));
@@ -127,6 +133,10 @@ SELECT
    --沒有顯示的欄位
    ,tmpKey = CAST(0 AS BIGINT) --控制新加的資料用,SizeRatio/PatternPanel
    ,ImportML = CAST(0 AS BIT)
+   --- 排序用
+   ,SORT_NUM = 0
+   ,multisize.multisize
+   ,Order_SizeCode_Seq.Order_SizeCode_Seq
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -161,6 +171,19 @@ OUTER APPLY (
         WHERE WorkOrderForPlanningUkey = wo.Ukey
         FOR XML PATH ('')), 1, 1, '')
 ) ws2
+outer apply
+(
+	Select multisize = iif(count(size.sizecode)>1,2,1) 
+	From WorkOrderForPlanning_SizeRatio size WITH (NOLOCK) 
+	Where wo.ukey = size.WorkOrderForPlanningUkey
+) as multisize
+outer apply
+(
+	select Order_SizeCode_Seq = max(c.Seq)
+	from WorkOrderForPlanning_SizeRatio b WITH (NOLOCK)
+	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
+	where b.WorkOrderForPlanningUkey = wo.Ukey
+) as Order_SizeCode_Seq
 OUTER APPLY (
     SELECT val = IIF(psd.Complete = 1, psd.FinalETA, IIF(psd.Eta IS NOT NULL, psd.eta, IIF(psd.shipeta IS NOT NULL, psd.shipeta, psd.finaletd)))
     FROM PO_Supp_Detail psd WITH (NOLOCK)
@@ -169,6 +192,8 @@ OUTER APPLY (
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
 WHERE wo.id = '{masterID}'
+
+ORDER BY SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
 ";
 
             string cmdsql = $@"
@@ -211,6 +236,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()))); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            this.Sorting();
         }
 
         private void GetAllDetailData()
@@ -234,7 +260,7 @@ WHERE wp.ID = '{cuttingID}'
 SELECT
     InlineDate = CONVERT(DATE, MIN(s.Inline), 111)
    ,SP = o.ID
-   ,Qty = SUM(ISNULL(s.AlloQty,0))
+   ,Qty = SUM(ISNULL(o.Qty,0) + ISNULL(o.FOC,0))
 FROM Orders o WITH (NOLOCK)
 LEFT JOIN SewingSchedule s WITH (NOLOCK) ON s.OrderID = o.ID
 WHERE o.POID = '{cuttingID}'
@@ -402,7 +428,7 @@ ORDER BY
             this.sizeRatiobs.Filter = filter;
 
             // 根據左邊Grid Filter 右邊 Order List 資訊
-            this.orderListBindingSource.Filter = $@"SP = '{this.CurrentDetailData["OrderID"]}' ";
+            //this.orderListBindingSource.Filter = $@"SP = '{this.CurrentDetailData["OrderID"]}' ";
         }
 
         protected override void DoPrint()
@@ -444,10 +470,41 @@ ORDER BY
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode;
+                this.btnImportMarker.Enabled = !this.Text.Contains("History") && this.GetWorkType() == "1" && !this.EditMode;
             }
         }
 
+        private void Sorting()
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            // 編輯時，將[SORT_NUM]賦予流水號
+            base.ClickEditAfter();
+
+            // 編輯時，將[SORT_NUM]賦予流水號
+            int serial = 1;
+            this.detailgridbs.SuspendBinding();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["SORT_NUM"] = serial;
+                serial++;
+            }
+
+            this.detailgridbs.ResumeBinding();
+            this.detailgrid.SelectRowTo(0);
+            ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
+        }
         #endregion
 
         #region Click Save Event
@@ -630,6 +687,11 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["SORT_NUM"] = 0;  // 編輯後存檔，將[SORT_NUM]歸零
+            }
+
             this.OnRefreshClick();
         }
 
@@ -831,6 +893,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
+                this.CurrentDetailData["SORT_NUM"] = oldRow["SORT_NUM"];
 
                 // WorkType = 2 才會有SP#
                 if (index == -1 && this.CurrentMaintain["WorkType"].ToString() == "2")
@@ -1153,6 +1216,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             this.OnRefreshClick();
             AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
             this.OnRefreshClick();
+            this.Sorting();  // 避免順序亂掉
         }
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)

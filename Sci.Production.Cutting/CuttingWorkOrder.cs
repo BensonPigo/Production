@@ -3310,7 +3310,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
             string tbPatternPanel = tableName + "_PatternPanel";
             string tbDistribute = tableName + "_Distribute";
             string tbSizeRatio = tableName + "_SizeRatio";
-            bool isTbPatternPanel = this.CheckTableExist(tbPatternPanel);
+            //bool isTbPatternPanel = this.CheckTableExist(tbPatternPanel);
             bool isTbDistribute = this.CheckTableExist(tbDistribute); // 基本上P09(也就是ForOutput才有Distribute表)
             bool isTbSizeRatio = this.CheckTableExist(tbSizeRatio);
             string tbUkey = tableName + "Ukey";

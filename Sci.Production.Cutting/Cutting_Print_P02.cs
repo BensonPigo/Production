@@ -1,18 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Windows.Forms;
 using Ict;
-using Sci.Data;
-using System.Data.SqlClient;
-using Excel = Microsoft.Office.Interop.Excel;
-using System.Runtime.InteropServices;
-using System.Linq;
-using ZXing;
-using ZXing.QrCode.Internal;
-using ZXing.QrCode;
-using System.Text.RegularExpressions;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
 namespace Sci.Production.Cutting
@@ -74,6 +62,14 @@ namespace Sci.Production.Cutting
         }
 
         /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.txtCutPlanStart.ReadOnly = true;
+            this.txtCutPlanEnd.ReadOnly = true;
+        }
+
+        /// <inheritdoc/>
         protected override bool ValidateInput()
         {
             this.printType = this.radioByCutRefNo.Checked ? "Cutref" : "Cutplanid";
@@ -125,16 +121,26 @@ namespace Sci.Production.Cutting
         {
             this.txtCutRefNoStart.Text = this.CutRef;
             this.txtCutRefNoEnd.Text = this.CutRef;
+            this.txtCutRefNoStart.ReadOnly = false;
+            this.txtCutRefNoEnd.ReadOnly = false;
+
             this.txtCutPlanStart.Text = string.Empty;
             this.txtCutPlanEnd.Text = string.Empty;
+            this.txtCutPlanStart.ReadOnly = true;
+            this.txtCutPlanEnd.ReadOnly = true;
         }
 
         private void RadioByCutplanId_CheckedChanged(object sender, EventArgs e)
         {
             this.txtCutRefNoStart.Text = string.Empty;
             this.txtCutRefNoEnd.Text = string.Empty;
+            this.txtCutRefNoStart.ReadOnly = true;
+            this.txtCutRefNoEnd.ReadOnly = true;
+
             this.txtCutPlanStart.Text = this.CutplanID;
             this.txtCutPlanEnd.Text = this.CutplanID;
+            this.txtCutPlanStart.ReadOnly = false;
+            this.txtCutPlanEnd.ReadOnly = false;
         }
     }
 }
