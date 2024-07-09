@@ -238,6 +238,7 @@
     <Build Include="dbo\Tables\P_FabricInspAvgInspLTInPast7Days.sql" />
     <Build Include="dbo\Tables\P_MaterialCompletionRateByWeek.sql" />
     <Build Include="dbo\Tables\P_MonthlySewingOutputSummary.sql" />
+    <Build Include="dbo\Tables\P_InventoryStockListReport.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
