@@ -788,7 +788,7 @@ Outer Apply(
 	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] =  CASE WHEN lm.SourceTable = 'IE P03' THEN IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-					  WHEN lm.SourceTable = 'IE P06' THEN  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestGSD) * b.CPU / lm.CurrentOperators )
+					  WHEN lm.SourceTable = 'IE P06' THEN  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 				 ELSE 0 END	
 	from #FinalAfterData lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
@@ -815,7 +815,7 @@ Outer Apply(
 													)
 				   ELSE 0 END AS DECIMAL(7,2))
 	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
-	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN 0
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN NULL
 			 ELSE 0 END
 	from #FinalBeforeData lm
 	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID --and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 

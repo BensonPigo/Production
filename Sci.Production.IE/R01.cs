@@ -310,7 +310,11 @@ namespace Sci.Production.IE
             }
 
             excel.Cells.EntireColumn.AutoFit();
-            excel.Cells.EntireRow.AutoFit();
+            excel.ActiveWorkbook.Worksheets[1].Columns["P"].ColumnWidth = 30;
+            excel.ActiveWorkbook.Worksheets[2].Columns["K"].ColumnWidth = 20;
+            excel.ActiveWorkbook.Worksheets[2].Columns["L"].ColumnWidth = 20;
+            excel.ActiveWorkbook.Worksheets[2].Columns["M"].ColumnWidth = 30;
+            excel.ActiveWorkbook.Worksheets[2].Columns["N"].ColumnWidth = 30;
             this.HideWaitMessage();
 
             #region Save & Show Excel
@@ -508,9 +512,9 @@ select distinct
     TotalGSD = DetailSum.TotalGSD,
 	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
     GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
-	ActCycleTimeAvg = IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators),  ---- 公式: [Total Cycle time] / [Current Oprts]
-	ActTimeDiffAvg = IIF( IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators) = 0 ,0,  
-		(IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators) - DetailSum.TotalCycle) / IIF(lm.CurrentOperators = 0, 0, DetailSum.TotalCycle / lm.CurrentOperators)
+	ActCycleTimeAvg = IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators),  ---- 公式: [Total Cycle time] / [Current Oprts] 兩個都是表頭欄位
+	ActTimeDiffAvg = IIF( IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators) = 0 ,0,  
+		(IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators) - DetailSum.TotalCycle) / IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators)
 		), 　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = lbr.name,
     IsFrom = 'IE P03'
@@ -785,8 +789,8 @@ select distinct
     TotalGSD = DetailSum.TotalGSD,
 	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
     GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
-	ActCycleTimeAvg = IIF(lm. SewerManpower = 0, 0, DetailSum.TotalCycle / lm. SewerManpower),  ---- 公式: [Total Cycle time] / [Current Oprts]
-	ActTimeDiffAvg = IIF((DetailSum.TotalCycle / lm. SewerManpower) = 0, 0, ( (DetailSum.TotalCycle / lm. SewerManpower) - DetailSum.TotalCycle ) / (DetailSum.TotalCycle / lm. SewerManpower)),　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
+	ActCycleTimeAvg = IIF(lm.SewerManpower = 0, 0, 1.0 * lm.TotalCycleTime / lm. SewerManpower),  ---- 公式: [Total Cycle time] / [Current Oprts] 兩個都是表頭欄位
+	ActTimeDiffAvg = IIF((1.0 * lm.TotalCycleTime / lm. SewerManpower) = 0, 0, ( (1.0 * lm.TotalCycleTime / lm. SewerManpower) - lm.TotalCycleTime ) / (1.0 * lm.TotalCycleTime / lm.SewerManpower)),　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = '',
     IsFrom = 'IE P06'
 from #LineMappingBalancing lm WITH (NOLOCK) 
@@ -1509,8 +1513,6 @@ select distinct
 	lm.Version,
 	lm.SewingLineID,
 	lm.Team,
-	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = IIF(lm.TotalCycle=0, 0,  ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour),
 
 	[Current # of Optrs] = Cast( lm.CurrentOperators as int),
 
@@ -1528,6 +1530,8 @@ select distinct
 
 	[CPU / PC] = s.CPU,
 	[No. of Hours] = lm.Workhour,
+	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
+	[Daily Demand / Shift] = IIF(lm.TotalCycle=0, 0,  ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour),
 
     ---- P03 為空
 	[Optrs of Presser] = 0,
@@ -1698,8 +1702,6 @@ select distinct
 	SewingLineID = '',
 	Team = '',
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Daily Demand / Shift] = 0.0,
 
 	[Current # of Optrs] = Cast( lm.SewerManpower as int),
 
@@ -1717,6 +1719,8 @@ select distinct
 
 	[CPU / PC] = s.CPU,
 	[No. of Hours] = lm.Workhour,
+	---- 公式：P05沒有TotalCycle，所以為0
+	[Daily Demand / Shift] = 0.0,
 
 	[Optrs of Presser] = Cast( lm.PresserManpower as int),
 	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
@@ -1873,8 +1877,6 @@ select distinct
 	lm.SewingLineID,
 	lm.Team,
 
-	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour,
 
 	[Current # of Optrs] = Cast(lm.SewerManpower as int),
 
@@ -1892,6 +1894,8 @@ select distinct
 
 	[CPU / PC] = s.CPU,
 	[No. of Hours] = lm.Workhour,
+	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
+	[Daily Demand / Shift] = ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour,
 
     ---- P03 為空
 	[Optrs of Presser] = Cast( lm.PresserManpower as int),
