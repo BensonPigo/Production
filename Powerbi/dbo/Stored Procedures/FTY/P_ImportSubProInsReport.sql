@@ -16,7 +16,7 @@ select
     O.SewInLine,
 	B.Sewinglineid,
     SR.Shift,
-	[RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
+	[RFT] = IIF(isnull(A.InspectQty,0) = 0, 0, round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2))
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,
@@ -84,7 +84,7 @@ select
     O.SewInLine,
     BR.Sewinglineid,
     SR.Shift,
-	[RFT] = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0),
+	[RFT] = IIF(isnull(A.InspectQty,0) = 0, 0, round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2))
 	SR.SubProcessID,
 	SR.BundleNo,
     [Artwork] = Artwork.val,

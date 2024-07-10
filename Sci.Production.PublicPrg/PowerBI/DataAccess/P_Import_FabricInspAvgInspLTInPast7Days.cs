@@ -21,7 +21,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!eDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
