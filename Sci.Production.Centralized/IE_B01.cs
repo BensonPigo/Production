@@ -51,20 +51,33 @@ namespace Sci.Production.Centralized
             }
             #endregion
             #region 檢查重複
-            DataTable dt;
+            DataTable[] dt;
             IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
             cmds.Add(new System.Data.SqlClient.SqlParameter() { ParameterName = "@No", Value = this.CurrentMaintain["No"].ToString() });
             cmds.Add(new System.Data.SqlClient.SqlParameter() { ParameterName = "@CheckList", Value = this.CurrentMaintain["CheckList"].ToString() });
-            string sql = @"select ID from ChgOverCheckListBase where No = @No and CheckList = @CheckList";
+            cmds.Add(new System.Data.SqlClient.SqlParameter() { ParameterName = "@ID", Value = this.CurrentMaintain["ID"].ToString() });
+            string sql = @"
+select ID From ChgOverCheckListBase where No = @No and ID != @ID 
+select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
+";
             DBProxy.Current.Select("ProductionTPE", sql, cmds, out dt);
-            if (dt.Rows.Count > 0)
+            string message = string.Empty;
+            if (dt[0].Rows.Count > 0)
             {
-                if (dt.Rows[0]["ID"].ToString() != this.CurrentMaintain["ID"].ToString())
-                {
-                    MyUtility.Msg.WarningBox("This <No> + <Check List> already exists!", "Warning");
-                    return false;
-                }
+                message += "This No: <No> already exists!" + Environment.NewLine;
             }
+
+            if (dt[1].Rows.Count > 0)
+            {
+                message += "This CheckList: <CheckList> already exists!" + Environment.NewLine;
+            }
+
+            if (!message.Empty())
+            {
+                MyUtility.Msg.WarningBox(message, "Warning");
+                return false;
+            }
+
             #endregion
 
             return base.ClickSaveBefore();
