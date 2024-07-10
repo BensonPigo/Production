@@ -188,7 +188,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string insert_cons = string.Format(
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
-                        from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
+                        from Cutplan_Detail a WITH (NOLOCK) ,WorkOrderForPlanning b WITH (NOLOCK) 
                         where a.id='{0}' and a.WorkOrderForPlanningUkey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", this.CurrentMaintain["ID"]);
             #endregion
