@@ -173,7 +173,15 @@ BEGIN
 	) c
 	where c.ID = ChgOver.ID
 
-		----------------ChgOver_Check-------------------------------
+	----------------ChgOver_Check-------------------------------
+	DELETE ChgOver_Check
+	FROM ChgOver CO WITH(NOLOCK)
+	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
+	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 	
+	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
+	WHERE 
+	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
 
 	UPDATE ChgOver_Check SET
 	--SElect
@@ -189,10 +197,10 @@ BEGIN
 	FROM ChgOver CO WITH(NOLOCK)
 	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
 	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
-	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
+	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
 	WHERE 
 	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
-	AND EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	AND EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
 	
 	INSERT INTO ChgOver_Check
 	(
@@ -208,6 +216,7 @@ BEGIN
 		,[LeadTime]
 		,[EditName]
 		,[EditDate]
+		,[ResponseDep]
 	)
 	SELECT
 	[ID] = CO.ID
@@ -222,24 +231,13 @@ BEGIN
 	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
 	,[EditName] = ''
 	,[EditDate] = NULL
+	,[ResponseDep] = ISNULL(CCLD.ResponseDep,'')
 	FROM ChgOver CO WITH(NOLOCK)
 	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
 	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
 	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
-	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CB.NO
 	WHERE
 	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
-
-
-	DELETE ChgOver_Check
-	--Select*
-	FROM ChgOver CO WITH(NOLOCK)
-	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
-	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
-	LEFT JOIN ChgOver_Check COC WITH(NOLOCK) ON COC.ID = CO.ID AND COC.ChgOverCheckListID = CCL.ID AND COC.NO = CCLD.ChgOverCheckListBaseID 
-	WHERE 
-	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID AND No = isnull(ccld.ChgOverCheckListBaseID,0) and ChgOverCheckListID = isnull(ccl.id,0))
+	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
 
 END

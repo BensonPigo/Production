@@ -13,6 +13,7 @@
     [No] INT NOT NULL, 
     [CompletionDate] DATE NULL, 
     [Deadline] DATE NULL, 
+    [ResponseDep] NVARCHAR(200) NULL DEFAULT (''), 
     CONSTRAINT [PK_ChgOver_Check] PRIMARY KEY CLUSTERED ([ID] ASC, [ChgOverCheckListID] ASC)
 );
 
@@ -126,3 +127,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'ChgOver_Check',
     @level2type = N'COLUMN',
     @level2name = N'Deadline'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'負責部門',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ChgOver_Check',
+    @level2type = N'COLUMN',
+    @level2name = N'ResponseDep'
