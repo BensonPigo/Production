@@ -594,13 +594,27 @@ else
 				select id from #tmpOrders as t 
 				where not exists(select 1 from #TOrder as s where t.id=s.ID)
 			)
-			and (exists (select 1 
-						from Production.dbo.PO_Supp_Detail p
-						left join MDivisionPoDetail c on p.id = c.poid and p.SEQ1=c.Seq1 and p.SEQ2=c.Seq2
-						where a.ID = p.ID and (p.ShipQty  > 0 or c.InQty > 0))
-				 or
-				 exists (select 1 from Production.dbo.Invtrans i where i.InventoryPOID = a.ID and i.Type = '1')						
+			and 
+			(
+				exists 
+				(	
+					select 1 
+					from Production.dbo.PO_Supp_Detail p
+					left join MDivisionPoDetail c on p.id = c.poid and p.SEQ1=c.Seq1 and p.SEQ2=c.Seq2
+					where a.ID = p.ID and (p.ShipQty  > 0 or c.InQty > 0)
 				)
+				or　exists 
+				(
+					select 1 from Production.dbo.Invtrans i where i.InventoryPOID = a.ID and i.Type = '1'
+				)						
+				or exists 
+				(
+					select 1 
+					from Production.dbo.PO_Supp_Detail p
+					left join Production.dbo.TransferExport_Detail ted on p.id = ted.poid and p.Seq1　=　ted.Seq1 and p.Seq2 = ted.Seq2
+					where a.ID = p.ID
+				)
+			)
 		) as s
 		on t.id = s.id
 		when matched then 
@@ -3699,47 +3713,59 @@ Delete b
 from Production.dbo.Order_UnitPrice b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
--------------------------------------[dbo].[PO]
-Delete b
-from Production.dbo.PO b
-where id in (select POID from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
-and 0 = (
-	select sum(psd.ShipQty) 
-	from Production.dbo.PO_Supp_Detail psd 
-	where psd.id = b.id)
--------------------------------------[dbo].[PO_Supp]
-Delete b
-from Production.dbo.PO_Supp b
-where id in (select POID from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
-and 0 = (
-	select sum(psd.ShipQty) 
-	from Production.dbo.PO_Supp_Detail psd 
-	where psd.id = b.id
-	and psd.SEQ1 = b.SEQ1)
+
 -------------------------------------[dbo].[PO_Supp_Detail]
-Delete b
+-- 因為這條件比較多, 所以該先刪除PO_Supp_Detail
+delete b
 from Production.dbo.PO_Supp_Detail b
 left join Production.dbo.MDivisionPoDetail c on b.id = c.poid and b.SEQ1=c.Seq1 and b.SEQ2=c.Seq2
-where id in (select POID from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
+where id in (
+	select POID from #tmpOrders as t 
+	where not exists(select 1 from #TOrder as s where t.id=s.ID)
+)
 and b.ShipQty = 0
 and (c.poid is null or c.InQty = 0)
 and not exists(select 1 from Production.dbo.Invtrans i where i.InventoryPOID = b.ID and i.InventorySeq1 = b.Seq1 and InventorySeq2 = b.Seq2 and i.Type = '1')
+and not exists (select 1 from Production.dbo.TransferExport_Detail ted where b.id = ted.poid and b.Seq1 = ted.Seq1 and b.Seq2 = ted.Seq2)
+
+-------------------------------------[dbo].[PO]
+Delete b
+from Production.dbo.PO b
+where id in (
+	select POID from #tmpOrders as t 
+	where not exists(select 1 from #TOrder as s where t.id=s.ID)
+)
+and not exists(
+	select 1 from Production.dbo.PO_Supp_Detail psd 
+	where psd.ID = b.ID
+)
+-------------------------------------[dbo].[PO_Supp]
+Delete b
+from Production.dbo.PO_Supp b
+where id in (
+	select POID from #tmpOrders as t 
+	where not exists(select 1 from #TOrder as s where t.id=s.ID)
+)
+and not exists(
+	select 1 from Production.dbo.PO_Supp_Detail psd 
+	where psd.ID = b.ID
+	and psd.SEQ1 = b.SEQ1
+)
 
 -------------------------------------[dbo].[PO_Supp_Detail_OrderList]
 Delete b
 from Production.dbo.PO_Supp_Detail_OrderList b
-where id in (select POID from #tmpOrders as t 
-where not exists(select 1 from #TOrder as s where t.id=s.ID))
-and exists (
+where id in (
+	select POID from #tmpOrders as t 
+	where not exists(select 1 from #TOrder as s where t.id=s.ID)
+)
+and not exists (
 	select 1 
 	from Production.dbo.PO_Supp_Detail psd 
 	where psd.id = b.id
 	and psd.SEQ1 = b.SEQ1
 	and psd.SEQ2 = b.SEQ2
-	and psd.ShipQty = 0)
+)
 -------------------------------------[dbo].[Cutting]
 Delete b
 from Production.dbo.Cutting b

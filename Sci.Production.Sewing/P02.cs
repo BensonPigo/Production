@@ -80,7 +80,7 @@ where UnLockDate is null and SewingOutputID='{this.CurrentMaintain["ID"]}'";
                 @"select sd.*,mo.MockupID,mo.Qty,(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as AccuQty,
 mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID) as VarQty,
 mo.Qty-(select isnull(sum(QAQty),0) from SewingOutput_Detail WITH (NOLOCK) where OrderId = sd.OrderId and ID != sd.ID)-sd.QAQty as BalQty,
-round(iif(sd.InlineQty = 0,0,sd.QAQty/sd.InlineQty),2)*100 as RFT
+round(iif(isnull(sd.InlineQty,0) = 0,0,sd.QAQty/sd.InlineQty)*100,2) as RFT
 from SewingOutput_Detail sd WITH (NOLOCK) 
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 where sd.ID = '{0}'",
@@ -664,7 +664,7 @@ where   mo.Junk = 0
         private void ReCalculateDefectAndRFT(DataRow dr)
         {
             dr["DefectQty"] = MyUtility.Convert.GetInt(dr["InlineQty"]) - MyUtility.Convert.GetInt(dr["QAQty"]);
-            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetInt(dr["QAQty"]) / MyUtility.Convert.GetDecimal(dr["InlineQty"]), 2) * 100;
+            dr["RFT"] = MyUtility.Check.Empty(dr["InlineQty"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetInt(dr["QAQty"]) / MyUtility.Convert.GetDecimal(dr["InlineQty"]) * 100, 2);
         }
 
         // Share < working hours > to SP#

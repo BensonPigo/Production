@@ -139,7 +139,7 @@ select B.StyleID
 , C.SewingCell 
 , case when B.Dest is null then '' else B.Dest+'-'+D.NameEN end as Dest 
 , B.CPU 
-, [RFT_percentage] = isnull(Convert(varchar(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0)
+, [RFT_percentage] = IIF(isnull(A.InspectQty,0) = 0, 0, CAST(round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2) as decimal(6,2)))
 , B.BuyerDelivery
                                 from Rft A WITH (NOLOCK) 
                                 left join Orders B WITH (NOLOCK) on B.ID=A.OrderID

@@ -176,8 +176,10 @@ namespace Sci.Production.Class
                         return;
                     }
 
+                    DataRow sqlRow = null;
+                    bool chk = MyUtility.Check.Seek(sql, out sqlRow, "Production");
                     if (oldValue != newValue &&
-                        !MyUtility.Check.Seek(sql, out DataRow sqlRow, "Production"))
+                        !chk)
                     {
                         row[reasonID] = string.Empty;
                         row[descriptionColName] = string.Empty;
@@ -185,6 +187,12 @@ namespace Sci.Production.Class
                         e.Cancel = true;
                         MyUtility.Msg.WarningBox(string.Format("< Shipping Reason > : {0} not found!!!", newValue));
                         return;
+                    }
+
+                    row[reasonID] = newValue;
+                    if (!MyUtility.Check.Empty(descriptionColName))
+                    {
+                        row[descriptionColName] = sqlRow["Description"].ToString();
                     }
                 };
 

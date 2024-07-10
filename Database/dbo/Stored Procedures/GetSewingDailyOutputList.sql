@@ -449,7 +449,7 @@ from(
 		,TotalCPU = ROUND(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty,3)
 		,CPUSewer = IIF(ROUND(ActManPower*WorkHour,2)>0,(IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/ROUND(ActManPower*WorkHour,2),0)
 		,EFF = ROUND(IIF(ROUND(ActManPower*WorkHour,2)>0,((IIF(t.Category=''M'',MockupCPU*MockupCPUFactor,OrderCPU*OrderCPUFactor*Rate)*t.QAQty)/(ROUND(ActManPower*WorkHour,2)*3600/StdTMS))*100,0),1)
-		,RFT = isnull(Convert(float(50),Convert(FLOAT(50), round(((A.InspectQty-A.RejectQty)/ nullif(A.InspectQty, 0))*100,2))),0) 
+		,RFT = IIF(isnull(A.InspectQty,0) = 0, 0, round(((A.InspectQty-A.RejectQty) / A.InspectQty)*100,2)) 
 		,CumulateDateSimilar = CONVERT(VARCHAR, CumulateDateSimilar)
 		,DateRange = IIF(CumulateDateSimilar >= 10,''>=10'',CONVERT(VARCHAR,CumulateDateSimilar))
 		,InlineQty'

@@ -177,6 +177,7 @@
     [FtyToClogTransit]             INT             CONSTRAINT [DF_P_PPICMASTERLIST_FtyToClogTransit] DEFAULT ((0)) NOT NULL,
     [ClogToCFATansit]              INT             CONSTRAINT [DF_P_PPICMASTERLIST_ClogToCFATansit] DEFAULT ((0)) NOT NULL,
     [CFAToClogTransit]             INT             CONSTRAINT [DF_P_PPICMASTERLIST_CFAToClogTransit] DEFAULT ((0)) NOT NULL,
+    [Shortage]                     NUMERIC(6,0)    CONSTRAINT [DF_P_PPICMasterList_Shortage] DEFAULT 0 NOT NULL
     CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED ([Ukey] DESC)
 );
 
@@ -1036,4 +1037,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Buyer Delivery
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'運送目的地' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMASTERLIST', @level2type=N'COLUMN',@level2name=N'Country'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單短交數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_PPICMasterList', @level2type=N'COLUMN',@level2name=N'Shortage'
 GO

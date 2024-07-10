@@ -3081,14 +3081,16 @@ END";
                 }
             }
 
-            var query = this.DetailDatas.Where(x => x.RowState != DataRowState.Deleted &&
-                                    (MyUtility.Check.Empty(x["MarkerName"]) ||
-                                    MyUtility.Check.Empty(x["Layer"]) ||
-                                    MyUtility.Check.Empty(x["SEQ1"]) ||
-                                    MyUtility.Check.Empty(x["SEQ2"]))).ToList();
+            var query = this.DetailDatas.Where
+            (x => x.RowState != DataRowState.Deleted &&
+                                (MyUtility.Check.Empty(x["MarkerName"]) ||
+                                MyUtility.Check.Empty(x["Layer"]) ||
+                                MyUtility.Check.Empty(x["SEQ1"]) ||
+                                MyUtility.Check.Empty(x["SEQ2"]) ||
+                                MyUtility.Check.Empty(x["OrderID"]))).ToList();
             if (query.Count > 0)
             {
-                MyUtility.Msg.ErrorBox(string.Format("MarkerName,Layer,SEQ1,SEQ2 can't be empty"));
+                MyUtility.Msg.ErrorBox(string.Format("MarkerName, Layer, SEQ1, SEQ2, SP# can't be empty"));
                 return false;
             }
 
