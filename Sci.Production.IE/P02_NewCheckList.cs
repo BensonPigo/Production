@@ -116,7 +116,7 @@ namespace Sci.Production.IE
             ,[OverDay_Check_1] = iif(OverDay_Check_1.VAL < 0,0, OverDay_Check_1.VAL)
             ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
             FROM ChgOver_Check CC WITH(NOLOCK)
-            LEFT JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
+            INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
             LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.[NO] = CC.[NO]
             OUTER APPLY
             (
