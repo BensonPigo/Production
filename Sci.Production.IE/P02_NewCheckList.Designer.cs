@@ -45,6 +45,10 @@
             // 
             this.delete.Visible = false;
             // 
+            // save
+            // 
+            this.save.Click += new System.EventHandler(this.Save_Click);
+            // 
             // P02_NewCheckList
             // 
             this.ClientSize = new System.Drawing.Size(831, 497);

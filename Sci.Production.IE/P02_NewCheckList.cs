@@ -102,8 +102,8 @@ namespace Sci.Production.IE
             ,[ChgOverCheckListID] = CC.ChgOverCheckListID
             ,[No] = CB.No
             ,[CHECKLISTS]  = CB.CheckList
-            ,[Dep] = CKD.ResponseDep
-            ,[LeadTime] = CKD.LeadTime
+            ,[Dep] = CC.ResponseDep
+            ,[LeadTime] = CC.LeadTime
             ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  CONVERT( VARCHAR(10),iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )))
             ,[Deadline] = CC.Deadline
             ,CC.[Checked]
@@ -116,10 +116,8 @@ namespace Sci.Production.IE
             ,[OverDay_Check_1] = iif(OverDay_Check_1.VAL < 0,0, OverDay_Check_1.VAL)
             ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
             FROM ChgOver_Check CC WITH(NOLOCK)
-            INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
-            INNER JOIN ChgOverCheckList CK WITH(NOLOCK) ON CC.ChgOverCheckListID = CK.ID
-            INNER join ChgOverCheckList_Detail CKD WITH(NOLOCK) ON  CKD.ID = CK.ID
-            INNER JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.ID = CKD.ChgOverCheckListBaseID AND CB.[NO] = CC.[NO]
+            LEFT JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
+            LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.[NO] = CC.[NO]
             OUTER APPLY
             (
 	            SELECT val = isnull(DATEDIFF(day,GETDATE(),CC.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
@@ -178,5 +176,13 @@ namespace Sci.Production.IE
 
             return base.OnSaveBefore();
         }
+
+        private void Save_Click(object sender, EventArgs e)
+        {
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
+        }
+
     }
 }

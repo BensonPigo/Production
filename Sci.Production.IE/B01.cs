@@ -84,7 +84,7 @@ Select Sel = Cast(0 as bit)
 , cb.No
 , cb.CheckList
 From ChgOverCheckListBase cb with (nolock)
-where cb.ID not in (select ChgOverCheckListBaseID from ChgOverCheckList_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}')
+where cb.ID not in (select ChgOverCheckListBaseID from ChgOverCheckList_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}') and cb.junk = 0
 order by No
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtBase);
@@ -267,8 +267,8 @@ if @@RowCount > 0
 begin
 	delete ChgOver_Check where ID in (select ID from @ChgOver)
 
-	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime)
-	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.No, ckd.LeadTime
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.No, ckd.LeadTime, ckd.ResponseDep
 	from @ChgOver co
 	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType
 	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
