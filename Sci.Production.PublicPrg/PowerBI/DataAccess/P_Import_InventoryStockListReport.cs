@@ -13,6 +13,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_InventoryStockListReport
     {
         /// <inheritdoc/>
+        public P_Import_InventoryStockListReport()
+        {
+            DBProxy.Current.DefaultTimeout = 1800;
+        }
+
+        /// <inheritdoc/>
         public Base_ViewModel P_InventoryStockListReport(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
