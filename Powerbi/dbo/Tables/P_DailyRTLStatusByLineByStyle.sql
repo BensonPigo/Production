@@ -17,6 +17,6 @@
 	ProductType         NVARCHAR(500) CONSTRAINT [DF_P_DailyRTLStatusByLineByStyle_ProductType] DEFAULT ('') NOT NULL,
 	FabricType          NVARCHAR(500) CONSTRAINT [DF_P_DailyRTLStatusByLineByStyle_FabricType] DEFAULT ('') NOT NULL,
 	AlloQty             INT          CONSTRAINT [DF_P_DailyRTLStatusByLineByStyle_AlloQty] DEFAULT 0 NOT NULL,
-	CONSTRAINT [PK_P_DailyRTLStatusByLineByStyle] PRIMARY KEY (APSNo)
+	CONSTRAINT [PK_P_DailyRTLStatusByLineByStyle] PRIMARY KEY (TransferDate,FactoryID,APSNo)
 )
 GO

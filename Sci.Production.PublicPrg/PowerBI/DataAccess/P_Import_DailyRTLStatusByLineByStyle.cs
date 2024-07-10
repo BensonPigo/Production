@@ -4,6 +4,7 @@ using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -72,6 +73,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         public Base_ViewModel P_DailyRTLStatusByLineByStyle(DateTime? inputkDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
+            this.BiDt = null;
+
             try
             {
                 this.CreateTaskAPI(inputkDate).Wait();
@@ -102,16 +105,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <returns>None</returns>
         public async Task CreateTaskAPI(DateTime? inputkDate)
         {
-            inputkDate = inputkDate ?? DateTime.Now;
+            if (!inputkDate.HasValue)
+            {
+                inputkDate = DateTime.Now.AddDays(-10);
+            }
 
             DBProxy.Current.Select("Production", "SELECT ID FROM Factory WITH(NOLOCK) WHERE Junk=0 AND IsProduceFty=1", out DataTable ftyTb);
 
-            var apiTasks = ftyTb.AsEnumerable()
-                .Select(row => this.GetDataByAPIAsync(MyUtility.Convert.GetString(row["ID"]), inputkDate.Value, 3))
-                .ToList();
+            List<Task<Base_ViewModel>> apiTasks = new List<Task<Base_ViewModel>>();
+
+            // 10 days, each Fty
+            for (int i = 0; i < 10; i++)
+            {
+                DateTime transferDate = inputkDate.Value.AddDays(i);
+                foreach (DataRow row in ftyTb.Rows)
+                {
+                    string factoryID = MyUtility.Convert.GetString(row["ID"]);
+
+                    apiTasks.Add(this.GetDataByAPIAsync(factoryID, transferDate, 3));
+                }
+            }
 
             var apiResults = await Task.WhenAll(apiTasks);
 
+            // 將結果保存
             foreach (var apiResult in apiResults)
             {
                 if (apiResult?.Dt != null)
@@ -245,7 +262,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <summary>
-        /// 保留十天內的資料，全刪除之後再重新轉
+        /// 保留十天內的資料
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>Base_ViewModel</returns>
@@ -255,6 +272,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sql = @"
+---- DELETE 因為成套規則有可能改變，即使存在也不是正確的，因此刪掉不在範圍內的資料
+DELETE t
+FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
+WHERE NOT EXISTS(
+    SELECT 1 FROM #tmp s 
+    WHERE s.TransferDate = t.TransferDate AND s.FactoryID = t.FactoryID AND s.APSNo = t.APSNo
+)
+
 ---- UPDATE
 UPDATE t
 SET 
@@ -276,7 +301,7 @@ SET
     t.FabricType = ISNULL(r1.Name, ''),
     t.AlloQty = a.AlloQty
 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
-INNER JOIN #tmp a ON t.APSNo = a.APSNo
+INNER JOIN #tmp a ON t.TransferDate = a.TransferDate AND t.FactoryID = a.FactoryID AND t.APSNo = a.APSNo
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
 INNER JOIN MainServer.Production.dbo.Orders o ON o.ID = a.OrderID
 INNER JOIN MainServer.Production.dbo.Style s ON s.Ukey = o.StyleUkey
@@ -295,9 +320,10 @@ INNER JOIN MainServer.Production.dbo.Orders o ON o.ID = a.OrderID
 INNER JOIN MainServer.Production.dbo.Style s ON s.Ukey = o.StyleUkey
 LEFT JOIN MainServer.Production.dbo.Reason r1 ON r1.ReasonTypeID = 'Fabric_Kind' AND r1.ID = s.FabricType
 LEFT JOIN MainServer.Production.dbo.Reason r2 ON r2.ReasonTypeID = 'Style_Apparel_Type' AND r2.ID = s.ApparelType
-WHERE NOT EXISTS(
-    SELECT 1 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle ori WHERE ori.APSNo = a.APSNo
-)
+WHERE NOT EXISTS (
+    SELECT 1 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle ori 
+    WHERE ori.TransferDate = a.TransferDate AND ori.FactoryID = a.FactoryID AND ori.APSNo = a.APSNo
+);
 ";
             finalResult = new Base_ViewModel()
             {

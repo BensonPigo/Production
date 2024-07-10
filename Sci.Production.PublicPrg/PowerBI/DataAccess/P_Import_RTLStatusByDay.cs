@@ -27,7 +27,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             this.BiDt = null;
         }
 
-        #region API回傳結果
+        private DataTable CreateDataTable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.AddRange(new DataColumn[]
+            {
+                        new DataColumn("TransferDate", typeof(DateTime)),
+                        new DataColumn("FactoryID", typeof(string)),
+                        new DataColumn("CurrentWIPDays", typeof(decimal)),
+            });
+            return dt;
+        }
+
         private DataTable _BiDt;
 
         /// <summary>
@@ -35,29 +46,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// </summary>
         public DataTable BiDt
         {
-            get
-            {
-                if (this._BiDt == null)
-                {
-                    this._BiDt = new DataTable();
-                    this._BiDt.Columns.AddRange(new DataColumn[]
-                    {
-                        new DataColumn("TransferDate", typeof(DateTime)),
-                        new DataColumn("FactoryID", typeof(string)),
-                        new DataColumn("CurrentWIPDays", typeof(decimal)),
-                    });
-                }
-
-                return this._BiDt;
-            }
-
-            set
-            {
-                this._BiDt = value;
-            }
+            get => this._BiDt ?? (this._BiDt = this.CreateDataTable());
+            set => this._BiDt = value;
         }
-
-        #endregion
 
         /// <summary>
         /// BI資料表 P_RTLStatusByDay 寫入，只保留十天份的資料
@@ -67,6 +58,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         public Base_ViewModel P_RTLStatusByDay(DateTime? inputkDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
+            this.BiDt = null;
+
             try
             {
                 this.CreateTaskAPI(inputkDate).GetAwaiter().GetResult();
