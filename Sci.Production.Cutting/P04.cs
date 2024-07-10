@@ -188,7 +188,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string insert_cons = string.Format(
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
-                        from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
+                        from Cutplan_Detail a WITH (NOLOCK) ,WorkOrderForPlanning b WITH (NOLOCK) 
                         where a.id='{0}' and a.WorkOrderForPlanningUkey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", this.CurrentMaintain["ID"]);
             #endregion
@@ -329,13 +329,6 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            #region 有Marker Req 不可Unconfirm
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["markerreqid"]))
-            {
-                MyUtility.Msg.WarningBox("The record already create Marker request, you can not Unconfirm.");
-                return;
-            }
-            #endregion
             #region 有IssueFabric 不可Uncomfirm
             string query = string.Format("Select * from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, query, out DataTable queryIssueFabric);
