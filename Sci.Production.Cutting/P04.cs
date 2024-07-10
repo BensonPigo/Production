@@ -329,13 +329,6 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            #region 有Marker Req 不可Unconfirm
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["markerreqid"]))
-            {
-                MyUtility.Msg.WarningBox("The record already create Marker request, you can not Unconfirm.");
-                return;
-            }
-            #endregion
             #region 有IssueFabric 不可Uncomfirm
             string query = string.Format("Select * from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, query, out DataTable queryIssueFabric);
