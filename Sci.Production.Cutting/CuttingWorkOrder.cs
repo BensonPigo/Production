@@ -3881,7 +3881,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                     worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                     worksheet.Select();
-                    worksheet.Name = cutrefdr1["Cutplanid"].ToString();
+                    worksheet.Name = cutrefdr1["Cutplanid"].ToString() + "-" + MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"]).Value.ToString("yyyy-MM-dd");
                     worksheet.Cells[3, 19] = cutrefdr1["Cutplanid"].ToString();
                     worksheet.Cells[8, 13] = ((DateTime)MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"])).ToShortDateString();
                     nSheet++;
