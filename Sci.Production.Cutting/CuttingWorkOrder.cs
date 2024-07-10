@@ -3388,6 +3388,56 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                     sqlFabricKindinto = $@" , rn=min(rn) into #tmp6 ";
                     sqlFabricKindjoin = $@"select t6.*,t5.FabricKind from #tmp6 t6 inner join #tmp5 t5 on t5.CutRef = t6.CutRef order by rn";
                 }
+                else
+                {
+                    sqlFabricKind = $@"
+SELECT distinct w.CutRef, wp.PatternPanel, x.FabricKind
+into #tmp3
+FROM #tmp W
+INNER JOIN {tbPatternPanel} WP ON W.Ukey = WP.{tbUkey}
+outer apply(
+	SELECT  FabricKind=DD.id + '-' + DD.NAME ,Refno
+	FROM dropdownlist DD 
+	OUTER apply(
+			SELECT OB.kind, 
+			OCC.id, 
+			OCC.article, 
+			OCC.colorid, 
+			OCC.fabricpanelcode, 
+			OCC.patternpanel ,
+			Refno
+		FROM order_colorcombo OCC 
+		INNER JOIN order_bof OB ON OCC.id = OB.id AND OCC.fabriccode = OB.fabriccode
+		where w.Article = OCC.Article
+	) LIST 
+	WHERE LIST.id = w.id 
+	AND LIST.patternpanel = wp.patternpanel 
+	AND DD.[type] = 'FabricKind' 
+	AND DD.id = LIST.kind 
+)x
+
+select CutRef,ct = count(1) into #tmp4 from(select distinct CutRef,FabricKind from #tmp3)x group by CutRef
+
+select t4.CutRef,FabricKind = IIF(t4.ct = 1, x1.FabricKind, x2.FabricKind)
+into #tmp5
+from #tmp4 t4
+outer apply(
+	select distinct t3.FabricKind
+	from #tmp3 t3
+	where t3.CutRef = t4.CutRef and t4.ct = 1
+)x1
+outer apply(
+	select FabricKind = STUFF((
+		select concat(', ', t3.FabricKind, ': ', t3.PatternPanel)
+		from #tmp3 t3
+		where t3.CutRef = t4.CutRef and t4.ct > 1
+		for XML path('')
+	),1,2,'')
+)x2
+";
+                    sqlFabricKindinto = $@" , rn=min(rn) into #tmp6 ";
+                    sqlFabricKindjoin = $@"select t6.*,t5.FabricKind from #tmp6 t6 inner join #tmp5 t5 on t5.CutRef = t6.CutRef order by rn";
+                }
             }
             else
             {
@@ -3409,6 +3459,7 @@ Select a.AddDate
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutCellID")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutNo")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutPlanID")}
+,{this.CheckAndGetColumns(cuttingForm, "a.Article")}
 , a.CutRef
 ,a.EditDate
 ,a.EditName
@@ -3548,17 +3599,46 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
 
     {sqlFabricKindjoin}
     ";
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], "SpreadingNoID,CutCellID,Cutref,CutPlanID,estCutDate,shc,ukey,id", sqlCutrefTb, out arrDtType[(int)TableType.CutrefTb]);
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], "SpreadingNoID,CutCellID,Cutref,CutPlanID,estCutDate,shc,ukey,id,Article", sqlCutrefTb, out arrDtType[(int)TableType.CutrefTb]);
+            if (!dResult)
+            {
+                return dResult;
+            }
 
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderDisTb], $"{sqlColByType},OrderID,SewLineList", $@"Select distinct {sqlColByType},OrderID,SewLineList From #tmp", out arrDtType[(int)TableType.CutDisOrderIDTb]); // 整理sp，此處的OrderID是來自Orders
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderDisTb], $"{sqlColByType},OrderID,SewLineList", $@"Select distinct {sqlColByType},OrderID,SewLineList From #tmp", out arrDtType[(int)TableType.CutDisOrderIDTb]); // 整理sp，此處的OrderID是來自Orders
 
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
+            if (!dResult)
+            {
+                return dResult;
+            }
 
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},SizeCode,seq", $"Select distinct {sqlColByType},SizeCode,seq From #tmp order by seq ", out arrDtType[(int)TableType.SizeTb]); // 整理Size
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
 
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName", $"Select distinct {sqlColByType},MarkerName From #tmp ", out arrDtType[(int)TableType.MarkerTB]); // 整理MarkerName
+            if (!dResult)
+            {
+                return dResult;
+            }
 
-            MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], $"{sqlColByType},FabricPanelCode,SCIRefno,shc", $"Select distinct {sqlColByType},a.FabricPanelCode,a.SCIRefno,b.Description,b.width,shc  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", out arrDtType[(int)TableType.FabricComboTb]); // 整理FabricPanelCode
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},SizeCode,seq", $"Select distinct {sqlColByType},SizeCode,seq From #tmp order by seq ", out arrDtType[(int)TableType.SizeTb]); // 整理Size
+
+            if (!dResult)
+            {
+                return dResult;
+            }
+
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName", $"Select distinct {sqlColByType},MarkerName From #tmp ", out arrDtType[(int)TableType.MarkerTB]); // 整理MarkerName
+
+            if (!dResult)
+            {
+                return dResult;
+            }
+
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderTb], $"{sqlColByType},FabricPanelCode,SCIRefno,shc", $"Select distinct {sqlColByType},a.FabricPanelCode,a.SCIRefno,b.Description,b.width,shc  From #tmp a Left Join Fabric b on a.SciRefno = b.SciRefno", out arrDtType[(int)TableType.FabricComboTb]); // 整理FabricPanelCode
+
+            if (!dResult)
+            {
+                return dResult;
+            }
 
             if (cuttingForm == CuttingForm.P02)
             {
@@ -4212,10 +4292,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                     worksheet.Name = cutrefdr["Cutref"].ToString();
                     worksheet.Cells[3, 18] = cutrefdr["Cutref"].ToString();
                     worksheet.Cells[8, 13] = MyUtility.Check.Empty(cutrefdr["Estcutdate"]) == false ? ((DateTime)MyUtility.Convert.GetDate(cutrefdr["Estcutdate"])).ToShortDateString() : string.Empty;
-                    if (isTbDistribute)
-                    {
-                        worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
-                    }
+                    worksheet.Cells[14, 14] = MyUtility.Convert.GetString(cutrefdr["FabricKind"]);
 
                     nSheet++;
                 }
