@@ -272,14 +272,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sql = @"
----- DELETE 因為成套規則有可能改變，即使存在也不是正確的，因此刪掉不在範圍內的資料
-DELETE t
-FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
-WHERE NOT EXISTS(
-    SELECT 1 FROM #tmp s 
-    WHERE s.TransferDate = t.TransferDate AND s.FactoryID = t.FactoryID AND s.APSNo = t.APSNo
-)
-
 ---- UPDATE
 UPDATE t
 SET 
@@ -308,7 +300,7 @@ LEFT JOIN MainServer.Production.dbo.Reason r2 ON r2.ReasonTypeID = 'Style_Appare
 
 ---- INSERT
 INSERT INTO POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle
-    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty)
+    (TransferDate, MDivisionID, FactoryID, APSNoji39e3, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty)
 SELECT
     a.TransferDate, f.MDivisionID, a.FactoryID, a.APSNo, a.SewingLineID, s.BrandID, s.SeasonID, o.StyleID,
     a.CurrentWIP, a.StdQty, a.WIP, a.nWIP, a.InLine, a.OffLine, s.CDCodeNew, ISNULL(r2.Name, ''), ISNULL(r1.Name, ''), a.AlloQty
