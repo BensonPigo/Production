@@ -18,25 +18,26 @@ END
     
 select DISTINCT w.ID
 into #tmpWorkOrderID
-from [MainServer].Production.dbo.WorkOrder w with(nolock) 
-left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
+from [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) 
+left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderForOutputUkey = w.Ukey
 left join [MainServer].Production.dbo.CuttingOutput co with(nolock) on co.id = cod.id
 where ((w.EstCutDate >= @SDate and w.EstCutDate <=  @EDate) OR (co.cDate >= @SDate and co.cDate <= @EDate))
 
 select w.ID,w.CutRef,w.MDivisionId,ActCutDate=max(co.cDate)
 into #tmp1
-from [MainServer].Production.dbo.WorkOrder w with(nolock) 
-left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
+from [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) 
+left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderForOutputUkey = w.Ukey
 left join [MainServer].Production.dbo.CuttingOutput co with(nolock) on co.id = cod.id
 where 1=1
 and isnull(w.CutRef,'') <> ''
 and w.id in (select id from #tmpWorkOrderID)
 group by w.CutRef,w.MDivisionID,w.ID
 
-select w.*,ActCutDate=co.cDate
+select w.*,ActCutDate=co.cDate,wp.CutPlanID
 into #tmpCutRefNull
-from [MainServer].Production.dbo.WorkOrder w with(nolock) 
-left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderUkey = w.Ukey
+from [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) 
+left join [MainServer].Production.dbo.WorkOrderForPlanning wp with(nolock) on wp.Ukey = w.WorkOrderForPlanningUkey
+left join [MainServer].Production.dbo.CuttingOutput_Detail cod with(nolock) on cod.WorkOrderForOutputUkey = w.Ukey
 left join [MainServer].Production.dbo.CuttingOutput co with(nolock) on co.id = cod.id
 where 1=1
 and isnull(w.CutRef,'') = ''
@@ -47,7 +48,7 @@ select t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID,
 	Cons=sum(w.Cons)
 into #tmp2a
 from #tmp1 t
-inner join [MainServer].Production.dbo.WorkOrder w with(nolock) on w.CutRef = t.CutRef
+inner join [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef
 group by t.CutRef,t.MDivisionId,t.ActCutDate ,t.ID
 
 select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,
@@ -55,8 +56,8 @@ select t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID,
 	EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
 into #tmp2
 from #tmp2a t
-inner join [MainServer].Production.dbo.WorkOrder w with(nolock) on w.CutRef = t.CutRef
-inner join [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
+inner join [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) on w.CutRef = t.CutRef
+inner join [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w.Ukey
 group by t.CutRef,t.MDivisionId,t.ActCutDate,t.Layer,t.Cons,t.ID
 
 select distinct
@@ -66,7 +67,7 @@ select distinct
 	w.EstCutDate,
 	CutCellid=isnull(w.CutCellid,''),
 	SpreadingNoID=isnull(w.SpreadingNoID,''),
-	CutplanID=isnull(w.CutplanID,''),
+	CutplanID=isnull(wp.CutplanID,''),
 	CutRef=isnull(w.CutRef,''),
 	ID=isnull(w.ID,''),
 	SubSP=isnull(subSp.SubSP,''),
@@ -99,7 +100,8 @@ select distinct
 	WindowLength=isnull(ct.WindowLength,0)
 into #tmp3
 from #tmp2 t
-OUTER APPLY(SELECT TOP 1 * FROM [MainServer].Production.dbo.WorkOrder w with(nolock) WHERE w.CutRef = t.CutRef)w
+OUTER APPLY(SELECT TOP 1 * FROM [MainServer].Production.dbo.WorkOrderForOutput w with(nolock) WHERE w.CutRef = t.CutRef)w
+OUTER APPLY(SELECT TOP 1 * FROM [MainServer].Production.dbo.WorkOrderForPlanning wp with(nolock) WHERE wp.Ukey = w.WorkOrderForPlanningUkey)wp
 inner join [MainServer].Production.dbo.orders o with(nolock) on o.id = w.ID
 left join [MainServer].Production.dbo.Fabric f with(nolock) on f.SCIRefno = w.SCIRefno
 left join [MainServer].Production.dbo.SpreadingTime st with(nolock) on st.WeaveTypeID = f.WeaveTypeID
@@ -109,8 +111,8 @@ left join [MainServer].Production.dbo.CuttingTime ct WITH (NOLOCK) on ct.WeaveTy
 outer apply(
 	select SubSP = stuff((
 		select distinct concat(',',wd.OrderID)
-		from [MainServer].Production.dbo.WorkOrder w2 with(nolock)
-		inner join [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		from [MainServer].Production.dbo.WorkOrderForOutput w2 with(nolock)
+		inner join [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w2.Ukey
 		where w2.CutRef = t.CutRef and t.ID=w2.ID
 		For XML path('')
 	),1,1,'')
@@ -118,8 +120,8 @@ outer apply(
 outer apply(
 	select Size = stuff((
 		select distinct concat(',',wd.SizeCode)
-		from [MainServer].Production.dbo.WorkOrder w2 with(nolock)
-		inner join [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
+		from [MainServer].Production.dbo.WorkOrderForOutput w2 with(nolock)
+		inner join [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w2.Ukey
 		where w2.CutRef = t.CutRef
 		For XML path('')
 	),1,1,'')
@@ -129,8 +131,8 @@ outer apply
 	select SizeCode = stuff(
 	(
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
-		From [MainServer].Production.dbo.WorkOrder w2 with(nolock)
-		inner join [MainServer].Production.dbo.WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
+		From [MainServer].Production.dbo.WorkOrderForOutput w2 with(nolock)
+		inner join [MainServer].Production.dbo.WorkOrderForOutput_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w2.Ukey
 		Where w2.CutRef = t.CutRef
 		For XML path('')
 	),1,1,'')
@@ -211,8 +213,8 @@ left join [MainServer].Production.dbo.CuttingTime ct WITH (NOLOCK) on ct.WeaveTy
 outer apply(
 	select SubSP = stuff((
 		select distinct concat(',',wd.OrderID)
-		from [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock) 
-		where wd.WorkOrderUkey=t.Ukey
+		from [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock) 
+		where wd.WorkOrderForOutputUkey=t.Ukey
 		For XML path('')
 	),1,1,'')
 )subSp
@@ -220,15 +222,15 @@ outer apply(
 	select 
 		noEXCESSqty=sum(iif(wd.OrderID <> 'EXCESS',wd.Qty,0)),
 		EXCESSqty = sum(iif(wd.OrderID =  'EXCESS',wd.Qty,0))
-	from [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock)
-	where wd.WorkOrderUkey = t.Ukey
+	from [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock)
+	where wd.WorkOrderForOutputUkey = t.Ukey
 )EQ
 outer apply(
 	select Size = stuff((
 		select distinct concat(',',wd.SizeCode)
-		from [MainServer].Production.dbo.WorkOrder w2 with(nolock)
-		inner join [MainServer].Production.dbo.WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w2.Ukey
-		where wd.WorkOrderUkey=t.Ukey
+		from [MainServer].Production.dbo.WorkOrderForOutput w2 with(nolock)
+		inner join [MainServer].Production.dbo.WorkOrderForOutput_Distribute wd with(nolock) on wd.WorkOrderForOutputUkey = w2.Ukey
+		where wd.WorkOrderForOutputUkey=t.Ukey
 		For XML path('')
 	),1,1,'')
 )size
@@ -237,9 +239,9 @@ outer apply
 	select SizeCode = stuff(
 	(
 		Select concat(', ' , wd.sizecode, '/ ', wd.qty)
-		From [MainServer].Production.dbo.WorkOrder w2 with(nolock)
-		inner join [MainServer].Production.dbo.WorkOrder_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderUkey = w2.Ukey
-		where wd.WorkOrderUkey=t.Ukey
+		From [MainServer].Production.dbo.WorkOrderForOutput w2 with(nolock)
+		inner join [MainServer].Production.dbo.WorkOrderForOutput_SizeRatio wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w2.Ukey
+		where wd.WorkOrderForOutputUkey=t.Ukey
 		For XML path('')
 	),1,1,'')
 )SizeCode
@@ -393,5 +395,3 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull,#tmpWorkOrderID
 
 END
 
-
-GO
