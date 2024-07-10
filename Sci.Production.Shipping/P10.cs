@@ -580,6 +580,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         {
             base.ClickUndo();
             this.RenewData();
+            this.OnDetailEntered();
         }
 
         /// <inheritdoc/>
