@@ -10,7 +10,7 @@
 	[OrigBuyerDelivery] [date] NULL,
 	[MaterialComplete] [varchar](1) NOT NULL,
 	[ETA] [date] NULL,
-	[ArriveWHDate] [varchar](100) NOT NULL,
+	[ArriveWHDate] [varchar](500) NOT NULL,
 	[ExportID] [varchar](300) NOT NULL,
 	[Packages] [varchar](100) NOT NULL,
 	[ContainerNo] [varchar](300) NOT NULL,
