@@ -523,6 +523,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
+            this.disPulloutDate.Text = string.Empty;
             this.listControlBindingSource1.DataSource = this.plData;
         }
 
@@ -578,7 +579,8 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         protected override void ClickUndo()
         {
             base.ClickUndo();
-            ((DataTable)this.listControlBindingSource1.DataSource).RejectChanges();
+            this.RenewData();
+            this.OnDetailEntered();
         }
 
         /// <inheritdoc/>
