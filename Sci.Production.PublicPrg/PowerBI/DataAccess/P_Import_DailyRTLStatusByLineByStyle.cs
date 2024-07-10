@@ -283,9 +283,7 @@ WHERE NOT EXISTS(
 ---- UPDATE
 UPDATE t
 SET 
-    t.TransferDate = a.TransferDate,
     t.MDivisionID = f.MDivisionID,
-    t.FactoryID = a.FactoryID,
     t.SewingLineID = a.SewingLineID,
     t.BrandID = s.BrandID,
     t.SeasonID = s.SeasonID,
