@@ -4,8 +4,6 @@
     [FactoryID]             VARCHAR (8)  CONSTRAINT [DF_Cutting_FactoryID] DEFAULT ('') NULL,
     [SewInLine]             DATE         NULL,
     [SewOffLine]            DATE         NULL,
-    [CutInLine]             DATE         NULL,
-    [CutOffLine]            DATE         NULL,
     [Remark]                NCHAR (60)   CONSTRAINT [DF_Cutting_Remark] DEFAULT ('') NULL,
     [FirstCutDate]          DATE         NULL,
     [LastCutDate]           DATE         NULL,
@@ -52,11 +50,11 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁縫下�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'CutInLine';
+
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'CutOffLine';
+
 
 
 GO

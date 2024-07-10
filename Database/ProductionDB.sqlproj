@@ -1042,10 +1042,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\TimeStudyHistory.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1282,10 +1278,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder_Distribute.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\Stocktaking.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1378,10 +1370,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder_Estcutdate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\Style_BOA_KeyWord.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1419,10 +1407,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\ArtworkPO.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Tables\WorkOrder_PatternPanel.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -1479,10 +1463,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\Fabric_HsCode.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Tables\WorkOrder_SizeRatio.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -2278,10 +2258,6 @@
     <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
     <Build Include="dbo\Tables\PackErrTransfer.sql" />
     <Build Include="dbo\Tables\PackErrCFM.sql" />
-    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_SizeRatioRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_PatternPanelRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_DistributeRevisedMarkerOriginalData.sql" />
     <Build Include="dbo\Tables\SpreadingTime.sql" />
     <Build Include="dbo\Tables\CuttingTime.sql" />
     <Build Include="dbo\Tables\CuttingMachine_detail.sql" />
@@ -2301,7 +2277,6 @@
     <Build Include="dbo\Tables\PackingErrorTypeReason.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
-    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
     <Build Include="dbo\Stored Procedures\SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\RFIDReader_SubProcess.sql" />
     <Build Include="dbo\Tables\RFIDReader_Panel.sql" />
