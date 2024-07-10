@@ -84,7 +84,7 @@ Select Sel = Cast(0 as bit)
 , cb.No
 , cb.CheckList
 From ChgOverCheckListBase cb with (nolock)
-where cb.No not in (select ChgOverCheckListBaseID from ChgOverCheckList_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}')
+where cb.ID not in (select ChgOverCheckListBaseID from ChgOverCheckList_Detail with (nolock) where ID = '{this.CurrentMaintain["ID"]}')
 order by No
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtBase);
@@ -173,7 +173,7 @@ order by No
             // 檢查Detail<Response Dep.>和<Lead Time>不可空白
             var dtDetail = (DataTable)this.gridDetailBs.DataSource;
             if (dtDetail.Rows.Count > 0
-                && dtDetail.AsEnumerable().Where(r => VFP.Empty(r["ResponseDep"]) || VFP.Empty(r["LeadTime"])).Any())
+                && dtDetail.AsEnumerable().Where(r => VFP.Empty(r["ResponseDep"]) || MyUtility.Convert.GetInt(r["LeadTime"]) == 0).Any())
             {
                 MyUtility.Msg.WarningBox("Please enter <Response Dep.> and <Lead Time> on the right side of the table.");
                 return false;
@@ -250,13 +250,17 @@ WHERE NOT EXISTS (
             var sqlUpdate = @"
 declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime)
 
--- 找出ChgOver中ChgOver_Check皆尚未Check的資料
+-- 找出符合以下條件的ChgOver
+-- 1. ChgOver_Check有資料但皆尚未Check
+-- 2. ChgOver_Check沒有資料
 insert into @ChgOver (ID, FactoryID, Inline)
 select co.ID, co.FactoryID, co.Inline
 from ChgOver co with (nolock)
 where co.Category = @Category
 and co.Type = @StyleType
-and exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.checked <> 1) 
+and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
+        and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
+    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID))
 
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0
