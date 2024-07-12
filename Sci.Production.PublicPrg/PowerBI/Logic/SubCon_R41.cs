@@ -357,7 +357,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 outer apply(
 	 select SpreadingNo = stuff((
 		    Select distinct concat(',', wo.SpreadingNoID)
-		    from WorkOrderForOutput wo WITH (NOLOCK, Index(CutRefNo)) 
+		    from WorkOrderForOutput wo WITH (NOLOCK, Index(IDX_WorkOrderForOutput_CutRef)) 
 		    where   wo.CutRef = b.CutRef 
                     and wo.ID = b.POID
             and wo.SpreadingNoID is not null
