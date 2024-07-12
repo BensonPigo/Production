@@ -66,9 +66,15 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                this.Text = "P09.WorkOrder For Output(History)";
+                this.Text = "[P091. WorkOrder For Output(History)]";
                 this.IsSupportEdit = false;
                 this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
+                this.btnImportFromWorkOrderForPlanning.EditMode = AdvEditModes.None;
+                this.btnAutoRef.EditMode = AdvEditModes.None;
+                this.btnImportFromWorkOrderForPlanning.Enabled = false;
+                this.btnAutoRef.Enabled = false;
+                this.gridSizeRatio.ContextMenuStrip = null;
+                this.gridDistributeToSP.ContextMenuStrip = null;
             }
 
             this.displayBoxFabricTypeRefno.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricTypeRefNo", true));
@@ -1743,7 +1749,8 @@ DEALLOCATE CURSOR_
         #region Other
         private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
-            var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["ID"].ToString());
+            // 當 P091 History, IsSupportEdit = false
+            var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
             exwip.ShowDialog();
         }
 
@@ -1757,7 +1764,7 @@ DEALLOCATE CURSOR_
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode;
+                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode && this.IsSupportEdit;
             }
         }
 
