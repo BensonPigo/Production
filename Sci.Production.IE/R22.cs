@@ -130,7 +130,15 @@ namespace Sci.Production.IE
 --Summary
 SELECT Distinct 
      [Inline] = CONVERT(varchar, co.Inline, 23),
-     [Ready (all checked)] = IIF(coc.Checked = 1, 'V', ''),
+     [Ready (all checked)] = CASE WHEN (SELECT COUNT(*) 
+                                        FROM ChgOver_Check coc2
+                                        WHERE coc2.ID = co.ID
+                                          AND coc2.Checked = 1) = 
+                                       (SELECT COUNT(*) 
+                                        FROM ChgOver_Check coc3
+                                        WHERE coc3.ID = co.ID) 
+                                   THEN 'V'
+                                   ELSE '' END,
      [SewingLine] = co.SewingLineID,
      [OldSP] = oldco.OrderID,
      [OldStyle] = oldco.StyleID,
