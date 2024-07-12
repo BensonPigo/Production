@@ -2224,10 +2224,10 @@ select
 	apm.StyleSeason,
 	apm.AddDate,
 	apm.EditDate,
-    fac.LastDownloadAPSDate
+    factory.LastDownloadAPSDate
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
-left join Factory fac on fac.ID = apm.FactoryID
+outer apply (select fac.LastDownloadAPSDate from factory fac where fac.id = (select f.KPICode from factory f where f.id = apm.FactoryID)) factory
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用
