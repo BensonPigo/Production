@@ -54,7 +54,7 @@ namespace Sci.Production.IE
                     {
                         row["Checked"] = true;
                         row["DaysLeft"] = '-';
-                        row["OverDays"] = row["OverDay_Check_1"];
+                        row["OverDays"] = (DateTime.Now - (DateTime)row["Deadline"]).Days;
                         row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
                     }
                     else
@@ -72,17 +72,17 @@ namespace Sci.Production.IE
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("No", header: "No", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Dep", header: "Dep", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Text("Dep", header: "Dep", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Numeric("LeadTime", header: "Lead Time", iseditingreadonly: true)
-                .Text("DaysLeft", header: "Days Left", iseditingreadonly: true)
-                .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(15), trueValue: 1, falseValue: 0, settings: cbs)
+                .Text("DaysLeft", header: "Days Left", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(6), trueValue: 1, falseValue: 0, settings: cbs)
                 .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(30))
-                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15))
+                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
             this.grid.Columns["Checked"].DefaultCellStyle.BackColor = Color.Pink;

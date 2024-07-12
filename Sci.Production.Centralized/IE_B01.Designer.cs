@@ -31,8 +31,8 @@
             this.labelNo = new Sci.Win.UI.Label();
             this.labelCheckList = new Sci.Win.UI.Label();
             this.chkJunk = new Sci.Win.UI.CheckBox();
-            this.txtNo = new Sci.Win.UI.TextBox();
             this.txtCheckList = new Sci.Win.UI.TextBox();
+            this.txtNo = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -47,8 +47,8 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.txtCheckList);
             this.detailcont.Controls.Add(this.txtNo);
+            this.detailcont.Controls.Add(this.txtCheckList);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.labelCheckList);
             this.detailcont.Controls.Add(this.labelNo);
@@ -108,19 +108,6 @@
             this.chkJunk.Text = "Juck";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
-            // txtNo
-            // 
-            this.txtNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtNo.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "No", true));
-            this.txtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtNo.Location = new System.Drawing.Point(158, 37);
-            this.txtNo.Name = "txtNo";
-            this.txtNo.ReadOnly = true;
-            this.txtNo.Size = new System.Drawing.Size(93, 23);
-            this.txtNo.TabIndex = 52;
-            this.txtNo.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TxtNo_KeyPress);
-            // 
             // txtCheckList
             // 
             this.txtCheckList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -132,6 +119,26 @@
             this.txtCheckList.ReadOnly = true;
             this.txtCheckList.Size = new System.Drawing.Size(590, 23);
             this.txtCheckList.TabIndex = 53;
+            // 
+            // txtNo
+            // 
+            this.txtNo.BackColor = System.Drawing.Color.White;
+            this.txtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "No", true));
+            this.txtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtNo.Location = new System.Drawing.Point(158, 37);
+            this.txtNo.Name = "txtNo";
+            this.txtNo.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.txtNo.Size = new System.Drawing.Size(93, 23);
+            this.txtNo.TabIndex = 54;
+            this.txtNo.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
             // 
             // IE_B01
             // 
@@ -166,6 +173,6 @@
         private Win.UI.Label labelNo;
         private Win.UI.CheckBox chkJunk;
         private Win.UI.TextBox txtCheckList;
-        private Win.UI.TextBox txtNo;
+        private Win.UI.NumericBox txtNo;
     }
 }

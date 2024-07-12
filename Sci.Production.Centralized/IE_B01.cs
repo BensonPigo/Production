@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿using Newtonsoft.Json.Converters;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -83,12 +84,12 @@ select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
             return base.ClickSaveBefore();
         }
 
-        private void TxtNo_KeyPress(object sender, KeyPressEventArgs e)
+        /// <inheritdoc/>
+        protected override void ClickNewAfter()
         {
-            if (((int)e.KeyChar < 48 | (int)e.KeyChar > 57) & !((int)e.KeyChar).IsOneOfThe(8, 46))
-            {
-                e.Handled = true;
-            }
+            base.ClickNewAfter();
+            this.CurrentMaintain["No"] = DBNull.Value;
+            
         }
     }
 }

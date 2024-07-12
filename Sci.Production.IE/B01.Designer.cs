@@ -57,7 +57,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1004, 413);
+            this.detail.Size = new System.Drawing.Size(1050, 413);
             // 
             // detailcont
             // 
@@ -73,13 +73,13 @@
             this.detailcont.Controls.Add(this.lbStyleType);
             this.detailcont.Controls.Add(this.lbSendMail);
             this.detailcont.Controls.Add(this.lbCategory);
-            this.detailcont.Size = new System.Drawing.Size(1004, 375);
+            this.detailcont.Size = new System.Drawing.Size(1050, 375);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 375);
-            this.detailbtm.Size = new System.Drawing.Size(1004, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1050, 38);
             // 
             // browse
             // 
@@ -87,7 +87,7 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1012, 442);
+            this.tabs.Size = new System.Drawing.Size(1058, 442);
             // 
             // createby
             // 
@@ -188,7 +188,8 @@
             this.gridDetail.AllowUserToAddRows = false;
             this.gridDetail.AllowUserToDeleteRows = false;
             this.gridDetail.AllowUserToResizeRows = false;
-            this.gridDetail.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.gridDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -205,7 +206,7 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(543, 221);
+            this.gridDetail.Size = new System.Drawing.Size(589, 260);
             this.gridDetail.TabIndex = 21;
             // 
             // gridBase
@@ -213,6 +214,8 @@
             this.gridBase.AllowUserToAddRows = false;
             this.gridBase.AllowUserToDeleteRows = false;
             this.gridBase.AllowUserToResizeRows = false;
+            this.gridBase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.gridBase.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridBase.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridBase.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -228,7 +231,7 @@
             this.gridBase.RowTemplate.Height = 24;
             this.gridBase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBase.ShowCellToolTips = false;
-            this.gridBase.Size = new System.Drawing.Size(392, 221);
+            this.gridBase.Size = new System.Drawing.Size(392, 260);
             this.gridBase.TabIndex = 22;
             // 
             // BtnAdd
@@ -257,7 +260,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(1012, 475);
+            this.ClientSize = new System.Drawing.Size(1058, 475);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;

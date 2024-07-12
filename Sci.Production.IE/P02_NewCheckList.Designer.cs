@@ -33,6 +33,14 @@
             this.btmcont.SuspendLayout();
             this.SuspendLayout();
             // 
+            // btmcont
+            // 
+            this.btmcont.Size = new System.Drawing.Size(1225, 40);
+            // 
+            // gridcont
+            // 
+            this.gridcont.Size = new System.Drawing.Size(1201, 435);
+            // 
             // append
             // 
             this.append.Visible = false;
@@ -45,13 +53,18 @@
             // 
             this.delete.Visible = false;
             // 
+            // undo
+            // 
+            this.undo.Location = new System.Drawing.Point(1135, 5);
+            // 
             // save
             // 
+            this.save.Location = new System.Drawing.Point(1055, 5);
             this.save.Click += new System.EventHandler(this.Save_Click);
             // 
             // P02_NewCheckList
             // 
-            this.ClientSize = new System.Drawing.Size(831, 497);
+            this.ClientSize = new System.Drawing.Size(1225, 497);
             this.GridPopUp = false;
             this.KeyField1 = "ID";
             this.Name = "P02_NewCheckList";
