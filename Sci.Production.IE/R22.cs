@@ -81,14 +81,14 @@ namespace Sci.Production.IE
             {
                 listParameter.Add(new SqlParameter("@sdate1", this.dDate1));
                 listParameter.Add(new SqlParameter("@sdate2", this.dDate2));
-                sqlWhere += $@"and coc.Deadline between @sdate1 and @sdate2 ";
+                sqlWhere += $@"and coc.Deadline >= @sdate1 and coc.Deadline < DateAdd(day , 1, @date2) ";
             }
 
             if (!MyUtility.Check.Empty(this.iDate1))
             {
                 listParameter.Add(new SqlParameter("@date1", this.iDate1));
                 listParameter.Add(new SqlParameter("@date2", this.iDate2));
-                sqlWhere += $@"and co.Inline between @date1 and @date2 ";
+                sqlWhere += $@"and co.Inline >= @date1 and co.Inline < DateAdd(day , 1, @date2) ";
             }
 
             if (!MyUtility.Check.Empty(this.strSP))
