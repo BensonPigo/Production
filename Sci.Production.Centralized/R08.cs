@@ -298,7 +298,7 @@ namespace Sci.Production.Centralized
             StringBuilder cmd = new StringBuilder();
 
             string headQuery = string.Empty;
-            #region headQuery
+            #region Output、 Inline 、Sewing Date
             if (this.dtOutputDate.Value1.HasValue && this.dtOutputDate.Value2.HasValue)
             {
                 headQuery += $@" and a.OutputDate BETWEEN '{this.dtOutputDate.Value1.Value.ToString("yyyy-MM-dd")}' AND '{this.dtOutputDate.Value2.Value.ToString("yyyy-MM-dd")}'" + Environment.NewLine;
@@ -318,6 +318,29 @@ namespace Sci.Production.Centralized
             {
                 headQuery += $@"and a.SewingLineID = '{this.line}'" + Environment.NewLine;
             }
+
+            if (!MyUtility.Check.Empty(this.dtInlineDate.Value1))
+            {
+                headQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dtInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.dtInlineDate.Value2))
+            {
+                headQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dtInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
+            }
+
+            if (!MyUtility.Check.Empty(this.dtSewingDate.Value1))
+            {
+                headQuery += $@" 
+and (convert(date,ss.Inline) >= '{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+            }
+
+            if (!MyUtility.Check.Empty(this.dtSewingDate.Value2))
+            {
+                headQuery += $@" 
+and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
+            }
+
             #endregion
 
             string detailQuery = string.Empty;
@@ -338,55 +361,16 @@ namespace Sci.Production.Centralized
             }
             #endregion
 
-            string otherDate = string.Empty;
-            #region Inline & Sewing Date is not null
-            string sewingDateQuery = string.Empty;
-            if (this.dtSewingDate.Value1.HasValue || this.dtSewingDate.Value2.HasValue
-                || this.dtInlineDate.Value1.HasValue || this.dtInlineDate.Value2.HasValue
-                || this.dtOutputDate.Value1.HasValue || this.dtOutputDate.Value2.HasValue)
-            {
-                if (!MyUtility.Check.Empty(this.dtInlineDate.Value1))
-                {
-                    sewingDateQuery += string.Format("and '{0}' <= convert(varchar(10), ss.Inline, 120) ", this.dtInlineDate.Value1.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (!MyUtility.Check.Empty(this.dtInlineDate.Value2))
-                {
-                    sewingDateQuery += string.Format("and convert(varchar(10), ss.Inline, 120) <= '{0}' ", this.dtInlineDate.Value2.Value.ToString("yyyy-MM-dd"));
-                }
-
-                if (!MyUtility.Check.Empty(this.dtSewingDate.Value1))
-                {
-                    sewingDateQuery += $@" 
-and (convert(date,ss.Inline) >= '{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value1.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
-                }
-
-                if (!MyUtility.Check.Empty(this.dtSewingDate.Value2))
-                {
-                    sewingDateQuery += $@" 
-and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' or ('{this.dtSewingDate.Value2.Value.ToString("yyyy/MM/dd")}' between convert(date,ss.Inline) and convert(date,ss.Offline)))";
-                }
-
-                otherDate = $@"
-AND EXISTS (	
-	select 1
-	from SewingSchedule ss
-	inner join Orders od on ss.OrderID = od.ID
-	where o.StyleUkey = od.StyleUkey
-	{sewingDateQuery}
-)
-
-";
-            }
-            #endregion
-
             cmd.Append($@"
 ---- 1. 整理出Sewing output有哪些產線，並將 Sewing 需要群組加總的先加一加
 select DISTINCT a.*
 into #SewingOutput
 from SewingOutput a
+INNER JOIN SewingOutput_Detail b  on a.ID = b.ID
+INNER JOIN SewingSchedule ss ON b.OrderId = ss.OrderID
 where 1=1
 {headQuery}
+
 
 select b.ID
 	,o.StyleUkey
@@ -412,7 +396,7 @@ inner join Orders o on b.OrderId = o.ID
 inner join Style s on o.StyleUkey = s.Ukey
 where 1=1
 {detailQuery}
-{otherDate}
+
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
 	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.Construction
 
