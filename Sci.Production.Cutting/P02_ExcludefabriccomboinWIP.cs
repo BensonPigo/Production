@@ -12,10 +12,11 @@ namespace Sci.Production.Cutting
         private readonly string id;
 
         /// <inheritdoc/>
-        public P02_ExcludefabriccomboinWIP(string id)
+        public P02_ExcludefabriccomboinWIP(string id, bool isSupportEdit)
         {
             this.InitializeComponent();
             this.id = id;
+            this.btnSave.Enabled = isSupportEdit;
         }
 
         /// <inheritdoc/>
