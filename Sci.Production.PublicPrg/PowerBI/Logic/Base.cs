@@ -52,6 +52,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
             P_MaterialCompletionRateByWeek,
+            P_RTLStatusByDay,
+            P_DailyRTLStatusByLineByStyle,
             P_InventoryStockListReport,
             P_RecevingInfoTrackingSummary,
         }
@@ -382,6 +384,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MaterialCompletionRateByWeek:
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                        break;
+                    case ListName.P_RTLStatusByDay:
+                        result = new P_Import_RTLStatusByDay().P_RTLStatusByDay(item.SDate);
+                        break;
+                    case ListName.P_DailyRTLStatusByLineByStyle:
+                        result = new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item.SDate);
                         break;
                     case ListName.P_InventoryStockListReport:
                         result = new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
