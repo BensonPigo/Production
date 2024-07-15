@@ -650,6 +650,7 @@ select a.*,b.Status
 	,b.HighestCycle
 	,b.TaktTime
 	,b.Workhour
+	,b.HighestGSD
 INTO #FinalBeforeData
 from #BeforeData a
 inner join LineMapping b on a.ID = b.ID　---- P03
@@ -662,6 +663,7 @@ select a.*,b.Status
 	,HighestCycle = 0
 	,TaktTime = 0
 	,b.Workhour
+	,HighestGSD = b.HighestGSDTime
 from #BeforeData a
 inner join AutomatedLineMapping b on a.ID = b.ID　---- P05
 WHERE a.SourceTable='IE P05'
@@ -784,7 +786,7 @@ Outer Apply(
 	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P03' THEN lm.TaktTime
 				   ELSE 0 END AS DECIMAL(7,2))
 	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
-	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	from #FinalBeforeData lm
 	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
