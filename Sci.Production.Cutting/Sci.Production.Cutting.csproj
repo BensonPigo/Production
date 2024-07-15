@@ -164,6 +164,12 @@
     <Compile Include="Cutting_Print_P09.Designer.cs">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </Compile>
+    <Compile Include="P05_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Import.Designer.cs">
+      <DependentUpon>P05_Import.cs</DependentUpon>
+    </Compile>
     <Compile Include="P09_History.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -627,6 +633,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Cutting_Print_P09.resx">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Import.resx">
+      <DependentUpon>P05_Import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P09_History.resx">
       <DependentUpon>P09_History.cs</DependentUpon>
