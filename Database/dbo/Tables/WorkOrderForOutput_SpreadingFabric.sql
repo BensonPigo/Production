@@ -1,4 +1,4 @@
-
+﻿
 CREATE TABLE [dbo].[WorkOrderForOutput_SpreadingFabric] (
     [Ukey]            BIGINT          IDENTITY (1, 1) NOT NULL,
     [CutRef]          VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_CutRef] DEFAULT ('') NOT NULL,
@@ -12,12 +12,14 @@ CREATE TABLE [dbo].[WorkOrderForOutput_SpreadingFabric] (
     [Tone]            VARCHAR (15)    CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_Tone] DEFAULT ('') NOT NULL,
     [InsertByManual]  BIT             CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_InsertByManual] DEFAULT ((0)) NOT NULL,
     [TicketYards]     NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_TicketYards] DEFAULT ((0)) NOT NULL,
-    [SpreadingLayers] NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_SpreadingLayers] DEFAULT ((0)) NOT NULL,
+    [SpreadingLayers] TINYINT         NULL,
     [MergeFabYards]   NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_MergeFabYards] DEFAULT ((0)) NOT NULL,
     [DamageYards]     NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_DamageYards] DEFAULT ((0)) NOT NULL,
     [ActCutends]      NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_ActCutends] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_WorkOrderForOutput_SpreadingFabric] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 	GO
 
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Pkey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput_SpreadingFabric', @level2type=N'COLUMN',@level2name=N'Ukey'
