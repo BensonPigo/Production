@@ -1461,7 +1461,7 @@ SELECT
    ,PUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a0.rno, a1.rno)
    ,NRno = a2.rno
    ,TAUnitRno = a3.rno
-   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'TTLPRINTING PPU', a3.rno, a4.rno)
+   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a3.rno, a4.rno)
    ,TNRno = a5.rno
    ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', l.Abb, ot.LocalSuppID), '')
    ,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMP.Abb, ot.LocalSuppID), '')
@@ -1559,7 +1559,7 @@ SELECT
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpArtworkData TAUnitRno ON a.TAUnitRno = TAUnitRno.rno
 INNER JOIN #tmpOrders b ON a.ID = b.ID
-WHERE a.ArtworkTypeID <> 'TTLPRINTING PPU'
+WHERE a.ArtworkTypeID <> 'PRINTING PPU'
 
 UNION ALL
  --有 by Order_QtyShip.Seq

@@ -498,10 +498,9 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
             using (sqlConn)
             {
                 string sql = @"	
-update p 
-	set p.[ColumnValue] = ISNULL(t.[ColumnValue], 0)
-from P_PPICMasterList_Extend p 
-inner join #tmp t on t.OrderID = p.OrderID and t.ColumnName = p.ColumnName
+delete p
+  from P_PPICMasterList_Extend p
+  join #tmp t on t.OrderID = p.OrderID
 
 insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
 select OrderID, ColumnName, isnull(ColumnValue, 0)
