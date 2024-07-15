@@ -4,6 +4,8 @@
     [FactoryID]             VARCHAR (8)  CONSTRAINT [DF_Cutting_FactoryID] DEFAULT ('') NULL,
     [SewInLine]             DATE         NULL,
     [SewOffLine]            DATE         NULL,
+    [CutInLine]             DATE         NULL,
+    [CutOffLine]            DATE         NULL,
     [Remark]                NCHAR (60)   CONSTRAINT [DF_Cutting_Remark] DEFAULT ('') NULL,
     [FirstCutDate]          DATE         NULL,
     [LastCutDate]           DATE         NULL,

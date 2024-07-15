@@ -1,12 +1,8 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.Production.Prg;
 using System;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
 {
@@ -16,10 +12,11 @@ namespace Sci.Production.Cutting
         private readonly string id;
 
         /// <inheritdoc/>
-        public P02_ExcludefabriccomboinWIP(string id)
+        public P02_ExcludefabriccomboinWIP(string id, bool isSupportEdit)
         {
             this.InitializeComponent();
             this.id = id;
+            this.btnSave.Enabled = isSupportEdit;
         }
 
         /// <inheritdoc/>

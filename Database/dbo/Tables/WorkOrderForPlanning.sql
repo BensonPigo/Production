@@ -1,44 +1,42 @@
-﻿CREATE TABLE [dbo].[WorkOrderForPlanning](
-		[Ukey] [int] IDENTITY(1,1) NOT NULL,
-		[Type] [varchar] (1) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_Type] DEFAULT '',
-		[ID] [varchar] (13) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_ID] DEFAULT '',
-		[OrderID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_OrderID] DEFAULT '',
-		[FactoryID] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FactoryID] DEFAULT '',
-		[MDivisionID] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MDivisionID] DEFAULT '',
-		[Seq1] [varchar] (3) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Seq1] DEFAULT '',
-		[Seq2] [varchar] (2) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Seq2] DEFAULT '',
-		[CutRef] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_CutRef] DEFAULT '',
-		[CutPlanID] [varchar] (13) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_CutPlanID] DEFAULT '',
-		[Layer] [int] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Layer] DEFAULT 0,
-		[WKETA] [date] NULL,
-		[EstCutDate] [date] Null,
-		[FabricCombo] [varchar] (2) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricCombo] DEFAULT '',
-		[FabricCode] [varchar] (3) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricCode] DEFAULT '',
-		[FabricPanelCode] [varchar] (2) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_FabricPanelCode] DEFAULT '',
-		[Article] [varchar] (8) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Article] DEFAULT '',
-		[RefNo] [varchar] (36) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_RefNo] DEFAULT '',
-		[SCIRefNo] [varchar] (30) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_SCIRefNo] DEFAULT '',
-		[ColorID] [varchar] (6) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_ColorID] DEFAULT '',
-		[ConsPC] [numeric] (12, 4) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_ConsPC] DEFAULT 0,
-		[Cons] [numeric] (16, 4) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Cons] DEFAULT 0,
-		[Tone] [varchar] (15) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Tone] DEFAULT '',
-		[Remark] [nvarchar] (MAX) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Remark] DEFAULT '',
-		[IsCreateByUser] [bit] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_IsCreateByUser] DEFAULT 0,
-		[MarkerName] [varchar] (20) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerName] DEFAULT '',
-		[MarkerNo] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerNo] DEFAULT '',
-		[MarkerLength] [varchar] (15) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_MarkerLength] DEFAULT '',
-		[MarkerVersion] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT '',
-		[Order_EachconsUkey] [bigint] NOT Null CONSTRAINT [DF_WorkOrderForPlanning_Order_EachconsUkey] DEFAULT 0,
-		[AddName] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_AddName] DEFAULT '',
-		[AddDate] [datetime] Null,
-		[EditName] [varchar] (10) NOT Null CONSTRAINT [DF_WorkOrderForPlanning_EditName] DEFAULT '',
-		[EditDate] [datetime] Null,
-		
-	 CONSTRAINT [PK_WorkOrderForPlanning] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+﻿CREATE TABLE [dbo].[WorkOrderForPlanning] (
+    [Ukey]               INT             IDENTITY (1, 1) NOT NULL,
+    [Type]               VARCHAR (1)     CONSTRAINT [DF_WorkOrderForPlanning_Type] DEFAULT ('') NOT NULL,
+    [ID]                 VARCHAR (13)    CONSTRAINT [DF_WorkOrderForPlanning_ID] DEFAULT ('') NOT NULL,
+    [OrderID]            VARCHAR (13)    CONSTRAINT [DF_WorkOrderForPlanning_OrderID] DEFAULT ('') NOT NULL,
+    [FactoryID]          VARCHAR (8)     CONSTRAINT [DF_WorkOrderForPlanning_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionID]        VARCHAR (8)     CONSTRAINT [DF_WorkOrderForPlanning_MDivisionID] DEFAULT ('') NOT NULL,
+    [Seq1]               VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]               VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_Seq2] DEFAULT ('') NOT NULL,
+    [CutRef]             VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_CutRef] DEFAULT ('') NOT NULL,
+    [CutPlanID]          VARCHAR (13)    CONSTRAINT [DF_WorkOrderForPlanning_CutPlanID] DEFAULT ('') NOT NULL,
+    [Layer]              INT             CONSTRAINT [DF_WorkOrderForPlanning_Layer] DEFAULT ((0)) NOT NULL,
+    [WKETA]              DATE            NULL,
+    [EstCutDate]         DATE            NULL,
+    [FabricCombo]        VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_FabricCombo] DEFAULT ('') NOT NULL,
+    [FabricCode]         VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_FabricCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]    VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [Article]            VARCHAR (8)     CONSTRAINT [DF_WorkOrderForPlanning_Article] DEFAULT ('') NOT NULL,
+    [RefNo]              VARCHAR (36)    CONSTRAINT [DF_WorkOrderForPlanning_RefNo] DEFAULT ('') NOT NULL,
+    [SCIRefNo]           VARCHAR (30)    CONSTRAINT [DF_WorkOrderForPlanning_SCIRefNo] DEFAULT ('') NOT NULL,
+    [ColorID]            VARCHAR (6)     CONSTRAINT [DF_WorkOrderForPlanning_ColorID] DEFAULT ('') NOT NULL,
+    [ConsPC]             NUMERIC (12, 4) CONSTRAINT [DF_WorkOrderForPlanning_ConsPC] DEFAULT ((0)) NOT NULL,
+    [Cons]               NUMERIC (16, 4) CONSTRAINT [DF_WorkOrderForPlanning_Cons] DEFAULT ((0)) NOT NULL,
+    [Tone]               VARCHAR (15)    CONSTRAINT [DF_WorkOrderForPlanning_Tone] DEFAULT ('') NOT NULL,
+    [Remark]             NVARCHAR (MAX)  CONSTRAINT [DF_WorkOrderForPlanning_Remark] DEFAULT ('') NOT NULL,
+    [IsCreateByUser]     BIT             CONSTRAINT [DF_WorkOrderForPlanning_IsCreateByUser] DEFAULT ((0)) NOT NULL,
+    [MarkerName]         VARCHAR (20)    CONSTRAINT [DF_WorkOrderForPlanning_MarkerName] DEFAULT ('') NOT NULL,
+    [MarkerNo]           VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_MarkerNo] DEFAULT ('') NOT NULL,
+    [MarkerLength]       VARCHAR (15)    CONSTRAINT [DF_WorkOrderForPlanning_MarkerLength] DEFAULT ('') NOT NULL,
+    [Order_EachconsUkey] BIGINT          CONSTRAINT [DF_WorkOrderForPlanning_Order_EachconsUkey] DEFAULT ((0)) NOT NULL,
+    [AddName]            VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]            DATETIME        NULL,
+    [EditName]           VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]           DATETIME        NULL,
+    [MarkerVersion]      VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT ('') NOT NULL,
+    CONSTRAINT [PK_WorkOrderForPlanning] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
 	Go
 
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'流水號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -109,3 +107,33 @@
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'EditDate'
 	GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_OrderID]
+    ON [dbo].[WorkOrderForPlanning]([OrderID] ASC)
+    INCLUDE([CutRef], [EstCutDate], [Ukey]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_MDivisionId]
+    ON [dbo].[WorkOrderForPlanning]([MDivisionID] ASC)
+    INCLUDE([CutRef]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_EstCutDate_CutCellid]
+    ON [dbo].[WorkOrderForPlanning]([EstCutDate] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_EstCutDate]
+    ON [dbo].[WorkOrderForPlanning]([EstCutDate] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_CutRef]
+    ON [dbo].[WorkOrderForPlanning]([CutRef] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_BundleESCDate]
+    ON [dbo].[WorkOrderForPlanning]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);
+

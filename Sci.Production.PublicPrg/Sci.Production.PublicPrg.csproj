@@ -162,6 +162,8 @@
   <ItemGroup>
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
+    <Compile Include="DataGridViewGeneratorExtensions.cs" />
+    <Compile Include="DataTableExts.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />

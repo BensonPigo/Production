@@ -1,55 +1,52 @@
-﻿CREATE TABLE [dbo].[WorkOrderForOutput](
-		[Ukey] [int] IDENTITY(1,1) NOT NULL,
-		[ID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_ID] DEFAULT '',
-		[FactoryID] [varchar] (8) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_FactoryID] DEFAULT '',
-		[MDivisionID] [varchar] (8) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MDivisionID] DEFAULT '',
-		[Seq1] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Seq1] DEFAULT '',
-		[Seq2] [varchar] (2) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Seq2] DEFAULT '',
-		[CutRef] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CutRef] DEFAULT '',
-		[CutNo] [int] NULL,
-		[OrderID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_OrderID] DEFAULT '',
-		[RefNo] [varchar] (36) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_RefNo] DEFAULT '',
-		[SCIRefNo] [varchar] (30) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SCIRefNo] DEFAULT '',
-		[ColorID] [varchar] (6) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_ColorID] DEFAULT '',
-		[Tone] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Tone] DEFAULT '',
-		[Layer] [int] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Layer] DEFAULT 0,
-		[WKETA] [date] NULL,
-		[FabricCombo] [varchar] (2) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_FabricCombo] DEFAULT '',
-		[FabricCode] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_FabricCode] DEFAULT '',
-		[FabricPanelCode] [varchar] (2) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_FabricPanelCode] DEFAULT '',
-		[EstCutDate] [date] NULL,
-		[ConsPC] [numeric] (12, 4) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_ConsPC] DEFAULT 0,
-		[Cons] [numeric] (16, 4) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Cons] DEFAULT 0,
-		[MarkerNo] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerNo] DEFAULT '',
-		[MarkerName] [varchar] (20) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerName] DEFAULT '',
-		[MarkerLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerLength] DEFAULT '',
-		[MarkerVersion] [varchar] (3) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_MarkerVersion] DEFAULT '',
-		[ActCuttingPerimeter] [nvarchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_ActCuttingPerimeter] DEFAULT '',
-		[StraightLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_StraightLength] DEFAULT '',
-		[CurvedLength] [varchar] (15) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CurvedLength] DEFAULT '',
-		[Shift] [varchar] (1) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Shift] DEFAULT '',
-		[CutCellID] [varchar] (2) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CutCellID] DEFAULT '',
-		[SpreadingNoID] [varchar] (5) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SpreadingNoID] DEFAULT '',
-		[UnfinishedCuttingReason] [varchar] (50) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_UnfinishedCuttingReason] DEFAULT '',
-		[UnfinishedCuttingRemark] [nvarchar] (500) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_UnfinishedCuttingRemark] DEFAULT '',
-		[IsCreateByUser] [bit] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_IsCreateByUser] DEFAULT 0,
-		[SpreadingStatus] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SpreadingStatus] DEFAULT 'Ready',
-		[SpreadingRemark] [nvarchar] (500) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SpreadingRemark] DEFAULT '',
-		[GroupID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_GroupID] DEFAULT '',
-		[WorkOrderForPlanningUkey] [int] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_WorkOrderForPlanningUkey] DEFAULT 0,
-		[SourceFrom] [varchar] (1) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_SourceFrom] DEFAULT '',
-		[CuttingMethod] [bit] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_CuttingMethod] DEFAULT 0,
-		[Order_EachconsUkey] [bigint] NOT NULL CONSTRAINT [DF_WorkOrderForOutput_Order_EachconsUkey] DEFAULT 0,
-		[AddName] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_AddName] DEFAULT '',
-		[AddDate] [datetime] NULL,
-		[EditName] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutput_EditName] DEFAULT '',
-		[EditDate] [datetime] NULL,
-		
-	 CONSTRAINT [PK_WorkOrderForOutput] PRIMARY KEY CLUSTERED 
-	(
-		[Ukey] ASC
-	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+CREATE TABLE [dbo].[WorkOrderForOutput] (
+    [Ukey]                     INT             IDENTITY (1, 1) NOT NULL,
+    [ID]                       VARCHAR (13)    CONSTRAINT [DF_WorkOrderForOutput_ID] DEFAULT ('') NOT NULL,
+    [FactoryID]                VARCHAR (8)     CONSTRAINT [DF_WorkOrderForOutput_FactoryID] DEFAULT ('') NOT NULL,
+    [MDivisionID]              VARCHAR (8)     CONSTRAINT [DF_WorkOrderForOutput_MDivisionID] DEFAULT ('') NOT NULL,
+    [Seq1]                     VARCHAR (3)     CONSTRAINT [DF_WorkOrderForOutput_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]                     VARCHAR (2)     CONSTRAINT [DF_WorkOrderForOutput_Seq2] DEFAULT ('') NOT NULL,
+    [CutRef]                   VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_CutRef] DEFAULT ('') NOT NULL,
+    [CutNo]                    INT             NULL,
+    [OrderID]                  VARCHAR (13)    CONSTRAINT [DF_WorkOrderForOutput_OrderID] DEFAULT ('') NOT NULL,
+    [RefNo]                    VARCHAR (36)    CONSTRAINT [DF_WorkOrderForOutput_RefNo] DEFAULT ('') NOT NULL,
+    [SCIRefNo]                 VARCHAR (30)    CONSTRAINT [DF_WorkOrderForOutput_SCIRefNo] DEFAULT ('') NOT NULL,
+    [ColorID]                  VARCHAR (6)     CONSTRAINT [DF_WorkOrderForOutput_ColorID] DEFAULT ('') NOT NULL,
+    [Tone]                     VARCHAR (15)    CONSTRAINT [DF_WorkOrderForOutput_Tone] DEFAULT ('') NOT NULL,
+    [Layer]                    INT             CONSTRAINT [DF_WorkOrderForOutput_Layer] DEFAULT ((0)) NOT NULL,
+    [WKETA]                    DATE            NULL,
+    [FabricCombo]              VARCHAR (2)     CONSTRAINT [DF_WorkOrderForOutput_FabricCombo] DEFAULT ('') NOT NULL,
+    [FabricCode]               VARCHAR (3)     CONSTRAINT [DF_WorkOrderForOutput_FabricCode] DEFAULT ('') NOT NULL,
+    [FabricPanelCode]          VARCHAR (2)     CONSTRAINT [DF_WorkOrderForOutput_FabricPanelCode] DEFAULT ('') NOT NULL,
+    [EstCutDate]               DATE            NULL,
+    [ConsPC]                   NUMERIC (12, 4) CONSTRAINT [DF_WorkOrderForOutput_ConsPC] DEFAULT ((0)) NOT NULL,
+    [Cons]                     NUMERIC (16, 4) CONSTRAINT [DF_WorkOrderForOutput_Cons] DEFAULT ((0)) NOT NULL,
+    [MarkerNo]                 VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_MarkerNo] DEFAULT ('') NOT NULL,
+    [MarkerName]               VARCHAR (20)    CONSTRAINT [DF_WorkOrderForOutput_MarkerName] DEFAULT ('') NOT NULL,
+    [MarkerLength]             VARCHAR (15)    CONSTRAINT [DF_WorkOrderForOutput_MarkerLength] DEFAULT ('') NOT NULL,
+    [MarkerVersion]            VARCHAR (3)     CONSTRAINT [DF_WorkOrderForOutput_MarkerVersion] DEFAULT ('') NOT NULL,
+    [ActCuttingPerimeter]      NVARCHAR (15)   CONSTRAINT [DF_WorkOrderForOutput_ActCuttingPerimeter] DEFAULT ('') NOT NULL,
+    [StraightLength]           VARCHAR (15)    CONSTRAINT [DF_WorkOrderForOutput_StraightLength] DEFAULT ('') NOT NULL,
+    [CurvedLength]             VARCHAR (15)    CONSTRAINT [DF_WorkOrderForOutput_CurvedLength] DEFAULT ('') NOT NULL,
+    [Shift]                    VARCHAR (1)     CONSTRAINT [DF_WorkOrderForOutput_Shift] DEFAULT ('') NOT NULL,
+    [CutCellID]                VARCHAR (2)     CONSTRAINT [DF_WorkOrderForOutput_CutCellID] DEFAULT ('') NOT NULL,
+    [SpreadingNoID]            VARCHAR (5)     CONSTRAINT [DF_WorkOrderForOutput_SpreadingNoID] DEFAULT ('') NOT NULL,
+    [UnfinishedCuttingReason]  VARCHAR (50)    CONSTRAINT [DF_WorkOrderForOutput_UnfinishedCuttingReason] DEFAULT ('') NOT NULL,
+    [UnfinishedCuttingRemark]  NVARCHAR (500)  CONSTRAINT [DF_WorkOrderForOutput_UnfinishedCuttingRemark] DEFAULT ('') NOT NULL,
+    [IsCreateByUser]           BIT             CONSTRAINT [DF_WorkOrderForOutput_IsCreateByUser] DEFAULT ((0)) NOT NULL,
+    [SpreadingStatus]          VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_SpreadingStatus] DEFAULT ('Ready') NOT NULL,
+    [SpreadingRemark]          NVARCHAR (500)  CONSTRAINT [DF_WorkOrderForOutput_SpreadingRemark] DEFAULT ('') NOT NULL,
+    [GroupID]                  VARCHAR (13)    CONSTRAINT [DF_WorkOrderForOutput_GroupID] DEFAULT ('') NOT NULL,
+    [WorkOrderForPlanningUkey] INT             CONSTRAINT [DF_WorkOrderForOutput_WorkOrderForPlanningUkey] DEFAULT ((0)) NOT NULL,
+    [SourceFrom]               VARCHAR (1)     CONSTRAINT [DF_WorkOrderForOutput_SourceFrom] DEFAULT ('') NOT NULL,
+    [CuttingMethod]            BIT             CONSTRAINT [DF_WorkOrderForOutput_CuttingMethod] DEFAULT ((0)) NOT NULL,
+    [Order_EachconsUkey]       BIGINT          CONSTRAINT [DF_WorkOrderForOutput_Order_EachconsUkey] DEFAULT ((0)) NOT NULL,
+    [AddName]                  VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_AddName] DEFAULT ('') NOT NULL,
+    [AddDate]                  DATETIME        NULL,
+    [EditName]                 VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_EditName] DEFAULT ('') NOT NULL,
+    [EditDate]                 DATETIME        NULL,
+    CONSTRAINT [PK_WorkOrderForOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
 	GO
 
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'流水號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -145,4 +142,33 @@
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'EditDate'
 	GO
-	
+
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_OrderID]
+    ON [dbo].[WorkOrderForOutput]([OrderID] ASC)
+    INCLUDE([CutRef], [CutNo], [EstCutDate], [Ukey]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_MDivisionId]
+    ON [dbo].[WorkOrderForOutput]([MDivisionID] ASC)
+    INCLUDE([CutRef]);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_EstCutDate_CutCellid]
+    ON [dbo].[WorkOrderForOutput]([EstCutDate] ASC, [CutCellID] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_EstCutDate]
+    ON [dbo].[WorkOrderForOutput]([EstCutDate] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_CutRef]
+    ON [dbo].[WorkOrderForOutput]([CutRef] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_BundleESCDate]
+    ON [dbo].[WorkOrderForOutput]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);

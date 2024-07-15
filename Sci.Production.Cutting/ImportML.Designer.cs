@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P02_ImportML
+    partial class ImportML
     {
         /// <summary>
         /// Required designer variable.
@@ -122,7 +122,7 @@
             this.ui_grid.TabIndex = 14;
             this.ui_grid.TabStop = false;
             // 
-            // P02_ImportML
+            // P09_ImportML
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -133,9 +133,9 @@
             this.Controls.Add(this.ui_btnConfirm);
             this.Controls.Add(this.ui_btnDelete);
             this.Controls.Add(this.ui_grid);
-            this.Name = "P02_ImportML";
+            this.Name = "P09_ImportML";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "ImportML";
+            this.Text = "Import Marker(Lectra)";
             this.Controls.SetChildIndex(this.ui_grid, 0);
             this.Controls.SetChildIndex(this.ui_btnDelete, 0);
             this.Controls.SetChildIndex(this.ui_btnConfirm, 0);
