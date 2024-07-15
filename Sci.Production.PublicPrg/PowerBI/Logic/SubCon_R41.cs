@@ -77,13 +77,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.CutRefNo1))
                 {
-                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.CutRef >= @CutRefNo1 ");
                 }
 
                 if (!MyUtility.Check.Empty(model.CutRefNo2))
                 {
-                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.CutRef <= @CutRefNo2 ");
                 }
 
@@ -160,13 +160,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate1))
                 {
-                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.EstCutDate >= convert(date,'{Convert.ToDateTime(model.EstCuttingDate1).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate2))
                 {
-                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.EstCutDate <= convert(date,'{Convert.ToDateTime(model.EstCuttingDate2).ToString("yyyy/MM/dd")}')");
                 }
 
