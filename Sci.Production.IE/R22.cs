@@ -81,7 +81,7 @@ namespace Sci.Production.IE
             {
                 listParameter.Add(new SqlParameter("@sdate1", this.dDate1));
                 listParameter.Add(new SqlParameter("@sdate2", this.dDate2));
-                sqlWhere += $@"and coc.Deadline >= @sdate1 and coc.Deadline < DateAdd(day , 1, @date2) ";
+                sqlWhere += $@"and coc.Deadline >= @sdate1 and coc.Deadline < DateAdd(day , 1, @sdate2) ";
             }
 
             if (!MyUtility.Check.Empty(this.iDate1))
