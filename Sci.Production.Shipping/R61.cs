@@ -90,10 +90,10 @@ select [WK#] = kid.ExportID
      , [Type] = kcdp.CustomsType 
      , kcdp.CDCCode
      , [Customs Description] = kcdp.CDCName
-     , [CDC Qty] = Kid.Qty*kcdp2.Ratio
+     , [CDC Qty] = Kid.CDCQty
      , [CDC Unit] = kid.CDCUnit 
      , [CDC Unit Price] = kid.CDCUnitPrice 
-     , [CDC Amount] = CDCAmount.value
+     , [CDC Amount] = Kid.CDCQty * Kid.CDCUnitPrice
      , [Act.NW] = kid.ActNetKg 
      , [Act.GW] = kid.ActWeightKg 
 	 , [Act.Amount] = kid.ActAmount 
@@ -104,15 +104,9 @@ select [WK#] = kid.ExportID
  inner join KHCustomsItem kc on kc.Refno=Kid.Refno and kc.ukey= kid.KHCustomsItemUkey
  inner join KHCustomsItem_Detail kcd on kc.ukey=kcd.KHCustomsItemUkey and kcd.Port=Ki.ImportPort
  inner join KHCustomsDescription kcdp on kc.KHCustomsDescriptionCDCName = kcdp.CDCName
-  left join KHCustomsDescription_Detail kcdp2 on kcdp2.CDCName = kcdp.CDCName and kcdp2.PurchaseUnit = kid.UnitId
  outer apply (
 	select value = count(*) from FtyExport fe where fe.id=kid.exportid
  )IsLocalShipment
- outer apply(
-	select value = sum(t.Qty * t.CDCUnitPrice) * kcdp2.Ratio 
-	from KHImportDeclaration_Detail t
-	where t.Ukey = kid.ukey
- )CDCAmount
  where 1=1
 ";
 
@@ -158,23 +152,23 @@ select
 	, ki.Cdate
 	, x.ActHSCode
     , kid.CustomsType as [Customs Type]
-	, kid.CDCName as [Customs Description]
-	, kid.CDCCode as [CDC Code]
+    , kid.CDCName as [Customs Description]
+    , kid.CDCCode as [CDC Code]
 	, kc.CDCUnit as [CDC Unit]
 	, kdQty.Value as [Total Qty]
-	, sum(ks.OriTtlNetKg) as [Ori Ttl N.W.]
-	, sum(ks.OriTtlWeightKg) as [Ori Ttl G.W.]
-	, sum(ks.OriTtlCDCAmount) as [Ori Ttl CDC Amount]
+    , sum(ks.OriTtlNetKg) as [Ori Ttl N.W.]
+    , sum(ks.OriTtlWeightKg) as [Ori Ttl G.W.]
+    , sum(ks.OriTtlCDCAmount) as [Ori Ttl CDC Amount]
     , sum(ks.ActCDCQty) as [ActCDCQty]
-	, sum(ks.ActTtlNetKg) as [Act. Ttl N.W.]
-	, sum(ks.ActTtlWeightKg) as [Act. Ttl G.W.]
-	, sum(ks.ActTtlAmount) as [Act. Ttl Amount]
+    , sum(ks.ActTtlNetKg) as [Act. Ttl N.W.]
+    , sum(ks.ActTtlWeightKg) as [Act. Ttl G.W.]
+    , sum(ks.ActTtlAmount) as [Act. Ttl Amount]
 	, diffNW.Value as [N.W. Diff]
 	, diffGW.Value as [G.W. Diff]
 from KHImportDeclaration_ShareCDCExpense ks
 inner join KHImportDeclaration ki on ki.id = ks.id
 inner join KHCustomsDescription kc on ks.KHCustomsDescriptionCDCName=kc.CDCName
-inner join KHImportDeclaration_Detail kid on kid.ID = ki.ID and kid.CDCName = kc.CDCName
+outer apply (select distinct CustomsType,CDCName,CDCCode from KHImportDeclaration_Detail where ID = ki.ID and CDCName = kc.CDCName ) kid
 outer apply(
 	select ActHSCode =  stuff((
 		select distinct concat(',', ActHSCode)

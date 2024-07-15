@@ -528,6 +528,7 @@ SELECT
    ,o.StyleUnit
    ,o.SubconInType
    ,o.isForecast
+   ,o.GMTComplete
 INTO #tmpOrders
 FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
@@ -993,6 +994,7 @@ SELECT
    ,[Qty] = O.Qty
    ,[FOC Qty] = o.FOCQty
    ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+   ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
    ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
    ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
    ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
@@ -1123,6 +1125,13 @@ LEFT JOIN TPEPass1 tp3 WITH (NOLOCK) ON PO.POSMR = tp3.ID
 LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
 LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
 LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
+outer apply (
+  select Qty=sum(pd.ShipQty)
+  from PackingList p, PackingList_Detail pd
+  where p.ID = pd.ID
+  and p.PulloutID <> ''
+  and pd.OrderID = o.ID
+) GetPulloutData 
 
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID

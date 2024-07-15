@@ -18,7 +18,7 @@ declare @Remark nvarchar(max) = (select Remark from Production.dbo.DateInfo wher
 
 --2.取得預設值
 if @DateEnd is Null
-	set @DateEnd = EOMONTH(GETDATE(),3)	
+	set @DateEnd = EOMONTH(GETDATE(),-3)	
 
 --3.更新Pms_To_Trade.dbo.dateInfo
 if exists(select 1 from Pms_To_Trade.dbo.dateInfo where Name = @DateInfoName )
@@ -39,7 +39,7 @@ Select	o.ID
 		, FirstCutDate = (select FirstCutDate from [Production].dbo.Cutting where ID = o.CuttingSP)
 INTO OrderSchedule
 from [Production].dbo.Orders o
-where	o.SCIDelivery <= @DateEnd
+where	o.SCIDelivery > @DateEnd
 		and o.Finished = 0
 		and (o.Junk=0 or (o.Junk=1 and o.NeedProduction=1))
 		and o.IsForecast = 0

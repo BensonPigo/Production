@@ -113,6 +113,16 @@ And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
 Delete P_MaterialCompletionRateByWeek 
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
+
+if exists(select 1 from BITableInfo where Id = 'P_MaterialCompletionRateByWeek')
+begin
+	update BITableInfo set TransferDate = getdate()
+	where Id = 'P_MaterialCompletionRateByWeek'
+end
+else
+begin
+	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_MaterialCompletionRateByWeek', GETDATE(), 0)
+end
 ";
 
                 result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);

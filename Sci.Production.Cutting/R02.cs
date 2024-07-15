@@ -1105,7 +1105,10 @@ drop table #tmp{i}
                         {
                             objSheets.get_Range("A" + (8 + j), "B" + (8 + j)).Merge(false); // 合併欄位
                             objSheets.get_Range("A" + (8 + j), "A" + (8 + j)).Font.Bold = true; // 指定粗體
-                            objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("yyyy/MM/dd");
+                            if (!MyUtility.Check.Empty(this.printData[i].Rows[j]["SCI Delivery"]))
+                            {
+                                objSheets.Cells[7 + j, 1] = "SCI Delivery: " + Convert.ToDateTime(this.printData[i].Rows[j]["SCI Delivery"]).ToString("yyyy/MM/dd");
+                            }
                         }
 
                         if (this.printData[i].Rows[j]["Ref#"].Empty())

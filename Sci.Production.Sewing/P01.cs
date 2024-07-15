@@ -1210,7 +1210,7 @@ and SunriseNid = 0
             cmds.Add(sp5);
 
             string sqlCmd = @"
-select iif(rft.InspectQty is null or rft.InspectQty = 0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
+select iif(isnull(rft.InspectQty,0)=0,'0.00%', CONVERT(VARCHAR, convert(Decimal(5,2), round((rft.InspectQty-rft.RejectQty)/rft.InspectQty*100,2) )) + '%') as RFT
 from RFT WITH (NOLOCK) 
 where OrderID = @orderid
 and CDate = @cdate
@@ -2731,6 +2731,16 @@ drop table #Child, #updateChild
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
+            string strSQL = $@"select Status from SewingOutput where FactoryID = '{Env.User.Factory}' and OutputDate = '{MyUtility.Convert.GetDate(this.CurrentMaintain["OutputDate"]).Value.ToString("yyyy/MM/dd")}' and SewingLineID = '{this.CurrentMaintain["SewingLineID"]}'";
+
+            string strStatus = MyUtility.GetValue.Lookup(strSQL);
+
+            if (strStatus != "Locked")
+            {
+                MyUtility.Msg.WarningBox("Please Refresh this page since someone already change the status.");
+                return;
+            }
+
             Win.UI.SelectReason callReason = new Win.UI.SelectReason("Sewing_RVS", true);
             DialogResult dResult = callReason.ShowDialog(this);
             if (dResult == DialogResult.OK)
