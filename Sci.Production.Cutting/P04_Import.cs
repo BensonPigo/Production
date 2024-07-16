@@ -65,13 +65,12 @@ namespace Sci.Production.Cutting
             string sqlcmd = $@"
             Select 
             wofp.*
-            ,[orderid_b] = wofp.OrderID
-            ,[article_b] = wofp.Article
-            ,[sizecode] = wofps.SizeCode
+            ,[orderid_b] = ''
+            ,[article_b] = ''
+            ,[sizecode] = ''
             ,'' as sewinglineid
             ,1 as sel 
             from WorkOrderForPlanning wofp
-            inner join WorkOrderForPlanning_SizeRatio wofps WITH(NOLOCK) on wofps.WorkOrderForPlanningUkey = wofp.Ukey
             where cutplanid='' 
             and wofp.CutRef != ''   
             and mDivisionid ='{this.keyWord}' 
