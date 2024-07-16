@@ -199,6 +199,7 @@ namespace Sci.Production.IE
                 cmdP05_Operation = this.GetDetailP05_Operation();
                 cmdP06_Operation = this.GetDetailP06_Operation();
 
+                // Station
                 result = DBProxy.Current.Select(null, cmdP03_Station.ToString(), out DataTable p03_Station);
                 if (!result)
                 {
@@ -220,6 +221,7 @@ namespace Sci.Production.IE
                     return failResult;
                 }
 
+                // Operation
                 result = DBProxy.Current.Select(null, cmdP03_Operation.ToString(), out DataTable p03_Operation);
                 if (!result)
                 {
@@ -662,10 +664,10 @@ select distinct
 	lm.Version,
 	lmd.No,
     TotalGSD = DetailSum.TotalGSD,
-	ActCycleTime = 0.0, -- P05沒有
-    GSDvsActTimeDiff = 0.0 , ----  P05沒有
-	ActCycleTimeAvg = 0.0,  ---- P05沒有
-	ActTimeDiffAvg = 0.0,　----  P05沒有
+	ActCycleTime =  Cast( NULL as decimal), -- P05沒有
+    GSDvsActTimeDiff = Cast( NULL as decimal), ----  P05沒有
+	ActCycleTimeAvg = Cast( NULL as decimal),  ---- P05沒有
+	ActTimeDiffAvg = Cast( NULL as decimal),　----  P05沒有
 	NotHitTargetReason = '',
     IsFrom = 'IE P05'
 from #AutomatedLineMapping lm WITH (NOLOCK) 
@@ -790,9 +792,12 @@ select distinct
 	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
     GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
 	ActCycleTimeAvg = IIF(lm.SewerManpower = 0, 0, 1.0 * lm.TotalCycleTime / lm. SewerManpower),  ---- 公式: [Total Cycle time] / [Current Oprts] 兩個都是表頭欄位
-	ActTimeDiffAvg = IIF((1.0 * lm.TotalCycleTime / lm. SewerManpower) = 0, 0, ( (1.0 * lm.TotalCycleTime / lm. SewerManpower) - lm.TotalCycleTime ) / (1.0 * lm.TotalCycleTime / lm.SewerManpower)),　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
+	ActTimeDiffAvg = IIF(lm. SewerManpower = 0 or lm.TotalCycleTime / lm. SewerManpower = 0 , 0 ,
+	
+						((1.0 * lm.TotalCycleTime / lm. SewerManpower) -  DetailSum.TotalCycle) / ( lm.TotalCycleTime / lm. SewerManpower)
+					) ,　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
 	NotHitTargetReason = '',
-    IsFrom = 'IE P06'
+    IsFrom = 'IE P06' 
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 outer apply (
