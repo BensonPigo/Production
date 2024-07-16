@@ -146,7 +146,7 @@ SELECT Distinct
      [NewSP] = co.OrderID,
      [NewStyle] = co.StyleID,
      [NewComboType] = co.ComboType,
-     [Style Type] = co.Type,
+     [Style Type] = iif(co.Type = 'N', 'New', 'Repeat')
      [Category] = co.Category
 FROM ChgOver co WITH (NOLOCK)
 INNER JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
@@ -171,6 +171,7 @@ OUTER APPLY
 ) AS oldco
 WHERE 1 = 1
 {sqlWhere}
+ORDER BY [Inline], [SewingLine], [OldSP], [NewSP] 
  
 --Detail
 SELECT Distinct
@@ -179,22 +180,40 @@ SELECT Distinct
     [Category] = co.Category,
     [Product Type] = r.Name,
     [Cell] = sl.SewingCell,
-    [Days Left] = DaysLeft.value,
+    [DaysLeft] = iif(coc.Checked = 1 ,'-' ,  CONVERT( VARCHAR(10),iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val ))),
     [Inline Date] = CONVERT(varchar, co.Inline, 23),
-    [Over Days] = IIF(coc.Checked = 0, DaysLeft.Value, OverDays.Value),
+    [Over Days] = iif(coc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [Check] = IIF(coc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, coc.CompletionDate, 23),
     [Response Dep.] = cod.ResponseDep,
     [Check List No] = coc.No,
     [Check List Item] = colb.CheckList,
-    [Late Reason] = co.Remark
+    [Late Reason] = coc.Remark
 FROM ChgOver_Check coc WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
+OUTER APPLY
+(
+	SELECT val = isnull(DATEDIFF(day,GETDATE(),coc.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,GETDATE())),0)
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = co.FactoryID
+)DaysLefCnt
+OUTER APPLY
+(
+	SELECT val = isnull(DATEDIFF(day,coc.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,GETDATE())),0)
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = co.FactoryID
+)OverDay_Check_0
+OUTER Apply
+(
+	SELECT val = isnull(iif(coc.CompletionDate IS NULL, 0, DATEDIFF(day,coc.DeadLine,coc.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,coc.CompletionDate))),0)
+	FROM Holiday WITH(NOLOCK)
+	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
+)OverDay_Check_1
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.ID = ccl.ID
+LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = coc.NO
 LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccld.ID = ccl.ID
 OUTER APPLY
 (
@@ -209,42 +228,9 @@ OUTER APPLY
 			for xml path ('')
 		) , 1, 1, '')
 ) as cod
-OUTER APPLY 
-(
-    SELECT COUNT(*) AS value
-    FROM (
-        SELECT DATEADD(DAY, number, GETDATE()) AS DateInPeriod
-        FROM master..spt_values
-        WHERE type = 'P'
-          AND number <= DATEDIFF(DAY, GETDATE(), coc.Deadline)
-    ) AS DateRange
-    WHERE DATEPART(WEEKDAY, DateInPeriod) <> 1
-      AND NOT EXISTS (
-          SELECT 1
-          FROM Holiday h WITH(NOLOCK)
-          WHERE h.HolidayDate = DateInPeriod
-            AND h.FactoryID = co.FactoryID
-      )
-) AS DaysLeft
-OUTER APPLY 
-(
-    SELECT COUNT(*) AS value
-    FROM (
-        SELECT DATEADD(DAY, number, coc.Deadline) AS DateInPeriod
-        FROM master..spt_values
-        WHERE type = 'P'
-          AND number <= DATEDIFF(DAY, coc.Deadline, coc.CompletionDate)
-    ) AS DateRange
-    WHERE DATEPART(WEEKDAY, DateInPeriod) <> 1
-      AND NOT EXISTS (
-          SELECT 1
-          FROM Holiday h WITH(NOLOCK)
-          WHERE h.HolidayDate = DateInPeriod
-            AND h.FactoryID = co.FactoryID
-      )
-) AS OverDays
 WHERE 1 = 1
             {sqlWhere}
+Order by  [Inline Date], [SP#], Style, Category, [Product Type], Cell, [Check List No]
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listParameter, out this.printData);
