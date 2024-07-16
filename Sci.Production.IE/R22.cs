@@ -146,7 +146,7 @@ SELECT Distinct
      [NewSP] = co.OrderID,
      [NewStyle] = co.StyleID,
      [NewComboType] = co.ComboType,
-     [Style Type] = iif(co.Type = 'N', 'New', 'Repeat')
+     [Style Type] = iif(co.Type = 'N', 'New', 'Repeat'),
      [Category] = co.Category
 FROM ChgOver co WITH (NOLOCK)
 INNER JOIN ChgOver_Check coc WITH (NOLOCK) ON coc.ID = co.ID
