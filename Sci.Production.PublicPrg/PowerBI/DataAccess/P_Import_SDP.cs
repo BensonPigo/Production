@@ -634,6 +634,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.Junk = 1
 
+	Delete p
+	from P_SDP p
+	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	where o.id is null
+
 	IF EXISTS (select 1 from BITableInfo b where b.id = 'P_SDP')
 	BEGIN
 		update b
