@@ -63,7 +63,7 @@ select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
 ";
             DBProxy.Current.Select("ProductionTPE", sql, cmds, out dt);
             string message = string.Empty;
-            if (dt[0].Rows.Count > 0)
+            if (MyUtility.Check.Empty(this.CurrentMaintain["No"]))
             {
                 message += "This No: <No> already exists!" + Environment.NewLine;
             }
@@ -89,7 +89,6 @@ select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
         {
             base.ClickNewAfter();
             this.CurrentMaintain["No"] = DBNull.Value;
-            
         }
     }
 }

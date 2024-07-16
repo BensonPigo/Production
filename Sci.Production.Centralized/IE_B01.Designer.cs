@@ -103,9 +103,9 @@
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkJunk.Location = new System.Drawing.Point(364, 39);
             this.chkJunk.Name = "chkJunk";
-            this.chkJunk.Size = new System.Drawing.Size(56, 21);
+            this.chkJunk.Size = new System.Drawing.Size(57, 21);
             this.chkJunk.TabIndex = 4;
-            this.chkJunk.Text = "Juck";
+            this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
             // txtCheckList
@@ -123,7 +123,7 @@
             // txtNo
             // 
             this.txtNo.BackColor = System.Drawing.Color.White;
-            this.txtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "No", true));
+            this.txtNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "No", true));
             this.txtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtNo.Location = new System.Drawing.Point(158, 37);
             this.txtNo.Name = "txtNo";
