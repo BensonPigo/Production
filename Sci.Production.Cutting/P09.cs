@@ -456,7 +456,6 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
-            // 編輯時，將[SORT_NUM]賦予流水號
             base.ClickEditAfter();
 
             // 編輯時，將[SORT_NUM]賦予流水號
@@ -504,7 +503,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
-            this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
+            this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}' AND SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' AND ColorID = '{this.CurrentDetailData["ColorID"]}'";
 
             this.ChangeQtyBreakDownRow();
         }
