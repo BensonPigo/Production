@@ -235,6 +235,10 @@ SELECT
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,ImportML = CAST(0 AS BIT)
    ,CanDoAutoDistribute = CAST(0 AS BIT)
+   --- 排序用
+   ,SORT_NUM = 0
+   ,multisize.multisize
+   ,Order_SizeCode_Seq.Order_SizeCode_Seq
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -301,7 +305,21 @@ OUTER APPLY (
     WHERE cod.WorkOrderForOutputUkey = wo.Ukey
     AND co.Status != 'New'
 ) co
+outer apply
+(
+	Select multisize = iif(count(size.sizecode)>1,2,1) 
+	From WorkOrderForPlanning_SizeRatio size WITH (NOLOCK) 
+	Where wo.ukey = size.WorkOrderForPlanningUkey
+) as multisize
+outer apply
+(
+	select Order_SizeCode_Seq = max(c.Seq)
+	from WorkOrderForPlanning_SizeRatio b WITH (NOLOCK)
+	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
+	where b.WorkOrderForPlanningUkey = wo.Ukey
+) as Order_SizeCode_Seq
 WHERE wo.id = '{masterID}'
+ORDER BY SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -314,6 +332,7 @@ WHERE wo.id = '{masterID}'
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
+            this.Sorting();
         }
 
         private void GetAllDetailData()
@@ -420,6 +439,38 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             bool hasHistory = this.dtsHistory[0].AsEnumerable().Any() || this.dtsHistory[1].AsEnumerable().Any() || this.dtsHistory[2].AsEnumerable().Any();
             this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
+        }
+
+        private void Sorting()
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article_CONCAT,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            // 編輯時，將[SORT_NUM]賦予流水號
+            base.ClickEditAfter();
+
+            // 編輯時，將[SORT_NUM]賦予流水號
+            int serial = 1;
+            this.detailgridbs.SuspendBinding();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["SORT_NUM"] = serial;
+                serial++;
+            }
+
+            this.detailgridbs.ResumeBinding();
+            this.detailgrid.SelectRowTo(0);
+            ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
 
@@ -1164,6 +1215,10 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                dr["SORT_NUM"] = 0;  // 編輯後存檔，將[SORT_NUM]歸零
+            }
 
             // 更新 P20
             this.BackgroundWorker1.RunWorkerAsync();
@@ -1251,6 +1306,7 @@ DEALLOCATE CURSOR_
                 this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
+                this.CurrentDetailData["SORT_NUM"] = oldRow["SORT_NUM"];
 
                 if (index == -1 || this.CurrentMaintain["WorkType"].ToString() == "1")
                 {
