@@ -58,12 +58,12 @@ namespace Sci.Production.Centralized
             cmds.Add(new System.Data.SqlClient.SqlParameter() { ParameterName = "@CheckList", Value = this.CurrentMaintain["CheckList"].ToString() });
             cmds.Add(new System.Data.SqlClient.SqlParameter() { ParameterName = "@ID", Value = this.CurrentMaintain["ID"].ToString() });
             string sql = @"
-select ID From ChgOverCheckListBase where No = @No and ID != @ID 
-select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
-";
+            select ID From ChgOverCheckListBase where No = @No and ID != @ID 
+            select ID From ChgOverCheckListBase where CheckList = @CheckList and ID != @ID
+            ";
             DBProxy.Current.Select("ProductionTPE", sql, cmds, out dt);
             string message = string.Empty;
-            if (MyUtility.Check.Empty(this.CurrentMaintain["No"]))
+            if (dt[0].Rows.Count > 0)
             {
                 message += "This No: <No> already exists!" + Environment.NewLine;
             }
