@@ -898,7 +898,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                 case CuttingForm.P09:
                     colName = "CutNo";
                     where = "And HasBundle = 0 And HasCuttingOutput = 0 And HasMarkerReq = 0 And SpreadingStatus = 'Ready'";
-                    cmdWhere = "AND CutNo IS NOT NULL";
+                    cmdWhere = "AND CutNo IS NOT NULL AND CutCellID <> ''";
                     nColumn = ", ws.SizeRatio";
                     outerApply = $@"
 OUTER APPLY (

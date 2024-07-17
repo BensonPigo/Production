@@ -235,6 +235,11 @@ SELECT
    ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
    ,ImportML = CAST(0 AS BIT)
    ,CanDoAutoDistribute = CAST(0 AS BIT)
+   --- 排序用
+   ,SORT_NUM = 0 -- 避免編輯過程資料跑來跑去
+   ,multisize.multisize
+   ,Order_SizeCode_Seq.Order_SizeCode_Seq
+
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -301,7 +306,19 @@ OUTER APPLY (
     WHERE cod.WorkOrderForOutputUkey = wo.Ukey
     AND co.Status != 'New'
 ) co
+OUTER APPLY (
+	SELECT multisize = IIF(COUNT(SizeCode) > 1, 2, 1) 
+    FROM WorkOrderForOutput_SizeRatio WITH (NOLOCK)
+	Where wo.Ukey = WorkOrderForOutputUkey
+) as multisize
+OUTER APPLY (
+	SELECT Order_SizeCode_Seq = max(osc.Seq)
+    FROM WorkOrderForOutput_SizeRatio ws WITH (NOLOCK)
+	LEFT JOIN Order_SizeCode osc WITH (NOLOCK) ON osc.ID = ws.ID and osc.SizeCode = ws.SizeCode
+	WHERE ws.WorkOrderForOutputUkey = wo.Ukey
+) as Order_SizeCode_Seq
 WHERE wo.id = '{masterID}'
+ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -314,6 +331,7 @@ WHERE wo.id = '{masterID}'
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
+            this.Sorting();
         }
 
         private void GetAllDetailData()
@@ -421,6 +439,29 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             bool hasHistory = this.dtsHistory[0].AsEnumerable().Any() || this.dtsHistory[1].AsEnumerable().Any() || this.dtsHistory[2].AsEnumerable().Any();
             this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
         }
+
+        private void Sorting()
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+
+            // 編輯時，將[SORT_NUM]賦予流水號
+            int serial = 1;
+            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
+            ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
+        }
         #endregion
 
         #region Grid 連動
@@ -453,7 +494,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
             this.distributebs.Filter = filter;
-            this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}'";
+            this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}' AND SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' AND ColorID = '{this.CurrentDetailData["ColorID"]}'";
 
             this.ChangeQtyBreakDownRow();
         }
@@ -1251,6 +1292,7 @@ DEALLOCATE CURSOR_
                 this.CurrentDetailData["FactoryID"] = oldRow["FactoryID"];
                 this.CurrentDetailData["MDivisionId"] = oldRow["MDivisionId"];
                 this.CurrentDetailData["MarkerNo"] = oldRow["MarkerNo"];
+                this.CurrentDetailData["SORT_NUM"] = oldRow["SORT_NUM"];
 
                 if (index == -1 || this.CurrentMaintain["WorkType"].ToString() == "1")
                 {
@@ -1277,6 +1319,7 @@ DEALLOCATE CURSOR_
                     "HasBundle",
                     "HasCuttingOutput",
                     "HasMarkerReq",
+                    "SpreadingStatus",
                     "Addname", // 這4欄位 base.OnDetailGridInsert 會自動寫入
                     "AddDate",
                     "Adduser",
@@ -1781,6 +1824,12 @@ DEALLOCATE CURSOR_
         private string GetWorkType()
         {
             return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.OnRefreshClick();
         }
         #endregion
 
