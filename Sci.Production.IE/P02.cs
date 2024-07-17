@@ -76,7 +76,7 @@ namespace Sci.Production.IE
         {
             base.OnDetailEntered();
 
-            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
+            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}' AND No <> 0", this.CurrentMaintain["ID"].ToString()));
             this.btnCheckList.ForeColor = existsChgOver_Check ? Color.Blue : Color.Black;
 
             string brand = string.Format(

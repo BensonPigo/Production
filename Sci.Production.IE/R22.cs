@@ -186,34 +186,34 @@ SELECT Distinct
     [Check] = IIF(coc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, coc.CompletionDate, 23),
     [Response Dep.] = cod.ResponseDep,
-    [Check List No] = coc.No,
+    [Check List No] = colb.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = coc.Remark
 FROM ChgOver_Check coc WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
 OUTER APPLY
 (
-	SELECT val = isnull(DATEDIFF(day,GETDATE(),coc.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,GETDATE())),0)
+	SELECT val = isnull(iif((coc.DeadLine IS NULL), 0, DATEDIFF(day,GETDATE(),coc.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(GETDATE(),coc.DeadLine))),0)
 	FROM Holiday WITH(NOLOCK)
-	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = co.FactoryID
+	WHERE HolidayDate BETWEEN GETDATE() AND coc.Deadline AND  FactoryID = co.FactoryID
 )DaysLefCnt
 OUTER APPLY
 (
-	SELECT val = isnull(DATEDIFF(day,coc.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,GETDATE())),0)
+	SELECT val = isnull(iif((coc.DeadLine IS NULL), 0, DATEDIFF(day,coc.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,GETDATE()))),0)
 	FROM Holiday WITH(NOLOCK)
 	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = co.FactoryID
 )OverDay_Check_0
 OUTER Apply
 (
-	SELECT val = isnull(iif(coc.CompletionDate IS NULL, 0, DATEDIFF(day,coc.DeadLine,coc.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,coc.CompletionDate))),0)
+	SELECT val = isnull(iif((coc.CompletionDate IS NULL) OR (coc.DeadLine IS NULL), 0, DATEDIFF(day,coc.DeadLine,coc.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(coc.DeadLine,coc.CompletionDate))),0)
 	FROM Holiday WITH(NOLOCK)
-	WHERE HolidayDate BETWEEN coc.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
+	WHERE HolidayDate BETWEEN coc.Deadline AND coc.CompletionDate AND FactoryID = CO.FactoryID
 )OverDay_Check_1
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = coc.NO
+LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.ID = coc.NO
 LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccld.ID = ccl.ID
 OUTER APPLY
 (

@@ -52,9 +52,18 @@ namespace Sci.Production.IE
                 {
                     if ((bool)e.FormattedValue)
                     {
+                        string sqlcmd = $@"
+                        DECLARE @CompletionDate Date = '{((DateTime)row["Deadline"]).ToString("yyyy/MM/dd")}'
+                        DECLARE @Holiday int;
+                        SELECT @Holiday = isnull(DATEDIFF(day,@CompletionDate,GETDATE()) - (COUNT(1) + dbo.getDateRangeSundayCount(@CompletionDate,GETDATE())),0)
+                        FROM Holiday WITH(NOLOCK)
+                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = 'MWI'
+                        SELECT VAL = IIF(@Holiday <= 0, 0 , @Holiday)
+                        ";
+                        var Holiday = MyUtility.GetValue.Lookup(sqlcmd);
                         row["Checked"] = true;
                         row["DaysLeft"] = '-';
-                        row["OverDays"] = (DateTime.Now - (DateTime)row["Deadline"]).Days;
+                        row["OverDays"] = MyUtility.Convert.GetInt(Holiday);
                         row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
                     }
                     else
@@ -115,28 +124,29 @@ namespace Sci.Production.IE
             ,[OverDay_Check_0] = iif(OverDay_Check_0.VAL < 0,0, OverDay_Check_0.VAL)
             ,[OverDay_Check_1] = iif(OverDay_Check_1.VAL < 0,0, OverDay_Check_1.VAL)
             ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
+            ,CO.FactoryID
             FROM ChgOver_Check CC WITH(NOLOCK)
             INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
-            LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.[NO] = CC.[NO]
+            LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.[ID] = CC.[No]
             OUTER APPLY
             (
-	            SELECT val = isnull(DATEDIFF(day,GETDATE(),CC.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
+	            SELECT val = isnull(iif((CC.Deadline IS NULL), 0, DATEDIFF(day,GETDATE(),CC.DeadLine) - (COUNT(1) + dbo.getDateRangeSundayCount(GETDATE(),cc.Deadline))),0)
 	            FROM Holiday WITH(NOLOCK)
-	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
+	            WHERE HolidayDate BETWEEN GETDATE() AND CC.Deadline AND FactoryID = CO.FactoryID
             )DaysLefCnt
             OUTER APPLY
             (
-	            SELECT val = isnull(DATEDIFF(day,CC.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
+	            SELECT val = isnull(iif((CC.Deadline IS NULL), 0, DATEDIFF(day,CC.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE()))),0)
 	            FROM Holiday WITH(NOLOCK)
 	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
             )OverDay_Check_0
             OUTER APPLY
             (
-	            SELECT val = isnull(iif(CC.CompletionDate IS NULL, 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate))),0)
+	            SELECT val = isnull(iif((CC.CompletionDate IS NULL) OR (CC.Deadline IS NULL), 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate))),0)
 	            FROM Holiday WITH(NOLOCK)
-	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
+	            WHERE HolidayDate BETWEEN CC.Deadline AND CC.CompletionDate AND FactoryID = CO.FactoryID
             )OverDay_Check_1
-            WHERE CC.id = {this.KeyValue1}
+            WHERE CC.id = {this.KeyValue1} AND CC.[NO] <> 0
             order by cc.ChgOverCheckListID";
             DualResult returnResult;
             returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
