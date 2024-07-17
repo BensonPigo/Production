@@ -381,7 +381,8 @@ INNER JOIN Trade_To_Pms.dbo.ChgOverCheckListBase TCCB WITH(NOLOCK) ON TCCB.ID = 
 
 /*INSERT*/
 INSERT INTO Production.dbo.ChgOverCheckListBase(
-[No]
+[ID]
+,[No]
 ,[CheckList]
 ,[Junk]
 ,[AddName] 
@@ -390,7 +391,8 @@ INSERT INTO Production.dbo.ChgOverCheckListBase(
 ,[EditDate]
 )
 SELECT 
-[NO] = ISNULL(TCCB.[No],0)
+[ID] = ISNULL(TCCB.[ID],0)
+,[NO] = ISNULL(TCCB.[No],0)
 ,[CheckList] = ISNULL(TCCB.CheckList,'')
 ,[Junk] = ISNULL(TCCB.Junk,0)
 ,[AddName] = ISNULL(TCCB.AddName ,'')
