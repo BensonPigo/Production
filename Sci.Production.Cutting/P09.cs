@@ -236,9 +236,10 @@ SELECT
    ,ImportML = CAST(0 AS BIT)
    ,CanDoAutoDistribute = CAST(0 AS BIT)
    --- 排序用
-   ,SORT_NUM = 0
+   ,SORT_NUM = 0 -- 避免編輯過程資料跑來跑去
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
+
 FROM WorkOrderForOutput wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -305,21 +306,19 @@ OUTER APPLY (
     WHERE cod.WorkOrderForOutputUkey = wo.Ukey
     AND co.Status != 'New'
 ) co
-outer apply
-(
-	Select multisize = iif(count(size.sizecode)>1,2,1) 
-	From WorkOrderForPlanning_SizeRatio size WITH (NOLOCK) 
-	Where wo.ukey = size.WorkOrderForPlanningUkey
+OUTER APPLY (
+	SELECT multisize = IIF(COUNT(SizeCode) > 1, 2, 1) 
+    FROM WorkOrderForOutput_SizeRatio WITH (NOLOCK)
+	Where wo.Ukey = WorkOrderForOutputUkey
 ) as multisize
-outer apply
-(
-	select Order_SizeCode_Seq = max(c.Seq)
-	from WorkOrderForPlanning_SizeRatio b WITH (NOLOCK)
-	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
-	where b.WorkOrderForPlanningUkey = wo.Ukey
+OUTER APPLY (
+	SELECT Order_SizeCode_Seq = max(osc.Seq)
+    FROM WorkOrderForOutput_SizeRatio ws WITH (NOLOCK)
+	LEFT JOIN Order_SizeCode osc WITH (NOLOCK) ON osc.ID = ws.ID and osc.SizeCode = ws.SizeCode
+	WHERE ws.WorkOrderForOutputUkey = wo.Ukey
 ) as Order_SizeCode_Seq
 WHERE wo.id = '{masterID}'
-ORDER BY SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
+ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -450,7 +449,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             }
 
             DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
-            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article_CONCAT,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+            dv.Sort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
         }
 
         /// <inheritdoc/>
@@ -460,15 +459,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            this.detailgridbs.SuspendBinding();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr["SORT_NUM"] = serial;
-                serial++;
-            }
-
-            this.detailgridbs.ResumeBinding();
-            this.detailgrid.SelectRowTo(0);
+            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
@@ -1214,10 +1205,6 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr["SORT_NUM"] = 0;  // 編輯後存檔，將[SORT_NUM]歸零
-            }
 
             // 更新 P20
             this.BackgroundWorker1.RunWorkerAsync();
@@ -1837,6 +1824,12 @@ DEALLOCATE CURSOR_
         private string GetWorkType()
         {
             return MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]);
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.OnRefreshClick();
         }
         #endregion
 

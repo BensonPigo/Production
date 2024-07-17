@@ -3,6 +3,7 @@ using Ict.Win;
 using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using Sci.Win.UI;
@@ -134,7 +135,7 @@ SELECT
    ,tmpKey = CAST(0 AS BIGINT) --控制新加的資料用,SizeRatio/PatternPanel
    ,ImportML = CAST(0 AS BIT)
    --- 排序用
-   ,SORT_NUM = 0
+   ,SORT_NUM = 0 -- 避免編輯過程資料跑來跑去
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
@@ -171,18 +172,16 @@ OUTER APPLY (
         WHERE WorkOrderForPlanningUkey = wo.Ukey
         FOR XML PATH ('')), 1, 1, '')
 ) ws2
-outer apply
-(
-	Select multisize = iif(count(size.sizecode)>1,2,1) 
-	From WorkOrderForPlanning_SizeRatio size WITH (NOLOCK) 
-	Where wo.ukey = size.WorkOrderForPlanningUkey
+OUTER APPLY (
+	SELECT multisize = IIF(COUNT(SizeCode) > 1, 2, 1) 
+    FROM WorkOrderForPlanning_SizeRatio WITH (NOLOCK)
+	Where wo.Ukey = WorkOrderForPlanningUkey
 ) as multisize
-outer apply
-(
-	select Order_SizeCode_Seq = max(c.Seq)
-	from WorkOrderForPlanning_SizeRatio b WITH (NOLOCK)
-	left join Order_SizeCode c WITH (NOLOCK) on c.Id = b.ID and c.SizeCode = b.SizeCode
-	where b.WorkOrderForPlanningUkey = wo.Ukey
+OUTER APPLY (
+	SELECT Order_SizeCode_Seq = max(osc.Seq)
+    FROM WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+	LEFT JOIN Order_SizeCode osc WITH (NOLOCK) ON osc.ID = ws.ID and osc.SizeCode = ws.SizeCode
+	WHERE ws.WorkOrderForPlanningUkey = wo.Ukey
 ) as Order_SizeCode_Seq
 OUTER APPLY (
     SELECT val = IIF(psd.Complete = 1, psd.FinalETA, IIF(psd.Eta IS NOT NULL, psd.eta, IIF(psd.shipeta IS NOT NULL, psd.shipeta, psd.finaletd)))
@@ -192,8 +191,7 @@ OUTER APPLY (
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
 WHERE wo.id = '{masterID}'
-
-ORDER BY SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey
+ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article, Order_SizeCode_Seq DESC, MarkerName, Ukey
 ";
 
             string cmdsql = $@"
@@ -489,20 +487,11 @@ ORDER BY
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
-            // 編輯時，將[SORT_NUM]賦予流水號
             base.ClickEditAfter();
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            this.detailgridbs.SuspendBinding();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr["SORT_NUM"] = serial;
-                serial++;
-            }
-
-            this.detailgridbs.ResumeBinding();
-            this.detailgrid.SelectRowTo(0);
+            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
@@ -687,11 +676,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr["SORT_NUM"] = 0;  // 編輯後存檔，將[SORT_NUM]歸零
-            }
-
             this.OnRefreshClick();
         }
 
@@ -802,16 +786,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             }
 
             return true;
-        }
-
-        // 表身若沒有第三層 SizeRatio 資料則移除
-        private void DeleteNonSizeRatio()
-        {
-            this.DetailDatas.Where(x => x.RowState != DataRowState.Deleted &&
-                !this.dt_SizeRatio.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted
-                    && o["tmpKey"].ToString() == x["tmpKey"].ToString()
-                    && o["WorkOrderForPlanningUkey"].ToString() == x["Ukey"].ToString())
-                .Any()).Delete();
         }
         #endregion
 
@@ -1392,6 +1366,12 @@ order by p.EditDate desc
         private void NumUnitCons_Validated(object sender, EventArgs e)
         {
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.OnRefreshClick();
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

@@ -433,7 +433,7 @@ namespace Sci.Production.Cutting
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09, MyUtility.Convert.GetInt(this.numLayers.Value)))
                 {
                     if (grid.Name == "gridSizeRatio")
                     {
