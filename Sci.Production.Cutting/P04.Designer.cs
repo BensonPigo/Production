@@ -76,7 +76,7 @@
             this.masterpanel.Controls.Add(this.labelCuttingDate);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.labelCutplanID);
-            this.masterpanel.Size = new System.Drawing.Size(892, 111);
+            this.masterpanel.Size = new System.Drawing.Size(913, 111);
             this.masterpanel.Controls.SetChildIndex(this.labelCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
@@ -98,7 +98,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(892, 238);
+            this.detailpanel.Size = new System.Drawing.Size(913, 307);
             // 
             // gridicon
             // 
@@ -110,7 +110,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 238);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 307);
             // 
             // detail2
             // 
@@ -124,13 +124,26 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(913, 456);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(913, 418);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 418);
+            this.detailbtm.Size = new System.Drawing.Size(913, 38);
+            // 
             // browse
             // 
             this.browse.Size = new System.Drawing.Size(1078, 456);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1086, 485);
+            this.tabs.Size = new System.Drawing.Size(921, 485);
             // 
             // createby
             // 
@@ -229,7 +242,7 @@
             // 
             this.btnimport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnimport.Enabled = false;
-            this.btnimport.Location = new System.Drawing.Point(741, 77);
+            this.btnimport.Location = new System.Drawing.Point(578, 75);
             this.btnimport.Name = "btnimport";
             this.btnimport.Size = new System.Drawing.Size(144, 30);
             this.btnimport.TabIndex = 17;
@@ -250,7 +263,7 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(743, 9);
+            this.btnSendMail.Location = new System.Drawing.Point(580, 7);
             this.btnSendMail.Name = "btnSendMail";
             this.btnSendMail.Size = new System.Drawing.Size(142, 30);
             this.btnSendMail.TabIndex = 20;
@@ -260,7 +273,7 @@
             // 
             // btnFabricIssueList
             // 
-            this.btnFabricIssueList.Location = new System.Drawing.Point(903, 77);
+            this.btnFabricIssueList.Location = new System.Drawing.Point(740, 75);
             this.btnFabricIssueList.Name = "btnFabricIssueList";
             this.btnFabricIssueList.Size = new System.Drawing.Size(167, 30);
             this.btnFabricIssueList.TabIndex = 21;
@@ -270,7 +283,7 @@
             // 
             // btnEditFabricCutDate
             // 
-            this.btnEditFabricCutDate.Location = new System.Drawing.Point(743, 43);
+            this.btnEditFabricCutDate.Location = new System.Drawing.Point(580, 41);
             this.btnEditFabricCutDate.Name = "btnEditFabricCutDate";
             this.btnEditFabricCutDate.Size = new System.Drawing.Size(142, 30);
             this.btnEditFabricCutDate.TabIndex = 26;
@@ -280,7 +293,7 @@
             // 
             // btnFabDelete
             // 
-            this.btnFabDelete.Location = new System.Drawing.Point(903, 11);
+            this.btnFabDelete.Location = new System.Drawing.Point(740, 9);
             this.btnFabDelete.Name = "btnFabDelete";
             this.btnFabDelete.Size = new System.Drawing.Size(167, 30);
             this.btnFabDelete.TabIndex = 27;
@@ -290,7 +303,7 @@
             // 
             // btnFabDeleteHistory
             // 
-            this.btnFabDeleteHistory.Location = new System.Drawing.Point(903, 44);
+            this.btnFabDeleteHistory.Location = new System.Drawing.Point(740, 42);
             this.btnFabDeleteHistory.Name = "btnFabDeleteHistory";
             this.btnFabDeleteHistory.Size = new System.Drawing.Size(167, 30);
             this.btnFabDeleteHistory.TabIndex = 28;
@@ -301,7 +314,7 @@
             // P04
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1086, 518);
+            this.ClientSize = new System.Drawing.Size(921, 518);
             this.DefaultOrder = "id";
             this.ExpressQuery = true;
             this.GridAlias = "Cutplan_Detail";
