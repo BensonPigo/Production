@@ -21,6 +21,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public Base_ViewModel Get_QA_R51(QA_R51_ViewModel model)
         {
+            var srWhere = this.GetSRWhere(model);
+
             var itemWhere = this.GetWhere(model);
 
             var itemCol_Join = this.GetCol_Join(model.FormatType, model.IsBI);
@@ -33,7 +35,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	            select  
 	            * 
 	            ,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate desc)
-	            from SubProInsRecord 
+	            from SubProInsRecord SR
+                where 1 = 1
+                {srWhere}
             )aa
             where RowNo = 1
 
@@ -306,22 +310,38 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public Tuple<string, string> GetWhere(QA_R51_ViewModel model)
+        public string GetSRWhere(QA_R51_ViewModel model)
         {
-            string sqlWhere1 = string.Empty;
-            string sqlWhere2 = string.Empty;
+            var srWhere = string.Empty;
 
             if (!model.SubProcess.Empty())
             {
-                sqlWhere1 = $@" and SR.SubProcessID in ({model.SubProcess})";
-                sqlWhere2 = $@" and SR.SubProcessID in ({model.SubProcess})";
+                srWhere = $@" and SR.SubProcessID in ({model.SubProcess})";
             }
 
             if (!model.StartInspectionDate.Value.Empty())
             {
-                sqlWhere1 += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
-                sqlWhere2 += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
+                srWhere += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
             }
+
+            if (!model.Factory.Empty())
+            {
+                srWhere += $@" and SR.FactoryID = @Factory";
+            }
+
+            if (!model.Shift.Empty())
+            {
+                srWhere += $@" and SR.Shift = @Shift";
+            }
+
+            return srWhere;
+        }
+
+        /// <inheritdoc/>
+        public Tuple<string, string> GetWhere(QA_R51_ViewModel model)
+        {
+            string sqlWhere1 = string.Empty;
+            string sqlWhere2 = string.Empty;
 
             if (!model.SP.Empty())
             {
@@ -339,18 +359,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 sqlWhere1 += $@" and Fac.MDivisionID= @M";
                 sqlWhere2 += $@" and Fac.MDivisionID= @M";
-            }
-
-            if (!model.Factory.Empty())
-            {
-                sqlWhere1 += $@" and SR.FactoryID = @Factory";
-                sqlWhere2 += $@" and SR.FactoryID = @Factory";
-            }
-
-            if (!model.Shift.Empty())
-            {
-                sqlWhere1 += $@" and SR.Shift = @Shift";
-                sqlWhere2 += $@" and SR.Shift = @Shift";
             }
 
             return Tuple.Create(sqlWhere1, sqlWhere2);
