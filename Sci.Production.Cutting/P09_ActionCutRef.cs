@@ -507,6 +507,8 @@ namespace Sci.Production.Cutting
 
             // 後刪除 SizeRatio
             dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
         }
 
         private void MenuItemInsertDistribute_Click(object sender, EventArgs e)
@@ -544,6 +546,8 @@ namespace Sci.Production.Cutting
             }
 
             dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dtWorkOrderForOutput_SizeRatio, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
         }
         #endregion
     }
