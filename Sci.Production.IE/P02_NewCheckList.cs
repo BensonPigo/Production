@@ -34,80 +34,9 @@ namespace Sci.Production.IE
             this.Text = "Check List";
         }
 
-        /// <summary>
-        /// OnGridSetup
-        /// </summary>
-        /// <returns>bool</returns>
-        protected override bool OnGridSetup()
+        protected override void OnFormLoaded()
         {
-            // DataGridViewGeneratorTextColumnSettings
-            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
-
-            cbs.CellValidating += (s, e) =>
-            {
-
-                DataRow row = this.chgOverChkList.Rows[e.RowIndex];
-                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
-
-                if (!MyUtility.Convert.GetBool(oridr["Checked"]))
-                {
-                    if ((bool)e.FormattedValue)
-                    {
-                        string sqlcmd = $@"
-                        DECLARE @CompletionDate Date = '{((DateTime)row["Deadline"]).ToString("yyyy/MM/dd")}'
-                        DECLARE @Holiday int;
-                        SELECT @Holiday = isnull(DATEDIFF(day,@CompletionDate,GETDATE()) - (COUNT(1) + dbo.getDateRangeSundayCount(@CompletionDate,GETDATE())),0)
-                        FROM Holiday WITH(NOLOCK)
-                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = 'MWI'
-                        SELECT VAL = IIF(@Holiday <= 0, 0 , @Holiday)
-                        ";
-                        var Holiday = MyUtility.GetValue.Lookup(sqlcmd);
-                        row["Checked"] = true;
-                        row["DaysLeft"] = '-';
-                        row["OverDays"] = MyUtility.Convert.GetInt(Holiday);
-                        row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
-                    }
-                    else
-                    {
-                        row["Checked"] = false;
-                        row["DaysLeft"] = row["DaysLeft1"];
-                        row["OverDays"] = row["OverDay_Check_0"];
-                        row["CompletionDate"] = DBNull.Value;
-                    }
-                }
-                else
-                {
-                    row["Checked"] = true;
-                }
-
-                this.gridbs.EndEdit();
-            };
-
-            this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("Dep", header: "Dep", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Numeric("LeadTime", header: "Lead Time", iseditingreadonly: true)
-                .Text("DaysLeft", header: "Days Left", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(6), trueValue: 1, falseValue: 0, settings: cbs)
-                .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15))
-                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
-
-            this.grid.Columns["Checked"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
-            return true;
-        }
-
-        /// <summary>
-        /// OnRequery
-        /// </summary>
-        /// <returns>bool</returns>
-        protected override DualResult OnRequery()
-        {
+            base.OnFormLoaded();
             string selectCommand = $@"
             SELECT 
             [ID] = CC.ID
@@ -155,13 +84,91 @@ namespace Sci.Production.IE
             returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
             if (!returnResult)
             {
-                return returnResult;
+                return;
             }
 
             this.gridbs.DataSource = this.chgOverChkList;
 
             this.copyDt = this.chgOverChkList.Copy();
-            return Ict.Result.True;
+        }
+
+        /// <summary>
+        /// OnGridSetup
+        /// </summary>
+        /// <returns>bool</returns>
+        protected override bool OnGridSetup()
+        {
+            // DataGridViewGeneratorTextColumnSettings
+            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings rk = new DataGridViewGeneratorTextColumnSettings();
+
+            cbs.CellValidating += (s, e) =>
+            {
+                DataRow row = this.chgOverChkList.Rows[e.RowIndex];
+                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
+
+                if (!MyUtility.Convert.GetBool(oridr["Checked"]))
+                {
+                    if ((bool)e.FormattedValue)
+                    {
+                        string sqlcmd = $@"
+                        DECLARE @CompletionDate Date = '{((DateTime)row["Deadline"]).ToString("yyyy/MM/dd")}'
+                        DECLARE @Holiday int;
+                        SELECT @Holiday = isnull(DATEDIFF(day,@CompletionDate,GETDATE()) - (COUNT(1) + dbo.getDateRangeSundayCount(@CompletionDate,GETDATE())),0)
+                        FROM Holiday WITH(NOLOCK)
+                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = 'MWI'
+                        SELECT VAL = IIF(@Holiday <= 0, 0 , @Holiday)
+                        ";
+                        var Holiday = MyUtility.GetValue.Lookup(sqlcmd);
+                        row["Checked"] = true;
+                        row["DaysLeft"] = '-';
+                        row["OverDays"] = MyUtility.Convert.GetInt(Holiday);
+                        row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        row["Checked"] = false;
+                        row["DaysLeft"] = row["DaysLeft1"];
+                        row["OverDays"] = row["OverDay_Check_0"];
+                        row["CompletionDate"] = DBNull.Value;
+                    }
+                }
+                else
+                {
+                    row["Checked"] = true;
+                }
+
+                this.gridbs.EndEdit();
+            };
+
+            rk.CellValidating += (s, e) =>
+            {
+                this.gridbs.EndEdit();
+                string da = MyUtility.Convert.GetString(e.FormattedValue);
+                if (da.Length >= 200)
+                {
+                    MyUtility.Msg.WarningBox("Input exceeds the 200 character limit. Please shorten your input.");
+                    return;
+                }
+            };
+
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Dep", header: "Dep", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("LeadTime", header: "Lead Time", iseditingreadonly: true)
+                .Text("DaysLeft", header: "Days Left", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(6), trueValue: 1, falseValue: 0, settings: cbs)
+                .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15), settings: rk)
+                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
+
+            this.grid.Columns["Checked"].DefaultCellStyle.BackColor = Color.Pink;
+            this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            return true;
         }
 
         /// <inheritdoc/>
@@ -169,6 +176,7 @@ namespace Sci.Production.IE
         {
             this.grid.ValidateControl();
             this.gridbs.EndEdit();
+
             string strErrorMes = string.Empty;
 
             foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)

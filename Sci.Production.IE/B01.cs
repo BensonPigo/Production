@@ -63,13 +63,35 @@ namespace Sci.Production.IE
                 }
             };
 
+            col_ResponseDep.CellValidating += (s, e) =>
+            {
+                string da = MyUtility.Convert.GetString(e.FormattedValue);
+                if (da.Length >= 200)
+                {
+                    MyUtility.Msg.WarningBox("Input exceeds the 200 character limit. Please shorten your input.");
+                    return;
+                }
+            };
+
+            DataGridViewGeneratorNumericColumnSettings col_LeadTime = new DataGridViewGeneratorNumericColumnSettings();
+
+            col_LeadTime.CellValidating += (s, e) =>
+            {
+                int da = MyUtility.Convert.GetInt(e.FormattedValue);
+                if (da >= 32767)
+                {
+                    MyUtility.Msg.WarningBox("Input exceeds the 32767 character limit. Please shorten your input.");
+                    return;
+                }
+            };
+
             this.gridDetail.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .CheckBox("Sel", header: "Sel", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: true)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("CheckList", header: "Check List Base", width: Widths.AnsiChars(28), iseditingreadonly: true)
                 .EditText("ResponseDep", header: "Response Dep.", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: col_ResponseDep)
-                .Numeric("LeadTime", header: "Lead Time", width: Widths.AnsiChars(8), iseditingreadonly: false)
+                .Numeric("LeadTime", header: "Lead Time", width: Widths.AnsiChars(8), iseditingreadonly: false, settings: col_LeadTime)
                 ;
         }
 
