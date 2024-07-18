@@ -185,12 +185,18 @@ SELECT Distinct
     [Over Days] = iif(coc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [Check] = IIF(coc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, coc.CompletionDate, 23),
-    [Response Dep.] = cod.ResponseDep,
+    [Response Dep.] = ccld.ResponseDep,
     [Check List No] = colb.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = coc.Remark
 FROM ChgOver_Check coc WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON coc.ID = co.ID
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccl.id = ccld.ID and ccld.ChgOverCheckListBaseID = coc.No
+LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.ID = coc.NO
+LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
+LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
+LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
 OUTER APPLY
 (
 	SELECT val = isnull(iif((coc.DeadLine IS NULL), 0, DATEDIFF(day,GETDATE(),coc.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(GETDATE(),coc.DeadLine))),0)
@@ -209,27 +215,7 @@ OUTER Apply
 	FROM Holiday WITH(NOLOCK)
 	WHERE HolidayDate BETWEEN coc.Deadline AND coc.CompletionDate AND FactoryID = CO.FactoryID
 )OverDay_Check_1
-LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID
-LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
-LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
-LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.ID = coc.NO
-LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccld.ID = ccl.ID
-OUTER APPLY
-(
-	select ResponseDep = Stuff((
-			select concat(',',ResponseDep)
-			from (
-					select 	distinct
-						d.ResponseDep
-					from dbo.ChgOverCheckList_Detail d WITH(NOLOCK)
-					where ID = ccl.ID
-				) s
-			for xml path ('')
-		) , 1, 1, '')
-) as cod
-WHERE 1 = 1
-            {sqlWhere}
+WHERE 1 = 1 {sqlWhere}
 Order by  [Inline Date], [SP#], Style, Category, [Product Type], Cell, [Check List No]
             ";
 

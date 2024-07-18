@@ -45,10 +45,11 @@ namespace Sci.Production.IE
 
             cbs.CellValidating += (s, e) =>
             {
+
                 DataRow row = this.chgOverChkList.Rows[e.RowIndex];
                 var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
 
-                if (! MyUtility.Convert.GetBool(oridr["Checked"]))
+                if (!MyUtility.Convert.GetBool(oridr["Checked"]))
                 {
                     if ((bool)e.FormattedValue)
                     {
@@ -78,6 +79,8 @@ namespace Sci.Production.IE
                 {
                     row["Checked"] = true;
                 }
+
+                this.gridbs.EndEdit();
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
@@ -147,7 +150,7 @@ namespace Sci.Production.IE
 	            WHERE HolidayDate BETWEEN CC.Deadline AND CC.CompletionDate AND FactoryID = CO.FactoryID
             )OverDay_Check_1
             WHERE CC.id = {this.KeyValue1} AND CC.[NO] <> 0
-            order by cc.ChgOverCheckListID";
+            order by  CB.No";
             DualResult returnResult;
             returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
             if (!returnResult)
