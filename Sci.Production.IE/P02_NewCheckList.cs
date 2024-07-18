@@ -141,17 +141,6 @@ namespace Sci.Production.IE
                 this.gridbs.EndEdit();
             };
 
-            rk.CellValidating += (s, e) =>
-            {
-                this.gridbs.EndEdit();
-                string da = MyUtility.Convert.GetString(e.FormattedValue);
-                if (da.Length >= 200)
-                {
-                    MyUtility.Msg.WarningBox("Input exceeds the 200 character limit. Please shorten your input.");
-                    return;
-                }
-            };
-
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -162,7 +151,7 @@ namespace Sci.Production.IE
                 .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(6), trueValue: 1, falseValue: 0, settings: cbs)
                 .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(9), iseditingreadonly: true)
-                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15), settings: rk)
+                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15))
                 .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
 
@@ -185,6 +174,14 @@ namespace Sci.Production.IE
                 {
                     strErrorMes += $@"Please fill in [Late Reason] since NO.<{dr["No"]}> already passed the Deadline." + Environment.NewLine;
                 }
+
+                string da = MyUtility.Convert.GetString(dr["Remark"]);
+                if (da.Length >= 60)
+                 {
+                    MyUtility.Msg.WarningBox("Input exceeds the 60 character limit. Please shorten your input.");
+                    return false;
+                }
+
             }
 
             if (!MyUtility.Check.Empty(strErrorMes))
