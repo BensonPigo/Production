@@ -174,12 +174,10 @@ namespace Sci.Production.IE
         /// <inheritdoc/>
         protected override bool OnSaveBefore()
         {
-            this.grid.ValidateControl();
-            this.gridbs.EndEdit();
 
             string strErrorMes = string.Empty;
-
-            foreach (DataRow dr in ((DataTable)this.gridbs.DataSource).Rows)
+            this.gridbs.EndEdit();
+            foreach (DataRow dr in this.chgOverChkList.Rows)
             {
                 if (MyUtility.Convert.GetBool(dr["Checked"]) &&
                     MyUtility.Convert.GetInt(dr["OverDays"]) > 0 &&
