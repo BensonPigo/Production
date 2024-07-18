@@ -52,6 +52,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
             P_MaterialCompletionRateByWeek,
+            P_MachineMasterListByDays,
         }
 
         /// <summary>
@@ -380,6 +381,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MaterialCompletionRateByWeek:
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                        break;
+                    case ListName.P_MachineMasterListByDays:
+                        result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

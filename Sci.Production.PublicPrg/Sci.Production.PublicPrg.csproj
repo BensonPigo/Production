@@ -162,6 +162,7 @@
   <ItemGroup>
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
+    <Compile Include="CallWebAPI.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />
@@ -202,6 +203,7 @@
     <Compile Include="BundleRFCardUSB.cs" />
     <Compile Include="FromTradeReport.cs" />
     <Compile Include="AbstractDBProxyPMS.cs" />
+    <Compile Include="GetTable.cs" />
     <Compile Include="GridRowDrag.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
@@ -218,6 +220,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingBCS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_OutStandingHPMS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricStatusAndIssueFabricTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspAvgInspLTInPast7Days.cs" />
@@ -281,6 +284,8 @@
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
+    <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
