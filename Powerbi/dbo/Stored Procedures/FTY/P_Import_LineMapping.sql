@@ -43,9 +43,9 @@ from (
 	,[CPU/PC] = isnull(s.CPU,0)
 	,[No. of Sewer] = isnull(l.CurrentOperators,0)
 	,[LBR By GSD Time(%)] = 
-	case when isnull(l.HighestGSD,0) = 0 then 0
-	when ISNULL(l.CurrentOperators,0) = 0 then 0
-	else round(convert(float,l.TotalGSD)/convert(float,l.HighestGSD)/convert(float,l.CurrentOperators) * 100,0) 
+	case when isnull(l.HighestGSD,0) = 0 then 0.00
+	when ISNULL(l.CurrentOperators,0) = 0 then 0.00
+	else round(convert(float,l.TotalGSD)/convert(float,l.HighestGSD)/convert(float,l.CurrentOperators) * 100,2) 
 	end
 	,[Total GSD Time] = isnull(l.TotalGSD,0)
 	,[Avg. GSD Time] = 
@@ -54,9 +54,9 @@ from (
 	end
 	,[Highest GSD Time] = isnull(l.HighestGSD,0)
 	,[LBR By Cycle Time(%)] = 
-	case when isnull(l.HighestCycle,0) = 0 then 0
-	when ISNULL(l.CurrentOperators,0) = 0 then 0
-	else round(convert(float,l.TotalCycle)/convert(float,l.HighestCycle)/convert(float,l.CurrentOperators) * 100,0) 
+	case when isnull(l.HighestCycle,0) = 0 then 0.00
+	when ISNULL(l.CurrentOperators,0) = 0 then 0.00
+	else round(convert(float,l.TotalCycle)/convert(float,l.HighestCycle)/convert(float,l.CurrentOperators) * 100,2) 
 	end
 	,[Total Cycle Time] = isnull(l.TotalCycle,0)
 	,[Avg. Cycle Time] = 
@@ -126,9 +126,9 @@ from (
 	,[CPU/PC] = isnull(s.CPU,0)
 	,[No. of Sewer] = l.SewerManpower
 	,[LBR By GSD Time(%)] =  
-	case when isnull(l.HighestGSDTime,0) = 0 then 0
-	when ISNULL(l.SewerManpower,0) = 0 then 0
-	else round(convert(float,l.TotalGSDTime)/convert(float,l.HighestGSDTime)/convert(float,l.SewerManpower) * 100,0) 
+	case when isnull(l.HighestGSDTime,0) = 0 then 0.00
+	when ISNULL(l.SewerManpower,0) = 0 then 0.00
+	else round(convert(float,l.TotalGSDTime)/convert(float,l.HighestGSDTime)/convert(float,l.SewerManpower) * 100,2) 
 	end
 	,[Total GSD Time] = l.TotalGSDTime
 	,[Avg. GSD Time] = 
@@ -137,9 +137,9 @@ from (
 	end
 	,[Highest GSD Time] = l.HighestGSDTime
 	,[LBR By Cycle Time(%)] = 
-	case when isnull(l.HighestCycleTime,0) = 0 then 0
-	when isnull(l.SewerManpower,0) = 0 then 0
-	else round(convert(float,l.TotalCycleTime)/convert(float,l.HighestCycleTime)/convert(float,l.SewerManpower) * 100,0) 
+	case when isnull(l.HighestCycleTime,0) = 0 then 0.00
+	when isnull(l.SewerManpower,0) = 0 then 0.00
+	else round(convert(float,l.TotalCycleTime)/convert(float,l.HighestCycleTime)/convert(float,l.SewerManpower) * 100,2) 
 	end
 	,[Total Cycle Time] = l.TotalCycleTime 
 	,[Avg. Cycle Time] = 
