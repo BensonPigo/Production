@@ -160,6 +160,15 @@ order by No
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            foreach (DataRow dr in ((DataTable)this.gridDetailBs.DataSource).Rows)
+            {
+                if (dr["ResponseDep"].ToString().Length >= 200)
+                {
+                    MyUtility.Msg.WarningBox("Input exceeds the 200 character limit. Please shorten your input.");
+                    return false;
+                }
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["Category"]))
             {
                 MyUtility.Msg.WarningBox("< Category > can not be empty!");
