@@ -45,6 +45,7 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_SizeRatio; // 第3層表:新刪修
         private DataTable dtWorkOrderForOutput_Distribute; // 第3層表:新刪修
         private DataTable dtWorkOrderForOutput_PatternPanel; // 第3層表:新刪修
+        private DataTable dtDeleteUkey_HasGroup; // 如果WorkOrderForOutput.GroupID != '' 刪除後存檔時要寫入WorkOrderForOutputDelete;
         private DataTable[] dtsHistory; // 要判斷按鈕顏色, 進表身就先撈, 還要用在傳入 History
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
@@ -168,9 +169,10 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 ;
             this.Helper.Controls.Grid.Generator(this.gridSpreadingFabric)
                 .Text("Seq1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("Seq2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("Seq2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Roll", header: "Roll", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("SpreadingLayers", header: "Layers", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
                 .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
@@ -178,7 +180,6 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true);
-
             this.GridEventSet();
         }
         #endregion
@@ -332,6 +333,8 @@ ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_Si
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.Sorting();
+            this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
+            this.gridSpreadingFabric.AutoResizeColumns();
         }
 
         private void GetAllDetailData()
@@ -353,7 +356,7 @@ SELECT *
 FROM WorkOrderForOutput_Distribute wd WITH (NOLOCK)
 WHERE wd.ID = '{this.CurrentMaintain["ID"]}'
 
-SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric WITH (NOLOCK) WHERE POID = '{this.CurrentMaintain["ID"]}'
+SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SpreadingFabric sf WITH (NOLOCK) WHERE EXISTS(SELECT 1 FROM WorkOrderForOutput WHERE CutRef = sf.CutRef AND ID = '{this.CurrentMaintain["ID"]}')
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dts);
             if (!result)
@@ -979,9 +982,34 @@ order by p.EditDate desc
             return base.ClickSaveBefore();
         }
 
+        protected override DualResult ClickSavePre()
+        {
+            // 在 base.ClickSavePre() 之前表身在資料庫還沒有刪除
+            DualResult result;
+            #region WorkOrderForOutputDelete
+            string sqlcmdWorkOrderForOutputDelete = @"
+INSERT INTO [dbo].[WorkOrderForOutputDelete]
+           ([ID]
+           ,[GroupID]
+           ,[CutRef]
+           ,[Layer])
+SELECT wo.ID, wo.GroupID, wo.CutRef, wo.Layer
+FROM #tmp t
+INNER JOIN WorkOrderForOutput wo WITH(NOLOCK) ON wo.Ukey = t.Ukey
+";
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtDeleteUkey_HasGroup, "Ukey", sqlcmdWorkOrderForOutputDelete, out DataTable odt)))
+            {
+                return result;
+            }
+            #endregion
+            return base.ClickSavePre();
+        }
+
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
+            DualResult result;
+
             // Stpe 1. 給第3層填入對應 WorkOrderForOutputUkey
             foreach (DataRow dr in this.DetailDatas.Where(row => row.RowState == DataRowState.Added))
             {
@@ -1024,7 +1052,6 @@ FROM #tmp t
 LEFT JOIN WorkOrderForOutput_SizeRatio wd ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.SizeCode = wd.SizeCode
 WHERE wd.WorkOrderForOutputUkey IS NULL
 ";
-            DualResult result;
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_SizeRatio, string.Empty, sqlDeleteSizeRatio, out DataTable dtDeleteSizeRatio)))
             {
                 return result;
@@ -1392,6 +1419,12 @@ DEALLOCATE CURSOR_
                     this.dtWorkOrderForOutput_Distribute.Select(GetFilter(currentDetailData, CuttingForm.P09)).Delete();
                     this.dtWorkOrderForOutput_PatternPanel.Select(GetFilter(currentDetailData, CuttingForm.P09)).Delete();
                 }
+            }
+
+            // 如果WorkOrderForOutput.GroupID != '' 刪除後存檔時要寫入WorkOrderForOutputDelete;
+            if (!MyUtility.Check.Empty(this.CurrentDetailData["GroupID"]))
+            {
+                this.dtDeleteUkey_HasGroup.ImportRow(this.CurrentDetailData);
             }
 
             base.OnDetailGridDelete();
