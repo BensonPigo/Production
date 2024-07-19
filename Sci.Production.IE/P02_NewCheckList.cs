@@ -34,9 +34,9 @@ namespace Sci.Production.IE
             this.Text = "Check List";
         }
 
-        protected override void OnFormLoaded()
+        /// <inheritdoc/>
+        protected override DualResult OnRequery()
         {
-            base.OnFormLoaded();
             string selectCommand = $@"
             SELECT 
             [ID] = CC.ID
@@ -84,12 +84,13 @@ namespace Sci.Production.IE
             returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
             if (!returnResult)
             {
-                return;
+                return returnResult;
             }
 
             this.gridbs.DataSource = this.chgOverChkList;
 
             this.copyDt = this.chgOverChkList.Copy();
+            return Ict.Result.True;
         }
 
         /// <summary>
