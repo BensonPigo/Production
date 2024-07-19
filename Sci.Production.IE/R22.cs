@@ -128,7 +128,7 @@ namespace Sci.Production.IE
 
             sqlCmd = $@"
 --Summary
-SELECT Distinct 
+SELECT  distinct
      [InlineDate] = CONVERT(varchar, co.Inline, 23),
      [Ready (all checked)] = iif ((SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 0 AND ID = CO.ID) > 0 ,'','V'),
      [SewingLine] = co.SewingLineID,
@@ -141,12 +141,12 @@ SELECT Distinct
      [Style Type] = iif(co.Type = 'N', 'New', 'Repeat'),
      [Category] = co.Category
 FROM ChgOver co WITH (NOLOCK)
-INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID
+INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID And cc.No <> 0
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type' 
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccl.ID = ccld.ID
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccl.ID = ccld.ID  and ccld.ChgOverCheckListBaseID = CC.[No]
 OUTER APPLY 
 (
     SELECT TOP 1 b.OrderID, b.StyleID, b.ComboType
@@ -161,9 +161,9 @@ OUTER APPLY
     AND b.FactoryID = co.FactoryID
     AND b.SewingLineID = co.SewingLineID
 ) AS oldco
-WHERE cc.No <> 0
+WHERE 1 = 1
 {sqlWhere}
-ORDER BY [Inline], [SewingLine], [OldSP], [NewSP] 
+ORDER BY [InlineDate], [SewingLine], [OldSP], [NewSP] 
  
 --Detail
 SELECT Distinct
@@ -177,12 +177,18 @@ SELECT Distinct
     [Over Days] = iif(cc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [Check] = IIF(cc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, cc.CompletionDate, 23),
-    [Response Dep.] = cod.ResponseDep,
+    [Response Dep.] = ccld.ResponseDep,
     [Check List No] = cc.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = cc.Remark
 FROM ChgOver_Check CC WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
+LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
+LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
+LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = CC.[NO]
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = CC.[No]
 OUTER APPLY
 (
 	SELECT val = isnull(DATEDIFF(day,GETDATE(),CC.DeadLine) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE())),0)
@@ -201,25 +207,6 @@ OUTER Apply
 	FROM Holiday WITH(NOLOCK)
 	WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
 )OverDay_Check_1
-LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
-LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
-LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
-LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = CC.NO
-INNER JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) on ccld.ID = ccl.ID
-OUTER APPLY
-(
-	select ResponseDep = Stuff((
-			select concat(',',ResponseDep)
-			from (
-					select 	distinct
-						d.ResponseDep
-					from dbo.ChgOverCheckList_Detail d WITH(NOLOCK)
-					where ID = ccl.ID
-				) s
-			for xml path ('')
-		) , 1, 1, '')
-) as cod
 WHERE cc.No <> 0
             {sqlWhere}
 Order by  [Inline Date], [SP#], Style, Category, [Product Type], Cell, [Check List No]
