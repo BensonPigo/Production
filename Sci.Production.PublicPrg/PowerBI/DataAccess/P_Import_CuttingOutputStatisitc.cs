@@ -195,7 +195,7 @@ OUTER APPLY (
     SELECT ActConsOutput = SUM(pso.ActConsOutput),
            BalanceCons = SUM(pso.BalanceCons)
     FROM P_CuttingScheduleOutputList pso WITH (NOLOCK)
-    WHERE pso.ActCuttingDate BETWEEN DATEADD(DAY, -7, psol.EstCuttingDate) AND psol.EstCuttingDate
+    WHERE pso.ActCuttingDate BETWEEN DATEADD(DAY, -7, psol.EstCuttingDate) AND DATEADD(DAY, -1, psol.EstCuttingDate)
     AND pso.FactoryID = psol.FactoryID
 ) psByWeek
 ORDER BY psol.FactoryID, psol.EstCuttingDate ASC
