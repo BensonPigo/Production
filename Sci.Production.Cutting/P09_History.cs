@@ -52,9 +52,9 @@ namespace Sci.Production.Cutting
 
         private void Query()
         {
-            this.originalCutRefbs.DataSource = this.dtsHistory[0];
-            this.currentCutRefbs.DataSource = this.dtsHistory[1];
-            this.removeListbs.DataSource = this.dtsHistory[2];
+            this.originalCutRefbs.DataSource = this.dtsHistory[0].Copy();
+            this.currentCutRefbs.DataSource = this.dtsHistory[1].Copy();
+            this.removeListbs.DataSource = this.dtsHistory[2].Copy();
 
             DataTable oridt = this.dtsHistory[0].DefaultView.ToTable(true, "CutRef");
             DataTable curdt = this.dtsHistory[1].DefaultView.ToTable(true, "CutRef");
@@ -90,13 +90,6 @@ namespace Sci.Production.Cutting
             this.gridOriginalCutRef.RowEnter += this.Grid_RowEnter;
             this.gridCurrentCutRef.RowEnter += this.Grid_RowEnter;
             this.gridRemoveList.RowEnter += this.Grid_RowEnter;
-        }
-
-        private void RemoveRowEnterEvent()
-        {
-            this.gridOriginalCutRef.RowEnter -= this.Grid_RowEnter;
-            this.gridCurrentCutRef.RowEnter -= this.Grid_RowEnter;
-            this.gridRemoveList.RowEnter -= this.Grid_RowEnter;
         }
 
         private void Cal3TTLQty()
@@ -210,7 +203,7 @@ namespace Sci.Production.Cutting
 
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this.Dispose();
         }
     }
 }
