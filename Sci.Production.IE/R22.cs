@@ -118,7 +118,7 @@ namespace Sci.Production.IE
 
             if (!MyUtility.Check.Empty(this.strRD))
             {
-                sqlWhere += string.Format($" and ccld.ResponseDep in ( {string.Join(",", this.strRD.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
+                sqlWhere += string.Format($" and (ccld.ResponseDep like {string.Join(" or ccld.ResponseDep like ", this.strRD.Split(',').Select(s => "'%" + s + "%'").ToList())} ) ");
             }
 
             if (this.chkOutstanding.Checked)
@@ -200,7 +200,7 @@ LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryI
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
 LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = CC.[NO]
-LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = CC.[No]
+LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = Colb.ID
 
 OUTER APPLY
 (
