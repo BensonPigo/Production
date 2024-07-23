@@ -7,6 +7,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
@@ -41,6 +42,43 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static string GetWebAPI<T>(string strServerName, string strAPI, int timeout, Dictionary<string, string> dictionart = null)
+        {
+            WebApiBaseResult webApiBaseResult;
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
+                {
+                    string apiUrl = GetWebAPIUrl(strServerName);
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, string.Empty, timeout, dictionart);
+                    if (!webApiBaseResult.isSuccess)
+                    {
+                        transactionScope.Dispose();
+                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                        {
+                            MyUtility.Msg.WarningBox(webApiBaseResult.responseContent);
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox(webApiBaseResult.exception.ToString());
+                        }
+
+                        return string.Empty;
+                    }
+
+                    string response = webApiBaseResult.responseContent;
+                    transactionScope.Complete();
+
+                    return response;
+                }
+                catch (Exception)
+                {
+                    transactionScope.Dispose();
+                    return string.Empty;
+                }
+            }
+        }
+
         /// <summary>
         /// GetWebAPIUrl
         /// </summary>
@@ -52,9 +90,9 @@ namespace Sci.Production.CallPmsAPI
 
             if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
             {
-#if DEBUG
+                #if DEBUG
                 return "http://172.17.3.97:16888/";
-#endif
+                #endif
 
                 return "http://172.17.3.96:16888/";
             }

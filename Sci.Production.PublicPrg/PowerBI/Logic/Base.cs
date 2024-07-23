@@ -383,7 +383,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
                         break;
                     case ListName.P_MachineMasterListByDays:
-                        result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                         result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

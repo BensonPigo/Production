@@ -132,6 +132,9 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Production.CallPmsAPI">
+      <HintPath>..\Sci.Production.CallPmsAPI\bin\Debug\Sci.Production.CallPmsAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
@@ -203,7 +206,6 @@
     <Compile Include="BundleRFCardUSB.cs" />
     <Compile Include="FromTradeReport.cs" />
     <Compile Include="AbstractDBProxyPMS.cs" />
-    <Compile Include="GetTable.cs" />
     <Compile Include="GridRowDrag.cs" />
     <Compile Include="ListToDataTable.cs" />
     <Compile Include="ConvertToPDF.cs" />
@@ -333,10 +335,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
-      <Project>{FC94FCAF-9216-4A2D-9E89-15FE27AEF028}</Project>
-      <Name>Sci.Production.CallPmsAPI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>
