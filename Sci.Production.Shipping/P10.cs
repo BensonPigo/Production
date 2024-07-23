@@ -668,7 +668,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 return false;
             }
 
-            bool needReason = dt.Select("CutOffDate > PulloutDate").Any();
+            bool needReason = dt.Select("CutOffDate < PulloutDate").Any();
 
             if (needReason)
             {
@@ -677,7 +677,6 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 if (returnResult == DialogResult.Cancel)
                 {
                     this.DetailFilter();
-
                     return false;
                 }
             }
@@ -691,7 +690,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
             if (dr != null && this.plData != null)
             {
-                string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
+                string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"])); 
                 this.plData.DefaultView.RowFilter = filter;
             }
         }
