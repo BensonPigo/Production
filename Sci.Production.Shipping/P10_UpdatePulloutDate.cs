@@ -297,7 +297,7 @@ where p.ShipPlanID = '{0}'";
 
             this.CheckPulloutputIDD(dt);
 
-            bool needReason = dt.Select("CutOffDate > PulloutDate").Any();
+            bool needReason = dt.Select("CutOffDate < PulloutDate").Any();
 
             if (needReason)
             {
