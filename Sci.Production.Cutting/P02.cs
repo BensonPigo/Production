@@ -722,7 +722,13 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             if (groupData.Any())
             {
-                DataTable dt = groupData.Select(o => new { MarkerName = o["MarkerName"].ToString(), MarkerNo = o["MarkerNo"].ToString(), MarkerLength = o["Markerlength"].ToString() }).Distinct().LinqToDataTable();
+                DataTable dt = groupData.Select(o => new
+                {
+                    MarkerName = o["MarkerName"].ToString(),
+                    MarkerNo = o["MarkerNo"].ToString(),
+                    MarkerLength = o["Markerlength"].ToString(),
+                    EstCutDate = MyUtility.Convert.GetDate(o["EstCutDate"]).HasValue ? MyUtility.Convert.GetDate(o["EstCutDate"]).Value.ToString("yyyy/MM/dd") : string.Empty,
+                }).Distinct().LinqToDataTable();
 
                 string msg = "The following MarkerName, MarkerNo combinations have different Markerlength or EstCutDate:";
                 MsgGridForm m = new MsgGridForm(dt, msg, "Exists different Markerlength or EstCutDate");
@@ -1325,7 +1331,7 @@ order by p.EditDate desc
         {
             if (grid.Name == "detailgrid")
             {
-                if (columNname.ToLower() == "OrderID" && this.CurrentMaintain["WorkType"].ToString() != "2")
+                if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
                 {
                     return false;
                 }
