@@ -921,6 +921,7 @@ SELECT
     w.FabricCombo,
     w.MarkerName, 
     w.EstCutDate,
+    Layer = SUM(w.Layer),
     w.{colName}
     {nColumn}
 FROM #tmpWorkOrder w WITH (NOLOCK) 
@@ -967,7 +968,8 @@ BEGIN TRANSACTION [Trans_Name];";
             foreach (DataRow dr in workordertmp.Rows)
             {
                 string newCutRef = string.Empty;
-                string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo($"{workOrder_tableName}", "CutRef");
+                string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo(workOrder_tableName, "CutRef");
+                string spreadingStatus = "Ready";
                 if (form == CuttingForm.P02)
                 {
                     newCutRef = maxref;
@@ -978,6 +980,24 @@ BEGIN TRANSACTION [Trans_Name];";
                     if (findrow.Length != 0)
                     {
                         newCutRef = findrow[0]["CutRef"].ToString();
+
+                        // spreadingStatus 規則
+                        int sameCutRefNewTotalLayer = findrow.AsEnumerable().Sum(row => MyUtility.Convert.GetInt(row["Layer"])) + MyUtility.Convert.GetInt(dr["Layer"]);
+                        string sqlSpreadingLayers = $"SELECT SUM(SpreadingLayers) FROM WorkOrderForOutput_SpreadingFabric WITH(NOLOCK) WHERE CutRef = '{newCutRef}'";
+                        int spreadingLayers = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlSpreadingLayers));
+
+                        if (spreadingLayers == 0)
+                        {
+                            spreadingStatus = "Ready";
+                        }
+                        else if (sameCutRefNewTotalLayer > spreadingLayers)
+                        {
+                            spreadingStatus = "Spreading";
+                        }
+                        else
+                        {
+                            spreadingStatus = "Finished";
+                        }
                     }
                     else
                     {
@@ -993,15 +1013,24 @@ BEGIN TRANSACTION [Trans_Name];";
                     }
                 }
 
+                string spreadingStatus_Col = form == CuttingForm.P02 ? string.Empty : $", SpreadingStatus = '{spreadingStatus}'";
                 updateCutRef += $@"
     IF (SELECT COUNT(1) FROM {workOrder_tableName} WITH (NOLOCK) WHERE CutRef = '{newCutRef}' AND id != '{cuttingID}') > 0
     BEGIN
         RAISERROR ('Duplicate CutRef. Please redo Auto Ref#', 12, 1);
         ROLLBACK TRANSACTION [Trans_Name];
     END
-    UPDATE {workOrder_tableName} SET CutRef = '{newCutRef}' 
+    UPDATE {workOrder_tableName} SET CutRef = '{newCutRef}' {spreadingStatus_Col}
     OUTPUT INSERTED.Ukey INTO #tmp{workOrder_tableName}
     WHERE ukey = '{dr["ukey"]}';";
+                if (form == CuttingForm.P09)
+                {
+                    updateCutRef += $@"
+    UPDATE {workOrder_tableName} SET SpreadingStatus = '{spreadingStatus}'
+    WHERE ukey <> '{dr["ukey"]}'-- 排除被咬住的
+    AND SpreadingStatus <> '{spreadingStatus}'-- 排除被咬住的
+    AND CutRef = '{newCutRef}' ";
+                }
             }
 
             updateCutRef += $@"
