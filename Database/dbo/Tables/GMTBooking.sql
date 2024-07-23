@@ -15,7 +15,7 @@
     [CutOffDate]               DATETIME        NULL,
     [ETD]                      DATE            NULL,
     [ETA]                      DATE            NULL,
-    [SONo]                     VARCHAR (16)    CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NOT NULL,
+    [SONo]                     VARCHAR (18)    CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NOT NULL,
     [SOCFMDate]                DATE            NULL,
     [ForwarderWhse_DetailUKey] BIGINT          CONSTRAINT [DF_GMTBooking_ForwarderWhse_DetailUKey] DEFAULT ((0)) NOT NULL,
     [Remark]                   NVARCHAR (60)   CONSTRAINT [DF_GMTBooking_Remark] DEFAULT ('') NOT NULL,
