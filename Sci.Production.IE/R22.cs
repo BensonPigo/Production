@@ -118,7 +118,7 @@ namespace Sci.Production.IE
 
             if (!MyUtility.Check.Empty(this.strRD))
             {
-                sqlWhere += string.Format($" and (ccld.ResponseDep like {string.Join(" or ccld.ResponseDep like ", this.strRD.Split(',').Select(s => "'%" + s + "%'").ToList())} ) ");
+                sqlWhere += string.Format($" and ccldx.ResponseDep in ({string.Join(",", this.strRD.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
             if (this.chkOutstanding.Checked)
@@ -146,7 +146,16 @@ LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonI
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type' 
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
-INNER JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccl.ID = ccld.ID  and ccld.ChgOverCheckListBaseID = CC.[No]
+OUTER APPLY
+(
+    SELECT LTRIM(RTRIM(m.n.value('.[1]', 'varchar(500)'))) AS ResponseDep
+    FROM (
+            SELECT CAST('<XMLRoot><RowData>' + REPLACE(ResponseDep, ',', '</RowData><RowData>') + '</RowData></XMLRoot>' AS XML) AS x
+            FROM ChgOverCheckList_Detail ccld WITH(NOLOCK)
+	        WHERE ccl.ID = ccld.ID  and ccld.ChgOverCheckListBaseID = CC.[No]
+        ) t
+    CROSS APPLY x.nodes('/XMLRoot/RowData') m(n)
+) AS ccldx
 OUTER APPLY 
 (
     SELECT TOP 1 b.OrderID, b.StyleID, b.ComboType
@@ -201,7 +210,17 @@ LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'S
 LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
 LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = CC.[NO]
 LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = Colb.ID
-
+OUTER APPLY
+(
+    SELECT LTRIM(RTRIM(m.n.value('.[1]', 'varchar(500)'))) AS ResponseDep
+    FROM (
+        SELECT CAST('<XMLRoot><RowData>' + REPLACE(ResponseDep, ',', '</RowData><RowData>') + '</RowData></XMLRoot>' AS XML) AS x
+        FROM ChgOverCheckList_Detail ccldx WITH(NOLOCK)
+	    WHERE ccl.ID = ccldx.ID  and ccldx.ChgOverCheckListBaseID = CC.[No]
+        and ccld.ID = ccldx.ID
+        ) t
+    CROSS APPLY x.nodes('/XMLRoot/RowData') m(n)
+) AS ccldx
 OUTER APPLY
 (
 	SELECT val = isnull(iif((CC.Deadline IS NULL), 0, DATEDIFF(day,GETDATE(),CC.DeadLine) - (COUNT(1) + dbo.getDateRangeSundayCount(GETDATE(),cc.Deadline))),0)
