@@ -158,8 +158,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     .Where(y => y.FirstAttribute.Value.EqualString(nowConnection))
                     .Descendants("connectionStrings")
                     .Elements()
-                    .FirstOrDefault(x => x.FirstAttribute.Value.Contains("PMSSewingAPIuri"))
+                    .FirstOrDefault(x => x.FirstAttribute.Value.Contains("PMSAPIuri"))
                     ?.LastAttribute.Value;
+
+                if (MyUtility.Check.Empty(url))
+                {
+                    finalResult.Result = new DualResult(true);
+                    return finalResult;
+                }
 
                 string apiURL = $@"{url}api/WIP/GetWIPDay";
                 string para = $"FactoryID={factory}&Date={workDate:yyyy/MM/dd}&WipDay={wipDay}";
