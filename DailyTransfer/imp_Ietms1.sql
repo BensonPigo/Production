@@ -359,6 +359,51 @@ FROM Production.dbo.SewingMachineAttachment t
 INNER JOIN Trade_To_Pms.dbo.SewingMachineAttachment s WITH(NOLOCK) ON t.ID = s.ID
 
 
+----------------------------------ChgOverCheckListBase----------------------------------
+/*DELETE*/
+Delete Production.dbo.ChgOverCheckListBase
+FROM Production.dbo.ChgOverCheckListBase PCCB
+LEFT JOIN Trade_To_Pms.dbo.ChgOverCheckListBase TCCB WITH(NOLOCK) ON TCCB.ID = PCCB.ID
+WHERE TCCB.ID IS NULL
+
+/*UPDATE*/
+UPDATE PCCB
+SET  
+ PCCB.[NO] = ISNULL(TCCB.[No],0)
+,PCCB.CheckList = ISNULL(TCCB.CheckList,'')
+,PCCB. Junk = TCCB.Junk
+,PCCB.AddName  = isnull(TCCB.AddName,'')
+,PCCB.AddDate = TCCB.AddDate
+,PCCB.EditName = ISNULL(TCCB.EditName,'')
+,PCCB.EditDate = TCCB.EditDate
+FROM Production.dbo.ChgOverCheckListBase PCCB
+INNER JOIN Trade_To_Pms.dbo.ChgOverCheckListBase TCCB WITH(NOLOCK) ON TCCB.ID = PCCB.ID
+
+/*INSERT*/
+INSERT INTO Production.dbo.ChgOverCheckListBase(
+[ID]
+,[No]
+,[CheckList]
+,[Junk]
+,[AddName] 
+,[AddDate] 
+,[EditName]
+,[EditDate]
+)
+SELECT 
+[ID] = ISNULL(TCCB.[ID],0)
+,[NO] = ISNULL(TCCB.[No],0)
+,[CheckList] = ISNULL(TCCB.CheckList,'')
+,[Junk] = ISNULL(TCCB.Junk,0)
+,[AddName] = ISNULL(TCCB.AddName ,'')
+,[AddDate] = TCCB.AddDate
+,[EditName] = ISNULL(TCCB.EditName,'')
+,[EditDate] = TCCB.EditDate
+FROM Trade_To_Pms.dbo.ChgOverCheckListBase TCCB WITH (NOLOCK)
+WHERE NOT EXISTS(SELECT 1 FROM Production.dbo.ChgOverCheckListBase PCCB WITH (NOLOCK) WHERE TCCB.ID = PCCB.ID)
+
+
+
 END
 
 

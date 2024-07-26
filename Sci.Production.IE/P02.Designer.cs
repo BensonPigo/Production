@@ -65,7 +65,6 @@
             this.labelType = new Sci.Win.UI.Label();
             this.btnFTYGSD = new Sci.Win.UI.Button();
             this.btnCheckList = new Sci.Win.UI.Button();
-            this.btnProblem = new Sci.Win.UI.Button();
             this.labelSewingDate = new Sci.Win.UI.Label();
             this.labelEFF = new Sci.Win.UI.Label();
             this.labelRFT = new Sci.Win.UI.Label();
@@ -169,7 +168,6 @@
             this.detailcont.Controls.Add(this.labelRFT);
             this.detailcont.Controls.Add(this.labelEFF);
             this.detailcont.Controls.Add(this.labelSewingDate);
-            this.detailcont.Controls.Add(this.btnProblem);
             this.detailcont.Controls.Add(this.btnCheckList);
             this.detailcont.Controls.Add(this.btnFTYGSD);
             this.detailcont.Controls.Add(this.labelType);
@@ -218,7 +216,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(827, 490);
+            this.browse.Size = new System.Drawing.Size(913, 490);
             // 
             // tabs
             // 
@@ -644,17 +642,6 @@
             this.btnCheckList.Text = "Check List";
             this.btnCheckList.UseVisualStyleBackColor = true;
             this.btnCheckList.Click += new System.EventHandler(this.BtnCheckList_Click);
-            // 
-            // btnProblem
-            // 
-            this.btnProblem.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnProblem.Location = new System.Drawing.Point(810, 114);
-            this.btnProblem.Name = "btnProblem";
-            this.btnProblem.Size = new System.Drawing.Size(96, 30);
-            this.btnProblem.TabIndex = 37;
-            this.btnProblem.Text = "Problem";
-            this.btnProblem.UseVisualStyleBackColor = true;
-            this.btnProblem.Click += new System.EventHandler(this.BtnProblem_Click);
             // 
             // labelSewingDate
             // 
@@ -1098,8 +1085,6 @@
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer4.Name = "shapeContainer1";
-            this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer4.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer4.TabIndex = 54;
             this.shapeContainer4.TabStop = false;
@@ -1127,8 +1112,6 @@
             this.shapeContainer5.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer5.Name = "shapeContainer1";
-            this.shapeContainer5.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer5.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer5.TabIndex = 54;
             this.shapeContainer5.TabStop = false;
@@ -1156,8 +1139,6 @@
             this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer6.Name = "shapeContainer1";
-            this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
             this.shapeContainer6.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer6.TabIndex = 54;
             this.shapeContainer6.TabStop = false;
@@ -1248,7 +1229,6 @@
         private Win.UI.Label labelRFT;
         private Win.UI.Label labelEFF;
         private Win.UI.Label labelSewingDate;
-        private Win.UI.Button btnProblem;
         private Win.UI.Button btnCheckList;
         private Win.UI.Button btnFTYGSD;
         private Win.UI.Label labelType;
