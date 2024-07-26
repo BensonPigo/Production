@@ -293,6 +293,7 @@ namespace Sci.Production.Logistic
             this.displayBrand.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["BrandID"]);
             this.displayStyle.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["StyleID"]);
             this.txtDest.TextBox1.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["Dest"]);
+            this.numWeight.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["ActCTNWeight"]);
             #endregion 左邊 Head
             #region 右邊 Head
 
@@ -427,6 +428,7 @@ namespace Sci.Production.Logistic
                 this.numBoxRemainCartons.Text = string.Empty;
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
+                this.numWeight.Text = string.Empty;
             }
             else if (type.Equals("SCAN"))
             {
@@ -446,6 +448,7 @@ namespace Sci.Production.Logistic
                 this.numBoxRemainQty.Text = string.Empty;
                 this.txtDest.TextBox1.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
+                this.numWeight.Text = string.Empty;
             }
         }
 
@@ -597,12 +600,23 @@ namespace Sci.Production.Logistic
                     }
                 }
 
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P17_InputWeight p17_InputWeight = new P17_InputWeight();
+                    p17_InputWeight.ShowDialog();
+                    this.numWeight.Value = p17_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
                 string upd_sql = $@"
                 update PackingList_Detail 
                 set ClogScanQty = QtyPerCTN 
                 , ClogScanDate = GETDATE()
                 , ScanName = '{Env.User.UserID}'   
                 , ClogLackingQty = 0
+                , ActCTNWeight = {this.numWeight.Value}
                 where id = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["ID"])}' 
                 and CTNStartNo = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["CTNStartNo"])}' 
 
@@ -908,6 +922,26 @@ namespace Sci.Production.Logistic
             }
 
             base.OnFormClosing(e);
+        }
+
+        private void NumWeight_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(((TextBox)sender).Text.ToString()))
+            {
+                return;
+            }
+
+            if (this.dtHade != null)
+            {
+                if (!MyUtility.Check.Empty(this.dtHade.Rows[0]["ID"].ToString()) && !MyUtility.Check.Empty(this.dtHade.Rows[0]["CTNStartNo"].ToString()) && !MyUtility.Check.Empty(this.dtHade.Rows[0]["Article"].ToString()))
+                {
+                    DataRow[] dt_scanDetailrow = this.dtDetail.Select($"ID = '{this.dtHade.Rows[0]["ID"]}' and CTNStartNo = '{this.dtHade.Rows[0]["CTNStartNo"]}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["ActCTNWeight"] = this.numWeight.Text;
+                    }
+                }
+            }
         }
     }
 }
