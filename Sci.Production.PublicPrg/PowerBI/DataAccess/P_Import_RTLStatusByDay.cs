@@ -138,9 +138,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                string nowConnection = DBProxy.Current.DefaultModuleName;
-                string url = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PMSAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                string url = MyUtility.GetValue.Lookup(
+                    $@"
+select b.URL
+from System a
+inner join SystemWebAPIURL b on a.RgCode = b.SystemName
+where Junk = 0 and Environment = 'Formal'
+", "Production");
 
                 if (MyUtility.Check.Empty(url))
                 {
