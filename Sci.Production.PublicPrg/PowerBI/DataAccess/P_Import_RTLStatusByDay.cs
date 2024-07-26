@@ -140,7 +140,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
                 string nowConnection = DBProxy.Current.DefaultModuleName;
-                string url = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PMSSewingAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                string url = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PMSAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+
+                if (MyUtility.Check.Empty(url))
+                {
+                    finalResult.Result = new DualResult(true);
+                    return finalResult;
+                }
 
                 string apiURL = $@"{url}api/WIP/GetWIPDay";
                 string para = "FactoryID=" + factory + "&Date=" + workDate.ToString("yyyy/MM/dd") + "&WipDay=" + wipDay.ToString();
