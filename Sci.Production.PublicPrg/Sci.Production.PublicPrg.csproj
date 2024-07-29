@@ -232,7 +232,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPO.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_OutstandingPOStatus.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ProductionKitsTracking.cs" />
-    <Compile Include="PowerBI\DataAccess\P_Import_CuttingOutputStatisitc.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CuttingOutputStatistic.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MaterialCompletionRateByWeek.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyRTLStatusByLineByStyle.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RTLStatusByDay.cs" />

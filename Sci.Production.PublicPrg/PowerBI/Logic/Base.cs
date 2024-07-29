@@ -51,7 +51,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SimilarStyle,
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
-            P_CuttingOutputStatisitc,
+            P_CuttingOutputStatistic,
             P_MaterialCompletionRateByWeek,
             P_RTLStatusByDay,
             P_DailyRTLStatusByLineByStyle,
