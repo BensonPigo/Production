@@ -50,30 +50,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
         {
-            Dictionary<string, string> dicHeaders = new Dictionary<string, string>
+            Machine_R01 machine_R01_ViewModel = new Machine_R01()
             {
-                { "StartMachineID", string.Empty },                                             // Machine# 開始
-                { "EndMachineID", string.Empty },                                               // Machine# 結束
-                { "MachineBrandID", string.Empty },                                             // Machine Brand
-                { "Model", string.Empty },                                                      // Model
-                { "MachineGroup", string.Empty },                                               // Macine Group
-                { "StartSerial", string.Empty },                                                // Serial 開始
-                { "EndSerial", string.Empty },                                                  // Serial 結束
-                { "LocationM", string.Empty },                                                  // Location M
-                { "StartMachineArrivalDate", string.Empty },                                    // Machine arrival date 開始
-                { "EndMachineArrivalDate", string.Empty },
-                { "Condition", string.Empty },                                                  // Condition
-                { "ExcludeDisposedData", "False" },                                             // ExcludeDisposedData
-                { "IncludeCancelData", "True" },                                                // IncludeCancelData
-                { "sBIDate", sDate.Value.ToString("yyyy/MM/dd") },                              // BI查詢日期
-                { "eBIDate", eDate.Value.ToString("yyyy/MM/dd") },                              // BI查詢日期
-                { "IsBI", "True" },                                                             // 是否BI
-                { "IsTPE_BI", "False" },                                                        // 是否台北BI
+                StartMachineID = string.Empty,
+                EndMachineID = string.Empty,
+                MachineBrandID = string.Empty,
+                Model = string.Empty,
+                MachineGroup = string.Empty,
+                StartSerial = string.Empty,
+                EndSerial = string.Empty,
+                LocationM = string.Empty,
+                StartMachineArrivalDate = string.Empty,
+                EndMachineArrivalDate = string.Empty,
+                Condition = string.Empty,
+                ExcludeDisposedData = "False",
+                IncludeCancelData = "True",
+                SBIDate = sDate.Value.ToString("yyyy/MM/dd"),
+                EBIDate = eDate.Value.ToString("yyyy/MM/dd"),
+                IsBI = "True",
+                IsTPE_BI = "False",
             };
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
             Base_ViewModel resultReport = new Base_ViewModel();
-            resultReport.Dt = CallWebAPI.ToTable<Machine_R01>(PackingA2BWebAPI.GetWebAPI<Machine_R01>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, dicHeaders));
+            resultReport.Dt = CallWebAPI.ToTable<Machine_R01_Report>(PackingA2BWebAPI.GetWebAPI<Machine_R01_Report>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, machine_R01_ViewModel));
             return resultReport;
         }
 

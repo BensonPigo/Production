@@ -42,7 +42,7 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
-        public static string GetWebAPI<T>(string strServerName, string strAPI, int timeout, Dictionary<string, string> dictionart = null)
+        public static string GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
         {
             WebApiBaseResult webApiBaseResult;
             using (TransactionScope transactionScope = new TransactionScope())
@@ -50,7 +50,7 @@ namespace Sci.Production.CallPmsAPI
                 try
                 {
                     string apiUrl = GetWebAPIUrl(strServerName);
-                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, string.Empty, timeout, dictionart);
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost("http://localhost:48926/", strAPI, dictionart, timeout);
                     if (!webApiBaseResult.isSuccess)
                     {
                         transactionScope.Dispose();
