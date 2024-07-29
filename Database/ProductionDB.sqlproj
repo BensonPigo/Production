@@ -2916,6 +2916,8 @@
     <Build Include="dbo\Tables\MtlType_Brand.sql" />
     <Build Include="dbo\Functions\IsSustainableMaterial.sql" />
     <Build Include="dbo\Tables\Brand_QAMoistureStandardListByActMoisture.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckList_Detail.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

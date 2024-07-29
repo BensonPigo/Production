@@ -29,58 +29,52 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabCompare = new Sci.Win.UI.TabControl();
             this.tabSewerMinus2 = new System.Windows.Forms.TabPage();
-            this.tabSewerMinus1 = new System.Windows.Forms.TabPage();
-            this.tabSewerManualInput = new System.Windows.Forms.TabPage();
-            this.tabSewerPlus1 = new System.Windows.Forms.TabPage();
-            this.tabSewerPlus2 = new System.Windows.Forms.TabPage();
             this.panelDisplay = new Sci.Win.UI.Panel();
-            this.splitTop = new System.Windows.Forms.SplitContainer();
             this.splitBottom = new System.Windows.Forms.SplitContainer();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.gridManualNoDetail = new Sci.Win.UI.Grid();
             this.label3 = new Sci.Win.UI.Label();
+            this.gridAutoNoDetail = new Sci.Win.UI.Grid();
             this.label4 = new Sci.Win.UI.Label();
+            this.splitTop = new System.Windows.Forms.SplitContainer();
+            this.gridManualMain = new Sci.Win.UI.Grid();
             this.numManualOPLoading = new Sci.Win.UI.NumericBox();
             this.numManualLBR = new Sci.Win.UI.NumericBox();
             this.numManualSewerManpower = new Sci.Win.UI.NumericBox();
             this.label5 = new Sci.Win.UI.Label();
             this.label6 = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
+            this.gridAutoMain = new Sci.Win.UI.Grid();
             this.numAutoOPLoading = new Sci.Win.UI.NumericBox();
             this.numAutoLBR = new Sci.Win.UI.NumericBox();
             this.numAutoSewerManpower = new Sci.Win.UI.NumericBox();
             this.label8 = new Sci.Win.UI.Label();
             this.label9 = new Sci.Win.UI.Label();
             this.label10 = new Sci.Win.UI.Label();
-            this.gridManualMain = new Sci.Win.UI.Grid();
-            this.gridAutoMain = new Sci.Win.UI.Grid();
-            this.gridManualNoDetail = new Sci.Win.UI.Grid();
-            this.gridAutoNoDetail = new Sci.Win.UI.Grid();
+            this.label2 = new Sci.Win.UI.Label();
+            this.tabSewerMinus1 = new System.Windows.Forms.TabPage();
+            this.tabSewerManualInput = new System.Windows.Forms.TabPage();
+            this.tabSewerPlus1 = new System.Windows.Forms.TabPage();
+            this.tabSewerPlus2 = new System.Windows.Forms.TabPage();
             this.gridAutoDetailBs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridManualDetailBs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabCompare.SuspendLayout();
             this.tabSewerMinus2.SuspendLayout();
             this.panelDisplay.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
-            this.splitTop.Panel1.SuspendLayout();
-            this.splitTop.Panel2.SuspendLayout();
-            this.splitTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitBottom)).BeginInit();
             this.splitBottom.Panel1.SuspendLayout();
             this.splitBottom.Panel2.SuspendLayout();
             this.splitBottom.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridManualMain)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAutoMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridManualNoDetail)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoNoDetail)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitTop)).BeginInit();
+            this.splitTop.Panel1.SuspendLayout();
+            this.splitTop.Panel2.SuspendLayout();
+            this.splitTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridManualMain)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAutoMain)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoDetailBs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridManualDetailBs)).BeginInit();
             this.SuspendLayout();
@@ -109,39 +103,6 @@
             this.tabSewerMinus2.TabIndex = 0;
             this.tabSewerMinus2.Text = "-2 Sewer";
             // 
-            // tabSewerMinus1
-            // 
-            this.tabSewerMinus1.Location = new System.Drawing.Point(4, 25);
-            this.tabSewerMinus1.Name = "tabSewerMinus1";
-            this.tabSewerMinus1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSewerMinus1.Size = new System.Drawing.Size(900, 478);
-            this.tabSewerMinus1.TabIndex = 1;
-            this.tabSewerMinus1.Text = "-1 Sewer";
-            // 
-            // tabSewerManualInput
-            // 
-            this.tabSewerManualInput.Location = new System.Drawing.Point(4, 25);
-            this.tabSewerManualInput.Name = "tabSewerManualInput";
-            this.tabSewerManualInput.Size = new System.Drawing.Size(900, 478);
-            this.tabSewerManualInput.TabIndex = 2;
-            this.tabSewerManualInput.Text = "Manual Input";
-            // 
-            // tabSewerPlus1
-            // 
-            this.tabSewerPlus1.Location = new System.Drawing.Point(4, 25);
-            this.tabSewerPlus1.Name = "tabSewerPlus1";
-            this.tabSewerPlus1.Size = new System.Drawing.Size(900, 478);
-            this.tabSewerPlus1.TabIndex = 3;
-            this.tabSewerPlus1.Text = "+1 Sewer";
-            // 
-            // tabSewerPlus2
-            // 
-            this.tabSewerPlus2.Location = new System.Drawing.Point(4, 25);
-            this.tabSewerPlus2.Name = "tabSewerPlus2";
-            this.tabSewerPlus2.Size = new System.Drawing.Size(900, 478);
-            this.tabSewerPlus2.TabIndex = 4;
-            this.tabSewerPlus2.Text = "+2 Sewer";
-            // 
             // panelDisplay
             // 
             this.panelDisplay.Controls.Add(this.splitBottom);
@@ -151,6 +112,98 @@
             this.panelDisplay.Name = "panelDisplay";
             this.panelDisplay.Size = new System.Drawing.Size(1143, 652);
             this.panelDisplay.TabIndex = 0;
+            // 
+            // splitBottom
+            // 
+            this.splitBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.splitBottom.Location = new System.Drawing.Point(0, 414);
+            this.splitBottom.Name = "splitBottom";
+            this.splitBottom.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitBottom.Panel1
+            // 
+            this.splitBottom.Panel1.Controls.Add(this.gridManualNoDetail);
+            this.splitBottom.Panel1.Controls.Add(this.label3);
+            // 
+            // splitBottom.Panel2
+            // 
+            this.splitBottom.Panel2.Controls.Add(this.gridAutoNoDetail);
+            this.splitBottom.Panel2.Controls.Add(this.label4);
+            this.splitBottom.Size = new System.Drawing.Size(1143, 238);
+            this.splitBottom.SplitterDistance = 119;
+            this.splitBottom.TabIndex = 1;
+            // 
+            // gridManualNoDetail
+            // 
+            this.gridManualNoDetail.AllowUserToAddRows = false;
+            this.gridManualNoDetail.AllowUserToDeleteRows = false;
+            this.gridManualNoDetail.AllowUserToResizeRows = false;
+            this.gridManualNoDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridManualNoDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridManualNoDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridManualNoDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridManualNoDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridManualNoDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridManualNoDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridManualNoDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridManualNoDetail.Location = new System.Drawing.Point(80, 3);
+            this.gridManualNoDetail.Name = "gridManualNoDetail";
+            this.gridManualNoDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridManualNoDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridManualNoDetail.RowTemplate.Height = 24;
+            this.gridManualNoDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridManualNoDetail.ShowCellToolTips = false;
+            this.gridManualNoDetail.Size = new System.Drawing.Size(1058, 113);
+            this.gridManualNoDetail.TabIndex = 2;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.label3.Location = new System.Drawing.Point(5, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(75, 23);
+            this.label3.TabIndex = 1;
+            this.label3.Text = "Manual";
+            this.label3.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // gridAutoNoDetail
+            // 
+            this.gridAutoNoDetail.AllowUserToAddRows = false;
+            this.gridAutoNoDetail.AllowUserToDeleteRows = false;
+            this.gridAutoNoDetail.AllowUserToResizeRows = false;
+            this.gridAutoNoDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridAutoNoDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAutoNoDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAutoNoDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAutoNoDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAutoNoDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAutoNoDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAutoNoDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAutoNoDetail.Location = new System.Drawing.Point(80, -1);
+            this.gridAutoNoDetail.Name = "gridAutoNoDetail";
+            this.gridAutoNoDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAutoNoDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAutoNoDetail.RowTemplate.Height = 24;
+            this.gridAutoNoDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAutoNoDetail.ShowCellToolTips = false;
+            this.gridAutoNoDetail.Size = new System.Drawing.Size(1058, 113);
+            this.gridAutoNoDetail.TabIndex = 3;
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(5, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.TabIndex = 2;
+            this.label4.Text = "Auto";
+            this.label4.TextStyle.Color = System.Drawing.Color.Blue;
             // 
             // splitTop
             // 
@@ -185,69 +238,30 @@
             this.splitTop.SplitterDistance = 566;
             this.splitTop.TabIndex = 0;
             // 
-            // splitBottom
+            // gridManualMain
             // 
-            this.splitBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.splitBottom.Location = new System.Drawing.Point(0, 414);
-            this.splitBottom.Name = "splitBottom";
-            this.splitBottom.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitBottom.Panel1
-            // 
-            this.splitBottom.Panel1.Controls.Add(this.gridManualNoDetail);
-            this.splitBottom.Panel1.Controls.Add(this.label3);
-            // 
-            // splitBottom.Panel2
-            // 
-            this.splitBottom.Panel2.Controls.Add(this.gridAutoNoDetail);
-            this.splitBottom.Panel2.Controls.Add(this.label4);
-            this.splitBottom.Size = new System.Drawing.Size(1143, 238);
-            this.splitBottom.SplitterDistance = 119;
-            this.splitBottom.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Manual";
-            this.label1.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(0, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(75, 23);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Auto";
-            this.label2.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(5, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(75, 23);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Manual";
-            this.label3.TextStyle.Color = System.Drawing.Color.Blue;
-            // 
-            // label4
-            // 
-            this.label4.BackColor = System.Drawing.Color.Transparent;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(5, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
-            this.label4.TabIndex = 2;
-            this.label4.Text = "Auto";
-            this.label4.TextStyle.Color = System.Drawing.Color.Blue;
+            this.gridManualMain.AllowUserToAddRows = false;
+            this.gridManualMain.AllowUserToDeleteRows = false;
+            this.gridManualMain.AllowUserToResizeRows = false;
+            this.gridManualMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridManualMain.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridManualMain.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridManualMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridManualMain.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridManualMain.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridManualMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridManualMain.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridManualMain.Location = new System.Drawing.Point(3, 26);
+            this.gridManualMain.Name = "gridManualMain";
+            this.gridManualMain.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridManualMain.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridManualMain.RowTemplate.Height = 24;
+            this.gridManualMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridManualMain.ShowCellToolTips = false;
+            this.gridManualMain.Size = new System.Drawing.Size(560, 376);
+            this.gridManualMain.TabIndex = 13;
             // 
             // numManualOPLoading
             // 
@@ -333,6 +347,42 @@
             this.label7.TabIndex = 7;
             this.label7.Text = "No. of Sewer";
             // 
+            // label1
+            // 
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Manual";
+            this.label1.TextStyle.Color = System.Drawing.Color.Blue;
+            // 
+            // gridAutoMain
+            // 
+            this.gridAutoMain.AllowUserToAddRows = false;
+            this.gridAutoMain.AllowUserToDeleteRows = false;
+            this.gridAutoMain.AllowUserToResizeRows = false;
+            this.gridAutoMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridAutoMain.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridAutoMain.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridAutoMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridAutoMain.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridAutoMain.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridAutoMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridAutoMain.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridAutoMain.Location = new System.Drawing.Point(3, 26);
+            this.gridAutoMain.Name = "gridAutoMain";
+            this.gridAutoMain.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridAutoMain.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridAutoMain.RowTemplate.Height = 24;
+            this.gridAutoMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridAutoMain.ShowCellToolTips = false;
+            this.gridAutoMain.Size = new System.Drawing.Size(557, 376);
+            this.gridAutoMain.TabIndex = 14;
+            // 
             // numAutoOPLoading
             // 
             this.numAutoOPLoading.BackColor = System.Drawing.Color.White;
@@ -417,153 +467,49 @@
             this.label10.TabIndex = 13;
             this.label10.Text = "No. of Sewer";
             // 
-            // gridManualMain
+            // label2
             // 
-            this.gridManualMain.AllowUserToAddRows = false;
-            this.gridManualMain.AllowUserToDeleteRows = false;
-            this.gridManualMain.AllowUserToResizeRows = false;
-            this.gridManualMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridManualMain.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridManualMain.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridManualMain.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
-            this.gridManualMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridManualMain.DefaultCellStyle = dataGridViewCellStyle5;
-            this.gridManualMain.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridManualMain.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridManualMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridManualMain.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridManualMain.Location = new System.Drawing.Point(3, 26);
-            this.gridManualMain.Name = "gridManualMain";
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridManualMain.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.gridManualMain.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridManualMain.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridManualMain.RowTemplate.Height = 24;
-            this.gridManualMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridManualMain.ShowCellToolTips = false;
-            this.gridManualMain.Size = new System.Drawing.Size(560, 376);
-            this.gridManualMain.TabIndex = 13;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Bold);
+            this.label2.Location = new System.Drawing.Point(0, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 23);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Auto";
+            this.label2.TextStyle.Color = System.Drawing.Color.Blue;
             // 
-            // gridAutoMain
+            // tabSewerMinus1
             // 
-            this.gridAutoMain.AllowUserToAddRows = false;
-            this.gridAutoMain.AllowUserToDeleteRows = false;
-            this.gridAutoMain.AllowUserToResizeRows = false;
-            this.gridAutoMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridAutoMain.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridAutoMain.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridAutoMain.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridAutoMain.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridAutoMain.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridAutoMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridAutoMain.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAutoMain.Location = new System.Drawing.Point(3, 26);
-            this.gridAutoMain.Name = "gridAutoMain";
-            this.gridAutoMain.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridAutoMain.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridAutoMain.RowTemplate.Height = 24;
-            this.gridAutoMain.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAutoMain.ShowCellToolTips = false;
-            this.gridAutoMain.Size = new System.Drawing.Size(557, 376);
-            this.gridAutoMain.TabIndex = 14;
+            this.tabSewerMinus1.Location = new System.Drawing.Point(4, 25);
+            this.tabSewerMinus1.Name = "tabSewerMinus1";
+            this.tabSewerMinus1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabSewerMinus1.Size = new System.Drawing.Size(1149, 658);
+            this.tabSewerMinus1.TabIndex = 1;
+            this.tabSewerMinus1.Text = "-1 Sewer";
             // 
-            // gridManualNoDetail
+            // tabSewerManualInput
             // 
-            this.gridManualNoDetail.AllowUserToAddRows = false;
-            this.gridManualNoDetail.AllowUserToDeleteRows = false;
-            this.gridManualNoDetail.AllowUserToResizeRows = false;
-            this.gridManualNoDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridManualNoDetail.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridManualNoDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridManualNoDetail.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.gridManualNoDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.gridManualNoDetail.DefaultCellStyle = dataGridViewCellStyle2;
-            this.gridManualNoDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridManualNoDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridManualNoDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridManualNoDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridManualNoDetail.Location = new System.Drawing.Point(80, 3);
-            this.gridManualNoDetail.Name = "gridManualNoDetail";
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridManualNoDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.gridManualNoDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridManualNoDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridManualNoDetail.RowTemplate.Height = 24;
-            this.gridManualNoDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridManualNoDetail.ShowCellToolTips = false;
-            this.gridManualNoDetail.Size = new System.Drawing.Size(1058, 113);
-            this.gridManualNoDetail.TabIndex = 2;
+            this.tabSewerManualInput.Location = new System.Drawing.Point(4, 25);
+            this.tabSewerManualInput.Name = "tabSewerManualInput";
+            this.tabSewerManualInput.Size = new System.Drawing.Size(1149, 658);
+            this.tabSewerManualInput.TabIndex = 2;
+            this.tabSewerManualInput.Text = "Manual Input";
             // 
-            // gridAutoNoDetail
+            // tabSewerPlus1
             // 
-            this.gridAutoNoDetail.AllowUserToAddRows = false;
-            this.gridAutoNoDetail.AllowUserToDeleteRows = false;
-            this.gridAutoNoDetail.AllowUserToResizeRows = false;
-            this.gridAutoNoDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridAutoNoDetail.BackgroundColor = System.Drawing.SystemColors.Control;
-            this.gridAutoNoDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-            this.gridAutoNoDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridAutoNoDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-            this.gridAutoNoDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.gridAutoNoDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.gridAutoNoDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridAutoNoDetail.Location = new System.Drawing.Point(80, -1);
-            this.gridAutoNoDetail.Name = "gridAutoNoDetail";
-            this.gridAutoNoDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-            this.gridAutoNoDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-            this.gridAutoNoDetail.RowTemplate.Height = 24;
-            this.gridAutoNoDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridAutoNoDetail.ShowCellToolTips = false;
-            this.gridAutoNoDetail.Size = new System.Drawing.Size(1058, 113);
-            this.gridAutoNoDetail.TabIndex = 3;
+            this.tabSewerPlus1.Location = new System.Drawing.Point(4, 25);
+            this.tabSewerPlus1.Name = "tabSewerPlus1";
+            this.tabSewerPlus1.Size = new System.Drawing.Size(1149, 658);
+            this.tabSewerPlus1.TabIndex = 3;
+            this.tabSewerPlus1.Text = "+1 Sewer";
+            // 
+            // tabSewerPlus2
+            // 
+            this.tabSewerPlus2.Location = new System.Drawing.Point(4, 25);
+            this.tabSewerPlus2.Name = "tabSewerPlus2";
+            this.tabSewerPlus2.Size = new System.Drawing.Size(1149, 658);
+            this.tabSewerPlus2.TabIndex = 4;
+            this.tabSewerPlus2.Text = "+2 Sewer";
             // 
             // P05_Compare
             // 
@@ -578,20 +524,20 @@
             this.tabCompare.ResumeLayout(false);
             this.tabSewerMinus2.ResumeLayout(false);
             this.panelDisplay.ResumeLayout(false);
+            this.splitBottom.Panel1.ResumeLayout(false);
+            this.splitBottom.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitBottom)).EndInit();
+            this.splitBottom.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridManualNoDetail)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridAutoNoDetail)).EndInit();
             this.splitTop.Panel1.ResumeLayout(false);
             this.splitTop.Panel1.PerformLayout();
             this.splitTop.Panel2.ResumeLayout(false);
             this.splitTop.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitTop)).EndInit();
             this.splitTop.ResumeLayout(false);
-            this.splitBottom.Panel1.ResumeLayout(false);
-            this.splitBottom.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitBottom)).EndInit();
-            this.splitBottom.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridManualMain)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoMain)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridManualNoDetail)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridAutoNoDetail)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridAutoDetailBs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridManualDetailBs)).EndInit();
             this.ResumeLayout(false);

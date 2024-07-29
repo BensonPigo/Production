@@ -51,6 +51,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SimilarStyle,
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
+            P_CuttingOutputStatisitc,
             P_MaterialCompletionRateByWeek,
             P_RTLStatusByDay,
             P_DailyRTLStatusByLineByStyle,
@@ -381,6 +382,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_FabricInspAvgInspLTInPast7Days:
                         result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_CuttingOutputStatistic:
+                        result = new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
                         break;
                     case ListName.P_MaterialCompletionRateByWeek:
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);

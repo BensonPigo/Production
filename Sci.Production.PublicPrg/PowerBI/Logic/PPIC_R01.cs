@@ -68,6 +68,11 @@ exec dbo.GetSewingLineScheduleData  @Inline,
                 return resultReport;
             }
 
+            if (!model.IsPowerBI)
+            {
+                dataTables[0].Columns.Remove("LastDownloadAPSDate");
+            }
+
             resultReport.DtArr = dataTables;
             return resultReport;
         }

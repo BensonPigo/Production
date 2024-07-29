@@ -339,7 +339,7 @@
                                 <TextRun>
                                   <Value>=Fields!Color.Value</Value>
                                   <Style>
-                                    <FontSize>5pt</FontSize>
+                                    <FontSize>2.8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
