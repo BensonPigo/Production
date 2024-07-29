@@ -50,7 +50,7 @@ namespace Sci.Production.CallPmsAPI
                 try
                 {
                     string apiUrl = GetWebAPIUrl(strServerName);
-                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost("http://localhost:48926/", strAPI, dictionart, timeout);
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
                     if (!webApiBaseResult.isSuccess)
                     {
                         transactionScope.Dispose();
