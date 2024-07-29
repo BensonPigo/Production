@@ -311,12 +311,16 @@ namespace Sci.Production.IE
                 MyUtility.Excel.CopyToXls(this.printData_Detail_Operation, string.Empty, fileName + ".xltx", 1, showExcel: false, fieldList: null, wSheet: wsSheet, excelApp: excel);
             }
 
-            excel.Cells.EntireColumn.AutoFit();
+            //excel.Cells.EntireColumn.AutoFit();
             excel.ActiveWorkbook.Worksheets[1].Columns["P"].ColumnWidth = 30;
             excel.ActiveWorkbook.Worksheets[2].Columns["K"].ColumnWidth = 20;
             excel.ActiveWorkbook.Worksheets[2].Columns["L"].ColumnWidth = 20;
             excel.ActiveWorkbook.Worksheets[2].Columns["M"].ColumnWidth = 30;
             excel.ActiveWorkbook.Worksheets[2].Columns["N"].ColumnWidth = 30;
+
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
+            worksheet.get_Range("M:M").WrapText = false;
+            worksheet.get_Range("N:N").WrapText = false;
             this.HideWaitMessage();
 
             #region Save & Show Excel
@@ -499,6 +503,7 @@ select lmd.*
 INTO #LineMapping_Detail
 from #LineMapping lm
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.IsHide = 0 and lmd.No <> ''
 
 select distinct
 	lm.FactoryID,
@@ -549,7 +554,7 @@ OUTER APPLY(
 	from #LineMapping_Detail lmdd
 	where lm.ID = lmdd.ID and lmd.No=lmdd.No
 )DetailSum
-where lmd.IsHide = 0
+where 1=1 
 ");
 
             if (this.bolBalancing)
@@ -651,6 +656,7 @@ select lmd.*
 INTO #AutomatedLineMapping_Detail
 from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	lm.FactoryID,
@@ -776,6 +782,7 @@ select lmd.*
 INTO #LineMappingBalancing_Detail
 from #LineMappingBalancing lm
 inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	lm.FactoryID,
@@ -933,6 +940,7 @@ select lmd.*
 INTO #LineMapping_Detail
 from #LineMapping lm
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.IsHide = 0 and lmd.No <> ''
 
 select distinct
 	lm.ID,
@@ -971,7 +979,7 @@ outer apply(
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )LinebalancingTarget 
-where lmd.IsHide = 0
+where 1=1 
 ");
 
             if (this.bolBalancing)
@@ -1136,6 +1144,7 @@ select lmd.*
 INTO #AutomatedLineMapping_Detail
 from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	t.FactoryID,
@@ -1191,7 +1200,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 		),1,1,'')
 )Annotation
-where 1=1
+where 1=1 
 ");
 
             if (this.latestVersion)
@@ -1290,6 +1299,7 @@ select lmd.*
 INTO #LineMappingBalancing_Detail
 from #LineMappingBalancing lm
 inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	lm.ID,
@@ -1505,6 +1515,7 @@ select lmd.*
 INTO #LineMapping_Detail
 from #LineMapping lm
 inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.IsHide = 0 and lmd.No <> ''
 
 select distinct
 	f.CountryID,
@@ -1552,7 +1563,19 @@ select distinct
 	[Line Balancing %] = IIF( lm.HighestCycle =0 or lm.CurrentOperators=0 ,0 , 1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators),
 
 	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100 ,
-	[Not Hit Target Type] = ISNULL(i.TypeGroup ,'') ,
+	[Not Hit Target Type] =  iif(lm.Version = 1, 
+								(select TypeGroup from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
+								(select STUFF ((
+										select distinct CONCAT (',', a.TypeGroup) 
+											from (
+												select lbr.TypeGroup
+												from LineMapping_Detail l2 WITH (NOLOCK)
+												inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+												where lm.ID = l2.ID
+											) a 
+											for xml path('')
+									), 1, 1, ''))
+	) ,
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
 	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
@@ -1560,8 +1583,19 @@ select distinct
 	                    where lm.ID = l2.ID
 	                    and ISNULL(l2.IEReasonLBRNotHit_DetailUkey, '') <> ''
                     )a )),
-	[Not Hit Target Reason]=ISNULL(i.Name ,'') ,
-
+    [Not Hit Target Reason] = iif(lm.Version = 1, 
+								    (select Name from IEReasonLBRnotHit_1st where Ukey = lm.IEReasonLBRnotHit_1stUkey),
+								    (select STUFF ((
+									    select distinct CONCAT (',', a.Name ) 
+										    from (
+											    select lbr.Name 
+											    from #LineMapping_Detail l2 WITH (NOLOCK)
+											    inner join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on l2.IEReasonLBRNotHit_DetailUkey = lbr.Ukey and lbr.junk = 0
+											    where lm.ID = l2.ID
+										    ) a 
+										    for xml path('')
+								    ), 1, 1, ''))
+    ),
 	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs]
 	[Lean Line Eff %] = IIF(lm.Workhour = 0 OR lm.TotalCycle =0 OR lm.CurrentOperators = 0 ,0,
         1.0 * lm.TotalCycle 
@@ -1582,7 +1616,6 @@ select distinct
 from #LineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
-left join IEReasonLBRnotHit_1st i on i.Ukey = lm.IEReasonLBRNotHit_1stUkey
 outer apply(
 	select top 1 c.Target
 	from factory f
@@ -1693,6 +1726,7 @@ select lmd.*
 INTO #AutomatedLineMapping_Detail
 from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	f.CountryID,
@@ -1868,6 +1902,7 @@ select lmd.*
 INTO #LineMappingBalancing_Detail
 from #LineMappingBalancing lm
 inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+where lmd.No <> ''
 
 select distinct
 	f.CountryID,

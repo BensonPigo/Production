@@ -748,7 +748,7 @@ select
 
 	,[Optrs Diff] = ISNULL(AfterData.CurrentOperators,0) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
 	,[LBR Diff (%)] = ISNULL(AfterData.LBR,0) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Total % Time diff] = IIF(AfterData.TotalCycle = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / AfterData.TotalCycle )
+	,[Total % Time diff] = IIF(AfterData.TotalCycle = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / AfterData.TotalCycle ) * 100
 	,[By style] = IIF(AfterData.Status = 'Confirmed' OR ISNULL(BeforeDataP03.Status,BeforeDataP05.Status)  = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
 	,[Last Version From] = ISNULL(AfterData.SourceTable, ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) )
