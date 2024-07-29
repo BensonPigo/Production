@@ -109,8 +109,8 @@ select o.FtyGroup
 								order by lm.Version desc)
 from Orders o
 inner join factory f on f.id=o.FactoryID
-left join LineMapping lm on lm.StyleUKey = o.StyleUkey
-left join Style s on s.Ukey = lm.StyleUKey
+inner join LineMapping lm on lm.StyleUKey = o.StyleUkey
+inner join Style s on s.Ukey = lm.StyleUKey
 Outer Apply (
     select IdAndNameAndExt
     from dbo.GetPassName(lm.AddName)

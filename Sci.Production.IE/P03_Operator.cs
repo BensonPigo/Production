@@ -31,10 +31,10 @@ namespace Sci.Production.IE
         public P03_Operator(DataTable dataTable, string sewingLineID)
         {
             this.InitializeComponent();
-            this.dtDeful = dataTable;
+            this.dtDeful = dataTable.Copy();
             this.strSewingLineID = sewingLineID;
             bool isEmptySewingLine = MyUtility.Check.Empty(sewingLineID);
-            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{sewingLineID}')";
+            var strSewingWhere = isEmptySewingLine ? "P03 = 1" : $"(Section = '{sewingLineID}' and P03 = 1)";
             this.dt = dataTable.Select(strSewingWhere).TryCopyToDataTable(dataTable);
         }
 
@@ -69,7 +69,7 @@ namespace Sci.Production.IE
             else
             {
                 bool isEmptySewingLine = MyUtility.Check.Empty(this.strSewingLineID);
-                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}') and P03 = 1";
+                var strSewingWhere = isEmptySewingLine ? "P03 = 1" : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}') and P03 = 1";
                 this.dt = this.dtDeful.Select(strSewingWhere).TryCopyToDataTable(this.dtDeful);
                 this.listControlBindingSource1.DataSource = this.dt;
             }

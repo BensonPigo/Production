@@ -39,8 +39,6 @@ namespace Sci.Production.IE
         private DataGridViewGeneratorNumericColumnSettings frequency = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings smvsec = new DataGridViewGeneratorNumericColumnSettings();
 
-        private DataTable testTable;
-
         private string styleID;
         private string seasonID;
         private string brandID;
@@ -214,7 +212,7 @@ namespace Sci.Production.IE
             ,td.[SEQ]
 			,[OriSewingSeq] = isnull(td.SewingSeq,'')
             ,[SewingSeq] = iif(td.SewingSeq = '' ,isnull(tmp.SewingSeq,''),isnull(td.SewingSeq,''))
-            ,[Location] = iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],''))
+            ,[Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),'')
 	        ,td.[OperationID]
             ,td.[Annotation]
             ,td.[PcsPerHour]
@@ -244,7 +242,7 @@ namespace Sci.Production.IE
                                                     when isnull(md.IsNonSewingLine, 0) = 1 then 1
                                                     else 0 end as bit)
             ,[Sort] = iif(td.Sort = 0 , ROW_NUMBER() OVER (ORDER BY  td.seq ASC),td.Sort)
-            into #tmp
+            ,[IsAdd] = td.IsAdd
             from TimeStudy_Detail td WITH (NOLOCK) 
             LEFT join tmp on tmp.ukey =td.ukey
             INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
@@ -268,10 +266,7 @@ namespace Sci.Production.IE
 	            ORDER BY t1.Seq asc
             )t1
             where td.ID = '{this.strTimeStudtID}'
-            order by td.seq
-
-            Select * from #tmp order by sort
-            drop table #tmp
+            order by SewingSeq,sort
             ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -416,8 +411,6 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             {
                 ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
             }
-
-            this.testTable = this.DetailDatas.CopyToDataTable();
         }
 
         private void HideRows()
@@ -487,15 +480,12 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                         dr["SewingSeq"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
                         dr.EndEdit();
                     }
-
-
                 }
             };
             #endregion
             #region Operation Code
             this.operation.EditingMouseDown += (s, e) =>
             {
-
                 int sewingSeq = 1;
                 if (this.EditMode)
                 {
@@ -538,6 +528,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                         dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                         dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
                                         dr["IsShow"] = 1;
+                                        dr["IsAdd"] = 1;
                                         this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                         dr.EndEdit();
                                     }
@@ -563,6 +554,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                     dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
                                     dr["IsShow"] = 1;
+                                    dr["IsAdd"] = 1;
                                     this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                     dr.EndEdit();
 
@@ -570,20 +562,25 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     {
                                         if (MyUtility.Convert.GetBool(dataRow["IsShow"]) && !MyUtility.Convert.GetString(dataRow["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
                                         {
-                                            dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
-                                            sewingSeq++;
+                                            if(!MyUtility.Check.Empty(dataRow["OperationID"]))
+                                            {
+                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
+                                                sewingSeq++; 
+                                            }
                                         }
                                     }
                                 }
                                 else
                                 {
-
                                     foreach (DataRow dataRow in this.DetailDatas)
                                     {
                                         if (MyUtility.Convert.GetBool(dataRow["IsShow"]) && !MyUtility.Convert.GetString(dataRow["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
                                         {
-                                            dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
-                                            sewingSeq++;
+                                            if (!MyUtility.Check.Empty(dataRow["OperationID"]))
+                                            {
+                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
+                                                sewingSeq++;
+                                            }
                                         }
                                     }
 
@@ -1822,6 +1819,15 @@ group by id.Location,M.ArtworkTypeID";
                 }
             }
 
+
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            dt.AsEnumerable().Where(row => MyUtility.Convert.GetString(row.Field<string>("OperationID")) == string.Empty).ToList().ForEach(row => row.Delete());
+
+            //foreach (DataRow dr in dt.Rows)
+            //{
+            //   dt.Rows.Remove(dr);
+            //}
+
             return base.ClickSaveBefore();
         }
 
@@ -1851,7 +1857,6 @@ WHERE Ukey={item["Ukey"]}
                     this.ShowErr(reusult);
                 }
             }
-
 
             string sqlcmd_Seq = $@"
             UPDATE td SET td.SewingSeq = t.SewingSeq
@@ -2546,12 +2551,14 @@ and s.BrandID = @brandid ", Env.User.Factory,
             {
                 this.detailgrid.AllowUserToAddRows = false;
                 string maxSewingSeq = oriDt.AsEnumerable()
+                                    .Where(x => x.RowState != DataRowState.Deleted)
                                     .Select(row => row.Field<string>("Seq"))
                                     .Max();
 
                 DataRow nextDataRow = oriDt.Rows[index];
 
                 nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + 10).PadLeft(4, '0');
+                nextDataRow["IsAdd"] = 1;
                 this.detailgridbs.DataSource = oriDt;
             }
             else if (index == -1)
@@ -2575,6 +2582,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
+            drSelect["IsAdd"] = 1;
 
             if (dt.Rows.Count >= 0)
             {
@@ -2617,6 +2625,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     if (MyUtility.Check.Empty(dr["Seq"]))
                     {
                         string maxSewingSeq = oriDt.AsEnumerable()
+                        .Where(w => w.RowState != DataRowState.Deleted)
                         .Select(row => row.Field<string>("Seq"))
                         .Max();
 
@@ -2625,7 +2634,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
                         dr["IsShow"] = 1;
                         // seq += 10;
                     }
-                    
                     #endregion OirSeq
                 }
             }

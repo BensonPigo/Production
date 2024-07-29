@@ -24,6 +24,7 @@
     [SewingSeq]     VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_SewingSeq]    NOT NULL DEFAULT (''), 
     [DesignateSeq]  VARCHAR(4)          CONSTRAINT [DF_TimeStudy_Detail_DesignateSeq]    NOT NULL DEFAULT (''), 
     [Sort] INT NOT NULL DEFAULT ((0)), 
+    [IsAdd] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_TimeStudy_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -137,3 +138,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TimeStudy_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Sort'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷是否工廠自行新增的資料',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'TimeStudy_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsAdd'

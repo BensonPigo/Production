@@ -166,9 +166,9 @@ select *
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
-    ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi)
-	,[EstTotalCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.TotalGSDNO / ld.OperatorEffi)
-	,[EstOutputHr] = iif(ld.OperatorEffi = '0.00','0.00', 3600 / ld.TotalGSDNO / ld.OperatorEffi)
+    ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
+	,[EstTotalCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.TotalGSDNO / ld.OperatorEffi * 100)
+	,[EstOutputHr] = iif(ld.OperatorEffi = '0.00','0.00', 3600 / ld.TotalGSDNO / ld.OperatorEffi * 100)
 from (
     select  ld.OriNO
 	    , ld.No
@@ -215,6 +215,25 @@ from (
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
     left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on ld.IEReasonLBRNotHit_DetailUkey = lbr.Ukey
     left join DropDownList d (NOLOCK) on d.ID=ld.PPA AND d.Type = 'PMS_IEPPA'
+	left JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
+	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
+	OUTER APPLY
+	(
+		SELECT TOP 1
+		val = OperatorIDss.OperationID
+		FROM
+		(
+			SELECT 
+			td.id
+			,td.Seq
+			,td.OperationID
+			from TimeStudy_Detail td WITH(NOLOCK)
+			where  td.OperationID LIKE '-%' and td.smv = 0
+		)
+		OperatorIDss 
+		WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LD.OperationID ORDER BY Seq DESC)
+		ORDER BY SEQ DESC
+	)Group_Header
     OUTER APPLY
 	(
 		select val = stuff((select distinct concat(',',Name)
@@ -247,7 +266,7 @@ from (
 		    SELECT 
 		    [ST_MC_Type] =lmd.MachineTypeID
 		    ,[Motion] = Operation_P03.val
-		    ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+		    ,Effi_90_day = FORMAT(CAST(iif(LM.ID is null or LMD.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
 		    from Employee eo
 		    left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
 		    left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -280,10 +299,10 @@ from (
             SELECT 
             [ST_MC_Type] =lmd.MachineTypeID
             ,[Motion] = Operation_P03.val
-            ,[Group_Header] = tsd.[location] 
+            ,[Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
             ,[Part] = lmd.SewingMachineAttachmentID
             ,[Attachment] = lmd.Attachment
-            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
             from Employee eo
             left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
             left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -295,12 +314,30 @@ from (
 		            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
 		            where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
             )Operation_P03
+			OUTER APPLY
+	        (
+		        SELECT TOP 1
+		        OperatorIDss.OperationID
+		        FROM
+		        (
+			        SELECT 
+			        td.id
+			        ,td.Seq
+			        ,td.OperationID
+			        from TimeStudy_Detail td WITH(NOLOCK)
+			        where  td.OperationID LIKE '-%' and td.smv = 0
+		        )
+		        OperatorIDss 
+		        WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+		        ORDER BY SEQ DESC
+	        )OP
 	        WHERE 
 	        eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
-			lmd.MachineTypeID = ld.MachineTypeID and
-			Operation_P03.val = Motion.val AND
-			lmd.Attachment = ld.Attachment AND
-			lmd.SewingMachineAttachmentID = ld.SewingMachineAttachmentID AND
+		    lmd.MachineTypeID = ld.MachineTypeID and
+		    Operation_P03.val = Motion.val AND
+		    ISNULL(lmd.Attachment,'') = ISNULL(ld.Attachment,'') AND
+		    lmd.SewingMachineAttachmentID = ld.SewingMachineAttachmentID AND
+			ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') =  ISNULL(REPLACE(Group_Header.val, '--', ''),'') AND
 		    ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
         )a
         GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
@@ -392,6 +429,25 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             this.numEstLBR.Value = numEstLBRValue;
 
             this.Distable();
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
+            {
+
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
+
         }
 
         /// <summary>
@@ -550,6 +606,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             if (errorDataRow.Length > 0)
                             {
                                 MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                dr["EmployeeName"] = string.Empty;
                                 return;
                             }
 
@@ -604,6 +661,12 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                     if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                     {
                         this.GetEmployee(iD: e.FormattedValue.ToString());
+
+                        if (this.EmployeeData == null)
+                        {
+                            return;
+                        }
+
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -618,6 +681,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             if (errorDataRow.Length > 0)
                             {
                                 MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                dr["EmployeeName"] = string.Empty;
                                 return;
                             }
 
@@ -1162,7 +1226,7 @@ and Name = @PPA
                 where 
                 (ResignationDate is null or ResignationDate > GETDATE()) 
                 and e.Junk = 0 "
-                + (iD == null ? string.Empty : " and ID = @id ")
+                + (iD == null ? string.Empty : " and e.ID = @id ")
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
 
@@ -1648,17 +1712,36 @@ WHERE Ukey={item["Ukey"]}
         // 計算DailyDemand,NetTime,TaktTime,LLER,Ideal Target / Hr. (100%), Ideal Daily demand/shift, Ideal Takt Time欄位值
         private void CalculateValue(int type)
         {
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
+            {
+
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
+
             if (type == 1)
             {
                 this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StandardOutput"]), 0);
                 this.CurrentMaintain["NetTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * 3600, 0);
-                this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
+                // this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
             }
 
             this.numLLER.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TaktTime"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TaktTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]) * 100, 2);
             this.numTargetHrIdeal.Value = MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]), 0);
             this.numDailydemandshiftIdeal.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.numTargetHrIdeal.Value), 0);
-            this.numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value), 0);
+            // this.numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value), 0);
         }
 
         // Compute Takt Time
@@ -2415,40 +2498,34 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             }
 
             List<GridList> gridLists = drs
-                .Select(x => new
-                {
-                    No = x.Field<string>("No"),
-                    ActCycle = x.Field<decimal?>("ActCycle"),
-                    TotalGSD = x.Field<decimal?>("TotalGSD"),
-                    TotalCycle = x.Field<decimal?>("TotalCycle"),
-                    ReasonName = x.Field<string>("ReasonName"),
-                    SortA = x.Field<string>("No").Substring(0, 1),
-                    SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
-                    EmployeeID = x.Field<string>("EmployeeID"),
-                    EmployeeName = x.Field<string>("EmployeeName"),
-                    EmployeeSkill = x.Field<string>("EmployeeSkill"),
-                    EstTotalCycleTime = x.Field<decimal?>("EstTotalCycleTime"),
-                    EstOutputHr = x.Field<decimal?>("EstOutputHr"),
-                })
-                .Distinct()
-                .Select(x => new GridList()
-                {
-                    No = x.No,
-                    ActCycle = x.ActCycle,
-                    TotalGSD = x.TotalGSD,
-                    TotalCycle = x.TotalCycle,
-                    ReasonName = x.ReasonName,
-                    SortA = x.SortA,
-                    SortB = x.SortB,
-                    EmployeeID = x.EmployeeID,
-                    EmployeeName = x.EmployeeName,
-                    EmployeeSkill = x.EmployeeSkill,
-                    EstTotalCycleTime = x.EstTotalCycleTime,
-                    EstOutputHr = x.EstOutputHr,
-                })
-                .OrderByDescending(x => x.SortA)
-                .ThenBy(x => x.SortB)
-                .ToList();
+            .GroupBy(x => new
+            {
+                No = x.Field<string>("No"),
+                SortA = x.Field<string>("No").Substring(0, 1),
+                SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
+                ReasonName = x.Field<string>("ReasonName"),
+                EmployeeID = x.Field<string>("EmployeeID"),
+                EmployeeName = x.Field<string>("EmployeeName"),
+                EmployeeSkill = x.Field<string>("EmployeeSkill"),
+            })
+            .Select(g => new GridList()
+            {
+                No = g.Key.No,
+                ActCycle = g.Max(x => x.Field<decimal?>("ActCycle")), // 假設ActCycle相同項取最大值
+                TotalGSD = g.Max(x => x.Field<decimal?>("TotalGSD")), // 假設TotalGSD相同項取最大值
+                TotalCycle = g.Max(x => x.Field<decimal?>("TotalCycle")), // 假設TotalCycle相同項取最大值
+                ReasonName = g.Key.ReasonName,
+                SortA = g.Key.SortA,
+                SortB = g.Key.SortB,
+                EmployeeID = g.Key.EmployeeID,
+                EmployeeName = g.Key.EmployeeName,
+                EmployeeSkill = g.Key.EmployeeSkill,
+                EstTotalCycleTime = g.Sum(x => x.Field<decimal?>("EstTotalCycleTime")),
+                EstOutputHr = g.Sum(x => x.Field<decimal?>("EstOutputHr")),
+            })
+            .OrderByDescending(x => x.SortA)
+            .ThenBy(x => x.SortB)
+            .ToList();
 
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
@@ -2572,10 +2649,23 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
         /// <inheritdoc/>
         private void TxtFactory_Validated(object sender, EventArgs e)
         {
-            this.txtSewingLine.Text = string.Empty;
-            this.comboSewingTeam1.SelectedIndex = 0;
-            this.comboSewingTeam1.Text = string.Empty;
-            this.comboSewingTeam1.SelectedValue = string.Empty;
+            if (this.CurrentMaintain.RowState == DataRowState.Added)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID", DataRowVersion.Original]))
+            {
+                return;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID", DataRowVersion.Original]) != MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]))
+            {
+                this.txtSewingLine.Text = string.Empty;
+                this.comboSewingTeam1.SelectedIndex = 0;
+                this.comboSewingTeam1.Text = string.Empty;
+                this.comboSewingTeam1.SelectedValue = string.Empty;
+            }
         }
     }
 

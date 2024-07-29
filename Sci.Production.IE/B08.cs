@@ -79,13 +79,14 @@ namespace Sci.Production.IE
                 SELECT 
                 [ST_MC_Type] =ISNULL(lmd.MachineTypeID,'')
                 ,[Motion] = ISNULL(Operation_P03.val,'')
-                ,[Group_Header] = ISNULL(tsd.[location] ,'')
+                ,[Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
                 ,[Part] = ISNULL(lmd.SewingMachineAttachmentID,'')
                 ,[Attachment] = ISNULL(lmd.Attachment,'')
                 ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
                 from Employee e
                 LEFT JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = e.ID　
                 LEFT JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID AND ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
+                INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
                 LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
                 OUTER APPLY
                 (
@@ -94,6 +95,23 @@ namespace Sci.Production.IE
 		                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
 		                where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
                 )Operation_P03
+	            OUTER APPLY
+	            (
+		            SELECT TOP 1
+		            OperatorIDss.OperationID
+		            FROM
+		            (
+			            SELECT 
+			            td.id
+			            ,td.Seq
+			            ,td.OperationID
+			            from TimeStudy_Detail td WITH(NOLOCK)
+			            where  td.OperationID LIKE '-%' and td.smv = 0
+		            )
+		            OperatorIDss 
+		            WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+		            ORDER BY SEQ DESC
+	            )OP
 	            WHERE 
 	            e.FactoryID = '{this.CurrentMaintain["FactoryID"]}' and e.ID = '{this.CurrentMaintain["ID"]}' AND lmd.MachineTypeID IS NOT NULL
             )a

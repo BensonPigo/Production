@@ -339,6 +339,23 @@ AND ALMCS.Junk = 0
                     col.DefaultCellStyle.ForeColor = Color.Black;
                 }
             }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSDTime"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["SewerManpower"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["WorkHour"]))
+            {
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
         }
 
         /// <inheritdoc/>
@@ -987,7 +1004,13 @@ from #tmp
             // TaktTime
             if (s4 != 0 && s5 != 0)
             {
-                this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
             }
             else
             {

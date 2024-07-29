@@ -224,14 +224,7 @@ AND ALMCS.Junk = 0
                             [EmployeeSkill] = e.Skill,
                             [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
 			                [Junk] = e.junk,
-			                [EstCycleTime] = CASE 
-						                  WHEN Effi.Effi_3_year = 0 THEN 
-							                  CAST(ad.GSD  / NULLIF(Effi.Effi_3_year, 0) AS DECIMAL(10, 2))
-						                  ELSE 
-							                  CAST(ad.GSD  / NULLIF(Effi_90_day.Effi_90_day, 0) AS DECIMAL(10, 2))
-						                END,
-			                Effi.Effi_3_year,
-			                Effi_90_day.Effi_90_day
+			                [EstCycleTime] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,ad.GSD  / Effi_90_day.Effi_90_day,ad.GSD  / Effi.Effi_3_year) ,0)
                         FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                         LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
                         LEFT JOIN Operation op WITH (NOLOCK) ON op.ID = ad.OperationID
@@ -253,20 +246,19 @@ AND ALMCS.Junk = 0
                             ,[Group_Header]
                             ,[Part]
                             ,[Attachment]
-                            ,[Effi_3_year] =isnull(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'),'0.00')
+                            ,[Effi_3_year] = isnull(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'),'0.00')
                             From
                             (
                                 SELECT 
                                 [ST_MC_Type] =lmd.MachineTypeID
                                 ,[Motion] = Operation_P03.val
-                                ,[Group_Header] = tsd.[location] 
+                                ,[Group_Header] = ISNULL(REPLACE(lmd.Location, '--', ''),'')
                                 ,[Part] = lmd.SewingMachineAttachmentID
                                 ,[Attachment] = lmd.Attachment
                                 ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
                                 from Employee eo
                                 left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
                                 left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
-                                left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
                                 OUTER APPLY
                                 (
                                 select val = stuff((select distinct concat(',',Name)
@@ -278,8 +270,9 @@ AND ALMCS.Junk = 0
 	                            eo.FactoryID = e.FactoryID and eo.ID = ad.EmployeeID AND
 			                    lmd.MachineTypeID = ad.MachineTypeID and
 			                    Operation_P03.val = Motion.val AND
-			                    lmd.Attachment = ad.Attachment AND
-			                    lmd.SewingMachineAttachmentID = ad.SewingMachineAttachmentID AND
+			                    ISNULL(lmd.Attachment,'') = ISNULL(ad.Attachment,'') AND
+			                    ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL(ad.SewingMachineAttachmentID,'') AND
+								ISNULL(REPLACE(lmd.Location, '--', ''),'') = ISNULL(REPLACE(ad.Location, '--', ''),'')  AND
 		                        ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
 			                )a
 			                GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
@@ -386,6 +379,22 @@ AND ALMCS.Junk = 0
 
             this.numEstLBR.Value = numEstLBRValue;
 
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalCycleTime"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["SewerManpower"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["WorkHour"]))
+            {
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycleTime"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
         }
 
         /// <inheritdoc/>
@@ -1193,10 +1202,19 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.CurrentMaintain["TargetHr"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycleTime"]), 0);
 
             // DailyDemand
-            this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TargetHr"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 0);
+            //this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TargetHr"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]), 0);
 
-            // TaktTime
-            this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+            // this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+
+            decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycleTime"]);
+            decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+            decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+            decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+            decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+
+            this.CurrentMaintain["DailyDemand"] = Math.Round(decDailyDemand_Shift, 2);
+            this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
 
             // EOLR
             this.CurrentMaintain["EOLR"] = MyUtility.Math.Round(3600 / MyUtility.Convert.GetDecimal(this.CurrentMaintain["HighestCycleTime"]), 2);
