@@ -419,7 +419,7 @@ from
 	,[Template] = isnull(ld.Template,'')
 	,[GSD Time] = isnull(ld.GSD,0)
 	,[Cycle Time] = isnull(ld.Cycle,0)
-	,[%] = ld.SewerDiffPercentage * 100
+	,[%] = ld.SewerDiffPercentage
 	,[Div. Sewer] = ld.DivSewer
 	,[Ori. Sewer] = ld.OriSewer
 	,[Thread Combination] = ld.ThreadComboID
