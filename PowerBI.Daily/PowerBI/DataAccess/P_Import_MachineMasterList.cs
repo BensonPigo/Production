@@ -3,14 +3,8 @@ using PowerBI.Daily.PowerBI.Model;
 using PowerBI.Daily.PowerBI.WebApi;
 using Sci;
 using Sci.Data;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace PowerBI.Daily.PowerBI.DataAccess
@@ -24,22 +18,24 @@ namespace PowerBI.Daily.PowerBI.DataAccess
 
             #region 參數設定
             this.dtAllData = null;
-            Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
-            dicHeaders.Add("StartMachineID", string.Empty);                                                 // Machine# 開始
-            dicHeaders.Add("EndMachineID", string.Empty);                                                   // Machine# 結束
-            dicHeaders.Add("MachineBrandID", string.Empty);                                                 // Machine Brand
-            dicHeaders.Add("Model", string.Empty);                                                          // Model
-            dicHeaders.Add("MachineGroup", string.Empty);                                                   // Macine Group
-            dicHeaders.Add("StartSerial", string.Empty);                                                    // Serial 開始
-            dicHeaders.Add("EndSerial", string.Empty);                                                      // Serial 結束
-            dicHeaders.Add("LocationM", string.Empty);                                                      // Location M
-            dicHeaders.Add("StartMachineArrivalDate", string.Empty);                                        // Machine arrival date 開始
-            dicHeaders.Add("EndMachineArrivalDate", string.Empty);                                          // Machine arrival date 結束
-            dicHeaders.Add("Condition", string.Empty);                                                      // Condition
-            dicHeaders.Add("ExcludeDisposedData", "True");                                                  // ExcludeDisposedData
-            dicHeaders.Add("IncludeCancelData", "True");                                                    // IncludeCancelData
-            dicHeaders.Add("IsBI", "True");                                                                 // 是否BI
-            dicHeaders.Add("IsTPE_BI", "True");                                                             // 是否台北BI
+            Machine_R01 machine_R01_ViewModel = new Machine_R01()
+            {
+                StartMachineID = string.Empty,
+                EndMachineID = string.Empty,
+                MachineBrandID = string.Empty,
+                Model = string.Empty,
+                MachineGroup = string.Empty,
+                StartSerial = string.Empty,
+                EndSerial = string.Empty,
+                LocationM = string.Empty,
+                StartMachineArrivalDate = string.Empty,
+                EndMachineArrivalDate = string.Empty,
+                Condition = string.Empty,
+                ExcludeDisposedData = "True",
+                IncludeCancelData = "True",
+                IsBI = "False",
+                IsTPE_BI = "True",
+            };
             #endregion
 
             #region 查詢全部伺服器名稱
@@ -57,7 +53,7 @@ namespace PowerBI.Daily.PowerBI.DataAccess
                 foreach (DataRow dataRow in dtRegion.Rows)
                 {
 
-                    DataTable dt = CallWebAPI.GetWebAPI<Machine_R01>(MyUtility.Convert.GetString(dataRow["SystemName"]), "api/PowerBI/Machine/R01/GetReportData", 600, dicHeaders);
+                    DataTable dt = CallWebAPI.GetWebAPI<Machine_R01_Report>(MyUtility.Convert.GetString(dataRow["SystemName"]), "api/PowerBI/Machine/R01/GetReportData", 600, machine_R01_ViewModel);
                     if (dt != null && dt.Rows.Count > 0)
                     {
                         if (this.dtAllData == null)

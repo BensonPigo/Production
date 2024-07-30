@@ -1,7 +1,7 @@
 ﻿namespace PowerBI.Daily.PowerBI.Model
 {
     /// <inheritdoc/>
-    public class Machine_R01
+    public class Machine_R01_Report
     {
         /// <inheritdoc/>
         public string M { get; set; }
@@ -75,4 +75,61 @@
         /// <inheritdoc/>
         public string YYYYMM { get; set; }
     }
+
+#pragma warning disable
+    /// <inheritdoc/>
+    public class Machine_R01
+    {
+        /// <inheritdoc/>
+        public string StartMachineID { get; set; }
+
+        /// <inheritdoc/>
+        public string EndMachineID { get; set; }
+
+        /// <inheritdoc/>
+        public string MachineBrandID { get; set; }
+
+        /// <inheritdoc/>
+        public string Model { get; set; }
+
+        /// <inheritdoc/>
+        public string MachineGroup { get; set; }
+
+        /// <inheritdoc/>
+        public string StartSerial { get; set; }
+
+        /// <inheritdoc/>
+        public string EndSerial { get; set; }
+
+        /// <inheritdoc/>
+        public string LocationM { get; set; }
+
+        /// <inheritdoc/>
+        public string StartMachineArrivalDate { get; set; }
+
+        /// <inheritdoc/>
+        public string EndMachineArrivalDate { get; set; }
+
+        /// <inheritdoc/>
+        public string Condition { get; set; }
+
+        /// <inheritdoc/>
+        public string ExcludeDisposedData { get; set; }
+
+        /// <inheritdoc/>
+        public string IncludeCancelData { get; set; }
+
+        /// <inheritdoc/>
+        public string IsBI { get; set; }
+
+        /// <inheritdoc/>
+        public string IsTPE_BI { get; set; }
+
+        /// <inheritdoc/>
+        public string SBIDate { get; set; }
+
+        /// <inheritdoc/>
+        public string EBIDate { get; set; }
+    }
+#pragma warning restore
 }

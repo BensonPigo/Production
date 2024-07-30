@@ -47,7 +47,7 @@ namespace PowerBI.Daily.PowerBI.WebApi
         }
 
         /// <inheritdoc/>
-        public static DataTable GetWebAPI<T>(string strServerName, string strAPI, int timeout, Dictionary<string, string> dictionart = null)
+        public static DataTable GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
         {
             WebApiBaseResult webApiBaseResult;
             using (TransactionScope transactionScope = new TransactionScope())
