@@ -828,7 +828,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
                     this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
-                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {
@@ -943,7 +943,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
                     this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
-                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.txtSewingTeam.Text);
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {
@@ -1330,7 +1330,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
                         where ResignationDate is null 
                         and e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}')
-                        and eas.P06 = 1"
+                        and eas.P06 = 1 and e.Junk = 0"
                 + sqlWhere
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : $@" and FirstName = '{firstName}'");
