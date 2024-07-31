@@ -1299,6 +1299,18 @@ else
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
+
+	------------- Update Local Order CPU--------------
+	update o
+	set o.CPU = s.CPU
+	,o.EditDate = GETDATE()
+	,o.EditName = 'SCIMIS'
+	from Production.dbo.orders o with(nolock) 
+	inner join Production.dbo.Style s with(nolock) on s.Ukey = o.StyleUkey and s.CPU <> 0
+	where o.LocalOrder=1
+	and not exists (select 1 from Production.dbo.SewingOutput_Detail sd with(nolock) where sd.OrderId = o.ID)
+	and o.CPU <> s.CPU
+
 	--------------Order_Qty--------------------------Qty BreakDown
 	--抓出轉入order_qty有異動的資料，作為後續傳送給廠商資料的依據
 	Delete Production.dbo.AutomationOrderQty;
