@@ -1826,7 +1826,7 @@ DEALLOCATE CURSOR_
         private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
             // 當 P091 History, IsSupportEdit = false
-            var exwip = new P02_ExcludefabriccomboinWIP(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
+            var exwip = new P09_ExcludeSetting(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
             exwip.ShowDialog();
         }
 

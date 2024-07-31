@@ -7,12 +7,12 @@ using System.Data;
 namespace Sci.Production.Cutting
 {
     /// <inheritdoc/>
-    public partial class P02_ExcludefabriccomboinWIP : Sci.Win.Tems.QueryForm
+    public partial class P09_ExcludeSetting : Sci.Win.Tems.QueryForm
     {
         private readonly string id;
 
         /// <inheritdoc/>
-        public P02_ExcludefabriccomboinWIP(string id, bool isSupportEdit)
+        public P09_ExcludeSetting(string id, bool isSupportEdit)
         {
             this.InitializeComponent();
             this.id = id;
