@@ -78,6 +78,8 @@ namespace Sci.Production.Cutting
             this.txtWKETA.Text = MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).Value.ToString("yyyy/MM/dd") : string.Empty;
             this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
 
+            this.txtSP.ReadOnly = MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) != "2";
+
             this.patternpanelbs.DataSource = this.dtWorkOrderForPlanning_PatternPanel;
             this.sizeRatiobs.DataSource = this.dtWorkOrderForPlanning_SizeRatio;
             this.orderList.DataSource = this.dtWorkOrderForPlanning_OrderList;
@@ -217,14 +219,13 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                MyUtility.Msg.WarningBox("Only <By SP#> can use.");
-                this.txtSP.Text = string.Empty;
+                MyUtility.Msg.WarningBox("Only <By SP#> can modify.");
             }
         }
 
         private void TxtSP_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (MyUtility.Check.Empty(this.txtSP.Text))
+            if (MyUtility.Check.Empty(this.txtSP.Text) || this.txtSP.Text == this.CurrentDetailData["OrderID"].ToString())
             {
                 return;
             }
@@ -249,8 +250,8 @@ namespace Sci.Production.Cutting
             }
             else
             {
-                MyUtility.Msg.WarningBox("Only <By SP#> can use.");
-                this.txtSP.Text = string.Empty;
+                MyUtility.Msg.WarningBox("Only <By SP#> can modify.");
+                this.txtSP.Text = this.CurrentDetailData["OrderID"].ToString();
             }
         }
 

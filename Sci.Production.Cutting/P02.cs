@@ -511,11 +511,6 @@ ORDER BY
                 return false;
             }
 
-            if (!this.ValidateMarkerNameAndNo())
-            {
-                return false;
-            }
-
             if (!this.ValidateMarkerNo())
             {
                 return false;
@@ -701,35 +696,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     MyUtility.Msg.WarningBox(rule.Value);
                     return false;
                 }
-            }
-
-            return true;
-        }
-
-        // 檢查MarkerName, MarkerNo 的group， Markerlength、EstCutDate 必須一樣
-        private bool ValidateMarkerNameAndNo()
-        {
-            var groupData = this.DetailDatas
-                .Where(x => x.RowState != DataRowState.Deleted && !MyUtility.Check.Empty(x["MarkerName"]) && !MyUtility.Check.Empty(x["MarkerNo"]))
-                .GroupBy(x => new { MarkerName = x["MarkerName"].ToString(), MarkerNo = x["MarkerNo"].ToString() })
-                .Where(
-                    group => group.Select(row => new
-                    {
-                        Markerlength = Prgs.ConvertFullWidthToHalfWidth(row["Markerlength"].ToString()),
-                        EstCutDate = MyUtility.Convert.GetDate(row["EstCutDate"]),
-                    }).Distinct().Count() > 1)
-                .SelectMany(group => group);
-
-            if (groupData.Any())
-            {
-                DataTable dt = groupData.Select(o => new { MarkerName = o["MarkerName"].ToString(), MarkerNo = o["MarkerNo"].ToString(), MarkerLength = o["Markerlength"].ToString() }).Distinct().LinqToDataTable();
-
-                string msg = "The following MarkerName, MarkerNo combinations have different Markerlength or EstCutDate:";
-                MsgGridForm m = new MsgGridForm(dt, msg, "Exists different Markerlength or EstCutDate");
-                m.grid1.Columns[1].HeaderText = "Pattern No";
-                m.grid1.ColumnsAutoSize();
-                m.ShowDialog();
-                return false;
             }
 
             return true;
@@ -1325,7 +1291,7 @@ order by p.EditDate desc
         {
             if (grid.Name == "detailgrid")
             {
-                if (columNname.ToLower() == "OrderID" && this.CurrentMaintain["WorkType"].ToString() != "2")
+                if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
                 {
                     return false;
                 }

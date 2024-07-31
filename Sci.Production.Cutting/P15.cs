@@ -2220,7 +2220,7 @@ and wd.orderid = 'EXCESS'
                 return;
             }
 
-            long ukey = (long)this.gridCutRef.CurrentDataRow["ukey"];
+            long ukey = MyUtility.Convert.GetLong(this.gridCutRef.CurrentDataRow["ukey"]);
             this.patternTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
             this.allpartTb.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted && (long)w["ukey"] == ukey).Delete();
             this.patternTb.AcceptChanges();
