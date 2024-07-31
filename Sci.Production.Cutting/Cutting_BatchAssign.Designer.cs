@@ -481,7 +481,7 @@
             this.DefaultControl = "txtSPNo";
             this.Name = "P02_BatchAssign";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
-            this.Text = "Batch Assign Cell/Est. Cut Date";
+            this.Text = "Batch Assign";
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssign)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             this.panel1.ResumeLayout(false);

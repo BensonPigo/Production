@@ -38,7 +38,7 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
 
             this.panel_P09.Visible = form == CuttingForm.P09;
-            this.Text = form.ToString() + ". Batch Assign Cell/Est. Cut Date";
+            this.Text = form.ToString() + ". Batch Assign";
             this.ID = id;
             this.form = form;
             this.detailDatas_Ori = detailDatas;
