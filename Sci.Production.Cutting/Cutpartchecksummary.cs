@@ -35,7 +35,7 @@ namespace Sci.Production.Cutting
         {
             this.InitializeComponent();
             this.form = form;
-            this.Text = $"Cut Parts Check Summary<SP:{cuttingID}>)";
+            this.Text = $"Cut Parts Check Summary<SP:{cuttingID}>";
             this.CuttingID = cuttingID;
             this.DetailDatas = detailDatas;
             this.dtSizeRatio = dtSizeRatio?.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).TryCopyToDataTable(dtSizeRatio);
