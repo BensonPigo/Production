@@ -188,7 +188,7 @@
             this.Controls.Add(this.label1);
             this.Name = "P09_AutoDistToSP";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P09. Auto Distribute to SP#";
+            this.Text = "P09. Distribute This CutRef";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
