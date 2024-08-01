@@ -20,9 +20,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             if (!sDate.HasValue)
             {
                 sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
-                DateTime currentDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
-                DateTime edt = currentDate.AddDays(1);
-                eDate = DateTime.Parse(edt.ToString("yyyy/MM/dd"));
+                eDate = DateTime.Parse(Convert.ToDateTime(sDate).AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -32,7 +30,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate);
+                finalResult = this.UpdateBIData(detailTable);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -77,21 +75,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sdate)
+        private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@Date", sdate));
+            DBProxy.Current.DefaultTimeout = 600;
 
             using (sqlConn)
             {
                 string sql = $@" 
-                DELETE P_MachineMasterListByDays
-                WHERE Not exists (SELECT 1 FROM #tmp t WITH(NOLOCK) WHERE MachineID = MACHINE) 
-
                 Update p Set 
                  [MachineID]					 = ISNULL(t.[Machine],'')
                 ,[M]							 = ISNULL(t.[M],'')
@@ -119,8 +112,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 From P_MachineMasterListByDays p
                 inner join #tmp t on p.MachineID = t.Machine 
                    
-
-
                 INSERT INTO P_MachineMasterListByDays
                 (
 	                 [MachineID]
@@ -186,7 +177,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 END
                 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
+                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dataTable, conn: sqlConn);
             }
 
             finalResult.Result = result;
