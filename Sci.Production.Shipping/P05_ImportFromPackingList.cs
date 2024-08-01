@@ -115,7 +115,7 @@ with IniBulkPack as (
             and p.BrandID = '{MyUtility.Convert.GetString(this.masterData["BrandID"])}'
             and p.Dest = '{MyUtility.Convert.GetString(this.masterData["Dest"])}'
             and p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}'
-            and p.OrderCompanyID = '{MyUtility.Convert.GetString(this.masterData["OrderCompanyID"])}'
+            and p.OrderCompanyID = {this.masterData["OrderCompanyID"]}
             and o.junk = 0
 ), IniSamplePack as (
     select  iif(p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}',1,0) as Selected
@@ -147,7 +147,7 @@ with IniBulkPack as (
             and '{this.txtmultifactoryFactory.Text}' like '%'+rtrim(o.FactoryID)+'%' 
             and p.Dest = '{MyUtility.Convert.GetString(this.masterData["Dest"])}' 
             and p.ShipModeID = '{MyUtility.Convert.GetString(this.masterData["ShipModeID"])}'
-            and p.OrderCompanyID = '{MyUtility.Convert.GetString(this.masterData["OrderCompanyID"])}'
+            and p.OrderCompanyID = {this.masterData["OrderCompanyID"]}
             and o.junk = 0
 ), AllPackData as (
     select * 

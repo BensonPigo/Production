@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.labelNo = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
@@ -79,7 +78,7 @@
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany();
             this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();

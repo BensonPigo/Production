@@ -250,6 +250,7 @@ group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.B
             string sqlGetA2BGMT = $@"
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
+Declare @OrderCompanyID NUMERIC(2,0) = {this.dr_master["OrderCompanyID"]}
 
 select distinct g.id,
         g.ETD,

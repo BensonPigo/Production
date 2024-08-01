@@ -491,7 +491,7 @@ where   o.ID = '{e.FormattedValue}'
         and o.Dest = '{this.CurrentMaintain["Dest"]}' 
         and o.CustCDID = '{this.CurrentMaintain["CustCDID"]}'
         and o.MDivisionID = '{Env.User.Keyword}'
-        and o.OrderCompanyID = '{this.CurrentMaintain["OrderCompanyID"]}'
+        and o.OrderCompanyID = {this.CurrentMaintain["OrderCompanyID"]}
         and f.IsProduceFty = 1";
 
                         if (!MyUtility.Check.Seek(sqlcmd, out DataRow orderData))

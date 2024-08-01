@@ -516,6 +516,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             base.ClickEditAfter();
             this.txtpaytermar1.TextBox1.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "FALSE")
             {
                 // 非Local訂單時只能修改FactoryID

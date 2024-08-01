@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.labelNo = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -67,7 +66,7 @@
             this.dateCartonEstBooking = new Sci.Win.UI.DateBox();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany();
             this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
