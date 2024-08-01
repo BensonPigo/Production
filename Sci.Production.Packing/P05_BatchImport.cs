@@ -19,19 +19,22 @@ namespace Sci.Production.Packing
         private DataTable selectDataTable;
         private DataTable detailData;
         private DualResult result;
+        private string orderCompanyID;
 
         /// <summary>
         /// P05_BatchImport
         /// </summary>
         /// <param name="packingListData">packingListData</param>
         /// <param name="detailData">detailData</param>
-        public P05_BatchImport(DataRow packingListData, DataTable detailData)
+        /// <param name="orderCompanyID">orderCompanyID</param>
+        public P05_BatchImport(DataRow packingListData, DataTable detailData, string orderCompanyID)
         {
             this.InitializeComponent();
             this.packingListData = packingListData;
             this.detailData = detailData;
             this.displayBrand.Value = packingListData["BrandID"].ToString();
             this.displayM.Value = packingListData["MDivisionID"].ToString();
+            this.comboCompany1.SelectedValue = this.orderCompanyID = orderCompanyID;
         }
 
         /// <summary>
@@ -96,6 +99,7 @@ with OrderData as (
             and o.Junk = 0
             and f.IsProduceFty = 1
             and o.category not in ('B','G')
+            and o.OrderCompanyID = @orderCompanyID
 ");
             if (!MyUtility.Check.Empty(this.txtSPNoStart.Text))
             {
@@ -288,6 +292,7 @@ drop table #tmp;
             cmds.Add(sp6);
             cmds.Add(sp7);
             cmds.Add(sp8);
+            cmds.Add(new System.Data.SqlClient.SqlParameter("@orderCompanyID", this.orderCompanyID));
             #endregion
 
             DataTable[] dts;

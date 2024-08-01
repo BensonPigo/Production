@@ -199,6 +199,7 @@
  [FtyToClogTransit] INT NOT NULL DEFAULT ((0)), 
     [ClogToCFATansit] INT NOT NULL DEFAULT ((0)), 
     [CFAToClogTransit] INT NOT NULL DEFAULT ((0)), 
+    [OrderCompanyID]   NUMERIC(2, 0) NOT NULL,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -574,6 +575,10 @@ GO
 
 ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_DirectShip]  DEFAULT ((0)) FOR [DirectShip]
 GO
+
+ALTER TABLE [dbo].[Orders] ADD  CONSTRAINT [DF_Orders_OrderCompanyID]  DEFAULT ((0)) FOR [OrderCompanyID]
+GO
+
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'ID'
 GO
@@ -1061,6 +1066,9 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders'
 GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+GO
 CREATE NONCLUSTERED INDEX [IDX_Orders_BrandStyle] ON [dbo].[Orders]
 (
 	[BrandID] ASC,
