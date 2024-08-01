@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ResultInfo.cs" />
     <Compile Include="PackingA2BWebAPI.cs" />
     <Compile Include="Model\PackingA2BWebAPI_Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

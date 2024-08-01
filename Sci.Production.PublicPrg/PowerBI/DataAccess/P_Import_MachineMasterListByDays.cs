@@ -1,6 +1,8 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
+using Sci.Production.CallPmsAPI.Model;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -12,6 +14,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_MachineMasterListByDays
     {
+        private string ErrorMeg;
+
         /// <inheritdoc/>
         public Base_ViewModel P_MachineMasterListByDays(DateTime? sDate, DateTime? eDate)
         {
@@ -26,17 +30,24 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             try
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-
-                DataTable detailTable = resultReport.Dt;
-
-                // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable);
-                if (!finalResult.Result)
+                if (this.ErrorMeg.Empty())
                 {
-                    throw finalResult.Result.GetException();
+                    DataTable detailTable = resultReport.Dt;
+
+                    // insert into PowerBI
+                    finalResult = this.UpdateBIData(detailTable);
+                    if (!finalResult.Result)
+                    {
+                        throw finalResult.Result.GetException();
+                    }
+
+                    finalResult.Result = new Ict.DualResult(true);
+                }
+                else
+                {
+                    finalResult.Result = new Ict.DualResult(false, null, this.ErrorMeg);
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -48,6 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
         {
+            this.ErrorMeg = string.Empty;
             Machine_R01 machine_R01_ViewModel = new Machine_R01()
             {
                 StartMachineID = string.Empty,
@@ -71,7 +83,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
             Base_ViewModel resultReport = new Base_ViewModel();
-            resultReport.Dt = CallWebAPI.ToTable<Machine_R01_Report>(PackingA2BWebAPI.GetWebAPI<Machine_R01_Report>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, machine_R01_ViewModel));
+
+            ResultInfo resultInfo = PackingA2BWebAPI.GetWebAPI<Machine_R01_Report>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, machine_R01_ViewModel);
+            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
+            resultReport.Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Machine_R01_Report>(resultInfo.ResultDT);
             return resultReport;
         }
 
