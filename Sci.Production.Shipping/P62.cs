@@ -129,6 +129,7 @@ where ked2.id = '{masterID}'
         {
             this.InitReadOnly(true);
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -370,6 +371,12 @@ where id = '{this.CurrentMaintain["ID"]}'
 
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["shipModeID"]))
             {
                 MyUtility.Msg.WarningBox("[Shipmode] cannot be empty!");
