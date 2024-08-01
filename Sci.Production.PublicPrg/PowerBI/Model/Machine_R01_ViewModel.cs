@@ -114,16 +114,16 @@
         public string Condition { get; set; }
 
         /// <inheritdoc/>
-        public string ExcludeDisposedData { get; set; }
+        public bool ExcludeDisposedData { get; set; }
 
         /// <inheritdoc/>
-        public string IncludeCancelData { get; set; }
+        public bool IncludeCancelData { get; set; }
 
         /// <inheritdoc/>
-        public string IsBI { get; set; }
+        public bool IsBI { get; set; }
 
         /// <inheritdoc/>
-        public string IsTPE_BI { get; set; }
+        public bool IsTPE_BI { get; set; }
 
         /// <inheritdoc/>
         public string SBIDate { get; set; }

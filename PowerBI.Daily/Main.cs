@@ -232,10 +232,46 @@ namespace PowerBI.Daily
 
         private DualResult DailyUpdate(int type = 0)
         {
-            #region WebAPI
-            P_Import_MachineMasterList p_Import_MachineMasterList = new P_Import_MachineMasterList();
-            p_Import_MachineMasterList.P_MachineMasterList();
-            #endregion
+            if (type == 0)
+            {
+                #region WebAPI
+                List<string> functionNameList = new List<string>()
+                {
+                    "P_Import_MachineMaserList",
+                };
+
+                this.InsertTransLog("Start Update_PoweBI_InThread", string.Empty, string.Empty, 0); // 測試時，記得註解不然會寫進正式資料庫
+                #region 查詢全部伺服器名稱
+                DualResult dualResult = DBProxy.Current.Select("PBIReportData", "select [SystemName] = Region from P_TransRegion", out DataTable dtRegion);
+                if (!dualResult)
+                {
+                    return dualResult;
+                }
+                #endregion
+                P_Import_MachineMasterList p_Import_MachineMasterList = new P_Import_MachineMasterList();
+
+                foreach (string strfunctionName in functionNameList)
+                {
+                    int iGroup = 1;
+                    foreach (DataRow dataRow in dtRegion.Rows)
+                    {
+                        string description = string.Empty;
+                        switch (strfunctionName)
+                        {
+                            case "P_Import_MachineMaserList":
+                                p_Import_MachineMasterList.P_MachineMasterList(MyUtility.Convert.GetString(dataRow["SystemName"]));
+                                description = p_Import_MachineMasterList.Msg.Empty() ? string.Empty : p_Import_MachineMasterList.Msg;
+                                break;
+
+                        }
+                        this.InsertTransLog(strfunctionName, description, MyUtility.Convert.GetString(dataRow["SystemName"]), iGroup);　// 測試時，記得註解不然會寫進正式資料庫
+                        iGroup++;
+                    }
+                }
+                this.InsertTransLog("End Update_PowerBI_InThread", string.Empty, string.Empty, 0);　// 測試時，記得註解不然會寫進正式資料庫
+                #endregion
+            }
+
 
             DualResult result;
             string whereP;
@@ -266,7 +302,7 @@ namespace PowerBI.Daily
                 ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
             FROM P_TransRegion r
             left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-            where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity' AND i.Name <> 'P_Import_MachineMaserList'
+            where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity'
             ";
 
             if (type == 0)

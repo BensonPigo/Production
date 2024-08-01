@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using PowerBI.Daily.PowerBI.Model;
 using PowerBI.Daily.PowerBI.WebApi;
 using Sci;
@@ -11,8 +12,10 @@ namespace PowerBI.Daily.PowerBI.DataAccess
 {
     public class P_Import_MachineMasterList
     {
-        private DataTable dtAllData;
-        public void P_MachineMasterList() 
+        public DataTable dtAllData;
+        public string Msg;
+       
+        public void P_MachineMasterList(string SystemName) 
         {
             DualResult result = new DualResult(true);
 
@@ -31,48 +34,29 @@ namespace PowerBI.Daily.PowerBI.DataAccess
                 StartMachineArrivalDate = string.Empty,
                 EndMachineArrivalDate = string.Empty,
                 Condition = string.Empty,
-                ExcludeDisposedData = "True",
-                IncludeCancelData = "True",
-                IsBI = "False",
-                IsTPE_BI = "True",
+                ExcludeDisposedData = true,
+                IncludeCancelData = true,
+                IsBI = false,
+                IsTPE_BI = true,
             };
-            #endregion
-
-            #region 查詢全部伺服器名稱
-            DualResult dualResult = DBProxy.Current.Select("PBIReportData", "select [SystemName] = Region from P_TransRegion", out DataTable dtRegion);
-            if (!dualResult)
-            {
-                MyUtility.Msg.WarningBox(dualResult.ToString());
-                return;
-            }
             #endregion
             
             #region 資料透過API方式撈取
-            using (TransactionScope scope = new TransactionScope())
-            {
-                foreach (DataRow dataRow in dtRegion.Rows)
-                {
 
-                    DataTable dt = CallWebAPI.GetWebAPI<Machine_R01_Report>(MyUtility.Convert.GetString(dataRow["SystemName"]), "api/PowerBI/Machine/R01/GetReportData", 600, machine_R01_ViewModel);
-                    if (dt != null && dt.Rows.Count > 0)
-                    {
-                        if (this.dtAllData == null)
-                        {
-                            this.dtAllData = dt;
-                        }
-                        else
-                        {
-                            this.dtAllData.Merge(dt);
-                        }
-                    }
-                    
-                }
-                scope.Complete();
+            ResultInfo resultInfo = CallWebAPI.GetWebAPI<Machine_R01_Report>(SystemName, "api/PowerBI/Machine/R01/GetReportData", 600, machine_R01_ViewModel);
+
+            this.dtAllData = resultInfo.ResultDT;
+
+            if (!MyUtility.Check.Empty(resultInfo.Result))
+            {
+                this.Msg = "WebAPI Error：" + JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
+                return;
             }
+
             #endregion
 
             #region 資料新增、刪除至資料庫
-            if (this.dtAllData!= null)
+            if (this.dtAllData != null)
             {
                 string sql = $@"
                 delete p
@@ -139,9 +123,12 @@ namespace PowerBI.Daily.PowerBI.DataAccess
                 from BITableInfo b
                 where b.Id = 'P_MachineMasterList'";
                 DBProxy.Current.OpenConnection("PBIReportData", out SqlConnection sqlConn);
+                DBProxy.Current.DefaultTimeout = 600;
+
                 result = MyUtility.Tool.ProcessWithDatatable(this.dtAllData, null, sql, out DataTable dataTable, conn: sqlConn);
                 if (!result)
                 {
+                    this.Msg = result.ToSimpleString();
                     return;
                 }
             }

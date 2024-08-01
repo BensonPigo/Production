@@ -130,6 +130,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterList.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
     <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\ResultInfo.cs" />
     <Compile Include="PowerBI\WebApi\CallWebAPI.cs" />
     <Compile Include="PowerBI\WebApi\GetTable.cs" />
     <Compile Include="Program.cs">

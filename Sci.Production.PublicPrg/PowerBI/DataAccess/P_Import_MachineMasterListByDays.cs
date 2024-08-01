@@ -63,12 +63,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 StartMachineArrivalDate = string.Empty,
                 EndMachineArrivalDate = string.Empty,
                 Condition = string.Empty,
-                ExcludeDisposedData = "False",
-                IncludeCancelData = "True",
+                ExcludeDisposedData = false,
+                IncludeCancelData = true,
                 SBIDate = sDate.Value.ToString("yyyy/MM/dd"),
                 EBIDate = eDate.Value.ToString("yyyy/MM/dd"),
-                IsBI = "True",
-                IsTPE_BI = "False",
+                IsBI = true,
+                IsTPE_BI = false,
             };
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
