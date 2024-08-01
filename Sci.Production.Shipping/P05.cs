@@ -547,6 +547,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.txtbrand.ReadOnly = true;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtShipmodeShippingMode.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -1855,6 +1856,12 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         // Import from packing list
         private void BtnImportfrompackinglist_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             // Brand, CustCD, Destination, Ship Mode不可以為空
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {

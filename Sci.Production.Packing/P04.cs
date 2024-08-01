@@ -155,17 +155,24 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 if (this.EditMode)
                 {
+                    // 1.檢查表頭
+                    if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                    {
+                        MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                        return;
+                    }
+
                     this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != this.dr["OrderID"].ToString())
                     {
                         // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString());
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
-
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString()),
+                            new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])),
+                            new System.Data.SqlClient.SqlParameter("@OrderCompanyID", MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"])),
+                        };
 
                         string sqlCmd = @"
 Select o.ID
@@ -177,10 +184,10 @@ inner join Factory f on o.FactoryID = f.ID
 where o.ID = @orderid 
 	  and o.Category = 'S' 
 	  and o.BrandID = @brandid
-	  and f.IsProduceFty = 1";
-
-                        DataTable orderData;
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
+	  and f.IsProduceFty = 1
+      and o.OrderCompanyID = @OrderCompanyID
+";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable orderData);
                         if (!result)
                         {
                             this.ClearGridRowData(this.dr);
@@ -582,6 +589,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             this.txtbrand.ReadOnly = true;
 
             // 部分欄位會依某些條件來決定是否可以被修改
@@ -601,7 +609,7 @@ Carton has been output from the hanger system or transferred to clog.";
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
-            
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]))
             {
                 this.dateCartonEstBooking.ReadOnly = true;
@@ -1170,13 +1178,19 @@ Packing list is locked in the hanger system.";
         // Batch Import
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't be empty!");
                 return;
             }
 
-            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1454,6 +1468,12 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
         // Import from excel
         private void BtnImportFromExcel_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Please input < Brand >!!");
@@ -1466,7 +1486,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
-            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString(), this.CurrentMaintain["OrderCompanyID"].ToString());
             callNextForm.ShowDialog(this);
         }
 

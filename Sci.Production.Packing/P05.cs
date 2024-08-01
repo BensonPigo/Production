@@ -138,6 +138,13 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             {
                 if (this.EditMode)
                 {
+                    // 1.檢查表頭
+                    if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                    {
+                        MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                        return;
+                    }
+
                     this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
@@ -156,6 +163,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         cmds.Add(sp1);
                         cmds.Add(sp2);
                         cmds.Add(sp3);
+                        cmds.Add(new SqlParameter("@OrderCompanyID", MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"])));
 
                         string sqlCmd = @"
 Select  o.ID
@@ -171,7 +179,9 @@ where   o.ID = @orderid
         and o.IsForecast = 0 
         and o.LocalOrder = 0 
         and o.Junk = 0
-        and f.IsProduceFty = 1";
+        and f.IsProduceFty = 1
+        and o.OrderCompanyID = @OrderCompanyID
+";
 
                         DataTable orderData;
                         DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
@@ -928,6 +938,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
         }
 
         /// <summary>
@@ -1239,13 +1250,19 @@ Packing list is locked in the hanger system.";
         // Batch Import
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't be empty!");
                 return;
             }
 
-            P05_BatchImport callNextForm = new P05_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P05_BatchImport callNextForm = new P05_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"]));
             callNextForm.ShowDialog(this);
             this.ComputeOrderQty();
         }

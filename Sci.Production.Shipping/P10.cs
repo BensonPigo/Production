@@ -569,6 +569,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")
             {
                 this.btnImportData.Enabled = false;
@@ -1207,6 +1208,12 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
         // Import Data
         private void BtnImportData_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             P10_ImportData callNextForm = new P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }

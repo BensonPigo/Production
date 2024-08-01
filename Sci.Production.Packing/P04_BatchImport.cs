@@ -18,13 +18,15 @@ namespace Sci.Production.Packing
         private DataRow packingListData;
         private DataTable selectDataTable;
         private DataTable detailData;
+        private string orderCompanyID;
 
         /// <summary>
         /// P04_BatchImport
         /// </summary>
         /// <param name="packingListData">packingListData</param>
         /// <param name="detailData">detailData</param>
-        public P04_BatchImport(DataRow packingListData, DataTable detailData)
+        /// <param name="orderCompanyID">orderCompanyID</param>
+        public P04_BatchImport(DataRow packingListData, DataTable detailData, string orderCompanyID)
         {
             this.InitializeComponent();
             this.packingListData = packingListData;
@@ -35,6 +37,7 @@ namespace Sci.Production.Packing
             this.txtcustcd.Text = packingListData["CustCDID"].ToString();
             this.txtcountryDestination.TextBox1.IsSupportEditMode = false;
             this.txtcountryDestination.TextBox1.ReadOnly = true;
+            this.comboCompany1.SelectedValue = this.orderCompanyID = orderCompanyID;
         }
 
         /// <summary>
@@ -74,7 +77,9 @@ as
 inner join Factory WITH (NOLOCK) on Factory.id = Orders.Factoryid
  where Category = 'S'
  and Factory.IsProduceFty = 1
- and BrandID = @brand");
+ and BrandID = @brand
+ and OrderCompanyID = @orderCompanyID
+");
             if (!MyUtility.Check.Empty(this.txtcustcd.Text))
             {
                 sqlCmd.Append("\r\n and CustCDID = @custcd");
@@ -169,6 +174,7 @@ left join View_OrderFAColor voc on voc.ID = pd.OrderID and voc.Article = pd.Arti
             cmds.Add(sp5);
             cmds.Add(sp6);
             cmds.Add(sp7);
+            cmds.Add(new System.Data.SqlClient.SqlParameter("@orderCompanyID", this.orderCompanyID));
             #endregion
             DualResult selectResult;
             if (selectResult = DBProxy.Current.Select(null, sqlCmd.ToString(), cmds, out this.selectDataTable))

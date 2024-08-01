@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using Sci.Production.CallPmsAPI;
 using System.Linq;
 using Microsoft.Office.Interop.Excel;
+using System.Windows.Media.Animation;
 
 namespace Sci.Production.Shipping
 {
@@ -187,6 +188,13 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                     this.numGW.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["GW"]);
                     this.numCMP.Value = MyUtility.Convert.GetDecimal(tmpData.Rows[0]["CMP"]);
                 }
+
+                sqlCmd = $@"
+SELECT OrderCompanyID
+FROM GMTBooking WITH(NOLOCK)
+WHERE ID = '{this.CurrentMaintain["InvNo"]}'
+";
+                this.comboCompany1.SelectedValue = MyUtility.GetValue.Lookup(sqlCmd);
             }
 
             if (this.EditMode)

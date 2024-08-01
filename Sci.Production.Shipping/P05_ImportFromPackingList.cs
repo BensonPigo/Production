@@ -33,7 +33,6 @@ namespace Sci.Production.Shipping
         {
             this.InitializeComponent();
 
-            // this.txtmultifactoryFactory.Text = Sci.Env.User.FactoryList;
             this.txtmultifactoryFactory.Text = MyUtility.GetValue.Lookup(@"
 select stuff(
 (
@@ -80,8 +79,7 @@ select stuff(
             StringBuilder sqlCmd = new StringBuilder();
             List<SqlParameter> listPar = new List<SqlParameter>();
             #region 組SQL語法
-            sqlCmd.Append(string.Format(
-                @"
+            sqlCmd.Append($@"
 with IniBulkPack as (
     select  1 as Selected
             , p.id
@@ -111,15 +109,16 @@ with IniBulkPack as (
                                                  and pd.OrderShipmodeSeq = oq.Seq
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     where   p.Type = 'B'
-            and '{0}' like '%'+rtrim(o.FactoryID)+'%'
+            and '{this.txtmultifactoryFactory.Text}' like '%'+rtrim(o.FactoryID)+'%'
             and p.INVNo = ''
-            and p.ShipModeID = '{1}'
-            and p.BrandID = '{2}'
-            and p.Dest = '{3}'
-            and p.CustCDID = '{4}'
+            and p.ShipModeID = '{MyUtility.Convert.GetString(this.masterData["ShipModeID"])}'
+            and p.BrandID = '{MyUtility.Convert.GetString(this.masterData["BrandID"])}'
+            and p.Dest = '{MyUtility.Convert.GetString(this.masterData["Dest"])}'
+            and p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}'
+            and p.OrderCompanyID = '{MyUtility.Convert.GetString(this.masterData["OrderCompanyID"])}'
             and o.junk = 0
 ), IniSamplePack as (
-    select  iif(p.CustCDID = '{4}',1,0) as Selected
+    select  iif(p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}',1,0) as Selected
             , p.id
             , p.OrderID
             , p.CustCDID
@@ -145,9 +144,10 @@ with IniBulkPack as (
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     where   p.INVNo = '' 
             and p.Type = 'S' 
-            and '{0}' like '%'+rtrim(o.FactoryID)+'%' 
-            and p.Dest = '{3}' 
-            and p.ShipModeID = '{1}'
+            and '{this.txtmultifactoryFactory.Text}' like '%'+rtrim(o.FactoryID)+'%' 
+            and p.Dest = '{MyUtility.Convert.GetString(this.masterData["Dest"])}' 
+            and p.ShipModeID = '{MyUtility.Convert.GetString(this.masterData["ShipModeID"])}'
+            and p.OrderCompanyID = '{MyUtility.Convert.GetString(this.masterData["OrderCompanyID"])}'
             and o.junk = 0
 ), AllPackData as (
     select * 
@@ -159,12 +159,7 @@ with IniBulkPack as (
 ), InvalidData as (
     select  distinct ID
     from AllPackData
-    where   1=1",
-                this.txtmultifactoryFactory.Text,
-                MyUtility.Convert.GetString(this.masterData["ShipModeID"]),
-                MyUtility.Convert.GetString(this.masterData["BrandID"]),
-                MyUtility.Convert.GetString(this.masterData["Dest"]),
-                MyUtility.Convert.GetString(this.masterData["CustCDID"])));
+    where   1=1");
 
             if (!MyUtility.Check.Empty(this.dateSDPDate.Value1))
             {
@@ -289,35 +284,12 @@ from PackData pd");
 
             if (this.txtmultifactoryFactory.IsDataFromA2B)
             {
-                // 動態connection string
-                //string connString = PackingA2BWebAPI.GetConnString(this.txtmultifactoryFactory.SystemName);
-                //SqlConnection sqlConnection = new SqlConnection(connString);
-                //result = DBProxy.Current.SelectByConn(sqlConnection, sqlCmd.ToString(), listPar, out this.gridData);
-
-                //P05_ImportFromPackingListQuery p05_ImportFromPackingList = new P05_ImportFromPackingListQuery()
-                //{
-                //    ShipModeID = MyUtility.Convert.GetString(this.masterData["ShipModeID"]),
-                //    BrandID = MyUtility.Convert.GetString(this.masterData["BrandID"]),
-                //    Dest = MyUtility.Convert.GetString(this.masterData["Dest"]),
-                //    CustCDID = MyUtility.Convert.GetString(this.masterData["CustCDID"]),
-                //    DateSDPDateFrom = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value1).ToString("yyyyMMdd"),
-                //    DateSDPDateTo = this.dateSDPDate.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateSDPDate.Value2).ToString("yyyyMMdd"),
-                //    BuyerDeliveryFrom = this.dateDelivery.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value1).ToString("yyyyMMdd"),
-                //    BuyerDeliveryTo = this.dateDelivery.Value2 == null ? string.Empty : Convert.ToDateTime(this.dateDelivery.Value2).ToString("yyyyMMdd"),
-                //    OrderIDFrom = this.txtSpStart.Text,
-                //    OrderIDTo = this.txtSPEnd.Text,
-                //    DateIDD = this.dateSDPDate.Value1 == null ? string.Empty : Convert.ToDateTime(this.dateIDD.Value).ToString("yyyyMMdd"),
-                //    MultifactoryFactory = this.txtmultifactoryFactory.Text,
-                //};
-
                 DataBySql dataBySql = new DataBySql()
                 {
                     SqlString = sqlCmd.ToString(),
                     SqlParameter = listPar.ToListSqlPar(),
                 };
                 result = PackingA2BWebAPI.GetDataBySql(this.txtmultifactoryFactory.SystemName, dataBySql, out this.gridData);
-
-                //result = PackingA2BWebAPI.GetP05_ImportFromPackingListQuery(this.txtmultifactoryFactory.SystemName, p05_ImportFromPackingList, out this.gridData);
             }
             else
             {

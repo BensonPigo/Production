@@ -455,6 +455,13 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 if (this.EditMode)
                 {
+                    // 1.檢查表頭
+                    if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                    {
+                        MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                        return;
+                    }
+
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
                     // 檢查箱子如果有送到Clog則不可以被修改
@@ -470,10 +477,7 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
-                        DataRow orderData;
-                        if (!MyUtility.Check.Seek(
-                            string.Format(
-                                @"
+                        string sqlcmd = $@"
 Select  o.ID
         , o.SeasonID
         , o.StyleID
@@ -481,18 +485,16 @@ Select  o.ID
         , o.FtyGroup
 from Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
-where   o.ID = '{0}' 
+where   o.ID = '{e.FormattedValue}' 
         and ((o.Category = 'B' and o.LocalOrder = 0) or o.Category = 'S' or o.Category = 'G')
-        and o.BrandID = '{1}' 
-        and o.Dest = '{2}' 
-        and o.CustCDID = '{3}'
-        and o.MDivisionID = '{4}'
-        and f.IsProduceFty = 1",
-                                e.FormattedValue.ToString(),
-                                this.CurrentMaintain["BrandID"].ToString(),
-                                this.CurrentMaintain["Dest"].ToString(),
-                                this.CurrentMaintain["CustCDID"].ToString(),
-                                Env.User.Keyword), out orderData))
+        and o.BrandID = '{this.CurrentMaintain["BrandID"]}' 
+        and o.Dest = '{this.CurrentMaintain["Dest"]}' 
+        and o.CustCDID = '{this.CurrentMaintain["CustCDID"]}'
+        and o.MDivisionID = '{Env.User.Keyword}'
+        and o.OrderCompanyID = '{this.CurrentMaintain["OrderCompanyID"]}'
+        and f.IsProduceFty = 1";
+
+                        if (!MyUtility.Check.Seek(sqlcmd, out DataRow orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = string.Empty;
@@ -1082,6 +1084,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             this.comboSortby.Text = string.Empty;
             if (this.CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
@@ -1200,7 +1203,7 @@ Carton has been output from the hanger system or transferred to clog.";
 
             foreach (var orderID in orderIdList)
             {
-                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"].ToString()}'");
+                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"]}'");
 
                 if (!exists)
                 {
@@ -2318,7 +2321,7 @@ order by PD.seq
                 LEFT JOIN PackingList_Detail c ON a.[Cust CTN#] = c.CustCTN AND c.CTNQty = 1
                 WHERE c.CustCTN IS NULL;             
 
-                update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
+                update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
                 ";
                 DataTable udt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, updateSqlCmd, out udt);
