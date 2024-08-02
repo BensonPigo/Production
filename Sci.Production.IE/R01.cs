@@ -1147,31 +1147,59 @@ inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
 select distinct
+	lm.ID,
+	lm.FactoryID,
+	lm.StyleID,
+	lm.StyleUKey,
+	lm.ComboType,
+	lm.SeasonID,
+    lm.Phase,
+	lm.BrandID,
+    SewingLineID = '',
+    Team = '',
+	lm.Version,
+	lmd.No,
+    IsFrom = 'IE P05'
+into #tmp
+from #AutomatedLineMapping lm WITH (NOLOCK) 
+inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+outer apply(
+	select top 1 c.Target
+	from factory f
+	left join ChgOverTarget c on c.MDivisionID= f.MDivisionID 
+				--and lm.status = 'Confirmed' 
+				--and c.EffectiveDate < lm.Editdate 
+				and c. Type ='LBR'
+	where f.id = lm.factoryid
+	order by EffectiveDate desc
+)LinebalancingTarget 
+where 1=1 
+
+select     
 	t.FactoryID,
 	t.StyleID,
 	t.ComboType,
 	t.SeasonID,
     t.Phase,
 	t.BrandID,
-    SewingLineID = '',
-    Team = '',
+    t.SewingLineID,
+    t.Team,
 	t.Version,
-	lmd.No,
+	t.No,
 	MachineTypeID = MachineType.Val,
 	MasterPlusGroup = MasterPlusGroup.Val,
 	Operation = Operation.Val,
 	Annotation = Annotation.Val,
-	GSDTime = 0.0,
+	GSDTime = DetailSum.TotalGSD,
 	CycleTime = 0.0,
 	Eff= 0.0,
-    IsFrom = 'IE P05'
-from #AutomatedLineMapping t WITH (NOLOCK) 
-inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on t.ID = lmd.ID
+    t.IsFrom
+from #tmp t
 OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MachineTypeID
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No
 		FOR XML PATH('')
 		),1,1,'')
 )MachineType
@@ -1179,7 +1207,7 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MasterPlusGroup
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No
 		FOR XML PATH('')
 		),1,1,'')
 )MasterPlusGroup
@@ -1188,7 +1216,7 @@ OUTER APPLY(
 		select DISTINCT ',' + o.DescEN 
 		from #AutomatedLineMapping_Detail lmdd
 		inner join Operation o on lmdd.OperationID = o.ID
-		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No
 		FOR XML PATH('')
 		),1,1,'')
 )Operation
@@ -1196,11 +1224,16 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + Annotation
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and lmd.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No
 		FOR XML PATH('')
 		),1,1,'')
 )Annotation
-where 1=1 
+OUTER APPLY(
+	select TotalGSD = SUM(lmdd.GSD*lmdd.SewerDiffPercentage) * 1.0
+	from #AutomatedLineMapping_Detail lmdd
+	where t.ID = lmdd.ID and t.No=lmdd.No
+)DetailSum
+WHERE 1=1
 ");
 
             if (this.latestVersion)
@@ -1424,7 +1457,7 @@ OUTER APPLY(
 		),1,1,'')
 )Annotation
 OUTER APPLY(
-	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD) * 1.0
+	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD * SewerDiffPercentage) * 1.0
 	from #LineMappingBalancing_Detail lmdd
 	where t.ID = lmdd.ID and t.No=lmdd.No
 )DetailSum
@@ -1777,10 +1810,9 @@ select distinct
 	[Not Hit Target Type] = '',
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
-	                    select distinct l2.NO, l2.Ukey
-	                    from #AutomatedLineMapping_Detail l2 WITH (NOLOCK)
+	                    select l2.ID, l2.NO
+	                    from AutomatedLineMapping_NotHitTargetReason l2 WITH (NOLOCK)
 	                    where lm.ID = l2.ID
-	                    and ISNULL(l2.Ukey, '') <> ''
                     )a )),
 	[Not Hit Target Reason] = '',
 
@@ -1954,10 +1986,9 @@ select distinct
 	[Not Hit Target Type] = '',
 	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
-	                    select distinct l2.NO, l2.Ukey
-	                    from #LineMappingBalancing_Detail l2 WITH (NOLOCK)
+	                    select l2.ID, l2.NO
+	                    from LineMappingBalancing_NotHitTargetReason l2 WITH (NOLOCK)
 	                    where lm.ID = l2.ID
-	                    and ISNULL(l2.Ukey, '') <> ''
                     )a )),
 	[Not Hit Target Reason]='',
 

@@ -769,7 +769,7 @@ Outer Apply(
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
 	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
-				  WHEN lm.SourceTable = 'IE P06' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
+				  WHEN lm.SourceTable = 'IE P06' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
