@@ -144,24 +144,24 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cutpartcheck.cs">
+    <Compile Include="CuttingClass\Cutpartcheck.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutpartcheck.designer.cs">
+    <Compile Include="CuttingClass\Cutpartcheck.designer.cs">
       <DependentUpon>Cutpartcheck.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cutpartchecksummary.cs">
+    <Compile Include="CuttingClass\Cutpartchecksummary.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutpartchecksummary.designer.cs">
+    <Compile Include="CuttingClass\Cutpartchecksummary.designer.cs">
       <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </Compile>
-    <Compile Include="CuttingWorkOrderExtensions.cs" />
-    <Compile Include="CuttingWorkOrder.cs" />
-    <Compile Include="Cutting_Print_P09.cs">
+    <Compile Include="CuttingClass\CuttingWorkOrderExtensions.cs" />
+    <Compile Include="CuttingClass\CuttingWorkOrder.cs" />
+    <Compile Include="CuttingClass\Cutting_Print_P09.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutting_Print_P09.Designer.cs">
+    <Compile Include="CuttingClass\Cutting_Print_P09.Designer.cs">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </Compile>
     <Compile Include="P05_Import.cs">
@@ -182,10 +182,10 @@
     <Compile Include="P09_ExcludeSetting.Designer.cs">
       <DependentUpon>P09_ExcludeSetting.cs</DependentUpon>
     </Compile>
-    <Compile Include="ImportML.cs">
+    <Compile Include="CuttingClass\ImportML.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ImportML.Designer.cs">
+    <Compile Include="CuttingClass\ImportML.Designer.cs">
       <DependentUpon>ImportML.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_WKETA.cs" />
@@ -300,16 +300,16 @@
     <Compile Include="P01_Print_OrderList.Designer.cs">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cutting_BatchAssign.cs">
+    <Compile Include="CuttingClass\Cutting_BatchAssign.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutting_BatchAssign.Designer.cs">
+    <Compile Include="CuttingClass\Cutting_BatchAssign.Designer.cs">
       <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </Compile>
-    <Compile Include="Cutting_Print_P02.cs">
+    <Compile Include="CuttingClass\Cutting_Print_P02.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Cutting_Print_P02.Designer.cs">
+    <Compile Include="CuttingClass\Cutting_Print_P02.Designer.cs">
       <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </Compile>
     <Compile Include="B08.cs">
@@ -625,13 +625,13 @@
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutpartcheck.resx">
+    <EmbeddedResource Include="CuttingClass\Cutpartcheck.resx">
       <DependentUpon>Cutpartcheck.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutpartchecksummary.resx">
+    <EmbeddedResource Include="CuttingClass\Cutpartchecksummary.resx">
       <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutting_Print_P09.resx">
+    <EmbeddedResource Include="CuttingClass\Cutting_Print_P09.resx">
       <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P05_Import.resx">
@@ -643,7 +643,7 @@
     <EmbeddedResource Include="P09_ExcludeSetting.resx">
       <DependentUpon>P09_ExcludeSetting.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ImportML.resx">
+    <EmbeddedResource Include="CuttingClass\ImportML.resx">
       <DependentUpon>ImportML.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_WKETA.resx">
@@ -715,10 +715,10 @@
     <EmbeddedResource Include="P01_Print_OrderList.resx">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutting_BatchAssign.resx">
+    <EmbeddedResource Include="CuttingClass\Cutting_BatchAssign.resx">
       <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Cutting_Print_P02.resx">
+    <EmbeddedResource Include="CuttingClass\Cutting_Print_P02.resx">
       <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
