@@ -217,6 +217,12 @@
     <Compile Include="P17.Designer.cs">
       <DependentUpon>P17.cs</DependentUpon>
     </Compile>
+    <Compile Include="P17_InputWeight.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P17_InputWeight.Designer.cs">
+      <DependentUpon>P17_InputWeight.cs</DependentUpon>
+    </Compile>
     <Compile Include="P19.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -443,6 +449,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P17.resx">
       <DependentUpon>P17.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P17_InputWeight.resx">
+      <DependentUpon>P17_InputWeight.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P19.resx">
       <DependentUpon>P19.cs</DependentUpon>
