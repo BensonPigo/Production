@@ -859,6 +859,7 @@
             this.txtSONo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SONo", true));
             this.txtSONo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSONo.Location = new System.Drawing.Point(679, 110);
+            this.txtSONo.MaxLength = 18;
             this.txtSONo.Name = "txtSONo";
             this.txtSONo.Size = new System.Drawing.Size(164, 23);
             this.txtSONo.TabIndex = 17;

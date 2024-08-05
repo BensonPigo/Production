@@ -100,7 +100,7 @@ where WhseCode = '{e.FormattedValue}'
                 dr.EndEdit();
             };
 
-            DataGridViewGeneratorTextColumnSettings soNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 16 };
+            DataGridViewGeneratorTextColumnSettings soNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 18 };
             DataGridViewGeneratorTextColumnSettings documentRefNo = new DataGridViewGeneratorTextColumnSettings() { MaxLength = 15 };
 
             this.grid.IsEditingReadOnly = false;
