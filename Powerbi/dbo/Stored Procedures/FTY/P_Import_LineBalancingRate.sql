@@ -30,51 +30,43 @@ create table #P_LineBalancingRate
 
 insert #P_LineBalancingRate(SewingDate,FactoryID,[Total SP Qty],[Total LBR],[Avg. LBR])
 select t.SewingDate,t.FactoryID
-,[Total SP Qty] = OrderCnt.value
-,[Total LBR] = LBR.value
-,[Avg. LBR] = ROUND(LBR.value / OrderCnt.value,2)
+,[Total SP Qty] = s.SPCnt
+,[Total LBR] = s.LBR
+,[Avg. LBR] = ROUND(s.LBR /  s.SPCnt,2)
 from #tmpMain t
-left join (
-	select FactoryID, value = count(1) 
-	from 
-	(
-		select * from 
-		(
-			select rowno = ROW_NUMBER() over(partition by lm.ID order by lm.ID desc)
-			, s.OrderID,s.FactoryID,lm.StyleUKey
-			from [MainServer].Production.dbo.SewingSchedule s with(nolock)
-			left join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id
-			left join P_LineMapping lm with(nolock) on lm.StyleUKey = o.StyleUkey and  s.FactoryID = lm.Factory	and s.ComboType = lm.ComboType and lm.Phase = 'Final'
-			where 1=1
-			and CONVERT(date,@SDate) between convert(date,Inline) and CONVERT(date, Offline)
-		) a
-		where rowno=1
-		and StyleUKey is not null
-	) a
-	group by FactoryID
-)OrderCnt on OrderCnt.FactoryID = t.FactoryID
-left join (
-	select Factory,value = round(convert(float,sum(value)),2)
-	from (
-		select Factory,value= AVG([LBR By Cycle Time(%)])
+left join(
+	select s.FactoryID,SPCnt = count(1),LBR = sum(LBR.value)
+	from [MainServer].Production.dbo.SewingSchedule s with(nolock)
+	inner join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id			
+	outer apply(
+		select value = SUM([LBR By Cycle Time(%)])
 		from (
-			select rowno = ROW_NUMBER() over(partition by Factory,StyleUKey,ComboType order by version desc),*
-			from P_LineMapping lm with(nolock)
-			where Phase='Final'
-			and exists(
-				select 1 
-				from [MainServer].Production.dbo.SewingSchedule s with(nolock)
-				left join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id
-				where  lm.StyleUKey = o.StyleUkey and s.FactoryID = lm.Factory
-				and s.ComboType = lm.ComboType 
-				and CONVERT(date,@SDate) between CONVERT(date,s.Inline) and CONVERT(date,s.Offline)
-			)
+			select s.FactoryID,s.ComboType,o.StyleUkey,rowno = ROW_NUMBER() over(partition by s.FactoryID,o.StyleUKey,s.ComboType order by version desc)
+			,[LBR By Cycle Time(%)] = AVG([LBR By Cycle Time(%)]) over (partition by s.FactoryID,o.StyleUKey,s.ComboType,lm.SewingLine order by version desc)
+			from [MainServer].Production.dbo.SewingSchedule s with(nolock)
+			inner join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id	
+			left join P_LineMapping lm with(nolock) 
+				on lm.StyleUKey = o.StyleUkey 
+				and  s.FactoryID = lm.Factory	
+				and s.ComboType = lm.ComboType 		
+			where 1=1
+			and CONVERT(date,@SDate) between convert(date,s.Inline) and CONVERT(date,s.Offline)
+			and lm.Phase = 'Final'
 		) a
 		where rowno=1
-		group by Factory,StyleUkey,ComboType
-	) a
-	group by Factory
-)LBR on lbr.Factory = t.FactoryID
+		and a.FactoryID = s.FactoryID and a.ComboType = s.ComboType and a.StyleUkey = o.StyleUkey
+	)LBR
+	where 1=1
+	and CONVERT(date,@SDate) between convert(date,Inline) and CONVERT(date, Offline)
+	and exists(
+		select 1 from P_LineMapping lm with(nolock) 
+		where lm.StyleUKey = o.StyleUkey 
+		and  s.FactoryID = lm.Factory	
+		and s.ComboType = lm.ComboType 
+		and lm.Phase = 'Final'
+	)
+	group by s.FactoryID
+) s on s.FactoryID = t.FactoryID
 option (recompile)
 
 /*
@@ -86,56 +78,44 @@ DECLARE @Day INT = 1;
 WHILE @Day <= 7
 BEGIN	
 	select   t.SewingDate,t.FactoryID,t.[Total SP Qty],t.[Total LBR],t.[Avg. LBR]
-	,[Total SP Qty In7Days] = OrderCnt.value
-	,[Total LBR In7Days] = LBR.value
+	,[Total SP Qty In7Days] = s.SPCnt
+	,[Total LBR In7Days] = s.LBR
 	into #tmpLoop
 	from #P_LineBalancingRate t
-	outer apply(
-		select FactoryID, value = count(1) 
-		from 
-		(
-			select * from 
-			(
-				select rowno = ROW_NUMBER() over(partition by lm.ID order by lm.ID desc)
-				, s.OrderID,s.FactoryID,lm.StyleUKey
+	left join(
+		select s.FactoryID,SPCnt = count(1),LBR = sum(LBR.value)
+		from [MainServer].Production.dbo.SewingSchedule s with(nolock)
+		inner join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id			
+		outer apply(
+			select value = SUM([LBR By Cycle Time(%)])
+			from (
+				select s.FactoryID,s.ComboType,o.StyleUkey,rowno = ROW_NUMBER() over(partition by s.FactoryID,o.StyleUKey,s.ComboType order by version desc)
+				,[LBR By Cycle Time(%)] = AVG([LBR By Cycle Time(%)]) over (partition by s.FactoryID,o.StyleUKey,s.ComboType,lm.SewingLine order by version desc)
 				from [MainServer].Production.dbo.SewingSchedule s with(nolock)
-				left join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id
-				left join P_LineMapping lm with(nolock) on lm.StyleUKey = o.StyleUkey and  s.FactoryID = lm.Factory	and s.ComboType = lm.ComboType AND lm.Phase = 'Final'
+				inner join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id	
+				left join P_LineMapping lm with(nolock) 
+					on lm.StyleUKey = o.StyleUkey 
+					and  s.FactoryID = lm.Factory	
+					and s.ComboType = lm.ComboType 		
 				where 1=1
-				and CONVERT(date,DATEADD(day,@Day, @SDate)) between convert(date,Inline) and CONVERT(date, Offline)
+				and CONVERT(date,DATEADD(day,@Day, @SDate)) between convert(date,s.Inline) and CONVERT(date,s.Offline)
+				and lm.Phase = 'Final'
 			) a
 			where rowno=1
-			and StyleUKey is not null
-		) a
-		where FactoryID = t.FactoryID
-		group by FactoryID
-	)OrderCnt
-	outer apply(
-		select Factory,value = round(convert(float,sum(value)),2)
-		from (
-			select Factory,value= AVG([LBR By Cycle Time(%)])
-			from (
-				select rowno = ROW_NUMBER() over(partition by Factory,StyleUKey,ComboType order by version desc),*
-				from P_LineMapping lm with(nolock)
-				where Phase='Final'
-				and exists(
-					select 1 
-					from [MainServer].Production.dbo.SewingSchedule s with(nolock)
-					left join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id
-					where  lm.StyleUKey = o.StyleUkey and s.FactoryID = lm.Factory
-					and s.ComboType = lm.ComboType 
-					and CONVERT(date,DATEADD(day,1, @SDate)) between convert(date,Inline) and CONVERT(date, Offline)
-				)
-			)a
-			where rowno=1
-			group by Factory,StyleUkey,ComboType
-		) a
-		where Factory = t.FactoryID
-		group by Factory
-	)LBR
+			and a.FactoryID = s.FactoryID and a.ComboType = s.ComboType and a.StyleUkey = o.StyleUkey
+		)LBR
+		where 1=1
+		and CONVERT(date,DATEADD(day,@Day, @SDate)) between convert(date,Inline) and CONVERT(date, Offline)
+		and exists(
+			select 1 from P_LineMapping lm with(nolock) 
+			where lm.StyleUKey = o.StyleUkey 
+			and  s.FactoryID = lm.Factory	
+			and s.ComboType = lm.ComboType 
+			and lm.Phase = 'Final'
+		)
+		group by s.FactoryID
+	) s on s.FactoryID = t.FactoryID
 	option (recompile)
-
-	--select * from #tmpLoop
 
 	update t
 	set [Total SP Qty In7Days] = isnull(t.[Total SP Qty In7Days],0) + s.[Total SP Qty In7Days]
@@ -217,3 +197,5 @@ end
 drop table #tmpMain,#P_LineBalancingRate
 
 end
+GO
+
