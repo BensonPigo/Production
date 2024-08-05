@@ -1777,11 +1777,10 @@ select distinct
 
 	[Current # of Optrs] = Cast( lm.SewerManpower as int),
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Target/Hr. (100%)] = 0.0,
+	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = ,0 ,( 3600 * lm.SewerManpower ) / lm.TotalGSDTime ),
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Takt Time] = 0.0,
+	---- 公式：P05沒有TotalCycle，所以用GSD
+	[Takt Time] = IIF(lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.WorkHour = 0 ,0 ,( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = 0.0,
@@ -1803,8 +1802,8 @@ select distinct
 	---- P05/P06呈現空白
 	[Efficiency %] = 0.0 ,
 
-	---- P05 公式：P05沒有TotalCycle，所以為0
-	[Line Balancing %] = 0.0,
+	---- P05 公式：P05沒有TotalCycle，所以用GSD
+	[Line Balancing %] = IIF( lm.HighestGSDTime = 0 or lm.SewerManpower = 0 ,0 , lm.TotalGSDTime / lm.HighestGSDTime / lm.SewerManpower * 100 ),
 
 	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100,
 	[Not Hit Target Type] = '',
@@ -1816,10 +1815,13 @@ select distinct
                     )a )),
 	[Not Hit Target Reason] = '',
 
-	---- 公式：P05沒有TotalCycle，所以為0
-	[Lean Line Eff %] = 0.0,
+	---- 公式：P05沒有TotalCycle，所以用GSD
+	[Lean Line Eff %] = IIF( lm.WorkHour = 0 or lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.SewerManpower = 0
+                            ,0
+                            ,lm.TotalGSDTime / (( 3600 * lm.WorkHour) / (( 3600 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)) / lm.SewerManpower * 100
+                        ),
 	
-	---- 公式：P05沒有Cycle，所以為0
+	---- 公式：P05因為[EOLR]空白，所以空白
 	[PPH] = 0.0,
 
 	lm.Status,
@@ -1953,7 +1955,7 @@ select distinct
 	[Current # of Optrs] = Cast(lm.SewerManpower as int),
 
 	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
-	[Target/Hr. (100%)] = (3600.0 * lm.SewerManpower) / lm.TotalCycleTime,
+	[Target/Hr. (100%)] = IIF(lm.TotalCycleTime=0 ,0  ,(3600.0 * lm.SewerManpower) / lm.TotalCycleTime),
 
 	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
 	[Takt Time] = CEILING( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour ) ),
