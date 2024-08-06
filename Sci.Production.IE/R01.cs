@@ -1191,8 +1191,8 @@ select
 	Operation = Operation.Val,
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
-	CycleTime = 0.0,
-	Eff= 0.0,
+	CycleTime = NULL,
+	Eff= NULL,
     t.IsFrom
 from #tmp t
 OUTER APPLY(
@@ -1568,7 +1568,7 @@ select distinct
 	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
 	[Target/Hr. (100%)] = IIF(lm.TotalCycle=0, 0, (3600.0 * lm.CurrentOperators) / lm.TotalCycle),
 
-	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
+	---- 公式：( 3600.* [No. of Hours] ) / [Daily Demand / Shift]
 	[Takt Time] = CEILING( IIF(lm.TotalCycle=0 OR lm.Workhour = 0,0, ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ) )),
 
 	[Total GSD Time] = lm.TotalGSD * 1.0,
@@ -1777,30 +1777,30 @@ select distinct
 
 	[Current # of Optrs] = Cast( lm.SewerManpower as int),
 
-	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = 0,0 ,( 3600 * lm.SewerManpower ) / lm.TotalGSDTime ),
+	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = 0,0 ,( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime ),
 
 	---- 公式：P05沒有TotalCycle，所以用GSD
 	[Takt Time] = IIF(lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.WorkHour = 0 ,0 ,( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
-	[Total Cycle Time] = 0.0,
+	[Total Cycle Time] = NULL,
 	
 	---- 公式: P05沒有TotalCycle，所以為0
-	[Avg. Cycle Time] = 0.0,
+	[Avg. Cycle Time] = NULL,
 
-	[CPU / PC] = s.CPU,
+	[CPU / PC] = lm.StyleCPU,
 	[No. of Hours] = lm.Workhour,
 	---- 公式：P05沒有TotalCycle，所以為0
-	[Daily Demand / Shift] = 0.0,
+	[Daily Demand / Shift] = IIF(lm.TotalGSDTime =0 ,0 ,  ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour),
 
 	[Optrs of Presser] = Cast( lm.PresserManpower as int),
 	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
 
 	---- 公式：P05沒有Cycle，所以為0
-	[EOLR] = 0.0,
+	[EOLR] = NULL,
 
 	---- P05/P06呈現空白
-	[Efficiency %] = 0.0 ,
+	[Efficiency %] = NULL ,
 
 	---- P05 公式：P05沒有TotalCycle，所以用GSD
 	[Line Balancing %] = IIF( lm.HighestGSDTime = 0 or lm.SewerManpower = 0 ,0 , lm.TotalGSDTime / lm.HighestGSDTime / lm.SewerManpower * 100 ),
@@ -1818,11 +1818,11 @@ select distinct
 	---- 公式：P05沒有TotalCycle，所以用GSD
 	[Lean Line Eff %] = IIF( lm.WorkHour = 0 or lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.SewerManpower = 0
                             ,0
-                            ,lm.TotalGSDTime / (( 3600 * lm.WorkHour) / (( 3600 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)) / lm.SewerManpower * 100
+                            ,lm.TotalGSDTime / (( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)) / lm.SewerManpower
                         ),
 	
 	---- 公式：P05因為[EOLR]空白，所以空白
-	[PPH] = 0.0,
+	[PPH] = NULL,
 
 	lm.Status,
 	[GSD Status] = lm.TimeStudyStatus,
@@ -1966,7 +1966,7 @@ select distinct
 	---- 公式: [Total Cycle Time] / [Current # of Optrs]
 	[Avg. Cycle Time] = 1.0 * lm.TotalCycleTime / lm.SewerManpower,
 
-	[CPU / PC] = s.CPU,
+	[CPU / PC] = lm.StyleCPU,
 	[No. of Hours] = lm.Workhour,
 	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
 	[Daily Demand / Shift] = ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour,
