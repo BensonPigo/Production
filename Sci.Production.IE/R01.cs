@@ -1777,7 +1777,7 @@ select distinct
 
 	[Current # of Optrs] = Cast( lm.SewerManpower as int),
 
-	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = ,0 ,( 3600 * lm.SewerManpower ) / lm.TotalGSDTime ),
+	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = 0,0 ,( 3600 * lm.SewerManpower ) / lm.TotalGSDTime ),
 
 	---- 公式：P05沒有TotalCycle，所以用GSD
 	[Takt Time] = IIF(lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.WorkHour = 0 ,0 ,( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)),
