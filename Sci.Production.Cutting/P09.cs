@@ -13,6 +13,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -332,7 +333,6 @@ ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_Si
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
-            this.Sorting();
             this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
             this.gridSpreadingFabric.AutoResizeColumns();
         }
@@ -441,18 +441,6 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             bool hasHistory = this.dtsHistory[0].AsEnumerable().Any() || this.dtsHistory[1].AsEnumerable().Any() || this.dtsHistory[2].AsEnumerable().Any();
             this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
-        }
-
-        private void Sorting()
-        {
-            this.detailgrid.ValidateControl();
-            if (this.CurrentDetailData == null)
-            {
-                return;
-            }
-
-            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
-            dv.Sort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
         }
 
         /// <inheritdoc/>
@@ -1144,6 +1132,28 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dtWorkOrderForOutput_Distribute, string.Empty, sqlInsertDistribute, out DataTable dtInsertDistribute)))
             {
                 return result;
+            }
+            #endregion
+
+            #region 回寫Orders CutInLine,CutOffLine
+
+            StringBuilder updatesql = new StringBuilder();
+            string cutInLine, cutOffLine;
+
+            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+
+            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
+
+            updatesql.AppendLine($@"UPDATE Orders set CutInLine = iif('{cutInLine}' = '',null,'{cutInLine}'),CutOffLine =  iif('{cutOffLine}' = '',null,'{cutOffLine}') where POID = '{this.CurrentMaintain["ID"]}';");
+
+            DualResult upResult;
+
+            if (!MyUtility.Check.Empty(updatesql.ToString()))
+            {
+                if (!(upResult = DBProxy.Current.Execute(null, updatesql.ToString())))
+                {
+                    return upResult;
+                }
             }
             #endregion
 

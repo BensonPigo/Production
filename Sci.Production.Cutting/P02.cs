@@ -234,7 +234,6 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()))); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-            this.Sorting();
         }
 
         private void GetAllDetailData()
@@ -284,7 +283,10 @@ ORDER BY
 
             foreach (DataRow dr in this.dt_SizeRatio.Rows)
             {
-                dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                }
             }
 
             // set Size Ratio data source
@@ -472,18 +474,6 @@ ORDER BY
             }
         }
 
-        private void Sorting()
-        {
-            this.detailgrid.ValidateControl();
-            if (this.CurrentDetailData == null)
-            {
-                return;
-            }
-
-            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
-            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
-        }
-
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
@@ -544,10 +534,6 @@ ORDER BY
 
             // 刪除 SizeRatio 之後重算 ConsPC
             BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, CuttingForm.P02);
-
-            // 計算CutInLine、CutOffLine
-            this.CurrentMaintain["CutForPlanningInline"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
-            this.CurrentMaintain["CutForPlanningOffLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null);
 
             return base.ClickSaveBefore();
         }
@@ -639,28 +625,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_PatternPanel, string.Empty, sqlInsertPatternPanel, out DataTable dtInsertPatternPanel)))
             {
                 return result;
-            }
-            #endregion
-
-            #region 回寫Orders CutInLine,CutOffLine
-
-            StringBuilder updatesql = new StringBuilder();
-            string cutInLine, cutOffLine;
-
-            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            updatesql.AppendLine($@"UPDATE Orders set CutInLine = iif('{cutInLine}' = '',null,'{cutInLine}'),CutOffLine =  iif('{cutOffLine}' = '',null,'{cutOffLine}') where POID = '{this.CurrentMaintain["ID"]}';");
-
-            DualResult upResult;
-
-            if (!MyUtility.Check.Empty(updatesql.ToString()))
-            {
-                if (!(upResult = DBProxy.Current.Execute(null, updatesql.ToString())))
-                {
-                    return upResult;
-                }
             }
             #endregion
 
@@ -996,7 +960,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 var tmpKey = MyUtility.Convert.GetLong(dr["tmpKey"]);
 
                 this.dt_SizeRatio.AsEnumerable()
-                .Where(o => MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
+                .Where(o => o.RowState != DataRowState.Deleted && MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
                 .ToList()
                 .ForEach(o =>
                 {
@@ -1129,7 +1093,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         }
         #endregion
 
-        #region 右邊Size Ratio表格相關(舊方法，先保留，改用共用)
+        #region 右邊Size Ratio表格相關
 
         /// <summary>
         /// SizeRatio 表格個欄位計算Total Cut Qty，Layer使用自己身上的就好
@@ -1156,7 +1120,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             this.OnRefreshClick();
             AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
             this.OnRefreshClick();
-            this.Sorting();  // 避免順序亂掉
         }
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
