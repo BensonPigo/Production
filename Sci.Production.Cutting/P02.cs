@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
+using Button = Sci.Win.UI.Button;
 
 namespace Sci.Production.Cutting
 {
@@ -470,7 +471,7 @@ ORDER BY
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = !this.Text.Contains("History") && this.GetWorkType() == "1" && !this.EditMode;
+                this.btnImportMarker.Enabled = !this.Text.Contains("History") && !this.EditMode;
             }
         }
 
