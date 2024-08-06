@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,9 +43,10 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
-        public static string GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
+        public static ResultInfo GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
         {
             WebApiBaseResult webApiBaseResult;
+            string errorMsg = string.Empty;
             using (TransactionScope transactionScope = new TransactionScope())
             {
                 try
@@ -56,25 +58,25 @@ namespace Sci.Production.CallPmsAPI
                         transactionScope.Dispose();
                         if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
                         {
-                            MyUtility.Msg.WarningBox(webApiBaseResult.responseContent);
+                            errorMsg = webApiBaseResult.responseContent;
                         }
                         else
                         {
-                            MyUtility.Msg.WarningBox(webApiBaseResult.exception.ToString());
+                            errorMsg = webApiBaseResult.exception.ToString();
                         }
 
-                        return string.Empty;
+                        return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
                     }
 
                     string response = webApiBaseResult.responseContent;
                     transactionScope.Complete();
 
-                    return response;
+                    return new ResultInfo() { Result = errorMsg, ResultDT = response };
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     transactionScope.Dispose();
-                    return string.Empty;
+                    return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
                 }
             }
         }

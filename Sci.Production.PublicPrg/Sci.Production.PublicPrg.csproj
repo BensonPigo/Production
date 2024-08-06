@@ -132,8 +132,9 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
-    <Reference Include="Sci.Production.CallPmsAPI">
-      <HintPath>..\Sci.Production.CallPmsAPI\bin\Debug\Sci.Production.CallPmsAPI.dll</HintPath>
+    <Reference Include="Sci.Production.CallPmsAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.Production.CallPmsAPI.dll</HintPath>
     </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
