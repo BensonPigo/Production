@@ -96,6 +96,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.AutoScroll = true;
+            this.masterpanel.AutoSize = true;
             this.masterpanel.Controls.Add(this.btnEdit);
             this.masterpanel.Controls.Add(this.btnImportMarkerLectra);
             this.masterpanel.Controls.Add(this.btnDownload);
@@ -157,13 +159,15 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.AutoScroll = true;
+            this.detailbtm.AutoSize = true;
             this.detailbtm.Controls.Add(this.btnToExcel);
             this.detailbtm.Controls.Add(this.btnQtyBreakdown);
             this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
             this.detailbtm.Controls.Add(this.btnCutPartsCheck);
             this.detailbtm.Controls.Add(this.btnAutoRef);
-            this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(1280, 41);
+            this.detailbtm.Location = new System.Drawing.Point(0, 617);
+            this.detailbtm.Size = new System.Drawing.Size(1280, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -207,6 +211,7 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.numCons);
             this.panel1.Controls.Add(this.splitContainer2);
             this.panel1.Controls.Add(this.numUnitCons);
