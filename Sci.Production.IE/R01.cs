@@ -312,13 +312,14 @@ namespace Sci.Production.IE
             }
 
             //excel.Cells.EntireColumn.AutoFit();
+            excel.ActiveWorkbook.Worksheets[1].Columns["A"].ColumnWidth = 10;
             excel.ActiveWorkbook.Worksheets[1].Columns["P"].ColumnWidth = 30;
             excel.ActiveWorkbook.Worksheets[2].Columns["K"].ColumnWidth = 20;
             excel.ActiveWorkbook.Worksheets[2].Columns["L"].ColumnWidth = 20;
             excel.ActiveWorkbook.Worksheets[2].Columns["M"].ColumnWidth = 30;
             excel.ActiveWorkbook.Worksheets[2].Columns["N"].ColumnWidth = 30;
 
-            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[2];
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)excel.ActiveWorkbook.Worksheets[1];
             worksheet.get_Range("M:M").WrapText = false;
             worksheet.get_Range("N:N").WrapText = false;
             this.HideWaitMessage();
