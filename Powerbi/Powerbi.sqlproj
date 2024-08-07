@@ -243,6 +243,8 @@
     <Build Include="dbo\Tables\P_MonthlySewingOutputSummary.sql" />
     <Build Include="dbo\Tables\P_InventoryStockListReport.sql" />
     <Build Include="dbo\Tables\P_RecevingInfoTrackingSummary.sql" />
+    <Build Include="dbo\Tables\P_MaterialLocationIndex.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_MaterialLocationIndex.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
