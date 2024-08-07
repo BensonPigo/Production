@@ -1191,8 +1191,8 @@ select
 	Operation = Operation.Val,
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
-	CycleTime = NULL,
-	Eff= NULL,
+	CycleTime = Cast( NULL as decimal),
+	Eff= Cast( NULL as decimal),
     t.IsFrom
 from #tmp t
 OUTER APPLY(
@@ -1783,10 +1783,10 @@ select distinct
 	[Takt Time] = IIF(lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.WorkHour = 0 ,0 ,( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
-	[Total Cycle Time] = NULL,
+	[Total Cycle Time] = Cast( NULL as decimal),
 	
 	---- 公式: P05沒有TotalCycle，所以為0
-	[Avg. Cycle Time] = NULL,
+	[Avg. Cycle Time] = Cast( NULL as decimal),
 
 	[CPU / PC] = lm.StyleCPU,
 	[No. of Hours] = lm.Workhour,
@@ -1797,10 +1797,10 @@ select distinct
 	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
 
 	---- 公式：P05沒有Cycle，所以為0
-	[EOLR] = NULL,
+	[EOLR] = Cast( NULL as decimal),
 
 	---- P05/P06呈現空白
-	[Efficiency %] = NULL ,
+	[Efficiency %] = Cast( NULL as decimal) ,
 
 	---- P05 公式：P05沒有TotalCycle，所以用GSD
 	[Line Balancing %] = IIF( lm.HighestGSDTime = 0 or lm.SewerManpower = 0 ,0 , lm.TotalGSDTime / lm.HighestGSDTime / lm.SewerManpower * 100 ),
@@ -1822,7 +1822,7 @@ select distinct
                         ),
 	
 	---- 公式：P05因為[EOLR]空白，所以空白
-	[PPH] = NULL,
+	[PPH] = Cast( NULL as decimal),
 
 	lm.Status,
 	[GSD Status] = lm.TimeStudyStatus,
