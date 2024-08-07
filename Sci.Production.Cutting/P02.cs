@@ -235,6 +235,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()))); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.detailgrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            this.Sorting();
         }
 
         private void GetAllDetailData()
@@ -475,6 +476,18 @@ ORDER BY
             }
         }
 
+        private void Sorting()
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+        }
+
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
@@ -482,7 +495,9 @@ ORDER BY
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.SuspendBinding();
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.ResumeBinding();
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion

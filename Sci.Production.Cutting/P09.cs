@@ -333,6 +333,7 @@ ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_Si
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
+            this.Sorting();
             this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
             this.gridSpreadingFabric.AutoResizeColumns();
         }
@@ -443,6 +444,18 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
         }
 
+        private void Sorting()
+        {
+            this.detailgrid.ValidateControl();
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+        }
+
         /// <inheritdoc/>
         protected override void ClickEditAfter()
         {
@@ -450,7 +463,9 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.SuspendBinding();
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.ResumeBinding();
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
@@ -1135,25 +1150,14 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             }
             #endregion
 
-            #region 回寫Orders CutInLine,CutOffLine
-
-            StringBuilder updatesql = new StringBuilder();
-            string cutInLine, cutOffLine;
-
-            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            updatesql.AppendLine($@"UPDATE Orders set CutInLine = iif('{cutInLine}' = '',null,'{cutInLine}'),CutOffLine =  iif('{cutOffLine}' = '',null,'{cutOffLine}') where POID = '{this.CurrentMaintain["ID"]}';");
-
-            DualResult upResult;
-
-            if (!MyUtility.Check.Empty(updatesql.ToString()))
+            #region 回寫Orders CutInLine, CutOffLine
+            var maxEstCutDate = this.DetailDatas.Max(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+            var minEstCutDate = this.DetailDatas.Min(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+            string sqlcmdOrders = $@"UPDATE Orders SET CutInLine = @CutInLine, CutOffLine = @CutOffLine WHERE POID = '{this.CurrentMaintain["ID"]}'";
+            result = DBProxy.Current.ExecuteEx(sqlcmdOrders, "CutInLine", minEstCutDate, "CutOffLine", maxEstCutDate);
+            if (!result)
             {
-                if (!(upResult = DBProxy.Current.Execute(null, updatesql.ToString())))
-                {
-                    return upResult;
-                }
+                return result;
             }
             #endregion
 
