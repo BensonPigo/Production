@@ -65,6 +65,10 @@ namespace Sci.Production.Cutting
             this.SetupCombobox();
 
             // 綁定 DataSource 後加事件
+            this.gridOriginalCutRef.CellFormatting += new DataGridViewCellFormattingEventHandler(this.DataGridView_CellFormatting);
+            this.gridCurrentCutRef.CellFormatting += new DataGridViewCellFormattingEventHandler(this.DataGridView_CellFormatting);
+            this.gridRemoveList.CellFormatting += new DataGridViewCellFormattingEventHandler(this.DataGridView_CellFormatting);
+
             this.AddRowEnterEvent();
             this.Cal3TTLQty();
         }
@@ -83,6 +87,17 @@ namespace Sci.Production.Cutting
         {
             MyUtility.Tool.SetupCombox(this.cmbOriginalCutRef, 1, this.dtAlloriginalCutref);
             MyUtility.Tool.SetupCombox(this.cmbCurrentCutRef, 1, this.dtAllcurrentCutref);
+        }
+
+        private void DataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            DataGridView dgv = sender as DataGridView;
+
+            if (dgv.Rows[e.RowIndex].Cells[e.ColumnIndex].Selected)
+            {
+                e.CellStyle.SelectionBackColor = e.CellStyle.BackColor;
+                e.CellStyle.SelectionForeColor = e.CellStyle.ForeColor;
+            }
         }
 
         private void AddRowEnterEvent()
