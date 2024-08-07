@@ -1850,7 +1850,7 @@ DEALLOCATE CURSOR_
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode && this.IsSupportEdit;
+                this.btnImportMarker.Enabled = !this.EditMode && this.IsSupportEdit;
             }
         }
 
@@ -1874,6 +1874,26 @@ DEALLOCATE CURSOR_
             base.ClickUndo();
             this.OnRefreshClick();
         }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            this.OnRefreshClick();
+        }
+
+        private void P09_SizeChanged(object sender, EventArgs e)
+        {
+            if (this.Width > 1252)
+            {
+                SetControlFontSize(this.tableLayoutPanel_Button1, 10);
+                SetControlFontSize(this.tableLayoutPanel_Button2, 10);
+            }
+            else
+            {
+                SetControlFontSize(this.tableLayoutPanel_Button1, 9);
+                SetControlFontSize(this.tableLayoutPanel_Button2, 9);
+            }
+        }
+
         #endregion
 
         #region 自動 編碼 / 分配

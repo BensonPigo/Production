@@ -3066,6 +3066,14 @@ ORDER BY FabricPanelCode,PatternPanel
                 dtTarget.ImportRowAdded(ddr);
             }
         }
+
+        public static void SetControlFontSize(Control parent, float fontSize)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                control.Font = new Font(control.Font.FontFamily, fontSize);
+            }
+        }
         #endregion
 
         #region CutPartCheck
