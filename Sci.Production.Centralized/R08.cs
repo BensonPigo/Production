@@ -383,6 +383,7 @@ select b.ID
 	,s.SeasonID
 	,s.CPU
 	,s.ApparelType
+	,s.FabricType
 	,s.Construction
 	,WorkHour = SUM(b.WorkHour)
 	,InlineQty = SUM(b.InlineQty)
@@ -398,7 +399,7 @@ where 1=1
 {detailQuery}
 
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
-	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.Construction
+	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction
 
 
 ---- 2. 根據Sewing的群組條件，挑出可以拿來篩選Line Mapping的欄位
@@ -408,7 +409,6 @@ select DISTINCT b.StyleUKey
 	,a.SewingLineID
 	,a.Team
 	,b.ComboType
-	,a.Manpower
 INTO #BaseData
 from #SewingOutput a
 inner join #SewingOutput_Detail b on a.ID = b.ID
@@ -472,7 +472,6 @@ from AutomatedLineMapping lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
-	AND a.Manpower = lm.SewerManpower
 )
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
@@ -566,16 +565,28 @@ INTO #P03Rank
 FROM PhaseRankedTableP03
 WHERE RowNum = 1
 
+---- P05必須與P06的SewerManpower一致
 ;WITH PhaseRankedTableP05 AS (
 	select 
-        *,
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType ORDER BY 
+        maxVer.*,
+        ROW_NUMBER() OVER (PARTITION BY maxVer.StyleUKey,maxVer.FactoryID,maxVer.SewingLineID,maxVer.Team,maxVer.ComboType ORDER BY 
             CASE 
-                WHEN Phase = 'Prelim' THEN 2
+                WHEN maxVer.Phase = 'Prelim' THEN 2
                 ELSE 1
             END DESC) AS RowNum
-	from #P05MaxVer
-	where Phase IN ('Prelim','Initial')
+	from #P05MaxVer maxVer
+	inner join AutomatedLineMapping p05 on maxVer.ID = p05.ID
+	where maxVer.Phase IN ('Prelim','Initial')
+	and exists(
+		select p06.SewerManpower
+		from #AfterData a
+		inner join LineMappingBalancing p06 on a.ID = p06.ID
+		where a.SourceTable='IE P06' 
+			and a.StyleUKey = maxVer.StyleUKey
+			and a.FactoryID = maxVer.FactoryID  
+			and a.ComboType = maxVer.ComboType  
+			and p06.SewerManpower = p05.SewerManpower
+	)
 )
 
 SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
@@ -760,7 +771,7 @@ select
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
 left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
-left join Reason r2 on r2.ReasonTypeID= 'Fabric_Kind' and r2.ID = b.ApparelType
+left join Reason r2 on r2.ReasonTypeID= 'Fabric_Kind' and r2.ID = b.FabricType
 left join DropDownList ddl on ddl.Type= 'StyleConstruction' and ddl.ID = b.Construction
 left join SewingReason sr on  sr.ID = a.SewingReasonIDForTypeIC and sr.Type='IC'
 Outer Apply(
