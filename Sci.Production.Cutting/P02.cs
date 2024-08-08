@@ -1318,6 +1318,34 @@ order by p.EditDate desc
             base.ClickUndo();
             this.OnRefreshClick();
         }
+
+        private void P02_SizeChanged(object sender, EventArgs e)
+        {
+            Font f = new Font(this.btnBatchAssign.Font.FontFamily, 9);
+            if (this.Width > 1252)
+            {
+                f = new Font(this.btnBatchAssign.Font.FontFamily, 10);
+            }
+
+            this.btnBatchAssign.Font = f;
+            this.btnImportMarker.Font = f;
+            this.btnDownload.Font = f;
+            this.btnImportMarkerLectra.Font = f;
+            this.btnEdit.Font = f;
+            this.btnCutPartsCheck.Font = f;
+            this.btnCutPartsCheckSummary.Font = f;
+            this.btnQtyBreakdown.Font = f;
+            this.btnToExcel.Font = f;
+            this.refresh.Font = f;
+        }
+
+        public void SetControlFontSize(Control parent, float fontSize)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                control.Font = new Font(control.Font.FontFamily, fontSize);
+            }
+        }
     }
 #pragma warning restore SA1600 // Elements should be documented
 }
