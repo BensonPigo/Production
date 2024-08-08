@@ -38,6 +38,7 @@ namespace Sci.Production.Shipping
         private DateTime? FBDate_Ori;
         public DateTime? newSOCFMDate;
         public string newSOCFMDateCmd;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// ListGMTBooking_Detail
@@ -290,6 +291,12 @@ $" where p.INVNo = '{this.masterID}'");
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             base.OnDetailEntered();
 
             if (MyUtility.Check.Seek($@"
@@ -518,6 +525,9 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Today;
@@ -2865,6 +2875,25 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnMercuryShipment_Click(object sender, EventArgs e)
         {
             new P05_MercuryPostScanShipment(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

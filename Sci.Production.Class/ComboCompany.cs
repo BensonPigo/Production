@@ -30,15 +30,15 @@ namespace Sci.Production.Class
             this.InitializeComponent();
         }
 
-        private bool isOrderCompany = false;
-        private bool junk = false;
+        private bool? isOrderCompany = null;
+        private bool? junk = null;
 
         /// <summary>
         /// 是否為訂單公司別
         /// </summary>
         [Category("Custom Properties")]
         [Description("是否為訂單公司別")]
-        public bool IsOrderCompany
+        public bool? IsOrderCompany
         {
             get
             {
@@ -56,7 +56,7 @@ namespace Sci.Production.Class
         /// Junk
         /// </summary>
         [Category("Custom Properties")]
-        public bool Junk
+        public bool? Junk
         {
             get
             {
@@ -77,24 +77,29 @@ namespace Sci.Production.Class
                 return;
             }
 
+            string where = string.Empty;
+            List<SqlParameter> listPar = new List<SqlParameter>();
+            if (this.isOrderCompany != null)
+            {
+                where += @" AND IsOrderCompany = @IsOrderCompany";
+                listPar.Add(new SqlParameter("@IsOrderCompany", SqlDbType.Bit) { Value = this.IsOrderCompany });
+            }
+
+            if (this.junk != null)
+            {
+                where += @" AND Junk = @Junk";
+                listPar.Add(new SqlParameter("@Junk", SqlDbType.Bit) { Value = this.Junk });
+            }
+
             string sqlcmd = $@"
-SELECT ID = 0, NameEN = ''
-UNION ALL
 SELECT
     Company.ID
    ,Company.NameEN
 FROM Company
 WHERE 1 = 1
-AND IsOrderCompany = @IsOrderCompany
-AND Junk = @Junk
+{where}
 ORDER BY ID ASC
 ";
-            List<SqlParameter> listPar = new List<SqlParameter>
-            {
-                new SqlParameter("@IsOrderCompany", SqlDbType.Bit) { Value = this.IsOrderCompany },
-                new SqlParameter("@Junk", SqlDbType.Bit) { Value = this.Junk },
-            };
-
             DualResult result = DBProxy.Current.Select(null, sqlcmd, listPar, out DataTable dt);
             if (!result)
             {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelNo = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
@@ -78,7 +79,7 @@
             this.txtcountry = new Sci.Production.Class.Txtcountry();
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.comboCompany1 = new Sci.Production.Class.ComboCompany();
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
             this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -819,14 +820,15 @@
             this.comboCompany1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCompany1.FormattingEnabled = true;
-            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsOrderCompany = null;
             this.comboCompany1.IsSupportUnselect = true;
-            this.comboCompany1.Junk = false;
+            this.comboCompany1.Junk = null;
             this.comboCompany1.Location = new System.Drawing.Point(147, 28);
             this.comboCompany1.Name = "comboCompany1";
             this.comboCompany1.OldText = "";
             this.comboCompany1.Size = new System.Drawing.Size(214, 24);
             this.comboCompany1.TabIndex = 87;
+            this.comboCompany1.SelectedIndexChanged += new System.EventHandler(this.ComboCompany1_SelectedIndexChanged);
             // 
             // label5
             // 

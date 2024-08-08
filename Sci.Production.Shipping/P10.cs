@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         private DataTable plData;
         private DataTable dtDeleteGBHistory;
         private DataSet allData = new DataSet();
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P10
@@ -268,6 +269,12 @@ group by    p.INVNo
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             base.OnDetailEntered();
             this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && Prgs.GetAuthority(Env.User.UserID, "P10. Ship Plan", "CanEdit");
             this.SumData();
@@ -519,6 +526,9 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
@@ -2045,6 +2055,26 @@ inner join #tmp t on t.ID = pd.ID
                 return true;
             }
             #endregion
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.plData.Clear();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

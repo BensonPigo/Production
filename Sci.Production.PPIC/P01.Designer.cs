@@ -3712,9 +3712,9 @@
             this.comboCompany1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCompany1.FormattingEnabled = true;
-            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsOrderCompany = null;
             this.comboCompany1.IsSupportUnselect = true;
-            this.comboCompany1.Junk = false;
+            this.comboCompany1.Junk = null;
             this.comboCompany1.Location = new System.Drawing.Point(328, 98);
             this.comboCompany1.Name = "comboCompany1";
             this.comboCompany1.OldText = "";

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelNo = new Sci.Win.UI.Label();
             this.labelSP = new Sci.Win.UI.Label();
             this.labelStyle = new Sci.Win.UI.Label();
@@ -66,7 +67,7 @@
             this.dateCartonEstBooking = new Sci.Win.UI.DateBox();
             this.label2 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.comboCompany1 = new Sci.Production.Class.ComboCompany();
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
             this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
@@ -634,9 +635,9 @@
             this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboCompany1.FormattingEnabled = true;
-            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsOrderCompany = null;
             this.comboCompany1.IsSupportUnselect = true;
-            this.comboCompany1.Junk = false;
+            this.comboCompany1.Junk = null;
             this.comboCompany1.Location = new System.Drawing.Point(112, 100);
             this.comboCompany1.Name = "comboCompany1";
             this.comboCompany1.OldText = "";

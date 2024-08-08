@@ -184,6 +184,12 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             base.OnDetailEntered();
             if (!this.EditMode)
             {
@@ -488,6 +494,9 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.DoNewAfter();
         }

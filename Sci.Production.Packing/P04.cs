@@ -45,6 +45,7 @@ namespace Sci.Production.Packing
         private string sqlCmd = string.Empty;
         private string filter = string.Empty;
         private string masterID;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P04
@@ -77,6 +78,12 @@ namespace Sci.Production.Packing
         /// </summary>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             base.OnDetailEntered();
 
             #region displayPurchaseCtn
@@ -155,17 +162,18 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 if (this.EditMode)
                 {
-                    // 1.檢查表頭
-                    if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
-                    {
-                        MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
-                        return;
-                    }
-
                     this.dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != this.dr["OrderID"].ToString())
                     {
+                        // 1.檢查表頭
+                        if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                        {
+                            this.ClearGridRowData(this.dr);
+                            MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                            return;
+                        }
+
                         // sql參數
                         IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
                         {
@@ -537,6 +545,9 @@ order by os.Seq", dr["OrderID"].ToString(),
         /// </summary>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex = -1;
             base.ClickNewAfter();
             this.txtshipmode.ReadOnly = false;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
@@ -1632,6 +1643,25 @@ where InvA.OrderID = '{0}'
                         this.detailgrid.Rows[index].Cells[15].Style.BackColor = Color.Red;
                     }
                 }
+            }
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
             }
         }
     }

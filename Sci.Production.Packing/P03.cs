@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using System.Transactions;
 using System.Linq;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
-using Sci.Production.Automation;
-using System.Data.Common;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
@@ -52,6 +49,7 @@ namespace Sci.Production.Packing
         private int detailgridSort = 0;
         private string formParameter = string.Empty;
         private bool isSingleShipment = true;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// ComboBox1_RowSource
@@ -265,6 +263,12 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         /// </summary>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             base.OnDetailEntered();
 
             this.labelCofirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
@@ -455,13 +459,6 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
             {
                 if (this.EditMode)
                 {
-                    // 1.檢查表頭
-                    if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
-                    {
-                        MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
-                        return;
-                    }
-
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
                     // 檢查箱子如果有送到Clog則不可以被修改
@@ -477,6 +474,23 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
+                        // 1.檢查表頭
+                        if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                        {
+                            MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                            dr["OrderID"] = string.Empty;
+                            dr["OrderShipmodeSeq"] = string.Empty;
+                            dr["Article"] = string.Empty;
+                            dr["Color"] = string.Empty;
+                            dr["SizeCode"] = string.Empty;
+                            dr["StyleID"] = string.Empty;
+                            dr["CustPONo"] = string.Empty;
+                            dr["SeasonID"] = string.Empty;
+                            dr["Factory"] = string.Empty;
+                            dr.EndEdit();
+                            return;
+                        }
+
                         string sqlcmd = $@"
 Select  o.ID
         , o.SeasonID
@@ -1038,6 +1052,9 @@ order by os.Seq",
         /// </summary>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["Type"] = "B";
@@ -2498,6 +2515,25 @@ The rest of the data has been updated successfully!'
         private void BtnCustSystem_Click(object sender, EventArgs e)
         {
             new P03_Mercury(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

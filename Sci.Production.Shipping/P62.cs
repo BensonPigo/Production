@@ -6,12 +6,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
     public partial class P62 : Sci.Win.Tems.Input6
     {
+        private int previousCompanySelectIndex = -1;
+
         /// <inheritdoc/>
         public P62(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -27,6 +30,12 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+            }
+
             this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
 
             this.ReCalculat();
@@ -135,6 +144,9 @@ where ked2.id = '{masterID}'
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             this.CurrentMaintain["Status"] = "New";
             this.InitReadOnly(false);
             base.ClickNewAfter();
@@ -419,6 +431,25 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     this.CurrentMaintain["ExportPort"] = dr["ID"];
                 }
+            }
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
             }
         }
     }

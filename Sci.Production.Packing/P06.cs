@@ -31,6 +31,7 @@ namespace Sci.Production.Packing
         private DualResult result;
         private DialogResult buttonResult;
         private DataTable selectedData;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P06
@@ -843,7 +844,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     DataTable orderData;
-                    string sqlCmd = "select ID, StyleID, SeasonID, CustPONo, LocalOrder from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid";
+                    string sqlCmd = "select ID, StyleID, SeasonID, CustPONo, LocalOrder, OrderCompanyID from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid";
 
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                     if (!result)
@@ -877,6 +878,8 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                                 MyUtility.Msg.WarningBox("This SP# is not local order!");
                                 return;
                             }
+
+                            this.comboCompany1.SelectedValue = orderData.Rows[0]["OrderCompanyID"];
                         }
                     }
                 }
