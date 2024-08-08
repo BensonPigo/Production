@@ -16,6 +16,8 @@ CREATE TABLE [dbo].[WorkOrderForOutput_SpreadingFabric] (
     [MergeFabYards]   NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_MergeFabYards] DEFAULT ((0)) NOT NULL,
     [DamageYards]     NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_DamageYards] DEFAULT ((0)) NOT NULL,
     [ActCutends]      NUMERIC (11, 2) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_ActCutends] DEFAULT ((0)) NOT NULL,
+	[AddDate]      DATETIME  NULL,
+	[AddName]      VARCHAR(10) CONSTRAINT [DF_WorkOrderForOutput_SpreadingFabric_AddName] DEFAULT (('')) NOT NULL,
     CONSTRAINT [PK_WorkOrderForOutput_SpreadingFabric] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
