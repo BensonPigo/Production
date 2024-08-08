@@ -304,7 +304,7 @@ namespace Sci.Production.Cutting
                         // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
                         if (MyUtility.Check.Empty(fabricPanelCode))
                         {
-                            continue;
+                            throw new Exception("Panel Code can't be empty.");
                         }
 
                         // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
@@ -369,7 +369,7 @@ namespace Sci.Production.Cutting
                                     // 計算剩餘英吋數、碼等等
                                     decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                                     string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
-                                    markerLength = $"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2";
+                                    markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2""";
                                     layerYDS += layerInch * this.inchToYdsRate;
                                     break;
                                 }
