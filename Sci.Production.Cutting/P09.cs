@@ -1168,10 +1168,16 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             this.SentChangeDataToGuozi_AGV(dtUpdateDistribute);
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, cutRefToEmptyUkey, dtDeleteDistribute);
 
-            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                dtDeleteSizeRatio.AsEnumerable().Any() || dtUpdateSizeRatio.AsEnumerable().Any() || dtInsertSizeRatio.AsEnumerable().Any() ||
-                dtDeleteDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() ||
-                dtDeletePatternPanel.AsEnumerable().Any() || dtInsertPatternPanel.AsEnumerable().Any();
+            this.ReUpdateP20 =
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(w => w.RowState != DataRowState.Unchanged) ||
+                (dtDeleteSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtUpdateSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtInsertSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtDeleteDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtUpdateDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtInsertDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtDeletePatternPanel?.AsEnumerable().Any() ?? false) ||
+                (dtInsertPatternPanel?.AsEnumerable().Any() ?? false);
 
             return base.ClickSavePost();
         }
