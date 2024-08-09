@@ -57,6 +57,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_DailyRTLStatusByLineByStyle,
             P_InventoryStockListReport,
             P_RecevingInfoTrackingSummary,
+            P_MachineMasterListByDays,
         }
 
         /// <summary>
@@ -400,6 +401,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_RecevingInfoTrackingSummary:
                         result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
+                    case ListName.P_MachineMasterListByDays:
+                         result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
