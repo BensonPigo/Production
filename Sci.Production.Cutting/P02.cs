@@ -15,6 +15,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
+using Button = Sci.Win.UI.Button;
 
 namespace Sci.Production.Cutting
 {
@@ -284,7 +285,10 @@ ORDER BY
 
             foreach (DataRow dr in this.dt_SizeRatio.Rows)
             {
-                dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                if (dr.RowState != DataRowState.Deleted)
+                {
+                    dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                }
             }
 
             // set Size Ratio data source
@@ -468,7 +472,7 @@ ORDER BY
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = !this.Text.Contains("History") && this.GetWorkType() == "1" && !this.EditMode;
+                this.btnImportMarker.Enabled = !this.Text.Contains("History") && !this.EditMode;
             }
         }
 
@@ -491,7 +495,9 @@ ORDER BY
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.SuspendBinding();
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.ResumeBinding();
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
@@ -544,10 +550,6 @@ ORDER BY
 
             // 刪除 SizeRatio 之後重算 ConsPC
             BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, CuttingForm.P02);
-
-            // 計算CutInLine、CutOffLine
-            this.CurrentMaintain["CutForPlanningInline"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
-            this.CurrentMaintain["CutForPlanningOffLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null);
 
             return base.ClickSaveBefore();
         }
@@ -639,28 +641,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_PatternPanel, string.Empty, sqlInsertPatternPanel, out DataTable dtInsertPatternPanel)))
             {
                 return result;
-            }
-            #endregion
-
-            #region 回寫Orders CutInLine,CutOffLine
-
-            StringBuilder updatesql = new StringBuilder();
-            string cutInLine, cutOffLine;
-
-            cutInLine = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            cutOffLine = ((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null) == DBNull.Value ? string.Empty : Convert.ToDateTime(((DataTable)this.detailgridbs.DataSource).Compute("Max(EstCutDate)", null)).ToString("yyyy-MM-dd HH:mm:ss");
-
-            updatesql.AppendLine($@"UPDATE Orders set CutInLine = iif('{cutInLine}' = '',null,'{cutInLine}'),CutOffLine =  iif('{cutOffLine}' = '',null,'{cutOffLine}') where POID = '{this.CurrentMaintain["ID"]}';");
-
-            DualResult upResult;
-
-            if (!MyUtility.Check.Empty(updatesql.ToString()))
-            {
-                if (!(upResult = DBProxy.Current.Execute(null, updatesql.ToString())))
-                {
-                    return upResult;
-                }
             }
             #endregion
 
@@ -996,7 +976,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 var tmpKey = MyUtility.Convert.GetLong(dr["tmpKey"]);
 
                 this.dt_SizeRatio.AsEnumerable()
-                .Where(o => MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
+                .Where(o => o.RowState != DataRowState.Deleted && MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
                 .ToList()
                 .ForEach(o =>
                 {
@@ -1129,7 +1109,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         }
         #endregion
 
-        #region 右邊Size Ratio表格相關(舊方法，先保留，改用共用)
+        #region 右邊Size Ratio表格相關
 
         /// <summary>
         /// SizeRatio 表格個欄位計算Total Cut Qty，Layer使用自己身上的就好
@@ -1156,7 +1136,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             this.OnRefreshClick();
             AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
             this.OnRefreshClick();
-            this.Sorting();  // 避免順序亂掉
         }
 
         private void BtnBatchAssign_Click(object sender, EventArgs e)
@@ -1338,6 +1317,34 @@ order by p.EditDate desc
         {
             base.ClickUndo();
             this.OnRefreshClick();
+        }
+
+        private void P02_SizeChanged(object sender, EventArgs e)
+        {
+            Font f = new Font(this.btnBatchAssign.Font.FontFamily, 9);
+            if (this.Width > 1252)
+            {
+                f = new Font(this.btnBatchAssign.Font.FontFamily, 10);
+            }
+
+            this.btnBatchAssign.Font = f;
+            this.btnImportMarker.Font = f;
+            this.btnDownload.Font = f;
+            this.btnImportMarkerLectra.Font = f;
+            this.btnEdit.Font = f;
+            this.btnCutPartsCheck.Font = f;
+            this.btnCutPartsCheckSummary.Font = f;
+            this.btnQtyBreakdown.Font = f;
+            this.btnToExcel.Font = f;
+            this.refresh.Font = f;
+        }
+
+        public void SetControlFontSize(Control parent, float fontSize)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                control.Font = new Font(control.Font.FontFamily, fontSize);
+            }
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

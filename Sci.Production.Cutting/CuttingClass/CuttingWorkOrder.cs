@@ -304,7 +304,7 @@ namespace Sci.Production.Cutting
                         // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
                         if (MyUtility.Check.Empty(fabricPanelCode))
                         {
-                            continue;
+                            throw new Exception("Panel Code can't be empty.");
                         }
 
                         // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
@@ -342,6 +342,7 @@ namespace Sci.Production.Cutting
                             decimal layerYDS = 0;
                             decimal layerInch = 0;
                             string importPatternPanel = string.Empty;
+                            string markerName = string.Empty;
                             string markerLength = string.Empty;
 
                             Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
@@ -368,7 +369,7 @@ namespace Sci.Production.Cutting
                                     // 計算剩餘英吋數、碼等等
                                     decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                                     string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
-                                    markerLength = $"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2";
+                                    markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2""";
                                     layerYDS += layerInch * this.inchToYdsRate;
                                     break;
                                 }
@@ -394,6 +395,9 @@ namespace Sci.Production.Cutting
                             // 開始找Pattern Panel，起點A 10
                             importPatternPanel = rangeSizeRatio.GetCellValue(1, idxMarker);
 
+                            // 開始找 Marker Name，起點B 10
+                            markerName = rangeSizeRatio.GetCellValue(2, idxMarker);
+
                             // 計算這個Pattern Panel的所有尺寸總和
                             garmentCnt = dicSizeRatio.Sum(s => s.Value);
 
@@ -409,7 +413,7 @@ namespace Sci.Production.Cutting
 
                             nwk.Cons = garmentCnt * consPc; // * wk.Layer; 這邊先不撈DB Layer 資訊, 之後才撈取 * Layer
                             nwk.MarkerLength = markerLength;
-                            nwk.MarkerNo = "001";
+                            nwk.Markername = markerName;
                             nwk.MarkerVersion = "-1";
 
                             workOrders.Add(nwk);
@@ -596,7 +600,14 @@ values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSi
                         new SqlParameter("@consPc", wk.ConsPC),
                         new SqlParameter("@Cons",  wk.Cons),
                     };
-                    string markername = "MK_" + markerSerNo.ToString().PadLeft(3, '0');
+                    string markername = "MK-" + markerSerNo.ToString();
+
+                    // 若能轉成int，代表是excel自動產生的Marker Name，因此套用編碼規則；不能轉代表是User自己手Key的，就不異動了
+                    if (int.TryParse(wk.Markername, out int x))
+                    {
+                        wk.Markername = markername;
+                    }
+
                     markerSerNo++;
 
                     string sqlInsertWorkOrder = $@"
@@ -634,13 +645,13 @@ values
 ,'{wk.SEQ2}'
 ,'{wk.Layer}'
 ,'{wk.Colorid}'
-,'{markername}'
+,'{wk.Markername}'
 ,'{wk.MarkerLength}' --MarkerLength
 ,@consPc --ConsPC
 ,@Cons --Cons
 ,'{wk.Refno}'
 ,'{wk.SCIRefno}'
-,'001'
+,'{wk.MarkerNo}'
 ,'{Env.User.UserID}'
 ,getdate()
 ,'{wk.FabricCombo}'
@@ -3053,6 +3064,14 @@ ORDER BY FabricPanelCode,PatternPanel
                 ddr[GetWorkOrderUkeyName(form)] = 0;
                 ddr["tmpKey"] = currentDetailData["tmpKey"];
                 dtTarget.ImportRowAdded(ddr);
+            }
+        }
+
+        public static void SetControlFontSize(Control parent, float fontSize)
+        {
+            foreach (Control control in parent.Controls)
+            {
+                control.Font = new Font(control.Font.FontFamily, fontSize);
             }
         }
         #endregion

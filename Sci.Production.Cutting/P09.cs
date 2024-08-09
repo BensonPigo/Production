@@ -13,6 +13,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
@@ -462,7 +463,9 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             // 編輯時，將[SORT_NUM]賦予流水號
             int serial = 1;
-            ((DataTable)this.detailgridbs.DataSource).ExtNotDeletedRowsForeach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.SuspendBinding();
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["SORT_NUM"] = serial++);
+            this.detailgridbs.ResumeBinding();
             ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
         #endregion
@@ -1147,6 +1150,17 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             }
             #endregion
 
+            #region 回寫Orders CutInLine, CutOffLine
+            var maxEstCutDate = this.DetailDatas.Max(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+            var minEstCutDate = this.DetailDatas.Min(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
+            string sqlcmdOrders = $@"UPDATE Orders SET CutInLine = @CutInLine, CutOffLine = @CutOffLine WHERE POID = '{this.CurrentMaintain["ID"]}'";
+            result = DBProxy.Current.ExecuteEx(sqlcmdOrders, "CutInLine", minEstCutDate, "CutOffLine", maxEstCutDate);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+
             // sent data to GZ WebAPI
             dtUpdateDistribute.Merge(dtInsertDistribute);
             List<long> listDeleteUkey = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(s => s.RowState == DataRowState.Deleted).Select(s => MyUtility.Convert.GetLong(s["Ukey", DataRowVersion.Original])).ToList();
@@ -1154,10 +1168,16 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             this.SentChangeDataToGuozi_AGV(dtUpdateDistribute);
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, cutRefToEmptyUkey, dtDeleteDistribute);
 
-            this.ReUpdateP20 = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Unchanged).Any() ||
-                dtDeleteSizeRatio.AsEnumerable().Any() || dtUpdateSizeRatio.AsEnumerable().Any() || dtInsertSizeRatio.AsEnumerable().Any() ||
-                dtDeleteDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() || dtUpdateDistribute.AsEnumerable().Any() ||
-                dtDeletePatternPanel.AsEnumerable().Any() || dtInsertPatternPanel.AsEnumerable().Any();
+            this.ReUpdateP20 =
+                ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(w => w.RowState != DataRowState.Unchanged) ||
+                (dtDeleteSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtUpdateSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtInsertSizeRatio?.AsEnumerable().Any() ?? false) ||
+                (dtDeleteDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtUpdateDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtInsertDistribute?.AsEnumerable().Any() ?? false) ||
+                (dtDeletePatternPanel?.AsEnumerable().Any() ?? false) ||
+                (dtInsertPatternPanel?.AsEnumerable().Any() ?? false);
 
             return base.ClickSavePost();
         }
@@ -1840,7 +1860,7 @@ DEALLOCATE CURSOR_
         {
             if (this.btnImportMarker != null)
             {
-                this.btnImportMarker.Enabled = this.GetWorkType() == "1" && !this.EditMode && this.IsSupportEdit;
+                this.btnImportMarker.Enabled = !this.EditMode && this.IsSupportEdit;
             }
         }
 
@@ -1864,6 +1884,26 @@ DEALLOCATE CURSOR_
             base.ClickUndo();
             this.OnRefreshClick();
         }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            this.OnRefreshClick();
+        }
+
+        private void P09_SizeChanged(object sender, EventArgs e)
+        {
+            if (this.Width > 1252)
+            {
+                SetControlFontSize(this.tableLayoutPanel_Button1, 10);
+                SetControlFontSize(this.tableLayoutPanel_Button2, 10);
+            }
+            else
+            {
+                SetControlFontSize(this.tableLayoutPanel_Button1, 9);
+                SetControlFontSize(this.tableLayoutPanel_Button2, 9);
+            }
+        }
+
         #endregion
 
         #region 自動 編碼 / 分配

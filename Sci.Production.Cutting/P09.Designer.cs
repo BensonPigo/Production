@@ -62,12 +62,14 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.tableLayoutPanel_Top2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnImportFromWorkOrderForPlanning = new Sci.Win.UI.Button();
             this.btnExcludeSetting = new Sci.Win.UI.Button();
-            this.displayBoxStyle = new Sci.Win.UI.DisplayBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayBoxSP = new Sci.Win.UI.DisplayBox();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.labelCutplanID = new Sci.Win.UI.Label();
+            this.displayBoxSP = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBoxStyle = new Sci.Win.UI.DisplayBox();
             this.btnBatchAssign = new Sci.Win.UI.Button();
             this.btnImportMarker = new Sci.Win.UI.Button();
             this.btnDownload = new Sci.Win.UI.Button();
@@ -75,14 +77,17 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnAutoRef = new Sci.Win.UI.Button();
             this.btnAutoCut = new Sci.Win.UI.Button();
-            this.btnAllSPDistribute = new Sci.Win.UI.Button();
-            this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
-            this.btnCutPartsCheck = new Sci.Win.UI.Button();
-            this.btnCutPartsCheckSummary = new Sci.Win.UI.Button();
-            this.btnHistory = new Sci.Win.UI.Button();
-            this.btnQtyBreakdown = new Sci.Win.UI.Button();
-            this.btnToExcel = new Sci.Win.UI.Button();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.tableLayoutPanel_Button1 = new System.Windows.Forms.TableLayoutPanel();
+            this.tableLayoutPanel_Button2 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnRefresh = new System.Windows.Forms.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.btnQtyBreakdown = new Sci.Win.UI.Button();
+            this.btnHistory = new Sci.Win.UI.Button();
+            this.btnCutPartsCheckSummary = new Sci.Win.UI.Button();
+            this.btnCutPartsCheck = new Sci.Win.UI.Button();
+            this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
+            this.btnAllSPDistribute = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -111,6 +116,10 @@
             this.cmsSizeRatio.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
             this.panel2.SuspendLayout();
+            this.tableLayoutPanel_Top2.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.tableLayoutPanel_Button1.SuspendLayout();
+            this.tableLayoutPanel_Button2.SuspendLayout();
             this.SuspendLayout();
             // 
             // masterpanel
@@ -121,35 +130,37 @@
             this.masterpanel.Controls.Add(this.btnImportMarker);
             this.masterpanel.Controls.Add(this.btnBatchAssign);
             this.masterpanel.Controls.Add(this.panel2);
-            this.masterpanel.Size = new System.Drawing.Size(937, 67);
+            this.masterpanel.Size = new System.Drawing.Size(685, 67);
             this.masterpanel.Controls.SetChildIndex(this.panel2, 0);
-            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportMarker, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportMarkerLectra, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 67);
-            this.detailpanel.Size = new System.Drawing.Size(937, 547);
+            this.detailpanel.Size = new System.Drawing.Size(685, 491);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gridicon.Location = new System.Drawing.Point(837, 35);
+            this.gridicon.Location = new System.Drawing.Point(585, 35);
             // 
             // refresh
             // 
-            this.refresh.Location = new System.Drawing.Point(1285, 5);
+            this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.refresh.Location = new System.Drawing.Point(974, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
+            this.refresh.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(937, 547);
+            this.detailgridcont.Size = new System.Drawing.Size(685, 491);
             // 
             // detail2
             // 
@@ -166,50 +177,36 @@
             // detail
             // 
             this.detail.Controls.Add(this.panel1);
-            this.detail.Size = new System.Drawing.Size(1372, 655);
+            this.detail.Size = new System.Drawing.Size(1000, 599);
             this.detail.Controls.SetChildIndex(this.detailbtm, 0);
             this.detail.Controls.SetChildIndex(this.panel1, 0);
             this.detail.Controls.SetChildIndex(this.detailcont, 0);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(937, 614);
+            this.detailcont.Size = new System.Drawing.Size(685, 558);
             // 
             // detailbtm
             // 
-            this.detailbtm.Controls.Add(this.btnToExcel);
-            this.detailbtm.Controls.Add(this.btnQtyBreakdown);
-            this.detailbtm.Controls.Add(this.btnHistory);
-            this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
-            this.detailbtm.Controls.Add(this.btnCutPartsCheck);
-            this.detailbtm.Controls.Add(this.btnDistributeThisCutRef);
-            this.detailbtm.Controls.Add(this.btnAllSPDistribute);
-            this.detailbtm.Controls.Add(this.btnAutoCut);
-            this.detailbtm.Controls.Add(this.btnAutoRef);
-            this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(1372, 41);
+            this.detailbtm.Controls.Add(this.tableLayoutPanel_Button2);
+            this.detailbtm.Controls.Add(this.tableLayoutPanel_Button1);
+            this.detailbtm.Location = new System.Drawing.Point(0, 558);
+            this.detailbtm.Size = new System.Drawing.Size(1000, 41);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
             this.detailbtm.Controls.SetChildIndex(this.createby, 0);
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnAutoRef, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnAutoCut, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnAllSPDistribute, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnDistributeThisCutRef, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheck, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheckSummary, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnHistory, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
-            this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.detailbtm.Controls.SetChildIndex(this.tableLayoutPanel_Button1, 0);
+            this.detailbtm.Controls.SetChildIndex(this.tableLayoutPanel_Button2, 0);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1372, 655);
+            this.browse.Size = new System.Drawing.Size(1000, 599);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1380, 684);
+            this.tabs.Size = new System.Drawing.Size(1008, 628);
             // 
             // createby
             // 
@@ -253,9 +250,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(937, 0);
+            this.panel1.Location = new System.Drawing.Point(685, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(435, 614);
+            this.panel1.Size = new System.Drawing.Size(315, 558);
             this.panel1.TabIndex = 4;
             // 
             // numCons
@@ -264,7 +261,7 @@
             this.numCons.DecimalPlaces = 4;
             this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCons.IsSupportEditMode = false;
-            this.numCons.Location = new System.Drawing.Point(247, 102);
+            this.numCons.Location = new System.Drawing.Point(233, 102);
             this.numCons.Name = "numCons";
             this.numCons.NullValue = new decimal(new int[] {
             0,
@@ -272,7 +269,7 @@
             0,
             0});
             this.numCons.ReadOnly = true;
-            this.numCons.Size = new System.Drawing.Size(180, 23);
+            this.numCons.Size = new System.Drawing.Size(78, 23);
             this.numCons.TabIndex = 32;
             this.numCons.Value = new decimal(new int[] {
             0,
@@ -292,7 +289,7 @@
             0,
             0,
             0});
-            this.numConsPC.Size = new System.Drawing.Size(94, 23);
+            this.numConsPC.Size = new System.Drawing.Size(82, 23);
             this.numConsPC.TabIndex = 7;
             this.numConsPC.Value = new decimal(new int[] {
             0,
@@ -319,8 +316,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label11);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
-            this.splitContainer1.Size = new System.Drawing.Size(431, 310);
-            this.splitContainer1.SplitterDistance = 149;
+            this.splitContainer1.Size = new System.Drawing.Size(311, 256);
+            this.splitContainer1.SplitterDistance = 118;
             this.splitContainer1.TabIndex = 31;
             // 
             // label10
@@ -356,12 +353,13 @@
             this.gridDistributeToSP.RowTemplate.Height = 24;
             this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributeToSP.ShowCellToolTips = false;
-            this.gridDistributeToSP.Size = new System.Drawing.Size(429, 130);
+            this.gridDistributeToSP.Size = new System.Drawing.Size(309, 100);
             this.gridDistributeToSP.TabIndex = 28;
             this.gridDistributeToSP.SelectionChanged += new System.EventHandler(this.GridDistributeToSP_SelectionChanged);
             // 
             // cmsDistribute
             // 
+            this.cmsDistribute.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsDistribute.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItemInsertDistribute,
             this.MenuItemDeleteDistribute});
@@ -414,7 +412,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(429, 136);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(309, 111);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric
@@ -422,6 +420,8 @@
             this.gridSpreadingFabric.AllowUserToAddRows = false;
             this.gridSpreadingFabric.AllowUserToDeleteRows = false;
             this.gridSpreadingFabric.AllowUserToResizeRows = false;
+            this.gridSpreadingFabric.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridSpreadingFabric.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSpreadingFabric.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSpreadingFabric.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -437,7 +437,7 @@
             this.gridSpreadingFabric.RowTemplate.Height = 24;
             this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSpreadingFabric.ShowCellToolTips = false;
-            this.gridSpreadingFabric.Size = new System.Drawing.Size(266, 95);
+            this.gridSpreadingFabric.Size = new System.Drawing.Size(147, 95);
             this.gridSpreadingFabric.TabIndex = 26;
             // 
             // label9
@@ -476,6 +476,7 @@
             // 
             // cmsSizeRatio
             // 
+            this.cmsSizeRatio.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItemInsertSizeRatio,
             this.MenuItemDeleteSizeRatio});
@@ -511,7 +512,7 @@
             this.displayBoxTtlDistributeQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxTtlDistributeQty.Location = new System.Drawing.Point(129, 154);
             this.displayBoxTtlDistributeQty.Name = "displayBoxTtlDistributeQty";
-            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(298, 23);
+            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(182, 23);
             this.displayBoxTtlDistributeQty.TabIndex = 22;
             // 
             // label7
@@ -529,7 +530,7 @@
             this.displayBoxTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 128);
             this.displayBoxTotalCutQty.Name = "displayBoxTotalCutQty";
-            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(298, 23);
+            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(182, 23);
             this.displayBoxTotalCutQty.TabIndex = 20;
             // 
             // label6
@@ -544,7 +545,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(229, 105);
+            this.label5.Location = new System.Drawing.Point(215, 105);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(12, 17);
             this.label5.TabIndex = 17;
@@ -566,7 +567,7 @@
             this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
             this.displayBoxDescription.Multiline = true;
             this.displayBoxDescription.Name = "displayBoxDescription";
-            this.displayBoxDescription.Size = new System.Drawing.Size(298, 70);
+            this.displayBoxDescription.Size = new System.Drawing.Size(182, 70);
             this.displayBoxDescription.TabIndex = 14;
             // 
             // displayBoxFabricTypeRefno
@@ -575,7 +576,7 @@
             this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
             this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
-            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(298, 23);
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(182, 23);
             this.displayBoxFabricTypeRefno.TabIndex = 13;
             // 
             // label3
@@ -598,82 +599,129 @@
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.btnImportFromWorkOrderForPlanning);
-            this.panel2.Controls.Add(this.btnExcludeSetting);
-            this.panel2.Controls.Add(this.displayBoxStyle);
-            this.panel2.Controls.Add(this.label1);
-            this.panel2.Controls.Add(this.displayBoxSP);
-            this.panel2.Controls.Add(this.labelCutplanID);
+            this.panel2.Controls.Add(this.tableLayoutPanel_Top2);
+            this.panel2.Controls.Add(this.tableLayoutPanel2);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(937, 35);
+            this.panel2.Size = new System.Drawing.Size(685, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // tableLayoutPanel_Top2
+            // 
+            this.tableLayoutPanel_Top2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel_Top2.AutoSize = true;
+            this.tableLayoutPanel_Top2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel_Top2.ColumnCount = 2;
+            this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Top2.Controls.Add(this.btnImportFromWorkOrderForPlanning, 1, 0);
+            this.tableLayoutPanel_Top2.Controls.Add(this.btnExcludeSetting, 0, 0);
+            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(311, 0);
+            this.tableLayoutPanel_Top2.Name = "tableLayoutPanel_Top2";
+            this.tableLayoutPanel_Top2.RowCount = 1;
+            this.tableLayoutPanel_Top2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_Top2.Size = new System.Drawing.Size(374, 35);
+            this.tableLayoutPanel_Top2.TabIndex = 16;
             // 
             // btnImportFromWorkOrderForPlanning
             // 
+            this.btnImportFromWorkOrderForPlanning.AutoSize = true;
+            this.btnImportFromWorkOrderForPlanning.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnImportFromWorkOrderForPlanning.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(646, 2);
+            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(118, 1);
+            this.btnImportFromWorkOrderForPlanning.Margin = new System.Windows.Forms.Padding(1);
             this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
-            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(290, 32);
-            this.btnImportFromWorkOrderForPlanning.TabIndex = 1;
+            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(255, 33);
+            this.btnImportFromWorkOrderForPlanning.TabIndex = 2;
             this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
             this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
             this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
             // 
             // btnExcludeSetting
             // 
+            this.btnExcludeSetting.AutoSize = true;
+            this.btnExcludeSetting.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnExcludeSetting.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnExcludeSetting.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnExcludeSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnExcludeSetting.Location = new System.Drawing.Point(505, 2);
+            this.btnExcludeSetting.Location = new System.Drawing.Point(1, 1);
+            this.btnExcludeSetting.Margin = new System.Windows.Forms.Padding(1);
             this.btnExcludeSetting.Name = "btnExcludeSetting";
-            this.btnExcludeSetting.Size = new System.Drawing.Size(137, 32);
-            this.btnExcludeSetting.TabIndex = 0;
+            this.btnExcludeSetting.Size = new System.Drawing.Size(115, 33);
+            this.btnExcludeSetting.TabIndex = 1;
             this.btnExcludeSetting.Text = "Exclude Setting";
             this.btnExcludeSetting.UseVisualStyleBackColor = true;
             this.btnExcludeSetting.Click += new System.EventHandler(this.BtnExcludeSetting_Click);
             // 
-            // displayBoxStyle
+            // tableLayoutPanel2
             // 
-            this.displayBoxStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxStyle.Location = new System.Drawing.Point(261, 5);
-            this.displayBoxStyle.Name = "displayBoxStyle";
-            this.displayBoxStyle.Size = new System.Drawing.Size(111, 23);
-            this.displayBoxStyle.TabIndex = 14;
+            this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.tableLayoutPanel2.ColumnCount = 4;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel2.Controls.Add(this.labelCutplanID, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.displayBoxSP, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.label1, 2, 0);
+            this.tableLayoutPanel2.Controls.Add(this.displayBoxStyle, 3, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 2);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(294, 31);
+            this.tableLayoutPanel2.TabIndex = 15;
             // 
-            // label1
+            // labelCutplanID
             // 
-            this.label1.Location = new System.Drawing.Point(190, 5);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 23);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Style";
+            this.labelCutplanID.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.labelCutplanID.Location = new System.Drawing.Point(0, 0);
+            this.labelCutplanID.Name = "labelCutplanID";
+            this.labelCutplanID.Size = new System.Drawing.Size(23, 31);
+            this.labelCutplanID.TabIndex = 2;
+            this.labelCutplanID.Text = "SP";
             // 
             // displayBoxSP
             // 
             this.displayBoxSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayBoxSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxSP.Location = new System.Drawing.Point(76, 5);
+            this.displayBoxSP.Location = new System.Drawing.Point(26, 3);
             this.displayBoxSP.Name = "displayBoxSP";
             this.displayBoxSP.Size = new System.Drawing.Size(111, 23);
             this.displayBoxSP.TabIndex = 12;
             // 
-            // labelCutplanID
+            // label1
             // 
-            this.labelCutplanID.Location = new System.Drawing.Point(5, 5);
-            this.labelCutplanID.Name = "labelCutplanID";
-            this.labelCutplanID.Size = new System.Drawing.Size(68, 23);
-            this.labelCutplanID.TabIndex = 2;
-            this.labelCutplanID.Text = "SP";
+            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label1.Location = new System.Drawing.Point(140, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(36, 31);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Style";
+            // 
+            // displayBoxStyle
+            // 
+            this.displayBoxStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxStyle.Location = new System.Drawing.Point(179, 3);
+            this.displayBoxStyle.Name = "displayBoxStyle";
+            this.displayBoxStyle.Size = new System.Drawing.Size(111, 23);
+            this.displayBoxStyle.TabIndex = 14;
             // 
             // btnBatchAssign
             // 
+            this.btnBatchAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchAssign.Location = new System.Drawing.Point(327, 35);
+            this.btnBatchAssign.Location = new System.Drawing.Point(78, 35);
             this.btnBatchAssign.Name = "btnBatchAssign";
             this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
             this.btnBatchAssign.TabIndex = 2;
@@ -683,8 +731,9 @@
             // 
             // btnImportMarker
             // 
+            this.btnImportMarker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarker.Location = new System.Drawing.Point(441, 35);
+            this.btnImportMarker.Location = new System.Drawing.Point(192, 35);
             this.btnImportMarker.Name = "btnImportMarker";
             this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
             this.btnImportMarker.TabIndex = 3;
@@ -694,8 +743,9 @@
             // 
             // btnDownload
             // 
+            this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
-            this.btnDownload.Location = new System.Drawing.Point(565, 38);
+            this.btnDownload.Location = new System.Drawing.Point(316, 38);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
@@ -704,9 +754,10 @@
             // 
             // btnImportMarkerLectra
             // 
+            this.btnImportMarkerLectra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 35);
+            this.btnImportMarkerLectra.Location = new System.Drawing.Point(346, 35);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
             this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
             this.btnImportMarkerLectra.TabIndex = 5;
@@ -716,9 +767,10 @@
             // 
             // btnEdit
             // 
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnEdit.Location = new System.Drawing.Point(772, 35);
+            this.btnEdit.Location = new System.Drawing.Point(523, 35);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(61, 32);
             this.btnEdit.TabIndex = 6;
@@ -728,11 +780,14 @@
             // 
             // btnAutoRef
             // 
+            this.btnAutoRef.AutoSize = true;
+            this.btnAutoRef.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAutoRef.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAutoRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAutoRef.Location = new System.Drawing.Point(3, 4);
+            this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnAutoRef.Location = new System.Drawing.Point(3, 3);
             this.btnAutoRef.Name = "btnAutoRef";
-            this.btnAutoRef.Size = new System.Drawing.Size(92, 34);
+            this.btnAutoRef.Size = new System.Drawing.Size(70, 35);
             this.btnAutoRef.TabIndex = 8;
             this.btnAutoRef.Text = "Auto Ref#";
             this.btnAutoRef.UseVisualStyleBackColor = true;
@@ -740,96 +795,18 @@
             // 
             // btnAutoCut
             // 
+            this.btnAutoCut.AutoSize = true;
+            this.btnAutoCut.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAutoCut.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnAutoCut.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoCut.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAutoCut.Location = new System.Drawing.Point(95, 4);
+            this.btnAutoCut.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnAutoCut.Location = new System.Drawing.Point(79, 3);
             this.btnAutoCut.Name = "btnAutoCut";
-            this.btnAutoCut.Size = new System.Drawing.Size(92, 34);
+            this.btnAutoCut.Size = new System.Drawing.Size(69, 35);
             this.btnAutoCut.TabIndex = 9;
             this.btnAutoCut.Text = "Auto Cut#";
             this.btnAutoCut.UseVisualStyleBackColor = true;
             this.btnAutoCut.Click += new System.EventHandler(this.BtnAutoCut_Click);
-            // 
-            // btnAllSPDistribute
-            // 
-            this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnAllSPDistribute.Location = new System.Drawing.Point(331, 4);
-            this.btnAllSPDistribute.Name = "btnAllSPDistribute";
-            this.btnAllSPDistribute.Size = new System.Drawing.Size(145, 34);
-            this.btnAllSPDistribute.TabIndex = 10;
-            this.btnAllSPDistribute.Text = "All SP# Distribute";
-            this.btnAllSPDistribute.UseVisualStyleBackColor = true;
-            this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
-            // 
-            // btnDistributeThisCutRef
-            // 
-            this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(476, 4);
-            this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";
-            this.btnDistributeThisCutRef.Size = new System.Drawing.Size(179, 34);
-            this.btnDistributeThisCutRef.TabIndex = 11;
-            this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
-            this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
-            this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
-            // 
-            // btnCutPartsCheck
-            // 
-            this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
-            this.btnCutPartsCheck.Location = new System.Drawing.Point(656, 4);
-            this.btnCutPartsCheck.Name = "btnCutPartsCheck";
-            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 34);
-            this.btnCutPartsCheck.TabIndex = 12;
-            this.btnCutPartsCheck.Text = "Cut Parts Check";
-            this.btnCutPartsCheck.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
-            // 
-            // btnCutPartsCheckSummary
-            // 
-            this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
-            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(790, 4);
-            this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
-            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 34);
-            this.btnCutPartsCheckSummary.TabIndex = 13;
-            this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
-            this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
-            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
-            // 
-            // btnHistory
-            // 
-            this.btnHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnHistory.Location = new System.Drawing.Point(995, 5);
-            this.btnHistory.Name = "btnHistory";
-            this.btnHistory.Size = new System.Drawing.Size(70, 32);
-            this.btnHistory.TabIndex = 14;
-            this.btnHistory.Text = "History";
-            this.btnHistory.UseVisualStyleBackColor = true;
-            this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
-            // 
-            // btnQtyBreakdown
-            // 
-            this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnQtyBreakdown.Location = new System.Drawing.Point(1066, 5);
-            this.btnQtyBreakdown.Name = "btnQtyBreakdown";
-            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 32);
-            this.btnQtyBreakdown.TabIndex = 15;
-            this.btnQtyBreakdown.Text = "Qty Breakdown";
-            this.btnQtyBreakdown.UseVisualStyleBackColor = true;
-            this.btnQtyBreakdown.Click += new System.EventHandler(this.BtnQtyBreakdown_Click);
-            // 
-            // btnToExcel
-            // 
-            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnToExcel.Location = new System.Drawing.Point(1192, 5);
-            this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(92, 32);
-            this.btnToExcel.TabIndex = 16;
-            this.btnToExcel.Text = "To Excel";
-            this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
             // 
             // BackgroundWorker1
             // 
@@ -837,10 +814,184 @@
             this.BackgroundWorker1.WorkerSupportsCancellation = true;
             this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
             // 
+            // tableLayoutPanel_Button1
+            // 
+            this.tableLayoutPanel_Button1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel_Button1.AutoSize = true;
+            this.tableLayoutPanel_Button1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel_Button1.ColumnCount = 2;
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Button1.Controls.Add(this.btnAutoCut, 1, 0);
+            this.tableLayoutPanel_Button1.Controls.Add(this.btnAutoRef, 0, 0);
+            this.tableLayoutPanel_Button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.tableLayoutPanel_Button1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel_Button1.Name = "tableLayoutPanel_Button1";
+            this.tableLayoutPanel_Button1.RowCount = 1;
+            this.tableLayoutPanel_Button1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_Button1.Size = new System.Drawing.Size(151, 41);
+            this.tableLayoutPanel_Button1.TabIndex = 18;
+            // 
+            // tableLayoutPanel_Button2
+            // 
+            this.tableLayoutPanel_Button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel_Button2.AutoSize = true;
+            this.tableLayoutPanel_Button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.tableLayoutPanel_Button2.ColumnCount = 8;
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnRefresh, 7, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnToExcel, 6, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnQtyBreakdown, 5, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnHistory, 4, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnCutPartsCheckSummary, 3, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnCutPartsCheck, 2, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnDistributeThisCutRef, 1, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnAllSPDistribute, 0, 0);
+            this.tableLayoutPanel_Button2.Location = new System.Drawing.Point(165, 0);
+            this.tableLayoutPanel_Button2.Name = "tableLayoutPanel_Button2";
+            this.tableLayoutPanel_Button2.RowCount = 1;
+            this.tableLayoutPanel_Button2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel_Button2.Size = new System.Drawing.Size(833, 41);
+            this.tableLayoutPanel_Button2.TabIndex = 19;
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.AutoSize = true;
+            this.btnRefresh.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnRefresh.Location = new System.Drawing.Point(770, 3);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(60, 35);
+            this.btnRefresh.TabIndex = 18;
+            this.btnRefresh.Text = "Refresh";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            // 
+            // btnToExcel
+            // 
+            this.btnToExcel.AutoSize = true;
+            this.btnToExcel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnToExcel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnToExcel.Location = new System.Drawing.Point(700, 3);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(64, 35);
+            this.btnToExcel.TabIndex = 17;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
+            // 
+            // btnQtyBreakdown
+            // 
+            this.btnQtyBreakdown.AutoSize = true;
+            this.btnQtyBreakdown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnQtyBreakdown.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(595, 3);
+            this.btnQtyBreakdown.Name = "btnQtyBreakdown";
+            this.btnQtyBreakdown.Size = new System.Drawing.Size(99, 35);
+            this.btnQtyBreakdown.TabIndex = 16;
+            this.btnQtyBreakdown.Text = "Qty Breakdown";
+            this.btnQtyBreakdown.UseVisualStyleBackColor = true;
+            this.btnQtyBreakdown.Click += new System.EventHandler(this.BtnQtyBreakdown_Click);
+            // 
+            // btnHistory
+            // 
+            this.btnHistory.AutoSize = true;
+            this.btnHistory.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnHistory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnHistory.Location = new System.Drawing.Point(535, 3);
+            this.btnHistory.Name = "btnHistory";
+            this.btnHistory.Size = new System.Drawing.Size(54, 35);
+            this.btnHistory.TabIndex = 15;
+            this.btnHistory.Text = "History";
+            this.btnHistory.UseVisualStyleBackColor = true;
+            this.btnHistory.Click += new System.EventHandler(this.BtnHistory_Click);
+            // 
+            // btnCutPartsCheckSummary
+            // 
+            this.btnCutPartsCheckSummary.AutoSize = true;
+            this.btnCutPartsCheckSummary.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnCutPartsCheckSummary.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(370, 3);
+            this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
+            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(159, 35);
+            this.btnCutPartsCheckSummary.TabIndex = 14;
+            this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
+            this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
+            // 
+            // btnCutPartsCheck
+            // 
+            this.btnCutPartsCheck.AutoSize = true;
+            this.btnCutPartsCheck.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnCutPartsCheck.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(261, 3);
+            this.btnCutPartsCheck.Name = "btnCutPartsCheck";
+            this.btnCutPartsCheck.Size = new System.Drawing.Size(103, 35);
+            this.btnCutPartsCheck.TabIndex = 13;
+            this.btnCutPartsCheck.Text = "Cut Parts Check";
+            this.btnCutPartsCheck.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
+            // 
+            // btnDistributeThisCutRef
+            // 
+            this.btnDistributeThisCutRef.AutoSize = true;
+            this.btnDistributeThisCutRef.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnDistributeThisCutRef.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(120, 3);
+            this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";
+            this.btnDistributeThisCutRef.Size = new System.Drawing.Size(135, 35);
+            this.btnDistributeThisCutRef.TabIndex = 12;
+            this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
+            this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
+            this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
+            // 
+            // btnAllSPDistribute
+            // 
+            this.btnAllSPDistribute.AutoSize = true;
+            this.btnAllSPDistribute.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnAllSPDistribute.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnAllSPDistribute.Location = new System.Drawing.Point(3, 3);
+            this.btnAllSPDistribute.Name = "btnAllSPDistribute";
+            this.btnAllSPDistribute.Size = new System.Drawing.Size(111, 35);
+            this.btnAllSPDistribute.TabIndex = 11;
+            this.btnAllSPDistribute.Text = "All SP# Distribute";
+            this.btnAllSPDistribute.UseVisualStyleBackColor = true;
+            this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
+            // 
             // P09
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1380, 717);
+            this.ClientSize = new System.Drawing.Size(1008, 661);
             this.DefaultOrder = "ID";
             this.ExpressQuery = true;
             this.GridAlias = "WorkOrderForOutput";
@@ -854,6 +1005,7 @@
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P09. WorkOrder For Output";
             this.WorkAlias = "Cutting";
+            this.SizeChanged += new System.EventHandler(this.P09_SizeChanged);
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
@@ -888,6 +1040,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.tableLayoutPanel_Top2.ResumeLayout(false);
+            this.tableLayoutPanel_Top2.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
+            this.tableLayoutPanel_Button1.ResumeLayout(false);
+            this.tableLayoutPanel_Button1.PerformLayout();
+            this.tableLayoutPanel_Button2.ResumeLayout(false);
+            this.tableLayoutPanel_Button2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -900,8 +1060,6 @@
         private Win.UI.DisplayBox displayBoxStyle;
         private Win.UI.Label label1;
         private Win.UI.DisplayBox displayBoxSP;
-        private Win.UI.Button btnExcludeSetting;
-        private Win.UI.Button btnImportFromWorkOrderForPlanning;
         private Win.UI.Button btnBatchAssign;
         private Win.UI.Button btnImportMarker;
         private Win.UI.Button btnDownload;
@@ -928,13 +1086,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Button btnAutoRef;
         private Win.UI.Button btnAutoCut;
-        private Win.UI.Button btnToExcel;
-        private Win.UI.Button btnQtyBreakdown;
-        private Win.UI.Button btnHistory;
-        private Win.UI.Button btnCutPartsCheckSummary;
-        private Win.UI.Button btnCutPartsCheck;
-        private Win.UI.Button btnDistributeThisCutRef;
-        private Win.UI.Button btnAllSPDistribute;
         private Win.UI.NumericBox numConsPC;
         private Win.UI.ListControlBindingSource sizeRatiobs;
         private Win.UI.ListControlBindingSource distributebs;
@@ -948,5 +1099,19 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteSizeRatio;
         private System.ComponentModel.BackgroundWorker BackgroundWorker1;
         private Win.UI.NumericBox numCons;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Button1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Button2;
+        private Win.UI.Button btnCutPartsCheck;
+        private Win.UI.Button btnDistributeThisCutRef;
+        private Win.UI.Button btnAllSPDistribute;
+        private System.Windows.Forms.Button btnRefresh;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnQtyBreakdown;
+        private Win.UI.Button btnHistory;
+        private Win.UI.Button btnCutPartsCheckSummary;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Top2;
+        private Win.UI.Button btnImportFromWorkOrderForPlanning;
+        private Win.UI.Button btnExcludeSetting;
     }
 }

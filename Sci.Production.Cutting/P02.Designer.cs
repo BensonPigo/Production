@@ -114,7 +114,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 65);
-            this.detailpanel.Size = new System.Drawing.Size(936, 549);
+            this.detailpanel.Size = new System.Drawing.Size(936, 552);
             // 
             // gridicon
             // 
@@ -129,7 +129,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(936, 549);
+            this.detailgridcont.Size = new System.Drawing.Size(936, 552);
             // 
             // detail2
             // 
@@ -153,7 +153,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(936, 614);
+            this.detailcont.Size = new System.Drawing.Size(936, 617);
             // 
             // detailbtm
             // 
@@ -162,8 +162,8 @@
             this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
             this.detailbtm.Controls.Add(this.btnCutPartsCheck);
             this.detailbtm.Controls.Add(this.btnAutoRef);
-            this.detailbtm.Location = new System.Drawing.Point(0, 614);
-            this.detailbtm.Size = new System.Drawing.Size(1280, 41);
+            this.detailbtm.Location = new System.Drawing.Point(0, 617);
+            this.detailbtm.Size = new System.Drawing.Size(1280, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -207,6 +207,7 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.numCons);
             this.panel1.Controls.Add(this.splitContainer2);
             this.panel1.Controls.Add(this.numUnitCons);
@@ -219,7 +220,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel1.Location = new System.Drawing.Point(936, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(344, 614);
+            this.panel1.Size = new System.Drawing.Size(344, 617);
             this.panel1.TabIndex = 4;
             // 
             // numCons
@@ -547,7 +548,7 @@
             // 
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchAssign.Location = new System.Drawing.Point(327, 34);
+            this.btnBatchAssign.Location = new System.Drawing.Point(321, 34);
             this.btnBatchAssign.Name = "btnBatchAssign";
             this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
             this.btnBatchAssign.TabIndex = 2;
@@ -559,7 +560,7 @@
             // 
             this.btnImportMarker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarker.Location = new System.Drawing.Point(441, 34);
+            this.btnImportMarker.Location = new System.Drawing.Point(435, 34);
             this.btnImportMarker.Name = "btnImportMarker";
             this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
             this.btnImportMarker.TabIndex = 3;
@@ -570,7 +571,7 @@
             // btnDownload
             // 
             this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
-            this.btnDownload.Location = new System.Drawing.Point(565, 37);
+            this.btnDownload.Location = new System.Drawing.Point(559, 37);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
@@ -581,7 +582,7 @@
             // 
             this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarkerLectra.Location = new System.Drawing.Point(595, 34);
+            this.btnImportMarkerLectra.Location = new System.Drawing.Point(589, 34);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
             this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
             this.btnImportMarkerLectra.TabIndex = 14;
@@ -593,7 +594,7 @@
             // 
             this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnEdit.Location = new System.Drawing.Point(772, 34);
+            this.btnEdit.Location = new System.Drawing.Point(766, 34);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(61, 32);
             this.btnEdit.TabIndex = 15;
@@ -675,6 +676,7 @@
             this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P02. WorkOrder For Planning";
             this.WorkAlias = "Cutting";
+            this.SizeChanged += new System.EventHandler(this.P02_SizeChanged);
             this.Controls.SetChildIndex(this.tabs, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
