@@ -61,15 +61,15 @@ namespace PowerBI.Daily.PowerBI.DataAccess
                 string sql = $@"
                 delete p
                 from P_MachineMasterList p
-                where exists (select 1 from #tmp t where p.Month = t.YYYYMM and p.M = t.LocationM)
+                where exists (select 1 from #tmp t where p.Month = t.YYYYMM and p.M = t.M and p.MachineID = t.Machine)
 
                 insert into P_MachineMasterList
                 (
                      Month
+                    ,MachineID                    
                     ,M
                     ,FTY
                     ,MachineLocationID
-                    ,MachineID
                     ,MachineGroup
                     ,BrandID
                     ,BrandName
