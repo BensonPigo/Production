@@ -242,7 +242,7 @@ namespace PowerBI.Daily
 
                 this.InsertTransLog("Start Update_PoweBI_InThread", string.Empty, string.Empty, 0); // 測試時，記得註解不然會寫進正式資料庫
                 #region 查詢全部伺服器名稱
-                DualResult dualResult = DBProxy.Current.Select("PBIReportData", "select [SystemName] = Region from P_TransRegion", out DataTable dtRegion);
+                DualResult dualResult = DBProxy.Current.Select("PBIReportData", "select [SystemName] = iif(Region = 'PH1', 'PHI', Region) from P_TransRegion", out DataTable dtRegion);
                 if (!dualResult)
                 {
                     return dualResult;
