@@ -414,7 +414,7 @@ update pld set
 	pld.PulloutTransport = t.PulloutTransport,
 	pld.PulloutTransportNo = t.PulloutTransportNo
 from #tmp t
-inner join PackingList_Detail pld on t.ukey = pld.ukey
+inner join PackingList_Detail pld on t.packinglistID = pld.ID and t.CTNStartNo = pld.CTNStartNo 
 ";
             DataTable ot;
             DualResult result = MyUtility.Tool.ProcessWithDatatable(seleDt, string.Empty, sqlupdate, out ot);
