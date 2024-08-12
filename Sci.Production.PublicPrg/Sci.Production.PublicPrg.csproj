@@ -132,6 +132,10 @@
     <Reference Include="Sci">
       <HintPath>..\_Dll\Sci.dll</HintPath>
     </Reference>
+    <Reference Include="Sci.Production.CallPmsAPI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_Dll\Sci.Production.CallPmsAPI.dll</HintPath>
+    </Reference>
     <Reference Include="Sci.Proj">
       <HintPath>..\_Dll\Sci.Proj.dll</HintPath>
     </Reference>
@@ -162,6 +166,7 @@
   <ItemGroup>
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
+    <Compile Include="CallWebAPI.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
     <Compile Include="DllInvoke.cs" />
@@ -219,6 +224,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RecevingInfoTrackingSummary.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_OutStandingHPMS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricStatusAndIssueFabricTracking.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspAvgInspLTInPast7Days.cs" />
@@ -287,6 +293,8 @@
     <Compile Include="PowerBI\Model\Base_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Cutting_R13_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
+    <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R21_ViewModel.cs" />
@@ -336,10 +344,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sci.Production.CallPmsAPI\Sci.Production.CallPmsAPI.csproj">
-      <Project>{FC94FCAF-9216-4A2D-9E89-15FE27AEF028}</Project>
-      <Name>Sci.Production.CallPmsAPI</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
       <Name>Sci.Production.Class</Name>

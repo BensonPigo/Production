@@ -1,12 +1,14 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
@@ -41,6 +43,44 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static ResultInfo GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
+        {
+            WebApiBaseResult webApiBaseResult;
+            string errorMsg = string.Empty;
+            using (TransactionScope transactionScope = new TransactionScope())
+            {
+                try
+                {
+                    string apiUrl = GetWebAPIUrl(strServerName);
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
+                    if (!webApiBaseResult.isSuccess)
+                    {
+                        transactionScope.Dispose();
+                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                        {
+                            errorMsg = webApiBaseResult.responseContent;
+                        }
+                        else
+                        {
+                            errorMsg = webApiBaseResult.exception.ToString();
+                        }
+
+                        return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
+                    }
+
+                    string response = webApiBaseResult.responseContent;
+                    transactionScope.Complete();
+
+                    return new ResultInfo() { Result = errorMsg, ResultDT = response };
+                }
+                catch (Exception e)
+                {
+                    transactionScope.Dispose();
+                    return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
+                }
+            }
+        }
+
         /// <summary>
         /// GetWebAPIUrl
         /// </summary>
@@ -52,9 +92,9 @@ namespace Sci.Production.CallPmsAPI
 
             if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
             {
-#if DEBUG
+                #if DEBUG
                 return "http://172.17.3.97:16888/";
-#endif
+                #endif
 
                 return "http://172.17.3.96:16888/";
             }

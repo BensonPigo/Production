@@ -466,6 +466,8 @@ SELECT
    ,o.HangerPack
    ,o.Customize1
    ,o.CustPONo
+   ,o.Customize4
+   ,o.Customize5
    ,o.VasShas
    ,o.MnorderApv
    ,o.MnorderApv2
@@ -967,6 +969,8 @@ SELECT
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
    ,[PONO] = o.CustPONo
+   ,[Original CustPO] = o.Customize4
+   ,[Line Aggregator] = o.Customize5
    ,[VAS/SHAS] = IIF(o.VasShas = 1, 'Y', '')
    ,[VAS/SHAS Apv.] = o.MnorderApv2
    ,[VAS/SHAS Cut Off Date] = FORMAT(DATEADD(DAY, -30, GetMinDate.minDate), 'yyyy/MM/dd')

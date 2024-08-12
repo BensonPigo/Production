@@ -104,6 +104,7 @@ Where Junk = 0
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(12))
                 .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(12))
+                .Text("HaulingScanTime", header: "Hauling Scan Time", width: Widths.AnsiChars(12))
                 .Text("PassName", header: "Scanned by", width: Widths.AnsiChars(12))
                 .Text("ActCTNWeight", header: "Actual CTN# Weight", width: Widths.AnsiChars(12));
 
@@ -436,15 +437,17 @@ select distinct
     [PKseq] = pd.Seq,
     o.Dest,
     isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
-    isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+    isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,120), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
     ,p.Remark
 	,pd.Ukey
 	,[IsFirstTimeScan] = Cast(1 as bit)
     ,o.CustCDID
     ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
+    ,[HaulingScanTime] = FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm')
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+LEFT join CTNHauling CTN WITH(NOLOCK) on CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo
 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
 where p.Type in ('B','L')
@@ -465,7 +468,7 @@ where p.Type in ('B','L')
                 }
             }
 
-            return true;
+                return true;
         }
 
         private bool IsNotInitialedIDX_CTRL()
@@ -773,6 +776,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
                                                               Remark = g.Key.Remark,
+                                                              HaulingScanTime = g.Select(st => st.Field<string>("HaulingScanTime")).FirstOrDefault(),
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
                                                               Article = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("Article")).ToArray()),
                                                               SizeCode = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("SizeCode")).ToArray()),
@@ -1458,6 +1462,8 @@ WHERE o.ID='{dr.OrderID}'");
             /// CustCD
             /// </summary>
             public string CustCD { get; set; }
+
+            public string HaulingScanTime { get; set; }
         }
 
         /// <inheritdoc/>
@@ -1699,15 +1705,17 @@ drop table #tmpUpdatedID
                                            [PKseq] = pd.Seq,
                                            o.Dest,
                                            isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
-                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,120), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                            ,o.CustCDID
                                            ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
+                                           ,[HaulingScanTime] = FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm')
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
+                                LEFT join CTNHauling CTN WITH(NOLOCK) on CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo
                                 left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
                                 left join pass1 ps WITH (NOLOCK) on pd.ScanName = ps.id
                                 where p.Type in ('B','L') ";
