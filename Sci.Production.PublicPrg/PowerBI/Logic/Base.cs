@@ -215,6 +215,7 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             DateTime stratExecutedTime = DateTime.Now;
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
+            List<ExecutedList> executedListException = new List<ExecutedList>();
 
             var results = executedList
                 .GroupBy(x => x.Group)
@@ -229,9 +230,19 @@ ORDER BY [Group], [SEQ], [NAME]";
                         .AsSequential()
                         .Select(detail =>
                         {
-                            ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
-                            executedListDetail.Add(detailPararllelResult);
-                            return detailPararllelResult;
+                            try
+                            {
+                                ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
+                                executedListDetail.Add(detailPararllelResult);
+                                return detailPararllelResult;
+                            }
+                            catch (Exception ex)
+                            {
+                                detail.Success = false;
+                                detail.ErrorMsg = ex.Message;
+                                executedListException.Add(detail);
+                                return detail;
+                            }
                         })
                         .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
                         .ToList();
@@ -248,10 +259,19 @@ ORDER BY [Group], [SEQ], [NAME]";
             foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
             {
                 string errMsg = "沒有執行";
-                var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                if (queryErrorGroup.Any())
+                var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                if (executedException != null)
                 {
-                    errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                    // 如果是Throw Exception的話，紀錄Exception訊息
+                    errMsg = executedException.ErrorMsg;
+                }
+                else
+                {
+                    var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
+                    if (queryErrorGroup.Any())
+                    {
+                        errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                    }
                 }
 
                 executedListEnd.Add(new ExecutedList()
