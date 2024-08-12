@@ -141,6 +141,7 @@ where pl.MDivisionID = '{Env.User.Keyword}'
         and pld.CFAReturnClogDate is null--（紙箱從 CFA 轉回 Clog 的日期 - 在途）
         and pld.DisposeFromClog = 0--（紙箱在 Clog 報廢）
         and pld.ClogPulloutDate is null--（紙箱從 Clog 出貨裝在卡車 / 貨櫃
+        and pld.CTNQty = 1
         {where}
 order by pld.ID,pld.CTNStartNo
 ";
