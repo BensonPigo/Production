@@ -636,7 +636,6 @@ where InvA.OrderID = '{0}'
                 }
             }
 
-
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("Qty"))
             {

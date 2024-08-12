@@ -43,7 +43,6 @@ namespace Sci.Production.Shipping
                     this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
                 }
             }
-
         }
 
         /// <inheritdoc/>
