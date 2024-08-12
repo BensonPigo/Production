@@ -401,6 +401,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_RecevingInfoTrackingSummary:
                         result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
+                        break;
                     case ListName.P_MachineMasterListByDays:
                          result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
                         break;
