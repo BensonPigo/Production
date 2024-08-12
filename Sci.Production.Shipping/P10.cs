@@ -269,13 +269,17 @@ group by    p.INVNo
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            base.OnDetailEntered();
             if (!this.EditMode)
             {
                 this.comboCompany1.IsOrderCompany = null;
                 this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
             }
 
-            base.OnDetailEntered();
             this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && Prgs.GetAuthority(Env.User.UserID, "P10. Ship Plan", "CanEdit");
             this.SumData();
             string sqlctnr = $@"

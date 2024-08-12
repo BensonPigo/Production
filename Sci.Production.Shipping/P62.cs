@@ -30,16 +30,20 @@ namespace Sci.Production.Shipping
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
-            if (!this.EditMode)
-            {
-                this.comboCompany1.IsOrderCompany = null;
-                this.comboCompany1.Junk = null;
-            }
-
             this.labelNotApprove.Text = this.CurrentMaintain["status"].ToString();
 
             this.ReCalculat();
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
         }
 
         /// <inheritdoc/>

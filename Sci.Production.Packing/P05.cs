@@ -625,13 +625,17 @@ where InvA.OrderID = '{0}'
                 this.labelConfirmed.Text = dr["Status"].ToString();
             }
 
+            base.OnDetailEntered();
             if (!this.EditMode)
             {
                 this.comboCompany1.IsOrderCompany = null;
                 this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
             }
 
-            base.OnDetailEntered();
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             if (!dt.Columns.Contains("Qty"))

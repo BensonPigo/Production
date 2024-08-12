@@ -78,13 +78,16 @@ namespace Sci.Production.Packing
         /// </summary>
         protected override void OnDetailEntered()
         {
+            base.OnDetailEntered();
             if (!this.EditMode)
             {
                 this.comboCompany1.IsOrderCompany = null;
                 this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
             }
-
-            base.OnDetailEntered();
 
             #region displayPurchaseCtn
             string sqlcmdC = $@"select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id

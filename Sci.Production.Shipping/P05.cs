@@ -291,13 +291,16 @@ $" where p.INVNo = '{this.masterID}'");
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
+            base.OnDetailEntered();
             if (!this.EditMode)
             {
                 this.comboCompany1.IsOrderCompany = null;
                 this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
             }
-
-            base.OnDetailEntered();
 
             if (MyUtility.Check.Seek($@"
 select WhseCode,WhseName,* 
