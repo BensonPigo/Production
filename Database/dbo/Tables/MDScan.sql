@@ -13,7 +13,7 @@
 	[DataRemark] [nvarchar](200) NOT NULL  CONSTRAINT [DF_MDScan_DataRemark] DEFAULT (''),
 	[Status] VARCHAR(6) NOT NULL  CONSTRAINT [DF_MDScan_Status] DEFAULT (''),
     [Remark] NVARCHAR(MAX) NOT NULL  CONSTRAINT [DF_MDScan_Remark] DEFAULT (''),
-    [IsFromM360] BIT NOT NULL  CONSTRAINT [DF_MDScan_IsFromM360] DEFAULT (0),
+    [IsFromM360] INT NOT NULL  CONSTRAINT [DF_MDScan_IsFromM360] DEFAULT ((0)),
     CONSTRAINT [PK_MDScan] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
@@ -81,7 +81,10 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2name = N'Remark'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'是否來自M360',
+    @value = N'資料從哪寫入
+0 = 來自Sewing P08
+1 = 來自M360 MD
+2 = 來自M360 Sewing P08',
     @level0type = N'SCHEMA',
     @level0name = N'dbo',
     @level1type = N'TABLE',
