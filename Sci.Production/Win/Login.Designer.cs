@@ -119,6 +119,7 @@ namespace Sci.Production.Win
             this.comboBox1.IsSupportUnselect = true;
             this.comboBox1.Location = new System.Drawing.Point(127, 104);
             this.comboBox1.Name = "comboBox1";
+            this.comboBox1.OldText = "";
             this.comboBox1.Size = new System.Drawing.Size(131, 24);
             this.comboBox1.TabIndex = 2;
             // 
@@ -130,6 +131,7 @@ namespace Sci.Production.Win
             this.comboBox2.IsSupportUnselect = true;
             this.comboBox2.Location = new System.Drawing.Point(127, 9);
             this.comboBox2.Name = "comboBox2";
+            this.comboBox2.OldText = "";
             this.comboBox2.Size = new System.Drawing.Size(131, 24);
             this.comboBox2.TabIndex = 97;
             this.comboBox2.Visible = false;
@@ -174,6 +176,7 @@ namespace Sci.Production.Win
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Login";
+            this.OnLineHelpID = "Sci.Win.Tools.Base";
             this.Text = "Login";
             this.ResumeLayout(false);
             this.PerformLayout();
