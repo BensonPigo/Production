@@ -132,7 +132,7 @@ outer apply(
         for xml path('')
         ),1,1,'')
 ) OrderQtyGarment 
-where o.Category IN ('B','G') 
+where o.Category IN ('B','G') and o.Qty <> 0
       {sqlWhere}
 
 select 

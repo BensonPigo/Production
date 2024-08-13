@@ -128,7 +128,7 @@ BEGIN
 END
 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
+                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
             finalResult.Result = result;

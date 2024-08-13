@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.CallPmsAPI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -192,7 +193,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 END
                 ";
 
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql, out DataTable dataTable, conn: sqlConn);
+                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn);
             }
 
             finalResult.Result = result;
