@@ -531,6 +531,7 @@ SELECT
    ,o.SubconInType
    ,o.isForecast
    ,o.GMTComplete
+   ,o.LocalMR
 INTO #tmpOrders
 FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
@@ -1065,6 +1066,8 @@ SELECT
    ,[PCHandle Name] = tp5.Name
    ,[MCHandle] = o.MCHandle
    ,[MCHandle Name] = p1.Name
+   ,[LocalMR] = o.LocalMR
+   ,[LocalMR Name] = p2.Name
    ,[DoxType] = o.DoxType
    ,[Packing CTN] = ISNULL(pld.PackingCTN, 0)
    ,[TTLCTN] = ISNULL(pld.TotalCTN, 0)
@@ -1129,6 +1132,7 @@ LEFT JOIN TPEPass1 tp3 WITH (NOLOCK) ON PO.POSMR = tp3.ID
 LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
 LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
 LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
+LEFT JOIN Pass1 p2 WITH (NOLOCK) ON o.LocalMR = p2.ID
 outer apply (
   select Qty=sum(pd.ShipQty)
   from PackingList p, PackingList_Detail pd
