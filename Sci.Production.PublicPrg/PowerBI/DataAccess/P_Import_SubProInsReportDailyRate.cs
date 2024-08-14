@@ -130,7 +130,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 };
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
                 };
             }
 

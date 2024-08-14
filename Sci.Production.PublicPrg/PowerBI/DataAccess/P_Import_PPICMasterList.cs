@@ -489,7 +489,7 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 
@@ -531,7 +531,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
                 };
             }
 

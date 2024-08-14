@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.PublicPrg;
 using System;
@@ -320,7 +321,7 @@ from #tmp t
 ";
             finalResult = new Base_ViewModel()
             {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
             };
 
             return finalResult;

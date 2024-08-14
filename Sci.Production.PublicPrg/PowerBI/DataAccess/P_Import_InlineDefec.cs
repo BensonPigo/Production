@@ -194,7 +194,7 @@ BEGIN
 	values('P_InlineDefectSummary', getdate())
 END
 ";
-                        result = MyUtility.Tool.ProcessWithDatatable(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: null);
                         if (!result.Result)
                         {
                             throw result.GetException();
@@ -265,7 +265,7 @@ BEGIN
 	values('P_InlineDefectDetail', getdate())
 END
 ";
-                        result = MyUtility.Tool.ProcessWithDatatable(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: null);
                         if (!result.Result)
                         {
                             throw result.GetException();

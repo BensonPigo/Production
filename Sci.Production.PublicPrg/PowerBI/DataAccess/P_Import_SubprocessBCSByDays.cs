@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System.Data.SqlClient;
 
@@ -86,7 +87,7 @@ drop table #tmpByDays
                 DBProxy.Current.DefaultTimeout = 1800;
                 finalResult = new Base_ViewModel()
                 {
-                    Result = DBProxy.Current.Execute("PowerBI", cmdtext: sql),
+                    Result = TransactionClass.ExecuteTransactionScope("PowerBI", cmdtext: sql),
                 };
             }
 

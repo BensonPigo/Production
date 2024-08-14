@@ -248,7 +248,7 @@ BEGIN
 	values('P_CuttingScheduleOutputList', getdate())
 END
 ";
-                    result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
+                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
                     if (!result.Result)
                     {
                         throw result.GetException();
