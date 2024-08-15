@@ -2063,8 +2063,9 @@ inner join #tmp t on t.ID = pd.ID
 
         private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
             {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
                 return;
             }
 
