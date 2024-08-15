@@ -107,6 +107,7 @@ SELECT [Inspected Date] = InspDate
        ,[Actual Width] = ActualWidth
        ,Speed
 	   ,[Total Defect Points] = TotalDefectPoints
+	   ,[Point Rate Per Roll] = PointRatePerRoll
        ,Grade
        ,[ActualInspectionTimeStart] = ActInspTimeStart
 	   ,[inspectionTimeStart] = CalculatedInspTimeStartFirstTime
@@ -147,6 +148,7 @@ select
        ,[Actual Width] 
        ,[Speed] 
 	   ,[Total Defect Points]
+       ,[Point Rate Per Roll]
        ,[Grade]
        ,[ActualInspectionTimeStart]
 	   ,[inspectionTimeStart] 
