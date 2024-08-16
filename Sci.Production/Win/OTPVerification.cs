@@ -28,7 +28,6 @@ namespace Sci.Production.Win
             this.DialogResult = DialogResult.Cancel;
             this.userInfo = userInfo;
             this.displayBoxAccount.Text = this.userInfo.UserID;
-            this.displayBoxEmail.Text = this.userInfo.MailAddress;
 
             // 設定支持的 SSL/TLS 版本
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;

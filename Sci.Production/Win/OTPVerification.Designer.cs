@@ -30,9 +30,7 @@ namespace Sci.Production.Win
         private void InitializeComponent()
         {
             this.labelAccount = new Sci.Win.UI.Label();
-            this.label1 = new Sci.Win.UI.Label();
             this.displayBoxAccount = new Sci.Win.UI.DisplayBox();
-            this.displayBoxEmail = new Sci.Win.UI.DisplayBox();
             this.txtOTP = new Sci.Win.UI.TextBox();
             this.btnLogin = new Sci.Win.UI.Button();
             this.btnSendOtp = new Sci.Win.UI.Button();
@@ -47,14 +45,6 @@ namespace Sci.Production.Win
             this.labelAccount.TabIndex = 2;
             this.labelAccount.Text = "Account";
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 38);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 23);
-            this.label1.TabIndex = 3;
-            this.label1.Text = "Send OTP To Email";
-            // 
             // displayBoxAccount
             // 
             this.displayBoxAccount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -64,21 +54,12 @@ namespace Sci.Production.Win
             this.displayBoxAccount.Size = new System.Drawing.Size(287, 23);
             this.displayBoxAccount.TabIndex = 56;
             // 
-            // displayBoxEmail
-            // 
-            this.displayBoxEmail.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxEmail.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxEmail.Location = new System.Drawing.Point(143, 38);
-            this.displayBoxEmail.Name = "displayBoxEmail";
-            this.displayBoxEmail.Size = new System.Drawing.Size(287, 23);
-            this.displayBoxEmail.TabIndex = 57;
-            // 
             // txtOTP
             // 
             this.txtOTP.BackColor = System.Drawing.Color.White;
             this.txtOTP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtOTP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtOTP.Location = new System.Drawing.Point(143, 67);
+            this.txtOTP.Location = new System.Drawing.Point(143, 38);
             this.txtOTP.Mask = "000000";
             this.txtOTP.MaxLength = 6;
             this.txtOTP.Name = "txtOTP";
@@ -87,7 +68,7 @@ namespace Sci.Production.Win
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(350, 96);
+            this.btnLogin.Location = new System.Drawing.Point(350, 67);
             this.btnLogin.Name = "btnLogin";
             this.btnLogin.Size = new System.Drawing.Size(80, 30);
             this.btnLogin.TabIndex = 59;
@@ -98,7 +79,7 @@ namespace Sci.Production.Win
             // btnSendOtp
             // 
             this.btnSendOtp.Enabled = false;
-            this.btnSendOtp.Location = new System.Drawing.Point(436, 96);
+            this.btnSendOtp.Location = new System.Drawing.Point(436, 67);
             this.btnSendOtp.Name = "btnSendOtp";
             this.btnSendOtp.Size = new System.Drawing.Size(109, 30);
             this.btnSendOtp.TabIndex = 60;
@@ -108,7 +89,7 @@ namespace Sci.Production.Win
             // 
             // labelOTP
             // 
-            this.labelOTP.Location = new System.Drawing.Point(9, 67);
+            this.labelOTP.Location = new System.Drawing.Point(9, 38);
             this.labelOTP.Name = "labelOTP";
             this.labelOTP.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelOTP.RectStyle.BorderWidth = 1F;
@@ -122,14 +103,12 @@ namespace Sci.Production.Win
             // 
             // OTPVerification
             // 
-            this.ClientSize = new System.Drawing.Size(557, 136);
+            this.ClientSize = new System.Drawing.Size(557, 110);
             this.Controls.Add(this.labelOTP);
             this.Controls.Add(this.btnSendOtp);
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.txtOTP);
-            this.Controls.Add(this.displayBoxEmail);
             this.Controls.Add(this.displayBoxAccount);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.labelAccount);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "OTPVerification";
@@ -143,9 +122,7 @@ namespace Sci.Production.Win
         #endregion
 
         private Sci.Win.UI.Label labelAccount;
-        private Sci.Win.UI.Label label1;
         private Sci.Win.UI.DisplayBox displayBoxAccount;
-        private Sci.Win.UI.DisplayBox displayBoxEmail;
         private Sci.Win.UI.TextBox txtOTP;
         private Sci.Win.UI.Button btnLogin;
         private Sci.Win.UI.Button btnSendOtp;
