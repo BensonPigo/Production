@@ -429,8 +429,7 @@ ORDER BY
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
             this.sizeRatiobs.Filter = filter;
 
-            // 根據左邊Grid Filter 右邊 Order List 資訊
-            //this.orderListBindingSource.Filter = $@"SP = '{this.CurrentDetailData["OrderID"]}' ";
+            Grid_ClickBeginEdit((object)this.detailgrid, null);
         }
 
         protected override void DoPrint()

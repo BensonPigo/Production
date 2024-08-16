@@ -503,6 +503,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             this.spreadingfabricbs.Filter = $"CutRef = '{this.CurrentDetailData["CutRef"]}' AND SCIRefno = '{this.CurrentDetailData["SCIRefno"]}' AND ColorID = '{this.CurrentDetailData["ColorID"]}'";
 
             this.ChangeQtyBreakDownRow();
+            Grid_ClickBeginEdit((object)this.detailgrid, null);
         }
 
         private void GridDistributeToSP_SelectionChanged(object sender, EventArgs e)

@@ -184,7 +184,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.ClickConfirm();
             #region 建立Cutplan_Detail_Cons 資料
-            DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
             string insert_cons = string.Format(
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
@@ -194,77 +193,11 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
             string insertmk = string.Empty;
             string insert_mark2 = string.Empty;
-            #region 建立Bulk request
-
-            #region ID
-            string keyword = this.keyWord + "MK";
-            string reqid = MyUtility.GetValue.GetID(keyword, "MarkerReq");
-            if (string.IsNullOrWhiteSpace(reqid))
-            {
-                return;
-            }
-            #endregion
-            insertmk = string.Format(
-            @"Insert into MarkerReq
-            (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
-            values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid,
-            this.dateCuttingDate.Text,
-            this.CurrentMaintain["mDivisionid"],
-            this.CurrentMaintain["cutcellid"],
-            this.CurrentMaintain["ID"],
-            this.loginID);
-
-            #region 表身
-            string marker2sql = string.Format(
-                @"
-Select distinct o.POID as OrderID
-,b.MarkerName
-,layer = sum(b.Layer) over (partition by o.poid,b.MarkerName,b.MarkerNo,b.fabricCombo,c.Width) 
-,b.MarkerNo
-,b.fabricCombo
-,(
-    Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-    From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
-    Where a.WorkOrderForPlanningUkey =c.WorkOrderForPlanningUkey            
-    For XML path('')
-) as SizeRatio
-,c.Width
-From WorkOrderForPlanning b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK), orders o with(nolock) 
-Where a.WorkOrderForPlanningukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey
-and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
-            #endregion
-
-            DualResult dResult = DBProxy.Current.Select(null, marker2sql, out DataTable markerTb);
-            if (dResult)
-            {
-                foreach (DataRow dr in markerTb.Rows)
-                {
-                    insert_mark2 = insert_mark2 + string.Format(
-                    @"Insert into MarkerReq_Detail      
-                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,CuttingWidth) 
-                    Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}');",
-                    reqid,
-                    dr["OrderID"],
-                    dr["SizeRatio"],
-                    dr["MarkerName"],
-                    dr["Layer"],
-                    dr["FabricCombo"],
-                    dr["MarkerNo"],
-                    dr["Width"]);
-                }
-            }
-            else
-            {
-                this.ShowErr(marker2sql, dResult);
-                return;
-            }
-            #endregion
 
             #region update Master
 
             // 1386: CUTTING_P04_Cutting Daily Plan。CONFIRM時，須回寫更新MarkerReqid。
-            string updSql = string.Format("update Cutplan set  MarkerReqid = '{2}' , Status = 'Confirmed', editdate = getdate(), editname = '{0}' Where id='{1}'", this.loginID, this.CurrentMaintain["ID"], reqid);
+            string updSql = $"update Cutplan set Status = 'Confirmed', editdate = getdate(), editname = '{this.loginID}' Where id='{this.CurrentMaintain["ID"]}'";
             #endregion
             #region transaction
             DualResult upResult;
