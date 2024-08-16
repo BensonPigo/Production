@@ -218,6 +218,7 @@ ORDER BY [Group], [SEQ], [NAME]";
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
             List<ExecutedList> executedListException = new List<ExecutedList>();
 
+            double timeout = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["EachThreadTimeout"]) * 1000;
             var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
@@ -233,7 +234,21 @@ ORDER BY [Group], [SEQ], [NAME]";
                         {
                             try
                             {
+                                System.Timers.Timer timer = new System.Timers.Timer(timeout);
+                                bool isTimeout = false;
+                                timer.Elapsed += (s, e) =>
+                                {
+                                    isTimeout = true;
+                                };
+                                timer.AutoReset = false;
+                                timer.Start();
                                 ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
+                                timer.Stop();
+                                if (isTimeout)
+                                {
+                                    throw new Exception("Time Out");
+                                }
+
                                 executedListDetail.Add(detailPararllelResult);
                                 return detailPararllelResult;
                             }
