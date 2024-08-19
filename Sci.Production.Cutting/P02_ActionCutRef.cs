@@ -51,7 +51,7 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             this.Text = $"P02. {this.Action} CutRef";
-            this.btnModify.Text = $"{this.Action}";
+            this.btnModify.Text = this.Action == DialogAction.Edit ? "Save" : $"{this.Action}";
             base.OnFormLoaded();
             this.SetData();
             this.GridSetup();
