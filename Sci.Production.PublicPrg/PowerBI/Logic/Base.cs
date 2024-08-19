@@ -220,8 +220,8 @@ ORDER BY [Group], [SEQ], [NAME]";
             List<ExecutedList> executedListException = new List<ExecutedList>();
             List<ExecutedList> executedListTimeout = new List<ExecutedList>();
 
-            double timeout = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["EachThreadTimeout"]) * 1000;
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            double timeout = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["EachThreadTimeout"]);
+            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
             var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
