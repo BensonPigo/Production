@@ -320,6 +320,13 @@ namespace Sci.Production.Cutting
                         // 直向往下找
                         for (int idxMarker = 7; idxMarker < 7 + markerRowCount; idxMarker++)
                         {
+                            // 若PatternPanel為空，這一列則跳過
+                            string checkPatternPanel = rangeSizeRatio.GetCellValue(1, idxMarker);
+                            if (string.IsNullOrEmpty(checkPatternPanel))
+                            {
+                                continue;
+                            }
+
                             // 準備好物件存資料
                             WorkOrder nwk = new WorkOrder()
                             {
@@ -465,9 +472,9 @@ SELECT
     ,ofc.FabricCode
 FROM PO_Supp_Detail psd WITH (NOLOCK)
 INNER JOIN PO_Supp_Detail_Spec psdc WITH (NOLOCK) ON psdc.ID = psd.id AND psdc.seq1 = psd.seq1 AND psdc.seq2 = psd.seq2 AND psdc.SpecColumnID = 'Color'
-INNER JOIN Fabric f ON f.SCIRefno = psd.SCIRefno
-INNER JOIN Order_FabricCode ofc on ofc.Id = psd.ID
-LEFT JOIN Construction c on c.Id = f.ConstructionID and c.Junk = 0
+INNER JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+INNER JOIN Order_FabricCode ofc WITH (NOLOCK) on ofc.Id = psd.ID
+LEFT JOIN Construction c WITH (NOLOCK) on c.Id = f.ConstructionID and c.Junk = 0
 WHERE psd.ID IN ('{poIDs.JoinToString("','")}' )
 AND psd.Junk = 0
 AND EXISTS (
@@ -576,20 +583,40 @@ WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
                     }
 
                     string patternPanel = itemPatternPanel;
-                    string fabricPanelCode = itemPatternPanel[1].ToString();
+                    string fabricPanelCode = wk.FabricPanelCode;
 
+                    // PatternPanel、FabricPanelCode檢驗方式同表身
                     sqlInsertWorkOrder_PatternPanel += $@"
-insert into {tableName}_PatternPanel(ID, {keyColumn}, PatternPanel, FabricPanelCode) 
-values('{this.CuttingPOID}', @newWorkOrderUkey, '{patternPanel}', '{fabricPanelCode}')";
+IF EXISTS(
+	SELECT 1
+	FROM Order_FabricCode WITH(NOLOCK)
+	WHERE ID = '{this.CuttingPOID}'
+	AND PatternPanel = '{patternPanel}'
+	AND FabricPanelCode = '{fabricPanelCode}'
+)
+BEGIN
+    insert into {tableName}_PatternPanel(ID, {keyColumn}, PatternPanel, FabricPanelCode) 
+    values('{this.CuttingPOID}', @newWorkOrderUkey, '{patternPanel}', '{fabricPanelCode}')
+END
+";
                 }
 
                 // WorkOrder_SizeRatio
                 string sqlInsertWorkOrder_SizeRatio = string.Empty;
                 foreach (KeyValuePair<string, int> itemSizeRatio in wk.SizeRatio)
                 {
+                    // SizeCode 檢驗方式同表身
                     sqlInsertWorkOrder_SizeRatio += $@"
-insert into {tableName}_SizeRatio ({keyColumn}, ID, SizeCode, Qty)
-values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
+IF EXISTS(
+	SELECT 1
+	FROM Order_Qty oq WITH (NOLOCK)
+	INNER JOIN Orders o WITH (NOLOCK) ON o.id = oq.id
+	WHERE o.CuttingSP = '{this.CuttingPOID}' AND oq.SizeCode = '{itemSizeRatio.Key}'
+)
+BEGIN
+    insert into {tableName}_SizeRatio ({keyColumn}, ID, SizeCode, Qty)
+    values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSizeRatio.Value}')
+END
 ";
                 }
 
@@ -605,7 +632,7 @@ values( @newWorkOrderUkey, '{this.CuttingPOID}', '{itemSizeRatio.Key}', '{itemSi
                     // 若能轉成int，代表是excel自動產生的Marker Name，因此套用編碼規則；不能轉代表是User自己手Key的，就不異動了
                     if (int.TryParse(wk.Markername, out int x))
                     {
-                        wk.Markername = markername;
+                        wk.Markername = "MK-" + wk.Markername.ToString();
                     }
 
                     markerSerNo++;

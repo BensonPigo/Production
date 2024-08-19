@@ -1154,7 +1154,9 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
             CuttingWorkOrder cw = new CuttingWorkOrder();
+            this.ShowWaitMessage("Processing...");
             DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P02);
+            this.HideWaitMessage();
             if (!result)
             {
                 this.ShowErr(result);

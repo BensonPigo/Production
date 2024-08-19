@@ -588,7 +588,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                 }
 
                 // 5. 有 WorkOrderForOutput 才跳視窗
-                DialogResult confirmResult = MessageBoxEX.Show("Work order data already exists, do you want to overwrite it?", "Warning", MessageBoxButtons.YesNo, new string[] { "Yes", "No" }, MessageBoxDefaultButton.Button2);
+                DialogResult confirmResult =  MyUtility.Msg.QuestionBox("Work order data already exists, do you want to overwrite it", buttons: MessageBoxButtons.YesNo);
                 if (confirmResult != DialogResult.Yes)
                 {
                     return;
