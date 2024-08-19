@@ -122,6 +122,11 @@ namespace Sci.Production.Win
             var otpResponse = await this.GetOtpFromServerAsync(accessTokenResponse.accessToken, request.timestamp);
             if (otpResponse.errorCode != 0)
             {
+                if (otpResponse.errorMsg.Contains("no e-mail"))
+                {
+                    throw new Exception($"Please ask the Local-IT for help in setting up the email address.");
+                }
+
                 throw new Exception($"Failed to get OTP: {otpResponse.errorMsg}");
             }
         }
