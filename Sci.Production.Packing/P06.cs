@@ -31,7 +31,6 @@ namespace Sci.Production.Packing
         private DualResult result;
         private DialogResult buttonResult;
         private DataTable selectedData;
-        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P06
@@ -878,8 +877,6 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                                 MyUtility.Msg.WarningBox("This SP# is not local order!");
                                 return;
                             }
-
-                            this.comboCompany1.SelectedValue = orderData.Rows[0]["OrderCompanyID"];
                         }
                     }
                 }
@@ -935,6 +932,7 @@ select  StyleID
         , CustCDID
         , Dest 
         , FtyGroup
+        , OrderCompanyID
 from Orders WITH (NOLOCK) 
 where ID = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out dr))
@@ -946,6 +944,7 @@ where ID = '{0}'", orderID);
                     this.CurrentMaintain["BrandID"] = dr["BrandID"].ToString();
                     this.CurrentMaintain["CustCDID"] = dr["CustCDID"].ToString();
                     this.CurrentMaintain["FactoryID"] = dr["FtyGroup"].ToString();
+                    this.CurrentMaintain["OrderCompanyID"] = dr["OrderCompanyID"].ToString();
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);

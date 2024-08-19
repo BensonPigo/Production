@@ -120,7 +120,7 @@ with IniBulkPack as (
 ), IniSamplePack as (
     select  iif(p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}',1,0) as Selected
             , p.id
-            , p.OrderID
+            , pd.OrderID
             , p.CustCDID
             , oq.SDPDate
             , oq.BuyerDelivery

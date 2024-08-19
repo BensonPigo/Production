@@ -169,7 +169,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(830, 430);
+            this.browse.Size = new System.Drawing.Size(830, 500);
             // 
             // tabs
             // 
@@ -450,9 +450,9 @@
             this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboCompany1.FormattingEnabled = true;
-            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsOrderCompany = null;
             this.comboCompany1.IsSupportUnselect = true;
-            this.comboCompany1.Junk = false;
+            this.comboCompany1.Junk = null;
             this.comboCompany1.Location = new System.Drawing.Point(115, 96);
             this.comboCompany1.Name = "comboCompany1";
             this.comboCompany1.OldText = "";
