@@ -67,6 +67,7 @@ select s.id
 	,[LockStatus] = CASE WHEN s.Status = 'Locked' THEN 'Monthly Lock' 
 						 WHEN s.Status = 'Sent' THEN 'Daily Lock' 
 						 ELSE '' END
+	,s.EditDate
 into #tmpSewingDetail
 from Production.dbo.System WITH (NOLOCK),Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -93,7 +94,7 @@ where 1=1
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
 and (s.OutputDate between @SDate and  @EDate
-	OR cast(s.EditDate as date) between @SDate and @EDate )
+	OR s.OutputDate in (Select OutputDate From Production.dbo.SewingOutput s2 with(nolock) where cast(s2.EditDate as date) between @SDate and @EDate))
 and f.Type != 'S'
 
 
@@ -133,6 +134,7 @@ select distinct ID
 	,[Gender] = sty.Gender
 	,[Construction] = sty.Construction
 	,t.LockStatus
+	,t.EditDate
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -283,6 +285,7 @@ select * INTO #Final from(
 		,t.Gender
 		,t.Construction
 		,t.LockStatus
+		,t.EditDate
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Article,SizeCode
 
@@ -302,17 +305,18 @@ select s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate
 	,s.DateRange,s.InlineQty,s.Diff,s.Rate,s.SewingReasonDesc,s.SciDelivery,s.CDCodeNew,s.ProductType,s.FabricType
 	,s.Lining,s.Gender,s.Construction,s.LockStatus
 from #Final s
-where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
-													   AND t.MDivisionID=s.MDivisionID 
-													   AND t.SewingLineID=s.SewingLineID 
-													   AND t.Team=s.Team 
-													   AND t.Shift=s.Shift 
-													   AND t.OrderId=s.OrderId 
-													   AND t.Article=s.Article 
-													   AND t.SizeCode=s.SizeCode 
-													   AND t.ComboType=s.ComboType  
-													   AND t.OutputDate = s.OutputDate
-													   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
+where (s.OutputDate between @SDate and @EDate or cast(s.EditDate as date) between @SDate and @EDate )
+	And not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
+														   AND t.MDivisionID=s.MDivisionID 
+														   AND t.SewingLineID=s.SewingLineID 
+														   AND t.Team=s.Team 
+														   AND t.Shift=s.Shift 
+														   AND t.OrderId=s.OrderId 
+														   AND t.Article=s.Article 
+														   AND t.SizeCode=s.SizeCode 
+														   AND t.ComboType=s.ComboType  
+														   AND t.OutputDate = s.OutputDate
+														   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
 
 
 
@@ -385,7 +389,7 @@ inner join #Final s on t.FactoryID=s.FactoryID
 
 delete t
 from P_SewingDailyOutput t 
-where t.OutputDate between @SDate and  @EDate
+where t.OutputDate in (select outputDate from #final)
 and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
 and not exists (
 select OrderID from #Final s 
