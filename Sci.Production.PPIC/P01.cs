@@ -571,6 +571,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                     return false;
                 }
                 #region 檢查必輸欄位
+                if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    MyUtility.Msg.WarningBox("Order Company can't empty!!");
+                    this.txtStyle.Focus();
+                    return false;
+                }
+
                 if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
                 {
                     MyUtility.Msg.WarningBox("Style# can't empty!!");
