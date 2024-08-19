@@ -1,10 +1,11 @@
-﻿
-CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
+﻿CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
 @apsservername varchar(50), @apsdatabasename varchar(25), @factoryid varchar(8), @login varchar(10)
 AS
 BEGIN
 	DECLARE @cmd VARCHAR(MAX)
 	DECLARE	@_i int
+	declare @Workhour_StartDate int = -31
+	declare @DateRange int = 190
 
 	--避免Divide by zero error encountered
 	SET ARITHABORT ON 
@@ -383,8 +384,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = DATEADD(DAY,-1, GETDATE())
-		WHILE (@_i < 160)
+		SET @workdate = DATEADD(DAY,@Workhour_StartDate, GETDATE())
+		WHILE (@_i < @DateRange)
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
@@ -605,8 +606,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = DATEADD(DAY,-1, GETDATE())
-		WHILE (@_i < 160)
+		SET @workdate = DATEADD(DAY,@Workhour_StartDate, GETDATE())
+		WHILE (@_i < @DateRange)
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)			
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
