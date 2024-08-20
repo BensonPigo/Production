@@ -176,7 +176,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Numeric("SpreadingLayers", header: "Layers", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
-                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
+                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)

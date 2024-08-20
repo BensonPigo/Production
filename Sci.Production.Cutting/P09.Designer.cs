@@ -130,7 +130,7 @@
             this.masterpanel.Controls.Add(this.btnImportMarker);
             this.masterpanel.Controls.Add(this.btnBatchAssign);
             this.masterpanel.Controls.Add(this.panel2);
-            this.masterpanel.Size = new System.Drawing.Size(685, 67);
+            this.masterpanel.Size = new System.Drawing.Size(858, 67);
             this.masterpanel.Controls.SetChildIndex(this.panel2, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnImportMarker, 0);
@@ -142,25 +142,25 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 67);
-            this.detailpanel.Size = new System.Drawing.Size(685, 491);
+            this.detailpanel.Size = new System.Drawing.Size(858, 547);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.gridicon.Dock = System.Windows.Forms.DockStyle.Right;
-            this.gridicon.Location = new System.Drawing.Point(585, 35);
+            this.gridicon.Location = new System.Drawing.Point(758, 35);
             // 
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(974, 5);
+            this.refresh.Location = new System.Drawing.Point(2138, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(685, 491);
+            this.detailgridcont.Size = new System.Drawing.Size(858, 547);
             // 
             // detail2
             // 
@@ -177,21 +177,21 @@
             // detail
             // 
             this.detail.Controls.Add(this.panel1);
-            this.detail.Size = new System.Drawing.Size(1000, 599);
+            this.detail.Size = new System.Drawing.Size(1280, 655);
             this.detail.Controls.SetChildIndex(this.detailbtm, 0);
             this.detail.Controls.SetChildIndex(this.panel1, 0);
             this.detail.Controls.SetChildIndex(this.detailcont, 0);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(685, 558);
+            this.detailcont.Size = new System.Drawing.Size(858, 614);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.tableLayoutPanel_Button2);
             this.detailbtm.Controls.Add(this.tableLayoutPanel_Button1);
-            this.detailbtm.Location = new System.Drawing.Point(0, 558);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 41);
+            this.detailbtm.Location = new System.Drawing.Point(0, 614);
+            this.detailbtm.Size = new System.Drawing.Size(1280, 41);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -202,11 +202,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 599);
+            this.browse.Size = new System.Drawing.Size(1280, 655);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 628);
+            this.tabs.Size = new System.Drawing.Size(1288, 684);
             // 
             // createby
             // 
@@ -250,9 +250,9 @@
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel1.Location = new System.Drawing.Point(685, 0);
+            this.panel1.Location = new System.Drawing.Point(858, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(315, 558);
+            this.panel1.Size = new System.Drawing.Size(422, 614);
             this.panel1.TabIndex = 4;
             // 
             // numCons
@@ -316,8 +316,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.label11);
             this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
-            this.splitContainer1.Size = new System.Drawing.Size(311, 256);
-            this.splitContainer1.SplitterDistance = 118;
+            this.splitContainer1.Size = new System.Drawing.Size(418, 312);
+            this.splitContainer1.SplitterDistance = 143;
             this.splitContainer1.TabIndex = 31;
             // 
             // label10
@@ -353,7 +353,7 @@
             this.gridDistributeToSP.RowTemplate.Height = 24;
             this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDistributeToSP.ShowCellToolTips = false;
-            this.gridDistributeToSP.Size = new System.Drawing.Size(309, 100);
+            this.gridDistributeToSP.Size = new System.Drawing.Size(416, 125);
             this.gridDistributeToSP.TabIndex = 28;
             this.gridDistributeToSP.SelectionChanged += new System.EventHandler(this.GridDistributeToSP_SelectionChanged);
             // 
@@ -364,19 +364,19 @@
             this.MenuItemInsertDistribute,
             this.MenuItemDeleteDistribute});
             this.cmsDistribute.Name = "contextMenuStrip1";
-            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
+            this.cmsDistribute.Size = new System.Drawing.Size(158, 48);
             // 
             // MenuItemInsertDistribute
             // 
             this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
-            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(157, 22);
             this.MenuItemInsertDistribute.Text = "Insert Distribute";
             this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
             // 
             // MenuItemDeleteDistribute
             // 
             this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
-            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(157, 22);
             this.MenuItemDeleteDistribute.Text = "Delete Record";
             this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
             // 
@@ -412,7 +412,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(309, 111);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 142);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric
@@ -437,7 +437,7 @@
             this.gridSpreadingFabric.RowTemplate.Height = 24;
             this.gridSpreadingFabric.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridSpreadingFabric.ShowCellToolTips = false;
-            this.gridSpreadingFabric.Size = new System.Drawing.Size(147, 95);
+            this.gridSpreadingFabric.Size = new System.Drawing.Size(254, 95);
             this.gridSpreadingFabric.TabIndex = 26;
             // 
             // label9
@@ -481,19 +481,19 @@
             this.MenuItemInsertSizeRatio,
             this.MenuItemDeleteSizeRatio});
             this.cmsSizeRatio.Name = "sizeratioMenuStrip";
-            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
+            this.cmsSizeRatio.Size = new System.Drawing.Size(157, 48);
             // 
             // MenuItemInsertSizeRatio
             // 
             this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
-            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(156, 22);
             this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
             this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
             // 
             // MenuItemDeleteSizeRatio
             // 
             this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
-            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(156, 22);
             this.MenuItemDeleteSizeRatio.Text = "Delete Record";
             this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 
@@ -604,7 +604,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(685, 35);
+            this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
             // 
             // tableLayoutPanel_Top2
@@ -618,7 +618,7 @@
             this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Top2.Controls.Add(this.btnImportFromWorkOrderForPlanning, 1, 0);
             this.tableLayoutPanel_Top2.Controls.Add(this.btnExcludeSetting, 0, 0);
-            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(311, 0);
+            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(484, 0);
             this.tableLayoutPanel_Top2.Name = "tableLayoutPanel_Top2";
             this.tableLayoutPanel_Top2.RowCount = 1;
             this.tableLayoutPanel_Top2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -676,15 +676,15 @@
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(294, 31);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(370, 31);
             this.tableLayoutPanel2.TabIndex = 15;
             // 
             // labelCutplanID
             // 
-            this.labelCutplanID.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelCutplanID.Location = new System.Drawing.Point(0, 0);
+            this.labelCutplanID.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.labelCutplanID.Location = new System.Drawing.Point(0, 4);
             this.labelCutplanID.Name = "labelCutplanID";
-            this.labelCutplanID.Size = new System.Drawing.Size(23, 31);
+            this.labelCutplanID.Size = new System.Drawing.Size(68, 23);
             this.labelCutplanID.TabIndex = 2;
             this.labelCutplanID.Text = "SP";
             // 
@@ -693,17 +693,17 @@
             this.displayBoxSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
             this.displayBoxSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxSP.Location = new System.Drawing.Point(26, 3);
+            this.displayBoxSP.Location = new System.Drawing.Point(71, 3);
             this.displayBoxSP.Name = "displayBoxSP";
             this.displayBoxSP.Size = new System.Drawing.Size(111, 23);
             this.displayBoxSP.TabIndex = 12;
             // 
             // label1
             // 
-            this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(140, 0);
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.Location = new System.Drawing.Point(185, 4);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(36, 31);
+            this.label1.Size = new System.Drawing.Size(68, 23);
             this.label1.TabIndex = 13;
             this.label1.Text = "Style";
             // 
@@ -711,7 +711,7 @@
             // 
             this.displayBoxStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxStyle.Location = new System.Drawing.Point(179, 3);
+            this.displayBoxStyle.Location = new System.Drawing.Point(256, 3);
             this.displayBoxStyle.Name = "displayBoxStyle";
             this.displayBoxStyle.Size = new System.Drawing.Size(111, 23);
             this.displayBoxStyle.TabIndex = 14;
@@ -721,7 +721,7 @@
             this.btnBatchAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchAssign.Location = new System.Drawing.Point(78, 35);
+            this.btnBatchAssign.Location = new System.Drawing.Point(251, 35);
             this.btnBatchAssign.Name = "btnBatchAssign";
             this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
             this.btnBatchAssign.TabIndex = 2;
@@ -733,7 +733,7 @@
             // 
             this.btnImportMarker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarker.Location = new System.Drawing.Point(192, 35);
+            this.btnImportMarker.Location = new System.Drawing.Point(365, 35);
             this.btnImportMarker.Name = "btnImportMarker";
             this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
             this.btnImportMarker.TabIndex = 3;
@@ -745,7 +745,7 @@
             // 
             this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
-            this.btnDownload.Location = new System.Drawing.Point(316, 38);
+            this.btnDownload.Location = new System.Drawing.Point(489, 38);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(25, 25);
             this.btnDownload.TabIndex = 4;
@@ -757,7 +757,7 @@
             this.btnImportMarkerLectra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportMarkerLectra.Location = new System.Drawing.Point(346, 35);
+            this.btnImportMarkerLectra.Location = new System.Drawing.Point(519, 35);
             this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
             this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
             this.btnImportMarkerLectra.TabIndex = 5;
@@ -770,7 +770,7 @@
             this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnEdit.Location = new System.Drawing.Point(523, 35);
+            this.btnEdit.Location = new System.Drawing.Point(696, 35);
             this.btnEdit.Name = "btnEdit";
             this.btnEdit.Size = new System.Drawing.Size(61, 32);
             this.btnEdit.TabIndex = 6;
@@ -865,7 +865,7 @@
             this.tableLayoutPanel_Button2.Controls.Add(this.btnCutPartsCheck, 2, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnDistributeThisCutRef, 1, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnAllSPDistribute, 0, 0);
-            this.tableLayoutPanel_Button2.Location = new System.Drawing.Point(165, 0);
+            this.tableLayoutPanel_Button2.Location = new System.Drawing.Point(445, 0);
             this.tableLayoutPanel_Button2.Name = "tableLayoutPanel_Button2";
             this.tableLayoutPanel_Button2.RowCount = 1;
             this.tableLayoutPanel_Button2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -991,7 +991,7 @@
             // P09
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 661);
+            this.ClientSize = new System.Drawing.Size(1288, 717);
             this.DefaultOrder = "ID";
             this.ExpressQuery = true;
             this.GridAlias = "WorkOrderForOutput";
