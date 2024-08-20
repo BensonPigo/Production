@@ -49,7 +49,7 @@ namespace PowerBI.Daily.PowerBI.DataAccess
 
             if (!MyUtility.Check.Empty(resultInfo.Result))
             {
-                this.Msg = "WebAPI Error：" + JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
+                this.Msg = "WebAPI Error：" + resultInfo.Result; //JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
                 return;
             }
 
