@@ -598,7 +598,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             #region 執行
 
-            // 1. Delete OUTPUT WorkOrderForOutput_Distribute
+            // 1. Delete & OUTPUT WorkOrderForOutput_Distribute
             string sqlcmdDelete = $@"
 DELETE WorkOrderForOutput OUTPUT DELETED.* WHERE ID = '{this.CurrentMaintain["ID"]}'
 DELETE WorkOrderForOutput_Distribute OUTPUT DELETED.* WHERE ID = '{this.CurrentMaintain["ID"]}'
@@ -679,9 +679,9 @@ SELECT
     ,WorkOrderForPlanning.MarkerName
     ,WorkOrderForPlanning.MarkerLength
     ,WorkOrderForPlanning.MarkerVersion
-    ,Order_EachCons.ActCuttingPerimeter
-    ,Order_EachCons.StraightLength
-    ,Order_EachCons.CurvedLength
+    ,ISNULL(Order_EachCons.ActCuttingPerimeter, '')
+    ,ISNULL(Order_EachCons.StraightLength, '')
+    ,ISNULL(Order_EachCons.CurvedLength, '')
     ,''--Shift
     ,''--CutCellID
     ,''--SpreadingNoID
@@ -698,7 +698,7 @@ SELECT
     ,''--EditName
     ,NULL
 FROM WorkOrderForPlanning
-INNER JOIN Order_EachCons ON WorkOrderForPlanning.Order_EachconsUkey = Order_EachCons.Ukey
+LEFT JOIN Order_EachCons ON WorkOrderForPlanning.Order_EachconsUkey = Order_EachCons.Ukey
 WHERE WorkOrderForPlanning.ID = '{this.CurrentMaintain["ID"]}'
 ORDER BY WorkOrderForPlanning.Ukey
 ";
@@ -717,7 +717,7 @@ SELECT
     WorkOrderForPlanning_PatternPanel.PatternPanel,
     WorkOrderForPlanning_PatternPanel.FabricPanelCode
 FROM WorkOrderForOutput WITH(NOLOCK)
-JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
+INNER JOIN WorkOrderForPlanning_PatternPanel ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_PatternPanel.WorkOrderForPlanningUkey
 WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -735,7 +735,7 @@ SELECT
     WorkOrderForPlanning_SizeRatio.SizeCode,
     WorkOrderForPlanning_SizeRatio.Qty
 FROM WorkOrderForOutput WITH(NOLOCK)
-JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
+INNER JOIN WorkOrderForPlanning_SizeRatio ON WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning_SizeRatio.WorkOrderForPlanningUkey
 WHERE WorkOrderForOutput.ID = '{this.CurrentMaintain["ID"]}'
 ";
 
@@ -825,7 +825,9 @@ WHERE ID = '{this.CurrentMaintain["ID"]}'
         private void BtnImportMarker_Click(object sender, EventArgs e)
         {
             CuttingWorkOrder cw = new CuttingWorkOrder();
+            this.ShowWaitMessage("Processing...");
             DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P09);
+            this.HideWaitMessage();
             if (!result)
             {
                 this.ShowErr(result);

@@ -375,7 +375,7 @@ namespace Sci.Production.Cutting
 
                                     // 計算剩餘英吋數、碼等等
                                     decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
-                                    string inchFraction = inchDecimalPart == 0 ? "0/0" : Prg.ProjExts.DecimalToFraction(inchDecimalPart);
+                                    string inchFraction = Prg.ProjExts.ConvertToFractionString(inchDecimalPart);
                                     markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2""";
                                     layerYDS += layerInch * this.inchToYdsRate;
                                     break;
