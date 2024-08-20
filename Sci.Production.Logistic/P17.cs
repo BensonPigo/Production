@@ -144,16 +144,49 @@ namespace Sci.Production.Logistic
             }
 
             string strSQL_CFA = $@"
-            SELECT 1
-            FROM PackingList_Detail pld
-            inner join TransferToCFA CFA on pld.id = cfa.PackingListID
-							            and pld.CTNStartNo = CFA.CTNStartNo
-            WHERE pld.SCICtnNo in(CFA.SCICtnNo) AND pld.SciCtnNo ='{sciCtnNo}'";
-            string cfaSciCtnNo = MyUtility.GetValue.Lookup(strSQL_CFA);
+            DECLARE @SCICtnNo varchar(16) = '{sciCtnNo}'
+			DECLARE @ReceiveDate DateTime
+			DECLARE @ReturnDate DateTime
+			DECLARE @CanUse bit
 
-            if (MyUtility.Check.Empty(cfaSciCtnNo) && !MyUtility.Check.Empty(packListSciCtnNo))
+			Select @ReturnDate = MAX(r.AddDate) From PackingList_Detail pld
+			Inner join CFAReturn r on r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
+			Where pld.SCICtnNo = @SCICtnNo
+
+			Select @ReceiveDate = MAX(r.AddDate) From PackingList_Detail pld
+			Inner join CFAReceive r on r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
+			Where pld.SCICtnNo = @SCICtnNo
+
+			If(@receiveDate is Null)
+				Begin
+					Set @CanUse = 0
+				End
+			Else
+				Begin
+					if(@ReturnDate is Null)
+						Begin
+							Set @CanUse = 1
+						End
+					Else
+						Begin
+							if(@ReceiveDate > @ReturnDate)
+								Begin 
+									Set @CanUse = 1
+								End
+							Else
+								Begin
+									Set @CanUse = 0
+								End
+						End
+				End
+
+			Select @CanUse
+            ";
+            bool cfaSciCtnNo = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(strSQL_CFA));
+
+            if (!cfaSciCtnNo)
             {
-                MyUtility.Msg.InfoBox("This carton No. has not been transferred to CFA. Cannot be scan & pack.", buttons: MessageBoxButtons.OK);
+                MyUtility.Msg.InfoBox("This carton No. has not been received from CFA. Cannot be scan & pack.", buttons: MessageBoxButtons.OK);
                 e.Cancel = true;
                 this.ClearAll("ALL");
                 return;
@@ -270,18 +303,19 @@ namespace Sci.Production.Logistic
             SELECT @PackingID = ID FROM PackingList_Detail WHERE SCICtnNo = '{sciCtnNo}'                                                
 
             SELECT 
-            TtlCartons= isnull(sum(pld.CTNQty),0)
-            ,TtlQty = isnull(sum(pld.ShipQty),0)
-            ,TtlPackedCartons = isnull(sum(case when pld.ClogScanQty > 0 and pld.CTNQty>0 then 1 else 0 end),0)
-            ,TtlPackQty = isnull(sum(pld.ClogScanQty),0)
+            TtlCartons = isnull(sum(pld.CTNQty),0)
+            , TtlQty = isnull(sum(pld.ShipQty),0)
+            , TtlPackedCartons = isnull(sum(case when pld.ClogScanQty > 0 and pld.CTNQty>0 then 1 else 0 end),0)
+            , TtlPackQty = isnull(sum(pld.ClogScanQty),0)
             FROM PackingList p
-            INNER join PackingList_Detail pld with(NOLOCK) on p.id = pld.id
-            inner join TransferToCFA CFA on pld.id = cfa.PackingListID
-					            and pld.CTNStartNo = CFA.CTNStartNo
+            INNER join PackingList_Detail pld With(NOLOCK) on p.id = pld.id
             WHERE 
-            pld.SCICtnNo in(CFA.SCICtnNo) AND 
-            p.Type in ('B','L') AND 
-            pld.ID = @PackingID";
+            EXists (
+				Select 1 From CFAReceive r With(NOLOCK) 
+				Where r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
+				) 
+				AND p.Type in ('B','L') 
+				AND pld.ID = @PackingID";
             DataRow dr_sum;
             MyUtility.Check.Seek(sum_sql, out dr_sum);
 
@@ -334,12 +368,13 @@ namespace Sci.Production.Logistic
             ,pd.SCICtnNo
             FROM PackingList p
             inner join  PackingList_Detail pd with(NOLOCK) on p.id = pd.id
-            left join TransferToCFA CFA on pd.id = CFA.PackingListID 
-							            and pd.CTNStartNo = CFA.CTNStartNo
             inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
             left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
-            WHERE pd.SCICtnNo in(CFA.SCICtnNo) and p.Type in ('B','L')
-            and pd.SCICtnNo = '{sciCtnNo}'";
+            WHERE EXists (
+				Select 1 from CFAReceive r With(nolock) Where r.PackingListID = pd.ID and r.CTNStartNo = pd.CTNStartNo and r.SCICtnNo = pd.SCICtnNo
+				) 
+				and p.Type in ('B','L')
+				and pd.SCICtnNo = '{sciCtnNo}'";
 
             DualResult result_Detail = DBProxy.Current.Select(null, sqlcmd_Detail, out this.dtDetail);
             if (!result_Detail)
@@ -834,7 +869,6 @@ namespace Sci.Production.Logistic
                 this.ClearAll("SCAN");
             }
         }
-
 
         private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
