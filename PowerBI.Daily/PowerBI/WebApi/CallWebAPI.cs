@@ -51,37 +51,32 @@ namespace PowerBI.Daily.PowerBI.WebApi
         {
             WebApiBaseResult webApiBaseResult;
             string errorMsg = string.Empty;
-            using (TransactionScope transactionScope = new TransactionScope())
-            {
-                try
-                {
-                    string apiUrl = CallWebAPI.GetWebAPIUrl(strServerName);
-                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
-                    if (!webApiBaseResult.isSuccess)
-                    {
-                        transactionScope.Dispose();
-                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
-                        {
-                            errorMsg = webApiBaseResult.responseContent;
-                        }
-                        else
-                        {
-                            errorMsg = webApiBaseResult.exception.ToString();
-                        }
 
-                        return new ResultInfo() { Result = errorMsg, ResultDT = new DataTable() };
+            try
+            {
+                string apiUrl = CallWebAPI.GetWebAPIUrl(strServerName);
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
+                if (!webApiBaseResult.isSuccess)
+                {
+                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    {
+                        errorMsg = webApiBaseResult.responseContent;
+                    }
+                    else
+                    {
+                        errorMsg = webApiBaseResult.exception.ToString();
                     }
 
-                    string response = webApiBaseResult.responseContent;
-                    transactionScope.Complete();
+                    return new ResultInfo() { Result = errorMsg, ResultDT = new DataTable() };
+                }
 
-                    return new ResultInfo() { Result = errorMsg, ResultDT = ToTable<T>(response) };
-                }
-                catch (Exception e)
-                {
-                    transactionScope.Dispose();
-                    return new ResultInfo() { Result = e.ToString(), ResultDT = new DataTable() };
-                }
+                string response = webApiBaseResult.responseContent;
+
+                return new ResultInfo() { Result = errorMsg, ResultDT = ToTable<T>(response) };
+            }
+            catch (Exception e)
+            {
+                return new ResultInfo() { Result = e.ToString(), ResultDT = new DataTable() };
             }
         }
 
