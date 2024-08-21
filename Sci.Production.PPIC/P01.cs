@@ -840,7 +840,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
 
             IList<DataRow> styleData;
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey,SMR = BulkSMR,MRHandle = BulkMRHandle,LocalMR from Style WITH (NOLOCK) where Junk = 0 ";
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0")
             {
                 Size = new Size(950, 500),
@@ -862,7 +862,12 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 this.CurrentMaintain["StyleUnit"] = styleData[0]["StyleUnit"];
                 this.CurrentMaintain["StyleUkey"] = styleData[0]["Ukey"];
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData[0]["Description"]);
+
+                this.CurrentMaintain["SMR"] = styleData[0]["SMR"];
+                this.CurrentMaintain["MRHandle"] = styleData[0]["MRHandle"];
+                this.CurrentMaintain["LocalMR"] = styleData[0]["LocalMR"];
                 this.chkpopup = true;
+
             }
         }
 
@@ -915,6 +920,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             this.CurrentMaintain["StyleUnit"] = string.Empty;
             this.CurrentMaintain["StyleUkey"] = 0;
             this.displayDescription.Value = string.Empty;
+            this.CurrentMaintain["SMR"] = string.Empty;
+            this.CurrentMaintain["MRHandle"] = string.Empty;
+            this.CurrentMaintain["LocalMR"] = string.Empty;
         }
 
         private void SetStyleColumn(string style)
@@ -928,7 +936,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 sp1,
             };
 
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey,SMR = BulkSMR,MRHandle = BulkMRHandle,LocalMR from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable styleData);
             if (!result || styleData.Rows.Count <= 0)
             {
@@ -953,6 +961,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 this.CurrentMaintain["StyleUnit"] = styleData.Rows[0]["StyleUnit"];
                 this.CurrentMaintain["StyleUkey"] = styleData.Rows[0]["Ukey"];
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData.Rows[0]["Description"]);
+                this.CurrentMaintain["SMR"] = styleData.Rows[0]["SMR"];
+                this.CurrentMaintain["MRHandle"] = styleData.Rows[0]["MRHandle"];
+                this.CurrentMaintain["LocalMR"] = styleData.Rows[0]["LocalMR"];
             }
         }
 

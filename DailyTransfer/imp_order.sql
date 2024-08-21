@@ -1140,7 +1140,7 @@ else
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
 			, SizeUnitWeight		, OrganicCotton         , DirectShip			, ScheETANoReplace		, SCHDLETA
 			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x  , Customize4
-            , Customize5
+            , Customize5			, LocalMR
 		) 
        VALUES
        (
@@ -1300,7 +1300,15 @@ else
 			  s.Sew_ScheETAnoReplace,
 			  s.MaxShipETA_Exclude5x,
               isnull(s.Customize4, ''),
-              isnull(s.Customize5, '')
+              isnull(s.Customize5, ''),
+			  isnull( 
+			  (
+				select localMR 
+				from Production.dbo.Style 
+				where BrandID = s.BrandID 
+				and id = s.styleid 
+				and SeasonID = s.SeasonID ), 
+				'')
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
