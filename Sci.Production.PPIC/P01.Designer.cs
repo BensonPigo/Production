@@ -2296,13 +2296,13 @@
             // 
             this.labelBuyMonth.Location = new System.Drawing.Point(562, 120);
             this.labelBuyMonth.Name = "labelBuyMonth";
-            this.labelBuyMonth.Size = new System.Drawing.Size(65, 21);
+            this.labelBuyMonth.Size = new System.Drawing.Size(119, 21);
             this.labelBuyMonth.TabIndex = 32;
-            this.labelBuyMonth.Text = "Buy Month";
+            this.labelBuyMonth.Text = "Est. Download Date";
             // 
             // labelOrderQty
             // 
-            this.labelOrderQty.Location = new System.Drawing.Point(812, 97);
+            this.labelOrderQty.Location = new System.Drawing.Point(833, 97);
             this.labelOrderQty.Name = "labelOrderQty";
             this.labelOrderQty.Size = new System.Drawing.Size(61, 21);
             this.labelOrderQty.TabIndex = 39;
@@ -2310,7 +2310,7 @@
             // 
             // labelFOCQty
             // 
-            this.labelFOCQty.Location = new System.Drawing.Point(812, 120);
+            this.labelFOCQty.Location = new System.Drawing.Point(833, 120);
             this.labelFOCQty.Name = "labelFOCQty";
             this.labelFOCQty.Size = new System.Drawing.Size(61, 21);
             this.labelFOCQty.TabIndex = 40;
@@ -2322,7 +2322,7 @@
             this.numOrderQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Qty", true));
             this.numOrderQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numOrderQty.IsSupportEditMode = false;
-            this.numOrderQty.Location = new System.Drawing.Point(877, 97);
+            this.numOrderQty.Location = new System.Drawing.Point(898, 97);
             this.numOrderQty.Name = "numOrderQty";
             this.numOrderQty.NullValue = new decimal(new int[] {
             0,
@@ -2345,7 +2345,7 @@
             this.numFOCQty.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FOCQty", true));
             this.numFOCQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numFOCQty.IsSupportEditMode = false;
-            this.numFOCQty.Location = new System.Drawing.Point(877, 120);
+            this.numFOCQty.Location = new System.Drawing.Point(898, 120);
             this.numFOCQty.Name = "numFOCQty";
             this.numFOCQty.NullValue = new decimal(new int[] {
             0,
@@ -3169,7 +3169,7 @@
             this.displayBuyMonth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBuyMonth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "BuyMonth", true));
             this.displayBuyMonth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBuyMonth.Location = new System.Drawing.Point(631, 120);
+            this.displayBuyMonth.Location = new System.Drawing.Point(684, 120);
             this.displayBuyMonth.Name = "displayBuyMonth";
             this.displayBuyMonth.Size = new System.Drawing.Size(145, 21);
             this.displayBuyMonth.TabIndex = 21;
