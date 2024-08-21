@@ -1,15 +1,40 @@
-﻿CREATE TABLE [dbo].[ChgOverCheckList] (
+﻿CREATE TABLE [dbo].[ChgOverCheckList](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[Category] [varchar] (1) NOT NULL CONSTRAINT [DF_ChgOverCheckList_Category] DEFAULT '',
-	[StyleType] [varchar] (1) NOT Null CONSTRAINT [DF_ChgOverCheckList_StyleType] DEFAULT '',
-	[SendMail] [nvarchar] (max) NOT Null CONSTRAINT [DF_ChgOverCheckList_SendMail] DEFAULT '',
-	[Junk] [bit] NOT Null CONSTRAINT [DF_ChgOverCheckList_Junk] DEFAULT 0,
-	[AddName] [varchar] (10) NOT Null CONSTRAINT [DF_ChgOverCheckList_AddName] DEFAULT '',
-	[AddDate] [datetime] Null,
-	[EditName] [varchar] (10) NOT Null CONSTRAINT [DF_ChgOverCheckList_EditName] DEFAULT '',
-	[EditDate] [datetime] Null,		
-	CONSTRAINT [PK_ChgOverCheckList] PRIMARY KEY CLUSTERED ([ID] ASC)	
-);
+	[Category] [varchar](1) NOT NULL,
+	[StyleType] [varchar](1) NOT NULL,
+	[SendMail] [nvarchar](max) NOT NULL,
+	[Junk] [bit] NOT NULL,
+	[AddName] [varchar](10) NOT NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NOT NULL,
+	[EditDate] [datetime] NULL,
+	[FactoryID] [varchar](8) NOT NULL,
+ CONSTRAINT [PK_ChgOverCheckList] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_Category]  DEFAULT ('') FOR [Category]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_StyleType]  DEFAULT ('') FOR [StyleType]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_SendMail]  DEFAULT ('') FOR [SendMail]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_Junk]  DEFAULT ((0)) FOR [Junk]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_AddName]  DEFAULT ('') FOR [AddName]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  CONSTRAINT [DF_ChgOverCheckList_EditName]  DEFAULT ('') FOR [EditName]
+GO
+
+ALTER TABLE [dbo].[ChgOverCheckList] ADD  DEFAULT ('') FOR [FactoryID]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ChgOverCheckList', @level2type=N'COLUMN',@level2name=N'ID'
@@ -37,3 +62,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ChgOverCheckList', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ChgOverCheckList', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
+
+

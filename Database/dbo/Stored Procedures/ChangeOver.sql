@@ -173,34 +173,48 @@ BEGIN
 	) c
 	where c.ID = ChgOver.ID
 
-	----------------ChgOver_Check-------------------------------
-	DELETE ChgOver_Check
-	FROM ChgOver CO WITH(NOLOCK)
-	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
-	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 	
-	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
-	WHERE 
-	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
+----------------ChgOver_Check-------------------------------
+	
+	SELECT
+	[ID] = CO.ID
+	,[DayBe4Inline] = 0
+	,[BaseOn] = 0
+	,[ChgOverCheckListID] = ISNULL(CCL.ID,0) 
+	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
+	,[CompletionDate] = NULL
+	,[Remaek] = ''
+	,[No] = ISNULL(CB.[ID],0)
+	,[Checked] = CC.Checked
+	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
+	,[EditName] = ''
+	,[EditDate] = NULL
+	,[ResponseDep] = ISNULL(CCLD.ResponseDep,'')
+	INTO #tmp
+	FROM ChgOver_Check CC WITH (NOLOCK)
+	INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
+	LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+	LEFT JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.NO = CC.[NO]
+	LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = CB.ID
+	WHERE CC.[Checked] = 0  AND CO.Inline > '2024-07-01'
+
+	DELETE CC
+	FROM ChgOver_Check CC
+	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID  and t.ChgOverCheckListID = CC.ChgOverCheckListID AND t.[No] = CC.[No]
 
 	UPDATE ChgOver_Check SET
 	--SElect
 	 [DayBe4Inline] = 0
+	,[ID] = T.ID
 	,[BaseOn] = 0
-	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
+	,[DeadLine] = T.[DeadLine]
 	,[CompletionDate] = NULL
 	,[Remark] = ''
 	,[Checked] = 0
-	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
+	,[Leadtime] = ISNULL(T.LeadTime,0)
 	,[EditName] = ''
 	,[EditDate] = NULL
-	FROM ChgOver CO WITH(NOLOCK)
-	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
-	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
-	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
-	WHERE 
-	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
-	AND EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
+	FROM ChgOver_Check CC
+	INNER JOIN #TMP T ON t.ID = CC.ID  and t.ChgOverCheckListID = CC.ChgOverCheckListID AND t.[No] = CC.[No]
 	
 	INSERT INTO ChgOver_Check
 	(
@@ -219,25 +233,21 @@ BEGIN
 		,[ResponseDep]
 	)
 	SELECT
-	[ID] = CO.ID
+	[ID] = T.ID
 	,[DayBe4Inline] = 0
 	,[BaseOn] = 0
-	,[ChgOverCheckListID] = ISNULL(CCL.ID,0) 
-	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
+	,[ChgOverCheckListID] = ISNULL(T.[ChgOverCheckListID],0) 
+	,[DeadLine] = T.[DeadLine]
 	,[CompletionDate] = NULL
 	,[Remaek] = ''
-	,[No] = ISNULL(CB.[No],0)
+	,[No] = T.[NO]
 	,[Checked] = 0
-	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
+	,[Leadtime] = ISNULL(T.LeadTime,0)
 	,[EditName] = ''
 	,[EditDate] = NULL
-	,[ResponseDep] = ISNULL(CCLD.ResponseDep,'')
-	FROM ChgOver CO WITH(NOLOCK)
-	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type
-	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID 
-	INNER JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.ID = CCLD.ChgOverCheckListBaseID
-	WHERE
-	(SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0  AND CO.Inline > '2024-07-01'
-	AND NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = CO.ID  and ChgOverCheckListID = ccl.id AND No = CB.[NO])
+	,[ResponseDep] = ISNULL(T.ResponseDep,'')
+	FROM #TMP T WITH(NOLOCK)
+	WHERE NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = T.ID  and ChgOverCheckListID = T.ChgOverCheckListID AND No = T.[NO])
 
+	DROP TABLE #tmp
 END
