@@ -173,8 +173,7 @@ BEGIN
 	) c
 	where c.ID = ChgOver.ID
 
-----------------ChgOver_Check-------------------------------
-	
+	----------------ChgOver_Check-------------------------------
 	SELECT
 	[ID] = CO.ID
 	,[DayBe4Inline] = 0
@@ -190,20 +189,19 @@ BEGIN
 	,[EditDate] = NULL
 	,[ResponseDep] = ISNULL(CCLD.ResponseDep,'')
 	INTO #tmp
-	FROM ChgOver_Check CC WITH (NOLOCK)
-	INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
-	LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+	FROM ChgOver co WITH (NOLOCK)
+	LEFT JOIN ChgOver_Check cc WITH (NOLOCK) ON CC.ID = co.ID
+	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type AND ccl.FactoryID = CO.FactoryID
 	LEFT JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.NO = CC.[NO]
-	LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = CB.ID
-	WHERE CC.[Checked] = 0  AND CO.Inline > '2024-07-01'
+	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID  and ccld.ChgOverCheckListBaseID = CB.ID
+	WHERE (SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
 
 	DELETE CC
 	FROM ChgOver_Check CC
-	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID  and t.ChgOverCheckListID = CC.ChgOverCheckListID AND t.[No] = CC.[No]
+	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID 
 
 	UPDATE ChgOver_Check SET
-	--SElect
-	 [DayBe4Inline] = 0
+	[DayBe4Inline] = 0
 	,[ID] = T.ID
 	,[BaseOn] = 0
 	,[DeadLine] = T.[DeadLine]
@@ -214,7 +212,7 @@ BEGIN
 	,[EditName] = ''
 	,[EditDate] = NULL
 	FROM ChgOver_Check CC
-	INNER JOIN #TMP T ON t.ID = CC.ID  and t.ChgOverCheckListID = CC.ChgOverCheckListID AND t.[No] = CC.[No]
+	INNER JOIN #TMP T ON t.ID = CC.ID
 	
 	INSERT INTO ChgOver_Check
 	(
