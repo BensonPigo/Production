@@ -330,15 +330,15 @@ namespace Sci.Production.Cutting
                             // 準備好物件存資料
                             WorkOrder nwk = new WorkOrder()
                             {
-                                FabricPanelCode = fabricPanelCode,
-                                SEQ1 = seq1,
-                                SEQ2 = seq2,
-                                MarkerNo = markerNo,
+                                FabricPanelCode = fabricPanelCode.Trim(),
+                                SEQ1 = seq1.Trim(),
+                                SEQ2 = seq2.Trim(),
+                                MarkerNo = markerNo.Trim(),
                                 ID = this.CuttingPOID,
                                 FactoryID = this.FactoryID,
                                 MDivisionId = this.MDivisionid,
-                                Colorid = tmpColorid,
-                                Tone = tmpTone,
+                                Colorid = tmpColorid.Trim(),
+                                Tone = tmpTone.Trim(),
                                 IsCreateByUser = true,
                             };
 
@@ -465,7 +465,7 @@ SELECT
     ,psd.SEQ2
     ,psd.Refno
     ,psd.SCIRefno
-    ,ColorID = ISNULL(psdc.SpecValue, '')
+    ,ColorID = LTRIM(RTRIM(ISNULL(psdc.SpecValue, '')))
     ,CuttingLayer = iif(isnull(c.CuttingLayer, 100) = 0, 100, isnull(c.CuttingLayer, 100))
     ,ofc.FabricPanelCode
     ,FabricCombo = ofc.PatternPanel

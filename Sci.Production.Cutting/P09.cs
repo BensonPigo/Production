@@ -1539,8 +1539,14 @@ DEALLOCATE CURSOR_
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string newValue = Prgs.SetMarkerLengthMaskString(e.FormattedValue.ToString());
-                string oldValue = MyUtility.Convert.GetString(dr["MarkerLength"]);
-                if (!this.CanEditData(dr) || newValue == oldValue)
+                string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
+
+                if (!this.CanEditData(dr))
+                {
+                    dr["MarkerLength"] = oldValue;
+                    return;
+                }
+                else if (oldValue == newValue)
                 {
                     return;
                 }

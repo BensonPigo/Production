@@ -37,6 +37,7 @@ namespace Sci.Production.Cutting
 
         private string CuttingID;
         private string SCIRefno = string.Empty;
+        private decimal Cons = 0;
 
         /// <inheritdoc/>
         public P02_ActionCutRef()
@@ -77,6 +78,7 @@ namespace Sci.Production.Cutting
             this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
             this.txtWKETA.Text = MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).Value.ToString("yyyy/MM/dd") : string.Empty;
             this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();
+            this.Cons = MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]);
 
             this.txtSP.ReadOnly = MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]) != "2";
 
@@ -150,6 +152,7 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData["MarkerNo"] = this.txtMarkerNo.Text;
             this.CurrentDetailData["MarkerLength"] = this.CurrentDetailData["MarkerLength_Mask"] = this.txtMarkerLength.Text == "Y  - / + \"" ? string.Empty : this.txtMarkerLength.Text;
             this.CurrentDetailData["SCIRefno"] = this.SCIRefno;
+            this.CurrentDetailData["Cons"] = this.Cons;
             this.CurrentDetailData["EstCutDate"] = this.dateBoxEstCutDate.Value ?? (object)DBNull.Value;
 
             if (this.txtWKETA.Text == string.Empty)
@@ -384,10 +387,23 @@ namespace Sci.Production.Cutting
             }
         }
 
+        private void NumConsPC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
+        }
+
+        private void NumLayers_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
+        }
+
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
             this.txtMarkerLength.Text = markerLength;
+
+            this.numConsPC.Value = CalculateConsPC(markerLength, this.CurrentDetailData, this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
+            this.Cons = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numConsPC.Value), MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
         }
 
         private void TxtMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -458,7 +474,13 @@ namespace Sci.Production.Cutting
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                QtyCellValidating(e, this.CurrentDetailData, this.gridSizeRatio, this.dtWorkOrderForPlanning_SizeRatio, null, CuttingForm.P02);
+                if (QtyCellValidating(e, this.CurrentDetailData, grid, this.dtWorkOrderForPlanning_SizeRatio, null, CuttingForm.P02, MyUtility.Convert.GetInt(this.numLayers.Value)))
+                {
+                    if (grid.Name == "gridSizeRatio")
+                    {
+                        this.numConsPC.Value = CalculateConsPC(this.CurrentDetailData, this.Cons, MyUtility.Convert.GetDecimal(this.numLayers.Value), this.dtWorkOrderForPlanning_SizeRatio, CuttingForm.P02);
+                    }
+                }
             };
         }
         #endregion

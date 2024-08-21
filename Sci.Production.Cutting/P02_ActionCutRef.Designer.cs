@@ -465,6 +465,7 @@ namespace Sci.Production.Cutting
             0,
             0,
             0});
+            this.numLayers.Validating += new System.ComponentModel.CancelEventHandler(this.NumLayers_Validating);
             // 
             // numConsPC
             // 
@@ -485,6 +486,7 @@ namespace Sci.Production.Cutting
             0,
             0,
             0});
+            this.numConsPC.Validating += new System.ComponentModel.CancelEventHandler(this.NumConsPC_Validating);
             // 
             // label16
             // 
