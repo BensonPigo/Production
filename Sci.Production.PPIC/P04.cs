@@ -450,6 +450,24 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                 }
             }
 
+            string upLocalMR = $@"
+update o
+set LocalMR = iif(o.LocalMR = '','{this.CurrentMaintain["LocalMR"]}',o.LocalMR)
+from orders o
+where o.StyleUkey = {this.CurrentMaintain["UKey"]} 
+and not exists (
+    select 1 
+    from SewingOutput_Detail 
+    where OrderId = o.ID
+)
+";
+            DualResult result2 = DBProxy.Current.Execute(null, upLocalMR);
+            if (!result2)
+            {
+                this.ShowErr("Update order LocalMR fail!!\r\n" + result2.ToString());
+                return result2;
+            }
+
             return Ict.Result.True;
         }
 
