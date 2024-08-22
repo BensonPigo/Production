@@ -302,7 +302,7 @@ namespace PowerBI.Daily
                 ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
             FROM P_TransRegion r
             left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-            where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity'
+            where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity' and i.Name <> 'P_Import_MachineMaserList'
             ";
 
             if (type == 0)
@@ -406,7 +406,7 @@ namespace PowerBI.Daily
 	                and r.Region = t.RegionID
                 )
             )
-            and i.Name {whereP} 'P_ImportEstShippingReport'  and i.Name <> 'P_Import_Capacity'
+            and i.Name {whereP} 'P_ImportEstShippingReport'  and i.Name <> 'P_Import_Capacity' and i.Name <> 'P_Import_MachineMaserList'
             ";
 
             if (type == 0)

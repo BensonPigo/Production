@@ -47,38 +47,36 @@ namespace Sci.Production.CallPmsAPI
         {
             WebApiBaseResult webApiBaseResult;
             string errorMsg = string.Empty;
-            using (TransactionScope transactionScope = new TransactionScope())
-            {
-                try
-                {
-                    string apiUrl = GetWebAPIUrl(strServerName);
-                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
-                    if (!webApiBaseResult.isSuccess)
-                    {
-                        transactionScope.Dispose();
-                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
-                        {
-                            errorMsg = webApiBaseResult.responseContent;
-                        }
-                        else
-                        {
-                            errorMsg = webApiBaseResult.exception.ToString();
-                        }
 
-                        return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
+            try
+            {
+                string apiUrl = GetWebAPIUrl(strServerName);
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
+                if (!webApiBaseResult.isSuccess)
+                {
+                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    {
+                        errorMsg = webApiBaseResult.responseContent;
+                    }
+                    else
+                    {
+                        errorMsg = webApiBaseResult.exception.ToString();
                     }
 
-                    string response = webApiBaseResult.responseContent;
-                    transactionScope.Complete();
+                    return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
+                }
 
-                    return new ResultInfo() { Result = errorMsg, ResultDT = response };
-                }
-                catch (Exception e)
-                {
-                    transactionScope.Dispose();
-                    return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
-                }
+                string response = webApiBaseResult.responseContent;
+
+                return new ResultInfo() { Result = errorMsg, ResultDT = response };
             }
+            catch (Exception e)
+            {
+                return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
+            }
+            
         }
 
         /// <summary>
@@ -90,13 +88,9 @@ namespace Sci.Production.CallPmsAPI
         {
             string environment = string.Empty;
 
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
             {
-                #if DEBUG
                 return "http://172.17.3.97:16888/";
-                #endif
-
-                return "http://172.17.3.96:16888/";
             }
 
             if (DBProxy.Current.DefaultModuleName.Contains("Training"))
@@ -120,7 +114,7 @@ namespace Sci.Production.CallPmsAPI
         public static string GetConnRegion(string systemName)
         {
             string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
             {
                 return "TESTING_" + finalDBName;
             }

@@ -22,11 +22,11 @@ namespace PowerBI.Daily.PowerBI.WebApi
         {
             string environment = string.Empty;
 
-            //測試記得打開
-
-            #if DEBUG
-                 return "http://172.17.3.97:16888/";
-            #endif
+            
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
+            {
+                return "http://172.17.3.97:16888/"; //測試走這裡
+            }
 
             if (DBProxy.Current.DefaultModuleName.Contains("Training"))
             {
@@ -42,8 +42,18 @@ namespace PowerBI.Daily.PowerBI.WebApi
             {
                 environment = "Formal";
             }
-
             return MyUtility.GetValue.Lookup($@"select [URL] from [Production].[dbo].[SystemWebAPIURL] with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'", "Production");
+        }
+
+        public static string GetConnRegion(string systemName)
+        {
+            string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
+            {
+                return "TESTING_" + finalDBName; ;
+            }
+
+            return finalDBName + "_Formal";
         }
 
         /// <inheritdoc/>
@@ -55,7 +65,9 @@ namespace PowerBI.Daily.PowerBI.WebApi
             try
             {
                 string apiUrl = CallWebAPI.GetWebAPIUrl(strServerName);
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout);
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
+                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
                 if (!webApiBaseResult.isSuccess)
                 {
                     if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
