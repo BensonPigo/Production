@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -217,11 +216,7 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             DateTime stratExecutedTime = DateTime.Now;
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
-            List<ExecutedList> executedListException = new List<ExecutedList>();
-            List<ExecutedList> executedListTimeout = new List<ExecutedList>();
 
-            double timeout = Convert.ToDouble(System.Configuration.ConfigurationManager.AppSettings["EachThreadTimeout"]);
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
             var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
@@ -229,43 +224,18 @@ ORDER BY [Group], [SEQ], [NAME]";
                 .Select(item =>
                 {
                     List<ExecutedList> executedListDetail = new List<ExecutedList>();
-                    ExecutedList currExecuted = new ExecutedList();
-                    try
-                    {
-                        var results_detail = item
-                            .OrderBy(x => x.SEQ)
-                            .AsParallel()
-                            .WithCancellation(cancellationTokenSource.Token)
-                            .AsSequential()
-                            .Select(detail =>
-                            {
-                                currExecuted = detail;
-                                try
-                                {
-                                    ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
-                                    executedListDetail.Add(detailPararllelResult);
-                                    return detailPararllelResult;
-                                }
-                                catch (Exception ex)
-                                {
-                                    detail.Success = false;
-                                    detail.ErrorMsg = ex.Message;
-                                    executedListException.Add(detail);
-                                    return detail;
-                                }
-                            })
-                            .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
-                            .ToList();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.GetType().FullName == "System.OperationCanceledException")
+                    var results_detail = item
+                        .OrderBy(x => x.SEQ)
+                        .AsParallel()
+                        .AsSequential()
+                        .Select(detail =>
                         {
-                            // 如果有觸發逾時先記錄至List
-                            currExecuted.ErrorMsg = "Timeout";
-                            executedListTimeout.Add(currExecuted);
-                        }
-                    }
+                            ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
+                            executedListDetail.Add(detailPararllelResult);
+                            return detailPararllelResult;
+                        })
+                        .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                        .ToList();
 
                     return executedListDetail;
                 })
@@ -279,24 +249,10 @@ ORDER BY [Group], [SEQ], [NAME]";
             foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
             {
                 string errMsg = "沒有執行";
-                var executedTimeout = executedListTimeout.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
-                var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
-                if (executedException != null)
+                var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
+                if (queryErrorGroup.Any())
                 {
-                    // 如果是Throw Exception的話，紀錄Exception訊息
-                    errMsg = executedException.ErrorMsg;
-                }
-                else if (executedTimeout != null)
-                {
-                    errMsg = executedTimeout.ErrorMsg;
-                }
-                else
-                {
-                    var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                    if (queryErrorGroup.Any())
-                    {
-                        errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
-                    }
+                    errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
                 }
 
                 executedListEnd.Add(new ExecutedList()
