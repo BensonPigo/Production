@@ -46,6 +46,8 @@
             this.cbProductType = new Sci.Production.Class.ComboProductType(this.components);
             this.dtAddEdit = new Sci.Win.UI.DateRange();
             this.dtInline = new Sci.Win.UI.DateRange();
+            this.label8 = new Sci.Win.UI.Label();
+            this.cbFactoryID = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -77,15 +79,15 @@
             // 
             this.txtRD.BackColor = System.Drawing.Color.White;
             this.txtRD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRD.Location = new System.Drawing.Point(116, 226);
+            this.txtRD.Location = new System.Drawing.Point(116, 250);
             this.txtRD.Name = "txtRD";
-            this.txtRD.Size = new System.Drawing.Size(166, 26);
+            this.txtRD.Size = new System.Drawing.Size(166, 23);
             this.txtRD.TabIndex = 203;
             this.txtRD.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtRD_PopUp);
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(10, 228);
+            this.label4.Location = new System.Drawing.Point(9, 250);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 23);
             this.label4.TabIndex = 202;
@@ -93,7 +95,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(9, 44);
+            this.label3.Location = new System.Drawing.Point(9, 40);
             this.label3.Name = "label3";
             this.label3.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.label3.RectStyle.BorderWidth = 1F;
@@ -107,7 +109,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(9, 197);
+            this.label2.Location = new System.Drawing.Point(9, 220);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(104, 23);
             this.label2.TabIndex = 198;
@@ -117,15 +119,15 @@
             // 
             this.txtCategory.BackColor = System.Drawing.Color.White;
             this.txtCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCategory.Location = new System.Drawing.Point(116, 164);
+            this.txtCategory.Location = new System.Drawing.Point(116, 190);
             this.txtCategory.Name = "txtCategory";
-            this.txtCategory.Size = new System.Drawing.Size(166, 26);
+            this.txtCategory.Size = new System.Drawing.Size(166, 23);
             this.txtCategory.TabIndex = 197;
             this.txtCategory.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtCategory_PopUp);
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(9, 136);
+            this.label1.Location = new System.Drawing.Point(9, 160);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(104, 23);
             this.label1.TabIndex = 195;
@@ -135,15 +137,15 @@
             // 
             this.txtSPNO.BackColor = System.Drawing.Color.White;
             this.txtSPNO.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNO.Location = new System.Drawing.Point(116, 73);
+            this.txtSPNO.Location = new System.Drawing.Point(116, 70);
             this.txtSPNO.Name = "txtSPNO";
-            this.txtSPNO.Size = new System.Drawing.Size(166, 26);
+            this.txtSPNO.Size = new System.Drawing.Size(166, 23);
             this.txtSPNO.TabIndex = 194;
             this.txtSPNO.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSPNO_PopUp);
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(9, 167);
+            this.label5.Location = new System.Drawing.Point(9, 190);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(104, 23);
             this.label5.TabIndex = 192;
@@ -154,16 +156,16 @@
             this.chkOutstanding.AutoSize = true;
             this.chkOutstanding.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkOutstanding.IsSupportEditMode = false;
-            this.chkOutstanding.Location = new System.Drawing.Point(10, 260);
+            this.chkOutstanding.Location = new System.Drawing.Point(10, 280);
             this.chkOutstanding.Name = "chkOutstanding";
-            this.chkOutstanding.Size = new System.Drawing.Size(366, 24);
+            this.chkOutstanding.Size = new System.Drawing.Size(309, 21);
             this.chkOutstanding.TabIndex = 191;
             this.chkOutstanding.Text = "Outstanding (Only Show Overdue CheckList)";
             this.chkOutstanding.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(9, 106);
+            this.label6.Location = new System.Drawing.Point(9, 130);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(104, 23);
             this.label6.TabIndex = 190;
@@ -188,10 +190,10 @@
             this.txtStyle.BackColor = System.Drawing.Color.White;
             this.txtStyle.BrandObjectName = null;
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStyle.Location = new System.Drawing.Point(116, 103);
+            this.txtStyle.Location = new System.Drawing.Point(116, 130);
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.SeasonObjectName = null;
-            this.txtStyle.Size = new System.Drawing.Size(166, 26);
+            this.txtStyle.Size = new System.Drawing.Size(166, 23);
             this.txtStyle.TabIndex = 204;
             this.txtStyle.TarBrand = null;
             this.txtStyle.TarSeason = null;
@@ -200,15 +202,15 @@
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
             this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(116, 195);
+            this.txtCell.Location = new System.Drawing.Point(116, 220);
             this.txtCell.MDivisionID = "";
             this.txtCell.Name = "txtCell";
-            this.txtCell.Size = new System.Drawing.Size(166, 26);
+            this.txtCell.Size = new System.Drawing.Size(166, 23);
             this.txtCell.TabIndex = 206;
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(10, 75);
+            this.label7.Location = new System.Drawing.Point(9, 70);
             this.label7.Name = "label7";
             this.label7.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.label7.RectStyle.BorderWidth = 1F;
@@ -227,10 +229,10 @@
             this.cbProductType.FormattingEnabled = true;
             this.cbProductType.IsJunk = false;
             this.cbProductType.IsSupportUnselect = true;
-            this.cbProductType.Location = new System.Drawing.Point(116, 132);
+            this.cbProductType.Location = new System.Drawing.Point(116, 160);
             this.cbProductType.Name = "cbProductType";
             this.cbProductType.OldText = "";
-            this.cbProductType.Size = new System.Drawing.Size(166, 28);
+            this.cbProductType.Size = new System.Drawing.Size(166, 24);
             this.cbProductType.StyleApparelType = "";
             this.cbProductType.TabIndex = 208;
             // 
@@ -241,18 +243,18 @@
             // 
             this.dtAddEdit.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dtAddEdit.DateBox1.Name = "";
-            this.dtAddEdit.DateBox1.Size = new System.Drawing.Size(127, 26);
+            this.dtAddEdit.DateBox1.Size = new System.Drawing.Size(129, 23);
             this.dtAddEdit.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dtAddEdit.DateBox2.Location = new System.Drawing.Point(153, 0);
+            this.dtAddEdit.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dtAddEdit.DateBox2.Name = "";
-            this.dtAddEdit.DateBox2.Size = new System.Drawing.Size(127, 26);
+            this.dtAddEdit.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dtAddEdit.DateBox2.TabIndex = 1;
             this.dtAddEdit.Location = new System.Drawing.Point(116, 10);
             this.dtAddEdit.Name = "dtAddEdit";
-            this.dtAddEdit.Size = new System.Drawing.Size(280, 26);
+            this.dtAddEdit.Size = new System.Drawing.Size(280, 23);
             this.dtAddEdit.TabIndex = 209;
             // 
             // dtInline
@@ -262,25 +264,49 @@
             // 
             this.dtInline.DateBox1.Location = new System.Drawing.Point(0, 0);
             this.dtInline.DateBox1.Name = "";
-            this.dtInline.DateBox1.Size = new System.Drawing.Size(127, 26);
+            this.dtInline.DateBox1.Size = new System.Drawing.Size(129, 23);
             this.dtInline.DateBox1.TabIndex = 0;
             // 
             // 
             // 
-            this.dtInline.DateBox2.Location = new System.Drawing.Point(153, 0);
+            this.dtInline.DateBox2.Location = new System.Drawing.Point(151, 0);
             this.dtInline.DateBox2.Name = "";
-            this.dtInline.DateBox2.Size = new System.Drawing.Size(127, 26);
+            this.dtInline.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dtInline.DateBox2.TabIndex = 1;
-            this.dtInline.Location = new System.Drawing.Point(116, 41);
+            this.dtInline.Location = new System.Drawing.Point(116, 40);
             this.dtInline.Name = "dtInline";
-            this.dtInline.Size = new System.Drawing.Size(280, 26);
+            this.dtInline.Size = new System.Drawing.Size(280, 23);
             this.dtInline.TabIndex = 210;
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(9, 100);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(104, 23);
+            this.label8.TabIndex = 211;
+            this.label8.Text = "Factory";
+            // 
+            // cbFactoryID
+            // 
+            this.cbFactoryID.BackColor = System.Drawing.Color.White;
+            this.cbFactoryID.FilteMDivision = false;
+            this.cbFactoryID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbFactoryID.FormattingEnabled = true;
+            this.cbFactoryID.IssupportJunk = false;
+            this.cbFactoryID.IsSupportUnselect = true;
+            this.cbFactoryID.Location = new System.Drawing.Point(116, 100);
+            this.cbFactoryID.Name = "cbFactoryID";
+            this.cbFactoryID.OldText = "";
+            this.cbFactoryID.Size = new System.Drawing.Size(166, 24);
+            this.cbFactoryID.TabIndex = 212;
             // 
             // R22
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(526, 383);
+            this.Controls.Add(this.cbFactoryID);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.dtInline);
             this.Controls.Add(this.dtAddEdit);
             this.Controls.Add(this.cbProductType);
@@ -324,6 +350,8 @@
             this.Controls.SetChildIndex(this.cbProductType, 0);
             this.Controls.SetChildIndex(this.dtAddEdit, 0);
             this.Controls.SetChildIndex(this.dtInline, 0);
+            this.Controls.SetChildIndex(this.label8, 0);
+            this.Controls.SetChildIndex(this.cbFactoryID, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -348,5 +376,7 @@
         private Class.ComboProductType cbProductType;
         private Win.UI.DateRange dtAddEdit;
         private Win.UI.DateRange dtInline;
+        private Win.UI.Label label8;
+        private Class.ComboFactory cbFactoryID;
     }
 }
