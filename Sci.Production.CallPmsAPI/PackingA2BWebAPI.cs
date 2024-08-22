@@ -88,7 +88,7 @@ namespace Sci.Production.CallPmsAPI
         {
             string environment = string.Empty;
 
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING")  || DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
             {
                 return "http://172.17.3.97:16888/";
             }
