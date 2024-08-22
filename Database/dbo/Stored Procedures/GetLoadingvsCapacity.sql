@@ -5,6 +5,7 @@ AS
 	declare @YearMonth_S date =  DATEADD(YEAR,-1,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))	--一年前的1/1
 	declare @YearMonth_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))-1	--二年後的12/31
 
+    declare @NoRestrictOrdersDelivery bit = (select TOP 1 NoRestrictOrdersDelivery from System)
 	declare @SourceA  TABLE
 	(
 		[FACTORYID] [VARCHAR](25) NULL,
@@ -51,7 +52,9 @@ AS
 		and (o.SciDelivery between @Date_S and @Date_E)
 		And (o.Junk = 0 OR (o.Junk = 1 AND o.NeedProduction = 1))
 		And (o.IsBuyBack = 0 OR (o.IsBuyBack = 1 AND o.BuyBackReason = 'KeepPanel'))
-        And (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0)))) 
+        And (@NoRestrictOrdersDelivery = 1
+            or 
+            (@NoRestrictOrdersDelivery = 0 and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))))
         And F.IsProduceFty = 1
 		/************************** Forecast **************************/
 		UNION
@@ -82,7 +85,9 @@ AS
 		o.ForecastCategory IN ('B', 'S') 
 		and o.BuyerDelivery between @Date_S and @Date_E 
 		and (Style.Ukey is null OR Style.Junk = 0) and o.Category = ''
-        and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0)))) 
+        and (@NoRestrictOrdersDelivery = 1
+            or 
+            (@NoRestrictOrdersDelivery = 0 and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))))
         and F.IsProduceFty = 1
 
 		/************************** FactoryOrder **************************/
@@ -116,7 +121,9 @@ AS
 		and o.SubconInType in ('2', '3') 
 		and o.SCIDelivery between @Date_S and @Date_E
 		and o.LocalOrder = '1'
-        and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0)))) 
+        and (@NoRestrictOrdersDelivery = 1
+            or 
+            (@NoRestrictOrdersDelivery = 0 and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))))
         and F.IsProduceFty = 1
 
 		/************************** 負的FactoryOrder **************************/
@@ -150,7 +157,9 @@ AS
 		and o.SubconInType in ('2') 
 		and o.SCIDelivery between @Date_S and @Date_E
 		and o.LocalOrder = '1'
-        and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0)))) 
+        and (@NoRestrictOrdersDelivery = 1
+            or 
+            (@NoRestrictOrdersDelivery = 0 and (o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))))
         and Factory.IsProduceFty = 1
 	) a
 	Group by a.FactoryID, a.MDivisionID, a.ArtworkTypeID, a.[Key], a.[Half key]
