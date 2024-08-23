@@ -300,6 +300,7 @@ SELECT c.[ID]
 	  ,co.SEQ
 	  ,[InspectedSP] = cfos.OrderID
 	  ,[InspectedSeq] = cfos.Seq
+	  ,[ReInspection] =  iif(c.ReInspection =1, 1, 0)
 INTO #MainData
 From ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord  c
 INNER JOIN ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
@@ -362,6 +363,7 @@ SELECT
 	,c.FirstInspection
 	,c.[InspectedSP]
 	,c.[InspectedSeq] 
+	,c.[ReInspection]
 INTO #tmp
 FROm #MainData  c
 LEFT JOIN ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord_Detail cd ON c.ID = cd.ID
@@ -412,6 +414,7 @@ SELECT
 	,FirstInspection  = IIF(FirstInspection = 1, ''Y'','''')
 	,t.[InspectedSP]
 	,t.[InspectedSeq] 
+	,t.[ReInspection]
 into #Final_P_CFAInspectionRecord_Detail
 FROM  #tmp t
 OUTER APPLY(
@@ -577,6 +580,7 @@ INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
 		   ,[1st_Inspection]
 		   ,[InspectedSP]
 		   ,[InspectedSeq] 
+		   ,[ReInspection]
 		   )
 select * from #Final_P_CFAInspectionRecord_Detail
 '
