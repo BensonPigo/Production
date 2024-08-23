@@ -90,6 +90,7 @@ left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o WITH (NOLOCK) on o.ID = td.Poid
 where td.ID = '{this.txtTransferInNo.Text}'
+and o.OrderCompanyID = '{P04.orderCompanyID}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
             if (!result)

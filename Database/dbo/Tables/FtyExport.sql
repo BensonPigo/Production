@@ -32,6 +32,7 @@
     [ShipDate] DATE NULL, 
     [ETA] DATE NULL, 
     [ExpressID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [OrderCompanyID] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -160,3 +161,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FtyExport',
     @level2type = N'COLUMN',
     @level2name = N'ETA'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為訂單公司別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyExport',
+    @level2type = N'COLUMN',
+    @level2name = N'OrderCompanyID'

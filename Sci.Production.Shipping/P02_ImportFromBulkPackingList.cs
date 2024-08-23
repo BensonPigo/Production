@@ -79,15 +79,18 @@ namespace Sci.Production.Shipping
             #region PackingListID 存在Pullout 則不能匯入
             List<SqlParameter> listParameter = new List<SqlParameter>();
             listParameter.Add(new SqlParameter("@PackingID", this.txtBulkPL.Text));
+            listParameter.Add(new SqlParameter("@OrderCompanyID", P02.orderCompanyID));
             DataRow dr;
             string sqlcmdChk = @"
 select distinct p.ID as PulloutID
 from PackingList_Detail pd WITH (NOLOCK) 
+left join PackingList pl with(nolock) on pl.id = pd.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
 inner join Pullout_Detail p on p.PackingListID = pd.ID
 where pd.ID = @PackingID
 and Factory.IsProduceFty=1
+and pl.OrderCompanyID = @OrderCompanyID
 ";
             if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
             {
@@ -126,6 +129,7 @@ and Factory.IsProduceFty=1
 	and pd.ID='{this.txtBulkPL.Text}'
     and Factory.IsProduceFty=1
     and p.Type = 'B'
+    and p.OrderCompanyID = '{P02.orderCompanyID}'
 	and not exists(
 		select distinct p1.ID as PulloutID
 		from PackingList_Detail p2 WITH (NOLOCK) 

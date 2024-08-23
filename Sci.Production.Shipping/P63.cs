@@ -217,6 +217,13 @@ ORDER BY GB.ETD
         }
 
         /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.comboCompany.ReadOnly = true;
+        }
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -225,6 +232,7 @@ ORDER BY GB.ETD
             this.gridCurrency.DataSource = null;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.RefreshExchangeRate();
+            this.comboCompany.ReadOnly = false;
         }
 
         /// <inheritdoc/>
@@ -233,6 +241,13 @@ ORDER BY GB.ETD
             if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail no data");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.comboCompany.Select();
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
                 return false;
             }
 
@@ -308,6 +323,7 @@ select ID from KHCMTInvoice where ID like @IDkeyWord + '%'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -405,6 +421,7 @@ where ID='{item["InvNo"]}'
 
             worksheet.Cells[10, 9] = $"លេខវិក្កយបត្រ៖{this.CurrentMaintain["ID"]}";
             worksheet.Cells[11, 9] = $"Invoice No:{this.CurrentMaintain["ID"]}";
+            worksheet.Cells[11, 2] = $"Costomer : " + MyUtility.GetValue.Lookup($@"SELECT NameEN FROM Company WHERE ID = '{this.CurrentMaintain["OrderCompanyID"]}'");
 
             string invDate = ((DateTime)this.CurrentMaintain["InvDate"]).ToString("dd-MMM-yyyy", CultureInfo.CreateSpecificCulture("en-US"));
             worksheet.Cells[12, 9] = $"កាលបរិច្ឆេត៖{invDate}";
@@ -731,6 +748,39 @@ order by r.BeginDate
             this.CurrentMaintain["ExchangeRate"] = this.numExchangeRate.Value;
 
             this.GetGridPOListData();
+        }
+
+        private void ComboCompany_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCompany.SelectedIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain != null && this.DetailDatas.Count != 0)
+            {
+                bool hasGBNo = this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["InvNo"])).Any();
+
+                // 如果表身有SP# 並且表頭的OrderCompanyID改變就要判斷
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]) != MyUtility.Convert.GetInt(this.comboCompany.SelectedValue) && hasGBNo)
+                {
+                    DialogResult dioResult = MyUtility.Msg.QuestionBox(@" [Order Company] has been changed and all GB# data will be clear.", buttons: MessageBoxButtons.YesNo);
+
+                    // Yes 就刪除所有表身資料
+                    if (dioResult == DialogResult.Yes)
+                    {
+                        foreach (DataRow item in this.DetailDatas)
+                        {
+                            item.Delete();
+                        }
+
+                        foreach (DataRow dr in ((DataTable)this.gridPOListbs.DataSource).Rows)
+                        {
+                            dr.Delete();
+                        }
+                    }
+                }
+            }
         }
     }
 }

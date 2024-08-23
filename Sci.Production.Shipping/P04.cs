@@ -17,6 +17,8 @@ namespace Sci.Production.Shipping
     /// </summary>
     public partial class P04 : Win.Tems.Input6
     {
+        public static int orderCompanyID = 0;
+
         /// <summary>
         /// P04
         /// </summary>
@@ -92,6 +94,12 @@ where ed.ID = '{0}'
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             if (this.radio3rdCountry.Checked || this.radioTransferIn.Checked || this.radioLocalPurchase.Checked)
             {
                 this.lbDeclareation.Text = "Import Declaration ID";
@@ -206,6 +214,14 @@ where ed.ID = '{0}'
             this.CurrentMaintain["Type"] = 1;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.btnShippingMemo.Enabled = false;
+            this.comboCompany.ReadOnly = false;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.comboCompany.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -300,6 +316,13 @@ where ed.ID = '{0}'
             {
                 this.dateOnBoardDate.Focus();
                 MyUtility.Msg.WarningBox("On Board Date cannot be empty!!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.comboCompany.Select();
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
                 return false;
             }
 
@@ -519,6 +542,19 @@ and INVNo = '{this.CurrentMaintain["INVNo"]}'
         // Import Data
         private void BtnImportData_Click(object sender, EventArgs e)
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.comboCompany.Select();
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             switch (this.CurrentMaintain["Type"].ToString())
             {
                 case "1":
@@ -789,6 +825,34 @@ where f.ID = '{this.CurrentMaintain["ID"].ToString()}'
             else
             {
                 this.btnShippingMemo.ForeColor = Color.Black;
+            }
+        }
+
+        private void ComboCompany_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCompany.SelectedIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain != null && this.DetailDatas.Count != 0)
+            {
+                bool hasSPNo = this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["POID"])).Any();
+
+                // 如果表身有SP# 並且表頭的OrderCompanyID改變就要判斷
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]) != MyUtility.Convert.GetInt(this.comboCompany.SelectedValue) && hasSPNo)
+                {
+                    DialogResult dioResult = MyUtility.Msg.QuestionBox(@" [Order Company] has been changed and all Fty WK# detail will be clear.", buttons: MessageBoxButtons.YesNo);
+
+                    // Yes 就刪除所有表身資料
+                    if (dioResult == DialogResult.Yes)
+                    {
+                        foreach (DataRow item in this.DetailDatas)
+                        {
+                            item.Delete();
+                        }
+                    }
+                }
             }
         }
     }
