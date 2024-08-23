@@ -198,7 +198,7 @@ SELECT Distinct
     [Over Days] = iif(cc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [Check] = IIF(cc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, cc.CompletionDate, 23),
-    [Response Dep.] = ccld.ResponseDep,
+    [Response Dep.] = CC.ResponseDep,
     [Check List No] = cc.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = cc.Remark
