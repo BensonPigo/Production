@@ -294,7 +294,8 @@ and co.Type = @StyleType
 and co.Inline >= Convert(date, GETDATE())
 and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
         and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
-    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID))
+    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)) 
+    and co.FactoryID = @FactoryID
 
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0
@@ -313,6 +314,7 @@ end
             {
                 new SqlParameter("@Category", this.CurrentMaintain["Category"]),
                 new SqlParameter("@StyleType", this.CurrentMaintain["StyleType"]),
+                new SqlParameter("@FactoryID", Env.User.Factory),
             };
 
             DualResult result = DBProxy.Current.Execute(null, sqlUpdate, listPar);
