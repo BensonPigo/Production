@@ -145,7 +145,7 @@ INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID And cc.No <> 0
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type' 
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
-LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type and ccl.FactoryID = co.FactoryID
 OUTER APPLY
 (
     SELECT LTRIM(RTRIM(m.n.value('.[1]', 'varchar(500)'))) AS ResponseDep
@@ -198,7 +198,7 @@ SELECT Distinct
     [Over Days] = iif(cc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [Check] = IIF(cc.Checked = 0, '', 'V'),
     [Completion Date] = CONVERT(varchar, cc.CompletionDate, 23),
-    [Response Dep.] = ccld.ResponseDep,
+    [Response Dep.] = CC.ResponseDep,
     [Check List No] = cc.No,
     [Check List Item] = colb.CheckList,
     [Late Reason] = cc.Remark
@@ -207,7 +207,7 @@ INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
 LEFT JOIN SewingLine sl WITH (NOLOCK) ON sl.ID = co.SewingLineID AND sl.FactoryID = co.FactoryID
 LEFT JOIN Reason r WITH (NOLOCK) ON r.ID = s.ApparelType AND r.ReasonTypeID = 'Style_Apparel_Type'
-LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type
+LEFT JOIN ChgOverCheckList ccl WITH(NOLOCK) ON ccl.Category = co.Category AND ccl.StyleType = co.Type and ccl.FactoryID = co.FactoryID
 LEFT JOIN ChgOverCheckListBase colb WITH(NOLOCK) ON colb.NO = CC.[NO]
 LEFT JOIN ChgOverCheckList_Detail ccld WITH(NOLOCK) ON ccld.ID = ccl.ID and ccld.ChgOverCheckListBaseID = Colb.ID
 OUTER APPLY
