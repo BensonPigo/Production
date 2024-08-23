@@ -304,7 +304,7 @@ begin
 	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
 	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
 	from @ChgOver co
-	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
 	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
 	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
 end
