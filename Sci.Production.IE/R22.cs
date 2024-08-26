@@ -24,6 +24,7 @@ namespace Sci.Production.IE
         private string strCategory;
         private string strCell;
         private string strRD;
+        private string strFactory;
         private DataTable[] printData;
 
         /// <inheritdoc/>
@@ -32,6 +33,7 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.cbProductType.SetDataSource();
+            this.cbFactoryID.SetDataSource();
         }
 
         /// <inheritdoc/>
@@ -66,6 +68,7 @@ namespace Sci.Production.IE
             this.strCategory = this.txtCategory.Text;
             this.strCell = this.txtCell.Text;
             this.strRD = this.txtRD.Text;
+            this.strFactory = this.cbFactoryID.Text;
 
             return base.ValidateInput();
         }
@@ -121,6 +124,11 @@ namespace Sci.Production.IE
                 sqlWhere += string.Format($" and ccldx.ResponseDep in ({string.Join(",", this.strRD.Split(',').Select(s => "'" + s + "'").ToList())} ) ");
             }
 
+            if (!MyUtility.Check.Empty(this.strFactory))
+            {
+                sqlWhere += string.Format($" and co.FactoryID = '{this.strFactory}'");
+            }
+
             if (this.chkOutstanding.Checked)
             {
                 sqlWhere += $@" AND (iif(CC.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL))) > 0";
@@ -129,6 +137,7 @@ namespace Sci.Production.IE
             sqlCmd = $@"
 --Summary
 SELECT  distinct
+     [Factory] = co.FactoryID,
      [InlineDate] = CONVERT(varchar, co.Inline, 23),
      [Ready (all checked)] = iif ((SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 0 AND ID = CO.ID) > 0 ,'','V'),
      [SewingLine] = co.SewingLineID,
@@ -188,6 +197,7 @@ ORDER BY [InlineDate], [SewingLine], [OldSP], [NewSP]
  
 --Detail
 SELECT Distinct
+    [Factory] = co.FactoryID,
     [SP#] = co.OrderID,
     [Style] = co.StyleID,
     [Category] = co.Category,
