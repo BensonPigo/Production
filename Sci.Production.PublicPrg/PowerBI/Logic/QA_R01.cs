@@ -546,16 +546,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
            
             ";
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
-                };
-                resultReport.DtArr = dataTables;
-                return resultReport;
-            }
+                Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
+            };
+            resultReport.DtArr = dataTables;
+            return resultReport;
         }
 
         /// <inheritdoc/>
