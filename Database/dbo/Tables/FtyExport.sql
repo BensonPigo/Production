@@ -5,7 +5,7 @@
     [ImportCountry] VARCHAR (2)     CONSTRAINT [DF_FtyExport_ImportCountry] DEFAULT ('') NULL,
     [ExportPort]    VARCHAR (20)    CONSTRAINT [DF_FtyExport_ExportPort] DEFAULT ('') NULL,
     [ImportPort]    VARCHAR (20)    CONSTRAINT [DF_FtyExport_ImportPort] DEFAULT ('') NULL,
-    [CYCFS]         VARCHAR (3)     CONSTRAINT [DF_FtyExport_CYCFS] DEFAULT ('') NULL,
+    [CYCFS]         VARCHAR (6)     CONSTRAINT [DF_FtyExport_CYCFS] DEFAULT ('') NULL,
     [ShipModeID]    VARCHAR (10)    CONSTRAINT [DF_FtyExport_ShipModeID] DEFAULT ('') NULL,
     [Consignee]     VARCHAR (8)     CONSTRAINT [DF_FtyExport_Consignee] DEFAULT ('') NULL,
     [Handle]        VARCHAR (10)    CONSTRAINT [DF_FtyExport_Handle] DEFAULT ('') NULL,

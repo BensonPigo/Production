@@ -91,7 +91,7 @@ namespace Sci.Production.Shipping
             string sqlGetMainGB = $@"
 select  k.InvDate,
         [CMTInv] = k.ID,
-        [Client] = 'Sintex International Ltd.',
+        [Client] = (SELECT NameEN FROM Company WHERE ID = gb.OrderCompanyID),
         [GBID] = gb.ID,
         [ExchangeRate] = isnull(k.ExchangeRate, 0),
         gb.BrandID,

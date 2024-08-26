@@ -421,7 +421,7 @@ where ID='{item["InvNo"]}'
 
             worksheet.Cells[10, 9] = $"លេខវិក្កយបត្រ៖{this.CurrentMaintain["ID"]}";
             worksheet.Cells[11, 9] = $"Invoice No:{this.CurrentMaintain["ID"]}";
-            worksheet.Cells[11, 2] = $"Costomer : " + MyUtility.GetValue.Lookup($@"SELECT NameEN FROM Company WHERE ID = '{this.CurrentMaintain["OrderCompanyID"]}'");
+            worksheet.Cells[11, 2] = $"Customer : " + MyUtility.GetValue.Lookup($@"SELECT NameEN FROM Company WHERE ID = '{this.CurrentMaintain["OrderCompanyID"]}'");
 
             string invDate = ((DateTime)this.CurrentMaintain["InvDate"]).ToString("dd-MMM-yyyy", CultureInfo.CreateSpecificCulture("en-US"));
             worksheet.Cells[12, 9] = $"កាលបរិច្ឆេត៖{invDate}";
