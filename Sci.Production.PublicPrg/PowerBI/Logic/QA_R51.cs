@@ -15,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public QA_R51()
         {
-            DBProxy.Current.DefaultTimeout = 1800;
+             DBProxy.Current.DefaultTimeout = 1800;
         }
 
         /// <inheritdoc/>
@@ -33,9 +33,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
             into #SubProInsRecord
             from(
 	            select  
-	            * 
-	            ,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate desc)
+	            SR.*,
+	            [Inspector] = CONCAT(a.ID, ':', a.Name)
+	            ,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by sr.Adddate desc)
 	            from SubProInsRecord SR
+                LEFT join [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) on a.ID = SR.AddName
                 where 1 = 1
                 {srWhere}
             )aa
@@ -70,7 +72,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        SR.RejectQty,
 	        SR.Machine,
 	        {itemCol_Join.Item1}
-	        Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
+	        Inspector = SR.Inspector,
 	        SR.Remark,
             AddDate2 = SR.AddDate,
             SR.RepairedDatetime,
@@ -93,7 +95,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                                 from Bundle_Detail_Art bda with (nolock) 
                                                 where bda.Bundleno = BD.Bundleno
                                                 FOR XML PATH('')),1,1,'') ) Artwork
-            outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
+            LEFT JOIN Factory fac WITH(NOLOCK) on fac.ID = SR.FactoryID and fac.Junk =0
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
             outer apply
@@ -144,7 +146,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        SR.RejectQty,
 	        SR.Machine,
 	        {itemCol_Join.Item1}
-	        Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
+	        Inspector = SR.Inspector,
 	        SR.Remark,
             AddDate2 = SR.AddDate,
             SR.RepairedDatetime,
@@ -168,7 +170,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                                 from Bundle_Detail_Art bda with (nolock) 
                                                 where bda.Bundleno = SR.BundleNo
                                                 FOR XML PATH('')),1,1,'') ) Artwork
-            outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
+            LEFT JOIN Factory fac WITH(NOLOCK) on fac.ID = SR.FactoryID and fac.Junk =0
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
             outer apply
@@ -218,16 +220,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@Shift", SqlDbType.VarChar, 5) { Value = (object)model.Shift ?? DBNull.Value },
             };
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
-                };
-                resultReport.DtArr = dataTables;
-                return resultReport;
-            }
+                Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
+            };
+            resultReport.DtArr = dataTables;
+            return resultReport;
         }
 
         /// <inheritdoc/>
