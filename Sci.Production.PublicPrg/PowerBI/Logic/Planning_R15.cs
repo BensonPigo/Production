@@ -1391,17 +1391,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
             sqlCmd += $@"Select [subprocessInoutColumnCount] = {this.subprocessInoutColumnCount}";
             #endregion 組SQL
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable[] dataTables),
-                };
+                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable[] dataTables),
+            };
 
-                resultReport.DtArr = dataTables;
-                return resultReport;
-            }
+            resultReport.DtArr = dataTables;
+            return resultReport;
         }
 
         /// <summary>

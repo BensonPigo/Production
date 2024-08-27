@@ -127,7 +127,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,SewInLine					   
 		            ,isnull(SewinglineID, '')			
 		            ,isnull(Shift, '')					
-		            ,isnull(RFT, 0)						
+		            ,isnull(CONVERT(NUMERIC(6,2), RFT), 0)						
 		            ,isnull(SubProcessID, '')			
 		            ,isnull(BundleNo, '')				
 		            ,isnull(Artwork, '')				

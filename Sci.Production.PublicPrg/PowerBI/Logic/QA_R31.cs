@@ -858,17 +858,13 @@ AND NOT EXISTS (
                 sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
             }
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
-                };
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
+            };
 
-                resultReport.Dt = dt;
-                return resultReport;
-            }
+            resultReport.Dt = dt;
+            return resultReport;
         }
 
         /// <summary>
