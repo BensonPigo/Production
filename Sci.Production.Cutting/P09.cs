@@ -342,7 +342,11 @@ ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_Si
         {
             string sqlcmd = $@"
 SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_PatternPanel WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'
-SELECT *, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SizeRatio WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'
+
+SELECT ws.*, tmpKey = CAST(0 AS BIGINT) FROM WorkOrderForOutput_SizeRatio ws WITH (NOLOCK)
+OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
+WHERE ws.ID = '{this.CurrentMaintain["ID"]}'
+ORDER BY osc.SizeGroup,osc.Seq
 
 SELECT *
     ,tmpKey = CAST(0 AS BIGINT)
