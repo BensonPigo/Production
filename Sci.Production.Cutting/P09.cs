@@ -697,10 +697,29 @@ SELECT
     ,GETDATE()
     ,''--EditName
     ,NULL
-FROM WorkOrderForPlanning
+FROM WorkOrderForPlanning WITH (NOLOCK)
 LEFT JOIN Order_EachCons ON WorkOrderForPlanning.Order_EachconsUkey = Order_EachCons.Ukey
+OUTER APPLY (
+    SELECT PatternPanel_CONCAT = STUFF((
+        SELECT DISTINCT CONCAT('+', PatternPanel)
+        FROM WorkOrderForPlanning_PatternPanel WITH (NOLOCK) 
+        WHERE WorkOrderForPlanningUkey = WorkOrderForPlanning.Ukey
+        FOR XML PATH ('')), 1, 1, '')
+) wp1
+OUTER APPLY (
+	SELECT multisize = IIF(COUNT(SizeCode) > 1, 2, 1) 
+    FROM WorkOrderForPlanning_SizeRatio WITH (NOLOCK)
+	Where WorkOrderForPlanning.Ukey = WorkOrderForPlanningUkey
+) as multisize
+OUTER APPLY (
+	SELECT Order_SizeCode_Seq = max(osc.Seq)
+    FROM WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+	LEFT JOIN Order_SizeCode osc WITH (NOLOCK) ON osc.ID = ws.ID and osc.SizeCode = ws.SizeCode
+	WHERE ws.WorkOrderForPlanningUkey = WorkOrderForPlanning.Ukey
+) as Order_SizeCode_Seq
 WHERE WorkOrderForPlanning.ID = '{this.CurrentMaintain["ID"]}'
-ORDER BY WorkOrderForPlanning.Ukey
+
+ORDER BY PatternPanel_CONCAT, multisize DESC, WorkOrderForPlanning.Article, Order_SizeCode_Seq DESC, MarkerName, Ukey
 ";
 
             // 3.WorkOrderForOutput_PatternPanel
