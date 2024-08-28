@@ -12,7 +12,7 @@
 	[CustPONo] [varchar](30) NOT NULL,
 	[BuyerID] [varchar](8) NOT NULL,
 	[BuyerDelivery] [date] NULL,
-	[Destination] [varchar](19) NOT NULL,
+	[Destination] [varchar](50) NOT NULL,
 	[Colorway] [varchar](500) NOT NULL,
 	[Color] [varchar](500) NOT NULL,
 	[Size] [varchar](500) NOT NULL,
