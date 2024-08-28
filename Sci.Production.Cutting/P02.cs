@@ -249,10 +249,12 @@ SELECT
     ws.*
    ,wp.Layer
    ,TotalCutQty_CONCAT = ''
-   ,tmpKey = CAST(0 AS BIGINT)
+   ,tmpKey = CAST(0 AS BIGINT),osc.Seq
 FROM WorkOrderForPlanning wp WITH (NOLOCK)
 INNER JOIN WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK) ON wp.Ukey = ws.WorkOrderForPlanningUkey
+OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
 WHERE wp.ID = '{cuttingID}'
+ORDER BY ws.WorkOrderForPlanningUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
 
 ---- Date有值的話，然後根據Date ASC、OrderID ASC排序
 ---- Date沒有值的話排最後面，然後根據OrderID ASC排序

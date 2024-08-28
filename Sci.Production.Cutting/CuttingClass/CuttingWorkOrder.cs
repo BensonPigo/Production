@@ -219,7 +219,7 @@ namespace Sci.Production.Cutting
                     // 開始檢查Excel
                     string keyWord_FabPanelCode = "Panel Code:";
                     string keyWord_Layer = "Layers";
-                    string keyWord_MarkerEnd = "Ttl. Qty.";
+                    string keyWord_MarkerEnd = "No.";
                     int curRowIndex = 1;
                     int emptyRowCount = 0;
 
@@ -260,25 +260,28 @@ namespace Sci.Production.Cutting
                         curDataStart_Y = 1;
 
                         // 若找到，「Panel Code:」的行數為 curRowIndex
-                        // 計算「Panel Code:」到「Ttl. Qty.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
+                        // 計算「Panel Code:」到下一個「No.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
                         // AA 25
                         curDataStart_Y += curRowIndex;
-                        string a = worksheet.GetCellValue(27, curDataStart_Y);
-                        while (a != keyWord_MarkerEnd && emptyRowCount < 50)
+                        string text = worksheet.GetCellValue(1, curDataStart_Y);
+                        while (text != keyWord_MarkerEnd && emptyRowCount < 50)
                         {
                             curDataStart_Y++;
                             emptyRowCount++;
-                            a = worksheet.GetCellValue(27, curDataStart_Y);
+                            text = worksheet.GetCellValue(1, curDataStart_Y);
                             continue;
                         }
 
+                        // 找到下一個「No.」，往上推兩格是終點
+                        curDataStart_Y -= 2;
+
                         emptyRowCount = 0;
 
-                        // 下一個「Panel Code:」的起點
-                        int nextFabPanelCodeStart = curDataStart_Y + 2;
+                        // 下一個「Panel Code:」的起點，前一個終點的下3格
+                        int nextFabPanelCodeStart = curDataStart_Y + 3;
 
                         // 計算Pattern Panel和Marker Name填寫的Row有幾行
-                        // 6 = 「Panel Code:」到「NK Name」的距離
+                        // 6 = 「Panel Code:」到「MK Name」的距離
                         // 1 = 「Ttl. Qty.」跟最後一筆資料的距離
                         int markerRowCount = curDataStart_Y - curRowIndex - 6;
 
