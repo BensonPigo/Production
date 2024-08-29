@@ -12,14 +12,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
     public class TransactionClass
     {
         /// <inheritdoc/>
-        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null)
+        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            var transactionOptions = new TransactionOptions
-            {
-                Timeout = TimeSpan.FromSeconds(1800), // 設置超時時間為 1800 秒
-            };
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = MyUtility.Tool.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand);
 
@@ -35,10 +31,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null)
+        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            using (TransactionScope transactionScope = new TransactionScope())
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = MyUtility.Tool.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand);
 
@@ -54,14 +50,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, IList<SqlParameter> parameters)
+        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            var transactionOptions = new TransactionOptions
-            {
-                Timeout = TimeSpan.FromSeconds(1800), // 設置超時時間為 1800 秒
-            };
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = Data.DBProxy.Current.ExecuteByConn(conn, cmdtext, parameters);
 
@@ -77,14 +69,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext)
+        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            var transactionOptions = new TransactionOptions
-            {
-                Timeout = TimeSpan.FromSeconds(1800), // 設置超時時間為 1800 秒
-            };
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = Data.DBProxy.Current.ExecuteByConn(conn, cmdtext);
 
@@ -100,14 +88,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteTransactionScope(string connname, string cmdtext)
+        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            var transactionOptions = new TransactionOptions
-            {
-                Timeout = TimeSpan.FromSeconds(1800), // 設置超時時間為 1800 秒
-            };
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = Data.DBProxy.Current.Execute(connname, cmdtext);
 
@@ -123,14 +107,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, IList<SqlParameter> parameters)
+        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 30 * 60)
         {
             DualResult dualResult;
-            var transactionOptions = new TransactionOptions
-            {
-                Timeout = TimeSpan.FromSeconds(1800), // 設置超時時間為 1800 秒
-            };
-            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, transactionOptions))
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 dualResult = Data.DBProxy.Current.Execute(connname, cmdtext, parameters);
 
