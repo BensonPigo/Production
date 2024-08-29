@@ -58,6 +58,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_InventoryStockListReport,
             P_RecevingInfoTrackingSummary,
             P_MachineMasterListByDays,
+            P_ScanPackList,
         }
 
         /// <summary>
@@ -403,7 +404,10 @@ ORDER BY [Group], [SEQ], [NAME]";
                         result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
                         break;
                     case ListName.P_MachineMasterListByDays:
-                         result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                        result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_ScanPackList:
+                        result = new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

@@ -249,6 +249,7 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_LineMapping.sql" />
     <Build Include="dbo\Tables\P_MaterialLocationIndex.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_MaterialLocationIndex.sql" />
+    <Build Include="dbo\Tables\P_ScanPackList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
