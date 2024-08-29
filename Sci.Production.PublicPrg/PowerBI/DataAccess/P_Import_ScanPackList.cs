@@ -2,6 +2,7 @@
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -55,10 +56,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable detailTable = resultReport.Dt;
-
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable);
+                finalResult = this.UpdateBIData(resultReport.Dt, sDate, eDate);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -74,52 +73,56 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", sDate.Value.ToString("yyyy/MM/dd 00:00:00")),
+                new SqlParameter("@eDate", eDate.Value.ToString("yyyy/MM/dd 23:59:59")),
+            };
             string sql = @"	
-update p
-	set p.[FactoryID]			= t.Factory
-	, p.[PackingID]				= t.[Packing#]
-	, p.[OrderID]				= t.[SP#]
-	, p.[CTNStartNo]			= t.[CTN#]
-	, p.[ShipModeID]			= t.Shipmode
-	, p.[StyleID]				= t.Style
-	, p.[BrandID]				= t.Brand
-	, p.[SeasonID]				= t.Season
-	, p.[SewLine]				= t.[Sewingline]
-	, p.[Customize1]			= t.Customize1
-	, p.[CustPONo]				= t.[P.O.#]
-	, p.[BuyerID]				= t.Buyer
-	, p.[BuyerDelivery]			= t.BuyerDelivery
-	, p.[Destination]			= t.Destination
-	, p.[Colorway]				= t.Colorway
-	, p.[Color]					= t.Color
-	, p.[Size]					= t.Size
-	, p.[CTNBarcode]			= t.[CTN Barcode]
-	, p.[QtyPerCTN]				= t.[PC/CTN]
-	, p.[ShipQty]				= t.QTY
-	, p.[QtyPerCTNScan]			= t.[PC/CTN Scanned]
-	, p.[PackingError]			= t.PackingError
-	, p.[ErrQty]				= t.ErrQty
-	, p.[AuditQCName]			= t.AuditQCName
-	, p.[ActCTNWeight]			= t.[Actual CTN Weight]
-	, p.[HangtagBarcode]		= t.[Ref. Barcode]
-	, p.[ScanName]				= t.[Scan Name]
-	, p.[CartonStatus]			= t.[Carton Status]
-	, p.[Lacking]				= t.Lacking
-	, p.[LackingQty]			= t.[Lacking Qty]
+delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
-inner join #tmp t on t.Factory = p.FactoryID and t.[Packing#] = p.PackingID and t.[SP#] = p.OrderID and t.[CTN#] = p.CTNStartNo
-where p.[ScanDate] != t.[Scan Date]
+where p.[ScanDate] >= @sDate
+and p.[ScanDate] <= @eDate
 
 insert into POWERBIReportData.dbo.P_ScanPackList([FactoryID], [PackingID], [OrderID], [CTNStartNo], [ShipModeID], [StyleID], [BrandID], [SeasonID], [SewLine], [Customize1], [CustPONo], [BuyerID], [BuyerDelivery], [Destination], [Colorway], [Color], [Size], [CTNBarcode], [QtyPerCTN], [ShipQty], [QtyPerCTNScan]
 , [PackingError], [ErrQty], [AuditQCName], [ActCTNWeight], [HangtagBarcode], [ScanDate], [ScanName], [CartonStatus], [Lacking], [LackingQty])
-select t.Factory, t.[Packing#], t.[SP#], t.[CTN#], t.Shipmode, t.Style, t.Brand, t.Season, t.[Sewingline]
-    , t.Customize1, t.[P.O.#], t.Buyer, t.BuyerDelivery, t.Destination, t.Colorway, t.Color, t.Size, t.[CTN Barcode], t.[PC/CTN], t.QTY, t.[PC/CTN Scanned]
-    , t.PackingError, t.ErrQty, t.AuditQCName, t.[Actual CTN Weight], t.[Ref. Barcode], t.[Scan Date], t.[Scan Name], t.[Carton Status], t.Lacking, t.[Lacking Qty]
+select t.Factory
+    , t.[Packing#]
+    , t.[SP#]
+    , t.[CTN#]
+    , Shipmode = ISNULL(t.Shipmode, '')
+    , Style = ISNULL(t.Style, '')
+    , Brand = ISNULL(t.Brand, '')
+    , Season = ISNULL(t.Season, '')
+    , [Sewingline] = ISNULL(t.[Sewingline], '')
+    , Customize1 = ISNULL(t.Customize1, '')
+    , [P.O.#] = ISNULL(t.[P.O.#], '')
+    , Buyer = ISNULL(t.Buyer, '')
+    , t.BuyerDelivery
+    , Destination = ISNULL(t.Destination, '')
+    , Colorway = ISNULL(t.Colorway, '')
+    , Color = ISNULL(t.Color, '')
+    , Size = ISNULL(t.Size, '')
+    , [CTN Barcode] = ISNULL(t.[CTN Barcode], '')
+    , [PC/CTN] = ISNULL(t.[PC/CTN], '')
+    , QTY = ISNULL(t.QTY, 0)
+    , [PC/CTN Scanned] = ISNULL(t.[PC/CTN Scanned], '')
+    , PackingError = ISNULL(t.PackingError, '')
+    , ErrQty = ISNULL(t.ErrQty, 0)
+    , AuditQCName = ISNULL(t.AuditQCName, '')
+    , [Actual CTN Weight] = ISNULL(t.[Actual CTN Weight], 0)
+    , [Ref. Barcode] = ISNULL(t.[Ref. Barcode], '')
+    , t.[Scan Date]
+    , [Scan Name] = ISNULL(t.[Scan Name], '')
+    , [Carton Status] = ISNULL(t.[Carton Status], '')
+    , Lacking = ISNULL(t.Lacking, '')
+    , [Lacking Qty] = ISNULL(t.[Lacking Qty], 0)
 from #tmp t
-where not exists (select 1 from POWERBIReportData.dbo.P_ScanPackList p where t.Factory = p.FactoryID and t.[Packing#] = p.PackingID and t.[SP#] = p.OrderID and t.[CTN#] = p.CTNStartNo)
+where t.[Scan Date] >= @sDate
+and t.[Scan Date] <= @eDate
 
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
@@ -150,7 +153,7 @@ if exists (select 1 from BITableInfo b where b.id = 'P_ScanPackList')
             {
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: null),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

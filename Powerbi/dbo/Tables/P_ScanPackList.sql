@@ -1,4 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_ScanPackList](
+	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[FactoryID] [varchar](8) NOT NULL,
 	[PackingID] [varchar](13) NOT NULL,
 	[OrderID] [varchar](13) NOT NULL,
@@ -32,10 +33,8 @@
 	[LackingQty] [int] NOT NULL,
  CONSTRAINT [PK_P_ScanPackList] PRIMARY KEY CLUSTERED 
 (
-	[FactoryID] ASC,
-	[PackingID] ASC,
-	[OrderID] ASC,
-	[CTNStartNo] ASC
+	[Ukey] DESC,
+	[FactoryID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
