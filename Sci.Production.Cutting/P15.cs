@@ -939,7 +939,7 @@ Select
 	, item.item
 	, w.SpreadingNoID
 	, w.colorid
-	, w.Ukey
+	, ukey = CAST(w.ukey as bigint)
 	, FabricKind.FabricKind
 	, FabricKind.FabricKindID
 	, TTLCutQty = (select SUM(qty) from WorkOrderForOutput_Distribute wd with(nolock) where wd.WorkOrderForOutputUkey = w.Ukey {distru_where})
@@ -991,7 +991,7 @@ order by o.poid,w.estcutdate,w.Fabriccombo,w.cutno
             string distru_cmd = $@"
 Select
 	 sel = cast(0 as bit)
-	, w.Ukey
+	, ukey = CAST(w.ukey as bigint)
 	, No = DENSE_RANK() over (partition by w.ukey order by article.article,wd.sizecode) -- 對應 GridQty 的欄位
 	, iden = 0
 	, Pkey = ROW_NUMBER() over (order by wd.sizecode,wd.orderid,w.FabricPanelCode) -- 為 workorder_Distribute 的 Key, 計算已選總和用
@@ -1191,7 +1191,7 @@ drop table #tmp, #msfa, #bundleinfo, #bundleSPCreatedQty, #tmp_Bundle ,#tmp_Bund
             this.fcDt = rightUpDt[3];
 
             string sizeRatio = $@"
-Select distinct w.ukey, ws.SizeCode, ws.Qty
+Select distinct ukey = CAST(w.ukey as bigint), ws.SizeCode, ws.Qty
 from WorkOrderForOutput w WITH (NOLOCK) 
 inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on  o.ID = w.id and o.cuttingsp = w.id
@@ -1352,7 +1352,7 @@ and o.mDivisionid = '{this.keyWord}'
         {
             // by Article, Size 整理出中上 No of Bundle 的資料表, 並從 1 開始依序給 No 值 (index). 唯一值:Ukey, No
             var result = this.ArticleSizeTb.AsEnumerable()
-                .GroupBy(s => new { Ukey = (int)s["Ukey"], No = (long)s["No"] , POID = s["POID"].ToString() , Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
+                .GroupBy(s => new { Ukey = MyUtility.Convert.GetLong(s["Ukey"]), No = (long)s["No"] , POID = s["POID"].ToString() , Article = s["Article"].ToString(), SizeCode = s["SizeCode"].ToString(), StyleUkey = (long)s["StyleUkey"] })
                 .Select((g, i) => new
                 {
                     g.Key.Ukey,
