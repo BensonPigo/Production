@@ -59,6 +59,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_RecevingInfoTrackingSummary,
             P_MachineMasterListByDays,
             P_ScanPackList,
+            P_MISCPurchaseOrderList,
         }
 
         /// <summary>
@@ -408,6 +409,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_ScanPackList:
                         result = new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_MISCPurchaseOrderList:
+                        result = new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
