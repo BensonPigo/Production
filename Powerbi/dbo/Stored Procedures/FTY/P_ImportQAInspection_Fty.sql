@@ -8,6 +8,7 @@ declare @sDate varchar(20) = cast(@InspectionDate as varchar) -- 2020/01/01
 
 declare @SqlCmd_Combin nvarchar(max) =''
 declare @SqlCmd1 nvarchar(max) ='';
+declare @SqlCmd1_1 nvarchar(max) ='';
 declare @SqlCmd2 nvarchar(max) ='';
 declare @SqlCmd3 nvarchar(max) ='';
 declare @SqlCmd4 nvarchar(max) ='';
@@ -40,7 +41,8 @@ declare @SqlFinal  nvarchar(max) = ''
 
 set @SqlCmd1 = '
 -- MES/Endline/R08
-select [FirstInspectionDate] = cast(Ins.AddDate as date)
+select [InspectionDate] = ins.InspectionDate
+	,[FirstInspectionDate] = cast(Ins.AddDate as date)
 	,[Factory] = ins.FactoryID
 	,[Brand] = ord.BrandID
 	,[Style] = ord.styleid
@@ -88,12 +90,15 @@ Outer apply (
 	where s.Ukey = ord.StyleUkey
 )sty
 where ins.Adddate >= '''+@sDate+'''
-group by cast(Ins.AddDate as date), ins.FactoryID, ord.BrandID, ord.styleid, ord.custpono, 
+group by ins.InspectionDate, cast(Ins.AddDate as date), ins.FactoryID, ord.BrandID, ord.styleid, ord.custpono, 
 ins.OrderId, ins.Article, ins.Size, Cou.Alias, ord.CdCodeID, cdc.ProductionFamilyID,
 ins.Team, ins.AddName, ins.Shift, ins.Line, s.SewingCell, sty.CDCodeNew,
 sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction,ord.SewInLine
+'
 
-select t.FirstInspectionDate
+set @SqlCmd1_1 = '
+select t.InspectionDate 
+	, t.FirstInspectionDate
 	, t.Factory
 	, t.Brand
 	, t.Style
@@ -119,6 +124,7 @@ select t.FirstInspectionDate
 	, t.Lining
 	, t.Gender
 	, t.Construction
+	, detail.DefectQty
 into #Final_DQSDefect_Summary
 from #tmp_summy_first t
 outer apply
@@ -136,6 +142,23 @@ outer apply
 	and so.Shift= iif(t.Shift = ''Day'',''D'',''N'') 
 	and r.CDate = t.SewInLine
 )RftValue
+outer apply (
+	select DefectQty = COUNT(*)
+	from ManufacturingExecution.dbo.Inspection insp WITH(NOLOCK) 
+	inner join ManufacturingExecution.dbo.Inspection_Detail ind WITH(NOLOCK) on insp.ID = ind.ID
+	where insp.Adddate >= '''+@sDate+'''
+	and insp.Status <> ''Pass'' 
+	and t.InspectionDate = insp.InspectionDate
+	and t.FirstInspectionDate = cast(insp.AddDate as Date)
+	and t.Factory = insp.FactoryID
+	and t.[SP#] = insp.OrderId
+	and t.Article = insp.Article
+	and t.Size = insp.Size
+	and t.Team = insp.Team
+	and t.AddName = insp.AddName
+	and t.Shift = insp.Shift
+	and t.Line = insp.Line
+) detail
 '
 
 set @SqlCmd2 = '
@@ -171,6 +194,8 @@ select fac.Zone
 	, [ReworkCardNo] = ins.ReworkCardNo
 	, [DefectTypeID] = ind.GarmentDefectTypeID
 	, [DefectCodeID] = ind.GarmentDefectCodeID
+	, [DefectCodeLocalDesc] = iif(isnull(gdc.LocalDescription,'''') = '''',gdc.Description,gdc.LocalDescription)
+	, [IsCriticalDefect] = iif(isnull(IsCriticalDefect,0) = 0, '''', ''Y'')
 into #Final_DQSDefect_Detail
 from ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
@@ -457,7 +482,8 @@ DELETE T FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM ['+@curr
 ;
 
 INSERT INTO [dbo].[P_DQSDefect_Summary]
-           ([FirstInspectDate]
+           ([InspectionDate]
+		   ,[FirstInspectDate]
            ,[FactoryID]
            ,[BrandID]
            ,[StyleID]
@@ -482,7 +508,8 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 		   ,[FabricType]
 		   ,[Lining]
 		   ,[Gender]
-		   ,[Construction])
+		   ,[Construction]
+		   ,[DefectQty])
  select * from #Final_DQSDefect_Summary
 
  INSERT INTO [dbo].[P_DQSDefect_Detail]
@@ -511,7 +538,9 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
            ,[AreaCode]
            ,[ReworkCardNo]
            ,[GarmentDefectTypeID]
-           ,[GarmentDefectCodeID])
+           ,[GarmentDefectCodeID]
+		   ,[DefectCodeLocalDesc]
+		   ,[IsCriticalDefect])
  select * from #Final_DQSDefect_Detail  
 '
 
@@ -616,9 +645,10 @@ from BITableInfo b
 where b.id = ''P_CFAInspectionRecord_Detail'' 
 '
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
 /*
 print @SqlCmd1
+print @SqlCmd1_1
 print @SqlCmd2
 print @SqlCmd3
 print @SqlCmd4
