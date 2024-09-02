@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
@@ -47,30 +48,44 @@ namespace Sci.Production.CallPmsAPI
         {
             WebApiBaseResult webApiBaseResult;
             string errorMsg = string.Empty;
+            string response = string.Empty;
+            string apiUrl = string.Empty;
+            int iCycle = 3;
 
             try
             {
-                string apiUrl = GetWebAPIUrl(strServerName);
+                apiUrl = GetWebAPIUrl(strServerName);
                 Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
                 dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
-                if (!webApiBaseResult.isSuccess)
+                for (int i = 1; i <= iCycle; i++)
                 {
-                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
+                    if (!webApiBaseResult.isSuccess)
                     {
-                        errorMsg = webApiBaseResult.responseContent;
+                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                        {
+                            errorMsg = webApiBaseResult.responseContent;
+                        }
+                        else
+                        {
+                            errorMsg = webApiBaseResult.exception.ToString();
+                        }
+
                     }
                     else
                     {
-                        errorMsg = webApiBaseResult.exception.ToString();
+                        response = webApiBaseResult.responseContent;
+                        break;
+                    }
+                    if (i == 3)
+                    {
+                        iCycle = 6;
+                        apiUrl = GetWebAPIUrl(strServerName, true);
                     }
 
-                    return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
+                    Thread.Sleep(1500);
                 }
-
-                string response = webApiBaseResult.responseContent;
-
-                return new ResultInfo() { Result = errorMsg, ResultDT = response };
+                return new ResultInfo() { Result = errorMsg, ResultDT = MyUtility.Check.Empty(errorMsg) ? response : string.Empty };
             }
             catch (Exception e)
             {
@@ -84,7 +99,7 @@ namespace Sci.Production.CallPmsAPI
         /// </summary>
         /// <param name="systemName">systemName</param>
         /// <returns>string</returns>
-        public static string GetWebAPIUrl(string systemName)
+        public static string GetWebAPIUrl(string systemName, bool isLAN = false)
         {
             string environment = string.Empty;
 
@@ -106,6 +121,11 @@ namespace Sci.Production.CallPmsAPI
             if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
             {
                 environment = "Formal";
+            }
+
+            if (isLAN)
+            {
+                environment = "BI";
             }
 
             return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");

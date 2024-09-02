@@ -5,6 +5,7 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading;
 using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
 
@@ -18,7 +19,7 @@ namespace PowerBI.Daily.PowerBI.WebApi
         /// </summary>
         /// <param name="systemName">systemName</param>
         /// <returns>string</returns>
-        public static string GetWebAPIUrl(string systemName)
+        public static string GetWebAPIUrl(string systemName, bool isLAN = false)
         {
             string environment = string.Empty;
 
@@ -42,6 +43,11 @@ namespace PowerBI.Daily.PowerBI.WebApi
             {
                 environment = "Formal";
             }
+
+            if (isLAN)
+            {
+                environment = "BI";
+            }
             return MyUtility.GetValue.Lookup($@"select [URL] from [Production].[dbo].[SystemWebAPIURL] with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'", "Production");
         }
 
@@ -61,30 +67,45 @@ namespace PowerBI.Daily.PowerBI.WebApi
         {
             WebApiBaseResult webApiBaseResult;
             string errorMsg = string.Empty;
+            string response = string.Empty;
+            string apiUrl = string.Empty;
+            int iCycle = 3;
 
             try
             {
-                string apiUrl = CallWebAPI.GetWebAPIUrl(strServerName);
+                apiUrl = CallWebAPI.GetWebAPIUrl(strServerName);
                 Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
                 dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
-                if (!webApiBaseResult.isSuccess)
+                for (int i = 1; i <= iCycle; i++)
                 {
-                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
+                    if (!webApiBaseResult.isSuccess)
                     {
-                        errorMsg = webApiBaseResult.responseContent;
+                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                        {
+                            errorMsg = webApiBaseResult.responseContent;
+                        }
+                        else
+                        {
+                            errorMsg = webApiBaseResult.exception.ToString();
+                        }
                     }
                     else
                     {
-                        errorMsg = webApiBaseResult.exception.ToString();
+                        response = webApiBaseResult.responseContent;
+                        break;
                     }
 
-                    return new ResultInfo() { Result = errorMsg, ResultDT = new DataTable() };
+                    if (i == 3)
+                    {
+                        iCycle = 6;
+                        apiUrl = CallWebAPI.GetWebAPIUrl(strServerName, true);
+                    }
+
+                    Thread.Sleep(1500);
+
                 }
-
-                string response = webApiBaseResult.responseContent;
-
-                return new ResultInfo() { Result = errorMsg, ResultDT = ToTable<T>(response) };
+                return new ResultInfo() { Result = errorMsg, ResultDT = MyUtility.Check.Empty(errorMsg) ? ToTable<T>(response) : new DataTable() };
             }
             catch (Exception e)
             {
