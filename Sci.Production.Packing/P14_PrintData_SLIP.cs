@@ -19,6 +19,8 @@
         public string TtlCtn { get; set; }
 
         /// <inheritdoc/>
+        public string Remaining_CTN { get; set; }
+        /// <inheritdoc/>
         public string ClogLocationId { get; set; }
 
         /// <inheritdoc/>
