@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
                 if (resultReport.Result)
-                {
+                 {
                     DataTable detailTable = resultReport.Dt;
 
                     // insert into PowerBI
@@ -149,8 +149,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[Budget]                 = ISNULL(T.[Budget],'')
                 ,P.[InternalRemarks]        = ISNULL(T.[InternalRemarks],'')
                 ,P.[APID]                   = ISNULL(T.[APID],'')
-                From P_MISCPurchaseOrderList
-                inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code
+                From P_MISCPurchaseOrderList P
+                inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo
                    
                 INSERT INTO P_MISCPurchaseOrderList
                 (
@@ -243,11 +243,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , ISNULL(T.[InternalRemarks],'')
                 , ISNULL(T.[APID],'')
                 FROM #TMP T 
-                WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code)
+                WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo)
 
                 DELETE P 
                 FROM P_MISCPurchaseOrderList P
-                WHERE NOT EXISTS (SELECT 1 FROM ExtendServer.Machine.dbo.MiscPO MWHERE M.ID = P.PONo)
+                WHERE NOT EXISTS (SELECT 1 FROM ExtendServer.Machine.dbo.MiscPO M WHERE M.ID = P.PONo)
     
                 IF EXISTS (select 1 from BITableInfo b where b.id = 'P_MISCPurchaseOrderList')
                 BEGIN
