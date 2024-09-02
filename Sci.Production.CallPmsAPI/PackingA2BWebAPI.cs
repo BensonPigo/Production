@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
@@ -19,6 +20,7 @@ namespace Sci.Production.CallPmsAPI
     /// </summary>
     public static class PackingA2BWebAPI
     {
+        private static WebApiBaseResult webApiBaseResult;
         public class PackingA2BResult : DualResult
         {
             public bool isDataExists { get; set; } = false;
@@ -45,17 +47,25 @@ namespace Sci.Production.CallPmsAPI
 
         public static ResultInfo GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
         {
-            WebApiBaseResult webApiBaseResult;
+            webApiBaseResult = null;
             string errorMsg = string.Empty;
+            string apiUrl = string.Empty;
+            int iCycle = 3;
 
             try
             {
-                string apiUrl = GetWebAPIUrl(strServerName);
+                apiUrl = GetWebAPIUrl(strServerName);
                 Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
                 dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
-                webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
-                if (!webApiBaseResult.isSuccess)
+
+                for (int i = 1; i <= iCycle; i++)
                 {
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
+                    if (webApiBaseResult.isSuccess)
+                    {
+                        break;
+                    }
+
                     if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
                     {
                         errorMsg = webApiBaseResult.responseContent;
@@ -65,18 +75,26 @@ namespace Sci.Production.CallPmsAPI
                         errorMsg = webApiBaseResult.exception.ToString();
                     }
 
-                    return new ResultInfo() { Result = errorMsg, ResultDT = string.Empty };
+                    if (i == 6)
+                    {
+                        return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = string.Empty };
+                    }
+               
+                    if (i == 3)
+                    {
+                        iCycle = 6;
+                        apiUrl = GetWebAPIUrl(strServerName, true);
+                    }
+
+                    Thread.Sleep(1500);
                 }
 
-                string response = webApiBaseResult.responseContent;
-
-                return new ResultInfo() { Result = errorMsg, ResultDT = response };
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = webApiBaseResult.responseContent };
             }
             catch (Exception e)
             {
-                return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = e.ToString(), ResultDT =  string.Empty};
             }
-            
         }
 
         /// <summary>
@@ -84,7 +102,7 @@ namespace Sci.Production.CallPmsAPI
         /// </summary>
         /// <param name="systemName">systemName</param>
         /// <returns>string</returns>
-        public static string GetWebAPIUrl(string systemName)
+        public static string GetWebAPIUrl(string systemName, bool isLAN = false)
         {
             string environment = string.Empty;
 
@@ -106,6 +124,11 @@ namespace Sci.Production.CallPmsAPI
             if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
             {
                 environment = "Formal";
+            }
+
+            if (isLAN)
+            {
+                environment = "BI";
             }
 
             return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");

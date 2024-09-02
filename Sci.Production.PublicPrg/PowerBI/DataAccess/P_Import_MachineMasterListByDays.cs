@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -31,7 +32,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             try
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (this.ErrorMeg.Empty())
+                if (resultReport.Result)
                 {
                     DataTable detailTable = resultReport.Dt;
 
@@ -86,7 +87,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel resultReport = new Base_ViewModel();
 
             ResultInfo resultInfo = PackingA2BWebAPI.GetWebAPI<Machine_R01_Report>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, machine_R01_ViewModel);
-            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
+            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : resultInfo.ErrCode;
+            resultReport.Result = new DualResult(resultInfo.Result.isSuccess);
             resultReport.Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Machine_R01_Report>(resultInfo.ResultDT);
             return resultReport;
         }

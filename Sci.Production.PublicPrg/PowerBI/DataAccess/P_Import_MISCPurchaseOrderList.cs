@@ -25,13 +25,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             if (!sDate.HasValue)
             {
                 sDate = DateTime.Now.AddDays(-14);
+            }
+
+            if (!eDate.HasValue)
+            {
                 eDate = DateTime.Now;
             }
 
             try
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (this.ErrorMeg.Empty())
+                if (resultReport.Result)
                 {
                     DataTable detailTable = resultReport.Dt;
 
@@ -84,10 +88,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
             Base_ViewModel resultReport = new Base_ViewModel();
-
             ResultInfo resultInfo = PackingA2BWebAPI.GetWebAPI<Miscellaneous_R02_Report>(setRgCode, "api/PowerBI/Miscellaneous/R02/GetReportData", 300, miscellaneous_R02_ViewModel);
-            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
+            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : resultInfo.ErrCode;
             resultReport.Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Miscellaneous_R02_Report>(resultInfo.ResultDT);
+            resultReport.Result = new DualResult(resultInfo.Result.isSuccess);
             return resultReport;
         }
 
@@ -145,7 +149,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[Budget]                 = ISNULL(T.[Budget],'')
                 ,P.[InternalRemarks]        = ISNULL(T.[InternalRemarks],'')
                 ,P.[APID]                   = ISNULL(T.[APID],'')
-                From P_MISCPurchaseOrderList p WITH(NOLOCK)
+                From P_MISCPurchaseOrderList
                 inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code
                    
                 INSERT INTO P_MISCPurchaseOrderList
@@ -239,11 +243,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , ISNULL(T.[InternalRemarks],'')
                 , ISNULL(T.[APID],'')
                 FROM #TMP T 
-                WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WITH(NOLOCK) WHERE T.PONo = P.PONo AND T.Code = P.Code)
+                WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code)
 
-                                DELETE P 
-                FROM P_MISCPurchaseOrderList P WITH(NOLOCK)
-                WHERE NOT EXISTS (SELECT 1 FROM ExtendServer.Machine.dbo.MiscPO M WITH(NOLOCK) WHERE M.ID = P.PONo)
+                DELETE P 
+                FROM P_MISCPurchaseOrderList P
+                WHERE NOT EXISTS (SELECT 1 FROM ExtendServer.Machine.dbo.MiscPO MWHERE M.ID = P.PONo)
     
                 IF EXISTS (select 1 from BITableInfo b where b.id = 'P_MISCPurchaseOrderList')
                 BEGIN
