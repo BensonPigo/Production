@@ -263,7 +263,7 @@ OUTER APPLY
 (
 	select val = COUNT(1)
 	from PackingList_Detail 
-	where OrderID = x.OrderID and ReceiveDate is null
+	where OrderID = x.OrderID and ReceiveDate is null AND CTNStartNo != 0 AND CTNQty != 0
 )RemainingCTN
 order by rn
 

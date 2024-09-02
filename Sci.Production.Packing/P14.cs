@@ -183,16 +183,16 @@ from (
             }
 
             sqlCmd.Append(@"
-) X 
-OUTER APPLY
-(
-	select val = COUNT(1)
-	from PackingList_Detail 
-	where OrderID = x.OrderID and ReceiveDate is null
-)RemainingCTN
-order by rn");
+            ) X 
+            OUTER APPLY
+            (
+	            select val = COUNT(1)
+	            from PackingList_Detail 
+	            where OrderID = x.OrderID and ReceiveDate is null AND CTNStartNo != 0 AND CTNQty != 0
+            )RemainingCTN
+            order by rn");
 
-             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail.\r\n" + result.ToString());
