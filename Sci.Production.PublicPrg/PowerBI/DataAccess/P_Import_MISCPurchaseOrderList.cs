@@ -15,8 +15,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_MISCPurchaseOrderList
     {
-        private string ErrorMeg;
-
         /// <inheritdoc/>
         public Base_ViewModel P_MISCPurchaseOrderList(DateTime? sDate, DateTime? eDate)
         {
@@ -36,7 +34,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
                 if (resultReport.Result)
-                 {
+                {
                     DataTable detailTable = resultReport.Dt;
 
                     // insert into PowerBI
@@ -50,9 +48,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
                 else
                 {
-                    finalResult.Result = new Ict.DualResult(false, null, this.ErrorMeg);
+                    finalResult.Result = new Ict.DualResult(false, null, resultReport.Result.ToMessages());
                 }
-
             }
             catch (Exception ex)
             {
@@ -64,7 +61,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
         {
-            this.ErrorMeg = string.Empty;
             Miscellaneous_R02 miscellaneous_R02_ViewModel = new Miscellaneous_R02()
             {
                 StartCreateDate = null,
@@ -87,11 +83,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
-            Base_ViewModel resultReport = new Base_ViewModel();
             ResultInfo resultInfo = PackingA2BWebAPI.GetWebAPI<Miscellaneous_R02_Report>(setRgCode, "api/PowerBI/Miscellaneous/R02/GetReportData", 300, miscellaneous_R02_ViewModel);
-            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : resultInfo.ErrCode;
-            resultReport.Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Miscellaneous_R02_Report>(resultInfo.ResultDT);
-            resultReport.Result = new DualResult(resultInfo.Result.isSuccess);
+            Base_ViewModel resultReport = new Base_ViewModel()
+            {
+                Result = new DualResult(resultInfo.Result.isSuccess, resultInfo.ErrCode),
+                Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Miscellaneous_R02_Report>(resultInfo.ResultDT),
+            };
             return resultReport;
         }
 
@@ -100,8 +97,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-            DBProxy.Current.DefaultTimeout = 600;
-
             using (sqlConn)
             {
                 string sql = $@" 
