@@ -26,7 +26,9 @@
 	[GarmentDefectTypeID] [varchar](1) NULL,
 	[GarmentDefectCodeID] [varchar](3) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
+ [DefectCodeLocalDesc] NVARCHAR(100) NOT NULL DEFAULT '', 
+    [IsCriticalDefect] VARCHAR NOT NULL DEFAULT '', 
+    CONSTRAINT [PK_P_DQSDefect_Detail] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
@@ -34,3 +36,20 @@
 ) ON [PRIMARY]
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'DefectCode當地描述',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_DQSDefect_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'DefectCodeLocalDesc'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為嚴重defect code',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_DQSDefect_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsCriticalDefect'
