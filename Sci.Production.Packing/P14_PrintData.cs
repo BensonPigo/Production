@@ -17,6 +17,8 @@
 
         /// <inheritdoc/>
         public string CTNStartNo { get; set; }
+        /// <inheritdoc/>
+        public string Remaining_CTN { get; set; }
 
         /// <inheritdoc/>
         public string StyleID { get; set; }
