@@ -5,6 +5,7 @@
 		[GroupID] [varchar] (13) NOT NULL CONSTRAINT [DF_WorkOrderForOutputHistory_GroupID] DEFAULT '',
 		[CutRef] [varchar] (10) NOT NULL CONSTRAINT [DF_WorkOrderForOutputHistory_CutRef] DEFAULT '',
 		[Layer] [int] NOT NULL CONSTRAINT [DF_WorkOrderForOutputHistory_Layer] DEFAULT 0,
+		[CutNo] [int] NULL,
 		
 	 CONSTRAINT [PK_WorkOrderForOutputHistory] PRIMARY KEY CLUSTERED 
 	(
@@ -26,4 +27,5 @@
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'層數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutputHistory', @level2type=N'COLUMN',@level2name=N'Layer'
 	GO
-	
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁次號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutputHistory', @level2type=N'COLUMN',@level2name=N'CutNo'
+	GO
