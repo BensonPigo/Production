@@ -20,6 +20,7 @@ namespace Sci.Production.CallPmsAPI
     /// </summary>
     public static class PackingA2BWebAPI
     {
+        private static WebApiBaseResult webApiBaseResult;
         public class PackingA2BResult : DualResult
         {
             public bool isDataExists { get; set; } = false;
@@ -46,9 +47,8 @@ namespace Sci.Production.CallPmsAPI
 
         public static ResultInfo GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
         {
-            WebApiBaseResult webApiBaseResult;
+            webApiBaseResult = null;
             string errorMsg = string.Empty;
-            string response = string.Empty;
             string apiUrl = string.Empty;
             int iCycle = 3;
 
@@ -57,26 +57,29 @@ namespace Sci.Production.CallPmsAPI
                 apiUrl = GetWebAPIUrl(strServerName);
                 Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
                 dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
+
                 for (int i = 1; i <= iCycle; i++)
                 {
                     webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
-                    if (!webApiBaseResult.isSuccess)
+                    if (webApiBaseResult.isSuccess)
                     {
-                        if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
-                        {
-                            errorMsg = webApiBaseResult.responseContent;
-                        }
-                        else
-                        {
-                            errorMsg = webApiBaseResult.exception.ToString();
-                        }
+                        break;
+                    }
 
+                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    {
+                        errorMsg = webApiBaseResult.responseContent;
                     }
                     else
                     {
-                        response = webApiBaseResult.responseContent;
-                        break;
+                        errorMsg = webApiBaseResult.exception.ToString();
                     }
+
+                    if (i == 6)
+                    {
+                        return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = string.Empty };
+                    }
+
                     if (i == 3)
                     {
                         iCycle = 6;
@@ -85,14 +88,15 @@ namespace Sci.Production.CallPmsAPI
 
                     Thread.Sleep(1500);
                 }
-                return new ResultInfo() { Result = errorMsg, ResultDT = MyUtility.Check.Empty(errorMsg) ? response : string.Empty };
+
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = webApiBaseResult.responseContent };
             }
             catch (Exception e)
             {
-                return new ResultInfo() { Result = e.ToString(), ResultDT = string.Empty };
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = e.ToString(), ResultDT = string.Empty };
             }
-            
         }
+
 
         /// <summary>
         /// GetWebAPIUrl

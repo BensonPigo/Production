@@ -9,14 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <inheritdoc/>
     public class P_Import_MachineMasterListByDays
     {
-        private string ErrorMeg;
-
         /// <inheritdoc/>
         public Base_ViewModel P_MachineMasterListByDays(DateTime? sDate, DateTime? eDate)
         {
@@ -31,7 +30,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             try
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (this.ErrorMeg.Empty())
+                if (resultReport.Result)
                 {
                     DataTable detailTable = resultReport.Dt;
 
@@ -46,7 +45,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
                 else
                 {
-                    finalResult.Result = new Ict.DualResult(false, null, this.ErrorMeg);
+                    finalResult.Result = new Ict.DualResult(false, null, resultReport.Result.ToMessages());
                 }
 
             }
@@ -60,7 +59,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
         {
-            this.ErrorMeg = string.Empty;
             Machine_R01 machine_R01_ViewModel = new Machine_R01()
             {
                 StartMachineID = string.Empty,
@@ -83,11 +81,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
 
             string setRgCode = MyUtility.GetValue.Lookup("select RgCode from system witch(nolock)  ", "Production");
-            Base_ViewModel resultReport = new Base_ViewModel();
-
             ResultInfo resultInfo = PackingA2BWebAPI.GetWebAPI<Machine_R01_Report>(setRgCode, "api/PowerBI/Machine/R01/GetReportData", 300, machine_R01_ViewModel);
-            this.ErrorMeg = resultInfo.Result.Empty() ? string.Empty : JsonConvert.DeserializeObject<ResultInfo>(resultInfo.Result).Result;
-            resultReport.Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Machine_R01_Report>(resultInfo.ResultDT);
+            Base_ViewModel resultReport = new Base_ViewModel()
+            {
+                Result = new DualResult(resultInfo.Result.isSuccess, resultInfo.ErrCode),
+                Dt = resultInfo.ResultDT.Empty() ? new DataTable() : CallWebAPI.ToTable<Machine_R01_Report>(resultInfo.ResultDT),
+            };
             return resultReport;
         }
 
@@ -96,8 +95,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-            DBProxy.Current.DefaultTimeout = 600;
-
             using (sqlConn)
             {
                 string sql = $@" 
