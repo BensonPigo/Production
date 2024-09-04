@@ -645,6 +645,16 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             var dataTable = (DataTable)this.detailgridbs.DataSource;
             var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
             this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
+
+            if (!this.EditMode)
+            {
+                this.comboCompany.IsOrderCompany = null;
+                this.comboCompany.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -873,6 +883,9 @@ Order by CTNNo,Seq1,Seq2", masterID);
 
             // 只有新增時才能編輯修改
             this.comboCompany.ReadOnly = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>

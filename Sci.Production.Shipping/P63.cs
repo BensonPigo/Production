@@ -58,6 +58,16 @@ namespace Sci.Production.Shipping
 
             this.btnImportGMTBooking.Enabled = this.EditMode;
 
+            if (!this.EditMode)
+            {
+                this.comboCompany.IsOrderCompany = null;
+                this.comboCompany.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
             this.GetGridPOListData();
         }
 
@@ -232,7 +242,12 @@ ORDER BY GB.ETD
             this.gridCurrency.DataSource = null;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.RefreshExchangeRate();
+
+            // 只有新增時才能編輯修改
             this.comboCompany.ReadOnly = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>

@@ -279,7 +279,7 @@
             // refresh
             // 
             this.refresh.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.refresh.Location = new System.Drawing.Point(8807, 8);
+            this.refresh.Location = new System.Drawing.Point(8887, 8);
             // 
             // detailgridcont
             // 
@@ -1133,7 +1133,7 @@
             this.comboCompany.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
             this.comboCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboCompany.FormattingEnabled = true;
-            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.IsOrderCompany = false;
             this.comboCompany.IsSupportUnselect = true;
             this.comboCompany.Junk = false;
             this.comboCompany.Location = new System.Drawing.Point(146, 32);

@@ -158,6 +158,16 @@ where ed.ID = '{0}'
                 this.detailgrid.Columns["ToSEQ"].Visible = false;
             }
 
+            if (!this.EditMode)
+            {
+                this.comboCompany.IsOrderCompany = null;
+                this.comboCompany.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
             this.ControlColor();
         }
 
@@ -214,7 +224,12 @@ where ed.ID = '{0}'
             this.CurrentMaintain["Type"] = 1;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.btnShippingMemo.Enabled = false;
+
+            // 只有新增時才能編輯修改
             this.comboCompany.ReadOnly = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>

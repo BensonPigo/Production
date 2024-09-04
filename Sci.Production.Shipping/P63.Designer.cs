@@ -122,7 +122,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1881, 142);
+            this.gridicon.Location = new System.Drawing.Point(2154, 142);
             // 
             // detailgridcont
             // 
@@ -406,7 +406,7 @@
             this.comboCompany.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
             this.comboCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboCompany.FormattingEnabled = true;
-            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.IsOrderCompany = false;
             this.comboCompany.IsSupportUnselect = true;
             this.comboCompany.Junk = false;
             this.comboCompany.Location = new System.Drawing.Point(415, 12);
