@@ -157,12 +157,20 @@ from (
         {
             // sql參數
             SqlParameter sp1 = new SqlParameter("@id", pLNo);
+            SqlParameter sp2 = new SqlParameter("@OrderCompanyID", P02.orderCompanyID);
 
-            IList<SqlParameter> cmds = new List<SqlParameter>();
+            IList <SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
+            cmds.Add(sp2);
 
             DataTable packListData;
-            string sqlCmd = "select ExpressID from PackingList WITH (NOLOCK) where ID = @id and Type = 'S'";
+            string sqlCmd = @"
+select ExpressID 
+from PackingList WITH (NOLOCK) 
+where ID = @id 
+and Type = 'S'
+and OrderCompanyID = @OrderCompanyID
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
@@ -359,11 +367,17 @@ SELECT [ExistsData]=1
 FROm  Express_Detail
 WHERE PackingListID='{packingListID}'
       AND OrderID='{orderID}' 
+      AND OrderCompanyID = '{P02.orderCompanyID}'
+and
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
 FROm PackingList
-WHERE ID='{packingListID}' AND ExpressID<>'{this.masterData["ID"].ToString()}' AND ExpressID <> ''  AND ExpressID IS NOT NULL
+WHERE ID='{packingListID}' 
+AND ExpressID<>'{this.masterData["ID"].ToString()}' 
+AND ExpressID <> ''  
+AND ExpressID IS NOT NULL
+AND OrderCompanyID = '{P02.orderCompanyID}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)

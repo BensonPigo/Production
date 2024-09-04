@@ -175,12 +175,21 @@ and pl.OrderCompanyID = @OrderCompanyID
         {
             // sql參數
             SqlParameter sp1 = new SqlParameter("@id", pLNo);
+            SqlParameter sp2 = new SqlParameter("@OrderCompanyID", P02.orderCompanyID);
 
             IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
+            cmds.Add(sp2);
 
             DataTable packListData;
-            string sqlCmd = "select distinct ID, OrderID from PackingList_Detail WITH (NOLOCK) where ID = @id";
+            string sqlCmd = @"
+select distinct pd.ID, pd.OrderID 
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p WITH (NOLOCK) on pd.id = p.id
+where 1=1
+and pd.ID = @id
+and p.OrderCompanyID = @OrderCompanyID
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
@@ -386,6 +395,7 @@ SELECT [ExistsData]=1
 FROm  PackingList
 WHERE ID='{packingListID}'
       and ExpressID = '{this.masterData["ID"].ToString()}'
+      and OrderCompanyID = '{P02.orderCompanyID}'
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
@@ -394,6 +404,7 @@ WHERE ID='{packingListID}'
       AND ExpressID<>'{this.masterData["ID"].ToString()}' 
       AND ExpressID <> ''  
       AND ExpressID IS NOT NULL
+      AND OrderCompanyID = '{P02.orderCompanyID}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)
