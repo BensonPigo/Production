@@ -250,6 +250,7 @@
     <Build Include="dbo\Tables\P_MaterialLocationIndex.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_MaterialLocationIndex.sql" />
     <Build Include="dbo\Tables\P_ScanPackList.sql" />
+    <Build Include="dbo\Tables\P_MISCPurchaseOrderList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

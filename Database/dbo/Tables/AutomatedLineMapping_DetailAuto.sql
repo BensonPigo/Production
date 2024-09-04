@@ -14,7 +14,7 @@
     [Attachment] VARCHAR(100) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_Attachment] DEFAULT ('') NOT NULL, 
     [SewingMachineAttachmentID] VARCHAR(200) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_SewingMachineAttachmentID] DEFAULT ('') NOT NULL, 
     [Template] VARCHAR(100) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_Template] DEFAULT ('') NOT NULL, 
-    [GSD] NUMERIC(6, 2) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_GSD] DEFAULT (0) NOT NULL, 
+    [GSD] NUMERIC(12, 2) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_GSD] DEFAULT (0) NOT NULL, 
     [SewerDiffPercentage] NUMERIC(3, 2) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_SewerDiffPercentage] DEFAULT (0) NOT NULL, 
     [DivSewer] NUMERIC(5, 4) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_DivSewer] DEFAULT (0) NOT NULL, 
     [OriSewer] NUMERIC(5, 4) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_OriSewer] DEFAULT (0) NOT NULL, 
