@@ -541,7 +541,35 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
            ,[GarmentDefectCodeID]
 		   ,[DefectCodeLocalDesc]
 		   ,[IsCriticalDefect])
- select * from #Final_DQSDefect_Detail  
+ select Zone
+    , [Brand]
+	, [Buyer Delivery Date]
+	, Line
+	, [Factory]
+	, Team 
+	, [Shift]
+ 	, [PO#]  
+	, [Style]
+	, [SP#]
+	, Article
+	, [Status]
+	, [FixType]
+	, [FirstInspectionDate]
+	, [FirstInspectedTime]
+	, [Inspected QC]
+	, [Fixed Time]
+	, [Fixed QC]
+	, [ProductType]
+	, [Size]
+	, [DefectTypeDescritpion]
+	, [DefectCodeDescritpion]
+	, [Area]
+	, [ReworkCardNo]
+	, [DefectTypeID]
+	, [DefectCodeID]
+	, DefectCodeLocalDesc = isnull([DefectCodeLocalDesc],'''')
+	, [IsCriticalDefect]
+ from #Final_DQSDefect_Detail  
 '
 
 set @SqlFinal2 ='
