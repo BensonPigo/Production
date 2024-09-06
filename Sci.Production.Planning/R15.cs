@@ -207,8 +207,26 @@ namespace Sci.Production.Planning
 
             this.printData = resultReport.DtArr[0];
             this.subprocessInoutColumnCount = resultReport.DtArr[1].Rows.Count > 0 ? MyUtility.Convert.GetInt(resultReport.DtArr[1].Rows[0]["subprocessInoutColumnCount"]) : 0;
+
+            this.RemoveOtherColumn();
             DBProxy.Current.DefaultTimeout = 300;
             return Ict.Result.True;
+        }
+
+        /// <summary>
+        /// 移除不要看到欄位
+        /// </summary>
+        private void RemoveOtherColumn()
+        {
+            string[] columnsToRemove = { "RFID AUT Farm In Qty", "RFID AUT Farm Out Qty", "RFID FM Farm In Qty", "RFID FM Farm Out Qty" };
+
+            foreach (string column in columnsToRemove)
+            {
+                if (this.printData.Columns.Contains(column))
+                {
+                    this.printData.Columns.Remove(column);
+                }
+            }
         }
 
         /// <summary>
