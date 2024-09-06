@@ -290,35 +290,40 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
             {
-                string errMsg = "沒有執行";
+                var executedListError = new ExecutedList()
+                {
+                    ClassName = item.ClassName,
+                    Group = item.Group,
+                    SEQ = item.SEQ,
+                    Success = false,
+                    ExecuteSDate = DateTime.Now,
+                    ExecuteEDate = DateTime.Now,
+                    ErrorMsg = "沒有執行",
+                };
                 var executedTimeout = executedListTimeout.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
                 var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
                 if (executedException != null)
                 {
                     // 如果是Throw Exception的話，紀錄Exception訊息
-                    errMsg = executedException.ErrorMsg;
+                    executedListError.ErrorMsg = executedException.ErrorMsg;
                 }
                 else if (executedTimeout != null)
                 {
-                    errMsg = executedTimeout.ErrorMsg;
+                    executedListError.ErrorMsg = executedTimeout.ErrorMsg;
                 }
                 else
                 {
-                    var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
+                    // 只有Group不為0的錯誤訊息要Show前面的執行階層
+                    var queryErrorGroup = item.Group == 0
+                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && x.Success == false)
+                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
                     if (queryErrorGroup.Any())
                     {
-                        errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                        executedListError.ErrorMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
                     }
                 }
 
-                executedListEnd.Add(new ExecutedList()
-                {
-                    ClassName = item.ClassName,
-                    Success = false,
-                    ExecuteSDate = DateTime.Now,
-                    ExecuteEDate = DateTime.Now,
-                    ErrorMsg = errMsg,
-                });
+                executedListEnd.Add(executedListError);
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
