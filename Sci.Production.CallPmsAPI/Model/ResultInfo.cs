@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.CallPmsAPI.Model
 {
@@ -11,7 +6,10 @@ namespace Sci.Production.CallPmsAPI.Model
     public class ResultInfo
     {
         /// <inheritdoc/>
-        public string Result { get; set; }
+        public WebApiBaseResult Result { get; set; }
+
+        /// <inheritdoc/>
+        public string ErrCode { get; set; }
 
         /// <inheritdoc/>
         public string ResultDT { get; set; }
