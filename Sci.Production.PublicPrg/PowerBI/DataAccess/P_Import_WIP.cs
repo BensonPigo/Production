@@ -137,6 +137,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,P.[RFIDEmbossDebossFarmOutQty]		=	ISNULL(T.[RFID Emboss Farm Out Qty],0)
             ,P.[RFIDHTFarmInQty]				=	ISNULL(T.[RFID HT Farm In Qty],0)
             ,P.[RFIDHTFarmOutQty]				=	ISNULL(T.[RFID HT Farm Out Qty],0)
+            ,P.[RFIDAUTFarmInQty]				=	ISNULL(T.[RFID AUT Farm In Qty],0)
+            ,P.[RFIDAUTFarmOutQty]				=	ISNULL(T.[RFID AUT Farm Out Qty],0)
+            ,P.[RFIDFMFarmInQty]				=	ISNULL(T.[RFID FM Farm In Qty],0)
+            ,P.[RFIDFMFarmOutQty]				=	ISNULL(T.[RFID FM Farm Out Qty],0)
             ,P.[SubProcessStatus]				=	ISNULL(T.[SubProcessStatus],'')	
             ,P.[EmbQty]							=	ISNULL(T.[EMBROIDERY_qty],0)
             ,P.[BondQty]						=	ISNULL(T.[BONDING_qty],0)
@@ -241,6 +245,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[RFIDEmbossDebossFarmOutQty]
 	            ,[RFIDHTFarmInQty]
 	            ,[RFIDHTFarmOutQty]
+	            ,[RFIDAUTFarmInQty]
+	            ,[RFIDAUTFarmOutQty]
+	            ,[RFIDFMFarmInQty]
+	            ,[RFIDFMFarmOutQty]
 	            ,[SubProcessStatus]
 	            ,[EmbQty]
 	            ,[BondQty]
@@ -341,6 +349,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[RFID Emboss Farm Out Qty],0)
             ,ISNULL(T.[RFID HT Farm In Qty],0)
             ,ISNULL(T.[RFID HT Farm Out Qty],0)
+            ,ISNULL(T.[RFID AUT Farm In Qty],0)
+            ,ISNULL(T.[RFID AUT Farm Out Qty],0)
+            ,ISNULL(T.[RFID FM Farm In Qty],0)
+            ,ISNULL(T.[RFID FM Farm Out Qty],0)
             ,ISNULL(T.[SubProcessStatus],'')
             ,ISNULL(T.[EMBROIDERY_qty],0)
             ,ISNULL(T.[BONDING_qty],0)
