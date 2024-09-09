@@ -1513,31 +1513,21 @@ and s.StyleUnit='PCS'
             #endregion
 
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
-            bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
+            // 不分LocalStyle,且都只帶出ArtworkTypeID = sewing. by ISP20240873
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(o => o.RowState != DataRowState.Deleted &&
                             !MyUtility.Convert.GetBool(o["IsSubprocess"]) &&
                             MyUtility.Convert.GetString(o["PPA"]) != "C")
                 .Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) })
                 .ToList();
-            decimal ttlSewingTime = 0;
-            if (!isLocalStyle)
-            {
-                DataTable tmp;
-                DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
-                List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+            DataTable tmp;
+            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
+            List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
-                ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
+            decimal ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
 
-                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
-            }
-            else
-            {
-                ttlSewingTime = machineSMV_List.Sum(o => o.SMV);
-
-                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
-            }
+            this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
 
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
             this.numTotalSewingTimePc.Text = totalSewing;
@@ -1594,25 +1584,6 @@ group by id.Location,M.ArtworkTypeID";
                     if (!result)
                     {
                         MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
-                    }
-                }
-
-                // Local Style，才進行以下判斷
-                if (!isLocalStyle)
-                {
-                    // Total Sewing Time重新計算過再來比
-                    decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
-                    decimal totalGSD = 0;
-
-                    if (dtGSD_Summary.Rows.Count > 0)
-                    {
-                        totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
-
-                        if (totalSewingTime > totalGSD)
-                        {
-                            MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
-                            return false;
-                        }
                     }
                 }
             }
