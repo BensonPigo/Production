@@ -208,7 +208,11 @@ namespace Sci.Production.Planning
             this.printData = resultReport.DtArr[0];
             this.subprocessInoutColumnCount = resultReport.DtArr[1].Rows.Count > 0 ? MyUtility.Convert.GetInt(resultReport.DtArr[1].Rows[0]["subprocessInoutColumnCount"]) : 0;
 
-            this.RemoveOtherColumn();
+            if (this.formParameter == "1")
+            {
+                this.RemoveOtherColumn();
+            }
+
             DBProxy.Current.DefaultTimeout = 300;
             return Ict.Result.True;
         }
