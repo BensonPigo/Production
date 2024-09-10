@@ -230,7 +230,7 @@ ORDER BY [Group], [SEQ], [NAME]";
             DateTime stratExecutedTime = DateTime.Now;
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
             List<ExecutedList> executedListException = new List<ExecutedList>();
-            List<ExecutedList> executedListTimeout = new List<ExecutedList>();
+            List<ExecutedList> executedListGroupLevelError = new List<ExecutedList>();
 
             double timeout = this.GetTimeout();
             var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
@@ -273,10 +273,16 @@ ORDER BY [Group], [SEQ], [NAME]";
                     {
                         if (ex.GetType().FullName == "System.OperationCanceledException")
                         {
-                            // 如果有觸發逾時先記錄至List
-                            currExecuted.ErrorMsg = "Timeout";
-                            executedListTimeout.Add(currExecuted);
+                            // 逾時的訊息
+                            currExecuted.ErrorMsg = "GroupLevel_Timeout,Time out cancel";
                         }
+                        else
+                        {
+                            // 其他錯誤的訊息
+                            currExecuted.ErrorMsg = "GroupLevel_Other," + ex.Message;
+                        }
+
+                        executedListGroupLevelError.Add(currExecuted);
                     }
 
                     return executedListDetail;
@@ -300,16 +306,16 @@ ORDER BY [Group], [SEQ], [NAME]";
                     ExecuteEDate = DateTime.Now,
                     ErrorMsg = "沒有執行",
                 };
-                var executedTimeout = executedListTimeout.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                var executedGroupLevelError = executedListGroupLevelError.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
                 var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
                 if (executedException != null)
                 {
                     // 如果是Throw Exception的話，紀錄Exception訊息
                     executedListError.ErrorMsg = executedException.ErrorMsg;
                 }
-                else if (executedTimeout != null)
+                else if (executedGroupLevelError != null)
                 {
-                    executedListError.ErrorMsg = executedTimeout.ErrorMsg;
+                    executedListError.ErrorMsg = executedGroupLevelError.ErrorMsg;
                 }
                 else
                 {
