@@ -31,6 +31,8 @@
             this.components = new System.ComponentModel.Container();
             this.gridBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panelFTP = new Sci.Win.UI.Panel();
+            this.textBox1 = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.textImportDataFileName = new Sci.Win.UI.TextBox();
             this.textFtpPwd = new Sci.Win.UI.TextBox();
             this.textFtpID = new Sci.Win.UI.TextBox();
@@ -105,6 +107,25 @@
             this.panelFTP.Size = new System.Drawing.Size(712, 68);
             this.panelFTP.TabIndex = 1;
             // 
+            // textBox1
+            // 
+            this.textBox1.BackColor = System.Drawing.Color.White;
+            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpPort", true));
+            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.textBox1.Location = new System.Drawing.Point(512, 38);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(44, 21);
+            this.textBox1.TabIndex = 21;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(480, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(30, 21);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "Port";
+            // 
             // textImportDataFileName
             // 
             this.textImportDataFileName.BackColor = System.Drawing.Color.White;
@@ -120,7 +141,7 @@
             // 
             this.textFtpPwd.BackColor = System.Drawing.Color.White;
             this.textFtpPwd.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpPwd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
+            this.textFtpPwd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpPwd", true));
             this.textFtpPwd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpPwd.Location = new System.Drawing.Point(573, 10);
             this.textFtpPwd.Name = "textFtpPwd";
@@ -131,7 +152,7 @@
             // 
             this.textFtpID.BackColor = System.Drawing.Color.White;
             this.textFtpID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
+            this.textFtpID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpID", true));
             this.textFtpID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpID.Location = new System.Drawing.Point(369, 10);
             this.textFtpID.Name = "textFtpID";
@@ -160,7 +181,7 @@
             // 
             this.textFtpIP.BackColor = System.Drawing.Color.White;
             this.textFtpIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
+            this.textFtpIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpIP", true));
             this.textFtpIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpIP.Location = new System.Drawing.Point(79, 10);
             this.textFtpIP.Name = "textFtpIP";
@@ -181,7 +202,7 @@
             this.labelFtpPwd.Name = "labelFtpPwd";
             this.labelFtpPwd.Size = new System.Drawing.Size(90, 21);
             this.labelFtpPwd.TabIndex = 4;
-            this.labelFtpPwd.Text = "FTP Password";
+            this.labelFtpPwd.Text = "SFTP Password";
             // 
             // labelFtpID
             // 
@@ -189,7 +210,7 @@
             this.labelFtpID.Name = "labelFtpID";
             this.labelFtpID.Size = new System.Drawing.Size(66, 21);
             this.labelFtpID.TabIndex = 2;
-            this.labelFtpID.Text = "FTP ID";
+            this.labelFtpID.Text = "SFTP ID";
             // 
             // labelFtpIP
             // 
@@ -197,7 +218,7 @@
             this.labelFtpIP.Name = "labelFtpIP";
             this.labelFtpIP.Size = new System.Drawing.Size(66, 21);
             this.labelFtpIP.TabIndex = 0;
-            this.labelFtpIP.Text = "FTP IP";
+            this.labelFtpIP.Text = "SFTP IP";
             // 
             // panelMail
             // 
