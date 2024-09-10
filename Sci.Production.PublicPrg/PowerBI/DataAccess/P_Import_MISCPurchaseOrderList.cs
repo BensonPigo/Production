@@ -242,7 +242,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 DELETE P 
                 FROM P_MISCPurchaseOrderList P
-                WHERE NOT EXISTS (SELECT 1 FROM ExtendServer.Machine.dbo.MiscPO M WHERE M.ID = P.PONo)
+                WHERE NOT EXISTS (SELECT 1 FROM Machine.dbo.MiscPO M WHERE M.ID = P.PONo)
     
                 IF EXISTS (select 1 from BITableInfo b where b.id = 'P_MISCPurchaseOrderList')
                 BEGIN
