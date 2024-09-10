@@ -371,7 +371,7 @@ SELECT
 	,cd.Remark
 	,c.ID
 	,c.IsCombinePO
-	,[InsCtn]=IIF(c.stage = ''Final'' OR c.Stage =''3rd party'',
+	,[InsCtn]=IIF(c.stage in (''Final'' ,''Final Internal'') OR c.Stage =''3rd party'',
 	( 
 		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
 		FROM ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord cr
