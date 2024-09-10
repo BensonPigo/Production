@@ -186,9 +186,6 @@ select pl.MDivisionID
 	, pl.EstCTNBooking
 	, pl.EstCTNArrive
 	, pl.Remark
-    , PackingListDetail_Sum.RefNo
-    , PackingListDetail_Sum.LocalSuppID1
-    , PackingListDetail_Sum.Abb
 from PackingList pl 
 outer apply(
 	select [TtlCTNS]=sum(pd.CTNQty) 
@@ -205,21 +202,15 @@ outer apply(
 	    ,pd.DisposeFromClog
         ,o.FOC,o.LocalOrder
         ,o.poid
-        ,pd.RefNo
-        ,liq.LocalSuppID1
-        ,ls.Abb
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
     LEFT JOIN LocalItem li ON pd.RefNo = li.RefNo
-    LEFT JOIN localitem_quot liq ON liq.RefNo = pd.RefNo
-    LEFT JOIN LocalSupp ls ON ls.ID = liq.LocalSuppID1 
 	where pd.ID = pl.ID
 	and pd.DisposeFromClog = 0 
 	group by o.SciDelivery, o.BuyerDelivery, o.CustPONo, o.ID
 		,o.Junk, o.StyleID, o.BrandID, o.SewLine
 		,o.SewInLine, o.SewOffLine, o.Qty, pd.DisposeFromClog
 		,o.FOC, o.LocalOrder,o.poid
-        ,pd.RefNo,liq.LocalSuppID1,ls.Abb
 )PackingListDetail_Sum
 where PackingListDetail_Sum.DisposeFromClog= 0
 {where}
