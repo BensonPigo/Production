@@ -274,6 +274,12 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            this.btn_JunkHis.Enabled = true;
+        }
+
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
@@ -285,6 +291,7 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             this.CurrentMaintain["Status"] = "New";
             this.btnBatchImport.Enabled = true;
 
+            this.btn_JunkHis.Enabled = false;
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
             this.gridicon.Remove.Enabled = true;
@@ -312,6 +319,9 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.dateIssuedate.ReadOnly = true;
+
+                this.btn_JunkSP.Enabled = false;
+                this.btn_JunkHis.Enabled = false;
 
                 // Confirmed下表身不能編輯
                 this.gridicon.Append.Enabled = false;
@@ -348,6 +358,12 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             {
                 this.ShowErr(result);
             }
+        }
+
+        protected override void ClickUndo()
+        {
+            base.ClickUndo();
+            this.btn_JunkHis.Enabled = true;
         }
 
         /// <inheritdoc/>
@@ -442,6 +458,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
                 this.col_LocalUnitPrice.IsEditingReadOnly = true;
                 this.col_Vat.IsEditingReadOnly = true;
                 this.col_KpiRate.IsEditingReadOnly = true;
+                this.btn_JunkSP.Enabled = true;
             }
             else
             {
@@ -453,6 +470,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
                 this.col_LocalUnitPrice.IsEditingReadOnly = false;
                 this.col_Vat.IsEditingReadOnly = false;
                 this.col_KpiRate.IsEditingReadOnly = false;
+                this.btn_JunkSP.Enabled = false;
             }
 
             if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirmed"))
@@ -1027,6 +1045,21 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
         {
             base.OnDetailGridRemoveClick();
             this.FirstCheckOutputQty = true;
+        }
+
+        private void Btn_JunkSP_Click(object sender, EventArgs e)
+        {
+            DataTable table = this.CurrentDetailData.Table.Copy();
+
+            var form = new P11_JunkSP(table);
+            form.ShowDialog();
+            this.ReloadDatas();
+        }
+
+        private void Btn_JunkHis_Click(object sender, EventArgs e)
+        {
+            var form = new P11_History(this.CurrentMaintain);
+            form.ShowDialog();
         }
     }
 }
