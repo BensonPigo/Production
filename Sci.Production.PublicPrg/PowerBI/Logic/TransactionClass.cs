@@ -12,12 +12,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
     public class TransactionClass
     {
         /// <inheritdoc/>
-        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
-                dualResult = MyUtility.Tool.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand);
+                dualResult = PublicPrg.CrossUtility.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand, defaultTimeout: defaultTimeoutInSeconds);
 
                 if (!dualResult)
                 {
@@ -31,12 +31,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ProcessWithDatatableWithTransactionScope(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
-                dualResult = MyUtility.Tool.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand);
+                dualResult = PublicPrg.CrossUtility.ProcessWithDatatable(source, tmp_columns, sqlcmd, out result, temptablename, conn, paramters, initTmpCommand, defaultTimeout: defaultTimeoutInSeconds);
 
                 if (!dualResult)
                 {
@@ -50,7 +50,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
@@ -69,7 +69,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ExecuteByConnTransactionScope(SqlConnection conn, string cmdtext, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
@@ -88,7 +88,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
@@ -107,7 +107,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 30 * 60)
+        public static DualResult ExecuteTransactionScope(string connname, string cmdtext, IList<SqlParameter> parameters, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
