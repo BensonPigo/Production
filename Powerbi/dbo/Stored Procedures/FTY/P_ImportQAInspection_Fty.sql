@@ -510,7 +510,37 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
 		   ,[Gender]
 		   ,[Construction]
 		   ,[DefectQty])
- select * from #Final_DQSDefect_Summary
+ select　InspectionDate 
+	, FirstInspectionDate
+	, isnull(Factory,'''')
+	, isnull(Brand,'''')
+	, isnull(Style,'''')
+	, isnull([PO#], '''')
+	, isnull([SP#], '''')
+	, isnull(Article, '''')
+	, isnull(Size, '''')
+	, isnull(Destination, '''')
+	, isnull(CdCodeID, '''')
+	, isnull(ProductionFamilyID,'''')
+	, isnull(Team, '''')
+	, isnull(AddName ,'''')
+	, isnull([Shift], '''')
+	, isnull(Line, '''')
+	, isnull(SewingCell, '''')	
+	, isnull(TtlQty, 0)
+	, isnull(RejectAndFixedQty, 0)
+	, isnull([EndlineWFT], 0) 
+	, isnull([Endline RFT(%)], 0) 
+	, isnull(CDCodeNew, '''')
+	, isnull(ProductType,'''')
+	, isnull(FabricType, '''')
+	, isnull(Lining,'''')
+	, isnull(Gender,'''')
+	, isnull(Construction,'''')
+	, isnull(DefectQty, 0)
+	from #Final_DQSDefect_Summary'
+
+set @SqlFinal2 ='
 
  INSERT INTO [dbo].[P_DQSDefect_Detail]
            ([FtyZon]
@@ -541,10 +571,34 @@ INSERT INTO [dbo].[P_DQSDefect_Summary]
            ,[GarmentDefectCodeID]
 		   ,[DefectCodeLocalDesc]
 		   ,[IsCriticalDefect])
- select * from #Final_DQSDefect_Detail  
+ select [Zone] = isnull([Zone],'''')
+    , Brand = isnull(Brand,'''')
+	, [Buyer Delivery Date]
+	, Line = isnull(Line,'''')
+	, [Factory] = isnull(Factory,'''')
+	, Team = isnull(Team,'''')
+	, [Shift] = isnull([Shift],'''')
+ 	, [PO#] = isnull([PO#],'''')
+	, [Style] = isnull(Style,'''')
+	, [SP#] = isnull([SP#],'''')
+	, Article = isnull(Article,'''')
+	, [Status] = isnull([Status],'''')
+	, [FixType] = isnull(FixType,'''')
+	, [FirstInspectionDate]
+	, [FirstInspectedTime]
+	, [Inspected QC] = isnull([Inspected QC],'''')
+	, [Fixed Time] = isnull([Fixed Time],'''')
+	, [Fixed QC] = isnull([Fixed QC],'''')
+	, [ProductType] = isnull(ProductType,'''')
+	, [Size]= isnull(Size,'''')
+	, [DefectTypeDescritpion] = isnull([DefectTypeDescritpion],'''')
+	, [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'''')
+	, [Area] = isnull(Area,'''')
+	, [ReworkCardNo] = isnull(ReworkCardNo,''''), [DefectTypeID] = isnull(DefectTypeID,''''), [DefectCodeID] = isnull(DefectCodeID,''''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''''), [IsCriticalDefect] = isnull(IsCriticalDefect,'''')
+ from #Final_DQSDefect_Detail  
 '
 
-set @SqlFinal2 ='
+set @SqlFinal3 ='
 INSERT INTO [dbo].[P_CFAInline_Detail]
            ([Action]
            ,[Area]
@@ -571,7 +625,33 @@ INSERT INTO [dbo].[P_CFAInline_Detail]
            ,[StyleID]
            ,[Team]
            ,[VASSHAS])
-select * from #Final_P_CFAInline_Detail
+select 
+	 [Action]= isnull([Action] ,'''' )
+	,[Area]= isnull([Area] ,'''')
+	,cDate
+	,isnull(BrandID ,'''')
+	,BuyerDelivery 
+	,[Cfa] = isnull([Cfa],'''')
+	,[Defect Description]= isnull([Defect Description],'''')
+	,isnull(DefectQty, 0)
+	,[Destination]=isnull([Destination],'''')
+	,isnull(FactoryID,'''') 
+	,[GarmentOutput]= isnull([GarmentOutput],0)
+	,[Stage]= isnull([Stage],'''')
+	,isnull(SewingLineID,'''')
+	,isnull([No. Of Defect],0)
+	,isnull(Qty,0)
+	,isnull(CustPONo, '''')
+	,isnull([Remark], '''')
+	,isnull([Result], '''')
+	,isnull(InspectQty, 0)		
+	,isnull([shift], '''')
+	,isnull(OrderID, '''')
+	,isnull([SQR], 0)
+	,isnull(StyleID, '''')
+	,isnull(Team, '''')
+	,isnull([VAS/SHAS], '''') 
+from #Final_P_CFAInline_Detail
 
 INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
            ([Action]
@@ -611,7 +691,44 @@ INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
 		   ,[InspectedSeq] 
 		   ,[ReInspection]
 		   )
-select * from #Final_P_CFAInspectionRecord_Detail
+select 
+	isnull(Action ,'''')
+	,isnull(AreaCodeDesc , '''')
+	,AuditDate
+	,isnull(BrandID, '''')
+	,BuyerDelivery
+	,isnull(CFA, '''')
+	,isnull(ClogReceivedPercentage , 0)
+	,isnull(DefectDescription, '''')
+	,isnull(DefectQty, 0)
+	,isnull(Dest ,'''')
+	,isnull(FactoryID, '''')
+	,isnull(Carton, '''')
+	,isnull([Inspected Ctn], 0)
+	,isnull([Inspected PoQty], 0)
+	,isnull(Stage ,'''')
+	,isnull(SewingLineID, '''')
+	,isnull(MDivisionid, '''')
+	,isnull(NoOfDefect, 0)
+	,isnull(Qty, 0)
+	,isnull(CustPoNo, '''')
+	,isnull(Remark, '''')
+	,isnull(Result, '''')
+	,isnull(InspectQty, 0)
+	,isnull(Seq ,'''')
+	,isnull(Shift, '''')
+	,isnull(OrderID, '''')
+	,isnull(SQR, 0)
+	,isnull(Status,'''')
+	,isnull(StyleID, '''')
+	,isnull(Team, '''')
+	,isnull([TTL CTN] , 0)
+	,isnull(VasShas ,'''')
+	,isnull(FirstInspection ,'''')
+	,isnull([InspectedSP], '''')
+	,isnull([InspectedSeq],'''') 
+	,[ReInspection]
+	from #Final_P_CFAInspectionRecord_Detail
 '
 
 set @SqlFinal = '
@@ -655,6 +772,7 @@ print @SqlCmd4
 print @SqlCmd5
 print @SqlFinal1 
 print @SqlFinal2 
+print @SqlFinal3 
 print @SqlFinal
 */
 
