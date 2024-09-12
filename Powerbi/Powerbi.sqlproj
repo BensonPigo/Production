@@ -251,6 +251,8 @@
     <Build Include="dbo\Stored Procedures\P_Import_MaterialLocationIndex.sql" />
     <Build Include="dbo\Tables\P_ScanPackList.sql" />
     <Build Include="dbo\Tables\P_MISCPurchaseOrderList.sql" />
+    <Build Include="dbo\Tables\P_LineBalancingRate.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_LineBalancingRate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
