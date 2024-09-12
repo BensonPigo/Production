@@ -47,6 +47,7 @@ Select
 From #tmp tmp
 inner join Orders o with(nolock) On tmp.OrderID = o.ID
 inner join Order_Qty oq with(nolock) On oq.ID = tmp.OrderID And oq.article = tmp.article
+Where tmp.AccuOutPutQty = 0
 Group By tmp.OrderID, o.StyleID, tmp.ComboType, oq.Article,tmp.OutputQty,tmp.UnitPrice, 
          tmp.SubConOutFty,tmp.ContractNumber,LocalUnitPrice, tmp.Vat, tmp.KpiRate, tmp.LocalCurrencyID
 ";
@@ -84,11 +85,9 @@ Group By tmp.OrderID, o.StyleID, tmp.ComboType, oq.Article,tmp.OutputQty,tmp.Uni
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            DataTable subconOutContract_Junk = new DataTable();
-            string sql = "Select * from SubconOutContract_Junk where 1 = 2";
-            DBProxy.Current.Select(null, sql, out subconOutContract_Junk);
+            DataTable tmp = new DataTable();
 
-            #region 新增至 SubconOutContract_Junk
+            #region 新增至 SubconOutContract_Junk，並移除SubconOutContract_Detail
 
             var selectedRows = this.dt.AsEnumerable()
                                       .Where(row => row.Field<bool>("sel"));
@@ -115,6 +114,7 @@ Group By tmp.OrderID, o.StyleID, tmp.ComboType, oq.Article,tmp.OutputQty,tmp.Uni
               SubConOutFty = group.Key.SubConOutFty,
               ContractNumber = group.Key.ContractNumber,
               OrderID = group.Key.OrderID,
+              StyleID = group.Key.StyleID,
               ComboType = group.Key.ComboType,
               Article = group.Key.Article,
               OutputQty = group.Key.OutputQty,
@@ -145,6 +145,31 @@ Group By tmp.OrderID, o.StyleID, tmp.ComboType, oq.Article,tmp.OutputQty,tmp.Uni
                new SqlParameter("@Reason", item.Reason),
                new SqlParameter("@AddName", Env.User.UserID),
                };
+
+                string sql = @"
+Select 1 
+from ( select isnull(sum(sod.QAQty),0) as value
+        from SewingOutput s with (nolock)
+        inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
+        where   s.SubConOutContractNumber = @ContractNumber and
+                s.SubconOutFty = @SubConOutFty  and
+                sod.OrderID = @OrderID and
+                sod.Article = @Article and
+                sod.Combotype  = @ComboType) as Qty
+Where Qty.value > 0";
+                DBProxy.Current.Select(null, sql, listPar, out tmp);
+
+                if (tmp != null && tmp.Rows.Count > 0)
+                {
+                    MyUtility.Msg.InfoBox($@"
+This 
+SP#:{item.OrderID}
+Style:{item.StyleID}
+ComboType:{item.ComboType}
+Article:{item.Article}
+Accu. Subcon Out Qty is greather than 0 !");
+                    return;
+                }
 
                 string sqlCmd = @"
 if not exists(
