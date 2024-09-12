@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[MechanicRepair_PartApply_Picture](
-	[Ukey] [int] IDENTITY(1,1) NOT NULL,
-	[MechanicRepairPartApplyUkey] [int] NOT NULL,
+	[Ukey] BIGINT IDENTITY(1,1) NOT NULL,
+	[MechanicRepairPartApplyUkey] BIGINT NOT NULL,
 	[Picture] [varbinary](max) NOT NULL,
  CONSTRAINT [PK_MechanicRepair_PartApply_Picture] PRIMARY KEY CLUSTERED 
 (

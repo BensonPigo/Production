@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[PartApply_Detail_Picture](
-	[Ukey] [int] IDENTITY(1,1) NOT NULL,
-	[PartApplyDetailUkey] [int] NOT NULL,
+	[Ukey] BIGINT IDENTITY(1,1) NOT NULL,
+	[PartApplyDetailUkey] BIGINT NOT NULL,
 	[Picture] [varbinary](max) NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
