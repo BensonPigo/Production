@@ -1,14 +1,11 @@
-﻿using Ict;
-using Ict.Win;
+﻿using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tools;
 using System;
 using System.Data;
-using System.Linq;
-using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P11_History : Win.Forms.Base
     {
         private DataRow masterrow;
@@ -43,12 +40,12 @@ select
      sj.Reason,
      ct.ContractNumbers1,
 	 Style = o.StyleID
-from SubconOutContract_Junk sj
-left join Orders o on sj.OrderID = o.ID
-left join Order_Qty oq on oq.ID = sj.OrderID and oq.article = sj.article
+from SubconOutContract_Junk sj with(nolock)
+inner join Orders o with(nolock) on sj.OrderID = o.ID
+inner join Order_Qty oq with(nolock) on oq.ID = sj.OrderID and oq.article = sj.article
 Outer Apply ( SELECT STUFF((
                             SELECT ',' + ContractNumber
-                            FROM SubconOutContract_Detail sd
+                            FROM SubconOutContract_Detail sd with(nolock)
                             WHERE sd.OrderID = sj.OrderID
                               AND sd.ComboType = sj.ComboType
                               AND sd.Article = sj.Article

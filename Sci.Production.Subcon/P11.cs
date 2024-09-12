@@ -274,12 +274,6 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             return base.ClickSaveBefore();
         }
 
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
-            this.btn_JunkHis.Enabled = true;
-        }
-
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
@@ -290,13 +284,12 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             this.CurrentMaintain["factoryid"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.btnBatchImport.Enabled = true;
-
-            this.btn_JunkHis.Enabled = false;
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
             this.gridicon.Remove.Enabled = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             base.ClickEditBefore();
@@ -319,9 +312,7 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.dateIssuedate.ReadOnly = true;
-
                 this.btn_JunkSP.Enabled = false;
-                this.btn_JunkHis.Enabled = false;
 
                 // Confirmed下表身不能編輯
                 this.gridicon.Append.Enabled = false;
@@ -360,12 +351,6 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             }
         }
 
-        protected override void ClickUndo()
-        {
-            base.ClickUndo();
-            this.btn_JunkHis.Enabled = true;
-        }
-
         /// <inheritdoc/>
         protected override void ClickUnconfirm()
         {
@@ -392,6 +377,7 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -445,8 +431,9 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
             this.FirstCheckOutputQty = true;
 
-            this.btnBatchImport.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"));
-            this.btnSplitSP.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED"));
+            this.btnBatchImport.Enabled = this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW");
+            this.btnSplitSP.Enabled = this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED");
+            this.btn_JunkHis.Enabled = !this.EditMode;
 
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
@@ -960,7 +947,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             this.CurrentDetailData["AccuOutputQty"] = MyUtility.GetValue.Lookup(getAccuOutputQty);
         }
 
-        private void btnBatchImport_Click(object sender, System.EventArgs e)
+        private void BtnBatchImport_Click(object sender, System.EventArgs e)
         {
             if (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"))
             {
@@ -995,7 +982,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             }
         }
 
-        private void btnSplitSP_Click(object sender, System.EventArgs e)
+        private void BtnSplitSP_Click(object sender, System.EventArgs e)
         {
             this.detailgrid.EndEdit();
             var frm = new P11_SplitSP((DataTable)this.detailgridbs.DataSource);
@@ -1029,18 +1016,21 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
             this.FirstCheckOutputQty = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsertClick()
         {
             base.OnDetailGridInsertClick();
             this.FirstCheckOutputQty = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRemoveClick()
         {
             base.OnDetailGridRemoveClick();

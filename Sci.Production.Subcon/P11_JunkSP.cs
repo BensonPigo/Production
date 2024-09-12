@@ -1,15 +1,13 @@
-﻿using Ict;
-using Ict.Win;
+﻿using Ict.Win;
 using Sci.Data;
-using Sci.Win.Tools;
 using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Sci.Production.Subcon
 {
+    /// <inheritdoc/>
     public partial class P11_JunkSP : Win.Forms.Base
     {
         private DataTable tmp;
@@ -47,10 +45,8 @@ Select
      tmp.KpiRate,
      reason = ''
 From #tmp tmp
-Left join Orders o On tmp.OrderID = o.ID
-Left join Order_Qty oq On oq.ID = tmp.OrderID And oq.article = tmp.article 
-Where 1=1
---And tmp.AccuOutPutQty = 0
+inner join Orders o with(nolock) On tmp.OrderID = o.ID
+inner join Order_Qty oq with(nolock) On oq.ID = tmp.OrderID And oq.article = tmp.article
 Group By tmp.OrderID, o.StyleID, tmp.ComboType, oq.Article,tmp.OutputQty,tmp.UnitPrice, 
          tmp.SubConOutFty,tmp.ContractNumber,LocalUnitPrice, tmp.Vat, tmp.KpiRate, tmp.LocalCurrencyID
 ";
@@ -192,24 +188,12 @@ INSERT INTO [dbo].[SubconOutContract_Junk]
             ,GetDate())
 End
 
-if exists(
-select 1 from SubconOutContract_Detail 
-where SubConOutFty = @SubConOutFty 
-and ContractNumber = @ContractNumber 
-and OrderID = @OrderID
-and ComboType = @ComboType
-and Article = @Article
-)
-BEGIN
-
 Delete SubconOutContract_Detail 
 Where SubConOutFty = @SubConOutFty 
 And ContractNumber = @ContractNumber 
 And OrderID = @OrderID
 And ComboType = @ComboType
 And Article = @Article
-
-END
 
 ";
 

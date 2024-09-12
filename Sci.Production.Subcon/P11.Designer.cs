@@ -343,7 +343,7 @@
             this.btnBatchImport.TabIndex = 32;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // btnSplitSP
             // 
@@ -354,7 +354,7 @@
             this.btnSplitSP.TabIndex = 33;
             this.btnSplitSP.Text = "Split SP#";
             this.btnSplitSP.UseVisualStyleBackColor = true;
-            this.btnSplitSP.Click += new System.EventHandler(this.btnSplitSP_Click);
+            this.btnSplitSP.Click += new System.EventHandler(this.BtnSplitSP_Click);
             // 
             // txtMdivision1
             // 
