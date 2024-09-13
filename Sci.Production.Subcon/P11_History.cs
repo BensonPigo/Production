@@ -38,22 +38,20 @@ select
      sj.AddName,
      sj.addDate,
      sj.Reason,
-     ct.ContractNumbers1,
+     ContractNumbers1 = (SELECT STUFF((
+                            SELECT distinct ',' + sd.ContractNumber
+                            FROM SubconOutContract_Detail sd with(nolock)
+                            Inner Join SubconOutContract s with(nolock) on sd.SubConOutFty = s.SubConOutFty and s.ContractNumber = sd.ContractNumber
+                            WHERE sd.OrderID = sj.OrderID
+                              AND sd.ComboType = sj.ComboType
+                              AND sd.Article = oq.Article
+                              AND s.Status = 'Confirmed'
+                            FOR XML PATH(''), TYPE
+                         ).value('.', 'NVARCHAR(MAX)'), 1, 1, '')) ,
 	 Style = o.StyleID
 from SubconOutContract_Junk sj with(nolock)
 inner join Orders o with(nolock) on sj.OrderID = o.ID
 inner join Order_Qty oq with(nolock) on oq.ID = sj.OrderID and oq.article = sj.article
-Outer Apply ( SELECT STUFF((
-                            SELECT ',' + ContractNumber
-                            FROM SubconOutContract_Detail sd with(nolock)
-                            Inner Join SubconOutContract s on sd.SubConOutFty = s.SubConOutFty and s.ContractNumber = sd.ContractNumber
-                            WHERE sd.OrderID = sj.OrderID
-                              AND sd.ComboType = sj.ComboType
-                              AND sd.Article = sj.Article
-                              AND s.Status = 'Confirmed'
-                            FOR XML PATH(''), TYPE
-                         ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
-) AS ContractNumbers1) as ct
 where sj.SubConOutFty = '{this.masterrow["SubConOutFty"]}'
 and sj.ContractNumber = '{this.masterrow["ContractNumber"]}' 
 Group by sj.OrderID, o.StyleID, sj.ComboType, oq.Article,sj.SubConOutFty,sj.UnitPrice 
