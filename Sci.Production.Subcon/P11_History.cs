@@ -55,7 +55,7 @@ inner join Order_Qty oq with(nolock) on oq.ID = sj.OrderID and oq.article = sj.a
 where sj.SubConOutFty = '{this.masterrow["SubConOutFty"]}'
 and sj.ContractNumber = '{this.masterrow["ContractNumber"]}' 
 Group by sj.OrderID, o.StyleID, sj.ComboType, oq.Article,sj.SubConOutFty,sj.UnitPrice 
-        ,ct.ContractNumbers1,sj.AddName, sj.addDate, sj.SubconQty, sj.Reason";
+        ,sj.AddName, sj.addDate, sj.SubconQty, sj.Reason";
 
             DBProxy.Current.Select(null, sqlcmd, out this.dt);
             this.listControlBindingSource1.DataSource = this.dt;
