@@ -80,7 +80,7 @@ Group by sj.OrderID, o.StyleID, sj.ComboType, oq.Article,sj.SubConOutFty,sj.Unit
             .Text("AddName", header: "Junk Name", iseditingreadonly: true, iseditable: false)
             .DateTime("AddDate", header: "Junk Date", iseditingreadonly: true, iseditable: false)
             .Text("Reason", header: "Reason", width: Widths.AnsiChars(35))
-            .Text("ContractNumber", header: "New Contract", iseditingreadonly: true, iseditable: false)
+            .Text("ContractNumbers1", header: "New Contract", iseditingreadonly: true, iseditable: false)
             ;
             #endregion
         }
