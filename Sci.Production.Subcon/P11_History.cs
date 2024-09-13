@@ -46,10 +46,11 @@ inner join Order_Qty oq with(nolock) on oq.ID = sj.OrderID and oq.article = sj.a
 Outer Apply ( SELECT STUFF((
                             SELECT ',' + ContractNumber
                             FROM SubconOutContract_Detail sd with(nolock)
+                            Inner Join SubconOutContract s on sd.SubConOutFty = s.SubConOutFty and s.ContractNumber = sd.ContractNumber
                             WHERE sd.OrderID = sj.OrderID
                               AND sd.ComboType = sj.ComboType
                               AND sd.Article = sj.Article
-                              --AND sd.SubConOutFty = sj.SubConOutFty
+                              AND s.Status = 'Confirmed'
                             FOR XML PATH(''), TYPE
                          ).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
 ) AS ContractNumbers1) as ct
