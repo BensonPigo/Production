@@ -499,8 +499,8 @@ order by ID
                 .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: midBankName)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
                 .Text("VNBankBranch", header: "Branch Name (MSB)", width: Widths.AnsiChars(20))
-                .Text("BankNameTPB", header: "Bank Name (TPB)", width: Widths.AnsiChars(20))
-                .Text("BankCodeTPB", header: "Bank Code (TPB)", width: Widths.AnsiChars(20))
+                .Text("BankNameTPB", header: "Bank Name (TPB)", width: Widths.AnsiChars(13))
+                .Text("BankCodeTPB", header: "Bank Code (TPB)", width: Widths.AnsiChars(13))
                 ;
         }
 

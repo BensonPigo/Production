@@ -132,7 +132,7 @@
             this.txtTPBBankName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtTPBBankName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtTPBBankName.Location = new System.Drawing.Point(144, 387);
-            this.txtTPBBankName.MaxLength = 20;
+            this.txtTPBBankName.MaxLength = 100;
             this.txtTPBBankName.Name = "txtTPBBankName";
             this.txtTPBBankName.Size = new System.Drawing.Size(198, 26);
             this.txtTPBBankName.TabIndex = 133;
