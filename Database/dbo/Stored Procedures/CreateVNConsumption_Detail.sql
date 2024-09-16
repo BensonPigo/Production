@@ -21,6 +21,17 @@ inner join VNConsumption_Detail_Detail vdd with (nolock) on v.ID = vdd.ID
 INSERT INTO VNConsumption_Detail(ID,NLCode,HSCode ,UnitID,Qty,SystemQty,Waste)
 			SELECT ID,NLCode,HSCode ,UnitID,Qty,SystemQty,Waste FROM #tmpVNConsumption_Detail
 
+-- 更新Waste,要將相同的合約和物料(Style,Brand,Season,VnContractID,NLCode)
+-- 都一併更新相同的Waste
+update t
+set t.Waste = s.Waste
+FROM VNConsumption_Detail t
+inner join VNConsumption v on t.ID = v.ID
+inner join (
+	select svd.*,sv.StyleID,sv.BrandID,sv.SeasonID,sv.VNContractID 
+	from #tmpVNConsumption_Detail svd
+	inner join VNConsumption sv on svd.ID = sv.ID
+) s on s.NLCode = t.NLCode and s.BrandID = v.BrandID and s.StyleID = v.StyleID and s.SeasonID = v.SeasonID and s.VNContractID = v.VNContractID
 
 drop table #tmpVNConsumption_Detail;
 

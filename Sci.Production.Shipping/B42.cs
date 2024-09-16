@@ -689,6 +689,26 @@ from System WITH (NOLOCK) ");
                 return isCreateVNConsumption_DetailOK;
             }
 
+            // 更新Waste,要將相同的合約和物料(Style,Brand,Season,VnContractID,NLCode)
+            // 都一併更新成相同的Waste by ISP20240920
+            string sqlUpdateSameMateriel_Waste = $@"
+update t
+set t.Waste = s.Waste
+FROM VNConsumption_Detail_Detail t
+inner join VNConsumption v on t.ID = v.ID
+inner join (
+	select svd.*,sv.StyleID,sv.BrandID,sv.SeasonID,sv.VNContractID 
+	from VNConsumption_Detail svd
+	inner join VNConsumption sv on svd.ID = sv.ID
+	where svd.ID = '{this.CurrentMaintain["ID"].ToString()}'
+) s on s.NLCode = t.NLCode and s.BrandID = v.BrandID and s.StyleID = v.StyleID and s.SeasonID = v.SeasonID and s.VNContractID = v.VNContractID
+";
+            DualResult resultSameMaterialwaste = DBProxy.Current.Execute(null, sqlUpdateSameMateriel_Waste);
+            if (!resultSameMaterialwaste)
+            {
+                return resultSameMaterialwaste;
+            }
+
             return base.ClickSavePost();
         }
 
