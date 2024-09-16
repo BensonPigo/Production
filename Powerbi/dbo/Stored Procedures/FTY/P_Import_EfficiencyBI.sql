@@ -434,16 +434,16 @@ Select col = ',t.'+Data + ' = s.' + Data From dbo.SplitString(@FinalColumns, ','
 declare @TTLZ nvarchar(max) = 
 (select concat(',['
 ,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_Unit, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
-,']=sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode)'
+,']=Cast(Round(sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),4) as Numeric(15,4))'
 ,iif(ArtworkType_CPU = '', '', concat(',['
 ,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_CPU, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
-,']=sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode)'))
+,']=Cast(Round(sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),4) as Numeric(15,4))'))
 ,',[TTL_'
 ,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_Unit, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
-,']=Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),')'
+,']=Cast(Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),') as Numeric(15,4))'
 ,iif(ArtworkType_CPU = '', '', concat(',[TTL_'
 ,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_CPU, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
-,']=Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),')'))
+,']=Cast(Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),') as Numeric(15,4))'))
 )from #atall for xml path(''))
 
 declare @lastSql nvarchar(max) = ''
@@ -508,7 +508,7 @@ insert into P_SewingDailyOutput(MDivisionID, FactoryID, ComboType, Category, Cou
 	, NoOfHours, TotalManhours, TargetCPU, TMS, CPUPrice, TargetQty, TotalOutputQty, TotalCPU, CPUSewerHR, EFF, RFT, CumulateOfDays
 	, DateRange, ProdOutput, Diff, Rate, SewingReasonDesc, SciDelivery, CDCodeNew, ProductType, FabricType
 	, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
-	,Low_output_Reason, New_Style_Repeat_Style'
+	, Low_output_Reason, New_Style_Repeat_Style'
 	set @lastSql = @lastSql + ' ' + @FinalColumns + N' '
 
 		set @lastSql = @lastSql + ')
@@ -637,5 +637,6 @@ from BITableInfo b
 where b.id = ''P_SewingDailyOutput''
 
 			'
+
 	EXEC sp_executesql @lastSql
 End
