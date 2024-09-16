@@ -15,8 +15,8 @@
     [Remark]       NVARCHAR (MAX) DEFAULT ('') NULL,
     [IsDefault]    BIT            DEFAULT ((0)) NULL,
     [VNBankBranch] VARCHAR (50)   DEFAULT ('') NULL,
-    [BankNameTPB] varchar(100)  DEFAULT ('') NOT NULL,
-    [BankCodeTPB] varchar(20)  DEFAULT ('') NOT NULL,
+    [BankNameTPB] varchar(100) CONSTRAINT [DF_LocalSupp_Bank_Detail_BankNameTPB]  DEFAULT ('') NOT NULL,
+    [BankCodeTPB] varchar(20)  CONSTRAINT [DF_LocalSupp_Bank_Detail_BankCodeTPB] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_LocalSupp_Bank_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [Pkey] ASC, [Ukey] ASC)
 );
 
