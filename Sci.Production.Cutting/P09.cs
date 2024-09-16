@@ -192,24 +192,6 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             this.DetailSelectCommand = $@"
-SELECT wo.Ukey
-INTO #tmpHasBundle
-FROM WorkOrderForOutput wo WITH (NOLOCK)
-INNER JOIN Bundle WITH (NOLOCK) ON Bundle.CutRef = wo.CutRef
-WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
-
-SELECT wo.Ukey
-INTO #tmpHasCuttingOutput
-FROM WorkOrderForOutput wo WITH (NOLOCK)
-INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.CutRef = wo.CutRef
-WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
-
-SELECT wo.Ukey
-INTO #tmpHasMarkerReq
-FROM WorkOrderForOutput wo WITH (NOLOCK)
-INNER JOIN MarkerReq_Detail mrd WITH (NOLOCK) ON mrd.CutRef = wo.CutRef
-WHERE wo.ID = '{masterID}' AND wo.CutRef <> ''
-
 SELECT
     wo.*
    ,PatternPanel_CONCAT
@@ -232,9 +214,7 @@ SELECT
 
    --沒有顯示的欄位
    ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/Distribute/PatternPanel
-   ,HasBundle = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasBundle WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
-   ,HasCuttingOutput = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasCuttingOutput WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
-   ,HasMarkerReq = CAST(IIF(EXISTS(SELECT 1 FROM #tmpHasMarkerReq WHERE Ukey = wo.Ukey), 1, 0) AS BIT)
+   ,CanEdit = dbo.GetCuttingP09CanEdit(wo.CutRef)
    ,ImportML = CAST(0 AS BIT)
    ,CanDoAutoDistribute = CAST(0 AS BIT)
    --- 排序用
@@ -573,7 +553,14 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                     return;
                 }
 
-                // 4. 欄位 SpreadingStatus
+                // 4. 存在 spreading schedule
+                msg = "The following spreading schedule data exists and cannot be imported again. If you need to re-import, please go to [Cutting_P31. Spreading Schedule] to delete the spreading schedule data.";
+                if (CheckSpreadingSchedule_DetailAndShowData(listCutref, msg))
+                {
+                    return;
+                }
+
+                // 5. 欄位 SpreadingStatus
                 DataTable dt = this.DetailDatas.AsEnumerable().Where(row => !MyUtility.Convert.GetString(row["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase)).TryCopyToDataTable((DataTable)this.detailgridbs.DataSource);
                 DataTable dtCheck = dt.DefaultView.ToTable(true, "CutRef", "CutNo", "MarkerName", "PatternPanel_CONCAT", "FabricPanelCode_CONCAT", "SpreadingStatus", "SpreadingRemark");
                 if (dtCheck.Rows.Count > 0)
@@ -591,7 +578,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                     return;
                 }
 
-                // 5. 有 WorkOrderForOutput 才跳視窗
+                // 6. 有 WorkOrderForOutput 才跳視窗
                 DialogResult confirmResult =  MyUtility.Msg.QuestionBox("Work order data already exists, do you want to overwrite it", buttons: MessageBoxButtons.YesNo);
                 if (confirmResult != DialogResult.Yes)
                 {
@@ -1350,6 +1337,7 @@ DEALLOCATE CURSOR_
             // 先取得當前編輯狀態的最新 tmpKey
             this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
             this.CurrentDetailData["CutNo"] = DBNull.Value;
+            this.CurrentDetailData["CanEdit"] = true;
             this.CurrentDetailData["SpreadingStatus"] = "Ready";
             this.CurrentDetailData["SourceFrom"] = 2;
             this.CurrentDetailData["Adduser"] = MyUtility.GetValue.Lookup($"SELECT NAME FROM Pass1 WITH (NOLOCK) Where ID = '{this.CurrentDetailData["AddName"]}'");
@@ -1392,6 +1380,7 @@ DEALLOCATE CURSOR_
                     "HasBundle",
                     "HasCuttingOutput",
                     "HasMarkerReq",
+                    "CanEdit",
                     "SpreadingStatus",
                     "Addname", // 這4欄位 base.OnDetailGridInsert 會自動寫入
                     "AddDate",
@@ -1797,40 +1786,43 @@ DEALLOCATE CURSOR_
                 return false;
             }
 
-            // 此4個欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
-            return !(
-                 !MyUtility.Convert.GetString(dr["SpreadingStatus"]).Equals("Ready", StringComparison.OrdinalIgnoreCase) ||
-                  MyUtility.Convert.GetBool(dr["HasBundle"]) ||
-                  MyUtility.Convert.GetBool(dr["HasCuttingOutput"]) ||
-                  MyUtility.Convert.GetBool(dr["HasMarkerReq"]));
+            // 此欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
+            return MyUtility.Convert.GetBool(dr["CanEdit"]);
         }
 
-        private bool CheckAndMsg(string actrion, DataRow currentDetailData)
+        private bool CheckAndMsg(string action, DataRow currentDetailData)
         {
             // 前 3 個都是及時去 DB 撈資料判斷, 並彈出訊息
             // 1. 存在 P10 Bundle
-            string msg = $"The following bundle data exists and cannot be {actrion}. If you need to {actrion}, please go to [Cutting_P10. Bundle Card] to delete the bundle data.";
+            string msg = $"The following bundle data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P10. Bundle Card] to {action} the bundle data.";
             if (!CheckBundleAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
             // 2. 存在 P20 CuttingOutput
-            msg = $"The following cutting output data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P20. Cutting Daily Output] to delete the cutting output data.";
+            msg = $"The following cutting output data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P20. Cutting Daily Output] to {action} the cutting output data.";
             if (!CheckCuttingOutputAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
             // 3. 存在 P05 MarkerReq_Detail
-            msg = $"The following marker request data exists and cannot be {actrion}. If you need to delete, please go to [Cutting_P05. Bulk Marker Request] to delete the marker request data.";
+            msg = $"The following marker request data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P05. Bulk Marker Request] to {action} the marker request data.";
             if (!CheckMarkerReqAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
 
+            // 4. 存在 spreading schedule
+            msg = $"The following spreading schedule data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P31. Spreading Schedule] to {action} the spreading schedule data.";
+            if (!CheckSpreadingSchedule_DetailAndShowData(currentDetailData["CutRef"].ToString(), msg))
+            {
+                return false;
+            }
+
             // 4 檢查欄位 SpreadingStatus
-            if (!CheckSpreadingStatus(currentDetailData, $"The following digitail spreading data exists and cannot be {actrion}"))
+            if (!CheckSpreadingStatus(currentDetailData, $"The following digitail spreading data exists and cannot be {action}"))
             {
                 return false;
             }

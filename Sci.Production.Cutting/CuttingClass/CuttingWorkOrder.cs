@@ -1244,6 +1244,19 @@ LEFT JOIN Pass1 WITH(NOLOCK) ON MarkerReq.AddName = Pass1.ID
 WHERE MarkerReq_Detail.CutRef IN ({0})
 ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
 
+        private static readonly string sqlTemplateSpreadingSchedule_Detail = @"
+SELECT
+[Cut Cell] = S.CutCellID,
+[Est.Cut Date] = S.EstCutDate ,
+[Create By] = P.[Name] ,
+[Create Date] = Convert(nvarchar(19), S.AddDate,120)
+
+FROM SpreadingSchedule S WITH(NOLOCK)
+INNER JOIN SpreadingSchedule_Detail SD WITH(NOLOCK) ON S.Ukey = SD.SpreadingScheduleUkey
+INNER JOIN Pass1 P WITH(NOLOCK) ON P.ID = S.AddName
+WHERE SD.CutRef IN ({0})
+Order by S.CutCellID, S.EstCutDate, P.[Name]";
+
         // Public Methods
         public static bool CheckBundleAndShowData(IEnumerable<string> cutRefs, string msg)
         {
@@ -1273,6 +1286,16 @@ ORDER BY MarkerReq.ID, MarkerReq_Detail.SizeRatio, Pass1.Name";
         public static bool CheckMarkerReqAndShowData(string cutRef, string msg)
         {
             return CheckDataAndShowForm("marker request", cutRef, msg, sqlTemplateMarkerReq);
+        }
+
+        public static bool CheckSpreadingSchedule_DetailAndShowData(IEnumerable<string> cutRefs, string msg)
+        {
+            return CheckDataAndShowForm("Spreading Schedule", cutRefs, msg, sqlTemplateSpreadingSchedule_Detail);
+        }
+
+        public static bool CheckSpreadingSchedule_DetailAndShowData(string cutRef, string msg)
+        {
+            return CheckDataAndShowForm("Spreading Schedule", cutRef, msg, sqlTemplateSpreadingSchedule_Detail);
         }
 
         #endregion
@@ -4640,6 +4663,7 @@ Where Cutref = '{cutref}'";
                     var distinct_CutQtyTb = from r1 in tmpCutQtyTB
                                             group r1 by new
                                             {
+                                                Cutno = MyUtility.Convert.GetString(r1["Cutno"]),
                                                 Colorid = r1.Field<string>("Colorid"),
                                                 Layer = r1.Field<int>("Layer"),
                                                 workorderukey_CuttingForm = r1.Field<int>(tbUkey),
@@ -4648,11 +4672,38 @@ Where Cutref = '{cutref}'";
                                             into g
                                             select new
                                             {
+                                                g.Key.Cutno,
                                                 g.Key.Colorid,
                                                 g.Key.Layer,
                                                 g.Key.workorderukey_CuttingForm,
                                                 g.Key.Cons,
                                             };
+                    if (cuttingForm == CuttingForm.P09)
+                    {
+                        var range = worksheet.Range[worksheet.Cells[nrow - 2, 1], worksheet.Cells[nrow - 1, 1]];
+                        range.Merge();
+                        range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
+                        range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
+                        range.Value = "Cut#";
+
+                        var range2 = worksheet.Range[worksheet.Cells[nrow - 2, 2], worksheet.Cells[nrow - 1, 2]];
+                        range2.Merge();
+                        range2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
+                        range2.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
+                        range.Value = "Color";
+                    }
+                    else
+                    {
+                        // 合併並把文字置中
+                        var range = worksheet.Range[worksheet.Cells[nrow - 2, 1], worksheet.Cells[nrow - 1, 2]];
+                        range.Merge();
+                        range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
+                        range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
+                        range.Value = "Color";
+
+                        worksheet.Range[worksheet.Cells[nrow, 1], worksheet.Cells[nrow, 2]].Merge();
+                        worksheet.Range[worksheet.Cells[nrow + 1, 1], worksheet.Cells[nrow + 1, 2]].Merge();
+                    }
 
                     foreach (var dis_dr in distinct_CutQtyTb)
                     {
@@ -4663,7 +4714,16 @@ Where Cutref = '{cutref}'";
                             r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
                         }
 
-                        worksheet.Cells[nrow, 1] = dis_dr.Colorid;
+                        if (cuttingForm == CuttingForm.P09)
+                        {
+                            worksheet.Cells[nrow, 1] = dis_dr.Cutno;
+                            worksheet.Cells[nrow, 2] = dis_dr.Colorid;
+                        }
+                        else
+                        {
+                            worksheet.Cells[nrow, 1] = dis_dr.Colorid;
+                        }
+
                         worksheet.Cells[nrow, 3] = dis_dr.Layer;
                         worksheet.Cells[nrow, 20] = dis_dr.Cons;
 

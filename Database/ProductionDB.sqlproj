@@ -2915,6 +2915,7 @@
     <Build Include="dbo\Tables\WorkOrderForOutput_Distribute.sql" />
     <Build Include="dbo\Tables\WorkOrderForOutput.sql" />
     <Build Include="dbo\Stored Procedures\GetNextSequenceCutRef.sql" />
+    <Build Include="dbo\Functions\GetCuttingP09CanEdit.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
