@@ -49,6 +49,8 @@
             this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.txtuser1 = new Sci.Production.Class.Txtuser();
             this.txtSubConOutFty = new Sci.Production.Class.TxtsubconNoConfirm();
+            this.btn_JunkHis = new System.Windows.Forms.Button();
+            this.btn_JunkSP = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -65,6 +67,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btn_JunkSP);
+            this.masterpanel.Controls.Add(this.btn_JunkHis);
             this.masterpanel.Controls.Add(this.btnSplitSP);
             this.masterpanel.Controls.Add(this.btnBatchImport);
             this.masterpanel.Controls.Add(this.txtMdivision1);
@@ -86,7 +90,7 @@
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateBoxApvDate);
             this.masterpanel.Controls.Add(this.dateIssuedate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 110);
+            this.masterpanel.Size = new System.Drawing.Size(1140, 110);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssuedate, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateBoxApvDate, 0);
@@ -109,39 +113,57 @@
             this.masterpanel.Controls.SetChildIndex(this.txtMdivision1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchImport, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSplitSP, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btn_JunkHis, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btn_JunkSP, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 110);
-            this.detailpanel.Size = new System.Drawing.Size(892, 239);
+            this.detailpanel.Size = new System.Drawing.Size(1140, 299);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(979, 72);
+            this.gridicon.Location = new System.Drawing.Point(1019, 72);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 239);
+            this.detailgridcont.Size = new System.Drawing.Size(1140, 299);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Location = new System.Drawing.Point(4, 29);
+            this.detail2.Size = new System.Drawing.Size(1140, 447);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1134, 401);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1134, 40);
+            // 
+            // detail
+            // 
+            this.detail.Location = new System.Drawing.Point(4, 29);
+            this.detail.Size = new System.Drawing.Size(1140, 447);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1140, 409);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 409);
+            this.detailbtm.Size = new System.Drawing.Size(1140, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1098, 451);
+            this.browse.Location = new System.Drawing.Point(4, 29);
+            this.browse.Size = new System.Drawing.Size(1140, 447);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1106, 480);
+            this.tabs.Size = new System.Drawing.Size(1148, 480);
             // 
             // label1
             // 
@@ -236,7 +258,7 @@
             this.txtContractnumber.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtContractnumber.Location = new System.Drawing.Point(128, 43);
             this.txtContractnumber.Name = "txtContractnumber";
-            this.txtContractnumber.Size = new System.Drawing.Size(252, 23);
+            this.txtContractnumber.Size = new System.Drawing.Size(252, 26);
             this.txtContractnumber.TabIndex = 24;
             // 
             // dateIssuedate
@@ -244,7 +266,7 @@
             this.dateIssuedate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Issuedate", true));
             this.dateIssuedate.Location = new System.Drawing.Point(217, 76);
             this.dateIssuedate.Name = "dateIssuedate";
-            this.dateIssuedate.Size = new System.Drawing.Size(130, 23);
+            this.dateIssuedate.Size = new System.Drawing.Size(130, 26);
             this.dateIssuedate.TabIndex = 26;
             // 
             // numericTtlQty
@@ -261,7 +283,7 @@
             0,
             0});
             this.numericTtlQty.ReadOnly = true;
-            this.numericTtlQty.Size = new System.Drawing.Size(110, 23);
+            this.numericTtlQty.Size = new System.Drawing.Size(110, 26);
             this.numericTtlQty.TabIndex = 27;
             this.numericTtlQty.Value = new decimal(new int[] {
             0,
@@ -284,7 +306,7 @@
             0,
             0});
             this.numericTtlCPU.ReadOnly = true;
-            this.numericTtlCPU.Size = new System.Drawing.Size(110, 23);
+            this.numericTtlCPU.Size = new System.Drawing.Size(110, 26);
             this.numericTtlCPU.TabIndex = 28;
             this.numericTtlCPU.Value = new decimal(new int[] {
             0,
@@ -299,7 +321,7 @@
             this.dateBoxApvDate.Location = new System.Drawing.Point(840, 43);
             this.dateBoxApvDate.Name = "dateBoxApvDate";
             this.dateBoxApvDate.ReadOnly = true;
-            this.dateBoxApvDate.Size = new System.Drawing.Size(130, 23);
+            this.dateBoxApvDate.Size = new System.Drawing.Size(130, 26);
             this.dateBoxApvDate.TabIndex = 27;
             // 
             // txtRemark
@@ -309,30 +331,30 @@
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtRemark.Location = new System.Drawing.Point(457, 76);
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(300, 23);
+            this.txtRemark.Size = new System.Drawing.Size(300, 26);
             this.txtRemark.TabIndex = 30;
             // 
             // btnBatchImport
             // 
             this.btnBatchImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchImport.Location = new System.Drawing.Point(977, 6);
+            this.btnBatchImport.Location = new System.Drawing.Point(1017, 6);
             this.btnBatchImport.Name = "btnBatchImport";
             this.btnBatchImport.Size = new System.Drawing.Size(110, 30);
             this.btnBatchImport.TabIndex = 32;
             this.btnBatchImport.Text = "Batch Import";
             this.btnBatchImport.UseVisualStyleBackColor = true;
-            this.btnBatchImport.Click += new System.EventHandler(this.btnBatchImport_Click);
+            this.btnBatchImport.Click += new System.EventHandler(this.BtnBatchImport_Click);
             // 
             // btnSplitSP
             // 
             this.btnSplitSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSplitSP.Location = new System.Drawing.Point(977, 38);
+            this.btnSplitSP.Location = new System.Drawing.Point(1017, 38);
             this.btnSplitSP.Name = "btnSplitSP";
             this.btnSplitSP.Size = new System.Drawing.Size(110, 30);
             this.btnSplitSP.TabIndex = 33;
             this.btnSplitSP.Text = "Split SP#";
             this.btnSplitSP.UseVisualStyleBackColor = true;
-            this.btnSplitSP.Click += new System.EventHandler(this.btnSplitSP_Click);
+            this.btnSplitSP.Click += new System.EventHandler(this.BtnSplitSP_Click);
             // 
             // txtMdivision1
             // 
@@ -343,7 +365,7 @@
             this.txtMdivision1.Location = new System.Drawing.Point(70, 76);
             this.txtMdivision1.Name = "txtMdivision1";
             this.txtMdivision1.ReadOnly = true;
-            this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision1.Size = new System.Drawing.Size(66, 26);
             this.txtMdivision1.TabIndex = 31;
             // 
             // txtuser1
@@ -372,10 +394,30 @@
             this.txtSubConOutFty.TabIndex = 23;
             this.txtSubConOutFty.TextBox1Binding = "";
             // 
+            // btn_JunkHis
+            // 
+            this.btn_JunkHis.Location = new System.Drawing.Point(763, 75);
+            this.btn_JunkHis.Name = "btn_JunkHis";
+            this.btn_JunkHis.Size = new System.Drawing.Size(113, 29);
+            this.btn_JunkHis.TabIndex = 34;
+            this.btn_JunkHis.Text = "Junk History";
+            this.btn_JunkHis.UseVisualStyleBackColor = true;
+            this.btn_JunkHis.Click += new System.EventHandler(this.Btn_JunkHis_Click);
+            // 
+            // btn_JunkSP
+            // 
+            this.btn_JunkSP.Location = new System.Drawing.Point(885, 75);
+            this.btn_JunkSP.Name = "btn_JunkSP";
+            this.btn_JunkSP.Size = new System.Drawing.Size(109, 29);
+            this.btn_JunkSP.TabIndex = 37;
+            this.btn_JunkSP.Text = "Junk SP#";
+            this.btn_JunkSP.UseVisualStyleBackColor = true;
+            this.btn_JunkSP.Click += new System.EventHandler(this.Btn_JunkSP_Click);
+            // 
             // P11
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1106, 513);
+            this.ClientSize = new System.Drawing.Size(1148, 513);
             this.CloseChkValue = "Confirmed";
             this.GridAlias = "SubconOutContract_detail";
             this.GridNew = 0;
@@ -434,5 +476,7 @@
         private Class.TxtMdivision txtMdivision1;
         private Win.UI.Button btnSplitSP;
         private Win.UI.Button btnBatchImport;
+        private System.Windows.Forms.Button btn_JunkHis;
+        private System.Windows.Forms.Button btn_JunkSP;
     }
 }
