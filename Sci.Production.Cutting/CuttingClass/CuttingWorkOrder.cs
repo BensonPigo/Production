@@ -4690,7 +4690,7 @@ Where Cutref = '{cutref}'";
                         range2.Merge();
                         range2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
                         range2.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
-                        range.Value = "Color";
+                        range2.Value = "Color";
                     }
                     else
                     {
