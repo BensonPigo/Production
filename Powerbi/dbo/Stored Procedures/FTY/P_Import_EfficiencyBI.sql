@@ -73,7 +73,7 @@ select s.id
 	,[Cancel] = iif(o.Junk = 1, 'Y', '')
 	,[Remark] = isnull(ssd.SewingOutputRemark,'')
 	,[SPFactory] = o.FactoryID
-	,[NonRevenue] = iif(o.NonRevenue = 1, 'Y', '')
+	,[NonRevenue] = iif(o.NonRevenue = 1, 'Y', 'N')
 	,[Inline_Category] = isnull((select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from Production.dbo.SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'), '')
 	,[Low_output_Reason] = isnull((select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from Production.dbo.SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO'), '')
 	,[New_Style_Repeat_style] = cast('' as varchar(20))
