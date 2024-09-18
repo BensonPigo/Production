@@ -1377,9 +1377,6 @@ DEALLOCATE CURSOR_
                     "CutRef",
                     "CutNo",
                     "SourceFrom",
-                    "HasBundle",
-                    "HasCuttingOutput",
-                    "HasMarkerReq",
                     "CanEdit",
                     "SpreadingStatus",
                     "Addname", // 這4欄位 base.OnDetailGridInsert 會自動寫入
