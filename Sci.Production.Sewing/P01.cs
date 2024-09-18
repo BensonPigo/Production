@@ -1978,7 +1978,7 @@ select
     t.SizeCode,
     t.Combotype,
     t.QAQty,
-    [OrderQty] = oq.Qty,
+    [OrderQty] = IIF(Upperlimit.OrderQtyUpperlimit > oq.Qty,Upperlimit.OrderQtyUpperlimit, oq.Qty)	,
     [OtherSewingOutputQty] = 
 	    isnull((
 		    select sum(sodd.QAQty)
@@ -1998,7 +1998,22 @@ select
 		    sotd.FromComboType = t.Combotype), 0)
 into #checkResultA
 from #tmp t
+inner join Orders o WITH (NOLOCK) on t.OrderId = o.ID
 inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
+outer apply(
+	select value=1
+	from Order_TmsCost ot with(nolock)
+	left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = t.SizeCode
+	where  ot.id = oq.ID and ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
+	and oq.SizeCode=os.SizeCode and oq.Article=t.Article and ot.id=o.id
+	and o.LocalOrder<>1
+)b
+outer apply(
+	select OrderQtyUpperlimit=iif(b.value is not null
+		,round(cast(oq.Qty as decimal)* (1+ isnull(o.DyeingLoss,0)/100),0)
+		,oq.Qty
+	)
+)Upperlimit ---- 若該訂單有設定DyeingLoss，則上限需要加上DyeingLoss
 where exists( select 1 from Orders o with (nolock) where o.ID = t.OrderID and o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
 
 select
