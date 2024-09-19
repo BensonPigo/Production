@@ -1,7 +1,8 @@
 ﻿-- =============================================
 -- Description:	資料來源SewingSchedule + P_LineMapping
 -- =============================================
-ALTER PROCEDURE [dbo].[P_Import_LineBalancingRate]
+
+CREATE PROCEDURE [dbo].[P_Import_LineBalancingRate]
 	@StartDate date
 AS
 
@@ -117,8 +118,6 @@ BEGIN
 		) s on s.FactoryID = t.FactoryID
 		option (recompile)
 
-		--select * from #tmpLoop
-
 		update t
 		set [Total SP Qty In7Days] = isnull(t.[Total SP Qty In7Days],0) + s.[Total SP Qty In7Days]
 		,[Total LBR In7Days] = isnull(t.[Total LBR In7Days],0) + s.[Total LBR In7Days]
@@ -199,6 +198,5 @@ BEGIN
 	drop table #tmpMain,#P_LineBalancingRate
 
 end
-
 
 GO

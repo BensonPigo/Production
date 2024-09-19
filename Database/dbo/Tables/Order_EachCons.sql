@@ -35,8 +35,11 @@
     [MarkerDownloadID]    VARCHAR (25)    CONSTRAINT [DF_Order_EachCons_MarkerDownloadID] DEFAULT ('') NOT NULL,
     [OrderCUkey_Old]      VARCHAR (10)    CONSTRAINT [DF_Order_EachCons_OrderCUkey_Old] DEFAULT ('') NOT NULL,
     [NoNotch]             BIT             CONSTRAINT [DF_Order_EachCons_NoNotch] DEFAULT ((0)) NOT NULL,
+    [MarkerType]          INT             CONSTRAINT [DF_Order_EachCons_MarkerType] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_EachCons] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -195,3 +198,6 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Order_EachCons',
     @level2type = N'COLUMN',
     @level2name = N'NoNotch'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Marker版本(0=採購用，1=生產用)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_EachCons', @level2type = N'COLUMN', @level2name = N'MarkerType';
+
