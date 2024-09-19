@@ -174,45 +174,14 @@ BEGIN
 	where c.ID = ChgOver.ID
 
 	----------------ChgOver_Check-------------------------------
-	SELECT
-	[ID] = CO.ID
-	,[DayBe4Inline] = 0
-	,[BaseOn] = 0
-	,[ChgOverCheckListID] = ISNULL(CCL.ID,0) 
-	,[DeadLine] = dbo.CalculateWorkDate(CO.Inline,-CCLD.LeadTime,CO.FactoryID)
-	,[CompletionDate] = NULL
-	,[Remaek] = ''
-	,[No] = ISNULL(CB.[ID],0)
-	,[Checked] = CC.Checked
-	,[Leadtime] = ISNULL(CCLD.LeadTime,0)
-	,[EditName] = ''
-	,[EditDate] = NULL
-	,[ResponseDep] = ISNULL(CCLD.ResponseDep,'')
+	SELECT ID, Category, Type, FactoryID, Inline
 	INTO #tmp
 	FROM ChgOver co WITH (NOLOCK)
-	LEFT JOIN ChgOver_Check cc WITH (NOLOCK) ON CC.ID = co.ID
-	LEFT JOIN ChgOverCheckList CCL WITH(NOLOCK) ON CCL.Category = CO.Category AND CCL.StyleType = CO.Type AND ccl.FactoryID = CO.FactoryID
-	LEFT JOIN ChgOverCheckListBase CB WITH(NOLOCK) ON CB.NO = CC.[NO]
-	LEFT JOIN ChgOverCheckList_Detail CCLD WITH(NOLOCK) ON CCL.ID  = CCLD.ID  and ccld.ChgOverCheckListBaseID = CB.ID
 	WHERE (SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
 
 	DELETE CC
 	FROM ChgOver_Check CC
-	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID 
-
-	UPDATE ChgOver_Check SET
-	[DayBe4Inline] = 0
-	,[ID] = T.ID
-	,[BaseOn] = 0
-	,[DeadLine] = T.[DeadLine]
-	,[CompletionDate] = NULL
-	,[Remark] = ''
-	,[Checked] = 0
-	,[Leadtime] = ISNULL(T.LeadTime,0)
-	,[EditName] = ''
-	,[EditDate] = NULL
-	FROM ChgOver_Check CC
-	INNER JOIN #TMP T ON t.ID = CC.ID
+	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID
 	
 	INSERT INTO ChgOver_Check
 	(
@@ -234,18 +203,20 @@ BEGIN
 	[ID] = T.ID
 	,[DayBe4Inline] = 0
 	,[BaseOn] = 0
-	,[ChgOverCheckListID] = ISNULL(T.[ChgOverCheckListID],0) 
-	,[DeadLine] = T.[DeadLine]
+	,[ChgOverCheckListID] = ISNULL(CC.ID,0) 
+	,[DeadLine] = dbo.CalculateWorkDate(T.Inline, -CCD.LeadTime, T.FactoryID)
 	,[CompletionDate] = NULL
 	,[Remaek] = ''
-	,[No] = T.[NO]
+	,[No] = cb.[NO]
 	,[Checked] = 0
-	,[Leadtime] = ISNULL(T.LeadTime,0)
+	,[Leadtime] = ISNULL(CCD.LeadTime,0)
 	,[EditName] = ''
 	,[EditDate] = NULL
-	,[ResponseDep] = ISNULL(T.ResponseDep,'')
+	,[ResponseDep] = ISNULL(CCD.ResponseDep,'')
 	FROM #TMP T WITH(NOLOCK)
-	WHERE NOT EXISTS(SELECT 1 FROM ChgOver_Check WITH(NOLOCK) WHERE ID = T.ID  and ChgOverCheckListID = T.ChgOverCheckListID AND No = T.[NO])
+	INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	INNER JOIN ChgOverCheckList_Detail CCD ON CCD.ID = CC.ID
+	INNER JOIN ChgOverCheckListBase cb with (nolock) on CCD.ChgOverCheckListBaseID = cb.ID
 
 	DROP TABLE #tmp
 END
