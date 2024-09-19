@@ -164,6 +164,16 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                     strSQLCmd.Append($@" and psd.Refno ='{this.txtRefno.Text}'");
                 }
 
+                if (!MyUtility.Check.Empty(this.txtRoll.Text))
+                {
+                    strSQLCmd.Append($" and c.Roll ='{this.txtRoll.Text}'");
+                }
+
+                if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+                {
+                    strSQLCmd.Append($" and c.Dyelot ='{this.txtDyelot.Text}'");
+                }
+
                 this.ShowWaitMessage("Data Loading....");
                 DualResult result;
                 if (result = DBProxy.Current.Select(null, strSQLCmd.ToString(), out this.dtArtwork))
