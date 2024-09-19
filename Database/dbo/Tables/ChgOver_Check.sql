@@ -11,7 +11,7 @@
     [EditName] VARCHAR(10) NOT NULL DEFAULT (''), 
     [EditDate] DATETIME NULL, 
     [No] INT NOT NULL, 
-    [CompletionDate] DATE NULL, 
+    [CompletionDate] DATETIME NULL, 
     [Deadline] DATE NULL, 
     [ResponseDep] NVARCHAR(200) NULL DEFAULT (''), 
     [CompletionDate] DATETIME NULL, 
