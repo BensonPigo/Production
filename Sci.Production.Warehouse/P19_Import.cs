@@ -160,6 +160,28 @@ AND exists (select 1
                 sbSQLCmd.Append($" AND PSD.FabricType= '{this.comboFabric.SelectedValue.ToString()}' ");
             }
 
+            if (!MyUtility.Check.Empty(this.txtRoll.Text))
+            {
+                sbSQLCmd.Append(@"
+        and FI.Roll = @Roll");
+
+                System.Data.SqlClient.SqlParameter sp_roll = new System.Data.SqlClient.SqlParameter();
+                sp_roll.ParameterName = "@Roll";
+                sp_roll.Value = this.txtRoll.Text;
+                cmds.Add(sp_roll);
+            }
+
+            if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+            {
+                sbSQLCmd.Append(@"
+        and FI.Dyelot = @Dyelot");
+
+                System.Data.SqlClient.SqlParameter sp_dyelot = new System.Data.SqlClient.SqlParameter();
+                sp_dyelot.ParameterName = "@Dyelot";
+                sp_dyelot.Value = this.txtDyelot.Text;
+                cmds.Add(sp_dyelot);
+            }
+
             DualResult result;
             this.ShowWaitMessage("Data Loading....");
             if (result = DBProxy.Current.Select(null, sbSQLCmd.ToString(), cmds, out this.dtImportData))

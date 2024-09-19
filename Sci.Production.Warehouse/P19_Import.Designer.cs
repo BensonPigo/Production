@@ -48,6 +48,10 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.gridImport = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.txtDyelot = new Sci.Win.UI.TextBox();
+            this.txtRoll = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -59,7 +63,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnCancel.Location = new System.Drawing.Point(942, 15);
+            this.btnCancel.Location = new System.Drawing.Point(1114, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
             this.btnCancel.TabIndex = 7;
@@ -71,7 +75,7 @@
             // 
             this.btnImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImport.Location = new System.Drawing.Point(846, 16);
+            this.btnImport.Location = new System.Drawing.Point(1018, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
             this.btnImport.TabIndex = 6;
@@ -83,10 +87,10 @@
             // 
             this.btnFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnFindNow.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnFindNow.Location = new System.Drawing.Point(942, 14);
+            this.btnFindNow.Location = new System.Drawing.Point(1114, 14);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(90, 30);
-            this.btnFindNow.TabIndex = 5;
+            this.btnFindNow.TabIndex = 7;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
@@ -95,7 +99,7 @@
             // 
             this.txtSPNo.BackColor = System.Drawing.Color.White;
             this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNo.Location = new System.Drawing.Point(323, 19);
+            this.txtSPNo.Location = new System.Drawing.Point(314, 19);
             this.txtSPNo.MaxLength = 13;
             this.txtSPNo.Name = "txtSPNo";
             this.txtSPNo.Size = new System.Drawing.Size(122, 23);
@@ -110,7 +114,7 @@
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.groupBox2.Location = new System.Drawing.Point(0, 477);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1038, 53);
+            this.groupBox2.Size = new System.Drawing.Size(1210, 53);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
             // 
@@ -133,6 +137,10 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.txtDyelot);
+            this.groupBox1.Controls.Add(this.txtRoll);
+            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.Controls.Add(this.comboFabric);
             this.groupBox1.Controls.Add(this.txtWKno);
             this.groupBox1.Controls.Add(this.label2);
@@ -146,7 +154,7 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1038, 55);
+            this.groupBox1.Size = new System.Drawing.Size(1210, 55);
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             // 
@@ -157,33 +165,33 @@
             this.comboFabric.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFabric.FormattingEnabled = true;
             this.comboFabric.IsSupportUnselect = true;
-            this.comboFabric.Location = new System.Drawing.Point(775, 17);
+            this.comboFabric.Location = new System.Drawing.Point(982, 18);
             this.comboFabric.Name = "comboFabric";
             this.comboFabric.OldText = "";
             this.comboFabric.Size = new System.Drawing.Size(121, 24);
-            this.comboFabric.TabIndex = 4;
+            this.comboFabric.TabIndex = 6;
             this.comboFabric.Type = "FabricType_Condition";
             // 
             // txtWKno
             // 
             this.txtWKno.BackColor = System.Drawing.Color.White;
             this.txtWKno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtWKno.Location = new System.Drawing.Point(566, 18);
+            this.txtWKno.Location = new System.Drawing.Point(552, 18);
             this.txtWKno.Name = "txtWKno";
             this.txtWKno.Size = new System.Drawing.Size(113, 23);
             this.txtWKno.TabIndex = 3;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(691, 18);
+            this.label2.Location = new System.Drawing.Point(890, 19);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(81, 23);
+            this.label2.Size = new System.Drawing.Size(89, 23);
             this.label2.TabIndex = 126;
             this.label2.Text = "Material Type";
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(523, 19);
+            this.label1.Location = new System.Drawing.Point(509, 19);
             this.label1.Name = "label1";
             this.label1.RectStyle.Color = System.Drawing.Color.SkyBlue;
             this.label1.Size = new System.Drawing.Size(40, 23);
@@ -195,7 +203,7 @@
             // txtSeq1
             // 
             this.txtSeq1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.txtSeq1.Location = new System.Drawing.Point(447, 18);
+            this.txtSeq1.Location = new System.Drawing.Point(438, 18);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Seq1 = "";
             this.txtSeq1.Seq2 = "";
@@ -204,7 +212,7 @@
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(235, 19);
+            this.labelSPNo.Location = new System.Drawing.Point(226, 19);
             this.labelSPNo.Name = "labelSPNo";
             this.labelSPNo.RectStyle.BorderColor = System.Drawing.Color.Black;
             this.labelSPNo.RectStyle.BorderWidth = 1F;
@@ -247,7 +255,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 55);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1038, 422);
+            this.panel1.Size = new System.Drawing.Size(1210, 422);
             this.panel1.TabIndex = 20;
             // 
             // gridImport
@@ -272,13 +280,47 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(1038, 422);
+            this.gridImport.Size = new System.Drawing.Size(1210, 422);
             this.gridImport.TabIndex = 0;
             this.gridImport.TabStop = false;
             // 
+            // txtDyelot
+            // 
+            this.txtDyelot.BackColor = System.Drawing.Color.White;
+            this.txtDyelot.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtDyelot.Location = new System.Drawing.Point(823, 18);
+            this.txtDyelot.Name = "txtDyelot";
+            this.txtDyelot.Size = new System.Drawing.Size(64, 23);
+            this.txtDyelot.TabIndex = 5;
+            // 
+            // txtRoll
+            // 
+            this.txtRoll.BackColor = System.Drawing.Color.White;
+            this.txtRoll.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtRoll.Location = new System.Drawing.Point(706, 18);
+            this.txtRoll.Name = "txtRoll";
+            this.txtRoll.Size = new System.Drawing.Size(64, 23);
+            this.txtRoll.TabIndex = 4;
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(773, 18);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(47, 23);
+            this.label3.TabIndex = 130;
+            this.label3.Text = "Dyelot";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(668, 18);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 23);
+            this.label4.TabIndex = 129;
+            this.label4.Text = "Roll";
+            // 
             // P19_Import
             // 
-            this.ClientSize = new System.Drawing.Size(1038, 530);
+            this.ClientSize = new System.Drawing.Size(1210, 530);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox2);
@@ -317,5 +359,9 @@
         private Win.UI.TextBox txtWKno;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.TextBox txtDyelot;
+        private Win.UI.TextBox txtRoll;
+        private Win.UI.Label label3;
+        private Win.UI.Label label4;
     }
 }
