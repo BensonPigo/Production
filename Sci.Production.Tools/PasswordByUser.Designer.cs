@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
+            this.checkBox1 = new Sci.Win.UI.CheckBox();
             this.txtADAccount = new Sci.Win.UI.TextBox();
             this.lbADAccount = new Sci.Win.UI.Label();
             this.btnShowImg = new Sci.Win.UI.Button();
@@ -79,26 +80,26 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(993, 572);
+            this.detail.Size = new System.Drawing.Size(993, 599);
             // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.grid1);
             this.detailcont.Controls.Add(this.radioGroup1);
-            this.detailcont.Size = new System.Drawing.Size(993, 534);
+            this.detailcont.Size = new System.Drawing.Size(993, 561);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 534);
+            this.detailbtm.Location = new System.Drawing.Point(0, 561);
             this.detailbtm.Size = new System.Drawing.Size(993, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(993, 572);
+            this.browse.Size = new System.Drawing.Size(993, 599);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1001, 601);
+            this.tabs.Size = new System.Drawing.Size(1001, 628);
             // 
             // createby
             // 
@@ -117,6 +118,7 @@
             // 
             this.radioGroup1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.radioGroup1.Controls.Add(this.checkBox1);
             this.radioGroup1.Controls.Add(this.txtADAccount);
             this.radioGroup1.Controls.Add(this.lbADAccount);
             this.radioGroup1.Controls.Add(this.btnShowImg);
@@ -153,9 +155,21 @@
             this.radioGroup1.Controls.Add(this.labelID);
             this.radioGroup1.Location = new System.Drawing.Point(10, 3);
             this.radioGroup1.Name = "radioGroup1";
-            this.radioGroup1.Size = new System.Drawing.Size(463, 671);
+            this.radioGroup1.Size = new System.Drawing.Size(463, 698);
             this.radioGroup1.TabIndex = 3;
             this.radioGroup1.TabStop = false;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsNeedOTP", true));
+            this.checkBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox1.Location = new System.Drawing.Point(96, 46);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(94, 21);
+            this.checkBox1.TabIndex = 62;
+            this.checkBox1.Text = "Need OTP";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // txtADAccount
             // 
@@ -163,14 +177,14 @@
             this.txtADAccount.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtADAccount.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ADAccount", true));
             this.txtADAccount.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtADAccount.Location = new System.Drawing.Point(254, 81);
+            this.txtADAccount.Location = new System.Drawing.Point(254, 101);
             this.txtADAccount.Name = "txtADAccount";
             this.txtADAccount.Size = new System.Drawing.Size(198, 23);
             this.txtADAccount.TabIndex = 58;
             // 
             // lbADAccount
             // 
-            this.lbADAccount.Location = new System.Drawing.Point(170, 82);
+            this.lbADAccount.Location = new System.Drawing.Point(170, 102);
             this.lbADAccount.Name = "lbADAccount";
             this.lbADAccount.Size = new System.Drawing.Size(81, 23);
             this.lbADAccount.TabIndex = 59;
@@ -178,7 +192,7 @@
             // 
             // btnShowImg
             // 
-            this.btnShowImg.Location = new System.Drawing.Point(293, 493);
+            this.btnShowImg.Location = new System.Drawing.Point(293, 513);
             this.btnShowImg.Name = "btnShowImg";
             this.btnShowImg.Size = new System.Drawing.Size(80, 30);
             this.btnShowImg.TabIndex = 57;
@@ -189,7 +203,7 @@
             // btnSetPic
             // 
             this.btnSetPic.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnSetPic.Location = new System.Drawing.Point(253, 493);
+            this.btnSetPic.Location = new System.Drawing.Point(253, 513);
             this.btnSetPic.Name = "btnSetPic";
             this.btnSetPic.Size = new System.Drawing.Size(34, 30);
             this.btnSetPic.TabIndex = 56;
@@ -202,14 +216,14 @@
             this.disBoxESignature.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.disBoxESignature.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ESignature", true));
             this.disBoxESignature.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.disBoxESignature.Location = new System.Drawing.Point(96, 496);
+            this.disBoxESignature.Location = new System.Drawing.Point(96, 516);
             this.disBoxESignature.Name = "disBoxESignature";
             this.disBoxESignature.Size = new System.Drawing.Size(155, 23);
             this.disBoxESignature.TabIndex = 55;
             // 
             // labESignature
             // 
-            this.labESignature.Location = new System.Drawing.Point(12, 496);
+            this.labESignature.Location = new System.Drawing.Point(12, 516);
             this.labESignature.Name = "labESignature";
             this.labESignature.Size = new System.Drawing.Size(81, 23);
             this.labESignature.TabIndex = 54;
@@ -220,7 +234,7 @@
             this.checkAdmin.AutoSize = true;
             this.checkAdmin.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsAdmin", true));
             this.checkAdmin.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkAdmin.Location = new System.Drawing.Point(96, 81);
+            this.checkAdmin.Location = new System.Drawing.Point(96, 101);
             this.checkAdmin.Name = "checkAdmin";
             this.checkAdmin.Size = new System.Drawing.Size(66, 21);
             this.checkAdmin.TabIndex = 53;
@@ -233,7 +247,7 @@
             this.txtPosition.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Position", true));
             this.txtPosition.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtPosition.IsSupportEditMode = false;
-            this.txtPosition.Location = new System.Drawing.Point(96, 297);
+            this.txtPosition.Location = new System.Drawing.Point(96, 317);
             this.txtPosition.Name = "txtPosition";
             this.txtPosition.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtPosition.ReadOnly = true;
@@ -245,7 +259,7 @@
             this.txtUserDeputy.AllowSelectResign = false;
             this.txtUserDeputy.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Deputy", true));
             this.txtUserDeputy.DisplayBox1Binding = "";
-            this.txtUserDeputy.Location = new System.Drawing.Point(96, 229);
+            this.txtUserDeputy.Location = new System.Drawing.Point(96, 249);
             this.txtUserDeputy.Name = "txtUserDeputy";
             this.txtUserDeputy.Size = new System.Drawing.Size(302, 23);
             this.txtUserDeputy.TabIndex = 8;
@@ -256,7 +270,7 @@
             this.txtUserSupervisor.AllowSelectResign = false;
             this.txtUserSupervisor.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Supervisor", true));
             this.txtUserSupervisor.DisplayBox1Binding = "";
-            this.txtUserSupervisor.Location = new System.Drawing.Point(96, 197);
+            this.txtUserSupervisor.Location = new System.Drawing.Point(96, 217);
             this.txtUserSupervisor.Name = "txtUserSupervisor";
             this.txtUserSupervisor.Size = new System.Drawing.Size(302, 23);
             this.txtUserSupervisor.TabIndex = 7;
@@ -267,7 +281,7 @@
             this.txtUserManager.AllowSelectResign = false;
             this.txtUserManager.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Manager", true));
             this.txtUserManager.DisplayBox1Binding = "";
-            this.txtUserManager.Location = new System.Drawing.Point(96, 164);
+            this.txtUserManager.Location = new System.Drawing.Point(96, 184);
             this.txtUserManager.Name = "txtUserManager";
             this.txtUserManager.Size = new System.Drawing.Size(302, 23);
             this.txtUserManager.TabIndex = 6;
@@ -287,7 +301,7 @@
             // dateResign
             // 
             this.dateResign.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Resign", true));
-            this.dateResign.Location = new System.Drawing.Point(322, 331);
+            this.dateResign.Location = new System.Drawing.Point(322, 351);
             this.dateResign.Name = "dateResign";
             this.dateResign.Size = new System.Drawing.Size(130, 23);
             this.dateResign.TabIndex = 13;
@@ -295,7 +309,7 @@
             // dateDateHired
             // 
             this.dateDateHired.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoard", true));
-            this.dateDateHired.Location = new System.Drawing.Point(96, 331);
+            this.dateDateHired.Location = new System.Drawing.Point(96, 351);
             this.dateDateHired.Name = "dateDateHired";
             this.dateDateHired.Size = new System.Drawing.Size(130, 23);
             this.dateDateHired.TabIndex = 12;
@@ -305,7 +319,7 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(96, 365);
+            this.editRemark.Location = new System.Drawing.Point(96, 385);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(356, 125);
@@ -318,7 +332,7 @@
             this.comboLanguage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboLanguage.FormattingEnabled = true;
             this.comboLanguage.IsSupportUnselect = true;
-            this.comboLanguage.Location = new System.Drawing.Point(322, 297);
+            this.comboLanguage.Location = new System.Drawing.Point(322, 317);
             this.comboLanguage.Name = "comboLanguage";
             this.comboLanguage.OldText = "";
             this.comboLanguage.Size = new System.Drawing.Size(121, 24);
@@ -330,7 +344,7 @@
             this.txtEMailAddr.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
             this.txtEMailAddr.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "EMail", true));
             this.txtEMailAddr.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtEMailAddr.Location = new System.Drawing.Point(96, 263);
+            this.txtEMailAddr.Location = new System.Drawing.Point(96, 283);
             this.txtEMailAddr.Name = "txtEMailAddr";
             this.txtEMailAddr.Size = new System.Drawing.Size(362, 23);
             this.txtEMailAddr.TabIndex = 9;
@@ -342,7 +356,7 @@
             this.editFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Factory", true));
             this.editFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editFactory.IsSupportEditMode = false;
-            this.editFactory.Location = new System.Drawing.Point(96, 108);
+            this.editFactory.Location = new System.Drawing.Point(96, 128);
             this.editFactory.Multiline = true;
             this.editFactory.Name = "editFactory";
             this.editFactory.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
@@ -355,7 +369,7 @@
             this.txtExtNo.BackColor = System.Drawing.Color.White;
             this.txtExtNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "ExtNo", true));
             this.txtExtNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtExtNo.Location = new System.Drawing.Point(322, 51);
+            this.txtExtNo.Location = new System.Drawing.Point(322, 71);
             this.txtExtNo.Name = "txtExtNo";
             this.txtExtNo.Size = new System.Drawing.Size(130, 23);
             this.txtExtNo.TabIndex = 4;
@@ -365,7 +379,7 @@
             this.txtPassword.BackColor = System.Drawing.Color.White;
             this.txtPassword.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Password", true));
             this.txtPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtPassword.Location = new System.Drawing.Point(96, 51);
+            this.txtPassword.Location = new System.Drawing.Point(96, 71);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(121, 23);
             this.txtPassword.TabIndex = 3;
@@ -383,7 +397,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(12, 365);
+            this.labelRemark.Location = new System.Drawing.Point(12, 385);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(81, 23);
             this.labelRemark.TabIndex = 13;
@@ -391,7 +405,7 @@
             // 
             // labelResign
             // 
-            this.labelResign.Location = new System.Drawing.Point(238, 331);
+            this.labelResign.Location = new System.Drawing.Point(238, 351);
             this.labelResign.Name = "labelResign";
             this.labelResign.Size = new System.Drawing.Size(81, 23);
             this.labelResign.TabIndex = 12;
@@ -399,7 +413,7 @@
             // 
             // labelLanguage
             // 
-            this.labelLanguage.Location = new System.Drawing.Point(238, 297);
+            this.labelLanguage.Location = new System.Drawing.Point(238, 317);
             this.labelLanguage.Name = "labelLanguage";
             this.labelLanguage.Size = new System.Drawing.Size(81, 23);
             this.labelLanguage.TabIndex = 11;
@@ -407,7 +421,7 @@
             // 
             // labelExtNo
             // 
-            this.labelExtNo.Location = new System.Drawing.Point(238, 51);
+            this.labelExtNo.Location = new System.Drawing.Point(238, 71);
             this.labelExtNo.Name = "labelExtNo";
             this.labelExtNo.Size = new System.Drawing.Size(81, 23);
             this.labelExtNo.TabIndex = 10;
@@ -415,7 +429,7 @@
             // 
             // labelDateHired
             // 
-            this.labelDateHired.Location = new System.Drawing.Point(12, 331);
+            this.labelDateHired.Location = new System.Drawing.Point(12, 351);
             this.labelDateHired.Name = "labelDateHired";
             this.labelDateHired.Size = new System.Drawing.Size(81, 23);
             this.labelDateHired.TabIndex = 9;
@@ -423,7 +437,7 @@
             // 
             // labelPosition
             // 
-            this.labelPosition.Location = new System.Drawing.Point(12, 297);
+            this.labelPosition.Location = new System.Drawing.Point(12, 317);
             this.labelPosition.Name = "labelPosition";
             this.labelPosition.Size = new System.Drawing.Size(81, 23);
             this.labelPosition.TabIndex = 8;
@@ -431,7 +445,7 @@
             // 
             // labelEMailAddr
             // 
-            this.labelEMailAddr.Location = new System.Drawing.Point(12, 263);
+            this.labelEMailAddr.Location = new System.Drawing.Point(12, 283);
             this.labelEMailAddr.Name = "labelEMailAddr";
             this.labelEMailAddr.Size = new System.Drawing.Size(81, 23);
             this.labelEMailAddr.TabIndex = 7;
@@ -439,7 +453,7 @@
             // 
             // labelDeputy
             // 
-            this.labelDeputy.Location = new System.Drawing.Point(12, 229);
+            this.labelDeputy.Location = new System.Drawing.Point(12, 249);
             this.labelDeputy.Name = "labelDeputy";
             this.labelDeputy.Size = new System.Drawing.Size(81, 23);
             this.labelDeputy.TabIndex = 6;
@@ -447,7 +461,7 @@
             // 
             // labelSupervisor
             // 
-            this.labelSupervisor.Location = new System.Drawing.Point(12, 197);
+            this.labelSupervisor.Location = new System.Drawing.Point(12, 217);
             this.labelSupervisor.Name = "labelSupervisor";
             this.labelSupervisor.Size = new System.Drawing.Size(81, 23);
             this.labelSupervisor.TabIndex = 5;
@@ -455,7 +469,7 @@
             // 
             // labelManager
             // 
-            this.labelManager.Location = new System.Drawing.Point(12, 164);
+            this.labelManager.Location = new System.Drawing.Point(12, 184);
             this.labelManager.Name = "labelManager";
             this.labelManager.Size = new System.Drawing.Size(81, 23);
             this.labelManager.TabIndex = 4;
@@ -463,7 +477,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(12, 108);
+            this.labelFactory.Location = new System.Drawing.Point(12, 128);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(81, 23);
             this.labelFactory.TabIndex = 3;
@@ -471,7 +485,7 @@
             // 
             // labelPassword
             // 
-            this.labelPassword.Location = new System.Drawing.Point(12, 51);
+            this.labelPassword.Location = new System.Drawing.Point(12, 71);
             this.labelPassword.Name = "labelPassword";
             this.labelPassword.Size = new System.Drawing.Size(81, 23);
             this.labelPassword.TabIndex = 2;
@@ -509,13 +523,13 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(514, 526);
+            this.grid1.Size = new System.Drawing.Size(514, 553);
             this.grid1.TabIndex = 15;
             this.grid1.TabStop = false;
             // 
             // PasswordByUser
             // 
-            this.ClientSize = new System.Drawing.Size(1001, 634);
+            this.ClientSize = new System.Drawing.Size(1001, 661);
             this.DefaultControl = "txtIDStart";
             this.GridAlias = "Pass2";
             this.IsSupportCopy = false;
@@ -579,5 +593,6 @@
         private Win.UI.DisplayBox disBoxESignature;
         private Win.UI.TextBox txtADAccount;
         private Win.UI.Label lbADAccount;
+        private Win.UI.CheckBox checkBox1;
     }
 }

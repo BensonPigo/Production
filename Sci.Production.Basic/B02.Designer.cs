@@ -144,6 +144,7 @@
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.checkBox2 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
@@ -749,6 +750,7 @@
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.panel1.Controls.Add(this.checkBox2);
             this.panel1.Controls.Add(this.btnPadPrintPath);
             this.panel1.Controls.Add(this.txtPadPrintPath);
             this.panel1.Controls.Add(this.label19);
@@ -1494,6 +1496,17 @@
             this.shapeContainer4.Size = new System.Drawing.Size(1089, 687);
             this.shapeContainer4.TabIndex = 51;
             this.shapeContainer4.TabStop = false;
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isNeedOTPFty", true));
+            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox2.Location = new System.Drawing.Point(955, 8);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(123, 21);
+            this.checkBox2.TabIndex = 168;
+            this.checkBox2.Text = "Need OTP(Fty)";
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // B02
             // 
@@ -1636,5 +1649,6 @@
         private Win.UI.Button btnPadPrintPath;
         private Win.UI.TextBox txtPadPrintPath;
         private Win.UI.Label label19;
+        private Win.UI.CheckBox checkBox2;
     }
 }

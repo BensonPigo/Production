@@ -1,6 +1,7 @@
 ﻿-- =============================================
 -- Description:	資料來源SewingSchedule + P_LineMapping
 -- =============================================
+
 CREATE PROCEDURE [dbo].[P_Import_LineBalancingRate]
 	@StartDate date
 AS
@@ -170,12 +171,12 @@ BEGIN
 	select  
 	[SewingDate]
 	,[FactoryID]
-	,[Total SP Qty]
-	,[Total LBR]
-	,[Avg. LBR]
-	,[Total SP Qty In7Days]
-	,[Total LBR In7Days]
-	,[Avg. LBR In7Days]
+	,ISNULL([Total SP Qty] ,0)
+	,ISNULL([Total LBR] ,0)
+	,ISNULL([Avg. LBR] ,0)
+	,ISNULL([Total SP Qty In7Days] ,0)
+	,ISNULL([Total LBR In7Days] ,0)
+	,ISNULL([Avg. LBR In7Days] ,0)
 	from #P_LineBalancingRate t
 	where not exists(
 		select 1 from P_LineBalancingRate s
@@ -197,5 +198,5 @@ BEGIN
 	drop table #tmpMain,#P_LineBalancingRate
 
 end
-GO
 
+GO
