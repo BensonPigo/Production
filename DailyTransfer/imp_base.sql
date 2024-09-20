@@ -2761,7 +2761,8 @@ on t.type=s.type and t.id=s.id
 		t.Name= isnull( s.Name,				 ''),
 		t.RealLength= isnull( s.RealLength,	 0),
 		t.Description= isnull( s.Description,''),
-		t.Seq= isnull( s.Seq				 ,0)
+		t.Seq= isnull( s.Seq				 ,0),
+		t.Conditions = isnull(s.Conditions,'')
 	when not matched by target then
 		insert(Type
 				,ID
@@ -2769,13 +2770,15 @@ on t.type=s.type and t.id=s.id
 				,RealLength
 				,Description
 				,Seq
+				,Conditions
 				)
 						values(isnull(s.Type,''),
 				isnull(s.ID,				 ''),
 				isnull(s.Name,				 ''),
 				isnull(s.RealLength,		 0),
 				isnull(s.Description,		 ''),
-				isnull(s.Seq				 ,0)
+				isnull(s.Seq				 ,0),
+				isnull(s.Conditions,'')
 				)
 	when not matched by source then
 		delete;
