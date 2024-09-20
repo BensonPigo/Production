@@ -218,7 +218,7 @@ select  [PackingAuditDate]
 	,[Barcode]
 	,[AuditBy]
 	,[AuditTime] = Format(t.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	,[PassDate] = PassDate.AddDate
+	,[PassDate] = iif(t.Status = 'Pass', t.AddDate, null)
     ,[HoldRemark]
     ,Status
     ,[ReturntoProduction] 
@@ -226,12 +226,6 @@ select  [PackingAuditDate]
     ,[SewingLineID]
     ,t.ID
 from #tmp t
-outer apply(
-	select AddDate = min(s.AddDate)
-	from CTNPackingAudit s
-	where s.Status='Pass' 
-	and s.AddDate > t.AddDate
-)PassDate
 order by PackingListID, CTN,PackingAuditDate
 
 select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
