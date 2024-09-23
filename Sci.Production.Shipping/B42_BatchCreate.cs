@@ -887,6 +887,21 @@ where vdd.ID = '{newID}'
 ";
                         insertCmds.Add(sqlUpdateVNConsumption_Detail_DetailWaste);
 
+                        // 更新Waste,要將相同的合約和物料(Style,Brand,Season,VnContractID,NLCode)
+                        // 都一併更新相同的Waste by ISP20240920
+                        string sqlUpdateSameMateriel_Waste = $@"
+update t
+set t.Waste = s.Waste
+FROM VNConsumption_Detail_Detail t
+inner join VNConsumption v on t.ID = v.ID
+inner join (
+	select svd.*,sv.StyleID,sv.BrandID,sv.SeasonID,sv.VNContractID 
+	from VNConsumption_Detail svd
+	inner join VNConsumption sv on svd.ID = sv.ID
+	where svd.ID = '{newID}'
+) s on s.NLCode = t.NLCode and s.BrandID = v.BrandID and s.StyleID = v.StyleID and s.SeasonID = v.SeasonID and s.VNContractID = v.VNContractID
+";
+                        insertCmds.Add(sqlUpdateSameMateriel_Waste);
                         DualResult result = DBProxy.Current.Executes(null, insertCmds);
                         if (!result)
                         {
