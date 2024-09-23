@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -601,12 +602,24 @@ from System WITH (NOLOCK) ");
             }
             #endregion
 
+            DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select("1=1");
             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
             DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
-            DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select("1=1");
             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(queryData, false);
             if (isVNConsumption_Detail_DetailHasDupData)
             {
+                return false;
+            }
+            #endregion
+
+            #region 檢查相同NLCode是否有不同的waste
+            var diffWasteSameKay = queryData.GroupBy(s => new { NLCode = s["NLCode"], Waste = s["Waste"] })
+                                   .GroupBy(y => new { y.Key.NLCode })
+                                   .Select(z => new { z.Key.NLCode, duplicateData = z.ToList() })
+                                   .Where(x => x.duplicateData.Count > 1);
+            if (diffWasteSameKay.Any())
+            {
+                MyUtility.Msg.WarningBox("The same Customs Code should have the same Waste value" + Environment.NewLine + $"Please recheck the Waste value of <{diffWasteSameKay.First().NLCode}>!");
                 return false;
             }
             #endregion
