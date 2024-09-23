@@ -120,6 +120,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,SubProResponseTeamID				
             ,CustomColumn1	
             ,MDivisionID
+            ,OpreatorID
             )
             select	isnull(FactoryID, '')					
 		            ,isnull(SubProLocationID, '')		
@@ -158,6 +159,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,isnull(SubProResponseTeamID, '')	
 		            ,isnull(CustomColumn1, '')	
 		            ,isnull(MDivisionID, '')
+                    ,isnull(OpreatorID, '')
             from #tmp
             update b
 		    set b.TransferDate = getdate()

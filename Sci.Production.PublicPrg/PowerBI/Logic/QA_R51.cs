@@ -265,13 +265,24 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     string strJunk = isBI ? "m.Junk," : "[Junk] = iif(m.Junk = 1, 'Y', 'N'),";
                     formatJoin = @"
                     left join SubProMachine m on SR.Machine = m.ID and SR.FactoryID = m.FactoryID and SR.SubProcessID = m.SubProcessID
-                    left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + sqlDefValue;
+                    left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
+                    outer apply 
+                    (
+                        select OpreatorID = STUFF((
+		                    select CONCAT(',', SubProOperatorEmployeeID)
+		                    from SubProInsRecord_Operator with (nolock)
+		                    where SubProInsRecordUkey = SR.Ukey
+		                    order by SubProOperatorEmployeeID
+		                    for xml path('')
+	                    ),1,1,'')
+                    ) SOE" + sqlDefValue;
                     formatCol1 = $@"
                     m.Serial,
                     {strJunk}
                     m.Description,
-                    SRD.DefectCode,                                
-                    SRD.DefectQty,";
+                    SRD.DefectCode,
+                    SRD.DefectQty,
+                    SOE.OpreatorID,";
                     formatCol2 = string.Empty;
                     return Tuple.Create(formatCol1, formatCol2, formatJoin);
                 case "ResponseTeam":
