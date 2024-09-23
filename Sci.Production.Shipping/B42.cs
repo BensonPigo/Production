@@ -694,12 +694,20 @@ from System WITH (NOLOCK) ");
                 return failResult;
             }
 
+            return base.ClickSavePost();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
             // 回寫VNConsumption_Detail
             string sqlCreateVNConsumption_Detail = $" exec CreateVNConsumption_Detail '{this.CurrentMaintain["ID"].ToString()}'";
             DualResult isCreateVNConsumption_DetailOK = DBProxy.Current.Execute(null, sqlCreateVNConsumption_Detail);
             if (!isCreateVNConsumption_DetailOK)
             {
-                return isCreateVNConsumption_DetailOK;
+                MyUtility.Msg.WarningBox(isCreateVNConsumption_DetailOK.ToString());
+                return;
             }
 
             // 更新Waste,要將相同的合約和物料(Style,Brand,Season,VnContractID,NLCode)
@@ -719,10 +727,9 @@ inner join (
             DualResult resultSameMaterialwaste = DBProxy.Current.Execute(null, sqlUpdateSameMateriel_Waste);
             if (!resultSameMaterialwaste)
             {
-                return resultSameMaterialwaste;
+                MyUtility.Msg.WarningBox(resultSameMaterialwaste.ToString());
+                return;
             }
-
-            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
