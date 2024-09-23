@@ -75,7 +75,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 IsOutstanding = false,
                 PurchaseFrom = string.Empty,
                 OutstandingType = string.Empty,
-                Status = "'New','Approved','Closed','Junked'",
+                Status = "'New','Approved','Closed','Junked','Locked'",
                 OrderBy = "Create Date",
                 IsBI = true,
                 SDate = sDate,
