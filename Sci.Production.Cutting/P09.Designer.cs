@@ -630,7 +630,7 @@
             this.btnImportFromWorkOrderForPlanning.AutoSize = true;
             this.btnImportFromWorkOrderForPlanning.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnImportFromWorkOrderForPlanning.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(118, 1);
             this.btnImportFromWorkOrderForPlanning.Margin = new System.Windows.Forms.Padding(1);
