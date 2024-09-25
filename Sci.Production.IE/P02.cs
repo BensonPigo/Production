@@ -7,6 +7,7 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using Sci.Production.Class;
 
 namespace Sci.Production.IE
 {
@@ -49,6 +50,28 @@ namespace Sci.Production.IE
 
             this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
+
+            Point loc = this.queryfors.Location;
+            Sci.Win.UI.CheckBox chkDeadline = new Win.UI.CheckBox();
+            chkDeadline.Text = "Deadline on the day";
+            chkDeadline.Location = loc;
+            chkDeadline.Width = 160;
+            chkDeadline.IsSupportEditMode = false;
+            chkDeadline.ForeColor = Color.Blue;
+            chkDeadline.CheckedChanged += (s, e) =>
+            {
+                if (((CheckBox)s).Checked)
+                {
+                    this.DefaultWhere = $" ID IN (SELECT ID FROM ChgOver_Check WHERE ChgOver_Check.ID = ChgOver.ID  and ChgOver_Check.Deadline = '{DateTime.Now.Date.ToShortDateString()}' and ChgOver_Check.Checked = 0 )";
+                }
+                else
+                {
+                    this.DefaultWhere = string.Empty;
+                }
+
+                this.ReloadDatas();
+            };
+            this.browsetop.Controls.Add(chkDeadline);
         }
 
         private string StdTMS = string.Empty; private DataTable dt1; private DataTable dt2;
@@ -155,7 +178,7 @@ from tmpDetailData
 group by OutputDate,StdTMS
 )
 select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
-isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
+isnull(Cast((select top (1) iif(isnull(InspectQty,0) = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}') as decimal(6,2)),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
 ",
@@ -767,6 +790,54 @@ order by OutputDate
             }
 
             return returnValue;
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            string updSql = $@"
+
+Select cd.*, cb.CheckList, cb.No
+into #tmp
+From ChgOverCheckList_Detail cd with (nolock)
+inner join ChgOverCheckListBase cb with (nolock) on cd.ChgOverCheckListBaseID = cb.ID
+order by No
+
+DELETE FROM dbo.ChgOverCheckList_Detail
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM #tmp s
+    WHERE dbo.ChgOverCheckList_Detail.ID = s.ID 
+    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
+);
+
+UPDATE dbo.ChgOverCheckList_Detail
+SET ResponseDep = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep, s.ResponseDep, dbo.ChgOverCheckList_Detail.ResponseDep),
+    LeadTime = IIF(dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, s.LeadTime, dbo.ChgOverCheckList_Detail.LeadTime),
+    EditName = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, '{Env.User.UserID}', dbo.ChgOverCheckList_Detail.EditName),
+    EditDate = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, GETDATE(), dbo.ChgOverCheckList_Detail.EditDate)
+FROM dbo.ChgOverCheckList_Detail
+JOIN #tmp s ON dbo.ChgOverCheckList_Detail.ID = s.ID 
+    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID;
+
+INSERT INTO dbo.ChgOverCheckList_Detail (ID, ChgOverCheckListBaseID, ResponseDep, LeadTime, AddName, AddDate)
+SELECT s.ID, s.ChgOverCheckListBaseID, s.ResponseDep, s.LeadTime, '{Env.User.UserID}', GETDATE()
+FROM #tmp s
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.ChgOverCheckList_Detail t
+    WHERE t.ID = s.ID 
+    AND t.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
+);
+";
+            DualResult upResult;
+            if (!(upResult = DBProxy.Current.Execute(string.Empty, updSql)))
+            {
+                MyUtility.Msg.ErrorBox(upResult.Messages.ToString());
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Update Success!");
+            }
         }
     }
 }

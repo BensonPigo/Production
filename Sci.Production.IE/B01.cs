@@ -143,6 +143,7 @@ order by No
             // 預設No欄位Asc排序
             this.gridBase.Sort(this.gridBase.Columns["No"], ListSortDirection.Ascending);
             this.gridDetail.Sort(this.gridDetail.Columns["No"], ListSortDirection.Ascending);
+            this.GetDetailCount();
         }
 
         /// <summary>
@@ -205,9 +206,9 @@ order by No
             // 檢查Detail<Response Dep.>和<Lead Time>不可空白
             var dtDetail = (DataTable)this.gridDetailBs.DataSource;
             if (dtDetail.Rows.Count > 0
-                && dtDetail.AsEnumerable().Where(r => VFP.Empty(r["ResponseDep"]) || MyUtility.Convert.GetInt(r["LeadTime"]) == 0).Any())
+                && dtDetail.AsEnumerable().Where(r => VFP.Empty(r["ResponseDep"])).Any())
             {
-                MyUtility.Msg.WarningBox("Please enter <Response Dep.> and <Lead Time> on the right side of the table.");
+                MyUtility.Msg.WarningBox("Please enter <Response Dep.> on the right side of the table.");
                 return false;
             }
 
@@ -350,6 +351,7 @@ end
                 selBase.ToList().ForEach(r => dtBase.Rows.Remove(r));
 
                 this.ResumeLayout(false);   // 恢復更新畫面
+                this.GetDetailCount();
             }
         }
 
@@ -376,7 +378,14 @@ end
                 selDetail.ToList().ForEach(r => dtDetail.Rows.Remove(r));
 
                 this.ResumeLayout(false);   // 恢復更新畫面
+                this.GetDetailCount();
             }
+        }
+
+        private void GetDetailCount()
+        {
+            this.labDetailCount1.Text = ((DataTable)this.gridBaseBs.DataSource).Rows.Count.ToString();
+            this.labDetailCount2.Text = ((DataTable)this.gridDetailBs.DataSource).Rows.Count.ToString();
         }
     }
 }

@@ -43,6 +43,10 @@
             this.gridBaseBs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.BtnAdd = new Sci.Win.UI.Button();
             this.BtnDelete = new Sci.Win.UI.Button();
+            this.labTotal1 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.labDetailCount1 = new Sci.Win.UI.Label();
+            this.labDetailCount2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -57,10 +61,14 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1050, 413);
+            this.detail.Size = new System.Drawing.Size(1050, 438);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.labDetailCount2);
+            this.detailcont.Controls.Add(this.labDetailCount1);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.labTotal1);
             this.detailcont.Controls.Add(this.BtnDelete);
             this.detailcont.Controls.Add(this.BtnAdd);
             this.detailcont.Controls.Add(this.gridBase);
@@ -73,21 +81,21 @@
             this.detailcont.Controls.Add(this.lbStyleType);
             this.detailcont.Controls.Add(this.lbSendMail);
             this.detailcont.Controls.Add(this.lbCategory);
-            this.detailcont.Size = new System.Drawing.Size(1050, 375);
+            this.detailcont.Size = new System.Drawing.Size(1050, 400);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 375);
+            this.detailbtm.Location = new System.Drawing.Point(0, 400);
             this.detailbtm.Size = new System.Drawing.Size(1050, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1050, 413);
+            this.browse.Size = new System.Drawing.Size(1050, 438);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1058, 442);
+            this.tabs.Size = new System.Drawing.Size(1058, 467);
             // 
             // createby
             // 
@@ -121,7 +129,7 @@
             // 
             // lbStyleType
             // 
-            this.lbStyleType.Location = new System.Drawing.Point(27, 66);
+            this.lbStyleType.Location = new System.Drawing.Point(27, 60);
             this.lbStyleType.Name = "lbStyleType";
             this.lbStyleType.Size = new System.Drawing.Size(103, 23);
             this.lbStyleType.TabIndex = 4;
@@ -156,7 +164,7 @@
             this.cboStyleType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.cboStyleType.FormattingEnabled = true;
             this.cboStyleType.IsSupportUnselect = true;
-            this.cboStyleType.Location = new System.Drawing.Point(134, 66);
+            this.cboStyleType.Location = new System.Drawing.Point(134, 60);
             this.cboStyleType.Name = "cboStyleType";
             this.cboStyleType.OldText = "";
             this.cboStyleType.Size = new System.Drawing.Size(92, 24);
@@ -199,14 +207,14 @@
             this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridDetail.Location = new System.Drawing.Point(453, 109);
+            this.gridDetail.Location = new System.Drawing.Point(453, 116);
             this.gridDetail.Name = "gridDetail";
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(589, 260);
+            this.gridDetail.Size = new System.Drawing.Size(589, 278);
             this.gridDetail.TabIndex = 21;
             // 
             // gridBase
@@ -224,14 +232,14 @@
             this.gridBase.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridBase.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridBase.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridBase.Location = new System.Drawing.Point(8, 109);
+            this.gridBase.Location = new System.Drawing.Point(8, 116);
             this.gridBase.Name = "gridBase";
             this.gridBase.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridBase.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridBase.RowTemplate.Height = 24;
             this.gridBase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBase.ShowCellToolTips = false;
-            this.gridBase.Size = new System.Drawing.Size(392, 260);
+            this.gridBase.Size = new System.Drawing.Size(392, 278);
             this.gridBase.TabIndex = 22;
             // 
             // BtnAdd
@@ -258,9 +266,55 @@
             this.BtnDelete.UseVisualStyleBackColor = true;
             this.BtnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
             // 
+            // labTotal1
+            // 
+            this.labTotal1.BackColor = System.Drawing.Color.Transparent;
+            this.labTotal1.Location = new System.Drawing.Point(8, 90);
+            this.labTotal1.Name = "labTotal1";
+            this.labTotal1.Size = new System.Drawing.Size(68, 23);
+            this.labTotal1.TabIndex = 25;
+            this.labTotal1.Text = "Total No：";
+            this.labTotal1.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomLeft;
+            this.labTotal1.TextStyle.BorderColor = System.Drawing.Color.White;
+            this.labTotal1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Location = new System.Drawing.Point(453, 90);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(68, 23);
+            this.label2.TabIndex = 26;
+            this.label2.Text = "Total No：";
+            this.label2.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomLeft;
+            this.label2.TextStyle.BorderColor = System.Drawing.Color.White;
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labDetailCount1
+            // 
+            this.labDetailCount1.BackColor = System.Drawing.Color.Transparent;
+            this.labDetailCount1.Location = new System.Drawing.Point(76, 90);
+            this.labDetailCount1.Name = "labDetailCount1";
+            this.labDetailCount1.Size = new System.Drawing.Size(68, 23);
+            this.labDetailCount1.TabIndex = 27;
+            this.labDetailCount1.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomLeft;
+            this.labDetailCount1.TextStyle.BorderColor = System.Drawing.Color.White;
+            this.labDetailCount1.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // labDetailCount2
+            // 
+            this.labDetailCount2.BackColor = System.Drawing.Color.Transparent;
+            this.labDetailCount2.Location = new System.Drawing.Point(521, 90);
+            this.labDetailCount2.Name = "labDetailCount2";
+            this.labDetailCount2.Size = new System.Drawing.Size(68, 23);
+            this.labDetailCount2.TabIndex = 28;
+            this.labDetailCount2.TextStyle.Alignment = System.Drawing.ContentAlignment.BottomLeft;
+            this.labDetailCount2.TextStyle.BorderColor = System.Drawing.Color.White;
+            this.labDetailCount2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(1058, 475);
+            this.ClientSize = new System.Drawing.Size(1058, 500);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
@@ -301,5 +355,9 @@
         private Win.UI.Button BtnDelete;
         private Win.UI.Button BtnAdd;
         private Win.UI.ListControlBindingSource gridBaseBs;
+        private Win.UI.Label labDetailCount2;
+        private Win.UI.Label labDetailCount1;
+        private Win.UI.Label label2;
+        private Win.UI.Label labTotal1;
     }
 }
