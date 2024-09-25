@@ -162,7 +162,7 @@ namespace Sci.Production.PublicPrg
 
                 using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
                 {
-                    bulkcopy.BulkCopyTimeout = 60;
+                    bulkcopy.BulkCopyTimeout = defaultTimeout;
                     if (temptablename.TrimStart().StartsWith("#"))
                     {
                         bulkcopy.DestinationTableName = temptablename.Trim();
