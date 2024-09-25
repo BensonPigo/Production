@@ -61,7 +61,7 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1050, 438);
+            this.detail.Size = new System.Drawing.Size(1062, 438);
             // 
             // detailcont
             // 
@@ -81,21 +81,21 @@
             this.detailcont.Controls.Add(this.lbStyleType);
             this.detailcont.Controls.Add(this.lbSendMail);
             this.detailcont.Controls.Add(this.lbCategory);
-            this.detailcont.Size = new System.Drawing.Size(1050, 400);
+            this.detailcont.Size = new System.Drawing.Size(1062, 400);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 400);
-            this.detailbtm.Size = new System.Drawing.Size(1050, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1062, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1050, 438);
+            this.browse.Size = new System.Drawing.Size(1062, 438);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1058, 467);
+            this.tabs.Size = new System.Drawing.Size(1070, 467);
             // 
             // createby
             // 
@@ -214,7 +214,7 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(589, 278);
+            this.gridDetail.Size = new System.Drawing.Size(601, 278);
             this.gridDetail.TabIndex = 21;
             // 
             // gridBase
@@ -314,7 +314,7 @@
             // 
             // B01
             // 
-            this.ClientSize = new System.Drawing.Size(1058, 500);
+            this.ClientSize = new System.Drawing.Size(1070, 500);
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportPrint = false;
