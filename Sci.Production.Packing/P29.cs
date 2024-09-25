@@ -52,6 +52,7 @@ namespace Sci.Production.Packing
                 .Text("AuditBy", header: "Audit By", iseditingreadonly: true)
                 .Text("AuditTime", header: "Audit Time", iseditingreadonly: true)
                 .Date("PassDate", header: "Pass Date", iseditingreadonly: true)
+                .Text("HoldRemark", header: "Hold Remark", iseditingreadonly: true)
                 .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
                 .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
                 .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
@@ -157,6 +158,7 @@ select [PackingAuditDate] = c.PackingAuditDate
     ,c.Remark
     ,[SewingLineID] = sw_Line.val
     ,c.ID
+    ,c.HoldRemark
 into #tmp
 from CTNPackingAudit c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
@@ -216,19 +218,14 @@ select  [PackingAuditDate]
 	,[Barcode]
 	,[AuditBy]
 	,[AuditTime] = Format(t.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	,[PassDate] = PassDate.AddDate
+	,[PassDate] = iif(t.Status = 'Pass', t.AddDate, null)
+    ,[HoldRemark]
     ,Status
     ,[ReturntoProduction] 
     ,Remark
     ,[SewingLineID]
     ,t.ID
 from #tmp t
-outer apply(
-	select AddDate = min(s.AddDate)
-	from CTNPackingAudit s
-	where s.Status='Pass' 
-	and s.AddDate > t.AddDate
-)PassDate
 order by PackingListID, CTN,PackingAuditDate
 
 select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
