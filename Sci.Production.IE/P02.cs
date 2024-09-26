@@ -8,6 +8,7 @@ using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Drawing;
 using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -794,45 +795,45 @@ order by OutputDate
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            string updSql = $@"
+            // 更新ChgOver_Check
+            string sqlUpdate = $@"
+declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime, Category varchar(1), Type varchar(1))
 
-Select cd.*, cb.CheckList, cb.No
-into #tmp
-From ChgOverCheckList_Detail cd with (nolock)
-inner join ChgOverCheckListBase cb with (nolock) on cd.ChgOverCheckListBaseID = cb.ID
-order by No
+-- 找出符合以下條件的ChgOver
+-- 1. Inline >= 今天
+-- 2. (ChgOver_Check有資料但皆尚未Check) or (ChgOver_Check沒有資料) 
+-- 3. 與B01.ClickSaveAfter() 邏輯相同，差異在本語法為多筆更新
+insert into @ChgOver (ID, FactoryID, Inline, Category, Type)
+select co.ID, co.FactoryID, co.Inline, co.Category, co.Type
+from ChgOver co with (nolock)
+where co.Inline >= Convert(date, GETDATE())
+and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
+        and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
+    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)) 
+    and co.FactoryID = @FactoryID
 
-DELETE FROM dbo.ChgOverCheckList_Detail
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM #tmp s
-    WHERE dbo.ChgOverCheckList_Detail.ID = s.ID 
-    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
-);
+-- 刪除並重新寫入ChgOver_Check資料
+if @@RowCount > 0
+begin
+	delete ChgOver_Check where ID in (select ID from @ChgOver)
 
-UPDATE dbo.ChgOverCheckList_Detail
-SET ResponseDep = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep, s.ResponseDep, dbo.ChgOverCheckList_Detail.ResponseDep),
-    LeadTime = IIF(dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, s.LeadTime, dbo.ChgOverCheckList_Detail.LeadTime),
-    EditName = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, '{Env.User.UserID}', dbo.ChgOverCheckList_Detail.EditName),
-    EditDate = IIF(dbo.ChgOverCheckList_Detail.ResponseDep != s.ResponseDep OR dbo.ChgOverCheckList_Detail.LeadTime != s.LeadTime, GETDATE(), dbo.ChgOverCheckList_Detail.EditDate)
-FROM dbo.ChgOverCheckList_Detail
-JOIN #tmp s ON dbo.ChgOverCheckList_Detail.ID = s.ID 
-    AND dbo.ChgOverCheckList_Detail.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID;
-
-INSERT INTO dbo.ChgOverCheckList_Detail (ID, ChgOverCheckListBaseID, ResponseDep, LeadTime, AddName, AddDate)
-SELECT s.ID, s.ChgOverCheckListBaseID, s.ResponseDep, s.LeadTime, '{Env.User.UserID}', GETDATE()
-FROM #tmp s
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM dbo.ChgOverCheckList_Detail t
-    WHERE t.ID = s.ID 
-    AND t.ChgOverCheckListBaseID = s.ChgOverCheckListBaseID
-);
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
+	from @ChgOver co
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = co.Category and ck.StyleType = co.Type and ck.FactoryID = co.FactoryID
+	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+end
 ";
-            DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(string.Empty, updSql)))
+            List<SqlParameter> listPar = new List<SqlParameter>()
             {
-                MyUtility.Msg.ErrorBox(upResult.Messages.ToString());
+                new SqlParameter("@FactoryID", Env.User.Factory),
+            };
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate, listPar);
+            if (!result)
+            {
+                this.ShowErr(result);
             }
             else
             {
