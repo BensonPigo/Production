@@ -793,8 +793,13 @@ order by OutputDate
             return returnValue;
         }
 
-        private void btnRefresh_Click(object sender, EventArgs e)
+        private void BtnRefresh_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Msg.QuestionBox("This will update LeadTime, DaysLeft, Deadline, and OverDays in the P02 CheckList if all [Check] boxes are unchecked.\r\nAre you sure you want to proceed ? ") == DialogResult.No)
+            {
+                return;
+            }
+
             // 更新ChgOver_Check
             string sqlUpdate = $@"
 declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime, Category varchar(1), Type varchar(1))
