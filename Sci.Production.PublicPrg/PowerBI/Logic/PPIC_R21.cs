@@ -150,6 +150,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 sqlWhere += $" and f.IsProduceFty = 1";
             }
 
+            if (!model.IsBI && !model.IncludeCancelOrder)
+            {
+                sqlWhere += $" and o.Junk = 0";
+            }
+
             string sql = $@"
 	select distinct [KPIGroup] = f.KPICode
 		, [Fty] = o.FactoryID
