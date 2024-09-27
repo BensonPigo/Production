@@ -7,6 +7,8 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -49,6 +51,28 @@ namespace Sci.Production.IE
 
             this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
+
+            Point loc = this.queryfors.Location;
+            Sci.Win.UI.CheckBox chkDeadline = new Win.UI.CheckBox();
+            chkDeadline.Text = "Deadline on the day";
+            chkDeadline.Location = loc;
+            chkDeadline.Width = 160;
+            chkDeadline.IsSupportEditMode = false;
+            chkDeadline.ForeColor = Color.Blue;
+            chkDeadline.CheckedChanged += (s, e) =>
+            {
+                if (((CheckBox)s).Checked)
+                {
+                    this.DefaultWhere = $" ID IN (SELECT ID FROM ChgOver_Check WHERE ChgOver_Check.ID = ChgOver.ID  and ChgOver_Check.Deadline = '{DateTime.Now.Date.ToShortDateString()}' and ChgOver_Check.Checked = 0 )";
+                }
+                else
+                {
+                    this.DefaultWhere = string.Empty;
+                }
+
+                this.ReloadDatas();
+            };
+            this.browsetop.Controls.Add(chkDeadline);
         }
 
         private string StdTMS = string.Empty; private DataTable dt1; private DataTable dt2;
@@ -155,7 +179,7 @@ from tmpDetailData
 group by OutputDate,StdTMS
 )
 select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
-isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
+isnull(Cast((select top (1) iif(isnull(InspectQty,0) = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}') as decimal(6,2)),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
 ",
@@ -767,6 +791,59 @@ order by OutputDate
             }
 
             return returnValue;
+        }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Msg.QuestionBox("This will update LeadTime, DaysLeft, Deadline, and OverDays in the P02 CheckList if all [Check] boxes are unchecked.\r\nAre you sure you want to proceed ? ") == DialogResult.No)
+            {
+                return;
+            }
+
+            // 更新ChgOver_Check
+            string sqlUpdate = $@"
+declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime, Category varchar(1), Type varchar(1))
+
+-- 找出符合以下條件的ChgOver
+-- 1. Inline >= 今天
+-- 2. (ChgOver_Check有資料但皆尚未Check) or (ChgOver_Check沒有資料) 
+-- 3. 與B01.ClickSaveAfter() 邏輯相同，差異在本語法為多筆更新
+insert into @ChgOver (ID, FactoryID, Inline, Category, Type)
+select co.ID, co.FactoryID, co.Inline, co.Category, co.Type
+from ChgOver co with (nolock)
+where co.Inline >= Convert(date, GETDATE())
+and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
+        and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
+    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)) 
+    and co.FactoryID = @FactoryID
+
+-- 刪除並重新寫入ChgOver_Check資料
+if @@RowCount > 0
+begin
+	delete ChgOver_Check where ID in (select ID from @ChgOver)
+
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
+	from @ChgOver co
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = co.Category and ck.StyleType = co.Type and ck.FactoryID = co.FactoryID
+	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+end
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@FactoryID", Env.User.Factory),
+            };
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate, listPar);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Update Success!");
+            }
         }
     }
 }
