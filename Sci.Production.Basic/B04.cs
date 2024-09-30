@@ -99,7 +99,9 @@ SELECT TOP 1 PKEY FROM LocalSupp_Bank WITH (NOLOCK) WHERE ID = '{this.CurrentMai
                 .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13))
                 .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13))
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
-                .Text("VNBankBranch", header: "VN Bank/Branch", width: Widths.AnsiChars(20))
+                .Text("VNBankBranch", header: "Branch Name (MSB)", width: Widths.AnsiChars(20))
+                .Text("BankNameTPB", header: "Bank Name (TPB)", width: Widths.AnsiChars(20))
+                .Text("BankCodeTPB", header: "Bank Code (TPB)", width: Widths.AnsiChars(20))
                 ;
         }
 
