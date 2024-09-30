@@ -281,11 +281,12 @@ FROM Pms_To_Trade.dbo.MachineIn, Production.dbo.SciMachine_MachineIn_Detail AS M
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
 -----------------------------------Machine-------------------------------------
-select LocationM, MachineGroupID 
+select LocationM, MachineGroupID, ObtainedDate  = a.CreateDate
 INTO Machine
-from Production.dbo.SciMachine_Machine
-where Status in ('Good', 'Repairing', 'Lent')
-and Junk = 0
+from Production.dbo.SciMachine_Machine m
+LEFT JOIN FixedAssets.dbo.Asset a on  iif(LEN(m.FAID) > 0,LEFT(m.FAID,LEN(m.FAID)-4),'') = a.ID
+where m.Status in ('Good', 'Repairing', 'Lent')
+and m.Junk = 0
 group by LocationM, MachineGroupID
 
 
