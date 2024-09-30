@@ -32,6 +32,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     MDivisionID = string.Empty,
                     FactoryID = string.Empty,
                     ExcludeSisterTransferOut = false,
+                    IsBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetCartonStatusTrackingList(model);
