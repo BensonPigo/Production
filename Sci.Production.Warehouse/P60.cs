@@ -167,10 +167,12 @@ namespace Sci.Production.Warehouse
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.detailgrid.IsEditingReadOnly = true;
+                this.toolbar.cmdEdit.Enabled = false;
             }
             else
             {
                 this.detailgrid.IsEditingReadOnly = false;
+                this.toolbar.cmdEdit.Enabled = true;
             }
             #region Status Label
 
@@ -279,6 +281,7 @@ where	Junk != 1
             #endregion
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("sel", header: "Select", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0)
             .Text("localpoid", header: "Local PO", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ORDERid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("refno", header: "Refno", width: Widths.AnsiChars(12), iseditingreadonly: true)
@@ -701,7 +704,8 @@ where exists (
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select  a.Id
+select CAST(0 AS bit) as sel
+       , a.Id
        ,a.OrderId
        ,Rtrim(a.Refno) Refno
        ,a.ThreadColorID
@@ -880,6 +884,41 @@ where l.id = @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnLocation_Click(object sender, EventArgs e)
+        {
+            bool allFalse = true;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (allFalse == true && dr["sel"] != DBNull.Value && Convert.ToBoolean(dr["sel"]) == true)
+                {
+                    allFalse = false;
+                }
+            }
+
+            if (allFalse)
+            {
+                MyUtility.Msg.InfoBox("Please select the item first!!");
+                return;
+            }
+
+            Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["sel"] != DBNull.Value && Convert.ToBoolean(dr["sel"]) == true)
+                {
+                    dr["location"] = item.GetSelectedString();
+                }
+            }
         }
     }
 }
