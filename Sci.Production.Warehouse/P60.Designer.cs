@@ -277,7 +277,7 @@
             // btnImport
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(759, 148);
+            this.btnImport.Location = new System.Drawing.Point(635, 148);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(123, 30);
             this.btnImport.TabIndex = 7;
@@ -342,7 +342,7 @@
             // btnLocation
             // 
             this.btnLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnLocation.Location = new System.Drawing.Point(760, 146);
+            this.btnLocation.Location = new System.Drawing.Point(760, 148);
             this.btnLocation.Name = "btnLocation";
             this.btnLocation.Size = new System.Drawing.Size(123, 30);
             this.btnLocation.TabIndex = 67;
