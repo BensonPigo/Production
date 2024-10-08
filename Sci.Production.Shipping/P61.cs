@@ -892,7 +892,11 @@ declare @BLNo varchar(30) = '{blNo}'
 	and fe.Blno = @BLNo
 	group by fe.Consignee,f2.SCIRefno,fed.UnitId,fe.ID
 ) 
-select *,rn = row_number()over(order by ExportID)
+select 
+[Selected] = 0 
+,vk_Refno = (select top 1 vk.Refno from View_KHImportItem vk with(nolock) where vk.SCIRefno = a.RefNo order by vk.Refno)
+, *
+,rn = row_number()over(order by ExportID)
 from (
 select distinct [ExportID] = e.ID
              , [BlNo] = e.Blno
@@ -1414,22 +1418,6 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     return;
                 }
-
-                DualResult result = DBProxy.Current.Select(null, this.GetDetailData(), out DataTable dt);
-                if (!result)
-                {
-                    this.ShowErr(result);
-                    return;
-                }
-
-                if (dt.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("No data found!");
-                    return;
-                }
-
-                dt.AsEnumerable().ToList().ForEach(row => ((DataTable)this.detailgridbs.DataSource).ImportRowAdded(row));
-                this.RateDt = this.GetRatebyCustomsTypeDescription();
             }
         }
 
@@ -1607,6 +1595,51 @@ where id = '{this.CurrentMaintain["ID"]}'
                     (MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlCDCAmount"]) == 0 ? 0 : s.CDCAmount / MyUtility.Convert.GetDecimal(sumDt.Select(string.Format(filter, s.CustomsType, s.CDCName))[0]["OriTtlCDCAmount"])),
                 }).ToList();
             return PublicPrg.ListToDataTable.ToDataTable(ratelist);
+        }
+
+        private void BtnImport_Click(object sender, System.EventArgs e)
+        {
+            if (MyUtility.Check.Empty(this.txtBLNo.Text))
+            {
+                MyUtility.Msg.WarningBox("Please fill in <BLNo> first!");
+                return;
+            }
+
+            DualResult result = DBProxy.Current.Select(null, this.GetDetailData(), out DataTable dt_Detail);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            DataTable detail = (DataTable)this.detailgridbs.DataSource;
+            DataTable dt = new DataTable();
+
+            // 取得要排除的 KHCustomsItemUkey 列表
+            List<string> p61Ids = detail.AsEnumerable().Select(row => row["KHCustomsItemUkey"].ToString()).ToList();
+
+            // 使用 LINQ 排除這些 KHCustomsItemUkey
+            var filteredRows = dt_Detail.AsEnumerable().Where(row => !p61Ids.Contains(row["KHCustomsItemUkey"].ToString()));
+
+            if (filteredRows.Any())
+            {
+                dt = filteredRows.CopyToDataTable();
+            }
+            else
+            {
+                dt = dt_Detail.Clone();
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("All RefNo of this BL：<BLNo> have already been created!");
+                return;
+            }
+
+            var frm = new P61_Import(dt_Detail, (DataTable)this.detailgridbs.DataSource);
+            frm.ShowDialog(this);
+            this.RenewData();
+            this.RateDt = this.GetRatebyCustomsTypeDescription();
         }
     }
 }
