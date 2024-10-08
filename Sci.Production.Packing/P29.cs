@@ -62,6 +62,7 @@ namespace Sci.Production.Packing
             #region GridDetail Setting
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Description", header: "Error Description", iseditingreadonly: true)
+                .Text("LocalDescription", header: "Local Description", iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
                 ;
             #endregion
@@ -229,7 +230,7 @@ select  [PackingAuditDate]
 from #tmp t
 order by PackingListID, CTN,PackingAuditDate
 
-select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
+select cd.ID,cd.PackingReasonID,pr.Description,pr.LocalDescription,cd.Qty 
 from CTNPackingAudit_Detail cd
 inner join #tmp t on t.ID = cd.ID
 left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
