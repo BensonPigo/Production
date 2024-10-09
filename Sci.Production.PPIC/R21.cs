@@ -76,6 +76,8 @@ namespace Sci.Production.PPIC
                 MDivisionID = this.txtMdivision.Text,
                 FactoryID = this.txtfactory.Text,
                 ExcludeSisterTransferOut = this.chkExcludeSisterTransferOut.Checked,
+                IncludeCancelOrder = this.cbIncludeCencelOrder.Checked,
+                IsBI = false,
             };
 
             return true;

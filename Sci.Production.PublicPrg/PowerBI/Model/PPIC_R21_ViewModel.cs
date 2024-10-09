@@ -30,5 +30,11 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public bool ExcludeSisterTransferOut { get; set; }
+
+        /// <inheritdoc/>
+        public bool IncludeCancelOrder { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsBI { get; set; }
     }
 }
