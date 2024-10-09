@@ -16,13 +16,20 @@ namespace Sci.Production.Shipping
         private DataTable dt_p61_detail;
 
         /// <inheritdoc/>
-        public P61_Import(DataTable detail, DataTable p61_detail)
+        public P61_Import(DataTable detail, DataTable deleteDT, DataTable p61_detail)
         {
             this.InitializeComponent();
             this.dt_p61_detail = p61_detail;
 
+            if (deleteDT != null)
+            {
+                detail.Merge(deleteDT);
+            }
+
             // 取得要排除的 KHCustomsItemUkey 列表
-            List<string> p61Ids = p61_detail.AsEnumerable().Select(row => row["KHCustomsItemUkey"].ToString()).ToList();
+            List<string> p61Ids = p61_detail.AsEnumerable()
+                .Where(row => row.RowState != DataRowState.Deleted)
+                .Select(row => row["KHCustomsItemUkey"].ToString()).ToList();
 
             // 使用 LINQ 排除這些 KHCustomsItemUkey
             var filteredRows = detail.AsEnumerable().Where(row => !p61Ids.Contains(row["KHCustomsItemUkey"].ToString()));
@@ -35,6 +42,8 @@ namespace Sci.Production.Shipping
             {
                 this.dt_detail = detail;
             }
+
+            this.btnImport.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -87,10 +96,12 @@ namespace Sci.Production.Shipping
                 filteredTable.AsEnumerable().ToList().ForEach(row => row["Selected"] = 1);
 
                 this.listControlBindingSource1.DataSource = filteredTable;
+                this.btnImport.Enabled = true;
             }
             else
             {
                 this.listControlBindingSource1.DataSource = null;
+                this.btnImport.Enabled = false;
             }
         }
 
@@ -120,7 +131,9 @@ namespace Sci.Production.Shipping
             {
                 DataRow[] findrow = this.dt_p61_detail.AsEnumerable()
                     .Where(row => row.RowState != DataRowState.Deleted
-                    && row["KHCustomsItemUkey"].EqualString(tmp["KHCustomsItemUkey"].ToString())).ToArray();
+                    && row["KHCustomsItemUkey"].EqualString(tmp["KHCustomsItemUkey"].ToString())
+                    && row["ExportID"].EqualString(tmp["ExportID"].ToString())
+                    ).ToArray();
                 if (findrow.Length == 0)
                 {
                      this.dt_p61_detail.ImportRowAdded(tmp);

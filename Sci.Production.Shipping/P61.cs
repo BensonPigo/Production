@@ -33,6 +33,7 @@ namespace Sci.Production.Shipping
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_ActAmount;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ActHSCode;
         private DataTable RateDt;
+        private DataTable DeleteDT;
 
         /// <inheritdoc/>
         public static DataTable KHImportDeclaration_ShareCDCExpense { get; set; }
@@ -899,7 +900,7 @@ select
 ,rn = row_number()over(order by ExportID)
 from (
 select distinct [ExportID] = e.ID
-             , [BlNo] = e.Blno
+             , [BLNo] = e.Blno
              , [Consignee] = e.Consignee 
              , [FactoryID] = e.FactoryID
              , [ETA] = e.Eta
@@ -911,7 +912,7 @@ select distinct [ExportID] = e.ID
              , [RefNo] = kc.Refno
              , [Description] = kc.Description 
              , [QTY] = s.Qty
-             , [UnitID] = s.UnitId 
+             , [UnitId] = s.UnitId 
              , [NetKg] = s.NW 
              , [WeightKg] = s.GW
              , [CustomsType] = kd.CustomsType  
@@ -939,7 +940,7 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
 union all
 
 select distinct [ExportID] = e.ID
-             , [BlNo] = e.Blno
+             , [BLNo] = e.Blno
              , [Consignee] = e.Consignee 
              , [FactoryID] = e.FactoryID
              , [ETA] = e.Eta
@@ -951,7 +952,7 @@ select distinct [ExportID] = e.ID
              , [RefNo] = kc.Refno
              , [Description] = kc.Description 
              , [QTY] = s.Qty
-             , [UnitID] = s.UnitId 
+             , [UnitId] = s.UnitId 
              , [NetKg] = s.NW 
              , [WeightKg] = s.GW
              , [CustomsType] = kd.CustomsType  
@@ -979,7 +980,7 @@ left  join KHCustomsDescription_Detail kdd on kd.CDCName=kdd.CDCName and kdd.Pur
 union all
 
 select [ExportID] = FE.ID  
-             , [BlNo] = fe.Blno
+             , [BLNo] = fe.Blno
              , [Consignee] = FE.Consignee  
              , [FactoryID] = ''  
              , [ETA] = null  
@@ -991,7 +992,7 @@ select [ExportID] = FE.ID
              , [RefNo] = kc.Refno  
              , [Description] = kc.Description  
              , [QTY] = s.Qty  
-             , [UnitID] = s.UnitID   
+             , [UnitId] = s.UnitID   
              , [NetKg] = s.NW  
              , [WeightKg] = s.GW  
              , [CustomsType] = kd.CustomsType  
@@ -1249,12 +1250,21 @@ where id = '{this.CurrentMaintain["ID"]}'
         {
             this.CurrentMaintain["Status"] = "New";
             this.InitReadOnly(false);
+            if (this.DeleteDT != null)
+            {
+                this.DeleteDT.Clear();
+            }
             base.ClickNewAfter();
         }
 
         /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
+            if (this.DeleteDT != null)
+            {
+                this.DeleteDT.Clear();
+            }
+
             return base.ClickEditBefore();
         }
 
@@ -1597,6 +1607,40 @@ where id = '{this.CurrentMaintain["ID"]}'
             return PublicPrg.ListToDataTable.ToDataTable(ratelist);
         }
 
+        /// <summary>
+        /// 表身Grid的Delete
+        /// </summary>
+        protected override void OnDetailGridDelete()
+        {
+            // 複製原始資料表的副本
+            DataTable originalDetail = ((DataTable)this.detailgridbs.DataSource).Copy();
+
+            // 進行刪除操作
+            base.OnDetailGridDelete();
+
+            // 獲取刪除後的資料表
+            DataTable updatedDetail = (DataTable)this.detailgridbs.DataSource;
+
+            // 創建一個新的 DataTable 來存放被刪除的資料
+            this.DeleteDT = originalDetail.Clone(); // 保持相同的結構
+
+            // 遍歷原始資料表中的資料列，找出被刪除的資料列
+            foreach (DataRow row in updatedDetail.Rows)
+            {
+                if (row.RowState == DataRowState.Deleted)
+                {
+                    // 使用 Original 狀態來獲取刪除前的值
+                    DataRow newRow = this.DeleteDT.NewRow();
+                    foreach (DataColumn column in updatedDetail.Columns)
+                    {
+                        newRow[column.ColumnName] = row[column, DataRowVersion.Original];
+                    }
+
+                    this.DeleteDT.Rows.Add(newRow);
+                }
+            }
+        }
+
         private void BtnImport_Click(object sender, System.EventArgs e)
         {
             if (MyUtility.Check.Empty(this.txtBLNo.Text))
@@ -1616,7 +1660,9 @@ where id = '{this.CurrentMaintain["ID"]}'
             DataTable dt = new DataTable();
 
             // 取得要排除的 KHCustomsItemUkey 列表
-            List<string> p61Ids = detail.AsEnumerable().Select(row => row["KHCustomsItemUkey"].ToString()).ToList();
+            List<string> p61Ids = detail.AsEnumerable()
+                .Where(row => row.RowState != DataRowState.Deleted)
+                .Select(row => row["KHCustomsItemUkey"].ToString()).ToList();
 
             // 使用 LINQ 排除這些 KHCustomsItemUkey
             var filteredRows = dt_Detail.AsEnumerable().Where(row => !p61Ids.Contains(row["KHCustomsItemUkey"].ToString()));
@@ -1630,13 +1676,18 @@ where id = '{this.CurrentMaintain["ID"]}'
                 dt = dt_Detail.Clone();
             }
 
+            if (this.DeleteDT != null)
+            {
+                dt.Merge(this.DeleteDT);
+            }
+
             if (dt.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox("All RefNo of this BL：<BLNo> have already been created!");
                 return;
             }
 
-            var frm = new P61_Import(dt_Detail, (DataTable)this.detailgridbs.DataSource);
+            var frm = new P61_Import(dt_Detail, this.DeleteDT, (DataTable)this.detailgridbs.DataSource);
             frm.ShowDialog(this);
             this.RenewData();
             this.RateDt = this.GetRatebyCustomsTypeDescription();
