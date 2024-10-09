@@ -7,6 +7,7 @@ using Ict;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Data;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Packing
 {
@@ -310,7 +311,7 @@ drop table #mesPass1
             Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
 
             // 移除最後一欄ID
-            objSheets.Columns["W"].Delete();
+            objSheets.Columns["X"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;

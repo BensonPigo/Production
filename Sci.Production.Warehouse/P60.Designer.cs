@@ -46,6 +46,7 @@
             this.txtInvoice = new Sci.Win.UI.TextBox();
             this.txtTotal = new Sci.Win.UI.DisplayBox();
             this.lblTotal = new Sci.Win.UI.Label();
+            this.btnLocation = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -62,6 +63,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnLocation);
             this.masterpanel.Controls.Add(this.txtTotal);
             this.masterpanel.Controls.Add(this.lblTotal);
             this.masterpanel.Controls.Add(this.txtInvoice);
@@ -100,6 +102,7 @@
             this.masterpanel.Controls.SetChildIndex(this.txtInvoice, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblTotal, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtTotal, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnLocation, 0);
             // 
             // detailpanel
             // 
@@ -274,7 +277,7 @@
             // btnImport
             // 
             this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImport.Location = new System.Drawing.Point(759, 148);
+            this.btnImport.Location = new System.Drawing.Point(635, 148);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(123, 30);
             this.btnImport.TabIndex = 7;
@@ -335,6 +338,17 @@
             this.lblTotal.Size = new System.Drawing.Size(108, 23);
             this.lblTotal.TabIndex = 66;
             this.lblTotal.Text = "Total Qty";
+            // 
+            // btnLocation
+            // 
+            this.btnLocation.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnLocation.Location = new System.Drawing.Point(760, 148);
+            this.btnLocation.Name = "btnLocation";
+            this.btnLocation.Size = new System.Drawing.Size(123, 30);
+            this.btnLocation.TabIndex = 67;
+            this.btnLocation.Text = "Batch Location";
+            this.btnLocation.UseVisualStyleBackColor = true;
+            this.btnLocation.Click += new System.EventHandler(this.BtnLocation_Click);
             // 
             // P60
             // 
@@ -397,5 +411,6 @@
         private Class.TxtsubconNoConfirm txtsubconLocalSupplier;
         private Win.UI.DisplayBox txtTotal;
         private Win.UI.Label lblTotal;
+        private Win.UI.Button btnLocation;
     }
 }
