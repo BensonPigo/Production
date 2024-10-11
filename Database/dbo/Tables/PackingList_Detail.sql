@@ -94,6 +94,7 @@
     [ClogScanDate] DATETIME NULL, 
     [ClogScanName] VARCHAR(10) NOT NULL, 
     [ClogPulloutIsFrom] INT NOT NULL DEFAULT ((0)), 
+    [ClogActCTNWeight] NUMERIC(7,3) NOT NULL CONSTRAINT [DF_PackingList_Detail_ClogActCTNWeight] DEFAULT ((0))
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
