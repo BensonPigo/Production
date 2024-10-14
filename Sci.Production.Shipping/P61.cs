@@ -1683,7 +1683,7 @@ where id = '{this.CurrentMaintain["ID"]}'
 
             if (dt.Rows.Count == 0)
             {
-                MyUtility.Msg.WarningBox("All RefNo of this BL：<BLNo> have already been created!");
+                MyUtility.Msg.WarningBox($@"All RefNo of this BL：<{this.txtBLNo.Text}> have already been created!");
                 return;
             }
 
