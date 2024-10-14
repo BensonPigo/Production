@@ -145,6 +145,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
     ,[Desc] = isnull(pd.val,'')
+    ,[LocalDesc] = isnull(pd2.val,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -194,6 +195,19 @@ outer apply (
 ) PD
 outer apply (
 	SELECT val = Stuff((
+		select distinct concat('/',pr.LocalDescription )
+		from PackingList_Detail pd
+		left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+		left join PackingReason pr on cd.PackingReasonID = pr.ID
+		where pr.Type = 'PA'
+		and pd.id = c.PackingListID
+		and pd.CTNStartNo = c.CTNStartNo
+		and pd.Orderid = c.Orderid
+	FOR XML PATH(''))
+	,1,1,'')
+) PD2
+outer apply (
+	SELECT val = Stuff((
 		select distinct concat('/', SewingLineID) 
 		from SewingSchedule s WITH(NOLOCK)
 		where s.OrderID = c.OrderID
@@ -209,7 +223,8 @@ select  [PackingAuditDate]
 	,[CTN] 
 	,[Qty] 
 	,[Discrepancy]
-    ,[Desc] 
+    ,[Desc]
+    ,[LocalDesc]
 	,[SP] 
 	,[PO] 
 	,[Style] 
