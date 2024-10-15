@@ -2921,6 +2921,7 @@
     <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
     <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v2.sql" />
     <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v3.sql" />
+    <Build Include="dbo\Tables\FIR_Physical_QCTime.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
