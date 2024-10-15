@@ -61,6 +61,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MachineMasterListByDays,
             P_ScanPackList,
             P_MISCPurchaseOrderList,
+            P_DailyAccuCPULoading,
         }
 
         /// <summary>
@@ -477,6 +478,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MISCPurchaseOrderList:
                         result = new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_DailyAccuCPULoading:
+                        result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures
