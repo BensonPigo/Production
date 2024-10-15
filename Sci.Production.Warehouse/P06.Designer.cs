@@ -899,7 +899,6 @@
             this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.comboCompany1.FormattingEnabled = true;
-            this.comboCompany1.IsOrderCompany = true;
             this.comboCompany1.IsSupportUnselect = true;
             this.comboCompany1.Junk = false;
             this.comboCompany1.Location = new System.Drawing.Point(361, 11);
