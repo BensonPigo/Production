@@ -31,10 +31,10 @@ namespace Sci.Production.IE
         public P03_Operator(DataTable dataTable, string sewingLineID)
         {
             this.InitializeComponent();
-            this.dtDeful = dataTable;
+            this.dtDeful = dataTable.Copy();
             this.strSewingLineID = sewingLineID;
             bool isEmptySewingLine = MyUtility.Check.Empty(sewingLineID);
-            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{sewingLineID}')";
+            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}')";
             this.dt = dataTable.Select(strSewingWhere).TryCopyToDataTable(dataTable);
         }
 

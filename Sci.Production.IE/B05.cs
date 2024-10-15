@@ -14,12 +14,14 @@ using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
+    /// <inheritdoc/>
     public partial class B05 : Sci.Win.Tems.Input1
     {
+        /// <inheritdoc/>
         public B05(ToolStripMenuItem menuitem)
             : base(menuitem)
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
         /// <inheritdoc/>
@@ -27,7 +29,7 @@ namespace Sci.Production.IE
         {
             base.OnDetailEntered();
 
-            if (EditMode == true)
+            if (this.EditMode == true)
             {
                 this.gridDetail.IsEditingReadOnly = false;
             }
@@ -64,6 +66,7 @@ where ID = '{this.CurrentMaintain["ID"]}'
             }
         }
 
+        /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
@@ -76,6 +79,8 @@ where ID = '{this.CurrentMaintain["ID"]}'
              .CheckBox("IsNonSewingLine", header: "Non-Sewing Line", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
              .CheckBox("IsNotShownInP01", header: "Not shown in P01", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
              .CheckBox("IsNotShownInP03", header: "Not shown in P03", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
+             .CheckBox("IsNotShownInP05", header: "Not shown in P05", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
+             .CheckBox("IsNotShownInP06", header: "Not shown in P06", width: Widths.AnsiChars(17), iseditable: false, trueValue: true, falseValue: false)
             ;
         }
 

@@ -13,6 +13,8 @@ using System.Data.SqlClient;
 using System.Reflection;
 using Sci.Production.Prg;
 using Sci.Win.Tools;
+using Microsoft.SqlServer.Management.Smo.Agent;
+using System.Runtime.InteropServices;
 
 namespace Sci.Production.IE
 {
@@ -157,13 +159,16 @@ namespace Sci.Production.IE
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
-            this.DetailSelectCommand = string.Format(
-                @"
+            this.DetailSelectCommand =
+                $@"
 select *
     , [sortNO] = case when ld.IsHide = 1 then 1 
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
+    ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
+	,[EstTotalCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.TotalGSDNO / ld.OperatorEffi * 100)
+	,[EstOutputHr] = iif(ld.OperatorEffi = '0.00','0.00', 3600 / ld.TotalGSDNO / ld.OperatorEffi * 100)
 from (
     select  ld.OriNO
 	    , ld.No
@@ -202,29 +207,149 @@ from (
         , [ReasonName] = lbr.Name
         , [EmployeeJunk] = e.junk
         , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
+		, [OperatorEffi] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) ,'0.00')
+		, [TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
+		, [Motion] = Motion.val
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
     left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on ld.IEReasonLBRNotHit_DetailUkey = lbr.Ukey
     left join DropDownList d (NOLOCK) on d.ID=ld.PPA AND d.Type = 'PMS_IEPPA'
+	left JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
+	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
+	OUTER APPLY
+	(
+		SELECT TOP 1
+		val = OperatorIDss.OperationID
+		FROM
+		(
+			SELECT 
+			td.id
+			,td.Seq
+			,td.OperationID
+			from TimeStudy_Detail td WITH(NOLOCK)
+			where  td.OperationID LIKE '-%' and td.smv = 0
+		)
+		OperatorIDss 
+		WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LD.OperationID ORDER BY Seq DESC)
+		ORDER BY SEQ DESC
+	)Group_Header
+    OUTER APPLY
+	(
+		select val = stuff((select distinct concat(',',Name)
+		from OperationRef a
+		inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		where a.CodeType = '00007' and a.id = ld.OperationID  for xml path('') ),1,1,'')
+	)Motion
     outer apply (
 	    select IsShowinIEP03 = IIF(isnull(md.IsNotShownInP03 ,0) = 0, 1, 0)
 		    , IsDesignatedArea = ISNULL(md.IsNonSewingLine,0)
 	    from Operation o2 WITH (NOLOCK) 
 	    inner join MachineType m WITH (NOLOCK) on o2.MachineTypeID = m.ID
-        inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{1}'
+        inner join MachineType_Detail md WITH (NOLOCK) on md.ID = m.ID and md.FactoryID = '{factoryID}'
 	    where o.ID = o2.ID and m.junk = 0
     )show
-    where ld.ID = '{0}' 
+    outer APPLY
+	(
+		SELECT val = SUM(ld2.GSD) 
+        FROM LineMapping_Detail ld2 
+        WHERE ld2.No = ld.No
+	)TotlGSFD
+	OUTER APPLY
+    (
+	    SELECT
+	    [ST_MC_Type]
+	    ,[Motion]
+	    ,[Effi_90_day] =isnull(FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00'),'0')
+	    From
+	    (
+		    SELECT 
+		    [ST_MC_Type] =lmd.MachineTypeID
+		    ,[Motion] = Operation_P03.val
+		    ,Effi_90_day = FORMAT(CAST(iif(LM.ID is null or LMD.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+		    from Employee eo
+		    left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
+		    left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
+		    OUTER APPLY
+		    (
+			    select val = stuff((select distinct concat(',',Name)
+			    from OperationRef a
+			    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+			    where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+		    )Operation_P03
+		    WHERE 
+		    eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
+			lmd.MachineTypeID = ld.MachineTypeID and
+			Operation_P03.val = Motion.val AND
+		    ((lm.EditDate >= DATEADD(day, -90, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(day, -90, GETDATE()) and lm.AddDate <= GETDATE()))
+	    )a
+	    GROUP BY [ST_MC_Type],[Motion]
+    )Effi_90_day
+    OUTER APPLY
+    (
+        SELECT
+        [ST_MC_Type]
+        ,[Motion]
+        ,[Group_Header]
+        ,[Part]
+        ,[Attachment]
+        ,[Effi_3_year] =isnull(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'),'0.00')
+        From
+        (
+            SELECT 
+            [ST_MC_Type] =lmd.MachineTypeID
+            ,[Motion] = Operation_P03.val
+            ,[Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
+            ,[Part] = lmd.SewingMachineAttachmentID
+            ,[Attachment] = lmd.Attachment
+            ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
+            from Employee eo
+            left JOIN LineMapping_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
+            left JOIN LineMapping lm WITH(NOLOCK) on lm.id = lmd.ID
+            left JOIN TimeStudy_Detail tsd WITH(NOLOCK) on lmd.OperationID = tsd.OperationID
+            OUTER APPLY
+            (
+            select val = stuff((select distinct concat(',',Name)
+		            from OperationRef a
+		            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+		            where a.CodeType = '00007' and a.id = lmd.OperationID  for xml path('') ),1,1,'')
+            )Operation_P03
+			OUTER APPLY
+	        (
+		        SELECT TOP 1
+		        OperatorIDss.OperationID
+		        FROM
+		        (
+			        SELECT 
+			        td.id
+			        ,td.Seq
+			        ,td.OperationID
+			        from TimeStudy_Detail td WITH(NOLOCK)
+			        where  td.OperationID LIKE '-%' and td.smv = 0
+		        )
+		        OperatorIDss 
+		        WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+		        ORDER BY SEQ DESC
+	        )OP
+	        WHERE 
+	        eo.FactoryID = e.FactoryID and eo.ID = ld.EmployeeID AND
+		    lmd.MachineTypeID = ld.MachineTypeID and
+		    Operation_P03.val = Motion.val AND
+		    ISNULL(lmd.Attachment,'') = ISNULL(ld.Attachment,'') AND
+		    lmd.SewingMachineAttachmentID = ld.SewingMachineAttachmentID AND
+			ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') =  ISNULL(REPLACE(Group_Header.val, '--', ''),'') AND
+		    ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
+        )a
+        GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
+    )Effi
+    where ld.ID = '{masterID}' 
 )ld
 where ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1)
 order by case when ld.No = '' then 1
 	    when left(ld.No, 1) = 'P' then 2
-	    else 3
+	    else 3 
 	    end, 
-        ld.GroupKey",
-                masterID,
-                factoryID);
+        ld.GroupKey";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -288,7 +413,41 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             this.btnNotHitTargetReason.Enabled = !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonID"]) || !MyUtility.Check.Empty(this.CurrentMaintain["IEReasonLBRnotHit_1stUkey"]);
             this.listControlBindingSource1.DataSource = this.distdt;
 
+            var sumData = this.DetailDatas.AsEnumerable().Where(r => r["EstCycleTime"] != DBNull.Value && r["EstCycleTime"] != null).Sum(r => Convert.ToDecimal(r["EstCycleTime"]));
+            var maxData = this.DetailDatas.AsEnumerable()
+            .Where(r => r["EstCycleTime"] != DBNull.Value && r["EstCycleTime"] != null)
+            .Select(r => Convert.ToDecimal(r["EstCycleTime"]))
+            .DefaultIfEmpty()
+            .Max();
+
+            decimal? numEstLBRValue = 0;
+            if (maxData != 0 && this.numlOprtsCurrent.Value != 0)
+            {
+                numEstLBRValue = sumData / maxData / this.numlOprtsCurrent.Value * 100;
+            }
+
+            this.numEstLBR.Value = numEstLBRValue;
+
             this.Distable();
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
+            {
+
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
+
         }
 
         /// <summary>
@@ -419,13 +578,24 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 {
                     if (e.Button == MouseButtons.Right)
                     {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            MyUtility.Msg.WarningBox("Please fill in [Factory] first!");
+                            return;
+                        }
+
                         if (e.RowIndex != -1)
                         {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                             this.GetEmployee(null);
-                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text );
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             if (result == DialogResult.Cancel)
+                            {
+                                return;
+                            }
+
+                            if (callNextForm.SelectOperator == null)
                             {
                                 return;
                             }
@@ -436,6 +606,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             if (errorDataRow.Length > 0)
                             {
                                 MyUtility.Msg.WarningBox($"<{callNextForm.SelectOperator["ID"]} {callNextForm.SelectOperator["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                dr["EmployeeName"] = string.Empty;
                                 return;
                             }
 
@@ -455,6 +626,23 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     row.EndEdit();
                                 }
                             }
+
+                            DataTable dt1 = (DataTable)this.listControlBindingSource1.DataSource;
+                            dt1.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable1 = dt1.DefaultView.ToTable();
+                            DataRow[] listDataRows1 = sortDataTable1.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows1.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows1)
+                                {
+                                    int dataIndex = sortDataTable1.Rows.IndexOf(dataRow);
+                                    DataRow row = this.grid1.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -463,7 +651,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -473,6 +661,12 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                     if (e.FormattedValue.ToString() != dr["EmployeeID"].ToString())
                     {
                         this.GetEmployee(iD: e.FormattedValue.ToString());
+
+                        if (this.EmployeeData == null)
+                        {
+                            return;
+                        }
+
                         if (this.EmployeeData.Rows.Count <= 0)
                         {
                             this.ReviseEmployeeToEmpty(dr);
@@ -487,6 +681,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                             if (errorDataRow.Length > 0)
                             {
                                 MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
+                                dr["EmployeeName"] = string.Empty;
                                 return;
                             }
 
@@ -506,6 +701,23 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     row.EndEdit();
                                 }
                             }
+
+                            DataTable dt1 = (DataTable)this.listControlBindingSource1.DataSource;
+                            dt1.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable1 = dt1.DefaultView.ToTable();
+                            DataRow[] listDataRows1 = sortDataTable1.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows1.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows1)
+                                {
+                                    int dataIndex = sortDataTable1.Rows.IndexOf(dataRow);
+                                    DataRow row = this.grid1.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
                         }
                     }
                 }
@@ -517,19 +729,29 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 {
                     if (e.Button == MouseButtons.Right)
                     {
+                        if (MyUtility.Check.Empty(this.txtFactory.Text))
+                        {
+                            MyUtility.Msg.WarningBox("Please fill in [Factory] first!");
+                            return;
+                        }
+
                         if (e.RowIndex != -1)
                         {
-                            DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
 
                             this.GetEmployee(null);
 
-                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]) + this.comboSewingTeam1.Text);
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             if (result == DialogResult.Cancel)
                             {
                                 return;
                             }
 
+                            if (callNextForm.SelectOperator == null)
+                            {
+                                return;
+                            }
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
                             DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(callNextForm.SelectOperator["ID"])}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
@@ -555,6 +777,24 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     row.EndEdit();
                                 }
                             }
+
+                            DataTable dt1 = (DataTable)this.listControlBindingSource1.DataSource;
+                            dt1.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable1 = dt1.DefaultView.ToTable();
+                            DataRow[] listDataRows1 = sortDataTable1.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows1.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows1)
+                                {
+                                    int dataIndex = sortDataTable1.Rows.IndexOf(dataRow);
+                                    DataRow row = this.grid1.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = callNextForm.SelectOperator["ID"];
+                                    row["EmployeeName"] = callNextForm.SelectOperator["Name"];
+                                    row["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
+
                         }
                     }
                 }
@@ -563,7 +803,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             {
                 if (this.EditMode)
                 {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                     if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         this.ReviseEmployeeToEmpty(dr);
@@ -607,6 +847,23 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
+                                    row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
+                                    row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
+                                    row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
+                                    row.EndEdit();
+                                }
+                            }
+
+                            DataTable dt1 = (DataTable)this.listControlBindingSource1.DataSource;
+                            dt1.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+                            DataTable sortDataTable1 = dt1.DefaultView.ToTable();
+                            DataRow[] listDataRows1 = sortDataTable1.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+                            if (listDataRows1.Length > 0)
+                            {
+                                foreach (DataRow dataRow in listDataRows1)
+                                {
+                                    int dataIndex = sortDataTable1.Rows.IndexOf(dataRow);
+                                    DataRow row = this.grid1.GetDataRow<DataRow>(dataIndex);
                                     row["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
                                     row["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
                                     row["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
@@ -789,33 +1046,29 @@ and Name = @PPA
             .Text("OriNo", header: "OriNo.", width: Widths.AnsiChars(4), iseditingreadonly: true)
             .Text("No", header: "No.", width: Widths.AnsiChars(4), settings: no)
             //.CheckBox("IsPPA", header: "PPA", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: ppa)
-            .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppaText)
+            .Text("PPAText", header: "PPA", width: Widths.AnsiChars(5), settings: ppaText)
             .CheckBox("IsHide", header: "Hide", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: hide)
-            .CheckBox("MachineCount", header: "Machine Count", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
-            .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
-            .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(10), settings: txtSubReason)
-            .EditText("Description", header: "Operation", width: Widths.AnsiChars(30), iseditingreadonly: true)
+            .CheckBox("MachineCount", header: "Machine\r\nCount", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
+            .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
+            .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
+            .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
-            .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-            .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
+            .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("Cycle", header: "Cycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
             .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
-            .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
+            .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
             .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
             .Text("ThreadColor", header: "ThreadColor", width: Widths.AnsiChars(1), settings: threadColor)
-            .Text("Notice", header: "Notice", width: Widths.AnsiChars(60), settings: notice)
-            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
-            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
-            .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true);
+            .Text("Notice", header: "Notice", width: Widths.AnsiChars(14), settings: notice)
+            .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
+            .Numeric("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
+            ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["EmployeeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["EmployeeName"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["EmployeeSkill"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
             {
                 if (e.RowIndex < 0)
@@ -909,7 +1162,13 @@ and Name = @PPA
             .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Text("ReasonName", header: "LBR not\r\nhit target\r\nreason.", width: Widths.AnsiChars(10), iseditable: true, iseditingreadonly: true, settings: reasonName)
+            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true,decimal_places: 0)
+            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
+            .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .Numeric("EstTotalCycleTime", header: "Est. Total\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places : 2)
             ;
+            this.grid1.Columns["No"].Frozen = true;
         }
 
         // 撈出Employee資料
@@ -922,57 +1181,6 @@ and Name = @PPA
                 string[] nameParts = name.Split(',');
                 lastName = nameParts[0];
                 firstName = nameParts[1];
-            }
-
-            string strDept = string.Empty;
-            string strPosition = string.Empty;
-            string strWhere = string.Empty;
-            switch (Env.User.Factory)
-            {
-                case "MAI":
-                case "MA2":
-                case "MA3":
-                case "MW2":
-                case "FIT":
-                case "MWI":
-                case "FAC":
-                case "FA2":
-                case "PSR":
-                case "VT1":
-                case "VT2":
-                case "GMM":
-                case "GM2":
-                case "GMI":
-                case "PS2":
-                case "ALA":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PCK','PRS','SEW','FSPR','LOP','STL','LL','SLS','SSLT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "ESP":
-                case "ES2":
-                case "ES3":
-                case "VSP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SPT":
-                    strDept = $"'PRO'";
-                    strPosition = $"'PAC','PRS','SEW','LL','SUP','PE','PIT','TL'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SNP":
-                    strDept = $"'PRO'";
-                    strPosition = $"'SEW','LL','PIT'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
-                case "SPS":
-                case "SPR":
-                    strDept = $"'SEW'";
-                    strPosition = $"'SWR','TRNEE','Lneldr','LINSUP','PRSSR','PCKR'";
-                    strWhere = $@" and Dept in({strDept})  and Position in({strPosition})";
-                    break;
             }
 
             string sqlCmd;
@@ -1002,20 +1210,25 @@ and Name = @PPA
                 new SqlParameter("@FirstName", firstName),
             };
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
-            {
-                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'') from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 {strWhere} "//+ (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
-                + (iD == null ? string.Empty : " and ID = @id ")
+                sqlCmd = $@"
+                select 
+                e.ID
+                ,FirstName
+                ,LastName
+                ,Section
+                ,Skill
+                ,SewingLineID 
+                , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  
+                ,e.FactoryID
+                , eas.P03
+                from Employee e WITH (NOLOCK) 
+                left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                where 
+                (ResignationDate is null or ResignationDate > GETDATE()) 
+                and e.Junk = 0 and eas.P03 = 1 "
+                + (iD == null ? string.Empty : " and e.ID = @id ")
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
-            }
-            else
-            {
-                sqlCmd = $@"select ID,FirstName,LastName,Section,Skill,SewingLineID , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  from Employee WITH (NOLOCK) where (ResignationDate > GETDATE() or ResignationDate is null) and Junk = 0 and FactoryID = @factoryid {strWhere} " 
-                + (iD == null ? string.Empty : " and ID = @id ")
-                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
-                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName"); // + (IsEmptySewingLine ? string.Empty : " and (SewingLineID = @SewingLine or Section = @SewingLine)");
-            }
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
             if (!result)
@@ -1046,6 +1259,26 @@ and Name = @PPA
                     row.EndEdit();
                 }
             }
+
+            DataTable dt1 = (DataTable)this.listControlBindingSource1.DataSource;
+
+            dt1.DefaultView.Sort = this.selectDataTable_DefaultView_Sort == "ASC" ? "No ASC" : string.Empty;
+            DataTable sortDataTable1 = dt1.DefaultView.ToTable();
+
+            DataRow[] listDataRows1 = sortDataTable1.Select($"No = '{MyUtility.Convert.GetString(dr["No"])}'");
+            if (listDataRows1.Length > 0)
+            {
+                foreach (DataRow dataRow in listDataRows1)
+                {
+                    int dataIndex = sortDataTable1.Rows.IndexOf(dataRow);
+                    DataRow row = this.grid1.GetDataRow<DataRow>(dataIndex);
+                    row["EmployeeID"] = string.Empty;
+                    row["EmployeeName"] = string.Empty;
+                    row["EmployeeSkill"] = string.Empty;
+                    row.EndEdit();
+                }
+            }
+
         }
 
         private DataTable GetLBRNotHitName()
@@ -1166,7 +1399,7 @@ and Name = @PPA
                 if (MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]))
                 {
                     MyUtility.Msg.WarningBox("Please enter <Sewing Line> since phase is Final.");
-                    this.txtsewingline.Focus();
+                    this.txtSewingLine.Focus();
                     return false;
                 }
 
@@ -1479,17 +1712,36 @@ WHERE Ukey={item["Ukey"]}
         // 計算DailyDemand,NetTime,TaktTime,LLER,Ideal Target / Hr. (100%), Ideal Daily demand/shift, Ideal Takt Time欄位值
         private void CalculateValue(int type)
         {
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["CurrentOperators"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["Workhour"]))
+            {
+
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
+
             if (type == 1)
             {
                 this.CurrentMaintain["DailyDemand"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["StandardOutput"]), 0);
                 this.CurrentMaintain["NetTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * 3600, 0);
-                this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
+                // this.CurrentMaintain["TaktTime"] = MyUtility.Check.Empty(this.CurrentMaintain["DailyDemand"]) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 0);
             }
 
             this.numLLER.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TaktTime"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"])) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalCycle"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TaktTime"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["CurrentOperators"]) * 100, 2);
             this.numTargetHrIdeal.Value = MyUtility.Check.Empty(this.CurrentMaintain["TotalGSD"]) ? 0 : MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["IdealOperators"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSD"]), 0);
             this.numDailydemandshiftIdeal.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["Workhour"]) * MyUtility.Convert.GetDecimal(this.numTargetHrIdeal.Value), 0);
-            this.numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value), 0);
+            // this.numTaktTimeIdeal.Value = MyUtility.Check.Empty(MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value)) ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["NetTime"]) / MyUtility.Convert.GetDecimal(this.numDailydemandshiftIdeal.Value), 0);
         }
 
         // Compute Takt Time
@@ -1833,6 +2085,10 @@ select ID = null
                           then 2
                           when left(ld.No, 1) = 'P' then 3
                           else 4 end
+       ,[EstCycleTime] = ld.EstCycleTime
+       ,[EstTotalCycleTime] = ld.EstTotalCycleTime
+       ,[EstOutputHr] = ld.EstOutputHr
+       ,[EstLBR] = ld.EstLBR
 from LineMapping_Detail ld WITH (NOLOCK)
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
 left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -1993,6 +2249,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
+    ,[EstCycleTime] = ''
+    ,[EstTotalCycleTime] = ''
+    ,[EstOutputHr] = ''
+    ,[EstLBR] = ''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting' and op.ID='PROCIPF00001'
@@ -2043,6 +2303,10 @@ select ID = null
        ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
 	   ,td.PPA
        ,PPAText = ISNULL(d.Name,'')
+       ,[EstCycleTime] = ''
+       ,[EstTotalCycleTime] = ''
+       ,[EstOutputHr] = ''
+       ,[EstLBR] = ''
 from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
@@ -2086,6 +2350,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
+    ,[EstCycleTime] = ''
+    ,[EstTotalCycleTime] = ''
+    ,[EstOutputHr] = ''
+    ,[EstLBR] = ''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection' and op.ID='PROCIPF00002'
@@ -2121,6 +2389,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
+    ,[EstCycleTime] = ''
+    ,[EstTotalCycleTime] = ''
+    ,[EstOutputHr] = ''
+    ,[EstLBR] = ''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing' and op.ID='PROCIPF00004'
@@ -2156,6 +2428,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
+    ,[EstCycleTime] = ''
+    ,[EstTotalCycleTime] = ''
+    ,[EstOutputHr] = ''
+    ,[EstLBR] = ''
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' and op.ID='PROCIPF00003'
@@ -2222,30 +2498,34 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             }
 
             List<GridList> gridLists = drs
-                .Select(x => new
-                {
-                    No = x.Field<string>("No"),
-                    ActCycle = x.Field<decimal?>("ActCycle"),
-                    TotalGSD = x.Field<decimal?>("TotalGSD"),
-                    TotalCycle = x.Field<decimal?>("TotalCycle"),
-                    ReasonName = x.Field<string>("ReasonName"),
-                    SortA = x.Field<string>("No").Substring(0, 1),
-                    SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
-                })
-                .Distinct()
-                .Select(x => new GridList()
-                {
-                    No = x.No,
-                    ActCycle = x.ActCycle,
-                    TotalGSD = x.TotalGSD,
-                    TotalCycle = x.TotalCycle,
-                    ReasonName = x.ReasonName,
-                    SortA = x.SortA,
-                    SortB = x.SortB,
-                })
-                .OrderByDescending(x => x.SortA)
-                .ThenBy(x => x.SortB)
-                .ToList();
+            .GroupBy(x => new
+            {
+                No = x.Field<string>("No"),
+                SortA = x.Field<string>("No").Substring(0, 1),
+                SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
+                ReasonName = x.Field<string>("ReasonName"),
+                EmployeeID = x.Field<string>("EmployeeID"),
+                EmployeeName = x.Field<string>("EmployeeName"),
+                EmployeeSkill = x.Field<string>("EmployeeSkill"),
+            })
+            .Select(g => new GridList()
+            {
+                No = g.Key.No,
+                ActCycle = g.Max(x => x.Field<decimal?>("ActCycle")), // 假設ActCycle相同項取最大值
+                TotalGSD = g.Max(x => x.Field<decimal?>("TotalGSD")), // 假設TotalGSD相同項取最大值
+                TotalCycle = g.Max(x => x.Field<decimal?>("TotalCycle")), // 假設TotalCycle相同項取最大值
+                ReasonName = g.Key.ReasonName,
+                SortA = g.Key.SortA,
+                SortB = g.Key.SortB,
+                EmployeeID = g.Key.EmployeeID,
+                EmployeeName = g.Key.EmployeeName,
+                EmployeeSkill = g.Key.EmployeeSkill,
+                EstTotalCycleTime = g.Sum(x => x.Field<decimal?>("EstTotalCycleTime")),
+                EstOutputHr = g.Sum(x => x.Field<decimal?>("EstOutputHr")),
+            })
+            .OrderByDescending(x => x.SortA)
+            .ThenBy(x => x.SortB)
+            .ToList();
 
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
@@ -2265,6 +2545,126 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                     this.detailgrid.Rows[i].Visible = false;
                     currencyManager.ResumeBinding();
                 }
+            }
+        }
+
+        private void Txtsewingline_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (MyUtility.Check.Empty(this.txtFactory.Text))
+                {
+                    MyUtility.Msg.WarningBox("Please fill in [Factory] first!");
+                }
+            }
+        }
+
+        private void TxtSewingLine_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string ftyWhere = string.Empty;
+            if (!this.txtFactory.Empty())
+            {
+                ftyWhere = $@"Where s.FactoryID in (select ID from Factory where FTYGroup = '{this.txtFactory.Text}') and s.Junk = 0";
+            }
+
+            string sql = $@"Select ID,FactoryID,Description From Production.dbo.SewingLine s WITH (NOLOCK)  {ftyWhere}";
+            Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSewingLine.Text = item.GetSelectedString();
+        }
+
+        private void BtnPrintDetail_Click(object sender, EventArgs e)
+        {
+            string excelName = "IE_P03";
+
+            DataTable dtSheet1 = (DataTable)this.detailgridbs.DataSource;
+
+            var selectShett1 = dtSheet1.AsEnumerable()
+                            .Where(row => row.Field<bool>("IsShow") == true)
+                            .Select(row => new
+                            {
+                                OriNo = row.Field<string>("OriNo"),
+                                No = row.Field<string>("No"),
+                                PPA = row.Field<string>("PPAText"),
+                                Hide = row.Field<bool>("IsHide") ? "Y" : "N",
+                                MachineCount = row.Field<bool>("MachineCount") ? "Y" : "N",
+                                MachineTypeID = row.Field<string>("MachineTypeID"),
+                                MasterPlusGroup = row.Field<string>("MasterPlusGroup"),
+                                Operation = row.Field<string>("Description"),
+                                Annotation = row.Field<string>("Annotation"),
+                                GSD = row.Field<decimal>("GSD"),
+                                Cycle = row.Field<decimal>("Cycle"),
+                                Attachment = row.Field<string>("Attachment"),
+                                SewingMachineAttachmentID = row.Field<string>("SewingMachineAttachmentID"),
+                                Template = row.Field<string>("Template"),
+                                ThreadColor = row.Field<string>("ThreadColor"),
+                                Notice = row.Field<string>("Notice"),
+                                Efficiency = row.Field<decimal>("Efficiency"),
+                                EstCycleTime = row.Field<decimal>("EstCycleTime"),
+                            }).ToList();
+
+            DataTable dtSheet2 = (DataTable)this.listControlBindingSource1.DataSource;
+
+            var selectShett2 = dtSheet2.AsEnumerable()
+                               .Select(
+                                row => new
+                                {
+                                    No = row.Field<string>("No"),
+                                    TotalCycle = row.Field<decimal>("TotalCycle"),
+                                    TotalGSD = row.Field<decimal>("TotalGSD"),
+                                    ReasonName = row.Field<string>("ReasonName"),
+                                    EstOutputHr = row.Field<decimal>("EstOutputHr"),
+                                    EmployeeID = row.Field<string>("EmployeeID"),
+                                    EmployeeName = row.Field<string>("EmployeeName"),
+                                    EmployeeSkill = row.Field<string>("EmployeeSkill"),
+                                    EstTotalCycleTime = row.Field<decimal>("EstTotalCycleTime"),
+                                }).ToList();
+
+            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
+            MyUtility.Excel.CopyToXls(selectShett1.ToDataTable(), string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(selectShett2.ToDataTable(), string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2]);
+
+            objApp.Sheets[1].Columns[1].ColumnWidth = 6;
+            objApp.Sheets[1].Columns[8].ColumnWidth = 20;
+            objApp.Sheets[1].Columns[9].ColumnWidth = 25;
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName("IE_P03");
+            Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            objApp.Quit();
+            Marshal.ReleaseComObject(objApp);          // 釋放objApp
+            Marshal.ReleaseComObject(workbook);
+
+            strExcelName.OpenFile();
+            #endregion
+        }
+
+        /// <inheritdoc/>
+        private void TxtFactory_Validated(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain.RowState == DataRowState.Added)
+            {
+                return;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID", DataRowVersion.Original]))
+            {
+                return;
+            }
+
+            if (MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID", DataRowVersion.Original]) != MyUtility.Convert.GetString(this.CurrentMaintain["FactoryID"]))
+            {
+                this.txtSewingLine.Text = string.Empty;
+                this.comboSewingTeam1.SelectedIndex = 0;
+                this.comboSewingTeam1.Text = string.Empty;
+                this.comboSewingTeam1.SelectedValue = string.Empty;
             }
         }
     }
@@ -2292,5 +2692,20 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 
         /// <inheritdoc/>
         public string SortB { get; set; }
+
+        /// <inheritdoc/>
+        public string EmployeeID { get; set; }
+
+        /// <inheritdoc/>
+        public string EmployeeName { get; set; }
+
+        /// <inheritdoc/>
+        public string EmployeeSkill { get; set; }
+
+        /// <inheritdoc/>
+        public decimal? EstTotalCycleTime { get; set; }
+
+        /// <inheritdoc/>
+        public decimal? EstOutputHr { get; set; }
     }
 }

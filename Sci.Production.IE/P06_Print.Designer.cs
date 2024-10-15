@@ -35,6 +35,8 @@
             this.comboDisplayBy = new Sci.Production.Class.ComboDropDownList(this.components);
             this.comboContentBy = new Sci.Production.Class.ComboDropDownList(this.components);
             this.comboLanguageBy = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.cbDirection = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.label4 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -128,11 +130,35 @@
             this.comboLanguageBy.TabIndex = 102;
             this.comboLanguageBy.Type = "Pms_Language";
             // 
+            // cbDirection
+            // 
+            this.cbDirection.AddAllItem = false;
+            this.cbDirection.BackColor = System.Drawing.Color.White;
+            this.cbDirection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbDirection.FormattingEnabled = true;
+            this.cbDirection.IsSupportUnselect = true;
+            this.cbDirection.Location = new System.Drawing.Point(106, 124);
+            this.cbDirection.Name = "cbDirection";
+            this.cbDirection.OldText = "";
+            this.cbDirection.Size = new System.Drawing.Size(163, 24);
+            this.cbDirection.TabIndex = 106;
+            this.cbDirection.Type = "Pms_Language";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 125);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(91, 23);
+            this.label4.TabIndex = 105;
+            this.label4.Text = "Direction";
+            // 
             // P06_Print
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(409, 178);
+            this.Controls.Add(this.cbDirection);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.comboLanguageBy);
             this.Controls.Add(this.comboContentBy);
             this.Controls.Add(this.comboDisplayBy);
@@ -154,6 +180,8 @@
             this.Controls.SetChildIndex(this.comboDisplayBy, 0);
             this.Controls.SetChildIndex(this.comboContentBy, 0);
             this.Controls.SetChildIndex(this.comboLanguageBy, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.cbDirection, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,5 +195,7 @@
         private Class.ComboDropDownList comboDisplayBy;
         private Class.ComboDropDownList comboContentBy;
         private Class.ComboDropDownList comboLanguageBy;
+        private Class.ComboDropDownList cbDirection;
+        private Win.UI.Label label4;
     }
 }

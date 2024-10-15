@@ -19,22 +19,26 @@ namespace Sci.Production.IE
     {
         private P06_PrintData printData;
         private string almID;
+        private DataTable rightDataTable;
 
         /// <summary>
         /// P06_Print
         /// </summary>
         /// <param name="almID">almID</param>
-        public P06_Print(string almID)
+        /// <param name="rightDataTable">rightDataTable</param>
+        public P06_Print(string almID, DataTable rightDataTable = null)
         {
             this.InitializeComponent();
             this.almID = almID;
+            this.rightDataTable = rightDataTable;
             this.printData = new P06_PrintData();
+            MyUtility.Tool.SetupCombox(this.cbDirection, 1, 1, "F,B");
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString());
+            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString(),this.cbDirection.SelectedValue.ToString(), rightDataTable: this.rightDataTable);
 
             return base.ValidateInput();
         }

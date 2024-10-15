@@ -198,6 +198,8 @@ AND ALM.StyleID = '{this.txtStyleCreate.Text}'
 AND ALM.SeasonID = '{this.txtSeasonCreate.Text}'
 AND ALM.BrandID = '{this.txtBrandCreate.Text}'
 AND ALM.ComboType = '{this.txtStyleLocationCreate.Text}'
+AND ALM.Phase = '{this.comboPhase.Text}'
+AND ALM.SewerManpower = '{this.numSewer.Value}'
 AND ALM.OriSewerManpower = '{this.numSewer.Text}'
 ");
             if (isAlreadyCreate)

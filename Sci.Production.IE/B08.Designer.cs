@@ -51,20 +51,31 @@
             this.txtSection = new Sci.Win.UI.TextBox();
             this.labelSection = new Sci.Win.UI.Label();
             this.chkJunk = new Sci.Win.UI.CheckBox();
+            this.chP03 = new Sci.Win.UI.CheckBox();
+            this.chP06 = new Sci.Win.UI.CheckBox();
+            this.btnOperationHistory = new Sci.Win.UI.Button();
+            this.panel4 = new Sci.Win.UI.Panel();
+            this.gridDetail = new Sci.Win.UI.Grid();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
             this.detailcont.SuspendLayout();
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
+            this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).BeginInit();
             this.SuspendLayout();
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(832, 395);
+            this.detail.Size = new System.Drawing.Size(832, 618);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.panel4);
+            this.detailcont.Controls.Add(this.btnOperationHistory);
+            this.detailcont.Controls.Add(this.chP06);
+            this.detailcont.Controls.Add(this.chP03);
             this.detailcont.Controls.Add(this.chkJunk);
             this.detailcont.Controls.Add(this.txtSection);
             this.detailcont.Controls.Add(this.labelSection);
@@ -88,19 +99,20 @@
             this.detailcont.Controls.Add(this.labelLastName);
             this.detailcont.Controls.Add(this.lblID);
             this.detailcont.Controls.Add(this.labelFactory);
-            this.detailcont.Size = new System.Drawing.Size(832, 357);
+            this.detailcont.Size = new System.Drawing.Size(832, 580);
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 580);
             this.detailbtm.Size = new System.Drawing.Size(832, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(832, 395);
+            this.browse.Size = new System.Drawing.Size(832, 618);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(840, 424);
+            this.tabs.Size = new System.Drawing.Size(840, 647);
             // 
             // createby
             // 
@@ -150,7 +162,7 @@
             // 
             // labelHiredOn
             // 
-            this.labelHiredOn.Location = new System.Drawing.Point(544, 46);
+            this.labelHiredOn.Location = new System.Drawing.Point(418, 46);
             this.labelHiredOn.Name = "labelHiredOn";
             this.labelHiredOn.Size = new System.Drawing.Size(75, 23);
             this.labelHiredOn.TabIndex = 4;
@@ -158,7 +170,7 @@
             // 
             // labelResigned
             // 
-            this.labelResigned.Location = new System.Drawing.Point(544, 95);
+            this.labelResigned.Location = new System.Drawing.Point(418, 95);
             this.labelResigned.Name = "labelResigned";
             this.labelResigned.Size = new System.Drawing.Size(75, 23);
             this.labelResigned.TabIndex = 5;
@@ -205,7 +217,7 @@
             // dateHiredOn
             // 
             this.dateHiredOn.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OnBoardDate", true));
-            this.dateHiredOn.Location = new System.Drawing.Point(623, 46);
+            this.dateHiredOn.Location = new System.Drawing.Point(497, 46);
             this.dateHiredOn.Name = "dateHiredOn";
             this.dateHiredOn.Size = new System.Drawing.Size(130, 23);
             this.dateHiredOn.TabIndex = 3;
@@ -213,7 +225,7 @@
             // dateResigned
             // 
             this.dateResigned.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ResignationDate", true));
-            this.dateResigned.Location = new System.Drawing.Point(623, 95);
+            this.dateResigned.Location = new System.Drawing.Point(497, 95);
             this.dateResigned.Name = "dateResigned";
             this.dateResigned.Size = new System.Drawing.Size(130, 23);
             this.dateResigned.TabIndex = 4;
@@ -335,7 +347,7 @@
             this.chkJunk.Enabled = false;
             this.chkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.chkJunk.IsSupportEditMode = false;
-            this.chkJunk.Location = new System.Drawing.Point(544, 16);
+            this.chkJunk.Location = new System.Drawing.Point(418, 16);
             this.chkJunk.Name = "chkJunk";
             this.chkJunk.ReadOnly = true;
             this.chkJunk.Size = new System.Drawing.Size(57, 21);
@@ -343,9 +355,84 @@
             this.chkJunk.Text = "Junk";
             this.chkJunk.UseVisualStyleBackColor = true;
             // 
+            // chP03
+            // 
+            this.chP03.AutoSize = true;
+            this.chP03.Enabled = false;
+            this.chP03.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chP03.IsSupportEditMode = false;
+            this.chP03.Location = new System.Drawing.Point(481, 18);
+            this.chP03.Name = "chP03";
+            this.chP03.ReadOnly = true;
+            this.chP03.Size = new System.Drawing.Size(68, 21);
+            this.chP03.TabIndex = 215;
+            this.chP03.Text = "IE P03";
+            this.chP03.UseVisualStyleBackColor = true;
+            // 
+            // chP06
+            // 
+            this.chP06.AutoSize = true;
+            this.chP06.Enabled = false;
+            this.chP06.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chP06.IsSupportEditMode = false;
+            this.chP06.Location = new System.Drawing.Point(555, 19);
+            this.chP06.Name = "chP06";
+            this.chP06.ReadOnly = true;
+            this.chP06.Size = new System.Drawing.Size(68, 21);
+            this.chP06.TabIndex = 216;
+            this.chP06.Text = "IE P06";
+            this.chP06.UseVisualStyleBackColor = true;
+            // 
+            // btnOperationHistory
+            // 
+            this.btnOperationHistory.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnOperationHistory.Location = new System.Drawing.Point(661, 42);
+            this.btnOperationHistory.Name = "btnOperationHistory";
+            this.btnOperationHistory.Size = new System.Drawing.Size(150, 30);
+            this.btnOperationHistory.TabIndex = 217;
+            this.btnOperationHistory.Text = "Operation History";
+            this.btnOperationHistory.UseVisualStyleBackColor = true;
+            this.btnOperationHistory.Click += new System.EventHandler(this.BtnOperationHistory_Click);
+            // 
+            // panel4
+            // 
+            this.panel4.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel4.Controls.Add(this.gridDetail);
+            this.panel4.Location = new System.Drawing.Point(0, 325);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(832, 255);
+            this.panel4.TabIndex = 218;
+            // 
+            // gridDetail
+            // 
+            this.gridDetail.AllowUserToAddRows = false;
+            this.gridDetail.AllowUserToDeleteRows = false;
+            this.gridDetail.AllowUserToResizeRows = false;
+            this.gridDetail.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDetail.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.gridDetail.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDetail.Location = new System.Drawing.Point(0, 0);
+            this.gridDetail.MultiSelect = false;
+            this.gridDetail.Name = "gridDetail";
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDetail.RowTemplate.Height = 24;
+            this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
+            this.gridDetail.Size = new System.Drawing.Size(832, 255);
+            this.gridDetail.TabIndex = 1;
+            this.gridDetail.TabStop = false;
+            // 
             // B08
             // 
-            this.ClientSize = new System.Drawing.Size(840, 457);
+            this.ClientSize = new System.Drawing.Size(840, 680);
             this.DefaultControl = "txtEmployee";
             this.DefaultControlForEdit = "txtNickName";
             this.DefaultOrder = "FactoryID,ID";
@@ -367,6 +454,8 @@
             this.detailbtm.ResumeLayout(false);
             this.detailbtm.PerformLayout();
             this.tabs.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridDetail)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -397,5 +486,10 @@
         private Win.UI.TextBox txtPosition;
         private Win.UI.Label labelPosition;
         private Win.UI.CheckBox chkJunk;
+        private Win.UI.CheckBox chP06;
+        private Win.UI.CheckBox chP03;
+        private Win.UI.Button btnOperationHistory;
+        private Win.UI.Panel panel4;
+        private Win.UI.Grid gridDetail;
     }
 }
