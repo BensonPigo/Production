@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.CallPmsAPI;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Runtime.CompilerServices;
-using Sci.Production.CallPmsAPI;
 using System.Linq;
-using Microsoft.Office.Interop.Excel;
+using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
 {
@@ -206,6 +203,23 @@ from GMTBooking WITH (NOLOCK) where ID = '{2}'",
                 }
 
                 this.detailgrid.EnsureStyle();
+            }
+
+            this.SetcomboCompany();
+        }
+
+        private void SetcomboCompany()
+        {
+            string sqlCmd = $@"
+SELECT OrderCompanyID
+FROM GMTBooking WITH(NOLOCK)
+WHERE ID = '{this.txtInvNo.Text}'
+";
+            string orderCompanyID = MyUtility.GetValue.Lookup(sqlCmd);
+            this.comboCompany1.SelectedIndex = -1;
+            if (orderCompanyID != string.Empty)
+            {
+                this.comboCompany1.SelectedValue = orderCompanyID;
             }
         }
 
@@ -550,6 +564,7 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
         {
             if (this.EditMode && this.txtInvNo.Text != this.txtInvNo.OldValue)
             {
+                this.SetcomboCompany();
                 foreach (DataRow dr in this.DetailDatas)
                 {
                     dr.Delete();
@@ -568,8 +583,8 @@ group by ed.CustomSP", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]));
                         }
                         else
                         {
-                        this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
-                        this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
+                            this.CurrentMaintain["InvNo"] = this.txtInvNo.Text;
+                            this.CurrentMaintain["DataFrom"] = "PACKINGLIST";
                         }
                     }
                     else

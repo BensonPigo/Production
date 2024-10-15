@@ -86,7 +86,8 @@ select  distinct gd.PLFromRgCode ,g.ID
 FROM   gmtbooking g WITH (nolock)
 inner  join  GMTBooking_Detail gd with (nolock) on g.ID = gd.ID
 where   g.shipplanid = '' and
-        g.socfmdate IS NOT NULL 
+        g.socfmdate IS NOT NULL
+        AND g.OrderCompanyID = {this.masterData["OrderCompanyID"]}
 ";
             sqlGetDataFromA2B = @"
 select  distinct    [id] = p.InvNo,
@@ -101,10 +102,11 @@ inner join  packinglist_detail pd WITH (nolock) on p.id = pd.id
 inner join  order_qtyship oq WITH (nolock) on pd.orderid = oq.id and pd.ordershipmodeseq = oq.seq
 inner join  orders o WITH (nolock) on o.ID = oq.Id
 WHERE   p.InvNo in ({0}) and
-        o.junk = 0 
-";
+        o.junk = 0         
+" + $"AND p.OrderCompanyID = {this.masterData["OrderCompanyID"]}"
+;
 
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 SELECT DISTINCT [Selected] = 1, 
                 g.id, 
                 g.brandid, 
@@ -139,6 +141,7 @@ inner join  orders o WITH (nolock) on o.ID = oq.Id
 WHERE  g.shipplanid = '' 
        AND g.socfmdate IS NOT NULL 
        AND o.junk = 0 
+       AND g.OrderCompanyID = {this.masterData["OrderCompanyID"]}
 ");
             if (!MyUtility.Check.Empty(this.txtGBNoStart.Text))
             {
@@ -293,6 +296,7 @@ from    (
             FROM   gmtbooking g WITH (nolock)
             inner join  localsupp ls WITH (nolock) on g.forwarder = ls.id
             inner join  #tmpA2B_GMT gmtAtoB on g.ID = gmtAtoB.id
+            where g.OrderCompanyID = {this.masterData["OrderCompanyID"]}
             union all
             {sqlCmd}
         )   result
@@ -351,14 +355,14 @@ group by    Selected,
             sqlCmd.Clear();
             if (allID.Length > 0)
             {
-                sqlCmd.Append(string.Format(
-                    @"
+                sqlCmd.Append($@"
 select distinct pd.ID, pd.OrderID,oq.BuyerDelivery,p.INVNo, oq.IDD
 from PackingList p WITH (NOLOCK) 
 INNER JOIN PackingList_Detail pd WITH (NOLOCK) ON p.id = pd.ID
 INNER JOIN Order_QtyShip oq WITH (NOLOCK) ON  pd.OrderID = oq.Id and pd.OrderShipmodeSeq = oq.Seq
-where p.INVNo in ({0})
-", allID.ToString().Substring(0, allID.Length - 1)));
+where p.INVNo in ({allID.ToString().Substring(0, allID.Length - 1)})
+AND p.OrderCompanyID = {this.masterData["OrderCompanyID"]}
+");
                 result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.plData);
                 if (!result)
                 {
