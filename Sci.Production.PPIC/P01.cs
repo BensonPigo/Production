@@ -187,6 +187,16 @@ namespace Sci.Production.PPIC
             base.OnDetailEntered();
             if (!this.EditMode)
             {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
+            if (!this.EditMode)
+            {
                 this.ControlButton();
             }
 
@@ -449,27 +459,10 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 if ((bool)this.CurrentMaintain["IsForecast"])
                 {
                     this.labelBuyMonth.Text = "Est. Download Date";
-
-                    // 加寬
-                    this.labelBuyMonth.Size = new Size(119, 21);
-
-                    // 其餘控制項往右推
-                    this.displayBuyMonth.Location = new System.Drawing.Point(697, 139);
-                    this.labelOrderQty.Location = new System.Drawing.Point(861, 112);
-                    this.numOrderQty.Location = new System.Drawing.Point(926, 112);
-                    this.labelFOCQty.Location = new System.Drawing.Point(861, 139);
-                    this.numFOCQty.Location = new System.Drawing.Point(926, 139);
                 }
                 else
                 {
                     this.labelBuyMonth.Text = "Buy Month";
-                    this.labelBuyMonth.Size = new Size(65, 21);
-
-                    this.displayBuyMonth.Location = new System.Drawing.Point(644, 139);
-                    this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
-                    this.numOrderQty.Location = new System.Drawing.Point(880, 112);
-                    this.labelFOCQty.Location = new System.Drawing.Point(815, 139);
-                    this.numFOCQty.Location = new System.Drawing.Point(880, 139);
                 }
             }
 
@@ -488,6 +481,9 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.DoNewAfter();
         }
@@ -516,6 +512,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             base.ClickEditAfter();
             this.txtpaytermar1.TextBox1.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "FALSE")
             {
                 // 非Local訂單時只能修改FactoryID
@@ -557,6 +554,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                     return false;
                 }
                 #region 檢查必輸欄位
+                if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    MyUtility.Msg.WarningBox("Order Company can't empty!!");
+                    this.txtStyle.Focus();
+                    return false;
+                }
+
                 if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
                 {
                     MyUtility.Msg.WarningBox("Style# can't empty!!");

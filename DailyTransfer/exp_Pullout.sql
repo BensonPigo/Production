@@ -1,5 +1,5 @@
 
-Create PROCEDURE [dbo].[exp_Pullout]
+alter PROCEDURE [dbo].[exp_Pullout]
 	
 AS
 BEGIN
@@ -199,6 +199,7 @@ from (
 		   , [IsShippingAPApprove] 
 		   , DocumentRefNo
 		   , DischargePortID
+		   , OrderCompanyID
 	from #tmpFtyBooking1
 
 	union all
@@ -244,6 +245,7 @@ from (
 		   , [IsShippingAPApprove]
 		   , [DocumentRefNo] = ''
 		   , DischargePortID = ''
+		   , OrderCompanyID = 0
 	from #tmpFtyBooking2
 ) a 
 

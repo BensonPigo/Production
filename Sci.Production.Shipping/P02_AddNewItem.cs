@@ -63,11 +63,22 @@ namespace Sci.Production.Shipping
         {
             if (this.EditMode && !string.IsNullOrEmpty(this.txtSPNo.Text))
             {
-                IList<SqlParameter> cmds = new List<SqlParameter> { new SqlParameter("@id", this.txtSPNo.Text) };
+                if (MyUtility.Check.Empty(P02.orderCompanyID))
+                {
+                    MyUtility.Check.Empty("[Order Company] cannot be empty.");
+                    return;
+                }
+
+                IList<SqlParameter> cmds = new List<SqlParameter> 
+                {
+                    new SqlParameter("@id", this.txtSPNo.Text),
+                    new SqlParameter("@OrderCompanyID", P02.orderCompanyID),
+                };
                 string sqlCmd = $@"
 SELECT ID, StyleID, SeasonID, BrandID, SMR, Description = [dbo].[getBOFMtlDesc](StyleUkey)
 FROM Orders WITH (NOLOCK)
 WHERE ID = @id
+and OrderCompanyID = @OrderCompanyID
 
 UNION ALL
 SELECT mo.ID, mo.StyleID, mo.SeasonID, mo.BrandID, mo.SMR, Description = [dbo].[getBOFMtlDesc](Style.Ukey)
@@ -89,6 +100,12 @@ WHERE mo.ID = @id
                     MyUtility.Msg.WarningBox("Data not found!!!");
                     this.ClearDatas();
                     e.Cancel = true;
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(P02.orderCompanyID))
+                {
+                    MyUtility.Check.Empty("[Order Company] cannot be empty.");
                     return;
                 }
 
