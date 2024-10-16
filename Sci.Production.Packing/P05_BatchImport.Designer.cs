@@ -51,6 +51,8 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.label5 = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -63,7 +65,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Left;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(5, 498);
+            this.panel1.Size = new System.Drawing.Size(5, 543);
             this.panel1.TabIndex = 0;
             // 
             // panel2
@@ -71,11 +73,13 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
             this.panel2.Location = new System.Drawing.Point(724, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(5, 498);
+            this.panel2.Size = new System.Drawing.Size(5, 543);
             this.panel2.TabIndex = 1;
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboCompany1);
+            this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.btnQuery);
             this.panel3.Controls.Add(this.label6);
             this.panel3.Controls.Add(this.dateSCIDelivery);
@@ -92,7 +96,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(719, 100);
+            this.panel3.Size = new System.Drawing.Size(719, 135);
             this.panel3.TabIndex = 2;
             // 
             // btnQuery
@@ -108,7 +112,7 @@
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(410, 9);
+            this.label6.Location = new System.Drawing.Point(406, 36);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(22, 23);
             this.label6.TabIndex = 11;
@@ -135,7 +139,7 @@
             this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
-            this.dateSCIDelivery.Location = new System.Drawing.Point(288, 63);
+            this.dateSCIDelivery.Location = new System.Drawing.Point(284, 90);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 10;
@@ -157,7 +161,7 @@
             this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
-            this.dateBuyerDelivery.Location = new System.Drawing.Point(288, 36);
+            this.dateBuyerDelivery.Location = new System.Drawing.Point(284, 63);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 9;
@@ -166,7 +170,7 @@
             // 
             this.txtSPNoEnd.BackColor = System.Drawing.Color.White;
             this.txtSPNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoEnd.Location = new System.Drawing.Point(433, 9);
+            this.txtSPNoEnd.Location = new System.Drawing.Point(429, 36);
             this.txtSPNoEnd.Name = "txtSPNoEnd";
             this.txtSPNoEnd.Size = new System.Drawing.Size(120, 23);
             this.txtSPNoEnd.TabIndex = 8;
@@ -175,32 +179,32 @@
             // 
             this.txtSPNoStart.BackColor = System.Drawing.Color.White;
             this.txtSPNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSPNoStart.Location = new System.Drawing.Point(288, 9);
+            this.txtSPNoStart.Location = new System.Drawing.Point(284, 36);
             this.txtSPNoStart.Name = "txtSPNoStart";
             this.txtSPNoStart.Size = new System.Drawing.Size(120, 23);
             this.txtSPNoStart.TabIndex = 7;
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Location = new System.Drawing.Point(189, 63);
+            this.labelSCIDelivery.Location = new System.Drawing.Point(178, 90);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
-            this.labelSCIDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelSCIDelivery.Size = new System.Drawing.Size(102, 23);
             this.labelSCIDelivery.TabIndex = 6;
             this.labelSCIDelivery.Text = "SCI Delivery";
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Location = new System.Drawing.Point(189, 36);
+            this.labelBuyerDelivery.Location = new System.Drawing.Point(178, 63);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
-            this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
+            this.labelBuyerDelivery.Size = new System.Drawing.Size(102, 23);
             this.labelBuyerDelivery.TabIndex = 5;
             this.labelBuyerDelivery.Text = "Buyer Delivery";
             // 
             // labelSPNo
             // 
-            this.labelSPNo.Location = new System.Drawing.Point(189, 9);
+            this.labelSPNo.Location = new System.Drawing.Point(178, 36);
             this.labelSPNo.Name = "labelSPNo";
-            this.labelSPNo.Size = new System.Drawing.Size(95, 23);
+            this.labelSPNo.Size = new System.Drawing.Size(102, 23);
             this.labelSPNo.TabIndex = 4;
             this.labelSPNo.Text = "SP No.";
             // 
@@ -243,7 +247,7 @@
             this.panel4.Controls.Add(this.btnClose);
             this.panel4.Controls.Add(this.btnImport);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel4.Location = new System.Drawing.Point(5, 453);
+            this.panel4.Location = new System.Drawing.Point(5, 498);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(719, 45);
             this.panel4.TabIndex = 3;
@@ -272,9 +276,9 @@
             // 
             this.panel5.Controls.Add(this.gridDetail);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel5.Location = new System.Drawing.Point(5, 100);
+            this.panel5.Location = new System.Drawing.Point(5, 135);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(719, 353);
+            this.panel5.Size = new System.Drawing.Size(719, 363);
             this.panel5.TabIndex = 4;
             // 
             // gridDetail
@@ -299,15 +303,39 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(719, 353);
+            this.gridDetail.Size = new System.Drawing.Size(719, 363);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
+            // 
+            // comboCompany1
+            // 
+            this.comboCompany1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboCompany1.FormattingEnabled = true;
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsSupportUnselect = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.Location = new System.Drawing.Point(283, 8);
+            this.comboCompany1.Name = "comboCompany1";
+            this.comboCompany1.OldText = "";
+            this.comboCompany1.ReadOnly = true;
+            this.comboCompany1.Size = new System.Drawing.Size(214, 24);
+            this.comboCompany1.TabIndex = 91;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(178, 9);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 22);
+            this.label5.TabIndex = 90;
+            this.label5.Text = "Order Company";
             // 
             // P05_BatchImport
             // 
             this.AcceptButton = this.btnImport;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(729, 498);
+            this.ClientSize = new System.Drawing.Size(729, 543);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -350,5 +378,7 @@
         private Win.UI.Label labelSPNo;
         private Win.UI.Button btnClose;
         private Win.UI.Button btnImport;
+        private Class.ComboCompany comboCompany1;
+        private Win.UI.Label label5;
     }
 }

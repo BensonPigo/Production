@@ -39,6 +39,7 @@
     [ByFtyCarrier]        VARCHAR (8)    CONSTRAINT [DF_Express_ByFtyCarrier] DEFAULT ('') NOT NULL,
     [IsSpecialSending]    BIT            DEFAULT ((0)) NOT NULL,
     [Testing_Center]      BIT            CONSTRAINT [DF_Express_Testing_Center] DEFAULT ((0)) NOT NULL,
+    [OrderCompanyID] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_Express] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -232,3 +233,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Express',
     @level2type = N'COLUMN',
     @level2name = N'Testing_Center'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為訂單公司別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Express',
+    @level2type = N'COLUMN',
+    @level2name = N'OrderCompanyID'

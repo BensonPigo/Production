@@ -17,6 +17,7 @@ namespace Sci.Production.Packing
         private DataTable detailData;
         private string mBrandID;
         private string mShipModeID;
+        private string orderCompanyID;
 
         /// <summary>
         /// P04_ExcelImport
@@ -24,12 +25,14 @@ namespace Sci.Production.Packing
         /// <param name="detailData">DetailData</param>
         /// <param name="brandID">BrandID</param>
         /// <param name="shipModeID">shipModeID</param>
-        public P04_ExcelImport(DataTable detailData, string brandID, string shipModeID)
+        /// <param name="orderCompanyID">orderCompanyID</param>
+        public P04_ExcelImport(DataTable detailData, string brandID, string shipModeID, string orderCompanyID)
         {
             this.InitializeComponent();
             this.detailData = detailData;
             this.mBrandID = brandID;
             this.mShipModeID = shipModeID;
+            this.orderCompanyID = orderCompanyID;
         }
 
         /// <summary>
@@ -246,7 +249,7 @@ namespace Sci.Production.Packing
             DataTable tmpPackData;
 
             string sqlcmd = $@"
-select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category,o.SeasonID,o.BrandID
+select distinct a.*,o.ID,oq.Seq,oqd.Article as oArticle,oqd.SizeCode as oSizeCode,o.StyleID,o.CustPONo,o.Category,o.SeasonID,o.BrandID,o.OrderCompanyID
         , CheckShipMode = isnull ((select 1 
                                    where  EXISTS(
                                                 SELECT 1
@@ -288,6 +291,7 @@ AND Article = '{dr["Article"]}'
 AND SizeCode = '{dr["SizeCode"]}' 
 AND Qty = {dr["Qty"]} 
 AND BrandID = '{this.mBrandID}'
+AND OrderCompanyID = '{this.orderCompanyID}'
 ");
 
                 if (findDR.Length > 0)

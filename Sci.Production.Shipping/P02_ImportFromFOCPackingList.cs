@@ -98,8 +98,7 @@ Please create a Pullout Report with this Ship. Date as Pullout Date first!!");
             }
             #endregion
 
-            string sqlCmd = string.Format(
-                @"
+            string sqlCmd = $@"
 select pd.ID,pd.OrderID,o.SeasonID,o.StyleID,'Sample' as Category
     , CTNNo = pd.CTNStartNo
     , ShowCTNNo = pd.ID + '-' + pd.CTNStartNo
@@ -133,9 +132,10 @@ outer apply(
 	and su.StyleUkey = s.Ukey
 )Style_UnitPrice
 
-where pd.ID = '{0}'
+where pd.ID = '{this.txtFOCPL.Text}'
         and p.Type = 'F'
-        and Factory.IsProduceFty=1", this.txtFOCPL.Text);
+        and p.OrderCompanyID = '{P02.orderCompanyID}'
+        and Factory.IsProduceFty=1";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
@@ -163,7 +163,12 @@ where pd.ID = '{0}'
             cmds.Add(sp1);
 
             DataTable packListData;
-            string sqlCmd = "select ExpressID from PackingList WITH (NOLOCK) where ID = @id and Type = 'F'";
+            string sqlCmd = $@"
+select ExpressID 
+from PackingList WITH (NOLOCK) 
+where ID = @id and Type = 'F'
+and OrderCompanyID = '{P02.orderCompanyID}'
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
