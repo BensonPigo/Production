@@ -323,11 +323,10 @@ drop table #mesPass1
                 return;
             }
 
-            MyUtility.Excel.CopyToXls(this.dtMaster, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
-            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            DataTable dtPrint = this.dtMaster.AsEnumerable().TryCopyToDataTable(this.dtMaster);
+            dtPrint.Columns.Remove("ID");
+            MyUtility.Excel.CopyToXls(dtPrint, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
-            // 移除最後一欄ID
-            objSheets.Columns["X"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
