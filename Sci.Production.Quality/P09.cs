@@ -33,7 +33,7 @@ namespace Sci.Production.Quality
             this.displayBox1.BackColor = Color.Yellow;
         }
 
-        private readonly string Filepath = @"/SFTP/FactoryFTP/MMC";
+        private readonly string Filepath = @"/SFTP/FactoryFTP/MMC/";
         private DataTable dt1;
         private DataTable dt2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
@@ -377,7 +377,7 @@ namespace Sci.Production.Quality
         // 子目錄
         private string Filedic(DataRow dr)
         {
-            string fp = this.Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
+            string fp = this.Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]);
             return fp;
         }
 
@@ -880,6 +880,9 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
 
         private void TestReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            TransferPms transferPMS = new TransferPms();
+            DualResult result;
+            result = transferPMS.SFtp_Ping(Env.Cfg.SFTP_Server_IP, Env.Cfg.SFTP_Server_Port, Env.Cfg.SFTP_Server_Account, Env.Cfg.SFTP_Server_Password);
             this.Savefile("-test");
         }
         #endregion Tab_Page1

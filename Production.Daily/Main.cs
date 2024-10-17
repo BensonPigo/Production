@@ -353,7 +353,7 @@ namespace Production.Daily
         {
             SqlConnection conn;
 
-            if (!Sci.SQL.GetConnection(out conn)) { return; }
+            if (!DBProxy.Current.OpenConnection("Production",out conn)) { return; }
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             DualResult result;

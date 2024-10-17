@@ -31,8 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.gridBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panelFTP = new Sci.Win.UI.Panel();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label2 = new Sci.Win.UI.Label();
             this.textImportDataFileName = new Sci.Win.UI.TextBox();
             this.textFtpPwd = new Sci.Win.UI.TextBox();
             this.textFtpID = new Sci.Win.UI.TextBox();
@@ -44,6 +42,7 @@
             this.labelFtpID = new Sci.Win.UI.Label();
             this.labelFtpIP = new Sci.Win.UI.Label();
             this.panelMail = new Sci.Win.UI.Panel();
+            this.txtMailServerPort = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.checkSendBack = new Sci.Win.UI.CheckBox();
@@ -80,7 +79,6 @@
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnTestWebApi = new Sci.Win.UI.Button();
-            this.txtMailServerPort = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -106,25 +104,6 @@
             this.panelFTP.Name = "panelFTP";
             this.panelFTP.Size = new System.Drawing.Size(712, 68);
             this.panelFTP.TabIndex = 1;
-            // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpPort", true));
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(512, 38);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(44, 21);
-            this.textBox1.TabIndex = 21;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(480, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(30, 21);
-            this.label2.TabIndex = 20;
-            this.label2.Text = "Port";
             // 
             // textImportDataFileName
             // 
@@ -247,8 +226,19 @@
             this.panelMail.DrawBorder = true;
             this.panelMail.Location = new System.Drawing.Point(12, 219);
             this.panelMail.Name = "panelMail";
-            this.panelMail.Size = new System.Drawing.Size(825, 191);
+            this.panelMail.Size = new System.Drawing.Size(823, 191);
             this.panelMail.TabIndex = 3;
+            // 
+            // txtMailServerPort
+            // 
+            this.txtMailServerPort.BackColor = System.Drawing.Color.White;
+            this.txtMailServerPort.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMailServerPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MailServerPort", true));
+            this.txtMailServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMailServerPort.Location = new System.Drawing.Point(321, 10);
+            this.txtMailServerPort.Name = "txtMailServerPort";
+            this.txtMailServerPort.Size = new System.Drawing.Size(44, 21);
+            this.txtMailServerPort.TabIndex = 19;
             // 
             // label1
             // 
@@ -579,9 +569,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.labelProgress});
-            this.statusStrip.Location = new System.Drawing.Point(0, 422);
+            this.statusStrip.Location = new System.Drawing.Point(0, 414);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(846, 22);
+            this.statusStrip.Size = new System.Drawing.Size(844, 22);
             this.statusStrip.TabIndex = 8;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -608,24 +598,13 @@
             this.btnTestWebApi.UseVisualStyleBackColor = true;
             this.btnTestWebApi.Click += new System.EventHandler(this.btnTestWebApi_Click);
             // 
-            // txtMailServerPort
-            // 
-            this.txtMailServerPort.BackColor = System.Drawing.Color.White;
-            this.txtMailServerPort.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtMailServerPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MailServerPort", true));
-            this.txtMailServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMailServerPort.Location = new System.Drawing.Point(321, 10);
-            this.txtMailServerPort.Name = "txtMailServerPort";
-            this.txtMailServerPort.Size = new System.Drawing.Size(44, 21);
-            this.txtMailServerPort.TabIndex = 19;
-            // 
             // Main
             // 
             this.AcceptButton = this.btnUpdate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(846, 444);
+            this.ClientSize = new System.Drawing.Size(844, 436);
             this.Controls.Add(this.btnTestWebApi);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
