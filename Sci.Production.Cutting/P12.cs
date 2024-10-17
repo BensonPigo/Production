@@ -306,12 +306,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 )as SubProcess
@@ -319,12 +317,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -332,12 +328,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -411,12 +405,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 )as SubProcess
@@ -424,12 +416,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -437,12 +427,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.PostSewingSubProcess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -548,12 +536,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 )as SubProcess 
@@ -561,12 +547,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -574,12 +558,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -646,12 +628,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select concat('+',iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', '')))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 )as SubProcess 
@@ -659,12 +639,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -672,12 +650,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        select concat('+',e1.Subprocessid)
         from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
-        Left join SubProcessSeq_Detail sd With(nolock) on sd.StyleUkey = c.StyleUkey and sd.SubProcessID = e1.SubprocessId
-        Left join SubProcess s With(nolock) on s.Id = e1.SubprocessId
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		order by Isnull(sd.Seq, s.Seq), IsNull(sd.SubProcessID, s.Id)
+		Order by e1.Ukey
         for xml path('')
     ),1,1,'')
 ) as nbs
