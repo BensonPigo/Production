@@ -39,10 +39,12 @@
             this.txtCutCell = new Sci.Production.Class.TxtCell();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTop = new Sci.Win.UI.Panel();
+            this.txtMarkName = new Sci.Win.UI.TextBox();
+            this.lbMarkerName = new Sci.Win.UI.Label();
+            this.txtCuttingSP = new Sci.Win.UI.TextBox();
             this.lbCuttingSP = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
-            this.txtCuttingSP = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelTop.SuspendLayout();
@@ -71,8 +73,8 @@
             this.gridImport.RowTemplate.Height = 24;
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
-            this.gridImport.Size = new System.Drawing.Size(944, 436);
-            this.gridImport.TabIndex = 3;
+            this.gridImport.Size = new System.Drawing.Size(944, 410);
+            this.gridImport.TabIndex = 8;
             this.gridImport.TabStop = false;
             // 
             // btnQuery
@@ -81,7 +83,7 @@
             this.btnQuery.Location = new System.Drawing.Point(827, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 2;
+            this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -92,7 +94,7 @@
             this.btnImport.Location = new System.Drawing.Point(748, 7);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
-            this.btnImport.TabIndex = 2;
+            this.btnImport.TabIndex = 5;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -103,36 +105,38 @@
             this.btnClose.Location = new System.Drawing.Point(834, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 3;
+            this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Location = new System.Drawing.Point(252, 11);
+            this.labelCutCell.Location = new System.Drawing.Point(17, 37);
             this.labelCutCell.Name = "labelCutCell";
-            this.labelCutCell.Size = new System.Drawing.Size(75, 23);
+            this.labelCutCell.Size = new System.Drawing.Size(99, 23);
             this.labelCutCell.TabIndex = 4;
             this.labelCutCell.Text = "Cut Cell";
             // 
             // labelEstCutDate
             // 
+            this.labelEstCutDate.BackColor = System.Drawing.Color.SkyBlue;
             this.labelEstCutDate.Location = new System.Drawing.Point(17, 11);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(99, 23);
             this.labelEstCutDate.TabIndex = 5;
             this.labelEstCutDate.Text = "Est. Cut Date";
+            this.labelEstCutDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // txtCutCell
             // 
             this.txtCutCell.BackColor = System.Drawing.Color.White;
             this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutCell.Location = new System.Drawing.Point(330, 11);
+            this.txtCutCell.Location = new System.Drawing.Point(119, 37);
             this.txtCutCell.MDivisionID = "";
             this.txtCutCell.Name = "txtCutCell";
-            this.txtCutCell.Size = new System.Drawing.Size(30, 23);
-            this.txtCutCell.TabIndex = 1;
+            this.txtCutCell.Size = new System.Drawing.Size(108, 23);
+            this.txtCutCell.TabIndex = 3;
             // 
             // dateEstCutDate
             // 
@@ -143,6 +147,8 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.txtMarkName);
+            this.panelTop.Controls.Add(this.lbMarkerName);
             this.panelTop.Controls.Add(this.txtCuttingSP);
             this.panelTop.Controls.Add(this.lbCuttingSP);
             this.panelTop.Controls.Add(this.labelEstCutDate);
@@ -153,16 +159,46 @@
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(944, 43);
-            this.panelTop.TabIndex = 6;
+            this.panelTop.Size = new System.Drawing.Size(944, 69);
+            this.panelTop.TabIndex = 7;
+            // 
+            // txtMarkName
+            // 
+            this.txtMarkName.BackColor = System.Drawing.Color.White;
+            this.txtMarkName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkName.Location = new System.Drawing.Point(558, 11);
+            this.txtMarkName.Name = "txtMarkName";
+            this.txtMarkName.Size = new System.Drawing.Size(100, 23);
+            this.txtMarkName.TabIndex = 2;
+            // 
+            // lbMarkerName
+            // 
+            this.lbMarkerName.BackColor = System.Drawing.Color.SkyBlue;
+            this.lbMarkerName.Location = new System.Drawing.Point(466, 11);
+            this.lbMarkerName.Name = "lbMarkerName";
+            this.lbMarkerName.Size = new System.Drawing.Size(89, 23);
+            this.lbMarkerName.TabIndex = 9;
+            this.lbMarkerName.Text = "Marker Name";
+            this.lbMarkerName.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtCuttingSP
+            // 
+            this.txtCuttingSP.BackColor = System.Drawing.Color.White;
+            this.txtCuttingSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCuttingSP.Location = new System.Drawing.Point(354, 11);
+            this.txtCuttingSP.Name = "txtCuttingSP";
+            this.txtCuttingSP.Size = new System.Drawing.Size(100, 23);
+            this.txtCuttingSP.TabIndex = 1;
             // 
             // lbCuttingSP
             // 
-            this.lbCuttingSP.Location = new System.Drawing.Point(363, 11);
+            this.lbCuttingSP.BackColor = System.Drawing.Color.SkyBlue;
+            this.lbCuttingSP.Location = new System.Drawing.Point(262, 11);
             this.lbCuttingSP.Name = "lbCuttingSP";
             this.lbCuttingSP.Size = new System.Drawing.Size(89, 23);
             this.lbCuttingSP.TabIndex = 7;
             this.lbCuttingSP.Text = "Cutting SP#";
+            this.lbCuttingSP.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // panelBottom
             // 
@@ -178,19 +214,10 @@
             // 
             this.panelMiddle.Controls.Add(this.gridImport);
             this.panelMiddle.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMiddle.Location = new System.Drawing.Point(0, 43);
+            this.panelMiddle.Location = new System.Drawing.Point(0, 69);
             this.panelMiddle.Name = "panelMiddle";
-            this.panelMiddle.Size = new System.Drawing.Size(944, 436);
+            this.panelMiddle.Size = new System.Drawing.Size(944, 410);
             this.panelMiddle.TabIndex = 8;
-            // 
-            // txtCuttingSP
-            // 
-            this.txtCuttingSP.BackColor = System.Drawing.Color.White;
-            this.txtCuttingSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCuttingSP.Location = new System.Drawing.Point(455, 11);
-            this.txtCuttingSP.Name = "txtCuttingSP";
-            this.txtCuttingSP.Size = new System.Drawing.Size(100, 23);
-            this.txtCuttingSP.TabIndex = 8;
             // 
             // P05_Import
             // 
@@ -228,5 +255,7 @@
         private Win.UI.Label lbCuttingSP;
         private Win.UI.ListControlBindingSource gridBS;
         private Win.UI.TextBox txtCuttingSP;
+        private Win.UI.TextBox txtMarkName;
+        private Win.UI.Label lbMarkerName;
     }
 }

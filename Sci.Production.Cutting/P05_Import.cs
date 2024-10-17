@@ -52,9 +52,9 @@ namespace Sci.Production.Cutting
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
-            if (MyUtility.Check.Empty(this.dateEstCutDate.Value))
+            if (MyUtility.Check.Empty(this.dateEstCutDate.Value) && MyUtility.Check.Empty(this.txtCuttingSP.Text) && MyUtility.Check.Empty(this.txtMarkName.Text))
             {
-                MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
+                MyUtility.Msg.WarningBox("<Est. Cut Date>, <Cutting SP#> and <Marker Name> can not all be empty.");
                 return;
             }
 
@@ -63,7 +63,12 @@ namespace Sci.Production.Cutting
             StringBuilder where = new StringBuilder();
             List<SqlParameter> paras = new List<SqlParameter>();
             paras.Add(new SqlParameter("@MDivisionID", this.keyWord));
-            paras.Add(new SqlParameter("@EstCutDate", this.dateEstCutDate.Text));
+
+            if (!MyUtility.Check.Empty(this.dateEstCutDate.Value))
+            {
+                where.AppendLine("and wofo.EstCutDate = @EstCutDate");
+                paras.Add(new SqlParameter("@EstCutDate", this.dateEstCutDate.Text));
+            }
 
             if (!MyUtility.Check.Empty(this.txtCutCell.Text))
             {
@@ -77,13 +82,18 @@ namespace Sci.Production.Cutting
                 paras.Add(new SqlParameter("@CuttingSP", this.txtCuttingSP.Text));
             }
 
+            if (!MyUtility.Check.Empty(this.txtMarkName.Text))
+            {
+                where.AppendLine("and wofo.MarkerName = @MarkerName");
+                paras.Add(new SqlParameter("@MarkerName", this.txtMarkName.Text));
+            }
+
             string sqlcmd = $@"
 ;with main as (
 	select distinct wofo.CutRef, wofo.EstCutDate
 	from WorkOrderForOutput wofo with (nolock)
 	where not exists (select 1 from MarkerReq_Detail mrd with (nolock) where mrd.CutRef = wofo.CutRef)
 	and wofo.MDivisionID = @MDivisionID
-	and wofo.EstCutDate = @EstCutDate
 )
 select Sel = cast(0 as bit), m.CutRef, Top1Data.POID, Top1Data.ID, Top1Data.FtyGroup, Top1Data.CutCellID, m.EstCutDate
 from main m

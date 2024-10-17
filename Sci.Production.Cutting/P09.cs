@@ -152,6 +152,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_StraightLength)
                 .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_CurvedLength)
                 .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
+                .Text("CuttingPlannerRemark", header: "Cutting Planner Remark", width: Ict.Win.Widths.AnsiChars(33))
                 .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
                 .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)

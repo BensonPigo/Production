@@ -173,7 +173,7 @@ namespace Sci.Production.Cutting
                 if (inValidWk.Any())
                 {
                     DataTable dt = ListToDataTable.ToDataTable(inValidWk.Select(o => new { o.ID, o.SEQ1, o.SEQ2, o.Markername, o.FabricPanelCode }).Distinct().ToList());
-                    var f = new MsgGridForm(dt, "Invalid data in Order ColorCombo", $"Invalid data");
+                    var f = new MsgGridForm(dt, "Import file info. error", $"Invalid data");
                     f.grid1.ColumnsAutoSize();
                     f.ShowDialog();
                 }
@@ -687,7 +687,7 @@ values
 ,'{wk.FabricCombo}'
 ,'{wk.FabricCode}'
 ,'{wk.FabricPanelCode}'
-,-1
+,0
 ,'{wk.Tone}'
 ,'{wk.ID}'
 ,1
