@@ -1,5 +1,5 @@
 
-alter PROCEDURE [dbo].[exp_Pullout]
+Create PROCEDURE [dbo].[exp_Pullout]
 	
 AS
 BEGIN
