@@ -462,6 +462,39 @@ where t.id= @ID
                     return false;
                 }
 
+                string startStr = "LAYER1", endStr_Nylon = "RECYCLED NYLON", endStr_Polyester = "RECYCLED POLYESTER";
+
+                // 處理GRS
+                bb.AsEnumerable().ToList().ForEach(r =>
+                {
+                    // 檢查Desc字串
+                    string str = r["Desc"].ToString().ToUpper();
+
+                    // 確認字串位置
+                    int pStart = str.IndexOf(startStr) + 1;
+                    int pEnd_Nylon = str.IndexOf(endStr_Nylon);
+                    int pEnd_Polyester = str.IndexOf(endStr_Polyester);
+
+                    // 確認結束字串位置
+                    string endStr = pEnd_Nylon > 0 ? endStr_Nylon : (pEnd_Polyester > 0 ? endStr_Polyester : string.Empty);
+                    int pEnd = pEnd_Nylon > 0 ? pEnd_Nylon : (pEnd_Polyester > 0 ? pEnd_Polyester : 0);
+
+                    // 若開始與結束字串都存在則繼續
+                    if (pStart > 0 && pEnd > 0)
+                    {
+                        // 擷取字串
+                        string subStr = str.Substring(pStart + startStr.Length, pEnd - (pStart + startStr.Length));
+                        string numStr = subStr.Replace(" ", string.Empty).Replace("%", string.Empty);
+
+                        // 是否能轉換成數字，若能則判斷數字是否大於50，是則 MDesc 欄位加入 "GRS" 字串
+                        decimal num;
+                        if (decimal.TryParse(numStr, out num))
+                        {
+                            r["MDesc"] = r["MDesc"].ToString() + Environment.NewLine + (num > 50 ? "GRS" : string.Empty);
+                        }
+                    }
+                });
+
                 // 傳 list 資料
                 List<P10_PrintData> data = bb.AsEnumerable()
                     .Select(row1 => new P10_PrintData()
