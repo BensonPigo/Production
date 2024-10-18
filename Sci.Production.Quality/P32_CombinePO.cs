@@ -248,7 +248,7 @@ WHERE ID = @ID AND Seq = @Seq
                 {
                     string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-                    if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
+                    if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL", "FINAL INTERNAL"))
                     {
                         selectedRow["Carton"] = string.Empty;
                         selectedRow.EndEdit();
@@ -288,7 +288,7 @@ AND CTNStartNo = @CTNStartNo
 AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = '')
 
 ";
-                        if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
+                        if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString() == "Final Internal" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
                         {
                             sqlCmd = $@"
 SELECT * 
@@ -378,7 +378,7 @@ AND CTNStartNo = @CTNStartNo
             string currentCarton = MyUtility.Convert.GetString(currentRow["Carton"]);
             string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-            if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
+            if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL", "FINAL INTERNAL"))
             {
                 return;
             }
@@ -477,7 +477,7 @@ DROP TABLE #MixCTNStartNo
 
 ";
 
-            if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
+            if (this.MasterCFAInspectionRecord["Stage"].ToString() == "Final" || this.MasterCFAInspectionRecord["Stage"].ToString() == "Final Internal" || this.MasterCFAInspectionRecord["Stage"].ToString().ToLower() == "3rd party")
             {
                 sqlCmd = $@"
 
@@ -688,7 +688,7 @@ EXISTS
                         // 只有3RD PARTY 可以存入Carton
                         string stage = MyUtility.Convert.GetString(this.MasterCFAInspectionRecord["stage"]);
 
-                        if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL"))
+                        if (!stage.ToUpper().IsOneOfThe("3RD PARTY", "FINAL", "FINAL INTERNAL"))
                         {
                             dr["Carton"] = string.Empty;
                         }
