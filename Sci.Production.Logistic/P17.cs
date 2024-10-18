@@ -144,49 +144,13 @@ namespace Sci.Production.Logistic
             }
 
             string strSQL_CFA = $@"
-            DECLARE @SCICtnNo varchar(16) = '{sciCtnNo}'
-			DECLARE @ReceiveDate DateTime
-			DECLARE @ReturnDate DateTime
-			DECLARE @CanUse bit
-
-			Select @ReturnDate = MAX(r.AddDate) From PackingList_Detail pld
-			Inner join CFAReturn r on r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
-			Where pld.SCICtnNo = @SCICtnNo
-
-			Select @ReceiveDate = MAX(r.AddDate) From PackingList_Detail pld
-			Inner join CFAReceive r on r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
-			Where pld.SCICtnNo = @SCICtnNo
-
-			If(@receiveDate is Null)
-				Begin
-					Set @CanUse = 0
-				End
-			Else
-				Begin
-					if(@ReturnDate is Null)
-						Begin
-							Set @CanUse = 1
-						End
-					Else
-						Begin
-							if(@ReceiveDate > @ReturnDate)
-								Begin 
-									Set @CanUse = 1
-								End
-							Else
-								Begin
-									Set @CanUse = 0
-								End
-						End
-				End
-
-			Select @CanUse
+            Select pld.ClogReceiveCFADate From PackingList_Detail pld where pld.SCICtnNo = '{sciCtnNo}'
             ";
-            bool cfaSciCtnNo = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(strSQL_CFA));
+            var cfaSciCtnNo = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup(strSQL_CFA));
 
-            if (!cfaSciCtnNo)
+            if (cfaSciCtnNo.Empty())
             {
-                MyUtility.Msg.InfoBox("This carton No. has not been received from CFA. Cannot be scan & pack.", buttons: MessageBoxButtons.OK);
+                MyUtility.Msg.InfoBox("This CTN# is either not in Clog or has not been inspected by the CFA, cannot do Clog P17!", buttons: MessageBoxButtons.OK);
                 e.Cancel = true;
                 this.ClearAll("ALL");
                 return;
@@ -257,7 +221,7 @@ namespace Sci.Production.Logistic
             pd.Ukey,
             [PKseq] = pd.Seq,
             o.Dest,
-            isnull(pd.ActCTNWeight,0) as ActCTNWeight
+            isnull(pd.ClogActCTNWeight,0) as ClogActCTNWeight
             ,p.Remark
 	        ,pd.Ukey
 	        ,[IsFirstTimeScan] = Cast(1 as bit)
@@ -327,7 +291,7 @@ namespace Sci.Production.Logistic
             this.displayBrand.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["BrandID"]);
             this.displayStyle.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["StyleID"]);
             this.txtDest.TextBox1.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["Dest"]);
-            this.numWeight.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["ActCTNWeight"]);
+            this.numWeight.Text = "0";
             #endregion 左邊 Head
             #region 右邊 Head
 
@@ -360,7 +324,7 @@ namespace Sci.Production.Logistic
             pd.Ukey,
             [PKseq] = pd.Seq,
             o.Dest,
-            isnull(pd.ActCTNWeight,0) as ActCTNWeight
+            isnull(pd.ClogActCTNWeight,0) as ClogActCTNWeight
             ,p.Remark
 	        ,pd.Ukey
 	        ,[IsFirstTimeScan] = Cast(1 as bit)
@@ -651,7 +615,7 @@ namespace Sci.Production.Logistic
                 , ClogScanDate = GETDATE()
                 , ScanName = '{Env.User.UserID}'   
                 , ClogLackingQty = 0
-                , ActCTNWeight = {this.numWeight.Value}
+                , ClogActCTNWeight = {this.numWeight.Value}
                 where id = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["ID"])}' 
                 and CTNStartNo = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["CTNStartNo"])}' 
 
@@ -972,7 +936,7 @@ namespace Sci.Production.Logistic
                     DataRow[] dt_scanDetailrow = this.dtDetail.Select($"ID = '{this.dtHade.Rows[0]["ID"]}' and CTNStartNo = '{this.dtHade.Rows[0]["CTNStartNo"]}'");
                     foreach (DataRow dr in dt_scanDetailrow)
                     {
-                        dr["ActCTNWeight"] = this.numWeight.Text;
+                        dr["ClogActCTNWeight"] = this.numWeight.Text;
                     }
                 }
             }

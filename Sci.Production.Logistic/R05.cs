@@ -268,6 +268,8 @@ select distinct
 ,cp.LackingQty
 ,o.POID
 ,c.Ukey
+,pd.ActCTNWeight
+,pd.ClogActCTNWeight
 ,[OrderNo] = dense_rank() over (partition by c.PackingListID order by o.AddDate)
 ,[OrderListNo] = dense_rank() over (partition by c.PackingListID, o.poid order by o.ID)
 into #tmp
@@ -305,6 +307,8 @@ select t.PackingListID
 ,t.[ScanName]
 ,t.[Lacking]
 ,[LackingQty] = LackingQty.Value
+,t.ActCTNWeight
+,t.ClogActCTNWeight
 ,[SCICtnNoNo] = Row_Number() over (partition by t.SCICtnNo order by t.[ScanDate])
 into #tmpFinal
 from #tmp t
@@ -468,6 +472,8 @@ group by t.PackingListID
 ,t.[ScanName]
 ,t.[Lacking]
 ,LackingQty.Value
+,t.ActCTNWeight
+,t.ClogActCTNWeight
 order by t.FactoryID,t.PackingListID,t.[ScanDate]
 
 {1}
@@ -511,6 +517,13 @@ DROP TABLE #TMP,#tmpFinal
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + reportname);
             Excel.Worksheet worksheet = objApp.Sheets[1];
             this.printData.Columns.Remove("SCICtnNoNo");
+            if (!this.rdbSummary.Checked)
+            {
+                this.printData.Columns.Remove("ActCTNWeight");
+                this.printData.Columns.Remove("ClogActCTNWeight");
+                worksheet.Range["W:X"].Delete();
+            }
+
             MyUtility.Excel.CopyToXls(this.printData, string.Empty, reportname, 2, showExcel: false, excelApp: objApp);
             worksheet.Columns.AutoFit();
 
