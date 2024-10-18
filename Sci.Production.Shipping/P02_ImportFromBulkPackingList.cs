@@ -79,15 +79,18 @@ namespace Sci.Production.Shipping
             #region PackingListID 存在Pullout 則不能匯入
             List<SqlParameter> listParameter = new List<SqlParameter>();
             listParameter.Add(new SqlParameter("@PackingID", this.txtBulkPL.Text));
+            listParameter.Add(new SqlParameter("@OrderCompanyID", P02.orderCompanyID));
             DataRow dr;
             string sqlcmdChk = @"
 select distinct p.ID as PulloutID
 from PackingList_Detail pd WITH (NOLOCK) 
+left join PackingList pl with(nolock) on pl.id = pd.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
 inner join Pullout_Detail p on p.PackingListID = pd.ID
 where pd.ID = @PackingID
 and Factory.IsProduceFty=1
+and pl.OrderCompanyID = @OrderCompanyID
 ";
             if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
             {
@@ -126,6 +129,7 @@ and Factory.IsProduceFty=1
 	and pd.ID='{this.txtBulkPL.Text}'
     and Factory.IsProduceFty=1
     and p.Type = 'B'
+    and p.OrderCompanyID = '{P02.orderCompanyID}'
 	and not exists(
 		select distinct p1.ID as PulloutID
 		from PackingList_Detail p2 WITH (NOLOCK) 
@@ -171,12 +175,21 @@ and Factory.IsProduceFty=1
         {
             // sql參數
             SqlParameter sp1 = new SqlParameter("@id", pLNo);
+            SqlParameter sp2 = new SqlParameter("@OrderCompanyID", P02.orderCompanyID);
 
             IList<SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
+            cmds.Add(sp2);
 
             DataTable packListData;
-            string sqlCmd = "select distinct ID, OrderID from PackingList_Detail WITH (NOLOCK) where ID = @id";
+            string sqlCmd = @"
+select distinct pd.ID, pd.OrderID 
+from PackingList_Detail pd WITH (NOLOCK) 
+inner join PackingList p WITH (NOLOCK) on pd.id = p.id
+where 1=1
+and pd.ID = @id
+and p.OrderCompanyID = @OrderCompanyID
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
@@ -382,6 +395,7 @@ SELECT [ExistsData]=1
 FROm  PackingList
 WHERE ID='{packingListID}'
       and ExpressID = '{this.masterData["ID"].ToString()}'
+      and OrderCompanyID = '{P02.orderCompanyID}'
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
@@ -390,6 +404,7 @@ WHERE ID='{packingListID}'
       AND ExpressID<>'{this.masterData["ID"].ToString()}' 
       AND ExpressID <> ''  
       AND ExpressID IS NOT NULL
+      AND OrderCompanyID = '{P02.orderCompanyID}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)

@@ -62,6 +62,7 @@ namespace Sci.Production.Packing
             #region GridDetail Setting
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Description", header: "Error Description", iseditingreadonly: true)
+                .Text("LocalDescription", header: "Local Description", iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
                 ;
             #endregion
@@ -144,6 +145,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
     ,[Desc] = isnull(pd.val,'')
+    ,[LocalDesc] = isnull(pd2.val,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -193,6 +195,19 @@ outer apply (
 ) PD
 outer apply (
 	SELECT val = Stuff((
+		select distinct concat('/',pr.LocalDescription )
+		from PackingList_Detail pd
+		left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+		left join PackingReason pr on cd.PackingReasonID = pr.ID
+		where pr.Type = 'PA'
+		and pd.id = c.PackingListID
+		and pd.CTNStartNo = c.CTNStartNo
+		and pd.Orderid = c.Orderid
+	FOR XML PATH(''))
+	,1,1,'')
+) PD2
+outer apply (
+	SELECT val = Stuff((
 		select distinct concat('/', SewingLineID) 
 		from SewingSchedule s WITH(NOLOCK)
 		where s.OrderID = c.OrderID
@@ -208,7 +223,8 @@ select  [PackingAuditDate]
 	,[CTN] 
 	,[Qty] 
 	,[Discrepancy]
-    ,[Desc] 
+    ,[Desc]
+    ,[LocalDesc]
 	,[SP] 
 	,[PO] 
 	,[Style] 
@@ -229,7 +245,7 @@ select  [PackingAuditDate]
 from #tmp t
 order by PackingListID, CTN,PackingAuditDate
 
-select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
+select cd.ID,cd.PackingReasonID,pr.Description,pr.LocalDescription,cd.Qty 
 from CTNPackingAudit_Detail cd
 inner join #tmp t on t.ID = cd.ID
 left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
@@ -307,11 +323,10 @@ drop table #mesPass1
                 return;
             }
 
-            MyUtility.Excel.CopyToXls(this.dtMaster, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
-            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            DataTable dtPrint = this.dtMaster.AsEnumerable().TryCopyToDataTable(this.dtMaster);
+            dtPrint.Columns.Remove("ID");
+            MyUtility.Excel.CopyToXls(dtPrint, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
-            // 移除最後一欄ID
-            objSheets.Columns["X"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;

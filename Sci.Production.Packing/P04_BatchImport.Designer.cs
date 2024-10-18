@@ -32,6 +32,8 @@
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.label5 = new Sci.Win.UI.Label();
             this.btnFind = new Sci.Win.UI.Button();
             this.txtLocateSPNo = new Sci.Win.UI.TextBox();
             this.btnQuery = new Sci.Win.UI.Button();
@@ -52,7 +54,6 @@
             this.labelOrderType = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel4 = new Sci.Win.UI.Panel();
             this.btnClose = new Sci.Win.UI.Button();
@@ -85,6 +86,8 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.comboCompany1);
+            this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.btnFind);
             this.panel3.Controls.Add(this.txtLocateSPNo);
             this.panel3.Controls.Add(this.btnQuery);
@@ -105,12 +108,35 @@
             this.panel3.Controls.Add(this.labelOrderType);
             this.panel3.Controls.Add(this.labelCustCD);
             this.panel3.Controls.Add(this.labelBrand);
-            this.panel3.Controls.Add(this.shapeContainer1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(896, 132);
             this.panel3.TabIndex = 2;
+            // 
+            // comboCompany1
+            // 
+            this.comboCompany1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboCompany1.FormattingEnabled = true;
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.IsSupportUnselect = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.Location = new System.Drawing.Point(537, 64);
+            this.comboCompany1.Name = "comboCompany1";
+            this.comboCompany1.OldText = "";
+            this.comboCompany1.ReadOnly = true;
+            this.comboCompany1.Size = new System.Drawing.Size(214, 24);
+            this.comboCompany1.TabIndex = 89;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(429, 64);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(105, 22);
+            this.label5.TabIndex = 88;
+            this.label5.Text = "Order Company";
             // 
             // btnFind
             // 
@@ -143,6 +169,20 @@
             // 
             // dateBuyerDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateBuyerDelivery.DateBox1.Name = "";
+            this.dateBuyerDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateBuyerDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateBuyerDelivery.DateBox2.Name = "";
+            this.dateBuyerDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateBuyerDelivery.DateBox2.TabIndex = 1;
             this.dateBuyerDelivery.IsRequired = false;
             this.dateBuyerDelivery.Location = new System.Drawing.Point(528, 38);
             this.dateBuyerDelivery.Name = "dateBuyerDelivery";
@@ -160,7 +200,6 @@
             // 
             // labelBuyerDelivery
             // 
-            this.labelBuyerDelivery.Lines = 0;
             this.labelBuyerDelivery.Location = new System.Drawing.Point(429, 38);
             this.labelBuyerDelivery.Name = "labelBuyerDelivery";
             this.labelBuyerDelivery.Size = new System.Drawing.Size(95, 23);
@@ -169,7 +208,6 @@
             // 
             // labelDestination
             // 
-            this.labelDestination.Lines = 0;
             this.labelDestination.Location = new System.Drawing.Point(429, 11);
             this.labelDestination.Name = "labelDestination";
             this.labelDestination.Size = new System.Drawing.Size(95, 23);
@@ -184,6 +222,7 @@
             this.txtdropdownlistBuyMonth.IsSupportUnselect = true;
             this.txtdropdownlistBuyMonth.Location = new System.Drawing.Point(301, 64);
             this.txtdropdownlistBuyMonth.Name = "txtdropdownlistBuyMonth";
+            this.txtdropdownlistBuyMonth.OldText = "";
             this.txtdropdownlistBuyMonth.Size = new System.Drawing.Size(121, 24);
             this.txtdropdownlistBuyMonth.TabIndex = 12;
             this.txtdropdownlistBuyMonth.Type = "BuyMonth";
@@ -209,7 +248,6 @@
             // 
             // labelBuyMonth
             // 
-            this.labelBuyMonth.Lines = 0;
             this.labelBuyMonth.Location = new System.Drawing.Point(222, 64);
             this.labelBuyMonth.Name = "labelBuyMonth";
             this.labelBuyMonth.Size = new System.Drawing.Size(75, 23);
@@ -218,7 +256,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(222, 37);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(75, 23);
@@ -227,7 +264,6 @@
             // 
             // labelShipMode
             // 
-            this.labelShipMode.Lines = 0;
             this.labelShipMode.Location = new System.Drawing.Point(222, 10);
             this.labelShipMode.Name = "labelShipMode";
             this.labelShipMode.Size = new System.Drawing.Size(75, 23);
@@ -265,7 +301,6 @@
             // 
             // labelLocateSPNo
             // 
-            this.labelLocateSPNo.Lines = 0;
             this.labelLocateSPNo.Location = new System.Drawing.Point(4, 101);
             this.labelLocateSPNo.Name = "labelLocateSPNo";
             this.labelLocateSPNo.Size = new System.Drawing.Size(93, 23);
@@ -274,7 +309,6 @@
             // 
             // labelOrderType
             // 
-            this.labelOrderType.Lines = 0;
             this.labelOrderType.Location = new System.Drawing.Point(4, 65);
             this.labelOrderType.Name = "labelOrderType";
             this.labelOrderType.Size = new System.Drawing.Size(75, 23);
@@ -283,7 +317,6 @@
             // 
             // labelCustCD
             // 
-            this.labelCustCD.Lines = 0;
             this.labelCustCD.Location = new System.Drawing.Point(4, 38);
             this.labelCustCD.Name = "labelCustCD";
             this.labelCustCD.Size = new System.Drawing.Size(75, 23);
@@ -292,23 +325,11 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(4, 11);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(75, 23);
             this.labelBrand.TabIndex = 0;
             this.labelBrand.Text = "Brand";
-            // 
-            // shapeContainer1
-            // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(896, 132);
-            this.shapeContainer1.TabIndex = 20;
-            this.shapeContainer1.TabStop = false;
             // 
             // lineShape1
             // 
@@ -378,6 +399,7 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(896, 380);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
@@ -392,8 +414,8 @@
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             this.Name = "P04_BatchImport";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Batch Import";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -438,5 +460,7 @@
         private Win.UI.Button btnImport;
         private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Class.ComboCompany comboCompany1;
+        private Win.UI.Label label5;
     }
 }

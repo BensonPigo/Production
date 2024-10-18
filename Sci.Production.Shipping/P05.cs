@@ -38,6 +38,7 @@ namespace Sci.Production.Shipping
         private DateTime? FBDate_Ori;
         public DateTime? newSOCFMDate;
         public string newSOCFMDateCmd;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// ListGMTBooking_Detail
@@ -291,6 +292,15 @@ $" where p.INVNo = '{this.masterID}'");
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
 
             if (MyUtility.Check.Seek($@"
 select WhseCode,WhseName,* 
@@ -518,6 +528,9 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Today;
@@ -547,6 +560,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.txtbrand.ReadOnly = true;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtShipmodeShippingMode.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -1855,6 +1869,12 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         // Import from packing list
         private void BtnImportfrompackinglist_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             // Brand, CustCD, Destination, Ship Mode不可以為空
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
@@ -2858,6 +2878,26 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnMercuryShipment_Click(object sender, EventArgs e)
         {
             new P05_MercuryPostScanShipment(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

@@ -88,6 +88,12 @@
     <Compile Include="ComboCentralizedM.Designer.cs">
       <DependentUpon>ComboCentralizedM.cs</DependentUpon>
     </Compile>
+    <Compile Include="ComboCompany.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ComboCompany.Designer.cs">
+      <DependentUpon>ComboCompany.cs</DependentUpon>
+    </Compile>
     <Compile Include="ComboDropDownList.cs">
       <SubType>Component</SubType>
     </Compile>

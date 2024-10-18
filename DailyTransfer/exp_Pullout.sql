@@ -199,6 +199,7 @@ from (
 		   , [IsShippingAPApprove] 
 		   , DocumentRefNo
 		   , DischargePortID
+		   , OrderCompanyID
 	from #tmpFtyBooking1
 
 	union all
@@ -244,6 +245,7 @@ from (
 		   , [IsShippingAPApprove]
 		   , [DocumentRefNo] = ''
 		   , DischargePortID = ''
+		   , OrderCompanyID = 0
 	from #tmpFtyBooking2
 ) a 
 

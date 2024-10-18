@@ -137,7 +137,8 @@ select Selected = 0
 ,[InCharge]=''
 ,[AddName]=''
 ,[AddDate]=''
-from FtyExport_Detail fd
+from FtyExport_Detail fd with (nolock)
+left join FtyExport f with (nolock) on fd.id = f.id
 left join PO_Supp_Detail psd with (nolock) on psd.ID = fd.POID and psd.SEQ1 = fd.Seq1 and psd.SEQ2 = fd.Seq2
 	    left join PO_Supp_Detail_Spec psds WITH (NOLOCK) on psds.ID = psd.id and psds.seq1 = psd.seq1 and psds.seq2 = psd.seq2 and psds.SpecColumnID = 'Color'
 left join PO_Supp ps WITH (NOLOCK) on fd.POID = ps.ID and fd.SEQ1 = ps.SEQ1
@@ -152,6 +153,7 @@ not exists (
     and ed.Seq1 = fd.Seq1
     and ed.Seq2 = fd.Seq2
 )
+and f.OrderCompanyID = '{P02.orderCompanyID}'
 and fd.ID ='{this.txtWKNo.Text}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable selectData);
