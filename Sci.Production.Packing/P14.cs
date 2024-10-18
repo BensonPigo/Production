@@ -188,7 +188,7 @@ from (
             (
 	            select val = COUNT(1)
 	            from PackingList_Detail 
-	            where OrderID = x.OrderID and ReceiveDate is null AND CTNStartNo != 0 AND CTNQty != 0
+	            where OrderID = x.OrderID and ReceiveDate is null AND ISNULL(TRY_CONVERT(int, CTNStartNo),0) != 0 AND CTNQty != 0
             )RemainingCTN
             order by rn");
 
