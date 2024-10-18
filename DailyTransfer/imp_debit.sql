@@ -61,7 +61,7 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.ResponFTY = isnull(s.ResponFTY,''),
 			t.SubName = isnull(s.SubName,''),
 			t.SubconID = isnull(s.SubconID,''),
-			t.OrderCompanyID = isnull(s.OrderCompanyID, 0)
+			t.OrderCompanyID = isnull(s.OrderCompany, 0)
 	when not matched by target then 	
     INSERT
            (
@@ -170,7 +170,7 @@ insert @Sayfty select id from Production.dbo.Factory
                   isnull(s.responfty,''),
                   isnull(subname,''),
                   isnull(SubconID,''),
-                  isnull(OrderCompanyID, 0)                  
+                  isnull(OrderCompany, 0)                  
            )
 		
 		output inserted.id,$action into @Tdebit ;
@@ -261,7 +261,7 @@ insert @Sayfty select id from Production.dbo.Factory
                      WHERE  id=s.responfty),'') ,
               s.adddate,
               isnull(responfty,''),
-              isnull(OrderCompanyID,'')
+              isnull(OrderCompany,'')
        )
 	;
 
@@ -281,7 +281,7 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.MDivisionID = isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.ResponFTY),''),
 			t.issuedate = s.adddate,
 			t.ResponFTY = isnull( s.ResponFTY,''),
-			t.OrderCompanyID = isnull(s.OrderCompanyID,             0)
+			t.OrderCompanyID = isnull(s.OrderCompany,             0)
 	;
 	
 	--LocalDebit_Detail INSERT

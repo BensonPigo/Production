@@ -108,7 +108,7 @@ BEGIN
 		, t.CIFTerms = isnull( s.CIFTerms                                  , 0)
 		, t.FtyDisburseSD = isnull( s.FtyDisburseSD                        , '')
 		, t.MainWKID08 = isnull(s.MainWKID08, '')
-		, t.OrderCompanyID = isnull(s.OrderCompanyID, '')
+		, t.OrderCompanyID = isnull(s.OrderCompany, '')
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort 
 		,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID 
@@ -188,7 +188,7 @@ BEGIN
               isnull(s.cifterms,       0),
               isnull(s.ftydisbursesd,  ''),
               isnull(s.MainWKID08, ''),
-              isnull(s.OrderCompanyID, '')
+              isnull(s.OrderCompany, '')
        )
 	  output inserted.id into @T; 
 
@@ -1029,7 +1029,7 @@ update a set
 	, a.Blno = ISNULL(b.Blno                 , '')
 	, a.Confirm = ISNULL(b.Confirm           , 0)
 	, a.ConfirmTime = b.ConfirmTime
-	, a.OrderCompanyID = ISNULL(b.OrderCompanyID, 0)
+	, a.OrderCompanyID = ISNULL(b.OrderCompany, 0)
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 

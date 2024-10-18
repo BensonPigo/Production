@@ -1106,7 +1106,7 @@ else
 				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x,
 				t.Customize4            = isnull(s.Customize4,''),
 				t.Customize5            = isnull(s.Customize5,''),
-				t.OrderCompanyID	    = isnull(s.OrderCompanyID, 0)
+				t.OrderCompanyID	    = isnull(s.OrderCompany, 0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -1311,7 +1311,7 @@ else
 				and id = s.styleid 
 				and SeasonID = s.SeasonID ), 
 				''),
-              isnull(s.OrderCompanyID, 0)
+              isnull(s.OrderCompany, 0)
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
