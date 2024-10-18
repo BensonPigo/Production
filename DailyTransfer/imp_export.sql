@@ -108,13 +108,15 @@ BEGIN
 		, t.CIFTerms = isnull( s.CIFTerms                                  , 0)
 		, t.FtyDisburseSD = isnull( s.FtyDisburseSD                        , '')
 		, t.MainWKID08 = isnull(s.MainWKID08, '')
+		, t.OrderCompanyID = isnull(s.OrderCompany, '')
 	  when not matched  by target then 
 		insert (ID ,ScheduleID ,ScheduleDate ,LoadDate ,CloseDate ,Etd ,Eta ,ExportCountry ,ImportCountry ,ExportPort ,ImportPort 
 		,CYCFS ,ShipModeID ,ShipmentTerm ,FactoryID ,ShipMark ,ShipMarkDesc ,Consignee ,Handle ,Posting ,Payer ,CompanyID 
 		,Confirm ,LastEdit ,Remark ,Ecfa ,FormStatus ,Carrier ,Forwarder ,Vessel ,ShipTo ,Sono ,Blno ,InvNo ,Exchange 
 		,Packages ,WeightKg ,NetKg ,Cbm ,CbmFor ,Takings ,TakingFee ,PortArrival ,DocArrival ,Broker 
 		,Insurer ,Trailer1 ,Trailer2 ,Freight ,Insurance ,Junk ,AddName ,AddDate ,EditName ,EditDate,MainExportID ,Replacement ,Delay ,PrepaidFtyImportFee,NoImportCharges
-		,MainExportID08 ,FormE, SQCS, FtyTruckFee, FtyTrucker, OTFee, CIFTerms,FtyDisburseSD,MainWKID08)
+		,MainExportID08 ,FormE, SQCS, FtyTruckFee, FtyTrucker, OTFee, CIFTerms,FtyDisburseSD,MainWKID08
+        ,OrderCompanyID)
        VALUES
        (
               isnull(s.id ,                 ''),
@@ -185,7 +187,8 @@ BEGIN
               isnull(s.otfee,          0),
               isnull(s.cifterms,       0),
               isnull(s.ftydisbursesd,  ''),
-              isnull(s.MainWKID08, '')
+              isnull(s.MainWKID08, ''),
+              isnull(s.OrderCompany, '')
        )
 	  output inserted.id into @T; 
 
@@ -1026,6 +1029,7 @@ update a set
 	, a.Blno = ISNULL(b.Blno                 , '')
 	, a.Confirm = ISNULL(b.Confirm           , 0)
 	, a.ConfirmTime = b.ConfirmTime
+	, a.OrderCompanyID = ISNULL(b.OrderCompany, 0)
 from Production.dbo.TransferExport a
 inner join Trade_To_Pms.dbo.TransferExport b on b.ID = a.ID
 
