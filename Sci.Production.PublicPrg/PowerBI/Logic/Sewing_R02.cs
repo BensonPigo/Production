@@ -1,10 +1,17 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -793,6 +800,53 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             }
 
             return pams;
+        }
+
+        public DataSet GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model)
+        {
+            DataSet returnResult = new DataSet();
+            string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description = 'PAMS WEB API ESP'", "ManufacturingExecution");
+#if DEBUG
+            url = "http://172.17.11.98:8998";
+#endif
+            string api = "api/AttendanceSummary/AttendanceSummary_Summary";
+
+            // 初始化 HttpClient 來發送請求
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+
+                    // 將Model 轉成Json格式
+                    string jsonBody = JsonConvert.SerializeObject(model);
+
+                    // 再將JSON 字串轉換為跳脫的字串
+                    string escapedJson = JsonConvert.SerializeObject(jsonBody);
+
+                    // 建立 HttpContent 物件，指定內容類型為 application/json
+                    var content = new StringContent(escapedJson, Encoding.UTF8, "application/json");
+
+                    // 發送同步Post 請求
+                    HttpResponseMessage response = client.PostAsync(url + "//" + api, content).Result;
+
+                    // 確認回應是成功的
+                    response.EnsureSuccessStatusCode();
+
+                    // 將回應的 JSON 內容轉換為字串
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                    AttendanceSummaryResult result = JsonConvert.DeserializeObject<AttendanceSummaryResult>(responseBody);
+
+                    // 將 JSON 字串轉換為 DataSet
+                    returnResult = result.QueryResult;
+                }
+                catch (HttpRequestException e)
+                {
+                    MyUtility.Msg.WarningBox("Request error: " + e.Message);
+                }
+            }
+
+            return returnResult;
         }
     }
 }
