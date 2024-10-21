@@ -40,6 +40,7 @@ CREATE TABLE [dbo].[WorkOrderForOutput] (
     [SourceFrom]               VARCHAR (1)     CONSTRAINT [DF_WorkOrderForOutput_SourceFrom] DEFAULT ('') NOT NULL,
     [CuttingMethod]            BIT             CONSTRAINT [DF_WorkOrderForOutput_CuttingMethod] DEFAULT ((0)) NOT NULL,
     [Order_EachconsUkey]       BIGINT          CONSTRAINT [DF_WorkOrderForOutput_Order_EachconsUkey] DEFAULT ((0)) NOT NULL,
+    [CuttingPlannerRemark]     NVARCHAR (500)  CONSTRAINT [DF_WorkOrderForOutput_CuttingPlannerRemark] DEFAULT ('') NOT NULL ,
     [AddName]                  VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_AddName] DEFAULT ('') NOT NULL,
     [AddDate]                  DATETIME        NULL,
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_EditName] DEFAULT ('') NOT NULL,
