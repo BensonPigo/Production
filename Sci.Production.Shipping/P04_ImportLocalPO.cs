@@ -69,12 +69,41 @@ namespace Sci.Production.Shipping
             }
 
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"select lo.*, 1 as Selected, (lo.SuppID+' - '+ls.Abb) as Supp,isnull(li.Description,'') as Description,li.Category as MtlTypeID,
-o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery,0.0 as NetKg,0.0 as WeightKg,
-'' as Seq1,'' as Seq2,'' as Seq,'' as FabricType
-from (select l.Id as TransactionID,ld.OrderId as POID,l.LocalSuppID as SuppID,SUBSTRING(ld.Id+ld.ThreadColorID,1,26) as SCIRefno,ld.Refno,ld.ThreadColorID,ld.UnitId,ld.Qty,ld.Price
-      from LocalPO l WITH (NOLOCK) , LocalPO_Detail ld WITH (NOLOCK) 
-	  where l.Id = ld.Id");
+            sqlCmd.Append(@"
+SELECT 
+    lo.*,
+    1 AS Selected, 
+    (lo.SuppID + ' - ' + ls.Abb) AS Supp,
+    ISNULL(li.Description, '') AS Description,
+    li.Category AS MtlTypeID,
+    o.BuyerDelivery,
+    ISNULL(o.BrandID, '') AS BrandID,
+    ISNULL(o.FactoryID, '') AS FactoryID,
+    o.SciDelivery,
+    0.0 AS NetKg,
+    0.0 AS WeightKg,
+    '' AS Seq1,
+    '' AS Seq2,
+    '' AS Seq,
+    '' AS FabricType
+FROM 
+(   SELECT 
+        l.Id AS TransactionID,
+        ld.OrderId AS POID,
+        l.LocalSuppID AS SuppID,
+        SUBSTRING(ld.Id + ld.ThreadColorID, 1, 26) AS SCIRefno,
+        ld.Refno,
+        ld.ThreadColorID,
+        ld.UnitId,
+        ld.Qty,
+        ld.Price
+     FROM 
+        LocalPO l WITH (NOLOCK), 
+        LocalPO_Detail ld WITH (NOLOCK) 
+     WHERE 
+        l.Id = ld.Id
+
+");
             if (!MyUtility.Check.Empty(this.txtLocalPurchase.Text))
             {
                 sqlCmd.Append(string.Format(" and l.id = '{0}'", this.txtLocalPurchase.Text.Trim()));
@@ -90,10 +119,13 @@ from (select l.Id as TransactionID,ld.OrderId as POID,l.LocalSuppID as SuppID,SU
                 sqlCmd.Append(string.Format(" and l.LocalSuppID = '{0}'", this.txtSubconSupplier.TextBox1.Text.Trim()));
             }
 
-            sqlCmd.Append(@") lo
+            sqlCmd.Append($@") lo
 left join Orders o on o.ID = lo.POID
 left join LocalItem li on li.RefNo = lo.Refno
-left join LocalSupp ls on ls.ID = lo.SuppID");
+left join LocalSupp ls on ls.ID = lo.SuppID
+where 1=1
+and o.OrderCompanyID = '{P04.orderCompanyID}'
+");
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out selectData);
             if (!result)

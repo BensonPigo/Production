@@ -1105,7 +1105,8 @@ else
 				t.Sew_ScheETAnoReplace	= s.Sew_ScheETAnoReplace,
 				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x,
 				t.Customize4            = isnull(s.Customize4,''),
-				t.Customize5            = isnull(s.Customize5,'')
+				t.Customize5            = isnull(s.Customize5,''),
+				t.OrderCompanyID	    = isnull(s.OrderCompany, 0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -1139,8 +1140,9 @@ else
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
 			, SizeUnitWeight		, OrganicCotton         , DirectShip			, ScheETANoReplace		, SCHDLETA
-			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x  , Customize4
-            , Customize5			, LocalMR
+			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x  , OrderCompanyID
+			, Customize4            , Customize5			, LocalMR
+
 		) 
        VALUES
        (
@@ -1299,6 +1301,7 @@ else
 			  s.Max_ScheETAbySP,
 			  s.Sew_ScheETAnoReplace,
 			  s.MaxShipETA_Exclude5x,
+			  isnull(s.OrderCompany, 0),
               isnull(s.Customize4, ''),
               isnull(s.Customize5, ''),
 			  isnull( 
@@ -1309,6 +1312,7 @@ else
 				and id = s.styleid 
 				and SeasonID = s.SeasonID ), 
 				'')
+              
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
