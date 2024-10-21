@@ -368,7 +368,6 @@ FROm  Express_Detail
 WHERE PackingListID='{packingListID}'
       AND OrderID='{orderID}' 
       AND OrderCompanyID = '{P02.orderCompanyID}'
-and
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
