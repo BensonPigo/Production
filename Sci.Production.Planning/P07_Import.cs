@@ -52,10 +52,10 @@ namespace Sci.Production.Planning
             .Numeric("DailyCPULoading", header: "Daily" + Environment.NewLine + "CPU Loading", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
             .Numeric("NewTarget", header: "New Target base on Actual" + Environment.NewLine + "output and left working days", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
             .Numeric("ActCPUPerformed", header: "Actual CPU " + Environment.NewLine + "Performed", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 3)
-            .Numeric("DailyCPUVarience", header: "Daily CPU Varience" + Environment.NewLine + "(based on new target)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 3)
-            .Numeric("AccuLoading", header: "Accumu-lated" + Environment.NewLine + "Loading", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 3)
-            .Numeric("AccuActCPUPerformed", header: "Accumu-lated Actual" + Environment.NewLine + "CPU Performed", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 3)
-            .Numeric("AccuCPUVariance", header: "Accumu-lated CPU" + Environment.NewLine + "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 3)
+            .Numeric("DailyCPUVarience", header: "Daily CPU Varience" + Environment.NewLine + "(based on new target)", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
+            .Numeric("AccuLoading", header: "Accumu-lated" + Environment.NewLine + "Loading", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
+            .Numeric("AccuActCPUPerformed", header: "Accumu-lated Actual" + Environment.NewLine + "CPU Performed", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
+            .Numeric("AccuCPUVariance", header: "Accumu-lated CPU" + Environment.NewLine + "Variance", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
             .Numeric("LeftWorkDays", header: "Left working days", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 0)
             .Numeric("AvgWorkhours", header: "Average" + Environment.NewLine + "w/hours", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 2)
             .Numeric("PPH", header: "PPH", width: Widths.AnsiChars(5), iseditingreadonly: true, decimal_places: 2)
@@ -142,23 +142,24 @@ namespace Sci.Production.Planning
                 newRow["Date"] = Convert.ToDateTime(detail_Date).ToString("MM/dd", CultureInfo.CreateSpecificCulture("en-US"));
                 newRow["WeekDay"] = Convert.ToDateTime(detail_Date).ToString("ddd", CultureInfo.CreateSpecificCulture("en-US"));
                 newRow["DailyCPULoading"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 3], "C").ToString();
-                newRow["NewTarget"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "C").ToString();
-                newRow["ActCPUPerformed"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "C").ToString();
-                newRow["DailyCPUVarience"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "C").ToString();
-                newRow["AccuLoading"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "C").ToString();
-                newRow["AccuActCPUPerformed"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "C").ToString();
-                newRow["AccuCPUVariance"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "C").ToString();
-                newRow["LeftWorkDays"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "C").ToString();
-                newRow["AvgWorkhours"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "C").ToString();
-                newRow["PPH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 12], "C").ToString();
-                newRow["Direct"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 13], "C").ToString();
-                newRow["Active"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 14], "C").ToString();
-                newRow["VPH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 15], "C").ToString();
-                newRow["ManpowerRatio"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 16], "C").ToString();
-                newRow["LineNo"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 17], "C").ToString();
-                newRow["LineManpower"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 18], "C").ToString();
-                newRow["GPH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 19], "C").ToString();
-                newRow["SPH"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, 20], "C").ToString();
+
+                newRow["NewTarget"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 4], "N")));
+                newRow["ActCPUPerformed"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 5], "N")), 3);
+                newRow["DailyCPUVarience"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 6], "N")));
+                newRow["AccuLoading"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 7], "N")));
+                newRow["AccuActCPUPerformed"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 8], "N")));
+                newRow["AccuCPUVariance"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 9], "N")));
+                newRow["LeftWorkDays"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 10], "N")));
+                newRow["AvgWorkhours"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 11], "N")), 2);
+                newRow["PPH"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 12], "N")), 2);
+                newRow["Direct"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 13], "N")));
+                newRow["Active"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 14], "N")));
+                newRow["VPH"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 15], "N")), 2);
+                newRow["ManpowerRatio"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 16], "N")), 2);
+                newRow["LineNo"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 17], "N")));
+                newRow["LineManpower"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 18], "N")));
+                newRow["GPH"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 19], "N")),2);
+                newRow["SPH"] = Math.Round(MyUtility.Convert.GetDecimal(MyUtility.Excel.GetExcelCellValue(objCellArray[1, 20], "N")),2);
                 this.gridData.Rows.Add(newRow);
             }
         }
