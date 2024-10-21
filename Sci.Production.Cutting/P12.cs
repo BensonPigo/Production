@@ -262,10 +262,16 @@ FROM dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 LEFT JOIN SubProcessSeq_Detail sd WITH (NOLOCK) ON sd.SubProcessID = e1.SubprocessId
 LEFT JOIN SubProcess s WITH (NOLOCK) ON s.Id = e1.SubprocessId
 where  EXISTS(
-
 	select b.id,a.BundleNo, a.PatternCode
 	 from dbo.Bundle_Detail a WITH (NOLOCK)
 	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
@@ -280,6 +286,13 @@ where  EXISTS(
 	select b.id,a.BundleNo, a.PatternCode
 	 from dbo.Bundle_Detail a WITH (NOLOCK)
 	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and x.id=b.id
@@ -519,10 +532,16 @@ FROM dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
 LEFT JOIN SubProcessSeq_Detail sd WITH (NOLOCK) ON sd.SubProcessID = e1.SubprocessId
 LEFT JOIN SubProcess s WITH (NOLOCK) ON s.Id = e1.SubprocessId
 where  EXISTS(
-
 	select b.id,a.BundleNo, a.PatternCode
 	 from dbo.Bundle_Detail a WITH (NOLOCK)
 	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
