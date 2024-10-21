@@ -872,6 +872,7 @@ where id = '{0}'", Env.User.Factory), null);
                 SciDeliveryTo = this.sciDelivery2,
                 BrandID = this.brand,
                 SubProcess = this.subProcess,
+                IsPowerBI = false,
             };
 
             PPIC_R01 biModel = new PPIC_R01();

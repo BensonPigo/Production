@@ -10,7 +10,10 @@
 	 @SciDeliveryFrom date = null,
 	 @SciDeliveryTo date = null,
 	 @BrandID varchar(8) = '',
-	 @SubProcess varchar(20) = ''
+	 @SubProcess varchar(20) = '',
+	 @sEditDate date = null,
+	 @eEditDate date = null,
+	 @IsPowerBI bit = 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -35,6 +38,7 @@ where   (s.MDivisionID = @MDivisionID or @MDivisionID = '') and
         (o.SciDelivery <= @SciDeliveryTo or @SciDeliveryTo is null) and
         (o.BrandID = @BrandID or @BrandID = '') and
         (@SubProcess = '' or exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @SubProcess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ))
+        OR (@IsPowerBI = 0 OR (o.EditDate >= @sEditDate AND o.EditDate <= @eEditDate))
 
 Declare @tmp_main table(
     SewingLineID varchar(5),

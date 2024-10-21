@@ -42,6 +42,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 SciDeliveryTo = null,
                 BrandID = string.Empty,
                 SubProcess = string.Empty,
+                IsPowerBI = true,
             };
 
             try
