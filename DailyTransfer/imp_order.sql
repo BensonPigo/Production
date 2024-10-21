@@ -1301,6 +1301,7 @@ else
 			  s.Max_ScheETAbySP,
 			  s.Sew_ScheETAnoReplace,
 			  s.MaxShipETA_Exclude5x,
+			  isnull(s.OrderCompany, 0),
               isnull(s.Customize4, ''),
               isnull(s.Customize5, ''),
 			  isnull( 
@@ -1310,8 +1311,7 @@ else
 				where BrandID = s.BrandID 
 				and id = s.styleid 
 				and SeasonID = s.SeasonID ), 
-				''),
-              isnull(s.OrderCompany, 0)
+				'')
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
