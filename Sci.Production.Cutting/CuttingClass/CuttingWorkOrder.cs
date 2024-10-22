@@ -168,6 +168,7 @@ namespace Sci.Production.Cutting
                         validWk.Add(workOrder);
                     }
 
+                    // 只要有不合法就全部不寫入
                     if (!inValidWk.Any() && validWk.Any())
                     {
                         // 合法資料開始寫入 WorkOrder、WorkOrder_PatternPanel、WorkOrder_SizeRati
