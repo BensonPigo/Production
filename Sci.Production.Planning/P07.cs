@@ -1,12 +1,14 @@
 ﻿using Ict;
 using Ict.Win;
 using System;
+using System.Data;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
 namespace Sci.Production.Planning
 {
-    /// <inheritdoc/>
+    /// <inheritdoc/
     public partial class P07 : Win.Tems.Input6
     {
         /// <inheritdoc/>
@@ -44,7 +46,6 @@ namespace Sci.Production.Planning
             ;
             #endregion
         }
-
         /// <inheritdoc/>
         protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
@@ -52,30 +53,54 @@ namespace Sci.Production.Planning
 
             this.DetailSelectCommand = $@"
              SELECT  
-             [DailyAccuCPULoadingUkey]
+             [DailyAccuCPULoadingUkey] 
             ,[Date]
             ,[WeekDay]
-            ,[DailyCPULoading]
-            ,[NewTarget]
-            ,[ActCPUPerformed]
-            ,[DailyCPUVarience]
-            ,[AccuLoading]
-            ,[AccuActCPUPerformed]
-            ,[AccuCPUVariance]
-            ,[LeftWorkDays]
-            ,[AvgWorkhours]
-            ,[PPH]
-            ,[Direct]
-            ,[Active]
-            ,[VPH]
-            ,[ManpowerRatio]
-            ,[LineNo]
-            ,[LineManpower]
-            ,[GPH]
-            ,[SPH]
+            ,[DailyCPULoading]     = IIF([DailyCPULoading]  = 0 , NULL , [DailyCPULoading]    )
+            ,[NewTarget]           = IIF([DailyCPULoading]  = 0 , NULL , [NewTarget]          )
+            ,[ActCPUPerformed]     = IIF([DailyCPULoading]  = 0 , NULL , [ActCPUPerformed]    )
+            ,[DailyCPUVarience]    = IIF([DailyCPULoading]  = 0 , NULL , [DailyCPUVarience]   )
+            ,[AccuLoading]         = IIF([DailyCPULoading]  = 0 , NULL , [AccuLoading]        )
+            ,[AccuActCPUPerformed] = IIF([DailyCPULoading]  = 0 , NULL , [AccuActCPUPerformed])
+            ,[AccuCPUVariance]     = IIF([DailyCPULoading]  = 0 , NULL , [AccuCPUVariance]    )
+            ,[LeftWorkDays]        = IIF([DailyCPULoading]  = 0 , NULL , [LeftWorkDays]       )
+            ,[AvgWorkhours]        = IIF([DailyCPULoading]  = 0 , NULL , [AvgWorkhours]       )
+            ,[PPH]                 = IIF([DailyCPULoading]  = 0 , NULL , [PPH]                )
+            ,[Direct]              = IIF([DailyCPULoading]  = 0 , NULL , [Direct]             )
+            ,[Active]              = IIF([DailyCPULoading]  = 0 , NULL , [Active]             )
+            ,[VPH]                 = IIF([DailyCPULoading]  = 0 , NULL , [VPH]                )
+            ,[ManpowerRatio]       = IIF([DailyCPULoading]  = 0 , NULL , [ManpowerRatio]      )
+            ,[LineNo]              = IIF([DailyCPULoading]  = 0 , NULL , [LineNo]             )
+            ,[LineManpower]        = IIF([DailyCPULoading]  = 0 , NULL , [LineManpower]       )
+            ,[GPH]                 = IIF([DailyCPULoading]  = 0 , NULL , [GPH]                )
+            ,[SPH]                 = IIF([DailyCPULoading]  = 0 , NULL , [SPH]                )
             FROM DailyAccuCPULoading_Detail where DailyAccuCPULoadingUkey = '{masterID}'";
 
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        /// <summary>
+        /// OnDetailEntered
+        /// </summary>
+        protected override void OnDetailEntered()
+        {
+            base.OnDetailEntered();
+
+            for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+            {
+                DataRow dataRows = this.detailgrid.GetDataRow(i);
+
+                for (int x = 0; x < this.detailgrid.Columns.Count; x++)
+                {
+                    var cellValue = dataRows[x];
+
+                    if ((cellValue is decimal && (decimal)cellValue < 0) || (cellValue is int && (int)cellValue < 0))
+                    {
+                        this.detailgrid.Rows[i].Cells[x - 1].Style.ForeColor = Color.Red;
+                    }
+                }
+            }
+
         }
 
         private void BtnImportFromExcel_Click(object sender, EventArgs e)

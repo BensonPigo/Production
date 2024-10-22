@@ -39,7 +39,6 @@
             this.txtYear = new Sci.Win.UI.TextBox();
             this.btnDownloadTemplate = new Sci.Win.UI.Button();
             this.btnImportExcel = new Sci.Win.UI.Button();
-            this.txtRemainCPU = new Sci.Win.UI.DisplayBox();
             this.lblRemainCPU = new Sci.Win.UI.Label();
             this.txtLoadOnCpu = new Sci.Win.UI.DisplayBox();
             this.txtDeductLoadingFromMonth = new Sci.Win.UI.DisplayBox();
@@ -66,6 +65,7 @@
             this.lblYear = new Sci.Win.UI.Label();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.txtRemainCPU = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchImport)).BeginInit();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -218,15 +218,6 @@
             this.btnImportExcel.Text = "Import Excel";
             this.btnImportExcel.UseVisualStyleBackColor = true;
             this.btnImportExcel.Click += new System.EventHandler(this.BtnImportExcel_Click);
-            // 
-            // txtRemainCPU
-            // 
-            this.txtRemainCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtRemainCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtRemainCPU.Location = new System.Drawing.Point(865, 159);
-            this.txtRemainCPU.Name = "txtRemainCPU";
-            this.txtRemainCPU.Size = new System.Drawing.Size(178, 23);
-            this.txtRemainCPU.TabIndex = 47;
             // 
             // lblRemainCPU
             // 
@@ -444,6 +435,15 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // txtRemainCPU
+            // 
+            this.txtRemainCPU.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtRemainCPU.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtRemainCPU.Location = new System.Drawing.Point(865, 159);
+            this.txtRemainCPU.Name = "txtRemainCPU";
+            this.txtRemainCPU.Size = new System.Drawing.Size(178, 23);
+            this.txtRemainCPU.TabIndex = 47;
+            // 
             // P07_Import
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -472,7 +472,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.GroupBox groupBox2;
-        private Win.UI.DisplayBox txtRemainCPU;
         private Win.UI.Label lblRemainCPU;
         private Win.UI.DisplayBox txtLoadOnCpu;
         private Win.UI.DisplayBox txtDeductLoadingFromMonth;
@@ -503,5 +502,6 @@
         private Win.UI.TextBox txtYear;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private Class.Txtfactory txtfactory;
+        private Win.UI.DisplayBox txtRemainCPU;
     }
 }
