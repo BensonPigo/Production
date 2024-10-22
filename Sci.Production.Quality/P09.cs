@@ -848,7 +848,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
                     DualResult dresult;
                     foreach (var file in filesDic)
                     {
-                        dresult = MyUtility.SFTP.SFTP_Download(file.Value + @"\" + file.Key, fbd.SelectedPath + @"\" + file.Key);
+                        dresult = MyUtility.SFTP.SFTP_Download(file.Value + @"/" + file.Key, fbd.SelectedPath + @"\" + file.Key);
                         if (!dresult)
                         {
                             this.ShowErr(dresult);
