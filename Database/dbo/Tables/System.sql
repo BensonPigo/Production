@@ -94,6 +94,7 @@ CREATE TABLE [dbo].[System] (
 	[ExportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ExportDataPathDummy]  DEFAULT (''),
 	IEPath NVARCHAR(120) NOT NULL CONSTRAINT [DF_System_IEPath] Default '',
     [isNeedOTPFty] BIT NOT NULL DEFAULT ((0)), 
+    [MercuryErrorEmailLastDate] DATE NOT NULL, 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go
@@ -279,3 +280,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'isNeedOTPFty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Mercury Error Email 最後寄出日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'MercuryErrorEmailLastDate'
