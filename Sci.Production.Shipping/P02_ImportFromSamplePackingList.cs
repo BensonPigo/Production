@@ -364,10 +364,11 @@ WHERE REFNO	= '{itemExpress_CTNData.First()["Refno"]}'
 
 ---- 1. 訂單 + PL 是否已經存在 HC表身
 SELECT [ExistsData]=1
-FROm  Express_Detail
-WHERE PackingListID='{packingListID}'
-      AND OrderID='{orderID}' 
-      AND OrderCompanyID = '{P02.orderCompanyID}'
+FROm  Express_Detail ED
+INNER JOIN Express E ON E.ID= ED.ID
+WHERE ED.PackingListID='{packingListID}'
+      AND ED.OrderID='{orderID}' 
+      AND E.OrderCompanyID = '{P02.orderCompanyID}'
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
