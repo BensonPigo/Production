@@ -186,7 +186,7 @@
             this.editBox1.Name = "editBox1";
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.editBox1.Size = new System.Drawing.Size(265, 23);
-            this.editBox1.TabIndex = 31;
+            this.editBox1.TabIndex = 3;
             // 
             // grid1
             // 
@@ -213,7 +213,7 @@
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(603, 134);
-            this.grid1.TabIndex = 30;
+            this.grid1.TabIndex = 6;
             this.grid1.SelectionChanged += new System.EventHandler(this.Grid1_SelectionChanged);
             // 
             // btnCreateNewCalendar
@@ -222,7 +222,7 @@
             this.btnCreateNewCalendar.Location = new System.Drawing.Point(11, 114);
             this.btnCreateNewCalendar.Name = "btnCreateNewCalendar";
             this.btnCreateNewCalendar.Size = new System.Drawing.Size(207, 30);
-            this.btnCreateNewCalendar.TabIndex = 29;
+            this.btnCreateNewCalendar.TabIndex = 5;
             this.btnCreateNewCalendar.Text = "Create new Calendar";
             this.btnCreateNewCalendar.UseVisualStyleBackColor = true;
             this.btnCreateNewCalendar.Click += new System.EventHandler(this.BtnCreateNewCalendar_Click);
@@ -236,7 +236,7 @@
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(100, 23);
-            this.txtCell1.TabIndex = 17;
+            this.txtCell1.TabIndex = 4;
             // 
             // txtMdivision1
             // 
@@ -257,7 +257,7 @@
             this.btnRemoveCalendar.Location = new System.Drawing.Point(836, 160);
             this.btnRemoveCalendar.Name = "btnRemoveCalendar";
             this.btnRemoveCalendar.Size = new System.Drawing.Size(158, 30);
-            this.btnRemoveCalendar.TabIndex = 61;
+            this.btnRemoveCalendar.TabIndex = 9;
             this.btnRemoveCalendar.Text = "Remove Calendar";
             this.btnRemoveCalendar.UseVisualStyleBackColor = true;
             this.btnRemoveCalendar.Click += new System.EventHandler(this.BtnRemoveCalendar_Click);
@@ -269,7 +269,7 @@
             this.btnEditCalendar.Location = new System.Drawing.Point(672, 160);
             this.btnEditCalendar.Name = "btnEditCalendar";
             this.btnEditCalendar.Size = new System.Drawing.Size(158, 30);
-            this.btnEditCalendar.TabIndex = 60;
+            this.btnEditCalendar.TabIndex = 8;
             this.btnEditCalendar.Text = "Edit Calendar";
             this.btnEditCalendar.UseVisualStyleBackColor = true;
             this.btnEditCalendar.Click += new System.EventHandler(this.BtnEditCalendar_Click);
@@ -301,7 +301,7 @@
             this.dateStart.Name = "dateStart";
             this.dateStart.ReadOnly = true;
             this.dateStart.Size = new System.Drawing.Size(130, 23);
-            this.dateStart.TabIndex = 57;
+            this.dateStart.TabIndex = 7;
             // 
             // label4
             // 
@@ -320,7 +320,7 @@
             this.calendarGrid1.Location = new System.Drawing.Point(12, 193);
             this.calendarGrid1.Name = "calendarGrid1";
             this.calendarGrid1.Size = new System.Drawing.Size(981, 362);
-            this.calendarGrid1.TabIndex = 62;
+            this.calendarGrid1.TabIndex = 10;
             // 
             // B05
             // 
