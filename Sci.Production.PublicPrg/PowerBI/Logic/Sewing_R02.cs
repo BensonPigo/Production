@@ -311,7 +311,8 @@ alter table #tmp alter column QAQty int
 alter table #tmp alter column LastShift varchar(1)
 alter table #tmp alter column SubconInType varchar(1)
 
-    Select ID
+      
+      Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
 		   																, '')),
@@ -323,6 +324,17 @@ alter table #tmp alter column SubconInType varchar(1)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
           and IsPrintToCMP=1
+	union all
+    -- 取得特殊的轉移訂單ArtworkTypeID 
+	select distinct ID = ap.LocalSuppID + ' ' + a.ID
+	, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
+	from ArtworkType a WITH (NOLOCK)
+	inner join artworkpo ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
 
 	--準備台北資料(須排除這些)
 	select ps.ID
@@ -335,21 +347,27 @@ alter table #tmp alter column SubconInType varchar(1)
 	and ml.isThread=1 
 	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
-    select ot.ArtworkTypeID
+    SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
+							else ot.ArtworkTypeID end
 		   , a.OrderId
 		   , a.ComboType
            , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-    into  #tmpAllSubprocess
+    into #tmpAllSubprocess
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+	left join (		
+		  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
+		  from ArtworkPO ap
+		  inner join ArtworkPO_Detail apd on ap.ID= apd.ID
+	) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID and apd.LocalSuppID in ('G168','SPP')
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
 
     --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
     -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
@@ -369,7 +387,9 @@ select ArtworkTypeID = t1.ID
 from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
-order by t1.ID");
+order by case when t1.ID like 'SPP%' or t1.ID like 'G168%' then 1 else 0 end, t1.ID
+
+");
                 Base_ViewModel resultReport = new Base_ViewModel
                 {
                     Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),

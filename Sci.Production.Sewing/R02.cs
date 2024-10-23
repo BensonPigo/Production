@@ -577,6 +577,16 @@ from ArtworkType WITH (NOLOCK)
 where Classify in ('I','A','P') 
 		and IsTtlTMS = 0
         and IsPrintToCMP=1
+union all
+select distinct ID = ap.LocalSuppID + ' ' + a.ID
+, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   								, iif(ProductionUnit = 'QTY', 'AMT'
+		   															, '')),
+        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							    when ProductionUnit = 'TMS' then 3
+							    else 0 end
+from ArtworkType a WITH (NOLOCK)
+inner join artworkpo ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
 
 --準備台北資料(須排除這些)
 select ps.ID
@@ -589,21 +599,27 @@ where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
 and ml.isThread=1 
 and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
-select ot.ArtworkTypeID
-		, a.OrderId
-		, a.ComboType
-        , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-into  #tmpAllSubprocess
+SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
+						else ot.ArtworkTypeID end
+	   , a.OrderId
+	   , a.ComboType
+       , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+into #tmpAllSubprocess
 from #tmp a
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+left join (		
+	  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
+	  from ArtworkPO ap
+	  inner join ArtworkPO_Detail apd on ap.ID= apd.ID
+) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID and apd.LocalSuppID in ('G168','SPP')
 where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
         --排除 subcon in non sister的數值
-        and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
-        and ot.Price > 0 		    
-		and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			or ot.ArtworkTypeID <> 'SP_THREAD')
-group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
+      and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
+      and ot.Price > 0 		    
+	  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+		  or ot.ArtworkTypeID <> 'SP_THREAD')
+group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
 
 --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
 -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
@@ -663,7 +679,9 @@ outer apply (
 	from ArtworkPo po WITH (NOLOCK) 
     inner join ArtworkPo_Detail pod WITH (NOLOCK) on pod.id = po.Id 
     inner join orders WITH (NOLOCK) on orders.id = pod.orderid
-		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID    AND Orders.Category=aa.Category) t
+		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID    
+        AND Orders.Category=aa.Category and po.LocalSuppID not in ('SPP','G168')
+    ) t
 ) x		
 where po_qty > 0
 
@@ -902,9 +920,34 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
             worksheet.Cells[insertRow, 1] = "Total work day:";
             worksheet.Cells[insertRow, 3] = this.workDay;
 
+            #region Only Subcon Out 含外發整件成衣& 外發加工段
+            insertRow += 3;
+            DataTable dtSubcOut = this.SewingR04[0];
+            if (dtSubcOut.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtSubcOut.Rows)
+                {
+                    // 插入一筆record
+                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
+
+                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["ProductionUnit"]));
+                    worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr["TTL_Price"]);
+                    insertRow++;
+                }
+            }
+            else
+            {
+                // 刪除沒資料的欄位
+                this.DeleteExcelRow(3, insertRow, excel);
+            }
+
+            #endregion
+
             // Subcon
             int revenueStartRow = 0;
-            insertRow = insertRow + 2;
+            insertRow = insertRow + 3;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
             if (this.subconData.Rows.Count > 0)
@@ -1060,33 +1103,8 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
             else
             {
                 // 要保留外發加工的欄位所以加上5行
-                this.DeleteExcelRow(9, insertRow + 4, excel);
+                this.DeleteExcelRow(9, insertRow , excel);
             }
-
-            #region Only Subcon Out 含外發整件成衣& 外發加工段
-            insertRow += 1;
-            DataTable dtSubcOut = this.SewingR04[0];
-            if (dtSubcOut.Rows.Count > 0)
-            {
-                foreach (DataRow dr in dtSubcOut.Rows)
-                {
-                    // 插入一筆record
-                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow + 1)), Type.Missing).EntireRow;
-                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
-                    Marshal.ReleaseComObject(rngToInsert);
-
-                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["ProductionUnit"]));
-                    worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr["TTL_Price"]);
-                    insertRow++;
-                }
-            }
-            else
-            {
-                // 刪除沒資料的欄位
-                this.DeleteExcelRow(3, insertRow, excel);
-            }
-
-            #endregion
 
             this.HideWaitMessage();
 
