@@ -965,6 +965,14 @@ where not exists (select 1 from ShipPlan_DeleteGBHistory sdh where sdh.ID = t.ID
                 return false;
             }
 
+            var plIDListData = this.plData.AsEnumerable().Where(r => !MyUtility.Check.Empty(r["PulloutID"])).Select(r => r["PulloutID"].ToString()).ToList().Distinct();
+            if (plIDListData.Count() > 0)
+            {
+                string pulloutIDList = string.Join(",", plIDListData);
+                MyUtility.Msg.WarningBox($"Pullout ID is not empty: {Environment.NewLine} {pulloutIDList}. {Environment.NewLine}Please complete the Pullout Report Revise before deleting");
+                return false;
+            }
+
             return base.ClickDeleteBefore();
         }
 
@@ -1251,6 +1259,14 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
                 }
 
                 this.gridDetailPackingList.ValidateControl();
+
+                var plIDListData = this.plData.AsEnumerable().Where(r => r["InvNo"].ToString() == MyUtility.Convert.GetString(this.CurrentDetailData["ID"]) && !MyUtility.Check.Empty(r["PulloutID"])).Select(r => r["PulloutID"].ToString()).ToList().Distinct();
+                if (plIDListData.Count() > 0)
+                {
+                    string pulloutIDList = string.Join(",", plIDListData);
+                    MyUtility.Msg.WarningBox($"Pullout ID is not empty: {Environment.NewLine} {pulloutIDList}. {Environment.NewLine}Please complete the Pullout Report Revise before deleting");
+                    return;
+                }
 
                 foreach (DataRow pldr in this.plData.Select(string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(this.CurrentDetailData["ID"]))))
                 {
