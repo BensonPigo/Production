@@ -5,10 +5,8 @@ using Sci.Data;
 using Sci.Production.Class.Command;
 using Sci.Production.Class.PublicForm;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Sci.Production.Cutting
