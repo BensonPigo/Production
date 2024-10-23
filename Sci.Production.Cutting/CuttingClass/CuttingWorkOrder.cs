@@ -145,9 +145,9 @@ namespace Sci.Production.Cutting
                         }
 
                         // 比較Excel填的ColorCombo設定的層數，看Excel填的有沒有超過上限
-                        var layer = e.ExcelLayer > firstCompare.FirstOrDefault().CuttingLayer ? firstCompare.FirstOrDefault().CuttingLayer : e.ExcelLayer;
+                        var layer = e.ExcelLayer;
                         e.Layer = layer;
-                        e.CuttingLayer = firstCompare.FirstOrDefault().CuttingLayer;
+                        e.CuttingLayer = layer;
 
                         e.Cons = e.Cons * layer; // 從 DB 取得 Layer 乘上
 
@@ -3366,19 +3366,25 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
         /// For Cutting P02、P09的範本檔下載
         /// </summary>
         /// <param name="cuttingForm">Type CuttingForm</param>
+        /// <param name="mRow">資料來源主檔</param>
         /// <param name="errMsg">錯誤訊息</param>
         /// <returns>成功失敗</returns>
-        public bool DownloadSampleFile(CuttingForm cuttingForm, out string errMsg)
+        public bool DownloadSampleFile(CuttingForm cuttingForm, DataRow mRow, out string errMsg)
         {
             errMsg = string.Empty;
             string xltxName = cuttingForm == CuttingForm.P02 ? "Cutting_P02. Import Marker Template Download" : "Cutting_P09. Import Marker Template Download";
 
+            string style = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{mRow["ID"]}'");
             try
             {
                 string strXltName = Env.Cfg.XltPathDir + $@"\{xltxName}.xltx";
                 Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
                 string strExcelName = Class.MicrosoftFile.GetName(xltxName);
                 Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
+                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets["Upload"];
+                worksheet.Cells[2, 2] = mRow["ID"].ToString();
+                worksheet.Cells[2, 7] = style;
+
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 excel.Quit();
@@ -3561,6 +3567,7 @@ Select a.AddDate
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutNo")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutPlanID")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.Article")}
+,{this.CheckAndGetColumns(cuttingForm, "a.Seq")}
 , a.CutRef
 ,a.EditDate
 ,a.EditName
@@ -4639,7 +4646,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                     pivot_cmd =
                         $@"
-Select Cutno,Colorid,SizeCode,Cons,Layer,{tbUkey},(Qty*Layer) as TotalQty from 
+Select Cutno,Seq,Colorid,SizeCode,Cons,Layer,{tbUkey},(Qty*Layer) as TotalQty from 
 #tmp
 Where Cutref = '{cutref}'";
 
@@ -4648,7 +4655,7 @@ Where Cutref = '{cutref}'";
                         arrDtType[(int)TableType.CutQtyTb].Clear();
                     }
 
-                    drwst = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"Cutno,Colorid,SizeCode,Qty,Layer,Cutref,Cons,{tbUkey}", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
+                    drwst = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"Cutno,Seq,Colorid,SizeCode,Qty,Layer,Cutref,Cons,{tbUkey}", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
                     if (!drwst)
                     {
                         MyUtility.Msg.ErrorBox("SQL command Pivot_cmd error!");
@@ -4664,6 +4671,7 @@ Where Cutref = '{cutref}'";
                                             group r1 by new
                                             {
                                                 Cutno = MyUtility.Convert.GetString(r1["Cutno"]),
+                                                Seq = MyUtility.Convert.GetInt(r1["Seq"]),
                                                 Colorid = r1.Field<string>("Colorid"),
                                                 Layer = r1.Field<int>("Layer"),
                                                 workorderukey_CuttingForm = r1.Field<int>(tbUkey),
@@ -4673,6 +4681,7 @@ Where Cutref = '{cutref}'";
                                             select new
                                             {
                                                 g.Key.Cutno,
+                                                g.Key.Seq,
                                                 g.Key.Colorid,
                                                 g.Key.Layer,
                                                 g.Key.workorderukey_CuttingForm,
@@ -4685,6 +4694,20 @@ Where Cutref = '{cutref}'";
                         range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
                         range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
                         range.Value = "Cut#";
+
+                        var range2 = worksheet.Range[worksheet.Cells[nrow - 2, 2], worksheet.Cells[nrow - 1, 2]];
+                        range2.Merge();
+                        range2.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
+                        range2.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
+                        range2.Value = "Color";
+                    }
+                    else if (cuttingForm == CuttingForm.P02)
+                    {
+                        var range = worksheet.Range[worksheet.Cells[nrow - 2, 1], worksheet.Cells[nrow - 1, 1]];
+                        range.Merge();
+                        range.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;  // 水平置中
+                        range.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;    // 垂直置中
+                        range.Value = "Seq";
 
                         var range2 = worksheet.Range[worksheet.Cells[nrow - 2, 2], worksheet.Cells[nrow - 1, 2]];
                         range2.Merge();
@@ -4717,6 +4740,11 @@ Where Cutref = '{cutref}'";
                         if (cuttingForm == CuttingForm.P09)
                         {
                             worksheet.Cells[nrow, 1] = dis_dr.Cutno;
+                            worksheet.Cells[nrow, 2] = dis_dr.Colorid;
+                        }
+                        else if (cuttingForm == CuttingForm.P02)
+                        {
+                            worksheet.Cells[nrow, 1] = dis_dr.Seq;
                             worksheet.Cells[nrow, 2] = dis_dr.Colorid;
                         }
                         else

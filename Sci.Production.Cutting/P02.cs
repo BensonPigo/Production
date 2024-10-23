@@ -26,6 +26,7 @@ namespace Sci.Production.Cutting
         #region 全域變數
         private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_seq;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
@@ -39,6 +40,7 @@ namespace Sci.Production.Cutting
         private DataTable dt_Layers;
         private DataTable dt_OrderList;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
+        private string detailSort = "CutRef,SEQ,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,CutPlanID,Edituser,EditDate,Adduser,AddDate";
         #endregion
 
         #region 程式開啟時
@@ -139,6 +141,7 @@ SELECT
    ,SORT_NUM = 0 -- 避免編輯過程資料跑來跑去
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
+   ,WorkOrderForOutput.ID WorkOrderForOutputID
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -191,8 +194,9 @@ OUTER APPLY (
     AND psd.seq1 = wo.seq1
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
+OUTER APPLY(SELECT Top 1 ID FROM WorkOrderForOutput WITH (NOLOCK) WHERE WorkOrderForPlanningUkey = wo.Ukey) WorkOrderForOutput
 WHERE wo.id = '{masterID}'
-ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article, Order_SizeCode_Seq DESC, MarkerName, Ukey
+ORDER BY {this.detailSort}
 ";
 
             string cmdsql = $@"
@@ -304,6 +308,7 @@ ORDER BY
         private void ChangeBtnColor()
         {
             this.btnQtyBreakdown.ForeColor = MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "Order_Qty", "ID") ? Color.Blue : Color.Black;
+            this.btnPackingMethod.ForeColor = MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "orders", "cuttingsp") ? Color.Blue : Color.Black;
         }
 
         /// <inheritdoc/>
@@ -313,6 +318,7 @@ ORDER BY
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
+                .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_seq)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
@@ -1050,6 +1056,45 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             this.BindQtyEvents(this.col_SizeRatio_Qty);
             #endregion
+
+            #region SEQ
+            this.col_seq.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) && this.EditMode)
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                }
+            };
+            this.col_seq.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+            };
+            #endregion
         }
 
         private void BindQtyEvents(Ict.Win.UI.DataGridViewNumericBoxColumn column)
@@ -1235,7 +1280,7 @@ order by p.EditDate desc
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P02, out errMsg))
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P02, this.CurrentMaintain, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
@@ -1348,6 +1393,53 @@ order by p.EditDate desc
             {
                 control.Font = new Font(control.Font.FontFamily, fontSize);
             }
+        }
+
+        private void BtnAutoSeq_Click(object sender, EventArgs e)
+        {
+            this.gridSizeRatio.ValidateControl();
+            this.gridOrderList.ValidateControl();
+            this.detailgrid.ValidateControl();
+            int maxSeq;
+
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["Seq"]) && !MyUtility.Check.Empty(dr["estcutdate"]))
+                {
+                    DataTable wk = (DataTable)this.detailgridbs.DataSource;
+                    string temp = wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString();
+                    if (MyUtility.Check.Empty(temp))
+                    {
+                        maxSeq = 1;
+                    }
+                    else
+                    {
+                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
+                        maxSeq = maxno + 1;
+                    }
+
+                    dr["Seq"] = maxSeq;
+                }
+            }
+        }
+
+        private void BtnPackingMethod_Click(object sender, EventArgs e)
+        {
+            this.gridSizeRatio.ValidateControl();
+            this.gridOrderList.ValidateControl();
+            this.detailgrid.ValidateControl();
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var frm = new PackingMethod(false, this.CurrentMaintain["id"].ToString(), null, null);
+            frm.ShowDialog(this);
+            this.RenewData();
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = this.detailSort;
+            this.OnDetailEntered();
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

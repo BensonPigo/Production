@@ -104,7 +104,7 @@ WHERE t.Sel = 1";
                 row["Seq1"] = data["Seq1"];
                 row["Seq2"] = data["Seq2"];
                 row["CutRef"] = data["CutRef"];
-                row["CutNo"] = DBNull.Value;
+                row["CutNo"] = data["Seq"];
                 row["OrderID"] = data["OrderID"];
                 row["RefNo"] = data["RefNo"];
                 row["SCIRefNo"] = data["SCIRefNo"];
@@ -228,6 +228,7 @@ INNER JOIN WorkOrderForPlanning_SizeRatio wsr WITH(NOLOCK) ON t.WorkOrderForPlan
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Sel", header: string.Empty, width: Ict.Win.Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
@@ -355,7 +356,8 @@ AND t.WorkOrderForPlanningUkey IS NULL
 AND ExistHistory.value IS NULL
 AND ExistDelete.value IS NULL
 AND NOT EXISTS (SELECT 1 FROM WorkOrderForOutput woo WITH (NOLOCK) WHERE woo.CutRef = wo.CutRef)
-ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article, Order_SizeCode_Seq DESC, MarkerName, Ukey
+ORDER BY CutRef,Seq,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,CutPlanID,Edituser,EditDate,Adduser,AddDate
+
 ";
             DataTable dtImport = new DataTable();
             var paramters = new List<SqlParameter>() { new SqlParameter("@ID", this.id) };

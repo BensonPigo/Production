@@ -49,6 +49,7 @@ namespace Sci.Production.Cutting
 
             this.dtAllSEQ_FabricCode = GetAllSEQ_FabricCode(id); // 先準備用來驗證 Seq 全部資訊, 避免逐筆去DB撈資料驗證會很卡
             this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID"); // 用在 Filter 開窗選項
+            this.BtnFilter_Click(null, null);
         }
 
         private void GridSetup()
@@ -104,7 +105,7 @@ namespace Sci.Production.Cutting
 
         private void Filter()
         {
-            string filter = " 1=1 ";
+            string filter = "(cutref is null or cutref = '') ";
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 filter += $" AND OrderID ='{this.txtSPNo.Text}'";

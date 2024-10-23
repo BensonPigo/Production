@@ -50,6 +50,7 @@ namespace Sci.Production.Cutting
         private DataTable[] dtsHistory; // 要判斷按鈕顏色, 進表身就先撈, 還要用在傳入 History
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
+        private string detailSort = "CutRef,Cutno,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article_CONCAT,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,Sewinline,SpreadingNoID,CutCellID,Shift,Actcutdate,Edituser,EditDate,Adduser,AddDate,ActCuttingPerimeter_Mask,StraightLength_Mask,CurvedLength_Mask";
         #endregion
 
         #region 程式開啟時, 只會執行一次
@@ -301,7 +302,7 @@ OUTER APPLY (
 	WHERE ws.WorkOrderForOutputUkey = wo.Ukey
 ) as Order_SizeCode_Seq
 WHERE wo.id = '{masterID}'
-ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey
+ORDER BY {this.detailSort}
 ";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -427,6 +428,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             bool hasHistory = this.dtsHistory[0].AsEnumerable().Any() || this.dtsHistory[1].AsEnumerable().Any() || this.dtsHistory[2].AsEnumerable().Any();
             this.btnHistory.ForeColor = hasHistory ? Color.Blue : Color.Black;
+            this.btnPackingMethod.ForeColor = MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "orders", "cuttingsp") ? Color.Blue : Color.Black;
         }
 
         private void Sorting()
@@ -573,7 +575,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, out errMsg))
+            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P09, this.CurrentMaintain, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
@@ -1734,7 +1736,27 @@ DEALLOCATE CURSOR_
             PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), dr["PoList"].ToString());
             callNextForm.ShowDialog(this);
         }
+
+        private void BtnPackingMethod_Click(object sender, EventArgs e)
+        {
+            this.gridSizeRatio.ValidateControl();
+            this.gridQtyBreakDown.ValidateControl();
+            this.detailgrid.ValidateControl();
+            var dr = this.CurrentMaintain;
+            if (dr == null)
+            {
+                return;
+            }
+
+            var frm = new PackingMethod(false, this.CurrentMaintain["id"].ToString(), null, null);
+            frm.ShowDialog(this);
+            this.RenewData();
+            DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
+            dv.Sort = this.detailSort;
+            this.OnDetailEntered();
+        }
         #endregion
+
     }
 #pragma warning restore SA1600 // Elements should be documented
 }

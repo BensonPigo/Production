@@ -88,6 +88,7 @@
             this.btnCutPartsCheck = new Sci.Win.UI.Button();
             this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
+            this.btnPackingMethod = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -153,7 +154,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(2138, 5);
+            this.refresh.Location = new System.Drawing.Point(3690, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -364,19 +365,19 @@
             this.MenuItemInsertDistribute,
             this.MenuItemDeleteDistribute});
             this.cmsDistribute.Name = "contextMenuStrip1";
-            this.cmsDistribute.Size = new System.Drawing.Size(158, 48);
+            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
             // 
             // MenuItemInsertDistribute
             // 
             this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
-            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(157, 22);
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
             this.MenuItemInsertDistribute.Text = "Insert Distribute";
             this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
             // 
             // MenuItemDeleteDistribute
             // 
             this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
-            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(157, 22);
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
             this.MenuItemDeleteDistribute.Text = "Delete Record";
             this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
             // 
@@ -481,19 +482,19 @@
             this.MenuItemInsertSizeRatio,
             this.MenuItemDeleteSizeRatio});
             this.cmsSizeRatio.Name = "sizeratioMenuStrip";
-            this.cmsSizeRatio.Size = new System.Drawing.Size(157, 48);
+            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
             // 
             // MenuItemInsertSizeRatio
             // 
             this.MenuItemInsertSizeRatio.Name = "MenuItemInsertSizeRatio";
-            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(156, 22);
+            this.MenuItemInsertSizeRatio.Size = new System.Drawing.Size(163, 22);
             this.MenuItemInsertSizeRatio.Text = "Insert Size Ratio";
             this.MenuItemInsertSizeRatio.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
             // 
             // MenuItemDeleteSizeRatio
             // 
             this.MenuItemDeleteSizeRatio.Name = "MenuItemDeleteSizeRatio";
-            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(156, 22);
+            this.MenuItemDeleteSizeRatio.Size = new System.Drawing.Size(163, 22);
             this.MenuItemDeleteSizeRatio.Text = "Delete Record";
             this.MenuItemDeleteSizeRatio.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
             // 
@@ -848,7 +849,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel_Button2.AutoSize = true;
             this.tableLayoutPanel_Button2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel_Button2.ColumnCount = 8;
+            this.tableLayoutPanel_Button2.ColumnCount = 9;
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
@@ -857,19 +858,21 @@
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel_Button2.Controls.Add(this.btnRefresh, 7, 0);
-            this.tableLayoutPanel_Button2.Controls.Add(this.btnToExcel, 6, 0);
-            this.tableLayoutPanel_Button2.Controls.Add(this.btnQtyBreakdown, 5, 0);
-            this.tableLayoutPanel_Button2.Controls.Add(this.btnHistory, 4, 0);
+            this.tableLayoutPanel_Button2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnRefresh, 8, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnToExcel, 7, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnQtyBreakdown, 6, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnHistory, 5, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnCutPartsCheckSummary, 3, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnCutPartsCheck, 2, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnDistributeThisCutRef, 1, 0);
             this.tableLayoutPanel_Button2.Controls.Add(this.btnAllSPDistribute, 0, 0);
-            this.tableLayoutPanel_Button2.Location = new System.Drawing.Point(445, 0);
+            this.tableLayoutPanel_Button2.Controls.Add(this.btnPackingMethod, 4, 0);
+            this.tableLayoutPanel_Button2.Location = new System.Drawing.Point(315, 0);
             this.tableLayoutPanel_Button2.Name = "tableLayoutPanel_Button2";
             this.tableLayoutPanel_Button2.RowCount = 1;
             this.tableLayoutPanel_Button2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Button2.Size = new System.Drawing.Size(833, 41);
+            this.tableLayoutPanel_Button2.Size = new System.Drawing.Size(963, 41);
             this.tableLayoutPanel_Button2.TabIndex = 19;
             // 
             // btnRefresh
@@ -878,7 +881,7 @@
             this.btnRefresh.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnRefresh.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnRefresh.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnRefresh.Location = new System.Drawing.Point(770, 3);
+            this.btnRefresh.Location = new System.Drawing.Point(900, 3);
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(60, 35);
             this.btnRefresh.TabIndex = 18;
@@ -892,7 +895,7 @@
             this.btnToExcel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnToExcel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnToExcel.Location = new System.Drawing.Point(700, 3);
+            this.btnToExcel.Location = new System.Drawing.Point(830, 3);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(64, 35);
             this.btnToExcel.TabIndex = 17;
@@ -906,7 +909,7 @@
             this.btnQtyBreakdown.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnQtyBreakdown.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnQtyBreakdown.Location = new System.Drawing.Point(595, 3);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(725, 3);
             this.btnQtyBreakdown.Name = "btnQtyBreakdown";
             this.btnQtyBreakdown.Size = new System.Drawing.Size(99, 35);
             this.btnQtyBreakdown.TabIndex = 16;
@@ -920,7 +923,7 @@
             this.btnHistory.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnHistory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.btnHistory.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnHistory.Location = new System.Drawing.Point(535, 3);
+            this.btnHistory.Location = new System.Drawing.Point(665, 3);
             this.btnHistory.Name = "btnHistory";
             this.btnHistory.Size = new System.Drawing.Size(54, 35);
             this.btnHistory.TabIndex = 15;
@@ -987,6 +990,17 @@
             this.btnAllSPDistribute.Text = "All SP# Distribute";
             this.btnAllSPDistribute.UseVisualStyleBackColor = true;
             this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
+            // 
+            // btnPackingMethod
+            // 
+            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPackingMethod.Location = new System.Drawing.Point(535, 3);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(124, 35);
+            this.btnPackingMethod.TabIndex = 95;
+            this.btnPackingMethod.Text = "Packing Method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // P09
             // 
@@ -1106,12 +1120,13 @@
         private Win.UI.Button btnDistributeThisCutRef;
         private Win.UI.Button btnAllSPDistribute;
         private System.Windows.Forms.Button btnRefresh;
-        private Win.UI.Button btnToExcel;
         private Win.UI.Button btnQtyBreakdown;
         private Win.UI.Button btnHistory;
         private Win.UI.Button btnCutPartsCheckSummary;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Top2;
         private Win.UI.Button btnImportFromWorkOrderForPlanning;
         private Win.UI.Button btnExcludeSetting;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnPackingMethod;
     }
 }
