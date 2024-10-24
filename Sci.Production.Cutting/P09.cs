@@ -50,7 +50,7 @@ namespace Sci.Production.Cutting
         private DataTable[] dtsHistory; // 要判斷按鈕顏色, 進表身就先撈, 還要用在傳入 History
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
-        private string detailSort = "CutRef,Cutno,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article_CONCAT,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,Sewinline,SpreadingNoID,CutCellID,Shift,Actcutdate,Edituser,EditDate,Adduser,AddDate,ActCuttingPerimeter_Mask,StraightLength_Mask,CurvedLength_Mask";
+        private string detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
         #endregion
 
         #region 程式開啟時, 只會執行一次
@@ -129,34 +129,34 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
+                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
-                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
-                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4))
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999).Get(out this.col_Layer)
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
+                .WorkOrderSP("OrderId", "SP#", Ict.Win.Widths.AnsiChars(13), this.GetWorkType, this.CanEditData)
+                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_Seq1)
+                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_Seq2)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
-                .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("Sewinline", header: "Sewing inline", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .Text("Shift", header: "Shift", width: Ict.Win.Widths.AnsiChars(2), settings: CellTextDropDownList.GetGridCell("Pms_WorkOrderShift"))
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
+                .Date("Actcutdate", header: "Act. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
+                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
                 .MaskedText("ActCuttingPerimeter_Mask", "000Yd00\"00", "ActCutting\r\nPerimeter", name: "ActCuttingPerimeter", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_ActCuttingPerimeter)
                 .MaskedText("StraightLength_Mask", "000Yd00\"00", "StraightLength", name: "StraightLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_StraightLength)
                 .MaskedText("CurvedLength_Mask", "000Yd00\"00", "CurvedLength", name: "CurvedLength", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_CurvedLength)
-                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
-                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
-                .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
-                .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(19), iseditingreadonly: true)
                 ;
             this.Helper.Controls.Grid.Generator(this.gridSizeRatio)
                 .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3)).Get(out this.col_SizeRatio_Size)
