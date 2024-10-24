@@ -135,7 +135,7 @@ AND MachineIoT_Calendar.StartDate = '{this.dateImportStartDate.Text}'";
 
             if (errMsg != null)
             {
-                MessageBox.Show(errMsg.Message);
+                MyUtility.Msg.ErrorBox(errMsg.Message);
                 return;
             }
 
