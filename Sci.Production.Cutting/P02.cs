@@ -400,29 +400,26 @@ ORDER BY
             DataRow[] cur = ((DataTable)this.detailgridbs.DataSource).Select(filterLayer);
             sumlayer = cur.AsEnumerable().Sum(l => MyUtility.Convert.GetInt(l["layer"]));
 
-            DataRow[] laydr;
             if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
-            {
-                laydr = this.dt_Layers.Select($"MarkerName = '{this.CurrentDetailData["MarkerName"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
-            }
-            else
-            {
-                laydr = this.dt_Layers.Select($"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
-            }
-
-            if (!laydr.Any())
             {
                 this.numTotalLayer.Value = 0;
                 this.numBalanceLayer.Value = 0;
             }
             else
             {
-                decimal totalLayer = MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"])
-                    ? (decimal)laydr[0]["TotalLayerMarker"]
-                    : (decimal)laydr[0]["TotalLayerUkey"];
+                DataRow[] laydr = this.dt_Layers.Select($"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
+                if (!laydr.Any())
+                {
+                    this.numTotalLayer.Value = 0;
+                    this.numBalanceLayer.Value = 0;
+                }
+                else
+                {
+                    decimal totalLayer = (decimal)laydr[0]["TotalLayerMarker"];
 
-                this.numTotalLayer.Value = totalLayer;
-                this.numBalanceLayer.Value = sumlayer - totalLayer;
+                    this.numTotalLayer.Value = totalLayer;
+                    this.numBalanceLayer.Value = sumlayer - totalLayer;
+                }
             }
 
             #endregion
