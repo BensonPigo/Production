@@ -262,6 +262,7 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorEffi", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstTotalCycleTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstOutputHr", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP05", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06Cnt", typeof(string)));
             this.dtGridDetailRightSummary.PrimaryKey = new DataColumn[] { this.dtGridDetailRightSummary.Columns["No"] };
@@ -502,6 +503,7 @@ namespace Sci.Production.IE
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
                                         newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / avgGSD * 100, 0);
+                                        newRow["IsNotShownInP05"] = groupItem.Select(s => s["IsNotShownInP05"].ToString()).First();
                                         return newRow;
                                     }).ToList();
                     break;
@@ -530,9 +532,10 @@ namespace Sci.Production.IE
                                     .Select(groupItem =>
                                     {
                                         DataRow newRow = dtSub.NewRow();
+
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
-                                        newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
+                                        newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
@@ -541,9 +544,22 @@ namespace Sci.Production.IE
                                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
-                                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) * 100, 2);
-                                        newRow["EstTotalCycleTime"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2));
-                                        newRow["EstOutputHr"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2)) == 0 ? 0 : 3600 / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2));
+                                        decimal totalCycleTime = newRow["TotalCycleTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]);
+                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
+                                        decimal totalGSDTime = newRow["TotalGSDTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]);
+
+                                        newRow["OperatorEffi"] = totalCycleTime == 0
+                                            ? (object)DBNull.Value
+                                            : (object)MyUtility.Math.Round(totalGSDTime / totalCycleTime * 100, 2);
+
+                                        newRow["EstTotalCycleTime"] = operatorEffi == 0
+                                                                    ? (object)DBNull.Value
+                                                                    : (object)MyUtility.Math.Round(totalGSDTime / operatorEffi, 2);
+
+                                        newRow["EstOutputHr"] = operatorEffi == 0 ? DBNull.Value :
+                                                                 (totalGSDTime / operatorEffi == 0 ? DBNull.Value :
+                                                                 (object)(3600 / (totalGSDTime / operatorEffi)));
+
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
                                         newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
                                         return newRow;

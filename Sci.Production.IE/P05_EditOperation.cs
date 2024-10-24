@@ -31,9 +31,10 @@ namespace Sci.Production.IE
         /// P05_EditOperation
         /// </summary>
         /// <param name="dtAutomatedLineMapping_Detail">dtAutomatedLineMapping_Detail</param>
-        public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail, bool IsP05 = true)
+        /// <param name="isP05">isP05</param>
+        public P05_EditOperation(DataTable dtAutomatedLineMapping_Detail, bool isP05 = true)
         {
-            this.IsP05 = IsP05;
+            this.IsP05 = isP05;
             this.DialogResult = DialogResult.No;
 
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
@@ -44,7 +45,7 @@ namespace Sci.Production.IE
                 this.dtAutomatedLineMapping_DetailCopy.Columns.Add("UpdSewerDiffPercentage", typeof(int));
             }
 
-            if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdDivSewer"))
+            if (this.IsP05 && !this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdDivSewer"))
             {
                 this.dtAutomatedLineMapping_DetailCopy.Columns.Add("UpdDivSewer", typeof(decimal));
             }
@@ -53,6 +54,7 @@ namespace Sci.Production.IE
             this.EditMode = true;
 
             this.gridIconEditOperation.InsertClick += this.GridIconEditOperation_InsertClick;
+            this.gridIconEditOperation.AppendClick += this.GridIconEditOperation_AppendClick;
             this.gridEditOperation.CellFormatting += this.GridEditOperation_CellFormatting;
 
             this.dtNoSelectItem.Columns.Add(new DataColumn("No", typeof(string)));
@@ -79,10 +81,24 @@ namespace Sci.Production.IE
 
             this.gridEditOperationBs.Filter = $" No in ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) or Selected = 1";
 
-            this.gridIconEditOperation.Append.Visible = false;
-            this.gridIconEditOperation.Remove.Visible = false;
+            if (isP05)
+            {
+                this.gridIconEditOperation.Location = new System.Drawing.Point(-30, 3);
+                this.gridIconEditOperation.Append.Visible = false;
+                this.gridIconEditOperation.Insert.Visible = true;
+                this.gridIconEditOperation.Remove.Visible = false;
+                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage", "UpdDivSewer" });
+            }
+            else
+            {
+                this.gridIconEditOperation.Location = new System.Drawing.Point(4, 3);
+                this.gridIconEditOperation.Append.Visible = true;
+                this.gridIconEditOperation.Insert.Visible = false;
+                this.gridIconEditOperation.Remove.Visible = false;
+                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage" });
+            }
 
-            new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage", "UpdDivSewer" });
+            this.IsP05 = isP05;
         }
 
         private void GridEditOperation_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -283,7 +299,7 @@ namespace Sci.Production.IE
                 var sameTimeStudyDetailUkeyDatas = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                           .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(dr["TimeStudyDetailUkey"]));
                 int totalUpdSewerDiffPercentage = sameTimeStudyDetailUkeyDatas.Sum(s => MyUtility.Convert.GetInt(s["UpdSewerDiffPercentage"]));
-                if (totalUpdSewerDiffPercentage == 100)
+                if (this.IsP05 && totalUpdSewerDiffPercentage == 100)
                 {
                     decimal totalUpdDivSewer = sameTimeStudyDetailUkeyDatas.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
                     decimal diffUpdDivSewer = MyUtility.Convert.GetDecimal(dr["OriSewer"]) - totalUpdDivSewer;
@@ -291,29 +307,54 @@ namespace Sci.Production.IE
                 }
             };
 
-            this.Helper.Controls.Grid.Generator(this.gridEditOperation)
+            if (this.IsP05)
+            {
+                this.Helper.Controls.Grid.Generator(this.gridEditOperation)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: colNo)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
                .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
-               .Numeric("OriSewer", header: "Original" + Environment.NewLine + "Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Original" + Environment.NewLine + "Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "Ori. %", width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Original" + Environment.NewLine + "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Original" + Environment.NewLine + "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("UpdSewerDiffPercentage", header: "Update %", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer)
-               .Numeric("UpdDivSewer", header: "Update" + Environment.NewLine + "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
+               .Numeric("UpdDivSewer", header: "Update" + Environment.NewLine + "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
+            }
+            else
+            {
+                this.Helper.Controls.Grid.Generator(this.gridEditOperation)
+               .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: colNo)
+               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
+               .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
+               .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
+               .Numeric("SewerDiffPercentageDesc", header: "Ori. %", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("UpdSewerDiffPercentage", header: "Update %", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
+            }
 
             this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridEditOperation.Columns["UpdSewerDiffPercentage"].DefaultCellStyle.ForeColor = Color.Red;
-            this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.ForeColor = Color.Red;
+
+            if (this.IsP05)
+            {
+                this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.BackColor = Color.Pink;
+                this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.ForeColor = Color.Red;
+            }
+
 
             this.Text = this.IsP05 ? "P05. Edit No. Operation" : "P06. Edit No. Operation";
         }
 
         private void CaculateUpdSewerColumn(string colName, DataRow caculateRow)
         {
+            if (!this.IsP05)
+            {
+                return;
+            }
+
             if (colName == "UpdSewerDiffPercentage")
             {
                 caculateRow["UpdDivSewer"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * MyUtility.Convert.GetDecimal(caculateRow["UpdSewerDiffPercentage"]) / 100, 4);
@@ -328,15 +369,79 @@ namespace Sci.Production.IE
                           .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(caculateRow["TimeStudyDetailUkey"]));
 
             var stillNotUpdDivSewer = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Check.Empty(s["UpdDivSewer"]));
-            if (stillNotUpdDivSewer.Count() == 1)
+
+            DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+            var noUpdSewerDiffPercentage = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Convert.GetString(s["UpdSewerDiffPercentage"]) != MyUtility.Convert.GetString(selectedRow["UpdSewerDiffPercentage"]));
+
+            if (sameTimeStudyDetailUkeyData.Count() == 2)
             {
-                DataRow targetFixRow = stillNotUpdDivSewer.First();
-                decimal accuUpdDivSewer = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
-                decimal accuUpdDivSewerPercentage = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]));
-                decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
-                targetFixRow["UpdDivSewer"] = oriSewer < accuUpdDivSewer ? 0 : oriSewer - accuUpdDivSewer;
-                targetFixRow["UpdSewerDiffPercentage"] = accuUpdDivSewerPercentage >= 100 ? 0 : 100 - accuUpdDivSewerPercentage;
+                if (stillNotUpdDivSewer.Count() == 1)
+                {
+                    DataRow targetFixRow = stillNotUpdDivSewer.First();
+                    decimal accuUpdDivSewer = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
+                    decimal accuUpdDivSewerPercentage = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]));
+                    decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
+                    if (this.IsP05)
+                    {
+                        targetFixRow["UpdDivSewer"] = oriSewer < accuUpdDivSewer ? 0 : oriSewer - accuUpdDivSewer;
+                    }
+                    else
+                    {
+                        targetFixRow["UpdDivSewer"] = 0;
+                    }
+
+                    targetFixRow["UpdSewerDiffPercentage"] = accuUpdDivSewerPercentage >= 100 ? 0 : 100 - accuUpdDivSewerPercentage;
+                }
+                else
+                {
+                    DataRow targetFixRow = noUpdSewerDiffPercentage.First();
+                    decimal accuUpdDivSewer = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * MyUtility.Convert.GetDecimal(caculateRow["UpdSewerDiffPercentage"]) / 100, 4);
+                    decimal accuUpdDivSewerPercentage = MyUtility.Convert.GetInt(selectedRow["UpdSewerDiffPercentage"]);
+                    decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
+                    targetFixRow["UpdDivSewer"] = this.IsP05 ? oriSewer - accuUpdDivSewer : 0;
+                    targetFixRow["UpdSewerDiffPercentage"] = 100 - accuUpdDivSewerPercentage;
+                }
             }
+        }
+
+        private void GridIconEditOperation_AppendClick(object sender, EventArgs e)
+        {
+            if (this.gridEditOperation.SelectedRows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+            DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+                                       .Where(x => MyUtility.Convert.GetString(x["OperationID"]) == MyUtility.Convert.GetString(selectedRow["OperationID"]))
+                                       .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
+
+            int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
+            int intUpd = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
+            DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
+            newRow.ItemArray = selectedRow.ItemArray; // 完整複製 selectedRow 的值
+            newRow["Selected"] = true;
+            newRow["No"] = string.Empty;
+            newRow["UpdSewerDiffPercentage"] = intUpd;
+
+            int icount = 0;
+            for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
+            {
+                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["OperationID"].ToString() == MyUtility.Convert.GetString(selectedRow["OperationID"]))
+                {
+                    icount++;
+                    if (icount == intDT_EditOperaror - 1)
+                    {
+                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * icount);
+                    }
+                    else
+                    {
+                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
+                    }
+                }
+            }
+            int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
+            this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);
         }
 
         private void GridIconEditOperation_InsertClick(object sender, EventArgs e)
@@ -347,26 +452,10 @@ namespace Sci.Production.IE
             }
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
-
-            var oriNo = selectedRow["No"];
-
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
-            // newRow["No"] = oriNo;
             newRow["Selected"] = true;
             newRow["UpdDivSewer"] = 0;
             newRow["UpdSewerDiffPercentage"] = 0;
-
-            var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
-            DataTable dt = (DataTable)this.gridEditOperationBs.DataSource;
-
-            var selectedRows = dt.AsEnumerable()
-                     .Where(row => checkedNo.Contains(row.Field<string>("No")))
-                     .CopyToDataTable();
-
-            //for (int i = this.gridEditOperation.SelectedRows[0].Index; i < selectedRows.Rows.Count; i++)
-            //{
-            //    int iNo = (int)selectedRows.Rows[i]["No"];
-            //}
 
             int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
             this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);
@@ -419,10 +508,12 @@ namespace Sci.Production.IE
         private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridEditOperationBs.EndEdit();
+
+
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var needKeepRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                 .Where(s => checkedNo.Contains(s["No"].ToString()) &&
-                            (MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0 || s["UpdDivSewer"] == DBNull.Value));
+                ((!this.IsP05) || (this.IsP05 && (s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0 || s["UpdDivSewer"] == DBNull.Value))));
 
             #region 檢查DivSewer與UpdSewerDiffPercentage總和是否超過或不足
             var checkDivSewerBalance = needKeepRows
@@ -430,8 +521,8 @@ namespace Sci.Production.IE
                 .Select(groupItem => new
                 {
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
-                    OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
-                    SumDivSewer = groupItem.Sum(s => s["UpdDivSewer"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["DivSewer"]) : MyUtility.Convert.GetDecimal(s["UpdDivSewer"])),
+                    OriSewer = this.IsP05 ? MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]) : 0,
+                    SumDivSewer = this.IsP05 ? groupItem.Sum(s => s["UpdDivSewer"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["DivSewer"]) : MyUtility.Convert.GetDecimal(s["UpdDivSewer"])) : 0,
                     SumSewerDiffPercentage = groupItem.Sum(s => s["UpdSewerDiffPercentage"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]) : MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
@@ -445,7 +536,7 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                if (checkItem.OriSewer != checkItem.SumDivSewer)
+                if (this.IsP05 && checkItem.OriSewer != checkItem.SumDivSewer)
                 {
                     MyUtility.Msg.WarningBox($"The sum of [Update Div. Sewer] of Operation [{checkItem.OperationDesc}] needs to be equal to [Original Sewer].");
                     return;
@@ -478,12 +569,24 @@ namespace Sci.Production.IE
             }
             #endregion
 
-            // 更新調整過的DivSewer與SewerDiffPercentage
-            foreach (var needUpdRow in needKeepRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
+            if (this.IsP05)
             {
-                needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
-                needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
-                needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                // 更新調整過的DivSewer與SewerDiffPercentage
+                foreach (var needUpdRow in needKeepRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
+                {
+                    needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
+                    needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
+                    needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                }
+            }
+            else
+            {
+                // 更新調整過的DivSewer與SewerDiffPercentage
+                foreach (var needUpdRow in needKeepRows)
+                {
+                    needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
+                    needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                }
             }
 
             // 更新TimeStudyDetailUkeyCnt
@@ -498,7 +601,7 @@ namespace Sci.Production.IE
             // 將No空白資料與UpdDivSewer = 0清除
             var needClearDatas = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                                 .Where(s => MyUtility.Check.Empty(s["No"]) ||
-                                            (MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) == 0 && s["UpdDivSewer"] != DBNull.Value))
+                                            (this.IsP05 && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) == 0 && s["UpdDivSewer"] != DBNull.Value))
                                 .ToList();
             foreach (var needRemoveRow in needClearDatas)
             {
@@ -551,10 +654,15 @@ namespace Sci.Production.IE
                         // 同TimeStudy_DetailUkey, No有多筆情況要合併
                         if (groupItem.Count() > 1)
                         {
-                            newRow["UpdDivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
-                            if (MyUtility.Check.Empty(newRow["UpdDivSewer"]))
+                            if (this.IsP05)
                             {
-                                newRow["UpdDivSewer"] = DBNull.Value;
+                                newRow["UpdDivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
+                                if (MyUtility.Check.Empty(newRow["UpdDivSewer"]))
+                                {
+                                    newRow["UpdDivSewer"] = DBNull.Value;
+                                }
+
+                                newRow["DivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["DivSewer"]));
                             }
 
                             newRow["UpdSewerDiffPercentage"] = groupItem.Sum(s => MyUtility.Convert.GetInt(s["UpdSewerDiffPercentage"]));
@@ -563,7 +671,6 @@ namespace Sci.Production.IE
                                 newRow["UpdSewerDiffPercentage"] = DBNull.Value;
                             }
 
-                            newRow["DivSewer"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["DivSewer"]));
                             newRow["SewerDiffPercentage"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]));
                             newRow["SewerDiffPercentageDesc"] = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(newRow["SewerDiffPercentage"]) * 100);
                         }
@@ -575,7 +682,5 @@ namespace Sci.Production.IE
                 this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
             }
         }
-
-
     }
 }

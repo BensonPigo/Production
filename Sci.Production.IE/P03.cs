@@ -41,7 +41,6 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            this.gridicon.Append.Visible = false;
             this.comboSewingTeam1.SetDataSource();
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
@@ -166,9 +165,20 @@ select *
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
+
     ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
-	,[EstTotalCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.TotalGSDNO / ld.OperatorEffi * 100)
-	,[EstOutputHr] = iif(ld.OperatorEffi = '0.00','0.00', 3600 / ld.TotalGSDNO / ld.OperatorEffi * 100)
+
+	,[EstTotalCycleTime] = CAST(IIF(
+                                    AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
+                                    0.0, 
+                                    ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100
+                                ) AS DECIMAL(20, 5))
+
+    ,[EstOutputHr] = CAST(IIF(
+                                AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
+                                0.0, 
+                                3600 / (ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100)
+                            ) AS DECIMAL(20, 5)) 
 from (
     select  ld.OriNO
 	    , ld.No
@@ -448,6 +458,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 this.CurrentMaintain["TaktTime"] = 0;
             }
 
+            this.gridicon.Insert.Visible = this.CurrentMaintain["Phase"].ToString() == "Final" ? true : false;
         }
 
         /// <summary>
@@ -470,11 +481,48 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
-           
-            machineCount.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
+            machineCount.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            operationID.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (this.EditMode)
+                {
+                    if (e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["New"]))
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
+                            {
+                                if (callNextForm.P01SelectOperationCode != null)
+                                {
+                                    dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                                    dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                                    dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr.EndEdit();
+                                }
+                            }
+
+                            if (result == DialogResult.OK)
+                            {
+                                dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                                dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+                    }
+                }
+            };
             #region No.的Valid
             no.CellValidating += (s, e) =>
             {
@@ -501,7 +549,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         this.ReclculateGridGSDCycleTime(dr["No"].ToString());
                         this.ComputeTaktTime();
                     }
-
                     this.Distable();
                     this.detailgrid.Focus();
                     this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
@@ -1051,7 +1098,7 @@ and Name = @PPA
             .CheckBox("MachineCount", header: "Machine\r\nCount", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
             .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
-            .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
+            .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true,settings: operationID)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
@@ -1166,7 +1213,6 @@ and Name = @PPA
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("EstTotalCycleTime", header: "Est. Total\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places : 2)
             ;
             this.grid1.Columns["No"].Frozen = true;
         }
@@ -1588,10 +1634,8 @@ WHERE Ukey={item["Ukey"]}
             this.Distable();
         }
 
-        /// <summary>
-        /// OnDetailGridInsertClick
-        /// </summary>
-        protected override void OnDetailGridInsertClick()
+        /// <inheritdoc/>
+        protected override void OnDetailGridAppendClick()
         {
             DataRow newrow, tmp;
 
@@ -1603,13 +1647,25 @@ WHERE Ukey={item["Ukey"]}
             }
 
             this.SumNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
-            base.OnDetailGridInsertClick();
+            base.OnDetailGridAppendClick();
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray; // 將剛剛紀錄的資料複製到新增的那筆record
             this.CurrentDetailData["New"] = true;
             this.CurrentDetailData["No"] = string.Empty;
             this.AssignNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
             this.ComputeTaktTime();
+        }
+
+        /// <summary>
+        /// OnDetailGridInsertClick
+        /// </summary>
+        protected override void OnDetailGridInsert(int index = 0)
+        {
+            base.OnDetailGridInsert();
+            this.CurrentDetailData["OriNo"] = string.Empty;
+            this.CurrentDetailData["New"] = true;
+            this.CurrentDetailData["No"] = string.Empty;
+            this.CurrentDetailData["IsShow"] = true;
         }
 
         /// <summary>
@@ -2146,6 +2202,7 @@ order by case when ld.No = '' then 1
                 this.CurrentMaintain["NetTime"] = callNextForm.P03CopyLineMapping["NetTime"].ToString();
                 this.CurrentMaintain["TaktTime"] = callNextForm.P03CopyLineMapping["TaktTime"].ToString();
                 this.CurrentMaintain["TotalGSD"] = callNextForm.P03CopyLineMapping["TotalGSD"].ToString();
+                this.CurrentMaintain["OriTotalGSD"] = callNextForm.P03CopyLineMapping["TotalGSD"].ToString();
                 this.CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 this.CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 this.CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
@@ -2249,10 +2306,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
-    ,[EstCycleTime] = ''
-    ,[EstTotalCycleTime] = ''
-    ,[EstOutputHr] = ''
-    ,[EstLBR] = ''
+    ,[EstCycleTime] = 0
+    ,[EstTotalCycleTime] = 0
+    ,[EstOutputHr] = 0
+    ,[EstLBR] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting' and op.ID='PROCIPF00001'
@@ -2303,10 +2360,10 @@ select ID = null
        ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.IsShowinIEP03, 1)) as bit)
 	   ,td.PPA
        ,PPAText = ISNULL(d.Name,'')
-       ,[EstCycleTime] = ''
-       ,[EstTotalCycleTime] = ''
-       ,[EstOutputHr] = ''
-       ,[EstLBR] = ''
+       ,[EstCycleTime] = 0
+       ,[EstTotalCycleTime] = 0
+       ,[EstOutputHr] = 0
+       ,[EstLBR] = 0
 from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
@@ -2350,10 +2407,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
-    ,[EstCycleTime] = ''
-    ,[EstTotalCycleTime] = ''
-    ,[EstOutputHr] = ''
-    ,[EstLBR] = ''
+    ,[EstCycleTime] = 0
+    ,[EstTotalCycleTime] = 0
+    ,[EstOutputHr] = 0
+    ,[EstLBR] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection' and op.ID='PROCIPF00002'
@@ -2389,10 +2446,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
-    ,[EstCycleTime] = ''
-    ,[EstTotalCycleTime] = ''
-    ,[EstOutputHr] = ''
-    ,[EstLBR] = ''
+    ,[EstCycleTime] = 0
+    ,[EstTotalCycleTime] = 0
+    ,[EstOutputHr] = 0
+    ,[EstLBR] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing' and op.ID='PROCIPF00004'
@@ -2428,10 +2485,10 @@ select distinct
     ,[IsShow] = cast(IIF(isnull(md.IsNotShownInP03, 0) = 0, 1, 0) as bit)
 	,PPA = ''
     ,PPAText =''
-    ,[EstCycleTime] = ''
-    ,[EstTotalCycleTime] = ''
-    ,[EstOutputHr] = ''
-    ,[EstLBR] = ''
+    ,[EstCycleTime] = 0
+    ,[EstTotalCycleTime] = 0
+    ,[EstOutputHr] = 0
+    ,[EstLBR] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' and op.ID='PROCIPF00003'
@@ -2507,6 +2564,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 EmployeeID = x.Field<string>("EmployeeID"),
                 EmployeeName = x.Field<string>("EmployeeName"),
                 EmployeeSkill = x.Field<string>("EmployeeSkill"),
+                EstTotalCycleTime = x.Field<decimal?>("EstTotalCycleTime"),
+                EstOutputHr = x.Field<decimal?>("EstOutputHr"),
             })
             .Select(g => new GridList()
             {
@@ -2520,16 +2579,14 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 EmployeeID = g.Key.EmployeeID,
                 EmployeeName = g.Key.EmployeeName,
                 EmployeeSkill = g.Key.EmployeeSkill,
-                EstTotalCycleTime = g.Sum(x => x.Field<decimal?>("EstTotalCycleTime")),
-                EstOutputHr = g.Sum(x => x.Field<decimal?>("EstOutputHr")),
+                EstTotalCycleTime = g.Key.EstTotalCycleTime, //g.Sum(x => x.Field<decimal>("EstTotalCycleTime")),
+                EstOutputHr = g.Key.EstOutputHr, //g.Sum(x => x.Field<decimal>("EstOutputHr")),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)
             .ToList();
-
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
-
             this.ConfirmChangeGridColor(false);
         }
 
@@ -2543,6 +2600,13 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                     CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
                     currencyManager.SuspendBinding();
                     this.detailgrid.Rows[i].Visible = false;
+                    currencyManager.ResumeBinding();
+                }
+                else
+                {
+                    CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
+                    currencyManager.SuspendBinding();
+                    this.detailgrid.Rows[i].Visible = true;
                     currencyManager.ResumeBinding();
                 }
             }

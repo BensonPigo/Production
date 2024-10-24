@@ -58,12 +58,12 @@
             this.tabPageLineMapping = new System.Windows.Forms.TabPage();
             this.splitLineMapping = new System.Windows.Forms.SplitContainer();
             this.gridLineMappingRight = new Sci.Win.UI.Grid();
-            this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.gridLineMappingRightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPageCentralizedPPA = new System.Windows.Forms.TabPage();
             this.splitCentralizedPPA = new System.Windows.Forms.SplitContainer();
             this.gridCentralizedPPALeft = new Sci.Win.UI.Grid();
             this.gridCentralizedPPARight = new Sci.Win.UI.Grid();
-            this.gridLineMappingRightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridCentralizedPPALeftBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridCentralizedPPARightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label12 = new Sci.Win.UI.Label();
@@ -114,6 +114,8 @@
             this.btnPrintDetail = new Sci.Win.UI.Button();
             this.label30 = new Sci.Win.UI.Label();
             this.txtReason = new Sci.Win.UI.TextBox();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.label31 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -133,7 +135,7 @@
             this.splitLineMapping.Panel2.SuspendLayout();
             this.splitLineMapping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
             this.tabPageCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitCentralizedPPA)).BeginInit();
             this.splitCentralizedPPA.Panel1.SuspendLayout();
@@ -141,13 +143,16 @@
             this.splitCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).BeginInit();
             this.SuspendLayout();
             // 
             // masterpanel
             // 
+            this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.numericBox1);
+            this.masterpanel.Controls.Add(this.label31);
             this.masterpanel.Controls.Add(this.txtReason);
             this.masterpanel.Controls.Add(this.label30);
             this.masterpanel.Controls.Add(this.numEstLBR);
@@ -216,7 +221,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1446, 213);
+            this.masterpanel.Size = new System.Drawing.Size(892, 213);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -286,15 +291,18 @@
             this.masterpanel.Controls.SetChildIndex(this.numEstLBR, 0);
             this.masterpanel.Controls.SetChildIndex(this.label30, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label31, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 213);
-            this.detailpanel.Size = new System.Drawing.Size(1446, 416);
+            this.detailpanel.Size = new System.Drawing.Size(892, 136);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(1341, 178);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.gridicon.Location = new System.Drawing.Point(1333, 177);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
@@ -304,7 +312,7 @@
             this.detailgridcont.Controls.Add(this.btnMachineSummary);
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1446, 416);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 136);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnMachineSummary, 0);
@@ -322,19 +330,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1446, 667);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1446, 629);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 629);
-            this.detailbtm.Size = new System.Drawing.Size(1446, 38);
             // 
             // browse
             // 
@@ -514,6 +509,7 @@
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
             this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
@@ -659,7 +655,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1446, 416);
+            this.tabDetail.Size = new System.Drawing.Size(892, 136);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -669,7 +665,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1438, 387);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(884, 107);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -682,8 +678,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1432, 381);
-            this.splitLineMapping.SplitterDistance = 1024;
+            this.splitLineMapping.Size = new System.Drawing.Size(878, 101);
+            this.splitLineMapping.SplitterDistance = 625;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -694,7 +690,7 @@
             this.gridLineMappingRight.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridLineMappingRight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridLineMappingRight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridLineMappingRight.DataSource = this.listControlBindingSource;
+            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS;
             this.gridLineMappingRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridLineMappingRight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridLineMappingRight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -707,9 +703,13 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(404, 381);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(249, 101);
             this.gridLineMappingRight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridLineMappingRight.TabIndex = 0;
+            // 
+            // gridLineMappingRightBS
+            // 
+            this.gridLineMappingRightBS.Filter = "";
             // 
             // tabPageCentralizedPPA
             // 
@@ -943,7 +943,6 @@
             // 
             this.numericTaktTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTaktTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
-            this.numericTaktTime.DecimalPlaces = 2;
             this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericTaktTime.IsSupportEditMode = false;
             this.numericTaktTime.Location = new System.Drawing.Point(1026, 9);
@@ -989,7 +988,7 @@
             // 
             this.numericPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PPH", true));
-            this.numericPPH.DecimalPlaces = 2;
+            this.numericPPH.DecimalPlaces = 4;
             this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericPPH.IsSupportEditMode = false;
             this.numericPPH.Location = new System.Drawing.Point(1026, 67);
@@ -1152,7 +1151,7 @@
             // 
             // label22
             // 
-            this.label22.Location = new System.Drawing.Point(238, 154);
+            this.label22.Location = new System.Drawing.Point(238, 183);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(142, 23);
             this.label22.TabIndex = 55;
@@ -1164,7 +1163,7 @@
             this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtSewingline.FactoryobjectName = null;
             this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingline.Location = new System.Drawing.Point(383, 154);
+            this.txtSewingline.Location = new System.Drawing.Point(383, 183);
             this.txtSewingline.Name = "txtSewingline";
             this.txtSewingline.Size = new System.Drawing.Size(49, 23);
             this.txtSewingline.TabIndex = 56;
@@ -1178,7 +1177,7 @@
             this.txtSewingTeam.IssupportEmptyitem = false;
             this.txtSewingTeam.IssupportJunk = false;
             this.txtSewingTeam.IsSupportSytsemContextMenu = false;
-            this.txtSewingTeam.Location = new System.Drawing.Point(434, 154);
+            this.txtSewingTeam.Location = new System.Drawing.Point(434, 183);
             this.txtSewingTeam.Name = "txtSewingTeam";
             this.txtSewingTeam.Size = new System.Drawing.Size(34, 23);
             this.txtSewingTeam.TabIndex = 57;
@@ -1348,8 +1347,9 @@
             // 
             // btnMachineSummary
             // 
+            this.btnMachineSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMachineSummary.FlatAppearance.BorderSize = 0;
-            this.btnMachineSummary.Location = new System.Drawing.Point(245, 1);
+            this.btnMachineSummary.Location = new System.Drawing.Point(429, 1);
             this.btnMachineSummary.Name = "btnMachineSummary";
             this.btnMachineSummary.Size = new System.Drawing.Size(154, 24);
             this.btnMachineSummary.TabIndex = 56;
@@ -1359,12 +1359,13 @@
             // 
             // brnOperatorSummary
             // 
+            this.brnOperatorSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.brnOperatorSummary.FlatAppearance.BorderSize = 0;
-            this.brnOperatorSummary.Location = new System.Drawing.Point(403, 1);
+            this.brnOperatorSummary.Location = new System.Drawing.Point(587, 1);
             this.brnOperatorSummary.Name = "brnOperatorSummary";
             this.brnOperatorSummary.Size = new System.Drawing.Size(154, 24);
             this.brnOperatorSummary.TabIndex = 57;
-            this.brnOperatorSummary.Text = "Operaror Summary";
+            this.brnOperatorSummary.Text = "Operator Summary";
             this.brnOperatorSummary.UseVisualStyleBackColor = true;
             this.brnOperatorSummary.Click += new System.EventHandler(this.BrnOperatorSummary_Click);
             // 
@@ -1409,8 +1410,9 @@
             // 
             // btnPrintDetail
             // 
+            this.btnPrintDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrintDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnPrintDetail.Location = new System.Drawing.Point(1301, 2);
+            this.btnPrintDetail.Location = new System.Drawing.Point(744, 2);
             this.btnPrintDetail.Name = "btnPrintDetail";
             this.btnPrintDetail.Size = new System.Drawing.Size(139, 23);
             this.btnPrintDetail.TabIndex = 250;
@@ -1436,6 +1438,36 @@
             this.txtReason.Size = new System.Drawing.Size(108, 23);
             this.txtReason.TabIndex = 252;
             this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReason_PopUp);
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OriTotalGSDTime", true));
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
+            this.numericBox1.Location = new System.Drawing.Point(383, 154);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(85, 23);
+            this.numericBox1.TabIndex = 254;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label31
+            // 
+            this.label31.Location = new System.Drawing.Point(238, 154);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(142, 23);
+            this.label31.TabIndex = 253;
+            this.label31.Text = "Ori. Total GSD time";
             // 
             // P06
             // 
@@ -1477,7 +1509,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitLineMapping)).EndInit();
             this.splitLineMapping.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
             this.tabPageCentralizedPPA.ResumeLayout(false);
             this.splitCentralizedPPA.Panel1.ResumeLayout(false);
             this.splitCentralizedPPA.Panel2.ResumeLayout(false);
@@ -1485,7 +1517,7 @@
             this.splitCentralizedPPA.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).EndInit();
             this.ResumeLayout(false);
@@ -1579,5 +1611,7 @@
         private Win.UI.Label label30;
         private Win.UI.TextBox txtReason;
         private Win.UI.ListControlBindingSource listControlBindingSource;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label label31;
     }
 }

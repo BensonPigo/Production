@@ -484,6 +484,25 @@ group by almd.No
             // Sheet - Centralized PPA
             this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[4], this.dtPPA_MachineArea, OperationType.PPA);
 
+            for (int i = 1; i < 4; i++)
+            {
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[i];
+
+                // 設置列印設置
+                worksheet.PageSetup.PaperSize = Excel.XlPaperSize.xlPaperA4; // 設置紙張大小為 A4
+                worksheet.PageSetup.Orientation = Excel.XlPageOrientation.xlPortrait; // 設置為縱向列印
+                worksheet.PageSetup.Zoom = false; // 禁用默認縮放比例
+                worksheet.PageSetup.FitToPagesWide = 1; // 將內容縮放以適合一頁寬
+                worksheet.PageSetup.FitToPagesTall = false;
+
+                // 設置頁邊距，使得頁邊距最小
+                worksheet.PageSetup.LeftMargin = excel.InchesToPoints(0.25); // 左邊距 0.25 英寸
+                worksheet.PageSetup.RightMargin = excel.InchesToPoints(0.25); // 右邊距 0.25 英寸
+                worksheet.PageSetup.TopMargin = excel.InchesToPoints(0.25); // 上邊距 0.25 英寸
+                worksheet.PageSetup.BottomMargin = excel.InchesToPoints(0.25); // 下邊距 0.25 英寸
+            }
+
+
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("IE_P06_Print");
             Excel.Workbook workbook = excel.ActiveWorkbook;
@@ -1375,7 +1394,10 @@ group by almd.No
                         sheet.Cells[norow, 26] = string.Format("=SUM(Z{0}:Z{1})", idx_s, idx_e);
 
                         var operatorList = this.rightDataTable.AsEnumerable().Where(row => row["No"].ToString() == MyUtility.Convert.GetString(nodr["No"])).ToList();
-                        sheet.Cells[norow, 20] = operatorList[0]["EmployeeID"].ToString() + "　" + operatorList[0]["EmployeeName"].ToString();
+                        if (operatorList.Count > 0)
+                        {
+                            sheet.Cells[norow, 20] = operatorList[0]["EmployeeID"].ToString() + "　" + operatorList[0]["EmployeeName"].ToString();
+                        }
 
                         // S字型單測累計兩次要換邊 (LRRLLRRLLR)
                         if (this.display.StartsWith("S"))

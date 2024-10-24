@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Ict.Win;
 using Ict.Win.Tools;
+using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
@@ -18,6 +19,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static Ict.Win.UI.DataGridView;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
@@ -78,6 +80,7 @@ AND ALMCS.Junk = 0
             this.txtSewingline.FactoryobjectName = this.txtfactory;
 
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
+            this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
         }
 
         /// <summary>
@@ -310,10 +313,9 @@ AND ALMCS.Junk = 0
                         WHERE ad.ID = '{masterID}'
                     ) a
                 ) b
-                WHERE b.IsRow = 1
+                WHERE b.IsRow = 1 and b.No != '' and b.IsNotShownInP06 = 'False'
                 ORDER BY IIF(No = '', 'ZZ', No), Seq
 ";
-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -550,7 +552,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         {
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            if (noCount + 5 < this.DetailDatas.Count)
+            if (noCount + 5 <= this.DetailDatas.Count)
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
@@ -689,6 +691,70 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorNumericColumnSettings colCycleTimePPA = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings location = new DataGridViewGeneratorTextColumnSettings();
+            #region Operation Code
+            operation.EditingMouseDown += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (this.EditMode)
+                {
+                    if (e.Button == MouseButtons.Right && MyUtility.Check.Empty(dr["OperationDesc"]))
+                    {
+                        if (e.RowIndex != -1)
+                        {
+                            P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
+                            DialogResult result = callNextForm.ShowDialog(this);
+                            if (result == DialogResult.Cancel)
+                            {
+                                if (callNextForm.P01SelectOperationCode != null)
+                                {
+                                    dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                                    dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                                    dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr.EndEdit();
+                                }
+                            }
+
+                            if (result == DialogResult.OK)
+                            {
+                                dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
+                                dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
+                                dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
+                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr.EndEdit();
+                            }
+                        }
+                    }
+                }
+            };
+
+            location.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    var groupDT = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
+                    .Where(row => row["Location"] != null && !string.IsNullOrWhiteSpace(row["Location"].ToString()))
+                    .GroupBy(row => row["Location"]).Select(group => group.First())
+                    .CopyToDataTable();
+
+                    SelectItem sele = new SelectItem(groupDT, "Location", "30", null);
+                    DialogResult result = sele.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    dr["Location"] = sele.GetSelectedString();
+                }
+            };
+            #endregion
+
+
 
             colCycleTime.CellValidating += (s, e) =>
             {
@@ -1043,11 +1109,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
-               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: location)
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
@@ -1055,7 +1121,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("EstCycleTime", header: "Est. Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTime)
-               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
@@ -1082,7 +1148,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID)
                .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name)
-               .Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+               //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
@@ -1107,7 +1173,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.gridCentralizedPPARight.Columns["No"].Frozen = true;
         }
 
-        /// <inheritdoc/> 
+        /// <inheritdoc/>
         protected override DualResult ClickSavePre()
         {
             // 因為這支程式在做某些操作時，Rowstate會亂掉，很難控制，所以直接在存檔前將資料庫的舊資料刪掉，再將detail rowstate都設定成Added來更新detail資料
@@ -1159,13 +1225,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             this.oriDataTable = (DataTable)this.gridLineMappingRight.DataSource;
-            this.listControlBindingSource.DataSource = this.gridLineMappingRight.DataSource;
-            var dt = (DataTable)this.listControlBindingSource.DataSource;
+            var dt = (DataTable)this.gridLineMappingRight.DataSource;
             foreach (DataRow dr in dt.Rows)
             {
                 dr["NoCnt"] = MyUtility.Convert.GetInt(dr["NoCnt"]) - MyUtility.Convert.GetInt(dr["IsNotShownInP06Cnt"]);
             }
-            this.listControlBindingSource.Filter = "NoCnt <> '0'";
+
+            this.gridLineMappingRightBS.DataSource = this.gridLineMappingRight.DataSource;
+            this.gridLineMappingRightBS.Filter = "IsNotShownInP06 = 'False'";
             this.detailgridbs.Filter = "IsNotShownInP06 = 'False'"; // ISP20240132 隱藏工段
         }
 
@@ -1388,6 +1455,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         private void BtnPrintDetail_Click(object sender, EventArgs e)
         {
             string excelName = "IE_P06";
+
+            this.detailgridbs.Filter = string.Empty;
             DataTable dtSheet1 = (DataTable)this.detailgridbs.DataSource;
 
             DataTable selectSheet1 = new DataTable();
@@ -1468,6 +1537,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             MyUtility.Excel.CopyToXls(selectSheet1, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[1]);
             MyUtility.Excel.CopyToXls(selectSheet2, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: 1, excelApp: objApp, wSheet: objApp.Sheets[2]);
             objApp.Cells.EntireRow.AutoFit();
+
+            Microsoft.Office.Interop.Excel.Worksheet worksheet = (Microsoft.Office.Interop.Excel.Worksheet)objApp.Sheets[1];
+
+            // 設定 A 欄的寬度為自動
+            Microsoft.Office.Interop.Excel.Range columnA = worksheet.Columns["A:A"];
+            columnA.ColumnWidth = 7;
+
             objApp.Visible = true;
             Marshal.ReleaseComObject(objApp);
         }
@@ -1478,39 +1554,166 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         /// <param name="index">index</param>
         protected override void OnDetailGridInsert(int index = 0)
         {
+            DataTable copyOriDataTable = ((DataTable)this.detailgridbs.DataSource).Copy();
+            DataRow copyDR;
+            DataRow seleceted_dataRow = copyOriDataTable.AsEnumerable().FirstOrDefault(x => MyUtility.Convert.GetBool(x["Selected"]) == true);
+
+            int insert_index = 0; // 插入的指標
+
+            if (seleceted_dataRow != null)
+            {
+                insert_index = copyOriDataTable.Rows.IndexOf(seleceted_dataRow);
+                copyDR = seleceted_dataRow;
+            }
+            else
+            {
+                insert_index = index;
+                copyDR = copyOriDataTable.Rows[index];
+            }
+
             this.detailgrid.AllowUserToAddRows = false;
-            base.OnDetailGridInsert(index);
+            base.OnDetailGridInsert(insert_index);
+
             DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
+
             if (index >= 0)
             {
-                DataRow nextDataRow = oriDt.Rows[index];
-                nextDataRow["No"] = oriDt.Rows[index + 1]["No"];
-                nextDataRow["IsNotShownInP06"] = false;
-
                 bool isGo = false;
-                foreach (DataRow dataRow in this.DetailDatas)
+
+                #region 主表插入
+                DataRow nextDataRow = oriDt.Rows[insert_index];
+                nextDataRow["Selected"] = "False";
+                nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
+                nextDataRow["IsNotShownInP06"] = false;
+                List<DataRow> rowsToMainAdd = new List<DataRow>();
+
+                if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
                 {
-                    int indexs = oriDt.Rows.IndexOf(dataRow);
-                    string strNo = MyUtility.Convert.GetString(dataRow["No"]);
-                    int iUkey = MyUtility.Convert.GetInt(dataRow["Ukey"]);
-                    if (MyUtility.Convert.GetString(nextDataRow["No"]) == strNo)
+                    nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
+                    foreach (DataRow dataRow in this.DetailDatas)
                     {
-                        if (indexs != index)
+                        int indexs = oriDt.Rows.IndexOf(dataRow);
+                        string strNo = MyUtility.Convert.GetString(dataRow["No"]);
+                        if (MyUtility.Convert.GetString(nextDataRow["No"]) == strNo)
+                        {
+                            if (indexs != insert_index)
+                            {
+                                dataRow["No"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dataRow["No"]) + 1).PadLeft(2, '0');
+                            }
+
+                            isGo = true;
+                            continue;
+                        }
+
+                        if (isGo)
                         {
                             dataRow["No"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dataRow["No"]) + 1).PadLeft(2, '0');
                         }
-
-                        isGo = true;
-                        continue;
                     }
 
-                    if (isGo)
+                    this.detailgridbs.DataSource = oriDt;
+                }
+                else
+                {
+                    nextDataRow["No"] = copyDR["No"];
+                }
+
+                int indexMain = 0;
+                for (int i = 0; i < this.detailgrid.Rows.Count; i++)
+                {
+                    if (this.detailgrid.Rows[i].Cells["No"].Value.ToString() == (object)nextDataRow["No"])
                     {
-                        dataRow["No"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(dataRow["No"]) + 1).PadLeft(2, '0');
+                        indexMain = i;
+                        break;
                     }
                 }
 
-                this.detailgridbs.DataSource = oriDt;
+                this.detailgrid.Rows[indexMain].Selected = true;
+                this.detailgrid.CurrentCell = this.detailgrid.Rows[indexMain].Cells[0];
+                this.detailgrid.FirstDisplayedScrollingRowIndex = indexMain;
+                #endregion 主表插入
+
+                #region 插入右邊表
+                DataColumn noColumn = dataTableRight.Columns["No"];
+                DataColumn[] primaryKeyColumns = dataTableRight.PrimaryKey;
+
+                if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
+                {
+                    dataTableRight.PrimaryKey = null;
+                }
+
+                List<DataRow> rowsToAdd = new List<DataRow>();
+
+                if (MyUtility.Convert.GetBool(copyDR["Selected"]))
+                {
+                    isGo = false;
+
+                    foreach (DataRow dataRow in dataTableRight.Rows)
+                    {
+                        if ((string)dataRow["No"] == (string)nextDataRow["No"])
+                        {
+                            DataRow newRow = dataTableRight.NewRow();
+                            newRow["No"] = nextDataRow["No"];
+                            newRow["NoCnt"] = "1";
+                            newRow["IsNotShownInP06Cnt"] = false;
+                            newRow["NeedExclude"] = false;
+                            newRow["IsNotShownInP06"] = false;
+
+                            rowsToAdd.Add(newRow);
+
+                            isGo = true;
+                        }
+
+                        if (isGo)
+                        {
+                            int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
+                            dataRow["No"] = MyUtility.Convert.GetString(iNo + 1).PadLeft(2, '0');
+                        }
+                    }
+
+                    foreach (DataRow rowToAdd in rowsToAdd)
+                    {
+                        dataTableRight.Rows.Add(rowToAdd);
+                    }
+                }
+                else
+                {
+                    DataRow dataRow = dataTableRight.AsEnumerable().FirstOrDefault(x => x["No"].ToString() == copyDR["No"].ToString());
+                    if (dataRow != null)
+                    {
+                        dataRow["NoCnt"] = MyUtility.Convert.GetInt(dataRow["NoCnt"]) + 1;
+                    }
+                }
+
+                DataView dataView = new DataView(dataTableRight);
+                dataView.Sort = "No ASC";
+                dataTableRight = dataView.ToTable();
+
+                if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
+                {
+                    DataColumn newNoColumn = dataTableRight.Columns["No"];
+                    dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
+                }
+
+                this.gridLineMappingRight.DataSource = dataTableRight;
+
+                string targetNo = rowsToAdd.Count > 0 ? rowsToAdd[0]["No"].ToString() : copyDR["No"].ToString();
+                int indexRight = 0;
+                for (int i = 0; i < this.gridLineMappingRight.Rows.Count; i++)
+                {
+                    if (this.gridLineMappingRight.Rows[i].Cells["No"].Value.ToString() == targetNo)
+                    {
+                        indexRight = i;
+                        break;
+                    }
+                }
+
+                this.gridLineMappingRight.ClearSelection();
+                this.gridLineMappingRight.Rows[indexRight].Selected = true;
+                this.gridLineMappingRight.CurrentCell = this.gridLineMappingRight.Rows[indexRight].Cells[0];
+                this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = indexRight;
+                #endregion 插入右邊表
             }
             else if (index == -1)
             {
@@ -1531,28 +1734,175 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
-            string row = dataTable.AsEnumerable().Where(x=> x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[this.detailgridbs.Position]["No"].ToString();
-            this.detailgrid.ValidateControl();
-            base.OnDetailGridRemoveClick();
-            bool isGo = false;
-            foreach (DataRow dataRow in this.DetailDatas)
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
+
+            string row = string.Empty;
+
+            DataRow seleceted_dataRow = dataTable.AsEnumerable().FirstOrDefault(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(x["Selected"]) == true);
+
+            if (seleceted_dataRow != null)
             {
-
-                if (dataRow["No"].ToString() == row)
-                {
-                    dataRow.Delete();
-                    isGo = true;
-                    continue;
-                }
-
-                if (isGo)
-                {
-                    int i = MyUtility.Convert.GetInt(dataRow["No"]);
-                    dataRow["No"] = MyUtility.Convert.GetString( i - 1).PadLeft(2, '0');
-                }
+                row = seleceted_dataRow["No"].ToString();
+            }
+            else
+            {
+                row = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[this.detailgridbs.Position]["No"].ToString();
             }
 
+            this.detailgrid.ValidateControl();
+
+            DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+
+            // base.OnDetailGridRemoveClick();
+            bool isGo = false;
+            #region 刪除右邊表
+            if (MyUtility.Convert.GetBool(dr["Selected"]) == true)
+            {
+                DataColumn noColumn = dataTableRight.Columns["No"];
+                DataColumn[] primaryKeyColumns = dataTableRight.PrimaryKey;
+
+                if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
+                {
+                    dataTableRight.PrimaryKey = null;
+                }
+
+                List<DataRow> rowsToDelete = new List<DataRow>();
+                foreach (DataRow dataRow in dataTableRight.Rows)
+                {
+                    if (dataRow["No"].ToString() == row)
+                    {
+                        rowsToDelete.Add(dataRow);
+                        isGo = true;
+                        continue;
+                    }
+
+                    if (isGo && dataRow.RowState != DataRowState.Deleted)
+                    {
+                        int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
+                        dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                    }
+                }
+
+                foreach (DataRow rowToDelete in rowsToDelete)
+                {
+                    rowToDelete.Delete();
+                }
+
+                // Sort and update DataTable
+                DataView dataView = new DataView(dataTableRight);
+                dataView.Sort = "No ASC";
+                dataTableRight = dataView.ToTable();
+
+                DataColumn newNoColumn = dataTableRight.Columns["No"];
+                dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
+            }
+            else
+            {
+                DataColumn noColumn = dataTableRight.Columns["No"];
+                DataColumn[] primaryKeyColumns = dataTableRight.PrimaryKey;
+
+                // 移除主鍵設置
+                if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
+                {
+                    dataTableRight.PrimaryKey = null;
+                }
+
+                // 查找對應的 DataRow
+                DataRow datarow = dataTableRight.AsEnumerable().FirstOrDefault(x => x["No"].ToString() == dr["No"].ToString());
+
+                if (datarow != null)
+                {
+                    if (MyUtility.Convert.GetInt(datarow["NoCnt"]) > 1)
+                    {
+                        datarow["NoCnt"] = MyUtility.Convert.GetInt(datarow["NoCnt"]) - 1;
+                    }
+                    else
+                    {
+                        datarow.Delete();
+                    }
+
+                    // 確認刪除操作已完成
+                    dataTableRight.AcceptChanges();
+                }
+
+                // 排序並更新 DataTable
+                DataView dataView = new DataView(dataTableRight);
+                dataView.Sort = "No ASC";
+                dataTableRight = dataView.ToTable();
+
+                // 使用新的 DataTable 設置主鍵
+                DataColumn newNoColumn = dataTableRight.Columns["No"];
+                dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
+            }
+            #endregion 刪除右邊表
+
+            isGo = false;
+            #region 刪除主表資料
+            List<DataRow> rowsToMainDelete = new List<DataRow>();
+
+            if (MyUtility.Convert.GetBool(dr["Selected"]) == true)
+            {
+                foreach (DataRow dataRow in dataTable.Rows)
+                {
+                    if (dataRow.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    if (dataRow["No"].ToString() == row)
+                    {
+                        //// Packer / Presser 卡控
+                        if (dataRow["OperationID"].ToString() == "PROCIPF00003" || dataRow["OperationID"].ToString() == "PROCIPF00004")
+                        {
+                            string manpowerKey = dataRow["OperationID"].ToString() == "PROCIPF00003" ? "PackerManpower" : "PresserManpower";
+                            string roleName = dataRow["OperationID"].ToString() == "PROCIPF00003" ? "Packer" : "Presser";
+
+                            if (!this.ValidateAndDecrementManpower(manpowerKey, roleName))
+                            {
+                                return; // 如果無法刪除，則返回
+                            }
+                        }
+
+                        rowsToMainDelete.Add(dataRow);
+                        isGo = true;
+                        continue;
+                    }
+
+                    if (isGo)
+                    {
+                        int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
+                        dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                    }
+                }
+
+                foreach (DataRow rowToDelete in rowsToMainDelete)
+                {
+                    rowToDelete.Delete();
+                }
+            }
+            else
+            {
+                dr.Delete();
+            }
+
+            #endregion 刪除主表資料
+
+            this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
+        }
+
+        private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
+        {
+            int manpower = MyUtility.Convert.GetInt(this.CurrentMaintain[manpowerKey]);
+
+            if ((manpower - 1) < 1)
+            {
+                MyUtility.Msg.WarningBox($"Cannot delete the last {roleName}");
+                return false;
+            }
+
+            this.CurrentMaintain[manpowerKey] = manpower - 1;
+            return true;
         }
 
         private void TxtReason_PopUp(object sender, TextBoxPopUpEventArgs e)

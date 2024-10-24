@@ -22,7 +22,7 @@ namespace Sci.Production.IE
         public P05_MachineSummary(string almID = "")
         {
             this.InitializeComponent();
-            this.LoadData(almID);
+            this.LoadData(almID == string.Empty ? "0" : almID);
         }
 
         /// <inheritdoc/>

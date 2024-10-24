@@ -117,6 +117,8 @@
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.numEstLBR = new Sci.Win.UI.NumericBox();
             this.btnPrintDetail = new Sci.Win.UI.Button();
+            this.numericBox1 = new Sci.Win.UI.NumericBox();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -138,6 +140,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numericBox1);
+            this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.btnPrintDetail);
             this.masterpanel.Controls.Add(this.numEstLBR);
             this.masterpanel.Controls.Add(this.label1);
@@ -286,6 +290,8 @@
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.numEstLBR, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
             // 
             // detailpanel
             // 
@@ -1367,6 +1373,7 @@
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsIE = false;
             this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = false;
@@ -1497,7 +1504,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(1153, 206);
             this.shapeContainer3.TabIndex = 27;
             this.shapeContainer3.TabStop = false;
@@ -1534,6 +1541,37 @@
             this.btnPrintDetail.Text = "Print Detail";
             this.btnPrintDetail.UseVisualStyleBackColor = true;
             this.btnPrintDetail.Click += new System.EventHandler(this.BtnPrintDetail_Click);
+            // 
+            // numericBox1
+            // 
+            this.numericBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numericBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OriTotalGSD", true));
+            this.numericBox1.DecimalPlaces = 2;
+            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numericBox1.IsSupportEditMode = false;
+            this.numericBox1.Location = new System.Drawing.Point(922, 88);
+            this.numericBox1.Name = "numericBox1";
+            this.numericBox1.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numericBox1.ReadOnly = true;
+            this.numericBox1.Size = new System.Drawing.Size(58, 21);
+            this.numericBox1.TabIndex = 251;
+            this.numericBox1.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(807, 91);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(112, 21);
+            this.label2.TabIndex = 250;
+            this.label2.Text = "Ori. Total GSD time";
             // 
             // P03
             // 
@@ -1671,5 +1709,7 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
         private Win.UI.NumericBox numEstLBR;
         private Win.UI.Button btnPrintDetail;
+        private Win.UI.NumericBox numericBox1;
+        private Win.UI.Label label2;
     }
 }

@@ -37,7 +37,8 @@ where	t.StyleID = @StyleID and
 
 select	td.ID,
 		td.Ukey,
-		td.Seq,
+		[Seq] = iif(td.DesignateSeq <> '',td.DesignateSeq,td.SewingSeq),
+		--td.Seq,
 		ts.TotalSewer,
 		[Sewer] = Round(ts.TotalSewer * (td.SMV / @TotalSMV), 4),
 		td.PPA,
@@ -558,7 +559,7 @@ group by tmd.TotalSewer
 
 -- insert **Pressing與**Packing資料
 DECLARE Create_detailPackerPresser CURSOR FOR 
-	select	TotalSewer, PackerManpower, PresserManpower
+	select	TotalSewer, PresserManpower,PackerManpower
 	from #detailSummary
 
 Declare @TotalSewerAdditional int

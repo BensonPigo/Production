@@ -33,6 +33,7 @@
     [EditDate] DATETIME NULL, 
     [OriNoNumber] INT    CONSTRAINT [DF_LineMappingBalancing_OriNoNumber] DEFAULT (0) NOT NULL , 
     [Reason] VARCHAR(5) CONSTRAINT [DF_LineMappingBalancing_Reason] DEFAULT ('') NOT NULL, 
+    [OriTotalGSDTime] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_OriTotalGSDTime] DEFAULT (0) NOT NULL,
     CONSTRAINT [PK_LineMappingBalancing] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -182,3 +183,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing',
     @level2type = N'COLUMN',
     @level2name = N'Reason'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'P05的總GSD時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'OriTotalGSDTime'

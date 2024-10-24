@@ -464,8 +464,83 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings location_Col = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings DSeq = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
+
+            location_Col.EditingMouseDown += (s, e) =>
+            {
+                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                string sqlcmd = $@"
+                DECLARE @ID varchar(10) = '{MyUtility.Convert.GetString(dr["ID"])}';
+                DECLARE @EndSeq varchar(4) = (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = @ID ORDER BY Seq DESC);
+
+                With tmp as
+                (
+                    SELECT
+                    SewingSeq = RIGHT('0000' + CAST((10 * (ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4)
+                    ,td.Ukey
+                    FROM TimeStudy_Detail td
+                    where ID = @ID and td.OperationID NOT LIKE '--%' AND td.IsNonSewingLine = 0
+                ),tmp1 as
+                (
+                    SELECT 
+                    td.Seq
+                    ,[NextSeq] = CASE 
+                            WHEN LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq) = 0 
+                            THEN @EndSeq
+                            ELSE LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq)
+                        END
+                    ,td.OperationID
+                    from TimeStudy_Detail td WITH(NOLOCK)
+                    where td.id = @ID and td.OperationID LIKE '-%' and td.smv = 0 
+                ),tmp2 AS
+                (
+			                select
+	                --DISTINCT
+	                [Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),'')
+	                from TimeStudy_Detail td WITH (NOLOCK) 
+	                OUTER APPLY
+	                (
+		                SELECT TOP 1
+		                OperationID FROM tmp1 t1 
+		                WHERE t1.NextSeq = @EndSeq  OR t1.NextSeq > td.Seq  
+		                ORDER BY t1.Seq asc
+	                )t1
+	                where td.ID = @ID
+                )
+
+                SELECT DISTINCT [Location] from tmp2";
+
+                DualResult dualResult = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
+
+                if (!dualResult)
+                {
+                    MyUtility.Msg.WarningBox(dualResult.ToString());
+                    return;
+                }
+
+                SelectItem item = new SelectItem(dt, "Location", "15", this.Text, headercaptions: "Location")
+                {
+                    Width = 300,
+                };
+                DialogResult returnResult = item.ShowDialog();
+                if (returnResult == DialogResult.Cancel)
+                {
+                    return;
+                }
+
+                DataRow selectedData = item.GetSelecteds().FirstOrDefault();
+
+                dr["Location"] = item.GetSelectedString();
+
+            };
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
@@ -1282,6 +1357,28 @@ and Name = @PPA
             template.MaxLength = 100;
             CheckBoxColumn colIsNonSewingLine;
 
+            DSeq.EditingTextChanged += (s, e) =>
+            {
+                string input = e.EditingControl.Text;
+
+                if (input.Length > 4)
+                {
+                    e.EditingControl.Text = input.Substring(0, 4);
+                    e.EditingControl.SelectionStart = 4; // 光標放在字串最後
+                }
+            };
+
+            DSeq.EditingKeyPress += (s, e) =>
+            {
+                string input = e.EditingControl.Text;
+
+                // 檢查是否是數字（允許控制鍵例如 Backspace）
+                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                {
+                    e.Handled = true; // 阻止非數字字符的輸入
+                }
+            };
+
             DSeq.CellFormatting += (s, e) =>
             {
                 if (e.RowIndex == -1)
@@ -1319,10 +1416,10 @@ and Name = @PPA
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("DesignateSeq", header: "Designate Seq", width: Widths.AnsiChars(4), settings: DSeq)
-                .Text("SewingSeq", header: "Sewing Seq", width: Widths.AnsiChars(4), settings: seq)
-                .Text("Seq", header: "Ori. Seq", width: Widths.AnsiChars(4), iseditingreadonly: true)
-                .Text("Location", header: "Location", width: Widths.AnsiChars(7))
+                .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: DSeq)
+                .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: seq)
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7), settings: location_Col, iseditingreadonly: false)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
@@ -1791,14 +1888,8 @@ group by id.Location,M.ArtworkTypeID";
                 }
             }
 
-
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-            dt.AsEnumerable().Where(row => MyUtility.Convert.GetString(row.Field<string>("OperationID")) == string.Empty).ToList().ForEach(row => row.Delete());
-
-            //foreach (DataRow dr in dt.Rows)
-            //{
-            //   dt.Rows.Remove(dr);
-            //}
+            dt.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(row.Field<string>("OperationID")) == string.Empty).ToList().ForEach(row => row.Delete());
 
             return base.ClickSaveBefore();
         }

@@ -33,10 +33,10 @@
             this.lblDept = new Sci.Win.UI.Label();
             this.txtDept = new Sci.Win.UI.TextBox();
             this.txtPosition = new Sci.Win.UI.TextBox();
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             this.checkJunk = new Sci.Win.UI.CheckBox();
             this.chP03 = new Sci.Win.UI.CheckBox();
             this.chP06 = new Sci.Win.UI.CheckBox();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -125,22 +125,6 @@
             this.txtPosition.TabIndex = 20;
             this.txtPosition.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPosition_PopUp);
             // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsMultiselect = false;
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(105, 33);
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory1.TabIndex = 22;
-            // 
             // checkJunk
             // 
             this.checkJunk.AutoSize = true;
@@ -176,6 +160,23 @@
             this.chP06.TabIndex = 25;
             this.chP06.Text = "IE P06";
             this.chP06.UseVisualStyleBackColor = true;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsIE = true;
+            this.txtfactory1.IsMultiselect = false;
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(105, 33);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 22;
             // 
             // B17
             // 

@@ -478,6 +478,25 @@ group by almd.No
             // Sheet - Centralized PPA
             this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[3], this.dtPPA_MachineArea, OperationType.PPA);
 
+            for (int i = 1; i < 4; i++)
+            {
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[i];
+
+                // 設置列印設置
+                worksheet.PageSetup.PaperSize = Excel.XlPaperSize.xlPaperA4; // 設置紙張大小為 A4
+                worksheet.PageSetup.Orientation = Excel.XlPageOrientation.xlPortrait; // 設置為縱向列印
+                worksheet.PageSetup.Zoom = false; // 禁用默認縮放比例
+                worksheet.PageSetup.FitToPagesWide = 1; // 將內容縮放以適合一頁寬
+                worksheet.PageSetup.FitToPagesTall = false;
+
+                // 設置頁邊距，使得頁邊距最小
+                worksheet.PageSetup.LeftMargin = excel.InchesToPoints(0.25); // 左邊距 0.25 英寸
+                worksheet.PageSetup.RightMargin = excel.InchesToPoints(0.25); // 右邊距 0.25 英寸
+                worksheet.PageSetup.TopMargin = excel.InchesToPoints(0.25); // 上邊距 0.25 英寸
+                worksheet.PageSetup.BottomMargin = excel.InchesToPoints(0.25); // 下邊距 0.25 英寸
+            }
+
+
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("IE_P05_Print");
             Excel.Workbook workbook = excel.ActiveWorkbook;

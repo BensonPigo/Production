@@ -82,7 +82,7 @@ left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA
 left join Operation op with (nolock) on op.ID = ad.OperationID
 inner join AutomatedLineMapping alm on alm.id = ad.ID
 LEFT join MachineType_Detail md on md.ID = ad.MachineTypeID and md.FactoryID = alm.FactoryID
-where {0} and isnull(md.IsNotShownInP05,0) = 0
+where {0} --and isnull(md.IsNotShownInP05,0) = 0
 order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
         private decimal StandardLBR
@@ -120,6 +120,8 @@ AND ALMCS.Junk = 0
             this.gridCentralizedPPALeft.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
             this.gridCentralizedPPALeft.DataSource = this.gridCentralizedPPALeftBS;
 
+            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS.DataSource;
+
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
 
@@ -156,6 +158,7 @@ AND ALMCS.Junk = 0
             this.chartLBR.Paint += this.ChartLBR_Paint;
 
             this.numericLBRByGSDTime.ValueChanged += this.NumericLBRByGSDTime_ValueChanged;
+            this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
         }
 
         private void NumericLBRByGSDTime_ValueChanged(object sender, EventArgs e)
@@ -691,6 +694,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 bool isChecked = MyUtility.Convert.GetBool(e.FormattedValue);
 
+
                 // 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
                 //if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
                 //{
@@ -712,7 +716,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 //    }
                 //}
 
-                //this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
+                this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
 
                 // 如果取消勾選之後，資料中沒有一筆勾選的情況，將每筆資料的Selected read only回復
                 if (!isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
@@ -938,15 +942,17 @@ from #tmp
 
             if (this.tabDetail.SelectedIndex == 0)
             {
-                this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
+                this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0 and IsNotShownInP05 = 0";
                 this.lineMappingGrids.RefreshSubData();
             }
             else
             {
-                this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
+                this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0 and IsNotShownInP05 = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
 
+            this.gridLineMappingRightBS.DataSource = this.gridLineMappingRight.DataSource;
+            this.gridLineMappingRightBS.Filter = "IsNotShownInP05 = 'False' and No <> '' and No is not null";
             this.detailgridbs.Filter = "IsNotShownInP05 = 'False' and No <> '' and No is not null"; // ISP20240132 隱藏工段
         }
 
@@ -1127,7 +1133,7 @@ from #tmp
             int i = 0;
             int btnLocationY = MyUtility.Convert.GetInt(this.chartLBR.ChartAreas[0].AxisY.ValueToPixelPosition(50) + 5);
 
-             foreach (var point in  this.chartLBR.Series[0].Points)
+            foreach (var point in this.chartLBR.Series[0].Points)
             {
                 // 取得 Bar 的數值
                 double value = point.YValues[0];
@@ -1209,7 +1215,8 @@ from #tmp
                 return;
             }
 
-            new P05_Chart(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+            int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
+            new P05_Chart(firstDisplaySewermanpower, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
             //int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
             //if (this.EditMode)
             //{
@@ -1274,7 +1281,8 @@ INSERT INTO LineMappingBalancing (
 	   ,AddName
 	   ,AddDate
        ,OriNoNumber
-       ,Reason)
+       ,Reason
+       ,OriTotalGSDTime)
 SELECT
 		alm.ID
 	   ,alm.StyleUKey
@@ -1302,6 +1310,7 @@ SELECT
 	   ,GETDATE()
        ,{this.DetailDatas.Count}
        ,''
+       ,alm.TotalGSDTime
 FROM AutomatedLineMapping alm
 WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
 
