@@ -122,39 +122,53 @@ namespace Sci.Production.Cutting
                     var poids = excelWk.Select(o => o.ID).Distinct().ToList();
 
                     // 檢查Excel 資料合法性，撈一次資料即可
-                    List<WorkOrder> compare = this.GetOrderInfoList(poids);
-                    List<WorkOrder> compareMarkerNo = this.GetOrder_EachConsInfoList(poids);
+                    List<WorkOrder> dbData = this.GetOrderInfoList(poids);
+                    List<WorkOrder> dbDataMarkerNo = this.GetOrder_EachConsInfoList(poids);
 
-                    foreach (var e in excelWk)
+                    foreach (var workOrder in excelWk)
                     {
-                        var firstCompare = compare.Where(o => o.ID == e.ID && o.SEQ1 == e.SEQ1 && o.SEQ2 == e.SEQ2 && o.FabricPanelCode == e.FabricPanelCode && o.Colorid == e.Colorid);
-                        if (!firstCompare.Any())
+                        // FabricPanelCode、ImportPatternPanel可能會有 A+B、FA+FB這種資料，所以要拆開來判斷
+                        var wks = this.TransWorkOrder(workOrder);
+
+                        List<WorkOrder> compareOkData = new List<WorkOrder>();
+                        bool isFail = false;
+                        foreach (var item in wks)
                         {
-                            inValidWk.Add(e);
+                            if (!dbData.Any(x => x.FabricPanelCode == item.FabricPanelCode && x.FabricCombo == item.ImportPatternPanel))
+                            {
+                                inValidWk.Add(workOrder);
+                                isFail = true;
+                            }
+                            else
+                            {
+                                compareOkData.Add(item);
+                            }
+                        }
+
+                        if (isFail)
+                        {
                             continue;
                         }
 
-                        e.Refno = firstCompare.FirstOrDefault().Refno;
-                        e.SCIRefno = firstCompare.FirstOrDefault().SCIRefno;
-                        e.FabricCode = firstCompare.FirstOrDefault().FabricCode;
-                        e.FabricPanelCode = firstCompare.FirstOrDefault().FabricPanelCode;
-                        e.FabricCombo = firstCompare.FirstOrDefault().FabricCombo;
-                        if (!compareMarkerNo.Any(o => o.MarkerNo == e.MarkerNo))
+                        workOrder.Refno = compareOkData.FirstOrDefault().Refno;
+                        workOrder.SCIRefno = compareOkData.FirstOrDefault().SCIRefno;
+                        workOrder.FabricCode = compareOkData.FirstOrDefault().FabricCode;
+                        if (!dbDataMarkerNo.Any(o => o.MarkerNo == workOrder.MarkerNo))
                         {
-                            e.MarkerNo = string.Empty;
+                            workOrder.MarkerNo = string.Empty;
                         }
 
                         // 比較Excel填的ColorCombo設定的層數，看Excel填的有沒有超過上限
-                        var layer = e.ExcelLayer;
-                        e.Layer = layer;
-                        e.CuttingLayer = layer;
+                        var layer = workOrder.ExcelLayer;
+                        workOrder.Layer = layer;
+                        workOrder.CuttingLayer = layer;
+                        workOrder.Cons = workOrder.Cons * layer; // 從 DB 取得 Layer 乘上
 
-                        e.Cons = e.Cons * layer; // 從 DB 取得 Layer 乘上
-
-                        validWk.Add(e);
+                        validWk.Add(workOrder);
                     }
 
-                    if (validWk.Any())
+                    // 只要有不合法就全部不寫入
+                    if (!inValidWk.Any() && validWk.Any())
                     {
                         // 合法資料開始寫入 WorkOrder、WorkOrder_PatternPanel、WorkOrder_SizeRati
                         List<long> newWorkOrderUkey = this.InsertWorkOrder(validWk, sqlConn, form);
@@ -172,8 +186,8 @@ namespace Sci.Production.Cutting
 
                 if (inValidWk.Any())
                 {
-                    DataTable dt = ListToDataTable.ToDataTable(inValidWk.Select(o => new { o.ID, o.SEQ1, o.SEQ2, o.Markername, o.FabricPanelCode }).Distinct().ToList());
-                    var f = new MsgGridForm(dt, "Invalid data in Order ColorCombo", $"Invalid data");
+                    DataTable dt = ListToDataTable.ToDataTable(inValidWk.Select(o => new { o.ID, o.SEQ1, o.SEQ2, o.Markername, PanelCode = o.FabricPanelCode, PatternPanel = o.ImportPatternPanel }).Distinct().ToList());
+                    var f = new MsgGridForm(dt, "Pattern Code does not match Panel Code", $"Invalid data");
                     f.grid1.ColumnsAutoSize();
                     f.ShowDialog();
                 }
@@ -220,21 +234,25 @@ namespace Sci.Production.Cutting
                     string keyWord_FabPanelCode = "Panel Code:";
                     string keyWord_Layer = "Layers";
                     string keyWord_MarkerEnd = "No.";
-                    int curRowIndex = 1;
+
+                    // 紀錄這一區的起點Index，起點是「Panel Code:」欄位
+                    int rowIndexPanelCode = 1;
+
+                    // 紀錄這一區的終點Index
+                    int rowIndexTerminalPoint = 1;
+
+                    // 紀錄資料有幾Column，到哪一個Index，整個Sheet都是一致的
+                    int colIndexLayers = 0;
+
+                    // 記錄有多少Row的暫存變數
                     int emptyRowCount = 0;
 
-                    // 紀錄這一區資料有幾Row，到哪一個Index
-                    int curDataStart_Y = 1;
-
-                    // 紀錄這一區資料有幾Column，到哪一個Index
-                    int curDataStart_X = 0;
-
                     // 橫向開始找「Layers」欄位(對應 範本Excel的col = AB, Row = 8 )，但是User可能自己複製column，所以動態抓，整個Sheet的Column是一起的，所以一張Sheet找一次就好
-                    if (curDataStart_X == 0)
+                    if (colIndexLayers == 0)
                     {
-                        while (worksheet.GetCellValue(curDataStart_X + 1, 8) != keyWord_Layer)
+                        while (worksheet.GetCellValue(colIndexLayers + 1, 8) != keyWord_Layer)
                         {
-                            curDataStart_X++;
+                            colIndexLayers++;
                         }
                     }
 
@@ -248,49 +266,55 @@ namespace Sci.Production.Cutting
                         }
 
                         // 開始找「Panel Code:」欄位(對應 Excel的col = A, Row = 4 )
-                        if (worksheet.GetCellValue(1, curRowIndex) != keyWord_FabPanelCode)
+                        if (worksheet.GetCellValue(1, rowIndexPanelCode) != keyWord_FabPanelCode)
                         {
-                            curRowIndex++;
+                            rowIndexPanelCode++;
                             emptyRowCount++;
                             continue;
                         }
 
                         // 找到「Panel Code:」欄位，重置
                         emptyRowCount = 0;
-                        curDataStart_Y = 1;
+                        rowIndexTerminalPoint = 1;
 
-                        // 若找到，「Panel Code:」的行數為 curRowIndex
-                        // 計算「Panel Code:」到下一個「No.」距離多少Row，User填了幾Row的資料，超50 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
+                        // 若找到，「Panel Code:」的行數為 indexPanelCode
+                        // 計算「Panel Code:」到下一個「No.」距離多少Row，User填了幾Row的資料，超 20 Row都找不到就算了(報表範本有鎖格式，所以應該不可能找不到)
                         // AA 25
-                        curDataStart_Y += curRowIndex;
-                        string text = worksheet.GetCellValue(1, curDataStart_Y);
-                        while (text != keyWord_MarkerEnd && emptyRowCount < 50)
+                        rowIndexTerminalPoint += rowIndexPanelCode;
+                        string text = worksheet.GetCellValue(1, rowIndexTerminalPoint);
+                        while (text != keyWord_MarkerEnd && emptyRowCount < 20)
                         {
-                            curDataStart_Y++;
+                            rowIndexTerminalPoint++;
                             emptyRowCount++;
-                            text = worksheet.GetCellValue(1, curDataStart_Y);
+                            text = worksheet.GetCellValue(1, rowIndexTerminalPoint);
                             continue;
                         }
 
                         // 找到下一個「No.」，往上推兩格是終點
-                        curDataStart_Y -= 2;
+                        rowIndexTerminalPoint -= 2;
 
                         emptyRowCount = 0;
 
                         // 下一個「Panel Code:」的起點，前一個終點的下3格
-                        int nextFabPanelCodeStart = curDataStart_Y + 3;
+                        int nextFabPanelCodeStart = rowIndexTerminalPoint + 3;
 
                         // 計算Pattern Panel和Marker Name填寫的Row有幾行
                         // 6 = 「Panel Code:」到「MK Name」的距離
                         // 1 = 「Ttl. Qty.」跟最後一筆資料的距離
-                        int markerRowCount = curDataStart_Y - curRowIndex - 6;
+                        int markerRowCount = rowIndexTerminalPoint - rowIndexPanelCode - 6;
 
-                        // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 curRowIndex
-                        string fabricPanelCode = worksheet.GetCellValue(2, curRowIndex);
+                        // 取得「Panel Code:」的值(對應 Excel的col = B, Row = 3 )，「Panel Code:」在「Panel Code:」的下一行，「Panel Code:」的行數為 indexPanelCode
+                        string fabricPanelCode = worksheet.GetCellValue(2, rowIndexPanelCode);
+
+                        // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
+                        if (MyUtility.Check.Empty(fabricPanelCode))
+                        {
+                            throw new Exception("Panel Code can't be empty.");
+                        }
 
                         // 取MarkerNo, Seq，在「Panel Code:」的上一Row
-                        string markerNo = worksheet.GetCellValue(6, curRowIndex - 1);
-                        string seq = worksheet.GetCellValue(11, curRowIndex - 1);
+                        string markerNo = worksheet.GetCellValue(6, rowIndexPanelCode - 1);
+                        string seq = worksheet.GetCellValue(11, rowIndexPanelCode - 1);
                         string seq1, seq2;
 
                         if (seq.Split('-').Length < 2)
@@ -304,20 +328,14 @@ namespace Sci.Production.Cutting
                             seq2 = seq.Split('-')[1];
                         }
 
-                        // 如果「Panel Code:」找不到，則跳到下一個「Panel Code:」的起點
-                        if (MyUtility.Check.Empty(fabricPanelCode))
-                        {
-                            throw new Exception("Panel Code can't be empty.");
-                        }
-
                         // 取得「Color:」的值((對應 Excel的col = B, Row = 5 )
-                        string[] colorInfo = worksheet.GetCellValue(2, curRowIndex + 1).Split('-');
+                        string[] colorInfo = worksheet.GetCellValue(2, rowIndexPanelCode + 1).Split('-');
 
                         string tmpColorid = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
                         string tmpTone = colorInfo.Length >= 2 ? colorInfo[1] : string.Empty;
 
                         // 取得Size Ratio Range (例如：1 ,4 ,28 ,24 )
-                        Excel.Range rangeSizeRatio = worksheet.GetRange(1, curRowIndex, curDataStart_X + 1, nextFabPanelCodeStart - 3);
+                        Excel.Range rangeSizeRatio = worksheet.GetRange(1, rowIndexPanelCode, colIndexLayers + 1, nextFabPanelCodeStart - 3);
 
                         // 讀每一個MkName，起點是從A4「Panel Code:」往下數，所以是 = 7；終點是下筆資料「Panel Code:」的Y值 - 3，
                         // 直向往下找
@@ -426,11 +444,13 @@ namespace Sci.Production.Cutting
                             nwk.Markername = markerName;
                             nwk.MarkerVersion = "-1";
 
+                            //var wks = this.TransWorkOrder(nwk);
                             workOrders.Add(nwk);
+                            //workOrders.AddRange(wks);
                         }
 
                         // 當前區域的X Y 範圍已經處理完畢，設定下一個起點
-                        curRowIndex = nextFabPanelCodeStart;
+                        rowIndexPanelCode = nextFabPanelCodeStart;
                     }
 
                     Marshal.ReleaseComObject(worksheet);
@@ -452,6 +472,35 @@ namespace Sci.Production.Cutting
             }
 
             return workOrders;
+        }
+
+        /// <summary>
+        /// WorkOrder拆分作業，根據FabricPanelCode、PatternPanel拆分
+        /// </summary>
+        /// <param name="nwk">Excel讀出來的WorkOrder</param>
+        /// <returns>WorkOrder物件集合</returns>
+        public List<WorkOrder> TransWorkOrder(WorkOrder nwk)
+        {
+            List<WorkOrder> result = new List<WorkOrder>();
+
+            // 拆分 FabricPanelCode 和 ImportPatternPanel
+            string[] fabricPanels = nwk.FabricPanelCode.Split('+');
+            string[] importPanels = nwk.ImportPatternPanel.Split('+');
+
+            int maxLength = Math.Max(fabricPanels.Length, importPanels.Length);
+
+            for (int i = 0; i < maxLength; i++)
+            {
+                // 淺複製 WorkOrder 並修改 FabricPanelCode 和 ImportPatternPanel
+                WorkOrder newWorkOrder = (WorkOrder)nwk.ShallowCopy();
+
+                newWorkOrder.FabricPanelCode = i < fabricPanels.Length ? fabricPanels[i] : string.Empty;
+                newWorkOrder.ImportPatternPanel = i < importPanels.Length ? importPanels[i] : string.Empty;
+
+                result.Add(newWorkOrder);
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -578,15 +627,11 @@ WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
 
                 // WorkOrder_PatternPanel
                 string sqlInsertWorkOrder_PatternPanel = string.Empty;
-                foreach (var itemPatternPanel in wk.ImportPatternPanel.Split('+'))
-                {
-                    if (itemPatternPanel.Length != 2)
-                    {
-                        continue;
-                    }
 
-                    string patternPanel = itemPatternPanel;
-                    string fabricPanelCode = wk.FabricPanelCode;
+                for (int i = 0; i < wk.ImportPatternPanel.Split('+').Length; i++)
+                {
+                    string patternPanel = wk.ImportPatternPanel.Split('+')[i];
+                    string fabricPanelCode = wk.FabricPanelCode.Split('+')[i];
 
                     // PatternPanel、FabricPanelCode檢驗方式同表身
                     sqlInsertWorkOrder_PatternPanel += $@"
@@ -603,6 +648,9 @@ BEGIN
 END
 ";
                 }
+
+                wk.FabricCombo = wk.ImportPatternPanel.Split('+')[0];
+                wk.FabricPanelCode = wk.FabricPanelCode.Split('+')[0];
 
                 // WorkOrder_SizeRatio
                 string sqlInsertWorkOrder_SizeRatio = string.Empty;
@@ -625,11 +673,6 @@ END
 
                 while (true)
                 {
-                    List<SqlParameter> sqlParameters = new List<SqlParameter>()
-                    {
-                        new SqlParameter("@consPc", wk.ConsPC),
-                        new SqlParameter("@Cons",  wk.Cons),
-                    };
                     string markername = "MK-" + markerSerNo.ToString();
 
                     // 若能轉成int，代表是excel自動產生的Marker Name，因此套用編碼規則；不能轉代表是User自己手Key的，就不異動了
@@ -641,6 +684,9 @@ END
                     markerSerNo++;
 
                     string sqlInsertWorkOrder = $@"
+declare @consPc as numeric(12, 4) = '{Math.Round(wk.ConsPC, 4)}'
+declare @Cons as numeric(16, 4) = '{Math.Round(wk.Cons, 4)}'
+
 insert into {tableName}(
 ID
 ,FactoryID
@@ -700,7 +746,7 @@ DECLARE @newWorkOrderUkey as bigint = (select @@IDENTITY)
 
 select @newWorkOrderUkey
 ";
-                    DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder, sqlParameters, out DataTable dtResult);
+                    DualResult result = DBProxy.Current.SelectByConn(sqlConnection, sqlInsertWorkOrder, out DataTable dtResult);
                     if (!result)
                     {
                         throw result.GetException();
@@ -896,6 +942,11 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             public bool IsCreateByUser { get; set; } = false;
             public string ImportPatternPanel { get; set; } = string.Empty;
             public Dictionary<string, int> SizeRatio { get; set; }
+
+            public WorkOrder ShallowCopy()
+            {
+                return (WorkOrder)this.MemberwiseClone();
+            }
         }
 #pragma warning restore SA1516 // Elements should be separated by blank line
         #endregion
