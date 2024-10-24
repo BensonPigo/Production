@@ -44,10 +44,7 @@ namespace Sci.Production.Cutting
                 ;
 
             // 關閉排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
-            {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            this.grid1.Columns.DisableSortable();
         }
 
         /// <inheritdoc/>

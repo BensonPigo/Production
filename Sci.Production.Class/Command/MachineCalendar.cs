@@ -110,6 +110,66 @@ ORDER BY WeekDay,IsCrossDate,StartTime
 #pragma warning disable SA1503
 
         /// <summary>
+        /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
+        /// Cutting B05 EditCalendar
+        /// MES B07 Set
+        /// MES B07 Batch assign special time
+        /// </summary>
+        /// <inheritdoc/>
+        public bool ValidateStartEndTime(DataTable dt, bool showMsg = true)
+        {
+            foreach (DataRow row in dt.Rows)
+            {
+                if (TimeSpan.TryParse(row["StartTime"].ToTimeFormat(), out TimeSpan startTime) &&
+                    TimeSpan.TryParse(row["EndTime"].ToTimeFormat(), out TimeSpan endTime))
+                {
+                    if (startTime >= endTime)
+                    {
+                        if (showMsg) MyUtility.Msg.WarningBox("The start time cannot be greater than the end time.");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 檢查不可時間交集: 排序後連續資料 EndTime 不可大於下一筆的 StartTime
+        /// Cutting B05 EditCalendar
+        /// MES B07 Set
+        /// MES B07 Batch assign special time
+        /// </summary>
+        /// <inheritdoc/>
+        public bool ValidateTimeIntervals(DataTable dt, bool showMsg = true)
+        {
+            // 把 isCrossDate 為 true 和 false 的資料分開
+            var rowsByIsCrossDate = dt.AsEnumerable().GroupBy(row => MyUtility.Convert.GetBool(row["isCrossDate"]));
+
+            foreach (var group in rowsByIsCrossDate)
+            {
+                // 根據 StartTime 進行排序
+                var sortedRows = group.OrderBy(row => TimeSpan.Parse(row["StartTime"].ToTimeFormat())).ToList();
+
+                // 驗證每一列，確保時間段沒有重疊或直接連續
+                for (int i = 0; i < sortedRows.Count - 1; i++)
+                {
+                    TimeSpan currentEndTime = TimeSpan.Parse(sortedRows[i]["EndTime"].ToString());
+                    TimeSpan nextStartTime = TimeSpan.Parse(sortedRows[i + 1]["StartTime"].ToString());
+
+                    // 檢查時間重疊的情況
+                    if (currentEndTime >= nextStartTime)
+                    {
+                        if (showMsg) MyUtility.Msg.WarningBox("Start time must be greater than the End time of the previous period.");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// 新增時 預防相同 machineIoT 之下的 MachineIoT_Calendar 不能出現兩筆相同 StartDate
         /// </summary>
         /// <inheritdoc/>

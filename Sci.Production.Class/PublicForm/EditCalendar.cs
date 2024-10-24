@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using static Sci.Production.Class.Command.ProductionSystem;
 
 namespace Sci.Production.Class.PublicForm
 {
@@ -39,10 +40,7 @@ namespace Sci.Production.Class.PublicForm
                 ;
 
             // 關閉排序功能
-            for (int i = 0; i < this.grid1.ColumnCount; i++)
-            {
-                this.grid1.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-            }
+            this.grid1.Columns.DisableSortable();
         }
 
         private void SetDataTable()
@@ -92,48 +90,14 @@ namespace Sci.Production.Class.PublicForm
             this.dt.AsEnumerable().Where(row => MyUtility.Check.Empty(row["StartTime"]) || MyUtility.Check.Empty(row["EndTime"])).ToList().ForEach(row => row.Delete());
             this.dt.AcceptChanges();
 
-            if (!this.ValidateStartEndTime())
+            if (!new MachineCalendar().ValidateStartEndTime(this.dt))
             {
                 return false;
             }
 
-            // 根據 isCrossDate 和 StartTime 排序資料
-            DataView dataView = this.dt.DefaultView;
-            dataView.Sort = "isCrossDate ASC, StartTime ASC";
-            DataTable sortedDt = dataView.ToTable();
-
-            // 驗證每一列，確保時間段沒有重疊或直接連續
-            for (int i = 0; i < sortedDt.Rows.Count - 1; i++)
+            if (!new MachineCalendar().ValidateTimeIntervals(this.dt))
             {
-                bool currentIsCrossDate = Convert.ToBoolean(sortedDt.Rows[i]["isCrossDate"]);
-                bool nextIsCrossDate = Convert.ToBoolean(sortedDt.Rows[i + 1]["isCrossDate"]);
-                TimeSpan currentEndTime = TimeSpan.Parse(sortedDt.Rows[i]["EndTime"].ToString());
-                TimeSpan nextStartTime = TimeSpan.Parse(sortedDt.Rows[i + 1]["StartTime"].ToString());
-
-                // 檢查時間重疊的情況
-                if (currentIsCrossDate == nextIsCrossDate && currentEndTime >= nextStartTime)
-                {
-                    MyUtility.Msg.WarningBox("Start time must be greater than the End time of the previous period.");
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private bool ValidateStartEndTime()
-        {
-            foreach (DataRow row in this.dt.Rows)
-            {
-                if (TimeSpan.TryParse(row["StartTime"].ToTimeFormat(), out TimeSpan startTime) &&
-                    TimeSpan.TryParse(row["EndTime"].ToTimeFormat(), out TimeSpan endTime))
-                {
-                    if (startTime >= endTime)
-                    {
-                        MyUtility.Msg.WarningBox("The start time cannot be greater than the end time.");
-                        return false;
-                    }
-                }
+                return false;
             }
 
             return true;
