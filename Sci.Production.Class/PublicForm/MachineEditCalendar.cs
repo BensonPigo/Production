@@ -193,7 +193,6 @@ VALUES ('{this.machineIoTUkey}', '{this.dateStart.Text}', '{Sci.Env.User.UserID}
 UPDATE MachineIoT_Calendar
 SET EditName = '{Sci.Env.User.UserID}'
    ,EditDate = GETDATE()
-   ,StartDate = '{this.dateStart.Text}'
 WHERE Ukey = {this.machineIoT_CalendarUkey}
 ";
             }
