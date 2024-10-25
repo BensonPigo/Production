@@ -41,6 +41,7 @@ namespace Production.Daily
             public DailyUser()
             {
             }
+            public string LoginName { get { return ""; } }
             public string AuthorityList { get { return ""; } }
             public string BrandList { get { return ""; } }
             public string Department { get { return ""; } }
