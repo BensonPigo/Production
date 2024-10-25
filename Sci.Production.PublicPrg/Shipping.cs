@@ -28,7 +28,7 @@ namespace Sci.Production.PublicPrg
         public static string ReCalculateExpress(string expressID)
         {
             return string.Format(
-@"update Express set NW = (select SUM(NW) from Express_Detail where ID = '{0}'),
+@"update Express set NW = isnull((select SUM(NW) from Express_Detail where ID = '{0}'),0),
 CTNQty = (select COUNT(distinct CTNNo) from Express_Detail where ID = '{0}')
 where ID = '{0}'", expressID);
         }
