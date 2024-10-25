@@ -1266,16 +1266,20 @@ DEALLOCATE CURSOR_
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string newValue = Prgs.SetMarkerLengthMaskString(e.FormattedValue.ToString());
-                string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
 
-                if (!this.CanEditData(dr))
+                if (dr.RowState != DataRowState.Added)
                 {
-                    dr["MarkerLength"] = oldValue;
-                    return;
-                }
-                else if (oldValue == newValue)
-                {
-                    return;
+                    string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
+
+                    if (!this.CanEditData(dr))
+                    {
+                        dr["MarkerLength"] = oldValue;
+                        return;
+                    }
+                    else if (oldValue == newValue)
+                    {
+                        return;
+                    }
                 }
 
                 dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
