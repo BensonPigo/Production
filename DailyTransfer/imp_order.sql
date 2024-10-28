@@ -1312,7 +1312,6 @@ else
 				and id = s.styleid 
 				and SeasonID = s.SeasonID ), 
 				'')
-              
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
