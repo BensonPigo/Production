@@ -163,7 +163,7 @@ namespace Sci.Production.Quality
                                             select rd.Roll
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
                                             where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -174,7 +174,7 @@ namespace Sci.Production.Quality
 	                                        select td.Roll
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
                                             where 
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -208,7 +208,7 @@ namespace Sci.Production.Quality
 	                                        select rd.Dyelot
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
 	                                        where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -219,7 +219,7 @@ namespace Sci.Production.Quality
 	                                        select td.Dyelot
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
 	                                        where  
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
