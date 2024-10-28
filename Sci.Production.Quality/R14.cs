@@ -127,7 +127,7 @@ namespace Sci.Production.Quality
             {
                 sqlcmd = $@"select 
                 [Factory] = pms_wo.FactoryID,
-                [Cut#] = Isnull(m.CutRef,'N/A'),
+                [Cut#] = Isnull(m.CutNo,'N/A'),
                 [OuiCutRef] = oui.[ouiCutRef],
                 [SubCutRef] = si.CutRef,
                 [Activate] = case when soc.[count] > sic.[count] then 'Combine'
@@ -309,7 +309,7 @@ namespace Sci.Production.Quality
 	                tmp for xml path('')),1,1,'')
                 )FabricRoll
                 {this.strSQLWhere}
-                Group by pms_wo.FactoryID,m.CutRef,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
+                Group by pms_wo.FactoryID,m.CutNo,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
                 ,color.val,size.val,si.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
                 ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,ip_bs.Result,ip_cr.Result,ip_ea.Result,ip_m.Result,ip_tc.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
                 ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name
@@ -319,7 +319,7 @@ namespace Sci.Production.Quality
             {
                 sqlcmd = $@"select 
                 [Factory] = pms_wo.FactoryID,
-				[Cut#] = isNull(m.[CutRef], 'N/A'),
+				[Cut#] = isNull(m.[CutNo], 'N/A'),
                 [OuiCutRef] = oui.[ouiCutRef],
                 [SubCutRef] = si.CutRef,
                 [Activate] = case when soc.[count] > sic.[count] then 'Combine'
@@ -379,7 +379,7 @@ namespace Sci.Production.Quality
                 )pms_wo
                 left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
                 outer apply( 
-	                select top 1 [MarkerNo] = w.MarkerNo, [CutRef] = w.CutRef
+	                select top 1 [MarkerNo] = w.MarkerNo, [CutRef] = w.CutRef, [CutNo] = w.Cutno
 	                from SciProduction_WorkOrder w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderUkey
 	                where so.id = si.id
