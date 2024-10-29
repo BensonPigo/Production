@@ -117,6 +117,13 @@ namespace Sci.Production.Planning
 
                 for (int i = rowIndex + 1; i <= worksheet.UsedRange.Rows.Count; i++)
                 {
+                    var detail_Date = (worksheet.Cells[i, 1] as Microsoft.Office.Interop.Excel.Range)?.Value2;
+                    var detail_WeekDay = (worksheet.Cells[i, 2] as Microsoft.Office.Interop.Excel.Range)?.Value2;
+                    if (detail_Date == null && detail_WeekDay == null)
+                    {
+                        continue;
+                    }
+
                     for (int j = 3; j <= totalColumns; j++)
                     {
                         var cellValue = (worksheet.Cells[i, j] as Microsoft.Office.Interop.Excel.Range)?.Value2;
@@ -130,7 +137,7 @@ namespace Sci.Production.Planning
                 if (nonDecimalValues.Any())
                 {
                     var uniqueNonDecimalValues = nonDecimalValues.GroupBy(x => x.Column).Select(g => g.First()).ToList();
-                    Microsoft.Office.Interop.Excel.Range range_DetailTitle = worksheet.Range["A15:T15"];
+                    Microsoft.Office.Interop.Excel.Range range_DetailTitle = worksheet.Range["C15:T15"];
                     object[,] objCellArray_Error = range_DetailTitle.Value;
 
                     string strError = string.Join(Environment.NewLine, uniqueNonDecimalValues.Select(val => "<" + (string)MyUtility.Excel.GetExcelCellValue(objCellArray_Error[1, val.Column], "C") + ">"));
