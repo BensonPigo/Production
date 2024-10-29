@@ -544,6 +544,55 @@ WHERE md.MachineIoT_CalendareUkey = (
             return dt;
         }
 
+        /// <summary>
+        /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
+        /// Cutting B05 EditCalendar
+        /// MES B07 Set
+        /// MES B07 Batch assign special time
+        /// </summary>
+        /// <param name="dt"> grid 綁定的 DataTable</param>
+        /// <param name="dt2">Time 欄位值格式化成 hh:mm 以便後續檢查和存檔 </param>
+        /// <inheritdoc/>
+        public bool ValidateDataTableTime(DataTable dt, out DataTable dt2)
+        {
+            dt2 = null;
+
+            // 移除全空的資料列
+            dt.AsEnumerable()
+                .Where(row => MyUtility.Check.Empty(row["StartTime"]) && MyUtility.Check.Empty(row["EndTime"]) && !MyUtility.Convert.GetBool(row["IsCrossDate"]))
+                .ToList().ForEach(row => row.Delete());
+            dt.AcceptChanges();
+
+            if (dt.Rows.Count == 0)
+            {
+                return false;
+            }
+
+            // 檢查 Time 欄位不可空
+            if (dt.AsEnumerable().Any(row => MyUtility.Check.Empty(row["StartTime"]) || MyUtility.Check.Empty(row["EndTime"])))
+            {
+                MyUtility.Msg.WarningBox("StartTime and EndTime can not empty!");
+                return false;
+            }
+
+            // 複製一份,格式化值後檢查
+            dt2 = dt.Copy();
+
+            // 實際值轉為 hh:mm
+            foreach (DataRow dr in dt2.Rows)
+            {
+                dr["StartTime"] = dr["StartTime"].ToTimeFormat();
+                dr["EndTime"] = dr["EndTime"].ToTimeFormat();
+            }
+
+            // 檢查 DataTable 時間不能有交集
+            if (!new MachineCalendar().ValidateTime(dt2))
+            {
+                return false;
+            }
+
+            return true;
+        }
 #pragma warning restore SA1503
     }
 }

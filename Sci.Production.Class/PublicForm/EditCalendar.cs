@@ -51,13 +51,12 @@ namespace Sci.Production.Class.PublicForm
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            if (!this.SaveBefore())
+            if (!new MachineCalendar().ValidateDataTableTime(this.dt, out DataTable dtFormatTime))
             {
                 return;
             }
 
-            DataTable dt = this.dt.Copy();
-
+            // 依據有勾選星期幾展開資料, 返回前一畫面顯示
             foreach (Control control in this.panel1.Controls)
             {
                 if (control is Win.UI.CheckBox checkBox && checkBox.Checked)
@@ -67,7 +66,7 @@ namespace Sci.Production.Class.PublicForm
 
                     this.dtMachineIoT_Calendar_Detail.Select($"WeekDay = {weekDay}").ToList().ForEach(row => row.Delete());
 
-                    foreach (DataRow dr in dt.Rows)
+                    foreach (DataRow dr in dtFormatTime.Rows)
                     {
                         dr["WeekDay"] = weekDay;
 
@@ -77,26 +76,6 @@ namespace Sci.Production.Class.PublicForm
             }
 
             this.Close();
-        }
-
-        private bool SaveBefore()
-        {
-            // 移除 StartTime 或 EndTime 為空的資料列
-            this.dt.AsEnumerable().Where(row => MyUtility.Check.Empty(row["StartTime"]) || MyUtility.Check.Empty(row["EndTime"])).ToList().ForEach(row => row.Delete());
-            this.dt.AcceptChanges();
-
-            foreach (DataRow dr in this.dt.Rows)
-            {
-                dr["StartTime"] = dr["StartTime"].ToTimeFormat();
-                dr["EndTime"] = dr["EndTime"].ToTimeFormat();
-            }
-
-            if (!new MachineCalendar().ValidateTime(this.dt))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private void BtnReset_Click(object sender, EventArgs e)
