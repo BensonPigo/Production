@@ -432,6 +432,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
 DECLARE @Date DATE = '{date:yyyy/MM/dd}'
 DECLARE @MachineIoTUkey BIGINT = {machineIoTUkey}
 SELECT * FROM dbo.GetMachineIoTScheduleNonTemp(@Date, @MachineIoTUkey)
+ORDER BY IsCrossDate,StartTime,EndTime
 ";
             return DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out dt);
         }
@@ -451,6 +452,7 @@ DECLARE @MachineIoTUkey BIGINT = {machineIoTUkey}
 DECLARE @MachineIoTCalendar as dbo.MachineIoTCalendar
 INSERT INTO @MachineIoTCalendar SELECT WeekDay,StartTime,EndTime,IsCrossDate FROM #tmp
 SELECT * FROM dbo.GetMachineIoTSchedule(@Date, @MachineIoTUkey, @MachineIoTCalendar)
+ORDER BY IsCrossDate,StartTime,EndTime
 ";
             DualResult result;
             if (!(result = DBProxy.Current.OpenConnection("ManufacturingExecution", out SqlConnection conn))) return result;
