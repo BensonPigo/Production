@@ -1,10 +1,10 @@
-﻿using Ict.Win;
+﻿using Ict;
+using Ict.Win;
 using Sci.Production.Class.Command;
 using System;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using static Sci.Production.Class.Command.ProductionSystem;
 
 namespace Sci.Production.Class.PublicForm
 {
@@ -36,7 +36,7 @@ namespace Sci.Production.Class.PublicForm
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .TimeSpanHHmm("StartTime", header: "Start")
                 .TimeSpanHHmm("EndTime", header: "End")
-                .CheckBox("IsCrossDate", header: "Cross-day", width: Widths.AnsiChars(5))
+                .CheckBox("IsCrossDate", header: "Cross-day", width: Widths.AnsiChars(5), trueValue: true, falseValue: false)
                 ;
 
             // 關閉排序功能
@@ -51,6 +51,7 @@ namespace Sci.Production.Class.PublicForm
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
+            this.grid1.ValidateControl();
             if (!new MachineCalendar().ValidateDataTableTime(this.dt, out DataTable dtFormatTime))
             {
                 return;

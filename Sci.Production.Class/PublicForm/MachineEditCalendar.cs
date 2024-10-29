@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sci.Production.Class.PublicForm
 {

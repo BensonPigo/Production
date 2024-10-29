@@ -1,7 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Production.Class.Command;
-using System;
 using System.Data;
 using System.Windows.Forms;
 

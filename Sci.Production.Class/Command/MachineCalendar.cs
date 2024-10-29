@@ -565,11 +565,6 @@ WHERE md.MachineIoT_CalendareUkey = (
                 .ToList().ForEach(row => row.Delete());
             dt.AcceptChanges();
 
-            if (dt.Rows.Count == 0)
-            {
-                return false;
-            }
-
             // 檢查 Time 欄位不可空
             if (dt.AsEnumerable().Any(row => MyUtility.Check.Empty(row["StartTime"]) || MyUtility.Check.Empty(row["EndTime"])))
             {
