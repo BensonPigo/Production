@@ -57,11 +57,6 @@ namespace Sci.Production.Class.PublicForm
             }
 
             DataTable dt = this.dt.Copy();
-            foreach (DataRow dr in dt.Rows)
-            {
-                dr["StartTime"] = dr["StartTime"].ToTimeFormat();
-                dr["EndTime"] = dr["EndTime"].ToTimeFormat();
-            }
 
             foreach (Control control in this.panel1.Controls)
             {
@@ -90,12 +85,13 @@ namespace Sci.Production.Class.PublicForm
             this.dt.AsEnumerable().Where(row => MyUtility.Check.Empty(row["StartTime"]) || MyUtility.Check.Empty(row["EndTime"])).ToList().ForEach(row => row.Delete());
             this.dt.AcceptChanges();
 
-            if (!new MachineCalendar().ValidateStartEndTime(this.dt))
+            foreach (DataRow dr in this.dt.Rows)
             {
-                return false;
+                dr["StartTime"] = dr["StartTime"].ToTimeFormat();
+                dr["EndTime"] = dr["EndTime"].ToTimeFormat();
             }
 
-            if (!new MachineCalendar().ValidateTimeIntervals(this.dt))
+            if (!new MachineCalendar().ValidateTime(this.dt))
             {
                 return false;
             }

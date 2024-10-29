@@ -116,18 +116,45 @@ ORDER BY WeekDay,IsCrossDate,StartTime
         /// MES B07 Batch assign special time
         /// </summary>
         /// <inheritdoc/>
+        public bool ValidateTime(DataTable dt, bool showMsg = true)
+        {
+            if (!new MachineCalendar().ValidateStartEndTime(dt, showMsg))
+            {
+                return false;
+            }
+
+            if (!new MachineCalendar().ValidateTimeIntervals(dt, showMsg))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
+        /// Cutting B05 EditCalendar
+        /// MES B07 Set
+        /// MES B07 Batch assign special time
+        /// </summary>
+        /// <inheritdoc/>
         public bool ValidateStartEndTime(DataTable dt, bool showMsg = true)
         {
             foreach (DataRow row in dt.Rows)
             {
-                if (TimeSpan.TryParse(row["StartTime"].ToTimeFormat(), out TimeSpan startTime) &&
-                    TimeSpan.TryParse(row["EndTime"].ToTimeFormat(), out TimeSpan endTime))
+                if (TimeSpan.TryParse(row["StartTime"].ToString(), out TimeSpan startTime) &&
+                    TimeSpan.TryParse(row["EndTime"].ToString(), out TimeSpan endTime))
                 {
                     if (startTime >= endTime)
                     {
                         if (showMsg) MyUtility.Msg.WarningBox("The start time cannot be greater than the end time.");
                         return false;
                     }
+                }
+                else
+                {
+                    MyUtility.Msg.WarningBox("Time format error");
+                    return false;
                 }
             }
 
@@ -149,7 +176,7 @@ ORDER BY WeekDay,IsCrossDate,StartTime
             foreach (var group in rowsByIsCrossDate)
             {
                 // 根據 StartTime 進行排序
-                var sortedRows = group.OrderBy(row => TimeSpan.Parse(row["StartTime"].ToTimeFormat())).ToList();
+                var sortedRows = group.OrderBy(row => TimeSpan.Parse(row["StartTime"].ToString())).ToList();
 
                 // 驗證每一列，確保時間段沒有重疊或直接連續
                 for (int i = 0; i < sortedRows.Count - 1; i++)
