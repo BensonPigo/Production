@@ -46,25 +46,24 @@
             // 
             // btmcont
             // 
-            this.btmcont.Location = new System.Drawing.Point(0, 415);
-            this.btmcont.Size = new System.Drawing.Size(632, 40);
+            this.btmcont.Location = new System.Drawing.Point(0, 491);
+            this.btmcont.Size = new System.Drawing.Size(606, 40);
             // 
             // gridcont
             // 
             this.gridcont.Location = new System.Drawing.Point(12, 51);
-            this.gridcont.Size = new System.Drawing.Size(172, 353);
+            this.gridcont.Size = new System.Drawing.Size(146, 429);
             // 
             // undo
             // 
-            this.undo.Location = new System.Drawing.Point(542, 5);
+            this.undo.Location = new System.Drawing.Point(516, 5);
             // 
             // save
             // 
-            this.save.Location = new System.Drawing.Point(462, 5);
+            this.save.Location = new System.Drawing.Point(436, 5);
             // 
             // labelOrderList
             // 
-            this.labelOrderList.Lines = 0;
             this.labelOrderList.Location = new System.Drawing.Point(12, 22);
             this.labelOrderList.Name = "labelOrderList";
             this.labelOrderList.Size = new System.Drawing.Size(108, 23);
@@ -73,8 +72,8 @@
             // 
             // labelPackingMethod
             // 
-            this.labelPackingMethod.Lines = 0;
-            this.labelPackingMethod.Location = new System.Drawing.Point(190, 22);
+            this.labelPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelPackingMethod.Location = new System.Drawing.Point(166, 22);
             this.labelPackingMethod.Name = "labelPackingMethod";
             this.labelPackingMethod.Size = new System.Drawing.Size(108, 23);
             this.labelPackingMethod.TabIndex = 100;
@@ -82,8 +81,8 @@
             // 
             // labelQtyCarton
             // 
-            this.labelQtyCarton.Lines = 0;
-            this.labelQtyCarton.Location = new System.Drawing.Point(368, 22);
+            this.labelQtyCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelQtyCarton.Location = new System.Drawing.Point(344, 22);
             this.labelQtyCarton.Name = "labelQtyCarton";
             this.labelQtyCarton.Size = new System.Drawing.Size(82, 23);
             this.labelQtyCarton.TabIndex = 101;
@@ -91,10 +90,11 @@
             // 
             // numQtyCarton
             // 
+            this.numQtyCarton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.numQtyCarton.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numQtyCarton.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CtnQty", true));
             this.numQtyCarton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numQtyCarton.Location = new System.Drawing.Point(368, 49);
+            this.numQtyCarton.Location = new System.Drawing.Point(344, 49);
             this.numQtyCarton.Name = "numQtyCarton";
             this.numQtyCarton.NullValue = new decimal(new int[] {
             0,
@@ -112,7 +112,8 @@
             // 
             // btnBreakdown
             // 
-            this.btnBreakdown.Location = new System.Drawing.Point(474, 45);
+            this.btnBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBreakdown.Location = new System.Drawing.Point(450, 45);
             this.btnBreakdown.Name = "btnBreakdown";
             this.btnBreakdown.Size = new System.Drawing.Size(96, 30);
             this.btnBreakdown.TabIndex = 103;
@@ -122,29 +123,32 @@
             // 
             // editpacking
             // 
+            this.editpacking.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.editpacking.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editpacking.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "packing", true));
             this.editpacking.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editpacking.Location = new System.Drawing.Point(190, 78);
+            this.editpacking.Location = new System.Drawing.Point(167, 78);
             this.editpacking.Multiline = true;
             this.editpacking.Name = "editpacking";
             this.editpacking.ReadOnly = true;
-            this.editpacking.Size = new System.Drawing.Size(418, 331);
+            this.editpacking.Size = new System.Drawing.Size(418, 402);
             this.editpacking.TabIndex = 104;
             // 
             // displayPackingMethod
             // 
+            this.displayPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.displayPackingMethod.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayPackingMethod.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Packingmethod", true));
             this.displayPackingMethod.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayPackingMethod.Location = new System.Drawing.Point(190, 49);
+            this.displayPackingMethod.Location = new System.Drawing.Point(166, 49);
             this.displayPackingMethod.Name = "displayPackingMethod";
             this.displayPackingMethod.Size = new System.Drawing.Size(172, 23);
             this.displayPackingMethod.TabIndex = 105;
             // 
-            // P02_PackingMethod
+            // PackingMethod
             // 
-            this.ClientSize = new System.Drawing.Size(632, 455);
+            this.ClientSize = new System.Drawing.Size(606, 531);
             this.Controls.Add(this.displayPackingMethod);
             this.Controls.Add(this.editpacking);
             this.Controls.Add(this.btnBreakdown);
@@ -155,7 +159,8 @@
             this.GridEdit = false;
             this.GridPopUp = false;
             this.KeyField1 = "cuttingsp";
-            this.Name = "P02_PackingMethod";
+            this.Name = "PackingMethod";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4";
             this.Text = "Packing Method";
             this.WorkAlias = "orders";
             this.Controls.SetChildIndex(this.btmcont, 0);

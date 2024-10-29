@@ -3735,7 +3735,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 return dResult;
             }
 
-            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(cuttingForm, "a.Cutno")}, a.colorid,c.seq,a.FabricPanelCode,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq";
+            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(cuttingForm, "a.Cutno")},{this.CheckAndGetColumns(cuttingForm, "a.seq")}, a.colorid,a.FabricPanelCode,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq";
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out arrDtType[(int)TableType.WorkorderSizeTb]);
             if (!dResult)
             {
@@ -4232,7 +4232,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                     string pivot_cmd = string.Format(
                     @"Select * From
                 (
-                    Select FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Cons,Layer,(Qty*Layer) as TotalQty from 
+                    Select FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Cons,Layer,Seq,(Qty*Layer) as TotalQty from 
                     #tmp
                     Where Cutplanid = '{0} '
                 ) as mTb
@@ -4246,7 +4246,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                         arrDtType[(int)TableType.CutQtyTb].Clear();
                     }
 
-                    MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], "FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Qty,Layer,Cutplanid,Cons", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
+                    MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], "FabricPanelCode,MarkerName,Cutno,Colorid,SizeCode,Qty,Layer,Cutplanid,Cons,Seq", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
                     nRow = nRow + 1;
                     bool lfirstComb = true;
                     string fabColor = string.Empty;
@@ -4284,7 +4284,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                                     tmpn++;
                                 }
 
-                                worksheet.Cells[nRow, 1] = cutqtydr["Cutno"].ToString();
+                                worksheet.Cells[nRow, 1] = cutqtydr["Seq"].ToString();
                                 worksheet.Cells[nRow, 2] = cutqtydr["Colorid"].ToString();
                                 worksheet.Cells[nRow, 3] = cutqtydr["Layer"].ToString();
                                 worksheet.Cells[nRow, 20] = cutqtydr["Cons"].ToString();

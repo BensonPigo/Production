@@ -1093,6 +1093,11 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     e.CellStyle.BackColor = Color.Pink;
                     e.CellStyle.ForeColor = Color.Red;
                 }
+
+                if (dr["Seq"] != DBNull.Value && Convert.ToInt32(dr["Seq"]) == 0)
+                {
+                    dr["Seq"] = DBNull.Value;
+                }
             };
             #endregion
         }
@@ -1414,7 +1419,7 @@ order by p.EditDate desc
                     }
                     else
                     {
-                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("FabricCombo ='{0}'", dr["FabricCombo"])));
+                        int maxno = Convert.ToInt32(wk.Compute("Max(Seq)", string.Format("(PatternPanel_CONCAT ='{0}' or ('{0}'in ('FA+FC','FC+FA') and PatternPanel_CONCAT in ('FA+FC','FC+FA')))", dr["PatternPanel_CONCAT"])).ToString());
                         maxSeq = maxno + 1;
                     }
 
