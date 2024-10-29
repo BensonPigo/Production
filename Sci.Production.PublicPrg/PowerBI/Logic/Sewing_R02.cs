@@ -827,7 +827,7 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             returnResult = new DataSet();
             string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description like 'PAMS WEB API%'", "ManufacturingExecution");
 #if DEBUG
-            url = "http://172.17.11.98:9537";
+            url = "http://172.17.11.98:8998";
 #endif
             string api = "api/AttendanceSummary/AttendanceSummary_Summary";
 
