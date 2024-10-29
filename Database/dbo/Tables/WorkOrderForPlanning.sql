@@ -8,6 +8,7 @@
     [Seq1]               VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_Seq1] DEFAULT ('') NOT NULL,
     [Seq2]               VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_Seq2] DEFAULT ('') NOT NULL,
     [CutRef]             VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_CutRef] DEFAULT ('') NOT NULL,
+    [Seq]                INT             NULL,
     [CutPlanID]          VARCHAR (13)    CONSTRAINT [DF_WorkOrderForPlanning_CutPlanID] DEFAULT ('') NOT NULL,
     [Layer]              INT             CONSTRAINT [DF_WorkOrderForPlanning_Layer] DEFAULT ((0)) NOT NULL,
     [WKETA]              DATE            NULL,
@@ -56,6 +57,8 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購小項' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Seq2'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁次' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'CutRef'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁次號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Seq'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪計畫單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'CutPlanID'
 	GO

@@ -68,6 +68,8 @@
             this.btnQtyBreakdown = new Sci.Win.UI.Button();
             this.btnToExcel = new Sci.Win.UI.Button();
             this.qtybreakBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnAutoSeq = new Sci.Win.UI.Button();
+            this.btnPackingMethod = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -157,6 +159,8 @@
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.btnPackingMethod);
+            this.detailbtm.Controls.Add(this.btnAutoSeq);
             this.detailbtm.Controls.Add(this.btnToExcel);
             this.detailbtm.Controls.Add(this.btnQtyBreakdown);
             this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
@@ -174,6 +178,8 @@
             this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheckSummary, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnAutoSeq, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnPackingMethod, 0);
             // 
             // browse
             // 
@@ -617,7 +623,7 @@
             // 
             this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
-            this.btnCutPartsCheck.Location = new System.Drawing.Point(640, 3);
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(493, 3);
             this.btnCutPartsCheck.Name = "btnCutPartsCheck";
             this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 32);
             this.btnCutPartsCheck.TabIndex = 20;
@@ -629,7 +635,7 @@
             // 
             this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
-            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(774, 3);
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(627, 3);
             this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
             this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 32);
             this.btnCutPartsCheckSummary.TabIndex = 21;
@@ -658,6 +664,29 @@
             this.btnToExcel.Text = "To Excel";
             this.btnToExcel.UseVisualStyleBackColor = true;
             this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
+            // 
+            // btnAutoSeq
+            // 
+            this.btnAutoSeq.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnAutoSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnAutoSeq.Location = new System.Drawing.Point(101, 3);
+            this.btnAutoSeq.Name = "btnAutoSeq";
+            this.btnAutoSeq.Size = new System.Drawing.Size(92, 32);
+            this.btnAutoSeq.TabIndex = 25;
+            this.btnAutoSeq.Text = "Auto Seq";
+            this.btnAutoSeq.UseVisualStyleBackColor = true;
+            this.btnAutoSeq.Click += new System.EventHandler(this.BtnAutoSeq_Click);
+            // 
+            // btnPackingMethod
+            // 
+            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPackingMethod.Location = new System.Drawing.Point(832, 3);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(145, 32);
+            this.btnPackingMethod.TabIndex = 94;
+            this.btnPackingMethod.Text = "Packing Method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
             // P02
             // 
@@ -752,5 +781,7 @@
         private System.Windows.Forms.ToolStripMenuItem deleteSizeRatioToolStripMenuItem;
         private Win.UI.ContextMenuStrip cmsSizeRatio;
         private Win.UI.ListControlBindingSource qtybreakBindingSource;
+        private Win.UI.Button btnAutoSeq;
+        private Win.UI.Button btnPackingMethod;
     }
 }

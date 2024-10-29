@@ -104,7 +104,7 @@ WHERE t.Sel = 1";
                 row["Seq1"] = data["Seq1"];
                 row["Seq2"] = data["Seq2"];
                 row["CutRef"] = data["CutRef"];
-                row["CutNo"] = DBNull.Value;
+                row["CutNo"] = data["Seq"];
                 row["OrderID"] = data["OrderID"];
                 row["RefNo"] = data["RefNo"];
                 row["SCIRefNo"] = data["SCIRefNo"];
@@ -228,28 +228,29 @@ INNER JOIN WorkOrderForPlanning_SizeRatio wsr WITH(NOLOCK) ON t.WorkOrderForPlan
             this.Helper.Controls.Grid.Generator(this.grid1)
                 .CheckBox("Sel", header: string.Empty, width: Ict.Win.Widths.AnsiChars(3), iseditable: true, trueValue: true, falseValue: false)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("MarkerNo", "Pattern No.", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("OrderId", "SP#", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
-                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999, iseditingreadonly: true)
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Date("WKETA", "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("OrderId", "SP#", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("SEQ1", header: "Seq1", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("SEQ2", header: "Seq2", width: Ict.Win.Widths.AnsiChars(2), iseditingreadonly: true)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("WKETA", "WK ETA", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("EstCutDate", "Est. Cut Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
-                .MaskedText("MarkerLength_Mask", "00Y00-0/0+0\"", "Marker Length", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
-                .Text("MarkerNo", "Pattern No.", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
-                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
-                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("Adduser", header: "Add Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
+                .DateTime("AddDate", header: "Add Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 ;
 
             this.grid1.IsEditingReadOnly = false;
@@ -355,7 +356,8 @@ AND t.WorkOrderForPlanningUkey IS NULL
 AND ExistHistory.value IS NULL
 AND ExistDelete.value IS NULL
 AND NOT EXISTS (SELECT 1 FROM WorkOrderForOutput woo WITH (NOLOCK) WHERE woo.CutRef = wo.CutRef)
-ORDER BY SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article, Order_SizeCode_Seq DESC, MarkerName, Ukey
+ORDER BY CutRef,Seq,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,CutPlanID,Edituser,EditDate,Adduser,AddDate
+
 ";
             DataTable dtImport = new DataTable();
             var paramters = new List<SqlParameter>() { new SqlParameter("@ID", this.id) };

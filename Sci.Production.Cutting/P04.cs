@@ -125,7 +125,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Sewinglineid", header: "Line#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Cutref", header: "CutRef#", width: Widths.Auto(), iseditingreadonly: true)
-            .Numeric("Cutno", header: "Cut#", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
+            .Numeric("Cutno", header: "Seq", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)

@@ -66,7 +66,7 @@ order by b.POID,c.seq1,c.seq2,b.Cutno
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Text("cutref", header: "Cut Ref#", width: Widths.AnsiChars(10))
-                 .Text("CutNo", header: "Cut#", width: Widths.AnsiChars(4))
+                 .Text("CutNo", header: "Seq", width: Widths.AnsiChars(4))
                  .Text("FabricCombo", header: "Comb", width: Widths.AnsiChars(4))
                  .Text("Article", header: "Article", width: Widths.AnsiChars(50))
                  .Text("Markername", header: "Marker name", width: Widths.AnsiChars(13))

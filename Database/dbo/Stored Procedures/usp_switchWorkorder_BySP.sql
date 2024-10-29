@@ -24,7 +24,7 @@ CREATE TABLE #tmp_WorkOrder_Distribute
 	Article VARCHAR(8)  ,
 	SizeCode VARCHAR(8)  ,
 	Qty    NUMERIC(6,0)  ,
-	Order_EachConsUkey INT  ,
+	Order_EachConsUkey BIGINT  ,
 	ColorID VARCHAR(6)  ,
 	newKey INT  NULL
 )
