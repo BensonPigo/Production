@@ -822,14 +822,19 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             return pams;
         }
 
-        public DataSet GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model)
+        public DualResult GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model, out DataSet returnResult)
         {
-            DataSet returnResult = new DataSet();
-            string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description = 'PAMS WEB API ESP'", "ManufacturingExecution");
+            returnResult = new DataSet();
+            string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description like 'PAMS WEB API%'", "ManufacturingExecution");
 #if DEBUG
             url = "http://172.17.11.98:9537";
 #endif
             string api = "api/AttendanceSummary/AttendanceSummary_Summary";
+
+            if (MyUtility.Check.Empty(url))
+            {
+                return new DualResult(false, "PAMS WEB API not exists");
+            }
 
             // 初始化 HttpClient 來發送請求
             using (HttpClient client = new HttpClient())
@@ -857,16 +862,21 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
 
                     AttendanceSummaryResult result = JsonConvert.DeserializeObject<AttendanceSummaryResult>(responseBody);
 
+                    if (!MyUtility.Check.Empty(result.Exception))
+                    {
+                        return new DualResult(false, result.Exception);
+                    }
+
                     // 將 JSON 字串轉換為 DataSet
                     returnResult = result.QueryResult;
                 }
                 catch (HttpRequestException e)
                 {
-                    MyUtility.Msg.WarningBox("Request error: " + e.Message);
+                    return new DualResult(false, e);
                 }
             }
 
-            return returnResult;
+            return new DualResult(true);
         }
     }
 }
