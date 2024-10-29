@@ -756,11 +756,12 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
                 IsLocal = false,
             };
 
-            //result = biModel.GetPamsAttendanceSummaryAsync(attendanceSummary_API, out this.dsPams);
-            //if (!result)
-            //{
-            //    return result;
-            //}
+            result = biModel.GetPamsAttendanceSummaryAsync(attendanceSummary_API, out this.dsPams);
+            if (!result)
+            {
+                return result;
+            }
+
             #endregion
 
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
@@ -859,12 +860,18 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
             this.DeleteExcelRow(2, insertRow, excel);
 
             // [GPH] [SPH] [VPH]
-            //DataTable dtOther = this.dsPams.Tables["other"];
+            DataTable dtOther = new DataTable();
             insertRow += 2;
             for (int i = 1; i <= 3; i++)
             {
                 decimal totalCPU = 0;
                 decimal totalMemory = 0;
+
+                if (this.dsPams != null && this.dsPams.Tables["other"].Rows.Count > 0)
+                {
+                    dtOther = this.dsPams.Tables["other"];
+                }
+
                 insertRow++;
 
                 // [GPH]
@@ -873,19 +880,19 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
                     // [GPH]
                     case 1:
                         totalCPU = MyUtility.Convert.GetDecimal(this.totalCPUIncludeSubConIn);
-                        //totalMemory = MyUtility.Convert.GetDecimal(dtOther.Rows[0]["GPH_Manhours"]);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["GPH_Manhours"]);
                         break;
 
                     // [SPH]
                     case 2:
                         totalCPU = MyUtility.Convert.GetDecimal(this.SewingR04[1].Rows[0]["SPH_ttlCPU"]);
-                        //totalMemory = MyUtility.Convert.GetDecimal(dtOther.Rows[0]["SPH_Manhours"]);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["SPH_Manhours"]);
                         break;
 
                     // [VPH]
                     case 3:
                         totalCPU = MyUtility.Convert.GetDecimal(this.totalCPUIncludeSubConIn) + MyUtility.Convert.GetDecimal(this.SewingR04[1].Rows[0]["SPH_ttlCPU"]);
-                        //totalMemory = MyUtility.Convert.GetDecimal(dtOther.Rows[0]["FtyManhours"]);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["FtyManhours"]);
                         break;
                     default:
                         break;
