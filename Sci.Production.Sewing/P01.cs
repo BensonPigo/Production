@@ -2175,7 +2175,7 @@ where not exists (select 1
             }
             #endregion
 
-            #region
+            #region 更新寫入RFT & Rft_Detail
             if (this.rftDT != null && this.rftDT.Rows.Count > 0)
             {
                 string insertRFT = $@"
@@ -2183,19 +2183,107 @@ select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
 into #tmp1
 from #tmp t
 
-create  table #td(id varchar(13))
-merge RFT t
-using #tmp1 s
-on  t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID and 
-    t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
-when not matched by target then 
-insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
-        ,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
-values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
-        ,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid])
-output inserted.id into #td 
-;
-select * from RFT with(nolock) where id in(select id from #td)
+update t
+set  t.InspectQty = s.InspectQty
+	,t.RejectQty = s.RejectQty
+	,t.DefectQty = s.DefectQty
+	,t.EditDate = GETDATE()
+	,t.EditName = '{Env.User.UserID}'
+from Rft t
+inner join #tmp1 s on t.orderid = s.orderid 
+and t.Cdate = s.CDate 
+and t.SewinglineID = s.SewinglineID 
+and t.FactoryID = s.FactoryID 
+and t.MDivisionid = s.MDivisionid 
+and t.Shift = s.Shift 
+and t.Team = s.Team 
+
+
+-- 紀錄SewingP01 相同Pkey所Update的RFT 資料
+select t.* 
+into #tmpUpdateMaster 
+from Rft t
+inner join #tmp1 s on t.orderid = s.orderid 
+and t.Cdate = s.CDate 
+and t.SewinglineID = s.SewinglineID 
+and t.FactoryID = s.FactoryID 
+and t.MDivisionid = s.MDivisionid 
+and t.Shift = s.Shift 
+and t.Team = s.Team 
+
+-- 紀錄SewingP01 需要新增的資料
+select s.*
+into #tmpAdd1
+from #tmp1 s
+where not exists(
+	select 1 from Rft t
+	where  t.orderid = s.orderid 
+	and t.Cdate = s.CDate 
+	and t.SewinglineID = s.SewinglineID 
+	and t.FactoryID = s.FactoryID 
+	and t.MDivisionid = s.MDivisionid 
+	and t.Shift = s.Shift 
+	and t.Team = s.Team 
+)
+
+-- 先新增完產生RFT.ID
+insert into Rft([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty],[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
+select s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
+,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid]
+from #tmpAdd1 s
+
+--紀錄SewingP01 相同Pkey所新增的RFT資料
+select t.*
+into #tmpAdd2
+from Rft t
+where exists(
+	select 1 from #tmpAdd1 s
+	where  t.orderid = s.orderid 
+	and t.Cdate = s.CDate 
+	and t.SewinglineID = s.SewinglineID 
+	and t.FactoryID = s.FactoryID 
+	and t.MDivisionid = s.MDivisionid 
+	and t.Shift = s.Shift 
+	and t.Team = s.Team 
+)
+
+select * 
+into #tmpEditRFT
+from(
+	select * from #tmpAdd2
+	union 
+	select * from #tmpUpdateMaster
+)a
+
+-- 更新RFT_Detail
+
+select t.id
+	, GarmentDefectTypeID
+	, GarmentDefectCodeID
+	, Qty=count(*)
+into #tmpRftDetail
+from #tmpEditRFT t
+inner join [ExtendServer].ManufacturingExecution.dbo.inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
+	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId and i.SunriseNid = 0
+inner join [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail id with(nolock) on i.id= id.id
+where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
+group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
+
+
+update t
+set  t.GarmentDefectTypeid = s.GarmentDefectTypeID
+	,t.Qty=s.Qty
+from Rft_Detail t
+inner join #tmpRftDetail s on t.ID = s.ID
+and t.GarmentDefectCodeID = s.GarmentDefectCodeID
+
+INSERT INTO [dbo].[Rft_Detail]([ID],[GarmentDefectCodeID],[GarmentDefectTypeid],[Qty])
+select id,GarmentDefectCodeID,GarmentDefectTypeID,qty 
+from #tmpRftDetail s
+where not exists(select 1 from Rft_Detail t where s.ID= t.ID and s.GarmentDefectCodeID = t.GarmentDefectCodeID)
+
+
+drop table #tmp1, #tmpAdd1,#tmpAdd2,#tmpEditRFT,#tmpRftDetail,#tmpUpdateMaster
 ";
                 DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, insertRFT, out this.rftDT);
                 if (!dualResult)
@@ -2203,36 +2291,36 @@ select * from RFT with(nolock) where id in(select id from #td)
                     return dualResult;
                 }
 
-                string rdfdetail = $@"
-select t.id
-	, GarmentDefectTypeID
-	, GarmentDefectCodeID
-	, Qty=count(*)
-from #tmp t
-inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
-	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId and i.SunriseNid = 0
-inner join Inspection_Detail id with(nolock) on i.id= id.id
-where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
-group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
-";
-                DataTable rftDT_Detail;
-                SqlConnection sqlConn = null;
-                DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
-                dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, rdfdetail, out rftDT_Detail, conn: sqlConn);
-                if (!dualResult)
-                {
-                    return dualResult;
-                }
+//                string rdfdetail = $@"
+//select t.id
+//	, GarmentDefectTypeID
+//	, GarmentDefectCodeID
+//	, Qty=count(*)
+//from #tmp t
+//inner join inspection i with(nolock) on t.Cdate = i.InspectionDate and t.FactoryID = i.FactoryID 
+//	and t.SewinglineID = i.Line and t.Team = i.Team and t.Shift = iif(i.Shift='Day','D','N')and t.OrderId = i.OrderId and i.SunriseNid = 0
+//inner join Inspection_Detail id with(nolock) on i.id= id.id
+//where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
+//group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
+//";
+//                DataTable rftDT_Detail;
+//                SqlConnection sqlConn = null;
+//                DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
+//                dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, rdfdetail, out rftDT_Detail, conn: sqlConn);
+//                if (!dualResult)
+//                {
+//                    return dualResult;
+//                }
 
-                string insetRFTDetail = $@"
-INSERT INTO [dbo].[Rft_Detail]([ID],[GarmentDefectCodeID],[GarmentDefectTypeid],[Qty])
-select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
+//                string insetRFTDetail = $@"
+//INSERT INTO [dbo].[Rft_Detail]([ID],[GarmentDefectCodeID],[GarmentDefectTypeid],[Qty])
+//select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
 
-                dualResult = MyUtility.Tool.ProcessWithDatatable(rftDT_Detail, string.Empty, insetRFTDetail, out rftDT_Detail);
-                if (!dualResult)
-                {
-                    return dualResult;
-                }
+//                dualResult = MyUtility.Tool.ProcessWithDatatable(rftDT_Detail, string.Empty, insetRFTDetail, out rftDT_Detail);
+//                if (!dualResult)
+//                {
+//                    return dualResult;
+//                }
 
                 this.rftDT = null;
             }
