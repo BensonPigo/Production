@@ -151,8 +151,11 @@
             // masterpanel
             // 
             this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.btnPrintDetail);
             this.masterpanel.Controls.Add(this.numericBox1);
+            this.masterpanel.Controls.Add(this.brnOperatorSummary);
             this.masterpanel.Controls.Add(this.label31);
+            this.masterpanel.Controls.Add(this.btnMachineSummary);
             this.masterpanel.Controls.Add(this.txtReason);
             this.masterpanel.Controls.Add(this.label30);
             this.masterpanel.Controls.Add(this.numEstLBR);
@@ -221,7 +224,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(892, 213);
+            this.masterpanel.Size = new System.Drawing.Size(1446, 235);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -291,33 +294,30 @@
             this.masterpanel.Controls.SetChildIndex(this.numEstLBR, 0);
             this.masterpanel.Controls.SetChildIndex(this.label30, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtReason, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMachineSummary, 0);
             this.masterpanel.Controls.SetChildIndex(this.label31, 0);
+            this.masterpanel.Controls.SetChildIndex(this.brnOperatorSummary, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 213);
-            this.detailpanel.Size = new System.Drawing.Size(892, 136);
+            this.detailpanel.Location = new System.Drawing.Point(0, 235);
+            this.detailpanel.Size = new System.Drawing.Size(1446, 408);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1333, 177);
+            this.gridicon.Location = new System.Drawing.Point(1378, 217);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Controls.Add(this.btnPrintDetail);
-            this.detailgridcont.Controls.Add(this.brnOperatorSummary);
-            this.detailgridcont.Controls.Add(this.btnMachineSummary);
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(892, 136);
+            this.detailgridcont.Size = new System.Drawing.Size(1446, 408);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
-            this.detailgridcont.Controls.SetChildIndex(this.btnMachineSummary, 0);
-            this.detailgridcont.Controls.SetChildIndex(this.brnOperatorSummary, 0);
-            this.detailgridcont.Controls.SetChildIndex(this.btnPrintDetail, 0);
             // 
             // detail2
             // 
@@ -331,13 +331,26 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1446, 681);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(1446, 643);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 643);
+            this.detailbtm.Size = new System.Drawing.Size(1446, 38);
+            // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1446, 667);
+            this.browse.Size = new System.Drawing.Size(1446, 681);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1454, 696);
+            this.tabs.Size = new System.Drawing.Size(1454, 710);
             // 
             // label1
             // 
@@ -655,7 +668,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(892, 136);
+            this.tabDetail.Size = new System.Drawing.Size(1446, 408);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -665,7 +678,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(884, 107);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1438, 379);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -678,8 +691,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(878, 101);
-            this.splitLineMapping.SplitterDistance = 625;
+            this.splitLineMapping.Size = new System.Drawing.Size(1432, 373);
+            this.splitLineMapping.SplitterDistance = 1019;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -703,7 +716,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(249, 101);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(409, 373);
             this.gridLineMappingRight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridLineMappingRight.TabIndex = 0;
             // 
@@ -717,7 +730,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 107);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 85);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -734,7 +747,7 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 101);
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 79);
             this.splitCentralizedPPA.SplitterDistance = 608;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
@@ -758,7 +771,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(608, 101);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(608, 79);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -781,7 +794,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(266, 101);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(266, 79);
             this.gridCentralizedPPARight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
@@ -1119,7 +1132,7 @@
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1288, 96);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1111, 49);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
             this.btnNotHitTargetReason.Size = new System.Drawing.Size(151, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
@@ -1347,11 +1360,10 @@
             // 
             // btnMachineSummary
             // 
-            this.btnMachineSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMachineSummary.FlatAppearance.BorderSize = 0;
-            this.btnMachineSummary.Location = new System.Drawing.Point(429, 1);
+            this.btnMachineSummary.Location = new System.Drawing.Point(1111, 102);
             this.btnMachineSummary.Name = "btnMachineSummary";
-            this.btnMachineSummary.Size = new System.Drawing.Size(154, 24);
+            this.btnMachineSummary.Size = new System.Drawing.Size(154, 46);
             this.btnMachineSummary.TabIndex = 56;
             this.btnMachineSummary.Text = "Machine Summary";
             this.btnMachineSummary.UseVisualStyleBackColor = true;
@@ -1359,11 +1371,10 @@
             // 
             // brnOperatorSummary
             // 
-            this.brnOperatorSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.brnOperatorSummary.FlatAppearance.BorderSize = 0;
-            this.brnOperatorSummary.Location = new System.Drawing.Point(587, 1);
+            this.brnOperatorSummary.Location = new System.Drawing.Point(1111, 154);
             this.brnOperatorSummary.Name = "brnOperatorSummary";
-            this.brnOperatorSummary.Size = new System.Drawing.Size(154, 24);
+            this.brnOperatorSummary.Size = new System.Drawing.Size(154, 46);
             this.brnOperatorSummary.TabIndex = 57;
             this.brnOperatorSummary.Text = "Operator Summary";
             this.brnOperatorSummary.UseVisualStyleBackColor = true;
@@ -1410,11 +1421,10 @@
             // 
             // btnPrintDetail
             // 
-            this.btnPrintDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPrintDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnPrintDetail.Location = new System.Drawing.Point(744, 2);
+            this.btnPrintDetail.Location = new System.Drawing.Point(1268, 49);
             this.btnPrintDetail.Name = "btnPrintDetail";
-            this.btnPrintDetail.Size = new System.Drawing.Size(139, 23);
+            this.btnPrintDetail.Size = new System.Drawing.Size(139, 47);
             this.btnPrintDetail.TabIndex = 250;
             this.btnPrintDetail.Text = "Print Detail";
             this.btnPrintDetail.UseVisualStyleBackColor = true;
@@ -1474,7 +1484,7 @@
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1454, 729);
+            this.ClientSize = new System.Drawing.Size(1454, 743);
             this.ExpressQuery = true;
             this.GridAlias = "LineMappingBalancing_Detail";
             this.IsSupportClip = false;

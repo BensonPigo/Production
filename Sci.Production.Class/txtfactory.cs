@@ -100,6 +100,7 @@ namespace Sci.Production.Class
 
             string strShowColumn = string.Empty;
             string strOrderBy = string.Empty;
+            string sqlcmd = string.Empty;
             if (!this.IsIE)
             {
                 // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
@@ -112,13 +113,14 @@ namespace Sci.Production.Class
                     strShowColumn = "ID";
                     strOrderBy = "order by FtyGroup";
                 }
+
+                sqlcmd = $@"Select {strShowColumn} as Factory from Production.dbo.Factory WITH (NOLOCK) {((listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty)} {strOrderBy}";
             }
             else
             {
-                strShowColumn = "DISTINCT KPICode";
-                listFilte.Add("KPICode <> ''");
+                sqlcmd = "SELECT DISTINCT FactoryID FROM Employee";
             }
-            string sqlcmd = $@"Select {strShowColumn} as Factory from Production.dbo.Factory WITH (NOLOCK) {((listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty)} {strOrderBy}";
+
             #endregion
             if (this.IsMultiselect)
             {

@@ -162,7 +162,7 @@ namespace Sci.Production.IE
         }
 
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-         {
+          {
             if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == "IsNonSewingLine")
             {
                 DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
@@ -204,7 +204,7 @@ namespace Sci.Production.IE
                 from TimeStudy_Detail td WITH(NOLOCK)
                 where td.id = '{this.strTimeStudtID}' and td.OperationID LIKE '-%' and td.smv = 0 
             )
-            select 0 as Selected, isnull(o.SeamLength,0) SeamLength
+            select distinct 0 as Selected, isnull(o.SeamLength,0) SeamLength
             ,ID.CodeFrom
             ,ID.IETMSUkey
             ,td.[ID]
@@ -212,7 +212,7 @@ namespace Sci.Production.IE
             ,td.[SEQ]
 			,[OriSewingSeq] = isnull(td.SewingSeq,'')
             ,[SewingSeq] = iif(td.SewingSeq = '' ,isnull(tmp.SewingSeq,''),isnull(td.SewingSeq,''))
-            ,[Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),'')
+            ,[Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),isnull(td.[Location],''))
 	        ,td.[OperationID]
             ,td.[Annotation]
             ,td.[PcsPerHour]
@@ -464,83 +464,10 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings location_Col = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings DSeq = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
-            location_Col.EditingMouseDown += (s, e) =>
-            {
-                if (e.RowIndex == -1 || e.Button != MouseButtons.Right)
-                {
-                    return;
-                }
 
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-
-                string sqlcmd = $@"
-                DECLARE @ID varchar(10) = '{MyUtility.Convert.GetString(dr["ID"])}';
-                DECLARE @EndSeq varchar(4) = (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = @ID ORDER BY Seq DESC);
-
-                With tmp as
-                (
-                    SELECT
-                    SewingSeq = RIGHT('0000' + CAST((10 * (ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4)
-                    ,td.Ukey
-                    FROM TimeStudy_Detail td
-                    where ID = @ID and td.OperationID NOT LIKE '--%' AND td.IsNonSewingLine = 0
-                ),tmp1 as
-                (
-                    SELECT 
-                    td.Seq
-                    ,[NextSeq] = CASE 
-                            WHEN LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq) = 0 
-                            THEN @EndSeq
-                            ELSE LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq)
-                        END
-                    ,td.OperationID
-                    from TimeStudy_Detail td WITH(NOLOCK)
-                    where td.id = @ID and td.OperationID LIKE '-%' and td.smv = 0 
-                ),tmp2 AS
-                (
-			                select
-	                --DISTINCT
-	                [Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),'')
-	                from TimeStudy_Detail td WITH (NOLOCK) 
-	                OUTER APPLY
-	                (
-		                SELECT TOP 1
-		                OperationID FROM tmp1 t1 
-		                WHERE t1.NextSeq = @EndSeq  OR t1.NextSeq > td.Seq  
-		                ORDER BY t1.Seq asc
-	                )t1
-	                where td.ID = @ID
-                )
-
-                SELECT DISTINCT [Location] from tmp2";
-
-                DualResult dualResult = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
-
-                if (!dualResult)
-                {
-                    MyUtility.Msg.WarningBox(dualResult.ToString());
-                    return;
-                }
-
-                SelectItem item = new SelectItem(dt, "Location", "15", this.Text, headercaptions: "Location")
-                {
-                    Width = 300,
-                };
-                DialogResult returnResult = item.ShowDialog();
-                if (returnResult == DialogResult.Cancel)
-                {
-                    return;
-                }
-
-                DataRow selectedData = item.GetSelecteds().FirstOrDefault();
-
-                dr["Location"] = item.GetSelectedString();
-
-            };
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
             #region Seq的Valid
@@ -1357,14 +1284,18 @@ and Name = @PPA
             template.MaxLength = 100;
             CheckBoxColumn colIsNonSewingLine;
 
-            DSeq.EditingTextChanged += (s, e) =>
+            DSeq.CellValidating += (s, e) =>
             {
-                string input = e.EditingControl.Text;
-
-                if (input.Length > 4)
+                if ((string)e.FormattedValue == GetEmpty())
                 {
-                    e.EditingControl.Text = input.Substring(0, 4);
-                    e.EditingControl.SelectionStart = 4; // 光標放在字串最後
+                    return;
+                }
+
+                string str = (string)e.FormattedValue;
+                if (str.Length != 4)
+                {
+                    MyUtility.Msg.WarningBox("<Dsg. Seq> can only accept 4-digit number!");
+                    return;
                 }
             };
 
@@ -1412,14 +1343,14 @@ and Name = @PPA
                         this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
                     }
                 }
-            };
+             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: DSeq)
                 .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: seq)
-                .Text("Location", header: "Location", width: Widths.AnsiChars(7), settings: location_Col, iseditingreadonly: false)
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: false)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
@@ -1450,6 +1381,11 @@ and Name = @PPA
             };
 
             this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
+        }
+
+        private static string GetEmpty()
+        {
+            return string.Empty;
         }
 
         private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -1644,6 +1580,14 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            var listDesSeq = this.DetailDatas.Where(s => MyUtility.Convert.GetString(s["DesignateSeq "]).Length != 4);
+
+            if (listDesSeq.Any())
+            {
+                MyUtility.Msg.WarningBox("<Dsg. Seq> can only accept 4-digit number!");
+                return false;
+            }
+
             #region Seq 重複資料檢查
             if (this.DetailDatas.Count != 0)
             {
@@ -1894,6 +1838,7 @@ group by id.Location,M.ArtworkTypeID";
             return base.ClickSaveBefore();
         }
 
+
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
@@ -1910,7 +1855,6 @@ group by id.Location,M.ArtworkTypeID";
 UPDATE TimeStudy_Detail
 SET MasterPlusGroup = '{item["MasterPlusGroup"]}'
 WHERE Ukey={item["Ukey"]}
-
 ";
                 }
 
@@ -2618,8 +2562,11 @@ and s.BrandID = @brandid ", Env.User.Factory,
                                     .Select(row => row.Field<string>("Seq"))
                                     .Max();
 
+                DataRow dr_Location = index == 0 ? oriDt.Rows[index + 1] : oriDt.Rows[index -1];
                 DataRow nextDataRow = oriDt.Rows[index];
-
+                nextDataRow["IETMSUkey"] = oriDt.Rows[0]["IETMSUkey"];
+                nextDataRow["CodeFrom"] = "Operation";
+                nextDataRow["Location"] = dr_Location["Location"];
                 nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + 10).PadLeft(4, '0');
                 nextDataRow["IsAdd"] = 1;
                 this.detailgridbs.DataSource = oriDt;
@@ -2640,18 +2587,19 @@ and s.BrandID = @brandid ", Env.User.Factory,
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
-
             int sewingSeq = 0;
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
-            drSelect["IsAdd"] = 1;
-
+            DataRow drSelect_Location = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index -1);
             if (dt.Rows.Count >= 0)
             {
                 sewingSeq = 10;
                 seq = 10;
-
+                drSelect["IsAdd"] = 1;
+                drSelect["IETMSUkey"] = dt.Rows[0]["IETMSUkey"];
+                drSelect["CodeFrom"] = "Operation";
+                drSelect["Location"] = drSelect_Location["Location"];
                 foreach (DataRow dr in dt.Rows)
                 {
                     if (dr.RowState == DataRowState.Deleted)
@@ -2683,7 +2631,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
                     DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
                     this.detailgrid.AllowUserToAddRows = false;
-
 
                     if (MyUtility.Check.Empty(dr["Seq"]))
                     {

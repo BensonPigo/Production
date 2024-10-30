@@ -545,12 +545,13 @@ namespace Sci.Production.IE
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
                                         decimal totalCycleTime = newRow["TotalCycleTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]);
-                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
                                         decimal totalGSDTime = newRow["TotalGSDTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]);
 
                                         newRow["OperatorEffi"] = totalCycleTime == 0
                                             ? (object)DBNull.Value
                                             : (object)MyUtility.Math.Round(totalGSDTime / totalCycleTime * 100, 2);
+
+                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
 
                                         newRow["EstTotalCycleTime"] = operatorEffi == 0
                                                                     ? (object)DBNull.Value

@@ -132,6 +132,7 @@
             // masterpanel
             // 
             this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.btnMachineSummary);
             this.masterpanel.Controls.Add(this.btnLineMappingComparison);
             this.masterpanel.Controls.Add(this.btnViewOperator);
             this.masterpanel.Controls.Add(this.btnH);
@@ -242,6 +243,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnViewOperator, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnLineMappingComparison, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMachineSummary, 0);
             // 
             // detailpanel
             // 
@@ -250,18 +252,16 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(8, 224);
+            this.gridicon.Location = new System.Drawing.Point(8, 236);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Controls.Add(this.btnMachineSummary);
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
             this.detailgridcont.Size = new System.Drawing.Size(1408, 415);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
-            this.detailgridcont.Controls.SetChildIndex(this.btnMachineSummary, 0);
             // 
             // detail2
             // 
@@ -1148,11 +1148,10 @@
             // 
             // btnMachineSummary
             // 
-            this.btnMachineSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMachineSummary.FlatAppearance.BorderSize = 0;
-            this.btnMachineSummary.Location = new System.Drawing.Point(1244, 3);
+            this.btnMachineSummary.Location = new System.Drawing.Point(1253, 113);
             this.btnMachineSummary.Name = "btnMachineSummary";
-            this.btnMachineSummary.Size = new System.Drawing.Size(154, 23);
+            this.btnMachineSummary.Size = new System.Drawing.Size(125, 47);
             this.btnMachineSummary.TabIndex = 55;
             this.btnMachineSummary.Text = "Machine Summary";
             this.btnMachineSummary.UseVisualStyleBackColor = true;

@@ -71,7 +71,7 @@
             this.Controls.Add(this.chart1);
             this.Name = "P05_Chart";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P05. Chart";
+            this.Text = "P05. Line Balancing Graph";
             this.Controls.SetChildIndex(this.chart1, 0);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.ResumeLayout(false);

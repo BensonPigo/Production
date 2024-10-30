@@ -1182,13 +1182,13 @@ drop TABLE #tmp1
 
             }
 
-            // // Attachment
-            // worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
-            // worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
-            // 
-            // // Template
-            // worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
-            // worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            // Attachment
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+
+            // Template
+            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
             worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum},Operation,4,0)))";

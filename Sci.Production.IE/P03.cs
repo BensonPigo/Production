@@ -15,6 +15,7 @@ using Sci.Production.Prg;
 using Sci.Win.Tools;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace Sci.Production.IE
 {
@@ -45,6 +46,9 @@ namespace Sci.Production.IE
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
             MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
+            this.gridicon.Append.Image = Image.FromFile(Application.StartupPath + "\\data\\Copy.png");
+            this.gridicon.Append.ImageAlign = ContentAlignment.MiddleCenter;
+            this.gridicon.Append.TextImageRelation = TextImageRelation.ImageBeforeText;
         }
 
         /// <summary>
@@ -95,8 +99,10 @@ namespace Sci.Production.IE
             this.splitContainer1.Panel1.Controls.Add(this.detailpanel);
             this.detailpanel.Dock = DockStyle.Fill;
             MyUtility.Tool.SetupCombox(this.comboPhase, 1, 1, ",Initial,Prelim,Final");
+            this.gridicon.Append.Image = Image.FromFile(Application.StartupPath + "\\data\\Copy.png");
+            this.gridicon.Append.ImageAlign = ContentAlignment.MiddleCenter;
+            this.gridicon.Append.TextImageRelation = TextImageRelation.ImageBeforeText;
         }
-
         /// <summary>
         /// ClickLocate
         /// </summary>
@@ -146,7 +152,7 @@ namespace Sci.Production.IE
                 GC.Collect();
             };
 
-            this.grid.Columns["ID"].Visible = false;
+            this.grid.Columns["ID"].Visible = true;
         }
 
         /// <summary>
@@ -167,18 +173,20 @@ select *
                       else 4 end
 
     ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
+	,[EstTotalCycleTime] = iif(CAST(ld.OperatorEffi AS DECIMAL) = 0,0,ld.TotalGSDNO / ld.OperatorEffi * 100)
+	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS DECIMAL) = 0,0, 3600 / ld.TotalGSDNO / ld.OperatorEffi * 100)
 
-	,[EstTotalCycleTime] = CAST(IIF(
-                                    AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
-                                    0.0, 
-                                    ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100
-                                ) AS DECIMAL(20, 5))
-
-    ,[EstOutputHr] = CAST(IIF(
-                                AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
-                                0.0, 
-                                3600 / (ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL(20, 5))) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100)
-                            ) AS DECIMAL(20, 5)) 
+	--,[EstTotalCycleTime] = CAST(IIF(
+    --                                   AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
+    --                                   0.0, 
+    --                                   ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100
+    --                               ) AS DECIMAL(20, 5))
+    --
+    --   ,[EstOutputHr] = CAST(IIF(
+    --                               AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
+    --                               0.0, 
+    --                               3600 / (ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100)
+    --                           ) AS DECIMAL(20, 5)) 
 from (
     select  ld.OriNO
 	    , ld.No
@@ -457,8 +465,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             {
                 this.CurrentMaintain["TaktTime"] = 0;
             }
-
-            this.gridicon.Insert.Visible = this.CurrentMaintain["Phase"].ToString() == "Final" ? true : false;
         }
 
         /// <summary>
@@ -1405,6 +1411,15 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            var oriNo_EmptyCnt = this.DetailDatas.AsEnumerable().Where(x => MyUtility.Check.Empty(x["OriNo"]));
+
+            if (oriNo_EmptyCnt.Any() && this.CurrentMaintain["Phase"].ToString() != "Final")
+            {
+                string strMsg = "The <Insert> button can only be used in the \"Final\" Phase!" + Environment.NewLine + "Please switch Phase to \"Final\", or remove rows where OriNo is empty.";
+                MyUtility.Msg.WarningBox(strMsg);
+                return false;
+            }
+
             #region 檢查必輸欄位
             if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
             {
@@ -2599,7 +2614,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 {
                     CurrencyManager currencyManager = (CurrencyManager)this.BindingContext[this.detailgrid.DataSource];
                     currencyManager.SuspendBinding();
-                    this.detailgrid.Rows[i].Visible = false;
+                    this.detailgrid.Rows[i].Visible = true;
                     currencyManager.ResumeBinding();
                 }
                 else

@@ -81,6 +81,8 @@ AND ALMCS.Junk = 0
 
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
             this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
+
+            this.gridicon.Location = new System.Drawing.Point(1339, 200);
         }
 
         /// <summary>
@@ -692,7 +694,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings location = new DataGridViewGeneratorTextColumnSettings();
             #region Operation Code
             operation.EditingMouseDown += (s, e) =>
             {
@@ -729,27 +730,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             }
                         }
                     }
-                }
-            };
-
-            location.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    var groupDT = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
-                    .Where(row => row["Location"] != null && !string.IsNullOrWhiteSpace(row["Location"].ToString()))
-                    .GroupBy(row => row["Location"]).Select(group => group.First())
-                    .CopyToDataTable();
-
-                    SelectItem sele = new SelectItem(groupDT, "Location", "30", null);
-                    DialogResult result = sele.ShowDialog();
-                    if (result == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    dr["Location"] = sele.GetSelectedString();
                 }
             };
             #endregion
@@ -1109,7 +1089,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
-               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: location)
+               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
@@ -1583,9 +1563,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 #region 主表插入
                 DataRow nextDataRow = oriDt.Rows[insert_index];
+                DataRow dataRow_Location = insert_index == 0 ? oriDt.Rows[insert_index + 1] : oriDt.Rows[insert_index - 1];
                 nextDataRow["Selected"] = "False";
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
+                nextDataRow["Location"] = dataRow_Location["Location"];
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
