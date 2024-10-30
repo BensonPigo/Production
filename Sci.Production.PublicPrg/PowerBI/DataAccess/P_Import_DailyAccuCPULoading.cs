@@ -143,7 +143,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,PDA.[GPH]								= T.[GPH]						
                 ,PDA.[SPH]								= T.[SPH]						
                 FROM P_DailyAccuCPULoading PDA
-                INNER JOIN #TMP T ON PDA.[Year] = T.[Year] AND PDA.[Month] = T.[Month] AND PDA.[FactoryID] = T.[FactoryID]
+                INNER JOIN #TMP T ON PDA.[Year] = T.[Year] AND PDA.[Month] = T.[Month] AND PDA.[FactoryID] = T.[FactoryID] AND PDA.[Date] = t.[Date]
 
                 INSERT INTO [dbo].[P_DailyAccuCPULoading]
                 ([Year]
@@ -229,6 +229,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     where PDA.FactoryID = T.FactoryID
 	                and PDA.[Month] = T.[Month]
 	                and PDA.[Year] = T.[Year]
+                    AND PDA.[Date] = t.[Date]
                 )
 
                 delete PDA 
@@ -238,6 +239,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     where PDA.FactoryID = T.FactoryID
 	                and PDA.[Month] = T.[Month]
 	                and PDA.[Year] = T.[Year]
+                    AND PDA.[Date] = t.[Date]
                 )
                 and 
                 (
