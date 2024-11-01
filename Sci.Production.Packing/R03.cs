@@ -307,13 +307,22 @@ outer apply(
 		,d.Description
         ,o.poid
         ,pd.RefNo
-        ,liq.LocalSuppID1
-        ,ls.Abb
+        ,(select STUFF((
+                 SELECT ',' + LocalSuppID1
+                 FROM (select lq.LocalSuppID1
+                         from localitem_quot lq 
+                        where lq.RefNo = pd.RefNo and lq.IssueDate = (select max(IssueDate) from localitem_quot lqd where lqd.RefNo = pd.RefNo))Data
+                 FOR XML PATH('')), 1, 2, '') AS LocalSuppID1) LocalSuppID1
+        ,(select STUFF((
+                 SELECT ',' + Abb
+                 FROM (select ls.Abb
+                         from localitem_quot lq 
+                         LEFT JOIN LocalSupp ls ON ls.ID = lq.LocalSuppID1 
+                        where lq.RefNo = pd.RefNo and lq.IssueDate = (select max(IssueDate) from localitem_quot lqd where lqd.RefNo = pd.RefNo))Data
+                 FOR XML PATH('')), 1, 2, '') AS ConcatenatedColumn) Abb
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
     LEFT JOIN LocalItem li ON pd.RefNo = li.RefNo
-   outer apply(select * from localitem_quot lq where lq.RefNo = pd.RefNo and lq.IssueDate = (select max(IssueDate) from localitem_quot lqd where lqd.RefNo = pd.RefNo)) liq
-    LEFT JOIN LocalSupp ls ON ls.ID = liq.LocalSuppID1 
 	outer apply(
 		select Description =
 		REPLACE(
@@ -337,7 +346,7 @@ outer apply(
 		,o.Junk, o.StyleID, o.BrandID, o.SewLine
 		,o.SewInLine, o.SewOffLine, o.Qty, pd.DisposeFromClog
 		,o.FOC, o.LocalOrder, d.Description, o.poid
-        ,pd.RefNo,liq.LocalSuppID1,ls.Abb
+        ,pd.RefNo
 )PackingListDetail_Sum
 where PackingListDetail_Sum.DisposeFromClog= 0
 {where}
