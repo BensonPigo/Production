@@ -101,7 +101,7 @@ outer apply(
 	where ot.ID = o.id and a.Classify = 'A'
 )s2
 outer apply(
-	select dbo.GetLocalPurchaseStdCost(o.id) price
+	select iif(b.AddDate > '2024/11/05', dbo.GetLocalPurchaseStdCost(o.id), 0) price
 )s3
 where b.Status = 'New'
 group by b.id,p.INVNo,p.gw,c.NameEN,o.CPU,s1.Price,s2.Price,s3.price,isnull(isnull(f1.CpuCost,f.CpuCost),0),ccd.BIRShipTo,o.PoPrice

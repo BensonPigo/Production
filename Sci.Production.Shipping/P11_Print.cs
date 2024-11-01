@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Newtonsoft.Json;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class.Command;
@@ -76,6 +77,9 @@ namespace Sci.Production.Shipping
 
                 return false;
             }
+
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.CurrentMaintain["AddDate"].ToDateTime() >= new DateTime(2024, 11, 05) ? "1" : "0";
 
             if (this.dateInvoice.HasValue1)
             {
@@ -191,7 +195,7 @@ where	1=1
 
             if (dtA2BGMT.Rows.Count > 0)
             {
-                string sqlGetPackingA2B = @"
+                string sqlGetPackingA2B = $@"
 alter table #tmp alter column [GMTBooking] varchar(25)
 
 select  t.InvDate,
@@ -224,7 +228,7 @@ outer apply (select top 1 [val] = fd.CpuCost
              and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
 			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
             
 ";
                 foreach (var groupA2BGMT in dtA2BGMT.AsEnumerable().GroupBy(s => s["PLFromRgCode"].ToString()))
@@ -304,7 +308,7 @@ outer apply (select top 1 [val] = fd.CpuCost
              and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
 			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
 			  inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -419,6 +423,9 @@ drop table #tmpBIRInvoice
 
             List<string> listPLFromRgCode = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(ids);
 
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.CurrentMaintain["AddDate"].ToDateTime() >= new DateTime(2024, 11, 05) ? "1" : "0";
+
             DataTable dt;
             string sqlcmd = $@"
 select 
@@ -459,7 +466,7 @@ outer apply(
     and fsd.seasonID = ''
 )f
 outer apply(
-	select dbo.GetLocalPurchaseStdCost(o.id) price
+	select iif({isNewData} = 1,dbo.GetLocalPurchaseStdCost(o.id),0) price
 )s3
 outer apply(
 	select FtyCMP = Round((isnull(round(o.CPU,3,1),0) + isnull(round(a.SubProcessCPU,3,1),0)) * 

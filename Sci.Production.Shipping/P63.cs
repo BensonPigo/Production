@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Win.Tools;
@@ -588,6 +589,10 @@ WHERE   RateTypeID='KP'           and
             }
 
             string whereInvNo = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["InvNo"])).Select(s => $"'{s["InvNo"].ToString()}'").JoinToString(",");
+
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.CurrentMaintain["AddDate"].ToDateTime() >= new DateTime(2024, 11, 05) ? "1" : "0";
+
             string sqlGetGridPOListData = $@"
 Declare @ExchangeRate decimal(18, 8) = {this.CurrentMaintain["ExchangeRate"]}
 
@@ -607,7 +612,7 @@ outer apply (select top 1 [val] = fd.CpuCost
              and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
 			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
 			  inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
