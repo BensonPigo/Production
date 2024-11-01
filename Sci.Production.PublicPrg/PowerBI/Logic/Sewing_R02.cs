@@ -1,10 +1,17 @@
 ﻿using Ict;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -304,7 +311,8 @@ alter table #tmp alter column QAQty int
 alter table #tmp alter column LastShift varchar(1)
 alter table #tmp alter column SubconInType varchar(1)
 
-    Select ID
+      
+      Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
 		   																, '')),
@@ -316,6 +324,17 @@ alter table #tmp alter column SubconInType varchar(1)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
           and IsPrintToCMP=1
+	union all
+    -- 取得特殊的轉移訂單ArtworkTypeID 
+	select distinct ID = ap.LocalSuppID + ' ' + a.ID
+	, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
+	from ArtworkType a WITH (NOLOCK)
+	inner join artworkpo ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
 
 	--準備台北資料(須排除這些)
 	select ps.ID
@@ -328,21 +347,27 @@ alter table #tmp alter column SubconInType varchar(1)
 	and ml.isThread=1 
 	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
-    select ot.ArtworkTypeID
+    SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
+							else ot.ArtworkTypeID end
 		   , a.OrderId
 		   , a.ComboType
            , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-    into  #tmpAllSubprocess
+    into #tmpAllSubprocess
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+	left join (		
+		  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
+		  from ArtworkPO ap
+		  inner join ArtworkPO_Detail apd on ap.ID= apd.ID
+	) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID and apd.LocalSuppID in ('G168','SPP')
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
 
     --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
     -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
@@ -362,7 +387,9 @@ select ArtworkTypeID = t1.ID
 from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
-order by t1.ID");
+order by case when t1.ID like 'SPP%' or t1.ID like 'G168%' then 1 else 0 end, t1.ID
+
+");
                 Base_ViewModel resultReport = new Base_ViewModel
                 {
                     Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
@@ -793,6 +820,63 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             }
 
             return pams;
+        }
+
+        public DualResult GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model, out DataSet returnResult)
+        {
+            returnResult = new DataSet();
+            string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description like 'PAMS WEB API%'", "ManufacturingExecution");
+#if DEBUG
+            url = "http://172.17.11.98:8998";
+#endif
+            string api = "api/AttendanceSummary/AttendanceSummary_Summary";
+
+            if (MyUtility.Check.Empty(url))
+            {
+                return new DualResult(false, "PAMS WEB API not exists");
+            }
+
+            // 初始化 HttpClient 來發送請求
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+
+                    // 將Model 轉成Json格式
+                    string jsonBody = JsonConvert.SerializeObject(model);
+
+                    // 再將JSON 字串轉換為跳脫的字串
+                    string escapedJson = JsonConvert.SerializeObject(jsonBody);
+
+                    // 建立 HttpContent 物件，指定內容類型為 application/json
+                    var content = new StringContent(escapedJson, Encoding.UTF8, "application/json");
+
+                    // 發送同步Post 請求
+                    HttpResponseMessage response = client.PostAsync(url + "//" + api, content).Result;
+
+                    // 確認回應是成功的
+                    response.EnsureSuccessStatusCode();
+
+                    // 將回應的 JSON 內容轉換為字串
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                    AttendanceSummaryResult result = JsonConvert.DeserializeObject<AttendanceSummaryResult>(responseBody);
+
+                    if (!MyUtility.Check.Empty(result.Exception))
+                    {
+                        return new DualResult(false, result.Exception);
+                    }
+
+                    // 將 JSON 字串轉換為 DataSet
+                    returnResult = result.QueryResult;
+                }
+                catch (HttpRequestException e)
+                {
+                    return new DualResult(false, e);
+                }
+            }
+
+            return new DualResult(true);
         }
     }
 }

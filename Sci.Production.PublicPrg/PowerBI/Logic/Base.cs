@@ -61,6 +61,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MachineMasterListByDays,
             P_ScanPackList,
             P_MISCPurchaseOrderList,
+            P_ReplacementReport,
         }
 
         /// <summary>
@@ -477,6 +478,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_MISCPurchaseOrderList:
                         result = new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_ReplacementReport:
+                        result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

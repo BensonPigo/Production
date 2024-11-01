@@ -276,9 +276,14 @@ namespace Sci.Production.Win
                 Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
                 Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
                 Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
-                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.SFTP_Server_IP = drSystem["SFtpIP"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Port = ushort.Parse(drSystem["SFtpPort"].ToString());
+                Env.Cfg.SFTP_Server_Account = drSystem["SFtpID"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Password = drSystem["SFtpPwd"].ToString().Trim();
+
+                // Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                // Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                // Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
                 Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
                 Env.Cfg.MailServerPort = MyUtility.Check.Empty(drSystem["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(drSystem["MailServerPort"]);
                 isLoginCheckADAccount = drSystem.Field<bool>("IsLoginCheckADAccount");

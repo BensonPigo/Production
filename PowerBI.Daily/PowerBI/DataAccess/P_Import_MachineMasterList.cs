@@ -34,8 +34,6 @@ namespace PowerBI.Daily.PowerBI.DataAccess
                 StartMachineArrivalDate = string.Empty,
                 EndMachineArrivalDate = string.Empty,
                 Condition = string.Empty,
-                ExcludeDisposedData = true,
-                IncludeCancelData = true,
                 IsBI = false,
                 IsTPE_BI = true,
             };
