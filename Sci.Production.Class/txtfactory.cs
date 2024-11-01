@@ -200,6 +200,11 @@ namespace Sci.Production.Class
 
             string where = (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty;
             string sqlcmd = $"Select {strShowColumn} from Production.dbo.Factory WITH (NOLOCK) {where}";
+
+            if (IsIE)
+            {
+                sqlcmd = $@"SELECT DISTINCT FactoryID FROM Employee where FactoryID = @str";
+            }
             if (this.IsMultiselect)
             {
                 string[] factorys = this.Text.Split(',');
