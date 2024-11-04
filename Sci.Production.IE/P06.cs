@@ -554,13 +554,13 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         {
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            if (noCount + 5 <= this.DetailDatas.Count)
+            if (noCount + 5 <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
             }
 
-            if (noCount - 5 > this.DetailDatas.Count)
+            if (noCount - 5 > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
