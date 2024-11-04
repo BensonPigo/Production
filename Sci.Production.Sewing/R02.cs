@@ -746,24 +746,6 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
 
             #endregion
 
-            #region 呼叫Pams API
-            AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
-            {
-                FactoryID = this.factory,
-                StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
-                EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
-                IsContainShare = false,
-                IsLocal = false,
-            };
-
-            result = biModel.GetPamsAttendanceSummaryAsync(attendanceSummary_API, out this.dsPams);
-            if (!result)
-            {
-                return result;
-            }
-
-            #endregion
-
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
             {
                 this.factoryName = MyUtility.GetValue.Lookup(string.Format("select Name from Mdivision WITH (NOLOCK) where ID = '{0}'", this.mDivision));
@@ -859,6 +841,27 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
 
             this.DeleteExcelRow(2, insertRow, excel);
 
+            #region 呼叫Pams API for [GPH] [SPH] [VPH]
+            AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
+            {
+                FactoryID = this.factory,
+                StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
+                EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
+                IsContainShare = false,
+                IsLocal = false,
+            };
+
+            Sewing_R02 biModel = new Sewing_R02();
+            DualResult result = biModel.GetPamsAttendanceSummaryAsync(attendanceSummary_API, out this.dsPams);
+
+            // 有錯誤也不回傳訊息, 因為這三個欄位是team3要看的, 工廠不一定需要
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox(@"Query System fail, pls contact Taipei MIS!!, API error msg: " + Environment.NewLine + result.ToString());
+            //}
+
+            #endregion
+
             // [GPH] [SPH] [VPH]
             DataTable dtOther = new DataTable();
             insertRow += 2;
@@ -867,7 +870,7 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
                 decimal totalCPU = 0;
                 decimal totalMemory = 0;
 
-                if (this.dsPams != null && this.dsPams.Tables["other"].Rows.Count > 0)
+                if (this.dsPams != null && this.dsPams.Tables.Count != 0)
                 {
                     dtOther = this.dsPams.Tables["other"];
                 }
