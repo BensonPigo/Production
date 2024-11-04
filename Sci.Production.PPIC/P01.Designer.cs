@@ -333,6 +333,8 @@
             this.checkTeamWear = new Sci.Win.UI.CheckBox();
             this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
             this.label6 = new Sci.Win.UI.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.PCSMRText = new Sci.Production.Class.Txttpeuser();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -550,6 +552,8 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.label8);
+            this.tabPage1.Controls.Add(this.PCSMRText);
             this.tabPage1.Controls.Add(this.dateBox2);
             this.tabPage1.Controls.Add(this.label5);
             this.tabPage1.Controls.Add(this.dateBox1);
@@ -3729,6 +3733,23 @@
             this.label6.TabIndex = 259;
             this.label6.Text = "Order Company";
             // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(600, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 21);
+            this.label8.TabIndex = 242;
+            this.label8.Text = "PC SMR";
+            // 
+            // PCSMRText
+            // 
+            this.PCSMRText.DisplayBox1Binding = "";
+            this.PCSMRText.DisplayBox2Binding = "";
+            this.PCSMRText.Location = new System.Drawing.Point(669, 6);
+            this.PCSMRText.Name = "PCSMRText";
+            this.PCSMRText.Size = new System.Drawing.Size(302, 23);
+            this.PCSMRText.TabIndex = 243;
+            // 
             // P01
             // 
             this.ClientSize = new System.Drawing.Size(1008, 752);
@@ -4071,5 +4092,7 @@
         private Win.UI.CheckBox checkTeamWear;
         private Class.ComboCompany comboCompany1;
         private Win.UI.Label label6;
+        private Win.UI.Label label8;
+        private Class.Txttpeuser PCSMRText;
     }
 }

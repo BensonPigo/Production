@@ -313,18 +313,20 @@ where s.Ukey = '{0}'",
 
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            sqlCmd = string.Format("select POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            sqlCmd = string.Format("select PCSMR,POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out DataRow pOData))
             {
                 this.txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
                 this.txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
                 this.PcHandleText.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCHandle"]);
+                this.PCSMRText.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCSMR"]);
             }
             else
             {
                 this.txttpeuser3.DisplayBox1Binding = string.Empty;
                 this.txttpeuser4.DisplayBox1Binding = string.Empty;
                 this.PcHandleText.DisplayBox1Binding = string.Empty;
+                this.PCSMRText.DisplayBox1Binding = string.Empty;
             }
 
             #endregion
