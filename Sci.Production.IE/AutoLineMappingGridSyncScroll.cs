@@ -461,7 +461,7 @@ namespace Sci.Production.IE
         /// RefreshSubData
         /// </summary>
         /// <param name="doReload">doReload</param>
-        public void RefreshSubData(bool doReload = true,bool isSort = true)
+        public void RefreshSubData(bool doReload = true, bool isSort = true)
         {
             DataTable dtSub = this.SubData;
 
@@ -536,8 +536,8 @@ namespace Sci.Production.IE
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
                                         newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
-                                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
-                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
+                                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
+                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
                                         newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle * 100, 0);
@@ -547,20 +547,29 @@ namespace Sci.Production.IE
                                         decimal totalCycleTime = newRow["TotalCycleTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]);
                                         decimal totalGSDTime = newRow["TotalGSDTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]);
 
-                                        newRow["OperatorEffi"] = totalCycleTime == 0
+                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
+
+                                        bool isEmplyee = MyUtility.Check.Empty(groupItem.Select(s => s["EmployeeID"].ToString()).First());
+
+                                        if (isEmplyee)
+                                        {
+                                            newRow["OperatorEffi"] = 0;
+                                            newRow["EstOutputHr"] = 0;
+                                        }
+                                        else
+                                        {
+                                            newRow["OperatorEffi"] = totalCycleTime == 0
                                             ? (object)DBNull.Value
                                             : (object)MyUtility.Math.Round(totalGSDTime / totalCycleTime * 100, 2);
 
-                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
+                                            newRow["EstOutputHr"] = operatorEffi == 0 ? DBNull.Value :
+                                                                     (totalGSDTime / operatorEffi == 0 ? DBNull.Value :
+                                                                     (object)MyUtility.Math.Round(3600 / ((totalGSDTime / operatorEffi) * 100), 2));
+                                        }
 
                                         newRow["EstTotalCycleTime"] = operatorEffi == 0
-                                                                    ? (object)DBNull.Value
-                                                                    : (object)MyUtility.Math.Round((totalGSDTime / operatorEffi) * 100, 2);
-
-                                        newRow["EstOutputHr"] = operatorEffi == 0 ? DBNull.Value :
-                                                                 (totalGSDTime / operatorEffi == 0 ? DBNull.Value :
-                                                                 (object)MyUtility.Math.Round(3600 / ((totalGSDTime / operatorEffi) * 100), 2));
-
+                                                    ? (object)DBNull.Value
+                                                    : (object)MyUtility.Math.Round((totalGSDTime / operatorEffi) * 100, 2);
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
                                         newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
                                         return newRow;

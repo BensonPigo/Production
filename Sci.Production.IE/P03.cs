@@ -2573,14 +2573,6 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             .GroupBy(x => new
             {
                 No = x.Field<string>("No"),
-                SortA = x.Field<string>("No").Substring(0, 1),
-                SortB = x.Field<string>("No").Substring(1, x.Field<string>("No").Length - 1),
-                ReasonName = x.Field<string>("ReasonName"),
-                EmployeeID = x.Field<string>("EmployeeID"),
-                EmployeeName = x.Field<string>("EmployeeName"),
-                EmployeeSkill = x.Field<string>("EmployeeSkill"),
-                EstTotalCycleTime = x.Field<decimal?>("EstTotalCycleTime"),
-                EstOutputHr = x.Field<decimal?>("EstOutputHr"),
             })
             .Select(g => new GridList()
             {
@@ -2588,14 +2580,14 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 ActCycle = g.Max(x => x.Field<decimal?>("ActCycle")), // 假設ActCycle相同項取最大值
                 TotalGSD = g.Max(x => x.Field<decimal?>("TotalGSD")), // 假設TotalGSD相同項取最大值
                 TotalCycle = g.Max(x => x.Field<decimal?>("TotalCycle")), // 假設TotalCycle相同項取最大值
-                ReasonName = g.Key.ReasonName,
-                SortA = g.Key.SortA,
-                SortB = g.Key.SortB,
-                EmployeeID = g.Key.EmployeeID,
-                EmployeeName = g.Key.EmployeeName,
-                EmployeeSkill = g.Key.EmployeeSkill,
-                EstTotalCycleTime = g.Key.EstTotalCycleTime, //g.Sum(x => x.Field<decimal>("EstTotalCycleTime")),
-                EstOutputHr = g.Key.EstOutputHr, //g.Sum(x => x.Field<decimal>("EstOutputHr")),
+                ReasonName = g.First().Field<string>("ReasonName"),
+                SortA = g.Key.No.Substring(0, 1),
+                SortB = g.Key.No.Substring(1, g.Key.No.Length - 1),
+                EmployeeID = g.First().Field<string>("EmployeeID"),
+                EmployeeName = g.First().Field<string>("EmployeeName"),
+                EmployeeSkill = g.First().Field<string>("EmployeeSkill"),
+                EstTotalCycleTime = g.Max(x => x.Field<decimal?>("EstTotalCycleTime")),
+                EstOutputHr = g.Max(x => x.Field<decimal?>("EstOutputHr")),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)

@@ -219,8 +219,31 @@ AND ALMCS.Junk = 0
                     SELECT *, [IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
                     FROM (
                         SELECT 
-                            cast(0 as bit) as Selected,
-                            ad.*,
+                            cast(0 as bit) as Selected
+                            ,ad.ukey
+                            ,ad.[ID]
+                            ,[No]
+                            ,ad.[Seq]
+                            ,[Location]
+                            ,[PPA]
+                            ,ad.[MachineTypeID]
+                            ,ad.[MasterPlusGroup]
+                            ,[OperationID]
+                            ,ad.[Annotation] 
+                            ,ad.[Attachment]
+                            ,[SewingMachineAttachmentID]
+                            ,[Template]
+                            ,[GSD]
+                            ,[Cycle]
+                            ,[SewerDiffPercentage]
+                            ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
+                            ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
+                            ,[TimeStudyDetailUkey]
+                            ,[ThreadComboID]
+                            ,[Notice]
+                            ,[EmployeeID]
+                            ,ad.[IsNonSewingLine]
+                            ,[IsAdd],
                             [PPADesc] = isnull(d.Name, ''),
                             [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
                             [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
@@ -552,6 +575,24 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
+            DataTable dt = this.DetailDatas.CopyToDataTable();
+            var list = dt.AsEnumerable()
+                .GroupBy(x => x["OperationID"].ToString())
+                .Select(g => new
+                {
+                    No = g.First()["No"],
+                    SumSewerDiffPercentageDesc = g.Sum(row => row.Field<decimal>("SewerDiffPercentageDesc")),
+                })
+                .Where(x => x.SumSewerDiffPercentageDesc < 100)
+                .ToList();
+
+            if (list.Count > 0)
+            {
+                string concatenatedNos = string.Join(", ", list.Select(x => x.No));
+                MyUtility.Msg.WarningBox($@"Total % of Operation in No.{concatenatedNos} does not equal to 100%, cannot save!");
+                return false;
+            }
+
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
             if (noCount + 5 <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
@@ -694,13 +735,58 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+
+            DataGridViewGeneratorNumericColumnSettings percentage = new DataGridViewGeneratorNumericColumnSettings();
+
+            percentage.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                DataTable dt = (DataTable)this.gridLineMappingRight.DataSource;
+
+                var dataRow = dt.AsEnumerable()
+                    .Select((row, index) => new { Row = row, Index = index })
+                    .Where(x => x.Row["No"].ToString() == dr["No"].ToString())
+                    .FirstOrDefault();
+
+                if (dataRow != null && dataRow.Index >= 0 && dataRow.Index < this.gridLineMappingRight.Rows.Count)
+                {
+                    this.gridLineMappingRight.BeginInvoke(new Action(() =>
+                    {
+                        this.gridLineMappingRight.ClearSelection();
+                        this.gridLineMappingRight.Rows[dataRow.Index].Selected = true;
+                        var targetCell = this.gridLineMappingRight.Rows[dataRow.Index].Cells[0];
+                        if (targetCell.Visible && this.gridLineMappingRight.CurrentCell != targetCell)
+                        {
+                            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = dataRow.Index;
+                            this.gridLineMappingRight.CurrentCell = targetCell;
+                        }
+                    }));
+                }
+
+                decimal curpercentage = MyUtility.Convert.GetDecimal(e.FormattedValue);
+
+                if (MyUtility.Convert.GetDecimal(dr["SewerDiffPercentageDesc"]) == curpercentage)
+                {
+                    return;
+                }
+
+                dr["SewerDiffPercentageDesc"] = e.FormattedValue;
+
+                this.RefreshLineMappingBalancingSummary(false);
+            };
             #region Operation Code
             operation.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (this.EditMode)
                 {
-                    if (e.Button == MouseButtons.Right && MyUtility.Check.Empty(dr["OperationDesc"]))
+                    if (e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["IsAdd"]) == true)
                     {
                         if (e.RowIndex != -1)
                         {
@@ -710,6 +796,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
+                                    string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
+                                    dr["GSD"] = MyUtility.Check.Empty(smv) ? 0 : (object)smv;
                                     dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
@@ -721,6 +809,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                             if (result == DialogResult.OK)
                             {
+                                string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
+                                dr["GSD"] = MyUtility.Check.Empty(smv) ? 0 : (object)smv;
                                 dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
@@ -742,6 +832,29 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 }
 
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+
+                DataTable dt = (DataTable)this.gridLineMappingRight.DataSource;
+
+                var dataRow = dt.AsEnumerable()
+                    .Select((row, index) => new { Row = row, Index = index })
+                    .Where(x => x.Row["No"].ToString() == dr["No"].ToString())
+                    .FirstOrDefault();
+
+                if (dataRow != null && dataRow.Index >= 0 && dataRow.Index < this.gridLineMappingRight.Rows.Count)
+                {
+                    this.gridLineMappingRight.BeginInvoke(new Action(() =>
+                    {
+                        this.gridLineMappingRight.ClearSelection();
+                        this.gridLineMappingRight.Rows[dataRow.Index].Selected = true;
+                        var targetCell = this.gridLineMappingRight.Rows[dataRow.Index].Cells[0];
+                        if (targetCell.Visible && this.gridLineMappingRight.CurrentCell != targetCell)
+                        {
+                            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = dataRow.Index;
+                            this.gridLineMappingRight.CurrentCell = targetCell;
+                        }
+                    }));
+                }
+
                 decimal curCycle = MyUtility.Convert.GetDecimal(e.FormattedValue);
 
                 if (MyUtility.Convert.GetDecimal(dr["Cycle"]) == curCycle)
@@ -1099,7 +1212,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("EstCycleTime", header: "Est. Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTime)
-               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
                .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
@@ -1563,9 +1676,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow nextDataRow = oriDt.Rows[insert_index];
                 DataRow dataRow_Location = insert_index == 0 ? oriDt.Rows[insert_index + 1] : oriDt.Rows[insert_index - 1];
                 nextDataRow["Selected"] = "False";
+                nextDataRow["IsAdd"] = "True";
+                nextDataRow["DivSewer"] = DBNull.Value;
+                nextDataRow["OriSewer"] = DBNull.Value;
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
                 nextDataRow["Location"] = dataRow_Location["Location"];
+
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)

@@ -94,10 +94,10 @@ namespace Sci.Production.IE
             this.chart1.Series["Takt time"].Color = Color.Brown;
             this.chart1.Series["Takt time"].BorderWidth = 3;
 
-            this.chart1.Series.Add("Act GSD Time(average)");
-            this.chart1.Series["Act GSD Time(average)"].ChartType = SeriesChartType.Line;
-            this.chart1.Series["Act GSD Time(average)"].Color = Color.YellowGreen;
-            this.chart1.Series["Act GSD Time(average)"].BorderWidth = 3;
+            this.chart1.Series.Add("Avg. GSD Time");
+            this.chart1.Series["Avg. GSD Time"].ChartType = SeriesChartType.Line;
+            this.chart1.Series["Avg. GSD Time"].Color = Color.YellowGreen;
+            this.chart1.Series["Avg. GSD Time"].BorderWidth = 3;
 
             // 傳值進去前面設定的Series
             for (int i = 0; i < this.dataTables[0].Rows.Count; i++)

@@ -1157,46 +1157,41 @@ drop TABLE #tmp1
 
         private void AddLineMappingFormula(Microsoft.Office.Interop.Excel.Worksheet worksheet, int rownum)
         {
-            int iSimplify = this.rbDetail.Checked ? 0 : 1;
             // Operation
-            worksheet.Cells[rownum, 5 - iSimplify] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,3,0)),\"\",VLOOKUP(AI{rownum},Operation,3,0))";
-            worksheet.Cells[rownum, 20 - iSimplify] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,3,0)),\"\",VLOOKUP(AJ{rownum},Operation,3,0))";
+            worksheet.Cells[rownum, 5] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0))";
+            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,3,0)),\"\",VLOOKUP(S{rownum},Operation,3,0))";
 
             // GSD
-            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,9,0)),\"\",VLOOKUP(AI{rownum},Operation,9,0))";
-            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,9,0)),\"\",VLOOKUP(AJ{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,9,0)),\"\",VLOOKUP(D{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,9,0)),\"\",VLOOKUP(S{rownum},Operation,9,0))";
 
             // TMS
-            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,10,0)),\"\",VLOOKUP(AI{rownum},Operation,10,0))";
-            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,10,0)),\"\",VLOOKUP(AJ{rownum},Operation,10,0))";
+            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,10,0)),\"\",VLOOKUP(D{rownum},Operation,10,0))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,10,0)),\"\",VLOOKUP(S{rownum},Operation,10,0))";
 
             // ST/MC type
-            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum},Operation,13,0)))";
-            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum},Operation,13,0)))";
+            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,13,0)))";
+            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,13,0)))";
 
             // Machine Group
-            if (this.rbDetail.Checked)
-            {
-                worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,5,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AI{rownum},Operation,5,0)))";
-                worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,5,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AJ{rownum},Operation,5,0)))";
-
-            }
+            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,5,0)),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,5,0)),\"\",IF(VLOOKUP(S{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
 
             // Attachment
-            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
-            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
-            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum},Operation,4,0)))";
-            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
 
             // Machine Group
-            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,14,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AI{rownum},Operation,5,0)))";
-            worksheet.Cells[rownum, 30] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,14,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AJ{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,14,0)),\"\",IF(VLOOKUP(D{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 30] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,14,0)),\"\",IF(VLOOKUP(S{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
         }
 
         private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, string sheetName, bool showMachineType = false, bool isDetail = false)
