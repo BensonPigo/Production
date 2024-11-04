@@ -62,6 +62,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ScanPackList,
             P_MISCPurchaseOrderList,
             P_ReplacementReport,
+            P_DailyAccuCPULoading,
         }
 
         /// <summary>
@@ -481,6 +482,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_ReplacementReport:
                         result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
+						break;
+                    case ListName.P_DailyAccuCPULoading:
+                        result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

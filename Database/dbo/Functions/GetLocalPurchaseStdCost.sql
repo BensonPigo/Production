@@ -32,7 +32,7 @@ BEGIN
 				where a.id = f.ArtWorkID 
 				and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
 				and f.isjunk = 0 
-				and not CostTypeID != 'FactoryCMT'
+				and not CostTypeID != 'Factory CMT'
 			)
 			or 
 			-- OrigBuyerDelivery 沒有在設定的日期範圍內
