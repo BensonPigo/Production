@@ -555,11 +555,11 @@ namespace Sci.Production.IE
 
                                         newRow["EstTotalCycleTime"] = operatorEffi == 0
                                                                     ? (object)DBNull.Value
-                                                                    : (object)MyUtility.Math.Round(totalGSDTime / operatorEffi, 2);
+                                                                    : (object)MyUtility.Math.Round((totalGSDTime / operatorEffi) * 100, 2);
 
                                         newRow["EstOutputHr"] = operatorEffi == 0 ? DBNull.Value :
                                                                  (totalGSDTime / operatorEffi == 0 ? DBNull.Value :
-                                                                 (object)(3600 / (totalGSDTime / operatorEffi)));
+                                                                 (object)MyUtility.Math.Round(3600 / ((totalGSDTime / operatorEffi) * 100), 2));
 
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
                                         newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();

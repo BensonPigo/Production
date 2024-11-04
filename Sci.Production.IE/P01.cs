@@ -1294,6 +1294,8 @@ and Name = @PPA
                 string str = (string)e.FormattedValue;
                 if (str.Length != 4)
                 {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    dr["DesignateSeq"] = string.Empty;
                     MyUtility.Msg.WarningBox("<Dsg. Seq> can only accept 4-digit number!");
                     return;
                 }
@@ -1580,14 +1582,6 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
-            var listDesSeq = this.DetailDatas.Where(s => MyUtility.Convert.GetString(s["DesignateSeq "]).Length != 4);
-
-            if (listDesSeq.Any())
-            {
-                MyUtility.Msg.WarningBox("<Dsg. Seq> can only accept 4-digit number!");
-                return false;
-            }
-
             #region Seq 重複資料檢查
             if (this.DetailDatas.Count != 0)
             {

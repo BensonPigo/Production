@@ -286,8 +286,8 @@ namespace Sci.Production.IE
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
-                    dr["UpdSewerDiffPercentage"] = e.FormattedValue;
-                    dr["UpdDivSewer"] = e.FormattedValue;
+                    dr["UpdSewerDiffPercentage"] = DBNull.Value;
+                    dr["UpdDivSewer"] = DBNull.Value;
                     return;
                 }
 
@@ -454,8 +454,8 @@ namespace Sci.Production.IE
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
             newRow["Selected"] = true;
-            newRow["UpdDivSewer"] = 0;
-            newRow["UpdSewerDiffPercentage"] = 0;
+            newRow["UpdDivSewer"] = DBNull.Value;
+            newRow["UpdSewerDiffPercentage"] = DBNull.Value;
 
             int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
             this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);

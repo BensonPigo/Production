@@ -734,8 +734,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
             #endregion
 
-
-
             colCycleTime.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -1735,10 +1733,31 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
 
+            //// Packer / Presser 卡控
+            if (dr["OperationID"].ToString() == "PROCIPF00003" || dr["OperationID"].ToString() == "PROCIPF00004")
+            {
+                string manpowerKey = dr["OperationID"].ToString() == "PROCIPF00003" ? "PackerManpower" : "PresserManpower";
+                string roleName = dr["OperationID"].ToString() == "PROCIPF00003" ? "Packer" : "Presser";
+
+                if (!this.ValidateAndDecrementManpower(manpowerKey, roleName))
+                {
+                    return; // 如果無法刪除，則返回
+                }
+            }
+
             // base.OnDetailGridRemoveClick();
             bool isGo = false;
+            bool isDes = false;
+
+            int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList().Count();
+
+            if (MyUtility.Convert.GetBool(dr["Selected"]) == true || cnt == 1)
+            {
+                isDes = true;
+            }
+
             #region 刪除右邊表
-            if (MyUtility.Convert.GetBool(dr["Selected"]) == true)
+            if (isDes)
             {
                 DataColumn noColumn = dataTableRight.Columns["No"];
                 DataColumn[] primaryKeyColumns = dataTableRight.PrimaryKey;
@@ -1822,7 +1841,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             #region 刪除主表資料
             List<DataRow> rowsToMainDelete = new List<DataRow>();
 
-            if (MyUtility.Convert.GetBool(dr["Selected"]) == true)
+            if (isDes)
             {
                 foreach (DataRow dataRow in dataTable.Rows)
                 {
@@ -1833,18 +1852,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                     if (dataRow["No"].ToString() == row)
                     {
-                        //// Packer / Presser 卡控
-                        if (dataRow["OperationID"].ToString() == "PROCIPF00003" || dataRow["OperationID"].ToString() == "PROCIPF00004")
-                        {
-                            string manpowerKey = dataRow["OperationID"].ToString() == "PROCIPF00003" ? "PackerManpower" : "PresserManpower";
-                            string roleName = dataRow["OperationID"].ToString() == "PROCIPF00003" ? "Packer" : "Presser";
-
-                            if (!this.ValidateAndDecrementManpower(manpowerKey, roleName))
-                            {
-                                return; // 如果無法刪除，則返回
-                            }
-                        }
-
                         rowsToMainDelete.Add(dataRow);
                         isGo = true;
                         continue;
