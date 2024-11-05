@@ -578,6 +578,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             var list = dt.AsEnumerable()
+                .Where(x => x.RowState != DataRowState.Deleted) // 排除被刪除的行
                 .GroupBy(x => new { OperationID = x["OperationID"].ToString() , Ukey = x["TimeStudyDetailUkey"] })
                 .Select(g => new
                 {
@@ -595,6 +596,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             }
 
             var list1 = dt.AsEnumerable()
+                .Where(x => x.RowState != DataRowState.Deleted) // 排除被刪除的行
                 .GroupBy(x => new { OperationID = x["OperationID"].ToString(), No = x["No"].ToString() })
                 .Select(g => new
                 {
@@ -612,13 +614,13 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            if (noCount + 5 <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+            if ((noCount + 5 >= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) & MyUtility.Check.Empty(this.txtReason.Text))
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
             }
 
-            if (noCount - 5 > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+            if ((noCount - 5 > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) && MyUtility.Check.Empty(this.txtReason.Text))
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
@@ -799,8 +801,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
-                                    string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
-                                    dr["GSD"] = MyUtility.Check.Empty(smv) ? 0 : (object)smv;
+                                    // string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
+                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMV"].ToString();
                                     dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
@@ -813,8 +815,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                             if (result == DialogResult.OK)
                             {
-                                string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
-                                dr["GSD"] = MyUtility.Check.Empty(smv) ? 0 : (object)smv;
+                                // string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
+                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMV"].ToString();
                                 dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
