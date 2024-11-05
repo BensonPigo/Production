@@ -636,8 +636,8 @@ namespace Sci.Production.IE
 
                                         if (isEmplyee)
                                         {
-                                            newRow["OperatorEffi"] = 0;
-                                            newRow["EstOutputHr"] = 0;
+                                            newRow["OperatorEffi"] = DBNull.Value;
+                                            newRow["EstOutputHr"] = DBNull.Value;
                                         }
                                         else
                                         {

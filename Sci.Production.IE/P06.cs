@@ -1071,11 +1071,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             effiCnt++;
                             decEffi += Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlcmd));
                         }
+
                         totleCycleTime += Convert.ToDecimal(row["GSD"]);
                     }
 
-                    dr["EstOutputHr"] = effiCnt == 0 ? 0 : 3600 / (totleCycleTime / (decEffi / effiCnt) * 100);
-                    dr["OperatorEffi"] = effiCnt == 0 ? 0 : decEffi / effiCnt;
+                    if (effiCnt == 0 || totleCycleTime == 0)
+                    {
+                        dr["EstOutputHr"] = DBNull.Value;
+                    }
+                    else
+                    {
+                        dr["EstOutputHr"] = 3600 / (totleCycleTime / (decEffi / effiCnt) * 100);
+                    }
+
+                    dr["OperatorEffi"] = effiCnt == 0 ? DBNull.Value : (object)(decEffi / effiCnt);
                     dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
                     dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
                     dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
