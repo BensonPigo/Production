@@ -19,6 +19,7 @@
     [LineNmforReport] VARCHAR(5) CONSTRAINT [DF_SewingLine_LineNmforReport] NOT NULL DEFAULT (('')), 
     [DQSTargetQty] INT NOT NULL DEFAULT ((0)), 
     [Outsourcing] BIT NOT NULL DEFAULT ((0)), 
+	DashboardSource varchar(8) NOT NULL CONSTRAINT [DF_SewingLine_DashboardSource] DEFAULT '',
     CONSTRAINT [PK_SewingLine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
 
