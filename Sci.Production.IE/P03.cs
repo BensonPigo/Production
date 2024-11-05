@@ -152,7 +152,7 @@ namespace Sci.Production.IE
                 GC.Collect();
             };
 
-            this.grid.Columns["ID"].Visible = true;
+            // this.grid.Columns["ID"].Visible = true;
         }
 
         /// <summary>
