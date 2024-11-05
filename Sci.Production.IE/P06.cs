@@ -575,21 +575,37 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            DataTable dt = this.DetailDatas.CopyToDataTable();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
             var list = dt.AsEnumerable()
-                .GroupBy(x => x["OperationID"].ToString())
+                .GroupBy(x => new { OperationID = x["OperationID"].ToString() })
                 .Select(g => new
                 {
-                    No = g.First()["No"],
+                    No = string.Join(", ", g.Select(row => row["No"].ToString())),
                     SumSewerDiffPercentageDesc = g.Sum(row => row.Field<decimal>("SewerDiffPercentageDesc")),
                 })
-                .Where(x => x.SumSewerDiffPercentageDesc < 100)
+                .Where(x => x.SumSewerDiffPercentageDesc != 100)
                 .ToList();
 
             if (list.Count > 0)
             {
                 string concatenatedNos = string.Join(", ", list.Select(x => x.No));
                 MyUtility.Msg.WarningBox($@"Total % of Operation in No.{concatenatedNos} does not equal to 100%, cannot save!");
+                return false;
+            }
+
+            var list1 = dt.AsEnumerable()
+                .GroupBy(x => new { OperationID = x["OperationID"].ToString(), No = x["No"].ToString() })
+                .Select(g => new
+                {
+                    No = g.Key.No,
+                    OperationID = g.Key.OperationID,
+                })
+                .Where(x => x.OperationID == string.Empty).ToList();
+
+            if (list1.Count > 0)
+            {
+                string concatenatedNos = string.Join(", ", list1.Select(x => x.No));
+                MyUtility.Msg.WarningBox($@"Please enter Operation in No.{concatenatedNos}!");
                 return false;
             }
 
