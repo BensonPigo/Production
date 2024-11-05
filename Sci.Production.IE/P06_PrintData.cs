@@ -874,7 +874,7 @@ group by almd.No
                 Excel.Series series1_actTime = seriesCollection_actTime.NewSeries();
                 series1_actTime.Values = chartData.get_Range("D2", $"D{chartDataEndRow}");
                 series1_actTime.XValues = chartData.get_Range("A2", $"A{chartDataEndRow}");
-                series1_actTime.Name = "Act Cycle Time(average)";
+                series1_actTime.Name = "Avg. Cycle Time";
                 series1_actTime.ChartType = Excel.XlChartType.xlLine;
 
                 // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
@@ -882,7 +882,7 @@ group by almd.No
                 chartPage.ChartTitle.Select();
                 chartPage.ChartTitle.Text = "Line Balancing Graph";
                 Excel.Axis z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlValue, Excel.XlAxisGroup.xlPrimary);
-                z.AxisTitle.Text = "Act Cycle Time (in secs)";
+                z.AxisTitle.Text = "Avg. Cycle Time";
                 z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlCategory, Excel.XlAxisGroup.xlPrimary);
                 z.AxisTitle.Text = "Operator No.";
 

@@ -547,7 +547,90 @@ namespace Sci.Production.IE
                                         decimal totalCycleTime = newRow["TotalCycleTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]);
                                         decimal totalGSDTime = newRow["TotalGSDTime"] == DBNull.Value ? 0 : MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]);
 
-                                        decimal operatorEffi = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["OperatorEffi"]), 2);
+                                        decimal decEffi = 0;
+                                        int effiCnt = 0;
+                                        decimal totleCycleTime = 0;
+                                        if (!MyUtility.Check.Empty(groupItem.Select(s => s["EmployeeID"].ToString()).First()))
+                                        {
+                                            string sqlcmd = $@"
+                                            select 
+                                            [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                                            from Employee e WITH (NOLOCK)
+                                            left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                                            LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                                            INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                                            INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                                            OUTER APPLY (
+	                                            SELECT val = STUFF((
+	                                            SELECT DISTINCT CONCAT(',', Name)
+	                                            FROM OperationRef a WITH(NOLOCK)
+	                                            INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                                            WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                                            FOR XML PATH('')), 1, 1, '')
+                                            ) Operation_P03
+                                            where ResignationDate is null 
+                                            and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                                            and eas.P06 = 1 and e.Junk = 0
+                                            AND ISNULL(lmd.MachineTypeID,'') = '{groupItem.Select(s => s["MachineTypeID"].ToString()).First()}' 
+                                            --AND ISNULL(Operation_P03.val,'') = '{groupItem.Select(s => s["MasterPlusGroup"].ToString()).First()}' 
+                                            AND E.id = '{groupItem.Select(s => s["EmployeeID"].ToString()).First()}'
+                                            GROUP BY
+                                            e.ID
+                                            ,Name
+                                            ,FirstName
+                                            ,LastName
+                                            ,Section
+                                            ,Skill
+                                            ,e.SewingLineID
+                                            ,e.FactoryID
+                                            ,lmd.MachineTypeID
+                                            ,Operation_P03.val
+                                            UNION
+                                            select 
+                                            [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                                            from Employee e WITH (NOLOCK)
+                                            left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                                            LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                                            INNER JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                                            INNER JOIN LineMappingBalancing lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                                            OUTER APPLY (
+	                                            SELECT val = STUFF((
+	                                            SELECT DISTINCT CONCAT(',', Name)
+	                                            FROM OperationRef a WITH(NOLOCK)
+	                                            INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                                            WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                                            FOR XML PATH('')), 1, 1, '')
+                                            ) Operation_P03
+                                            where ResignationDate is null 
+                                            and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                                            and eas.P06 = 1 and e.Junk = 0
+                                            AND ISNULL(lmd.MachineTypeID,'') = '{groupItem.Select(s => s["MachineTypeID"].ToString()).First()}' 
+                                            --AND ISNULL(Operation_P03.val,'') = '{groupItem.Select(s => s["MasterPlusGroup"].ToString()).First()}' 
+                                            AND E.id = '{groupItem.Select(s => s["EmployeeID"].ToString()).First()}'
+                                            GROUP BY
+                                            e.ID
+                                            ,Name
+                                            ,FirstName
+                                            ,LastName
+                                            ,Section
+                                            ,Skill
+                                            ,e.SewingLineID
+                                            ,e.FactoryID
+                                            ,lmd.MachineTypeID
+                                            ,Operation_P03.val";
+
+                                            if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sqlcmd)))
+                                            {
+                                                effiCnt++;
+                                                decEffi += Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlcmd));
+                                            }
+
+                                            totleCycleTime = Convert.ToDecimal(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])));
+
+                                        }
+
+                                        decimal operatorEffi = effiCnt == 0 ? 0 : decEffi / effiCnt;
+
 
                                         bool isEmplyee = MyUtility.Check.Empty(groupItem.Select(s => s["EmployeeID"].ToString()).First());
 
@@ -560,11 +643,11 @@ namespace Sci.Production.IE
                                         {
                                             newRow["OperatorEffi"] = totalCycleTime == 0
                                             ? (object)DBNull.Value
-                                            : (object)MyUtility.Math.Round(totalGSDTime / totalCycleTime * 100, 2);
+                                            : (object)MyUtility.Math.Round(operatorEffi, 2);
 
                                             newRow["EstOutputHr"] = operatorEffi == 0 ? DBNull.Value :
                                                                      (totalGSDTime / operatorEffi == 0 ? DBNull.Value :
-                                                                     (object)MyUtility.Math.Round(3600 / ((totalGSDTime / operatorEffi) * 100), 2));
+                                                                     (object)MyUtility.Math.Round(3600 / ((totleCycleTime / operatorEffi) * 100), 2));
                                         }
 
                                         newRow["EstTotalCycleTime"] = operatorEffi == 0

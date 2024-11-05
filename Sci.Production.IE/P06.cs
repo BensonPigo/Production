@@ -17,6 +17,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Web;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using static Ict.Win.UI.DataGridView;
@@ -577,7 +578,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             var list = dt.AsEnumerable()
-                .GroupBy(x => new { OperationID = x["OperationID"].ToString() })
+                .GroupBy(x => new { OperationID = x["OperationID"].ToString() , Ukey = x["TimeStudyDetailUkey"] })
                 .Select(g => new
                 {
                     No = string.Join(", ", g.Select(row => row["No"].ToString())),
@@ -770,27 +771,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     .Where(x => x.Row["No"].ToString() == dr["No"].ToString())
                     .FirstOrDefault();
 
-                if (dataRow != null && dataRow.Index >= 0 && dataRow.Index < this.gridLineMappingRight.Rows.Count)
-                {
-                    this.gridLineMappingRight.BeginInvoke(new Action(() =>
-                    {
-                        this.gridLineMappingRight.ClearSelection();
-                        this.gridLineMappingRight.Rows[dataRow.Index].Selected = true;
-                        var targetCell = this.gridLineMappingRight.Rows[dataRow.Index].Cells[0];
-                        if (targetCell.Visible && this.gridLineMappingRight.CurrentCell != targetCell)
-                        {
-                            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = dataRow.Index;
-                            this.gridLineMappingRight.CurrentCell = targetCell;
-                        }
-                    }));
-                }
-
                 decimal curpercentage = MyUtility.Convert.GetDecimal(e.FormattedValue);
 
                 if (MyUtility.Convert.GetDecimal(dr["SewerDiffPercentageDesc"]) == curpercentage)
                 {
                     return;
                 }
+
                 dr["SewerDiffPercentage"] = ((decimal)e.FormattedValue) / 100;
                 dr["SewerDiffPercentageDesc"] = e.FormattedValue;
 
@@ -858,21 +845,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     .Where(x => x.Row["No"].ToString() == dr["No"].ToString())
                     .FirstOrDefault();
 
-                if (dataRow != null && dataRow.Index >= 0 && dataRow.Index < this.gridLineMappingRight.Rows.Count)
-                {
-                    this.gridLineMappingRight.BeginInvoke(new Action(() =>
-                    {
-                        this.gridLineMappingRight.ClearSelection();
-                        this.gridLineMappingRight.Rows[dataRow.Index].Selected = true;
-                        var targetCell = this.gridLineMappingRight.Rows[dataRow.Index].Cells[0];
-                        if (targetCell.Visible && this.gridLineMappingRight.CurrentCell != targetCell)
-                        {
-                            this.gridLineMappingRight.FirstDisplayedScrollingRowIndex = dataRow.Index;
-                            this.gridLineMappingRight.CurrentCell = targetCell;
-                        }
-                    }));
-                }
-
                 decimal curCycle = MyUtility.Convert.GetDecimal(e.FormattedValue);
 
                 if (MyUtility.Convert.GetDecimal(dr["Cycle"]) == curCycle)
@@ -881,7 +853,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 }
 
                 dr["Cycle"] = e.FormattedValue;
-
                 this.RefreshLineMappingBalancingSummary(false);
             };
 
@@ -1019,6 +990,90 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         return;
                     }
 
+                    List<DataRow> list = dt.AsEnumerable().Where(x => x["No"].ToString() == dr["No"].ToString()).ToList();
+
+                    decimal decEffi = 0;
+                    int effiCnt = 0;
+                    decimal totleCycleTime = 0;
+                    foreach (DataRow row in list)
+                    {
+                        string sqlcmd = $@"
+                        select 
+                        [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                        from Employee e WITH (NOLOCK)
+                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                        LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                        INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                        INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                        OUTER APPLY (
+	                        SELECT val = STUFF((
+	                        SELECT DISTINCT CONCAT(',', Name)
+	                        FROM OperationRef a WITH(NOLOCK)
+	                        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                        WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                        FOR XML PATH('')), 1, 1, '')
+                        ) Operation_P03
+                        where ResignationDate is null 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and eas.P06 = 1 and e.Junk = 0
+                        AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
+                        --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
+                        AND E.id = '{callNextForm.SelectOperator["ID"]}'
+                        GROUP BY
+                        e.ID
+                        ,Name
+                        ,FirstName
+                        ,LastName
+                        ,Section
+                        ,Skill
+                        ,e.SewingLineID
+                        ,e.FactoryID
+                        ,lmd.MachineTypeID
+                        ,Operation_P03.val
+                        UNION
+                        select 
+                        [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                        from Employee e WITH (NOLOCK)
+                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                        LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                        INNER JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                        INNER JOIN LineMappingBalancing lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                        OUTER APPLY (
+	                        SELECT val = STUFF((
+	                        SELECT DISTINCT CONCAT(',', Name)
+	                        FROM OperationRef a WITH(NOLOCK)
+	                        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                        WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                        FOR XML PATH('')), 1, 1, '')
+                        ) Operation_P03
+                        where ResignationDate is null 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and eas.P06 = 1 and e.Junk = 0
+                        AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
+                        --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
+                        AND E.id = '{callNextForm.SelectOperator["ID"]}'
+                        GROUP BY
+                        e.ID
+                        ,Name
+                        ,FirstName
+                        ,LastName
+                        ,Section
+                        ,Skill
+                        ,e.SewingLineID
+                        ,e.FactoryID
+                        ,lmd.MachineTypeID
+                        ,Operation_P03.val";
+
+                        if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sqlcmd)))
+                        {
+                            effiCnt++;
+                            decEffi += Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlcmd));
+                        }
+                        totleCycleTime += Convert.ToDecimal(row["GSD"]);
+                    }
+
+                    dr["EstOutputHr"] = effiCnt == 0 ? 0 : 3600 / (totleCycleTime / (decEffi / effiCnt) * 100);
+                    dr["OperatorEffi"] = effiCnt == 0 ? 0 : decEffi / effiCnt;
                     dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
                     dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
                     dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
@@ -1045,6 +1100,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["EstOutputHr"] = 0;
+                    dr["OperatorEffi"] = 0;
                     this.ReviseEmployeeToEmpty(dr);
                     return;
                 }
@@ -1078,6 +1135,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     }
                     else
                     {
+
                         dr["EmployeeID"] = this.EmployeeData.Rows[0]["ID"];
                         dr["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
                         dr["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
@@ -1133,7 +1191,90 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         MyUtility.Msg.WarningBox($"<{this.EmployeeData.Rows[0]["ID"]} {this.EmployeeData.Rows[0]["Name"]}> already been used in No.{MyUtility.Convert.GetString(errorDataRow[0]["No"])}!!");
                         return;
                     }
+                    List<DataRow> list = dt.AsEnumerable().Where(x => x["No"].ToString() == dr["No"].ToString()).ToList();
 
+                    decimal decEffi = 0;
+                    int effiCnt = 0;
+                    decimal totleCycleTime = 0;
+                    foreach (DataRow row in list)
+                    {
+                        string sqlcmd = $@"
+                        select 
+                        [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                        from Employee e WITH (NOLOCK)
+                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                        LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                        INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                        INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                        OUTER APPLY (
+	                        SELECT val = STUFF((
+	                        SELECT DISTINCT CONCAT(',', Name)
+	                        FROM OperationRef a WITH(NOLOCK)
+	                        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                        WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                        FOR XML PATH('')), 1, 1, '')
+                        ) Operation_P03
+                        where ResignationDate is null 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and eas.P06 = 1 and e.Junk = 0
+                        AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
+                        --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
+                        AND E.id = '{callNextForm.SelectOperator["ID"]}'
+                        GROUP BY
+                        e.ID
+                        ,Name
+                        ,FirstName
+                        ,LastName
+                        ,Section
+                        ,Skill
+                        ,e.SewingLineID
+                        ,e.FactoryID
+                        ,lmd.MachineTypeID
+                        ,Operation_P03.val
+                        UNION
+                        select 
+                        [Effi_90_day] =  ISNULL(FORMAT(AVG(CASE WHEN d.DayRange = 90 THEN (lmd.GSD / lmd.Cycle)*100 ELSE NULL END) , '0.00'),0)
+                        from Employee e WITH (NOLOCK)
+                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                        LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
+                        INNER JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+                        INNER JOIN LineMappingBalancing lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(DAY, -d.DayRange, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+                        OUTER APPLY (
+	                        SELECT val = STUFF((
+	                        SELECT DISTINCT CONCAT(',', Name)
+	                        FROM OperationRef a WITH(NOLOCK)
+	                        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	                        WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+	                        FOR XML PATH('')), 1, 1, '')
+                        ) Operation_P03
+                        where ResignationDate is null 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and eas.P06 = 1 and e.Junk = 0
+                        AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
+                        --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
+                        AND E.id = '{callNextForm.SelectOperator["ID"]}'
+                        GROUP BY
+                        e.ID
+                        ,Name
+                        ,FirstName
+                        ,LastName
+                        ,Section
+                        ,Skill
+                        ,e.SewingLineID
+                        ,e.FactoryID
+                        ,lmd.MachineTypeID
+                        ,Operation_P03.val";
+
+                        if (!MyUtility.Check.Empty(MyUtility.GetValue.Lookup(sqlcmd)))
+                        {
+                            effiCnt++;
+                            decEffi += Convert.ToDecimal(MyUtility.GetValue.Lookup(sqlcmd));
+                        }
+                        totleCycleTime += Convert.ToDecimal(row["GSD"]);
+                    }
+
+                    dr["EstOutputHr"] = effiCnt == 0 ? 0 : 3600 / (totleCycleTime / (decEffi / effiCnt) * 100);
+                    dr["OperatorEffi"] = effiCnt == 0 ? 0 : decEffi / effiCnt;
                     dr["EmployeeID"] = callNextForm.SelectOperator["ID"];
                     dr["EmployeeName"] = callNextForm.SelectOperator["Name"];
                     dr["EmployeeSkill"] = callNextForm.SelectOperator["Skill"];
@@ -1160,6 +1301,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["EstOutputHr"] = 0;
+                    dr["OperatorEffi"] = 0;
                     this.ReviseEmployeeToEmpty(dr);
                     return;
                 }
@@ -1691,8 +1834,10 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 bool isGo = false;
 
                 #region 主表插入
+                int iDel = oriDt.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted).ToList().Count;
                 DataRow nextDataRow = oriDt.Rows[insert_index];
-                DataRow dataRow_Location = insert_index == 0 ? oriDt.Rows[insert_index + 1] : oriDt.Rows[insert_index - 1];
+                DataRow dataRow_Location = insert_index == 0 ? oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel + 1]
+                                                             : oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel - 1];
                 nextDataRow["Selected"] = "False";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
