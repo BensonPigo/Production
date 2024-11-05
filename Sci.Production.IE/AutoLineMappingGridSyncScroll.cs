@@ -537,10 +537,10 @@ namespace Sci.Production.IE
                                         newRow["NoCnt"] = groupItem.Count();
                                         newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
-                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
+                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]))/100, 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
-                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle * 100, 0);
+                                        newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle, 0);
                                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();

@@ -1309,7 +1309,7 @@ SELECT
 	   ,'New'
 	   ,'{Env.User.UserID}'
 	   ,GETDATE()
-       ,{this.DetailDatas.Count}
+       ,{this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()}
        ,''
        ,alm.TotalGSDTime
 FROM AutomatedLineMapping alm

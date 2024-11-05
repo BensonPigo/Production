@@ -775,7 +775,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     return;
                 }
-
+                dr["SewerDiffPercentage"] = ((decimal)e.FormattedValue) / 100;
                 dr["SewerDiffPercentageDesc"] = e.FormattedValue;
 
                 this.RefreshLineMappingBalancingSummary(false);
@@ -803,6 +803,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                     dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr.EndEdit();
                                 }
                             }
@@ -816,6 +817,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                 dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr.EndEdit();
                             }
                         }
@@ -1647,7 +1649,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         {
             DataTable copyOriDataTable = ((DataTable)this.detailgridbs.DataSource).Copy();
             DataRow copyDR;
-            DataRow seleceted_dataRow = copyOriDataTable.AsEnumerable().FirstOrDefault(x => MyUtility.Convert.GetBool(x["Selected"]) == true);
+            DataRow seleceted_dataRow = copyOriDataTable.AsEnumerable().FirstOrDefault(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(x["Selected"]) == true);
 
             int insert_index = 0; // 插入的指標
 
