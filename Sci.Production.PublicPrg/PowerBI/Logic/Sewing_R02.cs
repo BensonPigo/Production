@@ -3,15 +3,12 @@ using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
-using static PmsWebApiUtility20.WebApiTool;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -822,6 +819,7 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             return pams;
         }
 
+        /// <inheritdoc/>
         public DualResult GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model, out DataSet returnResult)
         {
             returnResult = new DataSet();
@@ -837,12 +835,11 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
                 return new DualResult(false, "PAMS WEB API not exists");
             }
 
-            // 初始化 HttpClient 來發送請求
-            using (HttpClient client = new HttpClient())
+            try
             {
-                try
+                // 初始化 HttpClient 來發送請求
+                using (HttpClient client = new HttpClient())
                 {
-
                     // 將Model 轉成Json格式
                     string jsonBody = JsonConvert.SerializeObject(model);
 
@@ -871,10 +868,10 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
                     // 將 JSON 字串轉換為 DataSet
                     returnResult = result.QueryResult;
                 }
-                catch (HttpRequestException e)
-                {
-                    return new DualResult(false, e);
-                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
             }
 
             return new DualResult(true);
