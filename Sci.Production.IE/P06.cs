@@ -620,7 +620,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
-            if ((noCount - 5 > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) && MyUtility.Check.Empty(this.txtReason.Text))
+            if ((noCount - 5 < this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) && MyUtility.Check.Empty(this.txtReason.Text))
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
@@ -1839,7 +1839,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 int iDel = oriDt.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted).ToList().Count;
                 DataRow nextDataRow = oriDt.Rows[insert_index];
                 DataRow dataRow_Location = insert_index == 0 ? oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel + 1]
-                                                             : oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel - 1];
+                                                             : oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - 1];
                 nextDataRow["Selected"] = "False";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
