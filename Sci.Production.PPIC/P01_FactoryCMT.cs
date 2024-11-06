@@ -39,7 +39,7 @@ namespace Sci.Production.PPIC
 
             string sqlCmd = string.Format(
                 @"
-select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,ot.Price,iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
+select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,Price = Round(ot.Price,3),iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 where ot.ID = '{0}' 
