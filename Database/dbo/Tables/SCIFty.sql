@@ -3,7 +3,7 @@
     [Junk]          BIT            CONSTRAINT [DF_SCIFty_Junk] DEFAULT ((0)) NOT NULL,
     [Abb]           NVARCHAR (10)  CONSTRAINT [DF_SCIFty_Abb] DEFAULT ('') NOT NULL,
     [NameCH]        NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameCH] DEFAULT ('') NOT NULL,
-    [NameEN]        NVARCHAR (40)  CONSTRAINT [DF_SCIFty_NameEN] DEFAULT ('') NOT NULL,
+    [NameEN]        NVARCHAR (80)  CONSTRAINT [DF_SCIFty_NameEN] DEFAULT ('') NOT NULL,
     [CountryID]     VARCHAR (2)    CONSTRAINT [DF_SCIFty_CountryID] DEFAULT ('') NOT NULL,
     [Tel]           VARCHAR (30)   CONSTRAINT [DF_SCIFty_Tel] DEFAULT ('') NOT NULL,
     [Fax]           VARCHAR (30)   CONSTRAINT [DF_SCIFty_Fax] DEFAULT ('') NOT NULL,
