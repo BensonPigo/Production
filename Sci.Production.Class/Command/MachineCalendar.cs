@@ -299,7 +299,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
             DualResult result;
             if (!(result = this.GetMachineIoTScheduleNonTemp(date.AddDays(-1), machineIoTUkey, out DataTable dt1))) return result;
             if (!(result = this.GetMachineIoTSchedule(date, machineIoTUkey, dtMachineIoT_Calendar_Detail, out DataTable dt2))) return result;
-            if (!this.ValidateDataTableOverlap(dt1, dt2, date.AddDays(-1))) return new DualResult(false, new Exception(string.Empty));
+            if (!this.ValidateDataTableOverlap(dt1, dt2, date.AddDays(-1), machineIoTUkey)) return new DualResult(false, new Exception(string.Empty));
             return Ict.Result.True;
         }
 
@@ -313,7 +313,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
             DualResult result;
             if (!(result = this.GetMachineIoTSchedule(date, machineIoTUkey, dtMachineIoT_Calendar_Detail, out DataTable dt1))) return result;
             if (!(result = this.GetMachineIoTScheduleNonTemp(date.AddDays(+1), machineIoTUkey, out DataTable dt2))) return result;
-            if (!this.ValidateDataTableOverlap(dt1, dt2, date)) return new DualResult(false, new Exception(string.Empty));
+            if (!this.ValidateDataTableOverlap(dt1, dt2, date, machineIoTUkey)) return new DualResult(false, new Exception(string.Empty));
             return Ict.Result.True;
         }
 
@@ -331,14 +331,14 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
             {
                 if (!(result = this.GetMachineIoTSchedule(specialDate, machineIoTUkey, dtMachineIoT_Calendar_Detail, out DataTable dt1))) return result;
                 if (!(result = this.GetMachineIoTSchedule(specialDate.AddDays(1), machineIoTUkey, dtMachineIoT_Calendar_Detail, out DataTable dt2))) return result;
-                if (!this.ValidateDataTableOverlap(dt1, dt2, specialDate, showMsg)) return new DualResult(false, new Exception(string.Empty));
+                if (!this.ValidateDataTableOverlap(dt1, dt2, specialDate, machineIoTUkey, showMsg)) return new DualResult(false, new Exception(string.Empty));
             }
 
             return Ict.Result.True;
         }
 
         /// <inheritdoc/>
-        public bool ValidateDataTableOverlap(DataTable dt1, DataTable dt2, DateTime date, bool showMsg = true)
+        public bool ValidateDataTableOverlap(DataTable dt1, DataTable dt2, DateTime date, long machineIoTUkey, bool showMsg = true)
         {
             var maxEndTimeInDt1 = this.GetMaxEndTime(dt1);
             var minStartTimeInDt2 = this.GetMinStartTime(dt2);
@@ -348,7 +348,11 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
 
             if (maxEndTimeInDt1 >= minStartTimeInDt2)
             {
-                string errorMessage = $"Working time overlap on [{date:yyyy/MM/dd}].";
+                DataRow dr = this.GetMachineIoT(machineIoTUkey);
+                string errorMessage = $@"
+Machine Type : {dr["MachineIoTType"]}
+Machine ID : {dr["MachineID"]}
+Working time overlap on [{date:yyyy/MM/dd}].";
                 if (showMsg) MyUtility.Msg.WarningBox(errorMessage);
                 return false;
             }
@@ -589,6 +593,13 @@ WHERE md.MachineIoT_CalendareUkey = (
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        public DataRow GetMachineIoT(long ukey)
+        {
+            MyUtility.Check.Seek($"SELECT * FROM MachineIoT WHERE Ukey = {ukey}", out DataRow dr, "ManufacturingExecution");
+            return dr;
         }
 #pragma warning restore SA1503
     }
