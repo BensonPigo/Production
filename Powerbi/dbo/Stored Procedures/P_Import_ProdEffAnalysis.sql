@@ -213,7 +213,7 @@ ProgramID
             end),'-')
 into #tmpMain
 from #tmpz 
-Group BY OutputDate,ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID
 
 
@@ -247,26 +247,26 @@ insert into P_ProdEffAnalysis(
       ,[Remark]
 )
 select OutputDate
-      ,[ArtworkType]
-	  ,ProgramID
-	  ,StyleID
-	  ,FtyZone
-	  ,FactoryID
-	  ,BrandID
-	  ,CDCodeNew
-	  ,ProductType
-	  ,FabricType
-	  ,Lining
-	  ,Gender
-	  ,Construction
-	  ,StyleDesc
-	  ,SeasonID
-	  ,[Total Qty]
-	  ,[Total Artwork CPU]
-	  ,[Total ManHours]
-	  ,[PPH]
-	  ,[EFF%]
-	  ,[Remark]
+      ,isnull([ArtworkType],'')
+	  ,isnull(ProgramID,'')
+	  ,isnull(StyleID,'')
+	  ,isnull(FtyZone,'')
+	  ,isnull(FactoryID,'')
+	  ,isnull(BrandID,'')
+	  ,isnull(CDCodeNew,'')
+	  ,isnull(ProductType,'')
+	  ,isnull(FabricType,'')
+	  ,isnull(Lining,'')
+	  ,isnull(Gender,'')
+	  ,isnull(Construction,'')
+	  ,isnull(StyleDesc,'')
+	  ,isnull(SeasonID,'')
+	  ,isnull([Total Qty],0)
+	  ,isnull([Total Artwork CPU],0)
+	  ,isnull([Total ManHours],'')
+	  ,isnull([PPH],'')
+	  ,isnull([EFF%],'')
+	  ,isnull([Remark],'')
 from #tmpMain t
 
 if exists(select 1 from BITableInfo where Id = 'P_ProdEffAnalysis')
@@ -284,3 +284,6 @@ drop table #tmp_MaxOutputDate,#stmp,#tmpz
 
 
 end
+GO
+
+
