@@ -1,11 +1,10 @@
-﻿using Sci.Production.Prg.PowerBI.Logic;
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -33,8 +32,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     eDate = eDate.Value.AddDays(1);
                 }
 
+                Base_ViewModel resultReport = this.GetDailyAccuCPULoading(sDate, eDate);
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate, eDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, sDate, eDate);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -50,7 +55,75 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetDailyAccuCPULoading(DateTime? sDate, DateTime? eDate)
+        {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", sDate),
+                new SqlParameter("@eDate", eDate),
+            };
+            string sql = @"
+            --DECLARE @sDate datetime = '2024-10-07'
+            --DECLARE @eDate datetime = '2024-10-15'
+            SELECT
+             [Year] = ISNULL(DA.[Year], '')
+            ,[Month] = ISNULL(DA.[Month], '')
+            ,[FactoryID] = ISNULL(DA.[FactoryID], '')
+            ,[TTLCPULoaded] = ISNULL(DA.[TTLCPULoaded], 0)
+            ,[UnfinishedLastMonth] = ISNULL(DA.[UnfinishedLastMonth], 0)
+            ,[FinishedLastMonth] = ISNULL(DA.[FinishedLastMonth], 0)
+            ,[CanceledStillNeedProd] = ISNULL(DA.[CanceledStillNeedProd], 0)
+            ,[SubconToSisFactory] = ISNULL(DA.SubconToSisFactory, 0)
+            ,[SubconFromSisterFactory] = ISNULL(DA.SubconFromSisterFactory, 0)
+            ,[PullForwardFromNextMonths] = ISNULL(DA.PullForwardFromNextMonths, 0)
+            ,[LoadingDelayFromThisMonth] = ISNULL(DA.LoadingDelayFromThisMonth, 0)
+            ,[LocalSubconInCPU] = ISNULL(DA.LocalSubconInCPU, 0)
+            ,[LocalSubconOutCPU] = ISNULL(DA.LocalSubconOutCPU, 0)
+            ,[RemainCPUThisMonth] = ISNULL(DA.[RemainCPUThisMonth], 0)
+            ,[AddName] = ISNULL(DA.[AddName], '')
+            ,[AddDate] = DA.[AddDate]
+            ,[EditName] = ISNULL(DA.[EditName], '')
+            ,[EditDate] = DA.[EditDate]
+            ,[Date] = ISNULL(DAD.[Date], '')
+            ,[WeekDay] = ISNULL(DAD.[WeekDay], '')
+            ,[DailyCPULoading] = ISNULL(DAD.[DailyCPULoading], 0)
+            ,[NewTarget] = ISNULL(DAD.[NewTarget], 0)
+            ,[ActCPUPerformed] = ISNULL(DAD.[ActCPUPerformed], 0)
+            ,[DailyCPUVarience] = ISNULL(DAD.[DailyCPUVarience], 0)
+            ,[AccuLoading] = ISNULL(DAD.[AccuLoading], 0)
+            ,[AccuActCPUPerformed] = ISNULL(DAD.[AccuActCPUPerformed], 0)
+            ,[AccuCPUVariance] = ISNULL(DAD.[AccuCPUVariance], 0)
+            ,[LeftWorkDays] = ISNULL(DAD.[LeftWorkDays], 0)
+            ,[AvgWorkhours] = ISNULL(DAD.[AvgWorkhours], 0)
+            ,[PPH] = ISNULL(DAD.[PPH], 0)
+            ,[Direct] = ISNULL(DAD.[Direct], 0)
+            ,[Active] = ISNULL(DAD.[Active], 0)
+            ,[VPH] = ISNULL(DAD.[VPH], 0)
+            ,[ManpowerRatio] = ISNULL(DAD.[ManpowerRatio], 0)
+            ,[LineNo] = ISNULL(DAD.[LineNo], 0)
+            ,[LineManpower] = ISNULL(DAD.[LineManpower], 0)
+            ,[GPH] = ISNULL(DAD.[GPH], 0)
+            ,[SPH] = ISNULL(DAD.[SPH], 0)
+            FROM MainServer.Production.dbo.DailyAccuCPULoading DA WITH(NOLOCK)
+            INNER JOIN MainServer.Production.dbo.DailyAccuCPULoading_Detail DAD WITH(NOLOCK) ON DAD.DailyAccuCPULoadingUkey = DA.UKEY
+            WHERE
+            ((DA.AddDate >= @sDate and DA.AddDate < @eDate) or(DA.EditDate >= @sDate and DA.EditDate < @eDate))";
+
+            Base_ViewModel resultReport = new Base_ViewModel
+            {
+                Result = DBProxy.Current.Select("Production", sql, sqlParameters, out DataTable dataTable),
+            };
+
+            if (!resultReport.Result)
+            {
+                return resultReport;
+            }
+
+            resultReport.Dt = dataTable;
+            return resultReport;
+        }
+
+        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -62,54 +135,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = @"
-                --DECLARE @sDate datetime = '2024-10-07'
-                --DECLARE @eDate datetime = '2024-10-15'
-                
-                SELECT
-                 [Year] = ISNULL(DA.[Year],'')
-                ,[Month] = ISNULL(DA.[Month],'')
-                ,[FactoryID] = ISNULL(DA.[FactoryID],'')
-                ,[TTLCPULoaded] = ISNULL(DA.[TTLCPULoaded],0)
-                ,[UnfinishedLastMonth] = ISNULL(DA.[UnfinishedLastMonth],0)
-                ,[FinishedLastMonth] =ISNULL( DA.[FinishedLastMonth],0)
-                ,[CanceledStillNeedProd] = ISNULL(DA.[CanceledStillNeedProd],0)
-                ,[SubconToSisFactory] = ISNULL(DA.SubconToSisFactory,0)
-                ,[SubconFromSisterFactory] = ISNULL(DA.SubconFromSisterFactory,0)
-                ,[PullForwardFromNextMonths] = ISNULL(DA.PullForwardFromNextMonths,0)
-                ,[LoadingDelayFromThisMonth] = ISNULL(DA.LoadingDelayFromThisMonth,0)
-                ,[LocalSubconInCPU] = ISNULL(DA.LocalSubconInCPU,0)
-                ,[LocalSubconOutCPU] = ISNULL(DA.LocalSubconOutCPU,0)
-                ,[RemainCPUThisMonth] = ISNULL(DA.[RemainCPUThisMonth],0)
-                ,[AddName] = ISNULL(DA.[AddName],'')
-                ,[AddDate] = DA.[AddDate]
-                ,[EditName] = ISNULL(DA.[EditName],'')
-                ,[EditDate] = DA.[EditDate]
-                ,[Date] = ISNULL(DAD.[Date],'')
-                ,[WeekDay] = ISNULL(DAD.[WeekDay],'')
-                ,[DailyCPULoading] = ISNULL(DAD.[DailyCPULoading],0)
-                ,[NewTarget] = ISNULL(DAD.[NewTarget],0)
-                ,[ActCPUPerformed] = ISNULL(DAD.[ActCPUPerformed],0)
-                ,[DailyCPUVarience] = ISNULL(DAD.[DailyCPUVarience],0)
-                ,[AccuLoading] = ISNULL(DAD.[AccuLoading],0)
-                ,[AccuActCPUPerformed] = ISNULL(DAD.[AccuActCPUPerformed],0)
-                ,[AccuCPUVariance] = ISNULL(DAD.[AccuCPUVariance],0)
-                ,[LeftWorkDays] = ISNULL(DAD.[LeftWorkDays],0)
-                ,[AvgWorkhours] = ISNULL(DAD.[AvgWorkhours],0)
-                ,[PPH] = ISNULL(DAD.[PPH],0)
-                ,[Direct] = ISNULL(DAD.[Direct],0)
-                ,[Active] = ISNULL(DAD.[Active],0)
-                ,[VPH] = ISNULL(DAD.[VPH],0)
-                ,[ManpowerRatio] = ISNULL(DAD.[ManpowerRatio],0)
-                ,[LineNo] = ISNULL(DAD.[LineNo],0)
-                ,[LineManpower] = ISNULL(DAD.[LineManpower],0)
-                ,[GPH] = ISNULL(DAD.[GPH],0)
-                ,[SPH] = ISNULL(DAD.[SPH],0)
-                into #tmp
-                FROM MainServer.Production.dbo.DailyAccuCPULoading DA WITH(NOLOCK)
-                INNER JOIN MainServer.Production.dbo.DailyAccuCPULoading_Detail DAD WITH(NOLOCK) ON DAD.DailyAccuCPULoadingUkey = DA.UKEY
-                WHERE 
-                ((DA.AddDate >= @sDate and DA.AddDate < @eDate) or (DA.EditDate >= @sDate and DA.EditDate < @eDate))
-
                 UPDATE PDA
                 SET
                  PDA.[TTLCPULoaded]						= T.[TTLCPULoaded]				
@@ -266,7 +291,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

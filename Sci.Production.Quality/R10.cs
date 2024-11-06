@@ -84,8 +84,8 @@ namespace Sci.Production.Quality
             this.Season = this.txtseason.Text;
             this.Brand = this.txtbrand.Text;
             this.FabricRefNo = this.txtFabRefno.Text;
-            this.T1SubconName = this.txtLocalSupp.TextBox1.Text;
-            this.T2SubconName = this.txtLocalTPESupp.TextBox1.Text;
+            this.T1SubconName = this.txtLocalSupp.DisplayBox1.Text;
+            this.T2SubconName = this.txtLocalTPESupp.DisplayBox1.Text;
 
             if (MyUtility.Check.Empty(this.Style) && (MyUtility.Check.Empty(this.Season) || MyUtility.Check.Empty(this.Brand)))
             {
@@ -103,7 +103,7 @@ namespace Sci.Production.Quality
             List<string> filter = new List<string>();
             if (!MyUtility.Check.Empty(this.Type) && this.Type != "All")
             {
-                filter.Add($"and TypeOfPrint='{this.Type}'");
+                filter.Add($"and TypeOfTesting='{this.Type}'");
             }
 
             if (!MyUtility.Check.Empty(this.Style))
@@ -138,7 +138,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.T2SubconName) && this.Type != "Mockup Crocking")
             {
-                filter.Add($"and (T2SubconName = '{this.T2SubconName}' or TypeOfPrint='Mockup Crocking')");
+                filter.Add($"and (T2SubconName = '{this.T2SubconName}' or TypeOfTesting='Mockup Crocking')");
             }
             #endregion
 
@@ -148,16 +148,15 @@ select * from
 (
 	select 
 	[TypeOfTesting] ='Mockup Crocking'
-	,[Style] = StyleID
-	,[Season] = SeasonID
-	,[Brand] = BrandID
+	,[Style] = a.StyleID
+	,[Season] = a.SeasonID
+	,[Brand] = a.BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
+	,[T1SubconName] = (select Name from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
 	,[T2SubconName] = ''
-	,[ReportNo] = c.ReportNo
-	,[SubmitDate] = b.SubmitDate
-	,[ReceivedDate] = b.ReceivedDate
-	,[ReleaseDate] = b.ReleasedDate
+	,[ReportNo] = a.ReportNo
+	,[ReceivedDate] = a.ReceivedDate
+	,[ReleaseDate] = a.ReleasedDate
 	,TestTemperature=null
 	,TestTime=null
 	,HTPlate=null
@@ -168,31 +167,29 @@ select * from
 	,HT2ndPressnoreverse=null
 	,HT2ndPressreversed=null
 	,HTCoolingTime=null
-	,[Artwork] = c.ArtworkTypeID
+	,[Artwork] = a.ArtworkTypeID
 	,TypeofPrint=null
-	,[ArtworkColor] = c.ArtworkColor
-	,[FabricRefNo] = c.FabricRefNo
-	,[FabricColor] = c.FabricColor
-	,[Result] = c.Result
-	,c.Remark
+	,[ArtworkColor] = b.ArtworkColor
+	,[FabricRefNo] = b.FabricRefNo
+	,[FabricColor] = b.FabricColor
+	,[Result] = b.Result
+	,b.Remark
 	 from MockupCrocking a
-	 left join MockupCrocking_Detail b on a.ID=b.ID
-	 left join MockupCrocking_Detail_Detail c on a.ID=c.ID
+	 left join MockupCrocking_Detail b on a.ReportNo = b.ReportNo
 
 union all 
 
 	select 
 	[TypeOfTesting] ='Mockup Oven'
-	,[Style] = StyleID
-	,[Season] = SeasonID
-	,[Brand] = BrandID
+	,[Style] = a.StyleID
+	,[Season] = a.SeasonID
+	,[Brand] = a.BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
-	,[T2SubconName] = (select top 1 Abb from(select Abb from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
-	,[ReportNo] = c.ReportNo
-	,[SubmitDate] = b.SubmitDate
-	,[ReceivedDate] = b.ReceivedDate
-	,[ReleaseDate] = b.ReleasedDate
+	,[T1SubconName] = (select Name from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
+	,[T2SubconName] = (select top 1 Name from(select Name from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
+	,[ReportNo] = a.ReportNo
+	,[ReceivedDate] = a.ReceivedDate
+	,[ReleaseDate] = a.ReleasedDate
 	,TestTemperature
 	,TestTime
 	,HTPlate
@@ -203,31 +200,29 @@ union all
 	,HT2ndPressnoreverse
 	,HT2ndPressreversed
 	,HTCoolingTime
-	,[Artwork] = c.ArtworkTypeID
+	,[Artwork] = a.ArtworkTypeID
 	,TypeofPrint
-	,[ArtworkColor] = c.ArtworkColor
-	,[FabricRefNo] = c.FabricRefNo
-	,[FabricColor] = c.FabricColor
-	,[Result] = c.Result
-	,c.Remark
+	,[ArtworkColor] = b.ArtworkColor
+	,[FabricRefNo] = b.FabricRefNo
+	,[FabricColor] = b.FabricColor
+	,[Result] = b.Result
+	,b.Remark
 	 from MockupOven a
-	 left join MockupOven_Detail b on a.ID=b.ID
-	 left join MockupOven_Detail_Detail c on a.ID=c.ID
+	 left join MockupOven_Detail b on a.ReportNo = b.ReportNo
 
 union all
 
 	select 
 	[TypeOfTesting] ='Mockup Wash'
-	,[Style] = StyleID
-	,[Season] = SeasonID
-	,[Brand] = BrandID
+	,[Style] = a.StyleID
+	,[Season] = a.SeasonID
+	,[Brand] = a.BrandID
 	,[Article] = a.Article
-	,[T1SubconName] = (select Abb from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
-	,[T2SubconName] =  (select top 1 Abb from(select Abb from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
-	,[ReportNo] = c.ReportNo
-	,[SubmitDate] = b.SubmitDate
-	,[ReceivedDate] = b.ReceivedDate
-	,[ReleaseDate] = b.ReleasedDate
+	,[T1SubconName] = (select Name from LocalSupp WITH (NOLOCK) where id = a.T1Subcon)
+	,[T2SubconName] = (select top 1 Name from(select Name from LocalSupp WITH (NOLOCK) where id = a.T2Supplier  union select [Abb] = AbbEN from Supp WITH (NOLOCK)where id = a.T2Supplier )a)
+	,[ReportNo] = a.ReportNo
+	,[ReceivedDate] = a.ReceivedDate
+	,[ReleaseDate] = a.ReleasedDate
 	,TestTemperature=null
 	,TestTime=null
 	,HTPlate
@@ -238,16 +233,15 @@ union all
 	,HT2ndPressnoreverse
 	,HT2ndPressreversed
 	,HTCoolingTime
-	,[Artwork] = c.ArtworkTypeID
-	,TypeofPrint
-	,[ArtworkColor] = c.ArtworkColor
-	,[FabricRefNo] = c.FabricRefNo
-	,[FabricColor] = c.FabricColor
-	,[Result] = c.Result
-	,c.Remark
+	,[Artwork] = a.ArtworkTypeID
+	,b.TypeofPrint
+	,[ArtworkColor] = b.ArtworkColor
+	,[FabricRefNo] = b.FabricRefNo
+	,[FabricColor] = b.FabricColor
+	,[Result] = b.Result
+	,b.Remark
 	 from MockupWash a
-	 left join MockupWash_Detail b on a.ID=b.ID
-	 left join MockupWash_Detail_Detail c on a.ID=c.ID
+	 left join MockupWash_Detail b on a.ReportNo = b.ReportNo
 ) d
 where 1=1
 {filter.JoinToString($"{Environment.NewLine} ")}
