@@ -64,7 +64,8 @@ AND (
     OR (ss.Inline BETWEEN @SewingDate1 AND @SewingDate2)
     -- 狀況 4: Offline 在 @SewingDate1 和 @SewingDate2 之間
     OR (ss.Offline BETWEEN @SewingDate1 AND @SewingDate2)
-)";
+)
+";
             }
 
             if (this.dateSewingInline.HasValue1)
@@ -91,6 +92,7 @@ SELECT
    ,ss.APSNo
    ,Inline = CAST(ss.Inline AS DATE)
    ,Offline = CAST(ss.Offline AS DATE)
+INTO #tmpSewingSchedule
 FROM SewingSchedule ss WITH (NOLOCK)
 WHERE ss.MDivisionID = '{this.txtMdivision1.Text}'
 AND ss.FactoryID = '{this.txtfactory1.Text}'
@@ -132,6 +134,52 @@ GROUP BY
    ,ss.FactoryID
    ,std.Date
 
+-- 規則同 Subcon P42 只取最後更新 TransferTime 的成套數
+SELECT
+    s.OrderID
+   ,s.SubProcessID
+   ,TransferTime = MAX(s.TransferTime)
+INTO #tmp_SetQtyBySubprocess_Last
+FROM SetQtyBySubprocess s WITH (NOLOCK)
+WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule t WHERE s.OrderID = t.OrderID)
+GROUP BY s.OrderID, s.SubProcessID
+
+-- OrderID, SubprocessID 加總
+SELECT
+    s.OrderID
+   ,s.SubprocessID
+   ,FinishedQtyBySet = SUM(s.FinishedQtyBySet)
+INTO #tmp_SetQtyBySubprocess
+FROM (
+    SELECT
+        s.OrderID
+       ,s.Article
+       ,s.SizeCode
+       ,s.SubprocessID
+       ,[FinishedQtyBySet] =
+            CASE
+                WHEN p.InOutRule = 2 OR p.InOutRule = 3 THEN MIN(s.OutQtyBySet)
+                WHEN p.InOutRule = 1 OR p.InOutRule = 4 THEN MIN(s.InQtyBySet)
+                ELSE MIN(s.FinishedQtyBySet)
+            END
+    FROM SetQtyBySubprocess s WITH (NOLOCK)
+    INNER JOIN SubProcess p WITH (NOLOCK) ON s.SubprocessID = p.Id
+    WHERE EXISTS (
+        SELECT 1
+        FROM #tmp_SetQtyBySubprocess_Last t
+        WHERE t.OrderID = s.OrderID
+        AND t.SubProcessID = s.SubProcessID
+        AND t.TransferTime = s.TransferTime
+    )
+    GROUP BY s.OrderID
+            ,s.Article
+            ,s.SizeCode
+            ,s.SubprocessID
+            ,p.InOutRule
+) s
+GROUP BY s.OrderID,s.SubprocessID
+
+--TO DO:把#tmp_SetQtyBySubprocess+SubprocessID 各成套欄位組上去
 SELECT
     ss.SewingLineID
    ,ss.OrderID
@@ -139,7 +187,6 @@ SELECT
    ,ss.SewingDate
    ,o.Qty
    ,StdQty = ISNULL(std.StdQty, 0)
-   --Cutting Output
    ,sdo.CuttingRemark
 FROM #tmpPkeyColumns ss
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = ss.OrderID
@@ -149,6 +196,7 @@ ORDER BY
     ss.SewingLineID
    ,ss.OrderID
    ,ss.FactoryID
+   ,ss.SewingDate
 
 DROP TABLE #tmpSewingSchedule
     ,#tmpPkeyColumns
