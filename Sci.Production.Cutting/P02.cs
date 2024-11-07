@@ -1387,14 +1387,7 @@ order by p.EditDate desc
             this.btnQtyBreakdown.Font = f;
             this.btnToExcel.Font = f;
             this.refresh.Font = f;
-        }
-
-        public void SetControlFontSize(Control parent, float fontSize)
-        {
-            foreach (Control control in parent.Controls)
-            {
-                control.Font = new Font(control.Font.FontFamily, fontSize);
-            }
+            this.btnPackingMethod.Font = f;
         }
 
         private void BtnAutoSeq_Click(object sender, EventArgs e)

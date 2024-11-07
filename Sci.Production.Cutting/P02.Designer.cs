@@ -679,7 +679,6 @@
             // 
             // btnPackingMethod
             // 
-            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnPackingMethod.Location = new System.Drawing.Point(832, 3);
             this.btnPackingMethod.Name = "btnPackingMethod";
             this.btnPackingMethod.Size = new System.Drawing.Size(145, 32);
