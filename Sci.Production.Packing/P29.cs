@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
