@@ -265,6 +265,9 @@ update p
 		, p.[FtyToClogTransit] = ISNULL(t.[Fty To Clog Transit], 0)
 		, p.[ClogToCFATansit] = ISNULL(t.[Clog To CFA Tansit], 0)
 		, p.[CFAToClogTransit] = ISNULL(t.[CFA To Clog Transit], 0)
+		, p.[Shortage] = ISNULL(t.[Shortage],0)
+		, p.[Original CustPO] = ISNULL(t.[Original CustPO],'')
+		, p.[Line Aggregator] = ISNULL(t.[Line Aggregator],'')
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -289,7 +292,8 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
-	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit])
+	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
+	, [Original CustPO], [Line Aggregator])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[FactoryID], '')
 	, [Delivery]
@@ -467,6 +471,9 @@ select ISNULL(t.[M], '')
 	, ISNULL([Fty To Clog Transit], 0)
     , ISNULL([Clog To CFA Tansit], 0)
     , ISNULL([CFA To Clog Transit], 0)
+	, ISNULL([Shortage],0)
+	, ISNULL([Original CustPO],'')
+	, ISNULL([Line Aggregator],'')
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -482,7 +489,7 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 
@@ -496,10 +503,9 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
             using (sqlConn)
             {
                 string sql = @"	
-update p 
-	set p.[ColumnValue] = ISNULL(t.[ColumnValue], 0)
-from P_PPICMasterList_Extend p 
-inner join #tmp t on t.OrderID = p.OrderID and t.ColumnName = p.ColumnName
+delete p
+  from P_PPICMasterList_Extend p
+  join #tmp t on t.OrderID = p.OrderID
 
 insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
 select OrderID, ColumnName, isnull(ColumnValue, 0)
@@ -525,7 +531,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
                 };
             }
 

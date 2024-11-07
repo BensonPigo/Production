@@ -523,12 +523,12 @@ WHERE a.ID ='{masterID}'
                 tmpOrder_QtyShip.Add("1=0");
             }
 
-            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
+            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
                 string chkHasPass = $@"
 SELECT 1 FROM Order_QtyShip WHERE ({tmpOrder_QtyShip.JoinToString(" OR ")})
 AND  (";
-                if (this.CurrentMaintain["Stage"].ToString() == "Final")
+                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal")
                 {
                     chkHasPass += $@"		CFAFinalInspectResult='Pass' OR CFAFinalInspectResult='Fail but release'  ";
                 }
@@ -553,7 +553,7 @@ UPDATE CFAInspectionRecord SET Status='Confirmed',EditName='{Sci.Env.User.UserID
                 updateCmd += $@"     
 UPDATE Order_QtyShip 
 SET CFAUpdateDate=GETDATE()";
-                if (this.CurrentMaintain["Stage"].ToString() == "Final")
+                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal")
                 {
                     updateCmd += $@"
 , CFAFinalInspectResult = '{this.CurrentMaintain["Result"].ToString()}'
@@ -615,7 +615,7 @@ WHERE {tmpOrder_QtyShip.JoinToString(" OR ")}
                 tmpOrder_QtyShip.Add("1=0");
             }
 
-            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
+            if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString() == "3rd party")
             {
                 updateCmd += $@"
 SELECT TOP 1 a.EditName
@@ -657,7 +657,7 @@ BEGIN
     UPDATE Order_QtyShip 
     SET CFAUpdateDate = GETDATE()";
 
-                if (this.CurrentMaintain["Stage"].ToString() == "Final")
+                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal")
                 {
                     updateCmd += $@"
         , CFAFinalInspectResult = 'Fail'
@@ -749,7 +749,7 @@ SELECT 1 FROM Orders WHERE ID='{this.topOrderID}' AND FtyGroup = '{Sci.Env.User.
                 List<string> cartons = this.topCarton.Split(',').ToList();
 
                 // Final、3rd party 且 IsCombinePO的話，檢查Sample單，不能輸入 Inspected Carton
-                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]) && (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "3rd party"))
+                if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]) && (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString() == "3rd party"))
                 {
                     if (this.IsSapmle && !MyUtility.Check.Empty(this.topCarton))
                     {
@@ -816,6 +816,7 @@ AND CTNStartNo IN ('{carontList.JoinToString("','")}')
                 if (cartons.Where(o => !MyUtility.Check.Empty(o)).Count() == 0 &&
                     (this.CurrentMaintain["Stage"].ToString() == "Stagger" ||
                     this.CurrentMaintain["Stage"].ToString() == "Final" ||
+                    this.CurrentMaintain["Stage"].ToString() == "Final Internal" ||
                     this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") &&
                     !this.IsSapmle &&
                     !MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
@@ -860,7 +861,7 @@ AND StaggeredCFAInspectionRecordID <> ''
                 }
 
                 // 檢查：過去是否有Pass或Release的紀錄
-                if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
+                if ((this.CurrentMaintain["Stage"].ToString().ToLower() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party") && (this.CurrentMaintain["Result"].ToString().ToLower() == "pass" || this.CurrentMaintain["Result"].ToString().ToLower() == "fail but release"))
                 {
                     List<string> tmpOrder_QtyShip = new List<string>();
                     foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
@@ -1463,7 +1464,7 @@ ORDER BY Cast([CTN#] as int)
 DROP TABLE #MixCTNStartNo 
 
 ";
-                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
+                if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
                 {
                     sqlCmd = $@"
 
@@ -1576,7 +1577,7 @@ AND CTNStartNo = @CTNStartNo
 AND (StaggeredCFAInspectionRecordID = @ID OR StaggeredCFAInspectionRecordID = '')
 
 ";
-                    if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
+                    if (this.CurrentMaintain["Stage"].ToString() == "Final" || this.CurrentMaintain["Stage"].ToString() == "Final Internal" || this.CurrentMaintain["Stage"].ToString().ToLower() == "3rd party")
                     {
                         sqlCmd = $@"
 SELECT * 
@@ -1733,7 +1734,7 @@ AND CFAIs3rdInspect = 1
             }
 
             // Final的時候Inspection result才能有Fail but release
-            if (stage == "Final")
+            if (stage == "Final" || stage == "Final Internal")
             {
                 // Final + IsCombinePO = 1，不允許輸入Carton
                 if (MyUtility.Convert.GetBool(this.CurrentMaintain["IsCombinePO"]))
@@ -1854,6 +1855,7 @@ SELECT STUFF(
                 "Inline",
                 "Stagger",
                 "Final",
+                "Final Internal",
                 "3rd party",
             });
             if (isCombinePO)
@@ -1861,9 +1863,11 @@ SELECT STUFF(
                 // 刪除，後面的Index了會往前推，所以同一個Index就好
                 this.comboStage.Items.RemoveAt(1);
                 this.comboStage.Items.RemoveAt(1);
+                this.comboStage.Items.RemoveAt(1);
             }
             else if (isSample)
             {
+                this.comboStage.Items.RemoveAt(2);
                 this.comboStage.Items.RemoveAt(2);
             }
 
@@ -1901,50 +1905,6 @@ SELECT STUFF(
         private void CalInsepectionCtn(bool isClickNew, bool isCombinePO)
         {
             string cmd = string.Empty;
-            /*
-            // 必須條件
-            if (MyUtility.Check.Empty(this.topOrderID) || MyUtility.Check.Empty(this.topSeq) || MyUtility.Check.Empty(this.CurrentMaintain["Stage"]) || MyUtility.Check.Empty(this.CurrentMaintain["AuditDate"]))
-            {
-                this.disInsCtn.Value = 0;
-                return;
-            }
-
-            // Final和3rd才需要計算
-            if (MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) != "Final" && MyUtility.Convert.GetString(this.CurrentMaintain["Stage"]) != "3rd party")
-            {
-                this.disInsCtn.Value = 0;
-                return;
-            }
-
-            if (isCombinePO)
-            {
-                this.disInsCtn.Value = null;
-                return;
-            }
-            */
-            // List<string> tmp = new List<string>();
-            // foreach (DataRow dr in this.CFAInspectionRecord_OrderSEQ.AsEnumerable().Where(o => o.RowState != DataRowState.Deleted))
-            // {
-            //    tmp.Add($@" (b.OrderID= '{dr["OrderID"]}' AND b.Seq = '{dr["Seq"]}') ");
-            // }
-
-            // if (!tmp.Any())
-            // {
-            //    tmp.Add("1=0");
-            // }
-
-// cmd = $@"
-// SELECT COUNT(1) + 1
-// FROM CFAInspectionRecord a
-// INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-// WHERE ( {tmp.JoinToString(" OR ")} )
-// AND Status = 'Confirmed'
-// AND Stage='{this.CurrentMaintain["Stage"]}'
-// AND AuditDate <= '{MyUtility.Convert.GetDate(this.CurrentMaintain["AuditDate"]).Value.ToString("yyyy/MM/dd")}'
-// AND a.ID  != '{this.CurrentMaintain["ID"]}'
-// ";
-
-// this.disInsCtn.Value = MyUtility.GetValue.Lookup(cmd);
         }
 
         private void ChkIsCombinePO_CheckedChanged(object sender, EventArgs e)

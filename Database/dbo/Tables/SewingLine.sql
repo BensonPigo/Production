@@ -17,6 +17,8 @@
     [DQSQtyPCTEditDate] DATETIME NULL, 
     [DQSWFTPCT] numeric(3, 1) CONSTRAINT [DF_SewingLine_DQSWFTPCT] DEFAULT ((0)) NOT NULL,
     [LineNmforReport] VARCHAR(5) CONSTRAINT [DF_SewingLine_LineNmforReport] NOT NULL DEFAULT (('')), 
+    [DQSTargetQty] INT NOT NULL DEFAULT ((0)), 
+    [Outsourcing] BIT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_SewingLine] PRIMARY KEY CLUSTERED ([ID] ASC, [FactoryID] ASC)
 );
 
@@ -103,3 +105,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'SewingLine',
     @level2type = N'COLUMN',
     @level2name = N'LineNmforReport'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'DQSTargetQty',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingLine',
+    @level2type = N'COLUMN',
+    @level2name = N'DQSTargetQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'外發廠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'SewingLine',
+    @level2type = N'COLUMN',
+    @level2name = N'Outsourcing'

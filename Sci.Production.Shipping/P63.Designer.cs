@@ -49,6 +49,8 @@
             this.btnImportGMTBooking = new Sci.Win.UI.Button();
             this.numDetailTotalQty = new Sci.Win.UI.NumericBox();
             this.gridCurrency = new Sci.Win.UI.Grid();
+            this.comboCompany = new Sci.Production.Class.ComboCompany(this.components);
+            this.label8 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -68,6 +70,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboCompany);
+            this.masterpanel.Controls.Add(this.label8);
             this.masterpanel.Controls.Add(this.gridCurrency);
             this.masterpanel.Controls.Add(this.numDetailTotalQty);
             this.masterpanel.Controls.Add(this.btnImportGMTBooking);
@@ -86,7 +90,7 @@
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.dateInvDate);
-            this.masterpanel.Size = new System.Drawing.Size(892, 182);
+            this.masterpanel.Size = new System.Drawing.Size(1165, 182);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateInvDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
@@ -106,21 +110,23 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportGMTBooking, 0);
             this.masterpanel.Controls.SetChildIndex(this.numDetailTotalQty, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridCurrency, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label8, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCompany, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Dock = System.Windows.Forms.DockStyle.Top;
             this.detailpanel.Location = new System.Drawing.Point(0, 182);
-            this.detailpanel.Size = new System.Drawing.Size(892, 155);
+            this.detailpanel.Size = new System.Drawing.Size(1165, 155);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1335, 142);
+            this.gridicon.Location = new System.Drawing.Point(2154, 142);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(892, 155);
+            this.detailgridcont.Size = new System.Drawing.Size(1165, 155);
             // 
             // detail2
             // 
@@ -134,12 +140,22 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(1165, 556);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.gridPOList);
+            this.detailcont.Size = new System.Drawing.Size(1165, 518);
             this.detailcont.Controls.SetChildIndex(this.masterpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.detailpanel, 0);
             this.detailcont.Controls.SetChildIndex(this.gridPOList, 0);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 518);
+            this.detailbtm.Size = new System.Drawing.Size(1165, 38);
             // 
             // browse
             // 
@@ -172,13 +188,13 @@
             this.gridPOList.RowTemplate.Height = 24;
             this.gridPOList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPOList.ShowCellToolTips = false;
-            this.gridPOList.Size = new System.Drawing.Size(892, 5);
+            this.gridPOList.Size = new System.Drawing.Size(1165, 174);
             this.gridPOList.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridPOList.TabIndex = 2;
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(27, 13);
+            this.label1.Location = new System.Drawing.Point(9, 13);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(117, 23);
             this.label1.TabIndex = 1;
@@ -186,7 +202,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(27, 43);
+            this.label2.Location = new System.Drawing.Point(9, 43);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(117, 23);
             this.label2.TabIndex = 2;
@@ -194,7 +210,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(27, 73);
+            this.label3.Location = new System.Drawing.Point(9, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(117, 23);
             this.label3.TabIndex = 3;
@@ -202,23 +218,23 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(332, 13);
+            this.label4.Location = new System.Drawing.Point(684, 12);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(75, 23);
+            this.label4.Size = new System.Drawing.Size(59, 23);
             this.label4.TabIndex = 4;
             this.label4.Text = "TTL Q\'ty";
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(332, 43);
+            this.label5.Location = new System.Drawing.Point(302, 43);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.Size = new System.Drawing.Size(110, 23);
             this.label5.TabIndex = 5;
             this.label5.Text = "Handle";
             // 
             // label6
             // 
-            this.label6.Location = new System.Drawing.Point(332, 73);
+            this.label6.Location = new System.Drawing.Point(302, 73);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(75, 23);
             this.label6.TabIndex = 6;
@@ -226,7 +242,7 @@
             // 
             // label7
             // 
-            this.label7.Location = new System.Drawing.Point(27, 103);
+            this.label7.Location = new System.Drawing.Point(9, 103);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(117, 23);
             this.label7.TabIndex = 7;
@@ -235,10 +251,10 @@
             // lblStatus
             // 
             this.lblStatus.BackColor = System.Drawing.Color.Transparent;
-            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold);
-            this.lblStatus.Location = new System.Drawing.Point(752, 6);
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 21F, System.Drawing.FontStyle.Bold);
+            this.lblStatus.Location = new System.Drawing.Point(851, 6);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(345, 36);
+            this.lblStatus.Size = new System.Drawing.Size(309, 36);
             this.lblStatus.TabIndex = 8;
             this.lblStatus.TextStyle.Color = System.Drawing.Color.Red;
             // 
@@ -247,7 +263,7 @@
             this.displayID.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
             this.displayID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayID.Location = new System.Drawing.Point(147, 13);
+            this.displayID.Location = new System.Drawing.Point(129, 13);
             this.displayID.Name = "displayID";
             this.displayID.Size = new System.Drawing.Size(164, 23);
             this.displayID.TabIndex = 9;
@@ -257,28 +273,28 @@
             this.displayApproveName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveName.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvName", true));
             this.displayApproveName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveName.Location = new System.Drawing.Point(410, 73);
+            this.displayApproveName.Location = new System.Drawing.Point(380, 73);
             this.displayApproveName.Name = "displayApproveName";
             this.displayApproveName.Size = new System.Drawing.Size(164, 23);
-            this.displayApproveName.TabIndex = 11;
+            this.displayApproveName.TabIndex = 4;
             // 
             // displayApproveDate
             // 
             this.displayApproveDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayApproveDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "FINMgrApvDate", true));
             this.displayApproveDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayApproveDate.Location = new System.Drawing.Point(580, 73);
+            this.displayApproveDate.Location = new System.Drawing.Point(550, 73);
             this.displayApproveDate.Name = "displayApproveDate";
             this.displayApproveDate.Size = new System.Drawing.Size(164, 23);
-            this.displayApproveDate.TabIndex = 12;
+            this.displayApproveDate.TabIndex = 5;
             // 
             // dateInvDate
             // 
             this.dateInvDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InvDate", true));
-            this.dateInvDate.Location = new System.Drawing.Point(147, 43);
+            this.dateInvDate.Location = new System.Drawing.Point(129, 43);
             this.dateInvDate.Name = "dateInvDate";
             this.dateInvDate.Size = new System.Drawing.Size(130, 23);
-            this.dateInvDate.TabIndex = 14;
+            this.dateInvDate.TabIndex = 0;
             this.dateInvDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateInvDate_Validating);
             // 
             // numExchangeRate
@@ -286,7 +302,7 @@
             this.numExchangeRate.BackColor = System.Drawing.Color.White;
             this.numExchangeRate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ExchangeRate", true));
             this.numExchangeRate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numExchangeRate.Location = new System.Drawing.Point(147, 73);
+            this.numExchangeRate.Location = new System.Drawing.Point(129, 73);
             this.numExchangeRate.Name = "numExchangeRate";
             this.numExchangeRate.NullValue = new decimal(new int[] {
             0,
@@ -294,7 +310,7 @@
             0,
             0});
             this.numExchangeRate.Size = new System.Drawing.Size(130, 23);
-            this.numExchangeRate.TabIndex = 15;
+            this.numExchangeRate.TabIndex = 1;
             this.numExchangeRate.Value = new decimal(new int[] {
             0,
             0,
@@ -304,10 +320,10 @@
             // 
             // btnExchangeRate
             // 
-            this.btnExchangeRate.Location = new System.Drawing.Point(279, 69);
+            this.btnExchangeRate.Location = new System.Drawing.Point(261, 69);
             this.btnExchangeRate.Name = "btnExchangeRate";
             this.btnExchangeRate.Size = new System.Drawing.Size(32, 30);
-            this.btnExchangeRate.TabIndex = 16;
+            this.btnExchangeRate.TabIndex = 9;
             this.btnExchangeRate.Text = "...";
             this.btnExchangeRate.UseVisualStyleBackColor = true;
             this.btnExchangeRate.Click += new System.EventHandler(this.BtnExchangeRate_Click);
@@ -317,21 +333,21 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(147, 103);
+            this.editRemark.Location = new System.Drawing.Point(129, 103);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
             this.editRemark.Size = new System.Drawing.Size(597, 73);
-            this.editRemark.TabIndex = 17;
+            this.editRemark.TabIndex = 2;
             // 
             // btnImportGMTBooking
             // 
             this.btnImportGMTBooking.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnImportGMTBooking.Location = new System.Drawing.Point(759, 144);
+            this.btnImportGMTBooking.Location = new System.Drawing.Point(732, 144);
             this.btnImportGMTBooking.Name = "btnImportGMTBooking";
-            this.btnImportGMTBooking.Size = new System.Drawing.Size(17, 30);
-            this.btnImportGMTBooking.TabIndex = 18;
+            this.btnImportGMTBooking.Size = new System.Drawing.Size(317, 30);
+            this.btnImportGMTBooking.TabIndex = 8;
             this.btnImportGMTBooking.Text = "Import Garment Booking";
             this.btnImportGMTBooking.UseVisualStyleBackColor = true;
             this.btnImportGMTBooking.Click += new System.EventHandler(this.BtnImportGMTBooking_Click);
@@ -341,7 +357,7 @@
             this.numDetailTotalQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numDetailTotalQty.IsSupportEditMode = false;
-            this.numDetailTotalQty.Location = new System.Drawing.Point(410, 13);
+            this.numDetailTotalQty.Location = new System.Drawing.Point(746, 12);
             this.numDetailTotalQty.Name = "numDetailTotalQty";
             this.numDetailTotalQty.NullValue = new decimal(new int[] {
             0,
@@ -349,8 +365,8 @@
             0,
             0});
             this.numDetailTotalQty.ReadOnly = true;
-            this.numDetailTotalQty.Size = new System.Drawing.Size(130, 23);
-            this.numDetailTotalQty.TabIndex = 19;
+            this.numDetailTotalQty.Size = new System.Drawing.Size(102, 23);
+            this.numDetailTotalQty.TabIndex = 6;
             this.numDetailTotalQty.Value = new decimal(new int[] {
             0,
             0,
@@ -372,7 +388,7 @@
             this.gridCurrency.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridCurrency.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridCurrency.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridCurrency.Location = new System.Drawing.Point(759, 45);
+            this.gridCurrency.Location = new System.Drawing.Point(732, 45);
             this.gridCurrency.Name = "gridCurrency";
             this.gridCurrency.ReadOnly = true;
             this.gridCurrency.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -380,9 +396,34 @@
             this.gridCurrency.RowTemplate.Height = 24;
             this.gridCurrency.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCurrency.ShowCellToolTips = false;
-            this.gridCurrency.Size = new System.Drawing.Size(65, 93);
+            this.gridCurrency.Size = new System.Drawing.Size(365, 93);
             this.gridCurrency.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
-            this.gridCurrency.TabIndex = 20;
+            this.gridCurrency.TabIndex = 7;
+            // 
+            // comboCompany
+            // 
+            this.comboCompany.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboCompany.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
+            this.comboCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboCompany.FormattingEnabled = true;
+            this.comboCompany.IsOrderCompany = false;
+            this.comboCompany.IsSupportUnselect = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.Location = new System.Drawing.Point(415, 12);
+            this.comboCompany.Name = "comboCompany";
+            this.comboCompany.OldText = "";
+            this.comboCompany.ReadOnly = true;
+            this.comboCompany.Size = new System.Drawing.Size(263, 24);
+            this.comboCompany.TabIndex = 3;
+            this.comboCompany.SelectedValueChanged += new System.EventHandler(this.ComboCompany_SelectedValueChanged);
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(302, 13);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(110, 23);
+            this.label8.TabIndex = 96;
+            this.label8.Text = "Order Company";
             // 
             // P63
             // 
@@ -390,6 +431,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1173, 618);
+            this.DefaultControl = "dateInvDate";
+            this.DefaultControlForEdit = "dateInvDate";
             this.GridAlias = "KHCMTInvoice_Detail";
             this.GridNew = 0;
             this.GridUniqueKey = "Invno";
@@ -449,5 +492,7 @@
         private Win.UI.NumericBox numDetailTotalQty;
         private Win.UI.ListControlBindingSource gridPOListbs;
         private Win.UI.Grid gridCurrency;
+        private Class.ComboCompany comboCompany;
+        private Win.UI.Label label8;
     }
 }

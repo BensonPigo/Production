@@ -187,6 +187,16 @@ namespace Sci.Production.PPIC
             base.OnDetailEntered();
             if (!this.EditMode)
             {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
+            if (!this.EditMode)
+            {
                 this.ControlButton();
             }
 
@@ -303,18 +313,20 @@ where s.Ukey = '{0}'",
 
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            sqlCmd = string.Format("select POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            sqlCmd = string.Format("select PCSMR,POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out DataRow pOData))
             {
                 this.txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
                 this.txttpeuser4.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POHandle"]);
                 this.PcHandleText.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCHandle"]);
+                this.PCSMRText.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["PCSMR"]);
             }
             else
             {
                 this.txttpeuser3.DisplayBox1Binding = string.Empty;
                 this.txttpeuser4.DisplayBox1Binding = string.Empty;
                 this.PcHandleText.DisplayBox1Binding = string.Empty;
+                this.PCSMRText.DisplayBox1Binding = string.Empty;
             }
 
             #endregion
@@ -449,27 +461,10 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                 if ((bool)this.CurrentMaintain["IsForecast"])
                 {
                     this.labelBuyMonth.Text = "Est. Download Date";
-
-                    // 加寬
-                    this.labelBuyMonth.Size = new Size(119, 21);
-
-                    // 其餘控制項往右推
-                    this.displayBuyMonth.Location = new System.Drawing.Point(697, 139);
-                    this.labelOrderQty.Location = new System.Drawing.Point(861, 112);
-                    this.numOrderQty.Location = new System.Drawing.Point(926, 112);
-                    this.labelFOCQty.Location = new System.Drawing.Point(861, 139);
-                    this.numFOCQty.Location = new System.Drawing.Point(926, 139);
                 }
                 else
                 {
                     this.labelBuyMonth.Text = "Buy Month";
-                    this.labelBuyMonth.Size = new Size(65, 21);
-
-                    this.displayBuyMonth.Location = new System.Drawing.Point(644, 139);
-                    this.labelOrderQty.Location = new System.Drawing.Point(815, 112);
-                    this.numOrderQty.Location = new System.Drawing.Point(880, 112);
-                    this.labelFOCQty.Location = new System.Drawing.Point(815, 139);
-                    this.numFOCQty.Location = new System.Drawing.Point(880, 139);
                 }
             }
 
@@ -488,6 +483,9 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.DoNewAfter();
         }
@@ -516,6 +514,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
         {
             base.ClickEditAfter();
             this.txtpaytermar1.TextBox1.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["LocalOrder"]).ToUpper() == "FALSE")
             {
                 // 非Local訂單時只能修改FactoryID
@@ -557,6 +556,13 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
                     return false;
                 }
                 #region 檢查必輸欄位
+                if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    MyUtility.Msg.WarningBox("Order Company can't empty!!");
+                    this.txtStyle.Focus();
+                    return false;
+                }
+
                 if (MyUtility.Check.Empty(this.CurrentMaintain["StyleID"]))
                 {
                     MyUtility.Msg.WarningBox("Style# can't empty!!");
@@ -840,7 +846,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             }
 
             IList<DataRow> styleData;
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 ";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey,SMR = BulkSMR,MRHandle = BulkMRHandle,LocalMR from Style WITH (NOLOCK) where Junk = 0 ";
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sqlCmd, "15,8,10,28,5,7,7,6", string.Empty, "Style,Season,Brand,Description,CdCode,CPU,Unit,Ukey", columndecimals: "0,0,0,0,0,3,0,0")
             {
                 Size = new Size(950, 500),
@@ -862,7 +868,12 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 this.CurrentMaintain["StyleUnit"] = styleData[0]["StyleUnit"];
                 this.CurrentMaintain["StyleUkey"] = styleData[0]["Ukey"];
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData[0]["Description"]);
+
+                this.CurrentMaintain["SMR"] = styleData[0]["SMR"];
+                this.CurrentMaintain["MRHandle"] = styleData[0]["MRHandle"];
+                this.CurrentMaintain["LocalMR"] = styleData[0]["LocalMR"];
                 this.chkpopup = true;
+
             }
         }
 
@@ -915,6 +926,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
             this.CurrentMaintain["StyleUnit"] = string.Empty;
             this.CurrentMaintain["StyleUkey"] = 0;
             this.displayDescription.Value = string.Empty;
+            this.CurrentMaintain["SMR"] = string.Empty;
+            this.CurrentMaintain["MRHandle"] = string.Empty;
+            this.CurrentMaintain["LocalMR"] = string.Empty;
         }
 
         private void SetStyleColumn(string style)
@@ -928,7 +942,7 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 sp1,
             };
 
-            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
+            string sqlCmd = "select ID,SeasonID,BrandID,Description,CdCodeID,CPU,StyleUnit,Ukey,SMR = BulkSMR,MRHandle = BulkMRHandle,LocalMR from Style WITH (NOLOCK) where Junk = 0 and ID = @styleid";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out System.Data.DataTable styleData);
             if (!result || styleData.Rows.Count <= 0)
             {
@@ -953,6 +967,9 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                 this.CurrentMaintain["StyleUnit"] = styleData.Rows[0]["StyleUnit"];
                 this.CurrentMaintain["StyleUkey"] = styleData.Rows[0]["Ukey"];
                 this.displayDescription.Value = MyUtility.Convert.GetString(styleData.Rows[0]["Description"]);
+                this.CurrentMaintain["SMR"] = styleData.Rows[0]["SMR"];
+                this.CurrentMaintain["MRHandle"] = styleData.Rows[0]["MRHandle"];
+                this.CurrentMaintain["LocalMR"] = styleData.Rows[0]["LocalMR"];
             }
         }
 

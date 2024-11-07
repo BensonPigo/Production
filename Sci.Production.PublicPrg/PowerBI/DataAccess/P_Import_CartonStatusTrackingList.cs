@@ -32,6 +32,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     MDivisionID = string.Empty,
                     FactoryID = string.Empty,
                     ExcludeSisterTransferOut = false,
+                    IsBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetCartonStatusTrackingList(model);
@@ -139,7 +140,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

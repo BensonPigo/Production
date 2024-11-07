@@ -281,11 +281,11 @@ FROM Pms_To_Trade.dbo.MachineIn, Production.dbo.SciMachine_MachineIn_Detail AS M
 WHERE MachineIn.ID = MachIn2.ID ORDER BY MachineIn.ID 
 
 -----------------------------------Machine-------------------------------------
-select LocationM, MachineGroupID 
+select LocationM, MachineGroupID
 INTO Machine
-from Production.dbo.SciMachine_Machine
-where Status in ('Good', 'Repairing', 'Lent')
-and Junk = 0
+from Production.dbo.SciMachine_Machine m
+where m.Status in ('Good', 'Repairing', 'Lent')
+and m.Junk = 0
 group by LocationM, MachineGroupID
 
 
@@ -352,8 +352,11 @@ select
   ,SciMachine_Machine.ArriveDate
   ,UsageTime = concat(ISNULL(ym.UsageTime,0)/360,'Y',(ISNULL(ym.UsageTime,0)%360)/30,'M')
   ,SciMachine_MachinePending_Detail.MachineDisposeID
+  ,ObtainedDate  = a.CreateDate
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
+LEFT JOIN  Production.dbo.SciMachine_Machine m ON m.ID = SciMachine_MachinePending_Detail.MachineID
+LEFT JOIN FixedAssets.dbo.Asset a on iif(LEN(m.FAID) > 0,LEFT(m.FAID,LEN(m.FAID)-4),'') = a.ID
 inner join (
 	---- ���F�ӽ� Machine to Dispose ���ݥx�_ Approved����ƥH�~
 	---- �A�N30�Ѥ��q�x�_ approve ��, �q�u�t���� Dispose��MachinePending detail��ƶǦ^�x�_��s Result , MachineDisposeID

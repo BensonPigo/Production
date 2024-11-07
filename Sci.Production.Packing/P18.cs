@@ -1,25 +1,20 @@
 ﻿using Ict;
+using Ict.Win;
 using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.Class;
+using Sci.Production.Prg;
+using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Windows.Forms;
-using Sci.Production.Class;
 using System.Linq;
-using Ict.Win;
 using System.Linq.Dynamic;
-using Sci.Win.Tools;
-using System.Transactions;
 using System.Threading.Tasks;
-using Sci.Production.Automation;
-using org.apache.pdfbox.io;
-using System.Data.SqlTypes;
-using System.Windows.Forms.VisualStyles;
-using System.Threading;
-using System.Security.AccessControl;
-using Sci.Production.Prg;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
@@ -104,6 +99,7 @@ Where Junk = 0
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(15))
                 .Text("QtyPerCTN", header: "Qty", width: Widths.AnsiChars(12))
                 .Text("ScanQty", header: "Scanned Qty", width: Widths.AnsiChars(12))
+                .Text("HaulingScanTime", header: "Hauling Scan Time", width: Widths.AnsiChars(12))
                 .Text("PassName", header: "Scanned by", width: Widths.AnsiChars(12))
                 .Text("ActCTNWeight", header: "Actual CTN# Weight", width: Widths.AnsiChars(12));
 
@@ -290,7 +286,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
         private void TxtScanCartonSP_Validating(object sender, CancelEventArgs e)
         {
             DualResult result;
-                this.PackingListID = string.Empty;
+            this.PackingListID = string.Empty;
             this.CTNStarNo = string.Empty;
 
             // 掃碼階段btnCalibrationList 不能啟用
@@ -327,7 +323,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
             }
 
             // 換箱清空更新barcode字串
-            this.upd_sql_barcode = string.Empty; 
+            this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
 
             this.ClearAll("SCAN");
@@ -397,7 +393,7 @@ select top 1 * from MDCalibrationList where MachineID = '{this.MachineID}' and C
                 DualResult result_load = this.LoadScanDetail(0);
             }
             #endregion
-            }
+        }
 
         private bool LoadDatas()
         {
@@ -436,12 +432,13 @@ select distinct
     [PKseq] = pd.Seq,
     o.Dest,
     isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
-    isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+    isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,120), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
     ,p.Remark
 	,pd.Ukey
 	,[IsFirstTimeScan] = Cast(1 as bit)
     ,o.CustCDID
     ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
+    ,[HaulingScanTime] = (SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC)
 from PackingList_Detail pd WITH (NOLOCK)
 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
@@ -474,7 +471,7 @@ where p.Type in ('B','L')
             {
                 MyUtility.Msg.WarningBox("Please enter Paircode first.");
                 return true;
-            } 
+            }
 
             return false;
         }
@@ -631,7 +628,7 @@ where p.Type in ('B','L')
             }
 
             // 換箱清空更新barcode字串
-            this.upd_sql_barcode = string.Empty; 
+            this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
         }
 
@@ -773,6 +770,7 @@ INSERT INTO [dbo].[PackingScan_History]
                                                               StyleId = g.Key.StyleID,
                                                               Dest = g.Key.Dest,
                                                               Remark = g.Key.Remark,
+                                                              HaulingScanTime = g.Select(st => st.Field<string>("HaulingScanTime")).FirstOrDefault(),
                                                               OrderID = string.Join("/", g.Select(st => st.Field<string>("OrderID")).Distinct().ToArray()),
                                                               Article = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("Article")).ToArray()),
                                                               SizeCode = string.Join("/", g.OrderBy(o => o.Field<string>("Article")).ThenBy(o => o.Field<string>("SizeCode")).ThenBy(o => o.Field<long>("Ukey")).Select(st => st.Field<string>("SizeCode")).ToArray()),
@@ -1458,6 +1456,8 @@ WHERE o.ID='{dr.OrderID}'");
             /// CustCD
             /// </summary>
             public string CustCD { get; set; }
+
+            public string HaulingScanTime { get; set; }
         }
 
         /// <inheritdoc/>
@@ -1651,7 +1651,7 @@ drop table #tmpUpdatedID
             }
 
             // 換箱清空更新barcode字串
-            this.upd_sql_barcode = string.Empty; 
+            this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
             this.ClearAll("SCAN");
 
@@ -1662,7 +1662,7 @@ drop table #tmpUpdatedID
             }
 
             // 換箱清空更新barcode字串
-            this.upd_sql_barcode = string.Empty; 
+            this.upd_sql_barcode = string.Empty;
             this.intTmpNo = 0;
             this.ClearAll("SCAN");
             #region 檢查是否有資料，三個角度
@@ -1699,12 +1699,13 @@ drop table #tmpUpdatedID
                                            [PKseq] = pd.Seq,
                                            o.Dest,
                                            isnull(pd.ActCTNWeight,0) as ActCTNWeight, 
-                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,112), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
+                                           isnull(iif(ps.name is null, convert(nvarchar(10),pd.ScanEditDate,120), ps.name+'-'+convert(nvarchar(10),pd.ScanEditDate,120)),'') as PassName
                                            ,p.Remark
 										   ,pd.Ukey
 										   ,[IsFirstTimeScan] = Cast(1 as bit)
                                            ,o.CustCDID
                                            ,[MDStatus] = IIF(pd.ScanPackMDDate is null, '1st MD', '2rd MD')
+                                           ,[HaulingScanTime] = (SELECT TOP 1 FORMAT(CTN.AddDate, 'yyyy-MM-dd HH:mm') FROM CTNHauling CTN WITH(NOLOCK) WHERE CTN.PackingListID = pd.ID AND CTN.OrderID = pd.OrderID AND CTN.CTNStartNo = pd.CTNStartNo ORDER BY CTN.AddDate DESC)
                                 from PackingList_Detail pd WITH (NOLOCK)
                                 inner join PackingList p WITH (NOLOCK) on p.ID = pd.ID
                                 inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID

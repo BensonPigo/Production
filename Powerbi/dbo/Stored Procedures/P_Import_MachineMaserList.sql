@@ -34,6 +34,7 @@ select [YYYYMM] = ''''' + @CreateYYYYMM + '''''
 	   , r.CDate as [Repair Start Date]
 	   , mc.EstFinishRepairDate
 	   , Mc.ArriveDate
+	   , [ObtainedDate] = A.CreateDate
 	   , Mc.LastTransferDate
 	   , LendTo = (Mc.LendTo+''''-''''+LS.Abb)
 	   , Mc.LendDate
@@ -50,6 +51,7 @@ left join Machine.dbo.MachineMasterGroup mmg with(nolock) on mmg.id = MachineGro
 left join Machine.dbo.MachineRepair r with(nolock) on Mc.id =r.MachineID and r.Status = ''''Repairing''''
 left join Machine.dbo.MachineIn_Detail_Inspect midi with(nolock) on mc.ID = midi.MachineID and midi.Result = ''''P''''
 left join Machine.dbo.MachinePO_Detail mpd with(nolock) on mpd.ID = midi.MachinePOID and mpd.Seq1 = midi.SEQ1 and mpd.Seq2 = midi.SEQ2
+left join FixedAssets.dbo.Asset A on iif(LEN(Mc.FAID) > 0,LEFT(Mc.FAID,LEN(Mc.FAID)-4),'''''''') = A.ID
 outer apply(
     select top 1 mp.CyApvDate 
     from Machine.dbo.MachinePending mp with(nolock)
@@ -83,6 +85,7 @@ insert into P_MachineMasterList(Month
 								,RepairStartDate
 								,EstFinishRepairDate
 								,MachineArrivalDate
+								,ObtainedDate
 								,TransferDate
 								,LendTo
 								,LendDate

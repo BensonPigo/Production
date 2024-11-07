@@ -26,7 +26,9 @@
 	[Gender] [varchar](10) NULL,
 	[Construction] [nvarchar](50) NULL,
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
- CONSTRAINT [PK_P_DQSDefect_Summary] PRIMARY KEY CLUSTERED 
+ [DefectQty] INT NOT NULL DEFAULT 0, 
+    [InspectionDate] DATE NULL, 
+    CONSTRAINT [PK_P_DQSDefect_Summary] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
 	[FactoryID] ASC
@@ -34,3 +36,20 @@
 ) ON [PRIMARY]
 
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Defect數量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_DQSDefect_Summary',
+    @level2type = N'COLUMN',
+    @level2name = N'DefectQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'實際產出日 (Last Inspection Date)',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_DQSDefect_Summary',
+    @level2type = N'COLUMN',
+    @level2name = N'InspectionDate'

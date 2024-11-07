@@ -126,7 +126,7 @@ select
 	, [FactoryID] = isnull([Factory],'')
 	, [Fabrication] = isnull([Fabrication],'')
 	, [Est.Cutting Date]
-	, [ActCuttingDate] = null
+	, [ActCuttingDate] = null 
 	, [Earliest Sewing Inline]
 	, [POID]=isnull([Master SP#],'')
 	, [BrandID] = isnull([Brand],'')
@@ -143,8 +143,8 @@ select
 	, [LackingLayers] = 0
 	, [Ratio] = isnull([Ratio],'')
 	, [Consumption] = isnull([Consumption],0)
-	, [ActConsOutput] = isnull([Act. Cons. Output],'')
-	, [BalanceCons] = isnull([Balance Cons.],'')
+	, [ActConsOutput] = isnull([Act. Cons. Output], 0.0)
+	, [BalanceCons] = isnull([Balance Cons.], 0.0)
 	, [MarkerName] = isnull([Marker Name],'')
 	, [MarkerNo] = isnull([Marker No.],'')
 	, [MarkerLength] = isnull([Marker Length],'')
@@ -248,7 +248,7 @@ BEGIN
 	values('P_CuttingScheduleOutputList', getdate())
 END
 ";
-                    result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
+                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
                     if (!result.Result)
                     {
                         throw result.GetException();

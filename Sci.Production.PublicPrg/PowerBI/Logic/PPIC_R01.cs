@@ -68,6 +68,11 @@ exec dbo.GetSewingLineScheduleData  @Inline,
                 return resultReport;
             }
 
+            if (!model.IsPowerBI)
+            {
+                dataTables[0].Columns.Remove("LastDownloadAPSDate");
+            }
+
             resultReport.DtArr = dataTables;
             return resultReport;
         }
@@ -89,6 +94,9 @@ exec dbo.GetSewingLineScheduleData  @Inline,
                 new SqlParameter("@SciDeliveryTo", SqlDbType.Date) { Value = (object)model.SciDeliveryTo ?? DBNull.Value },
                 new SqlParameter("@BrandID", SqlDbType.VarChar, 8) { Value = model.BrandID },
                 new SqlParameter("@SubProcess", SqlDbType.VarChar, 20) { Value = model.SubProcess },
+                new SqlParameter("@IsPowerBI", SqlDbType.Bit) { Value = model.IsPowerBI },
+                new SqlParameter("@sEditDate", SqlDbType.Date) { Value = DateTime.Now.AddDays(-7) },
+                new SqlParameter("@eEditDate", SqlDbType.Date) { Value = DateTime.Now.AddDays(1) },
             };
 
             string sql = @"
@@ -103,8 +111,10 @@ exec dbo.PPIC_R01_SewingLineScheduleBySP  @MDivisionID,
                                     @SciDeliveryFrom,
                                     @SciDeliveryTo,
                                     @BrandID,
-                                    @SubProcess
-";
+                                    @SubProcess,
+                                    @sEditDate,
+                                    @eEditDate,
+                                    @IsPowerBI";
             Base_ViewModel resultReport = new Base_ViewModel
             {
                 Result = this.DBProxy.Select("Production", sql, listPar, out DataTable dataTable),

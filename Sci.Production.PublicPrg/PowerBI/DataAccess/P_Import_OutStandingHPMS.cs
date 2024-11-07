@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -126,7 +127,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

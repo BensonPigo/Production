@@ -172,4 +172,51 @@ BEGIN
 		) b
 	) c
 	where c.ID = ChgOver.ID
+
+	----------------ChgOver_Check-------------------------------
+	SELECT ID, Category, Type, FactoryID, Inline
+	INTO #tmp
+	FROM ChgOver co WITH (NOLOCK)
+	WHERE (SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
+
+	DELETE CC
+	FROM ChgOver_Check CC
+	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID
+	
+	INSERT INTO ChgOver_Check
+	(
+		[ID]
+		,[DayBe4Inline]
+		,[BaseOn]
+		,[ChgOverCheckListID]
+		,[DeadLine]
+		,[CompletionDate]
+		,[Remark]
+		,[No]
+		,[Checked]
+		,[LeadTime]
+		,[EditName]
+		,[EditDate]
+		,[ResponseDep]
+	)
+	SELECT
+	[ID] = T.ID
+	,[DayBe4Inline] = 0
+	,[BaseOn] = 0
+	,[ChgOverCheckListID] = ISNULL(CC.ID,0) 
+	,[DeadLine] = dbo.CalculateWorkDate(T.Inline, -CCD.LeadTime, T.FactoryID)
+	,[CompletionDate] = NULL
+	,[Remaek] = ''
+	,[No] = cb.[NO]
+	,[Checked] = 0
+	,[Leadtime] = ISNULL(CCD.LeadTime,0)
+	,[EditName] = ''
+	,[EditDate] = NULL
+	,[ResponseDep] = ISNULL(CCD.ResponseDep,'')
+	FROM #TMP T WITH(NOLOCK)
+	INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	INNER JOIN ChgOverCheckList_Detail CCD ON CCD.ID = CC.ID
+	INNER JOIN ChgOverCheckListBase cb with (nolock) on CCD.ChgOverCheckListBaseID = cb.ID
+
+	DROP TABLE #tmp
 END

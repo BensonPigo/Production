@@ -2617,6 +2617,7 @@ SET
       ,a.AddDate	      = b.AddDate	
       ,a.EditName	      = isnull(b.EditName	 ,'')
       ,a.EditDate	      =b.EditDate	
+      ,a.IsOrderCompany	  = isnull(b.IsOrderCompany	 ,0)
 
 from Production.dbo.Company as a inner join Trade_To_Pms.dbo.Company as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
@@ -2640,7 +2641,7 @@ INSERT INTO Production.dbo.Company(
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,IsOrderCompany
 )
 select 
        isnull(ID		,'')
@@ -2662,6 +2663,7 @@ select
       ,AddDate
       ,isnull(EditName  ,'')
       ,EditDate
+      ,isnull(IsOrderCompany,0)
 from Trade_To_Pms.dbo.Company as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Company as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2767,7 +2769,8 @@ on t.type=s.type and t.id=s.id
 		t.Name= isnull( s.Name,				 ''),
 		t.RealLength= isnull( s.RealLength,	 0),
 		t.Description= isnull( s.Description,''),
-		t.Seq= isnull( s.Seq				 ,0)
+		t.Seq= isnull( s.Seq				 ,0),
+		t.Conditions = isnull(s.Conditions,'')
 	when not matched by target then
 		insert(Type
 				,ID
@@ -2775,13 +2778,15 @@ on t.type=s.type and t.id=s.id
 				,RealLength
 				,Description
 				,Seq
+				,Conditions
 				)
 						values(isnull(s.Type,''),
 				isnull(s.ID,				 ''),
 				isnull(s.Name,				 ''),
 				isnull(s.RealLength,		 0),
 				isnull(s.Description,		 ''),
-				isnull(s.Seq				 ,0)
+				isnull(s.Seq				 ,0),
+				isnull(s.Conditions,'')
 				)
 	when not matched by source then
 		delete;

@@ -466,6 +466,8 @@ SELECT
    ,o.HangerPack
    ,o.Customize1
    ,o.CustPONo
+   ,o.Customize4
+   ,o.Customize5
    ,o.VasShas
    ,o.MnorderApv
    ,o.MnorderApv2
@@ -528,6 +530,8 @@ SELECT
    ,o.StyleUnit
    ,o.SubconInType
    ,o.isForecast
+   ,o.GMTComplete
+   ,o.LocalMR
 INTO #tmpOrders
 FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
@@ -966,6 +970,8 @@ SELECT
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
    ,[PONO] = o.CustPONo
+   ,[Original CustPO] = o.Customize4
+   ,[Line Aggregator] = o.Customize5
    ,[VAS/SHAS] = IIF(o.VasShas = 1, 'Y', '')
    ,[VAS/SHAS Apv.] = o.MnorderApv2
    ,[VAS/SHAS Cut Off Date] = FORMAT(DATEADD(DAY, -30, GetMinDate.minDate), 'yyyy/MM/dd')
@@ -993,6 +999,7 @@ SELECT
    ,[Qty] = O.Qty
    ,[FOC Qty] = o.FOCQty
    ,[Total CPU] = o.CPU * o.Qty * o.CPUFactor
+   ,[Shortage] = iif(o.GMTComplete ='S',o.Qty - GetPulloutData.Qty,0)
    ,[Sew_Qty -- TOP] = ISNULL(#tmp_sewDetial.SewQtyTop, 0)
    ,[Sew_Qty -- Bottom] = ISNULL(#tmp_sewDetial.SewQtyBottom, 0)
    ,[Sew_Qty -- Inner] = ISNULL(#tmp_sewDetial.SewQtyInner, 0)
@@ -1059,6 +1066,8 @@ SELECT
    ,[PCHandle Name] = tp5.Name
    ,[MCHandle] = o.MCHandle
    ,[MCHandle Name] = p1.Name
+   ,[LocalMR] = o.LocalMR
+   ,[LocalMR Name] = p2.Name
    ,[DoxType] = o.DoxType
    ,[Packing CTN] = ISNULL(pld.PackingCTN, 0)
    ,[TTLCTN] = ISNULL(pld.TotalCTN, 0)
@@ -1123,6 +1132,14 @@ LEFT JOIN TPEPass1 tp3 WITH (NOLOCK) ON PO.POSMR = tp3.ID
 LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
 LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
 LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
+LEFT JOIN Pass1 p2 WITH (NOLOCK) ON o.LocalMR = p2.ID
+outer apply (
+  select Qty=sum(pd.ShipQty)
+  from PackingList p, PackingList_Detail pd
+  where p.ID = pd.ID
+  and p.PulloutID <> ''
+  and pd.OrderID = o.ID
+) GetPulloutData 
 
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
@@ -1452,7 +1469,7 @@ SELECT
    ,PUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a0.rno, a1.rno)
    ,NRno = a2.rno
    ,TAUnitRno = a3.rno
-   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'TTLPRINTING PPU', a3.rno, a4.rno)
+   ,TPUnitRno = IIF(ot.ArtworkTypeID = 'PRINTING PPU', a3.rno, a4.rno)
    ,TNRno = a5.rno
    ,EMBROIDERYSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', l.Abb, ot.LocalSuppID), '')
    ,EMBROIDERYPOSubcon = IIF(ot.ArtworkTypeID = 'EMBROIDERY', IIF(ot.InhouseOSP = 'O', EMP.Abb, ot.LocalSuppID), '')
@@ -1550,7 +1567,7 @@ SELECT
 FROM #tmp_LastArtworkType a
 INNER JOIN #tmpArtworkData TAUnitRno ON a.TAUnitRno = TAUnitRno.rno
 INNER JOIN #tmpOrders b ON a.ID = b.ID
-WHERE a.ArtworkTypeID <> 'TTLPRINTING PPU'
+WHERE a.ArtworkTypeID <> 'PRINTING PPU'
 
 UNION ALL
  --有 by Order_QtyShip.Seq

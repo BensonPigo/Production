@@ -51,6 +51,7 @@ namespace PowerBI.Daily
             public string UserID { get { return "Daily Schedule"; } }
             public string UserName { get { return "Daily Schedule"; } }
             public string UserPassword { get { return ""; } }
+            public string LoginName { get { return ""; } }
 
             public bool IsContainsAuthority(string id) { return false; }
             public bool IsContainsFactory(string id) { return false; }

@@ -168,7 +168,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 ";
             }
 
-            string subprocessQtyColumns = @"
+            string subProcessStatusWithBI = model.IsBI ? "and #AUT.InQtyBySet is null and #AUT.OutQtyBySet is null and #FM.InQtyBySet is null and #FM.OutQtyBySet is null " : string.Empty;
+            string subProcessStatusOtherWithBI = model.IsBI ? "and AUT_i.v = 1 and AUT_o.v = 1 and FM_i.v = 1 and FM_o.v = 1 " : string.Empty;
+
+            string subprocessQtyColumns = $@"
             , [RFID Cut Qty] = #SORTING.OutQtyBySet
             , [RFID SewingLine In Qty] = #SewingLine.InQtyBySet
             , [RFID Loading Qty] = #loading.InQtyBySet
@@ -186,6 +189,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             , [RFID Emboss Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('EMBOSS/DEBOSS')),ISNULL( #SUBCONEMB.OutQtyBySet ,0) ,#SUBCONEMB.OutQtyBySet)
             , [RFID HT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.InQtyBySet ,0) ,#HT.InQtyBySet)
             , [RFID HT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('HEAT TRANSFER')),ISNULL( #HT.OutQtyBySet ,0) ,#HT.OutQtyBySet)
+            , [RFID AUT Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AUT')),ISNULL( #AUT.InQtyBySet ,0) ,#AUT.InQtyBySet)
+            , [RFID AUT Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('AUT')),ISNULL( #AUT.OutQtyBySet ,0) ,#AUT.OutQtyBySet)
+            , [RFID FM Farm In Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('FM')),ISNULL( #FM.InQtyBySet ,0) ,#FM.InQtyBySet)
+            , [RFID FM Farm Out Qty] = IIF(EXISTS (SELECT 1 FROM [SplitString]( Artwork.Artwork , '+')  WHERE Data IN ('FM')),ISNULL( #FM.OutQtyBySet ,0) ,#FM.OutQtyBySet)
             , SubProcessStatus= case when t.Junk = 1 then null 
                                      when #SORTING.OutQtyBySet is null and #loading.InQtyBySet is null 
                                      and #SewingLine.InQtyBySet is null
@@ -195,7 +202,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                      and #AT.InQtyBySet  is null and #AT.OutQtyBySet  is null 
                                      and #PADPRT.InQtyBySet is null and #PADPRT.OutQtyBySet is null
                                      and #SUBCONEMB.InQtyBySet is null and #SUBCONEMB.OutQtyBySet is null
-                                     and #HT.InQtyBySet is null and #HT.OutQtyBySet is null                
+                                     and #HT.InQtyBySet is null and #HT.OutQtyBySet is null
+                                     {subProcessStatusWithBI}
                                      then null
 		                             when SORTINGStatus.v = 1 and loadingStatus.v = 1 --判斷有做加工段的數量=訂單qty,則為1,全部為1才為Y
 		                             and SewingLineStatus.v = 1
@@ -206,6 +214,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                             and PADPRT_i.v = 1 and PADPRT_o.v = 1
 		                             and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
 		                             and HT_i.v = 1 and HT_o.v = 1
+                                     {subProcessStatusOtherWithBI}
 		                             then 'Y' end";
 
             string subprocessQtyColumnsSource = $@"
@@ -220,7 +229,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             left join #AT on #AT.OrderID = t.OrderID
             left join #PADPRT on #PADPRT.OrderID = t.OrderID
             left join #SUBCONEMB on #SUBCONEMB.OrderID = t.OrderID
-            left join #HT on #HT.OrderID = t.OrderID" :
+            left join #HT on #HT.OrderID = t.OrderID
+            left join #AUT on #AUT.OrderID = t.OrderID
+            left join #FM on #FM.OrderID = t.OrderID" :
             $@"
             left join #Sorting on #Sorting.OrderID = t.OrderID and #Sorting.Article = t.Article and #Sorting.Sizecode = t.SizeCode
             left join #SewingLine on #SewingLine.OrderID = t.OrderID and #SewingLine.Article = t.Article and #SewingLine.Sizecode = t.SizeCode
@@ -231,7 +242,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             left join #AT on #AT.OrderID = t.OrderID and #AT.Article = t.Article and #AT.Sizecode = t.SizeCode
             left join #PADPRT on #PADPRT.OrderID = t.OrderID and #PADPRT.Article = t.Article and #PADPRT.Sizecode = t.SizeCode
             left join #SUBCONEMB on #SUBCONEMB.OrderID = t.OrderID and #SUBCONEMB.Article = t.Article and #SUBCONEMB.Sizecode = t.SizeCode
-            left join #HT on #HT.OrderID = t.OrderID and #HT.Article = t.Article and #HT.Sizecode = t.SizeCode")}
+            left join #HT on #HT.OrderID = t.OrderID and #HT.Article = t.Article and #HT.Sizecode = t.SizeCode
+            left join #AUT on #AUT.OrderID = t.OrderID and #AUT.Article = t.Article and #AUT.Sizecode = t.SizeCode
+            left join #FM on #FM.OrderID = t.OrderID and #FM.Article = t.Article and #FM.Sizecode = t.SizeCode")}
             outer apply(select v = case when #SORTING.OutQtyBySet is null or #SORTING.OutQtyBySet >= t.Qty then 1 else 0 end)SORTINGStatus--null即不用判斷此加工段 標記1, 數量=訂單數 標記1
             outer apply(select v = case when #SewingLine.InQtyBySet is null or #SewingLine.InQtyBySet >= t.Qty then 1 else 0 end)SewingLineStatus
             outer apply(select v = case when #loading.InQtyBySet is null or #loading.InQtyBySet >= t.Qty then 1 else 0 end)loadingStatus
@@ -248,9 +261,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
             outer apply(select v = case when #SUBCONEMB.InQtyBySet is null or #SUBCONEMB.InQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_i
             outer apply(select v = case when #SUBCONEMB.OutQtyBySet is null or #SUBCONEMB.OutQtyBySet >= t.Qty then 1 else 0 end)SUBCONEMB_o
             outer apply(select v = case when #HT.InQtyBySet is null or #HT.InQtyBySet >= t.Qty then 1 else 0 end)HT_i
-            outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o";
+            outer apply(select v = case when #HT.OutQtyBySet is null or #HT.OutQtyBySet >= t.Qty then 1 else 0 end)HT_o
+            outer apply(select v = case when #AUT.InQtyBySet is null or #AUT.InQtyBySet >= t.Qty then 1 else 0 end)AUT_i
+            outer apply(select v = case when #AUT.OutQtyBySet is null or #AUT.OutQtyBySet >= t.Qty then 1 else 0 end)AUT_o
+            outer apply(select v = case when #FM.InQtyBySet is null or #FM.InQtyBySet >= t.Qty then 1 else 0 end)FM_i
+            outer apply(select v = case when #FM.OutQtyBySet is null or #FM.OutQtyBySet >= t.Qty then 1 else 0 end)FM_o
+";
 
-            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "SewingLine" };
+            string[] subprocessIDs = new string[] { "Sorting", "Loading", "Emb", "BO", "PRT", "AT", "PAD-PRT", "SubCONEMB", "HT", "AUT", "FM", "SewingLine" };
 
             if (model.FormParameter == "2")
             {
@@ -1127,23 +1145,27 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 }
 
                 string subprocessQtyColumns_Line = @"
-                , [RFID Cut Qty] = SUM([RFID Cut Qty])
-                , [RFID SewingLine In Qty] = SUM([RFID SewingLine In Qty])
-                , [RFID Loading Qty] = SUM([RFID Loading Qty])
-                , [RFID Emb Farm In Qty] = SUM([RFID Emb Farm In Qty])
-                , [RFID Emb Farm Out Qty] = SUM([RFID Emb Farm Out Qty])
-                , [RFID Bond Farm In Qty] = SUM([RFID Bond Farm In Qty])
-                , [RFID Bond Farm Out Qty] = SUM([RFID Bond Farm Out Qty])
-                , [RFID Print Farm In Qty] = SUM([RFID Print Farm In Qty])
-                , [RFID Print Farm Out Qty] = SUM([RFID Print Farm Out Qty])
-                , [RFID AT Farm In Qty] = SUM([RFID AT Farm In Qty])
-                , [RFID AT Farm Out Qty] = SUM([RFID AT Farm Out Qty])
-                , [RFID Pad Print Farm In Qty] = SUM([RFID Pad Print Farm In Qty])
+                , [RFID Cut Qty]                = SUM([RFID Cut Qty])
+                , [RFID SewingLine In Qty]      = SUM([RFID SewingLine In Qty])
+                , [RFID Loading Qty]            = SUM([RFID Loading Qty])
+                , [RFID Emb Farm In Qty]        = SUM([RFID Emb Farm In Qty])
+                , [RFID Emb Farm Out Qty]       = SUM([RFID Emb Farm Out Qty])
+                , [RFID Bond Farm In Qty]       = SUM([RFID Bond Farm In Qty])
+                , [RFID Bond Farm Out Qty]      = SUM([RFID Bond Farm Out Qty])
+                , [RFID Print Farm In Qty]      = SUM([RFID Print Farm In Qty])
+                , [RFID Print Farm Out Qty]     = SUM([RFID Print Farm Out Qty])
+                , [RFID AT Farm In Qty]         = SUM([RFID AT Farm In Qty])
+                , [RFID AT Farm Out Qty]        = SUM([RFID AT Farm Out Qty])
+                , [RFID Pad Print Farm In Qty]  = SUM([RFID Pad Print Farm In Qty])
                 , [RFID Pad Print Farm Out Qty] = SUM([RFID Pad Print Farm Out Qty])
-                , [RFID Emboss Farm In Qty] = SUM([RFID Emboss Farm In Qty])
-                , [RFID Emboss Farm Out Qty] = SUM([RFID Emboss Farm Out Qty])
-                , [RFID HT Farm In Qty] = SUM([RFID HT Farm In Qty])
-                , [RFID HT Farm Out Qty] = SUM([RFID HT Farm Out Qty])
+                , [RFID Emboss Farm In Qty]     = SUM([RFID Emboss Farm In Qty])
+                , [RFID Emboss Farm Out Qty]    = SUM([RFID Emboss Farm Out Qty])
+                , [RFID HT Farm In Qty]         = SUM([RFID HT Farm In Qty])
+                , [RFID HT Farm Out Qty]        = SUM([RFID HT Farm Out Qty])
+                , [RFID AUT Farm In Qty]        = SUM([RFID AUT Farm In Qty])
+                , [RFID AUT Farm Out Qty]       = SUM([RFID AUT Farm Out Qty])
+                , [RFID FM Farm In Qty]         = SUM([RFID FM Farm In Qty])
+                , [RFID FM Farm Out Qty]        = SUM([RFID FM Farm Out Qty])
                 , ss.SubProcessStatus";
                 string subprocessQtyColumnsSource_Line = @"
                 outer apply(
@@ -1169,6 +1191,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     subprocessQtyColumnsSource_Line = string.Empty;
                     subprocessQtyColumnGroup = string.Empty;
                 }
+
                 sqlCmd += $@"
                 select
                 t.MDivisionID
@@ -1391,17 +1414,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
             sqlCmd += $@"Select [subprocessInoutColumnCount] = {this.subprocessInoutColumnCount}";
             #endregion 組SQL
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable[] dataTables),
-                };
+                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable[] dataTables),
+            };
 
-                resultReport.DtArr = dataTables;
-                return resultReport;
-            }
+            resultReport.DtArr = dataTables;
+            return resultReport;
         }
 
         /// <summary>

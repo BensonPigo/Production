@@ -144,16 +144,13 @@ namespace Sci.Production.Logistic
             }
 
             string strSQL_CFA = $@"
-            SELECT 1
-            FROM PackingList_Detail pld
-            inner join TransferToCFA CFA on pld.id = cfa.PackingListID
-							            and pld.CTNStartNo = CFA.CTNStartNo
-            WHERE pld.SCICtnNo in(CFA.SCICtnNo) AND pld.SciCtnNo ='{sciCtnNo}'";
-            string cfaSciCtnNo = MyUtility.GetValue.Lookup(strSQL_CFA);
+            Select pld.ClogReceiveCFADate From PackingList_Detail pld where pld.SCICtnNo = '{sciCtnNo}'
+            ";
+            var cfaSciCtnNo = MyUtility.Convert.GetDate(MyUtility.GetValue.Lookup(strSQL_CFA));
 
-            if (MyUtility.Check.Empty(cfaSciCtnNo) && !MyUtility.Check.Empty(packListSciCtnNo))
+            if (cfaSciCtnNo.Empty())
             {
-                MyUtility.Msg.InfoBox("This carton No. has not been transferred to CFA. Cannot be scan & pack.", buttons: MessageBoxButtons.OK);
+                MyUtility.Msg.InfoBox("This CTN# is either not in Clog or has not been inspected by the CFA, cannot do Clog P17!", buttons: MessageBoxButtons.OK);
                 e.Cancel = true;
                 this.ClearAll("ALL");
                 return;
@@ -224,7 +221,7 @@ namespace Sci.Production.Logistic
             pd.Ukey,
             [PKseq] = pd.Seq,
             o.Dest,
-            isnull(pd.ActCTNWeight,0) as ActCTNWeight
+            isnull(pd.ClogActCTNWeight,0) as ClogActCTNWeight
             ,p.Remark
 	        ,pd.Ukey
 	        ,[IsFirstTimeScan] = Cast(1 as bit)
@@ -270,18 +267,19 @@ namespace Sci.Production.Logistic
             SELECT @PackingID = ID FROM PackingList_Detail WHERE SCICtnNo = '{sciCtnNo}'                                                
 
             SELECT 
-            TtlCartons= isnull(sum(pld.CTNQty),0)
-            ,TtlQty = isnull(sum(pld.ShipQty),0)
-            ,TtlPackedCartons = isnull(sum(case when pld.ClogScanQty > 0 and pld.CTNQty>0 then 1 else 0 end),0)
-            ,TtlPackQty = isnull(sum(pld.ClogScanQty),0)
+            TtlCartons = isnull(sum(pld.CTNQty),0)
+            , TtlQty = isnull(sum(pld.ShipQty),0)
+            , TtlPackedCartons = isnull(sum(case when pld.ClogScanQty > 0 and pld.CTNQty>0 then 1 else 0 end),0)
+            , TtlPackQty = isnull(sum(pld.ClogScanQty),0)
             FROM PackingList p
-            INNER join PackingList_Detail pld with(NOLOCK) on p.id = pld.id
-            inner join TransferToCFA CFA on pld.id = cfa.PackingListID
-					            and pld.CTNStartNo = CFA.CTNStartNo
+            INNER join PackingList_Detail pld With(NOLOCK) on p.id = pld.id
             WHERE 
-            pld.SCICtnNo in(CFA.SCICtnNo) AND 
-            p.Type in ('B','L') AND 
-            pld.ID = @PackingID";
+            EXists (
+				Select 1 From CFAReceive r With(NOLOCK) 
+				Where r.PackingListID = pld.ID and r.CTNStartNo = pld.CTNStartNo and r.SCICtnNo = pld.SCICtnNo
+				) 
+				AND p.Type in ('B','L') 
+				AND pld.ID = @PackingID";
             DataRow dr_sum;
             MyUtility.Check.Seek(sum_sql, out dr_sum);
 
@@ -293,6 +291,7 @@ namespace Sci.Production.Logistic
             this.displayBrand.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["BrandID"]);
             this.displayStyle.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["StyleID"]);
             this.txtDest.TextBox1.Text = MyUtility.Convert.GetString(this.dtHade.Rows[0]["Dest"]);
+            this.numWeight.Text = "0";
             #endregion 左邊 Head
             #region 右邊 Head
 
@@ -325,7 +324,7 @@ namespace Sci.Production.Logistic
             pd.Ukey,
             [PKseq] = pd.Seq,
             o.Dest,
-            isnull(pd.ActCTNWeight,0) as ActCTNWeight
+            isnull(pd.ClogActCTNWeight,0) as ClogActCTNWeight
             ,p.Remark
 	        ,pd.Ukey
 	        ,[IsFirstTimeScan] = Cast(1 as bit)
@@ -333,12 +332,13 @@ namespace Sci.Production.Logistic
             ,pd.SCICtnNo
             FROM PackingList p
             inner join  PackingList_Detail pd with(NOLOCK) on p.id = pd.id
-            left join TransferToCFA CFA on pd.id = CFA.PackingListID 
-							            and pd.CTNStartNo = CFA.CTNStartNo
             inner join Orders o WITH (NOLOCK) on o.ID = pd.OrderID
             left join Order_SizeCode os WITH (NOLOCK) on os.id = o.POID and os.SizeCode = pd.SizeCode 
-            WHERE pd.SCICtnNo in(CFA.SCICtnNo) and p.Type in ('B','L')
-            and pd.SCICtnNo = '{sciCtnNo}'";
+            WHERE EXists (
+				Select 1 from CFAReceive r With(nolock) Where r.PackingListID = pd.ID and r.CTNStartNo = pd.CTNStartNo and r.SCICtnNo = pd.SCICtnNo
+				) 
+				and p.Type in ('B','L')
+				and pd.SCICtnNo = '{sciCtnNo}'";
 
             DualResult result_Detail = DBProxy.Current.Select(null, sqlcmd_Detail, out this.dtDetail);
             if (!result_Detail)
@@ -427,6 +427,7 @@ namespace Sci.Production.Logistic
                 this.numBoxRemainCartons.Text = string.Empty;
                 this.numBoxRemainQty.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
+                this.numWeight.Text = string.Empty;
             }
             else if (type.Equals("SCAN"))
             {
@@ -446,6 +447,7 @@ namespace Sci.Production.Logistic
                 this.numBoxRemainQty.Text = string.Empty;
                 this.txtDest.TextBox1.Text = string.Empty;
                 this.scanDetailBS.DataSource = null;
+                this.numWeight.Text = string.Empty;
             }
         }
 
@@ -597,12 +599,23 @@ namespace Sci.Production.Logistic
                     }
                 }
 
+                bool isNeedShowWeightInputWindow = this.chk_AutoCheckWeight.Checked && MyUtility.Check.Empty(this.numWeight.Value);
+
+                if (isNeedShowWeightInputWindow)
+                {
+                    P17_InputWeight p17_InputWeight = new P17_InputWeight();
+                    p17_InputWeight.ShowDialog();
+                    this.numWeight.Value = p17_InputWeight.ActWeight;
+                    this.numWeight.ValidateControl();
+                }
+
                 string upd_sql = $@"
                 update PackingList_Detail 
                 set ClogScanQty = QtyPerCTN 
                 , ClogScanDate = GETDATE()
                 , ScanName = '{Env.User.UserID}'   
                 , ClogLackingQty = 0
+                , ClogActCTNWeight = {this.numWeight.Value}
                 where id = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["ID"])}' 
                 and CTNStartNo = '{MyUtility.Convert.GetString(this.dtHade.Rows[0]["CTNStartNo"])}' 
 
@@ -821,7 +834,6 @@ namespace Sci.Production.Logistic
             }
         }
 
-
         private DualResult ClearScanQty(DataRow[] tmp, string clearType)
         {
             DualResult result1 = new DualResult(true);
@@ -908,6 +920,26 @@ namespace Sci.Production.Logistic
             }
 
             base.OnFormClosing(e);
+        }
+
+        private void NumWeight_Validating(object sender, CancelEventArgs e)
+        {
+            if (MyUtility.Check.Empty(((TextBox)sender).Text.ToString()))
+            {
+                return;
+            }
+
+            if (this.dtHade != null)
+            {
+                if (!MyUtility.Check.Empty(this.dtHade.Rows[0]["ID"].ToString()) && !MyUtility.Check.Empty(this.dtHade.Rows[0]["CTNStartNo"].ToString()) && !MyUtility.Check.Empty(this.dtHade.Rows[0]["Article"].ToString()))
+                {
+                    DataRow[] dt_scanDetailrow = this.dtDetail.Select($"ID = '{this.dtHade.Rows[0]["ID"]}' and CTNStartNo = '{this.dtHade.Rows[0]["CTNStartNo"]}'");
+                    foreach (DataRow dr in dt_scanDetailrow)
+                    {
+                        dr["ClogActCTNWeight"] = this.numWeight.Text;
+                    }
+                }
+            }
         }
     }
 }

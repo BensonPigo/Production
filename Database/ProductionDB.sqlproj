@@ -116,6 +116,7 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
     <Folder Include="dbo\CLR Store Procedures" />
+    <Folder Include="dbo\Index" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\MyGridStd1.sql">
@@ -2916,6 +2917,12 @@
     <Build Include="dbo\Tables\WorkOrderForOutput.sql" />
     <Build Include="dbo\Stored Procedures\GetNextSequenceCutRef.sql" />
     <Build Include="dbo\Functions\GetCuttingP09CanEdit.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckList_Detail.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
+    <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v2.sql" />
+    <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v3.sql" />
+    <Build Include="dbo\Tables\DailyAccuCPULoading.sql" />
+    <Build Include="dbo\Tables\DailyAccuCPULoading_Detail.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

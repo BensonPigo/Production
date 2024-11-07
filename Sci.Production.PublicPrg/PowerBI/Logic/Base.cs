@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -51,7 +52,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SimilarStyle,
             P_FabricInspLabSummaryReport,
             P_FabricInspAvgInspLTInPast7Days,
+            P_CuttingOutputStatistic,
             P_MaterialCompletionRateByWeek,
+            P_RTLStatusByDay,
+            P_DailyRTLStatusByLineByStyle,
+            P_InventoryStockListReport,
+            P_RecevingInfoTrackingSummary,
+            P_MachineMasterListByDays,
+            P_ScanPackList,
+            P_MISCPurchaseOrderList,
+            P_ReplacementReport,
+            P_DailyAccuCPULoading,
         }
 
         /// <summary>
@@ -105,6 +116,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
         {
             string sql = $"select [RgCode] = REPLACE(s.RgCode, 'PHI', 'PH1') from System s";
             return MyUtility.GetValue.Lookup(sql, connectionName: "Production");
+        }
+
+        /// <summary>
+        /// Get System Timeout
+        /// </summary>
+        /// <returns>double</returns>
+        public double GetTimeout()
+        {
+            string sql = $"select BITimeout from System s";
+            return Convert.ToDouble(MyUtility.GetValue.Lookup(sql, connectionName: "Production"));
         }
 
         /// <summary>
@@ -210,7 +231,11 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             DateTime stratExecutedTime = DateTime.Now;
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
+            List<ExecutedList> executedListException = new List<ExecutedList>();
+            List<ExecutedList> executedListGroupLevelError = new List<ExecutedList>();
 
+            double timeout = this.GetTimeout();
+            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
             var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
@@ -218,18 +243,49 @@ ORDER BY [Group], [SEQ], [NAME]";
                 .Select(item =>
                 {
                     List<ExecutedList> executedListDetail = new List<ExecutedList>();
-                    var results_detail = item
-                        .OrderBy(x => x.SEQ)
-                        .AsParallel()
-                        .AsSequential()
-                        .Select(detail =>
+                    ExecutedList currExecuted = new ExecutedList();
+                    try
+                    {
+                        var results_detail = item
+                            .OrderBy(x => x.SEQ)
+                            .AsParallel()
+                            .WithCancellation(cancellationTokenSource.Token)
+                            .AsSequential()
+                            .Select(detail =>
+                            {
+                                currExecuted = detail;
+                                try
+                                {
+                                    ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
+                                    executedListDetail.Add(detailPararllelResult);
+                                    return detailPararllelResult;
+                                }
+                                catch (Exception ex)
+                                {
+                                    detail.Success = false;
+                                    detail.ErrorMsg = ex.Message;
+                                    executedListException.Add(detail);
+                                    return detail;
+                                }
+                            })
+                            .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                            .ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.GetType().FullName == "System.OperationCanceledException")
                         {
-                            ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
-                            executedListDetail.Add(detailPararllelResult);
-                            return detailPararllelResult;
-                        })
-                        .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
-                        .ToList();
+                            // 逾時的訊息
+                            currExecuted.ErrorMsg = "GroupLevel_Timeout,Time out cancel";
+                        }
+                        else
+                        {
+                            // 其他錯誤的訊息
+                            currExecuted.ErrorMsg = "GroupLevel_Other," + ex.Message;
+                        }
+
+                        executedListGroupLevelError.Add(currExecuted);
+                    }
 
                     return executedListDetail;
                 })
@@ -242,21 +298,40 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
             {
-                string errMsg = "沒有執行";
-                var queryErrorGroup = executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                if (queryErrorGroup.Any())
-                {
-                    errMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
-                }
-
-                executedListEnd.Add(new ExecutedList()
+                var executedListError = new ExecutedList()
                 {
                     ClassName = item.ClassName,
+                    Group = item.Group,
+                    SEQ = item.SEQ,
                     Success = false,
                     ExecuteSDate = DateTime.Now,
                     ExecuteEDate = DateTime.Now,
-                    ErrorMsg = errMsg,
-                });
+                    ErrorMsg = "沒有執行",
+                };
+                var executedGroupLevelError = executedListGroupLevelError.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                if (executedException != null)
+                {
+                    // 如果是Throw Exception的話，紀錄Exception訊息
+                    executedListError.ErrorMsg = executedException.ErrorMsg;
+                }
+                else if (executedGroupLevelError != null)
+                {
+                    executedListError.ErrorMsg = executedGroupLevelError.ErrorMsg;
+                }
+                else
+                {
+                    // 只有Group不為0的錯誤訊息要Show前面的執行階層
+                    var queryErrorGroup = item.Group == 0
+                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && x.Success == false)
+                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
+                    if (queryErrorGroup.Any())
+                    {
+                        executedListError.ErrorMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                    }
+                }
+
+                executedListEnd.Add(executedListError);
             }
 
             this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
@@ -378,8 +453,38 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_FabricInspAvgInspLTInPast7Days:
                         result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
                         break;
+                    case ListName.P_CuttingOutputStatistic:
+                        result = new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
+                        break;
                     case ListName.P_MaterialCompletionRateByWeek:
                         result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                        break;
+                    case ListName.P_RTLStatusByDay:
+                        result = new P_Import_RTLStatusByDay().P_RTLStatusByDay(item.SDate);
+                        break;
+                    case ListName.P_DailyRTLStatusByLineByStyle:
+                        result = new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item.SDate);
+                        break;
+                    case ListName.P_InventoryStockListReport:
+                        result = new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_RecevingInfoTrackingSummary:
+                        result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_MachineMasterListByDays:
+                        result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_ScanPackList:
+                        result = new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_MISCPurchaseOrderList:
+                        result = new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_ReplacementReport:
+                        result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
+						break;
+                    case ListName.P_DailyAccuCPULoading:
+                        result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
                         break;
                     default:
                         // Execute all Stored Procedures

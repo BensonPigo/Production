@@ -107,6 +107,7 @@ namespace Sci.Production.Packing
             sqlCmd.Append(string.Format(
                 @"
 select  *
+        , [Remaining_CTN] = RemainingCTN.val
         , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
@@ -182,7 +183,14 @@ from (
             }
 
             sqlCmd.Append(@"
-) X order by rn");
+            ) X 
+            OUTER APPLY
+            (
+	            select val = COUNT(1)
+	            from PackingList_Detail 
+	            where OrderID = x.OrderID and ReceiveDate is null AND ISNULL(TRY_CONVERT(int, CTNStartNo),0) != 0 AND CTNQty != 0
+            )RemainingCTN
+            order by rn");
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), out this.gridData);
             if (!result)
@@ -231,9 +239,9 @@ from (
             // 將Grid勾選的資料匯到#tmp table,再將資料丟進DataTable匯出Excel
             DataTable selectData = null;
 
-            string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp where selected=1";
+            string sqlcmd = @"select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,Remaining_CTN,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid from #tmp where selected=1";
             MyUtility.Tool.ProcessWithDatatable(
-                excelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out selectData, "#tmp");
+                excelTable, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,Remaining_CTN,StyleID,BrandID,Customize1,CustPONo,Dest,FactoryID,BuyerDelivery,AddDate,tid", sqlcmd, out selectData, "#tmp");
 
             string date1, date2, packID, sPNo;
             date1 = (!MyUtility.Check.Empty(this.dateTimePicker1.Text)) ? this.dateTimePicker1.Text : null;

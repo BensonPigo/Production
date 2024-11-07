@@ -9,6 +9,7 @@
     [AddDate]     DATETIME       NULL,
     [EditName]    VARCHAR (10)   CONSTRAINT [DF_ShipPlan_EditName] DEFAULT ('') NULL,
     [EditDate]    DATETIME       NULL,
+    [OrderCompanyID] NUMERIC(2, 0)      CONSTRAINT [DF_ShipPlan_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ShipPlan] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -60,3 +61,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipPlan', @level2type = N'COLUMN', @level2name = N'MDivisionID';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ShipPlan', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+
+GO

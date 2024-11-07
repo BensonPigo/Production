@@ -238,7 +238,7 @@ END
 
             using (connBI)
             {
-                result = DBProxy.Current.ExecuteByConn(conn: connBI, cmdtext: sql);
+                result = TransactionClass.ExecuteByConnTransactionScope(conn: connBI, cmdtext: sql);
             }
 
             return result;

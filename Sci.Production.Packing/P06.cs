@@ -843,7 +843,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
                     cmds.Add(sp1);
                     cmds.Add(sp2);
                     DataTable orderData;
-                    string sqlCmd = "select ID, StyleID, SeasonID, CustPONo, LocalOrder from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid";
+                    string sqlCmd = "select ID, StyleID, SeasonID, CustPONo, LocalOrder, OrderCompanyID from Orders WITH (NOLOCK) where ID = @orderid and MDivisionID = @mdivisionid";
 
                     DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                     if (!result)
@@ -932,6 +932,7 @@ select  StyleID
         , CustCDID
         , Dest 
         , FtyGroup
+        , OrderCompanyID
 from Orders WITH (NOLOCK) 
 where ID = '{0}'", orderID);
                 if (MyUtility.Check.Seek(sqlCmd, out dr))
@@ -943,6 +944,7 @@ where ID = '{0}'", orderID);
                     this.CurrentMaintain["BrandID"] = dr["BrandID"].ToString();
                     this.CurrentMaintain["CustCDID"] = dr["CustCDID"].ToString();
                     this.CurrentMaintain["FactoryID"] = dr["FtyGroup"].ToString();
+                    this.CurrentMaintain["OrderCompanyID"] = dr["OrderCompanyID"].ToString();
 
                     #region 若Order_QtyShip有多筆資料話就跳出視窗讓使者選擇Seq
                     sqlCmd = string.Format("select count(ID) as CountID from Order_QtyShip WITH (NOLOCK) where ID = '{0}'", orderID);

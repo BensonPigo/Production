@@ -43,6 +43,7 @@
             this.txtCellNo = new Sci.Production.Class.TxtCell();
             this.textBox1 = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
+            this.checkOutsourcing = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -53,10 +54,12 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(832, 395);
+            this.detail.Location = new System.Drawing.Point(4, 29);
+            this.detail.Size = new System.Drawing.Size(832, 391);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkOutsourcing);
             this.detailcont.Controls.Add(this.textBox1);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtGroup);
@@ -72,17 +75,19 @@
             this.detailcont.Controls.Add(this.labelDescription);
             this.detailcont.Controls.Add(this.labelLine);
             this.detailcont.Controls.Add(this.labelFactory);
-            this.detailcont.Size = new System.Drawing.Size(832, 357);
+            this.detailcont.Size = new System.Drawing.Size(832, 353);
             this.detailcont.TabIndex = 0;
             // 
             // detailbtm
             // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 353);
             this.detailbtm.Size = new System.Drawing.Size(832, 38);
             this.detailbtm.TabIndex = 1;
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(832, 395);
+            this.browse.Location = new System.Drawing.Point(4, 29);
+            this.browse.Size = new System.Drawing.Size(832, 391);
             // 
             // tabs
             // 
@@ -90,12 +95,12 @@
             // 
             // createby
             // 
-            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Size = new System.Drawing.Size(350, 26);
             // 
             // editby
             // 
             this.editby.Location = new System.Drawing.Point(471, 7);
-            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Size = new System.Drawing.Size(350, 26);
             this.editby.TabIndex = 1;
             // 
             // lbleditby
@@ -120,7 +125,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(27, 134);
+            this.labelDescription.Location = new System.Drawing.Point(27, 240);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(117, 23);
             this.labelDescription.TabIndex = 2;
@@ -128,7 +133,7 @@
             // 
             // labelCellNo
             // 
-            this.labelCellNo.Location = new System.Drawing.Point(27, 172);
+            this.labelCellNo.Location = new System.Drawing.Point(27, 133);
             this.labelCellNo.Name = "labelCellNo";
             this.labelCellNo.Size = new System.Drawing.Size(117, 23);
             this.labelCellNo.TabIndex = 3;
@@ -136,7 +141,7 @@
             // 
             // labelNoOfSewers
             // 
-            this.labelNoOfSewers.Location = new System.Drawing.Point(27, 210);
+            this.labelNoOfSewers.Location = new System.Drawing.Point(27, 171);
             this.labelNoOfSewers.Name = "labelNoOfSewers";
             this.labelNoOfSewers.Size = new System.Drawing.Size(117, 23);
             this.labelNoOfSewers.TabIndex = 4;
@@ -149,7 +154,7 @@
             this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayFactory.Location = new System.Drawing.Point(147, 23);
             this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(69, 23);
+            this.displayFactory.Size = new System.Drawing.Size(69, 26);
             this.displayFactory.TabIndex = 0;
             // 
             // txtLine
@@ -159,7 +164,7 @@
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtLine.Location = new System.Drawing.Point(147, 61);
             this.txtLine.Name = "txtLine";
-            this.txtLine.Size = new System.Drawing.Size(69, 23);
+            this.txtLine.Size = new System.Drawing.Size(69, 26);
             this.txtLine.TabIndex = 1;
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLine_Validating);
             // 
@@ -168,24 +173,24 @@
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(147, 134);
+            this.txtDescription.Location = new System.Drawing.Point(147, 240);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(474, 23);
-            this.txtDescription.TabIndex = 2;
+            this.txtDescription.Size = new System.Drawing.Size(474, 26);
+            this.txtDescription.TabIndex = 8;
             // 
             // numNoOfSewers
             // 
             this.numNoOfSewers.BackColor = System.Drawing.Color.White;
             this.numNoOfSewers.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Sewer", true));
             this.numNoOfSewers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numNoOfSewers.Location = new System.Drawing.Point(147, 210);
+            this.numNoOfSewers.Location = new System.Drawing.Point(147, 171);
             this.numNoOfSewers.Name = "numNoOfSewers";
             this.numNoOfSewers.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numNoOfSewers.Size = new System.Drawing.Size(40, 23);
+            this.numNoOfSewers.Size = new System.Drawing.Size(40, 26);
             this.numNoOfSewers.TabIndex = 4;
             this.numNoOfSewers.Value = new decimal(new int[] {
             0,
@@ -200,14 +205,14 @@
             this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkJunk.Location = new System.Drawing.Point(313, 23);
             this.checkJunk.Name = "checkJunk";
-            this.checkJunk.Size = new System.Drawing.Size(57, 21);
-            this.checkJunk.TabIndex = 5;
+            this.checkJunk.Size = new System.Drawing.Size(66, 24);
+            this.checkJunk.TabIndex = 9;
             this.checkJunk.Text = "Junk";
             this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // lblGroup
             // 
-            this.lblGroup.Location = new System.Drawing.Point(27, 245);
+            this.lblGroup.Location = new System.Drawing.Point(27, 206);
             this.lblGroup.Name = "lblGroup";
             this.lblGroup.Size = new System.Drawing.Size(117, 23);
             this.lblGroup.TabIndex = 6;
@@ -218,9 +223,9 @@
             this.txtGroup.BackColor = System.Drawing.Color.White;
             this.txtGroup.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LineGroup", true));
             this.txtGroup.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtGroup.Location = new System.Drawing.Point(147, 245);
+            this.txtGroup.Location = new System.Drawing.Point(147, 206);
             this.txtGroup.Name = "txtGroup";
-            this.txtGroup.Size = new System.Drawing.Size(243, 23);
+            this.txtGroup.Size = new System.Drawing.Size(243, 26);
             this.txtGroup.TabIndex = 7;
             // 
             // txtCellNo
@@ -228,10 +233,10 @@
             this.txtCellNo.BackColor = System.Drawing.Color.White;
             this.txtCellNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingCell", true));
             this.txtCellNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCellNo.Location = new System.Drawing.Point(147, 172);
+            this.txtCellNo.Location = new System.Drawing.Point(147, 133);
             this.txtCellNo.MDivisionID = "displayBox1";
             this.txtCellNo.Name = "txtCellNo";
-            this.txtCellNo.Size = new System.Drawing.Size(30, 23);
+            this.txtCellNo.Size = new System.Drawing.Size(30, 26);
             this.txtCellNo.TabIndex = 3;
             // 
             // textBox1
@@ -241,8 +246,8 @@
             this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textBox1.Location = new System.Drawing.Point(147, 97);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(69, 23);
-            this.textBox1.TabIndex = 8;
+            this.textBox1.Size = new System.Drawing.Size(69, 26);
+            this.textBox1.TabIndex = 2;
             // 
             // label1
             // 
@@ -251,6 +256,18 @@
             this.label1.Size = new System.Drawing.Size(117, 23);
             this.label1.TabIndex = 9;
             this.label1.Text = "LineNmforReport";
+            // 
+            // checkOutsourcing
+            // 
+            this.checkOutsourcing.AutoSize = true;
+            this.checkOutsourcing.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Outsourcing", true));
+            this.checkOutsourcing.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkOutsourcing.Location = new System.Drawing.Point(313, 49);
+            this.checkOutsourcing.Name = "checkOutsourcing";
+            this.checkOutsourcing.Size = new System.Drawing.Size(122, 24);
+            this.checkOutsourcing.TabIndex = 10;
+            this.checkOutsourcing.Text = "Outsourcing";
+            this.checkOutsourcing.UseVisualStyleBackColor = true;
             // 
             // B06
             // 
@@ -294,5 +311,6 @@
         private Win.UI.Label lblGroup;
         private Win.UI.TextBox textBox1;
         private Win.UI.Label label1;
+        private Win.UI.CheckBox checkOutsourcing;
     }
 }

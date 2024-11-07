@@ -93,6 +93,8 @@
     [ClogLackingQty] SMALLINT NOT NULL DEFAULT ((0)), 
     [ClogScanDate] DATETIME NULL, 
     [ClogScanName] VARCHAR(10) NOT NULL, 
+    [ClogPulloutIsFrom] INT NOT NULL DEFAULT ((0)), 
+    [ClogActCTNWeight] NUMERIC(7,3) NOT NULL CONSTRAINT [DF_PackingList_Detail_ClogActCTNWeight] DEFAULT ((0))
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -418,3 +420,19 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'PackingList_Detail',
     @level2type = N'COLUMN',
     @level2name = N'ClogScanName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'
+是否來自M360 Clog Pullout
+0 = 否，來自PMS Clog P12
+1 = 是，來自M360 Clog P12',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'PackingList_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'ClogPulloutIsFrom'
+go
+CREATE NONCLUSTERED INDEX [IDX_Packinglist_Detail_CustCTN]
+    ON [dbo].[PackingList_Detail]([CustCTN] ASC)
+GO

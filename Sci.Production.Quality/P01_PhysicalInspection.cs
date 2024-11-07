@@ -163,7 +163,7 @@ namespace Sci.Production.Quality
                                             select rd.Roll
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
                                             where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -174,7 +174,7 @@ namespace Sci.Production.Quality
 	                                        select td.Roll
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
                                             where 
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -208,7 +208,7 @@ namespace Sci.Production.Quality
 	                                        select rd.Dyelot
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
 	                                        where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -219,7 +219,7 @@ namespace Sci.Production.Quality
 	                                        select td.Dyelot
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
 	                                        where  
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -351,7 +351,7 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
             double double_TicketYds = MyUtility.Convert.GetDouble(this.CurrentData["TicketYds"]);
             double double_Totalpoint = MyUtility.Convert.GetDouble(this.CurrentData["Totalpoint"]);
             double double_CutWidth = MyUtility.Convert.GetDouble(this.CurrentData["CutWidth"]);
-            double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]) - 0.01);
+            double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]));
             double actualWidth = MyUtility.Convert.GetDouble(this.CurrentData["actualwidth"]);
             double actualYdsF = actualYdsT - (actualYdsT % 5);
             double cutWidth = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup($@"
@@ -932,18 +932,42 @@ where Fir.ID = '{this.FirID}'"));
 
                 // 判斷Actualyds調整範圍後Fir_physical_Defect會被清掉的話需要提示
                 double double_ActualYds = Convert.ToDouble(newvalue);
-                double def_loc = 0d;
+                double actualYdsF = double_ActualYds - (double_ActualYds % 5);
                 StringBuilder hintmsg = new StringBuilder();
+
+                // check FIR_Physical_Defect
                 for (int i = 0; i <= this.Fir_physical_Defect.Rows.Count - 1; i++)
                 {
                     if (this.Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
                     {
-                        def_loc = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
-                        if (def_loc >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == this.CurrentData["NewKey"].ToString())
+                        double def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
+                        double def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
+                        if ((def_locF >= double_ActualYds || def_locT > double_ActualYds) && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == this.CurrentData["NewKey"].ToString())
                         {
                             hintmsg.Append("Yds : " + this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString() + " , Defects : " + this.Fir_physical_Defect.Rows[i]["DefectRecord"].ToString() +
                                                 " , Point : " + this.Fir_physical_Defect.Rows[i]["Point"].ToString() + "\n");
                         }
+                    }
+                }
+
+                string sqlCheck = $@"select * from dbo.FIR_Physical_Defect_Realtime where FIR_PhysicalDetailUkey = {dr["DetailUkey"]} and  Yards > {double_ActualYds}";
+                DualResult result = DBProxy.Current.Select("", sqlCheck, out DataTable dtCheck);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                if (dtCheck != null)
+                {
+                    for (int i = 0; i <= dtCheck.Rows.Count - 1; i++)
+                    {
+                        if (i == 0)
+                        {
+                            hintmsg.Append("-----------------------------------------------\n");
+                        }
+
+                        hintmsg.Append("Yds : " + dtCheck.Rows[i]["Yards"].ToString() + " , Defects : " + dtCheck.Rows[i]["FabricdefectID"].ToString() + "\n");
                     }
                 }
 
@@ -956,6 +980,40 @@ where Fir.ID = '{this.FirID}'"));
                         dr["Actualyds"] = oldvalue;
                         dr.EndEdit();
                         return;
+                    }
+                    else
+                    {
+                        string update_cmd = $@" Delete From FIR_Physical_Defect_Realtime Where FIR_PhysicalDetailUKey = {dr["DetailUkey"]} and Yards > {double_ActualYds};";
+                        DualResult upResult = DBProxy.Current.Execute("Production", update_cmd);
+                        if (!upResult)
+                        {
+                            this.ShowErr(upResult);
+                            return;
+                        }
+
+                        // 判斷是否需要刪除 FIR_Physical_Defect
+                        for (int i = 0; i <= this.Fir_physical_Defect.Rows.Count - 1; i++)
+                        {
+                            if (this.Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted)
+                            {
+                                double def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
+                                double def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
+
+                                // 判斷是否需要刪除, 代表區間最小值 > TotalYDS 那這區間資料就要刪除
+                                if (def_locF > double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == this.CurrentData["NewKey"].ToString())
+                                {
+                                    this.Fir_physical_Defect.Rows[i].Delete();
+                                }
+
+                                // 檢查此區間內 FIR_Physical_Defect_Realtime是否有資料，沒資料也要被delete
+                                string sqlCheck2 = $@"select id from FIR_Physical_Defect_Realtime where 
+                        FIR_PhysicalDetailUkey = {dr["DetailUkey"]} and Yards >= {def_locF} and Yards <= {def_locT}";
+                                if (!MyUtility.Check.Seek(sqlCheck2, "Production"))
+                                {
+                                    this.Fir_physical_Defect.Rows[i].Delete();
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -1140,7 +1198,7 @@ where Fir.ID = '{this.FirID}'"));
                 double double_TicketYds = MyUtility.Convert.GetDouble(dataRow["TicketYds"]);
                 double double_Totalpoint = MyUtility.Convert.GetDouble(dataRow["Totalpoint"]);
                 double double_CutWidth = MyUtility.Convert.GetDouble(dataRow["CutWidth"]);
-                double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(dataRow["ActualYds"]) - 0.01);
+                double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(dataRow["ActualYds"]));
                 double actualWidth = MyUtility.Convert.GetDouble(dataRow["actualwidth"]);
                 double actualYdsF = actualYdsT - (actualYdsT % 5);
                 double cutWidth = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup($@"

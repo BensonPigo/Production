@@ -339,7 +339,7 @@
                                 <TextRun>
                                   <Value>=Fields!Color.Value</Value>
                                   <Style>
-                                    <FontSize>5pt</FontSize>
+                                    <FontSize>=iif(Len(Fields!Color.Value) &gt; 35, iif(Len(Fields!Color.Value) &gt; 45, 3, 4), 5) &amp; "pt"</FontSize>
                                     <FontWeight>Bold</FontWeight>
                                   </Style>
                                 </TextRun>
@@ -362,6 +362,7 @@
                             </Border>
                             <VerticalAlign>Middle</VerticalAlign>
                             <PaddingLeft>1pt</PaddingLeft>
+                            <PaddingRight>1pt</PaddingRight>
                           </Style>
                         </Textbox>
                         <Textbox Name="Textbox14">

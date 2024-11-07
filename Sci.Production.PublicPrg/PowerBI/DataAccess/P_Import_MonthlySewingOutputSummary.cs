@@ -315,7 +315,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dataList.ToDataTable(), null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataList.ToDataTable(), null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
                 };
             }
 

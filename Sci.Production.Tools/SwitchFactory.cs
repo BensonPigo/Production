@@ -60,8 +60,11 @@ namespace Sci.Production.Tools
                 {
                     this.checkBoxTestEnvironment.Checked = true;
                 }
+                else
+                {
+                    this.ChangeTaipeiServer();
+                }
 
-                this.ChangeTaipeiServer();
                 this.comboBox2.SelectedValue = this.OriginalDatasource;
             }
 

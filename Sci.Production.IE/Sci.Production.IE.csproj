@@ -522,6 +522,12 @@
     <Compile Include="R02.Designer.cs">
       <DependentUpon>R02.cs</DependentUpon>
     </Compile>
+    <Compile Include="R22.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R22.designer.cs">
+      <DependentUpon>R22.cs</DependentUpon>
+    </Compile>
     <Compile Include="R09.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -743,6 +749,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R22.resx">
+      <DependentUpon>R22.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R09.resx">
       <DependentUpon>R09.cs</DependentUpon>

@@ -99,6 +99,7 @@ select 0 as selected
        , c.outqty
        , c.adjustqty 
        , c.ReturnQty
+       , c.Remark
        , [Tone] = c.Tone
        , [GMTWash] = isnull(GMTWash.val, '')
        , [Grade] = isnull(phy.Grade, '')
@@ -211,6 +212,7 @@ order by d.GroupQty DESC,c.Dyelot,balanceqty DESC
                 .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Remark", header: "MTL. Lock/Unlock Remark", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ActualWidth", header: "Act Width", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Relaxtime", header: "Relaxation", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("RelaxEndTime", header: "Relax End Time", width: Widths.AnsiChars(20), iseditingreadonly: true)

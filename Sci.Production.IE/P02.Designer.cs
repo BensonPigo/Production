@@ -65,7 +65,6 @@
             this.labelType = new Sci.Win.UI.Label();
             this.btnFTYGSD = new Sci.Win.UI.Button();
             this.btnCheckList = new Sci.Win.UI.Button();
-            this.btnProblem = new Sci.Win.UI.Button();
             this.labelSewingDate = new Sci.Win.UI.Label();
             this.labelEFF = new Sci.Win.UI.Label();
             this.labelRFT = new Sci.Win.UI.Label();
@@ -117,6 +116,7 @@
             this.displayConstruction = new Sci.Win.UI.DisplayBox();
             this.lbConstruction = new Sci.Win.UI.Label();
             this.shapeContainer7 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.btnRefresh = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -124,10 +124,6 @@
             this.detailbtm.SuspendLayout();
             this.tabs.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(913, 490);
             // 
             // detailcont
             // 
@@ -169,7 +165,6 @@
             this.detailcont.Controls.Add(this.labelRFT);
             this.detailcont.Controls.Add(this.labelEFF);
             this.detailcont.Controls.Add(this.labelSewingDate);
-            this.detailcont.Controls.Add(this.btnProblem);
             this.detailcont.Controls.Add(this.btnCheckList);
             this.detailcont.Controls.Add(this.btnFTYGSD);
             this.detailcont.Controls.Add(this.labelType);
@@ -208,21 +203,18 @@
             this.detailcont.Controls.Add(this.labelStyle);
             this.detailcont.Controls.Add(this.labelSP);
             this.detailcont.Controls.Add(this.shapeContainer1);
-            this.detailcont.Size = new System.Drawing.Size(913, 452);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 452);
-            this.detailbtm.Size = new System.Drawing.Size(913, 38);
             this.detailbtm.TabIndex = 0;
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(827, 490);
+            this.browse.Size = new System.Drawing.Size(942, 490);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(921, 519);
+            this.tabs.Size = new System.Drawing.Size(950, 519);
             this.tabs.TabIndex = 0;
             // 
             // createby
@@ -645,17 +637,6 @@
             this.btnCheckList.UseVisualStyleBackColor = true;
             this.btnCheckList.Click += new System.EventHandler(this.BtnCheckList_Click);
             // 
-            // btnProblem
-            // 
-            this.btnProblem.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnProblem.Location = new System.Drawing.Point(810, 114);
-            this.btnProblem.Name = "btnProblem";
-            this.btnProblem.Size = new System.Drawing.Size(96, 30);
-            this.btnProblem.TabIndex = 37;
-            this.btnProblem.Text = "Problem";
-            this.btnProblem.UseVisualStyleBackColor = true;
-            this.btnProblem.Click += new System.EventHandler(this.BtnProblem_Click);
-            // 
             // labelSewingDate
             // 
             this.labelSewingDate.Location = new System.Drawing.Point(42, 307);
@@ -868,7 +849,7 @@
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
             this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(913, 452);
+            this.shapeContainer1.Size = new System.Drawing.Size(906, 399);
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
@@ -1043,7 +1024,7 @@
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer2.TabIndex = 54;
             this.shapeContainer2.TabStop = false;
@@ -1070,7 +1051,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer3.TabIndex = 54;
             this.shapeContainer3.TabStop = false;
@@ -1097,9 +1078,7 @@
             // 
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer4.Name = "shapeContainer1";
-            this.shapeContainer4.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
+            this.shapeContainer4.Name = "shapeContainer4";
             this.shapeContainer4.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer4.TabIndex = 54;
             this.shapeContainer4.TabStop = false;
@@ -1126,9 +1105,7 @@
             // 
             this.shapeContainer5.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer5.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer5.Name = "shapeContainer1";
-            this.shapeContainer5.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
+            this.shapeContainer5.Name = "shapeContainer5";
             this.shapeContainer5.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer5.TabIndex = 54;
             this.shapeContainer5.TabStop = false;
@@ -1155,9 +1132,7 @@
             // 
             this.shapeContainer6.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer6.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer6.Name = "shapeContainer1";
-            this.shapeContainer6.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape4});
+            this.shapeContainer6.Name = "shapeContainer6";
             this.shapeContainer6.Size = new System.Drawing.Size(1031, 452);
             this.shapeContainer6.TabIndex = 54;
             this.shapeContainer6.TabStop = false;
@@ -1184,7 +1159,7 @@
             // 
             this.shapeContainer7.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer7.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer7.Name = "shapeContainer1";
+            this.shapeContainer7.Name = "shapeContainer7";
             this.shapeContainer7.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape4,
             this.lineShape3,
@@ -1195,10 +1170,22 @@
             this.shapeContainer7.TabIndex = 54;
             this.shapeContainer7.TabStop = false;
             // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.Location = new System.Drawing.Point(782, 12);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(156, 30);
+            this.btnRefresh.TabIndex = 5;
+            this.btnRefresh.Text = "Refresh CheckList";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.BtnRefresh_Click);
+            // 
             // P02
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(921, 552);
+            this.ClientSize = new System.Drawing.Size(950, 552);
+            this.Controls.Add(this.btnRefresh);
             this.DefaultControlForEdit = "numCOPT";
             this.DefaultOrder = "FactoryID,SewingLineID,Inline";
             this.IsSupportConfirm = true;
@@ -1212,6 +1199,8 @@
             this.UnApvChkValue = "Approved";
             this.UniqueExpress = "ID";
             this.WorkAlias = "ChgOver";
+            this.Controls.SetChildIndex(this.tabs, 0);
+            this.Controls.SetChildIndex(this.btnRefresh, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.detail.ResumeLayout(false);
@@ -1248,7 +1237,6 @@
         private Win.UI.Label labelRFT;
         private Win.UI.Label labelEFF;
         private Win.UI.Label labelSewingDate;
-        private Win.UI.Button btnProblem;
         private Win.UI.Button btnCheckList;
         private Win.UI.Button btnFTYGSD;
         private Win.UI.Label labelType;
@@ -1316,5 +1304,6 @@
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer5;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer6;
         private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer7;
+        private Win.UI.Button btnRefresh;
     }
 }

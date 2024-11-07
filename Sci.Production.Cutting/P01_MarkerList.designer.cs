@@ -86,6 +86,8 @@
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelSeqNo = new Sci.Win.UI.Label();
             this.labelSizeRatio = new Sci.Win.UI.Label();
+            this.displayBoxMarkerType = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -153,7 +155,6 @@
             // labelMarkerNo
             // 
             this.labelMarkerNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerNo.Lines = 0;
             this.labelMarkerNo.Location = new System.Drawing.Point(235, 41);
             this.labelMarkerNo.Name = "labelMarkerNo";
             this.labelMarkerNo.Size = new System.Drawing.Size(99, 22);
@@ -163,7 +164,6 @@
             // labelMarkerName
             // 
             this.labelMarkerName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerName.Lines = 0;
             this.labelMarkerName.Location = new System.Drawing.Point(235, 67);
             this.labelMarkerName.Name = "labelMarkerName";
             this.labelMarkerName.Size = new System.Drawing.Size(99, 22);
@@ -173,7 +173,6 @@
             // labelFabPanelCode
             // 
             this.labelFabPanelCode.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFabPanelCode.Lines = 0;
             this.labelFabPanelCode.Location = new System.Drawing.Point(235, 148);
             this.labelFabPanelCode.Name = "labelFabPanelCode";
             this.labelFabPanelCode.Size = new System.Drawing.Size(99, 22);
@@ -183,7 +182,6 @@
             // labelPatternPanel
             // 
             this.labelPatternPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPatternPanel.Lines = 0;
             this.labelPatternPanel.Location = new System.Drawing.Point(235, 121);
             this.labelPatternPanel.Name = "labelPatternPanel";
             this.labelPatternPanel.Size = new System.Drawing.Size(99, 22);
@@ -193,7 +191,6 @@
             // labelMarkerLength
             // 
             this.labelMarkerLength.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerLength.Lines = 0;
             this.labelMarkerLength.Location = new System.Drawing.Point(235, 94);
             this.labelMarkerLength.Name = "labelMarkerLength";
             this.labelMarkerLength.Size = new System.Drawing.Size(99, 22);
@@ -203,7 +200,6 @@
             // labelType
             // 
             this.labelType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelType.Lines = 0;
             this.labelType.Location = new System.Drawing.Point(452, 354);
             this.labelType.Name = "labelType";
             this.labelType.Size = new System.Drawing.Size(62, 23);
@@ -213,7 +209,6 @@
             // labelRemark
             // 
             this.labelRemark.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelRemark.Lines = 0;
             this.labelRemark.Location = new System.Drawing.Point(235, 284);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(99, 22);
@@ -223,7 +218,6 @@
             // labelForArticle
             // 
             this.labelForArticle.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelForArticle.Lines = 0;
             this.labelForArticle.Location = new System.Drawing.Point(235, 256);
             this.labelForArticle.Name = "labelForArticle";
             this.labelForArticle.Size = new System.Drawing.Size(99, 22);
@@ -233,7 +227,6 @@
             // labelConsPC
             // 
             this.labelConsPC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelConsPC.Lines = 0;
             this.labelConsPC.Location = new System.Drawing.Point(235, 229);
             this.labelConsPC.Name = "labelConsPC";
             this.labelConsPC.Size = new System.Drawing.Size(99, 22);
@@ -243,7 +236,6 @@
             // labelFabric
             // 
             this.labelFabric.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFabric.Lines = 0;
             this.labelFabric.Location = new System.Drawing.Point(235, 202);
             this.labelFabric.Name = "labelFabric";
             this.labelFabric.Size = new System.Drawing.Size(99, 22);
@@ -253,7 +245,6 @@
             // labelFabricCombo
             // 
             this.labelFabricCombo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFabricCombo.Lines = 0;
             this.labelFabricCombo.Location = new System.Drawing.Point(235, 175);
             this.labelFabricCombo.Name = "labelFabricCombo";
             this.labelFabricCombo.Size = new System.Drawing.Size(99, 22);
@@ -263,7 +254,6 @@
             // labelPerimeter
             // 
             this.labelPerimeter.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPerimeter.Lines = 0;
             this.labelPerimeter.Location = new System.Drawing.Point(236, 413);
             this.labelPerimeter.Name = "labelPerimeter";
             this.labelPerimeter.Size = new System.Drawing.Size(99, 22);
@@ -273,7 +263,6 @@
             // labelDirection
             // 
             this.labelDirection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelDirection.Lines = 0;
             this.labelDirection.Location = new System.Drawing.Point(452, 441);
             this.labelDirection.Name = "labelDirection";
             this.labelDirection.Size = new System.Drawing.Size(62, 23);
@@ -283,7 +272,6 @@
             // labelCuttingWidth
             // 
             this.labelCuttingWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelCuttingWidth.Lines = 0;
             this.labelCuttingWidth.Location = new System.Drawing.Point(236, 441);
             this.labelCuttingWidth.Name = "labelCuttingWidth";
             this.labelCuttingWidth.Size = new System.Drawing.Size(99, 22);
@@ -314,7 +302,6 @@
             // labelEfficiency
             // 
             this.labelEfficiency.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelEfficiency.Lines = 0;
             this.labelEfficiency.Location = new System.Drawing.Point(403, 174);
             this.labelEfficiency.Name = "labelEfficiency";
             this.labelEfficiency.Size = new System.Drawing.Size(81, 23);
@@ -324,7 +311,6 @@
             // labelFabricWidth
             // 
             this.labelFabricWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelFabricWidth.Lines = 0;
             this.labelFabricWidth.Location = new System.Drawing.Point(403, 231);
             this.labelFabricWidth.Name = "labelFabricWidth";
             this.labelFabricWidth.Size = new System.Drawing.Size(81, 23);
@@ -334,7 +320,6 @@
             // labelMarkerListWidth
             // 
             this.labelMarkerListWidth.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerListWidth.Lines = 0;
             this.labelMarkerListWidth.Location = new System.Drawing.Point(655, 227);
             this.labelMarkerListWidth.Name = "labelMarkerListWidth";
             this.labelMarkerListWidth.Size = new System.Drawing.Size(110, 23);
@@ -357,7 +342,6 @@
             // labelStraight
             // 
             this.labelStraight.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelStraight.Lines = 0;
             this.labelStraight.Location = new System.Drawing.Point(452, 413);
             this.labelStraight.Name = "labelStraight";
             this.labelStraight.Size = new System.Drawing.Size(62, 23);
@@ -367,7 +351,6 @@
             // labelPhase
             // 
             this.labelPhase.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelPhase.Lines = 0;
             this.labelPhase.Location = new System.Drawing.Point(452, 386);
             this.labelPhase.Name = "labelPhase";
             this.labelPhase.Size = new System.Drawing.Size(62, 23);
@@ -377,7 +360,6 @@
             // labelMarkerVersion
             // 
             this.labelMarkerVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerVersion.Lines = 0;
             this.labelMarkerVersion.Location = new System.Drawing.Point(662, 386);
             this.labelMarkerVersion.Name = "labelMarkerVersion";
             this.labelMarkerVersion.Size = new System.Drawing.Size(100, 23);
@@ -387,7 +369,6 @@
             // labelCurved
             // 
             this.labelCurved.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelCurved.Lines = 0;
             this.labelCurved.Location = new System.Drawing.Point(662, 413);
             this.labelCurved.Name = "labelCurved";
             this.labelCurved.Size = new System.Drawing.Size(100, 23);
@@ -397,7 +378,6 @@
             // labelApplyNo
             // 
             this.labelApplyNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelApplyNo.Lines = 0;
             this.labelApplyNo.Location = new System.Drawing.Point(236, 386);
             this.labelApplyNo.Name = "labelApplyNo";
             this.labelApplyNo.Size = new System.Drawing.Size(99, 22);
@@ -592,7 +572,7 @@
             this.txtEfficiency.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtEfficiency.Location = new System.Drawing.Point(487, 176);
             this.txtEfficiency.Name = "txtEfficiency";
-            this.txtEfficiency.Size = new System.Drawing.Size(57, 21);
+            this.txtEfficiency.Size = new System.Drawing.Size(60, 21);
             this.txtEfficiency.TabIndex = 156;
             // 
             // displayStraight
@@ -641,7 +621,6 @@
             // labelMarkerUpdate
             // 
             this.labelMarkerUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelMarkerUpdate.Lines = 0;
             this.labelMarkerUpdate.Location = new System.Drawing.Point(236, 468);
             this.labelMarkerUpdate.Name = "labelMarkerUpdate";
             this.labelMarkerUpdate.Size = new System.Drawing.Size(99, 22);
@@ -651,7 +630,6 @@
             // labelCreateBy
             // 
             this.labelCreateBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelCreateBy.Lines = 0;
             this.labelCreateBy.Location = new System.Drawing.Point(236, 493);
             this.labelCreateBy.Name = "labelCreateBy";
             this.labelCreateBy.Size = new System.Drawing.Size(99, 22);
@@ -672,7 +650,6 @@
             // labelEditBy
             // 
             this.labelEditBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelEditBy.Lines = 0;
             this.labelEditBy.Location = new System.Drawing.Point(236, 518);
             this.labelEditBy.Name = "labelEditBy";
             this.labelEditBy.Size = new System.Drawing.Size(99, 22);
@@ -737,7 +714,7 @@
             this.txtPatternPanel.Location = new System.Drawing.Point(339, 122);
             this.txtPatternPanel.Name = "txtPatternPanel";
             this.txtPatternPanel.ReadOnly = true;
-            this.txtPatternPanel.Size = new System.Drawing.Size(205, 21);
+            this.txtPatternPanel.Size = new System.Drawing.Size(48, 21);
             this.txtPatternPanel.TabIndex = 139;
             // 
             // txtFabPanelCode
@@ -748,13 +725,12 @@
             this.txtFabPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFabPanelCode.Location = new System.Drawing.Point(339, 148);
             this.txtFabPanelCode.Name = "txtFabPanelCode";
-            this.txtFabPanelCode.Size = new System.Drawing.Size(61, 21);
+            this.txtFabPanelCode.Size = new System.Drawing.Size(48, 21);
             this.txtFabPanelCode.TabIndex = 171;
             // 
             // labelTotal
             // 
             this.labelTotal.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelTotal.Lines = 0;
             this.labelTotal.Location = new System.Drawing.Point(725, 15);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(40, 23);
@@ -775,7 +751,6 @@
             // labelSeqNo
             // 
             this.labelSeqNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelSeqNo.Lines = 0;
             this.labelSeqNo.Location = new System.Drawing.Point(235, 15);
             this.labelSeqNo.Name = "labelSeqNo";
             this.labelSeqNo.Size = new System.Drawing.Size(99, 22);
@@ -784,7 +759,6 @@
             // 
             // labelSizeRatio
             // 
-            this.labelSizeRatio.Lines = 0;
             this.labelSizeRatio.Location = new System.Drawing.Point(474, 15);
             this.labelSizeRatio.Name = "labelSizeRatio";
             this.labelSizeRatio.Size = new System.Drawing.Size(70, 21);
@@ -792,9 +766,31 @@
             this.labelSizeRatio.Text = "Size Ratio";
             this.labelSizeRatio.TextStyle.Color = System.Drawing.Color.White;
             // 
+            // displayBoxMarkerType
+            // 
+            this.displayBoxMarkerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerTypeName", true));
+            this.displayBoxMarkerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBoxMarkerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.Location = new System.Drawing.Point(467, 122);
+            this.displayBoxMarkerType.Name = "displayBoxMarkerType";
+            this.displayBoxMarkerType.Size = new System.Drawing.Size(77, 21);
+            this.displayBoxMarkerType.TabIndex = 183;
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(390, 122);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 22);
+            this.label4.TabIndex = 182;
+            this.label4.Text = "MarkerType";
+            // 
             // P01_MarkerList
             // 
             this.ClientSize = new System.Drawing.Size(855, 600);
+            this.Controls.Add(this.displayBoxMarkerType);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelSizeRatio);
             this.Controls.Add(this.labelSeqNo);
             this.Controls.Add(this.displayTotal);
@@ -864,6 +860,7 @@
             this.KeyField1 = "ID";
             this.MasterKeyField = "Ukey";
             this.Name = "P01_MarkerList";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4Plus";
             this.Text = "Marker List";
             this.WorkAlias = "Order_Markerlist";
             this.Controls.SetChildIndex(this.labelMarkerNo, 0);
@@ -920,14 +917,16 @@
             this.Controls.SetChildIndex(this.displayType, 0);
             this.Controls.SetChildIndex(this.txtForArticle, 0);
             this.Controls.SetChildIndex(this.txtFabPanelCode, 0);
-            this.Controls.SetChildIndex(this.btmcont, 0);
-            this.Controls.SetChildIndex(this.gridcont, 0);
-            this.Controls.SetChildIndex(this.detailgridcont, 0);
-            this.Controls.SetChildIndex(this.detailgridicon, 0);
             this.Controls.SetChildIndex(this.labelTotal, 0);
             this.Controls.SetChildIndex(this.displayTotal, 0);
             this.Controls.SetChildIndex(this.labelSeqNo, 0);
             this.Controls.SetChildIndex(this.labelSizeRatio, 0);
+            this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.displayBoxMarkerType, 0);
+            this.Controls.SetChildIndex(this.btmcont, 0);
+            this.Controls.SetChildIndex(this.gridcont, 0);
+            this.Controls.SetChildIndex(this.detailgridcont, 0);
+            this.Controls.SetChildIndex(this.detailgridicon, 0);
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -997,5 +996,7 @@
         private Win.UI.DisplayBox displayTotal;
         private Win.UI.Label labelSeqNo;
         private Win.UI.Label labelSizeRatio;
+        private Win.UI.DisplayBox displayBoxMarkerType;
+        private Win.UI.Label label4;
     }
 }

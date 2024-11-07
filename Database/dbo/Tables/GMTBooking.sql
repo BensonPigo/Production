@@ -15,7 +15,7 @@
     [CutOffDate]               DATETIME        NULL,
     [ETD]                      DATE            NULL,
     [ETA]                      DATE            NULL,
-    [SONo]                     VARCHAR (16)    CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NOT NULL,
+    [SONo]                     VARCHAR (18)    CONSTRAINT [DF_GMTBooking_SONo] DEFAULT ('') NOT NULL,
     [SOCFMDate]                DATE            NULL,
     [ForwarderWhse_DetailUKey] BIGINT          CONSTRAINT [DF_GMTBooking_ForwarderWhse_DetailUKey] DEFAULT ((0)) NOT NULL,
     [Remark]                   NVARCHAR (60)   CONSTRAINT [DF_GMTBooking_Remark] DEFAULT ('') NOT NULL,
@@ -50,6 +50,7 @@
     [DischargePortID]          VARCHAR (20)    CONSTRAINT [DF_GMTBooking_DischargePortID] DEFAULT ('') NOT NULL,
     [PLFromRgCode]             VARCHAR (7)     CONSTRAINT [DF_GMTBooking_PLFromRgCode] DEFAULT ('') NOT NULL,
     [CMTInvoiceNo]             VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [OrderCompanyID]           NUMERIC(2)      CONSTRAINT [DF_GMTBooking_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_GMTBooking] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -232,6 +233,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主提單�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'副提單號碼(貨代提單)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'BL2No';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'GMTBooking', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
 
 
 GO
