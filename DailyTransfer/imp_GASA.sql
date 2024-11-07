@@ -39,7 +39,7 @@ SET NOCOUNT ON;
             ISNULL(s.ReceivedRemark, ''),
             ISNULL(s.DocumentName, ''),
             ISNULL(s.BrandID, ''),
-			ISNULL(s.LOT, ''),
+			ISNULL(s.LOT, '')
         );
 
 	--GASAClip import update to exclude the data created by pms
