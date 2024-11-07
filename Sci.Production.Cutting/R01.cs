@@ -79,6 +79,19 @@ By Cut Ref# 增加的欄位
 By Cut Ref# mapping new Table
 */
 outer apply(
+	select value = stuff(
+	(
+		Select concat(CHAR(10) + ', ', ws.SizeCode,'/', sum(ws.Qty * wo2.Layer))
+			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
+			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
+			left JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
+			Where wo2.ID = wo.ID and wo2.CutRef = wo.CutRef
+			group by ws.SizeCode,os.Seq
+			order by os.Seq
+			For XML path('')
+	),1,2,'') 
+)Qty
+outer apply(
 	select value = sum(SpreadingLayers)
 	from WorkOrderForOutput_SpreadingFabric wsf with(nolock)
 	where wsf.CutRef = wo.CutRef
@@ -108,7 +121,7 @@ outer apply(
 outer apply(
 	select Layer = sum(Layer), Cons = sum(Cons) 
 	from WorkOrderForOutput wo2 with(nolock)
-	where wo2.ID = wo.ID
+	where wo2.ID = wo.ID and wo2.CutRef = wo.CutRef
 )sumWo
 ";
             }
@@ -121,6 +134,18 @@ outer apply(
 	where wsf.CutRef = wo.CutRef
 	and wsf.POID = wo.ID
 )sumSpreadingLayers
+outer apply(
+	select value = stuff(
+	(
+		Select concat(CHAR(10) + ', ', ws.SizeCode,'/', ws.Qty * wo.Layer)
+			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
+			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
+			Where wo.ukey = ws.WorkOrderForOutputUkey 
+			group by ws.SizeCode,ws.Qty,os.Seq
+			order by os.Seq
+			For XML path('')
+	),1,2,'') 
+)Qty
 ";
                 colCutRefno = @"
 ,wo.Layer
@@ -180,7 +205,7 @@ outer apply(
 outer apply(
 	SELECT value = STUFF(
 	(
-		SELECT ', ' + Article
+		SELECT ',' + Article
 		FROM WorkOrderForOutput_Distribute wd with(nolock)
 		WHERE wd.WorkOrderForOutputUkey=wo.Ukey
 		GROUP BY wd.Article
@@ -191,40 +216,27 @@ outer apply(
 outer apply(
 	select value = stuff(
 	(
-		Select concat(', ', ws.SizeCode, CHAR(10), ws.Qty)
+		Select concat(CHAR(10) + ',', ws.SizeCode,'/', ws.Qty)
 		From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 		left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
 		Where ws.WorkOrderForOutputUkey = wo.Ukey
 		order by os.Seq
 		For XML path('')
-	),1,1,'') 
+	),1,2,'') 
 )SizeRatio
-outer apply(
-	select value = stuff(
-	(
-		Select concat(', ', ws.SizeCode, CHAR(10), ws.Qty * SUM(wo2.Layer))
-			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
-			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
-			LEFT JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
-			Where wo2.ID = wo.ID
-			group by ws.SizeCode,ws.Qty,os.Seq
-			order by os.Seq
-			For XML path('')
-	),1,1,'') 
-)Qty
 {sourceReportType}
 outer apply(
 	select value = stuff(
 	(
-		Select concat(', ', ws.SizeCode, CHAR(10), ws.Qty *  iif( sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0) < 0, 0 ,sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0)))
+		Select concat(CHAR(10) + ', ', ws.SizeCode, '/', sum(ws.Qty) *  iif( sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0) < 0, 0 ,sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0)))
 			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
 			LEFT JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
-			Where wo2.ID=wo.ID
-			group by ws.SizeCode,ws.Qty,os.Seq
+			Where wo2.ID = wo.ID and wo2.CutRef = wo.CutRef
+			group by ws.SizeCode,os.Seq
 			order by os.Seq
 			For XML path('')
-	),1,1,'') 
+	),1,2,'') 
 )QtyLater
 outer apply(
 	select value = sum(ws.Qty)
