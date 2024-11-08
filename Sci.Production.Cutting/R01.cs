@@ -52,9 +52,27 @@ namespace Sci.Production.Cutting
         {
             string colCutRefno = string.Empty;
             string sourceReportType = string.Empty;
+            string sqlMain = string.Empty;
             if (this.radioByCutRef.Checked)
             {
-                colCutRefno = @"
+                sqlMain = $@"
+select wo.MDivisionID
+,wo.FactoryID
+,wo.ID
+,wo.OrderID
+,wo.CutRef
+,wo.CutNo
+,wo.MarkerName
+,wo.MarkerNo
+,wo.MarkerLength
+,[PatternPanel] = PatternPanel.value
+,[FabricPanelCode] = FabricPanelCode.value
+,[Article] = Article.value
+,wo.ColorID
+,wo.Tone
+,[Seq] = wo.Seq1 + '-' + wo.Seq2
+,wo.EstCutDate
+,[SizeRatio] = SizeRatio.value
 ,[Layer] = sumWo.Layer
 ,[Qty] = Qty.value
 ,[Cons] = sumWo.Cons
@@ -73,15 +91,63 @@ By Cut Ref# 增加的欄位
 ,wsf.DamageYards
 ,wsf.ActCutends
 ,wsf.Variance
-";
-                sourceReportType = @"
-/*
-By Cut Ref# mapping new Table
-*/
+from WorkOrderForOutput wo with(nolock)
+outer apply(
+	SELECT value =  STUFF(
+	(
+		SELECT distinct ', ' + PatternPanel
+		FROM WorkOrderForOutput_PatternPanel wpp with(nolock)
+		left JOIN WorkOrderForOutput wo2 with(nolock) ON wpp.WorkOrderForOutputUkey = wo2.Ukey
+		WHERE wo2.ID=wo.ID and wo2.CutRef = wo.CutRef
+		and wpp.PatternPanel !=''
+		GROUP BY wpp.PatternPanel
+		FOR XML PATH('')
+	), 1, 2, ''
+	)
+)PatternPanel
+outer apply(
+	SELECT value = STUFF(
+	(
+		SELECT distinct ',' + wpp.FabricPanelCode
+		FROM WorkOrderForOutput_PatternPanel wpp with(nolock)
+		left JOIN WorkOrderForOutput wo2 with(nolock) ON wpp.WorkOrderForOutputUkey = wo2.Ukey
+		WHERE wo2.ID=wo.ID and wo2.CutRef = wo.CutRef
+		and wpp.FabricPanelCode !=''
+		GROUP BY wpp.FabricPanelCode
+		FOR XML PATH('')
+	), 1, 1, '')
+) FabricPanelCode
+outer apply(
+	SELECT value = STUFF(
+	(
+		SELECT distinct ', ' + Article
+		FROM WorkOrderForOutput_Distribute wd with(nolock)
+		left JOIN WorkOrderForOutput wo2 with(nolock) ON wd.WorkOrderForOutputUkey = wo2.Ukey
+		WHERE wo2.ID=wo.ID and wo2.CutRef = wo.CutRef
+		and wd.Article !=''
+		GROUP BY wd.Article
+		FOR XML PATH('')
+	), 1, 2, '')
+)Article
 outer apply(
 	select value = stuff(
 	(
-		Select concat(CHAR(10) + ', ', ws.SizeCode,'/', sum(ws.Qty * wo2.Layer))
+		Select concat(CHAR(10), SizeCode,'/', Qty)
+		from (
+			select distinct ws.SizeCode, ws.Qty,os.Seq
+			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
+			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
+			left JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
+			WHERE wo2.ID=wo.ID and wo2.CutRef = wo.CutRef
+		)a
+		order by seq
+		For XML path('')
+	),1,1,'') 
+)SizeRatio
+outer apply(
+	select value = stuff(
+	(
+		Select concat(CHAR(10), ws.SizeCode,'/', sum(ws.Qty * wo2.Layer))
 			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
 			left JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
@@ -89,7 +155,7 @@ outer apply(
 			group by ws.SizeCode,os.Seq
 			order by os.Seq
 			For XML path('')
-	),1,2,'') 
+	),1,1,'') 
 )Qty
 outer apply(
 	select value = sum(SpreadingLayers)
@@ -123,42 +189,30 @@ outer apply(
 	from WorkOrderForOutput wo2 with(nolock)
 	where wo2.ID = wo.ID and wo2.CutRef = wo.CutRef
 )sumWo
-";
-            }
-            else if (this.radioBySP.Checked)
-            {
-                sourceReportType = @"
-outer apply(
-	select value = sum(SpreadingLayers)
-	from WorkOrderForOutput_SpreadingFabric wsf with(nolock)
-	where wsf.CutRef = wo.CutRef
-	and wsf.POID = wo.ID
-)sumSpreadingLayers
 outer apply(
 	select value = stuff(
 	(
-		Select concat(CHAR(10) + ', ', ws.SizeCode,'/', ws.Qty * wo.Layer)
+		Select concat(CHAR(10), ws.SizeCode, '/', sum(ws.Qty) *  iif( sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0) < 0, 0 ,sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0)))
 			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
-			Where wo.ukey = ws.WorkOrderForOutputUkey 
-			group by ws.SizeCode,ws.Qty,os.Seq
+			LEFT JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
+			Where wo2.ID = wo.ID and wo2.CutRef = wo.CutRef
+			group by ws.SizeCode,os.Seq
 			order by os.Seq
 			For XML path('')
-	),1,2,'') 
-)Qty
-";
-                colCutRefno = @"
-,wo.Layer
-,[Qty] = Qty.value
-,wo.Cons
-,wo.SpreadingStatus
-,[Laters] = iif( wo.Layer - isnull(sumSpreadingLayers.value,0) < 0, 0 , wo.Layer - isnull(sumSpreadingLayers.value,0))
-,[QtyLater] = QtyLater.value
-,[Cons] = wo.ConsPC * QtySizRatio.value * (iif( wo.Layer - isnull(sumSpreadingLayers.value,0) < 0, 0 , wo.Layer - isnull(sumSpreadingLayers.value,0)))
+	),1,1,'') 
+)QtyLater
+outer apply(
+	select value = sum(ws.Qty)
+	from WorkOrderForOutput_SizeRatio ws with(nolock)
+	where ws.WorkOrderForOutputUkey = wo.Ukey
+)QtySizRatio
+where 1=1
 ";
             }
-
-            string sqlMain = $@"
+            else
+            {
+                sqlMain = @"
 select wo.MDivisionID
 ,wo.FactoryID
 ,wo.ID
@@ -176,8 +230,13 @@ select wo.MDivisionID
 ,[Seq] = wo.Seq1 + '-' + wo.Seq2
 ,wo.EstCutDate
 ,[SizeRatio] = SizeRatio.value
-{colCutRefno}
-
+,wo.Layer
+,[Qty] = Qty.value
+,wo.Cons
+,wo.SpreadingStatus
+,[Laters] = iif( wo.Layer - isnull(sumSpreadingLayers.value,0) < 0, 0 , wo.Layer - isnull(sumSpreadingLayers.value,0))
+,[QtyLater] = QtyLater.value
+,[Cons] = wo.ConsPC * QtySizRatio.value * (iif( wo.Layer - isnull(sumSpreadingLayers.value,0) < 0, 0 , wo.Layer - isnull(sumSpreadingLayers.value,0)))
 from WorkOrderForOutput wo with(nolock)
 outer apply(
 	SELECT value =  STUFF(
@@ -185,6 +244,7 @@ outer apply(
 		SELECT ', ' + PatternPanel
 		FROM WorkOrderForOutput_PatternPanel wpp with(nolock)
 		WHERE wpp.WorkOrderForOutputUkey = wo.Ukey
+		and wpp.PatternPanel !=''
 		GROUP BY wpp.PatternPanel
 		ORDER BY wpp.PatternPanel
 		FOR XML PATH('')
@@ -197,6 +257,7 @@ outer apply(
 		SELECT ', ' + FabricPanelCode
 		FROM WorkOrderForOutput_PatternPanel wpp with(nolock)
 		WHERE wpp.WorkOrderForOutputUkey = wo.Ukey
+		and wpp.FabricPanelCode !=''
 		GROUP BY wpp.FabricPanelCode
 		ORDER BY wpp.FabricPanelCode
 		FOR XML PATH('')
@@ -208,6 +269,7 @@ outer apply(
 		SELECT ',' + Article
 		FROM WorkOrderForOutput_Distribute wd with(nolock)
 		WHERE wd.WorkOrderForOutputUkey=wo.Ukey
+		and wd.Article !=''
 		GROUP BY wd.Article
 		ORDER BY wd.Article
 		FOR XML PATH('')
@@ -216,19 +278,36 @@ outer apply(
 outer apply(
 	select value = stuff(
 	(
-		Select concat(CHAR(10) + ',', ws.SizeCode,'/', ws.Qty)
+		Select concat(CHAR(10), ws.SizeCode,'/', ws.Qty)
 		From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 		left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
 		Where ws.WorkOrderForOutputUkey = wo.Ukey
 		order by os.Seq
 		For XML path('')
-	),1,2,'') 
+	),1,1,'') 
 )SizeRatio
-{sourceReportType}
+outer apply(
+	select value = sum(SpreadingLayers)
+	from WorkOrderForOutput_SpreadingFabric wsf with(nolock)
+	where wsf.CutRef = wo.CutRef
+	and wsf.POID = wo.ID
+)sumSpreadingLayers
 outer apply(
 	select value = stuff(
 	(
-		Select concat(CHAR(10) + ', ', ws.SizeCode, '/', sum(ws.Qty) *  iif( sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0) < 0, 0 ,sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0)))
+		Select concat(CHAR(10) , ws.SizeCode,'/', ws.Qty * wo.Layer)
+			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
+			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
+			Where wo.ukey = ws.WorkOrderForOutputUkey 
+			group by ws.SizeCode,ws.Qty,os.Seq
+			order by os.Seq
+			For XML path('')
+	),1,1,'') 
+)Qty
+outer apply(
+	select value = stuff(
+	(
+		Select concat(CHAR(10), ws.SizeCode, '/', sum(ws.Qty) *  iif( sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0) < 0, 0 ,sum(wo2.Layer) - isnull(sumSpreadingLayers.value,0)))
 			From WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) 
 			left join Order_SizeCode os with(nolock) on os.SizeCode = ws.SizeCode and os.Id=ws.ID
 			LEFT JOIN WorkOrderForOutput wo2 with(nolock) ON ws.WorkOrderForOutputUkey = wo2.Ukey
@@ -236,7 +315,7 @@ outer apply(
 			group by ws.SizeCode,os.Seq
 			order by os.Seq
 			For XML path('')
-	),1,2,'') 
+	),1,1,'') 
 )QtyLater
 outer apply(
 	select value = sum(ws.Qty)
@@ -245,6 +324,7 @@ outer apply(
 )QtySizRatio
 where 1=1
 ";
+            }
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
