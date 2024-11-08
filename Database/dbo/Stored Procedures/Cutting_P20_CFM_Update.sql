@@ -15,14 +15,20 @@ BEGIN
 	SET NOCOUNT ON;
 	BEGIN TRY
 		--find all PatternPanel
-		Select distinct orderid = wd.OrderID,wd.SizeCode,wd.article,wp.PatternPanel,w.MDivisionID
-		into #tmp1
-		from WorkOrderForOutput w WITH (NOLOCK)
-		inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w.Ukey
-		inner join WorkOrderForOutput_PatternPanel wp  WITH (NOLOCK) on wp.WorkOrderForOutputUkey = w.Ukey
-		inner join CuttingOutput_Detail cud WITH (NOLOCK) on cud.CuttingID = w.ID
-		where cud.id = @ID
-		and wd.OrderID <>'EXCESS'
+/*
+ISP20241140
+   準備基準資料,回 P02 WorkOrderForPlanning 找到所有部位 PatternPanel
+   EX: WorkOrderForPlanning, 有FA, FB, FC, FD,FE , 但 WorkOrderForOutput 只有 FA
+*/
+        SELECT DISTINCT wd.OrderID, wd.SizeCode, wd.Article, wopp.PatternPanel, w.MDivisionID
+		INTO #tmp1
+        FROM CuttingOutput_Detail cud WITH (NOLOCK)
+        INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON cud.CuttingID = w.ID
+        INNER JOIN WorkOrderForOutput_Distribute wd WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
+        INNER JOIN WorkOrderForPlanning wop WITH (NOLOCK) ON w.ID = wop.ID
+        INNER JOIN WorkOrderForPlanning_PatternPanel wopp WITH (NOLOCK) ON wop.Ukey = wopp.WorkOrderForPlanningUkey
+        WHERE cud.id = @ID
+        AND wd.OrderID <>'EXCESS'
 		--
 		If Object_ID('tempdb..#tmp2_A') Is Null
 		Begin
@@ -63,12 +69,16 @@ BEGIN
 			);
 		End;
 
+        --從 P09 計算裁剪數量
+        --CuttingOutput.cdate <= @Cdate 此 @ID 裁剪日<以>前已裁剪的數量
 		insert into #tmp2_A
 		exec CuttingP20calculateCutQty 0, @ID, @Cdate
 		
+        --CuttingOutput.cdate < @Cdate  此 @ID 裁剪日<之>前已裁剪的數量
 		insert into #tmp2_B
 		exec CuttingP20calculateCutQty 1, @ID, @Cdate
 		
+        --此 @ID 有的 POID 已完成的裁剪數量
 		insert into #tmp2_WIP_Qty
 		exec CuttingP20calculateCutQty 2, @ID, null
 
@@ -86,8 +96,8 @@ BEGIN
 			pre_cpu = isnull(ot.Price, 0) * min(isnull(b.pre_cutqty,0)),
 			WIP_Qty = min(isnull(b.WIP_Qty,0))
 		into #tmp3
-        from #tmp1 a 
-        left join #tmp2 b on a.orderid = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode
+        from #tmp1 a -- #tmp1 是 P02 有的資訊
+        left join #tmp2 b on a.orderid = b.orderid and a.Article = b.Article and a.PatternPanel = b.PatternPanel and a.SizeCode = b.SizeCode -- #tmp2 是 P09 有的資訊
         left join orders o WITH (NOLOCK) on o.id = a.orderid
 		left join Order_TmsCost ot with(nolock) on ot.id = o.id and ot.ArtworkTypeID='Cutting'
         group by o.poid,a.orderid,a.article,a.sizecode, o.cpu,isnull(ot.Price, 0) 
@@ -95,11 +105,12 @@ BEGIN
 		--update CuttingOutput.ActGarment/ PPH/ ActTTCPU
 		IF(@Run_type = 'Confirm')
 		BEGIN
-			Declare @ActTTCPU numeric(10,3),@PPH numeric(8,2),
-			@ActGarment int
+			Declare @ActTTCPU numeric(10,3)
+            Declare @PPH numeric(8,2)
+			Declare @ActGarment int
 
 			select
-				@ActGarment = sum(a.cutqty)  - sum(a.pre_cutqty) 
+				@ActGarment = sum(a.cutqty) - sum(a.pre_cutqty) 
 			from #tmp3 a
 			
 			--以下計算@ActTTCPU
@@ -140,7 +151,7 @@ BEGIN
 			select
 				--w.ID,--cod.CutRef,	
 				--OutputQty = cod.Layer * ws.SizeRatio, -- 此筆實際裁剪數
-				--w.ConsPC, -- 用P02的
+				--w.ConsPC, -- 用 P09 的
 				--ot.price, -- CPU/PC
 				@ActTTCPU = ROUND(sum( (cod.Layer * ws.SizeRatio) * t.ConsRate * ot.price), 3) -- TotalCPU
 			from  CuttingOutput_Detail cod WITH (NOLOCK) 
@@ -166,7 +177,7 @@ BEGIN
 		END
 		ELSE
 		BEGIN
-			--UnConfirm �����k0
+			--UnConfirm CuttingOutput
 			update CuttingOutput set ActTTCPU=0,ActGarment =0,PPH=0 where id = @ID;
 		END
 
@@ -199,5 +210,3 @@ BEGIN
 		EXEC usp_GetErrorInfo;
 	END CATCH
 END
-
-

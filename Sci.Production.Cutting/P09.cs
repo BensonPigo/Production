@@ -10,12 +10,9 @@ using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Transactions;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
 
@@ -48,6 +45,7 @@ namespace Sci.Production.Cutting
         private DataTable dtWorkOrderForOutput_PatternPanel; // 第3層表:新刪修
         private DataTable dtDeleteUkey_HasGroup; // 如果WorkOrderForOutput.GroupID != '' 刪除後存檔時要寫入WorkOrderForOutputDelete;
         private DataTable[] dtsHistory; // 要判斷按鈕顏色, 進表身就先撈, 還要用在傳入 History
+        private bool detaildatasHasChange = false;
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
         private string detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
@@ -324,6 +322,7 @@ ORDER BY {this.detailSort}
             this.Sorting();
             this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
             this.gridSpreadingFabric.AutoResizeColumns();
+            ((DataTable)this.detailgridbs.DataSource).AcceptChanges();
         }
 
         private void GetAllDetailData()
@@ -651,6 +650,8 @@ order by p.EditDate desc
         {
             this.GridValidateControl();
 
+            // 在 SaveBefore 先判斷是否有變更任何資訊, 因為底層過了 ClickSavePre 狀態就會改變, 這是用來控制 P20 是否重新執行 Confrim 其中一變數
+            this.detaildatasHasChange = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(w => w.RowState != DataRowState.Unchanged);
             #region 檢查 主表身
             if (!ValidateDetailDatasEmpty(this.DetailDatas, this.detailgrid))
             {
@@ -676,7 +677,9 @@ order by p.EditDate desc
             #region 第3層 處理
 
             // Step 1. 刪除空值
-            this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
+            var needDeleteSize = this.dtWorkOrderForOutput_SizeRatio.Select("Qty = 0 OR SizeCode = ''");
+            bool changeSizeData = needDeleteSize.Length > 0;
+            needDeleteSize.Delete();
             this.dtWorkOrderForOutput_Distribute.Select("Qty = 0 OR OrderID = '' OR SizeCode = ''").Delete();
             this.dtWorkOrderForOutput_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
 
@@ -714,7 +717,10 @@ order by p.EditDate desc
             #endregion
 
             // 刪除 SizeRatio 之後重算 ConsPC
-            BeforeSaveCalculateConsPC(this.DetailDatas, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            if (changeSizeData)
+            {
+                BeforeSaveCalculateConsPC(this.DetailDatas, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            }
 
             // 更新 Cutting 欄位
             this.CurrentMaintain["CutForOutputInline"] = this.DetailDatas.AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["EstCutDate"])) ?? (object)DBNull.Value;
@@ -778,6 +784,7 @@ OUTPUT INSERTED.*
 FROM WorkOrderForOutput_SizeRatio wd
 INNER JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.SizeCode = wd.SizeCode
 WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND wd.Qty <> t.Qty
 ";
 
             string sqlInsertSizeRatio = $@"
@@ -857,6 +864,7 @@ OUTPUT INSERTED.*
 FROM WorkOrderForOutput_Distribute wd
 INNER JOIN #tmp t ON t.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
 WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND wd.Qty <> t.Qty
 ";
             string sqlInsertDistribute = $@"
 INSERT INTO WorkOrderForOutput_Distribute (WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
@@ -906,8 +914,9 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             this.SentChangeDataToGuozi_AGV(dtUpdateDistribute);
             this.SentDeleteDataToGuozi_AGV(listDeleteUkey, cutRefToEmptyUkey, dtDeleteDistribute);
 
+            // 這要控制好 P20 重新 Confirm 有些資料量很大
             this.ReUpdateP20 =
-                ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Any(w => w.RowState != DataRowState.Unchanged) ||
+                this.detaildatasHasChange ||
                 (dtDeleteSizeRatio?.AsEnumerable().Any() ?? false) ||
                 (dtUpdateSizeRatio?.AsEnumerable().Any() ?? false) ||
                 (dtInsertSizeRatio?.AsEnumerable().Any() ?? false) ||
