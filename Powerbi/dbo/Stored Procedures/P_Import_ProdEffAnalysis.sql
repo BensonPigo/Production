@@ -8,8 +8,8 @@ AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	declare @SDate varchar(30) = @StartDate
-	declare @EDate varchar(30) = @EndDate
+	declare @SDate varchar(50) = @StartDate
+	declare @EDate varchar(50) = @EndDate
 
 	-- 一週七天內資料
 	if (@SDate is null) or (@SDate = 'null') or (@SDate = '')
