@@ -70,14 +70,14 @@
             this.gridCuttingReasonInput.RowTemplate.Height = 24;
             this.gridCuttingReasonInput.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCuttingReasonInput.ShowCellToolTips = false;
-            this.gridCuttingReasonInput.Size = new System.Drawing.Size(1517, 355);
+            this.gridCuttingReasonInput.Size = new System.Drawing.Size(984, 436);
             this.gridCuttingReasonInput.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCuttingReasonInput.TabIndex = 1;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(1449, 408);
+            this.btnClose.Location = new System.Drawing.Point(916, 489);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 9;
@@ -117,8 +117,8 @@
             // 
             // btnSave
             // 
-            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(1353, 408);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(820, 489);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 8;
@@ -128,7 +128,6 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnQuery.Location = new System.Drawing.Point(882, 5);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
@@ -179,7 +178,8 @@
             // 
             // labRemark
             // 
-            this.labRemark.Location = new System.Drawing.Point(1218, 9);
+            this.labRemark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labRemark.Location = new System.Drawing.Point(322, 496);
             this.labRemark.Name = "labRemark";
             this.labRemark.Size = new System.Drawing.Size(65, 23);
             this.labRemark.TabIndex = 15;
@@ -187,8 +187,9 @@
             // 
             // btnBatchUpdate
             // 
+            this.btnBatchUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnBatchUpdate.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnBatchUpdate.Location = new System.Drawing.Point(1409, 6);
+            this.btnBatchUpdate.Location = new System.Drawing.Point(513, 493);
             this.btnBatchUpdate.Name = "btnBatchUpdate";
             this.btnBatchUpdate.Size = new System.Drawing.Size(118, 30);
             this.btnBatchUpdate.TabIndex = 7;
@@ -198,27 +199,30 @@
             // 
             // txtRemark
             // 
+            this.txtRemark.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(1286, 9);
+            this.txtRemark.Location = new System.Drawing.Point(390, 496);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(117, 23);
             this.txtRemark.TabIndex = 5;
             // 
             // txtReason
             // 
+            this.txtReason.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.txtReason.BackColor = System.Drawing.Color.White;
             this.txtReason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtReason.Location = new System.Drawing.Point(1076, 9);
+            this.txtReason.Location = new System.Drawing.Point(80, 496);
             this.txtReason.Name = "txtReason";
-            this.txtReason.Size = new System.Drawing.Size(139, 23);
+            this.txtReason.Size = new System.Drawing.Size(239, 23);
             this.txtReason.TabIndex = 4;
             this.txtReason.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtReason_PopUp);
             this.txtReason.Validating += new System.ComponentModel.CancelEventHandler(this.txtReason_Validating);
             // 
             // labReason
             // 
-            this.labReason.Location = new System.Drawing.Point(1008, 9);
+            this.labReason.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.labReason.Location = new System.Drawing.Point(12, 496);
             this.labReason.Name = "labReason";
             this.labReason.Size = new System.Drawing.Size(65, 23);
             this.labReason.TabIndex = 14;
@@ -243,7 +247,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1541, 450);
+            this.ClientSize = new System.Drawing.Size(1008, 531);
             this.Controls.Add(this.txtReason);
             this.Controls.Add(this.labReason);
             this.Controls.Add(this.txtRemark);

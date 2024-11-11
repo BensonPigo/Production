@@ -121,6 +121,7 @@ namespace Sci.Production.Cutting
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridCuttingReasonInput.ColumnFrozen(this.gridCuttingReasonInput.Columns["Selected"].Index);
         }
 
         private void Query()
@@ -128,7 +129,7 @@ namespace Sci.Production.Cutting
             if (!this.dateEstCutDate.HasValue && !this.dateEstCutDate.HasValue1 &&
                 this.txtSPNo.Text.IsEmpty() && this.dateETA.Value.IsEmpty())
             {
-                MyUtility.Msg.WarningBox("Please input first < Est. Cut Date > or < ETA > or < SP# >!");
+                MyUtility.Msg.WarningBox("Please input <Est. Cut Date> or <ETA> or <SP#> first!");
                 return;
             }
 
@@ -362,6 +363,11 @@ update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCutting
 
         private void txtReason_Validating(object sender, CancelEventArgs e)
         {
+            if (this.txtReason.Text.IsEmpty())
+            {
+                return;
+            }
+
             List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@Name", this.txtReason.Text) };
             string selcmd = @"select Name from DropDownList with (nolock) where type = 'PMS_UnFinCutReason' and Name = @Name";
             DualResult result = DBProxy.Current.Select(null, selcmd, listPar, out DataTable dt);
@@ -375,6 +381,7 @@ update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCutting
             {
                 MyUtility.Msg.WarningBox($"Reason {this.txtReason.Text} not found!");
                 this.txtReason.Text = string.Empty;
+                this.txtReason.Focus();
             }
             else
             {
