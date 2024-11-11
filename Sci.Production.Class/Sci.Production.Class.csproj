@@ -1023,6 +1023,10 @@
       <Project>{fc94fcaf-9216-4a2d-9e89-15fe27aef028}</Project>
       <Name>Sci.Production.CallPmsAPI</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.PublicPrg\Sci.Production.PublicPrg.csproj">
+      <Project>{4a2f17b7-effe-454c-8f1e-9eebef170bc0}</Project>
+      <Name>Sci.Production.PublicPrg</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\exclamation_mark_PNG86.png" />

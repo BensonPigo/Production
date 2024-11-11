@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Linq;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Centralized
 {
@@ -134,19 +135,7 @@ namespace Sci.Production.Centralized
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionStrings = new List<string>(); // ←主要是要重組 List connectionString
-            foreach (string ss in strSevers)
-            {
-                if (ss.IndexOf("testing_PMS", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    continue;
-                }
-
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionStrings.Add(connections);
-            }
+            List<string> connectionStrings = CentralizedClass.AllFactoryConnectionString();
 
             if (connectionStrings == null || connectionStrings.Count == 0)
             {

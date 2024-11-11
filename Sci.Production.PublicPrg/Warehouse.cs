@@ -3848,7 +3848,7 @@ inner join #tmp t on t.ukey = f.Ukey
 
                     if (showmsg)
                     {
-                        Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                        Class.MsgGridPrg form = new Class.MsgGridPrg(dtS, showMsg);
                         form.ShowDialog();
                     }
 
@@ -3885,7 +3885,7 @@ inner join #tmp t on t.ukey = f.Ukey
                         MyUtility.Msg.ErrorBox(result.ToString());
                     }
 
-                    Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                    Class.MsgGridPrg form = new Class.MsgGridPrg(dtS, showMsg);
                     form.ShowDialog();
 
                     //Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), showMsg, isLocalOrderInventory: isLocalOrderInventory);
@@ -5851,7 +5851,7 @@ and exists(
             {
                 if (dt.Rows.Count > 0)
                 {
-                    Class.MsgGrid form = new Class.MsgGrid(dt, "WMS system have finished it already, you cannot unconfirm it.");
+                    Class.MsgGridPrg form = new Class.MsgGridPrg(dt, "WMS system have finished it already, you cannot unconfirm it.");
                     form.Width = 650;
                     form.ShowDialog();
 
@@ -7035,7 +7035,7 @@ where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
             if (datacheck.Rows.Count > 0)
             {
                 //MyUtility.Msg.ShowMsgGrid_LockScreen(datacheck, "Balacne Qty is not enough!!");
-                Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
+                Class.MsgGridPrg form = new Class.MsgGridPrg(datacheck, "Balacne Qty is not enough!!");
                 form.ShowDialog();
                 return false;
             }

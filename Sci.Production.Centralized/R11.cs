@@ -10,6 +10,7 @@ using System.Linq;
 using Sci.Utility.Excel;
 using System.Xml.Linq;
 using System.Configuration;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Centralized
 {
@@ -399,38 +400,7 @@ from #data";
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>();
-            foreach (string ss in strSevers)
-            {
-                #region 選擇單一工廠時，只需保留該工廠的連線
-                if (!this.txtFactoryFactoryID.Text.ToString().Empty())
-                {
-                    /*
-                     * 將 strSevers 切割成 0 : 連線 1 : 連線中所有的工廠
-                     */
-                    string[] m = ss.Split(new char[] { ':' });
-                    if (m.Count() > 1)
-                    {
-                        /*
-                         * 判斷該連線中，是否有與畫面中相同的工廠名稱
-                         */
-                        string[] mFactory = m[1].Split(new char[] { ',' });
-                        if (!mFactory.AsEnumerable().Any(f => f.EqualString(this.txtFactoryFactoryID.Text.ToString())))
-                        {
-                            continue;
-                        }
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
-                #endregion
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString(this.txtFactoryFactoryID.Text.ToString());
 
             if (connectionString == null || connectionString.Count == 0)
             {

@@ -351,8 +351,18 @@ namespace Sci.Production.Win
 
         private void ChangeTaipeiServer()
         {
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
+            List<string> hasConnectionNamedQuery = new List<string>();
+
+            var cfgsection = (CfgSection)ConfigurationManager.GetSection("sci");
+
+            if (cfgsection != null)
+            {
+                foreach (CfgSection.Module it in cfgsection.Modules)
+                {
+                    hasConnectionNamedQuery.Add(it.Name);
+                }
+            }
+
             Dictionary<string, string> systemOption = new Dictionary<string, string>();
             string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
             if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)
