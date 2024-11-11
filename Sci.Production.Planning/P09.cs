@@ -1,15 +1,20 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using static System.Windows.Forms.AxHost;
 
 namespace Sci.Production.Planning
 {
     /// <inheritdoc/>
     public partial class P09 : Win.Tems.QueryForm
     {
+        private DataTable dataTable = new DataTable();
+
         /// <summary>
         /// 展開: By SewingLine, Sewing Date, SP, Factory(已是必輸入條件)
         /// </summary>
@@ -31,8 +36,37 @@ namespace Sci.Production.Planning
         {
             this.grid1.DataSource = this.grid1bs;
             this.Helper.Controls.Grid.Generator(this.grid1)
-                .Text("SewingLineID", header: "SewingLine", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Date("SewingDate")
+                .Text("SewingLineID", header: "Sewing Line", width: Widths.AnsiChars(2), iseditingreadonly: true)
+                .Date("SewingDate", header: "Sewing Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("FactoryID", header: "Factory", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("OrderID", header: "SP", width: Widths.AnsiChars(13), iseditingreadonly: true)
+                .Numeric("OrderQty", header: "Order Qty", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Date("Inline", header: "Sewing Inline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Date("Offline", header: "Sewing Offline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("StdQty", header: "Standard Output/Day", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("CuttingOutput", header: "Cutting Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("CuttingRemark", header: "Cutting Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .Numeric("LoadingOutput", header: "Loading Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("LoadingRemark", header: "Loading Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("LoadingExclusion", header: "Loading Exclusion", width: Widths.AnsiChars(1), iseditable: true)
+                .Numeric("ATOutput", header: "AT Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("ATRemark", header: "AT Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("ATExclusion", header: "AT Exclusion", width: Widths.AnsiChars(5), iseditable: true)
+                .Numeric("AUTOutput", header: "AUT Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("AUTRemark", header: "AUT Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("AUTExclusion", header: "AUT Exclusion", width: Widths.AnsiChars(1), iseditable: true)
+                .Numeric("HTOutput", header: "HT Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("HTRemark", header: "HT Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("HTExclusion", header: "HT Exclusion", width: Widths.AnsiChars(1), iseditable: true)
+                .Numeric("BOOutput", header: "BO Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("BORemark", header: "BO Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("BOExclusion", header: "BO Exclusion", width: Widths.AnsiChars(1), iseditable: true)
+                .Numeric("FMOutput", header: "FM Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("FMRemark", header: "FM Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("FMExclusion", header: "FM Exclusion", width: Widths.AnsiChars(1), iseditable: true)
+                .Numeric("PRTOutput", header: "PRT Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Text("PRTRemark", header: "PRT Remark", width: Widths.AnsiChars(10), iseditable: true)
+                .CheckBox("PRTExclusion", header: "PRT Exclusion", width: Widths.AnsiChars(1), iseditable: true)
                 ;
         }
 
@@ -43,169 +77,40 @@ namespace Sci.Production.Planning
                 return;
             }
 
-            #region where
-            string sqlDECLARE = string.Empty;
-            string where = string.Empty;
-
-            // 特殊條件 Sewing Date Range 找出 SewingSchedule.Inline ~ SewingSchedule.Offline 有交集
-            if (this.dateSewing.HasValue1)
+            Base_ViewModel finalResult = new Base_ViewModel();
+            Planning_P09 biModel = new Planning_P09();
+            try
             {
-                sqlDECLARE = $@"
-DECLARE @SewingDate1 date = '{this.dateSewing.Text1}' 
-DECLARE @SewingDate2 date = '{this.dateSewing.Text2}'
-";
-                where += $@"
-AND (
-    -- 狀況 1: @SewingDate1 在 Inline 和 Offline 之間
-    (@SewingDate1 BETWEEN ss.Inline AND ss.Offline)
-    -- 狀況 2: @SewingDate2 在 Inline 和 Offline 之間
-    OR (@SewingDate2 BETWEEN ss.Inline AND ss.Offline)
-    -- 狀況 3: Inline 在 @SewingDate1 和 @SewingDate2 之間
-    OR (ss.Inline BETWEEN @SewingDate1 AND @SewingDate2)
-    -- 狀況 4: Offline 在 @SewingDate1 和 @SewingDate2 之間
-    OR (ss.Offline BETWEEN @SewingDate1 AND @SewingDate2)
-)
-";
+                Planning_P09_ViewModel viewModel = new Planning_P09_ViewModel()
+                {
+                    MDivisionID = this.txtMdivision1.Text,
+                    FactoryID = this.txtfactory1.Text,
+                    SewingSDate = this.dateSewingInline.Value1,
+                    SewingEDate = this.dateSewingInline.Value2,
+                    SewingInlineSDate = this.dateSewingInline.Value1,
+                    SewingInlineEDate = this.dateSewingInline.Value2,
+                    SewingOfflineSDate = this.dateSewingOffline.Value1,
+                    SewingOfflineEDate = this.dateSewingOffline.Value2,
+                };
+
+                Base_ViewModel resultReport = biModel.GetPlanning_P09(viewModel);
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
+                this.dataTable = resultReport.Dt;
+                this.grid1.DataSource = this.dataTable;
+                finalResult.Result = new Ict.DualResult(true);
+            }
+            catch (Exception ex)
+            {
+                finalResult.Result = new Ict.DualResult(false, ex);
             }
 
-            if (this.dateSewingInline.HasValue1)
+            if (!finalResult.Result)
             {
-                where += $@"
-AND ss.Inline BETWEEN '{this.dateSewingInline.Text1}' AND '{this.dateSewingInline.Text2}'";
-            }
-
-            if (this.dateSewingOffline.HasValue1)
-            {
-                where += $@"
-AND ss.Offline BETWEEN '{this.dateSewingOffline.Text1}' AND '{this.dateSewingOffline.Text2}'";
-            }
-
-            #endregion
-
-            // 展開: By SewingLine, Sewing Date, SP, Factory(已是必輸入條件)
-            string sqlcmd = $@"
-{sqlDECLARE}
-SELECT
-    ss.SewingLineID
-   ,ss.OrderID
-   ,ss.FactoryID
-   ,ss.APSNo
-   ,Inline = CAST(ss.Inline AS DATE)
-   ,Offline = CAST(ss.Offline AS DATE)
-INTO #tmpSewingSchedule
-FROM SewingSchedule ss WITH (NOLOCK)
-WHERE ss.MDivisionID = '{this.txtMdivision1.Text}'
-AND ss.FactoryID = '{this.txtfactory1.Text}'
-{where}
-
--- 將 Inline ~ Offline 列出每天日期展開, 使用遞增數字生成器展開日期範圍
-;WITH DateRange AS (
-    SELECT Increment = ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) - 1 FROM master.dbo.spt_values
-),ExpandedDates AS (
-    SELECT
-        ss.SewingLineID
-       ,ss.OrderID
-       ,ss.FactoryID
-       ,SewingDate = DATEADD(DAY, dr.Increment, ss.Inline)
-    FROM #tmpSewingSchedule ss
-    INNER JOIN DateRange dr ON DATEADD(DAY, dr.Increment, ss.Inline) <= ss.Offline --Inline 遞增到與 Offline 同一天
-)
-SELECT DISTINCT
-    SewingLineID
-   ,OrderID
-   ,FactoryID
-   ,SewingDate
-INTO #tmpPkeyColumns
-FROM ExpandedDates
-
---by Pkey 準備每日標準數(總和)--很慢
-SELECT
-    ss.SewingLineID
-   ,ss.OrderID
-   ,ss.FactoryID
-   ,std.Date
-   ,StdQty = SUM(std.StdQ)
-INTO #tmpSumDailyStdQty
-FROM #tmpSewingSchedule ss
-OUTER APPLY(SELECT * FROM dbo.getDailystdq (ss.APSNo) std) std
-GROUP BY
-    ss.SewingLineID
-   ,ss.OrderID
-   ,ss.FactoryID
-   ,std.Date
-
--- 規則同 Subcon P42 只取最後更新 TransferTime 的成套數
-SELECT
-    s.OrderID
-   ,s.SubProcessID
-   ,TransferTime = MAX(s.TransferTime)
-INTO #tmp_SetQtyBySubprocess_Last
-FROM SetQtyBySubprocess s WITH (NOLOCK)
-WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule t WHERE s.OrderID = t.OrderID)
-GROUP BY s.OrderID, s.SubProcessID
-
--- OrderID, SubprocessID 加總
-SELECT
-    s.OrderID
-   ,s.SubprocessID
-   ,FinishedQtyBySet = SUM(s.FinishedQtyBySet)
-INTO #tmp_SetQtyBySubprocess
-FROM (
-    SELECT
-        s.OrderID
-       ,s.Article
-       ,s.SizeCode
-       ,s.SubprocessID
-       ,[FinishedQtyBySet] =
-            CASE
-                WHEN p.InOutRule = 2 OR p.InOutRule = 3 THEN MIN(s.OutQtyBySet)
-                WHEN p.InOutRule = 1 OR p.InOutRule = 4 THEN MIN(s.InQtyBySet)
-                ELSE MIN(s.FinishedQtyBySet)
-            END
-    FROM SetQtyBySubprocess s WITH (NOLOCK)
-    INNER JOIN SubProcess p WITH (NOLOCK) ON s.SubprocessID = p.Id
-    WHERE EXISTS (
-        SELECT 1
-        FROM #tmp_SetQtyBySubprocess_Last t
-        WHERE t.OrderID = s.OrderID
-        AND t.SubProcessID = s.SubProcessID
-        AND t.TransferTime = s.TransferTime
-    )
-    GROUP BY s.OrderID
-            ,s.Article
-            ,s.SizeCode
-            ,s.SubprocessID
-            ,p.InOutRule
-) s
-GROUP BY s.OrderID,s.SubprocessID
-
---TO DO:把#tmp_SetQtyBySubprocess+SubprocessID 各成套欄位組上去
-SELECT
-    ss.SewingLineID
-   ,ss.OrderID
-   ,ss.FactoryID
-   ,ss.SewingDate
-   ,o.Qty
-   ,StdQty = ISNULL(std.StdQty, 0)
-   ,sdo.CuttingRemark
-FROM #tmpPkeyColumns ss
-INNER JOIN Orders o WITH (NOLOCK) ON o.ID = ss.OrderID
-LEFT JOIN #tmpSumDailyStdQty std ON std.SewingLineID = ss.SewingLineID AND std.OrderID = ss.OrderID AND std.FactoryID = ss.FactoryID AND std.Date = ss.SewingDate
-LEFT JOIN SewingDailyOutputStatusRecord sdo ON sdo.SewingLineID = ss.SewingLineID AND sdo.OrderID = ss.OrderID AND sdo.FactoryID = ss.FactoryID AND sdo.SewingOutputDate = ss.SewingDate
-ORDER BY 
-    ss.SewingLineID
-   ,ss.OrderID
-   ,ss.FactoryID
-   ,ss.SewingDate
-
-DROP TABLE #tmpSewingSchedule
-    ,#tmpPkeyColumns
-    ,#tmpSumDailyStdQty
-";
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
+                this.ShowErr(finalResult.Result);
                 return;
             }
         }

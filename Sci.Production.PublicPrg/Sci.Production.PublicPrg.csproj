@@ -279,6 +279,7 @@
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
+    <Compile Include="PowerBI\Logic\Planning_P09.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R04.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R16.cs" />
@@ -303,6 +304,7 @@
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
     <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Miscellaneous_R02.cs" />
+    <Compile Include="PowerBI\Model\Planning_P09_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
