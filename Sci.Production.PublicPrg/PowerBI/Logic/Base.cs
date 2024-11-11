@@ -63,6 +63,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MISCPurchaseOrderList,
             P_ReplacementReport,
             P_DailyAccuCPULoading,
+            P_DailyOutputStatusRecord,
         }
 
         /// <summary>
@@ -482,9 +483,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_ReplacementReport:
                         result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
-						break;
+                        break;
                     case ListName.P_DailyAccuCPULoading:
                         result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_DailyOutputStatusRecord:
+                        result = new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_DailyOutputStatusRecord.ToString());
                         break;
                     default:
                         // Execute all Stored Procedures
@@ -595,6 +599,33 @@ M: {region}
             }
 
             return resultReport;
+        }
+
+        /// <summary>
+        /// BITableInfo
+        /// </summary>
+        /// <param name="bITableInfoID">BITableInfo.ID</param>
+        /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
+        /// <returns>String</returns>
+        public string SqlBITableInfo(string bITableInfoID, bool is_Trans)
+        {
+            return $@"
+DECLARE @BITableInfoID VARCHAR(50) = '{bITableInfoID}'
+DECLARE @IS_Trans BIT = '{is_Trans}'
+
+IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
+BEGIN
+    UPDATE BITableInfo
+    SET TransferDate = GETDATE()
+       ,IS_Trans = @IS_Trans
+    WHERE ID = @BITableInfoID
+END
+ELSE
+BEGIN
+    INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
+        VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
+END
+";
         }
     }
 }
