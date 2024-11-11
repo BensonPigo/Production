@@ -48,6 +48,7 @@ SELECT[SuppID]
       ,[ReceivedRemark]
       ,[DocumentName]
       ,[BrandID]
+      ,[LOT]
 INTO FirstDyelot
 FROM Production.dbo.FirstDyelot
 WHERE EditDate >= @DateStart
