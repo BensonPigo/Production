@@ -2,32 +2,32 @@
 -- Description:	Import BI Table P_ProdEffAnalysis
 -- =============================================
 Create PROCEDURE [dbo].[P_Import_ProdEffAnalysis]
-	@StartDate date,
-	@EndDate date	
+	@StartDate varchar(50),
+	@EndDate varchar(50)	
 AS
 BEGIN	
 	SET NOCOUNT ON;
 
-	declare @SDate date = @StartDate
-	declare @EDate date = @EndDate
+	declare @SDate varchar(30) = @StartDate
+	declare @EDate varchar(30) = @EndDate
 
 	-- 一週七天內資料
-	if @StartDate is null
+	if (@SDate is null) or (@SDate = 'null') or (@SDate = '')
 	begin
-		set @SDate = '2018/01/01'
+		set @SDate = '1911/01/01'
 	end
 	else
 	begin
-		set @SDate = @StartDate
+		set @SDate = FORMAT(convert(date, @SDate),'yyyy/MM/dd')
 	end
 
-	if @EndDate is null
+	if (@EDate is null) or (@EDate = 'null') or (@EDate = '')
 	begin 
 		set @EDate = '2999/12/31'
 	end
 	else	
 	begin
-		set @EDate = @EndDate
+		set @EDate = FORMAT(convert(date, @EDate),'yyyy/MM/dd')
 	end
 
 -- Main data

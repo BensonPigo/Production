@@ -180,6 +180,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
                 string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}{"Group :" + group}{", SEQ :" + seq}";
+                string source = dr["Source"].ToString();
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -194,6 +195,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     Remark = remark,
                     Group = group,
                     SEQ = seq,
+                    Source = source,
                 };
 
                 executes.Add(model);
@@ -582,7 +584,7 @@ M: {region}
             DBProxy.Current.OpenConnection(item.DBName, out SqlConnection sqlConn);
             using (sqlConn)
             {
-                DBProxy.Current.DefaultTimeout = 1800;
+                DBProxy.Current.DefaultTimeout = MyUtility.Convert.GetInt(this.GetTimeout());
                 resultReport.Result = DBProxy.Current.ExecuteByConn(sqlConn, "exec " + procedureName);
             }
 
