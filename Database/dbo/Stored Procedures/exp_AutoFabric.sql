@@ -725,8 +725,8 @@ USING(
 			select CONCAT(',',SizeCode)
 			from(
 				select distinct SizeCode
-				from Production.dbo.WorkOrder_Distribute
-				where WorkOrderUkey = wo.Ukey
+				from Production.dbo.WorkOrderForOutput_Distribute
+				where WorkOrderForOutputUkey = wo.Ukey
 				)s
 				for xml path('')
 			),1,1,'')
@@ -736,8 +736,8 @@ USING(
 			select CONCAT(',',Article)
 			from(
 				select distinct Article
-				from Production.dbo.WorkOrder_Distribute
-				where WorkOrderUkey = wo.Ukey
+				from Production.dbo.WorkOrderForOutput_Distribute
+				where WorkOrderForOutputUkey = wo.Ukey
 				and Article !=''
 				)s
 				for xml path('')

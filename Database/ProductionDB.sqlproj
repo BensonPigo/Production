@@ -2865,7 +2865,6 @@
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Tables\DownloadStickerQueue.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
-    <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
     <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
     <Build Include="dbo\Functions\Get_SubCon_R41_Report.sql" />
     <Build Include="dbo\Functions\Warehouse_Report_R25.sql" />
