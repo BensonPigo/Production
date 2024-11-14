@@ -20,7 +20,7 @@
     [FMRemark]             VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMRemark] DEFAULT ('') NOT NULL,
     [FMExclusion]          BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMExclusion] DEFAULT ((0)) NOT NULL,
     [PRTRemark]            VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTRemark] DEFAULT ('') NOT NULL,
-    [PRTExclusion]         VARCHAR (1)  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTExclusion] DEFAULT ((0)) NOT NULL,
+    [PRTExclusion]         BIT  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTExclusion] DEFAULT ((0)) NOT NULL,
     [AddName]              VARCHAR (10) CONSTRAINT [DF_SewingDailyOutputStatusRecord_AddName] DEFAULT ('') NOT NULL,
     [AddDate]              DATETIME     NULL,
     [EditName]             VARCHAR (10) CONSTRAINT [DF_SewingDailyOutputStatusRecord_EditName] DEFAULT ('') NOT NULL,

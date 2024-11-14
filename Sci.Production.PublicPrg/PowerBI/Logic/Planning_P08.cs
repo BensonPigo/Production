@@ -8,10 +8,10 @@ using System.Data.SqlClient;
 namespace Sci.Production.Prg.PowerBI.Logic
 {
     /// <inheritdoc/>
-    public class Planning_P09
+    public class Planning_P08
     {
         /// <inheritdoc/>
-        public Planning_P09()
+        public Planning_P08()
         {
             DBProxy.Current.DefaultTimeout = 1800;
         }
@@ -21,7 +21,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// </summary>
         /// <param name="model">查詢資料</param>
         /// <returns>String Where</returns>
-        public Base_ViewModel GetPlanning_P09(Planning_P09_ViewModel model)
+        public Base_ViewModel GetPlanning_P08(Planning_P08_ViewModel model)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
@@ -38,19 +38,24 @@ namespace Sci.Production.Prg.PowerBI.Logic
             #region sqlWhere
             string sqlWhere = string.Empty;
 
+            if (model.OnlySchema)
+            {
+                sqlWhere += "AND 1 = 0";
+            }
+
             // 特殊條件 Sewing Date Range 找出 SewingSchedule.Inline ~ SewingSchedule.Offline 有交集
             if (model.SewingSDate.HasValue && model.SewingEDate.HasValue)
             {
                 sqlWhere += $@"
 AND (
     -- 狀況 1: @SewingSDate 在 Inline 和 Offline 之間
-    (@SewingSDate BETWEEN ss.Inline AND ss.Offline)
+    (@SewingSDate BETWEEN CAST(ss.Inline AS DATE) AND CAST(ss.Offline AS DATE))
     -- 狀況 2: @SewingEDate 在 Inline 和 Offline 之間
-    OR (@SewingEDate BETWEEN ss.Inline AND ss.Offline)
+    OR (@SewingEDate BETWEEN CAST(ss.Inline AS DATE) AND CAST(ss.Offline AS DATE))
     -- 狀況 3: Inline 在 @SewingSDate 和 @SewingEDate 之間
-    OR (ss.Inline BETWEEN @SewingSDate AND @SewingEDate)
+    OR (CAST(ss.Inline AS DATE) BETWEEN @SewingSDate AND @SewingEDate)
     -- 狀況 4: Offline 在 @SewingSDate 和 @SewingEDate 之間
-    OR (ss.Offline BETWEEN @SewingSDate AND @SewingEDate)
+    OR (CAST(ss.Offline AS DATE) BETWEEN @SewingSDate AND @SewingEDate)
 )
 ";
             }
@@ -58,13 +63,13 @@ AND (
             if (model.SewingInlineSDate.HasValue && model.SewingInlineEDate.HasValue)
             {
                 sqlWhere += $@"
-AND ss.Inline BETWEEN @SewingInlineSDate AND @SewingInlineEDate";
+AND CAST(ss.Inline AS DATE) BETWEEN @SewingInlineSDate AND @SewingInlineEDate";
             }
 
             if (model.SewingOfflineSDate.HasValue && model.SewingOfflineEDate.HasValue)
             {
                 sqlWhere += $@"
-AND ss.Offline BETWEEN @SewingOfflineSDate AND @SewingOfflineEDate";
+AND CAST(ss.Offline AS DATE) BETWEEN @SewingOfflineSDate AND @SewingOfflineEDate";
             }
 
             if (!string.IsNullOrEmpty(model.MDivisionID))
@@ -86,18 +91,165 @@ AND ss.FactoryID = @FactoryID";
                 return new Base_ViewModel() { Result = new Ict.DualResult(false, "Date can not all be empty!"), Dt = new DataTable() };
             }
 
+            string sqlBISource1 = string.Empty;
+            string sqlBI_tmpSumDailyStdQty = string.Empty;
+            string sqlAlloQty = string.Empty;
+            string sqlBIFinalColumn = string.Empty;
+            string sqlBILeftJoin = string.Empty;
+            string sqlNIdropTable = string.Empty;
+            if (model.IsBI)
+            {
+                sqlBISource1 = @"
+--BI 需要組合欄位資訊
+SELECT
+    ssd.Article
+   ,ss.SewingLineID
+   ,ss.OrderID
+   ,ss.FactoryID
+INTO #tmpSewingSchedule_Detail
+FROM SewingSchedule_Detail ssd WITH (NOLOCK)
+INNER JOIN #tmpSewingSchedule ss ON ss.ID = ssd.ID
+
+-- BI By OrderID 欄位
+SELECT DISTINCT OrderID
+INTO #tmpOrderID
+FROM #tmpSewingSchedule
+
+SELECT
+     o.OrderID
+    ,Consumption = SUM(w.ConsPC  * wd.Qty)
+INTO #tmpByOrderIDConsumption
+FROM #tmpOrderID o
+INNER JOIN WorkOrder_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
+INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
+GROUP BY o.OrderID
+
+SELECT DISTINCT
+    OrderID = ot.ID
+   ,[Artwork] = at.Abbreviation + ':' + IIF(ot.Qty > 0, CONVERT(VARCHAR, ot.Qty), CONVERT(VARCHAR, TMS))
+INTO #tmpArtwork
+FROM Order_TmsCost ot WITH (NOLOCK)
+INNER JOIN ArtworkType at WITH (NOLOCK) ON ot.ArtworkTypeID = at.ID
+WHERE (ot.Price > 0 OR at.Classify IN ('O', 'I'))
+AND (at.Classify IN ('S', 'I') OR at.IsSubprocess = 1)
+AND (ot.TMS > 0 OR ot.Qty > 0)
+AND at.Abbreviation != ''
+AND EXISTS (SELECT 1 FROM #tmpOrderID o WHERE ot.ID = o.OrderID)
+
+SELECT
+     o.OrderID
+    ,Artwork = STUFF((
+        SELECT CONCAT(',', Artwork)
+        FROM #tmpArtwork art
+        WHERE art.OrderID = o.OrderID
+        ORDER BY Artwork
+        FOR XML PATH ('')
+    ), 1, 1, '')    
+INTO #tmpByOrderArtwork
+FROM #tmpOrderID o
+
+-- 找出 OrderID 有的 WorkOrderUkey 底下所有數量
+SELECT
+     wd.WorkOrderUkey
+    ,wd.OrderID
+    ,wd.Qty
+    ,w.Cons
+INTO #tmpAllWorkOrder
+FROM WorkOrder_Distribute wd WITH (NOLOCK)
+INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
+WHERE EXISTS ( -- 找到有哪些 WorkOrderUkey
+    SELECT 1
+    FROM #tmpOrderID o 
+    INNER JOIN WorkOrder_Distribute wdo WITH (NOLOCK) ON wdo.OrderID = o.OrderID
+    INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderUkey = wdo.WorkOrderUkey -- 只計算已經建立 P20, 同 Cutting P03 規則
+    WHERE wdo.WorkOrderUkey = wd.WorkOrderUkey
+)
+
+SELECT
+     WorkOrderUkey
+    ,Qty = SUM(Qty) -- by WorkOrderUkey 分母
+    ,A.Cons
+INTO #tmpDenominator
+FROM #tmpAllWorkOrder A
+GROUP BY A.WorkOrderUkey, A.Cons
+
+SELECT
+     WorkOrderUkey
+    ,A.OrderID
+    ,Qty = SUM(Qty) -- by WorkOrderUkey, OrderID 分子
+INTO #tmpNumerator
+FROM #tmpAllWorkOrder A
+INNER JOIN #tmpOrderID o ON o.OrderID = A.OrderID
+GROUP BY A.WorkOrderUkey, A.OrderID
+
+-- by OrderID 計算 Cons 比例
+SELECT
+     n.OrderID
+    ,ActConsOutput = SUM(d.Cons * IIF(d.Qty = 0, 0, (n.Qty / d.Qty)))
+INTO #tmpByOrderIDActConsumption
+FROM #tmpNumerator n
+INNER JOIN #tmpDenominator d ON d.WorkOrderUkey = n.WorkOrderUkey
+GROUP BY n.OrderID
+";
+                sqlAlloQty = @",AlloQty = (SELECT SUM(AlloQty) FROM SewingSchedule_Detail ssd WITH (NOLOCK) WHERE ssd.ID = ss.ID)";
+                sqlBI_tmpSumDailyStdQty = @"
+   ,Article = STUFF((
+        SELECT CONCAT(',', Article)
+        FROM (
+            SELECT DISTINCT
+                ssd.Article
+            FROM #tmpSewingSchedule_Detail ssd WITH (NOLOCK)
+            WHERE ssd.SewingLineID = ss.SewingLineID
+            AND ssd.OrderID = ss.OrderID
+            AND ssd.FactoryID = ss.FactoryID
+        ) s
+        FOR XML PATH ('')), 1, 1, '')
+   ,AlloQty = SUM(AlloQty)
+";
+                sqlBIFinalColumn = @"
+    ,o.MDivisionID
+    ,o.BrandID
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.CDCodeNew
+    ,std.Article
+    ,o.POID
+    ,o.Category
+    ,o.SCIDelivery
+    ,o.BuyerDelivery
+    ,std.AlloQty
+    ,art.ArtWork
+    ,JITDate = o.SewInLine
+    ,BCSDate = o.SewInLine
+    ,o.ReadyDate
+    ,WorkHourPerDay = (SELECT SUM(Hours) FROM WorkHour WHERE WorkHour.SewingLineID = ss.SewingLineID AND WorkHour.FactoryID = ss.FactoryID AND WorkHour.Date = ss.SewingDate)
+    ,cons.Consumption -- by SP 計算
+    ,ActCons.ActConsOutput -- by SP 計算
+";
+                sqlBILeftJoin = @"
+LEFT JOIN #tmpByOrderArtwork art ON art.OrderID = ss.OrderID
+LEFT JOIN #tmpByOrderIDConsumption cons ON cons.OrderID = ss.OrderID
+LEFT JOIN #tmpByOrderIDActConsumption ActCons ON ActCons.OrderID = ss.OrderID
+";
+            }
+
             #region 組SQL
             string sqlCmd = $@"
 SELECT
-    ss.SewingLineID
+    ss.ID
+   ,ss.SewingLineID
    ,ss.OrderID
    ,ss.FactoryID
    ,ss.APSNo
+   {sqlAlloQty}
    ,Inline = CAST(ss.Inline AS DATE)
    ,Offline = CAST(ss.Offline AS DATE)
 INTO #tmpSewingSchedule
 FROM SewingSchedule ss WITH (NOLOCK)
+WHERE 1 = 1
 {sqlWhere}
+
+{sqlBISource1}
 
 -- 將 Inline ~ Offline 列出每天日期展開, 使用遞增數字生成器展開日期範圍
 ;WITH DateRange AS (
@@ -122,14 +274,16 @@ where not exists (select 1 from Holiday h where e.SewingDate = h.HolidayDate and
  
 
 --by Pkey 準備每日標準數(總和)--很慢
+--by Pkey 會有多筆計畫狀況, EX: 11/01~11/03, 11/03~11/05, 此狀況 11/03 這日期標準數加總 且 Inline 取最小 Offline 取最大
 SELECT
     ss.SewingLineID
    ,ss.OrderID
    ,ss.FactoryID
    ,std.Date
    ,StdQty = SUM(std.StdQ)
-   ,ss.Inline
-   ,ss.Offline
+   ,Inline = MIN(ss.Inline)
+   ,Offline = MAX(ss.Offline)
+    {sqlBI_tmpSumDailyStdQty}
 INTO #tmpSumDailyStdQty
 FROM #tmpSewingSchedule ss
 OUTER APPLY(SELECT * FROM dbo.getDailystdq (ss.APSNo) std) std
@@ -138,8 +292,6 @@ GROUP BY
    ,ss.OrderID
    ,ss.FactoryID
    ,std.Date
-   ,ss.Inline
-   ,ss.Offline
 
 
 -- 規則同 Subcon P42 只取最後更新 TransferTime 的成套數
@@ -294,11 +446,13 @@ SELECT ss.SewingLineID
 	,[PRTOutput] = sub.PRTQty
 	,sdo.PRTRemark
 	,sdo.PRTExclusion
+    {sqlBIFinalColumn}
 FROM #tmpPkeyColumns ss
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = ss.OrderID
 LEFT JOIN #tmpSumDailyStdQty std ON std.Date = ss.SewingDate AND std.SewingLineID = ss.SewingLineID AND std.OrderID = ss.OrderID AND std.FactoryID = ss.FactoryID
 LEFT JOIN SewingDailyOutputStatusRecord sdo ON sdo.SewingOutputDate = ss.SewingDate AND sdo.SewingLineID = ss.SewingLineID AND sdo.OrderID = ss.OrderID AND sdo.FactoryID = ss.FactoryID  
 LEFT JOIN #tmpSetQtyBySubprocess_Final sub ON sub.Date = ss.SewingDate AND sub.SewingLineID = ss.SewingLineID AND sub.OrderID = ss.OrderID AND sub.FactoryID = ss.FactoryID  
+{sqlBILeftJoin}
 ORDER BY 
     ss.SewingLineID
    ,ss.OrderID
@@ -308,13 +462,12 @@ ORDER BY
 DROP TABLE #tmp_SetQtyBySubprocess,#tmp_SetQtyBySubprocess_Last,#tmpPkeyColumns,#tmpSetQtyBySubprocess_Final,#tmpSewingSchedule,#tmpSumDailyStdQty";
             #endregion 組SQL
 
-            Base_ViewModel resultReport = new Base_ViewModel
+            var result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable dataTable);
+            return new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable dataTable),
+                Result = result,
+                Dt = dataTable,
             };
-
-            resultReport.Dt = dataTable;
-            return resultReport;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Planning
 {
-    partial class P09
+    partial class P08
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.panel3 = new Sci.Win.UI.Panel();
             this.btnExcelImport = new Sci.Win.UI.Button();
             this.btnDownloadTemplate = new Sci.Win.UI.Button();
@@ -45,11 +44,10 @@
             this.btnQuery = new Sci.Win.UI.Button();
             this.btnSave = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.grid1bs = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.button1 = new Sci.Win.UI.Button();
+            this.btnEdit = new Sci.Win.UI.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1bs)).BeginInit();
             this.SuspendLayout();
             // 
             // panel3
@@ -83,6 +81,7 @@
             this.btnExcelImport.TabIndex = 7;
             this.btnExcelImport.Text = "Excel Import";
             this.btnExcelImport.UseVisualStyleBackColor = true;
+            this.btnExcelImport.Click += new System.EventHandler(this.BtnExcelImport_Click);
             // 
             // btnDownloadTemplate
             // 
@@ -245,6 +244,7 @@
             this.btnSave.TabIndex = 8;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click);
             // 
             // grid1
             // 
@@ -257,7 +257,6 @@
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grid1.DataSource = this.grid1bs;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -274,36 +273,40 @@
             this.grid1.TabIndex = 8;
             this.grid1.TabStop = false;
             // 
-            // button1
+            // btnEdit
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.button1.Location = new System.Drawing.Point(796, 619);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(97, 30);
-            this.button1.TabIndex = 21;
-            this.button1.Text = "Edit";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnEdit.Location = new System.Drawing.Point(796, 619);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(97, 30);
+            this.btnEdit.TabIndex = 21;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
             // 
-            // P09
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // P08
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnEdit);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.btnSave);
             this.EditMode = true;
-            this.Name = "P09";
+            this.Name = "P08";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P09. Daily Output Status Record";
+            this.Text = "P08. Daily Output Status Record";
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.grid1, 0);
-            this.Controls.SetChildIndex(this.button1, 0);
+            this.Controls.SetChildIndex(this.btnEdit, 0);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.grid1bs)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -314,7 +317,6 @@
         private Win.UI.Button btnQuery;
         private Win.UI.Button btnSave;
         private Win.UI.Grid grid1;
-        private Win.UI.ListControlBindingSource grid1bs;
         private Win.UI.DateRange dateSewingOffline;
         private Win.UI.Label label5;
         private Win.UI.DateRange dateSewingInline;
@@ -327,6 +329,7 @@
         private Win.UI.Label label1;
         private Win.UI.Button btnExcelImport;
         private Win.UI.Button btnDownloadTemplate;
-        private Win.UI.Button button1;
+        private Win.UI.Button btnEdit;
+        private System.Windows.Forms.OpenFileDialog openFileDialog1;
     }
 }

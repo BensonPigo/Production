@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Sci.Production.Prg.PowerBI.Model
 {
     /// <inheritdoc/>
-    public class Planning_P09_ViewModel
+    public class Planning_P08_ViewModel
     {
         /// <inheritdoc/>
         public string MDivisionID { get; set; }
@@ -30,5 +30,11 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public DateTime? SewingOfflineEDate { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsBI { get; set; }
+
+        /// <inheritdoc/>
+        public bool OnlySchema { get; set; }
     }
 }

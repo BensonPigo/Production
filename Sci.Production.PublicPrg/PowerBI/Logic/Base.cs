@@ -63,7 +63,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MISCPurchaseOrderList,
             P_ReplacementReport,
             P_DailyAccuCPULoading,
-            P_DailyOutputStatusRecord,
+            P_SewingDailyOutputStatusRecord,
         }
 
         /// <summary>
@@ -487,8 +487,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     case ListName.P_DailyAccuCPULoading:
                         result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
                         break;
-                    case ListName.P_DailyOutputStatusRecord:
-                        result = new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_DailyOutputStatusRecord.ToString());
+                    case ListName.P_SewingDailyOutputStatusRecord:
+                        result = new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
                         break;
                     default:
                         // Execute all Stored Procedures
