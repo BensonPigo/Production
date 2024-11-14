@@ -141,7 +141,7 @@ namespace Sci.Production.Cutting
                             }
                             else
                             {
-                                compareOkData.Add(item);
+                                compareOkData.Add(dbData.Where(x => x.FabricPanelCode == item.FabricPanelCode && x.FabricCombo == item.ImportPatternPanel).FirstOrDefault());
                             }
                         }
 
