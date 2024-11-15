@@ -1557,7 +1557,8 @@ and f.BrandRefno = @BrandRefno
 and f.ColorID = @ColorID 
 and f.BrandID = @BrandID 
 and f.DocumentName = @DocumentName
-and f.TestDocFactoryGroup = @FactoryID
+and ((@FactoryID = 'SPR' and f.TestDocFactoryGroup in ('SPR', 'SPX'))
+    or (@FactoryID != 'SPR' and f.TestDocFactoryGroup = @FactoryID))
 and f.deleteColumn = 0
 Order by f.SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
