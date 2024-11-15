@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-Create PROCEDURE [dbo].[imp_Base]
+alter PROCEDURE [dbo].[imp_Base]
 	
 AS
 BEGIN
@@ -2413,8 +2413,10 @@ where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLO
 --DO releasememvar WITH 'FS_CMTPlus1'
 	----------------------刪除主TABLE多的資料
 Delete Production.dbo.FSRCpuCost_Detail
-from Production.dbo.FSRCpuCost_Detail as a left join Trade_To_Pms.dbo.FSRCpuCost_Detail as b
+from Production.dbo.FSRCpuCost_Detail as a 
+left join Trade_To_Pms.dbo.FSRCpuCost_Detail as b
 on a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate
+and a.OrderCompanyID = b.OrderCompany
 where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2428,7 +2430,9 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =isnull(b.EditName	,'')
 
-from Production.dbo.FSRCpuCost_Detail as a inner join Trade_To_Pms.dbo.FSRCpuCost_Detail as b ON a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate
+from Production.dbo.FSRCpuCost_Detail as a 
+inner join Trade_To_Pms.dbo.FSRCpuCost_Detail as b 
+ON a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate and a.OrderCompanyID = b.OrderCompany
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FSRCpuCost_Detail(
        ShipperID
@@ -2439,7 +2443,7 @@ INSERT INTO Production.dbo.FSRCpuCost_Detail(
       ,AddName
       ,EditDate
       ,EditName
-
+	  ,OrderCompanyID
 )
 select 
        isnull(ShipperID,'')
@@ -2450,8 +2454,13 @@ select
       ,isnull(AddName  ,'')
       ,EditDate 
       ,isnull(EditName ,'')
+	  ,isnull(OrderCompany,0)
 from Trade_To_Pms.dbo.FSRCpuCost_Detail as b WITH (NOLOCK)
-where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
+where not exists(
+	select ShipperID 
+	from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) 
+	where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate and a.OrderCompanyID = b.OrderCompany
+)
 
 
 
