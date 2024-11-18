@@ -2,7 +2,7 @@
     [ID]         VARCHAR (8)    CONSTRAINT [DF_Buyer_ID] DEFAULT ('') NOT NULL,
     [CountryID]  VARCHAR (2)    CONSTRAINT [DF_Buyer_CountryID] DEFAULT ('') NOT NULL,
     [NameCH]     NVARCHAR (30)  CONSTRAINT [DF_Buyer_NameCH] DEFAULT ('') NOT NULL,
-    [NameEN]     NVARCHAR (40)  CONSTRAINT [DF_Buyer_NameEN] DEFAULT ('') NOT NULL,
+    [NameEN]     NVARCHAR (80)  CONSTRAINT [DF_Buyer_NameEN] DEFAULT ('') NOT NULL,
     [Tel]        VARCHAR (20)   CONSTRAINT [DF_Buyer_Tel] DEFAULT ('') NOT NULL,
     [Fax]        VARCHAR (20)   CONSTRAINT [DF_Buyer_Fax] DEFAULT ('') NOT NULL,
     [Contact1]   VARCHAR (20)   CONSTRAINT [DF_Buyer_Contact1] DEFAULT ('') NOT NULL,

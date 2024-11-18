@@ -182,6 +182,7 @@
 	[Inline_Category] Nvarchar(65) Not Null,
 	[Low_output_Reason] Nvarchar(65) Not Null,
 	[New_Style_Repeat_style] Varchar(20) Not Null,
+	[ArtworkType] Varchar(100) Not Null,
  CONSTRAINT [PK_P_SewingDailyOutput] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC,
@@ -701,6 +702,9 @@ GO
 ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_Inline_New_Style_Repeat_style] DEFAULT ('') FOR [New_Style_Repeat_style]
 GO
 
+ALTER Table [dbo].[P_SewingDailyOutput] ADD CONSTRAINT [DF_P_SewingDailyOutput_ArtworkType] DEFAULT ('') FOR [ArtworkType]
+GO
+
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput_Detail_Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
@@ -841,4 +845,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'飛雁交期' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出的Lock狀態' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'LockStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否為訂單公司別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingDailyOutput', @level2type=N'COLUMN',@level2name=N'ArtworkType'
 GO
