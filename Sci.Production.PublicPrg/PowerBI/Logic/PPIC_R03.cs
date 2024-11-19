@@ -903,9 +903,13 @@ GROUP BY s.OrderID
             }
 
             string seq = string.Empty;
+            string pdseq = string.Empty;
+            string pdwhere = string.Empty;
             if (model.SeparateByQtyBdownByShipmode)
             {
                 seq = "o.Seq,";
+                pdseq = ", pd.OrderShipmodeSeq";
+                pdwhere = " and pd.OrderShipmodeSeq = o.seq";
             }
             #endregion
 
@@ -1071,6 +1075,7 @@ SELECT
    ,[DoxType] = o.DoxType
    ,[Packing CTN] = ISNULL(pld.PackingCTN, 0)
    ,[TTLCTN] = ISNULL(pld.TotalCTN, 0)
+   ,[Remain carton] = PackedCarton.sumCtnQty - PackedCarton.sumPackedCartons
    ,[Pack Error CTN] = pld.PackErrCTN
    ,[FtyCTN] = ISNULL(pld.FtyCtn_Remaining, 0)--和 UpdateOrdersCTN 中的 FtyCtn 不一樣喔, 這是目前在工廠的剩餘紙箱數量
    ,[Fty To Clog Transit] = ISNULL(pld.FtyToClogTransit, 0)
@@ -1135,11 +1140,21 @@ LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
 LEFT JOIN Pass1 p2 WITH (NOLOCK) ON o.LocalMR = p2.ID
 outer apply (
   select Qty=sum(pd.ShipQty)
-  from PackingList p, PackingList_Detail pd
+  from PackingList p with (nolock), PackingList_Detail pd with (nolock)
   where p.ID = pd.ID
   and p.PulloutID <> ''
   and pd.OrderID = o.ID
 ) GetPulloutData 
+
+outer apply(
+select sumCtnQty = sum(pd.CtnQty) , sumPackedCartons = sum(case when pd.ScanQty > 0 and pd.CTNQty > 0 then 1 else 0 end)
+from PackingList p with (nolock), 
+PackingList_Detail pd with (nolock)
+where p.ID = pd.ID
+and pd.OrderID = o.ID
+{pdwhere}
+Group by pd.OrderID {pdseq}
+) PackedCarton
 
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
