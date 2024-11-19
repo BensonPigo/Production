@@ -6,7 +6,7 @@
     [Junk]      BIT            CONSTRAINT [DF_Company_Junk] DEFAULT ((0)) NOT NULL,
     [Currency]  VARCHAR (3)    CONSTRAINT [DF_Company_Currency] DEFAULT ('') NOT NULL,
     [NameCH]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameCH] DEFAULT ('') NOT NULL,
-    [NameEN]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NOT NULL,
+    [NameEN]    NVARCHAR (80)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NOT NULL,
     [hasTax]    BIT            CONSTRAINT [DF_Company_hasTax] DEFAULT ((0)) NOT NULL,
     [IsDefault] BIT            CONSTRAINT [DF_Company_IsDefault] DEFAULT ((0)) NOT NULL,
     [VatNO]     VARCHAR (25)   CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NOT NULL,
