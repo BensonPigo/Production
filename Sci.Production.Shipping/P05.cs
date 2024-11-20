@@ -905,6 +905,20 @@ order by fw.WhseCode";
                 }
             }
 
+            sqlCmd = $@"select b.CountryID
+from GMTBooking a
+inner
+join SCIFty b on a.Shipper = b.ID
+where a.id = '{this.CurrentMaintain["ID"]}'";
+
+            string chkCountry = MyUtility.GetValue.Lookup(sqlCmd);
+
+            if (chkCountry != this.CurrentMaintain["Dest"].ToString() && this.CurrentMaintain["ShipModeID"].ToString() == "TRUCK")
+            {
+                MyUtility.Msg.WarningBox("The Destination Country is different from the Export Origin which is cross-border transportation, please contact MR Team to revise the Ship Mode as CB-Truck!!");
+                return false;
+            }
+
             #endregion
 
             #region 檢查LocalSupp_Bank
