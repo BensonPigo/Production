@@ -191,7 +191,7 @@ select t.OutputDate
 	, t.Manpower
 	, t.ManHour
 	, t.TotalOutput
-	, t.CD
+    , t.ComboType
     , t.CDCodeNew
 	, t.SeasonID
 	, t.BrandID
@@ -216,7 +216,7 @@ select t.OutputDate
     , t.Team
 from #tmp t
 left join Style s on t.StyleID = s.Id and t.BrandID = s.BrandID and t.SeasonID = s.SeasonID
-left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.CD, 1) = sl.Location
+left join Style_Location sl on s.Ukey = sl.StyleUkey and RIGHT(t.ComboType, 1) = sl.Location
 outer apply (
 	select TMS = sum(sq.TMS)
 	from Style_Quotation sq
@@ -331,7 +331,7 @@ outer apply (
                         Manpower = x.Field<decimal?>("Manpower"),
                         ManHour = x.Field<decimal?>("ManHour"),
                         TotalOutput = x.Field<int>("TotalOutput"),
-                        CD = x.Field<string>("CD"),
+                        ComboType = x.Field<string>("ComboType"),
                         CDCodeNew = x.Field<string>("CDCodeNew"),
                         SeasonID = x.Field<string>("SeasonID"),
                         BrandID = x.Field<string>("BrandID"),
