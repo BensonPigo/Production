@@ -251,10 +251,10 @@ namespace Sci.Production.Planning
                 DataRow newRow = dtPrint.NewRow();
                 foreach (DataColumn col in this.dataTable.Columns)
                 {
-                    if (col.ColumnName.Contains("Exclusion") && dr[col] is bool)
+                    if (col.ColumnName.Contains("Exclusion"))
                     {
                         // 將布林值轉換為 "Y" 或 "N"
-                        newRow[col.ColumnName] = (bool)dr[col] ? "Y" : "N";
+                        newRow[col.ColumnName] = MyUtility.Convert.GetBool(dr[col]) ? "Y" : "N";
                     }
                     else
                     {
@@ -273,7 +273,7 @@ namespace Sci.Production.Planning
             excelApp.Visible = true;
 
             Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];
-            int dataCount = dtPrint.Rows.Count;
+            int dataCount = dtPrint.Rows.Count + 1;
 
             // 設置資料驗證和背景顏色
             int[] regularColumns = new[] { 10 }; // Cutting

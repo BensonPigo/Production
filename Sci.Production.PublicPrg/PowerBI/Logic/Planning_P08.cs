@@ -211,7 +211,7 @@ GROUP BY n.OrderID
     ,o.BrandID
     ,o.StyleID
     ,o.SeasonID
-    ,o.CDCodeNew
+    ,style.CDCodeNew
     ,std.Article
     ,o.POID
     ,o.Category
@@ -219,14 +219,15 @@ GROUP BY n.OrderID
     ,o.BuyerDelivery
     ,std.AlloQty
     ,art.ArtWork
-    ,JITDate = o.SewInLine
-    ,BCSDate = o.SewInLine
-    ,o.ReadyDate
+    ,JITDate = DATEADD(DAY, -14, o.SewInLine)
+    ,BCSDate = DATEADD(DAY, -2, o.SewInLine)
+    ,ReadyDate = DATEADD(DAY, -2, o.SewOffLine)
     ,WorkHourPerDay = (SELECT SUM(Hours) FROM WorkHour WHERE WorkHour.SewingLineID = ss.SewingLineID AND WorkHour.FactoryID = ss.FactoryID AND WorkHour.Date = ss.SewingDate)
     ,cons.Consumption -- by SP 計算
     ,ActCons.ActConsOutput -- by SP 計算
 ";
                 sqlBILeftJoin = @"
+LEFT JOIN Style WITH (NOLOCK) ON Style.Ukey = o.StyleUkey
 LEFT JOIN #tmpByOrderArtwork art ON art.OrderID = ss.OrderID
 LEFT JOIN #tmpByOrderIDConsumption cons ON cons.OrderID = ss.OrderID
 LEFT JOIN #tmpByOrderIDActConsumption ActCons ON ActCons.OrderID = ss.OrderID
