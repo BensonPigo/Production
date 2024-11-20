@@ -93,10 +93,9 @@ AND ss.FactoryID = @FactoryID";
 
             string sqlBISource1 = string.Empty;
             string sqlBI_tmpSumDailyStdQty = string.Empty;
-            string sqlAlloQty = string.Empty;
+            string sqlBIAlloQty = string.Empty;
             string sqlBIFinalColumn = string.Empty;
             string sqlBILeftJoin = string.Empty;
-            string sqlNIdropTable = string.Empty;
             if (model.IsBI)
             {
                 sqlBISource1 = @"
@@ -123,30 +122,6 @@ FROM #tmpOrderID o
 INNER JOIN WorkOrder_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
 INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
 GROUP BY o.OrderID
-
-SELECT DISTINCT
-    OrderID = ot.ID
-   ,[Artwork] = at.Abbreviation + ':' + IIF(ot.Qty > 0, CONVERT(VARCHAR, ot.Qty), CONVERT(VARCHAR, TMS))
-INTO #tmpArtwork
-FROM Order_TmsCost ot WITH (NOLOCK)
-INNER JOIN ArtworkType at WITH (NOLOCK) ON ot.ArtworkTypeID = at.ID
-WHERE (ot.Price > 0 OR at.Classify IN ('O', 'I'))
-AND (at.Classify IN ('S', 'I') OR at.IsSubprocess = 1)
-AND (ot.TMS > 0 OR ot.Qty > 0)
-AND at.Abbreviation != ''
-AND EXISTS (SELECT 1 FROM #tmpOrderID o WHERE ot.ID = o.OrderID)
-
-SELECT
-     o.OrderID
-    ,Artwork = STUFF((
-        SELECT CONCAT(',', Artwork)
-        FROM #tmpArtwork art
-        WHERE art.OrderID = o.OrderID
-        ORDER BY Artwork
-        FOR XML PATH ('')
-    ), 1, 1, '')    
-INTO #tmpByOrderArtwork
-FROM #tmpOrderID o
 
 -- 找出 OrderID 有的 WorkOrderUkey 底下所有數量
 SELECT
@@ -190,8 +165,29 @@ INTO #tmpByOrderIDActConsumption
 FROM #tmpNumerator n
 INNER JOIN #tmpDenominator d ON d.WorkOrderUkey = n.WorkOrderUkey
 GROUP BY n.OrderID
+
+SELECT
+    t.OrderID
+    ,Artwork
+INTO #tmpArtwork
+FROM #tmpOrderID t
+--從 Planning R15 來的
+OUTER APPLY (
+    SELECT Artwork = STUFF((
+        SELECT CONCAT('+', ArtworkTypeID)
+        FROM (
+            SELECT DISTINCT [ArtworkTypeId] = IIF(s1.ArtworkTypeId = '', s1.ID, s1.ArtworkTypeId)
+            FROM Bundle b1
+            INNER JOIN Bundle_Detail_Order bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
+            INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
+            INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID = bda1.SubprocessId
+            WHERE bd1.Orderid = t.OrderID
+        ) tmpartwork
+        FOR XML PATH ('')
+    ), 1, 1, '')
+) Artwork
 ";
-                sqlAlloQty = @",AlloQty = (SELECT SUM(AlloQty) FROM SewingSchedule_Detail ssd WITH (NOLOCK) WHERE ssd.ID = ss.ID)";
+                sqlBIAlloQty = @",AlloQty = (SELECT SUM(AlloQty) FROM SewingSchedule_Detail ssd WITH (NOLOCK) WHERE ssd.ID = ss.ID)";
                 sqlBI_tmpSumDailyStdQty = @"
    ,Article = STUFF((
         SELECT CONCAT(',', Article)
@@ -218,19 +214,19 @@ GROUP BY n.OrderID
     ,o.SCIDelivery
     ,o.BuyerDelivery
     ,std.AlloQty
-    ,art.ArtWork
     ,JITDate = DATEADD(DAY, -14, o.SewInLine)
     ,BCSDate = DATEADD(DAY, -2, o.SewInLine)
     ,ReadyDate = DATEADD(DAY, -2, o.SewOffLine)
     ,WorkHourPerDay = (SELECT SUM(Hours) FROM WorkHour WHERE WorkHour.SewingLineID = ss.SewingLineID AND WorkHour.FactoryID = ss.FactoryID AND WorkHour.Date = ss.SewingDate)
     ,cons.Consumption -- by SP 計算
     ,ActCons.ActConsOutput -- by SP 計算
+    ,ta.Artwork -- by SP 組合
 ";
                 sqlBILeftJoin = @"
 LEFT JOIN Style WITH (NOLOCK) ON Style.Ukey = o.StyleUkey
-LEFT JOIN #tmpByOrderArtwork art ON art.OrderID = ss.OrderID
 LEFT JOIN #tmpByOrderIDConsumption cons ON cons.OrderID = ss.OrderID
 LEFT JOIN #tmpByOrderIDActConsumption ActCons ON ActCons.OrderID = ss.OrderID
+LEFT JOIN #tmpArtwork ta ON ta.OrderID = ss.OrderID
 ";
             }
 
@@ -242,7 +238,8 @@ SELECT
    ,ss.OrderID
    ,ss.FactoryID
    ,ss.APSNo
-   {sqlAlloQty}
+   {sqlBIAlloQty}
+   ,RateInAPSNo = 1.0 * AlloQty / (SELECT SUM(AlloQty) FROM SewingSchedule ss2 WITH (NOLOCK) WHERE ss2.APSNo = ss.APSNo)
    ,Inline = CAST(ss.Inline AS DATE)
    ,Offline = CAST(ss.Offline AS DATE)
 INTO #tmpSewingSchedule
@@ -271,7 +268,7 @@ SELECT DISTINCT
    ,SewingDate
 INTO #tmpPkeyColumns
 FROM ExpandedDates e
-where not exists (select 1 from Holiday h where e.SewingDate = h.HolidayDate and e.FactoryID = h.FactoryID)
+WHERE EXISTS (SELECT 1 FROM WorkHour WITH(NOLOCK) WHERE SewingLineID = e.SewingLineID AND FactoryID = e.FactoryID AND Date = e.SewingDate)
  
 
 --by Pkey 準備每日標準數(總和)--很慢
@@ -281,7 +278,7 @@ SELECT
    ,ss.OrderID
    ,ss.FactoryID
    ,std.Date
-   ,StdQty = SUM(std.StdQ)
+   ,StdQty = CEILING(SUM(std.StdQ * ss.RateInAPSNo))
    ,Inline = MIN(ss.Inline)
    ,Offline = MAX(ss.Offline)
     {sqlBI_tmpSumDailyStdQty}
@@ -344,73 +341,67 @@ FROM (
 GROUP BY s.OrderID,s.SubprocessID,s.TransferTime 
 
 
--- 計算各成套欄位組 
-select *
-	, [SortingQty] = case when [SortingLagoverQty] = 0 then 0
-						when [SortingLagoverQty] > 0 then t.StdQty
-						when ABS([SortingLagoverQty]) < t.StdQty then t.StdQty + [SortingLagoverQty]
-					else 0
-					end
-	, [LoadingQty] = case when [LoadingLagoverQty] = 0 then 0
-						when [LoadingLagoverQty] > 0 then t.StdQty
-						when ABS([LoadingLagoverQty]) < t.StdQty then t.StdQty + [LoadingLagoverQty]
-					else 0
-					end
-	, [ATQty] = case when [ATLagoverQty] = 0 then 0
-						when [ATLagoverQty] > 0 then t.StdQty
-						when ABS([ATLagoverQty]) < t.StdQty then t.StdQty + [ATLagoverQty]
-					else 0
-					end
-	, [AUTQty] = case when [AUTLagoverQty] = 0 then 0
-						when [AUTLagoverQty] > 0 then t.StdQty
-						when ABS([AUTLagoverQty]) < t.StdQty then t.StdQty + [AUTLagoverQty]
-					else 0
-					end
-	, [HTQty] = case when [HTLagoverQty] = 0 then 0
-						when [HTLagoverQty] > 0 then t.StdQty
-						when ABS([HTLagoverQty]) < t.StdQty then t.StdQty + [HTLagoverQty]
-					else 0
-					end
-	, [BOQty] = case when [BOLagoverQty] = 0 then 0
-						when [BOLagoverQty] > 0 then t.StdQty
-						when ABS([BOLagoverQty]) < t.StdQty then t.StdQty + [BOLagoverQty]
-					else 0
-					end
-	, [FMQty] = case when [FMLagoverQty] = 0 then 0
-						when [FMLagoverQty] > 0 then t.StdQty
-						when ABS([FMLagoverQty]) < t.StdQty then t.StdQty + [FMLagoverQty]
-					else 0
-					end
-	, [PRTQty] = case when [PRTLagoverQty] = 0 then 0
-						when [PRTLagoverQty] > 0 then t.StdQty
-						when ABS([PRTLagoverQty]) < t.StdQty then t.StdQty + [PRTLagoverQty]
-					else 0
-					end
+--每日的累計標準數
+SELECT *
+    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+INTO #tmpSumDailyStdQty_AccSum
+FROM #tmpSumDailyStdQty
+
+--準備前一個工作天的累計標準數, 第一天的前一天標準數 = 0
+SELECT *
+    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+INTO #tmpSumDailyStdQty_AccSum_BeforeWorkDate
+FROM #tmpSumDailyStdQty_AccSum
+
+
+--推算每天可能成套的數量
+--[當前成套總數]達到[到此天的累計標準總數]: 則顯示當天標準數
+--[當前成套總數]沒有達到[到前一個工作天的累計標準總數]: 顯示0
+--[當前成套總數]沒有達到[到此天的累計標準總數] && 超過 [到前一個工作天的累計標準總數]: 顯示 [當前成套總數]扣除[到前一個工作天的累計標準總數]
+SELECT
+    t.*
+    ,[SortingQty] =
+        CASE WHEN sorting.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN sorting.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE sorting.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[LoadingQty] =
+        CASE WHEN loading.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN loading.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE loading.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[ATQty] =
+        CASE WHEN att.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN att.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE att.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[AUTQty] =
+        CASE WHEN aut.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN aut.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE aut.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[HTQty] =
+        CASE WHEN ht.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN ht.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE ht.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[BOQty] =
+        CASE WHEN bo.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN bo.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE bo.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[FMQty] =
+        CASE WHEN fm.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN fm.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE fm.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[PRTQty] =
+        CASE WHEN prt.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
 into #tmpSetQtyBySubprocess_Final
-from (
-	select t.*
-		, [SortingLagoverQty] = ISNULL(Lag(sorting.FinishedQtyBySet - t.accStandardQty, 1, sorting.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [LoadingLagoverQty] =ISNULL( Lag(loading.FinishedQtyBySet - t.accStandardQty, 1, loading.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [ATLagoverQty] = ISNULL(Lag(att.FinishedQtyBySet - t.accStandardQty, 1, att.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [AUTLagoverQty] = ISNULL(Lag(aut.FinishedQtyBySet - t.accStandardQty, 1, aut.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [HTLagoverQty] = ISNULL(Lag(ht.FinishedQtyBySet - t.accStandardQty, 1, ht.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [BOLagoverQty] = ISNULL(Lag(bo.FinishedQtyBySet - t.accStandardQty, 1, bo.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [FMLagoverQty] = ISNULL(Lag(fm.FinishedQtyBySet - t.accStandardQty, 1, fm.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-		, [PRTLagoverQty] = ISNULL(Lag(prt.FinishedQtyBySet - t.accStandardQty, 1, prt.FinishedQtyBySet) over (partition by t.SewingLineID, t.OrderID, t.FactoryID order by t.Date) - t.StdQty, 0)
-	from (
-		select t.*
-			, accStandardQty = sum(t.StdQty) over(partition by t.SewingLineID, t.OrderID order by t.Date) 
-		from #tmpSumDailyStdQty t
-	) t
-	left join #tmp_SetQtyBySubprocess sorting on t.OrderID = sorting.OrderID and sorting.SubprocessID = 'Sorting'
-	left join #tmp_SetQtyBySubprocess loading on t.OrderID = loading.OrderID and loading.SubprocessID = 'Loading'
-	left join #tmp_SetQtyBySubprocess att on t.OrderID = att.OrderID and att.SubprocessID = 'AT'
-	left join #tmp_SetQtyBySubprocess aut on t.OrderID = aut.OrderID and aut.SubprocessID = 'AUT'
-	left join #tmp_SetQtyBySubprocess ht on t.OrderID = ht.OrderID and ht.SubprocessID = 'HT'
-	left join #tmp_SetQtyBySubprocess bo on t.OrderID = bo.OrderID and bo.SubprocessID = 'BO'
-	left join #tmp_SetQtyBySubprocess fm on t.OrderID = fm.OrderID and fm.SubprocessID = 'FM'
-	left join #tmp_SetQtyBySubprocess prt on t.OrderID = prt.OrderID and prt.SubprocessID = 'PRT'
-) t
+FROM #tmpSumDailyStdQty_AccSum_BeforeWorkDate t
+LEFT JOIN #tmp_SetQtyBySubprocess sorting ON t.OrderID = sorting.OrderID AND sorting.SubprocessID = 'Sorting'
+LEFT JOIN #tmp_SetQtyBySubprocess loading ON t.OrderID = loading.OrderID AND loading.SubprocessID = 'Loading'
+LEFT JOIN #tmp_SetQtyBySubprocess att ON t.OrderID = att.OrderID AND att.SubprocessID = 'AT'
+LEFT JOIN #tmp_SetQtyBySubprocess aut ON t.OrderID = aut.OrderID AND aut.SubprocessID = 'AUT'
+LEFT JOIN #tmp_SetQtyBySubprocess ht ON t.OrderID = ht.OrderID AND ht.SubprocessID = 'HT'
+LEFT JOIN #tmp_SetQtyBySubprocess bo ON t.OrderID = bo.OrderID AND bo.SubprocessID = 'BO'
+LEFT JOIN #tmp_SetQtyBySubprocess fm ON t.OrderID = fm.OrderID AND fm.SubprocessID = 'FM'
+LEFT JOIN #tmp_SetQtyBySubprocess prt ON t.OrderID = prt.OrderID AND prt.SubprocessID = 'PRT'
 
 
 
@@ -460,7 +451,11 @@ ORDER BY
    ,ss.FactoryID
    ,ss.SewingDate
 
-DROP TABLE #tmp_SetQtyBySubprocess,#tmp_SetQtyBySubprocess_Last,#tmpPkeyColumns,#tmpSetQtyBySubprocess_Final,#tmpSewingSchedule,#tmpSumDailyStdQty";
+DROP TABLE #tmp_SetQtyBySubprocess,#tmp_SetQtyBySubprocess_Last,#tmpPkeyColumns,#tmpSetQtyBySubprocess_Final,#tmpSewingSchedule,#tmpSumDailyStdQty
+    ,#tmpSumDailyStdQty_AccSum  
+    ,#tmpSumDailyStdQty_AccSum_BeforeWorkDate
+
+";
             #endregion 組SQL
 
             var result = DBProxy.Current.Select("Production", sqlCmd, listPar, out System.Data.DataTable dataTable);
