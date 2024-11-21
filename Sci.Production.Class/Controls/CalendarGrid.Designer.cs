@@ -33,16 +33,6 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.gridCalendar = new Sci.Win.UI.Grid();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.labelday4 = new System.Windows.Forms.Label();
-            this.labelday5 = new System.Windows.Forms.Label();
-            this.labelday6 = new System.Windows.Forms.Label();
-            this.labelday3 = new System.Windows.Forms.Label();
-            this.labelday0 = new System.Windows.Forms.Label();
-            this.labelday1 = new System.Windows.Forms.Label();
-            this.labelday2 = new System.Windows.Forms.Label();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.Start1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.End1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Start2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,6 +47,16 @@
             this.End6 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Start7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.End7 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnday5 = new Sci.Win.UI.Button();
+            this.btnday6 = new Sci.Win.UI.Button();
+            this.btnday7 = new Sci.Win.UI.Button();
+            this.btnday4 = new Sci.Win.UI.Button();
+            this.btnday1 = new Sci.Win.UI.Button();
+            this.btnday2 = new Sci.Win.UI.Button();
+            this.btnday3 = new Sci.Win.UI.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.gridCalendar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
@@ -129,122 +129,6 @@
             this.gridCalendar.TabIndex = 58;
             this.gridCalendar.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.GridCalendar_CellFormatting);
             this.gridCalendar.SizeChanged += new System.EventHandler(this.GridCalendar_SizeChanged);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 7;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
-            this.tableLayoutPanel1.Controls.Add(this.labelday4, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday5, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday6, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday3, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday0, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday1, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.labelday2, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(668, 24);
-            this.tableLayoutPanel1.TabIndex = 59;
-            // 
-            // labelday4
-            // 
-            this.labelday4.AutoSize = true;
-            this.labelday4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday4.Location = new System.Drawing.Point(380, 0);
-            this.labelday4.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday4.Name = "labelday4";
-            this.labelday4.Size = new System.Drawing.Size(95, 24);
-            this.labelday4.TabIndex = 60;
-            this.labelday4.Text = "Thursday";
-            this.labelday4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday5
-            // 
-            this.labelday5.AutoSize = true;
-            this.labelday5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday5.Location = new System.Drawing.Point(475, 0);
-            this.labelday5.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday5.Name = "labelday5";
-            this.labelday5.Size = new System.Drawing.Size(95, 24);
-            this.labelday5.TabIndex = 59;
-            this.labelday5.Text = "Friday";
-            this.labelday5.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday6
-            // 
-            this.labelday6.AutoSize = true;
-            this.labelday6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday6.Location = new System.Drawing.Point(570, 0);
-            this.labelday6.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday6.Name = "labelday6";
-            this.labelday6.Size = new System.Drawing.Size(98, 24);
-            this.labelday6.TabIndex = 58;
-            this.labelday6.Text = "Saturday";
-            this.labelday6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday3
-            // 
-            this.labelday3.AutoSize = true;
-            this.labelday3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday3.Location = new System.Drawing.Point(285, 0);
-            this.labelday3.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday3.Name = "labelday3";
-            this.labelday3.Size = new System.Drawing.Size(95, 24);
-            this.labelday3.TabIndex = 57;
-            this.labelday3.Text = "Wednesday";
-            this.labelday3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday0
-            // 
-            this.labelday0.AutoSize = true;
-            this.labelday0.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday0.Location = new System.Drawing.Point(0, 0);
-            this.labelday0.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday0.Name = "labelday0";
-            this.labelday0.Size = new System.Drawing.Size(95, 24);
-            this.labelday0.TabIndex = 56;
-            this.labelday0.Text = "Sunday";
-            this.labelday0.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday1
-            // 
-            this.labelday1.AutoSize = true;
-            this.labelday1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday1.Location = new System.Drawing.Point(95, 0);
-            this.labelday1.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday1.Name = "labelday1";
-            this.labelday1.Size = new System.Drawing.Size(95, 24);
-            this.labelday1.TabIndex = 55;
-            this.labelday1.Text = "Monday";
-            this.labelday1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelday2
-            // 
-            this.labelday2.AutoSize = true;
-            this.labelday2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.labelday2.Location = new System.Drawing.Point(190, 0);
-            this.labelday2.Margin = new System.Windows.Forms.Padding(0);
-            this.labelday2.Name = "labelday2";
-            this.labelday2.Size = new System.Drawing.Size(95, 24);
-            this.labelday2.TabIndex = 54;
-            this.labelday2.Text = "Tuesday";
-            this.labelday2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // Start1
             // 
@@ -386,6 +270,122 @@
             this.End7.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             this.End7.Width = 45;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 7;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 14.28571F));
+            this.tableLayoutPanel1.Controls.Add(this.btnday5, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday6, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday7, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday4, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday2, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.btnday3, 0, 0);
+            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(668, 24);
+            this.tableLayoutPanel1.TabIndex = 59;
+            // 
+            // btnday5
+            // 
+            this.btnday5.AutoSize = true;
+            this.btnday5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday5.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday5.Location = new System.Drawing.Point(380, 0);
+            this.btnday5.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday5.Name = "btnday5";
+            this.btnday5.Size = new System.Drawing.Size(95, 24);
+            this.btnday5.TabIndex = 60;
+            this.btnday5.Text = "Thursday";
+            // 
+            // btnday6
+            // 
+            this.btnday6.AutoSize = true;
+            this.btnday6.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday6.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday6.Location = new System.Drawing.Point(475, 0);
+            this.btnday6.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday6.Name = "btnday6";
+            this.btnday6.Size = new System.Drawing.Size(95, 24);
+            this.btnday6.TabIndex = 59;
+            this.btnday6.Text = "Friday";
+            // 
+            // btnday7
+            // 
+            this.btnday7.AutoSize = true;
+            this.btnday7.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday7.Location = new System.Drawing.Point(570, 0);
+            this.btnday7.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday7.Name = "btnday7";
+            this.btnday7.Size = new System.Drawing.Size(98, 24);
+            this.btnday7.TabIndex = 58;
+            this.btnday7.Text = "Saturday";
+            // 
+            // btnday4
+            // 
+            this.btnday4.AutoSize = true;
+            this.btnday4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday4.Location = new System.Drawing.Point(285, 0);
+            this.btnday4.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday4.Name = "btnday4";
+            this.btnday4.Size = new System.Drawing.Size(95, 24);
+            this.btnday4.TabIndex = 57;
+            this.btnday4.Text = "Wednesday";
+            // 
+            // btnday1
+            // 
+            this.btnday1.AutoSize = true;
+            this.btnday1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday1.Location = new System.Drawing.Point(0, 0);
+            this.btnday1.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday1.Name = "btnday1";
+            this.btnday1.Size = new System.Drawing.Size(95, 24);
+            this.btnday1.TabIndex = 56;
+            this.btnday1.Text = "Sunday";
+            // 
+            // btnday2
+            // 
+            this.btnday2.AutoSize = true;
+            this.btnday2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday2.Location = new System.Drawing.Point(95, 0);
+            this.btnday2.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday2.Name = "btnday2";
+            this.btnday2.Size = new System.Drawing.Size(95, 24);
+            this.btnday2.TabIndex = 55;
+            this.btnday2.Text = "Monday";
+            // 
+            // btnday3
+            // 
+            this.btnday3.AutoSize = true;
+            this.btnday3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnday3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnday3.Location = new System.Drawing.Point(190, 0);
+            this.btnday3.Margin = new System.Windows.Forms.Padding(0);
+            this.btnday3.Name = "btnday3";
+            this.btnday3.Size = new System.Drawing.Size(95, 24);
+            this.btnday3.TabIndex = 54;
+            this.btnday3.Text = "Tuesday";
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
             // CalendarGrid
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -406,13 +406,13 @@
 
         public Win.UI.Grid gridCalendar;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Label labelday4;
-        private System.Windows.Forms.Label labelday5;
-        private System.Windows.Forms.Label labelday6;
-        private System.Windows.Forms.Label labelday3;
-        private System.Windows.Forms.Label labelday0;
-        private System.Windows.Forms.Label labelday1;
-        private System.Windows.Forms.Label labelday2;
+        public Sci.Win.UI.Button btnday1;
+        public Sci.Win.UI.Button btnday2;
+        public Sci.Win.UI.Button btnday3;
+        public Sci.Win.UI.Button btnday4;
+        public Sci.Win.UI.Button btnday5;
+        public Sci.Win.UI.Button btnday6;
+        public Sci.Win.UI.Button btnday7;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Start1;

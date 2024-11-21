@@ -15,10 +15,11 @@ namespace Sci.Production.Class.PublicForm
         private DataTable dt;
 
         /// <inheritdoc/>
-        public EditCalendar(DataTable dtMachineIoT_Calendar_Detail)
+        public EditCalendar(DataTable dtMachineIoT_Calendar_Detail, int weekday)
         {
             this.InitializeComponent();
             this.dtMachineIoT_Calendar_Detail = dtMachineIoT_Calendar_Detail;
+            this.SetWeekDayCheckBox(weekday);
         }
 
         /// <inheritdoc/>
@@ -47,6 +48,15 @@ namespace Sci.Production.Class.PublicForm
         {
             this.dt = new MachineCalendar().GetMachineIoT_Calendar_DetailSchema();
             this.listControlBindingSource1.DataSource = this.dt;
+        }
+
+        private void SetWeekDayCheckBox(int weekday)
+        {
+            // 動態尋找對應的 CheckBox
+            if (this.panel1.Controls.Find($"checkBox{weekday}", true).FirstOrDefault() is CheckBox checkBox)
+            {
+                checkBox.Checked = true;
+            }
         }
 
         private void BtnSave_Click(object sender, EventArgs e)

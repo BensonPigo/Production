@@ -38,12 +38,12 @@
             this.checkBox6 = new Sci.Win.UI.CheckBox();
             this.checkBox7 = new Sci.Win.UI.CheckBox();
             this.grid1 = new Sci.Win.UI.Grid();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnSave = new Sci.Win.UI.Button();
             this.btnReset = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.btnAdd = new Sci.Win.UI.Button();
             this.btnDelete = new Sci.Win.UI.Button();
-            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel1 = new Sci.Win.UI.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();

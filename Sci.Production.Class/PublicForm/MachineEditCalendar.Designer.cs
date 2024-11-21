@@ -32,7 +32,6 @@
             this.displayBoxMachineID = new Sci.Win.UI.DisplayBox();
             this.dateStart = new Sci.Win.UI.DateBox();
             this.label4 = new Sci.Win.UI.Label();
-            this.btnEditCalendar = new Sci.Win.UI.Button();
             this.calendarGrid1 = new Sci.Production.Class.Controls.CalendarGrid();
             this.label3 = new System.Windows.Forms.Label();
             this.displayCrossday = new Sci.Win.UI.DisplayBox();
@@ -79,24 +78,13 @@
             this.label4.TabIndex = 58;
             this.label4.Text = "Start Date";
             // 
-            // btnEditCalendar
-            // 
-            this.btnEditCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEditCalendar.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnEditCalendar.Location = new System.Drawing.Point(813, 12);
-            this.btnEditCalendar.Name = "btnEditCalendar";
-            this.btnEditCalendar.Size = new System.Drawing.Size(158, 30);
-            this.btnEditCalendar.TabIndex = 61;
-            this.btnEditCalendar.Text = "Edit Calendar";
-            this.btnEditCalendar.UseVisualStyleBackColor = true;
-            this.btnEditCalendar.Click += new System.EventHandler(this.BtnEditCalendar_Click);
-            // 
             // calendarGrid1
             // 
             this.calendarGrid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.calendarGrid1.ColorCrossDay = System.Drawing.Color.Pink;
+            this.calendarGrid1.EnableHearder = true;
             this.calendarGrid1.Location = new System.Drawing.Point(9, 49);
             this.calendarGrid1.Margin = new System.Windows.Forms.Padding(4);
             this.calendarGrid1.Name = "calendarGrid1";
@@ -221,7 +209,6 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.displayCrossday);
             this.Controls.Add(this.calendarGrid1);
-            this.Controls.Add(this.btnEditCalendar);
             this.Controls.Add(this.dateStart);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.displayBoxMachineID);
@@ -234,7 +221,6 @@
             this.Controls.SetChildIndex(this.displayBoxMachineID, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.dateStart, 0);
-            this.Controls.SetChildIndex(this.btnEditCalendar, 0);
             this.Controls.SetChildIndex(this.calendarGrid1, 0);
             this.Controls.SetChildIndex(this.displayCrossday, 0);
             this.Controls.SetChildIndex(this.label3, 0);
@@ -253,7 +239,6 @@
         private Win.UI.DisplayBox displayBoxMachineID;
         private Win.UI.DateBox dateStart;
         private Win.UI.Label label4;
-        private Win.UI.Button btnEditCalendar;
         private Controls.CalendarGrid calendarGrid1;
         private System.Windows.Forms.Label label3;
         private Win.UI.DisplayBox displayCrossday;

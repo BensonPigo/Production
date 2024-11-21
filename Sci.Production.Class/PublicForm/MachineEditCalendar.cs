@@ -31,6 +31,21 @@ namespace Sci.Production.Class.PublicForm
             this.EditMode = editMode;
             this.dtMachineIoT_Calendar_Detail = this.machineCalendar.QueryMachineIoT_Calendar_Detail(machineIoT_CalendarUkey);
             this.calendarGrid1.SetDataSource(this.dtMachineIoT_Calendar_Detail, true);
+            this.calendarGrid1.btnday1.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday2.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday3.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday4.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday5.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday6.Click += this.Btnday_Click;
+            this.calendarGrid1.btnday7.Click += this.Btnday_Click;
+        }
+
+        private void Btnday_Click(object sender, EventArgs e)
+        {
+            Win.UI.Button btn = (Win.UI.Button)sender;
+            int weekDay = MyUtility.Convert.GetInt(btn.Name.Replace("btnday", string.Empty));
+            new EditCalendar(this.dtMachineIoT_Calendar_Detail, weekDay).ShowDialog();
+            this.calendarGrid1.SetDataSource(this.dtMachineIoT_Calendar_Detail, true);
         }
 
         /// <inheritdoc/>
@@ -57,12 +72,6 @@ WHERE MachineIoTType = '{this.MachineType}'
             }
 
             MyUtility.Tool.SetupCombox(this.comboBoxImportMachineID, 1, dt);
-        }
-
-        private void BtnEditCalendar_Click(object sender, EventArgs e)
-        {
-            new EditCalendar(this.dtMachineIoT_Calendar_Detail).ShowDialog();
-            this.calendarGrid1.SetDataSource(this.dtMachineIoT_Calendar_Detail, true);
         }
 
         private void BtnImport_Click(object sender, EventArgs e)

@@ -84,6 +84,10 @@
             this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.numSpreadingMachine_Target = new Sci.Win.UI.NumericBox();
+            this.label22 = new Sci.Win.UI.Label();
+            this.checkBox2 = new Sci.Win.UI.CheckBox();
             this.btnPadPrintPath = new Sci.Win.UI.Button();
             this.txtPadPrintPath = new Sci.Win.UI.TextBox();
             this.label19 = new Sci.Win.UI.Label();
@@ -144,10 +148,10 @@
             this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.shapeContainer4 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.checkBox2 = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).BeginInit();
             this.panel1.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMiscPOApproveDay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numQCMachineDelayTime)).BeginInit();
             this.SuspendLayout();
@@ -750,6 +754,7 @@
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.panel1.Controls.Add(this.groupBox3);
             this.panel1.Controls.Add(this.checkBox2);
             this.panel1.Controls.Add(this.btnPadPrintPath);
             this.panel1.Controls.Add(this.txtPadPrintPath);
@@ -858,6 +863,57 @@
             this.panel1.Size = new System.Drawing.Size(1089, 609);
             this.panel1.TabIndex = 50;
             // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.numSpreadingMachine_Target);
+            this.groupBox3.Controls.Add(this.label22);
+            this.groupBox3.Location = new System.Drawing.Point(729, 112);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(262, 54);
+            this.groupBox3.TabIndex = 171;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Spreading Machine";
+            // 
+            // numSpreadingMachine_Target
+            // 
+            this.numSpreadingMachine_Target.BackColor = System.Drawing.Color.White;
+            this.numSpreadingMachine_Target.DecimalPlaces = 2;
+            this.numSpreadingMachine_Target.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numSpreadingMachine_Target.Location = new System.Drawing.Point(181, 19);
+            this.numSpreadingMachine_Target.Name = "numSpreadingMachine_Target";
+            this.numSpreadingMachine_Target.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numSpreadingMachine_Target.Size = new System.Drawing.Size(68, 23);
+            this.numSpreadingMachine_Target.TabIndex = 34;
+            this.numSpreadingMachine_Target.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label22
+            // 
+            this.label22.Location = new System.Drawing.Point(9, 19);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(169, 23);
+            this.label22.TabIndex = 28;
+            this.label22.Text = "Target Tards (Yards/Hour)";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isNeedOTPFty", true));
+            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkBox2.Location = new System.Drawing.Point(955, 8);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(123, 21);
+            this.checkBox2.TabIndex = 168;
+            this.checkBox2.Text = "Need OTP(Fty)";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // btnPadPrintPath
             // 
             this.btnPadPrintPath.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
@@ -867,7 +923,7 @@
             this.btnPadPrintPath.TabIndex = 95;
             this.btnPadPrintPath.Text = "...";
             this.btnPadPrintPath.UseVisualStyleBackColor = true;
-            this.btnPadPrintPath.Click += new System.EventHandler(this.btnPadPrintPath_Click);
+            this.btnPadPrintPath.Click += new System.EventHandler(this.BtnPadPrintPath_Click);
             // 
             // txtPadPrintPath
             // 
@@ -978,7 +1034,7 @@
             this.btnFinalPatternPath.TabIndex = 36;
             this.btnFinalPatternPath.Text = "...";
             this.btnFinalPatternPath.UseVisualStyleBackColor = true;
-            this.btnFinalPatternPath.Click += new System.EventHandler(this.btnFinalPatternPath_Click);
+            this.btnFinalPatternPath.Click += new System.EventHandler(this.BtnFinalPatternPath_Click);
             // 
             // txtFinalPatternPath
             // 
@@ -1008,7 +1064,7 @@
             this.btnCriticalOperationPath.TabIndex = 37;
             this.btnCriticalOperationPath.Text = "...";
             this.btnCriticalOperationPath.UseVisualStyleBackColor = true;
-            this.btnCriticalOperationPath.Click += new System.EventHandler(this.btnCriticalOperationPath_Click);
+            this.btnCriticalOperationPath.Click += new System.EventHandler(this.BtnCriticalOperationPath_Click);
             // 
             // txtCriticalOperationPath
             // 
@@ -1038,7 +1094,7 @@
             this.btnHandoverSpecialToolsPath.TabIndex = 39;
             this.btnHandoverSpecialToolsPath.Text = "...";
             this.btnHandoverSpecialToolsPath.UseVisualStyleBackColor = true;
-            this.btnHandoverSpecialToolsPath.Click += new System.EventHandler(this.btnHandoverSpecialToolsPath_Click);
+            this.btnHandoverSpecialToolsPath.Click += new System.EventHandler(this.BtnHandoverSpecialToolsPath_Click);
             // 
             // btnHandoverATPath
             // 
@@ -1049,7 +1105,7 @@
             this.btnHandoverATPath.TabIndex = 38;
             this.btnHandoverATPath.Text = "...";
             this.btnHandoverATPath.UseVisualStyleBackColor = true;
-            this.btnHandoverATPath.Click += new System.EventHandler(this.btnHandoverATPath_Click);
+            this.btnHandoverATPath.Click += new System.EventHandler(this.BtnHandoverATPath_Click);
             // 
             // txtHandoverSpecialToolsPath
             // 
@@ -1432,6 +1488,7 @@
             // 
             // txtUserPOApproved
             // 
+            this.txtUserPOApproved.AllowSelectResign = false;
             this.txtUserPOApproved.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "POApproveName", true));
             this.txtUserPOApproved.DisplayBox1Binding = "";
             this.txtUserPOApproved.Location = new System.Drawing.Point(339, 54);
@@ -1442,6 +1499,7 @@
             // 
             // txtuserMiscPOApproveName
             // 
+            this.txtuserMiscPOApproveName.AllowSelectResign = false;
             this.txtuserMiscPOApproveName.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "MiscPOApproveName", true));
             this.txtuserMiscPOApproveName.DisplayBox1Binding = "";
             this.txtuserMiscPOApproveName.Location = new System.Drawing.Point(777, 54);
@@ -1463,7 +1521,7 @@
             // 
             this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer2";
+            this.shapeContainer1.Name = "shapeContainer1";
             this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
             this.lineShape10,
             this.lineShape8,
@@ -1483,7 +1541,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer2";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(737, 812);
             this.shapeContainer3.TabIndex = 0;
             this.shapeContainer3.TabStop = false;
@@ -1492,21 +1550,10 @@
             // 
             this.shapeContainer4.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer4.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer4.Name = "shapeContainer2";
+            this.shapeContainer4.Name = "shapeContainer4";
             this.shapeContainer4.Size = new System.Drawing.Size(1089, 687);
             this.shapeContainer4.TabIndex = 51;
             this.shapeContainer4.TabStop = false;
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isNeedOTPFty", true));
-            this.checkBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBox2.Location = new System.Drawing.Point(955, 8);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(123, 21);
-            this.checkBox2.TabIndex = 168;
-            this.checkBox2.Text = "Need OTP(Fty)";
-            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // B02
             // 
@@ -1524,6 +1571,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAutoApprovedWhileDateBefore)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMiscPOApproveDay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numQCMachineDelayTime)).EndInit();
             this.ResumeLayout(false);
@@ -1650,5 +1699,8 @@
         private Win.UI.TextBox txtPadPrintPath;
         private Win.UI.Label label19;
         private Win.UI.CheckBox checkBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private Win.UI.NumericBox numSpreadingMachine_Target;
+        private Win.UI.Label label22;
     }
 }
