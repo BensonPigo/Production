@@ -25,8 +25,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public Base_ViewModel GetWarehouse_R40Data(Warehouse_R40_ViewModel model)
         {
-			#region Set SQL Command & SQLParameter
-			string whereReceiving = string.Empty;
+            #region Set SQL Command & SQLParameter
+            string whereReceiving = string.Empty;
 			string whereTransferIn = string.Empty;
 			List<SqlParameter> listPar = new List<SqlParameter>();
 			Base_ViewModel resultReport = new Base_ViewModel();
@@ -150,6 +150,7 @@ select * into #tmpResult
 		    ,rd.PoId
 			,[Seq] = rd.Seq1 + ' ' + rd.Seq2
 			,o.BrandID
+			,o.StyleID
 			,psd.refno
 			,fb.WeaveTypeID
 			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
@@ -191,6 +192,7 @@ select * into #tmpResult
 		    ,rd.PoId
 			,[Seq] = rd.Seq1 + ' ' + rd.Seq2
 			,o.BrandID
+			,o.StyleID
 			,psd.refno
 			,fb.WeaveTypeID
 			,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
@@ -232,6 +234,7 @@ select  ReceivingID
 		,PoId
 		,Seq
 		,BrandID
+		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
@@ -251,6 +254,7 @@ select  ReceivingID
 		,PoId
 		,Seq
 		,BrandID
+		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
@@ -271,6 +275,7 @@ select  ReceivingID
 		,PoId
 		,Seq
 		,BrandID
+		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
@@ -291,6 +296,7 @@ select  ReceivingID
 		,PoId
 		,Seq
 		,BrandID
+		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
@@ -320,6 +326,7 @@ select
     ,rd.seq2
 	,[Seq] = rd.Seq1 + ' ' + rd.Seq2
 	,o.BrandID
+	,o.StyleID
 	,psd.refno
 	,fb.WeaveTypeID
 	,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
@@ -396,6 +403,7 @@ select
     ,rd.seq2
 	,[Seq] = rd.Seq1 + ' ' + rd.Seq2
 	,o.BrandID
+	,o.StyleID
 	,psd.refno
 	,fb.WeaveTypeID
 	,[Color] = iif(fb.MtlTypeID = 'EMB THREAD' OR fb.MtlTypeID = 'SP THREAD' OR fb.MtlTypeID = 'THREAD' 
@@ -457,6 +465,7 @@ select  ReceivingID = isnull(ReceivingID, '')
 		,PoId = isnull(PoId, '')
 		,Seq = isnull(Seq, '')
 		,BrandID = isnull(BrandID, '')
+		,StyleID = isnull(StyleID, '')
 		,refno = isnull(refno, '')
 		,WeaveTypeID = isnull(WeaveTypeID, '')
 		,Color = isnull(Color, '')
