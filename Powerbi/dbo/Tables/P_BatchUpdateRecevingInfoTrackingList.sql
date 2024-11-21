@@ -36,7 +36,7 @@
 		[Remark] [nvarchar] (100) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Remark]  DEFAULT '',
 		[AddDate] [datetime] NULL,
 		[EditDate] [datetime] NULL,
-	 [StyleID] NVARCHAR(15) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StyleID]  DEFAULT '', 
+	 [StyleID] VARCHAR(15) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StyleID]  DEFAULT '', 
     CONSTRAINT [PK_P_BatchUpdateRecevingInfoTrackingList] PRIMARY KEY CLUSTERED 
 	(
 		[ReceivingID] ASC,
