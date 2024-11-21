@@ -76,6 +76,7 @@ outer apply(
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 	and o.OrigBuyerDelivery is not null
     and fsd.seasonID = o.seasonID
+    and fd.OrderCompanyID = o.OrderCompanyID
 )f1
 outer apply(
 	select fd.CpuCost
@@ -86,6 +87,7 @@ outer apply(
 	and fsd.ShipperID = fd.ShipperID
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
 	and o.OrigBuyerDelivery is not null
+    and fd.OrderCompanyID = o.OrderCompanyID
     and fsd.seasonID = ''
 )f
 outer apply(

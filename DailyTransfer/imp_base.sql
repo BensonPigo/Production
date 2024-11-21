@@ -3,7 +3,7 @@
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
 -- =============================================
-alter PROCEDURE [dbo].[imp_Base]
+Create PROCEDURE [dbo].[imp_Base]
 	
 AS
 BEGIN
@@ -2379,7 +2379,7 @@ where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.i
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.FSRCpuCost
 from Production.dbo.FSRCpuCost as a left join Trade_To_Pms.dbo.FSRCpuCost as b
-on a.ShipperID = b.ShipperID
+on a.ShipperID = b.ShipperID and a.OrderCompanyID = b.OrderCompany
 where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2390,7 +2390,7 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =isnull(b.EditName	 ,'')
 
-from Production.dbo.FSRCpuCost as a inner join Trade_To_Pms.dbo.FSRCpuCost as b ON a.ShipperID=b.ShipperID
+from Production.dbo.FSRCpuCost as a inner join Trade_To_Pms.dbo.FSRCpuCost as b ON a.ShipperID=b.ShipperID and  a.OrderCompanyID = b.OrderCompany
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FSRCpuCost(
        ShipperID
@@ -2398,7 +2398,7 @@ INSERT INTO Production.dbo.FSRCpuCost(
       ,AddName
       ,EditDate
       ,EditName
-
+	  ,OrderCompanyID
 )
 select 
        isnull(ShipperID,'')
@@ -2406,8 +2406,9 @@ select
       ,isnull(AddName,'')
       ,EditDate
       ,isnull(EditName,'')
+	  ,OrderCompany
 from Trade_To_Pms.dbo.FSRCpuCost as b WITH (NOLOCK)
-where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID)
+where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID and a.OrderCompanyID = b.OrderCompany)
 
 
 --DO releasememvar WITH 'FS_CMTPlus1'
