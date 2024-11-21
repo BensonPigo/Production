@@ -91,6 +91,7 @@ AND ss.FactoryID = @FactoryID";
                 return new Base_ViewModel() { Result = new Ict.DualResult(false, "Date can not all be empty!"), Dt = new DataTable() };
             }
 
+            #region BI 才串上去的字串
             string sqlBISource1 = string.Empty;
             string sqlBI_tmpSumDailyStdQty = string.Empty;
             string sqlBIAlloQty = string.Empty;
@@ -229,6 +230,7 @@ LEFT JOIN #tmpByOrderIDActConsumption ActCons ON ActCons.OrderID = ss.OrderID
 LEFT JOIN #tmpArtwork ta ON ta.OrderID = ss.OrderID
 ";
             }
+            #endregion
 
             #region 組SQL
             string sqlCmd = $@"
@@ -268,7 +270,7 @@ SELECT DISTINCT
    ,SewingDate
 INTO #tmpPkeyColumns
 FROM ExpandedDates e
-WHERE EXISTS (SELECT 1 FROM WorkHour WITH(NOLOCK) WHERE SewingLineID = e.SewingLineID AND FactoryID = e.FactoryID AND Date = e.SewingDate)
+WHERE EXISTS (SELECT 1 FROM Workhour_Detail WITH(NOLOCK) WHERE SewingLineID = e.SewingLineID AND FactoryID = e.FactoryID AND Date = e.SewingDate)
  
 
 --by Pkey 準備每日標準數(總和)--很慢
@@ -340,6 +342,12 @@ FROM (
 ) s
 GROUP BY s.OrderID,s.SubprocessID,s.TransferTime 
 
+--準備 Bundle_Detail_Art 有的加工段
+SELECT DISTINCT bdo.OrderID, bda.SubprocessId
+INTO #tmpBundleSubprocessId
+FROM Bundle_Detail_Order bdo WITH (NOLOCK)
+INNER JOIN Bundle_Detail_Art bda WITH (NOLOCK) ON bda.Bundleno = bdo.Bundleno
+WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule WHERE OrderID = bdo.OrderID)
 
 --每日的累計標準數
 SELECT *
@@ -407,6 +415,7 @@ LEFT JOIN #tmp_SetQtyBySubprocess prt ON t.OrderID = prt.OrderID AND prt.Subproc
 
 
 --最後結果
+--選擇性的加工段若在 Bundle_Detail_Art 有, 擇要顯示 0
 SELECT ss.SewingLineID
 	,ss.SewingDate
 	,ss.FactoryID
@@ -415,27 +424,27 @@ SELECT ss.SewingLineID
 	,std.Inline
 	,std.Offline
 	,StdQty = ISNULL(std.StdQty, 0)
-	,[CuttingOutput] = sub.SortingQty
+	,[CuttingOutput] = ISNULL(sub.SortingQty, 0)
 	,sdo.CuttingRemark
-	,[LoadingOutput] = sub.LoadingQty
+	,[LoadingOutput] = ISNULL(sub.LoadingQty, 0)
 	,sdo.LoadingRemark
 	,sdo.LoadingExclusion
-	,[ATOutput] = sub.ATQty
+	,[ATOutput] = ISNULL(sub.ATQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'AT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.ATRemark
 	,sdo.ATExclusion
-	,[AUTOutput] = sub.AUTQty
+	,[AUTOutput] = ISNULL(sub.AUTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'AUT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.AUTRemark
 	,sdo.AUTExclusion
-	,[HTOutput] = sub.HTQty
+	,[HTOutput] = ISNULL(sub.HTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'HT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.HTRemark
 	,sdo.HTExclusion
-	,[BOOutput] = sub.BOQty
+	,[BOOutput] = ISNULL(sub.BOQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'BO' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.BORemark
 	,sdo.BOExclusion
-	,[FMOutput] = sub.FMQty
+	,[FMOutput] = ISNULL(sub.FMQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'FM' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.FMRemark
 	,sdo.FMExclusion
-	,[PRTOutput] = sub.PRTQty
+	,[PRTOutput] = ISNULL(sub.PRTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'PRT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.PRTRemark
 	,sdo.PRTExclusion
     {sqlBIFinalColumn}
@@ -454,7 +463,7 @@ ORDER BY
 DROP TABLE #tmp_SetQtyBySubprocess,#tmp_SetQtyBySubprocess_Last,#tmpPkeyColumns,#tmpSetQtyBySubprocess_Final,#tmpSewingSchedule,#tmpSumDailyStdQty
     ,#tmpSumDailyStdQty_AccSum  
     ,#tmpSumDailyStdQty_AccSum_BeforeWorkDate
-
+    ,#tmpBundleSubprocessId
 ";
             #endregion 組SQL
 

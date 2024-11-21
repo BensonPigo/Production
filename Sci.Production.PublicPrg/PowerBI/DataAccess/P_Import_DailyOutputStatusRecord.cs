@@ -94,11 +94,11 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,SewingOffLine        = t.Offline
    ,StardardOutputPerDay = ISNULL(t.StdQty, 0)
    ,WorkHourPerDay       = ISNULL(t.WorkHourPerDay, 0)
-   ,CuttingOutput        = ISNULL(t.CuttingOutput, -1)
+   ,CuttingOutput        = t.CuttingOutput
    ,CuttingRemark        = ISNULL(t.CuttingRemark, '')
    ,Consumption          = ISNULL(t.Consumption, 0)
-   ,ActConsOutput        = ISNULL(t.ActConsOutput, -1)
-   ,LoadingOutput        = ISNULL(t.LoadingOutput, -1)
+   ,ActConsOutput        = ISNULL(t.ActConsOutput, 0)
+   ,LoadingOutput        = t.LoadingOutput
    ,LoadingRemark        = ISNULL(t.LoadingRemark, '')
    ,LoadingExclusion     = ISNULL(t.LoadingExclusion, 0)
    ,ATOutput             = ISNULL(t.ATOutput, -1)
@@ -217,11 +217,11 @@ SELECT
     ,[Offline]
     ,ISNULL([StdQty], 0)
     ,ISNULL([WorkHourPerDay], 0)
-    ,ISNULL([CuttingOutput], -1)
+    ,[CuttingOutput]
     ,ISNULL([CuttingRemark], '')
     ,ISNULL([Consumption], 0)
-    ,ISNULL([ActConsOutput], -1)
-    ,ISNULL([LoadingOutput], -1)
+    ,ISNULL([ActConsOutput], 0)
+    ,[LoadingOutput]
     ,ISNULL([LoadingRemark], '')
     ,ISNULL([LoadingExclusion], 0)
     ,ISNULL([ATOutput], -1)
