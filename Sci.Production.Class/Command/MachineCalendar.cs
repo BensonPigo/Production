@@ -237,6 +237,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
                 int currentWeekDay = Convert.ToInt32(currentRow["WeekDay"]);
                 bool currentIsCrossDate = Convert.ToBoolean(currentRow["IsCrossDate"]);
                 TimeSpan currentEndTime = TimeSpan.Parse(currentRow["EndTime"].ToString());
+                if (currentEndTime == TimeSpan.Zero) currentEndTime = TimeSpan.FromHours(24); // 將其視為 24:00
 
                 // 找出下一天的 WeekDay (若是 7 則下個是 1)
                 int nextWeekDay = currentWeekDay == 7 ? 1 : currentWeekDay + 1;
