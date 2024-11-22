@@ -131,7 +131,7 @@ ORDER BY WeekDay,IsCrossDate,StartTime
         }
 
         /// <summary>
-        /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
+        /// Save 之前檢查 DataTable 每一筆爛位 StartTime 不可大於 EndTime
         /// Cutting B05 EditCalendar
         /// MES B07 Set
         /// MES B07 Batch assign special time
@@ -144,7 +144,7 @@ ORDER BY WeekDay,IsCrossDate,StartTime
                 if (TimeSpan.TryParse(row["StartTime"].ToString(), out TimeSpan startTime) &&
                     TimeSpan.TryParse(row["EndTime"].ToString(), out TimeSpan endTime))
                 {
-                    if (startTime >= endTime)
+                    if (startTime >= endTime && row["EndTime"].ToString() != "00:00")
                     {
                         if (showMsg) MyUtility.Msg.WarningBox("The start time cannot be greater than the end time.");
                         return false;
@@ -161,7 +161,7 @@ ORDER BY WeekDay,IsCrossDate,StartTime
         }
 
         /// <summary>
-        /// 檢查不可時間交集: 排序後連續資料 EndTime 不可大於下一筆的 StartTime
+        /// 檢查[同一天]不可時間交集: 排序後連續資料 EndTime 不可大於下一筆的 StartTime
         /// Cutting B05 EditCalendar
         /// MES B07 Set
         /// MES B07 Batch assign special time
@@ -183,8 +183,10 @@ ORDER BY WeekDay,IsCrossDate,StartTime
                     TimeSpan currentEndTime = TimeSpan.Parse(sortedRows[i]["EndTime"].ToString());
                     TimeSpan nextStartTime = TimeSpan.Parse(sortedRows[i + 1]["StartTime"].ToString());
 
+                    if (currentEndTime == TimeSpan.Zero) currentEndTime = TimeSpan.FromHours(24); // 將其視為 24:00
+
                     // 檢查時間重疊的情況
-                    if (currentEndTime >= nextStartTime)
+                    if (currentEndTime > nextStartTime)
                     {
                         if (showMsg) MyUtility.Msg.WarningBox("Start time must be greater than the End time of the previous period.");
                         return false;
@@ -246,7 +248,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
                     TimeSpan nextDayStartTime = TimeSpan.Parse(nextDayRow["StartTime"].ToString());
 
                     // 若當前天的結束時間與下一天的開始時間有重疊，則紀錄問題
-                    if (currentIsCrossDate && currentEndTime >= nextDayStartTime)
+                    if (currentIsCrossDate && currentEndTime > nextDayStartTime)
                     {
                         overlapDays.Add(dayNames[currentWeekDay - 1]); // 將重疊的星期名稱加入清單
                         break; // 如果找到重疊就跳出，繼續檢查下一天
@@ -345,7 +347,7 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
             // 如果其中一個時間為 null，直接回傳 true
             if (maxEndTimeInDt1 == null || minStartTimeInDt2 == null) return true;
 
-            if (maxEndTimeInDt1 >= minStartTimeInDt2)
+            if (maxEndTimeInDt1 > minStartTimeInDt2)
             {
                 DataRow dr = this.GetMachineIoT(machineIoTUkey);
                 string errorMessage = $@"
@@ -550,7 +552,7 @@ WHERE md.MachineIoT_CalendareUkey = (
         }
 
         /// <summary>
-        /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
+        /// Save 之前檢查[同一天] DataTable 爛位 StartTime 不可大於 EndTime
         /// Cutting B05 EditCalendar
         /// MES B07 Set
         /// MES B07 Batch assign special time
@@ -584,6 +586,10 @@ WHERE md.MachineIoT_CalendareUkey = (
                 dr["StartTime"] = dr["StartTime"].ToTimeFormat();
                 dr["EndTime"] = dr["EndTime"].ToTimeFormat();
             }
+
+            DataView dataView = dt2.DefaultView;
+            dataView.Sort = "isCrossDate ASC, StartTime ASC";
+            dt2 = dataView.ToTable();
 
             // 檢查 DataTable 時間不能有交集
             if (!this.ValidateTime(dt2))
