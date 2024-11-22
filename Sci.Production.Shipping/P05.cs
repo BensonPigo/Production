@@ -957,6 +957,21 @@ order by fw.WhseCode";
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
             }
+
+            if (!this.txtfactoryShipper.Text.IsNullOrWhiteSpace())
+            {
+                sqlCmd = $@"select CountryID 
+from SCIFty 
+where id = '{this.CurrentMaintain["Shipper"]}'";
+
+                string chkCountry = MyUtility.GetValue.Lookup(sqlCmd);
+
+                if (chkCountry != this.CurrentMaintain["Dest"].ToString() && this.CurrentMaintain["ShipModeID"].ToString() == "TRUCK")
+                {
+                    MyUtility.Msg.WarningBox("The Destination Country is different from the Export Origin which is cross-border transportation, please contact MR Team to revise the Ship Mode as CB-Truck!!");
+                    return false;
+                }
+            }
             #endregion
             #region 若 No Export Charge 有勾選，同時 Expense Data 也有資料，
             if (MyUtility.Convert.GetBool(this.CurrentMaintain["NoExportCharges"]) && this.ControlColor())
