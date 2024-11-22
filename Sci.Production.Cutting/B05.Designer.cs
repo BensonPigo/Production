@@ -36,6 +36,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.label5 = new Sci.Win.UI.Label();
             this.editBox1 = new Sci.Win.UI.EditBox();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
@@ -116,7 +118,7 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Location = new System.Drawing.Point(11, 60);
+            this.labelDescription.Location = new System.Drawing.Point(11, 85);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(104, 23);
             this.labelDescription.TabIndex = 10;
@@ -150,7 +152,7 @@
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(11, 85);
+            this.label2.Location = new System.Drawing.Point(11, 110);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(104, 23);
             this.label2.TabIndex = 18;
@@ -159,6 +161,8 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.txtfactory1);
+            this.panel1.Controls.Add(this.label5);
             this.panel1.Controls.Add(this.editBox1);
             this.panel1.Controls.Add(this.grid1);
             this.panel1.Controls.Add(this.label2);
@@ -173,15 +177,39 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1000, 152);
+            this.panel1.Size = new System.Drawing.Size(1000, 170);
             this.panel1.TabIndex = 19;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory1.FilteMDivision = true;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsMultiselect = false;
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(118, 60);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory1.TabIndex = 20;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(11, 60);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(104, 23);
+            this.label5.TabIndex = 19;
+            this.label5.Text = "Factory";
             // 
             // editBox1
             // 
             this.editBox1.BackColor = System.Drawing.Color.White;
             this.editBox1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Description", true));
             this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editBox1.Location = new System.Drawing.Point(118, 60);
+            this.editBox1.Location = new System.Drawing.Point(118, 85);
             this.editBox1.Multiline = true;
             this.editBox1.Name = "editBox1";
             this.editBox1.ScrollBars = System.Windows.Forms.ScrollBars.None;
@@ -212,14 +240,14 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(603, 134);
+            this.grid1.Size = new System.Drawing.Size(603, 152);
             this.grid1.TabIndex = 6;
             this.grid1.SelectionChanged += new System.EventHandler(this.Grid1_SelectionChanged);
             // 
             // btnCreateNewCalendar
             // 
             this.btnCreateNewCalendar.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCreateNewCalendar.Location = new System.Drawing.Point(11, 114);
+            this.btnCreateNewCalendar.Location = new System.Drawing.Point(11, 135);
             this.btnCreateNewCalendar.Name = "btnCreateNewCalendar";
             this.btnCreateNewCalendar.Size = new System.Drawing.Size(207, 30);
             this.btnCreateNewCalendar.TabIndex = 5;
@@ -232,7 +260,7 @@
             this.txtCell1.BackColor = System.Drawing.Color.White;
             this.txtCell1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CutCellID", true));
             this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(118, 85);
+            this.txtCell1.Location = new System.Drawing.Point(118, 110);
             this.txtCell1.MDivisionID = "";
             this.txtCell1.Name = "txtCell1";
             this.txtCell1.Size = new System.Drawing.Size(100, 23);
@@ -254,7 +282,7 @@
             // 
             this.btnRemoveCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRemoveCalendar.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnRemoveCalendar.Location = new System.Drawing.Point(836, 160);
+            this.btnRemoveCalendar.Location = new System.Drawing.Point(836, 173);
             this.btnRemoveCalendar.Name = "btnRemoveCalendar";
             this.btnRemoveCalendar.Size = new System.Drawing.Size(158, 30);
             this.btnRemoveCalendar.TabIndex = 9;
@@ -266,7 +294,7 @@
             // 
             this.btnEditCalendar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEditCalendar.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnEditCalendar.Location = new System.Drawing.Point(672, 160);
+            this.btnEditCalendar.Location = new System.Drawing.Point(672, 173);
             this.btnEditCalendar.Name = "btnEditCalendar";
             this.btnEditCalendar.Size = new System.Drawing.Size(158, 30);
             this.btnEditCalendar.TabIndex = 8;
@@ -277,7 +305,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(269, 168);
+            this.label3.Location = new System.Drawing.Point(269, 181);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(72, 17);
             this.label3.TabIndex = 59;
@@ -289,7 +317,7 @@
             this.displayCrossday.Enabled = false;
             this.displayCrossday.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.displayCrossday.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCrossday.Location = new System.Drawing.Point(243, 166);
+            this.displayCrossday.Location = new System.Drawing.Point(243, 179);
             this.displayCrossday.Name = "displayCrossday";
             this.displayCrossday.Size = new System.Drawing.Size(20, 21);
             this.displayCrossday.TabIndex = 58;
@@ -297,7 +325,7 @@
             // dateStart
             // 
             this.dateStart.IsSupportEditMode = false;
-            this.dateStart.Location = new System.Drawing.Point(107, 165);
+            this.dateStart.Location = new System.Drawing.Point(107, 178);
             this.dateStart.Name = "dateStart";
             this.dateStart.ReadOnly = true;
             this.dateStart.Size = new System.Drawing.Size(130, 23);
@@ -305,7 +333,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(12, 165);
+            this.label4.Location = new System.Drawing.Point(12, 178);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(92, 23);
             this.label4.TabIndex = 56;
@@ -317,9 +345,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.calendarGrid1.ColorCrossDay = System.Drawing.Color.Pink;
-            this.calendarGrid1.Location = new System.Drawing.Point(12, 193);
+            this.calendarGrid1.EnableHearder = false;
+            this.calendarGrid1.Location = new System.Drawing.Point(12, 207);
             this.calendarGrid1.Name = "calendarGrid1";
-            this.calendarGrid1.Size = new System.Drawing.Size(981, 362);
+            this.calendarGrid1.Size = new System.Drawing.Size(981, 348);
             this.calendarGrid1.TabIndex = 10;
             // 
             // B05
@@ -372,5 +401,7 @@
         private Win.UI.Label label4;
         private Class.Controls.CalendarGrid calendarGrid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Class.Txtfactory txtfactory1;
+        private Win.UI.Label label5;
     }
 }

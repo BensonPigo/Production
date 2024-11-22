@@ -11,6 +11,7 @@ namespace Sci.Production.Class.Command
     /// <inheritdoc/>
     public class MachineCalendar
     {
+#pragma warning disable SA1503
         /// <inheritdoc/>
         public DataTable GetWeekDayDataTable(long machineIoT_CalendareUkey)
         {
@@ -107,8 +108,6 @@ ORDER BY WeekDay,IsCrossDate,StartTime
             return dt;
         }
 
-#pragma warning disable SA1503
-
         /// <summary>
         /// Save 之前檢查 DataTable 爛位 StartTime 不可大於 EndTime
         /// Cutting B05 EditCalendar
@@ -118,12 +117,12 @@ ORDER BY WeekDay,IsCrossDate,StartTime
         /// <inheritdoc/>
         public bool ValidateTime(DataTable dt, bool showMsg = true)
         {
-            if (!new MachineCalendar().ValidateStartEndTime(dt, showMsg))
+            if (!this.ValidateStartEndTime(dt, showMsg))
             {
                 return false;
             }
 
-            if (!new MachineCalendar().ValidateTimeIntervals(dt, showMsg))
+            if (!this.ValidateTimeIntervals(dt, showMsg))
             {
                 return false;
             }
@@ -587,7 +586,7 @@ WHERE md.MachineIoT_CalendareUkey = (
             }
 
             // 檢查 DataTable 時間不能有交集
-            if (!new MachineCalendar().ValidateTime(dt2))
+            if (!this.ValidateTime(dt2))
             {
                 return false;
             }
@@ -600,6 +599,257 @@ WHERE md.MachineIoT_CalendareUkey = (
         {
             MyUtility.Check.Seek($"SELECT * FROM MachineIoT WHERE Ukey = {ukey}", out DataRow dr, "ManufacturingExecution");
             return dr;
+        }
+
+        /// <inheritdoc/>
+        public bool ValidSpecialDate(DataTable dt, DateTime date, long machineIoTUkey)
+        {
+            // 檢查特殊班表前一天是否有時間重疊
+            this.GetMachineIoTScheduleNonTemp(date.AddDays(-1), machineIoTUkey, out DataTable dt1);
+            if (!this.ValidateDataTableOverlap(dt1, dt, date.AddDays(-1), machineIoTUkey))
+            {
+                return false;
+            }
+
+            // 檢查特殊班表後一天是否有時間重疊
+            this.GetMachineIoTScheduleNonTemp(date.AddDays(1), machineIoTUkey, out DataTable dt3);
+            if (!this.ValidateDataTableOverlap(dt, dt3, date, machineIoTUkey))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 取得 MachineIoT_SpecialDate.Ukey
+        /// </summary>
+        /// <inheritdoc/>
+        public long GetMachineIoT_SpecialUkey(long machineIoTUkey, DateTime specialDate)
+        {
+            string sqlcmd = $"SELECT Ukey FROM MachineIoT_SpecialDate WITH(NOLOCK) WHERE MachineIoTUkey = @MachineIoTUkey AND SpecialDate = @SpecialDate";
+            var sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@MachineIoTUkey", SqlDbType.BigInt) { Value = machineIoTUkey },
+                new SqlParameter("@SpecialDate", SqlDbType.Date) { Value = specialDate },
+            };
+            if (MyUtility.Check.Seek(sqlcmd, sqlParameters, out DataRow dr, "ManufacturingExecution"))
+            {
+                return MyUtility.Convert.GetLong(dr["Ukey"]);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// 寫入或更新 MachineIoT_SpecialDate
+        /// </summary>
+        /// <inheritdoc/>
+        public DualResult SaveMachineIoT_SpecialDate(long machineIoTUkey, DateTime specialDate, out long machineIoT_SpecialUkey)
+        {
+            machineIoT_SpecialUkey = this.GetMachineIoT_SpecialUkey(machineIoTUkey, specialDate);
+            if (machineIoT_SpecialUkey == 0)
+            {
+                return this.InsertMachineIoT_SpecialDate(machineIoTUkey, specialDate, out machineIoT_SpecialUkey);
+            }
+            else
+            {
+                return this.UpdateMachineIoT_SpecialDate(machineIoT_SpecialUkey);
+            }
+        }
+
+        /// <summary>
+        /// 新增 MachineIoT_SpecialDate
+        /// </summary>
+        /// <inheritdoc/>
+        public DualResult InsertMachineIoT_SpecialDate(long machineIoTUkey, DateTime specialDate, out long machineIoT_SpecialUkey)
+        {
+            string sqlcmd = $@"
+INSERT INTO MachineIoT_SpecialDate (MachineIoTUkey, SpecialDate, AddName, AddDate)
+OUTPUT INSERTED.Ukey
+    VALUES (@MachineIoTUkey, @SpecialDate, @AddName, GETDATE())
+";
+            var sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@MachineIoTUkey", SqlDbType.BigInt) { Value = machineIoTUkey },
+                new SqlParameter("@SpecialDate", SqlDbType.Date) { Value = specialDate },
+                new SqlParameter("@AddName", SqlDbType.VarChar, 10) { Value = Sci.Env.User.UserID },
+            };
+            DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, sqlParameters, out DataTable dt);
+            if (!result)
+            {
+                machineIoT_SpecialUkey = 0;
+            }
+            else
+            {
+                machineIoT_SpecialUkey = MyUtility.Convert.GetLong(dt.Rows[0][0]);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 更新 MachineIoT_SpecialDate
+        /// </summary>
+        /// <inheritdoc/>
+        public DualResult UpdateMachineIoT_SpecialDate(long machineIoT_SpecialUkey)
+        {
+            string sqlcmd = $@"
+UPDATE MachineIoT_SpecialDate
+SET EditName = @EditName
+   ,EditDate = GETDATE()
+WHERE Ukey = @machineIoT_SpecialUkey
+";
+            var sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@machineIoT_SpecialUkey", SqlDbType.BigInt) { Value = machineIoT_SpecialUkey },
+                new SqlParameter("@EditName", SqlDbType.VarChar, 10) { Value = Sci.Env.User.UserID },
+            };
+            return DBProxy.Current.Execute("ManufacturingExecution", sqlcmd, sqlParameters);
+        }
+
+        /// <summary>
+        /// 全覆蓋 MachineIoT_SpecialDate_Detail
+        /// </summary>
+        /// <inheritdoc/>
+        public DualResult SaveMachineIoT_SpecialDate_Detail(DataTable dt, long machineIoT_SpecialUkey)
+        {
+            string sqlcmd = $@"
+DELETE MachineIoT_SpecialDate_Detail WHERE MachineIoT_SpecialUkey = {machineIoT_SpecialUkey}
+
+INSERT INTO MachineIoT_SpecialDate_Detail(MachineIoT_SpecialUkey, StartTime, EndTime, IsCrossDate,  AddName, AddDate)
+SELECT {machineIoT_SpecialUkey}, StartTime, EndTime, IsCrossDate, '{Sci.Env.User.UserID}', GETDATE()
+FROM #tmp
+";
+            DualResult result;
+            if (!(result = DBProxy.Current.OpenConnection("ManufacturingExecution", out SqlConnection conn))) return result;
+            return MyUtility.Tool.ProcessWithDatatable(dt, "StartTime,EndTime,IsCrossDate", sqlcmd, out DataTable _, conn: conn);
+        }
+
+        /// <summary>
+        /// 刪除特殊班表前檢查, 沒有假日才要檢查
+        /// </summary>
+        /// <inheritdoc/>
+        public bool DeleteMachineIoT_SpecialDate_Before(long machineIoTUkey, DateTime date, string machineIoTType)
+        {
+            if (!this.IsHoliday(date, machineIoTType))
+            {
+                return this.ValidateBeforeDelete(machineIoTUkey, date);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 刪除假日前檢查, 沒有特殊班表才要檢查
+        /// </summary>
+        /// <inheritdoc/>
+        public bool DeleteHoliday_Before(long machineIoTUkey, DateTime date)
+        {
+            if (!this.IsSpecialDate(machineIoTUkey, date))
+            {
+                return this.ValidateBeforeDelete(machineIoTUkey, date);
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public bool ValidateBeforeDelete(long machineIoTUkey, DateTime date)
+        {
+            // 檢查週期班表前一天是否有時間重疊
+            this.GetMachineIoTScheduleNonTemp(date.AddDays(-1), machineIoTUkey, out DataTable dt1);
+            DataTable dt2 = this.QueryCalendarByDate(date, machineIoTUkey); // 只須找出 @Date 的週期班表
+            if (!this.ValidateDataTableOverlap(dt1, dt2, date.AddDays(-1), machineIoTUkey))
+            {
+                return false;
+            }
+
+            // 檢查週期班表後一天是否有時間重疊
+            this.GetMachineIoTScheduleNonTemp(date.AddDays(1), machineIoTUkey, out DataTable dt3);
+            if (!this.ValidateDataTableOverlap(dt2, dt3, date, machineIoTUkey))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 刪除特殊班表
+        /// </summary>
+        /// <inheritdoc/>
+        public DualResult DeleteMachineIoT_SpecialDate(long machineIoTUkey, DateTime date)
+        {
+            long machineIoT_SpecialUkey = this.GetMachineIoT_SpecialUkey(machineIoTUkey, date);
+            string sqlcmd = $@"
+DELETE MachineIoT_SpecialDate WHERE Ukey = @MachineIoT_SpecialUkey
+DELETE MachineIoT_SpecialDate_Detail WHERE MachineIoT_SpecialUkey = @MachineIoT_SpecialUkey
+";
+            var sqlParameters = new List<SqlParameter>
+            {
+                new SqlParameter("@MachineIoT_SpecialUkey", SqlDbType.BigInt) { Value = machineIoT_SpecialUkey },
+            };
+
+            return DBProxy.Current.Execute("ManufacturingExecution", sqlcmd, sqlParameters);
+        }
+
+        /// <summary>
+        /// 只找出 @Date 的週期班表
+        /// </summary>
+        /// <inheritdoc/>
+        public DataTable QueryCalendarByDate(DateTime date, long machineIoTUkey)
+        {
+            string sqlcmd = $@"
+DECLARE @Date as date = '{date:yyyy/MM/dd}'
+DECLARE @MachineIoTUkey as int = {machineIoTUkey}
+select [Date] = @Date
+	, md.StartTime
+	, md.EndTime
+	, md.IsCrossDate
+from MachineIoT_Calendar_Detail md with(nolock)
+where md.MachineIoT_CalendareUkey = (
+	select m.Ukey
+	from MachineIoT_Calendar m with(nolock)
+	where m.MachineIoTUkey = @MachineIoTUkey
+	and m.StartDate = (
+		select [StartDate] = MAX(StartDate)
+		from MachineIoT_Calendar m with(nolock)
+		where m.MachineIoTUkey = @MachineIoTUkey
+		and m.StartDate <= @Date)
+)
+and md.WeekDay = (select DATEPART(WEEKDAY, @Date))
+";
+            DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable dt);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// DB 確認假日
+        /// </summary>
+        /// <inheritdoc/>
+        public bool IsHoliday(DateTime date, string machineIoTType)
+        {
+            string sqlcmd = $"SELECT 1 FROM MachineIoTHoliday WHERE HolidayDate = '{date:yyyy/MM/dd}' AND MachineIoTType = '{machineIoTType}'";
+            return MyUtility.Check.Seek(sqlcmd, "ManufacturingExecution");
+        }
+
+        /// <summary>
+        /// DB 特殊班表
+        /// </summary>
+        /// <inheritdoc/>
+        public bool IsSpecialDate(long machineIoTUkey, DateTime date)
+        {
+            string sqlcmd = $"SELECT 1 FROM MachineIoT_SpecialDate WHERE MachineIoTUkey = {machineIoTUkey} AND SpecialDate = '{date:yyyy/MM/dd}'";
+            return MyUtility.Check.Seek(sqlcmd, "ManufacturingExecution");
         }
 #pragma warning restore SA1503
     }

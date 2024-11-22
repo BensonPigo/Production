@@ -59,6 +59,7 @@ namespace Sci.Production.Cutting
         {
             base.ClickNewAfter();
             this.CurrentMaintain["MDivisionid"] = Env.User.Keyword;
+            this.CurrentMaintain["FactoryID"] = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -67,6 +68,12 @@ namespace Sci.Production.Cutting
             if (this.CurrentMaintain["ID"].IsEmpty())
             {
                 MyUtility.Msg.WarningBox("<Spreading No> cannot be empty.");
+                return false;
+            }
+
+            if (this.CurrentMaintain["FactoryID"].IsEmpty())
+            {
+                MyUtility.Msg.WarningBox("Factory cannot be empty.");
                 return false;
             }
 
