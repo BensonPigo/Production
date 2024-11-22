@@ -11,6 +11,7 @@ using System.Configuration;
 using System.Linq;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Reflection;
 
 namespace Sci.Production.Centralized
 {
@@ -25,11 +26,43 @@ namespace Sci.Production.Centralized
         private string season;
         private string brand;
         private string line;
+        private string category;
         private DataTable PrintData;
         private DataTable BrandData;
         private DataTable SeasonData;
         private DataTable StyleData;
         private DataTable LineData;
+
+        public static class OrderCategory
+        {
+            public static string Bulk { get { return "B"; } }
+
+            public static string Garment { get { return "G"; } }
+
+            public static string Material { get { return "M"; } }
+
+            public static string Sample { get { return "S"; } }
+
+            public static string SMTL { get { return "T"; } }
+
+            public static string GetValueByPropertyName(string propertyName)
+            {
+                if (string.IsNullOrEmpty(propertyName))
+                {
+                    return string.Empty;
+                }
+
+                // 透過反射取得屬性
+                var property = typeof(OrderCategory).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
+                if (property == null)
+                {
+                    throw new ArgumentException($"Property '{propertyName}' does not exist in OrderCategory.");
+                }
+
+                // 獲取屬性的值
+                return property.GetValue(null)?.ToString();
+            }
+        }
 
         /// <summary>
         /// R08
@@ -42,6 +75,8 @@ namespace Sci.Production.Centralized
             this.comboM.SetDefalutIndex();
             this.comboFty.SetDefalutIndex(string.Empty);
 
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
+            this.comboCategory.SelectedIndex = 0;
             this.InitAllRegionData();
         }
 
@@ -183,6 +218,7 @@ namespace Sci.Production.Centralized
             this.season = this.txtSeason.Text;
             this.brand = this.txtBrand.Text;
             this.line = this.txtLine.Text;
+            this.category = OrderCategory.GetValueByPropertyName(this.comboCategory.Text);
 
             return base.ValidateInput();
         }
@@ -241,7 +277,10 @@ namespace Sci.Production.Centralized
                     this.PrintData = dt.Clone();
                 }
 
-                this.PrintData.Merge(dt);
+                if (dt.Rows.Count > 0)
+                {
+                    this.PrintData.Merge(dt);
+                }
             }
 
             //this.HideWaitMessage();
@@ -359,6 +398,11 @@ and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy
             {
                 detailQuery += $@"and o.StyleID = '{this.style}'" + Environment.NewLine;
             }
+
+            if (!MyUtility.Check.Empty(this.category))
+            {
+                detailQuery += $@"and o.Category = '{this.category}'" + Environment.NewLine;
+            }
             #endregion
 
             cmd.Append($@"
@@ -371,10 +415,51 @@ INNER JOIN SewingSchedule ss ON b.OrderId = ss.OrderID
 where 1=1
 {headQuery}
 
+select DISTINCT o.StyleUkey
+    ,Program = IIF(o.Category='M', MockupProgram.Program, OrderProgram.Program)
+    ,Category = cc.Val
+INTO #OrderInfo
+from SewingOutput a
+inner join SewingOutput_Detail b on a.ID = b.ID
+inner join Orders o on b.OrderId = o.ID
+OUTER APPLY(
+	select Val = STUFF((
+		select distinct ',' + 
+                CASE WHEN x.Category = '{OrderCategory.Bulk}' THEN 'Bulk'
+                    WHEN x.Category = '{OrderCategory.Sample}' THEN 'Sample'
+                    WHEN x.Category = '{OrderCategory.Garment}' THEN 'Garment'
+                    WHEN x.Category = '{OrderCategory.Material}' THEN 'Material'
+                    WHEN x.Category = '{OrderCategory.SMTL}' THEN 'SMTL'
+                    ELSE x.Category
+                END
+		from Orders x
+		where x.StyleUkey = o.StyleUkey
+		FOR XML PATH('')
+	),1,1,'')
+)cc
+OUTER APPLY(
+	select Program = STUFF((
+		select distinct ',' + o.ProgramID
+		from Orders x
+		where x.StyleUkey = o.StyleUkey
+		FOR XML PATH('')
+	),1,1,'')
+)OrderProgram
+OUTER APPLY(
+	select Program = STUFF((
+		select distinct ',' + o.ProgramID
+		from MockupOrder x
+		inner join Orders xo on b.OrderId = xo.ID
+		where xo.StyleUkey = o.StyleUkey
+		FOR XML PATH('')
+	),1,1,'')
+)MockupProgram
 
 select b.ID
 	,o.StyleUkey
 	,b.ComboType
+    ,p.Program
+    ,p.Category
 	,c.CountryID
 	,o.BrandID
 	,o.StyleID
@@ -395,11 +480,12 @@ inner join SewingOutput_Detail b on a.ID = b.ID
 inner join Factory c on a.FactoryID=c.ID
 inner join Orders o on b.OrderId = o.ID
 inner join Style s on o.StyleUkey = s.Ukey
+inner join #OrderInfo p on p.StyleUkey=  s.Ukey
 where 1=1
 {detailQuery}
 
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
-	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction
+	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category
 
 
 ---- 2. 根據Sewing的群組條件，挑出可以拿來篩選Line Mapping的欄位
@@ -710,6 +796,7 @@ select
 	,b.BrandID
 	,b.StyleID
 	,b.ComboType
+    ,b.Program
 	,ProductType = r1.Name
 	,FabricType = r2.Name
 	,b.Lining
@@ -759,8 +846,8 @@ select
 
 	,[Optrs Diff] = ISNULL(AfterData.CurrentOperators,0) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
 	,[LBR Diff (%)] = ISNULL(AfterData.LBR,0) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Total % Time diff] = IIF(AfterData.TotalCycle = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / AfterData.TotalCycle ) * 100
-	,[By style] = IIF(AfterData.Status = 'Confirmed' OR ISNULL(BeforeDataP03.Status,BeforeDataP05.Status)  = 'Confirmed','Y','N')
+	,[Total % Time diff] = IIF(ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) ) * 100
+	,[By style] = IIF(AfterData.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
 	,[Last Version From] = ISNULL(AfterData.SourceTable, ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) )
 	,[Last Version Phase] = ISNULL(AfterData.Phase, ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase))
@@ -768,6 +855,7 @@ select
 	,[History LBR] = CASE WHEN AfterData.SourceTable = 'IE P03' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
 						  WHEN AfterData.SourceTable = 'IE P06' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
 					 ELSE NULL END
+    ,b.Category
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
 left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
@@ -812,7 +900,7 @@ Outer Apply(
 													)
 				   ELSE 0 END AS DECIMAL(7,2))
 	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
-	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN NULL
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	from #FinalBeforeData lm
 	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID --and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 
@@ -843,6 +931,7 @@ drop table #BaseData
 ,#FinalBeforeData
 ,#SewingOutput_Detail
 ,#SewingOutput
+,#OrderInfo
 
 ");
 

@@ -519,7 +519,7 @@ select distinct
 	lmd.No,
     TotalGSD = DetailSum.TotalGSD,
 	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
-    GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
+    GSDvsActTimeDiff = IIF(DetailSum.TotalGSD = 0, 0, (DetailSum.TotalGSD - DetailSum.TotalCycle) / DetailSum.TotalGSD ) , ---- 公式: ( [Ttl GSD time] - [Act. Cycle Time]) / [Ttl GSD time]
 	ActCycleTimeAvg = IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators),  ---- 公式: [Total Cycle time] / [Current Oprts] 兩個都是表頭欄位
 	ActTimeDiffAvg = IIF( IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators) = 0 ,0,  
 		(IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators) - DetailSum.TotalCycle) / IIF(lm.CurrentOperators = 0, 0, 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -659,6 +659,13 @@ from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
+select DISTINCT lm.ID, lmd.No, [Reason] = i.Description
+INTO #NotHitTargetReason
+from AutomatedLineMapping_NotHitTargetReason r
+inner join IEReason i on i.ID = r.IEReasonID and i.Type = 'AS'
+inner join #AutomatedLineMapping_Detail lmd on r.ID = lmd.ID and r.No = lmd.No
+inner join #AutomatedLineMapping lm on lm.ID = lmd.ID
+
 select distinct
 	lm.FactoryID,
 	lm.StyleID,
@@ -675,15 +682,20 @@ select distinct
     GSDvsActTimeDiff = Cast( NULL as decimal), ----  P05沒有
 	ActCycleTimeAvg = Cast( NULL as decimal),  ---- P05沒有
 	ActTimeDiffAvg = Cast( NULL as decimal),　----  P05沒有
-	NotHitTargetReason = '',
+	NotHitTargetReason = NotHitTargetReason.Reason,
     IsFrom = 'IE P05'
 from #AutomatedLineMapping lm WITH (NOLOCK) 
 inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 OUTER APPLY(
-	select TotalGSD = SUM(lmdd.GSD)
+	select TotalGSD = SUM(lmdd.GSD * lmdd.SewerDiffPercentage)
 	from #AutomatedLineMapping_Detail lmdd
 	where lm.ID = lmdd.ID and lmd.No=lmdd.No
 )DetailSum
+outer apply(
+    select TOP 1 r.Reason
+    from  #NotHitTargetReason r
+    where r.ID = lm.ID and r.No = lmd.No
+)NotHitTargetReason
 where 1 = 1
 ");
 
@@ -702,7 +714,7 @@ where 1 = 1
             }
 
 
-            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail  ");
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail,#NotHitTargetReason  ");
             return cmd;
         }
 
@@ -785,6 +797,13 @@ from #LineMappingBalancing lm
 inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
+select DISTINCT lm.ID, lmd.No, [Reason] = i.Description
+INTO #NotHitTargetReason
+from LineMappingBalancing_NotHitTargetReason r
+inner join IEReason i on i.ID = r.IEReasonID and i.Type = 'AS'
+inner join #LineMappingBalancing_Detail lmd on r.ID = lmd.ID and r.No = lmd.No
+inner join #LineMappingBalancing lm on lm.ID = lmd.ID
+
 select distinct
 	lm.FactoryID,
 	lm.StyleID,
@@ -798,13 +817,13 @@ select distinct
 	lmd.No,
     TotalGSD = DetailSum.TotalGSD,
 	ActCycleTime = DetailSum.TotalCycle, -- 公式：加總同No.的LineMapping_Detail.Cycle
-    GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalCycle - DetailSum.TotalGSD) / DetailSum.TotalCycle ) , ---- 公式: ( [Act. Cycle Time] - [Ttl GSD time] ) / [Act. Cycle Time]
+    GSDvsActTimeDiff = IIF(DetailSum.TotalCycle = 0, 0, (DetailSum.TotalGSD - DetailSum.TotalCycle) / DetailSum.TotalGSD ) , ---- 公式: ( [Ttl GSD time] - [Act. Cycle Time]) / [Ttl GSD time]
 	ActCycleTimeAvg = IIF(lm.SewerManpower = 0, 0, 1.0 * lm.TotalCycleTime / lm. SewerManpower),  ---- 公式: [Total Cycle time] / [Current Oprts] 兩個都是表頭欄位
 	ActTimeDiffAvg = IIF(lm. SewerManpower = 0 or lm.TotalCycleTime / lm. SewerManpower = 0 , 0 ,
 	
 						((1.0 * lm.TotalCycleTime / lm. SewerManpower) -  DetailSum.TotalCycle) / ( lm.TotalCycleTime / lm. SewerManpower)
 					) ,　---- 公式: ( [Act. Cycle Time (average)] - [ Act. Cycle time] ) / [Act. Cycle Time (average)]
-	NotHitTargetReason = '',
+	NotHitTargetReason = NotHitTargetReason.Reason,
     IsFrom = 'IE P06' 
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
@@ -830,10 +849,15 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 OUTER APPLY(
-	select TotalCycle = SUM(lmdd.Cycle) ,TotalGSD = SUM(lmdd.GSD)
+	select TotalCycle = SUM(lmdd.Cycle * lmdd.SewerDiffPercentage) ,TotalGSD = SUM(lmdd.GSD * lmdd.SewerDiffPercentage)
 	from #LineMappingBalancing_Detail lmdd
 	where lm.ID = lmdd.ID and lmd.No=lmdd.No
 )DetailSum
+outer apply(
+    select TOP 1 r.Reason
+    from  #NotHitTargetReason r
+    where r.ID = lm.ID and r.No = lmd.No
+)NotHitTargetReason
 where 1 = 1
 ");
 
@@ -860,7 +884,7 @@ and (((lmdavg.avgTotalCycle - DetailSum.TotalCycle) / lmdavg.avgTotalCycle) * 10
 ");
             }
 
-            cmd.Append(Environment.NewLine + "DROP TABLE #LineMappingBalancing ,#LineMappingBalancing_Detail ");
+            cmd.Append(Environment.NewLine + "DROP TABLE #LineMappingBalancing ,#LineMappingBalancing_Detail,#NotHitTargetReason ");
             return cmd;
         }
 
@@ -944,21 +968,24 @@ inner join LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.IsHide = 0 and lmd.No <> ''
 
 select distinct
-	lm.ID,
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-    lm.SewingLineID,
-    lm.Team,
-	lm.Version,
-	lmd.No,
-    IsFrom = 'IE P03'
+	 lm.ID
+	,lm.FactoryID
+	,lm.StyleID
+	,lm.ComboType
+	,lm.SeasonID
+    ,lm.Phase
+	,lm.BrandID
+    ,lm.SewingLineID
+    ,lm.Team
+	,lm.Version
+	,lmd.No
+    ,[OperationID] = lmd.OperationID 
+    ,[OperationDesc] = o.DescEN 
+    ,IsFrom = 'IE P03'
 into #tmp
 from #LineMapping lm WITH (NOLOCK) 
 inner join #LineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+inner join Operation o on lmd.OperationID = o.ID
 outer apply (
 	select avgTotalCycle = avg(TotalCycle)
 	from 
@@ -1020,7 +1047,7 @@ select
 	t.No,
 	MachineTypeID = MachineType.Val,
 	MasterPlusGroup = MasterPlusGroup.Val,
-	Operation = Operation.Val,
+	Operation = t.OperationDesc,
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
 	CycleTime = DetailSum.TotalCycle ,
@@ -1031,7 +1058,7 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MachineTypeID
 		from #LineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MachineType
@@ -1039,31 +1066,22 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MasterPlusGroup
 		from #LineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MasterPlusGroup
 OUTER APPLY(
 	select Val = STUFF( (
-		select DISTINCT ',' + o.DescEN 
-		from #LineMapping_Detail lmdd
-		inner join Operation o on lmdd.OperationID = o.ID
-		where t.ID = lmdd.ID and t.No=lmdd.No
-		FOR XML PATH('')
-		),1,1,'')
-)Operation
-OUTER APPLY(
-	select Val = STUFF( (
 		select DISTINCT ',' + Annotation
 		from #LineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )Annotation
 OUTER APPLY(
 	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD) * 1.0
 	from #LineMapping_Detail lmdd
-	where t.ID = lmdd.ID and t.No=lmdd.No
+	where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 )DetailSum
 
 
@@ -1148,22 +1166,25 @@ inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
 select distinct
-	lm.ID,
-	lm.FactoryID,
-	lm.StyleID,
-	lm.StyleUKey,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-    SewingLineID = '',
-    Team = '',
-	lm.Version,
-	lmd.No,
-    IsFrom = 'IE P05'
+	 lm.ID
+	,lm.FactoryID
+	,lm.StyleID
+	,lm.StyleUKey
+	,lm.ComboType
+	,lm.SeasonID
+    ,lm.Phase
+	,lm.BrandID
+    ,SewingLineID = ''
+    ,Team = ''
+	,lm.Version
+	,lmd.No
+    ,[OperationID] = lmd.OperationID 
+    ,[OperationDesc] = o.DescEN 
+    ,IsFrom = 'IE P05'
 into #tmp
 from #AutomatedLineMapping lm WITH (NOLOCK) 
 inner join #AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+inner join Operation o on lmd.OperationID = o.ID
 outer apply(
 	select top 1 c.Target
 	from factory f
@@ -1189,7 +1210,7 @@ select
 	t.No,
 	MachineTypeID = MachineType.Val,
 	MasterPlusGroup = MasterPlusGroup.Val,
-	Operation = Operation.Val,
+	Operation = t.OperationDesc,
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
 	CycleTime = Cast( NULL as decimal),
@@ -1200,7 +1221,7 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MachineTypeID
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MachineType
@@ -1208,31 +1229,22 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MasterPlusGroup
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MasterPlusGroup
 OUTER APPLY(
 	select Val = STUFF( (
-		select DISTINCT ',' + o.DescEN 
-		from #AutomatedLineMapping_Detail lmdd
-		inner join Operation o on lmdd.OperationID = o.ID
-		where t.ID = lmdd.ID and t.No=lmdd.No
-		FOR XML PATH('')
-		),1,1,'')
-)Operation
-OUTER APPLY(
-	select Val = STUFF( (
 		select DISTINCT ',' + Annotation
 		from #AutomatedLineMapping_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )Annotation
 OUTER APPLY(
 	select TotalGSD = SUM(lmdd.GSD*lmdd.SewerDiffPercentage) * 1.0
 	from #AutomatedLineMapping_Detail lmdd
-	where t.ID = lmdd.ID and t.No=lmdd.No
+	where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 )DetailSum
 WHERE 1=1
 ");
@@ -1251,8 +1263,7 @@ WHERE 1=1
 ");
             }
 
-
-            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail  ");
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail,#NotHitTargetReason  ");
             return cmd;
         }
 
@@ -1336,21 +1347,24 @@ inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
 select distinct
-	lm.ID,
-	lm.FactoryID,
-	lm.StyleID,
-	lm.ComboType,
-	lm.SeasonID,
-    lm.Phase,
-	lm.BrandID,
-    lm.SewingLineID,
-    lm.Team,
-	lm.Version,
-	lmd.No,
-    IsFrom = 'IE P06'
+	 lm.ID
+	,lm.FactoryID
+	,lm.StyleID
+	,lm.ComboType
+	,lm.SeasonID
+    ,lm.Phase
+	,lm.BrandID
+    ,lm.SewingLineID
+    ,lm.Team
+	,lm.Version
+	,lmd.No
+	,[OperationID] = lmd.OperationID
+	,[OperationDesc] = o.DescEN
+    ,IsFrom = 'IE P06'
 INTO #tmp
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join #LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
+inner join Operation o on lmd.OperationID = o.ID
 outer apply (
 	select avgTotalCycle = avg(Cycle)
 	from 
@@ -1417,7 +1431,7 @@ select
 	t.No,
 	MachineTypeID = MachineType.Val,
 	MasterPlusGroup = MasterPlusGroup.Val,
-	Operation = Operation.Val,
+	Operation = t.OperationDesc,
 	Annotation = Annotation.Val,
 	GSDTime = DetailSum.TotalGSD,
 	CycleTime = DetailSum.TotalCycle ,
@@ -1428,7 +1442,7 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MachineTypeID
 		from #LineMappingBalancing_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MachineType
@@ -1436,31 +1450,22 @@ OUTER APPLY(
 	select Val = STUFF( (
 		select DISTINCT ',' + MasterPlusGroup
 		from #LineMappingBalancing_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )MasterPlusGroup
 OUTER APPLY(
 	select Val = STUFF( (
-		select DISTINCT ',' + o.DescEN 
-		from #LineMappingBalancing_Detail lmdd
-		inner join Operation o on lmdd.OperationID = o.ID
-		where t.ID = lmdd.ID and t.No=lmdd.No
-		FOR XML PATH('')
-		),1,1,'')
-)Operation
-OUTER APPLY(
-	select Val = STUFF( (
 		select DISTINCT ',' + Annotation
 		from #LineMappingBalancing_Detail lmdd
-		where t.ID = lmdd.ID and t.No=lmdd.No
+		where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 		FOR XML PATH('')
 		),1,1,'')
 )Annotation
 OUTER APPLY(
 	select TotalCycle = SUM(lmdd.Cycle) * 1.0 ,TotalGSD = SUM(lmdd.GSD * SewerDiffPercentage) * 1.0
 	from #LineMappingBalancing_Detail lmdd
-	where t.ID = lmdd.ID and t.No=lmdd.No
+	where t.ID = lmdd.ID and t.No=lmdd.No and lmdd.OperationID = t.OperationID
 )DetailSum
 
 
@@ -1567,10 +1572,14 @@ select distinct
 	[Current # of Optrs] = Cast( lm.CurrentOperators as int),
 
 	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
-	[Target/Hr. (100%)] = IIF(lm.TotalCycle=0, 0, (3600.0 * lm.CurrentOperators) / lm.TotalCycle),
+	[Target/Hr. (100%)] = CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int),
 
-	---- 公式：( 3600.* [No. of Hours] ) / [Daily Demand / Shift]
-	[Takt Time] = CEILING( IIF(lm.TotalCycle=0 OR lm.Workhour = 0,0, ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ) )),
+	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
+	[Takt Time] = ROUND(
+                    IIF( CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ) = 0
+                    ,0
+                    ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ))
+                ,0),
 
 	[Total GSD Time] = lm.TotalGSD * 1.0,
 	[Total Cycle Time] = lm.TotalCycle * 1.0,
@@ -1581,7 +1590,7 @@ select distinct
 	[CPU / PC] = s.CPU,
 	[No. of Hours] = lm.Workhour,
 	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = IIF(lm.TotalCycle=0, 0,  ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour),
+	[Daily Demand / Shift] = CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ),
 
     ---- P03 為空
 	[Optrs of Presser] = 0,
@@ -1610,7 +1619,7 @@ select distinct
 											for xml path('')
 									), 1, 1, ''))
 	) ,
-	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+	[Total No. of Not Hit Target ] = iif(lm.Version <> 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
 	                    select distinct l2.NO, l2.IEReasonLBRNotHit_DetailUkey
 	                    from #LineMapping_Detail l2 WITH (NOLOCK)
@@ -1633,7 +1642,11 @@ select distinct
 	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs]
 	[Lean Line Eff %] = IIF(lm.Workhour = 0 OR lm.TotalCycle =0 OR lm.CurrentOperators = 0 ,0,
         1.0 * lm.TotalCycle 
-        / CEILING( IIF(lm.TotalCycle=0 OR lm.Workhour = 0,0, ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.CurrentOperators) / lm.TotalCycle) * lm.Workhour ) )) 
+        /  ROUND(
+                    IIF( CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ) = 0
+                    ,0
+                    ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ))
+                ,0)
         / lm.CurrentOperators ),
 
 	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
@@ -1762,6 +1775,13 @@ from #AutomatedLineMapping lm
 inner join AutomatedLineMapping_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
+select DISTINCT lm.ID, [Reason] = i.Description
+INTO #NotHitTargetReason
+from AutomatedLineMapping_NotHitTargetReason r
+inner join IEReason i on i.ID = r.IEReasonID and i.Type = 'AS'
+inner join #AutomatedLineMapping_Detail lmd on r.ID = lmd.ID and r.No = lmd.No
+inner join #AutomatedLineMapping lm on lm.ID = lmd.ID
+
 select distinct
 	f.CountryID,
 	lm.FactoryID,
@@ -1778,10 +1798,15 @@ select distinct
 
 	[Current # of Optrs] = Cast( lm.SewerManpower as int),
 
-	[Target/Hr. (100%)] = IIF(lm.TotalGSDTime = 0,0 ,( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime ),
+	[Target/Hr. (100%)] = CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int),
 
-	---- 公式：P05沒有TotalCycle，所以用GSD
-	[Takt Time] = IIF(lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.WorkHour = 0 ,0 ,( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)),
+	---- 公式：( 3600.* [No. of Hours] ) / [Daily Demand / Shift]
+	---- P05沒有TotalCycle，所以用GSD
+	[Takt Time] = ROUND(
+                    IIF( CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ) = 0
+                    ,0
+                    ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ) )
+                ,0),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = Cast( NULL as decimal),
@@ -1792,7 +1817,7 @@ select distinct
 	[CPU / PC] = lm.StyleCPU,
 	[No. of Hours] = lm.Workhour,
 	---- 公式：P05沒有TotalCycle，所以為0
-	[Daily Demand / Shift] = IIF(lm.TotalGSDTime =0 ,0 ,  ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour),
+	[Daily Demand / Shift] = CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ),
 
 	[Optrs of Presser] = Cast( lm.PresserManpower as int),
 	[Optrs of Packer] =  Cast( lm.PackerManpower as int),
@@ -1800,27 +1825,24 @@ select distinct
 	---- 公式：P05沒有Cycle，所以為0
 	[EOLR] = Cast( NULL as decimal),
 
-	---- P05/P06呈現空白
+	---- P05呈現空白
 	[Efficiency %] = Cast( NULL as decimal) ,
 
 	---- P05 公式：P05沒有TotalCycle，所以用GSD
-	[Line Balancing %] = IIF( lm.HighestGSDTime = 0 or lm.SewerManpower = 0 ,0 , lm.TotalGSDTime / lm.HighestGSDTime / lm.SewerManpower * 100 ),
+	[Line Balancing %] = IIF( lm.HighestGSDTime = 0 or lm.SewerManpower = 0 ,0 , lm.TotalGSDTime / lm.HighestGSDTime / lm.SewerManpower ),
 
 	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100,
 	[Not Hit Target Type] = '',
-	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+	[Total No. of Not Hit Target ] = iif(lm.Version <> 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
 	                    select l2.ID, l2.NO
 	                    from AutomatedLineMapping_NotHitTargetReason l2 WITH (NOLOCK)
 	                    where lm.ID = l2.ID
                     )a )),
-	[Not Hit Target Reason] = '',
+	[Not Hit Target Reason] = NotHitTargetReason.Val,
 
-	---- 公式：P05沒有TotalCycle，所以用GSD
-	[Lean Line Eff %] = IIF( lm.WorkHour = 0 or lm.SewerManpower = 0 or lm.TotalGSDTime = 0 or lm.SewerManpower = 0
-                            ,0
-                            ,lm.TotalGSDTime / (( 3600.0 * lm.WorkHour) / (( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime * lm.WorkHour)) / lm.SewerManpower
-                        ),
+	---- P05空白
+	[Lean Line Eff %] = Cast( NULL as decimal),
 	
 	---- 公式：P05因為[EOLR]空白，所以空白
 	[PPH] = Cast( NULL as decimal),
@@ -1836,6 +1858,14 @@ select distinct
 from #AutomatedLineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
+outer apply(
+	select Val = STUFF( (
+        select DISTINCT ',' + Reason
+        from #NotHitTargetReason r 
+        where r.ID = lm.ID
+		FOR XML PATH('')
+		),1,1,'')
+)NotHitTargetReason
 where 1 = 1
 ");
 
@@ -1853,7 +1883,7 @@ where 1 = 1
 ");
             }
 
-            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail ");
+            cmd.Append(Environment.NewLine + "DROP TABLE #AutomatedLineMapping,#AutomatedLineMapping_Detail,#NotHitTargetReason ");
 
             return cmd;
         }
@@ -1939,6 +1969,14 @@ from #LineMappingBalancing lm
 inner join LineMappingBalancing_Detail lmd WITH (NOLOCK) on lm.ID = lmd.ID
 where lmd.No <> ''
 
+
+select DISTINCT lm.ID, [Reason] = i.Description
+INTO #NotHitTargetReason
+from LineMappingBalancing_NotHitTargetReason r
+inner join IEReason i on i.ID = r.IEReasonID and i.Type = 'AS'
+inner join #LineMappingBalancing_Detail lmd on r.ID = lmd.ID and r.No = lmd.No
+inner join #LineMappingBalancing lm on lm.ID = lmd.ID
+
 select distinct
 	f.CountryID,
 	lm.FactoryID,
@@ -1956,10 +1994,14 @@ select distinct
 	[Current # of Optrs] = Cast(lm.SewerManpower as int),
 
 	---- 公式：( 3600 * [Current # of Optrs] ) / [Total Cycle Time]
-	[Target/Hr. (100%)] = IIF(lm.TotalCycleTime=0 ,0  ,(3600.0 * lm.SewerManpower) / lm.TotalCycleTime),
+	[Target/Hr. (100%)] = CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int),
 
-	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]
-	[Takt Time] = CEILING( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour ) ),
+	---- 公式：( 3600 * [No. of Hours] ) / [Daily Demand / Shift]	
+	[Takt Time] = ROUND(
+                    IIF( CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ) = 0
+                    ,0
+                    ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ) )
+                ,0),
 
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
@@ -1970,7 +2012,7 @@ select distinct
 	[CPU / PC] = lm.StyleCPU,
 	[No. of Hours] = lm.Workhour,
 	---- 公式：[Target / Hr.(100%)] * [No. of Hours]
-	[Daily Demand / Shift] = ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour,
+	[Daily Demand / Shift] = CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ),
 
     ---- P03 為空
 	[Optrs of Presser] = Cast( lm.PresserManpower as int),
@@ -1980,28 +2022,24 @@ select distinct
 	---- 公式：3600 / [Highest Cycle Time]
 	[EOLR] = 3600.0 / lm.HighestCycleTime,
 
-	[Efficiency %] = IIF(lm.HighestCycleTime = 0 OR lm.SewerManpower = 0 ,0 , 1.0 * lm.TotalGSDTime / lm.HighestCycleTime / lm.SewerManpower ) ,
+	---- P06空白
+	[Efficiency %] = Cast( NULL as decimal),
 
 	---- P03 公式：[Total Cycle Time] / [HighestCycle] / [Current # of Optrs]
 	[Line Balancing %] = 1.0 * lm.TotalCycleTime / lm.HighestCycleTime / lm.SewerManpower,
 
 	[Target Line Balancing% ]= (select top 1 co.Target from ChgOverTarget co where co.Type = 'LBR') / 100,
 	[Not Hit Target Type] = '',
-	[Total No. of Not Hit Target ] = iif(lm.Version = 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
+	[Total No. of Not Hit Target ] = iif(lm.Version <> 1,0,(select cnt = iif(count(*) = 0, '', cast(count(1) as varchar))
                     from (
 	                    select l2.ID, l2.NO
 	                    from LineMappingBalancing_NotHitTargetReason l2 WITH (NOLOCK)
 	                    where lm.ID = l2.ID
                     )a )),
-	[Not Hit Target Reason]='',
+	[Not Hit Target Reason]=NotHitTargetReason.Val,
 
-	---- 公式：[Total Cycle time] / [Takt Time] / [Current # of Optrs]
-	[Lean Line Eff %] = IIF(lm.Workhour = 0 or lm.SewerManpower = 0 or lm.TotalCycleTime = 0 , 0,
-            1.0 * lm.TotalCycleTime 
-            / ( ( 3600.0 * lm.Workhour ) / ( ((3600.0 * lm.SewerManpower) / lm.TotalCycleTime) * lm.Workhour )) 
-            / lm.SewerManpower
-            ),
-
+	---- P06空白
+	[Lean Line Eff %] = Cast( NULL as decimal),
 	---- 公式：( [EOLR] * [CPU / PC] ) / [Current # of Optrs]
 	[PPH] = ( ( 3600.0 / lm.HighestCycleTime) * s.CPU ) / lm.SewerManpower,
 
@@ -2016,6 +2054,14 @@ select distinct
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
+outer apply(
+	select Val = STUFF( (
+        select DISTINCT ',' + Reason
+        from #NotHitTargetReason r 
+        where r.ID = lm.ID
+		FOR XML PATH('')
+		),1,1,'')
+)NotHitTargetReason
 outer apply(
 	select top 1 c.Target
 	from factory f

@@ -47,6 +47,8 @@
             this.txtSeason = new Sci.Win.UI.TextBox();
             this.txtBrand = new Sci.Win.UI.TextBox();
             this.txtLine = new Sci.Win.UI.TextBox();
+            this.comboCategory = new Sci.Win.UI.ComboBox();
+            this.labelCategory = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -66,15 +68,15 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(315, 231);
+            this.buttonCustomized.Location = new System.Drawing.Point(368, 145);
             // 
             // checkUseCustomized
             // 
-            this.checkUseCustomized.Location = new System.Drawing.Point(341, 240);
+            this.checkUseCustomized.Location = new System.Drawing.Point(394, 154);
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(315, 251);
+            this.txtVersion.Location = new System.Drawing.Point(368, 165);
             // 
             // lbOutputDate
             // 
@@ -187,7 +189,7 @@
             this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboM.FormattingEnabled = true;
             this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(151, 118);
+            this.comboM.Location = new System.Drawing.Point(151, 151);
             this.comboM.Name = "comboM";
             this.comboM.OldText = "";
             this.comboM.Size = new System.Drawing.Size(80, 24);
@@ -195,7 +197,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(13, 118);
+            this.labelM.Location = new System.Drawing.Point(13, 151);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(135, 23);
             this.labelM.TabIndex = 151;
@@ -203,7 +205,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(13, 152);
+            this.labelFactory.Location = new System.Drawing.Point(13, 185);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(134, 23);
             this.labelFactory.TabIndex = 153;
@@ -211,7 +213,7 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(13, 218);
+            this.labelSeason.Location = new System.Drawing.Point(13, 251);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(134, 23);
             this.labelSeason.TabIndex = 158;
@@ -219,7 +221,7 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(13, 251);
+            this.labelStyle.Location = new System.Drawing.Point(13, 284);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(134, 23);
             this.labelStyle.TabIndex = 157;
@@ -227,7 +229,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(13, 184);
+            this.label3.Location = new System.Drawing.Point(13, 217);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(134, 23);
             this.label3.TabIndex = 246;
@@ -235,7 +237,7 @@
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(13, 288);
+            this.label4.Location = new System.Drawing.Point(13, 321);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(134, 23);
             this.label4.TabIndex = 248;
@@ -247,7 +249,7 @@
             this.comboFty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFty.FormattingEnabled = true;
             this.comboFty.IsSupportUnselect = true;
-            this.comboFty.Location = new System.Drawing.Point(151, 151);
+            this.comboFty.Location = new System.Drawing.Point(151, 184);
             this.comboFty.Name = "comboFty";
             this.comboFty.OldText = "";
             this.comboFty.Size = new System.Drawing.Size(80, 24);
@@ -258,7 +260,7 @@
             // 
             this.txtStyle.BackColor = System.Drawing.Color.White;
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtStyle.Location = new System.Drawing.Point(150, 251);
+            this.txtStyle.Location = new System.Drawing.Point(150, 284);
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.Size = new System.Drawing.Size(100, 23);
             this.txtStyle.TabIndex = 256;
@@ -269,7 +271,7 @@
             // 
             this.txtSeason.BackColor = System.Drawing.Color.White;
             this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(151, 218);
+            this.txtSeason.Location = new System.Drawing.Point(151, 251);
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(100, 23);
             this.txtSeason.TabIndex = 257;
@@ -280,7 +282,7 @@
             // 
             this.txtBrand.BackColor = System.Drawing.Color.White;
             this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBrand.Location = new System.Drawing.Point(151, 184);
+            this.txtBrand.Location = new System.Drawing.Point(151, 217);
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(100, 23);
             this.txtBrand.TabIndex = 258;
@@ -291,16 +293,38 @@
             // 
             this.txtLine.BackColor = System.Drawing.Color.White;
             this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtLine.Location = new System.Drawing.Point(151, 288);
+            this.txtLine.Location = new System.Drawing.Point(151, 321);
             this.txtLine.Name = "txtLine";
             this.txtLine.Size = new System.Drawing.Size(100, 23);
             this.txtLine.TabIndex = 259;
             this.txtLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtLine_PopUp);
             this.txtLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtLine_Validating);
             // 
+            // comboCategory
+            // 
+            this.comboCategory.BackColor = System.Drawing.Color.White;
+            this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCategory.FormattingEnabled = true;
+            this.comboCategory.IsSupportUnselect = true;
+            this.comboCategory.Location = new System.Drawing.Point(150, 116);
+            this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
+            this.comboCategory.Size = new System.Drawing.Size(170, 24);
+            this.comboCategory.TabIndex = 260;
+            // 
+            // labelCategory
+            // 
+            this.labelCategory.Location = new System.Drawing.Point(13, 117);
+            this.labelCategory.Name = "labelCategory";
+            this.labelCategory.Size = new System.Drawing.Size(135, 23);
+            this.labelCategory.TabIndex = 261;
+            this.labelCategory.Text = "Category";
+            // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(570, 350);
+            this.ClientSize = new System.Drawing.Size(570, 380);
+            this.Controls.Add(this.comboCategory);
+            this.Controls.Add(this.labelCategory);
             this.Controls.Add(this.txtLine);
             this.Controls.Add(this.txtBrand);
             this.Controls.Add(this.txtSeason);
@@ -349,6 +373,8 @@
             this.Controls.SetChildIndex(this.txtSeason, 0);
             this.Controls.SetChildIndex(this.txtBrand, 0);
             this.Controls.SetChildIndex(this.txtLine, 0);
+            this.Controls.SetChildIndex(this.labelCategory, 0);
+            this.Controls.SetChildIndex(this.comboCategory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -374,5 +400,7 @@
         private Win.UI.TextBox txtSeason;
         private Win.UI.TextBox txtBrand;
         private Win.UI.TextBox txtLine;
+        private Win.UI.ComboBox comboCategory;
+        private Win.UI.Label labelCategory;
     }
 }

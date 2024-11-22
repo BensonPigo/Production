@@ -569,6 +569,7 @@
             0});
             this.numericLBRByGSDTime.ReadOnly = true;
             this.numericLBRByGSDTime.Size = new System.Drawing.Size(55, 23);
+            this.numericLBRByGSDTime.DecimalPlaces = 2;
             this.numericLBRByGSDTime.TabIndex = 37;
             this.numericLBRByGSDTime.Value = new decimal(new int[] {
             0,
