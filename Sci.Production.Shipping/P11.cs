@@ -384,15 +384,18 @@ inner join Orders o with (nolock) on o.id = pd.OrderID
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
 outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where   p.INVNo in ({whereInvNo})
 ";
@@ -437,15 +440,18 @@ from Orders o with (nolock)
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
 outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
