@@ -106,7 +106,13 @@ namespace Sci.Production.Cutting
                 holiday.Visible = true;
                 holiday.label1.Text = date.Day.ToString();
                 holiday.Today = date;
-                string sqlcmd = $"select * from MachineIoTHoliday WITH (NOLOCK) where HolidayDate ='{date:yyyy/MM/dd}' AND MachineIoTType = '{this.comboDropDownList1.SelectedValue}' AND FactoryID = '{Sci.Env.User.Factory}'";
+                string sqlcmd = $@"
+select *
+from MachineIoTHoliday WITH (NOLOCK)
+where HolidayDate ='{date:yyyy/MM/dd}'
+AND MachineIoTType = '{this.comboDropDownList1.SelectedValue}'
+AND FactoryID = '{Sci.Env.User.Factory}'
+";
                 DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable findData);
                 if (findData == null || findData.Rows.Count <= 0)
                 {

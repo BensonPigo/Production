@@ -3,7 +3,6 @@ using Sci.Data;
 using System;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Cutting
 {
@@ -23,7 +22,8 @@ namespace Sci.Production.Cutting
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-            this.displayFactory.Text = Sci.Env.User.Factory;
+            this.comboFactory1.SetDataSource();
+            this.comboFactory1.Text = Sci.Env.User.Factory;
         }
 
         private void BtnImport_Click(object sender, EventArgs e)
@@ -36,7 +36,12 @@ namespace Sci.Production.Cutting
             }
 
             // 從 PMS 查詢資料
-            string sqlcmdPms = $"SELECT HolidayDate, Name FROM Holiday WITH(NOLOCK) WHERE HolidayDate BETWEEN '{this.dateRange1.Value1:yyyy/MM/dd}' AND '{this.dateRange1.Value2:yyyy/MM/dd}' AND FactoryID = '{Sci.Env.User.Factory}'";
+            string sqlcmdPms = $@"
+SELECT HolidayDate, Name
+FROM Holiday WITH(NOLOCK)
+WHERE HolidayDate BETWEEN '{this.dateRange1.Value1:yyyy/MM/dd}' AND '{this.dateRange1.Value2:yyyy/MM/dd}'
+AND FactoryID = '{this.comboFactory1.SelectedValue}'
+";
             DualResult resultPms = DBProxy.Current.Select("Production", sqlcmdPms, out DataTable dtPms);
             if (!resultPms)
             {
@@ -45,6 +50,7 @@ namespace Sci.Production.Cutting
             }
 
             // 只做更新與新增假日, 因為刪除假日必須驗證那天所有 Machine 的班表
+            // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
             string sqlcmd = $@"
 UPDATE m
 SET m.Name = t.Name

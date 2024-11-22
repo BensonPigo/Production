@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDescription = new Sci.Win.UI.Label();
             this.labelDate = new Sci.Win.UI.Label();
             this.btnCancel = new Sci.Win.UI.Button();
             this.dateRange1 = new Sci.Win.UI.DateRange();
             this.btnImport = new Sci.Win.UI.Button();
-            this.displayFactory = new Sci.Win.UI.DisplayBox();
+            this.comboFactory1 = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // labelDescription
@@ -96,20 +97,26 @@
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
-            // displayFactory
+            // comboFactory1
             // 
-            this.displayFactory.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayFactory.Location = new System.Drawing.Point(107, 48);
-            this.displayFactory.Name = "displayFactory";
-            this.displayFactory.Size = new System.Drawing.Size(113, 23);
-            this.displayFactory.TabIndex = 15;
+            this.comboFactory1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboFactory1.FilteMDivision = false;
+            this.comboFactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboFactory1.FormattingEnabled = true;
+            this.comboFactory1.IssupportJunk = false;
+            this.comboFactory1.IsSupportUnselect = true;
+            this.comboFactory1.Location = new System.Drawing.Point(107, 48);
+            this.comboFactory1.Name = "comboFactory1";
+            this.comboFactory1.OldText = "";
+            this.comboFactory1.ReadOnly = true;
+            this.comboFactory1.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory1.TabIndex = 16;
             // 
             // B12_ImportFromPMS
             // 
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(421, 127);
-            this.Controls.Add(this.displayFactory);
+            this.Controls.Add(this.comboFactory1);
             this.Controls.Add(this.btnImport);
             this.Controls.Add(this.dateRange1);
             this.Controls.Add(this.btnCancel);
@@ -124,9 +131,8 @@
             this.Controls.SetChildIndex(this.btnCancel, 0);
             this.Controls.SetChildIndex(this.dateRange1, 0);
             this.Controls.SetChildIndex(this.btnImport, 0);
-            this.Controls.SetChildIndex(this.displayFactory, 0);
+            this.Controls.SetChildIndex(this.comboFactory1, 0);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -137,6 +143,6 @@
         private Win.UI.Button btnCancel;
         private Win.UI.DateRange dateRange1;
         private Win.UI.Button btnImport;
-        private Win.UI.DisplayBox displayFactory;
+        private Class.ComboFactory comboFactory1;
     }
 }

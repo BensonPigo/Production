@@ -216,7 +216,7 @@ DROP TABLE #tmpMachineIoT
         private double QueryDetailAndSetMainWorkingHour(long machineIoTUkey, DateTime date)
         {
             DataTable dtDetail = this.QueryDetail(machineIoTUkey, date);
-            var totalHours = this.CalWorkingHour(dtDetail);
+            var totalHours = new MachineCalendar().CalWorkingHour(dtDetail);
             this.dtDisplayMain.Select($"Ukey = {machineIoTUkey}").FirstOrDefault()[date.ToString("yyyy/MM/dd")] = totalHours;
             return totalHours;
         }
@@ -248,12 +248,6 @@ DROP TABLE #tmpMachineIoT
             }
 
             return dtDetail;
-        }
-
-        private double CalWorkingHour(DataTable dtDetail)
-        {
-            double totalHours = dtDetail.AsEnumerable().Sum(r => ((TimeSpan)r["EndTime"] - (TimeSpan)r["StartTime"]).TotalHours);
-            return Math.Round(totalHours, 1);
         }
 
         private void Grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -385,7 +379,7 @@ DROP TABLE #tmpMachineIoT
         {
             DataTable dtDetail = this.QueryDetail(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value);
             this.grid2bs.DataSource = dtDetail;
-            double workinghour = this.CalWorkingHour(dtDetail);
+            double workinghour = new MachineCalendar().CalWorkingHour(dtDetail);
             if (workinghour == 0 && !this.IsSpecialinTemple(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value))
             {
                 if (this.dtCalendar.Select($"Ukey = {this.CurrentMachineIoTUkey} AND StartDate <= '{this.Grid1CurrentColumnName}'").Length > 0

@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace Sci.Production.Class.Command
 {
+    /// 這檔案 MES Basic B02, B07 有在用, Class DLL 要更新到 MES
     /// <inheritdoc/>
     public class MachineCalendar
     {
@@ -131,7 +132,7 @@ ORDER BY WeekDay,IsCrossDate,StartTime
         }
 
         /// <summary>
-        /// Save 之前檢查 DataTable 每一筆爛位 StartTime 不可大於 EndTime
+        /// 檢查[單筆] 爛位 StartTime 不可大於等於 EndTime
         /// Cutting B05 EditCalendar
         /// MES B07 Set
         /// MES B07 Batch assign special time
@@ -338,6 +339,9 @@ SELECT 1 FROM MachineIoT_Calendar WHERE MachineIoTUkey = {machineIoTUkey} AND St
             return Ict.Result.True;
         }
 
+        /// <summary>
+        /// dt1 的 IsCrossDate 最大 EndTime > dt2 !IsCrossDate 最小 StartTime 則有交集 跳訊息
+        /// </summary>
         /// <inheritdoc/>
         public bool ValidateDataTableOverlap(DataTable dt1, DataTable dt2, DateTime date, long machineIoTUkey, bool showMsg = true)
         {
@@ -387,7 +391,11 @@ Working time overlap on [{date:yyyy/MM/dd}].";
         {
             var endTimeList = dt.AsEnumerable()
                 .Where(row => MyUtility.Convert.GetBool(row["IsCrossDate"]))
-                .Select(row => TimeSpan.Parse(row["EndTime"].ToString()))
+                .Select(row =>
+                {
+                    TimeSpan endTime = TimeSpan.Parse(row["EndTime"].ToString());
+                    return endTime == TimeSpan.Zero ? TimeSpan.FromHours(24) : endTime; // 如果是 00:00，視為 24:00
+                })
                 .ToList();
 
             return endTimeList.Count > 0 ? (TimeSpan?)endTimeList.Max() : null;
@@ -587,6 +595,7 @@ WHERE md.MachineIoT_CalendareUkey = (
                 dr["EndTime"] = dr["EndTime"].ToTimeFormat();
             }
 
+            // 排序資料
             DataView dataView = dt2.DefaultView;
             dataView.Sort = "isCrossDate ASC, StartTime ASC";
             dt2 = dataView.ToTable();
@@ -856,6 +865,31 @@ and md.WeekDay = (select DATEPART(WEEKDAY, @Date))
         {
             string sqlcmd = $"SELECT 1 FROM MachineIoT_SpecialDate WHERE MachineIoTUkey = {machineIoTUkey} AND SpecialDate = '{date:yyyy/MM/dd}'";
             return MyUtility.Check.Seek(sqlcmd, "ManufacturingExecution");
+        }
+
+        /// <summary>
+        /// 計算[同一天] DataTable 中的工作時數
+        /// </summary>
+        /// <inheritdoc/>
+        public double CalWorkingHour(DataTable dtDetail)
+        {
+            double totalHours = dtDetail.AsEnumerable().Sum(row =>
+            {
+                TimeSpan startTime = (TimeSpan)row["StartTime"];
+                TimeSpan endTime = (TimeSpan)row["EndTime"];
+
+                // 如果 EndTime 是 00:00，視為跨到隔天的 24:00
+                if (endTime == TimeSpan.Zero)
+                {
+                    endTime = TimeSpan.FromHours(24); // 將 00:00 視為 24:00
+                }
+
+                // 計算該時間段的時數
+                double hours = (endTime - startTime).TotalHours;
+                return hours;
+            });
+
+            return Math.Round(totalHours, 1);
         }
 #pragma warning restore SA1503
     }

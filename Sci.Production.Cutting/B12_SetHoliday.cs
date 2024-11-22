@@ -32,7 +32,14 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
 
-            string sqlcmd = $"select Name from MachineIoTHoliday WITH (NOLOCK) where HolidayDate='{this.txtDate.Text}' AND MachineIoTType = '{this.machineIoTType}' AND FactoryID = '{Sci.Env.User.Factory}'";
+            // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
+            string sqlcmd = $@"
+select Name
+from MachineIoTHoliday WITH (NOLOCK)
+where HolidayDate='{this.txtDate.Text}'
+AND MachineIoTType = '{this.machineIoTType}'
+AND FactoryID = '{Sci.Env.User.Factory}'
+";
             string holidayName = MyUtility.GetValue.Lookup(sqlcmd, "ManufacturingExecution");
 
             if (MyUtility.Check.Empty(holidayName))
@@ -60,7 +67,13 @@ namespace Sci.Production.Cutting
                         return;
                     }
 
-                    string deleteCmd = $"delete MachineIoTHoliday where HolidayDate = '{this.reviseDate:yyyy/MM/dd}' AND MachineIoTType = '{this.machineIoTType}' AND FactoryID = '{Sci.Env.User.Factory}'";
+                    // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
+                    string deleteCmd = $@"
+delete MachineIoTHoliday
+where HolidayDate = '{this.reviseDate:yyyy/MM/dd}'
+AND MachineIoTType = '{this.machineIoTType}'
+AND FactoryID = '{Sci.Env.User.Factory}'
+";
                     DualResult result = DBProxy.Current.Execute("ManufacturingExecution", deleteCmd);
                     if (!result)
                     {
@@ -73,7 +86,14 @@ namespace Sci.Production.Cutting
             {
                 if (this.newRecord == 0)
                 {
-                    string updateCmd = $"update MachineIoTHoliday set Name = '{this.txtDescription.Text}' where HolidayDate = '{this.reviseDate:yyyy/MM/dd}' AND MachineIoTType = '{this.machineIoTType}' AND FactoryID = '{Sci.Env.User.Factory}'";
+                    // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
+                    string updateCmd = $@"
+update MachineIoTHoliday
+set Name = '{this.txtDescription.Text}'
+where HolidayDate = '{this.reviseDate:yyyy/MM/dd}'
+AND MachineIoTType = '{this.machineIoTType}'
+AND FactoryID = '{Sci.Env.User.Factory}'
+";
                     DualResult result = DBProxy.Current.Execute("ManufacturingExecution", updateCmd);
                     if (!result)
                     {
@@ -83,9 +103,11 @@ namespace Sci.Production.Cutting
                 }
                 else
                 {
+                    // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
                     string insertCmd = $@"
 insert into MachineIoTHoliday(HolidayDate, MachineIoTType, FactoryID, Name, AddName, AddDate)
-values ('{this.reviseDate:yyyy/MM/dd}','{this.machineIoTType}','{Sci.Env.User.Factory}','{this.txtDescription.Text}','{Env.User.UserID}',GETDATE());";
+values ('{this.reviseDate:yyyy/MM/dd}','{this.machineIoTType}','{Sci.Env.User.Factory}','{this.txtDescription.Text}','{Env.User.UserID}',GETDATE());
+";
                     DualResult result = DBProxy.Current.Execute("ManufacturingExecution", insertCmd);
                     if (!result)
                     {
@@ -98,7 +120,14 @@ values ('{this.reviseDate:yyyy/MM/dd}','{this.machineIoTType}','{Sci.Env.User.Fa
 
         private bool ValidateAllMachine()
         {
-            string sqlcmd = $@"SELECT Ukey, MachineID FROM MachineIoT WHERE MachineIoTType = '{this.machineIoTType}' ";
+            // PMS 多 by FactoryID 條件, MES 不 by FactoryID 條件
+            string sqlcmd = $@"
+SELECT Ukey, MachineID
+FROM MachineIoT WITH (NOLOCK)
+INNER JOIN [SciProduction_SpreadingNo] sn WITH (NOLOCK) ON sn.ID = MachineIoT.MachineID
+WHERE MachineIoTType = '{this.machineIoTType}'
+AND FactoryID = '{Sci.Env.User.Factory}'
+";
             DualResult result = DBProxy.Current.Select("ManufacturingExecution", sqlcmd, out DataTable dtMachine);
             if (!result)
             {
