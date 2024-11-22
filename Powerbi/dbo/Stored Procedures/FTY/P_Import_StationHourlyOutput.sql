@@ -56,9 +56,9 @@ BEGIN
 
 	Select 
 	[Ukey] = shod.Ukey
-	, [StationHourlyOutputUkey]
-	, [Oclock]
-	, [Qty]
+	, [StationHourlyOutputUkey] = shod.StationHourlyOutputUkey
+	, [Oclock] = shod.Oclock
+	, [Qty] = shod.Qty
 	, [FactoryID] = sho.FactoryID
 	into #tmpStationHourlyOutput_Detail
 	From ManufacturingExecution.dbo.StationHourlyOutput_Detail shod With(Nolock)

@@ -1,6 +1,6 @@
 ﻿Create Table [dbo].[P_StationHourlyOutput](
 		[FactoryID] [varchar] (8) Not Null Constraint [DF_P_StationHourlyOutput_FactoryID] Default '',
-		[Date] [date] Null Constraint [DF_P_StationHourlyOutput_Date] Default Null,
+		[Date] [date] Null,
 		[Shift] [varchar] (5) Not Null Constraint [DF_P_StationHourlyOutput_Shift] Default '',
 		[Team] [varchar] (10) Not Null Constraint [DF_P_StationHourlyOutput_Team] Default '',
 		[Line] [varchar] (5) Not Null Constraint [DF_P_StationHourlyOutput_Line] Default '',
