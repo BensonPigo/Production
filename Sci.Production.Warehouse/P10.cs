@@ -46,6 +46,18 @@ namespace Sci.Production.Warehouse
             // SubDetailKeyField1 = "Ukey";    // second PK
             // SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
             this.DoSubForm = new P10_Detail();
+
+            #region Batch MIND Releaser 按鈕
+            Point loc = this.queryfors.Location;
+            this.queryfors.Dispose();
+            Sci.Win.UI.Button btnMIND = new Win.UI.Button();
+            btnMIND.Text = "Batch MIND Releaser";
+            btnMIND.Location = loc;
+            btnMIND.Width = 160;
+            btnMIND.ForeColor = Color.Black;
+            btnMIND.Click += this.BtnMIND_Click;
+            this.browsetop.Controls.Add(btnMIND);
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -1305,6 +1317,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             P10_IssueSummary callNextFrom;
             callNextFrom = new P10_IssueSummary(this.CurrentMaintain["ID"].ToString());
             DialogResult result = callNextFrom.ShowDialog(this);
+        }
+
+        private void BtnMIND_Click(object sender, EventArgs e)
+        {
+            P10_Batch_MIND_Releaser win = new P10_Batch_MIND_Releaser();
+            win.ShowDialog(this);
         }
     }
 }
