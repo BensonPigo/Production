@@ -54,7 +54,7 @@ namespace Sci.Production.Warehouse
             btnMIND.Text = "Batch MIND Releaser";
             btnMIND.Location = loc;
             btnMIND.Width = 160;
-            btnMIND.ForeColor = Color.Red;
+            btnMIND.ForeColor = Color.Black;
             btnMIND.Click += this.BtnMIND_Click;
             this.browsetop.Controls.Add(btnMIND);
             #endregion
