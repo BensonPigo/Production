@@ -186,7 +186,7 @@
             // 
             this.btnRefersh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefersh.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnRefersh.Location = new System.Drawing.Point(566, 7);
+            this.btnRefersh.Location = new System.Drawing.Point(561, 7);
             this.btnRefersh.Name = "btnRefersh";
             this.btnRefersh.Size = new System.Drawing.Size(83, 27);
             this.btnRefersh.TabIndex = 2;
@@ -548,9 +548,9 @@
             // 
             this.btnImportFromPMS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportFromPMS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromPMS.Location = new System.Drawing.Point(655, 7);
+            this.btnImportFromPMS.Location = new System.Drawing.Point(650, 7);
             this.btnImportFromPMS.Name = "btnImportFromPMS";
-            this.btnImportFromPMS.Size = new System.Drawing.Size(206, 27);
+            this.btnImportFromPMS.Size = new System.Drawing.Size(211, 27);
             this.btnImportFromPMS.TabIndex = 3;
             this.btnImportFromPMS.Text = "Import from PMS Basic B05";
             this.btnImportFromPMS.UseVisualStyleBackColor = true;

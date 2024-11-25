@@ -44,6 +44,7 @@ namespace Sci.Production.Class.Command
             }
 
             string input = sender.ToString();
+            input = input.Replace(":", string.Empty); // 不一定有冒號, 先去除冒號
             string replaceZero = input.ReplaceZeroHHmm();
             string format4num = replaceZero.Insert(2, ":");
             if (TimeSpan.TryParseExact(format4num, @"hh\:mm", CultureInfo.InvariantCulture, out _))

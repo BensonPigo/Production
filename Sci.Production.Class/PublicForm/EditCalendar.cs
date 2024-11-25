@@ -120,6 +120,7 @@ namespace Sci.Production.Class.PublicForm
             }
 
             this.dt.Rows.Remove(this.grid1.CurrentDataRow);
+            this.dt.AcceptChanges();
         }
 
         private void BtnClose_Click(object sender, EventArgs e)

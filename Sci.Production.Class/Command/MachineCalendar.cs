@@ -892,6 +892,50 @@ and md.WeekDay = (select DATEPART(WEEKDAY, @Date))
 
             return Math.Round(totalHours, 1);
         }
+
+        /// <summary>
+        /// PMS Cutting B13, MES Basic B07 右側 Grid 資料
+        /// </summary>
+        /// <inheritdoc/>
+        public DataTable QueryCalendarDetail(long machineIoTUkey, DateTime date)
+        {
+            DualResult result = this.GetMachineIoTScheduleNonTemp(date, machineIoTUkey, out DataTable dtDetail);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            dtDetail.Columns.Add("StartTimeDisplay");
+            dtDetail.Columns.Add("EndTimeDisplay");
+
+            foreach (DataRow dr in dtDetail.Rows)
+            {
+                // 假設 StartTime 和 EndTime 是儲存 TimeSpan 類型資料
+                if (dr["StartTime"] is TimeSpan startTime)
+                {
+                    dr["StartTimeDisplay"] = startTime.ToString(@"hh\:mm");
+                }
+
+                if (dr["EndTime"] is TimeSpan endTime)
+                {
+                    dr["EndTimeDisplay"] = endTime.ToString(@"hh\:mm");
+                }
+            }
+
+            return dtDetail;
+        }
+
+        /// <summary>
+        /// PMS Cutting B13, MES Basic B07 一個 Cell 時數
+        /// </summary>
+        /// <inheritdoc/>
+        public void QueryDetailAndSetMainWorkingHour(long machineIoTUkey, DateTime date, DataTable dtDisplayMain)
+        {
+            DataTable dtDetail = this.QueryCalendarDetail(machineIoTUkey, date);
+            var totalHours = this.CalWorkingHour(dtDetail);
+            dtDisplayMain.Select($"Ukey = {machineIoTUkey}").FirstOrDefault()[date.ToString("yyyy/MM/dd")] = totalHours;
+        }
 #pragma warning restore SA1503
     }
 }

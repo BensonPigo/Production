@@ -158,7 +158,7 @@ namespace Sci.Production.Cutting
             this.display2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.display2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.display2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.display2.Location = new System.Drawing.Point(92, 43);
+            this.display2.Location = new System.Drawing.Point(127, 43);
             this.display2.Name = "display2";
             this.display2.Size = new System.Drawing.Size(14, 14);
             this.display2.TabIndex = 210;
@@ -166,7 +166,7 @@ namespace Sci.Production.Cutting
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(109, 39);
+            this.label7.Location = new System.Drawing.Point(144, 39);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 211;
@@ -189,7 +189,7 @@ namespace Sci.Production.Cutting
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Location = new System.Drawing.Point(27, 39);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(62, 23);
+            this.label6.Size = new System.Drawing.Size(97, 23);
             this.label6.TabIndex = 209;
             this.label6.Text = "Is Special Time";
             this.label6.TextStyle.Color = System.Drawing.Color.Black;

@@ -189,7 +189,7 @@ DROP TABLE #tmpMachineIoT
             // 特殊班表
             foreach (DataRow row in this.dtSpecial.Rows)
             {
-                this.QueryDetailAndSetMainWorkingHour((long)row["Ukey"], (DateTime)row["SpecialDate"]);
+                new MachineCalendar().QueryDetailAndSetMainWorkingHour((long)row["Ukey"], (DateTime)row["SpecialDate"], this.dtDisplayMain);
             }
 
             // 週期性班表
@@ -206,48 +206,11 @@ DROP TABLE #tmpMachineIoT
                         continue;
                     }
 
-                    this.QueryDetailAndSetMainWorkingHour((long)row["Ukey"], date);
+                    new MachineCalendar().QueryDetailAndSetMainWorkingHour((long)row["Ukey"], date, this.dtDisplayMain);
                 }
             }
 
             this.grid1.DataSource = this.dtDisplayMain;
-        }
-
-        private double QueryDetailAndSetMainWorkingHour(long machineIoTUkey, DateTime date)
-        {
-            DataTable dtDetail = this.QueryDetail(machineIoTUkey, date);
-            var totalHours = new MachineCalendar().CalWorkingHour(dtDetail);
-            this.dtDisplayMain.Select($"Ukey = {machineIoTUkey}").FirstOrDefault()[date.ToString("yyyy/MM/dd")] = totalHours;
-            return totalHours;
-        }
-
-        private DataTable QueryDetail(long machineIoTUkey, DateTime date)
-        {
-            DualResult result = new MachineCalendar().GetMachineIoTScheduleNonTemp(date, machineIoTUkey, out DataTable dtDetail);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return null;
-            }
-
-            dtDetail.Columns.Add("StartTimeDisplay");
-            dtDetail.Columns.Add("EndTimeDisplay");
-
-            foreach (DataRow dr in dtDetail.Rows)
-            {
-                // 假設 StartTime 和 EndTime 是儲存 TimeSpan 類型資料
-                if (dr["StartTime"] is TimeSpan startTime)
-                {
-                    dr["StartTimeDisplay"] = startTime.ToString(@"hh\:mm");
-                }
-
-                if (dr["EndTime"] is TimeSpan endTime)
-                {
-                    dr["EndTimeDisplay"] = endTime.ToString(@"hh\:mm");
-                }
-            }
-
-            return dtDetail;
         }
 
         private void Grid1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -288,7 +251,7 @@ DROP TABLE #tmpMachineIoT
             this.displayBoxWorkingHours.Text = this.RightRegionEnable ? MyUtility.Convert.GetString(this.grid1.CurrentCell.Value) : string.Empty;
             this.checkBoxIsHoliday.Checked = this.RightRegionEnable ? new MachineCalendar().IsHoliday(this.Grid1CurrentColumnDate.Value, this.machineIoTType) : false;
             this.checkBoxIsSpecialTime.Checked = this.RightRegionEnable ? this.IsSpecialinTemple(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value) : false;
-            this.grid2bs.DataSource = this.RightRegionEnable ? this.QueryDetail(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value) : null;
+            this.grid2bs.DataSource = this.RightRegionEnable ? new MachineCalendar().QueryCalendarDetail(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value) : null;
         }
 
         private void CheckBoxIsSpecialTime_CheckedChanged(object sender, EventArgs e)
@@ -377,7 +340,7 @@ DROP TABLE #tmpMachineIoT
 
         private void CurrentCellRefresh()
         {
-            DataTable dtDetail = this.QueryDetail(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value);
+            DataTable dtDetail = new MachineCalendar().QueryCalendarDetail(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value);
             this.grid2bs.DataSource = dtDetail;
             double workinghour = new MachineCalendar().CalWorkingHour(dtDetail);
             if (workinghour == 0 && !this.IsSpecialinTemple(this.CurrentMachineIoTUkey, this.Grid1CurrentColumnDate.Value))
