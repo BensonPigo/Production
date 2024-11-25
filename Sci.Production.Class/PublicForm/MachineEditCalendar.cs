@@ -46,6 +46,7 @@ namespace Sci.Production.Class.PublicForm
             int weekDay = MyUtility.Convert.GetInt(btn.Name.Replace("btnday", string.Empty));
             new EditCalendar(this.dtMachineIoT_Calendar_Detail, weekDay).ShowDialog();
             this.calendarGrid1.SetDataSource(this.dtMachineIoT_Calendar_Detail, true);
+
         }
 
         /// <inheritdoc/>

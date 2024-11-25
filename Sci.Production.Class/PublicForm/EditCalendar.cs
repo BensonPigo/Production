@@ -20,6 +20,7 @@ namespace Sci.Production.Class.PublicForm
             this.InitializeComponent();
             this.dtMachineIoT_Calendar_Detail = dtMachineIoT_Calendar_Detail;
             this.SetWeekDayCheckBox(weekday);
+            this.SetDataTable(weekday);
         }
 
         /// <inheritdoc/>
@@ -27,7 +28,6 @@ namespace Sci.Production.Class.PublicForm
         {
             base.OnFormLoaded();
             this.GridSetup();
-            this.SetDataTable();
         }
 
         private void GridSetup()
@@ -44,9 +44,14 @@ namespace Sci.Production.Class.PublicForm
             this.grid1.Columns.DisableSortable();
         }
 
-        private void SetDataTable()
+        private void SetDataTable(int weekday)
         {
             this.dt = new MachineCalendar().GetMachineIoT_Calendar_DetailSchema();
+            foreach (DataRow dr in this.dtMachineIoT_Calendar_Detail.Select($"WeekDay = {weekday}"))
+            {
+                this.dt.ImportRow(dr);
+            }
+
             this.listControlBindingSource1.DataSource = this.dt;
         }
 
