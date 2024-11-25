@@ -87,7 +87,7 @@ namespace Sci.Production.Warehouse
 		            )tmp for xml path('')   
 	            ),1,1,'')
             )Releaser
-            WHERE I.ISSUEDATE >= '{this.dateIssueDate.DateBox1.Text}' AND I.ISSUEDATE <= '{this.dateIssueDate.DateBox2.Text}' AND I.MDivisionID = '{Env.User.Keyword}'
+            WHERE 1=1 and Type='A' and I.ISSUEDATE >= '{this.dateIssueDate.DateBox1.Text}' AND I.ISSUEDATE <= '{this.dateIssueDate.DateBox2.Text}' AND I.MDivisionID = '{Env.User.Keyword}'
             ORDER BY I.ISSUEDATE, I.ID";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
