@@ -3611,9 +3611,10 @@ where td.ID = '{transcationID}'
         }
 
         /// <inheritdoc/>
-        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null)
+        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null, AbstractDBProxyPMS proxyPMS = null)
         {
-            string localRgcode = MyUtility.GetValue.Lookup("select RgCode from system");
+            string sqlGetRgCode = "select RgCode from system";
+            string localRgcode = proxyPMS == null ? MyUtility.GetValue.Lookup(sqlGetRgCode) : proxyPMS.Lookup(sqlGetRgCode, "Production");
             List<string> iDList = new List<string>();
             DateTime today = DateTime.Today;
             string taiwanYear;
@@ -3712,7 +3713,8 @@ order by Barcode desc
             }
 
             DualResult result = null;
-            if (result = DBProxy.Current.Select(connectionName, sqlCmd, out DataTable dtID))
+            DataTable dtID = null;
+            if (result = proxyPMS == null ? DBProxy.Current.Select(connectionName, sqlCmd, out dtID) : proxyPMS.Select("Production", sqlCmd, out dtID))
             {
                 if (dtID.Rows.Count > 0 && !MyUtility.Check.Empty(dtID.Rows[0]["Barcode"]))
                 {
@@ -4451,7 +4453,7 @@ order by sd.Ukey
                     int count = oriFtyInventory.Select(filter).Length;
                     if (count > 0)
                     {
-                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count, dtBarcodeSource: dt);
+                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count, dtBarcodeSource: dt, proxyPMS: proxyPMS);
                     }
                 }
             }

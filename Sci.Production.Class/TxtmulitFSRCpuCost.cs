@@ -20,7 +20,7 @@ namespace Sci.Production.Class
         protected override void OnPopUp(Win.UI.TextBoxPopUpEventArgs e)
         {
             base.OnPopUp(e);
-            string sql = "select ShipperID from FSRCpuCost WITH (NOLOCK)";
+            string sql = "select distinct ShipperID from FSRCpuCost WITH (NOLOCK)";
 
             Win.Tools.SelectItem2 item = new Win.Tools.SelectItem2(sql, "Shipper", "10", this.Text, null, null, null);
 

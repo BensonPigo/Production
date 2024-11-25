@@ -99,6 +99,7 @@ SET
 , t.Poid = s.Poid
 , t.Seq = s.Seq
 , t.BrandID = s.BrandID
+, t.StyleID = s.StyleID
 , t.refno = s.refno
 , t.WeaveTypeID = s.WeaveTypeID
 , t.Color = s.Color
@@ -138,12 +139,12 @@ AND t.Dyelot = s.Dyelot
 
 
 insert into P_BatchUpdateRecevingInfoTrackingList (
-    ReceivingID,ExportID,FtyGroup,Packages,ArriveDate,Poid,Seq,BrandID,refno,WeaveTypeID,Color,Roll,Dyelot,StockQty,StockType
+    ReceivingID,ExportID,FtyGroup,Packages,ArriveDate,Poid,Seq,BrandID,StyleID,refno,WeaveTypeID,Color,Roll,Dyelot,StockQty,StockType
 ,Location,Weight,ActualWeight,CutShadebandTime,CutBy,Fabric2LabTime,Fabric2LabBy,Checker,IsQRCodeCreatedByPMS,LastP26RemarkData
 ,MINDChecker,QRCode_PrintDate,MINDCheckAddDate,MINDCheckEditDate,SuppAbbEN,ForInspection,ForInspectionTime,OneYardForWashing
 ,Hold,Remark,AddDate,EditDate
 )
-select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.refno,s.WeaveTypeID,s.Color,s.Roll
+select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.StyleID,s.refno,s.WeaveTypeID,s.Color,s.Roll
 ,s.Dyelot,s.StockQty,StockType = s.rdStockType,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
 ,s.Checker,s.IsQRCodeCreatedByPMS,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
 ,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate
