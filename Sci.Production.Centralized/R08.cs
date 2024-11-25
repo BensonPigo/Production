@@ -483,7 +483,6 @@ inner join Style s on o.StyleUkey = s.Ukey
 inner join #OrderInfo p on p.StyleUkey=  s.Ukey
 where 1=1
 {detailQuery}
-
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
 	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category
 
@@ -520,7 +519,7 @@ from LineMapping lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
-)
+) and lm.Status = 'Confirmed'
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 
@@ -539,7 +538,7 @@ from LineMappingBalancing lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
-)
+) and lm.Status = 'Confirmed'
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 
@@ -558,7 +557,7 @@ from AutomatedLineMapping lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
-)
+) and lm.Status = 'Confirmed'
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
 
