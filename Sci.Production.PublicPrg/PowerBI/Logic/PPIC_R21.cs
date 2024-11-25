@@ -212,14 +212,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
 			else '' end 
 		, [HaulingScanTime] = HaulingScanTime.val
 		, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
+		, [HaulingReturn] = IIF(HauledReturn.val = 'Return', 'Yes', '')
 		, [DryRoomReceiveTime] = DryRoomReceiveTime.val
 		, [DryRoomTransferTime] = DryRoomTransferTime.val 
 		, [MDScanTime] = MDScan.val
 		, [MDFailQty] = ISNULL(MDFailQty.val, 0)
 		, [PackingAuditScanTime] = PackingAuditScanTime.val
 		, [PackingAuditFailQty] = PackingAuditFailQty.val
+		, [PackingAuditReturn] = IIF(PackingAuditReturn.val = 'Return', 'Yes', '')
 		, [M360MDScanTime] = M360MDScanTime.val
 		, [M360MDFailQty] = M360MDFailQty.val
+		, [M360MDReturn] = IIF(M360MDReturn.val = 'Return', 'Yes', '')
 		, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 		, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
 		, [ScanAndPackTime] = pld.ScanEditDate
@@ -281,6 +284,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
 									and ch.SCICtnNo = pd.SCICtnNo))
 	) HauledQty
 	outer apply(
+		select [val] = (select max(ch.Status)
+						from Production.dbo.CTNHauling ch with(nolock)
+						where ch.PackingListID = pld.ID 
+						and ch.CTNStartNo = pld.CTNStartNo
+						and ch.OrderID = pld.OrderID)
+
+	) HauledReturn
+	outer apply(
 		select [val] = (select max(dr.AddDate)
 						from Production.dbo.DryReceive dr with(nolock)
 						where	dr.PackingListID = pld.ID and
@@ -323,7 +334,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						pa.SCICtnNo = pld.SCICtnNo and 
 						pa.AddDate = PackingAuditScanTime.val)
 	) PackingAuditFailQty
-	
+	outer apply(
+		select [val] = (select max(pa.Status)
+				from Production.dbo.CTNPackingAudit pa with (nolock)
+				where	pa.packingListID = pld.ID and
+						pa.SCICtnNo = pld.SCICtnNo)
+	) PackingAuditReturn	
 	outer apply(
 		select [val] = (select MAX(AddDate)
 				from Production.dbo.MDScan md with (nolock) 
@@ -339,6 +355,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						md.SCICtnNo = pld.SCICtnNo and
 						md.AddDate = M360MDScanTime.val)
 	) M360MDFailQty
+	outer apply(
+		select [val] = (select max(md.Status)
+				from Production.dbo.MDScan md with (nolock)
+				where	md.DataRemark = 'Create from M360' and
+						md.PackingListID = pld.ID and
+						md.SCICtnNo = pld.SCICtnNo)
+	) M360MDReturn
 	outer apply(
 		select [val] = (select MAX(AddDate)
 				from Production.dbo.PackErrTransfer pe with (nolock) 
