@@ -2923,6 +2923,7 @@
     <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v3.sql" />
     <Build Include="dbo\Tables\DailyAccuCPULoading.sql" />
     <Build Include="dbo\Tables\DailyAccuCPULoading_Detail.sql" />
+    <Build Include="dbo\Tables\SewingDailyOutputStatusRecord.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

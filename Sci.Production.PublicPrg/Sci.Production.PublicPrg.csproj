@@ -166,6 +166,7 @@
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
     <Compile Include="CallWebAPI.cs" />
+    <Compile Include="CentralizedClass.cs" />
     <Compile Include="CrossUtility.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
@@ -214,6 +215,12 @@
     <Compile Include="Logistic.cs" />
     <Compile Include="MessageBoxEX.cs" />
     <Compile Include="MethodWatch.cs" />
+    <Compile Include="MsgGridPrg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MsgGridPrg.Designer.cs">
+      <DependentUpon>MsgGridPrg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
@@ -246,6 +253,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_DailyRTLStatusByLineByStyle.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RTLStatusByDay.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ScanPackList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_DailyOutputStatusRecord.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SimilarStyle.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_BatchUpdateRecevingInfoTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />
@@ -279,6 +287,7 @@
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
+    <Compile Include="PowerBI\Logic\Planning_P08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R04.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R16.cs" />
@@ -303,6 +312,7 @@
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
     <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Miscellaneous_R02.cs" />
+    <Compile Include="PowerBI\Model\Planning_P08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />
@@ -354,12 +364,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
-      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
-      <Name>Sci.Production.Class</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="PowerBI\BI_開發注意事項_開發前請先進來看.docx" />
     <None Include="packages.config" />
@@ -372,6 +376,9 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MsgGridPrg.resx">
+      <DependentUpon>MsgGridPrg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PowerBI\FormPage\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

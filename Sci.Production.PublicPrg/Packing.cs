@@ -1726,7 +1726,7 @@ select * from @tempQtyBDown";
             excel.CutCopyMode = Microsoft.Office.Interop.Excel.XlCutCopyMode.xlCopy;
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName(boolMultiple ? "Packing_P03_PackingListReport_Multiple" : "Packing_P03_PackingGuideReport");
+            string strExcelName = GetName(boolMultiple ? "Packing_P03_PackingListReport_Multiple" : "Packing_P03_PackingGuideReport", ".xlsx");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -2326,7 +2326,7 @@ where   p.ID = '{0}'
             }
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingGuideReport");
+            string strExcelName = Prgs.GetName("Packing_P03_PackingGuideReport", ".xlsx");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -2573,7 +2573,7 @@ select BuyerDelivery = stuff((
             }
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            string strExcelName = Prgs.GetName("Packing_P03_PackingMDFormReport", ".xlsx");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -2825,7 +2825,7 @@ select Kit = stuff((
             }
 
             #region Save & Show Excel
-            string strExcelName = Class.MicrosoftFile.GetName("Packing_P03_PackingMDFormReport");
+            string strExcelName = Prgs.GetName("Packing_P03_PackingMDFormReport", ".xlsx");
             Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
             workbook.SaveAs(strExcelName);
             workbook.Close();
@@ -4700,7 +4700,7 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             }
 
             #region Save Excel
-            string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
+            string excelFile = Prgs.GetName("RunningChange", ".xlsx");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
             workbook.SaveAs(excelFile);
             workbook.Close();
@@ -4826,7 +4826,7 @@ DROP TABLE #ShippingMarkPicture_PIC,#ShippingMarkPicture_HTML,#Ukeys,#CustPONo_H
             custPoSheet.Activate();
 
             #region Save Excel
-            string excelFile = Sci.Production.Class.MicrosoftFile.GetName("RunningChange");
+            string excelFile = Prgs.GetName("RunningChange", ".xlsx");
             xl.BoOpenFile = false;
             xl.Save(excelFile);
             xl.FinishSave();

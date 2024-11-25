@@ -16,6 +16,15 @@ namespace Sci.Production
         [STAThread]
         private static void Main(string[] args = null)
         {
+            // build時先將原本的appconfig加密
+            if (args.Length > 0 && args[0] == "Encryption")
+            {
+                ConfigEncryptionHelper.EncryptAESConfigFile(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                return;
+            }
+
+            ConfigEncryptionHelper.CopyAndEncryptAppConfig();
+
             // Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

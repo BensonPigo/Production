@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Prg;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -135,17 +136,7 @@ order by FtyZone",
         /// <returns>DualResult</returns>
         public DualResult SetDataSourceAllFty()
         {
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' }).Where(s => !s.Contains("testing_PMS")).ToArray();
-            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
-            foreach (string ss in strSevers)
-            {
-                if (!MyUtility.Check.Empty(ss))
-                {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                    connectionString.Add(connections);
-                }
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
 
             DataTable dtFtyZone = null;
             foreach (string conString in connectionString)
