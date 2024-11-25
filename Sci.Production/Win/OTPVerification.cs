@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Sci.Data;
 using System;
+using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Net;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using static Sci.CfgSection;
 
 namespace Sci.Production.Win
 {
@@ -84,19 +86,31 @@ namespace Sci.Production.Win
 
         private async Task GetOtpAsync()
         {
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string nowConnection = DBProxy.Current.DefaultModuleName;
-            string connectionString = docx.Descendants("modules").Elements()
-                .Where(y => y.FirstAttribute.Value.EqualString(nowConnection))
-                .Descendants("connectionStrings").Elements()
-                .Where(x => x.FirstAttribute.Value.Contains("mfaOTP"))
-                .Select(z => z.LastAttribute.Value).FirstOrDefault();
-            if (connectionString == null)
+            var cfgsection = (CfgSection)ConfigurationManager.GetSection("sci");
+            string apiUrl = string.Empty;
+            foreach (CfgSection.Module it in cfgsection.Modules)
+            {
+                if (it.Name != DBProxy.Current.DefaultModuleName)
+                {
+                    continue;
+                }
+
+                foreach (ConnectionStringElement connectionStringItem in it.ConnectionStrings)
+                {
+                    if (connectionStringItem.Name == "mfaOTP")
+                    {
+                        apiUrl = connectionStringItem.ConnectionString;
+                        break;
+                    }
+                }
+            }
+
+            if (MyUtility.Check.Empty(apiUrl))
             {
                 throw new Exception("Connection string not found.");
             }
 
-            string[] strAry = connectionString.Split(';');
+            string[] strAry = apiUrl.Split(';');
             this.uri = strAry[0].ToString();
             string account = strAry[1].ToString();
             string password = strAry[2].ToString();

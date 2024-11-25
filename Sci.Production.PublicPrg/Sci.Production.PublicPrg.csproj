@@ -166,6 +166,7 @@
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
     <Compile Include="CallWebAPI.cs" />
+    <Compile Include="CentralizedClass.cs" />
     <Compile Include="CrossUtility.cs" />
     <Compile Include="DataTableToList.cs" />
     <Compile Include="DBProxyPMS.cs" />
@@ -214,6 +215,12 @@
     <Compile Include="Logistic.cs" />
     <Compile Include="MessageBoxEX.cs" />
     <Compile Include="MethodWatch.cs" />
+    <Compile Include="MsgGridPrg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MsgGridPrg.Designer.cs">
+      <DependentUpon>MsgGridPrg.cs</DependentUpon>
+    </Compile>
     <Compile Include="Packing.cs" />
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
@@ -354,12 +361,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
-      <Project>{0e35fd31-4a86-4d4e-a393-b6c5e3d7c956}</Project>
-      <Name>Sci.Production.Class</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="app.config" />
     <None Include="PowerBI\BI_開發注意事項_開發前請先進來看.docx" />
     <None Include="packages.config" />
@@ -372,6 +373,9 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MsgGridPrg.resx">
+      <DependentUpon>MsgGridPrg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PowerBI\FormPage\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

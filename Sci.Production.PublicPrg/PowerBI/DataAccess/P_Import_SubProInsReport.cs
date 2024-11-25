@@ -1,8 +1,6 @@
 ﻿using Ict;
 using PostJobLog;
 using Sci.Data;
-using Sci.Production.Class;
-using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
