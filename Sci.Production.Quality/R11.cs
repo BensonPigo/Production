@@ -105,6 +105,7 @@ SELECT
 	o.StyleID,
 	o.BrandID,	
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
+	PS.SuppID,
 	PSD.Refno,
 	ColorID = isnull(psdsC.SpecValue ,''),
 	PSD.SCIRefno,
@@ -169,6 +170,7 @@ SELECT
 	o.StyleID,
 	o.BrandID,	
 	Supplier = concat(PS.SuppID,'-'+ S.AbbEN),
+	PS.SuppID,
 	PSD.Refno,
 	ColorID = isnull(psdsC.SpecValue ,''),
 	PSD.SCIRefno,
@@ -345,10 +347,11 @@ select
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-							 when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							 when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-							 when Q.PointRateOption = 4 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
-							 else Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0))/100
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',(Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0))/100,(Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))/100)
+							 when Q.PointRateOption = 4 and SpecialSupp_Formula.HasValue =  'True' then (Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))/100
+							 when Q.PointRateOption = 4 and SpecialSupp_Formula.HasValue <> 'True' then Defect.point / NULLIF(t.ActualYds, 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)
 	,t.Inspector
@@ -369,6 +372,13 @@ outer apply (
 	where Junk = 0 
 	and BrandID = t.BrandID
 )Q
+outer apply(
+	select top 1 HasValue = 'True'
+	from FIR_PointRateFormula
+	where BrandID= t.Brandid
+	and SuppID=t.SuppID
+	and WeaveTypeID = t.WeaveTypeID
+)SpecialSupp_Formula
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 
@@ -404,10 +414,11 @@ select
 	fd.DescriptionEN,
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
-							 when Q.PointRateOption = 2 then Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0)
-							 when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0),Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))
-							 when Q.PointRateOption = 4 then Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0)
-							 else Defect.point / NULLIF(t.ActualYds, 0)
+							when Q.PointRateOption = 2 then (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0))/100
+							when Q.PointRateOption = 3 then iif(t.WeaveTypeID = 'KNIT',(Defect.point * 3600 / NULLIF(t.TicketYds * t.width , 0))/100,(Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))/100)
+							 when Q.PointRateOption = 4 and SpecialSupp_Formula.HasValue =  'True' then (Defect.point * 3600 / NULLIF(t.ActualYds * t.width , 0))/100
+							 when Q.PointRateOption = 4 and SpecialSupp_Formula.HasValue <> 'True' then Defect.point / NULLIF(t.ActualYds, 0)
+							else Defect.point / NULLIF(t.ActualYds, 0)
 						 end 
 					, 0)
 	,t.Inspector
@@ -427,6 +438,13 @@ outer apply (
 	where Junk = 0 
 	and BrandID = t.BrandID
 )Q
+outer apply(
+	select top 1 HasValue = 'True'
+	from FIR_PointRateFormula
+	where BrandID= t.Brandid
+	and SuppID=t.SuppID
+	and WeaveTypeID = t.WeaveTypeID
+)SpecialSupp_Formula
 left join FabricDefect fd on fd.ID = Defect.DefectRecord
 where Defect.DefectRecord is not null or fd.Type is not null
 

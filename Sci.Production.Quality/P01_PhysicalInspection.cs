@@ -241,13 +241,12 @@ namespace Sci.Production.Quality
                 datas.ColumnsDecimalAdd("CutWidth");
                 foreach (DataRow dr in datas.Rows)
                 {
-                    int strWidth = MyUtility.Convert.GetInt(
-MyUtility.GetValue.Lookup($@"
+                    string strWidth = MyUtility.GetValue.Lookup($@"
 select width
 from Fabric 
 inner join Fir on Fabric.SCIRefno = fir.SCIRefno
 where Fir.ID = '{dr["id"]}'
-"));
+");
 
                     dr["CutWidth"] = strWidth;
                 }
@@ -268,7 +267,7 @@ where Fir.ID = '{dr["id"]}'
             int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
-                if ((this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK" ) && !this.txtGroup.Text.Empty())
+                if (this.displayBrand.Text == "LLL" && !this.txtGroup.Text.Empty())
                 {
                     var strGrade = dr["Grade"].ToString();
                     dr["ReGrade"] = strGrade;
@@ -441,7 +440,9 @@ where Fir.ID = '{this.FirID}'"));
                     if (MyUtility.Check.Seek($@"
 select * from FIR_PointRateFormula
 where SuppID = '{this.txtsupplier.TextBox1.Text}'
-and WeaveTypeID = '{weaveTypeid}'"))
+and WeaveTypeID = '{weaveTypeid}'
+and BrandID = '{this.displayBrand.Text}'
+"))
                     {
                         pointRate = (double_ActualYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * double_CutWidth), 2));
                     }
@@ -582,7 +583,6 @@ and WeaveTypeID = '{weaveTypeid}'"))
                 }
                 else
                 {
-
                     string sqlcmd = $@"select  ColorToneCheck
                     from FIR f
                     inner join FIR_Physical fp on f.id = fp.ID 
@@ -892,7 +892,7 @@ and WeaveTypeID = '{weaveTypeid}'"))
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]);
                     dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(cmd, null, null);
-                    if ((this.displayBrand.Text != "LLL" || this.displayBrand.Text.Trim().ToUpper() != "GYMSHARK") && this.txtGroup.Text != string.Empty)
+                    if ((this.displayBrand.Text != "LLL") && this.txtGroup.Text != string.Empty)
                     {
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
@@ -1097,7 +1097,7 @@ and WeaveTypeID = '{weaveTypeid}'"))
                 }
 
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                if (this.displayBrand.Text != "LLL" || this.displayBrand.Text.Trim().ToUpper() != "GYMSHARK" || this.txtGroup.Text.Empty())
+                if (this.displayBrand.Text != "LLL" || this.txtGroup.Text.Empty())
                 {
                     return;
                 }

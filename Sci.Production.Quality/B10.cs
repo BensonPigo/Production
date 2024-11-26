@@ -198,7 +198,7 @@ Group 5：TBC";
                 string strMsg = $@"X = Point Rate per 100 square yds (Linear yard)
 X = Point Rate per 100 square yds2 (Squared yard)
 KNIT
-X < {listData[0]} = Grade A; {listData[0]} < X < {listData[1]} = Grade B; X > {listData[1]} = Grand C 
+X <= {listData[0]} = Grade A; {listData[0]} < X <= {listData[1]} = Grade B; X > {listData[1]} = Grand C 
 WOVEN
 X <= {listData[2]} = Grade A; {listData[2]} < X <= {listData[3]} = Grade B; X > {listData[3]} = Grand C
 
