@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -252,7 +252,7 @@
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(8, 236);
+            this.gridicon.Location = new System.Drawing.Point(8, 251);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
@@ -1070,8 +1070,8 @@
             // 
             this.chartLBR.Location = new System.Drawing.Point(845, 8);
             this.chartLBR.Name = "chartLBR";
-            series1.Name = "Series1";
-            this.chartLBR.Series.Add(series1);
+            series2.Name = "Series1";
+            this.chartLBR.Series.Add(series2);
             this.chartLBR.Size = new System.Drawing.Size(270, 173);
             this.chartLBR.TabIndex = 51;
             // 
@@ -1079,9 +1079,9 @@
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1121, 60);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1253, 53);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
-            this.btnNotHitTargetReason.Size = new System.Drawing.Size(126, 47);
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(125, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
             this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
@@ -1091,10 +1091,10 @@
             // 
             this.btnTransferToP06.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnTransferToP06.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnTransferToP06.Location = new System.Drawing.Point(1121, 113);
+            this.btnTransferToP06.Location = new System.Drawing.Point(1252, 106);
             this.btnTransferToP06.Name = "btnTransferToP06";
-            this.btnTransferToP06.Size = new System.Drawing.Size(126, 47);
-            this.btnTransferToP06.TabIndex = 53;
+            this.btnTransferToP06.Size = new System.Drawing.Size(125, 47);
+            this.btnTransferToP06.TabIndex = 58;
             this.btnTransferToP06.Text = "Transfer to P06";
             this.btnTransferToP06.UseVisualStyleBackColor = true;
             this.btnTransferToP06.Click += new System.EventHandler(this.BtnTransferToP06_Click);
@@ -1126,10 +1126,10 @@
             // 
             this.btnViewOperator.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnViewOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnViewOperator.Location = new System.Drawing.Point(1253, 60);
+            this.btnViewOperator.Location = new System.Drawing.Point(1121, 53);
             this.btnViewOperator.Name = "btnViewOperator";
-            this.btnViewOperator.Size = new System.Drawing.Size(126, 47);
-            this.btnViewOperator.TabIndex = 55;
+            this.btnViewOperator.Size = new System.Drawing.Size(125, 47);
+            this.btnViewOperator.TabIndex = 56;
             this.btnViewOperator.Text = "View No of Operator";
             this.btnViewOperator.UseVisualStyleBackColor = true;
             this.btnViewOperator.Click += new System.EventHandler(this.BtnViewOperator_Click);
@@ -1138,10 +1138,10 @@
             // 
             this.btnLineMappingComparison.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnLineMappingComparison.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnLineMappingComparison.Location = new System.Drawing.Point(1121, 166);
+            this.btnLineMappingComparison.Location = new System.Drawing.Point(1121, 106);
             this.btnLineMappingComparison.Name = "btnLineMappingComparison";
-            this.btnLineMappingComparison.Size = new System.Drawing.Size(126, 47);
-            this.btnLineMappingComparison.TabIndex = 56;
+            this.btnLineMappingComparison.Size = new System.Drawing.Size(125, 47);
+            this.btnLineMappingComparison.TabIndex = 57;
             this.btnLineMappingComparison.Text = "Line Mapping Comparison";
             this.btnLineMappingComparison.UseVisualStyleBackColor = true;
             this.btnLineMappingComparison.Click += new System.EventHandler(this.BtnLineMappingComparison_Click);
@@ -1149,10 +1149,11 @@
             // btnMachineSummary
             // 
             this.btnMachineSummary.FlatAppearance.BorderSize = 0;
-            this.btnMachineSummary.Location = new System.Drawing.Point(1253, 113);
+            this.btnMachineSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnMachineSummary.Location = new System.Drawing.Point(1121, 159);
             this.btnMachineSummary.Name = "btnMachineSummary";
             this.btnMachineSummary.Size = new System.Drawing.Size(125, 47);
-            this.btnMachineSummary.TabIndex = 55;
+            this.btnMachineSummary.TabIndex = 59;
             this.btnMachineSummary.Text = "Machine Summary";
             this.btnMachineSummary.UseVisualStyleBackColor = true;
             this.btnMachineSummary.Click += new System.EventHandler(this.BtnMachineSummary_Click);
