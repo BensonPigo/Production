@@ -36,7 +36,7 @@ namespace Sci.Production.IE
             .Text("SewingLineID", header: "Sewing Line", iseditingreadonly: true, width: Widths.AnsiChars(7))
             .Text("Team", header: "Team", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("ttlTimeDiff", header: "Total % time diff", decimal_places: 2, integer_places: 8, width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("LBR", header: "LBR", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
+            .Numeric("LBR", header: "LBR", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Status", header: "Status", iseditingreadonly: true, width: Widths.AnsiChars(9))
             .Text("AddName", header: "Add Name", iseditingreadonly: true, width: Widths.AnsiChars(23))
             .Text("EditName", header: "Edit Name", iseditingreadonly: true, width: Widths.AnsiChars(23))
@@ -135,7 +135,7 @@ SELECT
     ,AddDate
     ,EditDate
     ,[ttlTimeDiff] = ISNULL(Round(((ISNULL(TotalGSD, 0) - ISNULL(TotalCycle, 0)) / NULLIF(1.0 * TotalGSD, 0)) * 100.0, 2), 0)
-    ,[LBR] = ISNULL(Round(TotalCycle / NULLIF(HighestCycle, 0) / NULLIF(CurrentOperators, 0) * 100.0, 2), 0)
+    ,[LBR] = ISNULL(Round(TotalCycle / NULLIF(HighestCycle, 0) / NULLIF(CurrentOperators, 0) * 100.0, 0), 0)
     ,AddName = (SELECT TOP 1 IdAndNameAndExt FROM dbo.GetPassName(AddName))
     ,EditName = (SELECT TOP 1 IdAndNameAndExt FROM dbo.GetPassName(EditName))
 INTO #tmpP0356
