@@ -217,7 +217,12 @@ AND ALMCS.Junk = 0
                 $@"
                 SELECT * 
                 FROM (
-                    SELECT *, [IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
+                    SELECT *
+                    ,[Effi] = (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No))  / (SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No))  * 100
+                     ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
+	                ,[EstTotalCycleTime] = IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
+	                ,[EstOutputHr] = iif(CAST(OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
+                    ,[IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
                     FROM (
                         SELECT 
                             cast(0 as bit) as Selected
@@ -253,11 +258,12 @@ AND ALMCS.Junk = 0
                             [EmployeeSkill] = e.Skill,
                             [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
 			                [Junk] = e.junk,
-			                [EstCycleTime] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,ad.GSD  / Effi_90_day.Effi_90_day,ad.GSD  / Effi.Effi_3_year) ,0)
+                            [OperatorEffi] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) ,'0.00')
                         FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                         LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
                         LEFT JOIN Operation op WITH (NOLOCK) ON op.ID = ad.OperationID
                         LEFT JOIN Employee e WITH (NOLOCK) ON e.FactoryID = '{factoryID}' AND e.ID = ad.EmployeeID
+                        LEFT JOIN Employee NotE WITH (NOLOCK) ON NotE.FactoryID = '{factoryID}' AND NotE.ID = ad.EmployeeID AND NotE.ResignationDate IS NULL
                         INNER JOIN LineMappingBalancing lmb ON lmb.ID = ad.ID
                         LEFT JOIN MachineType_Detail md ON md.ID = ad.MachineTypeID AND md.FactoryID = lmb.FactoryID
                         OUTER APPLY
@@ -284,7 +290,7 @@ AND ALMCS.Junk = 0
                                 ,[Group_Header] = ISNULL(REPLACE(lmd.Location, '--', ''),'')
                                 ,[Part] = lmd.SewingMachineAttachmentID
                                 ,[Attachment] = lmd.Attachment
-                                ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+                                ,Effi_3_year = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
                                 from Employee eo
                                 left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eo.ID　
                                 left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -302,7 +308,7 @@ AND ALMCS.Junk = 0
 			                    ISNULL(lmd.Attachment,'') = ISNULL(ad.Attachment,'') AND
 			                    ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL(ad.SewingMachineAttachmentID,'') AND
 								ISNULL(REPLACE(lmd.Location, '--', ''),'') = ISNULL(REPLACE(ad.Location, '--', ''),'')  AND
-		                        ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
+		                        ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
 			                )a
 			                GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
 		                )Effi
@@ -317,7 +323,7 @@ AND ALMCS.Junk = 0
 		                        SELECT 
 		                        [ST_MC_Type] =lmd.MachineTypeID
 		                        ,[Motion] = Operation_P03.val
-		                        ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle,2)) AS DECIMAL(10, 2)), '0.00')
+		                        ,Effi_90_day = FORMAT(CAST(iif(lmd.Cycle = 0,0,ROUND(lmd.GSD/ lmd.Cycle * 100,2)) AS DECIMAL(10, 2)), '0.00')
 		                        from Employee eo
 		                        left JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) on lmd.EmployeeID = eO.ID　
 		                        left JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.id = lmd.ID
@@ -614,13 +620,13 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            if ((noCount + 5 >= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) & MyUtility.Check.Empty(this.txtReason.Text))
+            if (noCount + 5 <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
             }
 
-            if ((noCount - 5 < this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()) && MyUtility.Check.Empty(this.txtReason.Text))
+            if (noCount - 5 > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
             {
                 MyUtility.Msg.WarningBox("Please fill in <Reason>!");
                 return false;
@@ -1413,7 +1419,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name)
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("OperatorEffi", header: "Effi (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Numeric("Effi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
@@ -2040,9 +2046,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             bool isGo = false;
             bool isDes = false;
 
-            int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList().Count();
+            int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["Selected"].ToString() == "True").ToList().Count();
 
-            if (MyUtility.Convert.GetBool(dr["Selected"]) == true || cnt == 1)
+            if (cnt > 0 || MyUtility.Convert.GetBool(dr["Selected"]) == true)
             {
                 isDes = true;
             }

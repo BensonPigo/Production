@@ -152,7 +152,7 @@ namespace Sci.Production.IE
                 GC.Collect();
             };
 
-            // this.grid.Columns["ID"].Visible = true;
+            this.grid.Columns["ID"].Visible = false;
         }
 
         /// <summary>
@@ -171,10 +171,9 @@ select *
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
-
     ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
-	,[EstTotalCycleTime] = iif(CAST(ld.OperatorEffi AS DECIMAL) = 0,0,ld.TotalGSDNO / ld.OperatorEffi * 100)
-	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS DECIMAL) = 0,0, 3600 / ld.TotalGSDNO / ld.OperatorEffi * 100)
+	,[EstTotalCycleTime] = IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100)
+	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100))
 
 	--,[EstTotalCycleTime] = CAST(IIF(
     --                                   AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
@@ -356,7 +355,7 @@ from (
 		    ISNULL(lmd.Attachment,'') = ISNULL(ld.Attachment,'') AND
 		    lmd.SewingMachineAttachmentID = ld.SewingMachineAttachmentID AND
 			ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') =  ISNULL(REPLACE(Group_Header.val, '--', ''),'') AND
-		    ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) and lm.AddDate <= GETDATE()))
+		    ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) and lm.EditDate <= GETDATE()) or (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) and lm.AddDate <= GETDATE()))
         )a
         GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
     )Effi
@@ -2586,12 +2585,13 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                 EmployeeID = g.First().Field<string>("EmployeeID"),
                 EmployeeName = g.First().Field<string>("EmployeeName"),
                 EmployeeSkill = g.First().Field<string>("EmployeeSkill"),
-                EstTotalCycleTime = g.Max(x => x.Field<decimal?>("EstTotalCycleTime")),
-                EstOutputHr = g.Max(x => x.Field<decimal?>("EstOutputHr")),
+                EstTotalCycleTime = g.Max(x => x.Field<double?>("EstTotalCycleTime")),
+                EstOutputHr = g.Max(x => x.Field<double?>("EstOutputHr")),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)
             .ToList();
+
             this.listControlBindingSource1.DataSource = gridLists.ToDataTable<GridList>();
             this.grid1.DataSource = this.listControlBindingSource1;
             this.ConfirmChangeGridColor(false);
@@ -2689,11 +2689,11 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
                                     TotalCycle = row.Field<decimal>("TotalCycle"),
                                     TotalGSD = row.Field<decimal>("TotalGSD"),
                                     ReasonName = row.Field<string>("ReasonName"),
-                                    EstOutputHr = row.Field<decimal>("EstOutputHr"),
+                                    EstOutputHr = row.Field<double>("EstOutputHr"),
                                     EmployeeID = row.Field<string>("EmployeeID"),
                                     EmployeeName = row.Field<string>("EmployeeName"),
                                     EmployeeSkill = row.Field<string>("EmployeeSkill"),
-                                    EstTotalCycleTime = row.Field<decimal>("EstTotalCycleTime"),
+                                    EstTotalCycleTime = row.Field<double>("EstTotalCycleTime"),
                                 }).ToList();
 
             Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{excelName}.xltx"); // 預先開啟excel app
@@ -2774,9 +2774,9 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
         public string EmployeeSkill { get; set; }
 
         /// <inheritdoc/>
-        public decimal? EstTotalCycleTime { get; set; }
+        public double? EstTotalCycleTime { get; set; }
 
         /// <inheritdoc/>
-        public decimal? EstOutputHr { get; set; }
+        public double? EstOutputHr { get; set; }
     }
 }

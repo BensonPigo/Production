@@ -37,7 +37,8 @@ namespace Sci.Production.IE
                     [PPADesc] = isnull(d.Name, ''),
                     [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
                     [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
+                    [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+                    [IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
             from AutomatedLineMapping_Detail ad WITH (NOLOCK)
             left join AutomatedLineMapping alm on alm.ID = ad.ID
             left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID

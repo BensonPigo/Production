@@ -32,6 +32,7 @@ namespace Sci.Production.IE
             SELECT
                 *
                 ,[EstCycleTime] = IIF(a.OperatorEffi = '0.00', '0.00', a.GSD / a.OperatorEffi * 100)
+            into #tmp
             FROM
             (
                 SELECT
@@ -168,7 +169,7 @@ namespace Sci.Production.IE
                             ISNULL(lmd.Attachment, '') = ISNULL(lmbd.Attachment, '') AND
                             lmd.SewingMachineAttachmentID = lmbd.SewingMachineAttachmentID AND
                             ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '') = ISNULL(REPLACE(Group_Header.val, '--', ''), '') AND
-                            ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) AND lm.AddDate <= GETDATE()))
+                            ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.AddDate <= GETDATE()))
 
                         UNION
 
@@ -213,7 +214,7 @@ namespace Sci.Production.IE
                             ISNULL(lmd.Attachment, '') = ISNULL(lmbd.Attachment, '') AND
                             lmd.SewingMachineAttachmentID = lmbd.SewingMachineAttachmentID AND
                             ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '') = ISNULL(REPLACE(Group_Header.val, '--', ''), '') AND
-                            ((lm.EditDate >= DATEADD(DAY, -360, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(DAY, -360, GETDATE()) AND lm.AddDate <= GETDATE()))
+                            ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.AddDate <= GETDATE()))
                     ) a
                     GROUP BY [ST_MC_Type], [Motion], [Group_Header], [Part], [Attachment]
                 ) Effi
@@ -221,6 +222,14 @@ namespace Sci.Production.IE
             ) a
             ORDER BY [No];
 
+            SELECT 
+             [No]
+            ,[OperatorID]
+            ,[ActualEffi] = IIF(OperatorID = '',0, SUM(GSD * ActualEffi) / SUM(GSD))
+            ,[OperatorEffi] = IIF(OperatorID = '',0, SUM(GSD * OperatorEffi) / SUM(GSD))
+            FROM #tmp 
+            GROUP BY [No],OperatorID
+            ORDER BY [No]
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtChart);
@@ -257,8 +266,7 @@ namespace Sci.Production.IE
             for (int i = 0; i < dtChart.Rows.Count; i++)
             {
                 string operarorID = dtChart.Rows[i]["OperatorID"].ToString();
-                chartArea.AxisX.CustomLabels.Add(i - 0.5, i + 0.5, operarorID); // X軸的文字
-
+                chartArea.AxisX.CustomLabels.Add(i - 0.4, i + 0.4, operarorID); // X軸的文字
                 this.chart1.Series[0].Points.AddXY(i, MyUtility.Convert.GetDecimal(dtChart.Rows[i]["ActualEffi"]));
                 this.chart1.Series[1].Points.AddXY(i, MyUtility.Convert.GetDecimal(dtChart.Rows[i]["OperatorEffi"]));
             }

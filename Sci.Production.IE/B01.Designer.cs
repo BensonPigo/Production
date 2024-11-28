@@ -59,10 +59,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gridBaseBs)).BeginInit();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1062, 438);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.labDetailCount2);
@@ -81,13 +77,7 @@
             this.detailcont.Controls.Add(this.lbStyleType);
             this.detailcont.Controls.Add(this.lbSendMail);
             this.detailcont.Controls.Add(this.lbCategory);
-            this.detailcont.Size = new System.Drawing.Size(1062, 400);
             this.detailcont.TabIndex = 0;
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 400);
-            this.detailbtm.Size = new System.Drawing.Size(1062, 38);
             // 
             // browse
             // 
@@ -214,7 +204,7 @@
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridDetail.ShowCellToolTips = false;
-            this.gridDetail.Size = new System.Drawing.Size(601, 278);
+            this.gridDetail.Size = new System.Drawing.Size(491, 218);
             this.gridDetail.TabIndex = 21;
             // 
             // gridBase
@@ -239,7 +229,7 @@
             this.gridBase.RowTemplate.Height = 24;
             this.gridBase.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridBase.ShowCellToolTips = false;
-            this.gridBase.Size = new System.Drawing.Size(392, 278);
+            this.gridBase.Size = new System.Drawing.Size(392, 218);
             this.gridBase.TabIndex = 22;
             // 
             // BtnAdd
