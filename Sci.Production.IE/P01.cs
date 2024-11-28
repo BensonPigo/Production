@@ -2345,6 +2345,7 @@ where ID = {0}",
                 @"
 select id.SEQ,
 	id.OperationID,
+	Location = IIF(id.OperationID LIKE '-%', id.OperationID, ''),
 	o.DescEN as OperationDescEN,
 	id.Annotation,
 	iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
