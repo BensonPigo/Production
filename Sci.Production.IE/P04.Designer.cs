@@ -68,7 +68,7 @@
             this.gridLineMappingStatus.RowTemplate.Height = 24;
             this.gridLineMappingStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingStatus.ShowCellToolTips = false;
-            this.gridLineMappingStatus.Size = new System.Drawing.Size(908, 414);
+            this.gridLineMappingStatus.Size = new System.Drawing.Size(1008, 414);
             this.gridLineMappingStatus.TabIndex = 1;
             this.gridLineMappingStatus.TabStop = false;
             // 
@@ -85,7 +85,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(908, 88);
+            this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 3;
             // 
             // txtfty
@@ -94,6 +94,7 @@
             this.txtfty.BoolFtyGroupList = true;
             this.txtfty.FilteMDivision = false;
             this.txtfty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfty.IsIE = false;
             this.txtfty.IsMultiselect = false;
             this.txtfty.IsProduceFty = false;
             this.txtfty.IssupportJunk = false;
@@ -187,7 +188,7 @@
             // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(908, 512);
+            this.ClientSize = new System.Drawing.Size(1008, 512);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gridLineMappingStatus);
             this.DefaultControl = "dateInlineDate";

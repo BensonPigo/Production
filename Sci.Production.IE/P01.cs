@@ -33,6 +33,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
+        private readonly int seqIncreaseNumber = 1; // 新增一筆時 SEQ 從最大往上增加
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
@@ -167,6 +168,40 @@ namespace Sci.Production.IE
             {
                 DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
                 this.detailgrid.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly = !MyUtility.Convert.GetBool(curRow["IsNonSewingLineEditable"]);
+            }
+
+            // 確保只處理列索引為 0 的格式化事件（避免多次處理同一行）
+            if (e.RowIndex >= 0 && e.ColumnIndex == 0)
+            {
+                // 重設所有行的背景色為白色
+                foreach (DataGridViewRow row in this.detailgrid.Rows)
+                {
+                    row.DefaultCellStyle.BackColor = Color.White;
+                }
+
+                // 遍歷所有行檢查條件
+                foreach (DataGridViewRow row in this.detailgrid.Rows)
+                {
+                    // 取得欄位 DesignateSeq 和 SewingSeq 的值
+                    var designateSeqValue = row.Cells["DesignateSeq"].Value;
+                    var sewingSeqValue = row.Cells["SewingSeq"].Value;
+
+                    // 1. 若 DesignateSeq 欄位有值，該行設為黃色
+                    if (!MyUtility.Check.Empty(designateSeqValue))
+                    {
+                        row.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+
+                        // 2. 找出所有 DesignateSeq == SewingSeq 的行，並設為黃色
+                        foreach (DataGridViewRow otherRow in this.detailgrid.Rows)
+                        {
+                            var otherSewingSeqValue = otherRow.Cells["SewingSeq"].Value; // SewingSeq
+                            if (designateSeqValue.ToString() == MyUtility.Convert.GetString(otherSewingSeqValue))
+                            {
+                                otherRow.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -464,27 +499,9 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings DSeq = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
-
-
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
-            #region Seq的Valid
-            seq.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["SewingSeq"].ToString()))
-                    {
-                        string oldValue = MyUtility.Check.Empty(dr["SewingSeq"]) ? string.Empty : dr["SewingSeq"].ToString();
-                        dr["SewingSeq"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
-                        dr.EndEdit();
-                    }
-                }
-            };
-            #endregion
             #region Operation Code
             this.operation.EditingMouseDown += (s, e) =>
             {
@@ -1244,134 +1261,33 @@ and Name = @PPA
             #endregion
             #endregion
 
-            DSeq.CellValidating += (s, e) =>
-            {
-                    var dt = (DataTable)this.detailgridbs.DataSource;
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    string oldvalue = dr["DesignateSeq"].ToString();
-                    string newvalue = e.FormattedValue.ToString();
-
-                    if (oldvalue != newvalue)
-                    {
-                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.White;
-                        foreach (DataRow row in dt.Rows)
-                        {
-                            if (oldvalue == MyUtility.Convert.GetString(row["SewingSeq"]))
-                            {
-                                this.detailgrid.Rows[row.Table.Rows.IndexOf(row)].DefaultCellStyle.BackColor = Color.White;
-                            }
-                        }
-                    }
-
-                    if (MyUtility.Check.Empty(e.FormattedValue.ToString()))
-                    {
-                        return;
-                    }
-
-                    this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        if (MyUtility.Convert.GetString(e.FormattedValue.ToString()) == MyUtility.Convert.GetString(row["SewingSeq"]))
-                        {
-                            this.detailgrid.Rows[row.Table.Rows.IndexOf(row)].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-                        }
-                        else if (MyUtility.Convert.GetString(row["SewingSeq"]) == string.Empty)
-                        {
-                            this.detailgrid.Rows[row.Table.Rows.IndexOf(row)].DefaultCellStyle.BackColor = Color.White;
-                        }
-                    }
-            };
             template.MaxLength = 100;
-            CheckBoxColumn colIsNonSewingLine;
-
-            DSeq.CellValidating += (s, e) =>
-            {
-                if ((string)e.FormattedValue == GetEmpty())
-                {
-                    return;
-                }
-
-                string str = (string)e.FormattedValue;
-                if (str.Length != 4)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                    dr["DesignateSeq"] = string.Empty;
-                    MyUtility.Msg.WarningBox("<Dsg. Seq> can only accept 4-digit number!");
-                    return;
-                }
-            };
-
-            DSeq.EditingKeyPress += (s, e) =>
-            {
-                string input = e.EditingControl.Text;
-
-                // 檢查是否是數字（允許控制鍵例如 Backspace）
-                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
-                {
-                    e.Handled = true; // 阻止非數字字符的輸入
-                }
-            };
-
-            DSeq.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-
-                if (dr == null)
-                {
-                    return;
-                }
-
-                string drDS = MyUtility.Convert.GetString(dr["DesignateSeq"]);
-                Debug.WriteLine(drDS);
-                if (drDS == string.Empty)
-                {
-                    return;
-                }
-
-                this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-
-                foreach (DataRow dataRow in this.DetailDatas)
-                {
-
-                    Debug.WriteLine(MyUtility.Convert.GetString(dataRow["SewingSeq"]));
-                    if (MyUtility.Convert.GetString(dataRow["SewingSeq"]) == drDS)
-                    {
-                        int index = dataRow.Table.Rows.IndexOf(dataRow);
-                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-                    }
-                }
-             };
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(1), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: DSeq)
-                .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: seq)
+                .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
+                .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
                 .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: false)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
-                .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
-                .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
-                .Numeric("SMV", header: "Fty. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out colIsNonSewingLine)
-                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
-                .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
-                .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
+                .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(3), integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
+                .Numeric("StdSMV", header: "Std. SMV\r\n(sec)", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
+                .Numeric("SMV", header: "Fty. SMV\r\n(sec)", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
+                .Text("MachineTypeID", header: "ST/MC\r\nType", width: Widths.AnsiChars(3), settings: this.machine)
+                .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(5), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
                 .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(7), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out CheckBoxColumn colIsNonSewingLine)
+                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
-                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
+                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
+                ;
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
@@ -1385,9 +1301,45 @@ and Name = @PPA
             this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
         }
 
-        private static string GetEmpty()
+        /// <summary>
+        /// 欄位:DesignateSeq 與 SewingSeq
+        /// </summary>
+        private DataGridViewGeneratorTextColumnSettings Col_Seq()
         {
-            return string.Empty;
+            DataGridViewGeneratorTextColumnSettings setting = new DataGridViewGeneratorTextColumnSettings();
+            setting.EditingKeyPress += (s, e) =>
+            {
+                // 限制只能輸入數字
+                string input = e.EditingControl.Text;
+                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                {
+                    e.Handled = true; // 阻止非數字字符的輸入
+                }
+            };
+
+            setting.CellValidating += (s, e) =>
+            {
+                if (MyUtility.Check.Empty(e.FormattedValue) || !this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string columnName = this.detailgrid.Columns[e.ColumnIndex].DataPropertyName;
+                if (e.FormattedValue.ToString().Length > 4)
+                {
+                    dr[columnName] = string.Empty;
+                    string displayColumn = columnName == "DesignateSeq" ? "Dsg. Seq" : "Sew. Seq";
+                    MyUtility.Msg.WarningBox($"<{displayColumn}> can only accept 4-digit number!");
+                    return;
+                }
+
+                // 左邊補 0 至 4 碼
+                dr[columnName] = e.FormattedValue.ToString().PadLeft(4, '0');
+                dr.EndEdit();
+            };
+
+            return setting;
         }
 
         private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
@@ -1605,6 +1557,17 @@ and Name = @PPA
                 }
             }
             #endregion Seq 重複資料檢查
+
+            #region SewingSeq 重複資料檢查
+            var sewingSeqs = this.DetailDatas.Where(row => !MyUtility.Check.Empty(row["SewingSeq"])).Select(row => row["SewingSeq"].ToString()).ToList();
+            var duplicateSewSeqs = sewingSeqs.GroupBy(seq => seq).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
+            if (duplicateSewSeqs.Any())
+            {
+                MyUtility.Msg.WarningBox("Sew. Seq cannot be duplicated! Duplicates: " + string.Join(", ", duplicateSewSeqs));
+                return false;
+            }
+            #endregion SewingSeq 重複資料檢查
+
             #region ST/MC Type檢查
             var listSTMCTypeCheckResult = this.DetailDatas
                 .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
@@ -1831,7 +1794,6 @@ group by id.Location,M.ArtworkTypeID";
 
             return base.ClickSaveBefore();
         }
-
 
         /// <inheritdoc/>
         protected override void ClickSaveAfter()
@@ -2561,7 +2523,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 nextDataRow["IETMSUkey"] = oriDt.Rows[0]["IETMSUkey"];
                 nextDataRow["CodeFrom"] = "Operation";
                 nextDataRow["Location"] = dr_Location["Location"];
-                nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + 10).PadLeft(4, '0');
+                nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + this.seqIncreaseNumber).PadLeft(4, '0');
                 nextDataRow["IsAdd"] = 1;
                 this.detailgridbs.DataSource = oriDt;
             }
@@ -2633,10 +2595,9 @@ and s.BrandID = @brandid ", Env.User.Factory,
                         .Select(row => row.Field<string>("Seq"))
                         .Max();
 
-                        var maxSeq = MyUtility.Convert.GetInt(maxSewingSeq) + 10;
+                        var maxSeq = MyUtility.Convert.GetInt(maxSewingSeq) + this.seqIncreaseNumber;
                         dr["Seq"] = MyUtility.Convert.GetString(maxSeq).PadLeft(4, '0');
                         dr["IsShow"] = 1;
-                        // seq += 10;
                     }
                     #endregion OirSeq
                 }
@@ -2941,7 +2902,7 @@ and s.BrandID = @brandid";
                         {
                             // 前一個Seq
                             int preSeq = Convert.ToInt32(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"]);
-                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + 10).PadLeft(4, '0');
+                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + this.seqIncreaseNumber).PadLeft(4, '0');
                         }
                     }
                 }
