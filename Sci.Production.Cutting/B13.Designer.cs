@@ -155,18 +155,17 @@ namespace Sci.Production.Cutting
             // display2
             // 
             this.display2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.display2.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.display2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.display2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.display2.Location = new System.Drawing.Point(127, 43);
+            this.display2.Location = new System.Drawing.Point(133, 39);
             this.display2.Name = "display2";
-            this.display2.Size = new System.Drawing.Size(14, 14);
+            this.display2.Size = new System.Drawing.Size(20, 21);
             this.display2.TabIndex = 210;
             // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(144, 39);
+            this.label7.Location = new System.Drawing.Point(156, 39);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 211;
@@ -176,18 +175,17 @@ namespace Sci.Production.Cutting
             // display1
             // 
             this.display1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.display1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.display1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
             this.display1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.display1.Location = new System.Drawing.Point(10, 43);
+            this.display1.Location = new System.Drawing.Point(10, 39);
             this.display1.Name = "display1";
-            this.display1.Size = new System.Drawing.Size(14, 14);
+            this.display1.Size = new System.Drawing.Size(20, 21);
             this.display1.TabIndex = 208;
             // 
             // label6
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
-            this.label6.Location = new System.Drawing.Point(27, 39);
+            this.label6.Location = new System.Drawing.Point(33, 39);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(97, 23);
             this.label6.TabIndex = 209;
