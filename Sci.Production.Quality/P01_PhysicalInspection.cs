@@ -241,13 +241,14 @@ namespace Sci.Production.Quality
                 datas.ColumnsDecimalAdd("CutWidth");
                 foreach (DataRow dr in datas.Rows)
                 {
-                    dr["CutWidth"] = MyUtility.GetValue.Lookup(
-                        string.Format(
-                        @"
-                                                                        select width
-                                                                        from Fabric 
-                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+                    string strWidth = MyUtility.GetValue.Lookup($@"
+select width
+from Fabric 
+inner join Fir on Fabric.SCIRefno = fir.SCIRefno
+where Fir.ID = '{dr["id"]}'
+");
+
+                    dr["CutWidth"] = strWidth;
                 }
             }
 
@@ -435,6 +436,23 @@ where Fir.ID = '{this.FirID}'"));
                     }
 
                     break;
+                case "4":
+                    if (MyUtility.Check.Seek($@"
+select * from FIR_PointRateFormula
+where SuppID = '{this.txtsupplier.TextBox1.Text}'
+and WeaveTypeID = '{weaveTypeid}'
+and BrandID = '{this.displayBrand.Text}'
+"))
+                    {
+                        pointRate = (double_ActualYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * double_CutWidth), 2));
+                    }
+                    else
+                    {
+                        pointRate = (double_ActualYds == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint / double_ActualYds) * 100, 2));
+                    }
+
+                    break;
+
                 default:
                     pointRate = 0;
                     break;
@@ -451,7 +469,7 @@ where Fir.ID = '{this.FirID}'"));
 
             List<string> list = new List<string>();
 
-            if (this.displayBrand.Text == "LLL")
+            if (this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK")
             {
                 grade_cmd = $@"
                 DECLARE @Point as NUMERIC(10, 2) = {this.CurrentData["PointRate"]}
@@ -557,7 +575,7 @@ where Fir.ID = '{this.FirID}'"));
 
             if (dts != null)
             {
-                if (this.displayBrand.Text == "LLL" && this.txtGroup.Text == string.Empty)
+                if ((this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK") && this.txtGroup.Text == string.Empty)
                 {
                     this.CurrentData["Grade"] = string.Empty;
                     this.CurrentData["Result"] = string.Empty;
@@ -565,7 +583,6 @@ where Fir.ID = '{this.FirID}'"));
                 }
                 else
                 {
-
                     string sqlcmd = $@"select  ColorToneCheck
                     from FIR f
                     inner join FIR_Physical fp on f.id = fp.ID 
@@ -585,9 +602,8 @@ where Fir.ID = '{this.FirID}'"));
                         this.CurrentData["Result"] = dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty;
                     }
 
-                    this.CurrentData["Grade"] = dts[0].Rows[0]["ShowGrade"];
-                    // this.CurrentData["Result"] = dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty;
-                    this.CurrentData["ReGrade"] = dts[0].Rows[0]["RealGrade"];
+                    this.CurrentData["Grade"] = dts[0].Rows.Count != 0 ? dts[0].Rows[0]["ShowGrade"] : string.Empty;
+                    this.CurrentData["ReGrade"] = dts[0].Rows.Count != 0 ? dts[0].Rows[0]["RealGrade"] : string.Empty;
                  }
             }
             #endregion
@@ -614,7 +630,7 @@ where Fir.ID = '{this.FirID}'"));
                 bool colorToneCheck = (bool)e.FormattedValue;
                 string weaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
                 string grade_cmd = string.Empty;
-                if (this.displayBrand.Text == "LLL")
+                if (this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK")
                 {
                     grade_cmd = $@"
                     DECLARE @Point as NUMERIC(10, 2) = {dr["PointRate"]}
@@ -788,7 +804,7 @@ where Fir.ID = '{this.FirID}'"));
                                                                     inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                     where Fir.ID = '{0}'", dr["id"]), null, null);
 
-                    if (this.displayBrand.Text == "LLL")
+                    if (this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK")
                     {
                         if (MyUtility.Check.Empty(this.txtGroup.Text))
                         {
@@ -876,7 +892,7 @@ where Fir.ID = '{this.FirID}'"));
                                                                         inner join Fir on Fabric.SCIRefno = fir.SCIRefno
                                                                         where Fir.ID = '{0}'", dr["id"]);
                     dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(cmd, null, null);
-                    if (this.displayBrand.Text != "LLL" && this.txtGroup.Text != string.Empty)
+                    if ((this.displayBrand.Text != "LLL") && this.txtGroup.Text != string.Empty)
                     {
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
@@ -1351,7 +1367,7 @@ where Fir.ID = '{this.FirID}'"));
                 DataTable[] dts;
                 DBProxy.Current.Select(null, grade_cmd, out dts);
 
-                if (this.displayBrand.Text == "LLL" && this.txtGroup.Text == string.Empty)
+                if ((this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK") && this.txtGroup.Text == string.Empty)
                 {
                     dataRow["Grade"] = string.Empty;
                     dataRow["Result"] = string.Empty;
@@ -1575,7 +1591,7 @@ Where DetailUkey = {dr["DetailUkey"]};
             string sqlCmd = $"select InspectionGroup from Fabric where SCIRefno = '{this.maindr["SCIRefno"].ToString()}'";
             this.txtGroup.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
 
-            if (MyUtility.Check.Empty(this.txtGroup.Text) && this.btnEncode.Text == "Encode" && this.displayBrand.Text == "LLL")
+            if (MyUtility.Check.Empty(this.txtGroup.Text) && this.btnEncode.Text == "Encode" && (this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK"))
             {
                 MyUtility.Msg.WarningBox("<Group> can not be empty, please ask the maintenance of relevant personnel.");
                 return;
@@ -1584,7 +1600,7 @@ Where DetailUkey = {dr["DetailUkey"]};
             if (this.btnEncode.Text == "Encode")
             {
                 var dataTable = (DataTable)this.gridbs.DataSource;
-                if ((dataTable != null || dataTable.Rows.Count > 0) && this.displayBrand.Text == "LLL")
+                if ((dataTable != null || dataTable.Rows.Count > 0) && (this.displayBrand.Text == "LLL" || this.displayBrand.Text.Trim().ToUpper() == "GYMSHARK"))
                 {
                     this.Get_All_point((DataTable)this.gridbs.DataSource);
                 }
