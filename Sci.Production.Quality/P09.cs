@@ -421,7 +421,7 @@ namespace Sci.Production.Quality
 
             string sqlWEAVETYPEID = string.Empty;
 
-            if (brandID == "LLL")
+            if (brandID == "LLL" ||　brandID.Trim().ToUpper() == "GYMSHARK")
             {
                 sqlWEAVETYPEID = $@"
                 DECLARE @Point as int = {pointRate}
