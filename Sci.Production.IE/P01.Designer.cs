@@ -156,7 +156,7 @@
             this.masterpanel.Controls.Add(this.labelBrand);
             this.masterpanel.Controls.Add(this.labelSeason);
             this.masterpanel.Controls.Add(this.labelStyle);
-            this.masterpanel.Size = new System.Drawing.Size(1000, 209);
+            this.masterpanel.Size = new System.Drawing.Size(892, 209);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSeason, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelBrand, 0);
@@ -215,7 +215,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 209);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 346);
+            this.detailpanel.Size = new System.Drawing.Size(892, 140);
             // 
             // gridicon
             // 
@@ -229,7 +229,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 346);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 140);
             // 
             // detail2
             // 
@@ -243,19 +243,9 @@
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1000, 593);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 555);
-            // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnStdGSDList);
-            this.detailbtm.Location = new System.Drawing.Point(0, 555);
-            this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -265,11 +255,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 593);
+            this.browse.Size = new System.Drawing.Size(1000, 599);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 622);
+            this.tabs.Size = new System.Drawing.Size(1008, 628);
             // 
             // createby
             // 
@@ -915,7 +905,7 @@
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 655);
+            this.ClientSize = new System.Drawing.Size(1008, 661);
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
             this.DefaultOrder = "StyleID";
