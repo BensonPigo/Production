@@ -48,8 +48,8 @@ o.SeasonID
 ,o.POID 
 ,o.Category
 ,o.CdCodeID 
-,[CPU] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0,o.CPU)
-,[ArtworkCPU] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0, ROUND(otc.TMS/1400,3))
+,[CPU] = o.CPU
+,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.TMS/1400,0),3)) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.TMS/1400,3))
 ,CPURate = o.CPUFactor * o.CPU  
 ,o.BuyerDelivery
 ,o.SCIDelivery
