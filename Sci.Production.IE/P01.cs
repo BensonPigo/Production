@@ -2547,7 +2547,17 @@ and s.BrandID = @brandid ", Env.User.Factory,
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
-            DataRow drSelect_Location = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index -1);
+            DataRow drSelect_Location;
+
+            if (this.detailgrid.Rows.Count == 1)
+            {
+                drSelect_Location = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
+            }
+            else
+            {
+                drSelect_Location = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index - 1);
+            }
+
             if (dt.Rows.Count >= 0)
             {
                 sewingSeq = 10;
