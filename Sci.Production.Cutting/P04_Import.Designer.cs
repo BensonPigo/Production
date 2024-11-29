@@ -39,6 +39,8 @@
             this.label1 = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
+            this.lblCutCell = new Sci.Win.UI.Label();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -119,6 +121,8 @@
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.txtCell1);
+            this.panelTop.Controls.Add(this.lblCutCell);
             this.panelTop.Controls.Add(this.txtfactory);
             this.panelTop.Controls.Add(this.label1);
             this.panelTop.Controls.Add(this.labelEstCutDate);
@@ -139,7 +143,7 @@
             this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(336, 11);
+            this.txtfactory.Location = new System.Drawing.Point(511, 11);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
@@ -147,7 +151,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(258, 11);
+            this.label1.Location = new System.Drawing.Point(433, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 6;
@@ -171,6 +175,24 @@
             this.panelMiddle.Name = "panelMiddle";
             this.panelMiddle.Size = new System.Drawing.Size(944, 436);
             this.panelMiddle.TabIndex = 8;
+            // 
+            // lblCutCell
+            // 
+            this.lblCutCell.Location = new System.Drawing.Point(268, 11);
+            this.lblCutCell.Name = "lblCutCell";
+            this.lblCutCell.Size = new System.Drawing.Size(75, 23);
+            this.lblCutCell.TabIndex = 8;
+            this.lblCutCell.Text = "Cut Cell";
+            // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(347, 11);
+            this.txtCell1.MDivisionID = "";
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(66, 23);
+            this.txtCell1.TabIndex = 9;
             // 
             // P04_Import
             // 
@@ -204,5 +226,7 @@
         private Win.UI.Panel panelMiddle;
         private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
+        private Win.UI.Label lblCutCell;
+        private Class.TxtCell txtCell1;
     }
 }

@@ -412,8 +412,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     objSheet.Cells[1, 1] = this.keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = this.dateCuttingDate.Text;
                     objSheet.Cells[3, 5] = this.CurrentMaintain["POID"].ToString();
-                    objSheet.Cells[3, 10] = this.CurrentMaintain["SpreadingNoID"].ToString();
-                    objSheet.Cells[3, 12] = this.CurrentMaintain["CutCellid"].ToString();
+                    objSheet.Cells[3, 10] = this.CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 15] = PublicPrg.Prgs.GetAddOrEditBy(this.loginID);
                     this.pathName = Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
                     objBook.SaveAs(this.pathName);
