@@ -511,6 +511,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                     dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                     dr.EndEdit();
                                 }
                             }
@@ -522,6 +523,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                 dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr.EndEdit();
                             }
                         }
