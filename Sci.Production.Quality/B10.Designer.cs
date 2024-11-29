@@ -36,7 +36,6 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.btnMoistureStandardList = new Sci.Win.UI.Button();
             this.radioPanel2 = new Sci.Win.UI.RadioPanel();
             this.radioForWetDry = new Sci.Win.UI.RadioButton();
@@ -54,6 +53,9 @@
             this.txtFormula = new System.Windows.Forms.TextBox();
             this.label8 = new Sci.Win.UI.Label();
             this.txtFacbricGrade = new System.Windows.Forms.TextBox();
+            this.btnSuppStandard = new Sci.Win.UI.Button();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.radioButton1 = new Sci.Win.UI.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -68,10 +70,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(712, 625);
+            this.detail.Size = new System.Drawing.Size(653, 625);
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.btnSuppStandard);
             this.detailcont.Controls.Add(this.txtFacbricGrade);
             this.detailcont.Controls.Add(this.label8);
             this.detailcont.Controls.Add(this.txtFormula);
@@ -90,23 +93,24 @@
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
             this.detailcont.Controls.Add(this.txtbrand);
-            this.detailcont.Size = new System.Drawing.Size(712, 587);
+            this.detailcont.Size = new System.Drawing.Size(653, 587);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 587);
-            this.detailbtm.Size = new System.Drawing.Size(712, 38);
+            this.detailbtm.Size = new System.Drawing.Size(653, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(712, 511);
+            this.browse.Size = new System.Drawing.Size(647, 625);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(720, 654);
+            this.tabs.Size = new System.Drawing.Size(661, 654);
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioButton1);
             this.radioPanel1.Controls.Add(this.radioOption3);
             this.radioPanel1.Controls.Add(this.radioOption1);
             this.radioPanel1.Controls.Add(this.radioOption2);
@@ -114,7 +118,7 @@
             this.radioPanel1.Location = new System.Drawing.Point(164, 63);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.ReadOnly = true;
-            this.radioPanel1.Size = new System.Drawing.Size(268, 28);
+            this.radioPanel1.Size = new System.Drawing.Size(329, 28);
             this.radioPanel1.TabIndex = 8;
             this.radioPanel1.ValueChanged += new System.EventHandler(this.RadioPanel1_ValueChanged);
             // 
@@ -123,7 +127,7 @@
             this.radioOption3.AutoCheck = false;
             this.radioOption3.AutoSize = true;
             this.radioOption3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.radioOption3.Location = new System.Drawing.Point(173, 4);
+            this.radioOption3.Location = new System.Drawing.Point(171, 4);
             this.radioOption3.Name = "radioOption3";
             this.radioOption3.Size = new System.Drawing.Size(76, 21);
             this.radioOption3.TabIndex = 2;
@@ -149,7 +153,7 @@
             this.radioOption2.AutoCheck = false;
             this.radioOption2.AutoSize = true;
             this.radioOption2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.radioOption2.Location = new System.Drawing.Point(91, 3);
+            this.radioOption2.Location = new System.Drawing.Point(89, 3);
             this.radioOption2.Name = "radioOption2";
             this.radioOption2.Size = new System.Drawing.Size(76, 21);
             this.radioOption2.TabIndex = 1;
@@ -193,21 +197,9 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Brand";
             // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "brandid", true));
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtbrand.IsSupportEditMode = false;
-            this.txtbrand.Location = new System.Drawing.Point(164, 35);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.ReadOnly = true;
-            this.txtbrand.Size = new System.Drawing.Size(119, 23);
-            this.txtbrand.TabIndex = 0;
-            // 
             // btnMoistureStandardList
             // 
-            this.btnMoistureStandardList.Location = new System.Drawing.Point(510, 35);
+            this.btnMoistureStandardList.Location = new System.Drawing.Point(445, 26);
             this.btnMoistureStandardList.Name = "btnMoistureStandardList";
             this.btnMoistureStandardList.Size = new System.Drawing.Size(194, 30);
             this.btnMoistureStandardList.TabIndex = 9;
@@ -269,7 +261,7 @@
             this.radioPanel3.Location = new System.Drawing.Point(164, 341);
             this.radioPanel3.Name = "radioPanel3";
             this.radioPanel3.ReadOnly = true;
-            this.radioPanel3.Size = new System.Drawing.Size(279, 28);
+            this.radioPanel3.Size = new System.Drawing.Size(264, 28);
             this.radioPanel3.TabIndex = 11;
             this.radioPanel3.ValueChanged += new System.EventHandler(this.RadioPanel3_ValueChanged);
             // 
@@ -365,7 +357,7 @@
             this.txtFormula.Multiline = true;
             this.txtFormula.Name = "txtFormula";
             this.txtFormula.ReadOnly = true;
-            this.txtFormula.Size = new System.Drawing.Size(454, 41);
+            this.txtFormula.Size = new System.Drawing.Size(475, 41);
             this.txtFormula.TabIndex = 17;
             // 
             // label8
@@ -384,12 +376,48 @@
             this.txtFacbricGrade.Multiline = true;
             this.txtFacbricGrade.Name = "txtFacbricGrade";
             this.txtFacbricGrade.ReadOnly = true;
-            this.txtFacbricGrade.Size = new System.Drawing.Size(454, 136);
+            this.txtFacbricGrade.Size = new System.Drawing.Size(475, 136);
             this.txtFacbricGrade.TabIndex = 19;
+            // 
+            // btnSuppStandard
+            // 
+            this.btnSuppStandard.Location = new System.Drawing.Point(520, 62);
+            this.btnSuppStandard.Name = "btnSuppStandard";
+            this.btnSuppStandard.Size = new System.Drawing.Size(119, 30);
+            this.btnSuppStandard.TabIndex = 20;
+            this.btnSuppStandard.Text = "Supp Standard";
+            this.btnSuppStandard.UseVisualStyleBackColor = true;
+            this.btnSuppStandard.Click += new System.EventHandler(this.btnSuppStandard_Click);
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtbrand.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "brandid", true));
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtbrand.IsSupportEditMode = false;
+            this.txtbrand.Location = new System.Drawing.Point(164, 35);
+            this.txtbrand.MyDocumentdName = null;
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.ReadOnly = true;
+            this.txtbrand.Size = new System.Drawing.Size(119, 23);
+            this.txtbrand.TabIndex = 0;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoCheck = false;
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.radioButton1.Location = new System.Drawing.Point(250, 4);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(76, 21);
+            this.radioButton1.TabIndex = 4;
+            this.radioButton1.Text = "Option4";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Value = "4";
             // 
             // B10
             // 
-            this.ClientSize = new System.Drawing.Size(720, 687);
+            this.ClientSize = new System.Drawing.Size(661, 687);
             this.DefaultControl = "txtbrand";
             this.DefaultControlForEdit = "txtbrand";
             this.IsDeleteOnBrowse = false;
@@ -448,5 +476,7 @@
         private System.Windows.Forms.TextBox txtFormula;
         private System.Windows.Forms.TextBox txtFacbricGrade;
         private Win.UI.Label label8;
+        private Win.UI.Button btnSuppStandard;
+        private Win.UI.RadioButton radioButton1;
     }
 }
