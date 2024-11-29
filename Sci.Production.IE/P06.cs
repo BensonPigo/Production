@@ -807,8 +807,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
-                                    // string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
-                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMV"].ToString();
+                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                     dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
@@ -821,8 +820,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                             if (result == DialogResult.OK)
                             {
-                                // string smv = MyUtility.GetValue.Lookup($@"SELECT ISNULL(SMV,0) from TimeStudy_Detail where OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'");
-                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMV"].ToString();
+                                dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");

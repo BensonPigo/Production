@@ -61,10 +61,13 @@ select  ad.*,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
+        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower),
+        [IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 from    AutomatedLineMapping_DetailTemp ad with (nolock) 
+left join AutomatedLineMapping alm on alm.ID = ad.ID
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
+left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID
 
 where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
