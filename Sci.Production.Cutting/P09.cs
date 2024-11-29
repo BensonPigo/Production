@@ -30,7 +30,7 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
-        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
+        //private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeter;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLength;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLength;
@@ -127,8 +127,8 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
+                //.MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
+                //.MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -187,6 +187,12 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("Balance", header: "Balance", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true);
             this.GridEventSet();
+
+            // 設定所有欄位的 AutoSizeMode
+            foreach (DataGridViewColumn column in this.detailgrid.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
         #endregion
 
@@ -261,16 +267,20 @@ OUTER APPLY (
 ) wd
 OUTER APPLY (
     SELECT SizeCode_CONCAT = STUFF((
-        SELECT CONCAT(', ', SizeCode, '/ ', Qty)
-        FROM WorkOrderForOutput_SizeRatio WITH (NOLOCK)
-        WHERE WorkOrderForOutputUkey = wo.Ukey
+        SELECT CONCAT(', ', ws.SizeCode, '/ ', ws.Qty)
+        FROM WorkOrderForOutput_SizeRatio ws WITH (NOLOCK)
+		OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
+        WHERE ws.WorkOrderForOutputUkey = wo.Ukey
+		ORDER BY ws.WorkOrderForOutputUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
         FOR XML PATH ('')), 1, 1, '')
 ) ws1
 OUTER APPLY (
     SELECT TotalCutQty_CONCAT = STUFF((
-        SELECT CONCAT(', ', Sizecode, '/ ', Qty * wo.Layer)
-        FROM WorkOrderForOutput_SizeRatio WITH (NOLOCK)
-        WHERE WorkOrderForOutputUkey = wo.Ukey
+        SELECT CONCAT(', ', ws.Sizecode, '/ ', ws.Qty * wo.Layer)
+        FROM WorkOrderForOutput_SizeRatio ws WITH (NOLOCK)
+		OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
+        WHERE ws.WorkOrderForOutputUkey = wo.Ukey
+		ORDER BY ws.WorkOrderForOutputUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
         FOR XML PATH ('')), 1, 1, '')
 ) ws2
 OUTER APPLY (
@@ -1278,30 +1288,30 @@ DEALLOCATE CURSOR_
             BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditData);
             BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditData);
 
-            this.col_MarkerLength.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                string newValue = Prgs.SetMarkerLengthMaskString(e.FormattedValue.ToString());
+            //this.col_MarkerLength.CellValidating += (s, e) =>
+            //{
+            //    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+            //    string newValue = Prgs.SetMarkerLengthMaskString(e.FormattedValue.ToString());
 
-                if (dr.RowState != DataRowState.Added)
-                {
-                    string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
+            //    if (dr.RowState != DataRowState.Added)
+            //    {
+            //        string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
 
-                    if (!this.CanEditData(dr))
-                    {
-                        dr["MarkerLength"] = oldValue;
-                        return;
-                    }
-                    else if (oldValue == newValue)
-                    {
-                        return;
-                    }
-                }
+            //        if (!this.CanEditData(dr))
+            //        {
+            //            dr["MarkerLength"] = oldValue;
+            //            return;
+            //        }
+            //        else if (oldValue == newValue)
+            //        {
+            //            return;
+            //        }
+            //    }
 
-                dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
-                dr.EndEdit();
-            };
+            //    dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            //    dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            //    dr.EndEdit();
+            //};
             this.col_ActCuttingPerimeter.CellValidating += this.MaskedCellValidatingHandler;
             this.col_StraightLength.CellValidating += this.MaskedCellValidatingHandler;
             this.col_CurvedLength.CellValidating += this.MaskedCellValidatingHandler;
@@ -1607,12 +1617,6 @@ DEALLOCATE CURSOR_
         #endregion
 
         #region Other
-        private void BtnExcludeSetting_Click(object sender, EventArgs e)
-        {
-            // 當 P091 History, IsSupportEdit = false
-            var exwip = new P09_ExcludeSetting(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
-            exwip.ShowDialog();
-        }
 
         protected override void OnEditModeChanged()
         {

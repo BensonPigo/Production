@@ -89,7 +89,8 @@ namespace Sci.Production.Cutting
             if (this.form == CuttingForm.P02)
             {
                 this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
-                    .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true);
+                    .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID);
             }
 
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
@@ -141,7 +142,7 @@ namespace Sci.Production.Cutting
                 filter += " AND EstCutDate is null ";
             }
 
-            this.detailgridbs.Filter = filter;
+            //this.detailgridbs.Filter = filter;
         }
 
         private void BtnBatchUpdate_Click(object sender, EventArgs e)
@@ -165,16 +166,16 @@ namespace Sci.Production.Cutting
                     dr["MarkerName"] = this.txtMakerName.Text;
                 }
 
+                if (!MyUtility.Check.Empty(this.txtCell.Text))
+                {
+                    dr["CutCellID"] = this.txtCell.Text;
+                }
+
                 if (this.form == CuttingForm.P09)
                 {
                     if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
                     {
                         dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
-                    }
-
-                    if (!MyUtility.Check.Empty(this.txtCell.Text))
-                    {
-                        dr["CutCellID"] = this.txtCell.Text;
                     }
                 }
             }
@@ -248,11 +249,11 @@ namespace Sci.Production.Cutting
                 detaildr["MarkerNo"] = dr["MarkerNo"];
                 detaildr["Seq1"] = dr["Seq1"];
                 detaildr["Seq2"] = dr["Seq2"];
+                detaildr["CutCellID"] = dr["CutCellID"];
 
                 if (this.form == CuttingForm.P09)
                 {
                     detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
-                    detaildr["CutCellID"] = dr["CutCellID"];
                 }
             }
 
@@ -327,10 +328,10 @@ namespace Sci.Production.Cutting
             ConfigureSeqColumnEvents(this.col_Seq1, this.gridBatchAssign, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
+            BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
             if (this.form == CuttingForm.P09)
             {
                 BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditData);
-                BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
             }
         }
         #endregion

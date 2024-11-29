@@ -74,7 +74,7 @@ namespace Sci.Production.Cutting
             this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
             this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
             this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength"].ToString();
+            this.txtMarkerLength.Text = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(this.CurrentDetailData["MarkerLength"].ToString()));
             this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
             this.txtWKETA.Text = MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentDetailData["WKETA"]).Value.ToString("yyyy/MM/dd") : string.Empty;
             this.SCIRefno = this.CurrentDetailData["SCIRefno"].ToString();

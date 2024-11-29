@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Cutting
 {
-    partial class P09_ExcludeSetting
+    partial class P02_ExcludeSetting
     {
         /// <summary>
         /// Required designer variable.

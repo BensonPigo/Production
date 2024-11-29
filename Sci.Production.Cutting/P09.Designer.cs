@@ -63,8 +63,6 @@
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel_Top2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnImportFromWorkOrderForPlanning = new Sci.Win.UI.Button();
-            this.btnExcludeSetting = new Sci.Win.UI.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.labelCutplanID = new Sci.Win.UI.Label();
             this.displayBoxSP = new Sci.Win.UI.DisplayBox();
@@ -89,6 +87,7 @@
             this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
             this.btnPackingMethod = new Sci.Win.UI.Button();
+            this.btnImportFromWorkOrderForPlanning = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -154,7 +153,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(3690, 5);
+            this.refresh.Location = new System.Drawing.Point(4466, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -618,45 +617,12 @@
             this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Top2.Controls.Add(this.btnImportFromWorkOrderForPlanning, 1, 0);
-            this.tableLayoutPanel_Top2.Controls.Add(this.btnExcludeSetting, 0, 0);
-            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(484, 0);
+            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(601, 0);
             this.tableLayoutPanel_Top2.Name = "tableLayoutPanel_Top2";
             this.tableLayoutPanel_Top2.RowCount = 1;
             this.tableLayoutPanel_Top2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Top2.Size = new System.Drawing.Size(374, 35);
+            this.tableLayoutPanel_Top2.Size = new System.Drawing.Size(257, 35);
             this.tableLayoutPanel_Top2.TabIndex = 16;
-            // 
-            // btnImportFromWorkOrderForPlanning
-            // 
-            this.btnImportFromWorkOrderForPlanning.AutoSize = true;
-            this.btnImportFromWorkOrderForPlanning.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnImportFromWorkOrderForPlanning.Dock = System.Windows.Forms.DockStyle.Left;
-            this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(118, 1);
-            this.btnImportFromWorkOrderForPlanning.Margin = new System.Windows.Forms.Padding(1);
-            this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
-            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(255, 33);
-            this.btnImportFromWorkOrderForPlanning.TabIndex = 2;
-            this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
-            this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
-            this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
-            // 
-            // btnExcludeSetting
-            // 
-            this.btnExcludeSetting.AutoSize = true;
-            this.btnExcludeSetting.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnExcludeSetting.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnExcludeSetting.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnExcludeSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnExcludeSetting.Location = new System.Drawing.Point(1, 1);
-            this.btnExcludeSetting.Margin = new System.Windows.Forms.Padding(1);
-            this.btnExcludeSetting.Name = "btnExcludeSetting";
-            this.btnExcludeSetting.Size = new System.Drawing.Size(115, 33);
-            this.btnExcludeSetting.TabIndex = 1;
-            this.btnExcludeSetting.Text = "Exclude Setting";
-            this.btnExcludeSetting.UseVisualStyleBackColor = true;
-            this.btnExcludeSetting.Click += new System.EventHandler(this.BtnExcludeSetting_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -1002,6 +968,22 @@
             this.btnPackingMethod.UseVisualStyleBackColor = true;
             this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
             // 
+            // btnImportFromWorkOrderForPlanning
+            // 
+            this.btnImportFromWorkOrderForPlanning.AutoSize = true;
+            this.btnImportFromWorkOrderForPlanning.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnImportFromWorkOrderForPlanning.Dock = System.Windows.Forms.DockStyle.Left;
+            this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(1, 1);
+            this.btnImportFromWorkOrderForPlanning.Margin = new System.Windows.Forms.Padding(1);
+            this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
+            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(255, 33);
+            this.btnImportFromWorkOrderForPlanning.TabIndex = 2;
+            this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
+            this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
+            this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
+            // 
             // P09
             // 
             this.ApvChkValue = "New";
@@ -1124,9 +1106,8 @@
         private Win.UI.Button btnHistory;
         private Win.UI.Button btnCutPartsCheckSummary;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Top2;
-        private Win.UI.Button btnImportFromWorkOrderForPlanning;
-        private Win.UI.Button btnExcludeSetting;
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnPackingMethod;
+        private Win.UI.Button btnImportFromWorkOrderForPlanning;
     }
 }
