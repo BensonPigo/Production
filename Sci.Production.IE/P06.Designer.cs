@@ -224,7 +224,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1446, 235);
+            this.masterpanel.Size = new System.Drawing.Size(892, 235);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -303,7 +303,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 235);
-            this.detailpanel.Size = new System.Drawing.Size(1446, 408);
+            this.detailpanel.Size = new System.Drawing.Size(892, 114);
             // 
             // gridicon
             // 
@@ -315,7 +315,7 @@
             // 
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1446, 408);
+            this.detailgridcont.Size = new System.Drawing.Size(892, 114);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
@@ -330,19 +330,6 @@
             // detailpanel2
             // 
             this.detailpanel2.Size = new System.Drawing.Size(886, 40);
-            // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(1446, 681);
-            // 
-            // detailcont
-            // 
-            this.detailcont.Size = new System.Drawing.Size(1446, 643);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 643);
-            this.detailbtm.Size = new System.Drawing.Size(1446, 38);
             // 
             // browse
             // 
@@ -668,7 +655,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1446, 408);
+            this.tabDetail.Size = new System.Drawing.Size(892, 114);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -678,7 +665,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1438, 379);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(884, 85);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -691,8 +678,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1432, 373);
-            this.splitLineMapping.SplitterDistance = 1019;
+            this.splitLineMapping.Size = new System.Drawing.Size(878, 79);
+            this.splitLineMapping.SplitterDistance = 624;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -716,7 +703,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(409, 373);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(250, 79);
             this.gridLineMappingRight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridLineMappingRight.TabIndex = 0;
             // 

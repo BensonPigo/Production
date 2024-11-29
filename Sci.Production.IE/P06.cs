@@ -219,7 +219,7 @@ AND ALMCS.Junk = 0
                 FROM (
                     SELECT *
                     ,[Effi] = (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No))  / (SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No))  * 100
-                     ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
+                    ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
 	                ,[EstTotalCycleTime] = IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
 	                ,[EstOutputHr] = iif(CAST(OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
                     ,[IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
@@ -1022,7 +1022,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 	                        FOR XML PATH('')), 1, 1, '')
                         ) Operation_P03
                         where ResignationDate is null 
-                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = '{Env.User.Factory}') 
                         and eas.P06 = 1 and e.Junk = 0
                         AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
                         --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
@@ -1055,7 +1055,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 	                        FOR XML PATH('')), 1, 1, '')
                         ) Operation_P03
                         where ResignationDate is null 
-                        and e.FactoryID IN (select ID from Factory where FTYGroup = 'SPR') 
+                        and e.FactoryID IN (select ID from Factory where FTYGroup = '{Env.User.Factory}') 
                         and eas.P06 = 1 and e.Junk = 0
                         AND ISNULL(lmd.MachineTypeID,'') = '{row["MachineTypeID"]}' 
                         --AND ISNULL(Operation_P03.val,'') = '{row["MasterPlusGroup"]}' 
