@@ -47,7 +47,6 @@
             this.displaySeasonID = new Sci.Win.UI.DisplayBox();
             this.displayBrandID = new Sci.Win.UI.DisplayBox();
             this.displayDescription = new Sci.Win.UI.DisplayBox();
-            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.numericStyleCPU = new Sci.Win.UI.NumericBox();
             this.numericTotalGSDTime = new Sci.Win.UI.NumericBox();
             this.numericAvgGSDTime = new Sci.Win.UI.NumericBox();
@@ -93,8 +92,6 @@
             this.btnEditOperation = new Sci.Win.UI.Button();
             this.btnH = new Sci.Win.UI.Button();
             this.label22 = new Sci.Win.UI.Label();
-            this.txtSewingline = new Sci.Production.Class.Txtsewingline();
-            this.txtSewingTeam = new Sci.Production.Class.TxtSewingTeam();
             this.label24 = new Sci.Win.UI.Label();
             this.label25 = new Sci.Win.UI.Label();
             this.label26 = new Sci.Win.UI.Label();
@@ -116,6 +113,9 @@
             this.txtReason = new Sci.Win.UI.TextBox();
             this.numericBox1 = new Sci.Win.UI.NumericBox();
             this.label31 = new Sci.Win.UI.Label();
+            this.txtSewingTeam = new Sci.Production.Class.TxtSewingTeam();
+            this.txtSewingline = new Sci.Production.Class.Txtsewingline();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -308,7 +308,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1495, 268);
+            this.gridicon.Location = new System.Drawing.Point(1534, 285);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
@@ -321,15 +321,15 @@
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(892, 387);
+            this.detail2.Size = new System.Drawing.Size(1446, 681);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            this.detailgridcont2.Size = new System.Drawing.Size(1440, 635);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(1440, 40);
             // 
             // detail
             // 
@@ -514,23 +514,6 @@
             this.displayDescription.Name = "displayDescription";
             this.displayDescription.Size = new System.Drawing.Size(545, 23);
             this.displayDescription.TabIndex = 31;
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsIE = false;
-            this.txtfactory.IsMultiselect = false;
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(95, 38);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(49, 23);
-            this.txtfactory.TabIndex = 32;
             // 
             // numericStyleCPU
             // 
@@ -730,7 +713,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 85);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(1438, 379);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -747,8 +730,8 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 79);
-            this.splitCentralizedPPA.SplitterDistance = 608;
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(1432, 376);
+            this.splitCentralizedPPA.SplitterDistance = 991;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -771,7 +754,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(608, 79);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(991, 376);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -794,7 +777,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(266, 79);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(437, 376);
             this.gridCentralizedPPARight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
@@ -1170,31 +1153,6 @@
             this.label22.TabIndex = 55;
             this.label22.Text = "Sewing Line / Team";
             // 
-            // txtSewingline
-            // 
-            this.txtSewingline.BackColor = System.Drawing.Color.White;
-            this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtSewingline.FactoryobjectName = null;
-            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingline.Location = new System.Drawing.Point(383, 183);
-            this.txtSewingline.Name = "txtSewingline";
-            this.txtSewingline.Size = new System.Drawing.Size(49, 23);
-            this.txtSewingline.TabIndex = 56;
-            this.txtSewingline.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSewingline_MouseDown);
-            // 
-            // txtSewingTeam
-            // 
-            this.txtSewingTeam.BackColor = System.Drawing.Color.White;
-            this.txtSewingTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
-            this.txtSewingTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSewingTeam.IssupportEmptyitem = false;
-            this.txtSewingTeam.IssupportJunk = false;
-            this.txtSewingTeam.IsSupportSytsemContextMenu = false;
-            this.txtSewingTeam.Location = new System.Drawing.Point(434, 183);
-            this.txtSewingTeam.Name = "txtSewingTeam";
-            this.txtSewingTeam.Size = new System.Drawing.Size(34, 23);
-            this.txtSewingTeam.TabIndex = 57;
-            // 
             // label24
             // 
             this.label24.Location = new System.Drawing.Point(471, 125);
@@ -1478,6 +1436,49 @@
             this.label31.Size = new System.Drawing.Size(142, 23);
             this.label31.TabIndex = 253;
             this.label31.Text = "Ori. Total GSD time";
+            // 
+            // txtSewingTeam
+            // 
+            this.txtSewingTeam.BackColor = System.Drawing.Color.White;
+            this.txtSewingTeam.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Team", true));
+            this.txtSewingTeam.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingTeam.IssupportEmptyitem = false;
+            this.txtSewingTeam.IssupportJunk = false;
+            this.txtSewingTeam.IsSupportSytsemContextMenu = false;
+            this.txtSewingTeam.Location = new System.Drawing.Point(434, 183);
+            this.txtSewingTeam.Name = "txtSewingTeam";
+            this.txtSewingTeam.Size = new System.Drawing.Size(34, 23);
+            this.txtSewingTeam.TabIndex = 57;
+            // 
+            // txtSewingline
+            // 
+            this.txtSewingline.BackColor = System.Drawing.Color.White;
+            this.txtSewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtSewingline.FactoryobjectName = null;
+            this.txtSewingline.FilterFtyGrop = true;
+            this.txtSewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingline.Location = new System.Drawing.Point(383, 183);
+            this.txtSewingline.Name = "txtSewingline";
+            this.txtSewingline.Size = new System.Drawing.Size(49, 23);
+            this.txtSewingline.TabIndex = 56;
+            this.txtSewingline.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtSewingline_MouseDown);
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
+            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(95, 38);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.Size = new System.Drawing.Size(49, 23);
+            this.txtfactory.TabIndex = 32;
             // 
             // P06
             // 
