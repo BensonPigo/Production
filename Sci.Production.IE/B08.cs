@@ -323,8 +323,10 @@ SELECT
 [Motion] = ISNULL(Operation_P03.val,''),
 [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
 [Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
-[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,''),
-[Effi_3_year] = ISNULL(FORMAT(((SUM(lmd.GSD) / SUM(lmd.Cycle))*100), '0.00'), '0.00')
+[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
+,lmd.GSD
+,lmd.Cycle
+INTO #P03
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, @goDate) AND lm_Day.EditDate <= @goDate) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, @goDate) AND lm_Day.AddDate <= @goDate))
@@ -362,17 +364,16 @@ OUTER APPLY
 	ORDER BY SEQ DESC
 )OP
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmd.MachineTypeID,'') != '')
-GROUP BY lmd.Attachment,lmd.MachineTypeID, Operation_P03.val,tsd.[location],OP.OperationID,tsd.[location],lmd.SewingMachineAttachmentID,lmd.Template
-
-UNION ALL
 
 SELECT
 [ST_MC_Type] = ISNULL(lmbd.MachineTypeID,''),
 [Motion] = ISNULL(Operation_P06.val,''),
 [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
 [Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
-[Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,''),
-[Effi_3_year] = ISNULL(FORMAT(((SUM(lmbd.GSD) / SUM(lmbd.Cycle))*100), '0.00'), '0.00')
+[Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
+,lmbd.GSD
+,lmbd.Cycle
+INTO #P06
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID  AND ((lmb_Day.EditDate >= DATEADD(YEAR, -3, @goDate) AND lmb_Day.EditDate <= @goDate) OR (lmb_Day.AddDate >= DATEADD(YEAR, -3, @goDate) AND lmb_Day.AddDate <= @goDate))
@@ -409,7 +410,28 @@ OUTER APPLY
 	ORDER BY SEQ DESC
 )OP
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmbd.MachineTypeID,'') != '')
-GROUP BY lmbd.Attachment,lmbd.MachineTypeID, Operation_P06.val,tsd.[location],OP.OperationID, tsd.[location], lmbd.SewingMachineAttachmentID,lmbd.Template;
+;
+SELECT a.[ST_MC_Type]
+,a.[Motion]
+,a.[Group_Header]
+,a.[Part]
+,a.[Attachment]	
+,[Effi_3_year] = ISNULL(FORMAT(((SUM(a.GSD) / SUM(a.Cycle))*100), '0.00'), '0.00')
+FROM (
+	select *
+	from #P03
+	UNION ALL
+	select *
+	from #P06
+)a
+GROUP BY [ST_MC_Type]
+,[Motion]
+,[Group_Header]
+,[Part]
+,[Attachment]
+
+
+drop table #P03,#P06
             ";
             return sql;
         }
