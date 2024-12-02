@@ -1,10 +1,15 @@
-﻿using System;
-using System.Data;
-using Ict;
+﻿using Ict;
 using Sci.Data;
-using System.Runtime.InteropServices;
+using Sci.Win.Tools;
+using System;
+using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Word = Microsoft.Office.Interop.Word;
+using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Packing
 {
@@ -21,6 +26,7 @@ namespace Sci.Production.Packing
         private string ctn2;
         private string specialInstruction;
         private bool country;
+        private string orderID;
         private DataTable printData;
         private DataTable ctnDim;
         private DataTable qtyCtn;
@@ -98,6 +104,31 @@ namespace Sci.Production.Packing
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (this.radioHandheldMetalDetectionReport.Checked)
+            {
+                if (MyUtility.Check.Empty(this.txtSPNo.Text))
+                {
+                    MyUtility.Msg.WarningBox("Please fill in <SPNo>!");
+                    return false;
+                }
+
+                string sqlcmd = $@"SELECT 1 FROM Orders WITH (NOLOCK) WHERE ID = '{this.txtSPNo.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    MyUtility.Msg.WarningBox($"This SPNo<{this.txtSPNo.Text}> does not exists!");
+                    this.txtSPNo.Text = string.Empty;
+                    return false;
+                }
+
+                sqlcmd = $@"SELECT 1 FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' AND OrderID = '{this.txtSPNo.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    MyUtility.Msg.WarningBox($"SPNo<{this.txtSPNo.Text}> does not belong to this PackingID<{this.masterData["ID"]}>!");
+                    this.txtSPNo.Text = string.Empty;
+                    return false;
+                }
+            }
+
             this.reportType = this.radioPackingListReportFormA.Checked ? "1" :
                 this.radioPackingListReportFormB.Checked ? "2" :
                 this.radioPackingGuideReport.Checked ? "3" :
@@ -107,11 +138,13 @@ namespace Sci.Production.Packing
                 this.radioMDform.Checked ? "8" :
                 this.radioWeighingform.Checked ? "9" :
                 this.rdbtnShippingMarkLLL.Checked ? "10" :
+                this.radioHandheldMetalDetectionReport.Checked ? "11" :
                 "4";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
             this.ReportResourceName = "P03_BarcodePrint.rdlc";
             this.country = this.checkBoxCountry.Checked;
+            this.orderID = this.txtSPNo.Text;
             return base.ValidateInput();
         }
 
@@ -144,6 +177,11 @@ namespace Sci.Production.Packing
             if (this.reportType == "10")
             {
                 return this.ShippingmarkLLL(out this.printDataA);
+            }
+
+            if (this.reportType == "11")
+            {
+                return this.HandheldMetalDetection(out this.printData);
             }
 
             return Ict.Result.True;
@@ -255,6 +293,11 @@ namespace Sci.Production.Packing
                 this.ShippingmarkLLLReport();
             }
 
+            if (this.reportType == "11")
+            {
+                this.HandheldMetalDetectionReport();
+            }
+
             this.HideWaitMessage();
             return true;
         }
@@ -345,6 +388,100 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Marshal.ReleaseComObject(excel);
             Marshal.ReleaseComObject(workbook);
 
+            strExcelName.OpenFile();
+            #endregion
+        }
+
+        private DualResult HandheldMetalDetection(out DataTable dt)
+        {
+            string sqlcmd = $@"
+SELECT
+     No = pld.CTNStartNo
+    ,ScanEditDate = FORMAT(pld.ScanEditDate, 'yyyy/MM/dd')
+    ,pld.CTNStartNo
+    ,pld.Article
+    ,pld.Color
+    ,pld.SizeCode
+    ,GarmentQty = pld.ShipQty
+    ,PassedQty = pld.ShipQty
+    ,FailedQty = 0
+FROM PackingList_Detail pld WITH (NOLOCK)
+WHERE ID = '{this.masterData["ID"]}'
+AND OrderID = '{this.orderID}'
+";
+            return DBProxy.Current.Select(null, sqlcmd, out dt);
+        }
+
+        private void HandheldMetalDetectionReport()
+        {
+            // 此報表是給廠商稽核用
+            this.SetCount(this.printData.Rows.Count);
+            if (this.printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return;
+            }
+
+            var listOrderby = this.printData.AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["No"]).Trim().PadLeft(4, '0')).ToList();
+            string previousNo = null;
+            foreach (var row in listOrderby)
+            {
+                string currentNo = MyUtility.Convert.GetString(row["No"]).Trim();
+
+                // 若當前的 No 和上一筆相同，則將當前 No 設為空白
+                if (currentNo == previousNo)
+                {
+                    row["No"] = string.Empty;  // 或使用 ""，依需求而定
+                }
+
+                // 更新上一筆的 No
+                previousNo = currentNo;
+            }
+
+            DataTable dtOrderby = listOrderby.CopyToDataTable();
+            string fileName = "Packing_P03_Handheld Metal Detection Report";
+            string fileNamexltx = fileName + ".xltx";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + fileNamexltx);
+            if (excelApp == null)
+            {
+                return;
+            }
+
+            Excel.Worksheet worksheet = (Excel.Worksheet)excelApp.ActiveSheet;
+
+            // 表頭資訊
+            string sqlcmd = $@"SELECT StyleID, Customize1 FROM Orders WHERE ID = '{this.orderID}'";
+            MyUtility.Check.Seek(sqlcmd, out DataRow dr);
+            worksheet.Cells[3, 2] = dr["StyleID"];
+            worksheet.Cells[4, 2] = dr["Customize1"];
+            worksheet.Cells[5, 2] = this.orderID;
+            worksheet.Cells[3, 8] = listOrderby.Select(row => MyUtility.Convert.GetString(row["No"])).Distinct().Count(); // Ttl Ctns
+            worksheet.Cells[4, 8] = listOrderby.Sum(row => MyUtility.Convert.GetInt(row["GarmentQty"])); // Ttl Garments
+            worksheet.Cells[5, 8] = "1.0"; // Sensitivity Used
+
+            // 表身
+            int headerRow = 7;
+            int insertRowIndex = headerRow + 2;
+
+            // 先增加需要幾 Row , 範本只有1列
+            for (int i = 0; i < listOrderby.Count() - 1; i++)
+            {
+                Excel.Range insertRow = worksheet.Rows[insertRowIndex];
+                insertRow.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+            }
+
+            int ttlRow = headerRow + listOrderby.Count() + 1;
+            worksheet.Cells[ttlRow, 7].Formula = $"=SUM(G{headerRow + 1}:G{ttlRow - 1})";
+            worksheet.Cells[ttlRow, 8].Formula = $"=SUM(H{headerRow + 1}:H{ttlRow - 1})";
+
+            MyUtility.Excel.CopyToXls(dtOrderby, string.Empty, fileNamexltx, headerRow, false, null, excelApp);
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName(fileName);
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelApp.Quit();
             strExcelName.OpenFile();
             #endregion
         }
@@ -817,6 +954,39 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
+        }
+
+        private void RadioHandheldMetalDetectionReport_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
+            this.txtSPNo.ReadOnly = !((Win.UI.RadioButton)sender).Checked;
+            if (!((Win.UI.RadioButton)sender).Checked)
+            {
+                this.txtSPNo.Text = string.Empty;
+            }
+            else
+            {
+                string sqlcmd = $@"SELECT DISTINCT OrderID FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' ORDER BY OrderID";
+                DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+
+                // 只有一個 OrderID 才自動帶入
+                if (dt.Rows.Count == 1)
+                {
+                    this.txtSPNo.Text = MyUtility.Convert.GetString(dt.Rows[0]["OrderID"]);
+                }
+            }
+        }
+
+        private void TxtSPNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"SELECT DISTINCT OrderID FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' ORDER BY OrderID";
+            SelectItem item = new SelectItem(sqlcmd, "20", this.txtSPNo.Text);
+            if (item.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSPNo.Text = item.GetSelectedString();
         }
     }
 }
