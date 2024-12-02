@@ -35,12 +35,12 @@
             this.labelEstCutDate = new Sci.Win.UI.Label();
             this.dateEstCutDate = new Sci.Win.UI.DateBox();
             this.panelTop = new Sci.Win.UI.Panel();
+            this.txtCell1 = new Sci.Production.Class.TxtCell();
+            this.lblCutCell = new Sci.Win.UI.Label();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.panelBottom = new Sci.Win.UI.Panel();
             this.panelMiddle = new Sci.Win.UI.Panel();
-            this.lblCutCell = new Sci.Win.UI.Label();
-            this.txtCell1 = new Sci.Production.Class.TxtCell();
             ((System.ComponentModel.ISupportInitialize)(this.gridImport)).BeginInit();
             this.panelTop.SuspendLayout();
             this.panelBottom.SuspendLayout();
@@ -68,7 +68,7 @@
             this.gridImport.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridImport.ShowCellToolTips = false;
             this.gridImport.Size = new System.Drawing.Size(944, 436);
-            this.gridImport.TabIndex = 3;
+            this.gridImport.TabIndex = 7;
             this.gridImport.TabStop = false;
             // 
             // btnQuery
@@ -77,7 +77,7 @@
             this.btnQuery.Location = new System.Drawing.Point(827, 7);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(80, 30);
-            this.btnQuery.TabIndex = 2;
+            this.btnQuery.TabIndex = 6;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -88,7 +88,7 @@
             this.btnImport.Location = new System.Drawing.Point(748, 7);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(80, 30);
-            this.btnImport.TabIndex = 2;
+            this.btnImport.TabIndex = 8;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
@@ -99,7 +99,7 @@
             this.btnClose.Location = new System.Drawing.Point(834, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
-            this.btnClose.TabIndex = 3;
+            this.btnClose.TabIndex = 9;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
@@ -109,7 +109,7 @@
             this.labelEstCutDate.Location = new System.Drawing.Point(17, 11);
             this.labelEstCutDate.Name = "labelEstCutDate";
             this.labelEstCutDate.Size = new System.Drawing.Size(99, 23);
-            this.labelEstCutDate.TabIndex = 5;
+            this.labelEstCutDate.TabIndex = 0;
             this.labelEstCutDate.Text = "Est. Cut Date";
             // 
             // dateEstCutDate
@@ -117,7 +117,7 @@
             this.dateEstCutDate.Location = new System.Drawing.Point(119, 11);
             this.dateEstCutDate.Name = "dateEstCutDate";
             this.dateEstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateEstCutDate.TabIndex = 0;
+            this.dateEstCutDate.TabIndex = 1;
             // 
             // panelTop
             // 
@@ -134,6 +134,24 @@
             this.panelTop.Size = new System.Drawing.Size(944, 43);
             this.panelTop.TabIndex = 6;
             // 
+            // txtCell1
+            // 
+            this.txtCell1.BackColor = System.Drawing.Color.White;
+            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtCell1.Location = new System.Drawing.Point(347, 11);
+            this.txtCell1.MDivisionID = "";
+            this.txtCell1.Name = "txtCell1";
+            this.txtCell1.Size = new System.Drawing.Size(66, 23);
+            this.txtCell1.TabIndex = 3;
+            // 
+            // lblCutCell
+            // 
+            this.lblCutCell.Location = new System.Drawing.Point(268, 11);
+            this.lblCutCell.Name = "lblCutCell";
+            this.lblCutCell.Size = new System.Drawing.Size(75, 23);
+            this.lblCutCell.TabIndex = 2;
+            this.lblCutCell.Text = "Cut Cell";
+            // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
@@ -147,14 +165,14 @@
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 7;
+            this.txtfactory.TabIndex = 5;
             // 
             // label1
             // 
             this.label1.Location = new System.Drawing.Point(433, 11);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
-            this.label1.TabIndex = 6;
+            this.label1.TabIndex = 4;
             this.label1.Text = "Factory";
             // 
             // panelBottom
@@ -175,24 +193,6 @@
             this.panelMiddle.Name = "panelMiddle";
             this.panelMiddle.Size = new System.Drawing.Size(944, 436);
             this.panelMiddle.TabIndex = 8;
-            // 
-            // lblCutCell
-            // 
-            this.lblCutCell.Location = new System.Drawing.Point(268, 11);
-            this.lblCutCell.Name = "lblCutCell";
-            this.lblCutCell.Size = new System.Drawing.Size(75, 23);
-            this.lblCutCell.TabIndex = 8;
-            this.lblCutCell.Text = "Cut Cell";
-            // 
-            // txtCell1
-            // 
-            this.txtCell1.BackColor = System.Drawing.Color.White;
-            this.txtCell1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell1.Location = new System.Drawing.Point(347, 11);
-            this.txtCell1.MDivisionID = "";
-            this.txtCell1.Name = "txtCell1";
-            this.txtCell1.Size = new System.Drawing.Size(66, 23);
-            this.txtCell1.TabIndex = 9;
             // 
             // P04_Import
             // 
