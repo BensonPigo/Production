@@ -48,14 +48,11 @@ select	ID,
 		Type,
 		AddName,
 		AddDate,
-		--MarkerDownLoadId,
 		FabricCombo,
 		FabricCode,
 		FabricPanelCode,
 		Order_eachconsUkey,
-		--ActCuttingPerimeter,
-		--StraightLength,
-		--CurvedLength,
+		Article,
 		[newKey]=0 into #tmp_Workorder from WorkOrderForPlanning where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrderForPlanning_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrderForPlanning_PatternPanel where 1=0
@@ -390,9 +387,9 @@ Begin
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
 		set @Cons = @FLayer * @SumRatio * @ConsPC
 		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
-		Markerno,MarkerVersion,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
+		Markerno,MarkerVersion,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey, Article)
 		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,
-		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey)
+		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey, @Article1)
 		--SizeRatio
 		DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
 		OPEN Size
@@ -471,7 +468,8 @@ Begin
 										FabricCombo,
 										FabricCode,
 										FabricPanelCode,
-										Order_eachconsUkey)
+										Order_eachconsUkey,
+										Article)
 	Select	ID,
 			FactoryID,
 			MDivisionid,
@@ -494,7 +492,8 @@ Begin
 			FabricCombo,
 			FabricCode,
 			FabricPanelCode,
-			Order_eachconsUkey
+			Order_eachconsUkey,
+			Article
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------�N���X��Ident �g�J----------

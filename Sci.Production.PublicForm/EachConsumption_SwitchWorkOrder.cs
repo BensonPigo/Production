@@ -107,6 +107,13 @@ and oe.CuttingPiece <> 1
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
+            string sqlCheckWorkOrderForOutputExists = $"select 1 from WorkOrderForOutput with (nolock) where ID = '{this.cuttingid}'";
+            if (MyUtility.Check.Seek(sqlCheckWorkOrderForOutputExists, "Production"))
+            {
+                MyUtility.Msg.WarningBox("Cutting_P09. WorkOrder For Output] still contains data and cannot be switch to workorder. Please delete the Cutting_P09 data first before executing switch to work order.");
+                return;
+            }
+
             string cmd = string.Empty;
             string worktype;
             if (this.radioCombination.Checked)
