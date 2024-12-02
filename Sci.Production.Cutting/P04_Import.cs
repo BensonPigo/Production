@@ -106,7 +106,8 @@ namespace Sci.Production.Cutting
 
                         // SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
                         string selwhere = $@"
-cuttingid = '{dr["id"]}'";
+cuttingid = '{dr["id"]}'
+and cutcellid ='{dr["cutcellid"]}' ";
                         DataRow[] griddray = this.gridTable.Select(selwhere);
 
                         if (griddray.Length == 0)
