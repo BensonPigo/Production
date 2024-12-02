@@ -304,7 +304,7 @@ namespace Sci.Production.Quality
 	                select val = stuff((select concat(';',tmp.Roll)
 	                from
 	                (
-		                select  Roll from SciProduction_WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
+                        select Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
 	                ) 
 	                tmp for xml path('')),1,1,'')
                 )FabricRoll
@@ -379,7 +379,7 @@ namespace Sci.Production.Quality
                 )pms_wo
                 left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
                 outer apply( 
-	                select top 1 [MarkerNo] = w.MarkerNo
+	                select top 1 [MarkerNo] = w.MarkerNo, [CutNo] = w.Cutno
 	                from SciProduction_WorkOrderForOutput w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderForOutputUkey
 	                where so.id = si.id
@@ -451,7 +451,7 @@ namespace Sci.Production.Quality
                 select val = stuff((select concat(';',tmp.Roll)
                 from
                 (
-	                select  Roll from SciProduction_WorkOrderForOutput_SpreadingFabric ws where ws.CutRef = si.CutRef
+                    select Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
                 ) 
                 tmp for xml path('')),1,1,'')
                 )FabricRoll

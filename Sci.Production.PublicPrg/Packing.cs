@@ -2658,7 +2658,7 @@ outer apply(
 	for xml path('')),1,1,'')
 )b
 outer apply(
-    select Name from pass1 with (nolock) where ID = pd.DryRoomMDScanName
+    select Name from [dbo].[SciMES_Pass1] with (nolock) where ID = pd.DryRoomMDScanName
 ) Signature
 where pd.id = '{packingListID}' and o.CustPONo = '{custPONoDT.Rows[i]["CustPONo"]}'
 group by pd.CTNStartNo,a.SizeCode,b.ShipQty,o.CustPONo,Signature.Name,pd.DryRoomMDScanDate,m.ScanDate,m.addName

@@ -397,7 +397,7 @@ namespace Sci.Production.Cutting
                                     // 計算剩餘英吋數、碼等等
                                     decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                                     string inchFraction = Prg.ProjExts.ConvertToFractionString(inchDecimalPart);
-                                    markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+2""";
+                                    markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1""";
                                     layerYDS += layerInch * this.inchToYdsRate;
                                     break;
                                 }
@@ -1990,7 +1990,7 @@ AND Junk = 0
         public static SelectItem PopupCutCell(string defaults)
         {
             DataTable dt = GetCutCell();
-            SelectItem selectItem = new SelectItem(dt, "ID", "10@300,300", defaults, false, ",");
+            SelectItem selectItem = new SelectItem(dt, "ID,Description", "5,40", defaults, false, ",");
             DialogResult result = selectItem.ShowDialog();
             if (result == DialogResult.Cancel)
             {
@@ -2027,10 +2027,11 @@ AND Junk = 0
         {
             string sqlcmd = $@"
 SELECT
-    ID
+    ID ,Description
 FROM CutCell WITH (NOLOCK)
 WHERE MDivisionID = '{Sci.Env.User.Keyword}'
 AND Junk = 0
+Order BY ID ASC
 ";
 
             DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable dt);
@@ -3997,10 +3998,10 @@ WHERE TABLE_NAME = N'{tableName}'";
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
                 // P02 不會有Spreading No、Cut Cell
-                worksheet.Cells[3, 5] = string.Empty;
-                worksheet.Cells[3, 10] = string.Empty;
-                worksheet.Cells[3, 7] = string.Empty;
-                worksheet.Cells[3, 12] = string.Empty;
+                //worksheet.Cells[3, 5] = string.Empty;
+                //worksheet.Cells[3, 10] = string.Empty;
+                //worksheet.Cells[3, 7] = string.Empty;
+                //worksheet.Cells[3, 12] = string.Empty;
 
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
@@ -4067,7 +4068,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                     if (workorderArry.Length > 0)
                     {
-                        worksheet.Cells[3, 7] = string.Empty;
+                        worksheet.Cells[3, 7] = workorderArry[0]["CutCellid"].ToString();
                         worksheet.Cells[3, 12] = string.Empty;
                         #region 從後面開始寫 先寫Refno,Color
 
@@ -4404,7 +4405,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                 if (isP02)
                 {
-                    worksheet.Cells[3, 5] = string.Empty;
+                    worksheet.Cells[3, 5] = "Cut Cell:";
                     worksheet.Cells[3, 10] = string.Empty;
                 }
 
@@ -4507,8 +4508,17 @@ WHERE TABLE_NAME = N'{tableName}'";
                     {
                         pattern = string.Empty;
                         worksheet.Cells[13, 2] = workorderArry[0]["FabricPanelCode"].ToString();
-                        worksheet.Cells[3, 7] = workorderArry[0]["SpreadingNoID"].ToString();
-                        worksheet.Cells[3, 12] = workorderArry[0]["CutCellid"].ToString();
+
+                        if (isP02)
+                        {
+                            worksheet.Cells[3, 7] = workorderArry[0]["CutCellid"].ToString();
+                        }
+                        else
+                        {
+                            worksheet.Cells[3, 7] = workorderArry[0]["SpreadingNoID"].ToString();
+                            worksheet.Cells[3, 12] = workorderArry[0]["CutCellid"].ToString();
+                        }
+
                         worksheet.Cells[22, 2] = workorderArry[0]["Tone"].ToString();
                         if (workorderPatternArry.Length > 0)
                         {
