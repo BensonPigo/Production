@@ -824,11 +824,49 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
         {
             returnResult = new DataSet();
             string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description like 'PAMS WEB API%'", "ManufacturingExecution");
-#if DEBUG
-            // 目前是call pmsdb\ESP api
-            url = "http://172.17.11.98:9530";
-#endif
             string api = "api/AttendanceSummary/AttendanceSummary_Summary";
+
+            #region 台北端PMSDB連線
+            DataTable dtQry;
+            // Port同Pmsdb IIS設定
+            var resultQry = this.DBProxy.Select(
+                null,
+@"select APIPort = Case @@SERVERNAME
+       When 'PMSDB\ESP' Then '9530'
+       When 'PMSDB\SNP' Then '9531'
+       When 'PMSDB\SPT' Then '9532'
+       When 'PMSDB\PH1' Then '9533'
+       When 'PMSDB\PH2' Then '9534'
+       When 'PMSDB\PAN' Then '9535'
+       When 'PMSDB\SPR' Then '9536'
+       When 'PMSDB\SPS' Then '9537'
+       When 'PMSDB\HZG' Then '9538'
+       When 'PMSDB\SWR' Then '9539'
+       When 'Testing\ESP' Then '9530'
+       When 'Testing\SNP' Then '9531'
+       When 'Testing\SPT' Then '9532'
+       When 'Testing\PH1' Then '9533'
+       When 'Testing\PH2' Then '9534'
+       When 'Testing\PAN' Then '9535'
+       When 'Testing\SPR' Then '9536'
+       When 'Testing\SPS' Then '9537'
+       When 'Testing\HZG' Then '9538'
+       When 'Testing\SWR' Then '9539'
+       Else ''
+       End ", out dtQry);
+
+            if (!resultQry)
+            {
+                return new DualResult(false, resultQry.Messages.ToString());
+            }
+
+            if (dtQry != null && dtQry.Rows.Count > 0 && !dtQry.Rows[0]["APIPort"].ToString().Empty())
+            {
+                // 目前是call各環境 pmsdb api
+                url = "http://172.17.11.98:" + dtQry.Rows[0]["APIPort"].ToString();
+            }
+
+            #endregion 台北端PMSDB連線
 
             if (MyUtility.Check.Empty(url))
             {
