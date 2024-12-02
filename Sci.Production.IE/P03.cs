@@ -174,18 +174,6 @@ select *
     ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
 	,[EstTotalCycleTime] = IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100)
 	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100))
-
-	--,[EstTotalCycleTime] = CAST(IIF(
-    --                                   AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
-    --                                   0.0, 
-    --                                   ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100
-    --                               ) AS DECIMAL(20, 5))
-    --
-    --   ,[EstOutputHr] = CAST(IIF(
-    --                               AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) = 0, 
-    --                               0.0, 
-    --                               3600 / (ld.TotalGSDNO / AVG(CAST(ld.OperatorEffi AS DECIMAL)) OVER (PARTITION BY ld.EmployeeID, ld.No) * 100)
-    --                           ) AS DECIMAL(20, 5)) 
 from (
     select  ld.OriNO
 	    , ld.No

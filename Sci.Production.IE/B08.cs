@@ -506,7 +506,6 @@ SELECT
 ,lmbd.Cycle
 INTO #DetailP06
 FROM Employee e WITH(NOLOCK)
-LEFT JOIN (VALUES (90),(180),(270),(360)) AS d (DayRange) ON 1=1
 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
 OUTER APPLY (
