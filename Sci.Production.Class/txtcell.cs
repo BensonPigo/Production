@@ -35,7 +35,7 @@ namespace Sci.Production.Class
                 this.where = string.Format(" Where junk = 0 and mdivisionid = '{0}'", this.MDivisionID);
             }
 
-            sql = "select distinct id from Production.dbo.CutCell WITH (NOLOCK) " + this.where;
+            sql = "select distinct [ID],[Description] from Production.dbo.CutCell WITH (NOLOCK) " + this.where;
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2", this.Text, false, ",")
             {
                 Width = 300,
