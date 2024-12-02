@@ -328,16 +328,22 @@ SELECT
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, @goDate) AND lm_Day.EditDate <= @goDate) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, @goDate) AND lm_Day.AddDate <= @goDate))
-INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm_Day.StyleID AND TS.SeasonID = lm_Day.SeasonID AND TS.ComboType = lm_Day.ComboType AND TS.BrandID = lm_Day.BrandID
-LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and tsd.id = ts.id
 OUTER APPLY (
     SELECT val = STUFF((
         SELECT DISTINCT CONCAT(',', Name)
         FROM OperationRef a WITH(NOLOCK)
-        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+        INNER JOIN IESelectCode b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
         WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
         FOR XML PATH('')), 1, 1, '')
 ) Operation_P03
+OUTER APPLY(
+	select TOP 1 tsd.Location,tsd.ID
+	from TimeStudy TS
+	inner join TimeStudy_Detail tsd WITH(NOLOCK) ON tsd.id = ts.id
+	where TS.StyleID = lm_Day.StyleID AND TS.SeasonID = lm_Day.SeasonID AND TS.ComboType = lm_Day.ComboType AND TS.BrandID = lm_Day.BrandID
+	and lmd.OperationID = tsd.OperationID
+
+)tsd
 OUTER APPLY
 (
 	SELECT TOP 1
@@ -352,11 +358,11 @@ OUTER APPLY
 		where  td.OperationID LIKE '-%' and td.smv = 0
 	)
 	OperatorIDss 
-	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+	WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmd.MachineTypeID,'') != '')
-GROUP BY ISNULL(lmd.Attachment,''),ISNULL(lmd.MachineTypeID,''), ISNULL(Operation_P03.val,''),ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''), ISNULL(lmd.SewingMachineAttachmentID,''),lmd.Template
+GROUP BY lmd.Attachment,lmd.MachineTypeID, Operation_P03.val,tsd.[location],OP.OperationID,tsd.[location],lmd.SewingMachineAttachmentID,lmd.Template
 
 UNION ALL
 
@@ -370,8 +376,6 @@ SELECT
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID  AND ((lmb_Day.EditDate >= DATEADD(YEAR, -3, @goDate) AND lmb_Day.EditDate <= @goDate) OR (lmb_Day.AddDate >= DATEADD(YEAR, -3, @goDate) AND lmb_Day.AddDate <= @goDate))
-INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lmb_Day.StyleID AND TS.SeasonID = lmb_Day.SeasonID AND TS.ComboType = lmb_Day.ComboType AND TS.BrandID = lmb_Day.BrandID
-LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmbd.OperationID = tsd.OperationID AND TSD.ID = TS.ID
 OUTER APPLY (
     SELECT val = STUFF((
         SELECT DISTINCT CONCAT(',', Name)
@@ -380,6 +384,13 @@ OUTER APPLY (
         WHERE a.CodeType = '00007' AND a.id = lmbd.OperationID  
         FOR XML PATH('')), 1, 1, '')
 ) Operation_P06
+OUTER APPLY(
+	select TOP 1 tsd.Location,tsd.ID
+	from TimeStudy TS
+	inner join TimeStudy_Detail tsd WITH(NOLOCK) ON tsd.id = ts.id
+	where TS.StyleID = lmb_Day.StyleID AND TS.SeasonID = lmb_Day.SeasonID AND TS.ComboType = lmb_Day.ComboType AND TS.BrandID = lmb_Day.BrandID
+	and lmbd.OperationID = tsd.OperationID
+)tsd
 OUTER APPLY
 (
 	SELECT TOP 1
@@ -394,11 +405,11 @@ OUTER APPLY
 		where  td.OperationID LIKE '-%' and td.smv = 0
 	)
 	OperatorIDss 
-	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = lmbd.OperationID ORDER BY Seq DESC)
+	WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = lmbd.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmbd.MachineTypeID,'') != '')
-GROUP BY ISNULL(lmbd.Attachment,''),ISNULL(lmbd.MachineTypeID,''), ISNULL(Operation_P06.val,''),ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''), ISNULL(lmbd.SewingMachineAttachmentID,''),lmbd.Template;
+GROUP BY lmbd.Attachment,lmbd.MachineTypeID, Operation_P06.val,tsd.[location],OP.OperationID, tsd.[location], lmbd.SewingMachineAttachmentID,lmbd.Template;
             ";
             return sql;
         }
