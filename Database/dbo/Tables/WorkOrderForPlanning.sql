@@ -29,11 +29,12 @@
     [MarkerNo]           VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_MarkerNo] DEFAULT ('') NOT NULL,
     [MarkerLength]       VARCHAR (15)    CONSTRAINT [DF_WorkOrderForPlanning_MarkerLength] DEFAULT ('') NOT NULL,
     [Order_EachconsUkey] BIGINT          CONSTRAINT [DF_WorkOrderForPlanning_Order_EachconsUkey] DEFAULT ((0)) NOT NULL,
+	[MarkerVersion]      VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT ('') NOT NULL,
+    [CutCellID] VARCHAR(2) CONSTRAINT [DF_WorkOrderForPlanning_CutCellID] DEFAULT ('') NOT NULL,
     [AddName]            VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_AddName] DEFAULT ('') NOT NULL,
     [AddDate]            DATETIME        NULL,
     [EditName]           VARCHAR (10)    CONSTRAINT [DF_WorkOrderForPlanning_EditName] DEFAULT ('') NOT NULL,
     [EditDate]           DATETIME        NULL,
-    [MarkerVersion]      VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_MarkerVersion] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_WorkOrderForPlanning] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -140,3 +141,13 @@ GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForPlanning_BundleESCDate]
     ON [dbo].[WorkOrderForPlanning]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'裁桌',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'WorkOrderForPlanning',
+    @level2type = N'COLUMN',
+    @level2name = N'CutCellID'

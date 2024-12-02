@@ -2821,10 +2821,6 @@
     <Build Include="dbo\Tables\AutomatedLineMapping_NotHitTargetReason.sql" />
     <Build Include="dbo\Tables\SewerGroupRange.sql" />
     <Build Include="dbo\Stored Procedures\GetAutomatedLineMapping.sql" />
-    <Build Include="dbo\Tables\複製Clip.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\GASAClip.sql" />
     <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
     <Build Include="dbo\Functions\GetUnrollRelaxationCompletion.sql" />
@@ -2887,7 +2883,6 @@
     <Build Include="dbo\Tables\ClogScanPack_Detail.sql" />
     <Build Include="dbo\Tables\SpreadingInspection_InsCutRef_Inspection_Roll.sql" />
     <Build Include="dbo\Tables\WorkOrderForPlanning.sql" />
-    <Build Include="dbo\Tables\WorkOrderForPlanning_Distribute.sql" />
     <Build Include="dbo\Tables\WorkOrderForPlanning_PatternPanel.sql" />
     <Build Include="dbo\Tables\WorkOrderForPlanning_SizeRatio.sql" />
     <Build Include="dbo\Tables\WorkOrderForOutput.sql" />
