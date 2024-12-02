@@ -138,6 +138,16 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.RunOnSunday = itemBase.RunOnSunday;
                     item.Group = itemBase.Group;
                     item.SEQ = itemBase.SEQ;
+                    if (MyUtility.Check.Empty(item.SDate) && itemBase.Source.ToUpper() == "SP")
+                    {
+                        item.SDate = MyUtility.Convert.GetDate("1911/01/01");
+                    }
+
+                    if (MyUtility.Check.Empty(item.EDate) && itemBase.Source.ToUpper() == "SP")
+                    {
+                        item.EDate = MyUtility.Convert.GetDate("2999/12/31");
+                    }
+
                     executedList.Add(item);
                 }
             }
