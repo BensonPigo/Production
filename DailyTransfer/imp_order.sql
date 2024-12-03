@@ -109,6 +109,7 @@ else
 		--��欰Cutting�����,����sMDivisionID
 		Update a
 		set a.MDivisionID = isnull(b.MDivisionID, '')
+            ,a.FactoryID = ISNULL(b.FactoryID, '')
 		from Production.dbo.Cutting a
 		inner join #TOrder b on a.ID = b.ID
 		where a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory)
