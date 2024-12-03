@@ -31,7 +31,7 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this._isBatchAssign = isBatchAssign;
 
-            if (isBatchAssign)
+            if (!isBatchAssign)
             {
                 this.id = id;
                 this.listID = id.Split(new string[] { "','" }, StringSplitOptions.None).ToList();
@@ -42,6 +42,7 @@ namespace Sci.Production.Warehouse
             }
             else
             {
+                this.Text = "P10. Batch Assign Releaser";
                 this.id = id;
                 this.listID = id.Split(new string[] { "','" }, StringSplitOptions.None).ToList();
                 this.drArray = dataTable.AsEnumerable()
@@ -49,7 +50,6 @@ namespace Sci.Production.Warehouse
                     .ToArray();
             }
 
-            this.Text = "P10. Batch Assign Releaser";
         }
 
         /// <inheritdoc/>
@@ -60,12 +60,7 @@ namespace Sci.Production.Warehouse
             this.Query();
             this.ControlButton();
 
-            if (this._isBatchAssign)
-            {
-                // batch 提示訊息
-                MyUtility.Msg.InfoBox("Please append the MIND Releasers to be batch assign.");
-            }
-            else
+            if (!this._isBatchAssign)
             {
                 if (this.drArray == null)
                 {
@@ -355,14 +350,11 @@ namespace Sci.Production.Warehouse
                     {
                         // batch ：舊資料全部刪除
                         DBProxy.Current.Execute(null, $@"delete from Issue_MIND where id IN ('{this.listID.JoinToString("','")}')");
-                        foreach (var issueId in this.listID)
+
+                        foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
                         {
-                            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-                            {
-                                dr["ID"] = issueId;
-                                dr["AddDate"] = datenow;
-                                result = DBProxy.Current.Insert(null, tableSchema, dr);
-                            }
+                            dr["AddDate"] = datenow;
+                            result = DBProxy.Current.Insert(null, tableSchema, dr);
                         }
                     }
                     else
