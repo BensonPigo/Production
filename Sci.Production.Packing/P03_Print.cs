@@ -475,6 +475,7 @@ AND OrderID = '{this.orderID}'
             worksheet.Cells[ttlRow, 8].Formula = $"=SUM(H{headerRow + 1}:H{ttlRow - 1})";
 
             MyUtility.Excel.CopyToXls(dtOrderby, string.Empty, fileNamexltx, headerRow, false, null, excelApp);
+            worksheet.Columns[2].ColumnWidth = 20;
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(fileName);
