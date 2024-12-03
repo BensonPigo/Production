@@ -455,7 +455,7 @@ AND OrderID = '{this.orderID}'
             worksheet.Cells[3, 2] = dr["StyleID"];
             worksheet.Cells[4, 2] = dr["Customize1"];
             worksheet.Cells[5, 2] = this.orderID;
-            worksheet.Cells[3, 8] = listOrderby.Select(row => MyUtility.Convert.GetString(row["No"])).Distinct().Count(); // Ttl Ctns
+            worksheet.Cells[3, 8] = listOrderby.Select(row => MyUtility.Convert.GetString(row["CTNStartNo"])).Distinct().Count(); // Ttl Ctns
             worksheet.Cells[4, 8] = listOrderby.Sum(row => MyUtility.Convert.GetInt(row["GarmentQty"])); // Ttl Garments
             worksheet.Cells[5, 8] = "1.0"; // Sensitivity Used
 
