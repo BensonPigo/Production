@@ -95,7 +95,6 @@
             this.dateIssueDate.DateBox1.Name = "";
             this.dateIssueDate.DateBox1.Size = new System.Drawing.Size(129, 23);
             this.dateIssueDate.DateBox1.TabIndex = 0;
-            this.dateIssueDate.DateBox1.TextChanged += new System.EventHandler(this.DateIssueDate_TextChanged);
             // 
             // 
             // 
@@ -103,12 +102,12 @@
             this.dateIssueDate.DateBox2.Name = "";
             this.dateIssueDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateIssueDate.DateBox2.TabIndex = 1;
-            this.dateIssueDate.DateBox2.TextChanged += new System.EventHandler(this.DateIssueDate_TextChanged);
             this.dateIssueDate.IsRequired = false;
             this.dateIssueDate.Location = new System.Drawing.Point(113, 9);
             this.dateIssueDate.Name = "dateIssueDate";
             this.dateIssueDate.Size = new System.Drawing.Size(280, 23);
             this.dateIssueDate.TabIndex = 133;
+            this.dateIssueDate.Validating += new System.ComponentModel.CancelEventHandler(this.DateIssueDate_Validating);
             // 
             // P10_Batch_MIND_Releaser
             // 
