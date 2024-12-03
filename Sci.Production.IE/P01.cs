@@ -33,7 +33,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
-        private readonly int seqIncreaseNumber = 1; // 新增一筆時 SEQ 從最大往上增加
+        private readonly int seqIncreaseNumber = 10; // 新增一筆時 SEQ 從最大往上增加
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
@@ -210,7 +210,7 @@ namespace Sci.Production.IE
         /// </summary>
         /// <param name="e">PrepareDetailSelectCommandEventArgs</param>
         /// <returns>DualResult</returns>
-        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e) 
+        protected override DualResult OnDetailSelectCommandPrepare(PrepareDetailSelectCommandEventArgs e)
         {
             this.strTimeStudtID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
@@ -495,7 +495,6 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
@@ -1281,7 +1280,7 @@ and Name = @PPA
                 .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(7), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
                 .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out CheckBoxColumn colIsNonSewingLine)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0, settings: this.Col_IsNonSewingLine())
                 .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
@@ -1292,7 +1291,6 @@ and Name = @PPA
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
-            colIsNonSewingLine.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.HideRows();
@@ -1337,6 +1335,18 @@ and Name = @PPA
                 // 左邊補 0 至 4 碼
                 dr[columnName] = e.FormattedValue.ToString().PadLeft(4, '0');
                 dr.EndEdit();
+            };
+
+            return setting;
+        }
+
+        private DataGridViewGeneratorCheckBoxColumnSettings Col_IsNonSewingLine()
+        {
+            DataGridViewGeneratorCheckBoxColumnSettings setting = new DataGridViewGeneratorCheckBoxColumnSettings();
+            setting.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            setting.CellValidating += (s, e) =>
+            {
+
             };
 
             return setting;
@@ -2434,7 +2444,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
             {
                 this.CurrentMaintain["IETMSID"] = ietmsData.Rows[0]["IETMSID"].ToString();
                 this.CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
-                this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
                 this.HideRows();
             }
         }
