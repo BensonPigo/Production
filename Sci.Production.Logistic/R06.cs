@@ -25,7 +25,7 @@ namespace Sci.Production.Logistic
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.FileType = "LogisticR06";
+            this.FileType = "ClogR06";
         }
 
         /// <inheritdoc/>

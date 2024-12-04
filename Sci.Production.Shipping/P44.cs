@@ -127,7 +127,6 @@ Order by CreateDate Desc, EditDate Desc, FileName
                 return;
             }
 
-            // 使用底層Clip來上傳檔案
             // 呼叫File 選擇視窗
             OpenFileDialog ofdFileName = ProductionEnv.GetOpenFileDialog();
             ofdFileName.Multiselect = false;
@@ -144,7 +143,8 @@ Order by CreateDate Desc, EditDate Desc, FileName
             {
                 return;
             }
-            this.ShowWaitMessage("Saving...");
+
+            this.ShowWaitMessage("Uploading...Please wait..");
 
             string fileName = ofdFileName.FileName;
             string[] clipFiles = new string[]
@@ -154,8 +154,8 @@ Order by CreateDate Desc, EditDate Desc, FileName
             string fileN = ofdFileName.SafeFileName;
             string uniqueKey = this.radioPanel.Value + ((DateTime)this.dateCreateDate.Value).ToString("yyyyMMdd") + Path.GetFileNameWithoutExtension(fileN);
 
+            #region Save Data & upload excel
             DualResult result;
-            #region Save data
             List<SqlParameter> listSQLParameter = new List<SqlParameter>
             {
                 new SqlParameter("@FileType", this.radioPanel.Value),
@@ -164,7 +164,7 @@ Order by CreateDate Desc, EditDate Desc, FileName
                 new SqlParameter("@UserID", Env.User.UserID),
             };
             string sqlcmd = $@"
-if exists(select * from StatementReport where FileType = @FileType and CreateDate = @CreateDate and FileName = @FileName)
+if exists(select 1 from StatementReport where FileType = @FileType and CreateDate = @CreateDate and FileName = @FileName)
 begin
 	update StatementReport
 	set EditDate = GETDATE()
@@ -182,7 +182,9 @@ end
             {
                 DialogResult dResult = MyUtility.Msg.QuestionBox(
                     $@"This FileName already exists with <{this.radioPanel.Value}> and <{((DateTime)this.dateCreateDate.Value).ToString("yyyy/MM/dd")}>.
-Do you want to replace it?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+Do you want to replace it?", "Question",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxDefaultButton.Button2);
                 if (dResult == DialogResult.No)
                 {
                     return;
@@ -223,6 +225,7 @@ and UniqueKey = '{clipUKey}'"))
                         }
                     }
 
+                    // 使用底層Clip來上傳檔案
                     // 新增clip 檔案和資料
                     result = Sci.Win.Tools.Clip.AddClip(tablename: "StatementReport", uniqueID: uniqueKey, userID: Env.User.UserID, description: "Import " + this.radioPanel.Value + " on " + ((DateTime)this.dateCreateDate.Value).ToString("yyyyMMdd"), clipFiles: clipFiles);
                     if (!result)
@@ -269,7 +272,7 @@ and UniqueKey = '{clipUKey}'"))
                 return;
             }
 
-            DialogResult dResult = MyUtility.Msg.QuestionBox($@"Are you sure about deleting this report <{selectedRow[0]["FileName"].ToString()}>", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
+            DialogResult dResult = MyUtility.Msg.QuestionBox($@"Are you sure about deleting this report <{selectedRow[0]["FileName"].ToString()}>?", "Question", MessageBoxButtons.YesNo, MessageBoxDefaultButton.Button2);
             if (dResult == DialogResult.No)
             {
                 return;
@@ -293,14 +296,6 @@ and UniqueKey = '{clipUKey}'"))
                 try
                 {
                     if (!(result = DBProxy.Current.Execute(string.Empty, sqldel, listSQLParameter)))
-                    {
-                        transactionscope.Dispose();
-                        this.ShowErr(result);
-                        return;
-                    }
-
-                    string[] files = null;
-                    if (!(result = Sci.Win.Tools.Clip.GetAllClipFiles("StatementReport", clipUKey, "%", out files, string.Empty)))
                     {
                         transactionscope.Dispose();
                         this.ShowErr(result);

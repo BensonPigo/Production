@@ -74,7 +74,7 @@
             this.dateCreateDate.Location = new System.Drawing.Point(118, 12);
             this.dateCreateDate.Name = "dateCreateDate";
             this.dateCreateDate.Size = new System.Drawing.Size(128, 23);
-            this.dateCreateDate.TabIndex = 57;
+            this.dateCreateDate.TabIndex = 0;
             // 
             // radioPanel
             // 
@@ -123,7 +123,7 @@
             this.radio_WHR29.Location = new System.Drawing.Point(3, 28);
             this.radio_WHR29.Name = "radio_WHR29";
             this.radio_WHR29.Size = new System.Drawing.Size(286, 21);
-            this.radio_WHR29.TabIndex = 4;
+            this.radio_WHR29.TabIndex = 1;
             this.radio_WHR29.TabStop = true;
             this.radio_WHR29.Text = "Warehouse R29. Replacement Rsleasing";
             this.radio_WHR29.UseVisualStyleBackColor = true;
@@ -136,7 +136,7 @@
             this.radio_CuttingR15.Location = new System.Drawing.Point(3, 109);
             this.radio_CuttingR15.Name = "radio_CuttingR15";
             this.radio_CuttingR15.Size = new System.Drawing.Size(201, 21);
-            this.radio_CuttingR15.TabIndex = 3;
+            this.radio_CuttingR15.TabIndex = 4;
             this.radio_CuttingR15.TabStop = true;
             this.radio_CuttingR15.Text = "Cutting R15. Manual Report";
             this.radio_CuttingR15.UseVisualStyleBackColor = true;
@@ -149,7 +149,7 @@
             this.radio_CuttingR14.Location = new System.Drawing.Point(3, 82);
             this.radio_CuttingR14.Name = "radio_CuttingR14";
             this.radio_CuttingR14.Size = new System.Drawing.Size(336, 21);
-            this.radio_CuttingR14.TabIndex = 2;
+            this.radio_CuttingR14.TabIndex = 3;
             this.radio_CuttingR14.TabStop = true;
             this.radio_CuttingR14.Text = "Cutting R14. Loading-Subprocess Manual Report";
             this.radio_CuttingR14.UseVisualStyleBackColor = true;
@@ -162,7 +162,7 @@
             this.radio_WHR30.Location = new System.Drawing.Point(3, 54);
             this.radio_WHR30.Name = "radio_WHR30";
             this.radio_WHR30.Size = new System.Drawing.Size(242, 21);
-            this.radio_WHR30.TabIndex = 1;
+            this.radio_WHR30.TabIndex = 2;
             this.radio_WHR30.TabStop = true;
             this.radio_WHR30.Text = "Warehouse R30. Inventory Report";
             this.radio_WHR30.UseVisualStyleBackColor = true;
@@ -188,7 +188,7 @@
             this.gridIcon1.Location = new System.Drawing.Point(645, 238);
             this.gridIcon1.Name = "gridIcon1";
             this.gridIcon1.Size = new System.Drawing.Size(100, 32);
-            this.gridIcon1.TabIndex = 55;
+            this.gridIcon1.TabIndex = 5;
             this.gridIcon1.Text = "gridIcon1";
             this.gridIcon1.RemoveClick += new System.EventHandler(this.GridIcon1_RemoveClick);
             // 
@@ -213,7 +213,7 @@
             this.dateQueryCreateDate.Location = new System.Drawing.Point(118, 247);
             this.dateQueryCreateDate.Name = "dateQueryCreateDate";
             this.dateQueryCreateDate.Size = new System.Drawing.Size(280, 23);
-            this.dateQueryCreateDate.TabIndex = 5;
+            this.dateQueryCreateDate.TabIndex = 2;
             // 
             // labSCIDlv
             // 
@@ -239,7 +239,7 @@
             this.btnQuery.Location = new System.Drawing.Point(461, 242);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(97, 30);
-            this.btnQuery.TabIndex = 6;
+            this.btnQuery.TabIndex = 4;
             this.btnQuery.Text = "Query";
             this.btnQuery.UseVisualStyleBackColor = true;
             this.btnQuery.Click += new System.EventHandler(this.BtnQuery_Click);
@@ -250,7 +250,7 @@
             this.btnImportFile.Location = new System.Drawing.Point(582, 21);
             this.btnImportFile.Name = "btnImportFile";
             this.btnImportFile.Size = new System.Drawing.Size(132, 30);
-            this.btnImportFile.TabIndex = 8;
+            this.btnImportFile.TabIndex = 3;
             this.btnImportFile.Text = "Import File";
             this.btnImportFile.UseVisualStyleBackColor = true;
             this.btnImportFile.Click += new System.EventHandler(this.BtnSave_Click);
@@ -285,9 +285,10 @@
             this.ClientSize = new System.Drawing.Size(756, 594);
             this.Controls.Add(this.grid);
             this.Controls.Add(this.panel3);
+            this.DefaultControl = "dateCreateDate";
             this.Name = "P44";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P44. Critical Activity Target Adjust";
+            this.Text = "P44. Statement Report";
             this.Controls.SetChildIndex(this.panel3, 0);
             this.Controls.SetChildIndex(this.grid, 0);
             this.panel3.ResumeLayout(false);

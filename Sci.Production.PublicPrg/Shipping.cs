@@ -1878,6 +1878,12 @@ where exists (select 1 from #tmp t where t.SP = oqs.ID and t.Seq = oqs.Seq and  
             }
         }
 
+        /// <summary>
+        /// VN海關Report共用開啟Report
+        /// </summary>
+        /// <param name="dtPrint">Excel DataTable</param>
+        /// <param name="fileType">判別FileType</param>
+        /// <returns>DualResult</returns>
         public static DualResult GetVNCustomsReport(DataTable dtPrint, string fileType)
         {
             #region 從Clip 撈出Excel
@@ -1937,7 +1943,7 @@ and UniqueKey = '{strUkey}'
                     return result;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // 訊息不能Show出檔案不存在會被懷疑, 所以只好說資料找不到請聯繫台北IT
                 result = new DualResult(false, "Clip Data not found, please contact Taipei IT.");
@@ -1949,6 +1955,12 @@ and UniqueKey = '{strUkey}'
             return result;
         }
 
+        /// <summary>
+        /// VN海關Report共用撈DB
+        /// </summary>
+        /// <param name="sqlwhere">where 條件</param>
+        /// <param name="fileType">FileType</param>
+        /// <returns>DataTable</returns>
         public static DataTable GetVNCustomsReportData(StringBuilder sqlwhere, string fileType)
         {
             StringBuilder sqlcmd = new StringBuilder();
