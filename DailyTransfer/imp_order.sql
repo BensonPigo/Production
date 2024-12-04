@@ -109,10 +109,11 @@ else
 		--��欰Cutting�����,����sMDivisionID
 		Update a
 		set a.MDivisionID = isnull(b.MDivisionID, '')
-            ,a.FactoryID = ISNULL(b.FactoryID, '')
+            ,a.FactoryID = ISNULL(b.Fty_Group, '')
 		from Production.dbo.Cutting a
 		inner join #TOrder b on a.ID = b.ID
-		where a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory)
+		where (a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory))
+              OR (a.FactoryID <> b.Fty_Group AND EXISTS (SELECT 1 FROM Production.dbo.Factory WHERE ID = b.Fty_Group))
 
 		--轉單為Cutting母單時,覆寫CutPlan母子單的工廠欄位 
 		Update a
