@@ -19,7 +19,7 @@ RETURN
 		Completed = IIF(sd.IsAGVArrived = 1, 'Y', 'N'),
 		Suspend = IIF(sd.IsSuspend = 1, 'Y', 'N'),
 		MaterialStatus='',--暫時不開發，預計之後得到廠商API綠色代表還夠量
-		Cutno = w.Seq,--時間緊迫保持APP正常(雖然那APP似乎沒人用), 欄位名稱照舊 Cutno, 日後維護為了避免誤會, 若有時間改成 SEQ 傳出
+		Cutno = w.Seq,--時間緊迫不改APP, 為了不讓APP掛掉欄位名稱照舊 Cutno, 日後維護為了避免誤會希望能改成 SEQ 傳出
 		w.Markername,
 		w.FabricCombo,
 		w.FabricPanelCode,
@@ -32,7 +32,7 @@ RETURN
 		w.SEQ1,
 		w.SEQ2,
 		EstCutDate = iif(@Ukey = 0 , w.EstCutDate, s.EstCutDate),
-		actcutdate = CAST(NULL AS DATETIME),--時間緊迫保持APP正常(雖然那APP似乎沒人用), 仍傳出這欄位為 null, 有空再移除此欄位
+		actcutdate = CAST(NULL AS DATETIME),--時間緊迫不改APP,  為了不讓APP掛掉仍傳出這欄位為 null, 雖然那APP似乎沒人用, 有空再移除此欄位
 		w.CutplanID,
 		IssueID = Issues.IssueID,
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
@@ -44,10 +44,10 @@ RETURN
 		f.WeaveTypeID
 	from WorkOrderForPlanning w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
-	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
+	inner join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
 													and s.EstCutDate = @EstCutDate
 													and s.CutCellid = w.CutCellid
-	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
+	inner join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
 	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkOrderForPlanningUkey = w.Ukey
 	left join Fabric f with (nolock) on f.SCIRefno = w.SCIRefno
 	outer apply
@@ -80,7 +80,6 @@ RETURN
 	where 1=1
 	and o.Finished = 0
 	and w.FactoryID = @FactoryID
-	and (w.CutRef is not null or sd.CutRef is not null)
 	and (
 		(
 			@Ukey = 0 and 
