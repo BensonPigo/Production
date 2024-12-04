@@ -397,7 +397,7 @@ namespace Sci.Production.Cutting
                                     // 計算剩餘英吋數、碼等等
                                     decimal inchDecimalPart = layerInch - Math.Floor(layerInch);
                                     string inchFraction = Prg.ProjExts.ConvertToFractionString(inchDecimalPart);
-                                    markerLength = $@"{layerYDS}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1""";
+                                    markerLength = $@"{layerYDS.ToString("00")}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1""";
                                     layerYDS += layerInch * this.inchToYdsRate;
                                     break;
                                 }
@@ -4216,14 +4216,15 @@ WHERE TABLE_NAME = N'{tableName}'";
                     string str_PIVOT = string.Empty;
                     nSizeColumn = 4;
                     DataRow[] fabricComboTbsia = arrDtType[(int)TableType.FabricComboTb].Select(string.Format("Cutplanid = '{0}'", cutplanid));
-                    foreach (DataRow dr in sizeCodeArry)
+                    List<string> sizeCodeDistinct = sizeCodeArry.AsEnumerable().Select(dr => dr["SizeCode"].ToString()).Distinct().ToList();
+                    foreach (string s in sizeCodeDistinct)
                     {
-                        str_PIVOT = str_PIVOT + string.Format("[{0}],", dr["SizeCode"].ToString());
+                        str_PIVOT = str_PIVOT + $@"[{s}],";
 
                         // 寫入Size
                         for (int i = 0; i < fabricComboTbsia.Length; i++)
                         {
-                            worksheet.Cells[nRow + (rowRange * i), nSizeColumn] = dr["SizeCode"].ToString();
+                            worksheet.Cells[nRow + (rowRange * i), nSizeColumn] = s;
                         }
 
                         nSizeColumn++;
@@ -4290,9 +4291,20 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 worksheet.Cells[nRow, 3] = cutqtydr["Layer"].ToString();
                                 worksheet.Cells[nRow, 20] = cutqtydr["Cons"].ToString();
                                 fabColor = cutqtydr["Colorid"].ToString();
-                                for (int nSizeDetail = 0; nSizeDetail < sizeCodeArry.Length; nSizeDetail++)
+
+                                int col = 0;
+                                foreach (string s in sizeCodeDistinct)
                                 {
-                                    worksheet.Cells[nRow, nSizeDetail + 4] = cutqtydr[6 + nSizeDetail].ToString(); // +4因為從第四個Column 開始 nSizeDetail +4 是因為Table 從第四個開始是Size
+                                    var currentSeq = sizeCodeArry.AsEnumerable()
+                                        .Where(o => o["Seq"].ToString() == cutqtydr["Seq"].ToString() && o["SizeCode"].ToString() == s)
+                                        .Select(o => new { Seq = o["Seq"].ToString(), SizeCode = o["SizeCode"].ToString() });
+                                    if (currentSeq.Any())
+                                    {
+                                        // cutqtydr[7 + col].ToString() 等同於 currentSeq找到的第一筆
+                                        worksheet.Cells[nRow, col + 4] = cutqtydr[7 + col].ToString();
+                                    }
+
+                                    col++;
                                 }
 
                                 nRow++;
