@@ -253,7 +253,7 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                .Text("Suspend", header: "Suspend", width: Widths.AnsiChars(3), iseditingreadonly: true, settings: suspend)
                .Text("MaterialStatus", header: "Material\r\nStatus", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(6), settings: cutRef)
-               .Numeric("Cutno", header: "Cut#", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Numeric("Cutno", header: "SEQ", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("Markername", header: "Maker\r\nName", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("FabricCombo", header: "Fabric\r\nCombo", width: Widths.AnsiChars(3), iseditingreadonly: true)
                .Text("FabricPanelCode", header: "Fab_Panel\r\nCode", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -269,7 +269,6 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
                .Date("EstCutDate", header: "Est. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Date("actcutdate", header: "Act. Cut Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("CutplanID", header: "CutPlan#", width: Widths.AnsiChars(14), iseditingreadonly: true)
                .Text("IssueID", header: "Issue ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                .Text("IsOutStanding", header: "Is OutStanding", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -680,6 +679,11 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
                     return;
                 }
             }
+        }
+
+        private void BtnReviseSchedule_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
