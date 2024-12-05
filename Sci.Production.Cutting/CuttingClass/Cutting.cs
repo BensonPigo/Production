@@ -101,14 +101,13 @@ AND EXISTS (SELECT 1 FROM SpreadingSchedule_Detail WITH (NOLOCK) WHERE CutRef = 
 
             foreach (DataRow dr in dt.Rows)
             {
-                result = new Gensong_SpreadingSchedule().DeleteSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
-                if (!result)
+                if (!(result = new Gensong_SpreadingSchedule().DeleteSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString())))
                 {
                     return result;
                 }
             }
 
-            // 2.檢查此次有存檔CutRef是否有其它的日期，若有就刪除，已完成與這次維護的資料不刪除 (ISP20210219)
+            // 2.刪除轉移來源的資訊
             string sqlDeleteSameFutureCutRef = $@"
 declare @today date = getdate()
 
@@ -120,23 +119,21 @@ AND ss.EstCutDate > @today
 AND ssd.IsAGVArrived = 0
 AND EXISTS (SELECT 1 FROM SpreadingSchedule_Detail WITH (NOLOCK) WHERE CutRef = ssd.CutRef AND SpreadingScheduleUkey = {ukeyNew}) -- 新單所有 CutRef
 ";
-            result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef);
-            if (!result)
+            if (!(result = DBProxy.Current.Execute(null, sqlDeleteSameFutureCutRef)))
             {
                 return result;
             }
 
-            // 3.呼叫中間API再把這些單重新傳給廠商新增 (呼叫中間API會依據Key重撈資料)
+            // 3.呼叫中間API再把原單重新傳給廠商新增 (呼叫中間API會依據Key重撈資料)
             foreach (DataRow dr in dt.Rows)
             {
-                result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString());
-                if (!result)
+                if (!(result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(dr["FactoryID"].ToString(), (DateTime)dr["EstCutDate"], dr["CutCellID"].ToString())))
                 {
                     return result;
                 }
             }
 
-            // 4.呼叫中間API 傳送當前這張單
+            // 4.呼叫中間API 傳送新單
             result = new Gensong_SpreadingSchedule().SendSpreadingSchedule(factorNew, estCutDateNew, cutCellIDNew);
             if (!result)
             {
