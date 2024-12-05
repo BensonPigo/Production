@@ -44,10 +44,8 @@ RETURN
 		f.WeaveTypeID
 	from WorkOrderForPlanning w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
-	inner join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
-													and s.EstCutDate = @EstCutDate
-													and s.CutCellid = w.CutCellid
-	inner join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
+	LEFT join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef
+	LEFT join SpreadingSchedule s with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
 	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkOrderForPlanningUkey = w.Ukey
 	left join Fabric f with (nolock) on f.SCIRefno = w.SCIRefno
 	outer apply

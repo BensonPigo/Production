@@ -86,8 +86,8 @@
             // 
             // gridicon
             // 
-            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(973, 66);
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.gridicon.Location = new System.Drawing.Point(801, 50);
             // 
             // refresh
             // 
@@ -300,6 +300,7 @@
             // btnReviseSchedule
             // 
             this.btnReviseSchedule.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnReviseSchedule.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnReviseSchedule.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnReviseSchedule.ForeColor = System.Drawing.Color.Blue;
             this.btnReviseSchedule.Location = new System.Drawing.Point(801, 14);
