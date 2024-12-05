@@ -266,6 +266,7 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP05", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06Cnt", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsResignationDate", typeof(string)));
             this.dtGridDetailRightSummary.PrimaryKey = new DataColumn[] { this.dtGridDetailRightSummary.Columns["No"] };
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
         }
@@ -511,16 +512,24 @@ namespace Sci.Production.IE
                 case SubGridType.LineMappingBalancing:
                     if (isSort)
                     {
-                        this.gridMain.BeginInvoke(new Action(() =>
+                        // 假設你的數據源是一個 DataTable
+                        DataTable dataTableMain = this.gridMain.DataSource as DataTable;
+
+                        if (dataTableMain != null)
                         {
-                            this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                        }));
-                        this.gridMain.Columns.DisableSortable();
-                        this.gridSub.BeginInvoke(new Action(() =>
+                            dataTableMain.DefaultView.Sort = "No ASC";
+                            this.gridMain.DataSource = dataTableMain;
+                        }
+
+                        // 對 gridSub 進行相似操作
+                        DataTable dataTableSub = this.gridSub.DataSource as DataTable;
+
+                        if (dataTableSub != null)
                         {
-                            this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                        }));
-                        this.gridSub.Columns.DisableSortable();
+                            dataTableSub.DefaultView.Sort = "No ASC";
+                            this.gridSub.DataSource = dataTableSub;
+                        }
+
                     }
 
                     decimal avgCycle = this.AvgCycleTime;
@@ -551,6 +560,8 @@ namespace Sci.Production.IE
                                         newRow["EstTotalCycleTime"] = groupItem.Select(s => s["EstTotalCycleTime"].ToString()).First();
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
                                         newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
+                                        newRow["IsResignationDate"] = groupItem.Select(s => s["IsResignationDate"].ToString()).First();
+
                                         return newRow;
                                     }).ToList();
                     break;

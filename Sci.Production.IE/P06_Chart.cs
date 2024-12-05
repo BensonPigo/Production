@@ -37,7 +37,7 @@ namespace Sci.Production.IE
             select No
             , ActGSDTime = Round(Sum(almd.Cycle * almd.SewerDiffPercentage), 2)
             , TaktTime = IIF(alm.TotalCycleTime = 0, 0, Round(3600 * alm.WorkHour / Round(Round(3600 * alm.SewerManpower / alm.TotalCycleTime, 0) * alm.WorkHour, 0), 2))
-            , ActGSDTime_Avg = Round(alm.TotalCycleTime / alm.SewerManpower, 2)
+            , ActCycleTime_Avg = Round(alm.TotalCycleTime / alm.SewerManpower, 2)
             , ct = count(1)
             from LineMappingBalancing alm
             left join LineMappingBalancing_Detail almd on alm.ID = almd.ID
@@ -91,13 +91,13 @@ namespace Sci.Production.IE
 
             this.chart1.Series.Add("Takt time");
             this.chart1.Series["Takt time"].ChartType = SeriesChartType.Line;
-            this.chart1.Series["Takt time"].Color = Color.Brown;
+            this.chart1.Series["Takt time"].Color = Color.Red;
             this.chart1.Series["Takt time"].BorderWidth = 3;
 
-            this.chart1.Series.Add("Avg. GSD Time");
-            this.chart1.Series["Avg. GSD Time"].ChartType = SeriesChartType.Line;
-            this.chart1.Series["Avg. GSD Time"].Color = Color.YellowGreen;
-            this.chart1.Series["Avg. GSD Time"].BorderWidth = 3;
+            this.chart1.Series.Add("Avg. Cycle Time");
+            this.chart1.Series["Avg. Cycle Time"].ChartType = SeriesChartType.Line;
+            this.chart1.Series["Avg. Cycle Time"].Color = Color.YellowGreen;
+            this.chart1.Series["Avg. Cycle Time"].BorderWidth = 3;
 
             // 傳值進去前面設定的Series
             for (int i = 0; i < this.dataTables[0].Rows.Count; i++)
@@ -107,7 +107,7 @@ namespace Sci.Production.IE
 
                 this.chart1.Series[0].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[0].Rows[i]["ActGSDTime"]));
                 this.chart1.Series[1].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[0].Rows[i]["TaktTime"]));
-                this.chart1.Series[2].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[0].Rows[i]["ActGSDTime_Avg"]));
+                this.chart1.Series[2].Points.AddXY(i, MyUtility.Convert.GetDecimal(this.dataTables[0].Rows[i]["ActCycleTime_Avg"]));
             }
             #endregion Line Balancing Graph 圖
 
