@@ -86,7 +86,6 @@ namespace Sci.Production.Cutting
             {
                 this.detailgrid.Rows[e.RowIndex].Cells["MaterialStatus"].Style.BackColor = Color.LightGreen;
             }
-
         }
 
         /// <inheritdoc/>
@@ -187,11 +186,13 @@ select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{es
             };
 
             DataGridViewGeneratorTextColumnSettings cutRef = new DataGridViewGeneratorTextColumnSettings();
-            cutRef.CellEditable += (s, e) =>
+            cutRef.EditingControlShowing += (s, e) =>
             {
-                // Act. CutDate 有值不可編輯 SpreadingSchdlSeq
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                e.IsEditable = MyUtility.Check.Empty(dr["Cutref"]);
+                if (e.Control is Ict.Win.UI.TextBoxBase textBoxBase)
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    textBoxBase.ReadOnly = !MyUtility.Check.Empty(dr["Cutref"]);
+                }
             };
             cutRef.CellValidating += (s, e) =>
             {
@@ -377,7 +378,8 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
         /// <inheritdoc/>
         protected override DualResult ClickSavePost()
         {
-            DualResult result = Cutting.P31SavePost(MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]).Value, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["CutCellID"].ToString());
+            // PS:正在編輯的此單為新單, 其它轉移來的為原單
+            DualResult result = Cutting.P31SavePost(MyUtility.Convert.GetLong(this.CurrentMaintain["Ukey"]), this.CurrentMaintain["FactoryID"].ToString(), (DateTime)this.CurrentMaintain["EstCutDate"], this.CurrentMaintain["CutCellID"].ToString());
             if (!result)
             {
                 return result;
@@ -590,8 +592,9 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
 
         private void BtnReviseSchedule_Click(object sender, EventArgs e)
         {
-            this.OnDetailEntered();
+            this.OnRefreshClick();
             new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
+            this.OnRefreshClick();
         }
     }
 }

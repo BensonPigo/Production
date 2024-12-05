@@ -25,8 +25,6 @@ namespace Sci.Production.Cutting
             this.InitializeComponent();
             this.CurrentMaintain = currentMaintain;
             this.dtDetail = dtDetail.Select("Completed = 'N'").TryCopyToDataTable(dtDetail); // 只有未完成的才能轉移
-            this.dtDetail.Columns.Add("Selected", typeof(bool)).DefaultValue = false;
-            this.grid1.DataSource = dtDetail;
             this.displayFactory.Text = MyUtility.Convert.GetString(currentMaintain["FactoryID"]);
         }
 
@@ -35,6 +33,13 @@ namespace Sci.Production.Cutting
         {
             base.OnFormLoaded();
             this.GridSetup();
+            this.dtDetail.Columns.Add("Selected", typeof(bool));
+            foreach (DataRow dr in this.dtDetail.Rows)
+            {
+                dr["Selected"] = false;
+            }
+
+            this.listControlBindingSource1.DataSource = this.dtDetail;
         }
 
         private void GridSetup()
@@ -78,7 +83,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            DataRow[] drs = this.dtDetail.Select("Selected");
+            DataRow[] drs = this.dtDetail.Select("Selected = 1");
             if (drs.Length == 0)
             {
                 MyUtility.Msg.WarningBox("Please select Datas");
@@ -123,9 +128,15 @@ AND CutCellID = '{cellNew}'
                 try
                 {
                     // 1.準備新單的 Ukey
+                    string sqlUpdateSpreadingSchedule = string.Empty;
                     if (MyUtility.Check.Seek(sqlcmd, out DataRow dr))
                     {
                         ukeyNew = MyUtility.Convert.GetLong(dr["Ukey"]);
+                        sqlUpdateSpreadingSchedule = $@"
+UPDATE SpreadingSchedule
+SET EditName = '{Sci.Env.User.UserID}'
+   ,EditDate = GETDATE()
+WHERE Ukey = {ukeyNew}";
                     }
                     else
                     {
@@ -149,6 +160,8 @@ INSERT INTO SpreadingSchedule_Detail (SpreadingScheduleUkey, CutRef, SpreadingSc
 SELECT {ukeyNew}, CutRef, 0, IsAGVArrived, IsSuspend
 FROM #tmp
 
+{sqlUpdateSpreadingSchedule}
+
 SELECT * FROM dbo.GetSpreadingSchedule('{factroyNew}','{estCutDateNew}','{cellNew}',{ukeyNew},'')
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, "CutRef,IsAGVArrived,IsSuspend", sqlcmd, out DataTable dtNew)))
@@ -163,7 +176,7 @@ SELECT * FROM dbo.GetSpreadingSchedule('{factroyNew}','{estCutDateNew}','{cellNe
                     sqlcmd = $@"
 UPDATE ssd
 SET SpreadingSchdlSeq = #tmp.SpreadingSchdlSeq
-FROM SpreadingSchedule_Detail ssd
+FROM SpreadingSchedule_Detail ssd WITH (NOLOCK)
 INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #tmp.CutRef = ssd.CutRef
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dtNew, "SpreadingScheduleUkey,CutRef,SpreadingSchdlSeq", sqlcmd, out DataTable _)))
@@ -171,7 +184,7 @@ INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #t
                         throw result.GetException();
                     }
 
-                    if (!(result = Cutting.P31SavePost(MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]).Value, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["CutCellID"].ToString())))
+                    if (!(result = Cutting.P31SavePost(ukeyNew, factroyNew, this.dateEstCut.Value.Value, cellNew)))
                     {
                         throw result.GetException();
                     }
@@ -189,6 +202,9 @@ INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #t
                 this.ShowErr(errMsg);
                 return;
             }
+
+            MyUtility.Msg.InfoBox("Success!");
+            this.Close();
         }
 
         private void DateEstCut_Validating(object sender, System.ComponentModel.CancelEventArgs e)

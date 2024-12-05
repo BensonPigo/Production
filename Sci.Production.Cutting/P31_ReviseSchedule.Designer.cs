@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnRevise = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.label1 = new System.Windows.Forms.Label();
@@ -38,7 +39,9 @@
             this.displayFactory = new Sci.Win.UI.DisplayBox();
             this.dateEstCut = new Sci.Win.UI.DateBox();
             this.label4 = new System.Windows.Forms.Label();
+            this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnRevise
@@ -63,6 +66,7 @@
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.grid1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.grid1.DataSource = this.listControlBindingSource1;
             this.grid1.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.grid1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
@@ -180,6 +184,7 @@
             this.Controls.SetChildIndex(this.dateEstCut, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,5 +201,6 @@
         private Win.UI.DisplayBox displayFactory;
         private Win.UI.DateBox dateEstCut;
         private System.Windows.Forms.Label label4;
+        private Win.UI.ListControlBindingSource listControlBindingSource1;
     }
 }

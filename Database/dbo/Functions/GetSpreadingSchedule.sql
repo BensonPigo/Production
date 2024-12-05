@@ -70,7 +70,7 @@ RETURN
 		(
 			Select concat(', ', i.ID)
 			From Issue i WITH (NOLOCK) 
-			Where i.CutplanID = w.CutplanID
+			Where i.CutplanID = w.CutplanID AND i.CutplanID <> ''
 			For XML path('')
 		),1,1,'')
 	) Issues
