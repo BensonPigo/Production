@@ -145,7 +145,7 @@ SELECT
    ,SORT_NUM = 0 -- 避免編輯過程資料跑來跑去
    ,multisize.multisize
    ,Order_SizeCode_Seq.Order_SizeCode_Seq
-   ,WorkOrderForOutput.ID WorkOrderForOutputID
+   ,CanEdit = dbo.GetCuttingP02CanEdit(wo.Ukey, wo.CutPlanID, wo.CutRef) -- 判斷此筆是否能編輯
 FROM WorkOrderForPlanning wo WITH (NOLOCK)
 LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno = wo.SCIRefno
 LEFT JOIN Construction cs WITH (NOLOCK) ON cs.ID = ConstructionID
@@ -202,7 +202,6 @@ OUTER APPLY (
     AND psd.seq1 = wo.seq1
     AND psd.seq2 = wo.seq2
 ) FabricArrDate
-OUTER APPLY(SELECT Top 1 ID FROM WorkOrderForOutput WITH (NOLOCK) WHERE WorkOrderForPlanningUkey = wo.Ukey) WorkOrderForOutput
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
@@ -326,7 +325,7 @@ ORDER BY
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
-                .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_seq)
+                .NumericNull("Seq", "Seq", Ict.Win.Widths.AnsiChars(5), this.CanEditData)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 //.MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 //.MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(13), this.CanEditData).Get(out this.col_MarkerLength)
@@ -814,6 +813,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             // 先取得當前編輯狀態的最新 tmpKey
             this.CurrentDetailData["tmpKey"] = this.DetailDatas.AsEnumerable().Max(row => MyUtility.Convert.GetLong(row["tmpKey"])) + 1;
             this.CurrentDetailData["Adduser"] = MyUtility.GetValue.Lookup($"SELECT NAME FROM Pass1 WITH (NOLOCK) Where ID = '{this.CurrentDetailData["AddName"]}'");
+            this.CurrentDetailData["CanEdit"] = true;
+            this.CurrentDetailData["Seq"] = DBNull.Value;
             if (oldRow == null)
             {
                 // 按 + 或 插入, 無表身時, 第一筆只能從 Cutting 欄位帶入
@@ -851,12 +852,15 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     "Ukey", // 此表 Pkey 底層處理
                     "tmpKey", // 上方有填不同值不複製
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
+                    "Seq",
                     "CutRef",
                     "CutNo",
                     "CutPlanID",
+                    "CanEdit",
                     "Addname",
                     "AddDate",
                     "EditName",
+                    "EditDate",
                     "EditDate",
                 };
 
@@ -1062,50 +1066,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             };
 
             this.BindQtyEvents(this.col_SizeRatio_Qty);
-            #endregion
-
-            #region SEQ
-            this.col_seq.EditingControlShowing += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) && this.EditMode)
-                {
-                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
-                }
-                else
-                {
-                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
-                }
-            };
-            this.col_seq.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
-
-                if (dr["Seq"] != DBNull.Value && Convert.ToInt32(dr["Seq"]) == 0)
-                {
-                    dr["Seq"] = DBNull.Value;
-                }
-            };
             #endregion
         }
 
@@ -1350,8 +1310,8 @@ order by p.EditDate desc
                 return false;
             }
 
-            // 沒有排入裁剪計畫的裁次才可異動
-            return this.EditMode && MyUtility.Check.Empty(dr["CutPlanID"]);
+            // 沒有排入裁剪計畫 && 不存在 SpreadingSchedule_Detail 的裁次才可異動
+            return this.EditMode && MyUtility.Convert.GetBool(dr["CanEdit"]);
         }
 
         private void GridValidateControl()

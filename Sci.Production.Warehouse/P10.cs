@@ -1041,8 +1041,7 @@ declare @today date = getdate()
 select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
 from Issue i with (nolock)
 inner join WorkOrderForPlanning wp with (nolock) on i.CutplanID = wp.CutplanID
-inner join WorkOrderForOutput wo with (nolock) on wp.ukey=wo.WorkOrderForPlanningUkey
-inner join SpreadingSchedule_Detail ssd with (nolock) on wo.CutRef = ssd.CutRef
+inner join SpreadingSchedule_Detail ssd with (nolock) on wp.CutRef = ssd.CutRef
 inner join SpreadingSchedule ss with (nolock) on ssd.SpreadingScheduleUkey = ss.Ukey
 where	i.Id = '{this.CurrentMaintain["ID"]}' and
 		ss.EstCutDate > @today
