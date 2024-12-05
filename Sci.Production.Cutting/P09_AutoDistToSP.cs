@@ -4,6 +4,7 @@ using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -61,22 +62,16 @@ namespace Sci.Production.Cutting
         {
             this.Query();
 
-            DataTable dtWorkOrderForOutput_Distribute = this.SourceDt.AsEnumerable().Where(s => MyUtility.Convert.GetDecimal(s["BalQty"]) > 0).TryCopyToDataTable(this.SourceDt);
-            if (dtWorkOrderForOutput_Distribute.Rows.Count == 0)
-            {
-                return new DualResult(true);
-            }
-
             try
             {
                 int seqBySewInline = 1;
-                foreach (DataRow dr in dtWorkOrderForOutput_Distribute.AsEnumerable().OrderBy(s => MyUtility.Convert.GetDate(s["SewInline"])))
+                foreach (DataRow dr in this.SourceDt.AsEnumerable().OrderBy(s => MyUtility.Convert.GetDate(s["SewInline"])))
                 {
                     dr["Seq"] = seqBySewInline.ToString();
                     seqBySewInline++;
                 }
 
-                this.DoDistribute(dtWorkOrderForOutput_Distribute);
+                this.DoDistribute(this.SourceDt);
                 return new DualResult(true);
             }
             catch (Exception ex)
@@ -362,13 +357,15 @@ ORDER BY OQ.sizecode,oq.id,OQ.article
 
             // 先清除此 WorkOrderForOutput 的 WorkOrderForOutput_Distribute
             this.DistqtyTb.Select(GetFilter(this.Detailrow, CuttingForm.P09)).Delete();
-
             foreach (DataRow row in processDT.Select($"Qty > 0"))
             {
                 row.AcceptChanges();
                 row.SetAdded();
                 this.DistqtyTb.ImportRow(row);
             }
+
+            // 更新畫面上Article顯示資訊
+            CuttingWorkOrder.UpdateArticle_CONCAT(this.Detailrow, this.DistqtyTb, CuttingForm.P09);
         }
 
         private void BtnDist_Click(object sender, EventArgs e)

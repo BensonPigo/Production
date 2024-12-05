@@ -6,6 +6,7 @@ using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,6 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
-        //private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_ActCuttingPerimeter;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_StraightLength;
         private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_CurvedLength;
@@ -49,6 +49,7 @@ namespace Sci.Production.Cutting
         private bool ReUpdateP20 = true;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
         private string detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+        private DataTable dt_Layers;
         #endregion
 
         #region 程式開啟時, 只會執行一次
@@ -84,6 +85,8 @@ namespace Sci.Production.Cutting
             this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
             this.displayBoxTotalCutQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalCutQty_CONCAT", true));
             this.displayBoxTtlDistributeQty.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "TotalDistributeQty", true));
+            this.txtPatternNo.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerNo", true));
+            this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerLength", true));
 
             this.detailgrid.Click += Grid_ClickBeginEdit;
         }
@@ -318,6 +321,35 @@ OUTER APPLY (
 WHERE wo.id = '{masterID}'
 ORDER BY {this.detailSort}
 ";
+
+            string cmdsql = $@"
+Select a.MarkerName,a.ColorID,a.Order_EachconsUkey
+	,layer = isnull(sum(a.layer),0)
+    ,TotalLayerUkey =             
+    (
+        Select isnull(sum(c.layer),0) as TL
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on c.ID = b.ID and c.Order_EachConsUkey = b.ukey
+	    where b.ID = a.ID and b.Markername = a.MarkerName and c.ColorID = a.ColorID and b.Ukey = a.Order_EachconsUkey 
+    )
+    ,TotalLayerMarker =
+    (
+        Select isnull(sum(c.layer),0) as TL2
+	    from Order_EachCons b WITH (NOLOCK) 
+		inner join Order_EachCons_Color c WITH (NOLOCK) on b.ID = c.ID and c.Order_EachConsUkey = b.ukey
+	    where b.ID = a.ID and b.Markername = a.MarkerName and c.ColorID = a.ColorID
+    )
+From WorkOrderForPlanning a WITH (NOLOCK) 
+Where a.ID = '{masterID}' 
+group by a.MarkerName,a.ColorID,a.Order_EachconsUkey,a.ID 
+Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
+";
+            DualResult result = DBProxy.Current.Select(null, cmdsql, out this.dt_Layers);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -498,6 +530,58 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                 return;
             }
 
+            #region Total Layer / Balance Layer
+            /*
+                Total Layer計算方式
+                根據CurrentDetailData的Order_EachconsUkey 判斷
+                1. Order_EachconsUkey 為空 => 使用 TotalLayerMarker
+                2. Order_EachconsUkey 不為空 => 使用 TotalLayerUkey
+
+                Balance Layer計算方式
+                群組加總"當前"WorkOrderForPlanning表身的 Layer 欄位，根據CurrentDetailData的Order_EachconsUkey 判斷群組條件
+                1. Order_EachconsUkey 為空  => MarkerName、Colorid
+                2. Order_EachconsUkey 不為空 =>Order_EachconsUkey、Colorid
+             */
+
+            int sumlayer = 0;
+            string filterLayer;
+
+            if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
+            {
+                filterLayer = $"MarkerName = '{this.CurrentDetailData["MarkerName"]}' and Colorid = '{this.CurrentDetailData["Colorid"]}'";
+            }
+            else
+            {
+                filterLayer = $"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and Colorid = '{this.CurrentDetailData["Colorid"]}'";
+            }
+
+            DataRow[] cur = ((DataTable)this.detailgridbs.DataSource).Select(filterLayer);
+            sumlayer = cur.AsEnumerable().Sum(l => MyUtility.Convert.GetInt(l["layer"]));
+
+            if (MyUtility.Check.Empty(this.CurrentDetailData["Order_EachConsUkey"]))
+            {
+                this.numTotalLayer.Text = string.Empty;
+                this.numBalanceLayer.Text = string.Empty;
+            }
+            else
+            {
+                DataRow[] laydr = this.dt_Layers.Select($"Order_EachConsUkey = '{this.CurrentDetailData["Order_EachConsUkey"]}' and ColorID = '{this.CurrentDetailData["Colorid"]}'");
+                if (!laydr.Any())
+                {
+                    this.numTotalLayer.Value = 0;
+                    this.numBalanceLayer.Value = 0;
+                }
+                else
+                {
+                    decimal totalLayer = (decimal)laydr[0]["TotalLayerMarker"];
+
+                    this.numTotalLayer.Value = totalLayer;
+                    this.numBalanceLayer.Value = sumlayer - totalLayer;
+                }
+            }
+
+            #endregion
+
             // 根據左邊Grid Filter 右邊資訊
             string filter = GetFilter(this.CurrentDetailData, CuttingForm.P09);
             this.sizeRatiobs.Filter = filter;
@@ -506,6 +590,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
 
             this.ChangeQtyBreakDownRow();
             Grid_ClickBeginEdit((object)this.detailgrid, null);
+
         }
 
         private void GridDistributeToSP_SelectionChanged(object sender, EventArgs e)
@@ -1409,10 +1494,15 @@ DEALLOCATE CURSOR_
                 if (Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, this.gridDistributeToSP, CuttingForm.P09, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
                     UpdateMinSewinline(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                    if (((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower() == "orderid")
+                    string columnName = ((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower();
+                    switch (columnName)
                     {
-                        UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
-                        UpdateArticle_CONCAT(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                        case "orderid":
+                            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                            break;
+                        case "article":
+                            UpdateArticle_CONCAT(this.CurrentDetailData, this.dtWorkOrderForOutput_Distribute, CuttingForm.P09);
+                            break;
                     }
                 }
             };
@@ -1785,6 +1875,38 @@ DEALLOCATE CURSOR_
         }
         #endregion
 
+        private void TxtPatternNo_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            string cuttingID = MyUtility.Check.Empty(this.CurrentMaintain) ? string.Empty : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            SelectItem selectItem = PopupMarkerNo(cuttingID, this.txtPatternNo.Text);
+            if (selectItem == null)
+            {
+                return;
+            }
+
+            this.txtPatternNo.Text = selectItem.GetSelectedString();
+        }
+
+        private void TxtPatternNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string cuttingID = MyUtility.Check.Empty(this.CurrentMaintain) ? string.Empty : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            if (!ValidatingMarkerNo(cuttingID, this.txtPatternNo.Text))
+            {
+                this.txtPatternNo.Text = string.Empty;
+                e.Cancel = true;
+            }
+        }
+
+        private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+            decimal totlaLayer = MyUtility.Convert.GetInt(this.numTotalLayer.Value) + MyUtility.Convert.GetDecimal(this.numBalanceLayer.Value);
+            this.txtMarkerLength.Text = markerLength;
+            this.CurrentDetailData["MarkerLength"] = markerLength;
+
+            this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), totlaLayer, this.dtWorkOrderForOutput_SizeRatio, CuttingForm.P09);
+        }
     }
 #pragma warning restore SA1600 // Elements should be documented
 }

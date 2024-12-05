@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtMarkerLength = new Sci.Win.UI.TextBox();
+            this.txtPatternNo = new Sci.Win.UI.TextBox();
+            this.label14 = new Sci.Win.UI.Label();
+            this.label15 = new Sci.Win.UI.Label();
             this.numCons = new Sci.Win.UI.NumericBox();
             this.numConsPC = new Sci.Win.UI.NumericBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -62,6 +66,10 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.numBalanceLayer = new Sci.Win.UI.NumericBox();
+            this.numTotalLayer = new Sci.Win.UI.NumericBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label13 = new Sci.Win.UI.Label();
             this.tableLayoutPanel_Top2 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.labelCutplanID = new Sci.Win.UI.Label();
@@ -116,7 +124,6 @@
             this.cmsSizeRatio.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
             this.panel2.SuspendLayout();
-            this.tableLayoutPanel_Top2.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel_Button1.SuspendLayout();
             this.tableLayoutPanel_Button2.SuspendLayout();
@@ -124,6 +131,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImportFromWorkOrderForPlanning);
             this.masterpanel.Controls.Add(this.btnEdit);
             this.masterpanel.Controls.Add(this.btnImportMarkerLectra);
             this.masterpanel.Controls.Add(this.btnDownload);
@@ -138,6 +146,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnImportMarkerLectra, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportFromWorkOrderForPlanning, 0);
             // 
             // detailpanel
             // 
@@ -153,7 +162,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(4466, 5);
+            this.refresh.Location = new System.Drawing.Point(6406, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -232,6 +241,10 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.txtMarkerLength);
+            this.panel1.Controls.Add(this.txtPatternNo);
+            this.panel1.Controls.Add(this.label14);
+            this.panel1.Controls.Add(this.label15);
             this.panel1.Controls.Add(this.numCons);
             this.panel1.Controls.Add(this.numConsPC);
             this.panel1.Controls.Add(this.splitContainer1);
@@ -255,13 +268,53 @@
             this.panel1.Size = new System.Drawing.Size(422, 614);
             this.panel1.TabIndex = 4;
             // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(129, 109);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(212, 23);
+            this.txtMarkerLength.TabIndex = 43;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
+            // 
+            // txtPatternNo
+            // 
+            this.txtPatternNo.BackColor = System.Drawing.Color.White;
+            this.txtPatternNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPatternNo.Location = new System.Drawing.Point(129, 83);
+            this.txtPatternNo.Name = "txtPatternNo";
+            this.txtPatternNo.Size = new System.Drawing.Size(212, 23);
+            this.txtPatternNo.TabIndex = 42;
+            this.txtPatternNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPatternNo_PopUp);
+            this.txtPatternNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPatternNo_Validating);
+            // 
+            // label14
+            // 
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label14.Location = new System.Drawing.Point(3, 109);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(123, 23);
+            this.label14.TabIndex = 41;
+            this.label14.Text = "Marker Length";
+            // 
+            // label15
+            // 
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label15.Location = new System.Drawing.Point(3, 83);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(123, 23);
+            this.label15.TabIndex = 40;
+            this.label15.Text = "Pattern No.";
+            // 
             // numCons
             // 
             this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numCons.DecimalPlaces = 4;
             this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numCons.IsSupportEditMode = false;
-            this.numCons.Location = new System.Drawing.Point(233, 102);
+            this.numCons.Location = new System.Drawing.Point(213, 135);
             this.numCons.Name = "numCons";
             this.numCons.NullValue = new decimal(new int[] {
             0,
@@ -269,7 +322,7 @@
             0,
             0});
             this.numCons.ReadOnly = true;
-            this.numCons.Size = new System.Drawing.Size(78, 23);
+            this.numCons.Size = new System.Drawing.Size(60, 23);
             this.numCons.TabIndex = 32;
             this.numCons.Value = new decimal(new int[] {
             0,
@@ -282,14 +335,14 @@
             this.numConsPC.BackColor = System.Drawing.Color.White;
             this.numConsPC.DecimalPlaces = 4;
             this.numConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numConsPC.Location = new System.Drawing.Point(129, 102);
+            this.numConsPC.Location = new System.Drawing.Point(129, 135);
             this.numConsPC.Name = "numConsPC";
             this.numConsPC.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-            this.numConsPC.Size = new System.Drawing.Size(82, 23);
+            this.numConsPC.Size = new System.Drawing.Size(60, 23);
             this.numConsPC.TabIndex = 7;
             this.numConsPC.Value = new decimal(new int[] {
             0,
@@ -510,17 +563,17 @@
             // 
             this.displayBoxTtlDistributeQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxTtlDistributeQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxTtlDistributeQty.Location = new System.Drawing.Point(129, 154);
+            this.displayBoxTtlDistributeQty.Location = new System.Drawing.Point(368, 135);
             this.displayBoxTtlDistributeQty.Name = "displayBoxTtlDistributeQty";
-            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(182, 23);
+            this.displayBoxTtlDistributeQty.Size = new System.Drawing.Size(48, 23);
             this.displayBoxTtlDistributeQty.TabIndex = 22;
             // 
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Location = new System.Drawing.Point(3, 154);
+            this.label7.Location = new System.Drawing.Point(276, 135);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(123, 23);
+            this.label7.Size = new System.Drawing.Size(89, 23);
             this.label7.TabIndex = 21;
             this.label7.Text = "Ttl. Dist. Qty.";
             // 
@@ -528,15 +581,15 @@
             // 
             this.displayBoxTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayBoxTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 128);
+            this.displayBoxTotalCutQty.Location = new System.Drawing.Point(129, 162);
             this.displayBoxTotalCutQty.Name = "displayBoxTotalCutQty";
-            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(182, 23);
+            this.displayBoxTotalCutQty.Size = new System.Drawing.Size(287, 23);
             this.displayBoxTotalCutQty.TabIndex = 20;
             // 
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(3, 128);
+            this.label6.Location = new System.Drawing.Point(3, 162);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(123, 23);
             this.label6.TabIndex = 19;
@@ -545,7 +598,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(215, 105);
+            this.label5.Location = new System.Drawing.Point(195, 138);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(12, 17);
             this.label5.TabIndex = 17;
@@ -554,7 +607,7 @@
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(3, 102);
+            this.label4.Location = new System.Drawing.Point(3, 135);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(123, 23);
             this.label4.TabIndex = 15;
@@ -567,7 +620,7 @@
             this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
             this.displayBoxDescription.Multiline = true;
             this.displayBoxDescription.Name = "displayBoxDescription";
-            this.displayBoxDescription.Size = new System.Drawing.Size(182, 70);
+            this.displayBoxDescription.Size = new System.Drawing.Size(287, 51);
             this.displayBoxDescription.TabIndex = 14;
             // 
             // displayBoxFabricTypeRefno
@@ -576,7 +629,7 @@
             this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
             this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
-            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(182, 23);
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(287, 23);
             this.displayBoxFabricTypeRefno.TabIndex = 13;
             // 
             // label3
@@ -599,6 +652,10 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.numBalanceLayer);
+            this.panel2.Controls.Add(this.numTotalLayer);
+            this.panel2.Controls.Add(this.label12);
+            this.panel2.Controls.Add(this.label13);
             this.panel2.Controls.Add(this.tableLayoutPanel_Top2);
             this.panel2.Controls.Add(this.tableLayoutPanel2);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
@@ -606,6 +663,66 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(858, 35);
             this.panel2.TabIndex = 12;
+            // 
+            // numBalanceLayer
+            // 
+            this.numBalanceLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBalanceLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBalanceLayer.IsSupportEditMode = false;
+            this.numBalanceLayer.Location = new System.Drawing.Point(592, 5);
+            this.numBalanceLayer.Name = "numBalanceLayer";
+            this.numBalanceLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBalanceLayer.ReadOnly = true;
+            this.numBalanceLayer.Size = new System.Drawing.Size(95, 23);
+            this.numBalanceLayer.TabIndex = 42;
+            this.numBalanceLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTotalLayer
+            // 
+            this.numTotalLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalLayer.IsSupportEditMode = false;
+            this.numTotalLayer.Location = new System.Drawing.Point(477, 5);
+            this.numTotalLayer.Name = "numTotalLayer";
+            this.numTotalLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalLayer.ReadOnly = true;
+            this.numTotalLayer.Size = new System.Drawing.Size(95, 23);
+            this.numTotalLayer.TabIndex = 41;
+            this.numTotalLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(577, 8);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(12, 17);
+            this.label12.TabIndex = 40;
+            this.label12.Text = "/";
+            // 
+            // label13
+            // 
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label13.Location = new System.Drawing.Point(373, 6);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(101, 23);
+            this.label13.TabIndex = 39;
+            this.label13.Text = "Ttl./Bal. Layer";
             // 
             // tableLayoutPanel_Top2
             // 
@@ -616,12 +733,12 @@
             this.tableLayoutPanel_Top2.ColumnCount = 2;
             this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel_Top2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel_Top2.Controls.Add(this.btnImportFromWorkOrderForPlanning, 1, 0);
-            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(601, 0);
+            this.tableLayoutPanel_Top2.Location = new System.Drawing.Point(858, 0);
             this.tableLayoutPanel_Top2.Name = "tableLayoutPanel_Top2";
             this.tableLayoutPanel_Top2.RowCount = 1;
             this.tableLayoutPanel_Top2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel_Top2.Size = new System.Drawing.Size(257, 35);
+            this.tableLayoutPanel_Top2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanel_Top2.Size = new System.Drawing.Size(0, 35);
             this.tableLayoutPanel_Top2.TabIndex = 16;
             // 
             // tableLayoutPanel2
@@ -975,11 +1092,11 @@
             this.btnImportFromWorkOrderForPlanning.Dock = System.Windows.Forms.DockStyle.Left;
             this.btnImportFromWorkOrderForPlanning.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportFromWorkOrderForPlanning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(1, 1);
+            this.btnImportFromWorkOrderForPlanning.Location = new System.Drawing.Point(0, 35);
             this.btnImportFromWorkOrderForPlanning.Margin = new System.Windows.Forms.Padding(1);
             this.btnImportFromWorkOrderForPlanning.Name = "btnImportFromWorkOrderForPlanning";
-            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(255, 33);
-            this.btnImportFromWorkOrderForPlanning.TabIndex = 2;
+            this.btnImportFromWorkOrderForPlanning.Size = new System.Drawing.Size(255, 32);
+            this.btnImportFromWorkOrderForPlanning.TabIndex = 13;
             this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
             this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
             this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
@@ -1006,6 +1123,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
             this.masterpanel.ResumeLayout(false);
+            this.masterpanel.PerformLayout();
             this.detailpanel.ResumeLayout(false);
             this.detail2.ResumeLayout(false);
             this.detailpanel2.ResumeLayout(false);
@@ -1036,8 +1154,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.tableLayoutPanel_Top2.ResumeLayout(false);
-            this.tableLayoutPanel_Top2.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel_Button1.ResumeLayout(false);
@@ -1109,5 +1225,13 @@
         private Win.UI.Button btnToExcel;
         private Win.UI.Button btnPackingMethod;
         private Win.UI.Button btnImportFromWorkOrderForPlanning;
+        private Win.UI.NumericBox numBalanceLayer;
+        private Win.UI.NumericBox numTotalLayer;
+        private System.Windows.Forms.Label label12;
+        private Win.UI.Label label13;
+        private Win.UI.TextBox txtMarkerLength;
+        private Win.UI.TextBox txtPatternNo;
+        private Win.UI.Label label14;
+        private Win.UI.Label label15;
     }
 }
