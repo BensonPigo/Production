@@ -556,7 +556,7 @@ namespace Sci.Production.IE
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
                                         newRow["OperatorEffi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["OperatorEffi"])).First();
                                         newRow["Effi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["Effi"])).First();
-                                        newRow["EstOutputHr"] = groupItem.Select(s => s["EstOutputHr"].ToString()).First();
+                                        newRow["EstOutputHr"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["EstOutputHr"])).First();
                                         newRow["EstTotalCycleTime"] = groupItem.Select(s => s["EstTotalCycleTime"].ToString()).First();
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
                                         newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
