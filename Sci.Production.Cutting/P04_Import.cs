@@ -29,7 +29,7 @@ namespace Sci.Production.Cutting
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
-            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutref from cutplan where 1=0", out this.gridTable);
+            DBProxy.Current.Select(null, "Select 0 as Sel, '' as poid,'' as cuttingid,'' as brandid,'' as styleid,'' as cutref,'' as cutcellid from cutplan where 1=0", out this.gridTable);
             base.OnFormLoaded();
             this.gridImport.IsEditingReadOnly = false; // 必設定, 否則CheckBox會顯示圖示
             this.gridImport.DataSource = this.gridTable;
@@ -40,7 +40,7 @@ namespace Sci.Production.Cutting
             .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             //.Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
-            //.Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
+            .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
 
@@ -53,10 +53,16 @@ namespace Sci.Production.Cutting
 
         private void BtnQuery_Click(object sender, EventArgs e)
         {
+            string sqlWhere = string.Empty;
             if (MyUtility.Check.Empty(this.dateEstCutDate.Value))
             {
                 MyUtility.Msg.WarningBox("<Est. Cut Date> can not be empty.");
                 return;
+            }
+
+            if (!MyUtility.Check.Empty(this.txtCell1.Text))
+            {
+                sqlWhere += $@" and wofp.CutCellID = '{this.txtCell1.Text}'";
             }
 
             this.gridTable.Rows.Clear();  // 開始查詢前先清空資料
@@ -74,7 +80,8 @@ namespace Sci.Production.Cutting
             where cutplanid='' 
             and wofp.CutRef != ''   
             and mDivisionid ='{this.keyWord}' 
-            and estcutdate = '{estcutdate}'";
+            and estcutdate = '{estcutdate}'
+            {sqlWhere}";
 
             if (!MyUtility.Check.Empty(factory))
             {
@@ -99,7 +106,8 @@ namespace Sci.Production.Cutting
 
                         // SpreadingNoID可能是DBNULL或空字串，對User來說都一樣，因此放進OR
                         string selwhere = $@"
-cuttingid = '{dr["id"]}'";
+cuttingid = '{dr["id"]}'
+and cutcellid ='{dr["cutcellid"]}' ";
                         DataRow[] griddray = this.gridTable.Select(selwhere);
 
                         if (griddray.Length == 0)
@@ -112,7 +120,7 @@ cuttingid = '{dr["id"]}'";
                             newdr["brandid"] = ordersRow["brandid"];
                             newdr["Styleid"] = ordersRow["styleid"];
                             // newdr["SpreadingNoID"] = dr["SpreadingNoID"];
-                            //newdr["Cutcellid"] = dr["cutcellid"];
+                            newdr["Cutcellid"] = dr["cutcellid"];
                             newdr["cutref"] = dr["cutref"];
                             this.gridTable.Rows.Add(newdr);
                         }
@@ -168,14 +176,16 @@ insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName
                                 id,
                                 dr["CuttingID"],
                                 this.keyWord,
-                                string.Empty,
+                                dr["cutcellid"],
                                 this.dateEstCutDate.Text,
                                 "New",
                                 this.loginID,
                                 dr["POId"],
                                 string.Empty);
 
-                            importay = this.detailTable.Select($@"id = '{dr["CuttingID"]}'");
+                            importay = this.detailTable.Select($@"id = '{dr["CuttingID"]}'
+                            and cutcellid = '{dr["cutcellid"]}' 
+                            ");
 
                             this.ImportedIDs.Add(id);
                             if (importay.Length > 0)

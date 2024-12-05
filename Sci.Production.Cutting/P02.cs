@@ -1011,14 +1011,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 dr.EndEdit();
             };
 
-            //this.col_MarkerLength.CellValidating += (s, e) =>
-            //{
-            //    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-
-            //    dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dt_SizeRatio, CuttingForm.P02);
-            //    dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
-            //    dr.EndEdit();
-            //};
             this.col_Tone.MaxLength = 15;
             #endregion
 

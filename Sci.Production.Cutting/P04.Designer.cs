@@ -44,6 +44,8 @@
             this.btnEditFabricCutDate = new Sci.Win.UI.Button();
             this.btnFabDelete = new Sci.Win.UI.Button();
             this.btnFabDeleteHistory = new Sci.Win.UI.Button();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -60,6 +62,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFabDeleteHistory);
             this.masterpanel.Controls.Add(this.btnFabDelete);
             this.masterpanel.Controls.Add(this.btnEditFabricCutDate);
@@ -94,6 +98,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnEditFabricCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDelete, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDeleteHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             // 
             // detailpanel
             // 
@@ -139,7 +145,7 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1078, 456);
+            this.browse.Size = new System.Drawing.Size(913, 456);
             // 
             // tabs
             // 
@@ -311,6 +317,24 @@
             this.btnFabDeleteHistory.UseVisualStyleBackColor = true;
             this.btnFabDeleteHistory.Click += new System.EventHandler(this.BtnFabDeleteHistory_Click);
             // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutCellID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(341, 75);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(108, 23);
+            this.displayBox1.TabIndex = 30;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(247, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 23);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "Cut Cell";
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
@@ -367,5 +391,7 @@
         private Win.UI.Button btnEditFabricCutDate;
         private Win.UI.Button btnFabDelete;
         private Win.UI.Button btnFabDeleteHistory;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label label1;
     }
 }
