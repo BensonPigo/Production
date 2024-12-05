@@ -128,7 +128,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
-                .Text("Cutno", header: "Cut#", width: Ict.Win.Widths.AnsiChars(5))
+                .NumericNull("CutNo", "CutNo", Ict.Win.Widths.AnsiChars(5), this.CanEditData)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
                 //.MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(11), this.CanEditData)
                 //.MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
@@ -228,7 +228,7 @@ SELECT
 
    --沒有顯示的欄位
    ,tmpKey = CAST(0 AS BIGINT)--控制新加的資料用,SizeRatio/Distribute/PatternPanel
-   ,CanEdit = dbo.GetCuttingP09CanEdit(wo.CutRef)
+   ,CanEdit = dbo.GetCuttingP09CanEdit(wo.CutRef) -- 判斷此筆是否能編輯
    ,ImportML = CAST(0 AS BIT)
    ,ImportWP = CAST(0 AS BIT)
    ,CanDoAutoDistribute = CAST(0 AS BIT)
@@ -1653,13 +1653,14 @@ DEALLOCATE CURSOR_
             {
                 return false;
             }
-
+            /*
             // 4. 存在 spreading schedule
             msg = $"The following spreading schedule data exists and cannot be {action}. If you need to {action}, please go to [Cutting_P31. Spreading Schedule] to {action} the spreading schedule data.";
             if (!CheckSpreadingSchedule_DetailAndShowData(currentDetailData["CutRef"].ToString(), msg))
             {
                 return false;
             }
+            */
 
             // 4 檢查欄位 SpreadingStatus
             if (!CheckSpreadingStatus(currentDetailData, $"The following digitail spreading data exists and cannot be {action}"))

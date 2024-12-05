@@ -1159,7 +1159,7 @@ END";
                 }
             }
 
-            if (dtWorkorder.Rows.Count > 0)
+            if (dtWorkorder.Rows.Count > 0 && form == CuttingForm.P09)
             {
                 Task.Run(() => new Guozi_AGV().SentWorkOrderToAGV(dtWorkorder));
             }

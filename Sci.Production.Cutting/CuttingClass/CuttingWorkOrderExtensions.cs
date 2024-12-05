@@ -106,5 +106,51 @@ namespace Sci.Production.Cutting
 
             return generator.Text(propertyName, header, null, width, settings);
         }
+
+        /// <summary>
+        /// P02 SEQ, P09 CutNo
+        /// </summary>
+        /// <inheritdoc/>
+        public static IDataGridViewGenerator NumericNull(
+            this IDataGridViewGenerator generator,
+            string propertyName,
+            string header,
+            IWidth width,
+            Func<DataRow, bool> canEditData)
+        {
+            DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
+            settings.EditingKeyPress += (s, e) =>
+            {
+                // 限制只能輸入數字
+                string input = e.EditingControl.Text;
+                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                {
+                    e.Handled = true; // 阻止非數字字符的輸入
+                }
+            };
+
+            settings.CellValidating += (s, e) =>
+             {
+                 DataGridView grid = ((DataGridViewColumn)s).DataGridView;
+                 DataRow dr = grid.GetDataRow(e.RowIndex);
+                 if (!canEditData(dr))
+                 {
+                     return;
+                 }
+
+                 if (MyUtility.Convert.GetString(e.FormattedValue) == string.Empty)
+                 {
+                     dr[propertyName] = DBNull.Value;
+                 }
+                 else
+                 {
+                     dr[propertyName] = e.FormattedValue;
+                 }
+
+                 dr.EndEdit();
+             };
+
+            return generator.Text(propertyName, header, null, width, settings);
+        }
     }
 }
