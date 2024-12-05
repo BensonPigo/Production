@@ -6,6 +6,7 @@ using Sci.Data;
 using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Production.PublicPrg;
+using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,8 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
-        private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
+        //private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
         private DataTable dt_SizeRatio; // 第3層表:新刪修
@@ -74,6 +76,8 @@ namespace Sci.Production.Cutting
             this.displayBoxDescription.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricDescription", true));
             this.numUnitCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "ConsPC", true));
             this.numCons.DataBindings.Add(new Binding("Value", this.bindingSourceDetail, "Cons", true));
+            this.txtPatternNo.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerNo", true));
+            this.txtMarkerLength.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "MarkerLength", true));
 
             this.detailgrid.Click += Grid_ClickBeginEdit;
         }
@@ -164,16 +168,20 @@ OUTER APPLY (
 ) wp2
 OUTER APPLY (
     SELECT SizeCode_CONCAT = STUFF((
-        SELECT CONCAT(', ', SizeCode, '/ ', Qty)
-        FROM WorkOrderForPlanning_SizeRatio WITH (NOLOCK)
-        WHERE WorkOrderForPlanningUkey = wo.Ukey
+        SELECT CONCAT(', ', ws.SizeCode, '/ ', ws.Qty)
+        FROM WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+		OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
+        WHERE ws.WorkOrderForPlanningUkey = wo.Ukey
+		ORDER BY ws.WorkOrderForPlanningUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
         FOR XML PATH ('')), 1, 1, '')
 ) ws1
 OUTER APPLY (
     SELECT TotalCutQty_CONCAT = STUFF((
-        SELECT CONCAT(', ', Sizecode, '/ ', Qty * wo.Layer)
-        FROM WorkOrderForPlanning_SizeRatio WITH (NOLOCK)
-        WHERE WorkOrderForPlanningUkey = wo.Ukey
+        SELECT CONCAT(', ', ws.Sizecode, '/ ', ws.Qty * wo.Layer)
+        FROM WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+		OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOLOCK) WHERE osc.Id = ws.ID AND osc.SizeCode = ws.SizeCode) osc
+        WHERE ws.WorkOrderForPlanningUkey = wo.Ukey
+		ORDER BY ws.WorkOrderForPlanningUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
         FOR XML PATH ('')), 1, 1, '')
 ) ws2
 OUTER APPLY (
@@ -320,8 +328,8 @@ ORDER BY
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_seq)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(13), this.CanEditData).Get(out this.col_MarkerLength)
+                //.MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
+                //.MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(13), this.CanEditData).Get(out this.col_MarkerLength)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_Article)
@@ -336,6 +344,7 @@ ORDER BY
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
+                .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
                 .DateTime("EditDate", header: "Edit Date", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
@@ -356,6 +365,12 @@ ORDER BY
                 .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
             this.GridEventSet();
+
+            // 設定所有欄位的 AutoSizeMode
+            foreach (DataGridViewColumn column in this.detailgrid.Columns)
+            {
+                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         /// <inheritdoc/>
@@ -958,6 +973,9 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
 
+            // Cut Cell
+            BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditData);
+
             this.col_Layer.CellValidating += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
@@ -993,14 +1011,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 dr.EndEdit();
             };
 
-            this.col_MarkerLength.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-
-                dr["ConsPC"] = CalculateConsPC(dr["MarkerLength"].ToString(), dr, this.dt_SizeRatio, CuttingForm.P02);
-                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
-                dr.EndEdit();
-            };
             this.col_Tone.MaxLength = 15;
             #endregion
 
@@ -1379,6 +1389,7 @@ order by p.EditDate desc
 
             this.btnBatchAssign.Font = f;
             this.btnImportMarker.Font = f;
+            this.btnExcludeSetting.Font = f;
             this.btnDownload.Font = f;
             this.btnImportMarkerLectra.Font = f;
             this.btnEdit.Font = f;
@@ -1435,6 +1446,45 @@ order by p.EditDate desc
             DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
             dv.Sort = this.detailSort;
             this.OnDetailEntered();
+        }
+
+        private void TxtPatternNo_PopUp(object sender, TextBoxPopUpEventArgs e)
+        {
+            string cuttingID = MyUtility.Check.Empty(this.CurrentMaintain) ? string.Empty : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            SelectItem selectItem = PopupMarkerNo(cuttingID, this.txtPatternNo.Text);
+            if (selectItem == null)
+            {
+                return;
+            }
+
+            this.txtPatternNo.Text = selectItem.GetSelectedString();
+        }
+
+        private void TxtPatternNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string cuttingID = MyUtility.Check.Empty(this.CurrentMaintain) ? string.Empty : MyUtility.Convert.GetString(this.CurrentMaintain["ID"]);
+            if (!ValidatingMarkerNo(cuttingID, this.txtPatternNo.Text))
+            {
+                this.txtPatternNo.Text = string.Empty;
+                e.Cancel = true;
+            }
+        }
+
+        private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+            decimal totlaLayer = MyUtility.Convert.GetInt(this.numTotalLayer.Value) + MyUtility.Convert.GetDecimal(this.numBalanceLayer.Value);
+            this.txtMarkerLength.Text = markerLength;
+
+            this.numUnitCons.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
+            this.numCons.Value = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numUnitCons.Value), totlaLayer, this.dt_SizeRatio, CuttingForm.P02);
+        }
+
+        private void btnExcludeSetting_Click(object sender, EventArgs e)
+        {
+            // 當 P091 History, IsSupportEdit = false
+            var exwip = new P02_ExcludeSetting(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
+            exwip.ShowDialog();
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

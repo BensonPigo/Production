@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
@@ -20,6 +21,7 @@ namespace Sci.Production.Cutting
         private DataTable sp; // 用在 Filter 開窗選項
         private string ID;
         private CuttingForm form;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Seq;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09 才有
@@ -58,6 +60,7 @@ namespace Sci.Production.Cutting
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("Seq", header: "Seq", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_Seq)
                 .Text("MarkerName", header: "Marker Name", width: Widths.AnsiChars(5))
                 .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(16), this.CanEditData)
                 .Text("PatternPanel_CONCAT", header: "Pattern Panel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
@@ -89,7 +92,8 @@ namespace Sci.Production.Cutting
             if (this.form == CuttingForm.P02)
             {
                 this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
-                    .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true);
+                    .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                    .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID);
             }
 
             this.Helper.Controls.Grid.Generator(this.gridBatchAssign)
@@ -141,7 +145,7 @@ namespace Sci.Production.Cutting
                 filter += " AND EstCutDate is null ";
             }
 
-            this.detailgridbs.Filter = filter;
+            //this.detailgridbs.Filter = filter;
         }
 
         private void BtnBatchUpdate_Click(object sender, EventArgs e)
@@ -165,16 +169,16 @@ namespace Sci.Production.Cutting
                     dr["MarkerName"] = this.txtMakerName.Text;
                 }
 
+                if (!MyUtility.Check.Empty(this.txtCell.Text))
+                {
+                    dr["CutCellID"] = this.txtCell.Text;
+                }
+
                 if (this.form == CuttingForm.P09)
                 {
                     if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
                     {
                         dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
-                    }
-
-                    if (!MyUtility.Check.Empty(this.txtCell.Text))
-                    {
-                        dr["CutCellID"] = this.txtCell.Text;
                     }
                 }
             }
@@ -246,13 +250,14 @@ namespace Sci.Production.Cutting
                 detaildr["MarkerLength"] = dr["MarkerLength"];
                 detaildr["MarkerLength_Mask"] = dr["MarkerLength_Mask"];
                 detaildr["MarkerNo"] = dr["MarkerNo"];
+                detaildr["Seq"] = dr["Seq"];
                 detaildr["Seq1"] = dr["Seq1"];
                 detaildr["Seq2"] = dr["Seq2"];
+                detaildr["CutCellID"] = dr["CutCellID"];
 
                 if (this.form == CuttingForm.P09)
                 {
                     detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
-                    detaildr["CutCellID"] = dr["CutCellID"];
                 }
             }
 
@@ -320,6 +325,49 @@ namespace Sci.Production.Cutting
         #region Grid 單筆資料的欄位開窗/驗證
         private void GridEventSet()
         {
+            #region SEQ
+            this.col_Seq.EditingControlShowing += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
+                if (MyUtility.Check.Empty(dr["Cutplanid"]) && MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) && this.EditMode)
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
+                }
+                else
+                {
+                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                }
+            };
+            this.col_Seq.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) || !this.EditMode)
+                {
+                    e.CellStyle.BackColor = Color.White;
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+                else
+                {
+                    e.CellStyle.BackColor = Color.Pink;
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+
+                if (dr["Seq"] != DBNull.Value && Convert.ToInt32(dr["Seq"]) == 0)
+                {
+                    dr["Seq"] = DBNull.Value;
+                }
+            };
+            #endregion
             // 可否編輯 && 顏色
             ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDataByGrid);
 
@@ -327,10 +375,10 @@ namespace Sci.Production.Cutting
             ConfigureSeqColumnEvents(this.col_Seq1, this.gridBatchAssign, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
+            BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
             if (this.form == CuttingForm.P09)
             {
                 BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditData);
-                BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
             }
         }
         #endregion

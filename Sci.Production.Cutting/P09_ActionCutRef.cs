@@ -73,10 +73,10 @@ namespace Sci.Production.Cutting
             this.numConsPC.Text = this.CurrentDetailData["ConsPC"].ToString();
             this.txtMarkerName.Text = this.CurrentDetailData["MarkerName"].ToString();
             this.txtMarkerNo.Text = this.CurrentDetailData["MarkerNo"].ToString();
-            this.txtMarkerLength.Text = this.CurrentDetailData["MarkerLength_Mask"].ToString();
-            this.txtActCuttingPerimeter.Text = this.CurrentDetailData["ActCuttingPerimeter_Mask"].ToString();
-            this.txtStraightLength.Text = this.CurrentDetailData["StraightLength_Mask"].ToString();
-            this.txtCurvedLength.Text = this.CurrentDetailData["CurvedLength_Mask"].ToString();
+            this.txtMarkerLength.Text = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(this.CurrentDetailData["MarkerLength"].ToString()));
+            this.txtActCuttingPerimeter.Text = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(this.CurrentDetailData["ActCuttingPerimeter_Mask"].ToString()));
+            this.txtStraightLength.Text = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(this.CurrentDetailData["StraightLength_Mask"].ToString()));
+            this.txtCurvedLength.Text = Prgs.ConvertFullWidthToHalfWidth(FormatLengthData(this.CurrentDetailData["CurvedLength_Mask"].ToString()));
             this.dateBoxEstCutDate.Value = MyUtility.Convert.GetDate(this.CurrentDetailData["EstCutDate"]);
             this.txtSpreadingNo.Text = this.CurrentDetailData["SpreadingNoID"].ToString();
             this.txtCell.Text = this.CurrentDetailData["CutCellID"].ToString();
