@@ -580,11 +580,13 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OperationID"].ToString())
+                    string oldValue = MyUtility.Convert.GetString(dr["OperationID"]);
+                    string newValue = MyUtility.Convert.GetString(e.FormattedValue);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && oldValue != newValue)
                     {
                         if (e.FormattedValue.ToString().Length > 1 && e.FormattedValue.ToString().Substring(0, 2) == "--")
                         {
-                            dr["OperationID"] = e.FormattedValue.ToString();
+                            dr["OperationID"] = newValue;
                             dr["OperationDescEN"] = string.Empty;
                             dr["MachineTypeID"] = string.Empty;
                             dr["Mold"] = string.Empty;
@@ -605,7 +607,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                             SqlParameter sp1 = new SqlParameter
                             {
                                 ParameterName = "@id",
-                                Value = e.FormattedValue.ToString(),
+                                Value = newValue,
                             };
 
                             IList<SqlParameter> cmds = new List<SqlParameter>
@@ -671,16 +673,19 @@ and o.ID = @id";
                         }
 
                         dr.EndEdit();
+
+                        // 重編 SewingSeq
+                        this.AfterColumnEdit(dr);
                     }
 
                     // 若為空則清空相關資料
                     else if (MyUtility.Check.Empty(e.FormattedValue))
                     {
                         this.ChangeToEmptyData(dr);
-                    }
 
-                    // 重編 SewingSeq
-                    this.AfterColumnEdit(dr);
+                        // 重編 SewingSeq
+                        this.AfterColumnEdit(dr);
+                    }
                 }
             };
             #endregion
@@ -2435,6 +2440,8 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 this.CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
                 this.HideRows();
             }
+
+            this.ReSetSewingSeqbyColumn();
         }
 
         // History
@@ -2611,16 +2618,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     #endregion OirSeq
                 }
             }
-        }
-
-        /// <summary>
-        /// gridIcon 刪除
-        /// </summary>
-        protected override void OnDetailGridDelete()
-        {
-            base.OnDetailGridDelete();
-
-            this.ReSetSewingSeq();
         }
 
         // Copy
@@ -2939,6 +2936,9 @@ and s.BrandID = @brandid";
             }
         }
 
+        /// <summary>
+        /// gridIcon 刪除按鈕
+        /// </summary>
         protected override void OnDetailGridRemoveClick()
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
@@ -2956,6 +2956,7 @@ and s.BrandID = @brandid";
             }
 
             base.OnDetailGridRemoveClick();
+            this.ReSetSewingSeq();
         }
 
         private DataTable dtDetailBeforeDrag;
@@ -3040,6 +3041,20 @@ and s.BrandID = @brandid";
             else
             {
                 dr["SewingSeq"] = string.Empty;
+            }
+
+            // 有值 SewingSeq 全部重編
+            this.ReSetSewingSeq();
+        }
+
+        private void ReSetSewingSeqbyColumn()
+        {
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (!MyUtility.Check.Empty(dr["OperationID"]) && !MyUtility.Convert.GetString(dr["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]))
+                {
+                    dr["SewingSeq"] = "1"; // 先給任一值
+                }
             }
 
             // 有值 SewingSeq 全部重編
