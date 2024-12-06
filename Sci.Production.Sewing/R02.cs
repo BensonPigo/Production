@@ -841,13 +841,15 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
 
             this.DeleteExcelRow(2, insertRow, excel);
 
+            string region = MyUtility.GetValue.Lookup("select Region from System");
+
             #region 呼叫Pams API for [GPH] [SPH] [VPH]
             AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
             {
-                FactoryID = this.factory,
+                FactoryID = this.factory == "SPR" || this.factory == "SPX" ? "SXR" : this.factory,
                 StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
                 EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
-                IsContainShare = false,
+                IsContainShare = region == "PH",
                 IsLocal = false,
             };
 
