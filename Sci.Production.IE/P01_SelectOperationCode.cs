@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -105,7 +109,21 @@ where CalibratedCode = 1
         // Find
         private void BtnFind_Click(object sender, EventArgs e)
         {
+
             StringBuilder filterCondition = new StringBuilder();
+
+            string descriptionText = this.txtDescription.Text.Trim();
+
+            // 定義一個正則表達式，匹配所有的特殊符號，除了分號
+            string pattern = @"[^a-zA-Z0-9\s;]";
+
+            if (Regex.IsMatch(descriptionText, pattern))
+            {
+                string sss = string.Empty;
+                this.gridData.DefaultView.RowFilter = $@"DescEN ='{descriptionText}'";
+                return;
+            }
+
             if (!MyUtility.Check.Empty(this.txtID.Text))
             {
                 filterCondition.Append(string.Format(" ID like '%{0}%' and", this.txtID.Text.Trim()));
@@ -133,7 +151,29 @@ where CalibratedCode = 1
 
             if (!MyUtility.Check.Empty(this.txtDescription.Text))
             {
-                filterCondition.Append(string.Format(" DescEN like'%{0}%' and", this.txtDescription.Text.Trim()));
+                List<string> descList = new List<string>();
+                if (!string.IsNullOrEmpty(this.txtDescription.Text))
+                {
+                    string tmp = this.txtDescription.Text.Replace("'", "''");
+                    descList = tmp.Split(';').Where(o => !string.IsNullOrEmpty(o)).ToList();
+                }
+
+                if (descList.Any())
+                {
+                    for (int i = 0; i < descList.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            filterCondition.Append(" OR ");
+                        }
+
+                        filterCondition.Append(" (");
+                        filterCondition.Append($"DescEN LIKE '%{descList[i]}%'");
+                        filterCondition.Append(")");
+                    }
+                }
+
+                filterCondition.Append(" AND ");
             }
 
             // ISP20220757 只顯示Operation.Junk = 0
@@ -142,11 +182,11 @@ where CalibratedCode = 1
             if (filterCondition.Length > 0)
             {
                 string filter = filterCondition.ToString().Substring(0, filterCondition.Length - 3);
-                this.gridData.DefaultView.RowFilter = filter;
+                this.gridData.DefaultView.RowFilter = "1=1 AND " + filter;
                 this.numCount.Value = this.gridData.DefaultView.Count;
             }
 
-            this.gridDetail.AutoResizeColumns();
+            // this.gridDetail.AutoResizeColumns();
         }
 
         // Select

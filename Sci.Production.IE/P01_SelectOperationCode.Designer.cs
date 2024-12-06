@@ -51,6 +51,7 @@
             this.panel5 = new Sci.Win.UI.Panel();
             this.gridDetail = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
@@ -76,6 +77,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this.btnFind);
             this.panel3.Controls.Add(this.txtDescription);
             this.panel3.Controls.Add(this.numSeamLength);
@@ -109,7 +111,7 @@
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDescription.Location = new System.Drawing.Point(81, 41);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(533, 23);
+            this.txtDescription.Size = new System.Drawing.Size(339, 23);
             this.txtDescription.TabIndex = 1;
             // 
             // numSeamLength
@@ -134,7 +136,6 @@
             // 
             // labelSeamLength
             // 
-            this.labelSeamLength.Lines = 0;
             this.labelSeamLength.Location = new System.Drawing.Point(595, 8);
             this.labelSeamLength.Name = "labelSeamLength";
             this.labelSeamLength.Size = new System.Drawing.Size(88, 23);
@@ -152,7 +153,6 @@
             // 
             // labelMachineCode
             // 
-            this.labelMachineCode.Lines = 0;
             this.labelMachineCode.Location = new System.Drawing.Point(374, 9);
             this.labelMachineCode.Name = "labelMachineCode";
             this.labelMachineCode.Size = new System.Drawing.Size(94, 23);
@@ -181,7 +181,6 @@
             // 
             // labelSMV
             // 
-            this.labelSMV.Lines = 0;
             this.labelSMV.Location = new System.Drawing.Point(236, 9);
             this.labelSMV.Name = "labelSMV";
             this.labelSMV.Size = new System.Drawing.Size(36, 23);
@@ -199,7 +198,6 @@
             // 
             // labelDescription
             // 
-            this.labelDescription.Lines = 0;
             this.labelDescription.Location = new System.Drawing.Point(3, 41);
             this.labelDescription.Name = "labelDescription";
             this.labelDescription.Size = new System.Drawing.Size(74, 23);
@@ -208,7 +206,6 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(4, 9);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(26, 23);
@@ -250,7 +247,6 @@
             // 
             // labelCount
             // 
-            this.labelCount.Lines = 0;
             this.labelCount.Location = new System.Drawing.Point(117, 9);
             this.labelCount.Name = "labelCount";
             this.labelCount.Size = new System.Drawing.Size(44, 23);
@@ -307,9 +303,18 @@
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
             this.gridDetail.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDetail.ShowCellToolTips = false;
             this.gridDetail.Size = new System.Drawing.Size(798, 446);
             this.gridDetail.TabIndex = 0;
             this.gridDetail.TabStop = false;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(423, 41);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(269, 23);
+            this.label1.TabIndex = 9;
+            this.label1.Text = "Use \';\' to separate desc keyword";
             // 
             // P01_SelectOperationCode
             // 
@@ -323,6 +328,7 @@
             this.Controls.Add(this.panel1);
             this.DefaultControl = "txtID";
             this.Name = "P01_SelectOperationCode";
+            this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Select Operation Code";
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
@@ -359,5 +365,6 @@
         private Win.UI.Button btnSelect;
         private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.Label label1;
     }
 }

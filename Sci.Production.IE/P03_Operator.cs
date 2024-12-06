@@ -92,7 +92,11 @@ namespace Sci.Production.IE
             {
                 for (int i = 0; i < descList.Count; i++)
                 {
-                    filterCondition.Append(" AND (");
+                    if(i > 0)
+                    {
+                        filterCondition.Append(" OR ");
+                    }
+                    filterCondition.Append(" (");
                     foreach (var columnName in new[] { "ID", "FIRSTNAME", "LASTNAME", "SECTION" })
                     {
                         filterCondition.Append($"{columnName} LIKE '%{descList[i]}%'");
@@ -109,14 +113,14 @@ namespace Sci.Production.IE
             if (filterCondition.Length > 0)
             {
                 string filter = filterCondition.ToString();
-                (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = "1=1" + filter;
+                (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = "1=1 AND " + filter;
             }
             else
             {
                 (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = string.Empty;
             }
 
-            this.gridDetail.AutoResizeColumns();
+            // this.gridDetail.AutoResizeColumns();
         }
 
         private void BtnSelect_Click(object sender, EventArgs e)
