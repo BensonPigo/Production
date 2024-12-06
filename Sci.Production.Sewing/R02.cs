@@ -846,7 +846,7 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
             #region 呼叫Pams API for [GPH] [SPH] [VPH]
             AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
             {
-                FactoryID = this.factory == "SPR" || this.factory == "SPX" ? "SXR" : this.factory,
+                FactoryID = this.factory == "SPR" ? "SXR" : this.factory,
                 StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
                 EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
                 IsContainShare = region == "PH",
