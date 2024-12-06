@@ -2511,6 +2511,8 @@ and s.BrandID = @brandid ", Env.User.Factory,
         {
             base.OnDetailGridInsert(index);
             DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
+            string iETMSUkey = MyUtility.Convert.GetString(oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[0]["IETMSUkey"]);
+
             if (index >= 0)
             {
                 this.detailgrid.AllowUserToAddRows = false;
@@ -2521,11 +2523,21 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
                 DataRow dr_Location = index == 0 ? oriDt.Rows[index + 1] : oriDt.Rows[index -1];
                 DataRow nextDataRow = oriDt.Rows[index];
-                nextDataRow["IETMSUkey"] = oriDt.Rows[0]["IETMSUkey"];
+                nextDataRow["IETMSUkey"] = iETMSUkey;
                 nextDataRow["CodeFrom"] = "Operation";
-                nextDataRow["Location"] = dr_Location["Location"];
                 nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxSewingSeq) + this.seqIncreaseNumber).PadLeft(4, '0');
                 nextDataRow["IsAdd"] = 1;
+
+                if (dr_Location.RowState != DataRowState.Deleted)
+                {
+                    nextDataRow["Location"] = dr_Location["Location"];
+                }
+                else
+                {
+                    // 處理被刪除的行的情況，例如設置默認值
+                    nextDataRow["Location"] = DBNull.Value; // 或者其他合理的默認值
+                }
+
                 this.detailgridbs.DataSource = oriDt;
             }
             else if (index == -1)
@@ -2547,6 +2559,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
             int sewingSeq = 0;
             int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            string iETMSUkey = MyUtility.Convert.GetString(dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[0]["IETMSUkey"]);
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
             DataRow drSelect_Location;
 
@@ -2564,7 +2577,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 sewingSeq = 10;
                 seq = 10;
                 drSelect["IsAdd"] = 1;
-                drSelect["IETMSUkey"] = dt.Rows[0]["IETMSUkey"];
+                drSelect["IETMSUkey"] = iETMSUkey;
                 drSelect["CodeFrom"] = "Operation";
                 drSelect["Location"] = drSelect_Location["Location"];
                 foreach (DataRow dr in dt.Rows)
@@ -2962,22 +2975,36 @@ and s.BrandID = @brandid";
             foreach (DataGridViewRow i in this.detailgrid.SelectedRows)
             {
                 this.viewRows.Add(i);
-                string selectSSValue = (string)this.detailgrid.Rows[i.Index].Cells["SewingSeq"].Value; // 之前資料
-                string selectDSValue = (string)this.detailgrid.Rows[i.Index].Cells["DesignateSeq"].Value; // 之前資料
-                foreach (DataRow row in this.dtDetailBeforeDrag.Rows)
+                string selectSSValue = Convert.ToString(this.detailgrid.Rows[i.Index].Cells["SewingSeq"].Value);
+                string selectDSValue = Convert.ToString(this.detailgrid.Rows[i.Index].Cells["DesignateSeq"].Value);
+
+                // string selectSSValue = (string)this.detailgrid.Rows[i.Index].Cells["SewingSeq"].Value; // 之前資料
+                // string selectDSValue = (string)this.detailgrid.Rows[i.Index].Cells["DesignateSeq"].Value; // 之前資料
+                foreach (DataRow row in this.dtDetailBeforeDrag.AsEnumerable().Where(x=>x.RowState != DataRowState.Deleted).ToList())
                 {
                     if ((MyUtility.Convert.GetString(row["DesignateSeq"]) == selectSSValue) ||
                         (MyUtility.Convert.GetString(row["DesignateSeq"]) == string.Empty && (MyUtility.Convert.GetString(dr["DesignateSeq"]) == MyUtility.Convert.GetString(row["SewingSeq"]))))
                     {
                         int index = row.Table.Rows.IndexOf(row);
-                        this.detailgrid.Rows[index].Cells["DesignateSeq"].Value = string.Empty;
-                        this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+
+                        // 確保索引在合理範圍內
+                        if (index >= 0 && index < this.detailgrid.Rows.Count)
+                        {
+                            this.detailgrid.Rows[index].Cells["DesignateSeq"].Value = string.Empty;
+                            this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
+                        }
                     }
                 }
             }
 
-            int iRow = dr.Table.Rows.IndexOf(dr);
-            this.detailgrid.Rows[iRow].Cells["DesignateSeq"].Value = string.Empty;
+            if (dr.RowState != DataRowState.Deleted)
+            {
+                int iRow = dr.Table.Rows.IndexOf(dr);
+                if (iRow >= 0 && iRow < this.detailgrid.Rows.Count)
+                {
+                    this.detailgrid.Rows[iRow].Cells["DesignateSeq"].Value = string.Empty;
+                }
+            }
         }
 
         private void DetailGridAfterRowDragDo(DataRow dr)
