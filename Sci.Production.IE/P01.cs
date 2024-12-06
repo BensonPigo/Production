@@ -1,30 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
+using Sci.Production.Prg;
+using Sci.Production.PublicForm;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
-using Sci.Production.PublicForm;
 using System.Data.SqlClient;
-using System.Linq;
-using Sci.Production.Class;
-using Sci.Win.Tems;
-using System.Net.Mail;
-using Sci.Production.Prg;
-using Sci.Production.Class.Command;
-using static Ict.Win.DataGridViewGenerator;
-using System.Security.AccessControl;
-using System.Diagnostics;
 using System.Drawing;
-using static Ict.Win.UI.DataGridView;
-using System.Windows.Forms.DataVisualization.Charting;
-using Microsoft.SqlServer.Management.Smo;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
-using System.Runtime.Remoting;
+using System.Linq;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
+using static Ict.Win.DataGridViewGenerator;
 
 namespace Sci.Production.IE
 {
@@ -140,7 +131,7 @@ namespace Sci.Production.IE
                 this.IsSupportCopy = true;
                 this.IsSupportDelete = true;
                 this.IsDeleteOnBrowse = true;
-  
+
             }
 
             this.DefaultFilter = df.ToString();
@@ -163,7 +154,7 @@ namespace Sci.Production.IE
         }
 
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
-          {
+        {
             if (this.detailgrid.Columns[e.ColumnIndex].DataPropertyName == "IsNonSewingLine")
             {
                 DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
@@ -380,13 +371,13 @@ namespace Sci.Production.IE
             bool isConfirmed = this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed");
             bool canEdit = PublicPrg.Prgs.GetAuthority(Env.User.UserID, "P01. Factory GSD", "CanEdit");
             this.btnNewVersion.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
-             this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
+            this.btnNewStatus.Enabled = !this.EditMode && this.CurrentMaintain != null && canEdit && isConfirmed;
             this.btnHistory.Enabled = !this.EditMode && this.CurrentMaintain != null;
             this.btnStdGSDList.Enabled = !this.EditMode && this.CurrentMaintain != null;
-             this.btnArtSum.Enabled = this.CurrentMaintain != null;
+            this.btnArtSum.Enabled = this.CurrentMaintain != null;
             this.btnSketch.Enabled = this.CurrentMaintain != null;
 
-             string styleVersion = MyUtility.GetValue.Lookup($@"
+            string styleVersion = MyUtility.GetValue.Lookup($@"
 select IETMSVersion from Style 
 where id= '{this.CurrentMaintain["StyleID"]}'
 and SeasonID= '{this.CurrentMaintain["SeasonID"]}'
@@ -580,10 +571,10 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     {
                                         if (MyUtility.Convert.GetBool(dataRow["IsShow"]) && !MyUtility.Convert.GetString(dataRow["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dataRow["IsNonSewingLine"]))
                                         {
-                                            if(!MyUtility.Check.Empty(dataRow["OperationID"]))
+                                            if (!MyUtility.Check.Empty(dataRow["OperationID"]))
                                             {
-                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
-                                                sewingSeq++; 
+                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq)).PadLeft(4, '0');
+                                                sewingSeq++;
                                             }
                                         }
                                     }
@@ -596,7 +587,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                         {
                                             if (!MyUtility.Check.Empty(dataRow["OperationID"]))
                                             {
-                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq) * 10).PadLeft(4, '0');
+                                                dataRow["SewingSeq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(sewingSeq)).PadLeft(4, '0');
                                                 sewingSeq++;
                                             }
                                         }
@@ -1267,7 +1258,7 @@ and Name = @PPA
                 .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
                 .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
-                .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: false)
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7))
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
@@ -1346,7 +1337,8 @@ and Name = @PPA
             setting.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             setting.CellValidating += (s, e) =>
             {
-
+                // 勾選就清空 Sew Seq
+                // 取消勾選重排 Sew Seq
             };
 
             return setting;
@@ -1839,7 +1831,7 @@ WHERE Ukey={item["Ukey"]}
 
             DataTable dtSeq = this.DetailDatas.CopyToDataTable();
 
-            MyUtility.Tool.ProcessWithDatatable(dtSeq,string.Empty, sqlcmd_Seq, out DataTable dt,"#tmp");
+            MyUtility.Tool.ProcessWithDatatable(dtSeq, string.Empty, sqlcmd_Seq, out DataTable dt, "#tmp");
 
             // 若ThreadColorComb已有資料要自動發信通知Style.ThreadEditname(去串pass1.EMail若為空或null則不需要發信)，通知使用者資料有變更。
             string sqlcmd = $@"
@@ -2528,7 +2520,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                                     .Select(row => row.Field<string>("Seq"))
                                     .Max();
 
-                DataRow dr_Location = index == 0 ? oriDt.Rows[index + 1] : oriDt.Rows[index -1];
+                DataRow dr_Location = index == 0 ? oriDt.Rows[index + 1] : oriDt.Rows[index - 1];
                 DataRow nextDataRow = oriDt.Rows[index];
                 nextDataRow["IETMSUkey"] = oriDt.Rows[0]["IETMSUkey"];
                 nextDataRow["CodeFrom"] = "Operation";
@@ -2570,7 +2562,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
             if (dt.Rows.Count >= 0)
             {
-                sewingSeq = 10;
+                sewingSeq = 1;
                 seq = 10;
                 drSelect["IsAdd"] = 1;
                 drSelect["IETMSUkey"] = dt.Rows[0]["IETMSUkey"];
@@ -2599,7 +2591,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     {
                         dr["SewingSeq"] = MyUtility.Convert.GetString(sewingSeq).PadLeft(4, '0');
                         dr["IsShow"] = 1;
-                        sewingSeq += 10;
+                        sewingSeq += 1;
                     }
                     #endregion SewingSeq
 
@@ -2624,7 +2616,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
             }
         }
 
-            // Copy
+        // Copy
         private void BtnCopy_Click(object sender, EventArgs e)
         {
             // 將要Copy的資料記錄起來
@@ -3014,7 +3006,7 @@ and s.BrandID = @brandid";
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
             DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
-            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource,ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
+            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource, ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
             windows.ShowDialog();
             this.detailgridbs.DataSource = dataSource;
         }
