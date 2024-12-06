@@ -1240,7 +1240,7 @@ and Name = @PPA
                 .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
                 .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
-                .Text("Location", header: "Location", width: Widths.AnsiChars(7))
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
                 .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
@@ -1302,7 +1302,7 @@ and Name = @PPA
                     if (columnName == "SewingSeq")
                     {
                         dr[columnName] = string.Empty;
-                        this.ReSetSewingSeq();
+                        this.ReFillSewingSeq();
                     }
 
                     return;
@@ -2441,7 +2441,11 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 this.HideRows();
             }
 
-            this.ReSetSewingSeqbyColumn();
+            // 補上空的Location
+            this.FillAllLocation();
+
+            // 編碼 SewingSeq
+            this.ReFillSewingSeqbyRule();
         }
 
         // History
@@ -2550,7 +2554,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
         {
             base.OnDetailGridAppendClick();
             int sewingSeq = 0;
-            int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
             DataRow drSelect_Location;
@@ -2567,7 +2570,6 @@ and s.BrandID = @brandid ", Env.User.Factory,
             if (dt.Rows.Count >= 0)
             {
                 sewingSeq = 1;
-                seq = 10;
                 drSelect["IsAdd"] = 1;
                 drSelect["IETMSUkey"] = dt.Rows[0]["IETMSUkey"];
                 drSelect["CodeFrom"] = "Operation";
@@ -2956,7 +2958,7 @@ and s.BrandID = @brandid";
             }
 
             base.OnDetailGridRemoveClick();
-            this.ReSetSewingSeq();
+            this.ReFillSewingSeq();
         }
 
         private DataTable dtDetailBeforeDrag;
@@ -3007,13 +3009,13 @@ and s.BrandID = @brandid";
                 sortIndex++;
             }
 
-            this.ReSetSewingSeq();
+            this.ReFillSewingSeq();
         }
 
         /// <summary>
         /// 針對有值 SewingSeq 按照畫面排序,重新編碼
         /// </summary>
-        private void ReSetSewingSeq()
+        private void ReFillSewingSeq()
         {
             int sewingSeq = 1;
             foreach (DataRow row in this.DetailDatas)
@@ -3044,10 +3046,13 @@ and s.BrandID = @brandid";
             }
 
             // 有值 SewingSeq 全部重編
-            this.ReSetSewingSeq();
+            this.ReFillSewingSeq();
         }
 
-        private void ReSetSewingSeqbyColumn()
+        /// <summary>
+        /// 依據規則重新編碼全部 SewingSeq
+        /// </summary>
+        private void ReFillSewingSeqbyRule()
         {
             foreach (DataRow dr in this.DetailDatas)
             {
@@ -3058,7 +3063,62 @@ and s.BrandID = @brandid";
             }
 
             // 有值 SewingSeq 全部重編
-            this.ReSetSewingSeq();
+            this.ReFillSewingSeq();
+        }
+
+        /// <summary>
+        /// 填入所有空的 Location 欄位。如果第一筆資料沒有 Location，會往下尋找第一筆有值的 Location 並向上填充。
+        /// </summary>
+        private void FillAllLocation()
+        {
+            // 填入與前一筆相同的 Location
+            string preLocation = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["Location"]))
+                {
+                    dr["Location"] = preLocation; // 與前一筆相同
+                }
+
+                preLocation = MyUtility.Convert.GetString(dr["Location"]); // 記錄前一筆
+            }
+
+            // 如果第一筆沒有 Location，往下尋找第一筆有值的 Location
+            if (MyUtility.Check.Empty(this.DetailDatas.First()["Location"]))
+            {
+                string firstNonEmptyLocation = this.FindFirstNonEmptyLocation();
+                if (!string.IsNullOrEmpty(firstNonEmptyLocation))
+                {
+                    // 將第一筆開始無值的部分往上填充
+                    foreach (DataRow dr in this.DetailDatas)
+                    {
+                        if (!MyUtility.Check.Empty(dr["Location"]))
+                        {
+                            break; // 已填充到有值為止
+                        }
+
+                        dr["Location"] = firstNonEmptyLocation;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 尋找 DetailDatas 中第一筆非空的 Location 值。
+        /// </summary>
+        /// <returns>第一筆非空的 Location 值，若無則返回空字串。</returns>
+        private string FindFirstNonEmptyLocation()
+        {
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string location = MyUtility.Convert.GetString(dr["Location"]);
+                if (!MyUtility.Check.Empty(location))
+                {
+                    return location;
+                }
+            }
+
+            return string.Empty;
         }
 
         private void BtnATSummary_Click(object sender, EventArgs e)
