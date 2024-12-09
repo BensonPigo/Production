@@ -23,12 +23,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(-30).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(75).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(75).ToString("yyyy/MM/dd"));
             }
 
             try
