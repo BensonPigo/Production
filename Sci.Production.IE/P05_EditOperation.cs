@@ -38,7 +38,7 @@ namespace Sci.Production.IE
             this.DialogResult = DialogResult.No;
 
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
-            this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
+            this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted && s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
 
             if (!this.dtAutomatedLineMapping_DetailCopy.Columns.Contains("UpdSewerDiffPercentage"))
             {
@@ -287,7 +287,11 @@ namespace Sci.Production.IE
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["UpdSewerDiffPercentage"] = DBNull.Value;
-                    dr["UpdDivSewer"] = DBNull.Value;
+                    if (dr.Table.Columns.Contains("UpdDivSewer"))
+                    {
+                        dr["UpdDivSewer"] = DBNull.Value;
+                    }
+
                     return;
                 }
 
@@ -504,29 +508,51 @@ namespace Sci.Production.IE
                 }
             }
         }
+        private decimal GetDecimalValue(object value, object defaultValue)
+        {
+            return value == DBNull.Value ? MyUtility.Convert.GetDecimal(defaultValue) : MyUtility.Convert.GetDecimal(value);
+        }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
             this.gridEditOperationBs.EndEdit();
 
-
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var needKeepRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                 .Where(s => checkedNo.Contains(s["No"].ToString()) &&
-                ((!this.IsP05) || (this.IsP05 && (s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0 || s["UpdDivSewer"] == DBNull.Value))));
+                ((!this.IsP05 && ((s["UpdSewerDiffPercentage"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]) > 0) || s["UpdSewerDiffPercentage"] == DBNull.Value)) ||
+                (this.IsP05 && ((s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0) || s["UpdDivSewer"] == DBNull.Value))));
 
             #region 檢查DivSewer與UpdSewerDiffPercentage總和是否超過或不足
-            var checkDivSewerBalance = needKeepRows
+
+            IEnumerable<dynamic> checkDivSewerBalance;
+
+            if (!IsP05)
+            {
+                checkDivSewerBalance = needKeepRows
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
-                    OriSewer = this.IsP05 ? MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]) : 0,
-                    SumDivSewer = this.IsP05 ? groupItem.Sum(s => s["UpdDivSewer"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["DivSewer"]) : MyUtility.Convert.GetDecimal(s["UpdDivSewer"])) : 0,
-                    SumSewerDiffPercentage = groupItem.Sum(s => s["UpdSewerDiffPercentage"] == DBNull.Value ? MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]) : MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
+                    SumSewerDiffPercentage = groupItem.Sum(s => GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
                 });
+            }
+            else
+            {
+                checkDivSewerBalance = needKeepRows
+                .GroupBy(s => s["TimeStudyDetailUkey"])
+                .Select(groupItem => new
+                {
+                    OperationDesc = groupItem.First()["OperationDesc"].ToString(),
+                    OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
+                    SumDivSewer = groupItem.Sum(s => this.GetDecimalValue(s["UpdDivSewer"], s["DivSewer"])),
+                    SumSewerDiffPercentage = groupItem.Sum(s => GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    TimeStudyDetailUkeyCnt = groupItem.Count(),
+                    DetailRows = groupItem,
+                });
+            }
 
             foreach (var checkItem in checkDivSewerBalance)
             {
@@ -552,7 +578,7 @@ namespace Sci.Production.IE
             if (listLoseTimeStudyDetailUkey.Any())
             {
                 MyUtility.Msg.WarningBox($@"The following Operation is missing.
-{listLoseTimeStudyDetailUkey.Select(s => s["OperationDesc"].ToString()).JoinToString(Environment.NewLine)}");
+        {listLoseTimeStudyDetailUkey.Select(s => s["OperationDesc"].ToString()).JoinToString(Environment.NewLine)}");
                 return;
             }
             #endregion
@@ -564,7 +590,7 @@ namespace Sci.Production.IE
             if (listLoseNo.Any())
             {
                 MyUtility.Msg.WarningBox($@"The following No is missing.
-{listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+        {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
                 return;
             }
             #endregion
@@ -601,6 +627,7 @@ namespace Sci.Production.IE
             // 將No空白資料與UpdDivSewer = 0清除
             var needClearDatas = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                                 .Where(s => MyUtility.Check.Empty(s["No"]) ||
+                                            (MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]) == 0 && s["UpdSewerDiffPercentage"] != DBNull.Value) ||
                                             (this.IsP05 && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) == 0 && s["UpdDivSewer"] != DBNull.Value))
                                 .ToList();
             foreach (var needRemoveRow in needClearDatas)

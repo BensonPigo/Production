@@ -87,7 +87,7 @@ AND ALMCS.Junk = 0
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
             // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
 
-            this.gridicon.Location = new System.Drawing.Point(1339, 200);
+            this.gridicon.Location = new System.Drawing.Point(1341, 200);
         }
 
         /// <summary>
@@ -959,7 +959,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 //    }
                 //}
 
-                //this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
+                this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
 
                 // 如果取消勾選之後，資料中沒有一筆勾選的情況，將每筆資料的Selected read only回復
                 if (!isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
