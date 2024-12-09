@@ -85,7 +85,7 @@ AND ALMCS.Junk = 0
             this.txtSewingline.FactoryobjectName = this.txtfactory;
 
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
-            this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
+            // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
 
             this.gridicon.Location = new System.Drawing.Point(1339, 200);
         }
@@ -354,8 +354,6 @@ AND ALMCS.Junk = 0
                     {
                         dr["EstOutputHr"] = 3600 / totleCycleTime;
                     }
-
-                    
                     dr["EstTotalCycleTime"] = totleCycleTime;
                 }
             }

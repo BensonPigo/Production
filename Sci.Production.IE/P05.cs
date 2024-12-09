@@ -162,7 +162,7 @@ AND ALMCS.Junk = 0
             this.chartLBR.Paint += this.ChartLBR_Paint;
 
             this.numericLBRByGSDTime.ValueChanged += this.NumericLBRByGSDTime_ValueChanged;
-            this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
+            // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
         }
 
         private void NumericLBRByGSDTime_ValueChanged(object sender, EventArgs e)
