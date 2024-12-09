@@ -119,7 +119,14 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
                                             , (Select concat(ID, '-', Name) from Color WITH(NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
                                         )
 									FROM fabric fbr WITH(NOLOCK) WHERE SCIRefno = p.SCIRefno))
-		, Mdesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
+		, Mdesc = Concat( 'Relaxation Type：'
+                         ,(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
+                         ,CHAR(13) + CHAR(10)
+                         ,CHAR(13) + CHAR(10)
+                         ,(Select iss.Seq1 + '-' + iss.Seq2 + ':' + psdsS.SpecValue + pd.Special + '=' + convert(varchar, pd.Qty) 
+                            from PO_Supp_Detail_Spec psdsS WITH (NOLOCK) 
+                            join PO_Supp_Detail pd on pd.ID = psdsS.ID and pd.seq1 = psdsS.seq1 and pd.seq2 = psdsS.seq2
+                           where psdsS.ID = iss.POID and psdsS.seq1 = iss.seq1 and psdsS.seq2 = iss.seq2 and psdsS.SpecColumnID = 'Size'))
         , t.Roll
         , t.Dyelot
         , t.Qty
