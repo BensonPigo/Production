@@ -3,6 +3,7 @@ using Ict.Win;
 using Ict.Win.Tools;
 using Microsoft.SqlServer.Management.Smo;
 using Microsoft.SqlServer.Management.Smo.Agent;
+using Microsoft.SqlServer.Management.Smo.Mail;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
@@ -87,7 +88,7 @@ AND ALMCS.Junk = 0
             this.numericLBRByCycleTime.ValueChanged += this.NumericLBRByCycleTime_ValueChanged;
             // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
 
-            this.gridicon.Location = new System.Drawing.Point(1341, 200);
+            this.gridicon.Location = new System.Drawing.Point(1340, 200);
         }
 
         /// <summary>
@@ -277,10 +278,10 @@ AND ALMCS.Junk = 0
                     LEFT JOIN MachineType_Detail md ON md.ID = ad.MachineTypeID AND md.FactoryID = lmb.FactoryID
                     OUTER APPLY
                     (
-                    select val = stuff((select distinct concat(',',Name)
-                    from OperationRef a
-                    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-                    where a.CodeType = '00007' and a.id = ad.OperationID  for xml path('') ),1,1,'')
+                        select val = stuff((select distinct concat(',',Name)
+                        from OperationRef a
+                        inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+                        where a.CodeType = '00007' and a.id = ad.OperationID  for xml path('') ),1,1,'')
                     )Motion
                     WHERE ad.ID = '{masterID}'     
                 )a
@@ -826,11 +827,29 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
+                                    string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+
+                                    if (MyUtility.Check.Empty(strAnnotation))
+                                    {
+                                        string sqlcmd = $@"select  Annotation
+                                        from TimeStudy TS WITH(NOLOCK)
+                                        INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+                                        WHERE 
+                                        TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
+                                        TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
+                                        TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
+                                        OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
+                                        strAnnotation = MyUtility.GetValue.Lookup(sqlcmd);
+                                    }
+
+                                   // var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.P01SelectOperationCode["ID"].ToString(), callNextForm.P01SelectOperationCode["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                                   // var effi_90D = this.GetEffi_90Day(Env.User.Factory, callNextForm.P01SelectOperationCode["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
+
                                     dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                     dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                    dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                    dr["Annotation"] = strAnnotation;
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                     dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr.EndEdit();
@@ -1864,7 +1883,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
                 nextDataRow["Location"] = dataRow_Location["Location"];
-
+                nextDataRow["Location1"] = dataRow_Location["Location"].ToString().Substring(2, dataRow_Location["Location"].ToString().Length -2);
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
@@ -2002,6 +2021,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     this.CurrentDetailData["IsShow"] = 1;
                 }
             }
+
+            this.CurrentMaintain["SewerManpower"] = this.GetSewer() + 1;
+
         }
 
         /// <inheritdoc/>
@@ -2177,6 +2199,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
+            this.CurrentMaintain["SewerManpower"] = this.GetSewer() - 1;
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
@@ -2400,6 +2423,16 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 			,[Attachment]";
 
             return MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlcmd));
+        }
+
+        /// <inheritdoc/>
+        public int GetSewer()
+        {
+            var count = this.DetailDatas.AsEnumerable()
+                            .GroupBy(row => row.Field<string>("No"))
+                            .Count();
+
+            return MyUtility.Convert.GetInt(count) - MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]);
         }
     }
 }

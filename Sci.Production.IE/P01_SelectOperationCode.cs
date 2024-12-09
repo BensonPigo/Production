@@ -78,23 +78,31 @@ namespace Sci.Production.IE
                  .Numeric("SeamLength", header: "Seam Length", decimal_places: 2, iseditingreadonly: true);
 
             string sqlCmd = $@"
-select  o.ID,
-        o.DescEN,
-        o.SMV,
-        SMVsec = o.SMV * 60,
-        o.MachineTypeID,
-        o.SeamLength,
-        o.MtlFactorID,
-        o.Annotation,
-        o.MasterPlusGroup,
-        [MachineType_IsSubprocess] = isnull(md.IsSubprocess,0),
-        o.Junk,
-        md.IsSubprocess,
-        [IsNonSewingLine] = isnull(md.IsNonSewingLine, 0),
-        o.MoldID
-from Operation o WITH (NOLOCK)
-left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
-where CalibratedCode = 1
+            select  o.ID,
+                    o.DescEN,
+                    o.SMV,
+                    SMVsec = o.SMV * 60,
+                    o.MachineTypeID,
+                    o.SeamLength,
+                    o.MtlFactorID,
+                    o.Annotation,
+                    o.MasterPlusGroup,
+                    [MachineType_IsSubprocess] = isnull(md.IsSubprocess,0),
+                    o.Junk,
+                    md.IsSubprocess,
+                    [IsNonSewingLine] = isnull(md.IsNonSewingLine, 0),
+                    o.MoldID,
+                    [Motion] = Motion.val
+            from Operation o WITH (NOLOCK)
+            left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
+            OUTER APPLY
+            (
+	            select val = stuff((select distinct concat(',',Name)
+	            from OperationRef a
+	            inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+	            where a.CodeType = '00007' and a.id = o.ID  for xml path('') ),1,1,'')
+            )Motion
+            where CalibratedCode = 1
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.gridData);
             if (!result)
