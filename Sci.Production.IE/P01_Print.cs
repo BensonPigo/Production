@@ -105,7 +105,7 @@ select Machine = stuff((
 --準備 SewingSeq , 同 P01 OnDetailSelectCommandPrepare 這段
 SELECT
     td.Ukey
-    ,SewingSeq = RIGHT('0000' + CAST((10 * (ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4)
+    ,SewingSeq = RIGHT('0000' + CAST(((ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4)
 INTO #tmpSewingSeq
 FROM TimeStudy_Detail td
 where ID = '{this.masterData["ID"]}'
