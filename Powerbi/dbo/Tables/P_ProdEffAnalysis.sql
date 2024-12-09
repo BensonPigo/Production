@@ -5,7 +5,7 @@
 	[Program] [nvarchar](12) NOT NULL,
 	[Style] [varchar](15) NOT NULL,
 	[FtyZone] [varchar](8) NOT NULL,
-	[Factory] [varchar](8) NOT NULL,
+	[FactoryID] [varchar](8) NOT NULL,
 	[Brand] [varchar](8) NOT NULL,
 	[NewCDCode] [varchar](5) NOT NULL,
 	[ProductType] [varchar](30) NOT NULL,
@@ -40,7 +40,7 @@ GO
 ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_FtyZone]  DEFAULT ('') FOR [FtyZone]
 GO
 
-ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Factory]  DEFAULT ('') FOR [Factory]
+ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
 
 ALTER TABLE [dbo].[P_ProdEffAnalysis] ADD  CONSTRAINT [DF_P_ProdEffAnalysis_Brand]  DEFAULT ('') FOR [Brand]
@@ -106,7 +106,7 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠區域' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'FtyZone'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'Factory'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProdEffAnalysis', @level2type=N'COLUMN',@level2name=N'Brand'

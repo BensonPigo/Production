@@ -219,7 +219,7 @@ insert into P_ProdEffAnalysis(
       ,[Program]
       ,[Style]
       ,[FtyZone]
-      ,[Factory]
+      ,[FactoryID]
       ,[Brand]
       ,[NewCDCode]
       ,[ProductType]
