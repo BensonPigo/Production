@@ -677,7 +677,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         {
             var validationRules = new Dictionary<string, string>
             {
-                { "MarkerNo", "Marker No cannot be empty." },
+                { "MarkerNo", "Pattern No cannot be empty." },
                 { "FabricPanelCode", "Fabric Panel Code cannot be empty." },
                 { "MarkerName", "Marker Name cannot be empty." },
                 { "Layer", "Layer cannot be empty." },

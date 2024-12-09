@@ -264,7 +264,6 @@ namespace Sci.Production.Cutting
                 detaildr["MarkerLength"] = dr["MarkerLength"];
                 detaildr["MarkerLength_Mask"] = dr["MarkerLength_Mask"];
                 detaildr["MarkerNo"] = dr["MarkerNo"];
-                detaildr["Seq"] = dr["Seq"];
                 detaildr["Seq1"] = dr["Seq1"];
                 detaildr["Seq2"] = dr["Seq2"];
                 detaildr["CutCellID"] = dr["CutCellID"];
@@ -273,6 +272,11 @@ namespace Sci.Production.Cutting
                 {
                     detaildr["CutNo"] = dr["CutNo"];
                     detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
+                }
+
+                if (this.form == CuttingForm.P02)
+                {
+                    detaildr["Seq"] = dr["Seq"];
                 }
             }
 
@@ -341,47 +345,50 @@ namespace Sci.Production.Cutting
         private void GridEventSet()
         {
             #region SEQ
-            this.col_Seq.EditingControlShowing += (s, e) =>
+            if (this.col_Seq != null)
             {
-                if (e.RowIndex == -1)
+                this.col_Seq.EditingControlShowing += (s, e) =>
                 {
-                    return;
-                }
+                    if (e.RowIndex == -1)
+                    {
+                        return;
+                    }
 
-                DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
-                if (MyUtility.Check.Empty(dr["Cutplanid"]) && MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) && this.EditMode)
+                    DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
+                    if (MyUtility.Check.Empty(dr["Cutplanid"]) && MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) && this.EditMode)
+                    {
+                        ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
+                    }
+                    else
+                    {
+                        ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
+                    }
+                };
+                this.col_Seq.CellFormatting += (s, e) =>
                 {
-                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = false;
-                }
-                else
-                {
-                    ((Ict.Win.UI.NumericBox)e.Control).ReadOnly = true;
-                }
-            };
-            this.col_Seq.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
+                    if (e.RowIndex == -1)
+                    {
+                        return;
+                    }
 
-                DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
-                if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) || !this.EditMode)
-                {
-                    e.CellStyle.BackColor = Color.White;
-                    e.CellStyle.ForeColor = Color.Black;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.Pink;
-                    e.CellStyle.ForeColor = Color.Red;
-                }
+                    DataRow dr = this.gridBatchAssign.GetDataRow(e.RowIndex);
+                    if (!MyUtility.Check.Empty(dr["Cutplanid"]) || !MyUtility.Check.Empty(dr["WorkOrderForOutputID"]) || !this.EditMode)
+                    {
+                        e.CellStyle.BackColor = Color.White;
+                        e.CellStyle.ForeColor = Color.Black;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.Pink;
+                        e.CellStyle.ForeColor = Color.Red;
+                    }
 
-                if (dr["Seq"] != DBNull.Value && Convert.ToInt32(dr["Seq"]) == 0)
-                {
-                    dr["Seq"] = DBNull.Value;
-                }
-            };
+                    if (dr["Seq"] != DBNull.Value && Convert.ToInt32(dr["Seq"]) == 0)
+                    {
+                        dr["Seq"] = DBNull.Value;
+                    }
+                };
+            }
             #endregion
             // 可否編輯 && 顏色
             ConfigureColumnEvents(this.gridBatchAssign, this.CanEditDataByGrid);
