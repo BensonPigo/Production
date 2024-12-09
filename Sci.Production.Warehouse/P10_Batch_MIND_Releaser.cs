@@ -79,7 +79,7 @@ namespace Sci.Production.Warehouse
             (
 	            select val = stuff(
 	            (
-		            SELECT concat(',',tmp.Releaser)
+		            SELECT distinct concat(',',tmp.Releaser)
 		            FROM
 		            (
 			            select Releaser from Issue_MIND
@@ -97,16 +97,6 @@ namespace Sci.Production.Warehouse
             }
 
             this.listControlBindingSource1.DataSource = dt;
-        }
-
-        private void DateIssueDate_TextChanged(object sender, System.EventArgs e)
-        {
-            if (this.listControlBindingSource1.DataSource == null)
-            {
-                return;
-            }
-
-            this.Query();
         }
 
         private void BtnMIND_Click(object sender, EventArgs e)
@@ -128,6 +118,17 @@ namespace Sci.Production.Warehouse
             DataTable dt = this.listControlBindingSource1.DataSource as DataTable;
             P10_AssignReleaser win = new P10_AssignReleaser(idList.JoinToString("','"), true, dt);
             win.ShowDialog(this);
+            this.Query();
+        }
+
+        private void DateIssueDate_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (this.listControlBindingSource1.DataSource == null)
+            {
+                return;
+            }
+
+            this.Query();
         }
     }
 }
