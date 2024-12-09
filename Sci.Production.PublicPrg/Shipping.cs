@@ -10,6 +10,7 @@ using Sci.Win.UI;
 using Sci.Production.CallPmsAPI;
 using Newtonsoft.Json;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
+using System.IO;
 
 namespace Sci.Production.PublicPrg
 {
@@ -1875,6 +1876,109 @@ where exists (select 1 from #tmp t where t.SP = oqs.ID and t.Seq = oqs.Seq and  
             {
                 MyUtility.Msg.InfoBox("IDD is different from Pullout Date");
             }
+        }
+
+        /// <summary>
+        /// VN海關Report共用開啟Report
+        /// </summary>
+        /// <param name="dtPrint">Excel DataTable</param>
+        /// <param name="fileType">判別FileType</param>
+        /// <returns>DualResult</returns>
+        public static DualResult GetVNCustomsReport(DataTable dtPrint, string fileType)
+        {
+            #region 從Clip 撈出Excel
+            string strUkey = fileType + ((DateTime)dtPrint.Rows[0]["CreateDate"]).ToString("yyyyMMdd") + Path.GetFileNameWithoutExtension(dtPrint.Rows[0]["FileName"].ToString());
+
+            // 取Clip 路徑
+            string clipDirPath = MyUtility.GetValue.Lookup("select ClipPath from system");
+
+            string sqlClip = $@"
+select * from Clip
+where TableName ='StatementReport'
+and UniqueKey = '{strUkey}' 
+";
+            DualResult result = new DualResult(true);
+            if (!(result = DBProxy.Current.Select(string.Empty, sqlClip, out System.Data.DataTable dtClip)))
+            {
+                return result;
+            }
+
+            if (dtClip == null || dtClip.Rows.Count <= 0)
+            {
+                result = new DualResult(false, "Clip Data not found!");
+                return result;
+            }
+
+            // 取原始檔名
+            string oriFileName = dtClip.Rows[0]["SourceFile"].ToString();
+
+            // 取出Clip更改後的檔案全名
+            string clipFileName = "StatementReport" + dtClip.Rows[0]["Pkey"].ToString() + Path.GetExtension(oriFileName);
+
+            string yyyyMM = ((DateTime)dtClip.Rows[0]["AddDate"]).ToString("yyyyMM");
+            clipDirPath = Path.Combine(clipDirPath, yyyyMM);
+
+            // 取Clip完整檔案路徑
+            string file = Path.Combine(clipDirPath, clipFileName);
+            if (!System.IO.File.Exists(file))
+            {
+                // 訊息不能Show出檔案找不到會被懷疑, 所以只好說資料找不到請聯繫台北IT
+                result = new DualResult(false, "Clip Data not found, please contact Taipei IT.");
+                return result;
+            }
+
+            // 將原始檔名rename
+            string newName = Path.GetFileNameWithoutExtension(oriFileName) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss") + new Random().Next(9999).ToString() + Path.GetExtension(oriFileName);
+
+            string newFile = Path.Combine(Env.Cfg.ReportTempDir, newName);
+
+            try
+            {
+                // 將Clip檔案更名後Copy至temp資料夾
+                File.Copy(file, newFile);
+
+                // 開啟新的Excel檔案
+                if (!(result = Utils.OpenFile(newFile)))
+                {
+                    return result;
+                }
+            }
+            catch (Exception)
+            {
+                // 訊息不能Show出檔案不存在會被懷疑, 所以只好說資料找不到請聯繫台北IT
+                result = new DualResult(false, "Clip Data not found, please contact Taipei IT.");
+                return result;
+            }
+
+            #endregion
+
+            return result;
+        }
+
+        /// <summary>
+        /// VN海關Report共用撈DB
+        /// </summary>
+        /// <param name="sqlwhere">where 條件</param>
+        /// <param name="fileType">FileType</param>
+        /// <returns>DataTable</returns>
+        public static DataTable GetVNCustomsReportData(StringBuilder sqlwhere, string fileType)
+        {
+            StringBuilder sqlcmd = new StringBuilder();
+            sqlcmd.Append($@"
+select top 1 * 
+from StatementReport
+where 1=1
+and FileType = '{fileType}'
+{sqlwhere.ToString()}
+order by CreateDate desc, EditDate desc
+");
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd.ToString(), out DataTable dtResult);
+            if (!result)
+            {
+                DualResult failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+            }
+
+            return dtResult;
         }
     }
 }

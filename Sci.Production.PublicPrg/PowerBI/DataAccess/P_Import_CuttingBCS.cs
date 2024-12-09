@@ -23,12 +23,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(-30).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(75).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(75).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -76,11 +76,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MinDate] = CONVERT(DATE, MIN(CONVERT(DATE, Inline)))
 				, [MaxDate] = CONVERT(DATE, Max(CONVERT(DATE, offline)))
 			into #tmp_StdQ_MainDates
-			FROM SewingSchedule s
-			inner join Orders o on o.id = s.OrderID
+			FROM SewingSchedule s WITH(NOLOCK)
+			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID
 			WHERE ([Offline] BETWEEN @StartDate AND GETDATE() -- Filter for the last 30 days
 				OR [Inline] BETWEEN GETDATE() AND @EndDate) -- Filter for the next 75 days
 			AND s.BIPImportCuttingBCSCmdTime IS NULL
+			AND EXISTS(select 1 from Factory f WITH(NOLOCK) where o.FactoryID = f.ID and f.IsSampleRoom = 0)
 			GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
 
 			-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_DateRange')
