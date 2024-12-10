@@ -37,6 +37,7 @@
             this.btnSetting = new Sci.Win.UI.Button();
             this.radioBundleErase = new System.Windows.Forms.RadioButton();
             this.linkLabelRFCardEraseBeforePrinting1 = new Sci.Production.Class.LinkLabelRFCardEraseBeforePrinting();
+            this.radioBundlewithQR = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // print
@@ -160,16 +161,28 @@
             // linkLabelRFCardEraseBeforePrinting1
             // 
             this.linkLabelRFCardEraseBeforePrinting1.AutoSize = true;
-            this.linkLabelRFCardEraseBeforePrinting1.Location = new System.Drawing.Point(12, 170);
+            this.linkLabelRFCardEraseBeforePrinting1.Location = new System.Drawing.Point(12, 189);
             this.linkLabelRFCardEraseBeforePrinting1.Name = "linkLabelRFCardEraseBeforePrinting1";
             this.linkLabelRFCardEraseBeforePrinting1.Size = new System.Drawing.Size(247, 17);
             this.linkLabelRFCardEraseBeforePrinting1.TabIndex = 105;
             this.linkLabelRFCardEraseBeforePrinting1.TabStop = true;
             this.linkLabelRFCardEraseBeforePrinting1.Text = "linkLabelRFCardEraseBeforePrinting1";
             // 
+            // radioBundlewithQR
+            // 
+            this.radioBundlewithQR.AutoSize = true;
+            this.radioBundlewithQR.Location = new System.Drawing.Point(12, 154);
+            this.radioBundlewithQR.Name = "radioBundlewithQR";
+            this.radioBundlewithQR.Size = new System.Drawing.Size(123, 21);
+            this.radioBundlewithQR.TabIndex = 106;
+            this.radioBundlewithQR.Text = "Bundle with QR";
+            this.radioBundlewithQR.UseVisualStyleBackColor = true;
+            this.radioBundlewithQR.CheckedChanged += new System.EventHandler(this.RadioBundlewithQR_CheckedChanged);
+            // 
             // P10_Print
             // 
-            this.ClientSize = new System.Drawing.Size(429, 221);
+            this.ClientSize = new System.Drawing.Size(429, 242);
+            this.Controls.Add(this.radioBundlewithQR);
             this.Controls.Add(this.linkLabelRFCardEraseBeforePrinting1);
             this.Controls.Add(this.radioBundleErase);
             this.Controls.Add(this.btnSetting);
@@ -199,6 +212,7 @@
             this.Controls.SetChildIndex(this.btnSetting, 0);
             this.Controls.SetChildIndex(this.radioBundleErase, 0);
             this.Controls.SetChildIndex(this.linkLabelRFCardEraseBeforePrinting1, 0);
+            this.Controls.SetChildIndex(this.radioBundlewithQR, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -214,5 +228,6 @@
         private Win.UI.Button btnSetting;
         private System.Windows.Forms.RadioButton radioBundleErase;
         private Class.LinkLabelRFCardEraseBeforePrinting linkLabelRFCardEraseBeforePrinting1;
+        private System.Windows.Forms.RadioButton radioBundlewithQR;
     }
 }
