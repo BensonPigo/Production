@@ -2926,6 +2926,9 @@
     <Build Include="dbo\Tables\SewingDailyOutputStatusRecord.sql" />
     <Build Include="dbo\Tables\FIR_PointRateFormula.sql" />
     <Build Include="dbo\Tables\StatementReport.sql" />
+    <Build Include="dbo\Tables\CTNJokerTag.sql" />
+    <Build Include="dbo\Tables\CTNHeatSeal.sql" />
+    <Build Include="dbo\Tables\CTNHangerPack.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
