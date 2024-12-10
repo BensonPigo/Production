@@ -364,6 +364,8 @@ and ID = '{Sci.Env.User.UserID}'"))
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Text("SizeCode", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PPICReasonID", header: "PPIC Reason Id", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("PPICReasonDesc", header: "PPIC Reason", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
         }
 
@@ -837,6 +839,8 @@ SELECT sd.*
        , location = dbo.Getlocation(f.Ukey)
        , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, ISNULL(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
        , [SizeCode] = isnull(psdsS.SpecValue,'')
+       , [PPICReasonID] = lackdetail.PPICReasonID
+	   , [PPICReasonDesc] = lackdetail.PPICReasonDesc
 FROM dbo.IssueLack_Detail sd WITH (NOLOCK) 
 INNER JOIN IssueLack s WITH (NOLOCK) ON sd.ID = s.ID
 INNER JOIN PO_Supp_Detail psd WITH (NOLOCK) ON psd.ID = sd.PoId AND psd.seq1 = sd.SEQ1 AND psd.SEQ2 = sd.seq2
@@ -850,6 +854,12 @@ INNER JOIN FtyInventory f WITH (NOLOCK) ON sd.POID = f.POID
 LEFT JOIN PO_Supp_Detail_Spec psdsC WITH (NOLOCK) ON psdsC.ID = psd.id AND psdsC.seq1 = psd.seq1 AND psdsC.seq2 = psd.seq2 AND psdsC.SpecColumnID = 'Color'
 LEFT JOIN PO_Supp_Detail_Spec psdsS WITH (NOLOCK) ON psdsS.ID = psd.id AND psdsS.seq1 = psd.seq1 AND psdsS.seq2 = psd.seq2 AND psdsS.SpecColumnID = 'Size'
 LEFT JOIN Lack l WITH (NOLOCK) ON l.POID = sd.POID AND l.ID = s.RequestID
+outer apply(
+	select top(1) Lack_Detail.PPICReasonID,PPICReason.Description PPICReasonDesc
+	from Lack_Detail 
+	left join PPICReason on PPICReason.ID = Lack_Detail.PPICReasonID
+	where Lack_Detail.ID = l.ID
+	) lackdetail
 WHERE sd.id = '{masterID}'
 ";
             return base.OnDetailSelectCommandPrepare(e);
