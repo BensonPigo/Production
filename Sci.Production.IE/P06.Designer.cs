@@ -308,7 +308,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1379, 217);
+            this.gridicon.Location = new System.Drawing.Point(1340, 200);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
@@ -675,7 +675,7 @@
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
             this.splitLineMapping.Size = new System.Drawing.Size(1432, 373);
-            this.splitLineMapping.SplitterDistance = 1016;
+            this.splitLineMapping.SplitterDistance = 1203;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -699,7 +699,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(412, 373);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(225, 373);
             this.gridLineMappingRight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridLineMappingRight.TabIndex = 0;
             // 
@@ -731,7 +731,7 @@
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
             this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 79);
-            this.splitCentralizedPPA.SplitterDistance = 607;
+            this.splitCentralizedPPA.SplitterDistance = 606;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
             // gridCentralizedPPALeft
@@ -754,7 +754,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(607, 79);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(606, 79);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -777,7 +777,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(267, 79);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(268, 79);
             this.gridCentralizedPPARight.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridCentralizedPPARight.TabIndex = 0;
             // 

@@ -12,6 +12,7 @@ using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -823,15 +824,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         {
                             P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
-                            if (result == DialogResult.Cancel)
-                            {
-                                if (callNextForm.P01SelectOperationCode != null)
-                                {
-                                    string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                            string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                            int timeStudyUkey = 0;
 
-                                    if (MyUtility.Check.Empty(strAnnotation))
-                                    {
-                                        string sqlcmd = $@"select  Annotation
+                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            List<DataRow> list = dt.AsEnumerable().Where(x => x["No"].ToString() == dr["No"].ToString()).ToList();
+
+                            // 找到第一個 EmployeeID 有值的行
+                            string employeeId = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeID"]?.ToString()))?["EmployeeID"]?.ToString() : string.Empty;
+
+                            string employeeName = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeName"]?.ToString()))?["EmployeeName"]?.ToString() : string.Empty;
+
+                            if (MyUtility.Check.Empty(strAnnotation))
+                            {
+                                string sqlcmd = $@"select  Annotation,TSD.Ukey
                                         from TimeStudy TS WITH(NOLOCK)
                                         INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
                                         WHERE 
@@ -839,33 +845,80 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                         TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
                                         TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
                                         OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
-                                        strAnnotation = MyUtility.GetValue.Lookup(sqlcmd);
-                                    }
+                                DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
+                                if (!dul)
+                                {
+                                    MyUtility.Msg.WarningBox(dul.ToString());
+                                    return;
+                                }
 
-                                   // var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.P01SelectOperationCode["ID"].ToString(), callNextForm.P01SelectOperationCode["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
-                                   // var effi_90D = this.GetEffi_90Day(Env.User.Factory, callNextForm.P01SelectOperationCode["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
+                                if (dt1.Rows.Count > 0)
+                                {
+                                    strAnnotation = dt1.Rows[0]["Annotation"].ToString();
+                                    timeStudyUkey = MyUtility.Convert.GetInt(dt1.Rows[0]["Ukey"]);
+                                }
+                            }
 
+                            if (result == DialogResult.Cancel)
+                            {
+                                if (callNextForm.P01SelectOperationCode != null)
+                                {
+                                    dr["TimeStudyDetailUkey"] = timeStudyUkey;
                                     dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                     dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
                                     dr["Annotation"] = strAnnotation;
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                    dr["Motion"] = callNextForm.P01SelectOperationCode["Motion"].ToString();
                                     dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
+                                    dr["EmployeeID"] = employeeId;
+                                    dr["EmployeeName"] = employeeName;
                                     dr.EndEdit();
                                 }
                             }
 
                             if (result == DialogResult.OK)
                             {
+                                dr["TimeStudyDetailUkey"] = timeStudyUkey;
                                 dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                dr["Annotation"] = strAnnotation;
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
+                                dr["Motion"] = callNextForm.P01SelectOperationCode["Motion"].ToString();
                                 dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
+                                dr["EmployeeID"] = employeeId;
+                                dr["EmployeeName"] = employeeName;
                                 dr.EndEdit();
+                            }
+
+                            decimal decEffi = 0;
+                            int effiCnt = 0;
+                            decimal gsdtime = 0;
+                            decimal totleCycleTime = 0;
+                            foreach (DataRow row in list)
+                            {
+                                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                                var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
+                                var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
+                                gsdtime += Convert.ToDecimal(row["GSD"]);
+
+                                decEffi += effi;
+                                effiCnt++;
+                                totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
+                                row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
+                                row["OperatorEffi"] = effi > 0 ? effi : 0;
+
+                                if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
+                                {
+                                    row["EstOutputHr"] = DBNull.Value;
+                                }
+                                else
+                                {
+                                    row["EstOutputHr"] = 3600 / totleCycleTime;
+                                }
                             }
                         }
                     }
@@ -1877,6 +1930,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow dataRow_Location = insert_index == 0 ? oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel + 1]
                                                              : oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - 1];
                 nextDataRow["Selected"] = "False";
+                nextDataRow["FactoryID"] = dataRow_Location["FactoryID"];
+                nextDataRow["IsRow"] = "1";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
                 nextDataRow["OriSewer"] = DBNull.Value;
