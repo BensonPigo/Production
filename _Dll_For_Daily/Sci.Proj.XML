@@ -44,34 +44,189 @@
             <param name="smallers"></param>
             <returns></returns>
         </member>
+        <member name="T:Sci.DB.Transfer">
+            <summary>
+            Daily Transfer base
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.FromSystem">
+            <summary>
+            Trade or Production
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.Regions_All">
+            <summary>
+            Region List
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.Tasks_All">
+            <summary>
+            Task List
+            </summary>
+        </member>
+        <member name="M:Sci.DB.Transfer.SetupData(System.Data.DataTable)">
+            <summary>
+            Setup data
+            </summary>
+            <param name="task_fullJoin_region"> datatable TransRegion join TransExport or TransImport </param>
+        </member>
+        <member name="P:Sci.DB.Transfer.Logger_Retry">
+            <summary>
+            Log insert db retry times
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.GroupID_BeforeTransfer">
+            <summary>
+            GroupID befort transfer
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.GroupID_AfterTransfer">
+            <summary>
+            GroupID after transfer
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.DailyBackupDirName">
+            <summary>
+            Daily backup dir name
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.TaipeiFtpPath">
+            <summary>
+            Taipei ftp path
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.SkipCheckDate">
+            <summary>
+            Skip check rar create date
+            </summary>
+        </member>
+        <member name="T:Sci.DB.Transfer.CreateSqlParams">
+            <summary>
+            delegate of Create Sql paramters
+            </summary>
+            <returns> list of sql parameter </returns>
+        </member>
+        <member name="P:Sci.DB.Transfer.CreateSqlParamsAction">
+            <summary>
+            delegate object of Create Sql paramters
+            </summary>
+        </member>
+        <member name="M:Sci.DB.Transfer.#ctor">
+            <summary>
+            Construct
+            </summary>
+        </member>
+        <member name="M:Sci.DB.Transfer.SetSMTP(System.String,System.Nullable{System.UInt16},System.String,System.String)">
+            <summary>
+            Set smtp
+            </summary>
+            <param name="mailServerIP"> mail server ip </param>
+            <param name="mailServerPort"> mail server port </param>
+            <param name="mailServerAccount"> mail server account </param>
+            <param name="mailServerPassword"> mail server password </param>
+        </member>
+        <member name="P:Sci.DB.Transfer.SQL_DB_DIR">
+            <summary>
+            Get SQL dir on server from sql command
+            </summary>
+        </member>
+        <member name="P:Sci.DB.Transfer.SQL_DB_Path">
+            <summary>
+            Trade用，指定DB存放路徑
+            </summary>
+        </member>
+        <member name="M:Sci.DB.Transfer.Retrieve_SQL_DB_DIR">
+            <summary>
+            Get database path on server
+            </summary>
+            <returns> DB file path </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Attach_DataBase(Sci.DB.TransRegion,System.Int32)">
+            <summary>
+            Attach database
+            </summary>
+            <param name="region"> region of factory </param>
+            <param name="groupID"> group id </param>
+            <returns> Execute Result </returns>
+        </member>
         <member name="M:Sci.DB.Transfer.Before_Export_ByRegion(Sci.DB.TransRegion)">
             <summary>
             1. 確認DB在Server上, 沒有的話要掛載上去
             <para>2. Drop DB裡面所有的Table</para>
             </summary>
-            <param name="region"></param>
-            <returns></returns>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Drop_Tables(Sci.DB.TransRegion)">
+            <summary>
+            drop all tables
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
         </member>
         <member name="M:Sci.DB.Transfer.Detach_Database(Sci.DB.TransRegion)">
             <summary>
             將 DB Detach,並刪除 log檔( .ldf )
             </summary>
-            <param name="region"></param>
-            <returns></returns>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Try_DeleteFile(System.String,Sci.DB.TransRegion)">
+            <summary>
+            try delete file
+            </summary>
+            <param name="fileName"> file name </param>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.After_Export_ByRegion(Sci.DB.TransRegion)">
+            <summary>
+            after export by region method
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.RAR_Files(System.String,System.String,System.Collections.Generic.List{System.String})">
+            <summary>
+            Rar files
+            </summary>
+            <param name="rarFilePath"> rar file path </param>
+            <param name="rarFilName"> rar file name </param>
+            <param name="files"> files </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.After_Import_ByRegion(Sci.DB.TransRegion)">
+            <summary>
+            after import by region
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
         </member>
         <member name="M:Sci.DB.Transfer.Export_ByRegion">
             <summary>
             依照Region 拆Thread 執行轉檔
             </summary>
-            <param name="region"></param>
-            <returns></returns>
+            <returns> Execute Result </returns>
         </member>
         <member name="M:Sci.DB.Transfer.Export_ByRegion_InThread(System.Collections.Generic.List{Sci.DB.TransTask})">
             <summary>
             同Region的Task, 依照GroupID拆開後, 拆Thread 執行轉檔
             </summary>
             <param name="region_Tasks">同Region的Task</param>
-            <returns></returns>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Import_ByGroupID">
+            <summary>
+            import by Groupid
+            </summary>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Import_ByGroupID_InThread(System.Collections.Generic.List{Sci.DB.TransTask})">
+            <summary>
+            import by groupid in thread
+            </summary>
+            <param name="region_Tasks"> region list </param>
+            <returns> Execute Result </returns>
         </member>
         <member name="M:Sci.DB.Transfer.Transfer_Task_BySeq(System.Collections.Generic.List{Sci.DB.TransTask})">
             <summary>
@@ -79,16 +234,293 @@
             同 GroupID ,若前一個Seq 執行失敗, 後面的Seq 的task將不會執行
             </summary>
             <param name="tasks">同Region, GroupID 的Task</param>
-            <returns></returns>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Transfer_Task(Sci.DB.TransTask,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter})">
+            <summary>
+            transfer task
+            </summary>
+            <param name="task"> task </param>
+            <param name="conn"> sql connection </param>
+            <param name="pars"> sql parameters </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Transfer_Task(Sci.DB.TransTask,System.String)">
+            <summary>
+            transfer task
+            </summary>
+            <param name="task"> task </param>
+            <param name="connectionName"> sql connection name </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Log(Sci.DB.TransRegion,Sci.DB.TransTask,System.Nullable{System.DateTime},System.Nullable{System.DateTime})">
+            <summary>
+            Save log
+            </summary>
+            <param name="region"> region of factory </param>
+            <param name="task"> task </param>
+            <param name="startTime"> start time </param>
+            <param name="endTime"> end time </param>
         </member>
         <member name="M:Sci.DB.Transfer.Deploy_Procedure(System.String,System.String,System.String)">
             <summary>
             搜尋目錄下的特定名稱的.sql檔 , 逐一執行
             </summary>
-            <param name="procedureDir"></param>
-            <param name="prefix"></param>
-            <param name="connectionName"></param>
-            <returns></returns>
+            <param name="procedureDir"> sp dir </param>
+            <param name="prefix"> sp prefix </param>
+            <param name="connectionName"> connection name </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Deploy_Procedure(System.String,System.Data.SqlClient.SqlConnection)">
+            <summary>
+            deploy sp
+            </summary>
+            <param name="sqlFile"> sp file path </param>
+            <param name="conn"> sql connection </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Create_DateInfo(Sci.DB.TransRegion)">
+            <summary>
+            create dateinfo
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.CheckRar_CreateDate(Sci.DB.TransRegion,System.String,System.Boolean)">
+            <summary>
+            check rar create date
+            </summary>
+            <param name="region"> region of factory </param>
+            <param name="rar"> rar path </param>
+            <param name="skipRarCheckDate"> skip rar check create date </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Export_EndTransfer_RarUpload(System.String,System.String,Sci.DB.TransRegion)">
+            <summary>
+            export end transfer rar upload
+            </summary>
+            <param name="rarFilePath"> rar file path </param>
+            <param name="rarFileName"> rar file name </param>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.Delete_Rar_On_Ftp(Sci.DB.TransRegion)">
+            <summary>
+            delete rar on ftp
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.GetSqlParameters">
+            <summary>
+            Get Sql Parameters
+            </summary>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.UnRAR_To_ImportDir(Sci.DB.TransRegion)">
+            <summary>
+            UnRAR to Import dir
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.RAR_Files_Before(System.Collections.Generic.List{System.String})">
+            <summary>
+            RAR files before
+            </summary>
+            <param name="files"> files path </param>
+        </member>
+        <member name="M:Sci.DB.Transfer.Before_Import_ByRegion(System.Boolean)">
+            <summary>
+            Before import by region
+            </summary>
+            <param name="skipCheckDate"> skpi check data </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="M:Sci.DB.Transfer.DeleteDatabase(Sci.DB.TransRegion)">
+            <summary>
+            delete database
+            </summary>
+            <param name="region"> region of factory </param>
+            <returns> Execute Result </returns>
+        </member>
+        <member name="T:Sci.DB.TransRegion">
+            <summary>
+            Class of TransRegion
+            </summary>
+        </member>
+        <member name="M:Sci.DB.TransRegion.#ctor(System.Data.DataRow)">
+            <summary>
+            Construct
+            </summary>
+            <param name="row"> TransRegion row </param>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Selected">
+            <summary>
+            Selected
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Succeeded">
+            <summary>
+            Successed
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Message">
+            <summary>
+            Message
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.CheckRarCreateDate_Ok">
+            <summary>
+            CheckRarCreateDate Ok
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.FtpDownload_Ok">
+            <summary>
+            FtpDownload Ok
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Logs">
+            <summary>
+            Log list
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.LastResult">
+            <summary>
+            Last result
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Region">
+            <summary>
+            TransRegion - Region
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.DirName">
+            <summary>
+            TransRegion - DirName
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.RarName">
+            <summary>
+            TransRegion - RarName
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.DBName">
+            <summary>
+            TransRegion - DBName
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.DBFileName">
+            <summary>
+            TransRegion - DBFileName
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.ConnectionName">
+            <summary>
+            TransRegion - ConnectionName
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransRegion.Is_Export">
+            <summary>
+            TransRegion - Is_Export
+            </summary>
+        </member>
+        <member name="T:Sci.DB.TransTask">
+            <summary>
+            Class of Task
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.TransRegion">
+            <summary>
+            TransRegion of Task
+            </summary>
+        </member>
+        <member name="M:Sci.DB.TransTask.#ctor(System.Data.DataRow,Sci.DB.TransRegion)">
+            <summary>
+            Task class construct
+            </summary>
+            <param name="row"> TransImport or TransExport data row </param>
+            <param name="tRegion"> TransRegion </param>
+        </member>
+        <member name="P:Sci.DB.TransTask.StartTime">
+            <summary>
+            Task Start time
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.EndTime">
+            <summary>
+            Task End time
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.TaskSelected">
+            <summary>
+            Task selected
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Succeeded">
+            <summary>
+            Execute Success
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Message">
+            <summary>
+            Message of Task
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Exception">
+            <summary>
+            Exception of Task
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.DualResult">
+            <summary>
+            Execute Result
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Region">
+            <summary>
+            Region name
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.RegionSelected">
+            <summary>
+            Region is Selected
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.GroupID">
+            <summary>
+            TransImport or TransExport - GroupID
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Seq">
+            <summary>
+            TransImport or TransExport - Seq
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.Name">
+            <summary>
+            TransImport or TransExport - Name
+            </summary>
+        </member>
+        <member name="P:Sci.DB.TransTask.TSQL">
+            <summary>
+            TransImport or TransExport - TSQL
+            </summary>
+        </member>
+        <member name="M:Sci.DB.TransferPms.GetFileEditDate_FromSFtp(Sci.DB.TransRegion,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.DB.TransferPms.SFtp_Ping(System.String,System.String,System.UInt16,System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.DB.TransferPms.SFTP_Delete(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.DB.TransferPms.SFTP_Download(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.DB.TransferPms.SFTP_Upload(System.String,System.String)">
+            <inheritdoc/>
         </member>
         <member name="M:Sci.MyUtility.Check.EqualDecimal(System.Object,System.Object)">
             <summary>
@@ -391,7 +823,7 @@
             <param name="offsetCols">指定最多抓幾行 ; sheet.Columns.Counts 會是該版本Excel的最大行數 </param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object,System.Boolean,System.Object,System.Boolean)">
+        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Data.DataTable,System.String,System.String,System.Int32,System.Boolean,System.String,System.Object,System.Boolean,System.Object,System.Boolean,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             CopyToXls()
             </summary>
@@ -403,9 +835,10 @@
             <param name="[String fieldList = null][StringfieldList=null]"></param>
             <param name="[Object excelApp = null][ObjectexcelApp=null]"></param>
             <param name="[bool showSaveMsg = true][boolshowSaveMsg=true]"></param>
+            <param name="excelType">Excel 存檔類型</param>
             <returns>bool</returns>
         </member>
-        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Object[0:,0:],System.String,System.String,System.Int32,System.Boolean,System.Object)">
+        <member name="M:Sci.MyUtility.Excel.CopyToXls(System.Object[0:,0:],System.String,System.String,System.Int32,System.Boolean,System.Object,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             將 2維陣列存到excel 檔
             </summary>
@@ -415,6 +848,7 @@
             <param name="headerline">標題列列數</param>
             <param name="openfile">excel存檔後是否開啟檔案</param>
             <param name="excelAppObj">不指定的話會在內部產生Excel application物件 ; 連續產生excel的話可不用反覆new Excel物件</param>
+            <param name="excelType">Excel 存檔類型</param>
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.Excel.XlsAutoFit(System.String,System.String,System.Int32,System.Boolean)" -->
@@ -441,11 +875,12 @@
             <param name="excelApp"></param>
             <returns></returns>
         </member>
-        <member name="M:Sci.MyUtility.Excel.GetRandomFileName(System.String)">
+        <member name="M:Sci.MyUtility.Excel.GetRandomFileName(System.String,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             取得ReportTmpDir + 隨機檔名的完整檔名路徑
             </summary>
             <param name="prefix">檔名的prefix</param>
+            <param name="excelType">Excel 存檔類型</param>
             <returns>完整的檔名路徑</returns>
         </member>
         <member name="M:Sci.MyUtility.File.ExportReportToPdf(System.String,System.String)">
@@ -481,7 +916,7 @@
             <returns>result of the method process.</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean,System.Boolean)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.File.UnRARFile(System.String,System.Boolean,System.String,System.String,System.Boolean,System.Boolean,System.String)" -->
         <member name="M:Sci.MyUtility.File.ReadPoperty(System.String,System.String)">
             <summary>
             讀取內容為 {key} = {value} 這種多行格式的文字檔
@@ -490,6 +925,44 @@
             <param name="key"></param>
             <returns></returns>
         </member>
+        <member name="T:Sci.MyUtility.SFTP">
+            <inheritdoc/>
+        </member>
+        <member name="T:Sci.MyUtility.SFTP.SFtpFile">
+            <summary>
+            SFTP 檔案相關資訊
+            </summary>
+        </member>
+        <member name="P:Sci.MyUtility.SFTP.SFtpFile.FileName">
+            <inheritdoc/>
+        </member>
+        <member name="P:Sci.MyUtility.SFTP.SFtpFile.FileSize">
+            <inheritdoc/>
+        </member>
+        <member name="P:Sci.MyUtility.SFTP.SFtpFile.LastModiifyTime">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.MyUtility.SFTP.SFTP_Ping">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.MyUtility.SFTP.SFTP_Delete(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.MyUtility.SFTP.SFTP_Download(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.MyUtility.SFTP.SFTP_Upload(System.String,System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Sci.MyUtility.SFTP.SFTP_GetFileList(System.String,System.Collections.Generic.IList{System.String}@)">
+            <summary>
+            Get File list from FTp server. (只列出指定目錄的檔案 , 不會將全部子目錄檔案列出 )
+            </summary>
+            <param name="ftpPath">Server path name.</param>
+            <param name="files">list of fileNames.</param>
+            <returns>Result of process.</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.SFTP.SFTP_GetFileList(System.String,System.Collections.Generic.IList{Sci.MyUtility.SFTP.SFtpFile}@)" -->
         <member name="T:Sci.MyUtility.FTP.FtpFile">
             <summary>
             FTP 檔案相關資訊
@@ -572,7 +1045,23 @@
             <param name="[int mode = 1][intmode=1]"></param>
             <returns>DateTime</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetID(System.String,System.String,System.DateTime,System.Int32,System.String,System.String,System.Int32,System.Int32,System.Int32)" -->
+        <member name="M:Sci.MyUtility.GetValue.CarryNum(System.String,System.Decimal)">
+            <summary>
+            進位次數
+            </summary>
+            <param name="original">original</param>
+            <param name="newNum">newNum</param>
+            <returns>CarryNum</returns>
+        </member>
+        <member name="M:Sci.MyUtility.GetValue.CarryLetter(System.Int32,System.Int32)">
+            <summary>
+            進位後傳還新的字母
+            </summary>
+            <param name="startAscii">startAscii</param>
+            <param name="carryTimes">carryTimes</param>
+            <returns>CarryLetter</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:Sci.MyUtility.GetValue.GetUKey(System.String,System.String,System.String)" -->
         <member name="M:Sci.MyUtility.GetValue.GetStr(System.String,System.Int32)">
             <summary>
@@ -763,52 +1252,6 @@
             <param name="string strTableNamestrTableName"></param>
             <param name="string strConnectionstrConnection"></param>
             <returns>DualResult</returns>
-        </member>
-        <member name="M:Sci.MyUtility.Tool.TableBulkInsert(System.Data.DataTable,System.String,System.Object)">
-            <summary>
-            批次透過 SqlBulkCopy 將DataTable 匯到 connection 的 #tmpTable
-            <para>匯入會排除 DataRowState = Deleted 的資料</para>
-            <para>再將#tmpTable 批次 insert into {TargetTable} 中</para>
-            </summary>
-            <param name="data"></param>
-            <param name="tableName"></param>
-            <param name="connection">可傳 null, String , SqlConnection物件</param>
-            <returns></returns>
-        </member>
-        <member name="M:Sci.MyUtility.Tool.TableBulkInsert(System.Data.DataTable,Sci.DB.DBTable,System.Object)">
-            <summary>
-            批次透過 SqlBulkCopy 將DataTable 匯到 connection 的 #tmpTable
-            <para>匯入會排除 DataRowState = Deleted 的資料</para>
-            <para>再將#tmpTable 批次 insert into {TargetTable} 中</para>
-            </summary>
-            <param name="data"></param>
-            <param name="tableSchema"></param>
-            <param name="connection">可傳 null, String , SqlConnection物件</param>
-            <returns></returns>
-        </member>
-        <member name="M:Sci.MyUtility.Tool.TableBulkMerge(System.Data.DataTable,System.String,System.Object,Sci.SQL.MergeOption)">
-            <summary>
-            批次透過 SqlBulkCopy 將DataTable 匯到 connection 的 #tmpTable
-            <para>只有使用MergeOption.InsertUpdate_SafeDelete選項的時候會使用 DataRowState = Deleted 的資料做刪除動作</para>
-            <para>再將#tmpTable 批次 Merge 到 {TargetTable} 中</para>
-            </summary>
-            <param name="data"></param>
-            <param name="tableName"></param>
-            <param name="connection">可傳 null, String , SqlConnection物件</param>
-            <param name="option"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Sci.MyUtility.Tool.TableBulkMerge(System.Data.DataTable,Sci.DB.DBTable,System.Object,Sci.SQL.MergeOption)">
-            <summary>
-            批次透過 SqlBulkCopy 將DataTable 匯到 connection 的 #tmpTable
-            <para>只有使用MergeOption.InsertUpdate_SafeDelete選項的時候會使用 DataRowState = Deleted 的資料做刪除動作</para>
-            <para>再將#tmpTable 批次 Merge 到 {TargetTable} 中</para>
-            </summary>
-            <param name="data"></param>
-            <param name="tableSchema"></param>
-            <param name="connection">可傳 null, String , SqlConnection物件</param>
-            <param name="option"></param>
-            <returns></returns>
         </member>
         <member name="M:Sci.MyUtility.Tool.ProcessWithObject(System.Collections.Generic.IEnumerable{System.Object},System.String,System.String,System.Data.DataTable@,System.String,System.Data.SqlClient.SqlConnection,System.Collections.Generic.List{System.Data.SqlClient.SqlParameter},System.String)">
             <summary>
@@ -1002,6 +1445,13 @@
             <param name="lookupTargets"></param>
             <returns></returns>
         </member>
+        <member name="M:Sci.ProjExts.HttpsFirstOrHttp(System.String)">
+            <summary>
+            檢查Https網址是否存在，否則替換為Http(反之亦可，檢查Http網址是否存在，否則替換為Https)
+            </summary>
+            <param name="originalUrl">原始網址</param>
+            <returns>Https or Http url</returns>
+        </member>
         <member name="M:Sci.ProjExts.JoinToString(System.Collections.Generic.IEnumerable{System.String},System.String)">
             <summary>
             用指定的分隔符號，透過string.Join方法將各項目串連起來做回傳
@@ -1158,188 +1608,6 @@
             <param name="c"></param>
             <param name="boReadOnly"></param>
         </member>
-        <member name="T:Sci.Utility.AutoUpdator">
-            <summary>
-            自帶Adapter和CommandBuilder的DataSet
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.#cctor">
-            <summary>
-            在最最一開始先準備好一份對照表，供後面組裝adapter的parameter時候使用
-            </summary>
-        </member>
-        <member name="T:Sci.Utility.AutoUpdator.UkeyRelation">
-            <summary>
-            以Ukey當作PK的DetailTable，透過這個設定值來做Identity欄位同步
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.UkeyRelation.MasterRow">
-            <summary>
-            MasterRow
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.UkeyRelation.ChildRowIdentityLinkField">
-            <summary>
-            ChildRowIdentityLinkField
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.UkeyRelation.ChildRows">
-            <summary>
-            ChildRows
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.UkeyRelation.#ctor(System.Data.DataRow,System.String,System.Data.DataRow[])">
-            <summary>
-            UkeyRelation
-            </summary>
-            <param name="masterRow">masterRow</param>
-            <param name="link">link</param>
-            <param name="childRows">childRows</param>
-        </member>
-        <member name="T:Sci.Utility.AutoUpdator.LoadTableInfo">
-            <summary>
-            提供LoadTable方法使用的參數集合物件
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.ConnectionName">
-            <summary>
-            要使用的連線名稱，預設為空字串
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.AliasName">
-            <summary>
-            指定本次載回的資料表，TableName的值，預設會透過GetSchema去抓sql取回的主資料表名稱，但有可能需要抓同一個表兩次，所以提供此屬性，讓呼叫端可以調整要使用的名稱
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.Sql">
-            <summary>
-            要執行的TSQL
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.LoadTableInfo.Timeout">
-            <summary>
-            給予Adapter內，各個Command物件的timeout值，預設0代表不指定
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadTableInfo.#ctor(System.String)">
-            <summary>
-            提供LoadTable方法使用的參數集合物件
-            </summary>
-            <param name="sql">要執行的TSQL</param>
-        </member>
-        <member name="T:Sci.Utility.AutoUpdator.LoadReferenceTableInfo">
-            <summary>
-            提供LoadReferenceTable方法使用的參數集合物件，繼承LoadTable
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.LoadReferenceTableInfo.TableName">
-            <summary>
-            載回來之後要使用的資料表名稱
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadReferenceTableInfo.#ctor(System.String,System.String)">
-            <summary>
-            提供LoadReferenceTable方法使用的參數集合物件，繼承LoadTable
-            </summary>
-            <param name="sql">要執行的TSQL</param>
-            <param name="tableName">載回來之後要使用的資料表名稱</param>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.#ctor">
-            <summary>
-            自帶Adapter和CommandBuilder的DataSet
-            </summary>
-        </member>
-        <member name="P:Sci.Utility.AutoUpdator.DefaultConnectionName">
-            <summary>
-            讓LoadTable與LoadReferenceTable可以使用這個屬性來決定採用哪一個連線設定
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.CloseAllConnection">
-            <summary>
-            關閉所有連線
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.OpenAllConnection">
-            <summary>
-            打開所有連線
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.ReopenAllConnection">
-            <summary>
-            關閉後重新打開所有連線
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadTable(System.String,System.Object[])">
-            <summary>
-            將資料表讀取回來，包含資料與資料結構，會自動判斷Identity欄位
-            </summary>
-            <param name="sql">sql</param>
-            <param name="args">args</param>
-            <returns>DataTable</returns>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadTable(Sci.Utility.AutoUpdator.LoadTableInfo,System.Object[])">
-            <summary>
-            以啟動物件進行載入資料表的動作
-            </summary>
-            <param name="info">info</param>
-            <param name="args">args</param>
-            <returns>DataTable</returns>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadReferenceTable(System.String,System.String,System.Object[])">
-            <summary>
-            將資料表加入內容作為一般資料表，這種資料表不能夠成為AutoUpdate的目標
-            </summary>
-            <param name="sql">sql</param>
-            <param name="tableName">tableName</param>
-            <param name="args">args</param>
-            <returns>DataTable</returns>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.LoadReferenceTable(Sci.Utility.AutoUpdator.LoadReferenceTableInfo,System.Object[])">
-            <summary>
-            以啟動物件進行載入參考資料表的動作
-            </summary>
-            <param name="info">info</param>
-            <param name="args">args</param>
-            <returns>DataTable</returns>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.UpdateAllTable">
-            <summary>
-            依照當時LoadTable的順序，循序進行Update
-            </summary>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.Update(System.Data.DataTable[])">
-            <summary>
-            依照指定的順序更新目標Table
-            </summary>
-            <param name="tables">tables</param>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.Update(System.Data.DataRow[])">
-            <summary>
-            把要更新的資料列，分所屬Table，逐一進行更新，但是順序就不太一定了
-            </summary>
-            <param name="rows">rows</param>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.AppendUkeyRelation(System.Data.DataRow,System.String,System.Data.DataRow[])">
-            <summary>
-            當有使用到UKey的欄位時，會以此關聯來同步MasterRow新取回來的Ukey給他的ChildRows
-            </summary>
-            <param name="masterRow">masterRow</param>
-            <param name="childLinkField">childLinkField</param>
-            <param name="detailRows">detailRows</param>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.Dispose(System.Boolean)">
-            <summary>
-            釋放內部資源
-            </summary>
-            <param name="disposing">disposing</param>
-        </member>
-        <member name="M:Sci.Utility.AutoUpdator.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
-            <summary>
-            回報外部此物件屬性狀態
-            </summary>
-            <param name="info">info</param>
-            <param name="context">context</param>
-        </member>
         <member name="T:Sci.Utility.Drawing.DrawingPrg">
             <summary>
             class for draw
@@ -1444,12 +1712,13 @@
             fliter file extension of excel
             </summary>
         </member>
-        <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String)">
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.SaveXlsAs(System.String,Sci.Utility.Report.ExcelCOM.ExcelType)">
             <summary>
             Edward : 開啟Excel檔案另存
                 create : 2016-04-20 15:27:00
             </summary>
             <param name="sourcePath"> source path </param>
+            <param name="excelType"> Excel file type, defaule xlsx </param>
         </member>
         <member name="M:Sci.Utility.Excel.MyExcelPrg.OpenFile(System.String)">
             <summary>
@@ -1458,7 +1727,7 @@
             </summary>
             <param name="path"> file path </param>
         </member>
-        <member name="M:Sci.Utility.Excel.MyExcelPrg.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean)">
+        <member name="M:Sci.Utility.Excel.MyExcelPrg.FastDtToExcel(System.Data.DataTable,Microsoft.Office.Interop.Excel.Worksheet,System.Int32,System.Int32,System.Boolean,System.Collections.Generic.List{System.String},System.Boolean,System.Boolean)">
             <summary>
             Edward : DataTable快速寫入WorkSheet
                  create : 2016-04-21 12:20:00
@@ -1470,6 +1739,7 @@
             <param name="addHead">是否加入Table Header</param>
             <param name="wantedColumns"> 需要那些欄位，目前應該都沒有使用到 </param>
             <param name="allowRangeTransferToString"> allow transfer column to string format </param>
+            <param name="isTransFormat"> 是否幫忙轉格式 </param>
         </member>
         <member name="M:Sci.Utility.Excel.MyExcelPrg.GetExcelColumnName(System.Int32)">
             <summary>
@@ -1608,6 +1878,11 @@
         <member name="P:Sci.Utility.Excel.SaveDataToExcel.ExcelApp">
             <summary>
             excel application, be carefully use.
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Excel.SaveDataToExcel.ExcelType">
+            <summary>
+            Excel file type, defaule xlsx
             </summary>
         </member>
         <member name="M:Sci.Utility.Excel.SaveDataToExcel.AddPivotSheet(Microsoft.Office.Interop.Excel.Application,Microsoft.Office.Interop.Excel.Worksheet,Microsoft.Office.Interop.Excel.Workbook,System.Data.DataTable,System.String,System.Collections.Generic.List{Sci.Utility.Excel.SaveDataToExcel.MyPivotField},System.String,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.Boolean)">
@@ -1758,6 +2033,11 @@
             dictionary of report content, key : some special tag in xlt start with _v,  value some common class or internal class
             </summary>
         </member>
+        <member name="P:Sci.Utility.Excel.SaveXltReportCls.ExcelType">
+            <summary>
+            Excel file type, defaule xlsx
+            </summary>
+        </member>
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.DicDatas">
             <summary>
             dictionary of report content, key : some special tag in xlt start with _v,  value some common class or internal class
@@ -1830,6 +2110,11 @@
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.boOpenFile">
             <summary>
             open file after save
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Excel.SaveXltReportCls.IsSaveExcel">
+            <summary>
+            是否將Excel保存下來
             </summary>
         </member>
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.BoOpenFile">
@@ -2025,6 +2310,11 @@
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.XltRptTable.HaveTotal">
             <summary>
             have total column at last
+            </summary>
+        </member>
+        <member name="P:Sci.Utility.Excel.SaveXltReportCls.XltRptTable.IsTransFormat">
+            <summary>
+            column format transfer or not
             </summary>
         </member>
         <member name="P:Sci.Utility.Excel.SaveXltReportCls.XltRptTable.HaveSeparator">
@@ -2549,6 +2839,11 @@
             WaitingPanel的最大寬度限制，預設為200
             </summary>
         </member>
+        <member name="P:Sci.Utility.Word.SaveDotReportCls.BoOpenFile">
+            <summary>
+            open file after save
+            </summary>
+        </member>
         <member name="M:Sci.Utility.Word.SaveDotReportCls.OpenFile(System.String)">
             <summary>
             Edward : 執行檔案
@@ -2608,6 +2903,34 @@
             <summary>
             此為設計工具支援所需的方法 - 請勿使用程式碼編輯器
             修改這個方法的內容。
+            </summary>
+        </member>
+        <member name="T:Sci.Win.UI.CustomizedClipPath">
+            <summary>
+            CustomizedClipPath
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.CustomizedClipPath.#ctor(System.Windows.Forms.ToolStripMenuItem)">
+            <summary>
+            CustomizedClipPath
+            </summary>
+            <param name="menuitem">menuitem</param>
+        </member>
+        <member name="F:Sci.Win.UI.CustomizedClipPath.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sci.Win.UI.CustomizedClipPath.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+            <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        </member>
+        <member name="M:Sci.Win.UI.CustomizedClipPath.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
             </summary>
         </member>
         <member name="F:Sci.Win.UI.EditBox_4Grid.components">
@@ -2738,6 +3061,9 @@
             the contents of this method with the code editor.
             </summary>
         </member>
+        <member name="M:Sci.Win.UI.MenuSetting.OnFormLoaded">
+            <inheritdoc/>
+        </member>
         <member name="F:Sci.Win.UI.MenuSetting.components">
             <summary>
             設計工具所需的變數。
@@ -2822,6 +3148,9 @@
             StdReportSetting
             </summary>
             <param name="menuitem">menuitem</param>
+        </member>
+        <member name="M:Sci.Win.UI.StdReportSetting.OnDetailEntered">
+            <inheritdoc/>
         </member>
         <member name="M:Sci.Win.UI.StdReportSetting.OnGridSetup">
             <inheritdoc/>
