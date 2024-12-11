@@ -72,11 +72,11 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnBundlewithQR = new Sci.Win.UI.Button();
             this.btnBundleCardRF = new Sci.Win.UI.Button();
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
             this.grid1 = new Sci.Win.UI.Grid();
-            this.btnBundlewithQR = new Sci.Win.UI.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
             this.panel3.SuspendLayout();
@@ -510,6 +510,17 @@
             this.panel3.Size = new System.Drawing.Size(1142, 52);
             this.panel3.TabIndex = 1;
             // 
+            // btnBundlewithQR
+            // 
+            this.btnBundlewithQR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBundlewithQR.Location = new System.Drawing.Point(723, 7);
+            this.btnBundlewithQR.Name = "btnBundlewithQR";
+            this.btnBundlewithQR.Size = new System.Drawing.Size(123, 33);
+            this.btnBundlewithQR.TabIndex = 6;
+            this.btnBundlewithQR.Text = "Bundle with QR";
+            this.btnBundlewithQR.UseVisualStyleBackColor = true;
+            this.btnBundlewithQR.Click += new System.EventHandler(this.BtnBundlewithQR_Click);
+            // 
             // btnBundleCardRF
             // 
             this.btnBundleCardRF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -564,17 +575,6 @@
             this.grid1.Size = new System.Drawing.Size(1142, 379);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
-            // 
-            // btnBundlewithQR
-            // 
-            this.btnBundlewithQR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBundlewithQR.Location = new System.Drawing.Point(723, 7);
-            this.btnBundlewithQR.Name = "btnBundlewithQR";
-            this.btnBundlewithQR.Size = new System.Drawing.Size(123, 33);
-            this.btnBundlewithQR.TabIndex = 6;
-            this.btnBundlewithQR.Text = "Bundle with QR";
-            this.btnBundlewithQR.UseVisualStyleBackColor = true;
-            this.btnBundlewithQR.Click += new System.EventHandler(this.BtnBundlewithQR_Click);
             // 
             // P12
             // 

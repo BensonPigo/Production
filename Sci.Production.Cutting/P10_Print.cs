@@ -630,7 +630,7 @@ order by x.[Bundle]");
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                this.strPagetype = 4;
+                this.strPagetype = 2;
                 RunPagePrint(data, excelApp, this.strPagetype);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
@@ -715,7 +715,7 @@ order by x.[Bundle]");
             }
         }
 
-        /// strPagetype = 4 分割4格 ; strPagetype = 9 分割9格 <inheritdoc/>
+        /// strPagetype = 2 分割2格 ; strPagetype = 9 分割9格 <inheritdoc/>
         internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int strPagetype)
         {
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
@@ -800,7 +800,7 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
                     i++;
                 });
             }
-            else if (strPagetype == 4)
+            else if (strPagetype == 2)
             {
                 /*
                  Level L (Low)      7%  of codewords can be restored.

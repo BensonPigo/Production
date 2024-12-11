@@ -1170,7 +1170,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
             string fileName = "Cutting_P10_Layout2";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
-            this.strPagetype = 4;
+            this.strPagetype = 2;
 
             if (this.checkChangepagebyCut.Checked)
             {
