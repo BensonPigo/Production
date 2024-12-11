@@ -797,8 +797,8 @@ Region      Succeeded       Message
                         //{
                         //    ftp = ftp + ":" + Sci.Env.Cfg.FtpServerPort;
                         //}
-                        DualResult dual = MyUtility.SFTP.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar);
-                        if (!dual)
+
+                        if(transferPMS.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar))
                         {
                             break;
                         }
