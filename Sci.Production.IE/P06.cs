@@ -224,7 +224,7 @@ AND ALMCS.Junk = 0
             SELECT * 
             FROM (
                 SELECT *
-                ,[Effi] = (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No))  / (SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No))  * 100
+                ,[Effi] = iif((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0 , (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No))  / (SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No))  * 100,0)
                 ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
                 ,[EstTotalCycleTime] = IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
                 ,[EstOutputHr] = iif((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))  = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
@@ -894,32 +894,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr.EndEdit();
                             }
 
-                            decimal decEffi = 0;
-                            int effiCnt = 0;
-                            decimal gsdtime = 0;
-                            decimal totleCycleTime = 0;
-                            foreach (DataRow row in list)
-                            {
-                                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
-                                var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
-                                var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
-                                gsdtime += Convert.ToDecimal(row["GSD"]);
-
-                                decEffi += effi;
-                                effiCnt++;
-                                totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
-                                row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
-                                row["OperatorEffi"] = effi > 0 ? effi : 0;
-
-                                if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
-                                {
-                                    row["EstOutputHr"] = DBNull.Value;
-                                }
-                                else
-                                {
-                                    row["EstOutputHr"] = 3600 / totleCycleTime;
-                                }
-                            }
+                            this.GetEstValue(list, dr["No"].ToString());
                         }
                     }
                 }
@@ -1918,7 +1893,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             base.OnDetailGridInsert(insert_index);
 
             DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
-            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRightBS.DataSource;
 
             if (index >= 0)
             {
@@ -1938,7 +1913,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
                 nextDataRow["Location"] = dataRow_Location["Location"];
-                nextDataRow["Location1"] = dataRow_Location["Location"].ToString().Substring(2, dataRow_Location["Location"].ToString().Length -2);
+                nextDataRow["Location1"] = !MyUtility.Check.Empty(dataRow_Location["Location"].ToString()) ? dataRow_Location["Location"].ToString().Substring(2, dataRow_Location["Location"].ToString().Length -2) : string.Empty;
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
@@ -2090,7 +2065,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
-            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
+
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRightBS.DataSource;
 
             string row = string.Empty;
 
@@ -2255,6 +2231,10 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
             this.CurrentMaintain["SewerManpower"] = this.GetSewer() - 1;
+
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            List<DataRow> list = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No", DataRowVersion.Original].ToString()).ToList();
+            this.GetEstValue(list, dr["No", DataRowVersion.Original].ToString());
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
@@ -2488,6 +2468,61 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             .Count();
 
             return MyUtility.Convert.GetInt(count) - MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]);
+        }
+
+        /// <inheritdoc/>
+        public void GetEstValue(List<DataRow> list, string no)
+        {
+            decimal decEffi = 0;
+            int effiCnt = 0;
+            decimal gsdtime = 0;
+            decimal totleCycleTime = 0;
+
+            foreach (DataRow row in list)
+            {
+                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
+                var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
+                gsdtime += Convert.ToDecimal(row["GSD"]);
+
+                decEffi += effi;
+                effiCnt++;
+                totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
+                row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
+                row["OperatorEffi"] = effi > 0 ? effi : 0;
+                row.EndEdit();
+            }
+
+            foreach (DataRow row in list)
+            {
+                if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
+                {
+                    row["EstOutputHr"] = DBNull.Value;
+                }
+                else
+                {
+                    row["EstOutputHr"] = 3600 / totleCycleTime;
+                    row["EstTotalCycleTime"] = totleCycleTime;
+                }
+
+                row.EndEdit();
+            }
+
+            var dtRight = (DataTable)this.gridLineMappingRightBS.DataSource;
+
+            var drRight = dtRight.AsEnumerable().Where(x => x["No"].ToString() == no);
+
+            if (drRight.Any())
+            {
+                foreach (DataRow dr1 in drRight.ToList())
+                {
+                    dr1["EstOutputHr"] = 3600 / totleCycleTime;
+                    dr1["EstTotalCycleTime"] = totleCycleTime;
+                    dr1.EndEdit();
+                }
+            }
+
+            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS;
         }
     }
 }
