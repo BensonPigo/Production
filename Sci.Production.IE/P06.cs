@@ -1444,7 +1444,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("sumGSDTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("sumCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID).Get(out this.col_color)
