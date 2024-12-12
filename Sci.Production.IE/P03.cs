@@ -16,6 +16,7 @@ using Sci.Win.Tools;
 using Microsoft.SqlServer.Management.Smo.Agent;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
+using Microsoft.SqlServer.Management.Smo;
 
 namespace Sci.Production.IE
 {
@@ -608,14 +609,42 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         {
                             P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
+
+                            string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                            int timeStudyUkey = 0;
+                            if(MyUtility.Check.Empty(strAnnotation))
+                            {
+                                string sqlcmd = $@"select  Annotation,TSD.Ukey
+                                        from TimeStudy TS WITH(NOLOCK)
+                                        INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+                                        WHERE 
+                                        TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
+                                        TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
+                                        TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
+                                        OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
+                                DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
+                                if (!dul)
+                                {
+                                    MyUtility.Msg.WarningBox(dul.ToString());
+                                    return;
+                                }
+
+                                if (dt1.Rows.Count > 0)
+                                {
+                                    strAnnotation = dt1.Rows[0]["Annotation"].ToString();
+                                    timeStudyUkey = MyUtility.Convert.GetInt(dt1.Rows[0]["Ukey"]);
+                                }
+                            }
+
                             if (result == DialogResult.Cancel)
                             {
                                 if (callNextForm.P01SelectOperationCode != null)
                                 {
+                                    dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                     dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                     dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                     dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                    dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                    dr["Annotation"] = strAnnotation;
                                     dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                     dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                     dr.EndEdit();
@@ -624,15 +653,18 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             if (result == DialogResult.OK)
                             {
+                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr["Description"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
                                 dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
                                 dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                dr["Annotation"] = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                                dr["Annotation"] = strAnnotation;
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                 dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr.EndEdit();
                             }
                         }
+
+                        this.ComputeTaktTime();
                     }
                 }
             };
@@ -728,6 +760,17 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                     this.detailgrid.Focus();
                     this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
                     this.detailgrid.BeginEdit(true);
+
+                    DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+                    List<DataRow> list = dataTable.AsEnumerable()
+                        .Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList();
+
+                    if (list.Count == 0)
+                    {
+                        return;
+                    }
+
+                    this.GetEstValue(list, dr["No"].ToString());
                 }
             };
             #endregion
@@ -1904,7 +1947,10 @@ WHERE Ukey={item["Ukey"]}
             }
 
             this.SumNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
-            base.OnDetailGridAppendClick();
+
+            // base.OnDetailGridAppendClick();
+            this.OnDetailGridInsert(this.detailgrid.GetSelectedRowIndex());
+
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray; // 將剛剛紀錄的資料複製到新增的那筆record
             this.CurrentDetailData["New"] = true;
@@ -1918,9 +1964,9 @@ WHERE Ukey={item["Ukey"]}
         /// </summary>
         protected override void OnDetailGridInsert(int index = 0)
         {
-            base.OnDetailGridInsert();
+            base.OnDetailGridInsert(index);
             this.CurrentDetailData["OriNo"] = string.Empty;
-            this.CurrentDetailData["New"] = true;
+            this.CurrentDetailData["New"] = false;
             this.CurrentDetailData["No"] = string.Empty;
             this.CurrentDetailData["IsShow"] = true;
         }
@@ -3168,6 +3214,61 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 			,[Attachment]";
 
             return MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sqlcmd));
+        }
+
+        /// <inheritdoc/>
+        public void GetEstValue(List<DataRow> list, string no)
+        {
+            decimal decEffi = 0;
+            int effiCnt = 0;
+            decimal gsdtime = 0;
+            decimal totleCycleTime = 0;
+
+            foreach (DataRow row in list)
+            {
+                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
+                var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
+                gsdtime += Convert.ToDecimal(row["GSD"]);
+
+                decEffi += effi;
+                effiCnt++;
+                totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
+                row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
+                row["OperatorEffi"] = effi > 0 ? effi : 0;
+                row.EndEdit();
+            }
+
+            foreach (DataRow row in list)
+            {
+                if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
+                {
+                    row["EstOutputHr"] = DBNull.Value;
+                }
+                else
+                {
+                    row["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
+                    row["EstTotalCycleTime"] = totleCycleTime;
+                }
+
+                row.EndEdit();
+            }
+
+            var dtRight = (DataTable)this.listControlBindingSource1.DataSource;
+
+            var drRight = dtRight.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == no);
+
+            if (drRight.Any())
+            {
+                foreach (DataRow dr1 in drRight.ToList())
+                {
+                    dr1["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
+                    dr1["EstTotalCycleTime"] = totleCycleTime;
+                    dr1.EndEdit();
+                }
+            }
+
+            this.grid1.DataSource = this.listControlBindingSource1;
         }
     }
 

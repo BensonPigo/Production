@@ -1210,6 +1210,8 @@ from #tmp
                     this.ShowLBRChart(this.CurrentMaintain);
                 }
             }
+
+            this.detailgrid.Sort(this.detailgrid.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
         }
 
         private void ChartBtn_Click(object sender, EventArgs e)

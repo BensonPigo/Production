@@ -40,6 +40,8 @@ namespace Sci.Production.IE
         private AutoLineMappingGridSyncScroll centralizedPPAGrids;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color1;
+        private int index_Gid = 0;
+
 
         private decimal StandardLBR
         {
@@ -90,6 +92,22 @@ AND ALMCS.Junk = 0
             // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
 
             this.gridicon.Location = new System.Drawing.Point(1340, 200);
+
+            this.detailgrid.SelectionChanged += Detailgrid_SelectionChanged;
+        }
+
+        private void Detailgrid_SelectionChanged(object sender, EventArgs e)
+        {
+            if (this.detailgrid.CurrentRow != null)
+            {
+                int currentIndex = this.detailgrid.CurrentRow.Index;
+                DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+                if (currentIndex > 0 && currentIndex < dataTable.Rows.Count)
+                {
+                    DataRow selectedRow = dataTable.Rows[currentIndex];
+                    this.index_Gid = currentIndex;
+                }
+            }
         }
 
         /// <summary>
@@ -793,7 +811,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                DataTable dt = (DataTable)this.gridLineMappingRight.DataSource;
+                DataTable dt = (DataTable)this.gridLineMappingRightBS.DataSource;
 
                 var dataRow = dt.AsEnumerable()
                     .Select((row, index) => new { Row = row, Index = index })
@@ -828,7 +846,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             int timeStudyUkey = 0;
 
                             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                            List<DataRow> list = dt.AsEnumerable().Where(x => x["No"].ToString() == dr["No"].ToString()).ToList();
+                            List<DataRow> list = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList();
 
                             // 找到第一個 EmployeeID 有值的行
                             string employeeId = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeID"]?.ToString()))?["EmployeeID"]?.ToString() : string.Empty;
@@ -910,11 +928,10 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
 
-                DataTable dt = (DataTable)this.gridLineMappingRight.DataSource;
+                DataTable dt = (DataTable)this.gridLineMappingRightBS.DataSource;
 
                 var dataRow = dt.AsEnumerable()
-                    .Select((row, index) => new { Row = row, Index = index })
-                    .Where(x => x.Row["No"].ToString() == dr["No"].ToString())
+                    .Where(x => x.RowState != DataRowState.Deleted &&  x["No"].ToString() == dr["No"].ToString())
                     .FirstOrDefault();
 
                 decimal curCycle = MyUtility.Convert.GetDecimal(e.FormattedValue);
@@ -926,6 +943,19 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 dr["Cycle"] = e.FormattedValue;
                 this.RefreshLineMappingBalancingSummary(false);
+
+                DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
+                List<DataRow> list = dataTable.AsEnumerable()
+                    .Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList();
+
+                if (list.Count == 0)
+                {
+                    return;
+                }
+
+                this.GetEstValue(list,dr["No"].ToString());
+
+
             };
 
             colCycleTimePPA.CellValidating += (s, e) =>
@@ -1116,11 +1146,17 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 DataGridView sourceGrid = ((DataGridViewColumn)s).DataGridView;
                 DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
-
+                DataTable dt = (DataTable)this.detailgridbs.DataSource;
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     dr["EstOutputHr"] = 0;
                     dr["OperatorEffi"] = 0;
+                    dr["IsResignationDate"] = 0;
+                    dr.EndEdit();
+
+                    dt.AsEnumerable()
+                      .FirstOrDefault(row => row.Field<string>("No") == dr["No"].ToString())?
+                      .SetField("IsResignationDate", 0);
                     this.ReviseEmployeeToEmpty(dr);
                     return;
                 }
@@ -1136,7 +1172,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
 
-                    DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                    
                     DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
@@ -1297,6 +1333,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     dr["EstOutputHr"] = 0;
                     dr["OperatorEffi"] = 0;
+                    dr["IsResignationDate"] = 0;
+                    dr.EndEdit();
                     this.ReviseEmployeeToEmpty(dr);
                     return;
                 }
@@ -1387,8 +1425,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("EstCycleTime", header: "Est. Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTime)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
-               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
 
@@ -1662,6 +1698,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     this.RefreshLineMappingBalancingSummary();
                 }
             }
+
+            this.detailgrid.Sort(this.detailgrid.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
         }
 
         private void BtnH_Click(object sender, EventArgs e)
@@ -1902,18 +1940,17 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 #region 主表插入
                 int iDel = oriDt.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted).ToList().Count;
                 DataRow nextDataRow = oriDt.Rows[insert_index];
-                DataRow dataRow_Location = insert_index == 0 ? oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - iDel + 1]
-                                                             : oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[insert_index - 1];
+                var list = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).ToList();
                 nextDataRow["Selected"] = "False";
-                nextDataRow["FactoryID"] = dataRow_Location["FactoryID"];
+                nextDataRow["FactoryID"] = Env.User.Factory;
                 nextDataRow["IsRow"] = "1";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
                 nextDataRow["OriSewer"] = DBNull.Value;
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
-                nextDataRow["Location"] = dataRow_Location["Location"];
-                nextDataRow["Location1"] = !MyUtility.Check.Empty(dataRow_Location["Location"].ToString()) ? dataRow_Location["Location"].ToString().Substring(2, dataRow_Location["Location"].ToString().Length -2) : string.Empty;
+                nextDataRow["Location"] = list[this.index_Gid + 1]["Location"].ToString();
+                nextDataRow["Location1"] = !MyUtility.Check.Empty(list[this.index_Gid + 1]["Location"].ToString()) ? list[this.index_Gid + 1]["Location"].ToString().Substring(2, list[this.index_Gid + 1]["Location"].ToString().Length - 2) : string.Empty;
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
@@ -2052,7 +2089,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 }
             }
 
-            this.CurrentMaintain["SewerManpower"] = this.GetSewer() + 1;
+            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() + 1 : 0;
 
         }
 
@@ -2230,11 +2267,16 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
-            this.CurrentMaintain["SewerManpower"] = this.GetSewer() - 1;
+            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() - 1 : 0;
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
-            List<DataRow> list = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No", DataRowVersion.Original].ToString()).ToList();
-            this.GetEstValue(list, dr["No", DataRowVersion.Original].ToString());
+            var validRows = dt.AsEnumerable()
+                .Where(x => x.RowState != DataRowState.Deleted);
+
+            List<DataRow> list = validRows
+                .Where(x => x["No"].ToString() == row)
+                .ToList();
+            this.GetEstValue(list, row);
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
@@ -2501,7 +2543,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 }
                 else
                 {
-                    row["EstOutputHr"] = 3600 / totleCycleTime;
+                    row["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
                     row["EstTotalCycleTime"] = totleCycleTime;
                 }
 
@@ -2510,13 +2552,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             var dtRight = (DataTable)this.gridLineMappingRightBS.DataSource;
 
-            var drRight = dtRight.AsEnumerable().Where(x => x["No"].ToString() == no);
+            var drRight = dtRight.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted &&  x["No"].ToString() == no);
 
             if (drRight.Any())
             {
                 foreach (DataRow dr1 in drRight.ToList())
                 {
-                    dr1["EstOutputHr"] = 3600 / totleCycleTime;
+                    dr1["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
                     dr1["EstTotalCycleTime"] = totleCycleTime;
                     dr1.EndEdit();
                 }

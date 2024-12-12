@@ -421,7 +421,8 @@ namespace Sci.Production.IE
                                        .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
             int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
-            int intUpd = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
+            //int intUpd = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
+            int intUpd = 100 / intDT_EditOperaror;
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
             newRow.ItemArray = selectedRow.ItemArray; // 完整複製 selectedRow 的值
             newRow["Selected"] = true;
@@ -440,7 +441,7 @@ namespace Sci.Production.IE
                     }
                     else
                     {
-                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
+                        this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = intUpd;
                     }
                 }
             }
@@ -508,6 +509,7 @@ namespace Sci.Production.IE
                 }
             }
         }
+
         private decimal GetDecimalValue(object value, object defaultValue)
         {
             return value == DBNull.Value ? MyUtility.Convert.GetDecimal(defaultValue) : MyUtility.Convert.GetDecimal(value);
@@ -533,8 +535,10 @@ namespace Sci.Production.IE
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
+                    OperationId = groupItem.First()["OperationId"].ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
-                    SumSewerDiffPercentage = groupItem.Sum(s => GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
                 });
@@ -545,10 +549,12 @@ namespace Sci.Production.IE
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
+                    OperationId = groupItem.First()["OperationId"].ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
                     SumDivSewer = groupItem.Sum(s => this.GetDecimalValue(s["UpdDivSewer"], s["DivSewer"])),
                     SumSewerDiffPercentage = groupItem.Sum(s => GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
                 });
@@ -590,7 +596,7 @@ namespace Sci.Production.IE
             if (listLoseNo.Any())
             {
                 MyUtility.Msg.WarningBox($@"The following No is missing.
-        {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+                {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
                 return;
             }
             #endregion
@@ -600,9 +606,15 @@ namespace Sci.Production.IE
                 // 更新調整過的DivSewer與SewerDiffPercentage
                 foreach (var needUpdRow in needKeepRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
                 {
-                    needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
-                    needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
-                    needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                    foreach (var groupItem in checkDivSewerBalance)
+                    {
+                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() && groupItem.SumSewerDiff == 100)
+                        {
+                            needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
+                            needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
+                            needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                        }
+                    }
                 }
             }
             else
@@ -610,8 +622,14 @@ namespace Sci.Production.IE
                 // 更新調整過的DivSewer與SewerDiffPercentage
                 foreach (var needUpdRow in needKeepRows)
                 {
-                    needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
-                    needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                    foreach (var groupItem in checkDivSewerBalance)
+                    {
+                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() && groupItem.SumSewerDiff == 100)
+                        {
+                            needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
+                            needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
+                        }
+                    }
                 }
             }
 
