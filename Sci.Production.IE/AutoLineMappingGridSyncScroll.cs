@@ -501,7 +501,7 @@ namespace Sci.Production.IE
                                         DataRow newRow = dtSub.NewRow();
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
-                                        newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
+                                        // newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
                                         newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
