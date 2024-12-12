@@ -303,18 +303,6 @@ where CuttingSp = '{0}'",
             frm.ShowDialog(this);
         }
 
-        // Cutpart Check
-        private void BtnCutPartsCheck_Click(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain == null)
-            {
-                return;
-            }
-
-            var frm = new P01_Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString());
-            frm.ShowDialog(this);
-        }
-
         // Quantity breakdown
         private void BtnQuantitybreakdown_Click(object sender, EventArgs e)
         {

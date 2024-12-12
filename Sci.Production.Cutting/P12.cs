@@ -269,9 +269,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
@@ -290,9 +290,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and x.id=b.id
@@ -539,9 +539,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
