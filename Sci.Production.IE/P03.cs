@@ -583,7 +583,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorTextColumnSettings no = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings cycle = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings operatorid = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operatorName = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings attachment = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
@@ -775,7 +775,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             };
             #endregion
             #region Operator ID No.的按右鍵與Validating
-            operatorid.EditingMouseDown += (s, e) =>
+            colOperator_ID.EditingMouseDown += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -878,7 +878,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                     }
                 }
             };
-            operatorid.CellValidating += (s, e) =>
+            colOperator_ID.CellValidating += (s, e) =>
             {
                 if (this.EditMode)
                 {
@@ -1448,9 +1448,9 @@ and Name = @PPA
             .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Text("ReasonName", header: "LBR not\r\nhit target\r\nreason.", width: Widths.AnsiChars(10), iseditable: true, iseditingreadonly: true, settings: reasonName)
-            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 0)
-            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: operatorid).Get(out this.col_color)
-            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName).Get(out this.col_color1)
+            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true,decimal_places: 0)
+            .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: colOperator_ID)
+            .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
             ;
             this.grid1.Columns["No"].Frozen = true;
@@ -1545,8 +1545,7 @@ and Name = @PPA
                 new SqlParameter("@LastName", lastName),
                 new SqlParameter("@FirstName", firstName),
             };
-
-                sqlCmd = $@"
+            sqlCmd = $@"
                 select 
                 e.ID
                 ,FirstName
@@ -1554,7 +1553,7 @@ and Name = @PPA
                 ,Section
                 ,Skill
                 ,SewingLineID 
-                , [Name] = iif(LastName+ ','+ FirstName <> ',' ,LastName+ ','+ FirstName,'')  
+                , [Name] = LastName+ ','+ FirstName
                 ,e.FactoryID
                 , eas.P03
                 from Employee e WITH (NOLOCK) 
