@@ -99,7 +99,7 @@ namespace Sci.Production.Class
 
             if (this.FilterFtyGrop)
             {
-                ftyWhere += $@" and s.FactoryID in (select ID from Factory where FTYGroup = '{currentID}')";
+                ftyWhere += $@" and s.FactoryID in (select ID from Factory where FTYGroup = '{factoryobjectName}')";
             }
             else
             {
