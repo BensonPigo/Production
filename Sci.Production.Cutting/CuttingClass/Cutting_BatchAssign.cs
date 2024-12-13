@@ -158,7 +158,7 @@ namespace Sci.Production.Cutting
                 filter += " AND EstCutDate is null ";
             }
 
-            //this.detailgridbs.Filter = filter;
+            this.detailgridbs.Filter = filter;
         }
 
         private void BtnBatchUpdate_Click(object sender, EventArgs e)
