@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Net.Mail;
@@ -1728,10 +1729,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         // 撈出Employee資料
         private void GetEmployee(string name, string iD, string factoryID, string sewinglineID)
         {
-
             string lastName = string.Empty;
             string firstName = string.Empty;
-            if (!MyUtility.Check.Empty(name) && name.Contains(","))
+            if (!MyUtility.Check.Empty(name))
             {
                 string[] nameParts = name.Split(',');
                 lastName = nameParts[0];
@@ -1740,37 +1740,51 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             string sqlCmd;
 
-            string sqlWhere = string.Empty;
-
-            if (!MyUtility.Check.Empty(iD))
+            bool IsEmptySewingLine = MyUtility.Check.Empty(this.CurrentMaintain["SewingLineID"]);
+            // sql參數
+            System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@factoryid", this.CurrentMaintain["FactoryID"].ToString());
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter
             {
-                sqlWhere += $" and e.ID = '{iD}' ";
+                ParameterName = "@id",
+            };
+            if (iD != null)
+            {
+                sp2.Value = iD;
+            }
+            else
+            {
+                sp2.Value = DBNull.Value;
             }
 
-            if (!MyUtility.Check.Empty(factoryID))
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
             {
-                sqlWhere += $" and e.FactoryID = '{factoryID}' ";
-            }
+                sp1,
+                sp2,
+                new SqlParameter("@SewingLine", this.CurrentMaintain["SewingLineID"] + this.txtSewingTeam.Text),
+                new SqlParameter("@LastName", lastName),
+                new SqlParameter("@FirstName", firstName),
+            };
+            sqlCmd = $@"
+                select 
+                e.ID
+                ,FirstName
+                ,LastName
+                ,Section
+                ,Skill
+                ,SewingLineID 
+                , [Name] = LastName+ ','+ FirstName
+                ,e.FactoryID
+                , eas.P03
+                from Employee e WITH (NOLOCK) 
+                left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+                where 
+                (ResignationDate is null or ResignationDate > GETDATE()) 
+                and e.Junk = 0 and eas.P06 = 1 "
+                + (iD == null ? string.Empty : " and e.ID = @id ")
+                + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
+                + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");
 
-            sqlCmd = $@"select 
-                        e.ID
-                        ,Name
-                        ,FirstName
-                        ,LastName
-                        ,Section
-                        ,Skill
-                        ,SewingLineID
-                        ,e.FactoryID 
-                        from Employee e WITH (NOLOCK)
-                        left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
-                        where ResignationDate is null 
-                        and e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}')
-                        and eas.P06 = 1 and e.Junk = 0"
-                + sqlWhere
-                + (MyUtility.Check.Empty(lastName) ? string.Empty : $@" and LastName = '{lastName}' ")
-                + (MyUtility.Check.Empty(firstName) ? string.Empty : $@" and FirstName = '{firstName}'");
-
-            DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.EmployeeData);
+            DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out this.EmployeeData);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Sql connection fail!!\r\n" + result.ToString());
