@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Production.PublicPrg;
 using Sci.Utility.Report;
 using System;
 using System.Collections.Generic;
@@ -140,7 +141,7 @@ namespace Sci.Production.Prg
             MsExcel.Application objApp = null;
             try
             {
-                strExcelName = Class.MicrosoftFile.GetName(fileName);
+                strExcelName = Prgs.GetName(fileName, ".xlsx");
                 DataTable gridSource = null;
                 if (grid.DataSource is DataTable)
                 {

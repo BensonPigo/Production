@@ -432,19 +432,7 @@ drop table #tmpBase1,#tmpBase2,#TPEtmp,#AT
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
-            foreach (string ss in strSevers)
-            {
-                if (ss.IndexOf("testing_PMS", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    continue;
-                }
-
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
 
             if (connectionString == null || connectionString.Count == 0)
             {

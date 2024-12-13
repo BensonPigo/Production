@@ -155,7 +155,7 @@ namespace Sci.Production.Warehouse
             this.DetailSelectCommand = $@"
 select  s.*
     , f.Refno
-	, [description] = f.DescDetail
+	, [description] = f.DescDetail + iif(isnull(Net.DescDetail,'')='','', CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10) + Net.DescDetail)
 	, [requestqty] = isnull(ec.RequestQty, 0.00)
 	, [accu_issue] =isnull (accu.accu_issue, 0.00)
     , unit = (select top 1 StockUnit from Po_Supp_Detail psd where psd.Id = s.Poid and psd.SciRefno = s.SciRefno)
@@ -193,9 +193,10 @@ outer apply(
 			and a.Type = 'I'
 ) accu
 outer apply(
-	select top 1 psd.NETQty
+	select top 1 psd.NETQty,DescDetail = psdsS.SpecValue + psd.Special + '=' + convert(varchar,psd.Qty)
 	from PO_Supp_Detail psd
     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    inner join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
 			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
 )Net
@@ -268,7 +269,7 @@ select s.*
 	, NetQty = isnull( Net.NETQty, 0)
 	, description = (select DescDetail 
                               from fabric WITH (NOLOCK) 
-                              where scirefno = s.scirefno)
+                              where scirefno = s.scirefno) + iif(isnull(Net.DescDetail,'')='','', CHAR(13) + CHAR(10) + CHAR(13) + CHAR(10) + Net.DescDetail)
 	, arqty = ec.RequestQty + AccuReq.ReqQty
 	, aiqqty = AccuIssue.aiqqty
 	, avqty = (ec.RequestQty + AccuReq.ReqQty) - AccuIssue.aiqqty
@@ -311,9 +312,10 @@ outer apply(
 			and a.Type = 'I'
 ) accu
 outer apply(
-	select top 1 psd.NETQty
+	select top 1 psd.NETQty,DescDetail = psdsS.SpecValue + psd.Special + '=' + convert(varchar,psd.Qty)
 	from PO_Supp_Detail psd
     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+    inner join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
 			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
 )Net

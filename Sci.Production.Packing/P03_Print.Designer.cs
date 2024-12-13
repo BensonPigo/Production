@@ -29,6 +29,11 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.txtSPNo = new Sci.Win.UI.TextBox();
+            this.label4 = new Sci.Win.UI.Label();
+            this.radioHandheldMetalDetectionReport = new Sci.Win.UI.RadioButton();
+            this.comboType = new Sci.Win.UI.ComboBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.rdbtnShippingMarkLLL = new Sci.Win.UI.RadioButton();
             this.radioBarcodePrintOther = new Sci.Win.UI.RadioButton();
             this.radioCustCTN = new Sci.Win.UI.RadioButton();
@@ -50,25 +55,29 @@
             this.labelCTN = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
             this.checkBoxCountry = new Sci.Win.UI.CheckBox();
-            this.comboType = new Sci.Win.UI.ComboBox();
-            this.label3 = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
             this.print.Location = new System.Drawing.Point(479, 9);
+            this.print.TabIndex = 100;
             // 
             // toexcel
             // 
             this.toexcel.Location = new System.Drawing.Point(479, 45);
+            this.toexcel.TabIndex = 101;
             // 
             // close
             // 
             this.close.Location = new System.Drawing.Point(479, 81);
+            this.close.TabIndex = 102;
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.txtSPNo);
+            this.radioPanel1.Controls.Add(this.label4);
+            this.radioPanel1.Controls.Add(this.radioHandheldMetalDetectionReport);
             this.radioPanel1.Controls.Add(this.comboType);
             this.radioPanel1.Controls.Add(this.label3);
             this.radioPanel1.Controls.Add(this.rdbtnShippingMarkLLL);
@@ -88,8 +97,66 @@
             this.radioPanel1.Controls.Add(this.radioPackingListReportFormA);
             this.radioPanel1.Location = new System.Drawing.Point(13, 12);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(427, 367);
+            this.radioPanel1.Size = new System.Drawing.Size(427, 389);
             this.radioPanel1.TabIndex = 94;
+            // 
+            // txtSPNo
+            // 
+            this.txtSPNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtSPNo.IsSupportEditMode = false;
+            this.txtSPNo.Location = new System.Drawing.Point(284, 213);
+            this.txtSPNo.Name = "txtSPNo";
+            this.txtSPNo.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.NonReadOnly;
+            this.txtSPNo.ReadOnly = true;
+            this.txtSPNo.Size = new System.Drawing.Size(140, 23);
+            this.txtSPNo.TabIndex = 52;
+            this.txtSPNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSPNo_PopUp);
+            // 
+            // label4
+            // 
+            this.label4.BackColor = System.Drawing.Color.Transparent;
+            this.label4.Location = new System.Drawing.Point(242, 213);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(39, 23);
+            this.label4.TabIndex = 18;
+            this.label4.Text = "SPNo:";
+            this.label4.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // radioHandheldMetalDetectionReport
+            // 
+            this.radioHandheldMetalDetectionReport.AutoSize = true;
+            this.radioHandheldMetalDetectionReport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioHandheldMetalDetectionReport.Location = new System.Drawing.Point(3, 213);
+            this.radioHandheldMetalDetectionReport.Name = "radioHandheldMetalDetectionReport";
+            this.radioHandheldMetalDetectionReport.Size = new System.Drawing.Size(236, 21);
+            this.radioHandheldMetalDetectionReport.TabIndex = 10;
+            this.radioHandheldMetalDetectionReport.TabStop = true;
+            this.radioHandheldMetalDetectionReport.Text = "Handheld Metal Detection Report";
+            this.radioHandheldMetalDetectionReport.UseVisualStyleBackColor = true;
+            this.radioHandheldMetalDetectionReport.CheckedChanged += new System.EventHandler(this.RadioHandheldMetalDetectionReport_CheckedChanged);
+            // 
+            // comboType
+            // 
+            this.comboType.BackColor = System.Drawing.Color.White;
+            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboType.FormattingEnabled = true;
+            this.comboType.IsSupportUnselect = true;
+            this.comboType.Location = new System.Drawing.Point(160, 312);
+            this.comboType.Name = "comboType";
+            this.comboType.OldText = "";
+            this.comboType.Size = new System.Drawing.Size(94, 24);
+            this.comboType.TabIndex = 15;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Location = new System.Drawing.Point(118, 312);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 23);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "Type:";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // rdbtnShippingMarkLLL
             // 
@@ -108,7 +175,7 @@
             // 
             this.radioBarcodePrintOther.AutoSize = true;
             this.radioBarcodePrintOther.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBarcodePrintOther.Location = new System.Drawing.Point(3, 258);
+            this.radioBarcodePrintOther.Location = new System.Drawing.Point(3, 287);
             this.radioBarcodePrintOther.Name = "radioBarcodePrintOther";
             this.radioBarcodePrintOther.Size = new System.Drawing.Size(251, 21);
             this.radioBarcodePrintOther.TabIndex = 13;
@@ -121,10 +188,10 @@
             // 
             this.radioCustCTN.AutoSize = true;
             this.radioCustCTN.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioCustCTN.Location = new System.Drawing.Point(3, 335);
+            this.radioCustCTN.Location = new System.Drawing.Point(3, 364);
             this.radioCustCTN.Name = "radioCustCTN";
             this.radioCustCTN.Size = new System.Drawing.Size(210, 21);
-            this.radioCustCTN.TabIndex = 12;
+            this.radioCustCTN.TabIndex = 17;
             this.radioCustCTN.TabStop = true;
             this.radioCustCTN.Text = "Cust CTN# Barcode List Print";
             this.radioCustCTN.UseVisualStyleBackColor = true;
@@ -134,10 +201,10 @@
             // 
             this.radioQRcodePrint.AutoSize = true;
             this.radioQRcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioQRcodePrint.Location = new System.Drawing.Point(3, 283);
+            this.radioQRcodePrint.Location = new System.Drawing.Point(3, 312);
             this.radioQRcodePrint.Name = "radioQRcodePrint";
             this.radioQRcodePrint.Size = new System.Drawing.Size(117, 21);
-            this.radioQRcodePrint.TabIndex = 11;
+            this.radioQRcodePrint.TabIndex = 14;
             this.radioQRcodePrint.TabStop = true;
             this.radioQRcodePrint.Text = "QR Code Print";
             this.radioQRcodePrint.UseVisualStyleBackColor = true;
@@ -147,10 +214,10 @@
             // 
             this.radioWeighingform.AutoSize = true;
             this.radioWeighingform.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioWeighingform.Location = new System.Drawing.Point(3, 211);
+            this.radioWeighingform.Location = new System.Drawing.Point(3, 240);
             this.radioWeighingform.Name = "radioWeighingform";
             this.radioWeighingform.Size = new System.Drawing.Size(230, 21);
-            this.radioWeighingform.TabIndex = 10;
+            this.radioWeighingform.TabIndex = 11;
             this.radioWeighingform.TabStop = true;
             this.radioWeighingform.Text = "Carton Weighing Logsheet Form";
             this.radioWeighingform.UseVisualStyleBackColor = true;
@@ -223,10 +290,10 @@
             // 
             this.radioNewBarcodePrint.AutoSize = true;
             this.radioNewBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioNewBarcodePrint.Location = new System.Drawing.Point(3, 308);
+            this.radioNewBarcodePrint.Location = new System.Drawing.Point(3, 337);
             this.radioNewBarcodePrint.Name = "radioNewBarcodePrint";
             this.radioNewBarcodePrint.Size = new System.Drawing.Size(191, 21);
-            this.radioNewBarcodePrint.TabIndex = 4;
+            this.radioNewBarcodePrint.TabIndex = 16;
             this.radioNewBarcodePrint.TabStop = true;
             this.radioNewBarcodePrint.Text = "New Barcode Format Print";
             this.radioNewBarcodePrint.UseVisualStyleBackColor = true;
@@ -236,10 +303,10 @@
             // 
             this.radioBarcodePrint.AutoSize = true;
             this.radioBarcodePrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.radioBarcodePrint.Location = new System.Drawing.Point(3, 236);
+            this.radioBarcodePrint.Location = new System.Drawing.Point(3, 265);
             this.radioBarcodePrint.Name = "radioBarcodePrint";
             this.radioBarcodePrint.Size = new System.Drawing.Size(112, 21);
-            this.radioBarcodePrint.TabIndex = 3;
+            this.radioBarcodePrint.TabIndex = 12;
             this.radioBarcodePrint.TabStop = true;
             this.radioBarcodePrint.Text = "Barcode Print";
             this.radioBarcodePrint.UseVisualStyleBackColor = true;
@@ -285,15 +352,15 @@
             // 
             this.txtCTNEnd.BackColor = System.Drawing.Color.White;
             this.txtCTNEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNEnd.Location = new System.Drawing.Point(173, 385);
+            this.txtCTNEnd.Location = new System.Drawing.Point(173, 410);
             this.txtCTNEnd.Name = "txtCTNEnd";
             this.txtCTNEnd.Size = new System.Drawing.Size(56, 23);
-            this.txtCTNEnd.TabIndex = 98;
+            this.txtCTNEnd.TabIndex = 51;
             // 
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(150, 385);
+            this.label2.Location = new System.Drawing.Point(150, 410);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 23);
             this.label2.TabIndex = 97;
@@ -307,14 +374,14 @@
             // 
             this.txtCTNStart.BackColor = System.Drawing.Color.White;
             this.txtCTNStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCTNStart.Location = new System.Drawing.Point(90, 385);
+            this.txtCTNStart.Location = new System.Drawing.Point(90, 410);
             this.txtCTNStart.Name = "txtCTNStart";
             this.txtCTNStart.Size = new System.Drawing.Size(56, 23);
-            this.txtCTNStart.TabIndex = 96;
+            this.txtCTNStart.TabIndex = 50;
             // 
             // labelCTN
             // 
-            this.labelCTN.Location = new System.Drawing.Point(43, 385);
+            this.labelCTN.Location = new System.Drawing.Point(43, 410);
             this.labelCTN.Name = "labelCTN";
             this.labelCTN.Size = new System.Drawing.Size(43, 23);
             this.labelCTN.TabIndex = 95;
@@ -322,7 +389,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(232, 385);
+            this.label1.Location = new System.Drawing.Point(232, 410);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(105, 23);
             this.label1.TabIndex = 99;
@@ -333,37 +400,15 @@
             this.checkBoxCountry.AutoSize = true;
             this.checkBoxCountry.Enabled = false;
             this.checkBoxCountry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkBoxCountry.Location = new System.Drawing.Point(351, 390);
+            this.checkBoxCountry.Location = new System.Drawing.Point(351, 415);
             this.checkBoxCountry.Name = "checkBoxCountry";
             this.checkBoxCountry.Size = new System.Drawing.Size(15, 14);
-            this.checkBoxCountry.TabIndex = 100;
+            this.checkBoxCountry.TabIndex = 52;
             this.checkBoxCountry.UseVisualStyleBackColor = true;
-            // 
-            // comboType
-            // 
-            this.comboType.BackColor = System.Drawing.Color.White;
-            this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboType.FormattingEnabled = true;
-            this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(160, 283);
-            this.comboType.Name = "comboType";
-            this.comboType.OldText = "";
-            this.comboType.Size = new System.Drawing.Size(94, 24);
-            this.comboType.TabIndex = 16;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Location = new System.Drawing.Point(118, 283);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(39, 23);
-            this.label3.TabIndex = 15;
-            this.label3.Text = "Type:";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P03_Print
             // 
-            this.ClientSize = new System.Drawing.Size(571, 442);
+            this.ClientSize = new System.Drawing.Size(571, 460);
             this.Controls.Add(this.checkBoxCountry);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtCTNEnd);
@@ -420,5 +465,8 @@
         private Win.UI.RadioButton rdbtnShippingMarkLLL;
         private Win.UI.ComboBox comboType;
         private Win.UI.Label label3;
+        private Win.UI.RadioButton radioHandheldMetalDetectionReport;
+        private Win.UI.TextBox txtSPNo;
+        private Win.UI.Label label4;
     }
 }

@@ -63,6 +63,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_MISCPurchaseOrderList,
             P_ReplacementReport,
             P_DailyAccuCPULoading,
+            P_SewingDailyOutputStatusRecord,
         }
 
         /// <summary>
@@ -182,6 +183,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 string sDate_s2 = hasStartDate2 ? "Sdate2 : " + sDate2.Value.ToShortDateString() : string.Empty;
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
                 string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}{"Group :" + group}{", SEQ :" + seq}";
+                string source = dr["Source"].ToString();
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -196,6 +198,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     Remark = remark,
                     Group = group,
                     SEQ = seq,
+                    Source = source,
                 };
 
                 executes.Add(model);
@@ -482,9 +485,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                         break;
                     case ListName.P_ReplacementReport:
                         result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
-						break;
+                        break;
                     case ListName.P_DailyAccuCPULoading:
                         result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
+                        break;
+                    case ListName.P_SewingDailyOutputStatusRecord:
+                        result = new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
                         break;
                     default:
                         // Execute all Stored Procedures
@@ -590,11 +596,38 @@ M: {region}
             DBProxy.Current.OpenConnection(item.DBName, out SqlConnection sqlConn);
             using (sqlConn)
             {
-                DBProxy.Current.DefaultTimeout = 1800;
+                DBProxy.Current.DefaultTimeout = MyUtility.Convert.GetInt(this.GetTimeout());
                 resultReport.Result = DBProxy.Current.ExecuteByConn(sqlConn, "exec " + procedureName);
             }
 
             return resultReport;
+        }
+
+        /// <summary>
+        /// BITableInfo
+        /// </summary>
+        /// <param name="bITableInfoID">BITableInfo.ID</param>
+        /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
+        /// <returns>String</returns>
+        public string SqlBITableInfo(string bITableInfoID, bool is_Trans)
+        {
+            return $@"
+DECLARE @BITableInfoID VARCHAR(50) = '{bITableInfoID}'
+DECLARE @IS_Trans BIT = '{is_Trans}'
+
+IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
+BEGIN
+    UPDATE BITableInfo
+    SET TransferDate = GETDATE()
+       ,IS_Trans = @IS_Trans
+    WHERE ID = @BITableInfoID
+END
+ELSE
+BEGIN
+    INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
+        VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
+END
+";
         }
     }
 }

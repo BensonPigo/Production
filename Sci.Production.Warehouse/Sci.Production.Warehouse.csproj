@@ -1637,6 +1637,24 @@
     <Compile Include="Report\R07.Designer.cs">
       <DependentUpon>R07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R28.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R28.Designer.cs">
+      <DependentUpon>R28.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R29.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R29.Designer.cs">
+      <DependentUpon>R29.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R30.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R30.Designer.cs">
+      <DependentUpon>R30.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R44.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1901,6 +1919,7 @@
     <EmbeddedResource Include="P64_Print.rdlc" />
     <EmbeddedResource Include="P06.resx">
       <DependentUpon>P06.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P19_TransferWKImport.resx">
       <DependentUpon>P19_TransferWKImport.cs</DependentUpon>
@@ -2526,6 +2545,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P38.resx">
       <DependentUpon>P38.cs</DependentUpon>
@@ -2614,6 +2634,15 @@
     <EmbeddedResource Include="P52_StocktakingList.rdlc" />
     <EmbeddedResource Include="Report\R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R28.resx">
+      <DependentUpon>R28.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R29.resx">
+      <DependentUpon>R29.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R30.resx">
+      <DependentUpon>R30.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R44.resx">
       <DependentUpon>R44.cs</DependentUpon>

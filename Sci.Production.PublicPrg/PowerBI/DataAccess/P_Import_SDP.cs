@@ -512,9 +512,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	,t.[ReasonRemark]				=	isnull(s.[ReasonRemark],'')
 	,t.[FactoryID]					=	isnull(s.[FactoryID],'')
 	from P_SDP t
-	inner join #tmp s on t.[SPNO]  = s.[SPNO]	and
+	inner join #tmp s on t.[FactoryID] = s.[FactoryID] and
+					     t.[SPNO]  = s.[SPNO]	and
 						 t.[Style] = s.[Style]	and
-						 t.[Seq]   = s.[Seq]
+						 t.[Seq]   = s.[Seq] and
+						 t.[Pullouttimes] = s.[Pullouttimes]
 
 	/************* 新增P_SDP的資料*************/
 	insert into P_SDP (
@@ -607,13 +609,27 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		,isnull(t.OutstandingReason,'')
 		,t.ReasonRemark
 	from #tmp t
-	where not exists (select 1 from P_SDP s where t.[SPNO] = s.[SPNO] and t.[Style] = s.[Style] and t.[Seq] = s.[Seq])
+	where not exists 
+	(
+		select 1 from P_SDP s 
+		where  t.[FactoryID] = s.[FactoryID] and
+			   t.[SPNO]  = s.[SPNO]	and
+			   t.[Style] = s.[Style]	and
+			   t.[Seq]   = s.[Seq] and
+			   t.[Pullouttimes] = s.[Pullouttimes]
+	)
 
 	-- 刪除掉#tmp不同Key且SPNo相同的資料
 	Delete P_SDP
 	from P_SDP as a 
-	where not exists(
-		select 1 from #tmp b where a.SPNo=b.SPNo and a.Style = b.Style and a.Seq = b.Seq
+	where not exists
+	(
+		select 1 from #tmp b 
+		where  a.[FactoryID] = b.[FactoryID] and
+			   a.[SPNO]  = b.[SPNO]	and
+			   a.[Style] = b.[Style] and
+			   a.[Seq]   = b.[Seq] and
+			   a.[Pullouttimes] = b.[Pullouttimes]
 	)
 	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 

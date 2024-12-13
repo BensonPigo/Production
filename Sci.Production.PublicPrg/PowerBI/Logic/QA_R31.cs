@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Sci.Data;
-using Sci.Production.Class;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
