@@ -545,14 +545,14 @@ namespace Sci.Production.IE
                                     {
                                         DataRow newRow = dtSub.NewRow();
 
-                                        decimal decEffi = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])) > 0 ? groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])) / groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])) : 0;
+                                        decimal decEffi = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Effi"])) > 0 ? groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Effi"])): 0;
 
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
                                         newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
                                         newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
-                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"]))/100, 2);
+                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["TotalCycleTime"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
                                         newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle * 100, 0);
@@ -560,7 +560,7 @@ namespace Sci.Production.IE
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
                                         newRow["OperatorEffi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["OperatorEffi"])).First();
-                                        newRow["Effi"] = decEffi * 100;
+                                        newRow["Effi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["Effi"])).First();
                                         newRow["EstOutputHr"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["EstOutputHr"])).First();
                                         newRow["EstTotalCycleTime"] = groupItem.Select(s => s["EstTotalCycleTime"].ToString()).First();
                                         newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();

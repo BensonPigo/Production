@@ -325,7 +325,7 @@ SELECT
 [Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
 [Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 ,lmd.GSD
-,lmd.Cycle
+,[Cycle] = lmd.Cycle *1.0
 INTO #P03
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
@@ -372,7 +372,7 @@ SELECT
 [Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
 [Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
 ,lmbd.GSD
-,lmbd.Cycle
+,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 INTO #P06
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
@@ -464,7 +464,7 @@ SELECT
 	, [Motion] = ISNULL(Operation_P03.val,'')
 	, [DiffDays] = DATEDIFF(DAY,lm_Day.EditDate,@goDate)
 	, lmd.GSD 
-	, lmd.Cycle
+	, [Cycle] = lmd.Cycle * 1.0
 INTO #DetailP03
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
@@ -536,7 +536,7 @@ SELECT
 ,[Motion] = ISNULL(Operation_P06.val,'')
 	,[DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,@goDate)
 ,lmbd.GSD 
-,lmbd.Cycle
+,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 INTO #DetailP06
 FROM Employee e WITH(NOLOCK)
 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID

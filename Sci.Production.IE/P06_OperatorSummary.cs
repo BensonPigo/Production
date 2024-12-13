@@ -22,6 +22,7 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.LoadData(lmbID);
         }
+
         /// <inheritdoc/>
         public void LoadData(string lmbID)
         {
@@ -29,9 +30,9 @@ namespace Sci.Production.IE
             var sqlcmd = $@"
 			DECLARE @LMBID bigint = {lmbID}
             -- 查詢和計算績效
+                        -- 查詢和計算績效
             SELECT
-                *
-                ,[EstCycleTime] = IIF(a.OperatorEffi = '0.00', '0.00', a.GSD / a.OperatorEffi * 100)
+            *
             into #tmp
             FROM
             (
@@ -39,8 +40,16 @@ namespace Sci.Production.IE
                     [No] = lmbd.[No]
                     ,[OperatorID] = lmbd.EmployeeID
                     ,[GSD] = lmbd.GSD
-                    ,[ActualEffi] = IIF(lmbd.Cycle = 0, 0, ROUND(lmbd.GSD / lmbd.Cycle, 2) * 100)
-                    ,[OperatorEffi] = ISNULL(IIF(Effi.Effi_3_year = '' OR Effi.Effi_3_year IS NULL, Effi_90_day.Effi_90_day, Effi.Effi_3_year), '0.00')
+					,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
+                    ,[ActualEffi] = IIF(lmbd.Cycle = 0, 0, CAST((lmbd.GSD / lmbd.Cycle * lmbd.SewerDiffPercentage) as NUMERIC(7,4) ) * 100)
+					,[OperatorEffi] = ISNULL(
+											IIF(
+												Effi.Effi_3_year IS NULL, 
+												TRY_CAST(Effi_90_day.Effi_90_day AS NUMERIC(7,4)), 
+												TRY_CAST(Effi.Effi_3_year AS NUMERIC(7,4))
+											), 
+											0.00
+										)
                 FROM LineMappingBalancing lmb
                 INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.ID = lmb.ID
                 LEFT JOIN MachineType_Detail md ON md.ID = lmbd.MachineTypeID AND md.FactoryID = lmb.FactoryID
@@ -70,151 +79,148 @@ namespace Sci.Production.IE
                 OUTER APPLY
                 (
                     SELECT
-                        [ST_MC_Type]
-                        ,[Motion]
-                        ,[Effi_90_day] = ISNULL(FORMAT(AVG(CAST([Effi_90_day] AS DECIMAL(10, 2))), '0.00'), '0')
+                    [Effi_90_day] = CAST(SUM(GSD) / SUM(Cycle) AS NUMERIC(7, 4))
                     FROM
                     (
-                        SELECT 
-                        [ST_MC_Type] = lmd.MachineTypeID
-                        ,[Motion] = Operation_P03.val
-                        ,[Effi_90_day] = FORMAT(CAST(IIF(LM.ID IS NULL OR LMD.Cycle = 0, 0, ROUND(lmd.GSD / lmd.Cycle * 100, 2)) AS DECIMAL(10, 2)), '0.00')
-                        FROM Employee eo
-                        LEFT JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
-                        LEFT JOIN LineMapping lm WITH(NOLOCK) ON lm.id = lmd.ID
-                        OUTER APPLY
-                        (
-                            SELECT val = STUFF((SELECT DISTINCT CONCAT(',', Name)
-                                FROM OperationRef a
-                                INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
-                                WHERE a.CodeType = '00007' AND a.id = lmd.OperationID FOR XML PATH('')), 1, 1, '')
-                        ) Operation_P03
-                        WHERE 
-                        eo.FactoryID = lmb.FactoryID AND eo.ID = lmbd.EmployeeID AND
-                        lmd.MachineTypeID = lmbd.MachineTypeID AND
-                        Operation_P03.val = Motion.val AND
-                        ((lm.EditDate >= DATEADD(day, -90, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(day, -90, GETDATE()) AND lm.AddDate <= GETDATE()))
+                                              SELECT
+						[ST_MC_Type] = ISNULL(lmd.MachineTypeID,'')
+						, [Motion] = ISNULL(Operation_P03.val,'')
+						, [DiffDays] = DATEDIFF(DAY,lm_Day.EditDate,GETDATE())
+						, lmd.GSD 
+						, [Cycle] = lmd.Cycle * 1.0
+						FROM Employee e WITH(NOLOCK)
+						INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+						INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID
+						OUTER APPLY (
+							SELECT val = STUFF((
+							SELECT DISTINCT CONCAT(',', Name)
+							FROM OperationRef a WITH(NOLOCK)
+							INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+							WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+							FOR XML PATH('')), 1, 1, '')
+						) Operation_P03
+						WHERE 
+						e.FactoryID IN (select ID from Factory where FTYGroup = lmb.FactoryID) AND
+						(ISNULL(lmd.MachineTypeID,'') != '') AND 
+						e.ID = lmbd.EmployeeID  AND
+						lmd.MachineTypeID = lmbd.MachineTypeID AND
+						Operation_P03.val = Motion.val AND 
+						DATEDIFF(DAY,lm_Day.EditDate,GETDATE()) <= 90
 			            UNION
-			            SELECT 
-                        [ST_MC_Type] = lmd.MachineTypeID
-                        ,[Motion] = Operation_P03.val
-                        ,[Effi_90_day] = FORMAT(CAST(IIF(LM.ID IS NULL OR LMD.Cycle = 0, 0, ROUND(lmd.GSD / lmd.Cycle * 100, 2)) AS DECIMAL(10, 2)), '0.00')
-                        FROM Employee eo
-                        LEFT JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
-                        LEFT JOIN LineMappingBalancing lm WITH(NOLOCK) ON lm.id = lmd.ID
-                        OUTER APPLY
-                        (
-                            SELECT val = STUFF((SELECT DISTINCT CONCAT(',', Name)
-                                FROM OperationRef a
-                                INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
-                                WHERE a.CodeType = '00007' AND a.id = lmd.OperationID FOR XML PATH('')), 1, 1, '')
-                        ) Operation_P03
-                        WHERE 
-                        eo.FactoryID = lmb.FactoryID AND eo.ID = lmbd.EmployeeID AND
-                        lmd.MachineTypeID = lmbd.MachineTypeID AND
-                        Operation_P03.val = Motion.val AND
-                        ((lm.EditDate >= DATEADD(day, -90, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(day, -90, GETDATE()) AND lm.AddDate <= GETDATE()))
+			            SELECT
+							[ST_MC_Type] = ISNULL(olmbd.MachineTypeID,'')
+						, [Motion] = ISNULL(Operation_P06.val,'')
+						, [DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,GETDATE())
+						, olmbd.GSD 
+						, [Cycle] = olmbd.Cycle * olmbd.SewerDiffPercentage
+						FROM Employee e WITH(NOLOCK)
+						INNER JOIN LineMappingBalancing_Detail olmbd WITH(NOLOCK) ON olmbd.EmployeeID = e.ID
+						INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = olmbd.ID
+						OUTER APPLY (
+							SELECT val = STUFF((
+							SELECT DISTINCT CONCAT(',', Name)
+							FROM OperationRef a WITH(NOLOCK)
+							INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+							WHERE a.CodeType = '00007' AND a.id = olmbd.OperationID  
+							FOR XML PATH('')), 1, 1, '')
+						) Operation_P06
+						WHERE 
+						e.FactoryID IN (select ID from Factory where FTYGroup = lmb.FactoryID) AND 
+						(ISNULL(olmbd.MachineTypeID,'') != '') AND 
+						e.ID = lmbd.EmployeeID AND
+						ISNULL(olmbd.MachineTypeID,'') = lmbd.MachineTypeID AND
+						ISNULL(Operation_P06.val,'') = Motion.val  AND 
+						DATEDIFF(DAY,lmb_Day.EditDate,GETDATE()) <= 90
                     ) a
-                    GROUP BY [ST_MC_Type], [Motion]
                 ) Effi_90_day
                 OUTER APPLY
                 (
                     SELECT
-                        [ST_MC_Type]
-                        ,[Motion]
-                        ,[Group_Header]
-                        ,[Part]
-                        ,[Attachment]
-                        ,[Effi_3_year] = ISNULL(FORMAT(AVG(CAST([Effi_3_year] AS DECIMAL(10, 2))), '0.00'), '0.00')
-                    FROM
-                    (
-                        SELECT 
-                            [ST_MC_Type] = lmd.MachineTypeID
-                            ,[Motion] = Operation_P03.val
-                            ,[Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '')
-                            ,[Part] = lmd.SewingMachineAttachmentID
-                            ,[Attachment] = lmd.Attachment
-                            ,[Effi_3_year] = FORMAT(CAST(IIF(lmd.Cycle = 0, 0, ROUND(lmd.GSD / lmd.Cycle * 100, 2)) AS DECIMAL(10, 2)), '0.00')
-                        FROM Employee eo
-                        LEFT JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
-                        LEFT JOIN LineMapping lm WITH(NOLOCK) ON lm.id = lmd.ID
-                        LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID
-                        OUTER APPLY
-                        (
-                            SELECT val = STUFF((SELECT DISTINCT CONCAT(',', Name)
-                                FROM OperationRef a
-                                INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
-                                WHERE a.CodeType = '00007' AND a.id = lmd.OperationID FOR XML PATH('')), 1, 1, '')
-                        ) Operation_P03
-                        OUTER APPLY
-                        (
-                            SELECT TOP 1
-                                OperatorIDss.OperationID
-                            FROM
-                            (
-                                SELECT 
-                                    td.id
-                                    ,td.Seq
-                                    ,td.OperationID
-                                FROM TimeStudy_Detail td WITH(NOLOCK)
-                                WHERE td.OperationID LIKE '-%' AND td.smv = 0
-                            ) OperatorIDss 
-                            WHERE ID = lmb.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = lmb.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
-                            ORDER BY SEQ DESC
-                        ) OP
-                        WHERE 
-                            eo.FactoryID = lmb.FactoryID AND eo.ID = lmbd.EmployeeID AND
-                            lmd.MachineTypeID = lmbd.MachineTypeID AND
-                            Operation_P03.val = Motion.val AND
-                            ISNULL(lmd.Attachment, '') = ISNULL(lmbd.Attachment, '') AND
-                            lmd.SewingMachineAttachmentID = lmbd.SewingMachineAttachmentID AND
-                            ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '') = ISNULL(REPLACE(Group_Header.val, '--', ''), '') AND
-                            ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.AddDate <= GETDATE()))
+			        [Effi_3_year] =  CAST(SUM(GSD) / SUM(Cycle) AS NUMERIC(7, 4))
+			        FROM (
+				        SELECT
+				       [ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
+				       [Motion] = ISNULL(Operation_P03.val,''),
+				       [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
+				       [Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
+				       [Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
+				       ,lmd.GSD
+				       ,[Cycle] = lmd.Cycle * 1.0
+				       FROM Employee e WITH(NOLOCK)
+				       INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
+				       INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
+				       OUTER APPLY (
+					       SELECT val = STUFF((
+						        SELECT DISTINCT CONCAT(',', Name)
+						        FROM OperationRef a WITH(NOLOCK)
+						        INNER JOIN IESelectCode b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+						        WHERE a.CodeType = '00007' AND a.id = lmd.OperationID  
+						        FOR XML PATH('')), 1, 1, '')
+				       ) Operation_P03
+				       OUTER APPLY(
+					       select TOP 1 tsd.Location,tsd.ID
+					       from TimeStudy TS
+					       inner join TimeStudy_Detail tsd WITH(NOLOCK) ON tsd.id = ts.id
+					       where TS.StyleID = lm_Day.StyleID AND TS.SeasonID = lm_Day.SeasonID AND TS.ComboType = lm_Day.ComboType AND TS.BrandID = lm_Day.BrandID
+					       and lmd.OperationID = tsd.OperationID
+					   
+				       )tsd
+				       OUTER APPLY
+				       (
+					       SELECT TOP 1
+					       OperatorIDss.OperationID
+					       FROM
+					       (
+						        SELECT 
+						        td.id
+						        ,td.Seq
+						        ,td.OperationID
+						        from TimeStudy_Detail td WITH(NOLOCK)
+						        where  td.OperationID LIKE '-%' and td.smv = 0
+					       )
+					       OperatorIDss 
+					       WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+					       ORDER BY SEQ DESC
+				       )OP
+				       WHERE 
+                       e.FactoryID IN (select ID from Factory where FTYGroup = lmb.FactoryID) 
+			           AND e.ID = lmbd.EmployeeID
+			           AND ISNULL(lmd.MachineTypeID,'') = lmbd.MachineTypeID
+			           AND ISNULL(Operation_P03.val,'') = ISNULL(Motion.val,'')
+			           AND ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') =  ISNULL(REPLACE(lmbd.[Location], '--', ''),'')
+			           AND ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL(lmbd.SewingMachineAttachmentID,'')
+			           AND (ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')) = ISNULL(lmbd.Attachment, '')
 
                         UNION
 
-                        SELECT 
-                            [ST_MC_Type] = lmd.MachineTypeID
-                            ,[Motion] = Operation_P03.val
-                            ,[Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '')
-                            ,[Part] = lmd.SewingMachineAttachmentID
-                            ,[Attachment] = lmd.Attachment
-                            ,[Effi_3_year] = FORMAT(CAST(IIF(lmd.Cycle = 0, 0, ROUND(lmd.GSD / lmd.Cycle * 100, 2)) AS DECIMAL(10, 2)), '0.00')
-                        FROM Employee eo
-                        LEFT JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
-                        LEFT JOIN LineMappingBalancing lm WITH(NOLOCK) ON lm.id = lmd.ID
-                        LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID
-                        OUTER APPLY
-                        (
-                            SELECT val = STUFF((SELECT DISTINCT CONCAT(',', Name)
-                                FROM OperationRef a
-                                INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
-                                WHERE a.CodeType = '00007' AND a.id = lmd.OperationID FOR XML PATH('')), 1, 1, '')
-                        ) Operation_P03
-                        OUTER APPLY
-                        (
-                            SELECT TOP 1
-                                OperatorIDss.OperationID
-                            FROM
-                            (
-                                SELECT 
-                                    td.id
-                                    ,td.Seq
-                                    ,td.OperationID
-                                FROM TimeStudy_Detail td WITH(NOLOCK)
-                                WHERE td.OperationID LIKE '-%' AND td.smv = 0
-                            ) OperatorIDss 
-                            WHERE ID = lmb.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = lmb.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
-                            ORDER BY SEQ DESC
-                        ) OP
-                        WHERE 
-                            eo.FactoryID = lmb.FactoryID AND eo.ID = lmbd.EmployeeID AND
-                            lmd.MachineTypeID = lmbd.MachineTypeID AND
-                            Operation_P03.val = Motion.val AND
-                            ISNULL(lmd.Attachment, '') = ISNULL(lmbd.Attachment, '') AND
-                            lmd.SewingMachineAttachmentID = lmbd.SewingMachineAttachmentID AND
-                            ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', ''), REPLACE(tsd.[location], '--', '')), '') = ISNULL(REPLACE(Group_Header.val, '--', ''), '') AND
-                            ((lm.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.EditDate <= GETDATE()) OR (lm.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm.AddDate <= GETDATE()))
+                        SELECT
+				        [ST_MC_Type] = ISNULL(olmbd.MachineTypeID,''),
+				        [Motion] = ISNULL(Operation_P06.val,''),
+				        [Group_Header] = REPLACE(olmbd.[location], '--', ''),
+				        [Part] = ISNULL(olmbd.SewingMachineAttachmentID,''),
+				        [Attachment] = ISNULL(olmbd.Attachment,'') + ' ' + ISNULL(olmbd.Template,'')
+				        ,olmbd.GSD
+				        ,[Cycle] = olmbd.Cycle * olmbd.SewerDiffPercentage
+				        FROM Employee e WITH(NOLOCK)
+				        INNER JOIN LineMappingBalancing_Detail olmbd WITH(NOLOCK) ON olmbd.EmployeeID = e.ID
+				        INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = olmbd.ID  AND ((lmb_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.EditDate <= GETDATE()) OR (lmb_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.AddDate <= GETDATE()))
+				        OUTER APPLY (
+					        SELECT val = STUFF((
+						        SELECT DISTINCT CONCAT(',', Name)
+						        FROM OperationRef a WITH(NOLOCK)
+						        INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+						        WHERE a.CodeType = '00007' AND a.id = olmbd.OperationID  
+						        FOR XML PATH('')), 1, 1, '')
+				        ) Operation_P06
+				        WHERE 
+			            e.FactoryID IN (select ID from Factory where FTYGroup = lmb.FactoryID)  
+			            AND e.ID = lmbd.EmployeeID 
+			            AND ISNULL(olmbd.MachineTypeID,'') = ISNULL(lmbd.MachineTypeID,'')
+			            AND ISNULL(Operation_P06.val,'') = ISNULL(Motion.val,'')
+			            AND ISNULL(REPLACE(olmbd.[location], '--', ''),'') = ISNULL(REPLACE(lmbd.[Location], '--', ''),'')
+			            AND ISNULL(lmbd.SewingMachineAttachmentID,'') = ISNULL(olmbd.SewingMachineAttachmentID,'')
+			            AND (ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')) = ISNULL(olmbd.Attachment, '')
+
                     ) a
                     GROUP BY [ST_MC_Type], [Motion], [Group_Header], [Part], [Attachment]
                 ) Effi
@@ -225,11 +231,13 @@ namespace Sci.Production.IE
             SELECT 
              [No]
             ,[OperatorID]
-            ,[ActualEffi] = IIF(OperatorID = '',0, SUM(GSD * ActualEffi) / SUM(GSD))
-            ,[OperatorEffi] = IIF(OperatorID = '',0, SUM(GSD * OperatorEffi) / SUM(GSD))
+            ,[ActualEffi] = CAST(IIF(OperatorID = '', 0, AVG(GSD / NULLIF(CYCLE, 0) * 100)) AS NUMERIC(7,2))
+            ,[OperatorEffi] = CAST(IIF(OperatorID = '',0, AVG(OperatorEffi) * 100) AS NUMERIC(7,2))
             FROM #tmp 
             GROUP BY [No],OperatorID
             ORDER BY [No]
+            
+			drop table #tmp
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtChart);
@@ -256,11 +264,13 @@ namespace Sci.Production.IE
             this.chart1.Series.Add("Actual Effi%");
             this.chart1.Series["Actual Effi%"].ChartType = SeriesChartType.Column;
             this.chart1.Series["Actual Effi%"].Color = Color.CornflowerBlue;
+            this.chart1.Series["Actual Effi%"].IsValueShownAsLabel = true;
 
             this.chart1.Series.Add("Est Effi%");
             this.chart1.Series["Est Effi%"].ChartType = SeriesChartType.Line;
             this.chart1.Series["Est Effi%"].Color = Color.Brown;
             this.chart1.Series["Est Effi%"].BorderWidth = 3;
+            this.chart1.Series["Est Effi%"].IsValueShownAsLabel = true;
 
             // 傳值進去前面設定的Series
             for (int i = 0; i < dtChart.Rows.Count; i++)

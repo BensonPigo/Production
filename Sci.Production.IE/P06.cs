@@ -42,7 +42,6 @@ namespace Sci.Production.IE
         private Ict.Win.UI.DataGridViewTextBoxColumn col_color1;
         private int index_Gid = 0;
 
-
         private decimal StandardLBR
         {
             get
@@ -82,6 +81,7 @@ AND ALMCS.Junk = 0
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
+            this.gridLineMappingRight.DataSource = this.gridCentralizedPPARightBS;
 
             this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No", SubGridType.LineMappingBalancing);
             this.centralizedPPAGrids = new AutoLineMappingGridSyncScroll(this.gridCentralizedPPALeft, this.gridCentralizedPPARight, "No", SubGridType.BalancingCentrailizedPPA);
@@ -242,7 +242,7 @@ AND ALMCS.Junk = 0
             SELECT * 
             FROM (
                 SELECT *
-                ,[Effi] = iif((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0 , (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No))  / (SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No))  * 100,0)
+                ,[Effi] = iif((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0 , AVG( CAST(EffiPercentage AS FLOAT)) OVER (PARTITION BY No) * 100,0)
                 ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
                 ,[EstTotalCycleTime] = IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
                 ,[EstOutputHr] = iif((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))  = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
@@ -269,6 +269,8 @@ AND ALMCS.Junk = 0
                     ,[Template]
                     ,[GSD]
                     ,[Cycle]
+                    ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
+                    ,[EffiPercentage] = iif([Cycle] > 0 , [GSD] /[Cycle] * [SewerDiffPercentage],0)
                     ,[SewerDiffPercentage]
                     ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
                     ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
@@ -378,7 +380,7 @@ AND ALMCS.Junk = 0
                 }
             }
 
-            this.FilterGrid();
+
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
             this.btnEditOperation.Enabled = this.tabDetail.SelectedIndex == 0 && this.EditMode;
@@ -432,6 +434,8 @@ AND ALMCS.Junk = 0
             {
                 this.CurrentMaintain["TaktTime"] = 0;
             }
+
+            this.FilterGrid();
         }
 
         /// <inheritdoc/>
@@ -657,12 +661,15 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            string lml_Cnt = MyUtility.GetValue.Lookup("SELECT TOP 1 [CNT] = [Description] FROM ProductionTPE.DBO.IEReason WHERE [Type] = 'LL' ORDER BY [ID] DESC");
+            string lml_Cnt = MyUtility.GetValue.Lookup("SELECT TOP 1 [CNT] = [Description] FROM IEReason WHERE [Type] = 'LL' ORDER BY [ID] DESC");
 
-            if (noCount + MyUtility.Convert.GetInt(lml_Cnt) <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+            if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
             {
-                MyUtility.Msg.WarningBox("Please fill in <Reason>!");
-                return false;
+                if (noCount + MyUtility.Convert.GetInt(lml_Cnt) <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+                {
+                    MyUtility.Msg.WarningBox("Please fill in <Reason>!");
+                    return false;
+                }
             }
 
             if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
@@ -953,9 +960,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     return;
                 }
 
-                this.GetEstValue(list,dr["No"].ToString());
-
-
+                this.GetEstValue(list, dr["No"].ToString());
             };
 
             colCycleTimePPA.CellValidating += (s, e) =>
@@ -1110,6 +1115,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
                         row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
                         row["OperatorEffi"] = effi > 0 ? effi : 0;
+                        row.EndEdit();
                     }
 
                     if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
@@ -1172,7 +1178,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     this.GetEmployee(null, e.FormattedValue.ToString(), this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
 
-                    
                     DataRow[] errorDataRow = dt.Select($"EmployeeID = '{MyUtility.Convert.GetString(e.FormattedValue.ToString())}' and NO <> '{MyUtility.Convert.GetString(dr["No"])}'");
                     if (errorDataRow.Length > 0)
                     {
@@ -1212,6 +1217,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             drDetail["EmployeeName"] = this.EmployeeData.Rows[0]["Name"];
                             drDetail["EmployeeSkill"] = this.EmployeeData.Rows[0]["Skill"];
                             drDetail["IsResignationDate"] = "0";
+                            drDetail.EndEdit();
                         }
 
                         if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
@@ -1444,8 +1450,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("sumCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Text("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Numeric("sumCycleTime", header: "Total" + Environment.NewLine + "Cycle Time", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID).Get(out this.col_color)
                .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name).Get(out this.col_color1)
@@ -1545,6 +1551,13 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             return base.ClickSavePre();
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+            this.OnDetailEntered();
         }
 
         private void TabDetail_SelectedIndexChanged(object sender, EventArgs e)
@@ -1878,14 +1891,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             {
                 selectSheet2.Rows.Add(
                     row["No"].ToString(),
-                    row["sumGSDTime"].ToString(),
+                    row["sumCycleTime"].ToString(),
                     row["TotalCycleTime"].ToString(),
                     row["OperatorLoading"].ToString(),
                     row["EmployeeID"].ToString(),
                     row["EmployeeName"].ToString(),
                     row["EstTotalCycleTime"].ToString(),
                     row["EmployeeSkill"].ToString(),
-                    row["OperatorEffi"].ToString(),
+                    row["Effi"].ToString(),
                     row["EstOutputHr"].ToString());
             }
 
@@ -1927,11 +1940,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 copyDR = copyOriDataTable.Rows[index];
             }
 
-            this.detailgrid.AllowUserToAddRows = false;
+            // this.detailgrid.AllowUserToAddRows = false;
             base.OnDetailGridInsert(insert_index);
 
             DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
-            DataTable dataTableRight = (DataTable)this.gridLineMappingRightBS.DataSource;
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
 
             if (index >= 0)
             {
@@ -2090,7 +2103,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() + 1 : 0;
-
+            this.lineMappingGrids.RefreshSubData();
         }
 
         /// <inheritdoc/>
@@ -2103,7 +2116,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
 
-            DataTable dataTableRight = (DataTable)this.gridLineMappingRightBS.DataSource;
+            DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
 
             string row = string.Empty;
 
@@ -2328,7 +2341,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 				, [Motion] = ISNULL(Operation_P03.val,'')
 				, [DiffDays] = DATEDIFF(DAY,lm_Day.EditDate,GETDATE())
 				, lmd.GSD 
-				, lmd.Cycle
+				, [Cycle] = lmd.Cycle * 1.0
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 				INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID
@@ -2355,7 +2368,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 				, [Motion] = ISNULL(Operation_P06.val,'')
 				, [DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,GETDATE())
 				, lmbd.GSD 
-				, lmbd.Cycle
+				, [Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 				INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
@@ -2393,7 +2406,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 				[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
 				[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 				,lmd.GSD
-				,lmd.Cycle
+				,[Cycle] = lmd.Cycle * 1.0
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 				INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
@@ -2448,7 +2461,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 				[Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
 				[Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
 				,lmbd.GSD
-				,lmbd.Cycle
+				,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 				INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID  AND ((lmb_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.EditDate <= GETDATE()) OR (lmb_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.AddDate <= GETDATE()))
@@ -2519,19 +2532,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             int effiCnt = 0;
             decimal gsdtime = 0;
             decimal totleCycleTime = 0;
-
+            decimal sumTotalCycleTime = 0;
             foreach (DataRow row in list)
             {
                 var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Location1"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
                 var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
                 var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
                 gsdtime += Convert.ToDecimal(row["GSD"]);
-
                 decEffi += effi;
                 effiCnt++;
+                sumTotalCycleTime += Convert.ToDecimal(row["Cycle"]) * Convert.ToDecimal(row["SewerDiffPercentage"]);
                 totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
                 row["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(row["GSD"]) / effi) * 100 : 0;
                 row["OperatorEffi"] = effi > 0 ? effi : 0;
+                row["TotalCycleTime"] = Convert.ToDecimal(row["Cycle"]) * Convert.ToDecimal(row["SewerDiffPercentage"]);
                 row.EndEdit();
             }
 
@@ -2550,7 +2564,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 row.EndEdit();
             }
 
-            var dtRight = (DataTable)this.gridLineMappingRightBS.DataSource;
+            var dtRight = (DataTable)this.gridLineMappingRight.DataSource;
 
             var drRight = dtRight.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted &&  x["No"].ToString() == no);
 
@@ -2558,13 +2572,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             {
                 foreach (DataRow dr1 in drRight.ToList())
                 {
+                    dr1["TotalCycleTime"] = sumTotalCycleTime;
                     dr1["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
                     dr1["EstTotalCycleTime"] = totleCycleTime;
                     dr1.EndEdit();
                 }
             }
 
-            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS;
+            this.gridLineMappingRight.DataSource = dtRight;
         }
     }
 }

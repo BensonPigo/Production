@@ -292,7 +292,7 @@ from (
 	OUTER APPLY
     (
 		SELECT
-		[Effi_90_day] = CAST(  SUM(GSD)/SUM(Cycle) * 100 as numeric(7,4))
+		[Effi_90_day] = CAST(SUM(GSD)/SUM(Cycle) * 100 as numeric(7,4))
 		FROM
 		(
 			SELECT
@@ -300,7 +300,7 @@ from (
 			, [Motion] = ISNULL(Operation_P03.val,'')
 			, [DiffDays] = DATEDIFF(DAY,lm_Day.EditDate,GETDATE())
 			, lmd.GSD 
-			, lmd.Cycle
+			, [Cycle] = lmd.Cycle * 1.0
 			FROM Employee eo WITH(NOLOCK)
 			INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 			INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID
@@ -327,7 +327,7 @@ from (
 			, [Motion] = ISNULL(Operation_P06.val,'')
 			, [DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,GETDATE())
 			, lmbd.GSD 
-			, lmbd.Cycle
+			, [Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 			FROM Employee eo WITH(NOLOCK)
 			INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 			INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
@@ -361,7 +361,7 @@ from (
 			[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
 			[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 			,lmd.GSD
-			,lmd.Cycle
+			,[Cycle] = lmd.Cycle * 1.0
 			FROM Employee eo WITH(NOLOCK)
 			INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
 			INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
@@ -417,7 +417,7 @@ from (
 			[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
 			[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 			,lmd.GSD
-			,lmd.Cycle
+			,[Cycle] = lmd.Cycle * lmd.SewerDiffPercentage
 			FROM Employee eo WITH(NOLOCK)
 			INNER JOIN LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = eo.ID
 			INNER JOIN LineMappingBalancing lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
@@ -3042,7 +3042,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 				, [Motion] = ISNULL(Operation_P03.val,'')
 				, [DiffDays] = DATEDIFF(DAY,lm_Day.EditDate,GETDATE())
 				, lmd.GSD 
-				, lmd.Cycle
+				, [Cycle] = lmd.Cycle * 1.0
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 				INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID
@@ -3069,7 +3069,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 				, [Motion] = ISNULL(Operation_P06.val,'')
 				, [DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,GETDATE())
 				, lmbd.GSD 
-				, lmbd.Cycle
+				, [Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 				INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
@@ -3106,8 +3106,8 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 				[Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
 				[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
 				[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
-				,lmd.GSD
-				,lmd.Cycle
+				,lmd.GSD 
+				,[Cycle] = lmd.Cycle * 1.0
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMapping_Detail lmd WITH(NOLOCK) ON lmd.EmployeeID = e.ID
 				INNER JOIN LineMapping lm_Day WITH(NOLOCK) ON lm_Day.id = lmd.ID  AND ((lm_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.EditDate <= GETDATE()) OR (lm_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lm_Day.AddDate <= GETDATE()))
@@ -3162,7 +3162,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 				[Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
 				[Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
 				,lmbd.GSD
-				,lmbd.Cycle
+				,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
 				FROM Employee e WITH(NOLOCK)
 				INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
 				INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID  AND ((lmb_Day.EditDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.EditDate <= GETDATE()) OR (lmb_Day.AddDate >= DATEADD(YEAR, -3, GETDATE()) AND lmb_Day.AddDate <= GETDATE()))
