@@ -791,7 +791,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         {
                             DataRow dr = this.grid1.GetDataRow<DataRow>(e.RowIndex);
                             this.GetEmployee(null);
-                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             if (result == DialogResult.Cancel)
                             {
@@ -1000,7 +1000,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
                             this.GetEmployee(null);
 
-                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+                            P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
                             DialogResult result = callNextForm.ShowDialog(this);
                             if (result == DialogResult.Cancel)
                             {
@@ -1546,21 +1546,22 @@ and Name = @PPA
                 new SqlParameter("@FirstName", firstName),
             };
             sqlCmd = $@"
-                select 
-                e.ID
-                ,FirstName
-                ,LastName
-                ,Section
-                ,Skill
-                ,SewingLineID 
-                , [Name] = LastName+ ','+ FirstName
-                ,e.FactoryID
-                , eas.P03
-                from Employee e WITH (NOLOCK) 
-                left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
-                where 
-                (ResignationDate is null or ResignationDate > GETDATE()) 
-                and e.Junk = 0 and eas.P03 = 1 "
+select 
+e.ID
+,FirstName
+,LastName
+,Section
+,Skill
+,SewingLineID 
+, [Name] = LastName+ ','+ FirstName
+,e.FactoryID
+, eas.P03
+,e.Section
+from Employee e WITH (NOLOCK) 
+left join EmployeeAllocationSetting eas on e.FactoryID = eas.FactoryID and e.Dept = eas.Dept and e.Position = eas.Position 
+where 
+(ResignationDate is null or ResignationDate > GETDATE()) 
+and e.Junk = 0 and eas.P03 = 1 "
                 + (iD == null ? string.Empty : " and e.ID = @id ")
                 + (MyUtility.Check.Empty(lastName) ? string.Empty : " and LastName = @LastName")
                 + (MyUtility.Check.Empty(firstName) ? string.Empty : " and FirstName = @FirstName");

@@ -1082,7 +1082,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
                     this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
-                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {
@@ -1265,7 +1265,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
                     this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
-                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]));
+                    P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
                     {

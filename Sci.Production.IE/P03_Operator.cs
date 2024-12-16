@@ -26,15 +26,17 @@ namespace Sci.Production.IE
         private DataTable dtDeful;
         private DataTable dt;
         private string strSewingLineID;
+        private string strTeam;
 
         /// <inheritdoc/>
-        public P03_Operator(DataTable dataTable, string sewingLineID)
+        public P03_Operator(DataTable dataTable, string sewingLineID, string team)
         {
             this.InitializeComponent();
             this.dtDeful = dataTable.Copy();
             this.strSewingLineID = sewingLineID;
+            this.strTeam = team;
             bool isEmptySewingLine = MyUtility.Check.Empty(sewingLineID);
-            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}')";
+            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{this.strSewingLineID + this.strTeam}')";
             this.dt = dataTable.Select(strSewingWhere).TryCopyToDataTable(dataTable);
         }
 
@@ -69,7 +71,7 @@ namespace Sci.Production.IE
             else
             {
                 bool isEmptySewingLine = MyUtility.Check.Empty(this.strSewingLineID);
-                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}')";
+                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{this.strSewingLineID + this.strTeam}')";
                 this.dt = this.dtDeful.Select(strSewingWhere).TryCopyToDataTable(this.dtDeful);
                 this.listControlBindingSource1.DataSource = this.dt;
             }
