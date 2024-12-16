@@ -563,7 +563,7 @@ ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
 
 ---- 4.  開始After Data準備
 ---- After Data的找法：
----- (1) 資料來源只有P03、P06
+---- (1) 資料來源只有P03、P06 (其中P06是從P05轉過去的)
 ---- (2) P03、P06找出Phase = Final的產線計畫
 ---- (3) 每筆的Key值為 factory, brand, style, season, combo type, Line, Team，從P03或P06取一個
 ---- (4) 取的方式：如果這組只有P03或P06有就直接取；P03、P06 同時有則取 EditDate 大的那邊 (若皆無 EditDate 則比較 AddDate) 
@@ -626,13 +626,13 @@ ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,E
 
 ---- 5. 開始Before Data準備
 ---- Before Data的找法：
----- (1) 資料來源只有P03、P05
+---- (1) 資料來源只有P03、P05 (因為P06是從P05轉過去的，所以只需要找出P06來源的P05即可)
 ---- (2) P03、P05找出Phase = Initial 或 Prelim 的產線計畫
 ---- (3) P03每筆的Key值為 factory, brand, style, season, combo type, Line, Team，但P05沒有 Line, Team
 ---- (4) P03、P05先各自處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
----- (4) 再從P03或P05取一個，取的方式：如果這組只有P03或P05有就直接取；P03、P05 同時有則取 EditDate 大的那邊 (若皆無 EditDate 則比較 AddDate) 
+---- (5) 再從P03或P05取一個，取的方式： 若After為 P06 ，Before 只需要找 P05；若After為 P03 ，Before 只需要找 P03
 
----- 先處理P03、P05的Prelim、Initial 優先度問題
+---- 先處理P03、P05的Prelim、Initial 優先度問題。
 ;WITH PhaseRankedTableP03 AS (
 	select 
         *,
@@ -679,64 +679,23 @@ INTO #P05Rank
 FROM PhaseRankedTableP05
 WHERE RowNum = 1
 
---P03有 && P05沒有、P03沒有 && p05有
+--找出所Before：P03 Before => P03 After；P05 Before => P06 After
+
+--P03的Before
 select p03.*
 ,SourceTable = 'IE P03'
 INTO #BeforeData
 from #BaseData a
 INNER join #P03Rank p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType
-where not exists(
-	select 1
-	from #P05Rank p05 ---- P05 沒有Line Team
-	where p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType 
-)
-UNION 
+UNION
+--P05的Before (必須在 P06.AutomatedLineMappingID 當中)
 select p05.*
 ,SourceTable = 'IE P05' ---- P05 沒有Line Team
 from #BaseData a
 INNER join #P05Rank p05 on p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType
-where not exists(
-	select 1
-	from #P03Rank p03 
-	where p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and a.ComboType=p03.ComboType --and p03.Phase='Final'
+where exists(
+	select 1 from LineMappingBalancing p06 where p06.AutomatedLineMappingID = p05.ID
 )
-
---P03有 && P05有
-;WITH BeforeCombinedTable AS (
-    SELECT 'IE P03' AS SourceTable, *
-    FROM #P03Rank a
-	where not exists(
-		select 1 from #BeforeData b
-		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
-	)
-    UNION ALL
-    SELECT 'IE P05' AS SourceTable, *
-    FROM #P05Rank a
-	where not exists( ---- P05 沒有Line Team
-		select 1 from #BeforeData b
-		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and a.ComboType=b.ComboType
-	) 
-),
-BeforeRankedTable AS (
-    SELECT 
-        *,
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,ComboType,Phase ORDER BY 
-            CASE 
-                WHEN EditDate IS NOT NULL THEN EditDate 
-                ELSE AddDate 
-            END DESC) AS RowNum
-    FROM BeforeCombinedTable
-)
-
-
---SELECT * FROM BeforeRankedTable WHERE RowNum = 1;
-INSERT INTO #BeforeData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID)
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID
-FROM BeforeRankedTable
-WHERE RowNum = 1
-ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate 
-
-
 
 ---- 6. 前面已經鎖定了每一組 factory, brand, style, season, combo type, Line, Team ，對應到的兩個產線計畫(分別是Before和After)，最後可以去P03、P05、P06找出最終的那一筆，並取出需要的欄位就好
 select a.*,b.Status
