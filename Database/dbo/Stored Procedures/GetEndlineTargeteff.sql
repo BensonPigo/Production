@@ -2,8 +2,7 @@
 AS
 BEGIN
 	/*宣告變數*/
-	DECLARE @RgCode Varchar(5) = (Select RgCode FROM [System]);
-	DECLARE @APSDate Datetime = (Select LastDownloadAPSDate  From Factory WHERE ID = @RgCode); --抓現在APS的時間
+	DECLARE @APSDate Datetime = (Select MAX(LastDownloadAPSDate)  From Factory WHERE Junk = 0); --抓現在APS的時間
 	DECLARE @MAX_TargetEff_APSDate Datetime = (Select MAX(APSDate)  From [ExtendServer].[ManufacturingExecution].dbo.TargetEffUpdateByAps); -- TargetEffUpdateByAps.APSDate 最大值
 	DECLARE @tmpCount int ;
 
