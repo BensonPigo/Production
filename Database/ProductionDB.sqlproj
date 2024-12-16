@@ -2926,6 +2926,7 @@
     <Build Include="dbo\Tables\SewingDailyOutputStatusRecord.sql" />
     <Build Include="dbo\Tables\FIR_PointRateFormula.sql" />
     <Build Include="dbo\Tables\StatementReport.sql" />
+    <Build Include="dbo\Stored Procedures\GetEndlineTargeteff.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
