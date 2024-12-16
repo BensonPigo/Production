@@ -503,7 +503,6 @@ inner join #SewingOutput_Detail b on a.ID = b.ID
 
 
 ---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
-----     *其中 P05 沒有產線和Team的資訊，User說要比對車工人數，人數一致的計畫才能使用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -670,7 +669,6 @@ WHERE RowNum = 1
 			and a.StyleUKey = maxVer.StyleUKey
 			and a.FactoryID = maxVer.FactoryID  
 			and a.ComboType = maxVer.ComboType  
-			and p06.SewerManpower = p05.SewerManpower
 	)
 )
 
