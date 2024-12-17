@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.label8 = new Sci.Win.UI.Label();
+            this.PCSMRText = new Sci.Production.Class.Txttpeuser();
             this.dateBox2 = new Sci.Win.UI.DateBox();
             this.label5 = new Sci.Win.UI.Label();
             this.dateBox1 = new Sci.Win.UI.DateBox();
@@ -333,8 +335,8 @@
             this.checkTeamWear = new Sci.Win.UI.CheckBox();
             this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
             this.label6 = new Sci.Win.UI.Label();
-            this.label8 = new Sci.Win.UI.Label();
-            this.PCSMRText = new Sci.Production.Class.Txttpeuser();
+            this.chkJokerTag = new Sci.Win.UI.CheckBox();
+            this.chkHeatSeal = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -351,6 +353,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.chkHeatSeal);
+            this.detailcont.Controls.Add(this.chkJokerTag);
             this.detailcont.Controls.Add(this.comboCompany1);
             this.detailcont.Controls.Add(this.label6);
             this.detailcont.Controls.Add(this.txtOrderType);
@@ -694,6 +698,23 @@
             this.tabPage1.Size = new System.Drawing.Size(897, 395);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // label8
+            // 
+            this.label8.Location = new System.Drawing.Point(600, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(65, 21);
+            this.label8.TabIndex = 242;
+            this.label8.Text = "PC SMR";
+            // 
+            // PCSMRText
+            // 
+            this.PCSMRText.DisplayBox1Binding = "";
+            this.PCSMRText.DisplayBox2Binding = "";
+            this.PCSMRText.Location = new System.Drawing.Point(669, 6);
+            this.PCSMRText.Name = "PCSMRText";
+            this.PCSMRText.Size = new System.Drawing.Size(302, 23);
+            this.PCSMRText.TabIndex = 243;
             // 
             // dateBox2
             // 
@@ -2860,7 +2881,7 @@
             this.checkSP.AutoSize = true;
             this.checkSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ScanAndPack", true));
             this.checkSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSP.Location = new System.Drawing.Point(707, 336);
+            this.checkSP.Location = new System.Drawing.Point(707, 359);
             this.checkSP.Name = "checkSP";
             this.checkSP.Size = new System.Drawing.Size(50, 19);
             this.checkSP.TabIndex = 23;
@@ -2873,7 +2894,7 @@
             this.checkVASSHAS.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "VasShas", true));
             this.checkVASSHAS.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkVASSHAS.IsSupportEditMode = false;
-            this.checkVASSHAS.Location = new System.Drawing.Point(707, 362);
+            this.checkVASSHAS.Location = new System.Drawing.Point(707, 385);
             this.checkVASSHAS.Name = "checkVASSHAS";
             this.checkVASSHAS.ReadOnly = true;
             this.checkVASSHAS.Size = new System.Drawing.Size(83, 19);
@@ -2886,7 +2907,7 @@
             this.checkTissuePaper.AutoSize = true;
             this.checkTissuePaper.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TissuePaper", true));
             this.checkTissuePaper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkTissuePaper.Location = new System.Drawing.Point(707, 390);
+            this.checkTissuePaper.Location = new System.Drawing.Point(707, 413);
             this.checkTissuePaper.Name = "checkTissuePaper";
             this.checkTissuePaper.Size = new System.Drawing.Size(97, 19);
             this.checkTissuePaper.TabIndex = 25;
@@ -2899,7 +2920,7 @@
             this.checkSpecialCustomer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpecialCust", true));
             this.checkSpecialCustomer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkSpecialCustomer.IsSupportEditMode = false;
-            this.checkSpecialCustomer.Location = new System.Drawing.Point(825, 336);
+            this.checkSpecialCustomer.Location = new System.Drawing.Point(825, 361);
             this.checkSpecialCustomer.Name = "checkSpecialCustomer";
             this.checkSpecialCustomer.ReadOnly = true;
             this.checkSpecialCustomer.Size = new System.Drawing.Size(121, 19);
@@ -2912,7 +2933,7 @@
             this.checkExceptionForm.AutoSize = true;
             this.checkExceptionForm.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkExceptionForm.IsSupportEditMode = false;
-            this.checkExceptionForm.Location = new System.Drawing.Point(825, 362);
+            this.checkExceptionForm.Location = new System.Drawing.Point(825, 387);
             this.checkExceptionForm.Name = "checkExceptionForm";
             this.checkExceptionForm.ReadOnly = true;
             this.checkExceptionForm.Size = new System.Drawing.Size(108, 19);
@@ -2925,7 +2946,7 @@
             this.checkRainwearTestPassed.AutoSize = true;
             this.checkRainwearTestPassed.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "RainwearTestPassed", true));
             this.checkRainwearTestPassed.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkRainwearTestPassed.Location = new System.Drawing.Point(825, 388);
+            this.checkRainwearTestPassed.Location = new System.Drawing.Point(825, 413);
             this.checkRainwearTestPassed.Name = "checkRainwearTestPassed";
             this.checkRainwearTestPassed.Size = new System.Drawing.Size(144, 19);
             this.checkRainwearTestPassed.TabIndex = 29;
@@ -3253,7 +3274,7 @@
             // 
             // btnExpectionFormRemark
             // 
-            this.btnExpectionFormRemark.Location = new System.Drawing.Point(930, 359);
+            this.btnExpectionFormRemark.Location = new System.Drawing.Point(930, 384);
             this.btnExpectionFormRemark.Name = "btnExpectionFormRemark";
             this.btnExpectionFormRemark.Size = new System.Drawing.Size(30, 25);
             this.btnExpectionFormRemark.TabIndex = 4;
@@ -3266,7 +3287,7 @@
             this.displayIsMixMarker.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayIsMixMarker.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OrderTypeID", true));
             this.displayIsMixMarker.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayIsMixMarker.Location = new System.Drawing.Point(707, 444);
+            this.displayIsMixMarker.Location = new System.Drawing.Point(707, 464);
             this.displayIsMixMarker.Name = "displayIsMixMarker";
             this.displayIsMixMarker.Size = new System.Drawing.Size(126, 21);
             this.displayIsMixMarker.TabIndex = 224;
@@ -3289,7 +3310,7 @@
             this.chkAFbyAdidas.AutoSize = true;
             this.chkAFbyAdidas.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "AirFreightByBrand", true));
             this.chkAFbyAdidas.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAFbyAdidas.Location = new System.Drawing.Point(839, 442);
+            this.chkAFbyAdidas.Location = new System.Drawing.Point(839, 462);
             this.chkAFbyAdidas.Name = "chkAFbyAdidas";
             this.chkAFbyAdidas.Size = new System.Drawing.Size(95, 19);
             this.chkAFbyAdidas.TabIndex = 226;
@@ -3647,7 +3668,7 @@
             this.checkOrganicCotton.AutoSize = true;
             this.checkOrganicCotton.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkOrganicCotton.IsSupportEditMode = false;
-            this.checkOrganicCotton.Location = new System.Drawing.Point(707, 415);
+            this.checkOrganicCotton.Location = new System.Drawing.Point(707, 438);
             this.checkOrganicCotton.Name = "checkOrganicCotton";
             this.checkOrganicCotton.ReadOnly = true;
             this.checkOrganicCotton.Size = new System.Drawing.Size(164, 19);
@@ -3702,7 +3723,7 @@
             this.checkTeamWear.AutoSize = true;
             this.checkTeamWear.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkTeamWear.IsSupportEditMode = false;
-            this.checkTeamWear.Location = new System.Drawing.Point(839, 470);
+            this.checkTeamWear.Location = new System.Drawing.Point(839, 482);
             this.checkTeamWear.Name = "checkTeamWear";
             this.checkTeamWear.ReadOnly = true;
             this.checkTeamWear.Size = new System.Drawing.Size(87, 19);
@@ -3733,22 +3754,33 @@
             this.label6.TabIndex = 259;
             this.label6.Text = "Order Company";
             // 
-            // label8
+            // chkJokerTag
             // 
-            this.label8.Location = new System.Drawing.Point(600, 6);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(65, 21);
-            this.label8.TabIndex = 242;
-            this.label8.Text = "PC SMR";
+            this.chkJokerTag.AutoSize = true;
+            this.chkJokerTag.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "JokerTag", true));
+            this.chkJokerTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkJokerTag.IsSupportEditMode = false;
+            this.chkJokerTag.Location = new System.Drawing.Point(707, 336);
+            this.chkJokerTag.Name = "chkJokerTag";
+            this.chkJokerTag.ReadOnly = true;
+            this.chkJokerTag.Size = new System.Drawing.Size(80, 19);
+            this.chkJokerTag.TabIndex = 261;
+            this.chkJokerTag.Text = "Joker Tag";
+            this.chkJokerTag.UseVisualStyleBackColor = true;
             // 
-            // PCSMRText
+            // chkHeatSeal
             // 
-            this.PCSMRText.DisplayBox1Binding = "";
-            this.PCSMRText.DisplayBox2Binding = "";
-            this.PCSMRText.Location = new System.Drawing.Point(669, 6);
-            this.PCSMRText.Name = "PCSMRText";
-            this.PCSMRText.Size = new System.Drawing.Size(302, 23);
-            this.PCSMRText.TabIndex = 243;
+            this.chkHeatSeal.AutoSize = true;
+            this.chkHeatSeal.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "HeatSeal", true));
+            this.chkHeatSeal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.chkHeatSeal.IsSupportEditMode = false;
+            this.chkHeatSeal.Location = new System.Drawing.Point(825, 336);
+            this.chkHeatSeal.Name = "chkHeatSeal";
+            this.chkHeatSeal.ReadOnly = true;
+            this.chkHeatSeal.Size = new System.Drawing.Size(80, 19);
+            this.chkHeatSeal.TabIndex = 262;
+            this.chkHeatSeal.Text = "Heat Seal";
+            this.chkHeatSeal.UseVisualStyleBackColor = true;
             // 
             // P01
             // 
@@ -4094,5 +4126,7 @@
         private Win.UI.Label label6;
         private Win.UI.Label label8;
         private Class.Txttpeuser PCSMRText;
+        private Win.UI.CheckBox chkHeatSeal;
+        private Win.UI.CheckBox chkJokerTag;
     }
 }

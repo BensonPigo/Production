@@ -761,7 +761,9 @@ else
 				t.HangerPack = isnull( s.HangerPack,                           0),
 				t.DelayCode = isnull( s.DelayCode,                             ''),
 				t.DelayDesc = isnull( s.DelayDesc,                             ''),
-				t.SizeUnitWeight = isnull( s.SizeUnitWeight,                   '')
+				t.SizeUnitWeight = isnull( s.SizeUnitWeight,                   ''),
+				t.JokerTag  = isnull( s.JokerTag ,                           0),
+				t.HeatSeal  = isnull( s.HeatSeal ,                           0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -794,7 +796,7 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
-			, SizeUnitWeight
+			, SizeUnitWeight		, JokerTag 		, HeatSeal 
 		) 
        VALUES
        (
@@ -944,7 +946,9 @@ else
               isnull(s.hangerpack ,              0),
               isnull(s.delaycode ,               ''),
               isnull(s.delaydesc ,               ''),
-              isnull(s.sizeunitweight,           '')
+              isnull(s.sizeunitweight,           ''),
+              isnull(s.JokerTag  ,               0),
+              isnull(s.HeatSeal  ,               0)
        );
 
 -----------------------------------------------------------------------------------------------------------
@@ -1108,7 +1112,9 @@ else
 				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x,
 				t.Customize4            = isnull(s.Customize4,''),
 				t.Customize5            = isnull(s.Customize5,''),
-				t.OrderCompanyID	    = isnull(s.OrderCompany, 0)
+				t.OrderCompanyID	    = isnull(s.OrderCompany, 0),
+				t.JokerTag 			= isnull( s.JokerTag ,                0),
+				t.HeatSeal 			= isnull( s.HeatSeal ,                0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -1143,7 +1149,7 @@ else
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
 			, SizeUnitWeight		, OrganicCotton         , DirectShip			, ScheETANoReplace		, SCHDLETA
 			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x  , OrderCompanyID
-			, Customize4            , Customize5			, LocalMR
+			, Customize4            , Customize5			, LocalMR			    , JokerTag 			    , HeatSeal 
 
 		) 
        VALUES
@@ -1313,7 +1319,9 @@ else
 				where BrandID = s.BrandID 
 				and id = s.styleid 
 				and SeasonID = s.SeasonID ), 
-				'')
+				''),
+              isnull(s.JokerTag ,      0),
+              isnull(s.HeatSeal  ,      0)
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
 
