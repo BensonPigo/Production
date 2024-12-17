@@ -96,12 +96,23 @@
     [ClogPulloutIsFrom]                   INT             CONSTRAINT [DF_PackingList_Detail_ClogPulloutIsFrom] DEFAULT ((0)) NOT NULL,
     [ClogActCTNWeight]                    NUMERIC (7, 3)  CONSTRAINT [DF_PackingList_Detail_ClogActCTNWeight] DEFAULT ((0)) NOT NULL,
     [HangerPackScanTime]                  DATE            NULL,
+    [HangerPackReturn]                    VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HangerPackReturn] DEFAULT ((0)) NOT NULL,
     [HangerPackStatus]                    VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HangerPackStatus] DEFAULT ('') NOT NULL,
     [JokerTagScanTime]                    DATE            NULL,
+    [JokerTagReturn]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_JokerTagReturn] DEFAULT ((0)) NOT NULL,
+    [JokerTagStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_JokerTagStatus] DEFAULT ('') NOT NULL,
     [HeatSealScanTime]                    DATE            NULL,
+    [HeatSealReturn]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HeatSealReturn] DEFAULT ((0)) NOT NULL,
     [HeatSealStatus]                      VARCHAR (6)     CONSTRAINT [DF_PackingList_Detail_HeatSealStatus] DEFAULT ('') NOT NULL,
+    [HaulingFailQty]                      INT             CONSTRAINT [DF_PackingList_Detail_HaulingFailQty] DEFAULT ((0)) NOT NULL,
+    [PackingAuditFailQty]                 INT             CONSTRAINT [DF_PackingList_Detail_PackingAuditFailQty] DEFAULT ((0)) NOT NULL,
+    [HangerPackFailQty]                   INT             CONSTRAINT [DF_PackingList_Detail_HangerPackFailQty] DEFAULT ((0)) NOT NULL,
+    [JokerTagFailQty]                     INT             CONSTRAINT [DF_PackingList_Detail_JokerTagFailQty] DEFAULT ((0)) NOT NULL,
+    [HeatSealFailQty]                     INT             CONSTRAINT [DF_PackingList_Detail_HeatSealFailQty] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Ukey] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -492,4 +503,40 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Hanger
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Hanger Pack 掃描時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HangerPackScanTime';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Packing Audit Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'PackingAuditFailQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Joker Tag 是否被 Return', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'JokerTagStatus';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Joker Tag 是否被 Return', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'JokerTagReturn';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Joker Tag Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'JokerTagFailQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Heat Seal 是否被 Return', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HeatSealReturn';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Heat Seal Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HeatSealFailQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hauling Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HaulingFailQty';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'M360 Hanger Pack 是否被 Return', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HangerPackReturn';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Hanger Pack Fail數', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PackingList_Detail', @level2type = N'COLUMN', @level2name = N'HangerPackFailQty';
 
