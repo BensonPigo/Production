@@ -350,7 +350,7 @@ select
   ,SerialNo = ISNULL(SciMachine_Machine.SerialNo,'')
   ,LocationM = ISNULL(SciMachine_Machine.LocationM,'')
   ,SciMachine_Machine.ArriveDate
-  ,UsageTime = concat(ISNULL(ym.UsageTime,0)/360,'Y',(ISNULL(ym.UsageTime,0)%360)/30,'M')
+  ,UsageTime = concat(ISNULL(ym.UsageTime,0)/365,'Y',(ISNULL(ym.UsageTime,0)%365)/30,'M')
   ,SciMachine_MachinePending_Detail.MachineDisposeID
   ,ObtainedDate  = a.CreateDate
 into MachinePending_Detail
