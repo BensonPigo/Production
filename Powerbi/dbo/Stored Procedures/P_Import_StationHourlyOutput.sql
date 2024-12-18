@@ -20,7 +20,7 @@ BEGIN
 	, [Ukey]
 	, [StyleID] = Isnull(styleid.val, '')
 	, [OrderID] = Isnull(OrderID.val, '')
-    , [Problems4MSDesc] = ps.Description
+    , [Problems4MSDesc] = Isnull(ps.Description, '')
 	into #tmpStationHourlyOutput
 	From ManufacturingExecution.dbo.StationHourlyOutput sho With(Nolock)
     LEFT JOIN ManufacturingExecution.dbo.ProblemsSetting ps WITH(NOLOCK) ON ps.ID = sho.[Problems4MS]
