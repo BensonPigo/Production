@@ -153,11 +153,12 @@ AND ALMCS.Junk = 0
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (dr["OperationID"].ToString() == "PROCIPF00003" ||
-                dr["OperationID"].ToString() == "PROCIPF00004")
+
+            if ((dr["OperationID"].ToString() == "PROCIPF00003" ||
+                dr["OperationID"].ToString() == "PROCIPF00004") && dr.RowState == DataRowState.Unchanged)
             {
-                this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
-                return;
+               this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
+               return;
             }
 
             if (e.ColumnIndex > 1)
@@ -243,10 +244,10 @@ AND ALMCS.Junk = 0
             SELECT * 
             FROM (
                 SELECT *
-                ,[Effi] = iif((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0 , AVG( CAST(EffiPercentage AS FLOAT)) OVER (PARTITION BY No) * 100,0)
-                ,[EstCycleTime] = iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
-                ,[EstTotalCycleTime] = IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
-                ,[EstOutputHr] = iif((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))  = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
+                ,[Effi] =  IIF((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0,ROUND(AVG(CAST(EffiPercentage AS NUMERIC(7,3))) OVER (PARTITION BY No) * 100, 2),0.00)
+                ,[EstCycleTime] =CAST(0.00 AS NUMERIC(12, 4)) --iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
+                ,[EstTotalCycleTime] = CAST(0.00 AS NUMERIC(12, 4)) --IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
+                ,[EstOutputHr] = CAST(0.00 AS NUMERIC(12, 4)) --iif((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))  = 0,0, 3600 / IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) * 100))
                 ,[IsRow] = ROW_NUMBER() OVER(PARTITION BY EmployeeID, Ukey ORDER BY Junk ASC)
                 FROM
                 (
@@ -271,7 +272,7 @@ AND ALMCS.Junk = 0
                     ,[GSD]
                     ,[Cycle]
                     ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
-                    ,[EffiPercentage] = iif([Cycle] > 0 , [GSD] /[Cycle] * [SewerDiffPercentage],0)
+                    ,[EffiPercentage] =  iif(([Cycle] * [SewerDiffPercentage]) > 0 , [GSD] /([Cycle] * [SewerDiffPercentage]),0)
                     ,[SewerDiffPercentage]
                     ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
                     ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
@@ -377,10 +378,10 @@ AND ALMCS.Junk = 0
                     {
                         dr["EstOutputHr"] = 3600 / totleCycleTime;
                     }
+
                     dr["EstTotalCycleTime"] = totleCycleTime;
                 }
             }
-
 
             this.detailgrid.ColumnHeadersHeight = this.gridLineMappingRight.ColumnHeadersHeight;
             this.gridCentralizedPPALeft.ColumnHeadersHeight = this.gridCentralizedPPARight.ColumnHeadersHeight;
@@ -668,14 +669,14 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             {
                 if (noCount + MyUtility.Convert.GetInt(lml_Cnt) <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
                 {
-                    MyUtility.Msg.WarningBox("Please fill in <Reason>!");
+                    MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
                     return false;
                 }
             }
 
             if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
             {
-                MyUtility.Msg.WarningBox("Please fill in <Reason>!");
+                MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
                 return false;
             }
 
@@ -841,7 +842,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             #region Operation Code
             operation.EditingMouseDown += (s, e) =>
             {
-                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                //DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                DataRow dr = dt.Rows[e.RowIndex];
                 if (this.EditMode)
                 {
                     if (e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["IsAdd"]) == true)
@@ -850,17 +853,23 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         {
                             P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
+
+                            if (callNextForm.P01SelectOperationCode == null)
+                            {
+                                return;
+                            }
+
                             string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
                             int timeStudyUkey = 0;
 
-                            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+                            //DataTable dt = (DataTable)this.detailgridbs.DataSource;
                             List<DataRow> list = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList();
 
                             // 找到第一個 EmployeeID 有值的行
                             string employeeId = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeID"]?.ToString()))?["EmployeeID"]?.ToString() : string.Empty;
 
                             string employeeName = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeName"]?.ToString()))?["EmployeeName"]?.ToString() : string.Empty;
-
+                            string operationID = callNextForm.P01SelectOperationCode["ID"].ToString();
                             if (MyUtility.Check.Empty(strAnnotation))
                             {
                                 string sqlcmd = $@"select  Annotation,TSD.Ukey
@@ -870,7 +879,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                         TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
                                         TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
                                         TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
-                                        OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
+                                        OperationID = '{operationID}'";
                                 DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
                                 if (!dul)
                                 {
@@ -885,27 +894,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 }
                             }
 
-                            if (result == DialogResult.Cancel)
+                            if (callNextForm.P01SelectOperationCode != null)
                             {
-                                if (callNextForm.P01SelectOperationCode != null)
-                                {
-                                    dr["TimeStudyDetailUkey"] = timeStudyUkey;
-                                    dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
-                                    dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
-                                    dr["MachineTypeID"] = callNextForm.P01SelectOperationCode["MachineTypeID"].ToString();
-                                    dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{callNextForm.P01SelectOperationCode["MoldID"]}', 'Template')");
-                                    dr["Annotation"] = strAnnotation;
-                                    dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
-                                    dr["Motion"] = callNextForm.P01SelectOperationCode["Motion"].ToString();
-                                    dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
-                                    dr["EmployeeID"] = employeeId;
-                                    dr["EmployeeName"] = employeeName;
-                                    dr.EndEdit();
-                                }
-                            }
-
-                            if (result == DialogResult.OK)
-                            {
+                                dr["OperationID"] = operationID;
                                 dr["TimeStudyDetailUkey"] = timeStudyUkey;
                                 dr["GSD"] = callNextForm.P01SelectOperationCode["SMVsec"].ToString();
                                 dr["OperationDesc"] = callNextForm.P01SelectOperationCode["DescEN"].ToString();
@@ -914,9 +905,28 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr["Annotation"] = strAnnotation;
                                 dr["MasterPlusGroup"] = callNextForm.P01SelectOperationCode["MasterPlusGroup"].ToString();
                                 dr["Motion"] = callNextForm.P01SelectOperationCode["Motion"].ToString();
-                                dr["OperationID"] = callNextForm.P01SelectOperationCode["ID"].ToString();
                                 dr["EmployeeID"] = employeeId;
                                 dr["EmployeeName"] = employeeName;
+
+                                if (dr["OperationID"].ToString() == "PROCIPF00003" ||
+                                dr["OperationID"].ToString() == "PROCIPF00004")
+                                {
+                                    this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
+
+                                    if (dr["OperationID"].ToString() == "PROCIPF00003")
+                                    {
+                                        this.CurrentMaintain["PackerManpower"] = MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) + 1;
+                                    }
+                                    else
+                                    {
+                                        this.CurrentMaintain["PresserManpower"] = MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]) + 1;
+                                    }
+                                }
+                                else
+                                {
+                                    this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() : 0;
+                                }
+
                                 dr.EndEdit();
                             }
 
@@ -1459,7 +1469,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("Effi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
+               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1973,6 +1984,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["IsRow"] = "1";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
+                nextDataRow["IsNonSewingLine"] = "False";
                 nextDataRow["OriSewer"] = DBNull.Value;
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
@@ -2116,7 +2128,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 }
             }
 
-            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() + 1 : 0;
             this.lineMappingGrids.RefreshSubData();
         }
 
@@ -2145,9 +2156,39 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 row = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[this.detailgridbs.Position]["No"].ToString();
             }
 
+            DataRow dr;
+            if (seleceted_dataRow != null)
+            {
+                dr = seleceted_dataRow;
+            }
+            else
+            {
+                var selectedRow = this.detailgrid.SelectedRows
+                .Cast<DataGridViewRow>()
+                .Where(e => e.Cells["No"].Value != null &&
+                            e.Cells["No"].Value != DBNull.Value)
+                .OrderBy(e =>
+                {
+                    int value;
+                    return int.TryParse(e.Cells["No"].Value.ToString(), out value) ? value : int.MaxValue;
+                })
+                .FirstOrDefault();
+
+                dr = this.detailgrid.GetDataRow<DataRow>(selectedRow.Index);
+            }
+
             this.detailgrid.ValidateControl();
 
-            DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.CurrentRow.Index);
+            // base.OnDetailGridRemoveClick();
+            bool isGo = false;
+            bool isDes = false;
+
+            int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["Selected"].ToString() == "True").ToList().Count();
+
+            if (cnt > 0 || MyUtility.Convert.GetBool(dr["Selected"]) == true)
+            {
+                isDes = true;
+            }
 
             //// Packer / Presser 卡控
             if (dr["OperationID"].ToString() == "PROCIPF00003" || dr["OperationID"].ToString() == "PROCIPF00004")
@@ -2159,17 +2200,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     return; // 如果無法刪除，則返回
                 }
-            }
-
-            // base.OnDetailGridRemoveClick();
-            bool isGo = false;
-            bool isDes = false;
-
-            int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["Selected"].ToString() == "True").ToList().Count();
-
-            if (cnt > 0 || MyUtility.Convert.GetBool(dr["Selected"]) == true)
-            {
-                isDes = true;
             }
 
             #region 刪除右邊表
@@ -2294,7 +2324,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
-            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() - 1 : 0;
+            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() : 0;
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
             var validRows = dt.AsEnumerable()
@@ -2304,6 +2334,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 .Where(x => x["No"].ToString() == row)
                 .ToList();
             this.GetEstValue(list, row);
+
+            
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
@@ -2347,7 +2379,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         {
             string sqlcmd = $@"			                
             SELECT
-			[Effi_90_day] = CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4))
+			[Effi_90_day] = iif(sum(A.Cycle) > 0 , CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4)),0)
 			FROM
 			(
 				SELECT
@@ -2411,7 +2443,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         {
             string sqlcmd = $@"			                                
 			SELECT
-			[Effi_3_year] =  CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4))
+			[Effi_3_year] =  iif(sum(cycle) > 0,CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4)),0)
 			FROM (
 				SELECT
 				[ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
@@ -2536,7 +2568,27 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             .GroupBy(row => row.Field<string>("No"))
                             .Count();
 
-            return MyUtility.Convert.GetInt(count) - MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]);
+            var result1 = this.DetailDatas.AsEnumerable()
+                        .GroupBy(row => row["No"].ToString()) // 依 No 分組
+                        .Where(group =>
+                            !(group.Count() == 1 && group.All(row =>
+                                row["OperationID"].ToString() == "PROCIPF00003" ||
+                                row["OperationID"].ToString() == "PROCIPF00004")) // 排除 Count = 1 且 OperationID 符合條件的群組
+                            && group.Count() > 1 && group.Any(row =>
+                                row["OperationID"].ToString() == "PROCIPF00003" ||
+                                row["OperationID"].ToString() == "PROCIPF00004")) // 保留 Count > 1 且含指定 OperationID 的群組
+                        .Select(group => new
+                        {
+                            No = group.Key, // 分組的 No
+                            Count = group.Count(), // 每個 No 的數量
+                            Details = group.Select(row => new
+                            {
+                                ID = row["ID"].ToString(),
+                                OperationID = row["OperationID"].ToString(),
+                            }).ToList(),
+                        }).ToList();
+
+            return MyUtility.Convert.GetInt(count) - MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) - MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]) + result1.Count;
         }
 
         /// <inheritdoc/>

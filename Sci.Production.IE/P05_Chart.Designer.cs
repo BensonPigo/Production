@@ -54,7 +54,7 @@
             title2.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Left;
             title2.Font = new System.Drawing.Font("Calibri", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             title2.Name = "Act GSD Time";
-            title2.Text = "Act GSD Time (in secs)";
+            title2.Text = "Avg. GSD Time";
             title3.Docking = System.Windows.Forms.DataVisualization.Charting.Docking.Bottom;
             title3.Font = new System.Drawing.Font("Calibri", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             title3.Name = "Operator No.";

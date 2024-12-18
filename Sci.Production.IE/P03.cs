@@ -174,7 +174,7 @@ select *
                       when ld.No = '' and ld.IsHide = 0 and ld.IsPPA = 0 then 2
                       when left(ld.No, 1) = 'P' then 3
                       else 4 end
-    ,[EstCycleTime] = iif(ld.OperatorEffi = '0.00','0.00',ld.GSD / ld.OperatorEffi * 100)
+    ,[EstCycleTime] = iif(ld.OperatorEffi = 0.00, 0.00, ROUND(CAST(ld.GSD / ld.OperatorEffi * 100 AS NUMERIC(12,3)),2))
 	,[EstTotalCycleTime] = IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100)
 	,[EstOutputHr] = iif(CAST(ld.OperatorEffi AS FLOAT) = 0,0, 3600 / IIF((AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) = 0, 0, (SUM(CAST(ld.GSD AS FLOAT)) OVER (PARTITION BY ld.No)) / (AVG(CAST(ld.OperatorEffi AS FLOAT)) OVER (PARTITION BY ld.No)) * 100))
 from (
