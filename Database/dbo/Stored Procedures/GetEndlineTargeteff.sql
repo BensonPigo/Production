@@ -27,12 +27,12 @@ BEGIN
 	,[SewingDay]
 	,[SewingLine]
 	,[StyleID]
-	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(SewingCPU, 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
+	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(SUM(SewingCPU), 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
 	,[APSDate] = @APSDate
 	INTO #tmp_Effi
 	FROM #tmp
 	WHERE SEWINGDAY = FORMAT(GETDATE(), 'yyyy-MM-dd')
-	Group BY SewingCPU,Sewer,SewingLine,StyleID,[SewingDay],[FactoryID]
+	Group BY Sewer,SewingLine,StyleID,[SewingDay],[FactoryID]
 
 
 	SELECT
