@@ -350,13 +350,13 @@ select
   ,SerialNo = ISNULL(SciMachine_Machine.SerialNo,'')
   ,LocationM = ISNULL(SciMachine_Machine.LocationM,'')
   ,SciMachine_Machine.ArriveDate
-  ,UsageTime = concat(ISNULL(ym.UsageTime,0)/360,'Y',(ISNULL(ym.UsageTime,0)%360)/30,'M')
+  ,UsageTime = concat(ISNULL(ym.UsageTime,0)/365,'Y',(ISNULL(ym.UsageTime,0)%365)/30,'M')
   ,SciMachine_MachinePending_Detail.MachineDisposeID
   ,ObtainedDate  = a.CreateDate
 into MachinePending_Detail
 from Production.dbo.SciMachine_MachinePending_Detail
 LEFT JOIN  Production.dbo.SciMachine_Machine m ON m.ID = SciMachine_MachinePending_Detail.MachineID
-LEFT JOIN FixedAssets.dbo.Asset a on iif(LEN(m.FAID) > 0,LEFT(m.FAID,LEN(m.FAID)-4),'') = a.ID
+LEFT JOIN [MainServer].FixedAssets.dbo.Asset a on iif(LEN(m.FAID) > 0,LEFT(m.FAID,LEN(m.FAID)-4),'') = a.ID
 inner join (
 	---- ���F�ӽ� Machine to Dispose ���ݥx�_ Approved����ƥH�~
 	---- �A�N30�Ѥ��q�x�_ approve ��, �q�u�t���� Dispose��MachinePending detail��ƶǦ^�x�_��s Result , MachineDisposeID

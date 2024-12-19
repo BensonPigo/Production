@@ -16,6 +16,10 @@ CREATE FUNCTION [dbo].[GetSewingLineScheduleDataBase]
 RETURNS @table TABLE
 (
 	[APSNo] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[StyleID] [varchar](25) NULL,
+	[SewingDay] [Date] NULL,
     [SewingStart] datetime null,
     [SewingEnd] datetime null,
     [WorkingTime] [float] NULL,
@@ -39,6 +43,7 @@ BEGIN
 
 declare  @APSListWorkDay TABLE(
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[MDivisionID] [varchar](8) NULL,
 	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
@@ -65,6 +70,7 @@ declare  @APSListWorkDay TABLE(
 insert into @APSListWorkDay
 select
 	s.APSNo ,
+	sty.ID,
 	s.MDivisionID,
 	s.SewingLineID,
 	s.FactoryID,
@@ -89,6 +95,7 @@ select
 	s.SwitchTime
 from SewingSchedule s  WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+inner join Style sty WITH(NOLOCK) on sty.Ukey = o.StyleUkey
 inner join Factory f with (nolock) on f.id = s.FactoryID and Type <> 'S'
 left join Country c WITH (NOLOCK) on o.Dest = c.ID
 outer apply(select [val] = iif(isnull(s.OriEff,0)=0 or isnull(s.SewLineEff,0)=0, s.MaxEff, isnull(s.OriEff,100) * isnull(s.SewLineEff,100) / 100) ) ScheduleEff
@@ -123,7 +130,8 @@ group by	s.APSNo ,
 			s.ComboType,
 			o.StyleUkey,
 			s.LNCSERIALNumber,
-			s.SwitchTime
+			s.SwitchTime,
+			sty.ID
 
 
 declare @WorkDate TABLE(
@@ -142,6 +150,7 @@ AND DATEADD(DAY,number,(select CAST(min(Inline)AS date) from @APSListWorkDay)) <
 --展開計畫日期資料
 Declare @Workhour_step1 table(
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
 	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
@@ -166,6 +175,7 @@ Declare @Workhour_step1 table(
 )
 insert into @Workhour_step1
 select  al.APSNo,
+		al.StyleID,
         al.LearnCurveID,
         wkd.SewingLineID,
         wkd.FactoryID,
@@ -200,6 +210,7 @@ delete @Workhour_step1 where WorkDate = OfflineDate and StartHour >= OfflineHour
 --排出每天班表順序
 Declare @Workhour_step2 table(
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
 	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
@@ -226,6 +237,7 @@ Declare @Workhour_step2 table(
 )
 insert into @Workhour_step2
 select  APSNo,
+		StyleID,
         LearnCurveID,
         SewingLineID,
         FactoryID,
@@ -257,7 +269,10 @@ update @Workhour_step2 set EndHour = OfflineHour where WorkDate = OfflineDate an
 
 Declare @APSExtendWorkDate_step1 table(
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
@@ -275,7 +290,10 @@ Declare @APSExtendWorkDate_step1 table(
 insert into @APSExtendWorkDate_step1
 select 
 APSNo,
+StyleID,
 LearnCurveID,
+[SewingLineID],
+[FactoryID],
 [SewingStart] = DATEADD(mi, min(StartHour) * 60,   WorkDate),
 [SewingEnd] = DATEADD(mi, max(EndHour) * 60,   WorkDate),
 SwitchTime,
@@ -290,7 +308,7 @@ TotalSewingTime,
 Sewer,
 LNCSERIALNumber
 from @Workhour_step2 
-group by APSNo,LearnCurveID,WorkDate,HourOutput,
+group by APSNo,LearnCurveID,WorkDate,HourOutput,StyleID,[SewingLineID],[FactoryID],
 OriWorkHour,CPU,TotalSewingTime,Sewer,OrderID,LNCSERIALNumber,ComboType,SwitchTime
 
 /* 
@@ -305,7 +323,10 @@ Work hour/Day 扣除Switch Time, 如過不夠扣除則將剩餘的分鐘數
 Declare @APSExtendWorkDate_step2 table(
 	[Sum_Work_Minute] [float] NULL,
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
@@ -331,7 +352,10 @@ Declare @APSExtendWorkDate_step3 table(
 	[New_SwitchTime] [float] NULL,
 	[Sum_Work_Minute] [float] NULL,
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
@@ -360,7 +384,10 @@ Declare @APSExtendWorkDate_step4 table(
 	[New_SwitchTime]  [float] NULL,
 	[Sum_Work_Minute] [float] NULL,
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
@@ -397,7 +424,11 @@ from @APSExtendWorkDate_step3
 --       生產的第一天都對應學習曲線的第一天。
 Declare @APSExtendWorkDate table(
 	[APSNo] [int] NULL,
+	[StyleID] [varchar](25) NULL,
 	[LearnCurveID] [int] NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[SewingDay] [Date] null,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[WorkDate] [datetime] NULL,
@@ -415,7 +446,11 @@ Declare @APSExtendWorkDate table(
 )
 insert into @APSExtendWorkDate
 select	APSNo,
+		StyleID,
 		LearnCurveID,
+		SewingLineID,
+		FactoryID,
+		[SewingDay] = cast(SewingStart as date),
 		SewingStart,
 		SewingEnd,
 		WorkDate,
@@ -449,6 +484,10 @@ declare @StdTMS  float
 SELECT @StdTMS = StdTMS * 1.0 from System
 
 insert into @table(	[APSNo]	,
+					[SewingLineID],
+					[FactoryID],
+					[StyleID],
+					[SewingDay],
 					[SewingStart] ,
 					[SewingEnd] ,
 					[WorkingTime] ,
@@ -462,6 +501,10 @@ insert into @table(	[APSNo]	,
 					[Efficienycy],
 					[Sewer])
 select  awd.APSNo
+		,awd.SewingLineID
+		,awd.FactoryID
+		, awd.StyleID
+		, cast(awd.SewingStart as date)
         , awd.SewingStart
         , awd.SewingEnd
         , awd.WorkingTime		
@@ -479,6 +522,7 @@ inner join @OriTotalWorkHour otw on otw.APSNo = awd.APSNo and otw.WorkDate = awd
 left join LearnCurve_Detail lcd with (nolock) on awd.LearnCurveID = lcd.ID and awd.WorkDateSer = lcd.Day
 outer apply(select top 1 [val] = Efficiency from LearnCurve_Detail where ID = awd.LearnCurveID order by Day desc ) LastEff
 group by awd.APSNo,
+		 awd.StyleID,
 		 awd.SewingStart,
 		 awd.SewingEnd,
 		 awd.WorkingTime,
@@ -486,7 +530,9 @@ group by awd.APSNo,
 		 awd.New_SwitchTime,
 		 awd.New_WorkingTime,
 		 ISNULL(lcd.Efficiency,ISNULL(LastEff.val,100.0)),
-		 awd.Sewer
+		 awd.Sewer		
+		 ,awd.SewingLineID
+		,awd.FactoryID
 
 Return;
 
