@@ -27,7 +27,7 @@ BEGIN
 	,[SewingDay]
 	,[SewingLine]
 	,[StyleID]
-	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(SUM(SewingCPU), 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
+	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(AVG(SewingCPU), 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
 	,[APSDate] = @APSDate
 	INTO #tmp_Effi
 	FROM #tmp
