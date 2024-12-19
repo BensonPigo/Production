@@ -14,7 +14,7 @@
     [ShipModeID]          VARCHAR (10)    CONSTRAINT [DF_Export_ShipModeID] DEFAULT ('') NOT NULL,
     [ShipmentTerm]        VARCHAR (5)     CONSTRAINT [DF_Export_ShipmentTerm] DEFAULT ('') NOT NULL,
     [FactoryID]           VARCHAR (8)     CONSTRAINT [DF_Export_FactoryID] DEFAULT ('') NOT NULL,
-    [ShipMark]            VARCHAR (10)    CONSTRAINT [DF_Export_ShipMark] DEFAULT ('') NOT NULL,
+    [ShipMark]            VARCHAR (20)    CONSTRAINT [DF_Export_ShipMark] DEFAULT ('') NOT NULL,
     [ShipMarkDesc]        NVARCHAR (MAX)  CONSTRAINT [DF_Export_ShipMarkDesc] DEFAULT ('') NOT NULL,
     [Consignee]           VARCHAR (8)     CONSTRAINT [DF_Export_Consignee] DEFAULT ('') NOT NULL,
     [Handle]              VARCHAR (10)    CONSTRAINT [DF_Export_Handle] DEFAULT ('') NOT NULL,

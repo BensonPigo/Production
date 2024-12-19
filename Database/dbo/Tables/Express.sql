@@ -1,7 +1,7 @@
 ﻿CREATE TABLE [dbo].[Express] (
     [ID]                  VARCHAR (13)   CONSTRAINT [DF_Express_ID] DEFAULT ('') NOT NULL,
     [MDivisionID]         VARCHAR (8)    CONSTRAINT [DF_Express_MDivisionID] DEFAULT ('') NOT NULL,
-    [ShipMark]            VARCHAR (10)   CONSTRAINT [DF_Express_ShipMark] DEFAULT ('') NOT NULL,
+    [ShipMark]            VARCHAR (20)   CONSTRAINT [DF_Express_ShipMark] DEFAULT ('') NOT NULL,
     [FromTag]             VARCHAR (1)    CONSTRAINT [DF_Express_FromTag] DEFAULT ('') NOT NULL,
     [FromSite]            VARCHAR (8)    CONSTRAINT [DF_Express_FromSite] DEFAULT ('') NOT NULL,
     [ToTag]               VARCHAR (1)    CONSTRAINT [DF_Express_ToTag] DEFAULT ('') NOT NULL,

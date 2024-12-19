@@ -12,7 +12,7 @@
     [ShipmentTerm] varchar(5) NOT NULL CONSTRAINT [DF_TransferExport_ShipmentTerm] DEFAULT (''), 
     [FromFactoryID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_FromFactoryID] DEFAULT (''),  
     [FactoryID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_FactoryID] DEFAULT (''),  
-    [ShipMark] VARCHAR(10) NOT NULL CONSTRAINT [DF_TransferExport_ShipMark] DEFAULT (''), 
+    [ShipMark] VARCHAR(20) NOT NULL CONSTRAINT [DF_TransferExport_ShipMark] DEFAULT (''), 
     [ShipMarkDesc] NVARCHAR(MAX) NOT NULL CONSTRAINT [DF_TransferExport_ShipMarkDesc] DEFAULT (''), 
     [Consignee] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_Consignee] DEFAULT (''), 
     [Handle] VARCHAR(10) NOT NULL CONSTRAINT [DF_TransferExport_Handle] DEFAULT (''), 
