@@ -18,36 +18,61 @@ BEGIN
 	,Sewer
 	,WorkingTime 
 	,SewingStart
-	,[RowNum] = ROW_NUMBER() OVER(PARTITION BY SewingLineID, FactoryID, StyleID, SewingDay ORDER BY SewingEnd desc)
 	into #tmp
 	FROM dbo.GetSewingLineScheduleDataBase(GETDATE(),GETDATE(),default,default,default,default, default, default, default, default, default)
-	WHERE SEWINGDAY = FORMAT(GETDATE(), 'yyyy-MM-dd') --AND SewingLineID = 'A35' and StyleID = 'LW6CUUS'
+	WHERE SEWINGDAY = FORMAT(GETDATE(), 'yyyy-MM-dd')
 
 	SELECT
-	 [APSNo]
-	,[FactoryID]
+	 [FactoryID]
 	,[SewingDay]
 	,[SewingLine]
 	,[StyleID]
-	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(SewingCPU, 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
+	,[TargetEff]= CONVERT(FLOAT, ROUND((SUM(ROUND(StdOutput, 0)) * ROUND(SUM(SewingCPU), 5)) / (Sewer * SUM(ROUND(WorkingTime, 5)) * 2.57),4)) * 100
 	,[APSDate] = @APSDate
-	--,[RowNum]
 	INTO #tmp_Effi
 	FROM #tmp
-	WHERE SEWINGDAY = FORMAT(GETDATE(), 'yyyy-MM-dd') and RowNum = 1
-	Group BY SewingCPU,Sewer,SewingLine,StyleID,[SewingDay],[FactoryID],[APSNo],[RowNum]
+	WHERE SEWINGDAY = FORMAT(GETDATE(), 'yyyy-MM-dd')
+	Group BY Sewer,SewingLine,StyleID,[SewingDay],[FactoryID]
 
-	SELECT 
-	 [APSNo] = T.APSNo
-	,[FactoryID] = T.FactoryID
-	,[Date] = T.SewingDay
-	,[SewingLine] = T.SewingLine
-	,[StyleID] = T.StyleID
-	,[TargetEff] = T.TargetEff
-	,[APSDate] = T.APSDate
-	into #tmpEnd
-	FROM #tmp_Effi T WITH(NOLOCK)
-	LEFT JOIN [ExtendServer].[ManufacturingExecution].dbo.TargetEffUpdateByAps TEU WITH(NOLOCK) ON TEU.APSNo = T.APSNo AND TEU.FactoryID = T.FactoryID and TEU.[Date] = T.SewingDay AND TEU.SewingLine = T.SewingLine AND TEU.StyleID = T.StyleID AND TEU.[Date] = GETDATE()
+
+	SELECT
+	 [APSNo] = tmp.APSNo
+	,[FactoryID] = tmp.FactoryID
+	,[Date] = tmp.[Date]
+	,[SewingLine] = tmp.SewingLine
+	,[StyleID] = tmp.StyleID
+	,[TargetEff] = tmp.TargetEff
+	,[APSDate] = tmp.APSDate
+	INTO #tmpEnd
+	FROM
+	(
+		SELECT 
+		 [APSNo] = APSNo.val
+		,[FactoryID] = T.FactoryID
+		,[Date] = T.SewingDay
+		,[SewingLine] = T.SewingLine
+		,[StyleID] = T.StyleID
+		,[TargetEff] = T.TargetEff
+		,[APSDate] = T.APSDate
+		FROM #tmp_Effi T WITH(NOLOCK)
+		OUTER APPLY
+		(
+			SELECT val = stuff(
+			(
+			select concat(',',APSNo)
+			FROM
+			(
+				SELECT APSNo
+					FROM #TMP TT
+					WHERE TT.FactoryID = T.FactoryID AND
+							TT.SewingDay = T.SewingDay AND
+							TT.SewingLine = T.SewingLine AND
+							TT.StyleID = T.StyleID
+			)
+			tmp for xml path('')),1,1,'')
+		)APSNo
+	)tmp
+	LEFT JOIN [ExtendServer].[ManufacturingExecution].dbo.TargetEffUpdateByAps TEU WITH(NOLOCK) ON TEU.APSNo = tmp.APSNo AND TEU.FactoryID = tmp.FactoryID and TEU.[Date] = tmp.[Date] AND TEU.SewingLine = tmp.SewingLine AND TEU.StyleID = tmp.StyleID AND TEU.[Date] = GETDATE()
 	WHERE TEU.APSNo IS NULL
 
 	SET @tmpCount =(Select count(1)  from #tmpEnd)
