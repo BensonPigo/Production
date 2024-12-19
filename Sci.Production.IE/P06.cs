@@ -627,15 +627,24 @@ where   ID = '{this.CurrentMaintain["ID"]}'
             }
 
             var list = dt.AsEnumerable()
-                .Where(x => x.RowState != DataRowState.Deleted) // 排除被刪除的行
-                .GroupBy(x => new { OperationID = x["OperationID"].ToString() , Ukey = x["TimeStudyDetailUkey"] })
-                .Select(g => new
+            .Where(x => x.RowState != DataRowState.Deleted) // 排除被刪除的行
+            .GroupBy(x =>
+            {
+                // 如果 TimeStudyDetailUkey 為 0，單獨分組
+                var ukey = x["TimeStudyDetailUkey"].ToString() == "0" ? Guid.NewGuid().ToString() : x["TimeStudyDetailUkey"].ToString();
+                return new
                 {
-                    No = string.Join(", ", g.Select(row => row["No"].ToString())),
-                    SumSewerDiffPercentageDesc = g.Sum(row => row.Field<decimal>("SewerDiffPercentageDesc")),
-                })
-                .Where(x => x.SumSewerDiffPercentageDesc != 100)
-                .ToList();
+                    OperationID = x["OperationID"].ToString(),
+                    Ukey = ukey,
+                };
+            })
+            .Select(g => new
+            {
+                No = string.Join(", ", g.Select(row => row["No"].ToString())),
+                SumSewerDiffPercentageDesc = g.Sum(row => row.Field<decimal>("SewerDiffPercentageDesc")),
+            })
+            .Where(x => x.SumSewerDiffPercentageDesc != 100)
+            .ToList();
 
             if (list.Count > 0)
             {
@@ -672,12 +681,12 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                     MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
                     return false;
                 }
-            }
 
-            if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
-            {
-                MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
-                return false;
+                if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+                {
+                    MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
+                    return false;
+                }
             }
 
             if (MyUtility.Check.Empty(this.CurrentMaintain["FactoryID"]))
@@ -1469,8 +1478,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("Effi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
-               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true);
+               .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1988,8 +1996,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["OriSewer"] = DBNull.Value;
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
-                nextDataRow["Location"] = list[this.index_Gid + 1]["Location"].ToString();
-                nextDataRow["Location1"] = !MyUtility.Check.Empty(list[this.index_Gid + 1]["Location"].ToString()) ? list[this.index_Gid + 1]["Location"].ToString().Substring(2, list[this.index_Gid + 1]["Location"].ToString().Length - 2) : string.Empty;
+                nextDataRow["Location"] = list[insert_index + 1]["Location"].ToString();
+                nextDataRow["Location1"] = !MyUtility.Check.Empty(list[insert_index + 1]["Location"].ToString()) ? list[insert_index + 1]["Location"].ToString().Substring(2, list[insert_index + 1]["Location"].ToString().Length - 2) : string.Empty;
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 
                 if (MyUtility.Convert.GetBool(copyDR["Selected"]) == true)
@@ -2183,6 +2191,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             bool isGo = false;
             bool isDes = false;
 
+            int notSelect = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList().Count();
             int cnt = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["Selected"].ToString() == "True").ToList().Count();
 
             if (cnt > 0 || MyUtility.Convert.GetBool(dr["Selected"]) == true)
@@ -2223,10 +2232,14 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         continue;
                     }
 
-                    if (isGo && dataRow.RowState != DataRowState.Deleted)
+                    if ((isGo || notSelect == 1) && dataRow.RowState != DataRowState.Deleted)
                     {
+                        int delNo = MyUtility.Convert.GetInt(row);
                         int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
-                        dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                        if (iNo > delNo)
+                        {
+                            dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                        }
                     }
                 }
 
@@ -2239,6 +2252,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataView dataView = new DataView(dataTableRight);
                 dataView.Sort = "No ASC";
                 dataTableRight = dataView.ToTable();
+
+                // 確認排序後的數據一致性
+                if (dataTableRight.AsEnumerable().GroupBy(row1 => row1["No"].ToString()).Any(g => g.Count() > 1))
+                {
+                    throw new Exception("排序後的 'No' 欄位中存在重複值，無法設置主鍵。");
+                }
 
                 DataColumn newNoColumn = dataTableRight.Columns["No"];
                 dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
@@ -2259,6 +2278,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (datarow != null)
                 {
+                    foreach (DataRow dataRow in dataTableRight.Rows)
+                    {
+
+                        if ((notSelect == 1) && dataRow.RowState != DataRowState.Deleted)
+                        {
+                            int delNo = MyUtility.Convert.GetInt(row);
+                            int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
+                            if (iNo > delNo)
+                            {
+                                dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                            }
+                        }
+                    }
+
                     if (MyUtility.Convert.GetInt(datarow["NoCnt"]) > 1)
                     {
                         datarow["NoCnt"] = MyUtility.Convert.GetInt(datarow["NoCnt"]) - 1;
@@ -2276,6 +2309,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataView dataView = new DataView(dataTableRight);
                 dataView.Sort = "No ASC";
                 dataTableRight = dataView.ToTable();
+
+                // 確認排序後的數據一致性
+                if (dataTableRight.AsEnumerable().GroupBy(row1 => row1["No"].ToString()).Any(g => g.Count() > 1))
+                {
+                    throw new Exception("排序後的 'No' 欄位中存在重複值，無法設置主鍵。");
+                }
 
                 // 使用新的 DataTable 設置主鍵
                 DataColumn newNoColumn = dataTableRight.Columns["No"];
@@ -2305,8 +2344,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                     if (isGo)
                     {
+                        int delNo = MyUtility.Convert.GetInt(row);
                         int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
-                        dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                        if (iNo > delNo)
+                        {
+                            dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                        }
                     }
                 }
 
@@ -2317,6 +2360,24 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
             else
             {
+                if (notSelect == 1)
+                {
+                    foreach (DataRow dataRow in dataTable.Rows)
+                    {
+                        if (dataRow.RowState == DataRowState.Deleted)
+                        {
+                            continue;
+                        }
+
+                        int delNo = MyUtility.Convert.GetInt(row);
+                        int iNo = MyUtility.Convert.GetInt(dataRow["No"]);
+                        if (iNo > delNo)
+                        {
+                            dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
+                        }
+                    }
+                }
+
                 dr.Delete();
             }
 
@@ -2334,8 +2395,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 .Where(x => x["No"].ToString() == row)
                 .ToList();
             this.GetEstValue(list, row);
-
-            
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
@@ -2354,9 +2413,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
         private void TxtReason_PopUp(object sender, TextBoxPopUpEventArgs e)
         {
-            string sqlcmd = $@"SELECT ID,Description FROM ProductionTPE.DBO.IEReason WHERE [Type] = 'LN' AND [JUNK] = 0";
+            string sqlcmd = $@"select * from DropdownList where Type = 'PMS_IEReasonType' and ID not in ('LL','LN')";
 
-            DualResult dualResult = DBProxy.Current.Select("ProductionTPE", sqlcmd, out DataTable dt);
+            DualResult dualResult = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt);
 
             if (!dualResult)
             {
