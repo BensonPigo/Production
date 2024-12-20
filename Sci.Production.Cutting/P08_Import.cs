@@ -110,7 +110,7 @@ and isnull(fi.InQty,0) - isnull(fi.OutQty,0) + isnull(fi.AdjustQty,0) - isnull(f
             .Date("Mtl ETA", header: "Mtl ETA", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Date("1stSewingDate", header: "1st Sewing Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Type of Cutting", header: "Type of Cutting", width: Widths.AnsiChars(10), iseditingreadonly: true)
-            .Numeric("Cut Width", header: "Cut Width", width: Widths.AnsiChars(2), integer_places: 8, decimal_places: 4, iseditingreadonly: true)
+            .Text("Cut Width", header: "Cut Width", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(8), integer_places: 5, decimal_places: 2, iseditingreadonly: true)
             .Numeric("ReleaseQty", header: "Release Qty", width: Widths.AnsiChars(8), integer_places: 5, decimal_places: 2)
             .Text("Seq1", header: "Seq1", width: Widths.AnsiChars(3), iseditingreadonly: true)
@@ -192,12 +192,13 @@ outer apply(
 	where t.CuttingSP = @CuttingID And t.IsForecast = 0 AND t.Junk = 0 AND t.LocalOrder = 0 AND t.category not in('M','T')
 ) CutCombo
 outer apply(
-    select ETA = max(FinalETA), Seq1 = min(po3.SEQ1), Seq2 = min(po3.SEQ2)
+    select ETA = FinalETA, po3.SEQ1, po3.SEQ2
     from (
         select psd.FinalETA, psd.SEQ1, psd.SEQ2
         from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
         left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID 
+		left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID and psdsS.SpecValue = e.CuttingWidth
         AND psd.SEQ1 = 'A1' AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
 
         union all
@@ -205,7 +206,8 @@ outer apply(
         from PO_Supp_Detail psd WITH (NOLOCK)
         inner join PO_Supp_Detail b1 WITH (NOLOCK) on b1.ID = psd.StockPOID and b1.SEQ1 = psd.Stockseq1 and b1.SEQ2 = psd.StockSeq2
         left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID 
+		left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
+        where psd.id = o.poid AND psd.SCIRefno = bof.SCIRefno AND isnull(psdsC.SpecValue ,'') = c.ColorID and psdsS.SpecValue = e.CuttingWidth
         AND psd.SEQ1 = 'A1' AND ((psd.Special NOT LIKE ('%DIE CUT%')) and psd.Special is not null)
     ) po3
 ) mtl
