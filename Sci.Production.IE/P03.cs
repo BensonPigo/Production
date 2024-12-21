@@ -209,7 +209,9 @@ from (
         , ld.OperationID
         , [Group_Header] = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
         , ld.New
+        , ld.[Append]
         , ld.SewingMachineAttachmentID
+        , [PartID] = PartID_V.val
         , ld.MoldID
         , ld.MachineCount
         , IsMachineTypeID_MM = Cast( IIF( ld.MachineTypeID like 'MM%',1,0) as bit)
@@ -289,6 +291,13 @@ from (
 		WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = ld.OperationID ORDER BY Seq DESC)
 		ORDER BY SEQ DESC
 	)OP
+    OUTER APPLY
+    (
+	    SELECT val = R.[NAME]
+	    FROM Operation O WITH(NOLOCK)
+	    LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	    WHERE O.ID = ld.OperationID 
+    )PartID_V
 	OUTER APPLY
     (
 		SELECT
@@ -358,7 +367,7 @@ from (
 			[ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
 			[Motion] = ISNULL(Operation_P03.val,''),
 			[Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
-			[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
+			[Part] = PartID.val, --ISNULL(lmd.SewingMachineAttachmentID,''),
 			[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 			,lmd.GSD
 			,[Cycle] = lmd.Cycle * 1.0
@@ -398,6 +407,13 @@ from (
 				WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 				ORDER BY SEQ DESC
 			)OP
+            OUTER APPLY
+            (
+	            SELECT val = R.[NAME]
+	            FROM Operation O WITH(NOLOCK)
+	            LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	            WHERE O.ID = lmd.OperationID 
+            )PartID
 			WHERE 
 			eo.FactoryID = lm.FactoryID
 			AND lmd.EmployeeID = ld.EmployeeID 
@@ -405,7 +421,7 @@ from (
 			AND (ISNULL(lmd.MachineTypeID,'') = ISNULL(ld.MachineTypeID,''))
 			AND (ISNULL(Operation_P03.val,'') = ISNULL(Motion.val,''))
 			AND ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
-			AND ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL(ld.SewingMachineAttachmentID,'')
+			AND ISNULL(PartID.val,'') = ISNULL(PartID_V.val,'')
 			AND (ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')) = ISNULL(ld.Attachment,'')
 
 			UNION ALL
@@ -414,7 +430,7 @@ from (
 			[ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
 			[Motion] = ISNULL(Operation_P03.val,''),
 			[Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
-			[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
+			[Part] = PartID.val, --ISNULL(lmd.SewingMachineAttachmentID,''),
 			[Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 			,lmd.GSD
 			,[Cycle] = lmd.Cycle * lmd.SewerDiffPercentage
@@ -454,6 +470,13 @@ from (
 				WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 				ORDER BY SEQ DESC
 			)OP
+            OUTER APPLY
+            (
+	            SELECT val = R.[NAME]
+	            FROM Operation O WITH(NOLOCK)
+	            LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	            WHERE O.ID = lmd.OperationID 
+            )PartID
 			WHERE 
 			eo.FactoryID = lm.FactoryID
 			AND lmd.EmployeeID = ld.EmployeeID 
@@ -461,7 +484,7 @@ from (
 			AND (ISNULL(lmd.MachineTypeID,'') = ISNULL(ld.MachineTypeID,''))
 			AND (ISNULL(Operation_P03.val,'') = ISNULL(Motion.val,''))
 			AND ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') = ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
-			AND ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL(ld.SewingMachineAttachmentID,'')
+			AND ISNULL(PartID.val,'') = ISNULL(PartID_V.val,'')
 			AND (ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')) = ISNULL(ld.Attachment,'')
         )a
         GROUP BY [ST_MC_Type],[Motion], [Group_Header], [Part], [Attachment]
@@ -603,25 +626,30 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 if (this.EditMode)
                 {
-                    if (e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["New"]))
+                    if ((e.Button == MouseButtons.Right && MyUtility.Convert.GetBool(dr["New"])) || MyUtility.Convert.GetBool(dr["Append"]))
                     {
                         if (e.RowIndex != -1)
                         {
                             P01_SelectOperationCode callNextForm = new P01_SelectOperationCode();
                             DialogResult result = callNextForm.ShowDialog(this);
-
-                            string strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                            string strAnnotation = string.Empty;
                             int timeStudyUkey = 0;
-                            if(MyUtility.Check.Empty(strAnnotation))
+                            if (callNextForm.P01SelectOperationCode == null)
+                            {
+                                return;
+                            }
+
+                            strAnnotation = callNextForm.P01SelectOperationCode["Annotation"].ToString();
+                            if (MyUtility.Check.Empty(strAnnotation))
                             {
                                 string sqlcmd = $@"select  Annotation,TSD.Ukey
-                                        from TimeStudy TS WITH(NOLOCK)
-                                        INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
-                                        WHERE 
-                                        TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
-                                        TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
-                                        TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
-                                        OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
+                                    from TimeStudy TS WITH(NOLOCK)
+                                    INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+                                    WHERE 
+                                    TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
+                                    TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
+                                    TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
+                                    OperationID = '{callNextForm.P01SelectOperationCode["ID"].ToString()}'";
                                 DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
                                 if (!dul)
                                 {
@@ -694,6 +722,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                         this.ReclculateGridGSDCycleTime(dr["No"].ToString());
                         this.ComputeTaktTime();
                     }
+
                     this.Distable();
                     this.detailgrid.Focus();
                     this.detailgrid.CurrentCell = this.detailgrid[e.ColumnIndex, e.RowIndex];
@@ -703,25 +732,25 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
 
             no.EditingControlShowing += (s, e) =>
             {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
+                //if (e.RowIndex == -1)
+                //{
+                //    return;
+                //}
 
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.EditMode)
-                {
-                    return;
-                }
+                //DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                //if (!this.EditMode)
+                //{
+                //    return;
+                //}
 
-                if (MyUtility.Convert.GetBool(dr["IsHide"]))
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
-                }
-                else
-                {
-                    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
-                }
+                //if (MyUtility.Convert.GetBool(dr["IsHide"]))
+                //{
+                //    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = true;
+                //}
+                //else
+                //{
+                //    ((Ict.Win.UI.TextBox)e.Control).ReadOnly = false;
+                //}
             };
             #endregion
             #region Cycle的Valid
@@ -828,7 +857,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["PartID"].ToString(), row["Attachment"].ToString());
 
                                     var effi_90D = this.GetEffi_90Day(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
 
@@ -932,7 +961,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                 {
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
-                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, this.EmployeeData.Rows[0]["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, this.EmployeeData.Rows[0]["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["PartID"].ToString(), row["Attachment"].ToString());
 
                                     var effi_90D = this.GetEffi_90Day(Env.User.Factory, this.EmployeeData.Rows[0]["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
 
@@ -1036,7 +1065,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
                                     int dataIndex = sortDataTable.Rows.IndexOf(dataRow);
                                     DataRow row = this.detailgrid.GetDataRow<DataRow>(dataIndex);
 
-                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                                    var effi_3Y = this.GetEffi_3Year(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["PartID"].ToString(), row["Attachment"].ToString());
 
                                     var effi_90D = this.GetEffi_90Day(Env.User.Factory, callNextForm.SelectOperator["ID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
 
@@ -1351,12 +1380,12 @@ and Name = @PPA
             ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // this.detailgrid.Columns["No"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["GSD"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
-            {
+             {
                 if (e.RowIndex < 0)
                 {
                     return;
@@ -1397,7 +1426,7 @@ and Name = @PPA
                 if (columIndex == 1)
                 {
                     DataTable dt = (DataTable)this.detailgridbs.DataSource;
-                    dt.DefaultView.Sort = "sortNO, No";
+                    dt.DefaultView.Sort = "no,sortNO";
                     this.detailgridbs.DataSource = dt;
                     this.selectDataTable_DefaultView_Sort = "ASC";
 
@@ -1932,6 +1961,7 @@ WHERE Ukey={item["Ukey"]}
             }
 
             this.Distable();
+            this.OnDetailEntered();
         }
 
         /// <inheritdoc/>
@@ -1954,6 +1984,7 @@ WHERE Ukey={item["Ukey"]}
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray; // 將剛剛紀錄的資料複製到新增的那筆record
             this.CurrentDetailData["New"] = true;
+            this.CurrentDetailData["Append"] = false;
             this.CurrentDetailData["No"] = string.Empty;
             this.AssignNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
             this.ComputeTaktTime();
@@ -1967,6 +1998,7 @@ WHERE Ukey={item["Ukey"]}
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["OriNo"] = string.Empty;
             this.CurrentDetailData["New"] = false;
+            this.CurrentDetailData["Append"] = true;
             this.CurrentDetailData["No"] = string.Empty;
             this.CurrentDetailData["IsShow"] = true;
         }
@@ -2446,7 +2478,7 @@ select ID = null
                           else 4 end
        ,[EstCycleTime] = ld.EstCycleTime
        ,[EstTotalCycleTime] = ld.EstTotalCycleTime
-       ,[EstOutputHr] = ld.EstOutputHr
+       ,[EstOutputHr] = ISNULL(ld.EstOutputHr,0)
        ,[EstLBR] = ld.EstLBR
 from LineMapping_Detail ld WITH (NOLOCK)
 left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
@@ -3144,13 +3176,20 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 					WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 					ORDER BY SEQ DESC
 				)OP
+                OUTER APPLY
+                (
+	                SELECT val = R.[NAME]
+	                FROM Operation O WITH(NOLOCK)
+	                LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	                WHERE O.ID = lmd.OperationID 
+                )PartID
 				WHERE 
                 e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}') 
 			    AND e.ID = '{employeeID}'
 			    AND ISNULL(lmd.MachineTypeID,'') = ISNULL('{machineType}','')
 			    AND ISNULL(Operation_P03.val,'') = ISNULL('{motion}','')
 			    AND ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') = REPLACE('{location}', '--', '')
-			    AND ISNULL(lmd.SewingMachineAttachmentID,'') = ISNULL('{part}','')
+			    AND ISNULL(PartID.val,'') = ISNULL('{part}','')
 			    AND (ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')) = ISNULL('{attachment}','')
 
 				UNION ALL
@@ -3159,7 +3198,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 				[ST_MC_Type] = ISNULL(lmbd.MachineTypeID,''),
 				[Motion] = ISNULL(Operation_P06.val,''),
 				[Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
-				[Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
+				[Part] = PartID.val, --ISNULL(lmd.SewingMachineAttachmentID,''),
 				[Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
 				,lmbd.GSD
 				,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
@@ -3198,13 +3237,20 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 					WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = lmbd.OperationID ORDER BY Seq DESC)
 					ORDER BY SEQ DESC
 				)OP
+                OUTER APPLY
+                (
+	                SELECT val = R.[NAME]
+	                FROM Operation O WITH(NOLOCK)
+	                LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	                WHERE O.ID = lmbd.OperationID 
+                )PartID
 				WHERE 
 			    e.FactoryID IN (select ID from Factory where FTYGroup = '{factoryID}')  
 			    AND e.ID = '{employeeID}' 
 			    AND ISNULL(lmbd.MachineTypeID,'') = ISNULL('{machineType}','')
 			    AND ISNULL(Operation_P06.val,'') = ISNULL('{motion}','')
 			    AND ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'') = REPLACE('{location}', '--', '')
-			    AND ISNULL(lmbd.SewingMachineAttachmentID,'') = ISNULL('{part}','')
+			    AND ISNULL(PartID.val,'') = ISNULL('{part}','')
 			    AND (ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')) = ISNULL('{attachment}','')
 			)a
 			GROUP BY [ST_MC_Type]
@@ -3226,7 +3272,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
 
             foreach (DataRow row in list)
             {
-                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["SewingMachineAttachmentID"].ToString(), row["Attachment"].ToString());
+                var effi_3Y = this.GetEffi_3Year(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString(), row["Group_Header"].ToString(), row["PartID"].ToString(), row["Attachment"].ToString());
                 var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
                 var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
                 gsdtime += Convert.ToDecimal(row["GSD"]);
@@ -3243,7 +3289,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             {
                 if (effiCnt == 0 || totleCycleTime == 0 || decEffi == 0)
                 {
-                    row["EstOutputHr"] = DBNull.Value;
+                    row["EstOutputHr"] = 0;
                 }
                 else
                 {

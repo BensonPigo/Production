@@ -129,6 +129,7 @@ select
 , [Operation] = o.DescEN
 , [Motion] = Motion.val
 , [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
+, [PartID] = PartID.val
 , [Shape] = Shape.val
 , [Attachment] = lmd.Attachment
 , [Tmplate] = lmd.Template
@@ -172,6 +173,13 @@ OUTER APPLY
 	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmd.OperationID 
+)PartID
 Where 1=1 and (e.ID is not null or e.id <> '')
 and e.junk = 0
 and lm.Status = 'Confirmed'
@@ -210,6 +218,7 @@ select
 , [Operation] = o.DescEN
 , [Motion] = Motion.val
 , [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
+, [PartID] = PartID.val
 , [Shape] = Shape.val
 , [Attachment] = lmd.Attachment
 , [Tmplate] = lmd.Template
@@ -253,6 +262,13 @@ OUTER APPLY
 	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmd.OperationID 
+)PartID
 Where 1=1 and (e.ID is not null or e.id <> '')
 and e.junk = 0
 and lm.Status = 'Confirmed'
@@ -278,7 +294,7 @@ UNION ALL
 select *
 from #P06
 
-drop table #tmp03, #tmpp06 ,#P03 , #P06
+drop table #tmpP03, #tmpp06 ,#P03 , #P06
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listParameter, out this.printData);

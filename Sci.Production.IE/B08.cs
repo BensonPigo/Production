@@ -322,7 +322,7 @@ SELECT
 [ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
 [Motion] = ISNULL(Operation_P03.val,''),
 [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
-[Part] = ISNULL(lmd.SewingMachineAttachmentID,''),
+[Part] = PartID.val, --ISNULL(lmd.SewingMachineAttachmentID,''),
 [Attachment] = ISNULL(lmd.Attachment,'') + ' ' + ISNULL(lmd.Template,'')
 ,lmd.GSD
 ,[Cycle] = lmd.Cycle *1.0
@@ -363,13 +363,20 @@ OUTER APPLY
 	WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmd.OperationID 
+)PartID
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmd.MachineTypeID,'') != '')
 
 SELECT
 [ST_MC_Type] = ISNULL(lmbd.MachineTypeID,''),
 [Motion] = ISNULL(Operation_P06.val,''),
 [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),''),
-[Part] = ISNULL(lmbd.SewingMachineAttachmentID,''),
+[Part] = PartID.val, --ISNULL(lmd.SewingMachineAttachmentID,''),
 [Attachment] = ISNULL(lmbd.Attachment,'') + ' ' + ISNULL(lmbd.Template,'')
 ,lmbd.GSD
 ,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
@@ -409,6 +416,13 @@ OUTER APPLY
 	WHERE ID =  tsd.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = tsd.ID AND OperationID = lmbd.OperationID ORDER BY Seq DESC)
 	ORDER BY SEQ DESC
 )OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmbd.OperationID 
+)PartID
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmbd.MachineTypeID,'') != '')
 ;
 SELECT a.[ST_MC_Type]

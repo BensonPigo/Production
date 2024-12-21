@@ -1,4 +1,6 @@
-﻿namespace Sci.Production.IE
+﻿using System.Windows.Forms;
+
+namespace Sci.Production.IE
 {
     partial class B08_Operation
     {
@@ -28,8 +30,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.gridDetail = new Sci.Win.UI.Grid();
+            // 新增邏輯：設定是否允許編輯
+            this.gridDetail.ReadOnly = true;
+
+            // 新增邏輯：顯示行號
+            this.gridDetail.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToDisplayedHeaders;
+
+            this.components = new System.ComponentModel.Container();
+            
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.panel5 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();

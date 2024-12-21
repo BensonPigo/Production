@@ -78,9 +78,8 @@ namespace Sci.Production.IE
 
             this.gridEditOperation.DataSource = this.gridEditOperationBs;
             this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
-
-            this.gridEditOperationBs.Filter = $" No in ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) or Selected = 1";
-
+            this.gridEditOperationBs.Filter = $"((OperationDesc NOT LIKE '%PACK%' AND OperationDesc NOT LIKE '%PRESS%') OR OperationDesc IS NULL) " +
+                                                $"AND (No IN ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) OR Selected = 1)";
             if (isP05)
             {
                 this.gridIconEditOperation.Location = new System.Drawing.Point(-30, 3);
@@ -217,15 +216,10 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
-                {
-                    return;
-                }
+                //if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
+                //{
+                //    return;
+                //}
 
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
 
@@ -421,13 +415,14 @@ namespace Sci.Production.IE
                                        .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
             int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
-            //int intUpd = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(selectedRow["SewerDiffPercentageDesc"]) / intDT_EditOperaror);
             int intUpd = 100 / intDT_EditOperaror;
             DataRow newRow = this.dtAutomatedLineMapping_DetailCopy.NewRow();
             newRow.ItemArray = selectedRow.ItemArray; // 完整複製 selectedRow 的值
             newRow["Selected"] = true;
             newRow["No"] = string.Empty;
             newRow["UpdSewerDiffPercentage"] = intUpd;
+            newRow["DivSewer"] = DBNull.Value;
+            newRow["OriSewer"] = DBNull.Value;
 
             int icount = 0;
             for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
@@ -521,7 +516,7 @@ namespace Sci.Production.IE
 
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var needKeepRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                .Where(s => checkedNo.Contains(s["No"].ToString()) &&
+                .Where(s => checkedNo.Contains(s["No"].ToString()) && s["TimeStudyDetailUkey"].ToString() != "0" &&
                 ((!this.IsP05 && ((s["UpdSewerDiffPercentage"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]) > 0) || s["UpdSewerDiffPercentage"] == DBNull.Value)) ||
                 (this.IsP05 && ((s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0) || s["UpdDivSewer"] == DBNull.Value))));
 
@@ -560,6 +555,20 @@ namespace Sci.Production.IE
                 });
             }
 
+            var dt = this.gridEditOperation.GetTable();
+
+            if (dt != null)
+            {
+                var checkNo = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && MyUtility.Check.Empty(x["No"]) &&
+                                                      x["OperationDesc"].ToString().IndexOf("PACK", StringComparison.OrdinalIgnoreCase) == -1 &&
+                                                      x["OperationDesc"].ToString().IndexOf("PRESS", StringComparison.OrdinalIgnoreCase) == -1);
+                if (checkNo.Any())
+                {
+                    MyUtility.Msg.WarningBox("This Operation already exists in the same No.!!");
+                    return;
+                }
+            }
+
             foreach (var checkItem in checkDivSewerBalance)
             {
                 if (checkItem.SumSewerDiffPercentage != 100)
@@ -580,7 +589,7 @@ namespace Sci.Production.IE
             List<long> curTimeStudyDetailUkey = needKeepRows.Select(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"])).Distinct().ToList();
 
             var listLoseTimeStudyDetailUkey = this.dtSelectItemSource.AsEnumerable()
-                .Where(s => !curTimeStudyDetailUkey.Contains(MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]))).ToList();
+                .Where(s => s["TimeStudyDetailUkey"].ToString() != "0" && !curTimeStudyDetailUkey.Contains(MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]))).ToList();
             if (listLoseTimeStudyDetailUkey.Any())
             {
                 MyUtility.Msg.WarningBox($@"The following Operation is missing.
@@ -659,7 +668,7 @@ namespace Sci.Production.IE
                 needCancelCheck["Selected"] = false;
             }
 
-            foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s["PPA"].ToString() != "C").ToList())
+            foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted &&  s["PPA"].ToString() != "C").ToList())
             {
                 this.dtAutomatedLineMapping_Detail.Rows.Remove(item);
             }
@@ -717,7 +726,10 @@ namespace Sci.Production.IE
                             }
 
                             newRow["SewerDiffPercentage"] = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"]));
-                            newRow["SewerDiffPercentageDesc"] = MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(newRow["SewerDiffPercentage"]) * 100);
+
+                            newRow["SewerDiffPercentageDesc"] = MyUtility.Check.Empty(newRow["UpdSewerDiffPercentage"])
+                                ? MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(newRow["SewerDiffPercentage"]) * 100)
+                                : (object)MyUtility.Convert.GetInt(MyUtility.Convert.GetDecimal(newRow["UpdSewerDiffPercentage"]));
                         }
 
                         return newRow;
