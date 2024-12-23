@@ -512,15 +512,26 @@ namespace Sci.Production.IE
                                     }).ToList();
                     break;
                 case SubGridType.LineMappingBalancing:
-                    this.gridMain.BeginInvoke(new Action(() =>
+
+                    // 假設你的數據源是一個 DataTable
+                    DataTable dataTableMain = this.gridMain.DataSource as DataTable;
+
+                    if (dataTableMain != null)
                     {
-                        this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                    }));
+                        dataTableMain.DefaultView.Sort = "No ASC";
+                        this.gridMain.DataSource = dataTableMain;
+                    }
+
+                    // 對 gridSub 進行相似操作
+                    DataTable dataTableSub = this.gridSub.DataSource as DataTable;
+
+                    if (dataTableSub != null)
+                    {
+                        dataTableSub.DefaultView.Sort = "No ASC";
+                        this.gridSub.DataSource = dataTableSub;
+                    }
+
                     this.gridMain.Columns.DisableSortable();
-                    this.gridSub.BeginInvoke(new Action(() =>
-                    {
-                        this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                    }));
                     this.gridSub.Columns.DisableSortable();
                     decimal avgCycle = this.AvgCycleTime;
                     resultRows = mainData.Where(s => s["PPA"].ToString() != "C" &&
