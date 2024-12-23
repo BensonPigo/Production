@@ -82,6 +82,7 @@ AND ALMCS.Junk = 0
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.detailgrid.CellFormatting += this.Detailgrid_CellFormatting;
+            this.detailgrid.DataBindingComplete += Detailgrid_DataBindingComplete;
             this.gridLineMappingRight.DataSource = this.gridCentralizedPPARightBS;
 
             this.lineMappingGrids = new AutoLineMappingGridSyncScroll(this.detailgrid, this.gridLineMappingRight, "No", SubGridType.LineMappingBalancing);
@@ -95,6 +96,7 @@ AND ALMCS.Junk = 0
             this.gridicon.Location = new System.Drawing.Point(1340, 200);
 
         }
+
         private void Detailgrid_SelectionChanged(object sender, EventArgs e)
         {
             if (this.detailgrid.CurrentRow != null)
@@ -150,20 +152,26 @@ AND ALMCS.Junk = 0
 
         private bool IsAddPack_Presser = false;
 
-        private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        private void Detailgrid_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
         {
-            DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-
-            if (!this.IsAddPack_Presser)
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
             {
-                this.IsAddPack_Presser = false;
-                if (dr["OperationID"].ToString() == "PROCIPF00003" ||
-                 dr["OperationID"].ToString() == "PROCIPF00004")
+                var dr = this.detailgrid.GetDataRow(row.Index); // 獲取資料行
+                if (dr != null && (dr["OperationID"].ToString() == "PROCIPF00003" || dr["OperationID"].ToString() == "PROCIPF00004"))
                 {
-                    this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
-                    return;
+                    row.ReadOnly = true; // 設置只讀
                 }
             }
+        }
+
+        private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+
+            if (e.RowIndex < 0 || e.RowIndex >= this.detailgrid.Rows.Count) return;
+
+            // 獲取行資料
+            var dr = this.detailgrid.GetDataRow(e.RowIndex);
+            if (dr == null) return;
 
             if (e.ColumnIndex > 1)
             {
@@ -716,8 +724,16 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 return false;
             }
 
-            this.detailgridbs.RemoveFilter();
-            this.gridCentralizedPPALeftBS.RemoveFilter();
+            // Null 檢查並移除篩選
+            if (this.detailgridbs != null)
+            {
+                this.detailgridbs.RemoveFilter();
+            }
+
+            if (this.gridCentralizedPPALeftBS != null)
+            {
+                this.gridCentralizedPPALeftBS.RemoveFilter();
+            }
 
             int seqLineMapping = 1;
             int seqCentralizedPPA = 1;
