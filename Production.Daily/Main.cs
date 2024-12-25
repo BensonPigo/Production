@@ -25,6 +25,7 @@ namespace Production.Daily
 {
     public partial class Main : Sci.Win.Tems.Input7
     {
+        private string Sftp_Path = @"/SFTP/FactoryFTP/PMS/NewPMS/";
         bool isAuto = false;
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
@@ -208,7 +209,7 @@ namespace Production.Daily
         {
             // MyUtility.FTP
             DualResult result;
-            result = transferPMS.SFtp_Ping(this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+            result = transferPMS.SFtp_Ping(Sftp_Path,sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
 
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
 
@@ -466,7 +467,7 @@ namespace Production.Daily
             for (int i = 0; i < 3; i++)
             {
 
-                result = transferPMS.SFtp_Ping(this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+                result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
                 if (result)
                 {
                     break;
@@ -730,11 +731,15 @@ Region      Succeeded       Message
             }
             #endregion
 
+
+            
             #region 檢查FTP檔案的日期是否正確
             bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
-                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, isSkipRarCheckDate))
+                DualResult result1;
+                result1 = transferPMS.SFtp_Ping(Sftp_Path,this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+                if (!transferPMS.CheckRar_CreateDate(importRegion,Sftp_Path + importRegion.RarName, isSkipRarCheckDate))
                 {
                     fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
@@ -774,6 +779,7 @@ Region      Succeeded       Message
             {
                 if (isAuto)
                 {
+                    result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
                     string UnRARpath = Path.Combine(importRegion.DirName);
                     string targetRar = Path.Combine(UnRARpath, importRegion.RarName);
                     //自動的話, 去FTP下載
@@ -791,8 +797,8 @@ Region      Succeeded       Message
                         //{
                         //    ftp = ftp + ":" + Sci.Env.Cfg.FtpServerPort;
                         //}
-                        DualResult dual = transferPMS.SFTP_Download("/SFTP/FactoryFTP/PMS/NewPMS/" + importRegion.RarName, targetRar);
-                        if (!dual)
+
+                        if(transferPMS.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar))
                         {
                             break;
                         }
@@ -864,7 +870,7 @@ Region      Succeeded       Message
             #region Export_Pms_To_Trade(包含上傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
             for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
             {
-                if (!transferPMS.Export_Pms_To_Trade(sftpIP, sftpID, sftpPwd, _fromPath, exportRegion.DBName, sftpPort))
+                if (!transferPMS.Export_Pms_To_Trade(Sftp_Path, sftpIP, sftpID, sftpPwd, _fromPath, exportRegion.DBName, sftpPort))
                 {
                     if (i == Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]))
                     {
@@ -999,13 +1005,13 @@ Where TransRegion.Is_Export = 0";
             #region Region檢核
 
             string chkSqlcmd = @"
-select 1 from Production.dbo.System s
-where   exists(
-	            select 1 from Trade_To_PMS.dbo.TransRegion t
-	            where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
-            ) or
-        s.ImportDataFileName = 'wt_PMS.rar'
-;";
+            select 1 from Production.dbo.System s
+            where   exists(
+	                        select 1 from Trade_To_PMS.dbo.TransRegion t
+	                        where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
+                        ) or
+                    s.ImportDataFileName = 'wt_PMS.rar'
+            ;";
             if (!MyUtility.Check.Seek(chkSqlcmd))
             {
                 String subject = "PMS Trans Region Error";
@@ -1040,7 +1046,7 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
             #region Import_Trade_To_Pms(包含下傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
             for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
             {
-                if (!transferPMS.Import_Trade_To_Pms(sftpIP, sftpID, sftpPwd))
+                if (!transferPMS.Import_Trade_To_Pms(Sftp_Path,sftpIP, sftpID, sftpPwd))
                 {
                     if (i == Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]))
                     {
@@ -1456,5 +1462,49 @@ end
             DBProxy.Current.ExecuteByConn(conn, sqlCmd);
         }
         #endregion
+
+        private void btnFileCopy_Click(object sender, EventArgs e)
+        {
+            DualResult result;
+            result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+
+            TransRegion importRegion;
+            DualResult result1 = GetTransRegion("I", this.importDataFileName, this.importDataPath, this.importDataFileName, out importRegion);
+            string targetRar = Path.Combine(this.importDataPath, this.importDataFileName);
+            #region 1. 清空已存在的 targetDir 下的檔案
+            var cleanFiles = Directory.GetFiles(this.importDataPath);
+            cleanFiles.Select(fileName => transferPMS.Try_DeleteFile(fileName, importRegion)).ToList().All(deleted => deleted);
+            #endregion
+            #region 2. 從FTP下載檔案
+            for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
+            {
+                DualResult dual = MyUtility.SFTP.SFTP_Download(Sftp_Path + this.importDataFileName, targetRar);  // transferPMS.SFTP_Download();
+                if (!dual)
+                {
+                    MyUtility.Msg.WarningBox(dual.ToString());
+                    break;
+                }
+            }
+            #endregion
+            #region 3. 解壓縮
+            DualResult unRARResult = MyUtility.File.UnRARFile(targetRar, true, this.importDataPath);//waitRarFinished: true);
+            if (unRARResult)
+            {
+                MyUtility.Msg.WarningBox(unRARResult.ToString());
+                //  importRegion.Logs.Add(new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result));
+            }
+            #endregion
+        }
+
+        private void btnRARCheck_Click(object sender, EventArgs e)
+        {
+            TransRegion importRegion;
+            DualResult result1 = GetTransRegion("I", this.importDataFileName, this.importDataPath, this.importDataFileName, out importRegion);
+            if (!transferPMS.CheckRar_CreateDate(importRegion, Sftp_Path + importRegion.RarName, false))
+            {
+                MyUtility.Msg.WarningBox(importRegion.Logs[0].ToString() + Environment.NewLine + "importRegion.RarName :" + importRegion.RarName + Environment.NewLine + "this.importDataFileName :" + this.importDataFileName + Environment.NewLine + "this.importDataPath:" + this.importDataPath);
+                return;
+            }
+        }
     }
 }
