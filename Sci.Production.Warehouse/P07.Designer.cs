@@ -75,6 +75,8 @@
             this.comboStockType = new Sci.Win.UI.ComboBox();
             this.btnCallP99 = new Sci.Win.UI.Button();
             this.btnPrintAccessorySticker = new Sci.Win.UI.Button();
+            this.txtBLAWB = new Sci.Win.UI.DisplayBox();
+            this.lblBlAWB = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -92,6 +94,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.txtBLAWB);
+            this.masterpanel.Controls.Add(this.lblBlAWB);
             this.masterpanel.Controls.Add(this.btnPrintAccessorySticker);
             this.masterpanel.Controls.Add(this.comboStockType);
             this.masterpanel.Controls.Add(this.btnUpdateLocation);
@@ -178,6 +182,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnUpdateLocation, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboStockType, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintAccessorySticker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.lblBlAWB, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtBLAWB, 0);
             // 
             // detailpanel
             // 
@@ -718,6 +724,23 @@
             this.btnPrintAccessorySticker.UseVisualStyleBackColor = true;
             this.btnPrintAccessorySticker.Click += new System.EventHandler(this.BtnPrintAccessorySticker_Click);
             // 
+            // txtBLAWB
+            // 
+            this.txtBLAWB.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtBLAWB.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBLAWB.Location = new System.Drawing.Point(560, 94);
+            this.txtBLAWB.Name = "txtBLAWB";
+            this.txtBLAWB.Size = new System.Drawing.Size(110, 23);
+            this.txtBLAWB.TabIndex = 71;
+            // 
+            // lblBlAWB
+            // 
+            this.lblBlAWB.Location = new System.Drawing.Point(460, 94);
+            this.lblBlAWB.Name = "lblBlAWB";
+            this.lblBlAWB.Size = new System.Drawing.Size(95, 23);
+            this.lblBlAWB.TabIndex = 72;
+            this.lblBlAWB.Text = "BL/AWB#";
+            // 
             // P07
             // 
             this.ApvChkValue = "New";
@@ -810,5 +833,7 @@
         private Win.UI.ComboBox comboStockType;
         private Win.UI.Button btnCallP99;
         private Win.UI.Button btnPrintAccessorySticker;
+        private Win.UI.DisplayBox txtBLAWB;
+        private Win.UI.Label lblBlAWB;
     }
 }
