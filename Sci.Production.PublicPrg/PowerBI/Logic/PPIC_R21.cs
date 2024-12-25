@@ -224,13 +224,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		, [M360MDFailQty] = M360MDFailQty.val
 		, [M360MDReturn] = IIF(M360MDReturn.val = 'Return', 'Yes', '')
 		, [HangerPackScanTime] = pld.HangerPackScanTime
-		, [HangerPackReturn] = IIF(pld.HangerPackReturn = 'Return', 'Yes', '')
+		, [HangerPackStatus] = IIF(pld.HangerPackStatus = 'Return', 'Yes', '')
 		, [HangerPackFailQty] = pld.HangerPackFailQty
 		, [JokerTagScanTime] = pld.JokerTagScanTime
-		, [JokerTagReturn] = IIF(pld.JokerTagReturn = 'Return', 'Yes', '')
+		, [JokerTagStatus] = IIF(pld.JokerTagStatus = 'Return', 'Yes', '')
 		, [JokerTagFailQty] = pld.JokerTagFailQty
 		, [HeatSealScanTime] = pld.HeatSealScanTime
-		, [HeatSealReturn] = IIF(pld.HeatSealReturn = 'Return', 'Yes', '')
+		, [HeatSealStatus] = IIF(pld.HeatSealStatus = 'Return', 'Yes', '')
 		, [HeatSealFailQty] = pld.HeatSealFailQty
 		, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 		, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val

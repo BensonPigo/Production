@@ -584,13 +584,13 @@ SELECT
     ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,M360MDFailQty = SUM(pld.M360MDFailQty)
     ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
-    ,HangerPackReturn = IIF( SUM(IIF( pld.HangerPackReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
     ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
-    ,JokerTagReturn = IIF( SUM(IIF( pld.JokerTagReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
     ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
-    ,HeatSealReturn = IIF( SUM(IIF( pld.HeatSealReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
@@ -643,13 +643,13 @@ SELECT
     ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,M360MDFailQty = SUM(pld.M360MDFailQty)
     ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
-    ,HangerPackReturn = IIF( SUM(IIF( pld.HangerPackReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
     ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
-    ,JokerTagReturn = IIF( SUM(IIF( pld.JokerTagReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
     ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
-    ,HeatSealReturn = IIF( SUM(IIF( pld.HeatSealReturn = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
     ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
@@ -937,13 +937,13 @@ GROUP BY s.OrderID
     ,M360MDStatus        = pld.M360MDStatus
     ,M360MDFailQty       = ISNULL( pld.M360MDFailQty ,0)
     ,HangerPackScanTime  = pld.HangerPackScanTime
-    ,HangerPackReturn    = pld.HangerPackReturn
+    ,HangerPackStatus    = pld.HangerPackStatus
     ,HangerPackFailQty   = ISNULL( pld.HangerPackFailQty ,0)
     ,JokerTagScanTime    = pld.JokerTagScanTime
-    ,JokerTagReturn      = pld.JokerTagReturn
+    ,JokerTagStatus      = pld.JokerTagStatus
     ,JokerTagFailQty     = ISNULL( pld.JokerTagFailQty ,0)
     ,HeatSealScanTime    = pld.HeatSealScanTime
-    ,HeatSealReturn      = pld.HeatSealReturn
+    ,HeatSealStatus      = pld.HeatSealStatus
     ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
 ";
             }
