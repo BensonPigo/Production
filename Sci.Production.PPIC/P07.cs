@@ -78,6 +78,16 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
                 return;
             }
 
+            // 設定參數控制 0 = 排程執行、1 = 手動執行
+            result = DBProxy.Current.Execute("Production", "exec dbo.ChangeOver 1");
+            if (!result)
+            {
+                MyUtility.Msg.WaitClear();
+                this.ShowErr(sqlCmd, result);
+                this.HideWaitMessage();
+                return;
+            }
+
             if (dsForAutomation[0].Rows.Count > 0)
             {
                 Task.Run(() => new Guozi_AGV().SentSewingLineToAGV(dsForAutomation[0]))

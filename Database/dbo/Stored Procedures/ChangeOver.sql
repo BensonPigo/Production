@@ -7,11 +7,17 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[ChangeOver]
 
+--此為初始值。設定參數控制 0 = 排程執行、1 = 手動執行
+@UpdateRecentData bit = 0
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	--取得30分鐘前的時間
+	Declare @UpdateRecentDate Datetime = dateadd(minute, -30, getdate())
 
    --刪除不存在Sewing Schedule的資料
 	select distinct s.APSNo,s.FactoryID,s.SewingLineID,s.OrderID,s.ComboType
@@ -27,7 +33,7 @@ BEGIN
 
 	--更新現有資料
 	update ChgOver set Inline = s.Inline,AlloQty = s.AlloQty,StandardOutput = s.StandardOutput,TotalSewingTime = s.TotalSewingTime
-	from SewingSchedule s where s.APSNo = ChgOver.APSNo and s.OrderID = ChgOver.OrderID;
+	from SewingSchedule s where s.APSNo = ChgOver.APSNo and s.OrderID = ChgOver.OrderID and (@UpdateRecentData = 0 or (@UpdateRecentData = 1 and (s.AddDate >= @UpdateRecentDate or s.EditDate >= @UpdateRecentDate)));
 	update ChgOver set StyleID = o.StyleID,CDCodeID = o.CdCodeID, SeasonID = o.SeasonID
 	from Orders o where o.ID = ChgOver.OrderID;
 
@@ -42,6 +48,7 @@ BEGIN
 	where s.Inline is not null 
 	and s.Offline > DATEADD(MONTH,-1,GETDATE()) 
 	and f.IsSampleRoom = 0
+	and @UpdateRecentData = 0 or (@UpdateRecentData = 1 and (s.AddDate >= @UpdateRecentDate or s.EditDate >= @UpdateRecentDate))
 	order by s.FactoryID,s.SewingLineID,s.Inline,s.OrderID;
 
 
