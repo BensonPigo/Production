@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.checkBoxOnlyNotYetCompleted = new Sci.Win.UI.CheckBox();
             this.txtSpreadingNo1 = new Sci.Production.Class.TxtSpreadingNo();
@@ -73,6 +72,7 @@
             this.btnToExcel = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnBundlewithQR = new Sci.Win.UI.Button();
             this.btnBundleCardRF = new Sci.Win.UI.Button();
             this.checkChangepagebyCut = new System.Windows.Forms.CheckBox();
             this.panel5 = new Sci.Win.UI.Panel();
@@ -124,7 +124,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1008, 131);
+            this.panel1.Size = new System.Drawing.Size(1142, 131);
             this.panel1.TabIndex = 0;
             // 
             // checkBoxOnlyNotYetCompleted
@@ -193,6 +193,7 @@
             // 
             // txtuser1
             // 
+            this.txtuser1.AllowSelectResign = false;
             this.txtuser1.DisplayBox1Binding = "";
             this.txtuser1.Location = new System.Drawing.Point(108, 104);
             this.txtuser1.Name = "txtuser1";
@@ -239,6 +240,7 @@
             this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsMultiselect = false;
             this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;
             this.txtfactoryByM.Location = new System.Drawing.Point(434, 29);
@@ -462,7 +464,7 @@
             // btnBundleCard
             // 
             this.btnBundleCard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBundleCard.Location = new System.Drawing.Point(462, 6);
+            this.btnBundleCard.Location = new System.Drawing.Point(465, 7);
             this.btnBundleCard.Name = "btnBundleCard";
             this.btnBundleCard.Size = new System.Drawing.Size(123, 33);
             this.btnBundleCard.TabIndex = 1;
@@ -473,7 +475,7 @@
             // btnToExcel
             // 
             this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnToExcel.Location = new System.Drawing.Point(718, 7);
+            this.btnToExcel.Location = new System.Drawing.Point(852, 7);
             this.btnToExcel.Name = "btnToExcel";
             this.btnToExcel.Size = new System.Drawing.Size(136, 33);
             this.btnToExcel.TabIndex = 2;
@@ -484,7 +486,7 @@
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(860, 7);
+            this.btnClose.Location = new System.Drawing.Point(994, 7);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(136, 33);
             this.btnClose.TabIndex = 3;
@@ -494,6 +496,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.btnBundlewithQR);
             this.panel3.Controls.Add(this.btnBundleCardRF);
             this.panel3.Controls.Add(this.checkChangepagebyCut);
             this.panel3.Controls.Add(this.labelSortBy);
@@ -504,13 +507,24 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel3.Location = new System.Drawing.Point(0, 510);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(1008, 52);
+            this.panel3.Size = new System.Drawing.Size(1142, 52);
             this.panel3.TabIndex = 1;
+            // 
+            // btnBundlewithQR
+            // 
+            this.btnBundlewithQR.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBundlewithQR.Location = new System.Drawing.Point(723, 7);
+            this.btnBundlewithQR.Name = "btnBundlewithQR";
+            this.btnBundlewithQR.Size = new System.Drawing.Size(123, 33);
+            this.btnBundlewithQR.TabIndex = 6;
+            this.btnBundlewithQR.Text = "Bundle with QR";
+            this.btnBundlewithQR.UseVisualStyleBackColor = true;
+            this.btnBundlewithQR.Click += new System.EventHandler(this.BtnBundlewithQR_Click);
             // 
             // btnBundleCardRF
             // 
             this.btnBundleCardRF.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnBundleCardRF.Location = new System.Drawing.Point(591, 7);
+            this.btnBundleCardRF.Location = new System.Drawing.Point(594, 7);
             this.btnBundleCardRF.Name = "btnBundleCardRF";
             this.btnBundleCardRF.Size = new System.Drawing.Size(123, 33);
             this.btnBundleCardRF.TabIndex = 5;
@@ -534,7 +548,7 @@
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(0, 131);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(1008, 379);
+            this.panel5.Size = new System.Drawing.Size(1142, 379);
             this.panel5.TabIndex = 10;
             // 
             // grid1
@@ -553,26 +567,18 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(0, 0);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(1008, 379);
+            this.grid1.Size = new System.Drawing.Size(1142, 379);
             this.grid1.TabIndex = 0;
             this.grid1.TabStop = false;
             // 
             // P12
             // 
-            this.ClientSize = new System.Drawing.Size(1008, 562);
+            this.ClientSize = new System.Drawing.Size(1142, 562);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel3);
             this.Controls.Add(this.panel1);
@@ -644,5 +650,6 @@
         private Class.TxtSpreadingNo txtSpreadingNo1;
         private Win.UI.Button btnBundleCardRF;
         private Win.UI.CheckBox checkBoxOnlyNotYetCompleted;
+        private Win.UI.Button btnBundlewithQR;
     }
 }

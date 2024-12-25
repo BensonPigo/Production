@@ -6,11 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ZXing.QrCode.Internal;
+using ZXing.QrCode;
+using ZXing;
 using static Sci.Production.Automation.Guozi_AGV;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -22,6 +26,7 @@ namespace Sci.Production.Cutting
     {
         private readonly DataRow CurrentDataRow;
         private DualResult result;
+        private int strPagetype;
 
         /// <inheritdoc/>
         public P10_Print(DataRow row)
@@ -46,7 +51,7 @@ namespace Sci.Production.Cutting
         protected override DualResult OnAsyncDataLoad(ReportEventArgs e)
         {
             this.result = new DualResult(true);
-            if (this.radioBundleCard.Checked || this.radioBundleCardRF.Checked)
+            if (this.radioBundleCard.Checked || this.radioBundleCardRF.Checked || this.radioBundlewithQR.Checked)
             {
                 List<SqlParameter> pars = new List<SqlParameter>
                 {
@@ -111,6 +116,8 @@ from (
         , a.RFIDScan
         , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
         , a.Dyelot
+        , a.ID
+        , a.PatternDesc
     from dbo.Bundle_Detail a WITH (NOLOCK) 
     inner join dbo.Bundle b WITH (NOLOCK) on a.id=b.id
     outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -395,7 +402,8 @@ order by x.[Bundle]");
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
                 Excel.Workbook workbook = excelApp.ActiveWorkbook;
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                RunPagePrint(data, excelApp);
+                this.strPagetype = 9;
+                RunPagePrint(data, excelApp, this.strPagetype);
                 this.HideWaitMessage();
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
@@ -569,6 +577,77 @@ order by x.[Bundle]");
                 this.HideWaitMessage();
                 MyUtility.Msg.InfoBox("Erase success, Please check result in Bin Box.");
             }
+            else if (this.radioBundlewithQR.Checked)
+            {
+                if (this.dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.ErrorBox("Data not found");
+                    return false;
+                }
+
+                this.SetCount(this.dt.Rows.Count);
+
+                this.ShowWaitMessage("Process Excel!");
+                List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
+                {
+                    Group_right = row1["Group_right"].ToString(),
+                    Group_left = row1["Group_left"].ToString(),
+                    CutRef = this.CurrentDataRow["CutRef"].ToString(),
+                    Tone = MyUtility.Convert.GetString(row1["Tone"]),
+                    Line = row1["Line"].ToString(),
+                    Cell = row1["Cell"].ToString(),
+                    POID = row1["POID"].ToString(),
+                    SP = row1["SP"].ToString(),
+                    Style = row1["Style"].ToString(),
+                    MarkerNo = row1["MarkerNo"].ToString(),
+                    Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
+                    Parts = row1["Parts"].ToString(),
+                    Color = row1["Color"].ToString(),
+                    Article = row1["Article"].ToString(),
+                    Size = row1["Size"].ToString(),
+                    SizeSpec = MyUtility.Check.Empty(row1["SizeSpec"].ToString()) ? string.Empty : "(" + row1["SizeSpec"].ToString() + ")",
+                    Desc = row1["Desc"].ToString(),
+                    Artwork = row1["Artwork"].ToString(),
+                    Quantity = row1["Quantity"].ToString(),
+                    Barcode = row1["Barcode"].ToString(),
+                    Season = row1["Seasonid"].ToString(),
+                    Brand = row1["brand"].ToString(),
+                    Item = row1["item"].ToString(),
+                    EXCESS1 = MyUtility.Convert.GetBool(row1["isEXCESS"]) ? "EXCESS" : string.Empty,
+                    NoBundleCardAfterSubprocess1 = row1["NoBundleCardAfterSubprocess"].ToString().Empty() ? string.Empty : "X",
+                    Replacement1 = string.Empty,
+                    ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
+                    FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
+                    BundleID = row1["BundleID"].ToString(),
+                    RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
+                    CutCell = row1["CutCell"].ToString(),
+                    Dyelot = row1["Dyelot"].ToString(),
+                    ID = row1["ID"].ToString(),
+                    BundleNo = row1["BundleNo"].ToString(),
+                    PatternDesc = row1["PatternDesc"].ToString(),
+                }).ToList();
+                string fileName = "Cutting_P10_Layout2";
+                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
+                Excel.Workbook workbook = excelApp.ActiveWorkbook;
+                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
+                this.strPagetype = 2;
+                RunPagePrint(data, excelApp, this.strPagetype);
+                this.HideWaitMessage();
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
+                {
+                    string printer = pd.PrinterSettings.PrinterName;
+                    workbook.PrintOutEx(ActivePrinter: printer);
+                }
+
+                string excelName = Class.MicrosoftFile.GetName(fileName);
+                excelApp.ActiveWorkbook.SaveAs(excelName);
+                workbook.Close();
+                excelApp.Quit();
+                Marshal.ReleaseComObject(excelApp);
+                File.Delete(excelName);
+                this.WritePrintDate();
+            }
 
             return true;
         }
@@ -636,11 +715,11 @@ order by x.[Bundle]");
             }
         }
 
-        /// <inheritdoc/>
-        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp)
+        /// strPagetype = 2 分割2格 ; strPagetype = 9 分割9格 <inheritdoc/>
+        internal static void RunPagePrint(List<P10_PrintData> data, Excel.Application excelApp, int strPagetype)
         {
             // 範本預設 A4 紙, 分割 9 格貼紙格式, 因印表機邊界, 9 格格式有點不同
-            int page = ((data.Count - 1) / 9) + 1;
+            int page = ((data.Count - 1) / strPagetype) + 1;
             for (int pi = 1; pi < page; pi++)
             {
                 Excel.Worksheet worksheet2 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
@@ -666,25 +745,27 @@ order by x.[Bundle]");
 
             for (int pi = 1; pi <= page; pi++)
             {
-                var writedata = data.Skip((pi - 1) * 9).Take(9).ToList();
+                var writedata = data.Skip((pi - 1) * strPagetype).Take(strPagetype).ToList();
                 Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pi];
-                ProcessPrint(writedata, worksheet, allNoDatas);
+                ProcessPrint(writedata, worksheet, allNoDatas, strPagetype);
             }
         }
 
         /// <inheritdoc/>
-        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, DataTable allNoDatas)
+        internal static void ProcessPrint(List<P10_PrintData> data, Excel.Worksheet worksheet, DataTable allNoDatas, int strPagetype)
         {
             int i = 0;
             int col_ref = 0;
             int row_ref = 0;
 
-            data.ForEach(r =>
+            if (strPagetype == 9)
             {
-                // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
-                string no = GetNo(r.Barcode, allNoDatas);
-                string contian;
-                contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
+                data.ForEach(r =>
+                {
+                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
+                    string no = GetNo(r.Barcode, allNoDatas);
+                    string contian;
+                    contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
 SP#:{r.SP}
 Style#: {r.Style} Cell: {r.CutCell}
 Cut#: {r.Body_Cut}
@@ -696,28 +777,124 @@ Sub Process: {r.Artwork}
 Desc: {r.Desc}
 Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
-                row_ref = i / 3;
-                row_ref = (row_ref * 5) - (row_ref / 3);
-                col_ref = (i % 3) * 4;
-                int cutindex = contian.IndexOf("Cut/L");
-                worksheet.Cells[1 + row_ref, 1 + col_ref] = contian;
-                worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
-                worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
-                worksheet.Cells[2 + row_ref, 1 + col_ref] = r.EXCESS1;
-                worksheet.Cells[2 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
-                worksheet.Cells[3 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
+                    row_ref = i / 3;
+                    row_ref = (row_ref * 5) - (row_ref / 3);
+                    col_ref = (i % 3) * 4;
+                    int cutindex = contian.IndexOf("Cut/L");
+                    worksheet.Cells[1 + row_ref, 1 + col_ref] = contian;
+                    worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
+                    worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
+                    worksheet.Cells[2 + row_ref, 1 + col_ref] = r.EXCESS1;
+                    worksheet.Cells[2 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
+                    worksheet.Cells[3 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
 
-                // 邊框 」貼紙裁線
-                if (i % 3 != 2 && (i / 3) % 3 != 2)
+                    // 邊框 」貼紙裁線
+                    if (i % 3 != 2 && (i / 3) % 3 != 2)
+                    {
+                        string colN = MyUtility.Excel.ConvertNumericToExcelColumn(3 + col_ref);
+                        Excel.Range excelRange = worksheet.get_Range($"{colN}{4 + row_ref}");
+                        excelRange.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
+                        excelRange.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
+                    }
+
+                    i++;
+                });
+            }
+            else if (strPagetype == 2)
+            {
+                /*
+                 Level L (Low)      7%  of codewords can be restored.
+                 Level M (Medium)   15% of codewords can be restored.
+                 Level Q (Quartile) 25% of codewords can be restored.
+                 Level H (High)     30% of codewords can be restored.
+                */
+                BarcodeWriter writer = new BarcodeWriter
                 {
-                    string colN = MyUtility.Excel.ConvertNumericToExcelColumn(3 + col_ref);
-                    Excel.Range excelRange = worksheet.get_Range($"{colN}{4 + row_ref}");
-                    excelRange.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
-                    excelRange.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
-                }
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = new QrCodeEncodingOptions
+                    {
+                        // Create Photo
+                        Height = 120,
+                        Width = 120,
+                        Margin = 0,
+                        CharacterSet = "UTF-8",
+                        PureBarcode = true,
 
-                i++;
-            });
+                        // 錯誤修正容量
+                        // L水平    7%的字碼可被修正
+                        // M水平    15%的字碼可被修正
+                        // Q水平    25%的字碼可被修正
+                        // H水平    30%的字碼可被修正
+                        ErrorCorrection = ErrorCorrectionLevel.L,
+                    },
+                };
+
+                data.ForEach(r =>
+                {
+                    string no = GetNo(r.Barcode, allNoDatas);
+                    string contian;
+                    contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
+SP#:{r.SP}
+Style#: {r.Style} Cell: {r.CutCell}
+Cut#: {r.Body_Cut}
+Color: {r.Color}
+Size: {r.Size}     Part: {r.Parts}     Dyelot: {r.Dyelot}
+Sea: {r.Season}     Brand: {r.ShipCode}
+MK#: {r.MarkerNo}     Cut/L:
+Sub Process: {r.Artwork}
+Desc: {r.Desc}
+Qty: {r.Quantity}(#{no})  Item: {r.Item}";
+
+                    string strQRCodeInfor;
+                    strQRCodeInfor = $@"ID: {r.ID} 
+Bundle No: {r.BundleNo}
+Cutpart Name: {r.PatternDesc}";
+
+                    row_ref = i / 2;
+                    row_ref = (row_ref * 8) - (row_ref / 2);
+                    col_ref = (i % 2) * 6;
+                    int cutindex = contian.IndexOf("Cut/L");
+                    worksheet.Cells[1 + row_ref, 1 + col_ref] = "○";
+                    worksheet.Cells[2 + row_ref, 3 + col_ref] = contian;
+                    worksheet.Cells[2 + row_ref, 3 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
+                    worksheet.Cells[2 + row_ref, 3 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
+                    worksheet.Cells[3 + row_ref, 3 + col_ref] = r.EXCESS1;
+                    worksheet.Cells[3 + row_ref, 4 + col_ref] = r.NoBundleCardAfterSubprocess1;
+                    worksheet.Cells[4 + row_ref, 3 + col_ref] = "*" + r.Barcode + "*";
+                    worksheet.Cells[7 + row_ref, 2 + col_ref] = strQRCodeInfor;
+
+                    Bitmap newQRCode = writer.Write(r.BundleNo.ToString().Trim());
+
+                    // 將圖片存儲為暫時檔案
+                    string tempFilePath = System.IO.Path.GetTempFileName();
+                    newQRCode.Save(tempFilePath);
+                    Excel.Range rng = worksheet.Cells[7 + row_ref, 4 + col_ref];
+
+                    // 將圖片插入到工作表中的指定位置
+                    Excel.Shape pictureShape = worksheet.Shapes.AddPicture(
+                        tempFilePath,
+                        Microsoft.Office.Core.MsoTriState.msoFalse,
+                        Microsoft.Office.Core.MsoTriState.msoCTrue,
+                        (float)rng.Left,
+                        (float)rng.Top,
+                        (float)rng.Height,
+                        (float)rng.Height);
+
+                    // 刪除暫時檔案
+                    System.IO.File.Delete(tempFilePath);
+
+                    // 邊框 」貼紙裁線
+                    if (i % 2 != 2 && (i / 2) % 2 != 2)
+                    {
+                        string colN = MyUtility.Excel.ConvertNumericToExcelColumn(5 + col_ref);
+                        Excel.Range excelRange = worksheet.get_Range($"{colN}{8 + row_ref}");
+                        excelRange.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
+                        excelRange.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
+                    }
+
+                    i++;
+                });
+            }
         }
 
         private void P10_Print_FormClosed(object sender, FormClosedEventArgs e)
@@ -774,11 +951,16 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
             this.RadioButtionChangeStatus();
         }
 
+        private void RadioBundlewithQR_CheckedChanged(object sender, EventArgs e)
+        {
+            this.RadioButtionChangeStatus();
+        }
+
         private void RadioButtionChangeStatus()
         {
             this.toexcel.Enabled = true;
             this.print.Enabled = true;
-            if (this.radioBundleCard.Checked)
+            if (this.radioBundleCard.Checked || this.radioBundlewithQR.Checked)
             {
                 this.toexcel.Enabled = false;
             }
