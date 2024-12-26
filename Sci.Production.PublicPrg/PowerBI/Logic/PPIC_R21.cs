@@ -224,13 +224,24 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		, [M360MDFailQty] = M360MDFailQty.val
 		, [M360MDReturn] = IIF(M360MDReturn.val = 'Return', 'Yes', '')
 		, [HangerPackScanTime] = pld.HangerPackScanTime
-		, [HangerPackStatus] = IIF(pld.HangerPackStatus = 'Return', 'Yes', '')
+		, [HangerPackStatus] = CASE WHEN pld.HangerPackStatus = 'Return'THEN 'Return'
+									 WHEN pld.HangerPackStatus = 'Pass 'THEN 'Hold'
+									ELSE pld.HangerPackStatus
+								END
+
 		, [HangerPackFailQty] = pld.HangerPackFailQty
 		, [JokerTagScanTime] = pld.JokerTagScanTime
-		, [JokerTagStatus] = IIF(pld.JokerTagStatus = 'Return', 'Yes', '')
+		, [JokerTagStatus] = CASE WHEN pld.JokerTagStatus = 'Return'THEN 'Return'
+								  WHEN pld.JokerTagStatus = 'Pass 'THEN 'Hold'
+								  ELSE pld.JokerTagStatus
+							  END
+
 		, [JokerTagFailQty] = pld.JokerTagFailQty
 		, [HeatSealScanTime] = pld.HeatSealScanTime
-		, [HeatSealStatus] = IIF(pld.HeatSealStatus = 'Return', 'Yes', '')
+		, [HeatSealStatus] = CASE WHEN pld.HeatSealStatus = 'Return'THEN 'Return'
+								  WHEN pld.HeatSealStatus = 'Pass 'THEN 'Hold'
+								  ELSE pld.HeatSealStatus
+							  END
 		, [HeatSealFailQty] = pld.HeatSealFailQty
 		, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 		, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
