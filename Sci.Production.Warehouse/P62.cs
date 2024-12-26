@@ -61,6 +61,11 @@ namespace Sci.Production.Warehouse
             this.detailgrid.VirtualMode = true;
             this.detailgrid.CellValueNeeded += (s, e) =>
             {
+                if (this.detailgrid.Rows[e.RowIndex] == null)
+                {
+                    return;
+                }
+
                 string sTRrequestqty = this.detailgrid.Rows[e.RowIndex].Cells["requestqty"].Value.ToString();
                 string sTRaccu_issue = this.detailgrid.Rows[e.RowIndex].Cells["accu_issue"].Value.ToString();
                 string sTRqty = this.detailgrid.Rows[e.RowIndex].Cells["qty"].Value.ToString();
@@ -395,7 +400,7 @@ outer apply(
         protected override bool ClickSaveBefore()
         {
             #region 表頭必輸檢查
-
+            this.GetSubDetailDatas(out DataTable dtaa);
             if (MyUtility.Check.Empty(this.CurrentMaintain["cutplanId"]))
             {
                 MyUtility.Msg.WarningBox("< Request# >  can't be empty!", "Warning");
@@ -411,6 +416,24 @@ outer apply(
             }
 
             #endregion
+
+            // 將Issue_Detail的數量更新Issue_Summary
+            DataTable subDetail;
+            foreach (DataRow detailRow in this.DetailDatas)
+            {
+                this.GetSubDetailDatas(detailRow, out subDetail);
+                decimal detailQty = 0;
+                if (subDetail.Rows.Count > 0)
+                {
+                    detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
+                }
+
+                if (MyUtility.Convert.GetDecimal(detailRow["qty"]) != detailQty)
+                {
+                    MyUtility.Msg.WarningBox($"<SP#>{detailRow["POID"]}, <Seq>{detailRow["Seq1"]} {detailRow["Seq2"]} Issue Qty({detailRow["qty"]}) does not match the details' total({detailQty}). Please double click <Issue Qty> check detail again. ");
+                    return false;
+                }
+            }
 
             #region 表身檢查
             if (this.DetailDatas.Count == 0)
@@ -443,36 +466,6 @@ outer apply(
                 }
 
                 this.CurrentMaintain["id"] = tmpId;
-            }
-
-            ////assign 給detail table ID
-            // DataTable tmp = (DataTable)detailgridbs.DataSource;
-            // foreach (DataRow row in tmp.Rows)
-            // {
-            //    row.SetField("ID", MyUtility.Convert.GetString(CurrentMaintain["id"]));
-            //    DataTable subDT;
-            //    if (GetSubDetailDatas(row, out subDT))
-            //    {
-            //        foreach (DataRow ddrow in subDT.Rows)
-            //        {
-            //            ddrow.SetField("ID", MyUtility.Convert.GetString(CurrentMaintain["id"]));
-            //        }
-            //    }
-            // }
-
-            // 將Issue_Detail的數量更新Issue_Summary
-            DataTable subDetail;
-            foreach (DataRow detailRow in this.DetailDatas)
-            {
-                this.GetSubDetailDatas(detailRow, out subDetail);
-                if (subDetail.Rows.Count == 0)
-                {
-                    detailRow["Qty"] = 0;
-                }
-                else
-                {
-                    decimal detailQty = subDetail.AsEnumerable().Sum(s => s.RowState != DataRowState.Deleted ? (decimal)s["Qty"] : 0);
-                }
             }
 
             return base.ClickSaveBefore();
@@ -640,13 +633,24 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             sqlcmd = string.Format(
                 @"
-Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    ,d.Dyelot
-from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot 
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+select	d.poid
+		,d.seq1
+		,d.seq2
+		,d.Roll
+		,d.Qty
+		,[balanceQty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+		,d.Dyelot
+from (	SELECT POID, StockType, Roll, Seq1, Seq2, Dyelot, [Qty] = sum(Qty)
+		from dbo.Issue_Detail WITH (NOLOCK)
+		where id = '{0}' 
+		group by POID, StockType, Roll, Seq1, Seq2, Dyelot) d
+left join FtyInventory f WITH (NOLOCK) on   d.POID = f.POID  AND
+                                            D.StockType = F.StockType and 
+                                            d.Roll = f.Roll and
+                                            d.Seq1 =f.Seq1 and
+                                            d.Seq2 = f.Seq2 and
+                                            d.Dyelot = f.Dyelot
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) - d.Qty < 0)", this.CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result);
@@ -808,13 +812,25 @@ where f.lock=1 and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             sqlcmd = string.Format(
                 @"
-Select d.poid,d.seq1,d.seq2,d.Roll,d.Qty
-    ,isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) as balanceQty
-    ,d.Dyelot
-from dbo.Issue_Detail d WITH (NOLOCK) left join FtyInventory f WITH (NOLOCK) 
-on d.POID = f.POID  AND D.StockType = F.StockType
-and d.Roll = f.Roll and d.Seq1 =f.Seq1 and d.Seq2 = f.Seq2 and d.Dyelot = f.Dyelot 
-where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0) and d.Id = '{0}'", this.CurrentMaintain["id"]);
+select	d.poid
+		,d.seq1
+		,d.seq2
+		,d.Roll
+		,d.Qty
+		,[balanceQty] = isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0)
+		,d.Dyelot
+from (	SELECT POID, StockType, Roll, Seq1, Seq2, Dyelot, [Qty] = sum(Qty)
+		from dbo.Issue_Detail WITH (NOLOCK)
+		where id = '{0}' 
+		group by POID, StockType, Roll, Seq1, Seq2, Dyelot) d
+left join FtyInventory f WITH (NOLOCK) on   d.POID = f.POID  AND
+                                            D.StockType = F.StockType and 
+                                            d.Roll = f.Roll and
+                                            d.Seq1 =f.Seq1 and
+                                            d.Seq2 = f.Seq2 and
+                                            d.Dyelot = f.Dyelot
+where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f.ReturnQty,0) + d.Qty < 0)
+", this.CurrentMaintain["id"]);
             if (!(result = DBProxy.Current.Select(null, sqlcmd, out datacheck)))
             {
                 this.ShowErr(sqlcmd, result);
