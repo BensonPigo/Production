@@ -435,20 +435,16 @@ select distinct [KPIGroup] = f.KPICode
 								ELSE pld.HangerPackStatus
 							END
 
-	, [HangerPackFailQty] = pld.HangerPackFailQty
-	, [JokerTagScanTime] = CTNJokerTagTime.val
+	, [JokerTagScanTime] = CTNJokerTagTime.val 
 	, [JokerTagStatus] = CASE WHEN pld.JokerTagStatus = 'Return'THEN 'Return'
 								WHEN pld.JokerTagStatus = 'Pass 'THEN 'Done'
 								ELSE pld.JokerTagStatus
 							END
-
-	, [JokerTagFailQty] = pld.JokerTagFailQty
 	, [HeatSealScanTime] = CTNHeatSealTime.val
 	, [HeatSealStatus] = CASE WHEN pld.HeatSealStatus = 'Return'THEN 'Return'
 								WHEN pld.HeatSealStatus = 'Pass 'THEN 'Done'
 								ELSE pld.HeatSealStatus
 							END
-	, [HeatSealFailQty] = pld.HeatSealFailQty
 	, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 	, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
 	, [ScanAndPackTime] = pld.ScanEditDate
