@@ -203,7 +203,7 @@ outer apply(
     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     inner join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
-			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
+			and psd.SEQ1 like 'A%' and psd.SEQ1 = s.Seq1 and psd.Seq2 = s.Seq2  and psd.NETQty <> 0
 )Net
 outer apply(select CuttingID from CutTapePlan where Id = '{cutplanID}' )c
 outer apply(
@@ -322,7 +322,7 @@ outer apply(
     inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
     inner join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 	where psd.ID = s.POID and psd.SCIRefno = s.SCIRefno and psdsC.SpecValue = s.ColorID
-			and psd.SEQ1 like 'A%' and psd.NETQty <> 0
+			and psd.SEQ1 like 'A%' and psd.SEQ1 = s.Seq1 and psd.Seq2 = s.Seq2  and psd.NETQty <> 0
 )Net
 outer apply(
 	select aiqqty = isnull(sum(sm.Qty), 0)
