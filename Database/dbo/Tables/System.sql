@@ -281,6 +281,15 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'ExportDataPathDummy'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該工廠是否啟用OTP驗證功能',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+	@level2name = N'isNeedOTPFty'	
+GO
 
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'該工廠是否啟用OTP驗證功能',
@@ -293,7 +302,7 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
 go
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'Formal的 FTP Port',
-    @level0type = N'SCHEMA',
+	@level0type = N'SCHEMA',
     @level0name = N'dbo',
     @level1type = N'TABLE',
     @level1name = N'System',

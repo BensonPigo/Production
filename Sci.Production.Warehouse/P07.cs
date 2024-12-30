@@ -670,7 +670,7 @@ where pl.POID in ({poIDs}) and pll.QRCode <> ''
             {
                 this.dateArrivePortDate.Value = null;
                 this.dateDoxRcvDate.Value = null;
-                string sqlcmd = $@"select portarrival, docarrival from dbo.export WITH (NOLOCK) where id='{this.CurrentMaintain["exportid"]}'";
+                string sqlcmd = $@"select portarrival, docarrival, Blno from dbo.export WITH (NOLOCK) where id='{this.CurrentMaintain["exportid"]}'";
                 if (MyUtility.Check.Seek(sqlcmd, out DataRow dr, null))
                 {
                     if (!MyUtility.Check.Empty(dr["portarrival"]))
@@ -682,6 +682,8 @@ where pl.POID in ({poIDs}) and pll.QRCode <> ''
                     {
                         this.dateDoxRcvDate.Value = DateTime.Parse(dr["docarrival"].ToString());
                     }
+
+                    this.txtBLAWB.Text = dr["Blno"].ToString();
                 }
 
                 this.dateETA.Enabled = MyUtility.Check.Empty(this.CurrentMaintain["third"]) || this.CurrentMaintain["third"].ToString() == "True";
