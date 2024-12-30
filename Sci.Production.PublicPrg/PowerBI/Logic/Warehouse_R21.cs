@@ -173,6 +173,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
     ,[Supplier] = isnull(concat(Supp.ID, '-' + Supp.AbbEN), '')
     ,[VID] = isnull(VID.CustPONoList,'')
+    ,[Grade] = ''
     ";
 
         private string sqlcolumn_sum = @"select
@@ -339,6 +340,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 #region 主要sql Detail
                 sqlcmd.Append($@" 
+INTO #TMP
 from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
@@ -379,6 +381,7 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) VID
+
 where 1=1
 ");
                 #endregion
@@ -726,7 +729,17 @@ or
 	, [AddDate] = o.AddDate
 	, [EditDate] =o.EditDate
 ";
-                sql = this.sqlcolumn + columns + sqlcmd.ToString();
+                string strup = $@"
+                    UPDATE #TMP SET Grade = FP.Grade 
+                    from FIR F
+                    inner join FIR_Physical FP  on fp.id = f.ID
+                    INNER JOIN #TMP T ON T.POID = F.POID AND T.SEQ1 = F.SEQ1 AND T.SEQ2 = F.SEQ2 AND T.Roll = FP.Roll AND T.Dyelot = FP.Dyelot
+
+                    SELECT * FROM #TMP
+
+                    DROP TABLE #TMP
+                    ";
+                sql = this.sqlcolumn + columns + sqlcmd.ToString() + strup;
             }
             else
             {
@@ -735,7 +748,17 @@ or
 ";
                 if (model.ReportType == 0)
                 {
-                    sql = this.sqlcolumn + columns + sqlcmd.ToString();
+                    string strup = $@"
+                    UPDATE #TMP SET Grade = FP.Grade 
+                    from FIR F
+                    inner join FIR_Physical FP  on fp.id = f.ID
+                    INNER JOIN #TMP T ON T.POID = F.POID AND T.SEQ1 = F.SEQ1 AND T.SEQ2 = F.SEQ2 AND T.Roll = FP.Roll AND T.Dyelot = FP.Dyelot
+
+                    SELECT * FROM #TMP
+
+                    DROP TABLE #TMP
+                    ";
+                    sql = this.sqlcolumn + columns + sqlcmd.ToString() + strup;
                 }
                 else
                 {

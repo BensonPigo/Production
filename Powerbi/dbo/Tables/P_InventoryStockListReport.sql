@@ -51,7 +51,8 @@
 	[VID] [varchar](30) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
- CONSTRAINT [PK_P_InventoryStockListReport] PRIMARY KEY CLUSTERED 
+	[Grade] VARCHAR(10) NOT NULL, 
+    CONSTRAINT [PK_P_InventoryStockListReport] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
 	[SEQ1] ASC,
