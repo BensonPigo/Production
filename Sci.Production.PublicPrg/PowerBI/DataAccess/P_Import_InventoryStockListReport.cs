@@ -128,6 +128,7 @@ SET
     ,t.[POSMR] = s.[POSMR]
     ,t.[Supplier] = s.[Supplier]
     ,t.[VID] = s.[VID]
+    ,t.[Grade] = s.[Grade]
     ,t.[AddDate] = s.[AddDate]
     ,t.[EditDate] = s.[EditDate]
 from P_InventoryStockListReport t 
@@ -190,6 +191,7 @@ INSERT INTO [dbo].[P_InventoryStockListReport]
            ,[POSMR]
            ,[Supplier]
            ,[VID]
+           ,[Grade]
            ,[AddDate]
            ,[EditDate])
 select [MDivisionID]
@@ -242,6 +244,7 @@ select [MDivisionID]
            ,[POSMR]
            ,[Supplier]
            ,[VID]
+           ,[Grade]
            ,[AddDate]
            ,[EditDate]
 from #tmp s
