@@ -251,6 +251,7 @@ namespace Sci.Production.IE
 
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("No", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumEffi", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumGSDTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumCycleTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
@@ -548,6 +549,7 @@ namespace Sci.Production.IE
 
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
+                                        newRow["SumEffi"] = groupItem.Select(s => s["SumEffi"].ToString()).First();
                                         newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
                                         newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);

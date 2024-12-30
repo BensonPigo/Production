@@ -140,8 +140,8 @@ from LineMapping_Detail lmd
 LEFT JOIN LineMapping lm WITH(NOLOCK) on lm.ID = lmd.ID
 LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
 LEFT JOIN Operation o WITH(NOLOCK) on o.ID = lmd.OperationID
-INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
-LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and ts.ID = tsd.ID
+LEFT JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID and ts.Version = lm.TimeStudyVersion
+LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and ts.ID = tsd.ID 
 OUTER APPLY
 (
 	select val = stuff((select distinct concat(',',Name)
@@ -229,7 +229,7 @@ from LineMappingBalancing_Detail lmd
 LEFT JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.ID = lmd.ID
 LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
 LEFT JOIN Operation o WITH(NOLOCK) on o.ID = lmd.OperationID
-INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
+INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType and ts.[Version] = lm.TimeStudyVersion
 LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and ts.ID = tsd.ID
 OUTER APPLY
 (
@@ -294,7 +294,7 @@ UNION ALL
 select *
 from #P06
 
-drop table #tmpP03, #tmpp06 ,#P03 , #P06
+drop table #tmpP03, #tmpp06 ,#P03 , #P06           
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listParameter, out this.printData);

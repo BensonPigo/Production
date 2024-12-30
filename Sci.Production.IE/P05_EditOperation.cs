@@ -71,8 +71,8 @@ namespace Sci.Production.IE
 
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             this.dtSelectItemSource = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                .Where(s => checkedNo.Contains(s["No"].ToString()))
-                .GroupBy(s => s["TimeStudyDetailUkey"])
+                .Where(s => checkedNo.Contains(s["No"].ToString()) && !MyUtility.Check.Empty(s["OperationID"]))
+                .GroupBy(s => s["OperationID"])
                 .Select(s => s.First())
                 .TryCopyToDataTable(this.dtAutomatedLineMapping_DetailCopy);
 

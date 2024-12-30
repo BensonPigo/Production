@@ -256,6 +256,7 @@ AND ALMCS.Junk = 0
             SELECT * 
             FROM (
                 SELECT *
+                ,[SumEffi] = IIF((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0 ,ROUND(SUM(CAST(GSD AS NUMERIC(7,3))) OVER (PARTITION BY No) / SUM(CAST(Cycle AS NUMERIC(7,3))) OVER (PARTITION BY No) * 100, 2),0.00)
                 ,[Effi] =  IIF((SUM(CAST(Cycle AS FLOAT)) OVER (PARTITION BY No)) > 0,ROUND(AVG(CAST(EffiPercentage AS NUMERIC(7,3))) OVER (PARTITION BY No) * 100, 2),0.00)
                 ,[EstCycleTime] =CAST(0.00 AS NUMERIC(12, 4)) --iif(OperatorEffi = '0.00','0.00',GSD / OperatorEffi * 100)
                 ,[EstTotalCycleTime] = CAST(0.00 AS NUMERIC(12, 4)) --IIF((AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No)) = 0, 0, (SUM(CAST(GSD AS FLOAT)) OVER (PARTITION BY No)) / (AVG(CAST(OperatorEffi AS FLOAT)) OVER (PARTITION BY No))* 100)
@@ -298,7 +299,9 @@ AND ALMCS.Junk = 0
                     [PPADesc] = isnull(d.Name, ''),
                     [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
                     [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+                    [TimeStudyDetailUkeyCnt] = COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey 
+														  ELSE NULL 
+												     END) OVER (PARTITION BY TimeStudyDetailUkey),
                     [EmployeeName] = e.Name,
                     [EmployeeSkill] = e.Skill,
                     [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
@@ -384,7 +387,7 @@ AND ALMCS.Junk = 0
 
                             decEffi += effi;
                             effiCnt++;
-                            totleCycleTime = effi > 0 ? (gsdtime / (decEffi / effiCnt)) * 100 : 0;
+                            totleCycleTime += effi > 0 ? (Convert.ToDecimal(dr1["GSD"]) / effi) * 100 : 0;
                             dr1["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(dr1["GSD"]) / effi) * 100 : 0;
                             dr1["OperatorEffi"] = effi > 0 ? effi : 0;
                         }
@@ -679,24 +682,27 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 string concatenatedNos = string.Join(", ", list1.Select(x => x.No));
                 MyUtility.Msg.WarningBox($@"Please enter Operation in No.{concatenatedNos}!");
                 return false;
-            }
+            } 
 
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
-            string lml_Cnt = MyUtility.GetValue.Lookup("SELECT TOP 1 [CNT] = [Description] FROM IEReason WHERE [Type] = 'LL' ORDER BY [ID] DESC");
+            string lml_Cnt = MyUtility.GetValue.Lookup("SELECT TOP 1 [CNT] = [Description] FROM IEReason WHERE [Type] = 'LL' and junk = 0 ORDER BY [ID] DESC");
 
-            if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
+            if (!MyUtility.Check.Empty(lml_Cnt))
             {
-                if (noCount + MyUtility.Convert.GetInt(lml_Cnt) <= this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+                if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
                 {
-                    MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
-                    return false;
-                }
+                    if (noCount + MyUtility.Convert.GetInt(lml_Cnt) < this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+                     {
+                        MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
+                        return false;
+                    }
 
-                if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
-                {
-                    MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
-                    return false;
+                    if (noCount - MyUtility.Convert.GetInt(lml_Cnt) > this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
+                    {
+                        MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
+                        return false;
+                    }
                 }
             }
 
@@ -947,6 +953,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr["Motion"] = callNextForm.P01SelectOperationCode["Motion"].ToString();
                                 dr["EmployeeID"] = employeeId;
                                 dr["EmployeeName"] = employeeName;
+                                dr["SewerDiffPercentageDesc"] = 100;
+                                dr["SewerDiffPercentage"] = 1;
 
                                 if (dr["OperationID"].ToString() == "PROCIPF00003" ||
                                 dr["OperationID"].ToString() == "PROCIPF00004")
@@ -966,41 +974,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 }
 
                                 dr.EndEdit();
-                            }
-
-                            DataTable dT_EditOperaror = dt.AsEnumerable()
-                           .Where(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(x["OperationID"]) == operationID)
-                           .TryCopyToDataTable(dt);
-
-                            int intDT_EditOperaror = dT_EditOperaror.Rows.Count;
-                            int intUpd = 100 / intDT_EditOperaror;
-
-                            int icount = 0;
-
-                            foreach (DataRow dataRow in dt.Rows)
-                            {
-                                if (dataRow.RowState == DataRowState.Deleted)
-                                {
-                                    continue;
-                                }
-
-                                if (dataRow["OperationID"].ToString() == operationID)
-                                {
-                                    icount++;
-                                    if (icount == intDT_EditOperaror - 1)
-                                    {
-                                        dataRow["SewerDiffPercentageDesc"] = 100 - (intUpd * icount);
-                                        dataRow["SewerDiffPercentage"] = (100 - (intUpd * icount)) * 0.01;
-
-                                    }
-                                    else
-                                    {
-                                        dataRow["SewerDiffPercentageDesc"] = intUpd;
-                                        dataRow["SewerDiffPercentage"] = intUpd * 0.01;
-                                    }
-                                }
-
-                                dataRow.EndEdit();
                             }
 
                             this.GetEstValue(list, dr["No"].ToString());
@@ -1451,7 +1424,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name).Get(out this.col_color1)
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
-               .Numeric("Effi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("SumEffi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(5), decimal_places: 0, iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
@@ -1687,7 +1660,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 })
                 .ToList();
 
-            using (P05_EditOperation p06_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource, false))
+            using (P05_EditOperation p06_EditOperation = new P05_EditOperation(this.DetailDatas.CopyToDataTable(), false))
             {
                 DialogResult dialogResult = p06_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)
@@ -1789,6 +1762,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             dr["EmployeeID"] = string.Empty;
             dr["EmployeeName"] = string.Empty;
             dr["EmployeeSkill"] = string.Empty;
+            dr["IsResignationDate"] = 0;
             dr.EndEdit();
 
             foreach (DataRow drDetail in this.DetailDatas.Where(row => row["No"].ToString() == dr["No"].ToString()))
@@ -1797,6 +1771,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 drDetail["EmployeeID"] = string.Empty;
                 drDetail["EmployeeName"] = string.Empty;
                 drDetail["EmployeeSkill"] = string.Empty;
+                drDetail["IsResignationDate"] = 0;
             }
         }
 
@@ -1970,6 +1945,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["Selected"] = "False";
                 nextDataRow["FactoryID"] = Env.User.Factory;
                 nextDataRow["IsRow"] = "1";
+                nextDataRow["TimeStudyDetailUkeyCnt"] = "1";
                 nextDataRow["IsAdd"] = "True";
                 nextDataRow["DivSewer"] = DBNull.Value;
                 nextDataRow["IsNonSewingLine"] = "False";
@@ -2418,7 +2394,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         {
             string sqlcmd = $@"			                
             SELECT
-			[Effi_90_day] = iif(sum(A.Cycle) > 0 , CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4)),0)
+			[Effi_90_day] = iif(sum(A.Cycle) > 0 , CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(12, 4)),0)
 			FROM
 			(
 				SELECT
@@ -2482,7 +2458,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         {
             string sqlcmd = $@"			                                
 			SELECT
-			[Effi_3_year] =  iif(sum(cycle) > 0,CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(7, 4)),0)
+			[Effi_3_year] =  iif(sum(cycle) > 0,CAST(SUM(GSD) / SUM(Cycle) * 100 AS NUMERIC(12, 4)),0)
 			FROM (
 				SELECT
 				[ST_MC_Type] = ISNULL(lmd.MachineTypeID,''),
@@ -2650,6 +2626,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             decimal decEffi = 0;
             int effiCnt = 0;
             decimal gsdtime = 0;
+            decimal cycletime = 0;
             decimal totleCycleTime = 0;
             decimal sumTotalCycleTime = 0;
             foreach (DataRow row in list)
@@ -2658,6 +2635,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 var effi_90D = this.GetEffi_90Day(Env.User.Factory, row["EmployeeID"].ToString(), row["MachineTypeID"].ToString(), row["Motion"].ToString());
                 var effi = effi_3Y > 0 ? effi_3Y : effi_90D;
                 gsdtime += Convert.ToDecimal(row["GSD"]);
+                cycletime += Convert.ToDecimal(row["Cycle"]);
                 decEffi += effi;
                 effiCnt++;
                 sumTotalCycleTime += Convert.ToDecimal(row["Cycle"]) * Convert.ToDecimal(row["SewerDiffPercentage"]);
@@ -2694,6 +2672,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                     dr1["TotalCycleTime"] = sumTotalCycleTime;
                     dr1["EstOutputHr"] = totleCycleTime > 0 ? 3600 / totleCycleTime : 0;
                     dr1["EstTotalCycleTime"] = totleCycleTime;
+                    dr1["sumEffi"] = cycletime > 0 ? (gsdtime / cycletime) * 100 : 0;
                     dr1.EndEdit();
                 }
             }
