@@ -106,6 +106,7 @@ select selected = 0
        , psd.Refno
        , [Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
        , [Grade] = phy.Grade 
+        ,[FIRemark] = c.Remark
 from dbo.Lack_Detail a WITH (NOLOCK) 
 inner join dbo.Lack b WITH (NOLOCK) on b.ID = a.ID
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = b.POID 
@@ -259,6 +260,7 @@ Where a.id = '{this.dr_master["requestid"]}'
                 .Text("location", header: "Bulk Location", iseditingreadonly: true) // 5
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .EditText("FIRemark", header: "MTL. Lock/Unlock Remark", iseditingreadonly: true)
                 ;
             this.gridLack_Detail.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             #endregion

@@ -104,6 +104,7 @@ select  0 as selected
         , TransferExport_DetailUkey = cast(0 as bigint)
 		, MDivisionID = '{this.M}'
         , [Grade] = phy.Grade
+        , [FIRemark] = FI.Remark
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -274,6 +275,7 @@ AND exists (select 1
                 .EditText("Description", header: "Description", iseditingreadonly: true) // 4
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .EditText("FIRemark", header: "MTL. Lock/Unlock Remark", iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)
