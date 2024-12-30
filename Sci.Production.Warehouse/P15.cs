@@ -1021,13 +1021,15 @@ select a.POID
 	,ReqQty=c.Requestqty 
 	,a.Qty
     ,[Location]=dbo.Getlocation(fi.ukey)
-    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	        
+    ,[Total]=sum(a.Qty) OVER (PARTITION BY a.POID ,a.Seq1,a.Seq2 )	   
+    ,[Reason] = pr.Description
 from dbo.IssueLack_Detail a WITH (NOLOCK) 
 left join dbo.IssueLack d WITH (NOLOCK) on d.id=a.ID
 left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.POID and b.SEQ1=a.Seq1 and b.SEQ2=a.seq2
 left join dbo.Lack_Detail c WITH (NOLOCK) on c.id=d.RequestID and c.Seq1=a.Seq1 and c.Seq2=a.Seq2
 left join dbo.FtyInventory FI on a.poid = fi.poid and a.seq1 = fi.seq1 and a.seq2 = fi.seq2 and a.Dyelot = fi.Dyelot
     and a.roll = fi.roll and a.stocktype = fi.stocktype
+left join PPICReason pr on pr.id = c.PPICReasonID and pr.Type = 'AL'
 where a.id= @ID";
 
             result = DBProxy.Current.Select(string.Empty, cmdText, pars, out dd);
@@ -1054,6 +1056,7 @@ where a.id= @ID";
                     QTY = row1["QTY"].ToString().Trim(),
                     Location = row1["Location"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
+                    Reason = row1["Reason"].ToString(),
                 }).ToList();
 
             report.ReportDataSource = data;
