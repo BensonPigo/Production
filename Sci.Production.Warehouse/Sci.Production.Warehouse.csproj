@@ -2796,6 +2796,7 @@
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
+    <None Include="Properties\DataSources\P15_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />
