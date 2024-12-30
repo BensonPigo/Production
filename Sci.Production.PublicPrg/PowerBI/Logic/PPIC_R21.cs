@@ -351,8 +351,8 @@ WHERE EXISTS (
 );
 
 SELECT ch.*
-INTO #CTNHealSeal 
-FROM Production.dbo.CTNHealSeal  ch
+INTO #CTNHeatSeal 
+FROM Production.dbo.CTNHeatSeal  ch
 WHERE EXISTS (
     SELECT 1
     FROM #PackingList_Detail pld
@@ -443,7 +443,7 @@ select distinct [KPIGroup] = f.KPICode
 							END
 
 	, [JokerTagFailQty] = pld.JokerTagFailQty
-	, [HeatSealScanTime] = CTNHealSealTime.val
+	, [HeatSealScanTime] = CTNHeatSealTime.val
 	, [HeatSealStatus] = CASE WHEN pld.HeatSealStatus = 'Return'THEN 'Return'
 								WHEN pld.HeatSealStatus = 'Pass 'THEN 'Done'
 								ELSE pld.HeatSealStatus
@@ -677,11 +677,11 @@ outer apply(
 
 outer apply(
 	select [val] = (select MAX(AddDate)
-			from #CTNHealSeal cr with (nolock) 
+			from #CTNHeatSeal cr with (nolock) 
 			where	cr.PackingListID = pld.ID and 
 					cr.CTNStartNo = pld.CTNStartNo and
 					cr.OrderID = pld.OrderID)
-) CTNHealSealTime
+) CTNHeatSealTime
 ";
 
             Base_ViewModel resultReport = new Base_ViewModel
