@@ -16,6 +16,8 @@
 
         public string Location { get; set; }
 
+        public string Reason { get; set; }
+
         public string Total { get; set; }
     }
 }
