@@ -173,7 +173,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
     ,[Supplier] = isnull(concat(Supp.ID, '-' + Supp.AbbEN), '')
     ,[VID] = isnull(VID.CustPONoList,'')
-    ,[Grade] = ''
+    ,[Grade] = isnull(fp.Grade, '')
     ";
 
         private string sqlcolumn_sum = @"select
@@ -345,12 +345,12 @@ from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
+{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed with (nolock) ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
-left join Supp on Supp.id = ps.SuppID 
+left join Supp with (nolock) on Supp.id = ps.SuppID 
 left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
 outer apply
 (
@@ -373,15 +373,24 @@ outer apply(
 		select concat(',',CustPONo)
 		from (
 				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
+				from PO_Supp_Detail_OrderList spdo with (nolock)
+				inner join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o with (nolock) on o.ID = spdo.OrderID
 				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
 			) s
 		for xml path ('')
 	) , 1, 1, '')
 ) VID
-
+outer apply(
+	select fp.Grade
+	from FIR F with (nolock)
+    inner join FIR_Physical FP with (nolock) on fp.id = f.ID
+	where psd.id = F.POID 
+	AND psd.SEQ1 = F.SEQ1 
+	AND psd.SEQ2 = F.SEQ2 
+	AND fi.Roll = FP.Roll 
+	AND fi.Dyelot = FP.Dyelot
+) fp
 where 1=1
 ");
                 #endregion
@@ -394,7 +403,7 @@ from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
+{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed with (nolock) ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
@@ -417,9 +426,9 @@ outer apply(
 		select concat(',',CustPONo)
 		from (
 				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
+				from PO_Supp_Detail_OrderList spdo with (nolock) 
+				inner join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o with (nolock) on o.ID = spdo.OrderID
 				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
 			) s
 		for xml path ('')
@@ -729,17 +738,7 @@ or
 	, [AddDate] = o.AddDate
 	, [EditDate] =o.EditDate
 ";
-                string strup = $@"
-                    UPDATE #TMP SET Grade = FP.Grade 
-                    from FIR F
-                    inner join FIR_Physical FP  on fp.id = f.ID
-                    INNER JOIN #TMP T ON T.POID = F.POID AND T.SEQ1 = F.SEQ1 AND T.SEQ2 = F.SEQ2 AND T.Roll = FP.Roll AND T.Dyelot = FP.Dyelot
-
-                    SELECT * FROM #TMP
-
-                    DROP TABLE #TMP
-                    ";
-                sql = this.sqlcolumn + columns + sqlcmd.ToString() + strup;
+                sql = this.sqlcolumn + columns + sqlcmd.ToString();
             }
             else
             {
@@ -748,17 +747,7 @@ or
 ";
                 if (model.ReportType == 0)
                 {
-                    string strup = $@"
-                    UPDATE #TMP SET Grade = FP.Grade 
-                    from FIR F
-                    inner join FIR_Physical FP  on fp.id = f.ID
-                    INNER JOIN #TMP T ON T.POID = F.POID AND T.SEQ1 = F.SEQ1 AND T.SEQ2 = F.SEQ2 AND T.Roll = FP.Roll AND T.Dyelot = FP.Dyelot
-
-                    SELECT * FROM #TMP
-
-                    DROP TABLE #TMP
-                    ";
-                    sql = this.sqlcolumn + columns + sqlcmd.ToString() + strup;
+                    sql = this.sqlcolumn + columns + sqlcmd.ToString();
                 }
                 else
                 {
