@@ -340,7 +340,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 #region 主要sql Detail
                 sqlcmd.Append($@" 
-INTO #TMP
 from View_WH_Orders o with (nolock)
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
