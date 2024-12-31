@@ -1264,6 +1264,8 @@ and Name = @PPA
             };
 
             this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
+
+            this.detailgrid.Columns.DisableSortable();
         }
 
         /// <summary>
@@ -2945,6 +2947,8 @@ and s.BrandID = @brandid";
                 row["Sort"] = sortIndex;
                 sortIndex++;
             }
+
+            this.ReFillSewingSeq();
         }
 
         /// <summary>
