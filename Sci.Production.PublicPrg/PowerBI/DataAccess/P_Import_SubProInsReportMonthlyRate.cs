@@ -65,7 +65,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             FROM
             (
 	            select 
-	            [Month] = DATEPART(month, GETDATE())-1
+	            [Month] = CASE WHEN DATEPART(month, GETDATE()) = 1 THEN 12 
+                               ELSE DATEPART(month, GETDATE()) - 1 
+                          END
 	            ,FactoryID
 	            ,[TotalPassQty] = SUM(Qty) - SUM(RejectQty)
 	            ,[TotalQty] = SUM(Qty)
