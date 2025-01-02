@@ -1280,8 +1280,6 @@ and Name = @PPA
             {
                 this.HideRows();
             };
-
-            this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
         }
 
         /// <summary>
@@ -1310,11 +1308,18 @@ and Name = @PPA
 
                 DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
                 string columnName = this.detailgrid.Columns[e.ColumnIndex].DataPropertyName;
+                string oldValue = MyUtility.Convert.GetString(dr[columnName]);
+                string newValue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldValue == newValue)
+                {
+                    return;
+                }
+
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
                     if (columnName == "SewingSeq")
                     {
-                        string oldValue = MyUtility.Convert.GetString(dr[columnName]);
+                        oldValue = MyUtility.Convert.GetString(dr[columnName]);
                         if (oldValue == string.Empty) // 原本就是空的, 點了不要重排
                         {
                             return;
@@ -1368,31 +1373,6 @@ and Name = @PPA
             };
 
             return setting;
-        }
-
-        private void Detailgrid_RowsAdded(object sender, DataGridViewRowsAddedEventArgs e)
-        {
-            if (e.RowIndex < 0)
-            {
-                return;
-            }
-
-            DataRow sourceRow = this.detailgrid.GetDataRow(e.RowIndex);
-
-            if (sourceRow.RowState == DataRowState.Added)
-            {
-                this.detailgrid.Rows[e.RowIndex].Cells["Location"].ReadOnly = false;
-
-                for (int i = e.RowIndex; i < this.detailgrid.RowCount; i++)
-                {
-                    this.detailgrid.Rows[i].DefaultCellStyle.BackColor = Color.White;
-                    this.detailgrid.Rows[i].Cells["DesignateSeq"].Value = string.Empty;
-                }
-            }
-            else
-            {
-                this.detailgrid.Rows[e.RowIndex].Cells["Location"].ReadOnly = true;
-            }
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -1563,7 +1543,7 @@ and Name = @PPA
         protected override bool ClickSaveBefore()
         {
             #region 應該上產線卻沒有 SewingSeq. SewingSeq 空白, OperationID 是--開頭, IsNonSewingLine = False 不能存檔
-            var checkSewing = this.DetailDatas.AsEnumerable().Where(r => MyUtility.Check.Empty(r["SewingSeq"]) && MyUtility.Convert.GetString(r["OperationID"]).Substring(0, 2) == "--" && !MyUtility.Convert.GetBool(r["IsNonSewingLine"])).ToList();
+            var checkSewing = this.DetailDatas.AsEnumerable().Where(r => MyUtility.Check.Empty(r["SewingSeq"]) && this.NeedSewingSeq(r)).ToList();
             if (checkSewing.Any())
             {
                 string oriSeq = checkSewing.Select(r => MyUtility.Convert.GetString(r["Seq"])).JoinToString(",");
@@ -2521,57 +2501,56 @@ and s.BrandID = @brandid ", Env.User.Factory,
         /// <param name="index">index</param>
         protected override void OnDetailGridInsert(int index = 0)
         {
-            // base.OnDetailGridInsert(index);
-            DataTable dt = (DataTable)this.detailgridbs.DataSource;
-            if (index == -1)
-            {
-                index = dt.Rows.Count;
-            }
-
-            DataRow newRow = dt.NewRow();
-
             int maxSeq = this.DetailDatas.AsEnumerable()
                 .Select(r => MyUtility.Convert.GetInt(r["Seq"]))
                 .DefaultIfEmpty(0)
                 .Max();
 
-            newRow["Seq"] = (maxSeq + this.seqIncreaseNumber).ToString().PadLeft(4, '0'); // 固定最大值往上增加
-            newRow["IsAdd"] = 1; // PMS 新增資訊
-            newRow["CodeFrom"] = "Operation";
-            newRow["IsShow"] = 1;
-            newRow["IETMSUkey"] = this.DetailDatas.Count == 0 ? 0 : MyUtility.Convert.GetLong(this.DetailDatas[0]["IETMSUkey"]); // 原規則都是取第一筆, 保持不變
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            if (index >= 0)
+            string location;
+            if (this.DetailDatas.Count > 0)
             {
-                DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
-                this.detailgrid.AllowUserToAddRows = false;
-
-                DataRow dr_Location = index == 0 ? oriDt.Rows[index] : oriDt.Rows[index - 1];
-                if (dr_Location.RowState != DataRowState.Deleted)
+                if (index == -1) // 按新增
                 {
-                    newRow["Location"] = dr_Location["Location"];
+                    location = MyUtility.Convert.GetString(this.DetailDatas.Last()["Location"]); // 最後一筆 Row
                 }
-                else
+                else // 按插入
                 {
-                    // 處理被刪除的行的情況，例如設置默認值
-                    newRow["Location"] = DBNull.Value; // 或者其他合理的默認值
+                    if (index > 0 && index <= this.DetailDatas.Count) // 確保 index 有效
+                    {
+                        location = MyUtility.Convert.GetString(this.DetailDatas[index - 1]["Location"]); // 找到 index - 1 那筆
+                    }
+                    else
+                    {
+                        location = MyUtility.Convert.GetString(this.DetailDatas[index]["Location"]);
+                    }
                 }
             }
-
-            dt.Rows.InsertAt(newRow, index);
-
-            // 找到排序後的位置
-            var bindingList = this.detailgridbs.List.OfType<DataRowView>();
-            var sortedIndex = bindingList
-                .Select((row, idx) => new { Row = row, Index = idx })
-                .FirstOrDefault(x => x.Row.Row == newRow)?
-                .Index;
-
-            // 移動到排序後的位置
-            if (sortedIndex.HasValue)
+            else
             {
-                this.detailgridbs.Position = sortedIndex.Value;
+                location = string.Empty; // 或其他預設值
             }
+
+            base.OnDetailGridInsert(index);
+
+            DataRow nowRow;
+            if (index == -1)
+            {
+                nowRow = this.CurrentDetailData;
+            }
+            else
+            {
+                nowRow = dt.Rows[index];
+            }
+
+            nowRow["Seq"] = (maxSeq + this.seqIncreaseNumber).ToString().PadLeft(4, '0'); // 固定最大值往上增加
+            nowRow["IsAdd"] = 1; // PMS 新增資訊
+            nowRow["CodeFrom"] = "Operation";
+            nowRow["IsShow"] = 1;
+            nowRow["IETMSUkey"] = this.DetailDatas.Count == 0 ? 0 : MyUtility.Convert.GetLong(this.DetailDatas[0]["IETMSUkey"]); // 原規則都是取第一筆, 保持不變
+            nowRow["Location"] = location;
+            nowRow.EndEdit();
         }
 
         // Copy
@@ -2964,8 +2943,25 @@ and s.BrandID = @brandid";
 
             foreach (DataRow row in this.DetailDatas)
             {
-                row["Sort"] = sortIndex; // 說真的沒啥用, 建議拿掉
+                row["Sort"] = sortIndex;
                 sortIndex++;
+            }
+
+            // 把空白的拖移到 0001 之下 要給值
+            bool flag = false;
+            foreach (DataRow row in this.DetailDatas)
+            {
+                // 第一筆有值 0001
+                if (!MyUtility.Check.Empty(row["SewingSeq"]) && !flag)
+                {
+                    flag = true;
+                }
+
+                // 先給 1 之後再使用 ReFillSewingSeq 重編碼
+                if (flag && MyUtility.Check.Empty(row["SewingSeq"]) && this.NeedSewingSeq(row))
+                {
+                    row["SewingSeq"] = 1;
+                }
             }
 
             this.ReFillSewingSeq(); // 拖拉後重排 SewSeq 是主功能, 畫面由上往下重排有填值的 SewSeq
@@ -2977,13 +2973,11 @@ and s.BrandID = @brandid";
         /// <param name="newSewingSeq">newSewingSeq</param>
         private void InsertSewingSeqAndAdjust(int newSewingSeq)
         {
-            DataTable dt = (DataTable)this.detailgridbs.DataSource;
-
             // 尋找是否已經有相同 SewingSeq
-            if (dt.AsEnumerable().Any(row => MyUtility.Convert.GetInt(row["SewingSeq"]) == newSewingSeq))
+            if (this.DetailDatas.Any(row => MyUtility.Convert.GetInt(row["SewingSeq"]) == newSewingSeq))
             {
                 // 若存在相同 SewingSeq，將所有後續的 SewingSeq 往後加 1
-                foreach (var row in dt.AsEnumerable()
+                foreach (var row in this.DetailDatas.AsEnumerable()
                                      .Where(r => MyUtility.Convert.GetInt(r["SewingSeq"]) >= newSewingSeq)
                                      .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"])))
                 {
@@ -2999,13 +2993,7 @@ and s.BrandID = @brandid";
         /// <param name="movetoIndex">movetoIndex</param>
         protected void UpdateRowIndexBasedOnSewingSeqAndSeq(bool movetoIndex = true)
         {
-            // 確保資料來源和 DataGrid 存在
-            if (this.detailgridbs == null || this.detailgridbs.DataSource == null)
-            {
-                return;
-            }
-
-            int targetIndex = -1; // 記錄目標筆資料的位置
+            int targetIndex = -1;
             try
             {
                 int targetSewingSeq = MyUtility.Convert.GetInt(this.CurrentDetailData["SewingSeq"]); // 指定的 SewingSeq
@@ -3014,52 +3002,68 @@ and s.BrandID = @brandid";
                 // 取得資料來源
                 DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-                // 暫時解除繫結
-                this.detailgridbs.SuspendBinding();
-                this.detailgrid.SuspendLayout();
+                // 確保資料表存在並且有資料
+                if (dt.Rows.Count <= 1)
+                {
+                    return;
+                }
 
-                // 按照 SewingSeq 和 Seq 進行排序
+                int sourceIndex = dt.Rows.IndexOf(this.CurrentDetailData); // 目標位置為當前綁定位置
+
                 var sortedRows = dt.AsEnumerable()
-                    .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"])) // 以 SewingSeq 排序
-                    .ThenBy(r => MyUtility.Convert.GetInt(r["Seq"])) // 再以 Seq 排序
-                    .ToList();
+                    .Where(r => r.RowState != DataRowState.Deleted)
+                    .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"]))
+                    .ThenBy(r => MyUtility.Convert.GetInt(r["Seq"]));
 
-                // 新建一個暫存表來儲存排序結果
-                DataTable tempTable = dt.Clone(); // 只複製結構，不複製資料
-
-                foreach (var row in sortedRows)
+                // 確保原始位置在排序後的目標位置 (targetIndex)
+                DataRow beforeRow = null;
+                foreach (DataRow row in sortedRows)
                 {
-                    DataRow newRow = tempTable.NewRow();
-                    newRow.ItemArray = row.ItemArray; // 複製資料
-                    tempTable.Rows.Add(newRow);
-
-                    // 找到指定的 SewingSeq 和 Seq
-                    if (MyUtility.Convert.GetInt(row["SewingSeq"]) == targetSewingSeq && MyUtility.Convert.GetInt(row["Seq"]) == targetSeq)
+                    if (beforeRow == null)
                     {
-                        targetIndex = tempTable.Rows.Count - 1; // 記錄目標索引
+                        beforeRow = row;
+                        continue;
                     }
+
+                    if (targetSewingSeq == 0 &&
+                        MyUtility.Convert.GetInt(row["SewingSeq"]) == targetSewingSeq &&
+                        MyUtility.Convert.GetInt(row["Seq"]) == targetSeq)
+                    {
+                        targetIndex = dt.Rows.IndexOf(beforeRow);
+                        break;
+                    }
+
+                    if (targetSewingSeq > 0 &&
+                        MyUtility.Convert.GetInt(beforeRow["SewingSeq"]) == targetSewingSeq &&
+                        MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
+                    {
+                        targetIndex = dt.Rows.IndexOf(row);
+                        break;
+                    }
+
+                    beforeRow = row;
                 }
 
-                // 用暫存表替換原表資料
-                dt.Clear();
-                foreach (DataRow row in tempTable.Rows)
+                // 確保索引有效
+                if (sourceIndex == -1 || targetIndex < 0 || targetIndex >= dt.Rows.Count)
                 {
-                    dt.ImportRow(row);
+                    return;
                 }
+
+                // 移動 DataRow
+                this.MoveDataRow(dt, sourceIndex, targetIndex);
+                this.ReFillSewingSeq(); // 調整 index 順序後, 再調整 SewSeq 連續性
             }
             catch (Exception ex)
             {
                 this.ShowErr(ex);
             }
-            finally
-            {
-                // 恢復繫結並刷新畫面
-                this.detailgrid.ResumeLayout();
-                this.detailgridbs.ResumeBinding();
-                this.detailgridbs.ResetBindings(false);
-            }
 
-            this.ReFillSewingSeq(); // 調整 index 順序後, 再調整 SewSeq 連續性
+            // 清除所有行的選擇狀態
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                row.Selected = false;
+            }
         }
 
         /// <summary>
@@ -3107,13 +3111,18 @@ and s.BrandID = @brandid";
         {
             foreach (DataRow dr in this.DetailDatas)
             {
-                if (!MyUtility.Check.Empty(dr["OperationID"]) && !MyUtility.Convert.GetString(dr["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]))
+                if (this.NeedSewingSeq(dr))
                 {
                     dr["SewingSeq"] = "1"; // 先給任一值
                 }
             }
 
             this.ReFillSewingSeq(); // Copy From Style Std GSD, 符合規則自動填入, 並將有值 SewingSeq 全部重編
+        }
+
+        private bool NeedSewingSeq(DataRow dr)
+        {
+            return !MyUtility.Check.Empty(dr["OperationID"]) && !MyUtility.Convert.GetString(dr["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]);
         }
 
         /// <summary>
@@ -3202,6 +3211,51 @@ and s.BrandID = @brandid";
             var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource, ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
             windows.ShowDialog();
             this.detailgridbs.DataSource = dataSource;
+        }
+
+        private DataRow MoveDataRow(DataTable dataTable, int sourceIndex, int targetIndex)
+        {
+            if (dataTable.Rows.Count < 2)
+            {
+                return null;
+            }
+
+            DataRow dataRow = dataTable.Rows[sourceIndex];
+            DataRow newRow = dataTable.NewRow();
+            DataRowState oriRowState = dataRow.RowState;
+
+            newRow.ItemArray = oriRowState == DataRowState.Modified ? this.GetRowItemArrayByVersion(dataRow, DataRowVersion.Original) : dataRow.ItemArray;
+            object[] currentRowData = dataRow.ItemArray;
+
+            // 從 DataTable 中移除資料列
+            dataTable.Rows.Remove(dataRow);
+
+            // 插入資料列至目標位置
+            dataTable.Rows.InsertAt(newRow, targetIndex);
+            if (oriRowState == DataRowState.Unchanged)
+            {
+                newRow.AcceptChanges();
+            }
+            else if (oriRowState == DataRowState.Modified)
+            {
+                newRow.AcceptChanges();
+                newRow.ItemArray = currentRowData;
+            }
+
+            return newRow;
+        }
+
+        private object[] GetRowItemArrayByVersion(DataRow srcRow, DataRowVersion dataRowVersion)
+        {
+            object[] resultItemArray = new object[srcRow.Table.Columns.Count];
+            int colIndex = 0;
+            foreach (DataColumn col in srcRow.Table.Columns)
+            {
+                resultItemArray[colIndex] = srcRow[col.ColumnName, dataRowVersion];
+                colIndex++;
+            }
+
+            return resultItemArray;
         }
     }
 }
