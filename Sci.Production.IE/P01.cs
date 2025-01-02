@@ -2993,7 +2993,7 @@ and s.BrandID = @brandid";
         /// <param name="movetoIndex">movetoIndex</param>
         protected void UpdateRowIndexBasedOnSewingSeqAndSeq(bool movetoIndex = true)
         {
-            int targetIndex = 0;
+            int targetIndex = -1;
             try
             {
                 int targetSewingSeq = MyUtility.Convert.GetInt(this.CurrentDetailData["SewingSeq"]); // 指定的 SewingSeq
@@ -3008,18 +3008,41 @@ and s.BrandID = @brandid";
                     return;
                 }
 
-                int sourceIndex = this.detailgridbs.Position; // 目標位置為當前綁定位置
+                int sourceIndex = dt.Rows.IndexOf(this.CurrentDetailData); // 目標位置為當前綁定位置
 
-                var sortedRows = dt.DefaultView.ToTable().AsEnumerable()
+                var sortedRows = dt.AsEnumerable()
+                    .Where(r => r.RowState != DataRowState.Deleted)
                     .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"]))
-                    .ThenBy(r => MyUtility.Convert.GetInt(r["Seq"]))
-                    .ToList();
+                    .ThenBy(r => MyUtility.Convert.GetInt(r["Seq"]));
 
                 // 確保原始位置在排序後的目標位置 (targetIndex)
-                targetIndex = sortedRows
-                    .Select((row, index) => new { Row = row, Index = index })
-                    .FirstOrDefault(x => MyUtility.Convert.GetInt(x.Row["SewingSeq"]) == targetSewingSeq &&
-                                         MyUtility.Convert.GetInt(x.Row["Seq"]) == targetSeq)?.Index ?? -1;
+                DataRow beforeRow = null;
+                foreach (DataRow row in sortedRows)
+                {
+                    if (beforeRow == null)
+                    {
+                        beforeRow = row;
+                        continue;
+                    }
+
+                    if (targetSewingSeq == 0 &&
+                        MyUtility.Convert.GetInt(row["SewingSeq"]) == targetSewingSeq &&
+                        MyUtility.Convert.GetInt(row["Seq"]) == targetSeq)
+                    {
+                        targetIndex = dt.Rows.IndexOf(beforeRow);
+                        break;
+                    }
+
+                    if (targetSewingSeq > 0 &&
+                        MyUtility.Convert.GetInt(beforeRow["SewingSeq"]) == targetSewingSeq &&
+                        MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
+                    {
+                        targetIndex = dt.Rows.IndexOf(row);
+                        break;
+                    }
+
+                    beforeRow = row;
+                }
 
                 // 確保索引有效
                 if (sourceIndex == -1 || targetIndex < 0 || targetIndex >= dt.Rows.Count)
