@@ -388,7 +388,8 @@ AND ALMCS.Junk = 0
                             decEffi += effi;
                             effiCnt++;
                             totleCycleTime += effi > 0 ? (Convert.ToDecimal(dr1["GSD"]) / effi) * 100 : 0;
-                            dr1["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(dr1["GSD"]) / effi) * 100 : 0;
+                            dr1["EstCycleTime"] = effi > 0 ? Math.Round((Convert.ToDecimal(dr1["GSD"]) / effi) * 100, 2) : 0;
+                            //dr1["EstCycleTime"] = effi > 0 ? (Convert.ToDecimal(dr1["GSD"]) / effi) * 100 : 0;
                             dr1["OperatorEffi"] = effi > 0 ? effi : 0;
                         }
                     }
