@@ -1453,7 +1453,7 @@ and Name = @PPA
         {
             if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("Please Confirm first! Only confirmed records can be copied!");
+                MyUtility.Msg.WarningBox("This flowchart has not been confirmed and cannot be copied.");
                 return false;
             }
 
