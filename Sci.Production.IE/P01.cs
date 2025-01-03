@@ -1451,9 +1451,9 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
-            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
+                MyUtility.Msg.WarningBox("Please Confirm first! Only confirmed records can be copied!");
                 return false;
             }
 
