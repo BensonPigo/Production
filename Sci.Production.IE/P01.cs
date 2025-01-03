@@ -1327,7 +1327,7 @@ and Name = @PPA
 
                         dr[columnName] = string.Empty;
                         dr.EndEdit();
-                        this.UpdateRowIndexBasedOnSewingSeqAndSeq(false); // 從有值 → 清空 SewingSeq
+                        this.UpdateRowIndexBasedOnSewingSeqAndSeq(); // 從有值 → 清空 SewingSeq
                     }
 
                     return;
@@ -1451,7 +1451,7 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickCopyBefore()
         {
-            if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
+            if (this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 return false;
@@ -1485,6 +1485,12 @@ and Name = @PPA
             this.CurrentMaintain["ComboType"] = this.comboType;
             this.CurrentMaintain["Version"] = "01";
             this.CurrentMaintain["ID"] = 0;
+
+            // 如果SewingSeq都空白就自動補
+            if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["SewingSeq"])))
+            {
+                this.FillSewingSeqAfterCopy();
+            }
         }
 
         /// <inheritdoc/>
@@ -1499,6 +1505,18 @@ and Name = @PPA
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+
+            // 如果SewingSeq有值,Sew Sew按鈕就read only
+            if (this.DetailDatas.Any(r => !MyUtility.Check.Empty(r["SewingSeq"])))
+            {
+                this.btnSewSeq.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -2163,6 +2181,8 @@ where ID = {0}",
 
                 this.RenewData();
                 this.ClickEdit();
+
+                this.btnSewSeq.PerformClick();
             }
         }
 
@@ -2258,6 +2278,8 @@ where ID = {0}",
 
                 this.RenewData();
                 this.ClickEdit();
+
+                this.btnSewSeq.PerformClick();
             }
         }
 
@@ -2509,23 +2531,12 @@ and s.BrandID = @brandid ", Env.User.Factory,
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
             string location;
-            if (this.DetailDatas.Count > 0)
+            var lastLocation = dt.AsEnumerable()
+                .Where(row => (dt.Rows.IndexOf(row) <= index || index == -1) &&
+                               row.RowState != DataRowState.Deleted);
+            if (lastLocation.Any())
             {
-                if (index == -1) // 按新增
-                {
-                    location = MyUtility.Convert.GetString(this.DetailDatas.Last()["Location"]); // 最後一筆 Row
-                }
-                else // 按插入
-                {
-                    if (index > 0 && index <= this.DetailDatas.Count) // 確保 index 有效
-                    {
-                        location = MyUtility.Convert.GetString(this.DetailDatas[index - 1]["Location"]); // 找到 index - 1 那筆
-                    }
-                    else
-                    {
-                        location = MyUtility.Convert.GetString(this.DetailDatas[index]["Location"]);
-                    }
-                }
+                location = MyUtility.Convert.GetString(lastLocation.Last()["Location"]); // 最後一筆 Row
             }
             else
             {
@@ -2990,8 +3001,7 @@ and s.BrandID = @brandid";
         /// <summary>
         /// 依據 SewingSeq, Seq 改變資料列的Index
         /// </summary>
-        /// <param name="movetoIndex">movetoIndex</param>
-        protected void UpdateRowIndexBasedOnSewingSeqAndSeq(bool movetoIndex = true)
+        protected void UpdateRowIndexBasedOnSewingSeqAndSeq()
         {
             int targetIndex = -1;
             try
@@ -3017,31 +3027,40 @@ and s.BrandID = @brandid";
 
                 // 確保原始位置在排序後的目標位置 (targetIndex)
                 DataRow beforeRow = null;
-                foreach (DataRow row in sortedRows)
+
+                // 若是最後一筆, 直接放最後
+                if (sortedRows.Last() == this.CurrentDetailData)
                 {
-                    if (beforeRow == null)
+                    targetIndex = dt.Rows.Count - 1;
+                }
+                else
+                {
+                    foreach (DataRow row in sortedRows)
                     {
+                        if (beforeRow == null)
+                        {
+                            beforeRow = row;
+                        }
+
+                        if (MyUtility.Convert.GetInt(beforeRow["SewingSeq"]) == targetSewingSeq &&
+                            MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
+                        {
+                            targetIndex = dt.Rows.IndexOf(row);
+                            if (beforeRow == row)
+                            {
+                                targetIndex = 0;
+                            }
+
+                            break;
+                        }
+
                         beforeRow = row;
-                        continue;
                     }
 
-                    if (targetSewingSeq == 0 &&
-                        MyUtility.Convert.GetInt(row["SewingSeq"]) == targetSewingSeq &&
-                        MyUtility.Convert.GetInt(row["Seq"]) == targetSeq)
+                    if (targetIndex > sourceIndex)
                     {
-                        targetIndex = dt.Rows.IndexOf(beforeRow);
-                        break;
+                        targetIndex--;
                     }
-
-                    if (targetSewingSeq > 0 &&
-                        MyUtility.Convert.GetInt(beforeRow["SewingSeq"]) == targetSewingSeq &&
-                        MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
-                    {
-                        targetIndex = dt.Rows.IndexOf(row);
-                        break;
-                    }
-
-                    beforeRow = row;
                 }
 
                 // 確保索引有效
@@ -3256,6 +3275,17 @@ and s.BrandID = @brandid";
             }
 
             return resultItemArray;
+        }
+
+        private void BtnSewSeq_Click(object sender, EventArgs e)
+        {
+            // Detail geid Sew Seq有值就不做
+            if (this.DetailDatas.Any(r => !MyUtility.Check.Empty(r["SewingSeq"])))
+            {
+                return;
+            }
+
+            this.FillSewingSeqAfterCopy();
         }
     }
 }
