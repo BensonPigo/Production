@@ -282,7 +282,7 @@ begin
 
 	DECLARE @BomTypeCalculatePCS BIT;
 	DECLARE @BomTypeMatching BIT;
-	DECLARE @BoaIsCustCD NUMERIC(1, 0);
+	DECLARE @BoaIsCustCD NUMERIC(2, 0);
 	DECLARE @BoaCursor TABLE (
 		RowID BIGINT IDENTITY (1, 1) NOT NULL
 	   ,Ukey BIGINT
@@ -311,7 +311,7 @@ begin
        ,BomTypeBuyerDlvMonth BIT
 	   ,BomTypeMatching BIT
 	   ,Keyword VARCHAR(MAX)
-	   ,IsCustCD NUMERIC(1, 0)
+	   ,IsCustCD NUMERIC(2, 0)
 	   ,BomTypeCalculatePCS BIT
 	   ,SizeItem_PCS VARCHAR(3)
 	);
