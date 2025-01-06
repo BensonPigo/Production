@@ -10,7 +10,7 @@
     [ProvidedPatternRoom]     BIT             CONSTRAINT [DF_Style_BOA_ProvidedPatternRoom] DEFAULT ((0)) NOT NULL,
     [Remark]                  NVARCHAR (MAX)  CONSTRAINT [DF_Style_BOA_Remark] DEFAULT ('') NOT NULL,
     [ColorDetail]             NVARCHAR (100)  CONSTRAINT [DF_Style_BOA_ColorDetail] DEFAULT ('') NOT NULL,
-    [IsCustCD]                TINYINT         CONSTRAINT [DF_Style_BOA_IsCustCD] DEFAULT ((0)) NOT NULL,
+    [IsCustCD]                NUMERIC (2, 0)  CONSTRAINT [DF_Style_BOA_IsCustCD] DEFAULT ((0)) NOT NULL,
     [BomTypeZipper]           BIT             CONSTRAINT [DF_Style_BOA_BomTypeZipper] DEFAULT ((0)) NOT NULL,
     [BomTypeSize]             BIT             CONSTRAINT [DF_Style_BOA_BomTypeSize] DEFAULT ((0)) NOT NULL,
     [BomTypeColor]            BIT             CONSTRAINT [DF_Style_BOA_BomTypeColor] DEFAULT ((0)) NOT NULL,
