@@ -49,7 +49,7 @@ o.SeasonID
 ,o.Category
 ,o.CdCodeID 
 ,[CPU] = o.CPU
-,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),3)) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,3))
+,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),iif(at.ProductionUnit = 'QTY',4,3))) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,iif(at.ProductionUnit = 'QTY',4,3)))
 ,CPURate = o.CPUFactor * o.CPU  
 ,o.BuyerDelivery
 ,o.SCIDelivery
@@ -126,9 +126,9 @@ a.ArtworkTypeID
     , TotalManHour = ROUND( ActManPower * WorkHour, 2)
     , TotalCPUOut = ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor, CPU*CPUFactor*Rate)*QAQty,3)
 	, TotalArtwrokCPUOut = (
-		case when Category = 'M' then round(ArtworkCPU*MockupCPUFactor * QAQty,3)
-		when IsTtlTMS = 1 and ArtworkTypeID = 'SEWING' then Round(a.ArtworkCPU*a.CPUFactor*a.Rate * QAQty,3)
-		else  round(ArtworkCPU*CPUFactor*Rate * QAQty, 3)
+		case when Category = 'M' then round(ArtworkCPU*MockupCPUFactor * QAQty, iif([RS] = 'AMT' ,4,3))
+		when IsTtlTMS = 1 and ArtworkTypeID = 'SEWING' then Round(a.ArtworkCPU*a.CPUFactor*a.Rate * QAQty,iif([RS] = 'AMT' ,4,3))
+		else  round(ArtworkCPU*CPUFactor*Rate * QAQty, iif([RS] = 'AMT' ,4,3))
 		end
 	)
     , a.StyleDesc
