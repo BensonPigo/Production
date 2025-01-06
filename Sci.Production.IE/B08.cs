@@ -492,8 +492,31 @@ OUTER APPLY (
 	FOR XML PATH('')), 1, 1, '')
 ) Operation_P03
 WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmd.MachineTypeID,'') != '')
-ORDER BY lmd.MachineTypeID,Operation_P03.val
-;
+ORDER BY lmd.MachineTypeID,Operation_P03.val;
+
+--------------------------------------------
+SELECT
+[ST_MC_Type] = ISNULL(lmbd.MachineTypeID,'')
+,[Motion] = ISNULL(Operation_P06.val,'')
+	,[DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,@goDate)
+,lmbd.GSD 
+,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
+INTO #DetailP06
+FROM Employee e WITH(NOLOCK)
+INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
+INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
+OUTER APPLY (
+	SELECT val = STUFF((
+	SELECT DISTINCT CONCAT(',', Name)
+	FROM OperationRef a WITH(NOLOCK)
+	INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
+	WHERE a.CodeType = '00007' AND a.id = lmbd.OperationID  
+	FOR XML PATH('')), 1, 1, '')
+) Operation_P06
+WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmbd.MachineTypeID,'') != '')
+ORDER BY lmbd.MachineTypeID,Operation_P06.val;
+
+
 select a.ST_MC_Type
 	,a.Motion
 	,a.Title
@@ -523,55 +546,7 @@ from (
 	,d.GSD,d.Cycle
 	from #DetailP03 d
 	inner join @DataRangeTable rt on d.DiffDays <= rt.maxDays and rt.Title=360
-)a
-GROUP BY a.ST_MC_Type,a.Motion,a.Title
-;
-SELECT 
-    ST_MC_Type,
-    Motion,
-    ISNULL([Effi_90_day], 0) AS Effi_90_day,
-    ISNULL([Effi_180_day], 0) AS Effi_180_day,
-    ISNULL([Effi_270_day], 0) AS Effi_270_day,
-    ISNULL([Effi_360_day], 0) AS Effi_360_day
-INTO #PivotTableP03
-FROM 
-    (SELECT ST_MC_Type, Motion, Title, CAST( Eff * 100 AS NUMERIC(5,2)) AS Eff -- 效率轉換為百分比
-     FROM #FinalP03) AS SourceTable
-PIVOT 
-    (MAX(Eff) ---- 已經確定會是唯一值，所以放心取max
-     FOR Title IN ([Effi_90_day], [Effi_180_day], [Effi_270_day], [Effi_360_day])
-    ) AS PivotTable
-ORDER BY 
-    ST_MC_Type, Motion
-;
------------------
-SELECT
-[ST_MC_Type] = ISNULL(lmbd.MachineTypeID,'')
-,[Motion] = ISNULL(Operation_P06.val,'')
-	,[DiffDays] = DATEDIFF(DAY,lmb_Day.EditDate,@goDate)
-,lmbd.GSD 
-,[Cycle] = lmbd.Cycle * lmbd.SewerDiffPercentage
-INTO #DetailP06
-FROM Employee e WITH(NOLOCK)
-INNER JOIN LineMappingBalancing_Detail lmbd WITH(NOLOCK) ON lmbd.EmployeeID = e.ID
-INNER JOIN LineMappingBalancing lmb_Day WITH(NOLOCK) ON lmb_Day.id = lmbd.ID
-OUTER APPLY (
-	SELECT val = STUFF((
-	SELECT DISTINCT CONCAT(',', Name)
-	FROM OperationRef a WITH(NOLOCK)
-	INNER JOIN IESELECTCODE b WITH(NOLOCK) ON a.CodeID = b.ID AND a.CodeType = b.Type
-	WHERE a.CodeType = '00007' AND a.id = lmbd.OperationID  
-	FOR XML PATH('')), 1, 1, '')
-) Operation_P06
-WHERE e.FactoryID = '{factoryID}' AND e.ID = '{employeeID}' AND (ISNULL(lmbd.MachineTypeID,'') != '')
-ORDER BY lmbd.MachineTypeID,Operation_P06.val
-;
-select a.ST_MC_Type
-	,a.Motion
-	,a.Title
-	,[Eff] = CAST(  SUM(GSD)/SUM(Cycle) as numeric(7,4))
-INTO #FinalP06
-from (
+	UNION ALL
 	select d.ST_MC_Type,d.Motion
 	,[Title] = 'Effi_' + cast( rt.Title as varchar) +'_day'
 	,d.GSD,d.Cycle
@@ -596,8 +571,8 @@ from (
 	from #DetailP06 d
 	inner join @DataRangeTable rt on d.DiffDays <= rt.maxDays and rt.Title=360
 )a
-GROUP BY a.ST_MC_Type,a.Motion,a.Title
-;
+GROUP BY a.ST_MC_Type,a.Motion,a.Title;
+
 SELECT 
     ST_MC_Type,
     Motion,
@@ -605,25 +580,18 @@ SELECT
     ISNULL([Effi_180_day], 0) AS Effi_180_day,
     ISNULL([Effi_270_day], 0) AS Effi_270_day,
     ISNULL([Effi_360_day], 0) AS Effi_360_day
-INTO #PivotTableP06
+---INTO #PivotTableP03
 FROM 
     (SELECT ST_MC_Type, Motion, Title, CAST( Eff * 100 AS NUMERIC(5,2)) AS Eff -- 效率轉換為百分比
-     FROM #FinalP06) AS SourceTable
+     FROM #FinalP03) AS SourceTable
 PIVOT 
     (MAX(Eff) ---- 已經確定會是唯一值，所以放心取max
      FOR Title IN ([Effi_90_day], [Effi_180_day], [Effi_270_day], [Effi_360_day])
     ) AS PivotTable
-ORDER BY 
-    ST_MC_Type, Motion;
+ORDER BY  ST_MC_Type, Motion;
+-----------------
 
-select *
-from #PivotTableP03
-UNION ALL
-select *
-from #PivotTableP06
-
-drop table #DetailP03,#FinalP03,#DetailP06,#FinalP06,#PivotTableP03,#PivotTableP06
-";
+drop table #DetailP03,#FinalP03,#DetailP06";
             return sql;
         }
     }

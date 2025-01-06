@@ -159,7 +159,7 @@ AND ALMCS.Junk = 0
                 var dr = this.detailgrid.GetDataRow(row.Index); // 獲取資料行
                 if (dr != null && (dr["OperationID"].ToString() == "PROCIPF00003" || dr["OperationID"].ToString() == "PROCIPF00004"))
                 {
-                    row.ReadOnly = true; // 設置只讀
+                    row.ReadOnly = false; // 設置開啟 ISP20240132 說要開啟的
                 }
             }
         }
@@ -813,10 +813,10 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 checkItem["Selected"] = isChecked;
 
                 var listNoForSameTimeStudyDetailUkey = this.DetailDatas
-                                .Where(row => row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
-                                              row["TimeStudyDetailUkey"].ToString() != "0" &&
-                                              row["No"].ToString() != checkItem["No"].ToString() &&
-                                              (row["OperationID"].ToString() != "PROCIPF00003" || row["OperationID"].ToString() != "PROCIPF00004") &&
+                                .Where(row => //row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
+                                              //row["TimeStudyDetailUkey"].ToString() != "0" &&
+                                              //row["No"].ToString() != checkItem["No"].ToString() &&
+                                              row["OperationID"].ToString() == checkItem["OperationID"].ToString() &&
                                               (bool)row["Selected"] != isChecked)
                                 .Select(s => s["No"].ToString())
                                 .ToList()
@@ -1660,11 +1660,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 })
                 .ToList();
 
-            using (P05_EditOperation p06_EditOperation = new P05_EditOperation(this.DetailDatas.CopyToDataTable(), false))
+            using (P05_EditOperation p06_EditOperation = new P05_EditOperation(this.detailgrid.GetTable(), false))
             {
                 DialogResult dialogResult = p06_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)
                 {
+                    // this.gridbs.DataSource = p06_EditOperation.dtAutomatedLineMapping_DetailCopy;
                     foreach (var itemEmployeeInfo in employeeInfoByNo)
                     {
                         foreach (DataRow drDetail in this.DetailDatas.Where(s => s["No"].ToString() == itemEmployeeInfo.No))

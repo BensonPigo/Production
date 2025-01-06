@@ -20,7 +20,7 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P05_EditOperation : Sci.Win.Tems.QueryForm
     {
-        private DataTable dtAutomatedLineMapping_DetailCopy;
+        public DataTable dtAutomatedLineMapping_DetailCopy;
 
         private DataTable dtAutomatedLineMapping_Detail;
         private DataTable dtSelectItemSource;
@@ -78,8 +78,7 @@ namespace Sci.Production.IE
 
             this.gridEditOperation.DataSource = this.gridEditOperationBs;
             this.gridEditOperationBs.DataSource = this.dtAutomatedLineMapping_DetailCopy;
-            this.gridEditOperationBs.Filter = $"((OperationDesc NOT LIKE '%PACK%' AND OperationDesc NOT LIKE '%PRESS%') OR OperationDesc IS NULL) " +
-                                                $"AND (No IN ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) OR Selected = 1)";
+            this.gridEditOperationBs.Filter = $"(No IN ({checkedNo.Select(s => $"'{s}'").JoinToString(",")}) OR Selected = 1)";
             if (isP05)
             {
                 this.gridIconEditOperation.Location = new System.Drawing.Point(-30, 3);
@@ -598,17 +597,17 @@ namespace Sci.Production.IE
             }
             #endregion
 
-            #region 檢查No是否完整
-            List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
+            //#region 檢查No是否完整
+            //List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
 
-            var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
-            if (listLoseNo.Any())
-            {
-                MyUtility.Msg.WarningBox($@"The following No is missing.
-                {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
-                return;
-            }
-            #endregion
+            //var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
+            //if (listLoseNo.Any())
+            //{
+            //    MyUtility.Msg.WarningBox($@"The following No is missing.
+            //    {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+            //    return;
+            //}
+            //#endregion
 
             if (this.IsP05)
             {
@@ -693,7 +692,7 @@ namespace Sci.Production.IE
             var groupTimeStudy_DetailUkeyNo = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                                                 .GroupBy(s => new
                                                 {
-                                                    TimeStudy_DetailUkey = s["TimeStudyDetailUkey"].ToString(),
+                                                    OperationID = s["OperationID"].ToString(),
                                                     No = s["No"].ToString(),
                                                 });
 

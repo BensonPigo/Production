@@ -1319,7 +1319,15 @@ group by almd.No
                         sheet.Cells[norow, 5] = string.Format("=SUM(E{0}:E{1})", idx_s, idx_e);
 
                         var operatorList = this.rightDataTable.AsEnumerable().Where(row => row["No"].ToString() == MyUtility.Convert.GetString(nodr["No"])).ToList();
-                        sheet.Cells[norow, 10] = operatorList[0]["EmployeeID"].ToString() + "　" + operatorList[0]["EmployeeName"].ToString();
+
+                        if (operatorList.Count > 0)
+                        {
+                            sheet.Cells[norow, 10] = MyUtility.Convert.GetString(operatorList[0]["EmployeeID"]) + "　" + MyUtility.Convert.GetString(operatorList[0]["EmployeeName"]);
+                        }
+                        else
+                        {
+                            sheet.Cells[norow, 10] = string.Empty;
+                        }
 
                         // S字型單測累計兩次要換邊 (LRRLLRRLLR)
                         if (this.display.StartsWith("S"))
