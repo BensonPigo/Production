@@ -1,7 +1,7 @@
 ﻿-- =============================================
 -- Description:	Import BI Table P_ProdEffAnalysis
 -- =============================================
-Create PROCEDURE [dbo].[P_Import_ProdEffAnalysis]
+CREATE PROCEDURE [dbo].[P_Import_ProdEffAnalysis]
 	@StartDate varchar(50),
 	@EndDate varchar(50)	
 AS
@@ -49,7 +49,7 @@ o.SeasonID
 ,o.Category
 ,o.CdCodeID 
 ,[CPU] = o.CPU
-,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.TMS/1400,0),3)) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.TMS/1400,3))
+,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),iif(at.ProductionUnit = 'QTY',4,3))) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,iif(at.ProductionUnit = 'QTY',4,3)))
 ,CPURate = o.CPUFactor * o.CPU  
 ,o.BuyerDelivery
 ,o.SCIDelivery
@@ -126,9 +126,9 @@ a.ArtworkTypeID
     , TotalManHour = ROUND( ActManPower * WorkHour, 2)
     , TotalCPUOut = ROUND(IIF(Category='M',MockupCPU*MockupCPUFactor, CPU*CPUFactor*Rate)*QAQty,3)
 	, TotalArtwrokCPUOut = (
-		case when Category = 'M' then round(ArtworkCPU*MockupCPUFactor * QAQty,3)
-		when IsTtlTMS = 1 and ArtworkTypeID = 'SEWING' then Round(a.ArtworkCPU*a.CPUFactor*a.Rate * QAQty,3)
-		else  round(ArtworkCPU*CPUFactor*Rate * QAQty, 3)
+		case when Category = 'M' then round(ArtworkCPU*MockupCPUFactor * QAQty, iif([RS] = 'AMT' ,4,3))
+		when IsTtlTMS = 1 and ArtworkTypeID = 'SEWING' then Round(a.ArtworkCPU*a.CPUFactor*a.Rate * QAQty,iif([RS] = 'AMT' ,4,3))
+		else  round(ArtworkCPU*CPUFactor*Rate * QAQty, iif([RS] = 'AMT' ,4,3))
 		end
 	)
     , a.StyleDesc
@@ -203,11 +203,74 @@ ProgramID
 										and t2.FactoryID = t.FactoryID)
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end),'-')
-into #tmpMain
+into #tmp2
 from #tmpz 
 Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID
 
+
+select * 
+into #tmpMain
+from (
+	select * 
+	from (
+	select OutputDate
+	,IsTtlTMS
+	,[ArtworkType] = 'TTL AT (CPU)'
+	,ProgramID
+		, StyleID
+		, FtyZone
+		, FactoryID
+		, BrandID
+		, CDCodeNew
+		, ProductType
+		, FabricType
+		, Lining
+		, Gender
+		, Construction
+		, StyleDesc
+		, SeasonID
+		, [Total Qty]
+		, [Total Artwork CPU]
+		, [Total CPU]
+		, [Total ManHours]
+		, [PPH]
+		, [EFF%]
+		, [Remark] 
+		, row = ROW_NUMBER() over(partition by OutputDate ,IsTtlTMS, ProgramID,StyleID,FtyZone,FactoryID,BrandID, CDCodeNew, ProductType,FabricType, Lining, Gender, Construction, StyleDesc, SeasonID order by isnull([Total Artwork CPU],0) desc)
+	from #tmp2 
+	where [ArtworkType] like '%AT (HAND)%' or [ArtworkType] like '%AT (MACHINE)%'
+	) a where [row] = 1
+
+union all
+
+select OutputDate ,
+IsTtlTMS,
+[ArtworkType], 
+ProgramID
+    , StyleID
+    , FtyZone
+    , FactoryID
+    , BrandID
+    , CDCodeNew
+    , ProductType
+    , FabricType
+    , Lining
+    , Gender
+    , Construction
+    , StyleDesc
+    , SeasonID
+    , [Total Qty]
+	, [Total Artwork CPU]
+	, [Total CPU]
+    , [Total ManHours]
+    , [PPH]
+    , [EFF%]
+    , [Remark] 
+	, row = iif([ArtworkType] like '%AT (HAND)%' or [ArtworkType] like '%AT (MACHINE)%', ROW_NUMBER() over(partition by OutputDate ,IsTtlTMS, ProgramID,StyleID,FtyZone,FactoryID,BrandID, CDCodeNew, ProductType,FabricType, Lining, Gender, Construction, StyleDesc, SeasonID order by isnull([Total Artwork CPU],0)),1)
+from #tmp2 
+where [ArtworkType] not like '%AT (HAND)%' 
+and [ArtworkType] not like '%AT (MACHINE)%'
+) a
 
 delete t
 from P_ProdEffAnalysis t
@@ -271,7 +334,7 @@ end
 
 drop table #tmpMain
 drop table #tmp_MaxOutputDate,#stmp,#tmpz
+drop table #tmp2
 
 
 end
-GO
