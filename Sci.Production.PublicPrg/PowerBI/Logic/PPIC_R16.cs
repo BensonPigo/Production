@@ -86,7 +86,7 @@ SELECT
 	,o.CustPONo
 	,o.StyleID
 	,oq.BuyerDelivery
-	,oq.Seq
+	,[Seq] = ISNULL(oq.Seq,'')
 	,oq.ShipmodeID
     ,[Dest] = c.Alias
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk' 
