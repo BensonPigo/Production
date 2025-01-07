@@ -1912,7 +1912,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         /// <param name="index">index</param>
         protected override void OnDetailGridInsert(int index = 0)
         {
-            DataTable copyOriDataTable = ((DataTable)this.detailgridbs.DataSource).Copy();
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            DataView dataView1 = new DataView(dt);
+            dataView1.Sort = "No ASC";
+            this.detailgridbs.DataSource = dataView1.ToTable();
+
+            DataTable copyOriDataTable = dataView1.ToTable();
             DataRow copyDR;
             DataRow seleceted_dataRow = copyOriDataTable.AsEnumerable().FirstOrDefault(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(x["Selected"]) == true);
 
