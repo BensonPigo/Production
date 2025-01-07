@@ -672,7 +672,7 @@ namespace Sci.Production.IE
                 dr["SewerDiffPercentage"] = MyUtility.Convert.GetDecimal(dr["UpdSewerDiffPercentage"]) / 100;
             }
 
-            foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted &&  s["PPA"].ToString() != "C").ToList())
+            foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted && s["PPA"].ToString() != "C").ToList())
             {
                 this.dtAutomatedLineMapping_Detail.Rows.Remove(item);
             }

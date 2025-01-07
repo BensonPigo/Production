@@ -2059,11 +2059,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 dataView.Sort = "No ASC";
                 dataTableRight = dataView.ToTable();
 
-                if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
-                {
-                    DataColumn newNoColumn = dataTableRight.Columns["No"];
-                    dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
-                }
+                //if (primaryKeyColumns.Length == 1 && primaryKeyColumns[0].ColumnName == "No")
+                //{
+                //    DataColumn newNoColumn = dataTableRight.Columns["No"];
+                //    dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
+                //}
 
                 this.gridLineMappingRight.DataSource = dataTableRight;
 
