@@ -78,7 +78,7 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false);
         }
 
         private void Detailgrid_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
@@ -288,6 +288,37 @@ namespace Sci.Production.IE
             order by SewingSeq,sort
             ";
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            // 新增一筆時 SEQ 從最大往上增加
+            if (e.Details != null)
+            {
+                DataColumn idColumn = new DataColumn("IdetityKey", typeof(int));
+                idColumn.AutoIncrement = true;       // 啟用自動編號
+                idColumn.AutoIncrementSeed = 1;      // 起始值
+                idColumn.AutoIncrementStep = 1;      // 增量
+                idColumn.AllowDBNull = false;
+                e.Details.Columns.Add(idColumn);
+
+                e.Details.Columns.Add("DesignateSeqIdetityKey", typeof(int));
+
+                foreach (DataRow row in e.Details.Rows)
+                {
+                    row["IdetityKey"] = row.Table.Rows.IndexOf(row) + 1;
+                }
+
+                e.Details.Columns["IdetityKey"].Unique = true;
+
+                foreach (DataRow row in e.Details.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["DesignateSeq"])))
+                {
+                    this.MappingDesignateSeqSewingSeq(row);
+                }
+            }
+
+            return base.OnRenewDataDetailPost(e);
         }
 
         /// <summary>
@@ -1319,7 +1350,6 @@ and Name = @PPA
                 {
                     if (columnName == "SewingSeq")
                     {
-                        oldValue = MyUtility.Convert.GetString(dr[columnName]);
                         if (oldValue == string.Empty) // 原本就是空的, 點了不要重排
                         {
                             return;
@@ -1327,7 +1357,7 @@ and Name = @PPA
 
                         dr[columnName] = string.Empty;
                         dr.EndEdit();
-                        this.UpdateRowIndexBasedOnSewingSeqAndSeq(); // 從有值 → 清空 SewingSeq
+                        this.UpdateRowIndexBasedOnSewingSeqAndSeq(oldValue); // 從有值 → 清空 SewingSeq
                     }
 
                     return;
@@ -1340,12 +1370,13 @@ and Name = @PPA
 
                     // 左邊補 0 至 4 碼
                     dr[columnName] = sewingSeq.ToString().PadLeft(4, '0');
-                    this.UpdateRowIndexBasedOnSewingSeqAndSeq(); // 手動輸入Sew Seq 處理完重複後
+                    this.UpdateRowIndexBasedOnSewingSeqAndSeq(oldValue); // 手動輸入Sew Seq 處理完重複後
                 }
                 else
                 {
                     // 左邊補 0 至 4 碼
                     dr[columnName] = e.FormattedValue.ToString().PadLeft(4, '0');
+                    this.MappingDesignateSeqSewingSeq(dr);
                 }
 
                 dr.EndEdit();
@@ -1353,6 +1384,13 @@ and Name = @PPA
 
             return setting;
         }
+
+        private void MappingDesignateSeqSewingSeq(DataRow drDesignateSeq)
+        {
+            var matchingRow = this.DetailDatas.FirstOrDefault(r => r["SewingSeq"].EqualString(drDesignateSeq["DesignateSeq"]));
+            drDesignateSeq["DesignateSeqIdetityKey"] = matchingRow != null ? matchingRow["IdetityKey"] : DBNull.Value;
+        }
+
 
         private DataGridViewGeneratorCheckBoxColumnSettings Col_IsNonSewingLine()
         {
@@ -2904,50 +2942,6 @@ and s.BrandID = @brandid";
             this.ReFillSewingSeq(); // 移除一筆表身後重編 Sewing Seq
         }
 
-        private DataTable dtDetailBeforeDrag;
-        private List<DataGridViewRow> viewRows;
-
-        private void DetailGridBeforeRowDragDo(DataRow dr)
-        {
-            this.dtDetailBeforeDrag = dr.Table.Copy();
-            this.viewRows = new List<DataGridViewRow>();
-            string nowDesignateSeq = MyUtility.Convert.GetString(dr["DesignateSeq"]);
-
-            foreach (DataGridViewRow i in this.detailgrid.SelectedRows)
-            {
-                this.viewRows.Add(i);
-                string selectSSValue = Convert.ToString(this.detailgrid.Rows[i.Index].Cells["SewingSeq"].Value);
-                string selectDSValue = Convert.ToString(this.detailgrid.Rows[i.Index].Cells["DesignateSeq"].Value);
-
-                // string selectSSValue = (string)this.detailgrid.Rows[i.Index].Cells["SewingSeq"].Value; // 之前資料
-                // string selectDSValue = (string)this.detailgrid.Rows[i.Index].Cells["DesignateSeq"].Value; // 之前資料
-                foreach (DataRow row in this.dtDetailBeforeDrag.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).ToList())
-                {
-                    if ((MyUtility.Convert.GetString(row["DesignateSeq"]) == selectSSValue) ||
-                        (MyUtility.Convert.GetString(row["DesignateSeq"]) == string.Empty && (MyUtility.Convert.GetString(dr["DesignateSeq"]) == MyUtility.Convert.GetString(row["SewingSeq"]))))
-                    {
-                        int index = row.Table.Rows.IndexOf(row);
-
-                        // 確保索引在合理範圍內
-                        if (index >= 0 && index < this.detailgrid.Rows.Count)
-                        {
-                            this.detailgrid.Rows[index].Cells["DesignateSeq"].Value = string.Empty;
-                            this.detailgrid.Rows[index].DefaultCellStyle.BackColor = Color.White;
-                        }
-                    }
-                }
-            }
-
-            if (dr.RowState != DataRowState.Deleted)
-            {
-                int iRow = dr.Table.Rows.IndexOf(dr);
-                if (iRow >= 0 && iRow < this.detailgrid.Rows.Count)
-                {
-                    this.detailgrid.Rows[iRow].Cells["DesignateSeq"].Value = string.Empty;
-                }
-            }
-        }
-
         private void DetailGridAfterRowDragDo(DataRow dr)
         {
             int sortIndex = 1;
@@ -3001,7 +2995,8 @@ and s.BrandID = @brandid";
         /// <summary>
         /// 依據 SewingSeq, Seq 改變資料列的Index
         /// </summary>
-        protected void UpdateRowIndexBasedOnSewingSeqAndSeq()
+        /// <param name="oldSewingSeq">oldSewingSeq</param>
+        protected void UpdateRowIndexBasedOnSewingSeqAndSeq(string oldSewingSeq)
         {
             int targetIndex = -1;
             try
@@ -3042,8 +3037,7 @@ and s.BrandID = @brandid";
                             beforeRow = row;
                         }
 
-                        if (MyUtility.Convert.GetInt(beforeRow["SewingSeq"]) == targetSewingSeq &&
-                            MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
+                        if (MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
                         {
                             targetIndex = dt.Rows.IndexOf(row);
                             if (beforeRow == row)
@@ -3057,7 +3051,7 @@ and s.BrandID = @brandid";
                         beforeRow = row;
                     }
 
-                    if (targetIndex > sourceIndex)
+                    if (targetIndex > sourceIndex && MyUtility.Check.Empty(oldSewingSeq))
                     {
                         targetIndex--;
                     }
@@ -3096,6 +3090,12 @@ and s.BrandID = @brandid";
                 row["SewingSeq"] = sewingSeq.ToString().PadLeft(4, '0');
                 sewingSeq++;
             }
+
+            // 對應DesignateSeq 要根據DesignateSeqIdetityKey透過IdetityKey重新抓取新的DesignateSeq
+            foreach (DataRow row in this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["DesignateSeq"])))
+            {
+                row["DesignateSeq"] = this.GetDesignateSeq(row["DesignateSeqIdetityKey"].ToString());
+            }
         }
 
         /// <summary>
@@ -3120,7 +3120,7 @@ and s.BrandID = @brandid";
                 dr["SewingSeq"] = string.Empty;
             }
 
-            this.UpdateRowIndexBasedOnSewingSeqAndSeq(); // 欄位編輯後自動帶入 SewSeq 並重新排序. 欄位: OperationID , IsNonSewingLine
+            this.UpdateRowIndexBasedOnSewingSeqAndSeq(dr["SewingSeq"].ToString()); // 欄位編輯後自動帶入 SewSeq 並重新排序. 欄位: OperationID , IsNonSewingLine
         }
 
         /// <summary>
@@ -3286,6 +3286,12 @@ and s.BrandID = @brandid";
             }
 
             this.FillSewingSeqAfterCopy();
+        }
+
+        private string GetDesignateSeq(string designateSeqIdetityKey)
+        {
+            var matchingRow = this.DetailDatas.FirstOrDefault(r => r["IdetityKey"].ToString() == designateSeqIdetityKey);
+            return matchingRow != null ? matchingRow["SewingSeq"].ToString() : string.Empty;
         }
     }
 }
