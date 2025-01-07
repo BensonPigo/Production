@@ -661,11 +661,11 @@ namespace Sci.Production.IE
                 this.dtAutomatedLineMapping_DetailCopy.Rows.Remove(needRemoveRow);
             }
 
-            // 將selected都改成false
-            foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
-            {
-                needCancelCheck["Selected"] = false;
-            }
+            //// 將selected都改成false
+            //foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
+            //{
+            //    needCancelCheck["Selected"] = false;
+            //}
 
             foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted &&  s["PPA"].ToString() != "C").ToList())
             {
