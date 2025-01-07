@@ -547,7 +547,7 @@ namespace Sci.Production.IE
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
                     SumDivSewer = groupItem.Sum(s => this.GetDecimalValue(s["UpdDivSewer"], s["DivSewer"])),
-                    SumSewerDiffPercentage = groupItem.Sum(s => GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
                     SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
@@ -634,7 +634,7 @@ namespace Sci.Production.IE
                     {
                         if (groupItem.OperationId == needUpdRow["OperationId"].ToString() && groupItem.SumSewerDiff == 100)
                         {
-                            needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
+                            needUpdRow["SewerDiffPercentageDesc"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                             needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                         }
                     }
@@ -661,11 +661,16 @@ namespace Sci.Production.IE
                 this.dtAutomatedLineMapping_DetailCopy.Rows.Remove(needRemoveRow);
             }
 
-            //// 將selected都改成false
-            //foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
-            //{
-            //    needCancelCheck["Selected"] = false;
-            //}
+            // 將selected都改成false
+            // foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
+            // {
+            //     //needCancelCheck["Selected"] = false;
+            // }
+            foreach (var dr in this.dtAutomatedLineMapping_DetailCopy.AsEnumerable().Where(x => MyUtility.Convert.GetBool(x["Selected"]) && !MyUtility.Check.Empty(x["UpdSewerDiffPercentage"])))
+            {
+                dr["SewerDiffPercentageDesc"] = dr["UpdSewerDiffPercentage"];
+                dr["SewerDiffPercentage"] = MyUtility.Convert.GetDecimal(dr["UpdSewerDiffPercentage"]) / 100;
+            }
 
             foreach (var item in this.dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted &&  s["PPA"].ToString() != "C").ToList())
             {
