@@ -286,6 +286,7 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
     <Compile Include="PowerBI\Logic\Planning_P08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R04.cs" />

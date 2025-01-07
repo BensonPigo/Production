@@ -5,9 +5,11 @@ using Sci.Production.Prg.PowerBI.DataAccess;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Win.Tools;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -236,58 +238,72 @@ ORDER BY [Group], [SEQ], [NAME]";
             List<ExecutedList> executedListEnd = new List<ExecutedList>();
             List<ExecutedList> executedListException = new List<ExecutedList>();
             List<ExecutedList> executedListGroupLevelError = new List<ExecutedList>();
-
+            var semaphore = new SemaphoreSlim(8); // 全局共享, 限制同時執行 8 筆
             double timeout = this.GetTimeout();
-            var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout));
             var results = executedList
                 .GroupBy(x => x.Group)
                 .AsParallel()
-                .AsOrdered()
                 .Select(item =>
                 {
-                    List<ExecutedList> executedListDetail = new List<ExecutedList>();
-                    ExecutedList currExecuted = new ExecutedList();
-                    try
+                    var executedListDetail = new ConcurrentBag<ExecutedList>();
+                    using (var groupCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout * 0.8)))
                     {
-                        var results_detail = item
-                            .OrderBy(x => x.SEQ)
-                            .AsParallel()
-                            .WithCancellation(cancellationTokenSource.Token)
-                            .AsSequential()
-                            .Select(detail =>
-                            {
-                                currExecuted = detail;
-                                try
-                                {
-                                    ExecutedList detailPararllelResult = this.ExecuteSingle(detail);
-                                    executedListDetail.Add(detailPararllelResult);
-                                    return detailPararllelResult;
-                                }
-                                catch (Exception ex)
-                                {
-                                    detail.Success = false;
-                                    detail.ErrorMsg = ex.Message;
-                                    executedListException.Add(detail);
-                                    return detail;
-                                }
-                            })
-                            .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
-                            .ToList();
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex.GetType().FullName == "System.OperationCanceledException")
+                        try
                         {
-                            // 逾時的訊息
-                            currExecuted.ErrorMsg = "GroupLevel_Timeout,Time out cancel";
-                        }
-                        else
-                        {
-                            // 其他錯誤的訊息
-                            currExecuted.ErrorMsg = "GroupLevel_Other," + ex.Message;
-                        }
+                            var results_detail = item
+                                .OrderBy(x => x.SEQ)
+                                .AsParallel()
+                                .WithCancellation(groupCancellationTokenSource.Token)
+                                .AsSequential()
+                                .Select(detail =>
+                                {
+                                    this.WriteTranslog(detail.ClassName, "begin to wait");
+                                    semaphore.Wait(); // 等待取得執行許可
+                                    try
+                                    {
+                                        this.WriteTranslog(detail.ClassName, "start");
+                                        ExecutedList detailResult = this.ExecuteSingle(detail);
+                                        this.WriteTranslog(detail.ClassName, "end");
+                                        lock (executedListDetail)
+                                        {
+                                            executedListDetail.Add(detailResult);
+                                        }
+                                        return detailResult;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        this.WriteTranslog(detail.ClassName, "error " + ex.Message);
+                                        detail.Success = false;
+                                        detail.ErrorMsg = ex.Message;
+                                        lock (executedListException)
+                                        {
+                                            executedListException.Add(detail);
+                                        }
 
-                        executedListGroupLevelError.Add(currExecuted);
+                                        return detail;
+                                    }
+                                    finally
+                                    {
+                                        semaphore.Release(); // 釋放執行許可
+                                    }
+                                })
+                                .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
+                                .ToList();
+                        }
+                        catch (OperationCanceledException)
+                        {
+                            executedListGroupLevelError.Add(new ExecutedList
+                            {
+                                ErrorMsg = "GroupLevel_Timeout, Time out cancel",
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            executedListGroupLevelError.Add(new ExecutedList
+                            {
+                                ErrorMsg = "GroupLevel_Other, " + ex.Message,
+                            });
+                        }
                     }
 
                     return executedListDetail;
@@ -628,6 +644,26 @@ BEGIN
         VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
 END
 ";
+        }
+
+        private void WriteTranslog(string tableName, string description)
+        {
+            string functionName = "PowerBI-" + tableName;
+            string nowDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss");
+
+            List<SqlParameter> sqlParameter = new List<SqlParameter>() {
+                new SqlParameter("@functionName", functionName),
+                new SqlParameter("@description", description),
+                new SqlParameter("@startTime", nowDate),
+                new SqlParameter("@endTime", nowDate),
+            };
+
+            string sqlCmd =
+                $@"
+insert into TransLog([FunctionName], [Description], [StartTime], [EndTime])
+values(@functionName, @description, @startTime, @endTime)
+";
+            DualResult result = DBProxy.Current.Execute("Production", sqlCmd, sqlParameter);
         }
     }
 }

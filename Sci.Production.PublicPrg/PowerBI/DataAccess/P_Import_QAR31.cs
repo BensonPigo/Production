@@ -161,11 +161,19 @@ and exists(
 	and f.id = t.FactoryID
 )
 
-update b
-	set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.id = 'P_QA_R31'
+if exists (select 1 from BITableInfo b where b.id = 'P_QA_R31')
+begin
+    update b
+        set b.TransferDate = getdate()
+            , b.IS_Trans = 1
+    from BITableInfo b
+    where b.id = 'P_QA_R31'
+end
+else 
+begin
+    insert into BITableInfo(Id, TransferDate, IS_Trans)
+    values('P_QA_R31', getdate(), 1)
+end
 ";
                 finalResult = new Base_ViewModel()
                 {
