@@ -383,6 +383,9 @@ select distinct [KPIGroup] = f.KPICode
 			when HaulingScanTime.val is null 
 					and PackingAuditScanTime.val is null 
 					and M360MDScanTime.val is null
+					and CTNHangerPackTime.val is null
+					and CTNJokerTagTime.val is null
+					and CTNHeatSealTime.val is null
 					and pld.ScanEditDate  is null 
 					and pld.TransferDate is null 
 					then 'Fty'
@@ -390,20 +393,74 @@ select distinct [KPIGroup] = f.KPICode
 				((ClogReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
 				and ClogReturnTime.val > isnull(M360MDScanTime.val, '19710101') 
 				and ClogReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
-				and ClogReturnTime.val > isnull(HaulingScanTime.val, '19710101')) 
+				and ClogReturnTime.val > isnull(HaulingScanTime.val, '19710101')
+				and ClogReturnTime.val > isnull(CTNHangerPackTime.val, '19710101')
+				and ClogReturnTime.val > isnull(CTNJokerTagTime.val, '19710101')
+				and ClogReturnTime.val > isnull(CTNHeatSealTime.val, '19710101')) 
 				or 
 				(CFAReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
 				and CFAReturnTime.val > isnull(M360MDScanTime.val, '19710101')
 				and CFAReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
-				and CFAReturnTime.val > isnull(HaulingScanTime.val, '19710101')))
+				and CFAReturnTime.val > isnull(HaulingScanTime.val, '19710101')
+				and CFAReturnTime.val > isnull(CTNHangerPackTime.val, '19710101')
+				and CFAReturnTime.val > isnull(CTNJokerTagTime.val, '19710101')
+				and CFAReturnTime.val > isnull(CTNHeatSealTime.val, '19710101')))
 					then 'Fty'
-			when pld.TransferDate is null and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+			when pld.TransferDate is null 
+					and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 					then 'Packing Audit'
-			when pld.TransferDate is null and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+			when pld.TransferDate is null 
+					and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 					then 'Hauling'
-			when pld.TransferDate is null and M360MDScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and M360MDScanTime.val > isnull(HaulingScanTime.val, '19710101') and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+			when pld.TransferDate is null 
+					and M360MDScanTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(HaulingScanTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
 					then 'M360 MD'
-			when pld.TransferDate is null and pld.ScanEditDate > isnull(PackingAuditScanTime.val, '19710101') and pld.ScanEditDate > isnull(HaulingScanTime.val, '19710101') and pld.ScanEditDate > isnull(M360MDScanTime.val, '19710101') 
+			when pld.TransferDate is null 
+					and CTNHangerPackTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(HaulingScanTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Hanger Pack'
+			when pld.TransferDate is null 
+					and CTNJokerTagTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and CTNJokerTagTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNJokerTagTime.val > isnull(HaulingScanTime.val, '19710101') 
+					and CTNJokerTagTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Joker Tag'
+			when pld.TransferDate is null 
+					and CTNHeatSealTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(HaulingScanTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Heat Seal'
+			when pld.TransferDate is null 
+					and pld.ScanEditDate > isnull(PackingAuditScanTime.val, '19710101') 
+					and pld.ScanEditDate > isnull(HaulingScanTime.val, '19710101') 
+					and pld.ScanEditDate > isnull(M360MDScanTime.val, '19710101') 
+					and pld.ScanEditDate > isnull(CTNHangerPackTime.val, '19710101') 
+					and pld.ScanEditDate > isnull(CTNJokerTagTime.val, '19710101') 
+					and pld.ScanEditDate > isnull(CTNHeatSealTime.val, '19710101') 
 					then 'Scan & Pack'
 			when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
 					then 'Fty transit to CLOG'
@@ -418,17 +475,28 @@ select distinct [KPIGroup] = f.KPICode
 		else '' end 
 	, [HaulingScanTime] = HaulingScanTime.val
 	, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
-	, [HaulingReturn] = IIF(HauledReturn.val = 'Return', 'Yes', '')
+	, [HaulingStatus] = CASE    WHEN HauledReturn.val = 'Return' THEN 'Return'
+								WHEN HauledReturn.val = 'Haul 'THEN 'Hauled'
+							ELSE HauledReturn.val
+						END
 	, [DryRoomReceiveTime] = DryRoomReceiveTime.val
 	, [DryRoomTransferTime] = DryRoomTransferTime.val 
 	, [MDScanTime] = MDScan.val
 	, [MDFailQty] = ISNULL(MDFailQty.val, 0)
 	, [PackingAuditScanTime] = PackingAuditScanTime.val
 	, [PackingAuditFailQty] = PackingAuditFailQty.val
-	, [PackingAuditReturn] = IIF(PackingAuditReturn.val = 'Return', 'Yes', '')
+	, [PackingAuditStatus] = CASE 　WHEN PackingAuditReturn.val = 'Return' THEN 'Return'
+									WHEN PackingAuditReturn.val = 'Pass 'THEN 'Pass'
+									WHEN PackingAuditReturn.val = 'Hold 'THEN 'Hold'
+								ELSE PackingAuditReturn.val
+							END
 	, [M360MDScanTime] = M360MDScanTime.val
 	, [M360MDFailQty] = M360MDFailQty.val
-	, [M360MDReturn] = IIF(M360MDReturn.val = 'Return', 'Yes', '')
+	, [M360MDStatus] =	CASE 　 WHEN M360MDReturn.val = 'Return'THEN 'Return'
+								WHEN M360MDReturn.val = 'Pass 'THEN 'Pass'
+								WHEN M360MDReturn.val = 'Hold 'THEN 'Hold'
+							ELSE M360MDReturn.val
+						END
 	, [HangerPackScanTime] = CTNHangerPackTime.val
 	, [HangerPackStatus] = CASE WHEN pld.HangerPackStatus = 'Return'THEN 'Return'
 									WHEN pld.HangerPackStatus = 'Pass 'THEN 'Done'
