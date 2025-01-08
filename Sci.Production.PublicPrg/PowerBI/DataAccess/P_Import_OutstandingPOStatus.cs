@@ -82,7 +82,7 @@ update p
 from P_OutstandingPOStatus p
 inner join #tmp t on t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup
 
-if exists (select 1 from BITableInfo b where b.id = 'P_CartonScanRate')
+if exists (select 1 from BITableInfo b where b.id = 'P_OutstandingPOStatus')
 begin
 	update b
 		set b.TransferDate = getdate()

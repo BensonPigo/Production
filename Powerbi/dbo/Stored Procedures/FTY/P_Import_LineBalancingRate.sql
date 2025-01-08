@@ -224,12 +224,13 @@ BEGIN
 
 	if exists(select 1 from BITableInfo where Id = 'P_LineBalancingRate')
 	begin
-		update BITableInfo set TransferDate = @SDate
+		update BITableInfo 
+			set TransferDate = GETDATE()
 		where Id = 'P_LineBalancingRate'
 	end
 	else
 	begin
-		insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineBalancingRate', @SDate, 0)
+		insert into BITableInfo(Id, TransferDate) values('P_LineBalancingRate', GETDATE())
 	end
 
 
