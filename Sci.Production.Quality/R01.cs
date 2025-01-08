@@ -366,6 +366,9 @@ select
 	,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
 	,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
     ,[CutTime] = Qty.CutTime
+    ,[MCHandle_id] = COALESCE(pass1_MCHandle.id, TPEPass1_MCHandle.id)
+    ,[MCHandle_name] = COALESCE(pass1_MCHandle.name, TPEPass1_MCHandle.name)
+    ,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -380,10 +383,12 @@ cross apply(
     group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
 inner join (
-    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID,MCHandle
     from dbo.Orders o WITH (NOLOCK)  
     {oWhere}
 ) O on O.id = F.POID
+left join pass1 pass1_MCHandle with(nolock) on pass1_MCHandle.id = O.MCHandle
+left join TPEPass1 TPEPass1_MCHandle with(nolock) on TPEPass1_MCHandle.id = O.MCHandle
 left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
@@ -699,6 +704,7 @@ select
 	,tf.RESULT4
 	,tf.CFInspector
     ,tf.LocalMR
+    ,[MCHandle] = tf.MCHandle_id + '-' + tf.MCHandle_name + '#' + tf.MCHandle_extno
     ,tf.[OrderType]
 from #tmpFinal tf
 ORDER BY POID,SEQ
