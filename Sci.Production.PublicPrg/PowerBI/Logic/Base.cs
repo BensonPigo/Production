@@ -25,7 +25,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SewingLineScheduleBySP,
             P_InlineDefectSummary,
             P_CuttingScheduleOutputList,
-            P_QAR31,
+            P_QA_R31,
             P_QA_CFAMasterList,
             P_CFAMasterListRelatedrate,
             P_CartonScanRate,
@@ -66,6 +66,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ReplacementReport,
             P_DailyAccuCPULoading,
             P_SewingDailyOutputStatusRecord,
+            P_LineBalancingRate,
         }
 
         /// <summary>
@@ -153,9 +154,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
 SELECT i.*
 	, [Group] = ISNULL(g.[GroupID], 0)
 	, [SEQ] = ISNULL(g.[SEQ], 1)
+    , b.TransferDate
 FROM BITaskInfo i
 LEFt JOIN BITaskGroup g ON i.[Name] = g.[Name]
+LEFT JOIN BITableInfo b ON i.[Name] = b.[Id]
 WHERE i.[Junk] = 0
+AND (b.TransferDate >= GETDATE() OR b.TransferDate IS NULL)
 ORDER BY [Group], [SEQ], [NAME]";
             DualResult result = DBProxy.Current.Select("PowerBI", sql, out DataTable dataTable);
             if (!result || dataTable.Rows.Count == 0)
@@ -268,6 +272,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                                         {
                                             executedListDetail.Add(detailResult);
                                         }
+
                                         return detailResult;
                                     }
                                     catch (Exception ex)
@@ -368,151 +373,7 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             if (Enum.TryParse(item.ClassName, out ListName className))
             {
-                switch (className)
-                {
-                    case ListName.P_MonthlySewingOutputSummary:
-                        result = new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SewingLineSchedule:
-                        result = new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_InlineDefectSummary:
-                        result = new P_Import_InlineDefec().P_InlineDefecBIData(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_CuttingScheduleOutputList:
-                        result = new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_QAR31:
-                        result = new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_QA_CFAMasterList:
-                        result = new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
-                        break;
-                    case ListName.P_CFAMasterListRelatedrate:
-                        result = new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SewingLineScheduleBySP:
-                        result = new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_CartonScanRate:
-                        result = new P_Import_CartonScanRate().P_CartonScanRate(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_CartonStatusTrackingList:
-                        result = new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
-                        break;
-                    case ListName.P_OutStandingHPMS:
-                        result = new P_Import_OutStandingHPMS().P_OutStandingHPMS(item.SDate);
-                        break;
-                    case ListName.P_FabricDispatchRate:
-                        result = new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
-                        break;
-                    case ListName.P_IssueFabricByCuttingTransactionList:
-                        result = new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_ProductionKitsTracking:
-                        result = new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_PPICMASTERLIST:
-                        result = new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
-                        break;
-                    case ListName.P_FabricInspReport_ReceivingTransferIn:
-                        result = new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_MtlStatusAnalisis:
-                        result = new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_BatchUpdateRecevingInfoTrackingList:
-                        result = new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SubProInsReport:
-                        result = new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SubProInsReportDailyRate:
-                        result = new P_Import_SubProInsReportDailyRate().P_SubProInsReportDailyRate(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SubProInsReportMonthlyRate:
-                        result = new P_Import_SubProInsReportMonthlyRate().P_SubProInsReportMonthlyRate(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_OustandingPO:
-                        result = new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_OutstandingPOStatus:
-                        result = new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
-                        break;
-                    case ListName.P_SubprocessWIP:
-                        result = new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
-                        break;
-                    case ListName.P_RightFirstTimeDailyReport:
-                        result = new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SDP:
-                        result = new P_Import_SDP().P_SDP(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_WIP:
-                        result = new P_Import_WIP().P_WIP(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_WBScanRate:
-                        result = new P_Import_WBScanRate().P_WBScanRate(item.SDate);
-                        break;
-                    case ListName.P_WIPBySPLine:
-                        result = new P_Import_WIPBySPLine().P_WIPBySPLine(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_CuttingBCS:
-                        result = new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_FabricStatus_And_IssueFabricTracking:
-                        result = new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
-                        break;
-                    case ListName.P_SimilarStyle:
-                        result = new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
-                        break;
-                    case ListName.P_FabricInspLabSummaryReport:
-                        result = new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_FabricInspAvgInspLTInPast7Days:
-                        result = new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_CuttingOutputStatistic:
-                        result = new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_MaterialCompletionRateByWeek:
-                        result = new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
-                        break;
-                    case ListName.P_RTLStatusByDay:
-                        result = new P_Import_RTLStatusByDay().P_RTLStatusByDay(item.SDate);
-                        break;
-                    case ListName.P_DailyRTLStatusByLineByStyle:
-                        result = new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item.SDate);
-                        break;
-                    case ListName.P_InventoryStockListReport:
-                        result = new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_RecevingInfoTrackingSummary:
-                        result = new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_MachineMasterListByDays:
-                        result = new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_ScanPackList:
-                        result = new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_MISCPurchaseOrderList:
-                        result = new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_ReplacementReport:
-                        result = new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_DailyAccuCPULoading:
-                        result = new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
-                        break;
-                    case ListName.P_SewingDailyOutputStatusRecord:
-                        result = new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
-                        break;
-                    default:
-                        // Execute all Stored Procedures
-                        result = this.ExecuteSP(item);
-                        break;
-                }
+                result = this.ExecuteByClassName(className, item);
             }
             else
             {
@@ -534,6 +395,110 @@ ORDER BY [Group], [SEQ], [NAME]";
             };
 
             return model;
+        }
+
+        private Base_ViewModel ExecuteByClassName(ListName className, ExecutedList item)
+        {
+            switch (className)
+            {
+                case ListName.P_MonthlySewingOutputSummary:
+                    return new P_Import_MonthlySewingOutputSummary().P_MonthlySewingOutputSummary(item.SDate, item.EDate);
+                case ListName.P_SewingLineSchedule:
+                    return new P_Import_SewingLineScheduleBIData().P_SewingLineScheduleBIData(item.SDate, item.EDate);
+                case ListName.P_InlineDefectSummary:
+                    return new P_Import_InlineDefec().P_InlineDefecBIData(item.SDate, item.EDate);
+                case ListName.P_CuttingScheduleOutputList:
+                    return new P_Import_CuttingScheduleOutputList().P_CuttingScheduleOutputList(item.SDate, item.EDate);
+                case ListName.P_QA_R31:
+                    return new P_Import_QAR31().P_QAR31(item.SDate, item.EDate);
+                case ListName.P_QA_CFAMasterList:
+                    return new P_Import_QA_CFAMasterList().P_QA_CFAMasterList(item.SDate);
+                case ListName.P_CFAMasterListRelatedrate:
+                    return new P_Import_CFAMasterListRelatedrate().P_CFAMasterListRelatedrate(item.SDate, item.EDate);
+                case ListName.P_SewingLineScheduleBySP:
+                    return new P_Import_SewingLineScheduleBySP().P_SewingLineScheduleBySP(item.SDate, item.EDate);
+                case ListName.P_CartonScanRate:
+                    return new P_Import_CartonScanRate().P_CartonScanRate(item.SDate, item.EDate);
+                case ListName.P_CartonStatusTrackingList:
+                    return new P_Import_CartonStatusTrackingList().P_CartonStatusTrackingList(item.SDate);
+                case ListName.P_OutStandingHPMS:
+                    return new P_Import_OutStandingHPMS().P_OutStandingHPMS(item.SDate);
+                case ListName.P_FabricDispatchRate:
+                    return new P_Import_FabricDispatchRate().P_FabricDispatchRate(item.SDate);
+                case ListName.P_IssueFabricByCuttingTransactionList:
+                    return new P_Import_IssueFabricByCuttingTransactionList().P_IssueFabricByCuttingTransactionList(item.SDate, item.EDate);
+                case ListName.P_ProductionKitsTracking:
+                    return new P_Import_ProductionKitsTracking().P_ProductionKitsTracking(item.SDate, item.EDate);
+                case ListName.P_PPICMASTERLIST:
+                    return new P_Import_PPICMasterListBIData().P_PPICMasterListBIData(item.SDate);
+                case ListName.P_FabricInspReport_ReceivingTransferIn:
+                    return new P_Import_FabricInspReportReceivingTransferIn().P_FabricInspReportReceivingTransferIn(item.SDate, item.EDate);
+                case ListName.P_MtlStatusAnalisis:
+                    return new P_Import_MtlStatusAnalisis().P_MtlStatusAnalisis(item.SDate, item.EDate);
+                case ListName.P_BatchUpdateRecevingInfoTrackingList:
+                    return new P_Import_BatchUpdateRecevingInfoTrackingList().P_BatchUpdateRecevingInfoTrackingList(item.SDate, item.EDate);
+                case ListName.P_SubProInsReport:
+                    return new P_Import_SubProInsReport().P_SubProInsReport(item.SDate, item.EDate);
+                case ListName.P_SubProInsReportDailyRate:
+                    return new P_Import_SubProInsReportDailyRate().P_SubProInsReportDailyRate(item.SDate, item.EDate);
+                case ListName.P_SubProInsReportMonthlyRate:
+                    return new P_Import_SubProInsReportMonthlyRate().P_SubProInsReportMonthlyRate(item.SDate, item.EDate);
+                case ListName.P_OustandingPO:
+                    return new P_Import_OutstandingPO().P_OutstandingPO(item.SDate, item.EDate);
+                case ListName.P_OutstandingPOStatus:
+                    return new P_Import_OutstandingPOStatus().P_OutstandingPOStatus(item.SDate);
+                case ListName.P_SubprocessWIP:
+                    return new P_Import_SubprocessWIP().P_SubprocessWIP(item.SDate);
+                case ListName.P_RightFirstTimeDailyReport:
+                    return new P_Import_RightFirstTimeDailyReport().P_RightFirstTimeDailyReport(item.SDate, item.EDate);
+                case ListName.P_SDP:
+                    return new P_Import_SDP().P_SDP(item.SDate, item.EDate);
+                case ListName.P_WIP:
+                    return new P_Import_WIP().P_WIP(item.SDate, item.EDate);
+                case ListName.P_WBScanRate:
+                    return new P_Import_WBScanRate().P_WBScanRate(item.SDate);
+                case ListName.P_WIPBySPLine:
+                    return new P_Import_WIPBySPLine().P_WIPBySPLine(item.SDate, item.EDate);
+                case ListName.P_CuttingBCS:
+                    return new P_Import_CuttingBCS().P_CuttingBCS(item.SDate, item.EDate);
+                case ListName.P_FabricStatus_And_IssueFabricTracking:
+                    return new P_Import_FabricStatusAndIssueFabricTracking().P_FabricStatusAndIssueFabricTracking(item.SDate);
+                case ListName.P_SimilarStyle:
+                    return new P_Import_SimilarStyle().P_SimilarStyle(item.SDate);
+                case ListName.P_FabricInspLabSummaryReport:
+                    return new P_Import_FabricInspLabSummaryReport().P_FabricInspLabSummaryReport(item.SDate, item.EDate);
+                case ListName.P_FabricInspAvgInspLTInPast7Days:
+                    return new P_Import_FabricInspAvgInspLTInPast7Days().P_FabricInspAvgInspLTInPast7Days(item.SDate, item.EDate);
+                case ListName.P_CuttingOutputStatistic:
+                    return new P_Import_CuttingOutputStatistic().P_CuttingOutputStatistic(item.SDate, item.EDate);
+                case ListName.P_MaterialCompletionRateByWeek:
+                    return new P_Import_MaterialCompletionRateByWeek().P_MaterialCompletionRateByWeek(item.SDate);
+                case ListName.P_RTLStatusByDay:
+                    return new P_Import_RTLStatusByDay().P_RTLStatusByDay(item.SDate);
+                case ListName.P_DailyRTLStatusByLineByStyle:
+                    return new P_Import_DailyRTLStatusByLineByStyle().P_DailyRTLStatusByLineByStyle(item.SDate);
+                case ListName.P_InventoryStockListReport:
+                    return new P_Import_InventoryStockListReport().P_InventoryStockListReport(item.SDate, item.EDate);
+                case ListName.P_RecevingInfoTrackingSummary:
+                    return new P_Import_RecevingInfoTrackingSummary().P_RecevingInfoTrackingSummary(item.SDate, item.EDate);
+                case ListName.P_MachineMasterListByDays:
+                    return new P_Import_MachineMasterListByDays().P_MachineMasterListByDays(item.SDate, item.EDate);
+                case ListName.P_ScanPackList:
+                    return new P_Import_ScanPackList().P_ScanPackListTransferIn(item.SDate, item.EDate);
+                case ListName.P_MISCPurchaseOrderList:
+                    return new P_Import_MISCPurchaseOrderList().P_MISCPurchaseOrderList(item.SDate, item.EDate);
+                case ListName.P_ReplacementReport:
+                    return new P_Import_ReplacementReport().P_ReplacementReport(item.SDate, item.EDate);
+                case ListName.P_DailyAccuCPULoading:
+                    return new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
+                case ListName.P_SewingDailyOutputStatusRecord:
+                    return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
+                case ListName.P_LineBalancingRate:
+                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate);
+                default:
+                    // Execute all Stored Procedures
+                    return this.ExecuteSP(item);
+            }
         }
 
         /// <summary>
@@ -564,6 +529,8 @@ ORDER BY [Group], [SEQ], [NAME]";
 
             string jobLogUkey = this.CallJobLogApi(jobLog);
 
+            // 取消寄信
+            /*
             if (nonSucceed)
             {
                 // Send Mail
@@ -578,6 +545,7 @@ M: {region}
 ";
                 var email = new MailTo(Env.Cfg.MailFrom, mailTo, mailCC, subject, string.Empty, content, false, true);
             }
+            */
         }
 
         /// <summary>

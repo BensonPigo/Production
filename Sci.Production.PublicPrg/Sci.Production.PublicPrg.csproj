@@ -231,6 +231,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RecevingInfoTrackingSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
