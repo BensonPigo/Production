@@ -231,6 +231,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RecevingInfoTrackingSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
@@ -286,6 +287,7 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
     <Compile Include="PowerBI\Logic\Planning_P08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R04.cs" />
