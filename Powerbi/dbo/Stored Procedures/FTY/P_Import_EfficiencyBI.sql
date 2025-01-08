@@ -74,6 +74,7 @@ select s.id
 	,[Remark] = cast('' as varchar(max))
 	,[SPFactory] = o.FactoryID
 	,[NonRevenue] = iif(o.NonRevenue = 1, 'Y', 'N')
+	,[InlineCategoryID] =  InlineCategoryID.val
 	,[Inline_Category] = cast('' as nvarchar(65))
 	,[Low_output_Reason] = cast('' as nvarchar(65))
 	,[New_Style_Repeat_style] = cast('' as varchar(20))
@@ -91,6 +92,26 @@ left join Production.dbo.OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and
 left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
 outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
+OUTER APPLY
+(
+	select val = 
+	CASE  WHEN o.Category = 'S' THEN '00005'
+		  ELSE 
+            CASE 
+                WHEN ContinuousDaysCalc.ContinuousDays > 29 THEN '00004'
+                WHEN ContinuousDaysCalc.ContinuousDays > 14 THEN '00003'
+                WHEN ContinuousDaysCalc.ContinuousDays > 3 THEN '00002'
+                ELSE '00001'
+            END
+	END
+	from Production.dbo.SewingReason sr
+	CROSS APPLY (
+    SELECT 
+        ContinuousDays = Production.dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate)
+	) ContinuousDaysCalc
+	where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'
+	
+)InlineCategoryID
 where 1=1 
 --排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
 and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
@@ -101,7 +122,7 @@ and f.Type != 'S'
 update s
 set [SewingReasonDesc]=isnull(sr.SewingReasonDesc,''),
 	[Remark] = isnull(ssd.SewingOutputRemark,''),
-	[Inline_Category]=isnull(srICReason.Inline_Category, ''),
+	[Inline_Category] = iif(s.SewingReasonIDForTypeIC = '00005', (select CONCAT(s.InlineCategoryID, '-' + SR.Description) from Production.dbo.SewingReason sr where sr.ID = s.InlineCategoryID and sr.Type='IC') , isnull(srICReason.Inline_Category, '')),
 	[Low_output_Reason]=isnull(srLOReason.Low_output_Reason, ''),
 	[ArtworkType]=isnull(apd.ArtworkType, '')
 from #tmpSewingDetail s

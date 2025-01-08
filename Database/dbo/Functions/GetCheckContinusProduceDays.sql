@@ -1,4 +1,5 @@
 ﻿
+/****** 更新時 連同MES.Production 一起更新******/
 Create FUNCTION [dbo].[GetCheckContinusProduceDays]
 (
 	@StyleUkey bigint ,
