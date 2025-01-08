@@ -251,6 +251,7 @@ namespace Sci.Production.IE
                 curRow["IsNonSewingLine"] = selectedResult["IsNonSewingLine"];
                 curRow["PPADesc"] = selectedResult["PPADesc"];
                 curRow["OperationDesc"] = selectedResult["OperationDesc"];
+                curRow["Cycle"] = selectedResult["Cycle"];
                 curRow.EndEdit();
 
                 this.MergeSameTimeStudy_DetailUkeyByNo();

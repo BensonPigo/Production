@@ -813,10 +813,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 checkItem["Selected"] = isChecked;
 
                 var listNoForSameTimeStudyDetailUkey = this.DetailDatas
-                                .Where(row => //row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
-                                              //row["TimeStudyDetailUkey"].ToString() != "0" &&
-                                              //row["No"].ToString() != checkItem["No"].ToString() &&
-                                              row["OperationID"].ToString() == checkItem["OperationID"].ToString() &&
+                                .Where(row => row["OperationID"].ToString() == checkItem["OperationID"].ToString() &&
+                                              !MyUtility.Check.Empty(row["OperationID"].ToString()) &&
                                               (bool)row["Selected"] != isChecked)
                                 .Select(s => s["No"].ToString())
                                 .ToList()
