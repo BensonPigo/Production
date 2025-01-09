@@ -166,12 +166,17 @@ AND ALMCS.Junk = 0
 
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-
-            if (e.RowIndex < 0 || e.RowIndex >= this.detailgrid.Rows.Count) return;
+            if (e.RowIndex < 0 || e.RowIndex >= this.detailgrid.Rows.Count)
+            {
+                return;
+            }
 
             // 獲取行資料
             var dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (dr == null) return;
+            if (dr == null)
+            {
+                return;
+            }
 
             if (e.ColumnIndex > 1)
             {
@@ -2117,21 +2122,27 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 return;
             }
 
+            // 一定要排序，不然GetDataRow會亂給
             DataTable dataTable = (DataTable)this.detailgridbs.DataSource;
-
+            DataView dataView1 = new DataView(dataTable);
+            dataView1.Sort = "No ASC";
+            this.detailgridbs.DataSource = dataView1.ToTable();
+            dataTable = (DataTable)this.detailgridbs.DataSource;
             DataTable dataTableRight = (DataTable)this.gridLineMappingRight.DataSource;
-
             string row = string.Empty;
-
+            string strTimeStudyDetailUkey = string.Empty;
             DataRow seleceted_dataRow = dataTable.AsEnumerable().FirstOrDefault(x => x.RowState != DataRowState.Deleted && MyUtility.Convert.GetBool(x["Selected"]) == true);
 
             if (seleceted_dataRow != null)
             {
                 row = seleceted_dataRow["No"].ToString();
+                strTimeStudyDetailUkey = seleceted_dataRow["TimeStudyDetailUkey"].ToString();
             }
             else
             {
-                row = dataTable.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).CopyToDataTable().Rows[this.detailgridbs.Position]["No"].ToString();
+                DataRow drSelect = this.detailgrid.GetDataRow(this.detailgridbs.Position);
+                row = drSelect["No"].ToString();
+                strTimeStudyDetailUkey = drSelect["TimeStudyDetailUkey"].ToString();
             }
 
             DataRow dr;
@@ -2222,12 +2233,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataView dataView = new DataView(dataTableRight);
                 dataView.Sort = "No ASC";
                 dataTableRight = dataView.ToTable();
-
-                // 確認排序後的數據一致性
-                if (dataTableRight.AsEnumerable().GroupBy(row1 => row1["No"].ToString()).Any(g => g.Count() > 1))
-                {
-                    throw new Exception("排序後的 'No' 欄位中存在重複值，無法設置主鍵。");
-                }
 
                 DataColumn newNoColumn = dataTableRight.Columns["No"];
                 dataTableRight.PrimaryKey = new DataColumn[] { newNoColumn };
@@ -2321,6 +2326,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
                         }
                     }
+
+                    dataRow.EndEdit();
                 }
 
                 foreach (DataRow rowToDelete in rowsToMainDelete)
@@ -2345,13 +2352,30 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         {
                             dataRow["No"] = iNo == 1 ? "01" : MyUtility.Convert.GetString(iNo - 1).PadLeft(2, '0');
                         }
+
+                        dataRow.EndEdit();
                     }
                 }
 
                 dr.Delete();
+
+                dataTable.AcceptChanges();
             }
 
             #endregion 刪除主表資料
+
+            foreach (DataRow dataRow in dataTable.Rows)
+            {
+                if (dataRow.RowState == DataRowState.Deleted)
+                {
+                    continue;
+                }
+
+                if (dataRow["TimeStudyDetailUkey"].ToString() == strTimeStudyDetailUkey)
+                {
+                    dataRow["TimeStudyDetailUkeyCnt"] = Convert.ToString(MyUtility.Convert.GetInt(dataRow["TimeStudyDetailUkeyCnt"]) - 1);
+                }
+            }
 
             this.gridLineMappingRight.DataSource = dataTableRight;
             this.detailgridbs.DataSource = dataTable;
@@ -2365,6 +2389,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 .Where(x => x["No"].ToString() == row)
                 .ToList();
             this.GetEstValue(list, row);
+            this.RenewData();
+
+            foreach (DataGridViewRow dr1 in this.detailgrid.Rows)
+            {
+                DataRow sourceDr = this.detailgrid.GetDataRow(dr1.Index);
+
+                for (int i = 0; i < dr1.Cells.Count; i++)
+                {
+                    if (i > 1)
+                    {
+                        dr1.Cells[i].Style.BackColor = MyUtility.Convert.GetInt(sourceDr["TimeStudyDetailUkeyCnt"]) > 1 ? Color.FromArgb(255, 255, 153) : this.detailgrid.DefaultCellStyle.BackColor;
+                    }
+                }
+            }
         }
 
         private bool ValidateAndDecrementManpower(string manpowerKey, string roleName)
