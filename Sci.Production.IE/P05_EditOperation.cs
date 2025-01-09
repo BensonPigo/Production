@@ -215,11 +215,6 @@ namespace Sci.Production.IE
                     return;
                 }
 
-                //if (this.gridEditOperation.Rows[e.RowIndex].Cells[e.ColumnIndex].Style.BackColor != Color.Pink)
-                //{
-                //    return;
-                //}
-
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
 
                 Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer", null, null, false, null, "Location,ST/MC,MC Group,Operation,Original Sewer", columndecimals: ",,,,4")
@@ -253,6 +248,29 @@ namespace Sci.Production.IE
                 curRow["OperationDesc"] = selectedResult["OperationDesc"];
                 curRow["Cycle"] = selectedResult["Cycle"];
                 curRow.EndEdit();
+
+                DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+                           .Where(x => MyUtility.Convert.GetString(x["TimeStudyDetailUkey"]) == MyUtility.Convert.GetString(selectedResult["TimeStudyDetailUkey"]))
+                           .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
+
+                int intDT_EditOperaror = dT_EditOperaror.Rows.Count;
+                int intUpd = 100 / intDT_EditOperaror;
+                int icount = 0;
+                for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
+                {
+                    if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["TimeStudyDetailUkey"].ToString() == MyUtility.Convert.GetString(selectedResult["TimeStudyDetailUkey"]))
+                    {
+                        icount++;
+                        if (icount == intDT_EditOperaror - 1)
+                        {
+                            this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * icount);
+                        }
+                        else
+                        {
+                            this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = intUpd;
+                        }
+                    }
+                }
 
                 this.MergeSameTimeStudy_DetailUkeyByNo();
             };
