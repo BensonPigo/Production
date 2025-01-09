@@ -1201,7 +1201,7 @@ from #tmp
                 return;
             }
 
-            using (P05_EditOperation p05_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource))
+            using (P05_EditOperation p05_EditOperation = new P05_EditOperation(this.detailgrid.GetTable()))
             {
                 DialogResult dialogResult = p05_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)

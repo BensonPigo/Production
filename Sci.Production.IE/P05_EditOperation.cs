@@ -216,11 +216,21 @@ namespace Sci.Production.IE
                 }
 
                 DataRow curRow = this.gridEditOperation.GetDataRow(e.RowIndex);
-
-                Win.Tools.SelectItem item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer", null, null, false, null, "Location,ST/MC,MC Group,Operation,Original Sewer", columndecimals: ",,,,4")
+                Win.Tools.SelectItem item;
+                if (this.IsP05)
                 {
-                    Width = 780,
-                };
+                    item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer,DivSewer", null, null, false, null, "Location,ST/MC,MC Group,Operation,Original Sewer,Original Div. Sewer", columndecimals: ",,,,4")
+                    {
+                        Width = 780,
+                    };
+                }
+                else
+                {
+                    item = new Win.Tools.SelectItem(this.dtSelectItemSource, "Location,MachineTypeID,MasterPlusGroup,OperationDesc,OriSewer,", null, null, false, null, "Location,ST/MC,MC Group,Operation,Original Sewer", columndecimals: ",,,,4")
+                    {
+                        Width = 780,
+                    };
+                }
 
                 DialogResult returnResult = item.ShowDialog();
                 if (returnResult == DialogResult.Cancel)
@@ -246,7 +256,18 @@ namespace Sci.Production.IE
                 curRow["IsNonSewingLine"] = selectedResult["IsNonSewingLine"];
                 curRow["PPADesc"] = selectedResult["PPADesc"];
                 curRow["OperationDesc"] = selectedResult["OperationDesc"];
-                curRow["Cycle"] = selectedResult["Cycle"];
+                if (!this.IsP05)
+                {
+                    curRow["Cycle"] = selectedResult["Cycle"];
+                }
+                else
+                {
+                    curRow["SewerDiffPercentageDesc"] = selectedResult["SewerDiffPercentageDesc"];
+                    curRow["DivSewer"] = selectedResult["DivSewer"];
+                    curRow["IsNotShownInP05"] = false;
+
+                }
+
                 curRow.EndEdit();
 
                 DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
@@ -264,10 +285,18 @@ namespace Sci.Production.IE
                         if (icount == intDT_EditOperaror - 1)
                         {
                             this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * icount);
+                            if (this.IsP05)
+                            {
+                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["DivSewer"]) * (intUpd * icount)) / 100;
+                            }
                         }
                         else
                         {
                             this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = intUpd;
+                            if (this.IsP05)
+                            {
+                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["DivSewer"]) * intUpd) / 100;
+                            }
                         }
                     }
                 }
@@ -541,7 +570,7 @@ namespace Sci.Production.IE
 
             IEnumerable<dynamic> checkDivSewerBalance;
 
-            if (!IsP05)
+            if (!this.IsP05)
             {
                 checkDivSewerBalance = needKeepRows
                 .GroupBy(s => s["TimeStudyDetailUkey"])
@@ -578,10 +607,13 @@ namespace Sci.Production.IE
 
             if (dt != null)
             {
-                var checkNo = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && MyUtility.Check.Empty(x["No"]) &&
-                                                      x["OperationDesc"].ToString().IndexOf("PACK", StringComparison.OrdinalIgnoreCase) == -1 &&
-                                                      x["OperationDesc"].ToString().IndexOf("PRESS", StringComparison.OrdinalIgnoreCase) == -1);
-                if (checkNo.Any())
+                var checkNo = dt.AsEnumerable()
+                .Where(x => x.RowState != DataRowState.Deleted) // 排除已刪除的行
+                .GroupBy(x => new { No = x["No"].ToString(), OperationCode = x["TimeStudyDetailUkey"].ToString() }) // 根據 No 和 TimeStudyDetailUkey 分組
+                .Where(g => g.Count() > 1) // 找出有多筆相同 No 和 Operation Code 的分組
+                .ToList().Count;
+
+                if (checkNo > 0)
                 {
                     MyUtility.Msg.WarningBox("This Operation already exists in the same No.!!");
                     return;
@@ -617,17 +649,17 @@ namespace Sci.Production.IE
             }
             #endregion
 
-            //#region 檢查No是否完整
-            //List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
+            #region 檢查No是否完整
+            List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
 
-            //var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
-            //if (listLoseNo.Any())
-            //{
-            //    MyUtility.Msg.WarningBox($@"The following No is missing.
-            //    {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
-            //    return;
-            //}
-            //#endregion
+            var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
+            if (listLoseNo.Any())
+            {
+                MyUtility.Msg.WarningBox($@"The following No is missing.
+                {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+                return;
+            }
+            #endregion
 
             if (this.IsP05)
             {
