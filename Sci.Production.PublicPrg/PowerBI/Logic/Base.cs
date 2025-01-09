@@ -159,7 +159,7 @@ FROM BITaskInfo i
 LEFt JOIN BITaskGroup g ON i.[Name] = g.[Name]
 LEFT JOIN BITableInfo b ON i.[Name] = b.[Id]
 WHERE i.[Junk] = 0
-AND (b.TransferDate >= GETDATE() OR b.TransferDate IS NULL)
+--AND (b.TransferDate >= GETDATE() OR b.TransferDate IS NULL)
 ORDER BY [Group], [SEQ], [NAME]";
             DualResult result = DBProxy.Current.Select("PowerBI", sql, out DataTable dataTable);
             if (!result || dataTable.Rows.Count == 0)
