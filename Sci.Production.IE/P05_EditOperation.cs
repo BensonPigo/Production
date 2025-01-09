@@ -342,7 +342,6 @@ namespace Sci.Production.IE
                 this.gridEditOperation.Columns["UpdDivSewer"].DefaultCellStyle.ForeColor = Color.Red;
             }
 
-
             this.Text = this.IsP05 ? "P05. Edit No. Operation" : "P06. Edit No. Operation";
         }
 
@@ -411,7 +410,7 @@ namespace Sci.Production.IE
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
             DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                                       .Where(x => MyUtility.Convert.GetString(x["OperationID"]) == MyUtility.Convert.GetString(selectedRow["OperationID"]))
+                                       .Where(x => MyUtility.Convert.GetString(x["TimeStudyDetailUkey"]) == MyUtility.Convert.GetString(selectedRow["TimeStudyDetailUkey"]))
                                        .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
             int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
@@ -427,7 +426,7 @@ namespace Sci.Production.IE
             int icount = 0;
             for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
             {
-                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["OperationID"].ToString() == MyUtility.Convert.GetString(selectedRow["OperationID"]))
+                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["TimeStudyDetailUkey"].ToString() == MyUtility.Convert.GetString(selectedRow["TimeStudyDetailUkey"]))
                 {
                     icount++;
                     if (icount == intDT_EditOperaror - 1)
@@ -663,10 +662,10 @@ namespace Sci.Production.IE
             }
 
             // 將selected都改成false
-            // foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
-            // {
-            //     //needCancelCheck["Selected"] = false;
-            // }
+            foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
+            {
+                needCancelCheck["Selected"] = false;
+            }
             foreach (var dr in this.dtAutomatedLineMapping_DetailCopy.AsEnumerable().Where(x => MyUtility.Convert.GetBool(x["Selected"]) && !MyUtility.Check.Empty(x["UpdSewerDiffPercentage"])))
             {
                 dr["SewerDiffPercentageDesc"] = dr["UpdSewerDiffPercentage"];

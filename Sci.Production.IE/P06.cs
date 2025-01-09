@@ -812,15 +812,25 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             {
                 checkItem["Selected"] = isChecked;
 
-                var listNoForSameTimeStudyDetailUkey = this.DetailDatas
-                                .Where(row => row["OperationID"].ToString() == checkItem["OperationID"].ToString() &&
-                                              !MyUtility.Check.Empty(row["OperationID"].ToString()) &&
-                                              (bool)row["Selected"] != isChecked)
-                                .Select(s => s["No"].ToString())
-                                .ToList()
-                                .Distinct();
+                var listNoForTimeStudyDetailUkey = this.DetailDatas
+                    .Where(row => (((row["OperationID"].ToString() == "PROCIPF00003" ||
+                                  row["OperationID"].ToString() == "PROCIPF00004") &&
+                                  row["OperationID"].ToString() == checkItem["OperationID"].ToString()) ||
+                                  (row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
+                                  Convert.ToInt64(row["TimeStudyDetailUkeyCnt"]) > 1)) &&
+                                  !MyUtility.Check.Empty(row["OperationID"].ToString()) &&
+                                  (bool)row["Selected"] != isChecked)
+                    .Select(s => s["No"].ToString())
+                    .Distinct()
+                    .ToList();
 
-                listNoSyncSelected.AddRange(listNoForSameTimeStudyDetailUkey);
+                foreach (var strNo in listNoForTimeStudyDetailUkey)
+                {
+                    if (!listNoSyncSelected.Contains(strNo))
+                    {
+                        listNoSyncSelected.Add(strNo);
+                    }
+                }
             }
 
             foreach (string syncSelectedNo in listNoSyncSelected.Distinct())
