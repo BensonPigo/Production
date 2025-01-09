@@ -73,12 +73,14 @@ namespace Sci.Production.Prg.PowerBI.FormPage
             Logic.Base biBase = new Logic.Base();
             if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
             {
-                var query = this.executedList.Where(x => x.RunOnSunday).ToList();
-                foreach (var item in query)
-                {
-                    this.executedList.Remove(item);
-                }
+                this.executedList.RemoveAll(x => x.RunOnSunday);
             }
+
+            // 執行尚未跑的
+            this.executedList = this.executedList
+                .Where(x => !x.TransferDate.HasValue
+                            || x.TransferDate.Value < DateTime.Today)
+                .ToList();
 
             biBase.ExecuteAll(this.executedList);
         }

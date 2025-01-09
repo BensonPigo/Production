@@ -95,6 +95,11 @@ namespace Sci.Production.Prg.PowerBI.Model
         public string Source { get; set; }
 
         /// <summary>
+        /// BITableInfo.TransferDate
+        /// </summary>
+        public DateTime? TransferDate { get; set; }
+
+        /// <summary>
         /// 執行清單
         /// </summary>
         public List<ExecutedList> ExecutedLists { get; set; }
