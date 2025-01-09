@@ -194,7 +194,7 @@ OUTER APPLY
 )OverDay_Check_1
 OUTER APPLY
 (
-    select top(1) s.OutputDate,s.Manpower,s.ID
+    select top(1) s.OutputDate
     from SewingOutput s WITH (NOLOCK) 
     inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
     where 
