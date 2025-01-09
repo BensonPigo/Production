@@ -1372,20 +1372,22 @@ SELECT
     ,FakeID = Seq + 'U1'
     ,ColumnN = RTRIM(ID) + ' (' + ArtworkUnit + ')'
     ,ColumnSeq = '1'
+    ,colArtworkType = ArtworkType.seq
 INTO #tmpArtworkType
 FROM ArtworkType WITH (NOLOCK)
-WHERE ArtworkUnit <> ''
+WHERE ArtworkUnit <> '' and Junk <> 1
 AND Classify IN ({whereClassify})
 
 UNION ALL
 SELECT
     ID
     ,FakeID = Seq + 'U2'
-    ,ColumnN = RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
+    ,ColumnN = ArtworkType.seq + '-' + RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
     ,ColumnSeq = '2'
+    ,colArtworkType = ArtworkType.seq
 FROM ArtworkType WITH (NOLOCK)
 OUTER APPLY (SELECT PUnit = IIF({byCPUsqlbit} = 1 AND ProductionUnit = 'TMS', 'CPU', ProductionUnit)) p
-WHERE ProductionUnit <> ''
+WHERE ProductionUnit <> '' and Junk <> 1
 AND Classify IN ({whereClassify})
 AND ID <> 'PRINTING PPU'
 
@@ -1393,10 +1395,11 @@ UNION ALL
 SELECT
     ID
     ,FakeID = Seq + 'N'
-    ,ColumnN = RTRIM(ID)
+    ,ColumnN = ArtworkType.seq + '-' + RTRIM(ID)
     ,ColumnSeq = '3'
+    ,colArtworkType = ArtworkType.seq
 FROM ArtworkType WITH (NOLOCK)
-WHERE ArtworkUnit = ''
+WHERE ArtworkUnit = '' and Junk <> 1
 AND ProductionUnit = ''
 AND Classify IN ({whereClassify})
 
@@ -1408,24 +1411,28 @@ SELECT
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
+    ,colArtworkType = ''
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
+    ,colArtworkType = ''
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'POSubCon'
     ,ColumnSeq = '998'
+    ,colArtworkType = ''
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'SubCon'
     ,ColumnSeq = '999'
+    ,colArtworkType = ''
 
 SELECT *, rno = (ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq))
 INTO #tmpSubProcess
@@ -1438,7 +1445,12 @@ SELECT
    ,rno = (ROW_NUMBER() OVER (ORDER BY a.rno))
 INTO #tmpArtworkData
 FROM (
-    SELECT *
+    SELECT 
+    ID,
+    FakeID,
+    ColumnN,
+    ColumnSeq,
+    rno
     FROM #tmpSubProcess WITH (NOLOCK)
     
     UNION ALL
@@ -1453,7 +1465,11 @@ FROM (
     SELECT
         ID = 'TTL' + ID
         ,FakeID = 'T' + FakeID
-        ,ColumnN = 'TTL_' + ColumnN
+        ,ColumnN = CASE 
+                WHEN colArtworkType IS NOT NULL AND colArtworkType <> '' 
+                THEN colArtworkType + '-' + 'TTL_' + ColumnN
+                ELSE 'TTL_' + ColumnN
+              END
         ,ColumnSeq
         ,rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000--在 TTL_TMS 999 之後
     FROM #tmpSubProcess WITH (NOLOCK)
