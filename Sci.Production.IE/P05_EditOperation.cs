@@ -529,6 +529,7 @@ namespace Sci.Production.IE
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
+                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
                     OperationId = groupItem.First()["OperationId"].ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
@@ -543,6 +544,7 @@ namespace Sci.Production.IE
                 .GroupBy(s => s["TimeStudyDetailUkey"])
                 .Select(groupItem => new
                 {
+                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
                     OperationId = groupItem.First()["OperationId"].ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     OriSewer = MyUtility.Convert.GetDecimal(groupItem.First()["OriSewer"]),
@@ -616,7 +618,7 @@ namespace Sci.Production.IE
                 {
                     foreach (var groupItem in checkDivSewerBalance)
                     {
-                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() && groupItem.SumSewerDiff == 100)
+                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.SumSewerDiff == 100)
                         {
                             needUpdRow["DivSewer"] = needUpdRow["UpdDivSewer"];
                             needUpdRow["SewerDiffPercentageDesc"] = needUpdRow["UpdSewerDiffPercentage"];
@@ -632,7 +634,7 @@ namespace Sci.Production.IE
                 {
                     foreach (var groupItem in checkDivSewerBalance)
                     {
-                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() && groupItem.SumSewerDiff == 100)
+                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.SumSewerDiff == 100)
                         {
                             needUpdRow["SewerDiffPercentageDesc"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                             needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
@@ -661,11 +663,6 @@ namespace Sci.Production.IE
                 this.dtAutomatedLineMapping_DetailCopy.Rows.Remove(needRemoveRow);
             }
 
-            // 將selected都改成false
-            foreach (var needCancelCheck in needKeepRows.Where(s => MyUtility.Convert.GetBool(s["Selected"])))
-            {
-                needCancelCheck["Selected"] = false;
-            }
             foreach (var dr in this.dtAutomatedLineMapping_DetailCopy.AsEnumerable().Where(x => MyUtility.Convert.GetBool(x["Selected"]) && !MyUtility.Check.Empty(x["UpdSewerDiffPercentage"])))
             {
                 dr["SewerDiffPercentageDesc"] = dr["UpdSewerDiffPercentage"];
@@ -698,7 +695,7 @@ namespace Sci.Production.IE
                                                 .Where(x => x["Selected"].ToString() == "TRUE")
                                                 .GroupBy(s => new
                                                 {
-                                                    OperationID = s["OperationID"].ToString(),
+                                                    OperationID = s["TimeStudyDetailUkey"].ToString(),
                                                     No = s["No"].ToString(),
                                                 });
 
