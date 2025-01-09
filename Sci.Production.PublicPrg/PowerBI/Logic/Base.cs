@@ -159,7 +159,6 @@ FROM BITaskInfo i
 LEFt JOIN BITaskGroup g ON i.[Name] = g.[Name]
 LEFT JOIN BITableInfo b ON i.[Name] = b.[Id]
 WHERE i.[Junk] = 0
-AND (b.TransferDate >= GETDATE() OR b.TransferDate IS NULL)
 ORDER BY [Group], [SEQ], [NAME]";
             DualResult result = DBProxy.Current.Select("PowerBI", sql, out DataTable dataTable);
             if (!result || dataTable.Rows.Count == 0)
@@ -190,6 +189,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 string eDate_s2 = hasEndDate2 ? "Edate2 : " + eDate2.Value.ToShortDateString() : string.Empty;
                 string remark = $@"{dr["Source"]}{procedureNameS}{Environment.NewLine}{sDate_s}{Environment.NewLine}{eDate_s}{Environment.NewLine}{sDate_s2}{Environment.NewLine}{eDate_s2}{"Group :" + group}{", SEQ :" + seq}";
                 string source = dr["Source"].ToString();
+                DateTime? transferDate = !string.IsNullOrEmpty(dr["TransferDate"].ToString()) ? DateTime.Parse(dr["TransferDate"].ToString()) : (DateTime?)null;
 
                 ExecutedList model = new ExecutedList()
                 {
@@ -205,6 +205,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     Group = group,
                     SEQ = seq,
                     Source = source,
+                    TransferDate = transferDate,
                 };
 
                 executes.Add(model);
