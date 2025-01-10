@@ -148,7 +148,8 @@ SELECT  distinct
      [NewStyle] = co.StyleID,
      [NewComboType] = co.ComboType,
      [Style Type] = iif(co.Type = 'N', 'New', 'Repeat'),
-     [Category] = co.Category
+     [Category] = co.Category,
+     [First Sewing Output Date] = GetOutputDate.OutputDate
 FROM ChgOver co WITH (NOLOCK)
 INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID And cc.No <> 0
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
@@ -191,6 +192,17 @@ OUTER APPLY
 	FROM Holiday WITH(NOLOCK)
 	WHERE HolidayDate BETWEEN CC.Deadline AND CC.CompletionDate AND FactoryID = CO.FactoryID
 )OverDay_Check_1
+OUTER APPLY
+(
+    select top(1) s.OutputDate
+    from SewingOutput s WITH (NOLOCK) 
+    inner join SewingOutput_Detail sd WITH (NOLOCK) on s.ID = sd.ID
+    where 
+    sd.OrderId = co.OrderId
+    and sd.ComboType = co.ComboType
+    and s.SewingLineID = co.SewingLineID
+    and s.FactoryID = co.FactoryID
+)GetOutputDate
 WHERE 1 = 1
 {sqlWhere}
 ORDER BY [InlineDate], [SewingLine], [OldSP], [NewSP] 
