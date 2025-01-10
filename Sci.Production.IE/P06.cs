@@ -656,7 +656,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             var list = dt.AsEnumerable()
             .Where(x => x.RowState != DataRowState.Deleted && x["TimeStudyDetailUkey"].ToString() != "0") // 排除被刪除的行
-            .GroupBy(x => new { OperationID = x["OperationID"].ToString(), Ukey = x["TimeStudyDetailUkey"] })
+            .GroupBy(x => new { OperationID = x["OperationID"].ToString(), Ukey = x["TimeStudyDetailUkey"], IsAdd = x["IsAdd"] })
             .Select(g => new
             {
                 No = string.Join(", ", g.Select(row => row["No"].ToString())),

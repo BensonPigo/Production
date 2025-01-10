@@ -37,6 +37,8 @@ namespace Sci.Production.IE
             this.IsP05 = isP05;
             this.DialogResult = DialogResult.No;
 
+
+
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
             this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted && s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
 
@@ -270,8 +272,10 @@ namespace Sci.Production.IE
 
                 curRow.EndEdit();
 
+                string strColumns = selectedResult["OperationID"].ToString() == "PROCIPF00003" || selectedResult["OperationID"].ToString() == "PROCIPF00004" ? "OperationID" : "TimeStudyDetailUkey";
+
                 DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                           .Where(x => MyUtility.Convert.GetString(x["TimeStudyDetailUkey"]) == MyUtility.Convert.GetString(selectedResult["TimeStudyDetailUkey"]))
+                           .Where(x => MyUtility.Convert.GetString(x[strColumns]) == MyUtility.Convert.GetString(selectedResult[strColumns]))
                            .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
                 int intDT_EditOperaror = dT_EditOperaror.Rows.Count;
@@ -279,12 +283,12 @@ namespace Sci.Production.IE
                 int icount = 0;
                 for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
                 {
-                    if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["TimeStudyDetailUkey"].ToString() == MyUtility.Convert.GetString(selectedResult["TimeStudyDetailUkey"]))
+                    if (this.dtAutomatedLineMapping_DetailCopy.Rows[i][strColumns].ToString() == MyUtility.Convert.GetString(selectedResult[strColumns]))
                     {
                         icount++;
-                        if (icount == intDT_EditOperaror - 1)
+                        if (intDT_EditOperaror == icount)
                         {
-                            this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * icount);
+                            this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * (icount - 1));
                             if (this.IsP05)
                             {
                                 this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["DivSewer"]) * (intUpd * icount)) / 100;
@@ -562,7 +566,7 @@ namespace Sci.Production.IE
 
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var needKeepRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                .Where(s => checkedNo.Contains(s["No"].ToString()) && s["TimeStudyDetailUkey"].ToString() != "0" &&
+                .Where(s => checkedNo.Contains(s["No"].ToString()) &&
                 ((!this.IsP05 && ((s["UpdSewerDiffPercentage"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]) > 0) || s["UpdSewerDiffPercentage"] == DBNull.Value)) ||
                 (this.IsP05 && ((s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0) || s["UpdDivSewer"] == DBNull.Value))));
 
@@ -648,7 +652,6 @@ namespace Sci.Production.IE
                 return;
             }
             #endregion
-
             #region 檢查No是否完整
             List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
 
