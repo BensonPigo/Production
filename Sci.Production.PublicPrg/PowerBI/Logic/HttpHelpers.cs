@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -12,11 +13,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// </summary>
         /// <param name="targetUrl">Url</param>
         /// <param name="parameter">Para</param>
+        /// <param name="timeout">default Time out</param>
         /// <returns>HttpResponseMessage</returns>
-        public static HttpResponseMessage GetJsonDataHttpClient(string targetUrl, string parameter)
+        public static HttpResponseMessage GetJsonDataHttpClient(string targetUrl, string parameter, int timeout = 5)
         {
             HttpResponseMessage httpResponseMessage = new HttpResponseMessage();
-            using (HttpClient httpClient = new HttpClient())
+            using (HttpClient httpClient = new HttpClient() { Timeout = TimeSpan.FromMinutes(timeout) })
             {
                 httpResponseMessage = httpClient.GetAsync(targetUrl + "?" + parameter).Result;
             }

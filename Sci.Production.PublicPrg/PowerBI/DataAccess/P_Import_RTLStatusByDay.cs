@@ -135,7 +135,7 @@ where Junk = 0 and Environment = 'Formal'", "Production");
                             return model;
                         });
 
-                    foreach (var model in models.Where(x => x.Result))
+                    foreach (var model in models)
                     {
                         if (model.Dt != null && model.Dt.Rows.Count > 0)
                         {
@@ -175,7 +175,6 @@ where Junk = 0 and Environment = 'Formal'", "Production");
             {
                 string apiURL = $@"{url}api/WIP/GetWIPDay";
                 string para = $"FactoryID={factory}&Date={workDate:yyyy/MM/dd}&WipDay={wipDay}";
-                using (HttpClient client = new HttpClient())
                 using (HttpResponseMessage response = HttpHelpers.GetJsonDataHttpClient(apiURL, para))
                 {
                     // api 呼叫失敗
