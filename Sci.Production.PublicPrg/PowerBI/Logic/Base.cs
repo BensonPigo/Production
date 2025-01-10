@@ -3,13 +3,11 @@ using PostJobLog;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.DataAccess;
 using Sci.Production.Prg.PowerBI.Model;
-using Sci.Win.Tools;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Threading;
 
@@ -509,6 +507,7 @@ ORDER BY [Group], [SEQ], [NAME]";
         /// <param name="stratExecutedTime">Strat ExecutedTime</param>
         public void UpdateJobLogAndSendMail(List<ExecutedList> executedList, DateTime stratExecutedTime)
         {
+            this.WriteTranslog("JobLog", "start");
             string region = this.GetRegion();
             string description = string.Join(Environment.NewLine, executedList.Select(x => $"[{x.ClassName}] is {(x.Success ? "completed " : "fail ")} Time: {x.ExecuteSDate.Value.ToString("yyyy/MM/dd HH:mm:ss")} - {x.ExecuteEDate.Value.ToString("yyyy/MM/dd HH:mm:ss")}。 {(x.Success ? string.Empty : Environment.NewLine + x.ErrorMsg)}"));
             bool nonSucceed = executedList.Where(x => !x.Success).Count() > 0;
@@ -529,7 +528,7 @@ ORDER BY [Group], [SEQ], [NAME]";
             };
 
             string jobLogUkey = this.CallJobLogApi(jobLog);
-
+            this.WriteTranslog("JobLog", "end " + jobLogUkey);
             // 取消寄信
             /*
             if (nonSucceed)

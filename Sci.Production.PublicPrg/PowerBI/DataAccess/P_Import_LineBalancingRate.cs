@@ -9,12 +9,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_LineBalancingRate
     {
-        /// <inheritdoc/>
-        public P_Import_LineBalancingRate()
-        {
-            DBProxy.Current.DefaultTimeout = 1800;
-        }
-
         /// <summary>
         /// 寫入 P_LineBalancingRate
         /// </summary>
