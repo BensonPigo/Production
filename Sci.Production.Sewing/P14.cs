@@ -47,7 +47,7 @@ namespace Sci.Production.Sewing
                 .Text("Barcode", header: "Barcode", iseditingreadonly: false)
                 .Text("ScanBy", header: "Scan By", iseditingreadonly: false)
                 .Text("ScanTime", header: "Scan Time", iseditingreadonly: false)
-                .Text("ReturntoProduction", header: "Hauling Status", iseditingreadonly: false)
+                .Text("HaulingStatus", header: "Hauling Status", iseditingreadonly: false)
                 .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
                 .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
             #endregion
