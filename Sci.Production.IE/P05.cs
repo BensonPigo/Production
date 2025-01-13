@@ -1371,11 +1371,7 @@ from #tmp
             ,almd.ThreadComboID
             ,''
             ,almd.IsNonSewingLine
-            ,[GroupNo] = CASE 
-	            WHEN almd.OperationID = 'PROCIPF00003' THEN ROW_NUMBER() OVER (PARTITION BY almd.OperationID ORDER BY almd.Seq)
-                WHEN almd.OperationID = 'PROCIPF00004' THEN ROW_NUMBER() OVER (PARTITION BY almd.OperationID ORDER BY almd.Seq)
-                ELSE 1
-            END
+            ,[GroupNo] = 1
             FROM AutomatedLineMapping_Detail almd
             WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
 
