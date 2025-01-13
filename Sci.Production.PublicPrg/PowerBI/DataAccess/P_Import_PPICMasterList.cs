@@ -89,7 +89,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = @"	
 update p 
 	set p.[M] = ISNULL(t.[M], '')
-		, p.[FactoryID] = ISNULL(t.[FactoryID], '')
+		, p.[FactoryID] = ISNULL(t.[Factory], '')
 		, p.[Delivery] = t.[Delivery]
 		, p.[Delivery(YYYYMM)] = ISNULL(t.[Delivery(YYYYMM)], '')
 		, p.[Earliest SCIDlv] = t.[Earliest SCIDlv]
@@ -244,7 +244,7 @@ update p
 		, p.[Last ctn recvd date] = t.[Last ctn recvd date]
 		, p.[OrganicCotton] = ISNULL(t.[Organic Cotton/Recycle Polyester/Recycle Nylon], '')
 		, p.[Direct Ship] = ISNULL(t.[Direct Ship], '')
-		, p.[StyleCarryover] = ISNULL(t.[StyleCarryover], '')
+		, p.[StyleCarryover] = ISNULL(t.[Style-Carryover], '')
 		, p.[SCHDL/ETA(SP)] = t.[SCHDL/ETA(SP)]
 		, p.[SewingMtlETA(SPexclRepl)] = t.[SewingMtlETA(SPexclRepl)]
 		, p.[ActualMtlETA(exclRepl)] = t.[ActualMtlETA(exclRepl)]
@@ -295,7 +295,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
 	, [Original CustPO], [Line Aggregator])
 select ISNULL(t.[M], '')
-	, ISNULL(t.[FactoryID], '')
+	, ISNULL(t.[Factory], '')
 	, [Delivery]
 	, ISNULL(t.[Delivery(YYYYMM)], '')
 	, [Earliest SCIDlv]
@@ -450,7 +450,7 @@ select ISNULL(t.[M], '')
 	, [Last ctn recvd date]
 	, ISNULL(t.[Organic Cotton/Recycle Polyester/Recycle Nylon], '')
 	, ISNULL(t.[Direct Ship], '')
-	, ISNULL(t.[StyleCarryover], '')
+	, ISNULL(t.[Style-Carryover], '')
 	, t.[SCHDL/ETA(SP)]
 	, t.[SewingMtlETA(SPexclRepl)]
 	, t.[ActualMtlETA(exclRepl)]
