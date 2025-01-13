@@ -25,7 +25,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Warehouse_R21 biModel = new Warehouse_R21();
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse("2021/12/01");
             }
 
             if (!eDate.HasValue)
@@ -42,6 +42,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ReportType = 0,
                     BoolCheckQty = true,
                     ArriveWHFrom = sDate,
+                    ArriveWHTo = eDate,
                     IsPowerBI = true,
                 };
 
@@ -82,213 +83,186 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EDate", eDate),
                 };
                 string sql = @"	
-UPDATE t
-SET 
-     t.[MDivisionID] = s.[MDivisionID]
-    ,t.[FactoryID] = s.[FactoryID]
-    ,t.[SewLine] = s.[SewLine]
-    ,t.[Category] = s.[Category]
-    ,t.[OrderTypeID] = s.[OrderTypeID]
-    ,t.[WeaveTypeID] = s.[WeaveTypeID]
-    ,t.[BuyerDelivery] = s.[BuyerDelivery]
-    ,t.[OrigBuyerDelivery] = s.[OrigBuyerDelivery]
-    ,t.[MaterialComplete] = s.[MaterialComplete]
-    ,t.[ETA] = s.[ETA]
-    ,t.[ArriveWHDate] = s.[ArriveWHDate]
-    ,t.[ExportID] = s.[ExportID]
-    ,t.[Packages] = s.[Packages]
-    ,t.[ContainerNo] = s.[ContainerNo]
-    ,t.[BrandID] = s.[BrandID]
-    ,t.[StyleID] = s.[StyleID]
-    ,t.[SeasonID] = s.[SeasonID]
-    ,t.[ProjectID] = s.[ProjectID]
-    ,t.[ProgramID] = s.[ProgramID]
-    ,t.[MaterialType] = s.[MaterialType]
-    ,t.[StockPOID] = s.[StockPOID]
-    ,t.[StockSeq1] = s.[StockSeq1]
-    ,t.[StockSeq2] = s.[StockSeq2]
-    ,t.[Refno] = s.[Refno]
-    ,t.[SCIRefno] = s.[SCIRefno]
-    ,t.[Description] = s.[Description]
-    ,t.[ColorID] = s.[ColorID]
-    ,t.[ColorName] = s.[ColorName]
-    ,t.[Size] = s.[Size]
-    ,t.[StockUnit] = s.[StockUnit]
-    ,t.[PurchaseQty] = s.[PurchaseQty]
-    ,t.[OrderQty] = s.[OrderQty]
-    ,t.[ShipQty] = s.[ShipQty]
-    ,t.[InQty] = s.[InQty]
-    ,t.[OutQty] = s.[OutQty]
-    ,t.[AdjustQty] = s.[AdjustQty]
-    ,t.[ReturnQty] = s.[ReturnQty]
-    ,t.[BalanceQty] = s.[BalanceQty]
-    ,t.[MtlLocationID] = s.[MtlLocationID]
-    ,t.[MCHandle] = s.[MCHandle]
-    ,t.[POHandle] = s.[POHandle]
-    ,t.[POSMR] = s.[POSMR]
-    ,t.[Supplier] = s.[Supplier]
-    ,t.[VID] = s.[VID]
-    ,t.[Grade] = s.[Grade]
-    ,t.[AddDate] = s.[AddDate]
-    ,t.[EditDate] = s.[EditDate]
-from P_InventoryStockListReport t 
-inner join #tmp s on t.[POID] = s.[POID] 
-    AND t.[SEQ1] = s.[SEQ1] 
-    AND t.[SEQ2] = s.[SEQ2] 
-    AND t.[Roll] = s.[Roll]
-    AND t.[Dyelot] = s.[Dyelot]
-    AND t.[StockType] = s.[StockType]
+                alter table #tmp alter column MDivisionID        varchar (8)
+                alter table #tmp alter column FactoryID          varchar (8)
+                alter table #tmp alter column SewLine            varchar (60)
+                alter table #tmp alter column POID               varchar (13)
+                alter table #tmp alter column Category           varchar (15)
+                alter table #tmp alter column OrderTypeID        varchar (20)
+                alter table #tmp alter column WeaveTypeID        varchar (20)
+                alter table #tmp alter column BuyerDelivery      date
+                alter table #tmp alter column OrigBuyerDelivery  date
+                alter table #tmp alter column MaterialComplete   varchar (1)
+                alter table #tmp alter column ETA                date
+                alter table #tmp alter column ArriveWHDate       varchar (500)
+                alter table #tmp alter column ExportID           varchar (300)
+                alter table #tmp alter column Packages           varchar (100)
+                alter table #tmp alter column ContainerNo        varchar (300)
+                alter table #tmp alter column BrandID            varchar (8)
+                alter table #tmp alter column StyleID            varchar (15)
+                alter table #tmp alter column SeasonID           varchar (10)
+                alter table #tmp alter column ProjectID          varchar (5)
+                alter table #tmp alter column ProgramID          nvarchar (12)
+                alter table #tmp alter column SEQ1               varchar (3)
+                alter table #tmp alter column SEQ2               varchar (2)
+                alter table #tmp alter column MaterialType       varchar (50)
+                alter table #tmp alter column StockPOID          varchar (13)
+                alter table #tmp alter column StockSeq1          varchar (3)
+                alter table #tmp alter column StockSeq2          varchar (2)
+                alter table #tmp alter column Refno              varchar (36)
+                alter table #tmp alter column SCIRefno           varchar (30)
+                alter table #tmp alter column Description        nvarchar (150)
+                alter table #tmp alter column ColorID            varchar (50)
+                alter table #tmp alter column ColorName          nvarchar (150)
+                alter table #tmp alter column Size               varchar (50)
+                alter table #tmp alter column StockUnit          varchar (8)
+                alter table #tmp alter column PurchaseQty        decimal
+                alter table #tmp alter column OrderQty           int
+                alter table #tmp alter column ShipQty            decimal
+                alter table #tmp alter column Roll               varchar (8)
+                alter table #tmp alter column Dyelot             varchar (8)
+                alter table #tmp alter column StockType          varchar (15)
+                alter table #tmp alter column InQty              numeric (11, 2)
+                alter table #tmp alter column OutQty             numeric (11, 2)
+                alter table #tmp alter column AdjustQty          numeric (11, 2)
+                alter table #tmp alter column ReturnQty          numeric (11, 2)
+                alter table #tmp alter column BalanceQty         numeric (11, 2)
+                alter table #tmp alter column MtlLocationID      varchar (500)
+                alter table #tmp alter column MCHandle           varchar (100)
+                alter table #tmp alter column POHandle           varchar (100)
+                alter table #tmp alter column POSMR              varchar (100)
+                alter table #tmp alter column Supplier           varchar (50)
+                alter table #tmp alter column VID                varchar (30)
+                alter table #tmp alter column AddDate            datetime
+                alter table #tmp alter column EditDate           datetime
+                alter table #tmp alter column Grade              varchar (10)
 
+                delete t 
+                from dbo.P_InventoryStockListReport t
+    
+                INSERT INTO [dbo].[P_InventoryStockListReport]
+                ([MDivisionID]
+                ,[FactoryID]
+                ,[SewLine]
+                ,[POID]
+                ,[Category]
+                ,[OrderTypeID]
+                ,[WeaveTypeID]
+                ,[BuyerDelivery]
+                ,[OrigBuyerDelivery]
+                ,[MaterialComplete]
+                ,[ETA]
+                ,[ArriveWHDate]
+                ,[ExportID]
+                ,[Packages]
+                ,[ContainerNo]
+                ,[BrandID]
+                ,[StyleID]
+                ,[SeasonID]
+                ,[ProjectID]
+                ,[ProgramID]
+                ,[SEQ1]
+                ,[SEQ2]
+                ,[MaterialType]
+                ,[StockPOID]
+                ,[StockSeq1]
+                ,[StockSeq2]
+                ,[Refno]
+                ,[SCIRefno]
+                ,[Description]
+                ,[ColorID]
+                ,[ColorName]
+                ,[Size]
+                ,[StockUnit]
+                ,[PurchaseQty]
+                ,[OrderQty]
+                ,[ShipQty]
+                ,[Roll]
+                ,[Dyelot]
+                ,[StockType]
+                ,[InQty]
+                ,[OutQty]
+                ,[AdjustQty]
+                ,[ReturnQty]
+                ,[BalanceQty]
+                ,[MtlLocationID]
+                ,[MCHandle]
+                ,[POHandle]
+                ,[POSMR]
+                ,[Supplier]
+                ,[VID]
+                ,[Grade]
+                ,[AddDate]
+                ,[EditDate])
+                select 
+                [MDivisionID]
+                ,[FactoryID]
+                ,[SewLine]
+                ,[POID]
+                ,[Category]
+                ,[OrderTypeID]
+                ,[WeaveTypeID]
+                ,[BuyerDelivery]
+                ,[OrigBuyerDelivery]
+                ,[MaterialComplete]
+                ,[ETA]
+                ,[ArriveWHDate]
+                ,[ExportID]
+                ,[Packages]
+                ,[ContainerNo]
+                ,[BrandID]
+                ,[StyleID]
+                ,[SeasonID]
+                ,[ProjectID]
+                ,[ProgramID]
+                ,[SEQ1]
+                ,[SEQ2]
+                ,[MaterialType]
+                ,[StockPOID]
+                ,[StockSeq1]
+                ,[StockSeq2]
+                ,[Refno]
+                ,[SCIRefno]
+                ,[Description]
+                ,[ColorID]
+                ,[ColorName]
+                ,[Size]
+                ,[StockUnit]
+                ,[PurchaseQty]
+                ,[OrderQty]
+                ,[ShipQty]
+                ,[Roll]
+                ,[Dyelot]
+                ,[StockType]
+                ,[InQty]
+                ,[OutQty]
+                ,[AdjustQty]
+                ,[ReturnQty]
+                ,[BalanceQty]
+                ,[MtlLocationID]
+                ,[MCHandle]
+                ,[POHandle]
+                ,[POSMR]
+                ,[Supplier]
+                ,[VID]
+                ,[Grade]
+                ,[AddDate]
+                ,[EditDate]
+                from #tmp s
 
-INSERT INTO [dbo].[P_InventoryStockListReport]
-           ([MDivisionID]
-           ,[FactoryID]
-           ,[SewLine]
-           ,[POID]
-           ,[Category]
-           ,[OrderTypeID]
-           ,[WeaveTypeID]
-           ,[BuyerDelivery]
-           ,[OrigBuyerDelivery]
-           ,[MaterialComplete]
-           ,[ETA]
-           ,[ArriveWHDate]
-           ,[ExportID]
-           ,[Packages]
-           ,[ContainerNo]
-           ,[BrandID]
-           ,[StyleID]
-           ,[SeasonID]
-           ,[ProjectID]
-           ,[ProgramID]
-           ,[SEQ1]
-           ,[SEQ2]
-           ,[MaterialType]
-           ,[StockPOID]
-           ,[StockSeq1]
-           ,[StockSeq2]
-           ,[Refno]
-           ,[SCIRefno]
-           ,[Description]
-           ,[ColorID]
-           ,[ColorName]
-           ,[Size]
-           ,[StockUnit]
-           ,[PurchaseQty]
-           ,[OrderQty]
-           ,[ShipQty]
-           ,[Roll]
-           ,[Dyelot]
-           ,[StockType]
-           ,[InQty]
-           ,[OutQty]
-           ,[AdjustQty]
-           ,[ReturnQty]
-           ,[BalanceQty]
-           ,[MtlLocationID]
-           ,[MCHandle]
-           ,[POHandle]
-           ,[POSMR]
-           ,[Supplier]
-           ,[VID]
-           ,[Grade]
-           ,[AddDate]
-           ,[EditDate])
-select [MDivisionID]
-           ,[FactoryID]
-           ,[SewLine]
-           ,[POID]
-           ,[Category]
-           ,[OrderTypeID]
-           ,[WeaveTypeID]
-           ,[BuyerDelivery]
-           ,[OrigBuyerDelivery]
-           ,[MaterialComplete]
-           ,[ETA]
-           ,[ArriveWHDate]
-           ,[ExportID]
-           ,[Packages]
-           ,[ContainerNo]
-           ,[BrandID]
-           ,[StyleID]
-           ,[SeasonID]
-           ,[ProjectID]
-           ,[ProgramID]
-           ,[SEQ1]
-           ,[SEQ2]
-           ,[MaterialType]
-           ,[StockPOID]
-           ,[StockSeq1]
-           ,[StockSeq2]
-           ,[Refno]
-           ,[SCIRefno]
-           ,[Description]
-           ,[ColorID]
-           ,[ColorName]
-           ,[Size]
-           ,[StockUnit]
-           ,[PurchaseQty]
-           ,[OrderQty]
-           ,[ShipQty]
-           ,[Roll]
-           ,[Dyelot]
-           ,[StockType]
-           ,[InQty]
-           ,[OutQty]
-           ,[AdjustQty]
-           ,[ReturnQty]
-           ,[BalanceQty]
-           ,[MtlLocationID]
-           ,[MCHandle]
-           ,[POHandle]
-           ,[POSMR]
-           ,[Supplier]
-           ,[VID]
-           ,[Grade]
-           ,[AddDate]
-           ,[EditDate]
-from #tmp s
-where not exists (
-    select 1 from P_InventoryStockListReport t 
-    where t.[POID] = s.[POID] 
-    AND t.[SEQ1] = s.[SEQ1] 
-    AND t.[SEQ2] = s.[SEQ2] 
-    AND t.[Roll] = s.[Roll]
-    AND t.[Dyelot] = s.[Dyelot]
-    AND t.[StockType] = s.[StockType]
-)
-
-delete t 
-from dbo.P_InventoryStockListReport t
-Outer Apply (
-    Select Date = cast(Data as Date) From SplitString(t.[ArriveWHDate], ';') WHERE Data <> ''
-)getArriveWHDate
-where 
-getArriveWHDate.Date Between @SDate and @eDate
-and not exists (
-    select 1 from #tmp s 
-    where t.[POID] = s.[POID] 
-    AND t.[SEQ1] = s.[SEQ1] 
-    AND t.[SEQ2] = s.[SEQ2] 
-    AND t.[Roll] = s.[Roll]
-    AND t.[Dyelot] = s.[Dyelot]
-    AND t.[StockType] = s.[StockType]
-)
-
-
-IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_InventoryStockListReport')
-BEGIN
-    UPDATE B
-    SET b.TransferDate = getdate()
-    FROM BITableInfo B
-    WHERE B.ID = 'P_InventoryStockListReport'
-END
-ELSE 
-BEGIN
-    INSERT INTO BITableInfo(Id, TransferDate)
-    VALUES('P_InventoryStockListReport', GETDATE())
-END
-";
+                IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_InventoryStockListReport')
+                BEGIN
+                    UPDATE B
+                    SET b.TransferDate = getdate()
+                    FROM BITableInfo B
+                    WHERE B.ID = 'P_InventoryStockListReport'
+                END
+                ELSE 
+                BEGIN
+                    INSERT INTO BITableInfo(Id, TransferDate)
+                    VALUES('P_InventoryStockListReport', GETDATE())
+                END
+                ";
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
