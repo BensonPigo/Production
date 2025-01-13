@@ -1,8 +1,8 @@
 ﻿using Ict;
-using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -14,8 +14,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// </summary>
         /// <param name="sDate">Start Date</param>
         /// <param name="eDate">End Data</param>
+        /// <param name="biTableInfoID">bi table id</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel P_LineBalancingRate(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_LineBalancingRate(DateTime? sDate, DateTime? eDate, string biTableInfoID)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
@@ -32,6 +33,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             try
             {
                 finalResult.Result = this.ImportLineBalancingRate(sDate.Value, eDate.Value);
+                if (finalResult.Result)
+                {
+                    this.UpdateBIData(biTableInfoID);
+                }
             }
             catch (Exception ex)
             {
@@ -46,9 +51,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DualResult finalResult = new DualResult(true);
             try
             {
+                List<string> tsqlCommands = new List<string>();
                 for (DateTime date = sDate; date <= eDate; date = date.AddDays(1))
                 {
-                    string tsql = $"exec P_Import_LineBalancingRate '{date.ToString("yyyy/MM/dd")}'";
+                    string tsql = $"exec P_Import_LineBalancingRate '{date:yyyy/MM/dd}'";
+                    tsqlCommands.Add(tsql);
+                }
+
+                foreach (var tsql in tsqlCommands)
+                {
                     finalResult = TransactionClass.ExecuteTransactionScope("PowerBI", tsql);
                     if (!finalResult)
                     {
@@ -62,6 +73,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             }
 
             return finalResult;
+        }
+
+        private Base_ViewModel UpdateBIData(string biTableInfoID)
+        {
+            string sql = new Base().SqlBITableInfo(biTableInfoID, false);
+            return new Base_ViewModel()
+            {
+                Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
+            };
         }
     }
 }
