@@ -271,6 +271,7 @@ AND ALMCS.Junk = 0
                 (
                     SELECT 
                     cast(0 as bit) as Selected
+                    ,[GroupNo]
                     ,lmb.FactoryID
                     ,ad.ukey
                     ,ad.[ID]
@@ -304,9 +305,9 @@ AND ALMCS.Junk = 0
                     [PPADesc] = isnull(d.Name, ''),
                     [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
                     [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey 
-														  ELSE NULL 
-												     END) OVER (PARTITION BY TimeStudyDetailUkey),
+                    [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID)
+												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey)
+												 END,
                     [EmployeeName] = e.Name,
                     [EmployeeSkill] = e.Skill,
                     [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
@@ -818,13 +819,15 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 checkItem["Selected"] = isChecked;
 
                 var listNoForTimeStudyDetailUkey = this.DetailDatas
-                    .Where(row => (((row["OperationID"].ToString() == "PROCIPF00003" ||
-                                  row["OperationID"].ToString() == "PROCIPF00004") &&
-                                  row["OperationID"].ToString() == checkItem["OperationID"].ToString()) ||
-                                  (row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString() &&
-                                  Convert.ToInt64(row["TimeStudyDetailUkeyCnt"]) > 1)) &&
-                                  !MyUtility.Check.Empty(row["OperationID"].ToString()) &&
-                                  (bool)row["Selected"] != isChecked)
+                    .Where(row => ((row["TimeStudyDetailUkey"].ToString() == "0" &&
+                                    (row["OperationID"].ToString() == "PROCIPF00003" ||
+                                    row["OperationID"].ToString() == "PROCIPF00004") &&
+                                    row["OperationID"].ToString() == checkItem["OperationID"].ToString()) ||
+                               (row["TimeStudyDetailUkey"].ToString() != "0" && row["TimeStudyDetailUkey"].ToString() == checkItem["TimeStudyDetailUkey"].ToString())) &&
+                               !MyUtility.Check.Empty(row["OperationID"].ToString()) &&
+                                MyUtility.Convert.GetInt(row["TimeStudyDetailUkeyCnt"]) > 1 &&
+                                MyUtility.Convert.GetInt(row["GroupNo"]) == MyUtility.Convert.GetInt(checkItem["GroupNo"]) &&
+                                (bool)row["Selected"] != isChecked)
                     .Select(s => s["No"].ToString())
                     .Distinct()
                     .ToList();
@@ -968,6 +971,9 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr["EmployeeName"] = employeeName;
                                 dr["SewerDiffPercentageDesc"] = 100;
                                 dr["SewerDiffPercentage"] = 1;
+                                var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey)
+                                                                  .Max(row => Convert.ToInt16(row["GroupNo"])) + 1;
+                                dr["GroupNo"] = newGroupNo;
 
                                 if (dr["OperationID"].ToString() == "PROCIPF00003" ||
                                 dr["OperationID"].ToString() == "PROCIPF00004")

@@ -1261,116 +1261,125 @@ from #tmp
             }
 
             string sqlInsertLineMappingBalancing = $@"
-INSERT INTO LineMappingBalancing (
-		AutomatedLineMappingID
-	   ,StyleUKey
-	   ,Phase
-	   ,Version
-	   ,FactoryID
-	   ,StyleID
-	   ,SeasonID
-	   ,BrandID
-	   ,ComboType
-	   ,StyleCPU
-	   ,SewerManpower
-	   ,PackerManpower
-	   ,PresserManpower
-	   ,TotalGSDTime
-       ,TotalCycleTime
-	   ,HighestGSDTime
-       ,HighestCycleTime
-	   ,TimeStudyID
-	   ,TimeStudyStatus
-	   ,TimeStudyVersion
-	   ,WorkHour
-	   ,Status
-	   ,AddName
-	   ,AddDate
-       ,OriNoNumber
-       ,Reason
-       ,OriTotalGSDTime)
-SELECT
-		alm.ID
-	   ,alm.StyleUKey
-	   ,'Final'
-	   ,0
-	   ,alm.FactoryID
-	   ,alm.StyleID
-	   ,alm.SeasonID
-	   ,alm.BrandID
-	   ,alm.ComboType
-	   ,alm.StyleCPU
-	   ,alm.SewerManpower
-	   ,alm.PackerManpower
-	   ,alm.PresserManpower
-	   ,alm.TotalGSDTime
-       ,alm.TotalGSDTime
-	   ,alm.HighestGSDTime
-       ,alm.HighestGSDTime
-	   ,alm.TimeStudyID
-	   ,alm.TimeStudyStatus
-	   ,alm.TimeStudyVersion
-	   ,alm.WorkHour
-	   ,'New'
-	   ,'{Env.User.UserID}'
-	   ,GETDATE()
-       ,{this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()}
-       ,''
-       ,alm.TotalGSDTime
-FROM AutomatedLineMapping alm
-WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
+            INSERT INTO LineMappingBalancing 
+            (
+	            AutomatedLineMappingID
+	            ,StyleUKey
+	            ,Phase
+	            ,Version
+	            ,FactoryID
+	            ,StyleID
+	            ,SeasonID
+	            ,BrandID
+	            ,ComboType
+	            ,StyleCPU
+	            ,SewerManpower
+	            ,PackerManpower
+	            ,PresserManpower
+	            ,TotalGSDTime
+                ,TotalCycleTime
+	            ,HighestGSDTime
+                ,HighestCycleTime
+	            ,TimeStudyID
+	            ,TimeStudyStatus
+	            ,TimeStudyVersion
+	            ,WorkHour
+	            ,Status
+	            ,AddName
+	            ,AddDate
+                ,OriNoNumber
+                ,Reason
+                ,OriTotalGSDTime
+            )
+            SELECT
+            alm.ID
+            ,alm.StyleUKey
+            ,'Final'
+            ,0
+            ,alm.FactoryID
+            ,alm.StyleID
+            ,alm.SeasonID
+            ,alm.BrandID
+            ,alm.ComboType
+            ,alm.StyleCPU
+            ,alm.SewerManpower
+            ,alm.PackerManpower
+            ,alm.PresserManpower
+            ,alm.TotalGSDTime
+            ,alm.TotalGSDTime
+            ,alm.HighestGSDTime
+            ,alm.HighestGSDTime
+            ,alm.TimeStudyID
+            ,alm.TimeStudyStatus
+            ,alm.TimeStudyVersion
+            ,alm.WorkHour
+            ,'New'
+            ,'{Env.User.UserID}'
+            ,GETDATE()
+            ,{this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()}
+            ,''
+            ,alm.TotalGSDTime
+            FROM AutomatedLineMapping alm
+            WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
 
-DECLARE @ID INT = @@identity
+            DECLARE @ID INT = @@identity
 
-INSERT INTO LineMappingBalancing_Detail (
-	 ID
-	,No
-	,Seq
-	,Location
-	,PPA
-	,MachineTypeID
-	,MasterPlusGroup
-	,OperationID
-	,Annotation
-	,Attachment
-	,SewingMachineAttachmentID
-	,Template
-	,GSD
-    ,Cycle
-	,SewerDiffPercentage
-	,DivSewer
-	,OriSewer
-	,TimeStudyDetailUkey
-	,ThreadComboID
-	,Notice
-	,IsNonSewingLine
-)
-SELECT
-   @ID
-   ,almd.No
-   ,almd.Seq
-   ,almd.Location
-   ,almd.PPA
-   ,almd.MachineTypeID
-   ,almd.MasterPlusGroup
-   ,almd.OperationID
-   ,almd.Annotation
-   ,almd.Attachment
-   ,almd.SewingMachineAttachmentID
-   ,almd.Template
-   ,almd.GSD
-   ,almd.GSD
-   ,almd.SewerDiffPercentage
-   ,almd.DivSewer
-   ,almd.OriSewer
-   ,almd.TimeStudyDetailUkey
-   ,almd.ThreadComboID
-   ,''
-   ,almd.IsNonSewingLine
-FROM AutomatedLineMapping_Detail almd
-WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
+            INSERT INTO LineMappingBalancing_Detail 
+            (
+                ID
+                ,No
+                ,Seq
+                ,Location
+                ,PPA
+                ,MachineTypeID
+                ,MasterPlusGroup
+                ,OperationID
+                ,Annotation
+                ,Attachment
+                ,SewingMachineAttachmentID
+                ,Template
+                ,GSD
+                ,Cycle
+                ,SewerDiffPercentage
+                ,DivSewer
+                ,OriSewer
+                ,TimeStudyDetailUkey
+                ,ThreadComboID
+                ,Notice
+                ,IsNonSewingLine
+                ,GroupNo
+            )
+            SELECT
+            @ID
+            ,almd.No
+            ,almd.Seq
+            ,almd.Location
+            ,almd.PPA
+            ,almd.MachineTypeID
+            ,almd.MasterPlusGroup
+            ,almd.OperationID
+            ,almd.Annotation
+            ,almd.Attachment
+            ,almd.SewingMachineAttachmentID
+            ,almd.Template
+            ,almd.GSD
+            ,almd.GSD
+            ,almd.SewerDiffPercentage
+            ,almd.DivSewer
+            ,almd.OriSewer
+            ,almd.TimeStudyDetailUkey
+            ,almd.ThreadComboID
+            ,''
+            ,almd.IsNonSewingLine
+            ,[GroupNo] = CASE 
+	            WHEN almd.OperationID = 'PROCIPF00003' THEN ROW_NUMBER() OVER (PARTITION BY almd.OperationID ORDER BY almd.Seq)
+                WHEN almd.OperationID = 'PROCIPF00004' THEN ROW_NUMBER() OVER (PARTITION BY almd.OperationID ORDER BY almd.Seq)
+                ELSE 1
+            END
+            FROM AutomatedLineMapping_Detail almd
+            WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
 
-select [ID] = @ID
+            select [ID] = @ID
 ";
             DataTable dtOutID;
             DualResult result = DBProxy.Current.Select(null, sqlInsertLineMappingBalancing, out dtOutID);

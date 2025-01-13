@@ -261,21 +261,25 @@ namespace Sci.Production.IE
                 if (!this.IsP05)
                 {
                     curRow["Cycle"] = selectedResult["Cycle"];
+                    curRow["GroupNo"] = selectedResult["GroupNo"];
                 }
                 else
                 {
                     curRow["SewerDiffPercentageDesc"] = selectedResult["SewerDiffPercentageDesc"];
                     curRow["DivSewer"] = selectedResult["DivSewer"];
                     curRow["IsNotShownInP05"] = false;
-
                 }
 
                 curRow.EndEdit();
 
                 string strColumns = selectedResult["OperationID"].ToString() == "PROCIPF00003" || selectedResult["OperationID"].ToString() == "PROCIPF00004" ? "OperationID" : "TimeStudyDetailUkey";
-
                 DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                           .Where(x => MyUtility.Convert.GetString(x[strColumns]) == MyUtility.Convert.GetString(selectedResult[strColumns]))
+                           .Where(x => ((x["TimeStudyDetailUkey"].ToString() == "0" &&
+                                        (x["OperationID"].ToString() == "PROCIPF00003" || x["OperationID"].ToString() == "PROCIPF00004") &&
+                                        x["OperationID"].ToString() == selectedResult["OperationID"].ToString()) ||
+                                        (x["TimeStudyDetailUkey"].ToString() != "0" && x["TimeStudyDetailUkey"].ToString() == selectedResult["TimeStudyDetailUkey"].ToString())) &&
+                                        !MyUtility.Check.Empty(x["OperationID"].ToString()) &&
+                                        MyUtility.Convert.GetString(x["GroupNo"]) == MyUtility.Convert.GetString(selectedResult["GroupNo"]))
                            .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
                 int intDT_EditOperaror = dT_EditOperaror.Rows.Count;
@@ -460,8 +464,19 @@ namespace Sci.Production.IE
             }
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+
+            if (MyUtility.Check.Empty(selectedRow["OperationID"].ToString())|| MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"].ToString()))
+            {
+                return;
+            }
+
             DataTable dT_EditOperaror = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                                       .Where(x => MyUtility.Convert.GetString(x["TimeStudyDetailUkey"]) == MyUtility.Convert.GetString(selectedRow["TimeStudyDetailUkey"]))
+                                       .Where(x => ((x["TimeStudyDetailUkey"].ToString() == "0" &&
+                                                    (x["OperationID"].ToString() == "PROCIPF00003" || x["OperationID"].ToString() == "PROCIPF00004") &&
+                                                    x["OperationID"].ToString() == selectedRow["OperationID"].ToString()) ||
+                                                    (x["TimeStudyDetailUkey"].ToString() != "0" && x["TimeStudyDetailUkey"].ToString() == selectedRow["TimeStudyDetailUkey"].ToString())) &&
+                                                    !MyUtility.Check.Empty(x["OperationID"].ToString()) &&
+                                                    MyUtility.Convert.GetString(x["GroupNo"]) == MyUtility.Convert.GetString(selectedRow["GroupNo"]))
                                        .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
             int intDT_EditOperaror = dT_EditOperaror.Rows.Count + 1;
@@ -473,11 +488,12 @@ namespace Sci.Production.IE
             newRow["UpdSewerDiffPercentage"] = intUpd;
             newRow["DivSewer"] = DBNull.Value;
             newRow["OriSewer"] = DBNull.Value;
+            string strColumns = selectedRow["OperationID"].ToString() == "PROCIPF00003" || selectedRow["OperationID"].ToString() == "PROCIPF00004" ? "OperationID" : "TimeStudyDetailUkey";
 
             int icount = 0;
             for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
             {
-                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i]["TimeStudyDetailUkey"].ToString() == MyUtility.Convert.GetString(selectedRow["TimeStudyDetailUkey"]))
+                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i][strColumns].ToString() == MyUtility.Convert.GetString(selectedRow[strColumns]))
                 {
                     icount++;
                     if (icount == intDT_EditOperaror - 1)
@@ -490,6 +506,7 @@ namespace Sci.Production.IE
                     }
                 }
             }
+
             int insertIndex = this.dtAutomatedLineMapping_DetailCopy.Rows.IndexOf(selectedRow);
             this.dtAutomatedLineMapping_DetailCopy.Rows.InsertAt(newRow, insertIndex);
         }
