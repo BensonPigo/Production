@@ -493,7 +493,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 case ListName.P_SewingDailyOutputStatusRecord:
                     return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
                 case ListName.P_LineBalancingRate:
-                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate);
+                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate, ListName.P_LineBalancingRate.ToString());
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
