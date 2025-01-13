@@ -1411,14 +1411,18 @@ SELECT
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
-    ,colArtworkType = '3010-'
+    ,colArtworkType = ArtworkType.seq + '-'
+FROM ArtworkType WITH (NOLOCK)
+WHERE Junk <> 1 and ID = 'EMBROIDERY'
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
-    ,colArtworkType = '3010-'
+    ,colArtworkType = ArtworkType.seq + '-'
+FROM ArtworkType WITH (NOLOCK)
+WHERE Junk <> 1 and ID = 'EMBROIDERY'
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
