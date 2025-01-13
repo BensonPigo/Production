@@ -381,7 +381,7 @@ outer apply(
 	) , 1, 1, '')
 ) VID
 outer apply(
-	select fp.Grade
+	select top(1) fp.Grade
 	from FIR F with (nolock)
     inner join FIR_Physical FP with (nolock) on fp.id = f.ID
 	where psd.id = F.POID 
