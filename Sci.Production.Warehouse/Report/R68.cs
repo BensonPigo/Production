@@ -296,7 +296,7 @@ OUTER APPLY (SELECT
     AND cl.Refno = idt.Refno
     AND cl.Color = idt.Color) FinPickTime
 OUTER APPLY (SELECT
-        [FinDate] = MAX(UnrollEndTime)
+        [FinDate] = MAX(UnrollStartTime)
     FROM #issueDtl idt
     WHERE cl.ID = idt.ID
     AND cl.Refno = idt.Refno
