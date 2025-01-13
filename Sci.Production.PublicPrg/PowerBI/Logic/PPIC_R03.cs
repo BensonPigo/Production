@@ -1372,7 +1372,7 @@ SELECT
     ,FakeID = Seq + 'U1'
     ,ColumnN = RTRIM(ID) + ' (' + ArtworkUnit + ')'
     ,ColumnSeq = '1'
-    ,colArtworkType = ArtworkType.seq
+    ,colArtworkType = ArtworkType.seq + '-'
 INTO #tmpArtworkType
 FROM ArtworkType WITH (NOLOCK)
 WHERE ArtworkUnit <> '' and Junk <> 1
@@ -1382,9 +1382,9 @@ UNION ALL
 SELECT
     ID
     ,FakeID = Seq + 'U2'
-    ,ColumnN = ArtworkType.seq + '-' + RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
+    ,ColumnN = RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
     ,ColumnSeq = '2'
-    ,colArtworkType = ArtworkType.seq
+    ,colArtworkType = ArtworkType.seq + '-'
 FROM ArtworkType WITH (NOLOCK)
 OUTER APPLY (SELECT PUnit = IIF({byCPUsqlbit} = 1 AND ProductionUnit = 'TMS', 'CPU', ProductionUnit)) p
 WHERE ProductionUnit <> '' and Junk <> 1
@@ -1395,9 +1395,9 @@ UNION ALL
 SELECT
     ID
     ,FakeID = Seq + 'N'
-    ,ColumnN = ArtworkType.seq + '-' + RTRIM(ID)
+    ,ColumnN = RTRIM(ID)
     ,ColumnSeq = '3'
-    ,colArtworkType = ArtworkType.seq
+    ,colArtworkType = ArtworkType.seq + '-'
 FROM ArtworkType WITH (NOLOCK)
 WHERE ArtworkUnit = '' and Junk <> 1
 AND ProductionUnit = ''
@@ -1411,14 +1411,14 @@ SELECT
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
-    ,colArtworkType = ''
+    ,colArtworkType = '3010-'
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
-    ,colArtworkType = ''
+    ,colArtworkType = '3010-'
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
@@ -1448,7 +1448,7 @@ FROM (
     SELECT 
     ID,
     FakeID,
-    ColumnN,
+    ColumnN = #tmpSubProcess.colArtworkType + ColumnN,
     ColumnSeq,
     rno
     FROM #tmpSubProcess WITH (NOLOCK)
@@ -1467,7 +1467,7 @@ FROM (
         ,FakeID = 'T' + FakeID
         ,ColumnN = CASE 
                 WHEN colArtworkType IS NOT NULL AND colArtworkType <> '' 
-                THEN colArtworkType + '-' + 'TTL_' + ColumnN
+                THEN colArtworkType + 'TTL_' + ColumnN
                 ELSE 'TTL_' + ColumnN
               END
         ,ColumnSeq
