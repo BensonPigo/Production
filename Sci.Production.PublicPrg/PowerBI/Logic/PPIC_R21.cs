@@ -171,6 +171,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		, oqs.BuyerDelivery
 		, [PackingListID] = p.ID
 		, [CtnNo] = pld.CTNStartNo
+		, [Refno] = pld.Refno
+		, [Description] = LocalItem.Description
 		, [Size] = ISNULL(Size.val, '')
 		, [CartonQty] = ISNULL(CartonQty.val, 0)
 		, [Status] = case 
@@ -244,6 +246,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
 	inner join Production.dbo.PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 	inner join Production.dbo.PackingList p with (nolock) on p.ID = pld.ID
+	left join Production.dbo.LocalItem with (nolock) on LocalItem.Refno = pld.Refno
 	left join Production.dbo.DropDownList d with (nolock) on d.Type = 'Category' AND d.ID = o.Category	
 	outer apply(
 		select [val] = Stuff((select distinct concat('/',SizeCode) 
