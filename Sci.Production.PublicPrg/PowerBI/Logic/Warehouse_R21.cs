@@ -13,6 +13,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
     {
         private DBProxy DBProxy;
         private string sqlcolumn = @"
+select f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll, [Grade] = MIN(fp.Grade)
+into #tmp_FIR
+from FIR F with (nolock) 
+inner join FIR_Physical FP with (nolock) on fp.id = f.ID
+group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
+
     select
 	 [MDivisionID] = isnull(o.MDivisionID, '')
 	,[FactoryID] = isnull(o.FactoryID, '')
@@ -351,6 +357,7 @@ left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SE
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 left join Supp with (nolock) on Supp.id = ps.SuppID 
 left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
+left join #tmp_FIR fp on psd.ID = fp.POID and psd.SEQ1 = fp.SEQ1 and psd.SEQ2 = fp.SEQ2 and fi.Dyelot = fp.Dyelot and fi.Roll = fp.Roll
 outer apply
 (
 	select MtlLocationID = stuff(
@@ -380,16 +387,6 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) VID
-outer apply(
-	select top(1) fp.Grade
-	from FIR F with (nolock)
-    inner join FIR_Physical FP with (nolock) on fp.id = f.ID
-	where psd.id = F.POID 
-	AND psd.SEQ1 = F.SEQ1 
-	AND psd.SEQ2 = F.SEQ2 
-	AND fi.Roll = FP.Roll 
-	AND fi.Dyelot = FP.Dyelot
-) fp
 where 1=1
 ");
                 #endregion
