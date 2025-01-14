@@ -117,7 +117,7 @@ namespace Sci.Production.IE
                         DECLARE @Holiday int;
                         SELECT @Holiday = isnull(DATEDIFF(day,@CompletionDate,GETDATE()) - (COUNT(1) + dbo.getDateRangeSundayCount(@CompletionDate,GETDATE())),0)
                         FROM Holiday WITH(NOLOCK)
-                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = 'MWI'
+                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = '{row["FactoryID"]}'
                         SELECT VAL = IIF(@Holiday <= 0, 0 , @Holiday)
                         ";
                         var Holiday = MyUtility.GetValue.Lookup(sqlcmd);
