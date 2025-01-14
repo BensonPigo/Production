@@ -56,6 +56,8 @@ namespace Sci.Production.Basic
         {
             base.OnFormLoaded();
             this.btnMailTo.ForeColor = MyUtility.GetValue.Lookup("select isnull(count(ID),0) from MailTo WITH (NOLOCK) ") == "0" ? Color.Black : Color.Blue;
+            MyUtility.Check.Seek("SELECT SpreadingMachine_Target FROM SYSTEM", out DataRow dr, "ManufacturingExecution");
+            this.numSpreadingMachine_Target.Value = MyUtility.Convert.GetInt(dr["SpreadingMachine_Target"]);
         }
 
         // 取Sketch目錄的路徑
@@ -101,6 +103,18 @@ namespace Sci.Production.Basic
             this.txtUserPOApproved.TextBox1.Select();
         }
 
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            DualResult result = DBProxy.Current.Execute("ManufacturingExecution", $"UPDATE SYSTEM SET SpreadingMachine_Target = {this.numSpreadingMachine_Target.Value}");
+            if (!result)
+            {
+                return result;
+            }
+
+            return base.ClickSavePost();
+        }
+
         // 取Pic Files Path 路徑
         private void BtnPicFilesPath_Click(object sender, EventArgs e)
         {
@@ -138,7 +152,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void btnHandoverATPath_Click(object sender, EventArgs e)
+        private void BtnHandoverATPath_Click(object sender, EventArgs e)
         {
             string dir = this.GetDir();
             if (!MyUtility.Check.Empty(dir))
@@ -147,7 +161,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void btnHandoverSpecialToolsPath_Click(object sender, EventArgs e)
+        private void BtnHandoverSpecialToolsPath_Click(object sender, EventArgs e)
         {
             string dir = this.GetDir();
             if (!MyUtility.Check.Empty(dir))
@@ -156,7 +170,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void btnCriticalOperationPath_Click(object sender, EventArgs e)
+        private void BtnCriticalOperationPath_Click(object sender, EventArgs e)
         {
             string dir = this.GetDir();
             if (!MyUtility.Check.Empty(dir))
@@ -165,7 +179,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void btnFinalPatternPath_Click(object sender, EventArgs e)
+        private void BtnFinalPatternPath_Click(object sender, EventArgs e)
         {
             string dir = this.GetDir();
             if (!MyUtility.Check.Empty(dir))
@@ -174,7 +188,7 @@ namespace Sci.Production.Basic
             }
         }
 
-        private void btnPadPrintPath_Click(object sender, EventArgs e)
+        private void BtnPadPrintPath_Click(object sender, EventArgs e)
         {
             string dir = this.GetDir();
             if (!MyUtility.Check.Empty(dir))
