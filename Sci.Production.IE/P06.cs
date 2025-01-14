@@ -305,8 +305,8 @@ AND ALMCS.Junk = 0
                     [PPADesc] = isnull(d.Name, ''),
                     [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
                     [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID)
-												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey)
+                    [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
+												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
 												 END,
                     [EmployeeName] = e.Name,
                     [EmployeeSkill] = e.Skill,
@@ -635,7 +635,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
-        protected override bool ClickSaveBefore()
+        protected override bool ClickSaveBefore() 
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
