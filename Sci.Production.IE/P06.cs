@@ -635,7 +635,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
-        protected override bool ClickSaveBefore() 
+        protected override bool ClickSaveBefore()
         {
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
@@ -657,7 +657,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
 
             var list = dt.AsEnumerable()
             .Where(x => x.RowState != DataRowState.Deleted && x["TimeStudyDetailUkey"].ToString() != "0") // 排除被刪除的行
-            .GroupBy(x => new { OperationID = x["OperationID"].ToString(), Ukey = x["TimeStudyDetailUkey"], IsAdd = x["IsAdd"] })
+            .GroupBy(x => new { OperationID = x["OperationID"].ToString(), Ukey = x["TimeStudyDetailUkey"], IsAdd = x["IsAdd"], GroupNo = x["GroupNo"] })
             .Select(g => new
             {
                 No = string.Join(", ", g.Select(row => row["No"].ToString())),
@@ -688,7 +688,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 string concatenatedNos = string.Join(", ", list1.Select(x => x.No));
                 MyUtility.Msg.WarningBox($@"Please enter Operation in No.{concatenatedNos}!");
                 return false;
-            } 
+            }
 
             int noCount = MyUtility.Convert.GetInt(this.CurrentMaintain["OriNoNumber"]);
 
@@ -1009,6 +1009,21 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
                 if (MyUtility.Check.Empty(e.FormattedValue))
                 {
+                    dr["OperationID"] = string.Empty;
+                    dr["TimeStudyDetailUkey"] = DBNull.Value;
+                    dr["GSD"] = DBNull.Value;
+                    dr["Cycle"] = DBNull.Value;
+                    dr["OperationDesc"] = string.Empty;
+                    dr["MachineTypeID"] = string.Empty;
+                    dr["Template"] = string.Empty;
+                    dr["Annotation"] = string.Empty;
+                    dr["MasterPlusGroup"] = string.Empty;
+                    dr["Motion"] = string.Empty;
+                    dr["EmployeeID"] = string.Empty;
+                    dr["EmployeeName"] = string.Empty;
+                    dr["SewerDiffPercentageDesc"] = DBNull.Value;
+                    dr["SewerDiffPercentage"] = DBNull.Value;
+                    dr["TimeStudyDetailUkeyCnt"] = 1;
                     return;
                 }
 
@@ -1016,6 +1031,11 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     if (this.EditMode)
                     {
+                        if (dr["OperationDesc"].ToString().ToUpper() == e.FormattedValue.ToString().ToUpper())
+                        {
+                            return;
+                        }
+
                         string sqlcmd = $@"            
                         select 
                         [OperationID] = o.ID,
@@ -1111,7 +1131,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         dr["EmployeeName"] = employeeName;
                         dr["SewerDiffPercentageDesc"] = 100;
                         dr["SewerDiffPercentage"] = 1;
-                        var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey && MyUtility.Convert.GetInt(row["No"]) != MyUtility.Convert.GetInt(dr["No"]))
+                        dr["TimeStudyDetailUkeyCnt"] = 1;
+                        var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey)
                                                           .Max(row => Convert.ToInt16(row["GroupNo"])) + 1;
                         dr["GroupNo"] = newGroupNo;
 
@@ -1133,6 +1154,19 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         }
 
                         dr.EndEdit();
+                    }
+
+                    foreach (DataGridViewRow dr1 in this.detailgrid.Rows)
+                    {
+                        DataRow sourceDr = this.detailgrid.GetDataRow(dr1.Index);
+
+                        for (int i = 0; i < dr1.Cells.Count; i++)
+                        {
+                            if (i > 1)
+                            {
+                                dr1.Cells[i].Style.BackColor = MyUtility.Convert.GetInt(sourceDr["TimeStudyDetailUkeyCnt"]) > 1 ? Color.FromArgb(255, 255, 153) : this.detailgrid.DefaultCellStyle.BackColor;
+                            }
+                        }
                     }
                 }
             };
