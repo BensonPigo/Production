@@ -490,7 +490,7 @@ namespace Sci.Production.IE
             int icount = 0;
             for (int i = 0; i < this.dtAutomatedLineMapping_DetailCopy.Rows.Count; i++)
             {
-                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i][strColumns].ToString() == MyUtility.Convert.GetString(selectedRow[strColumns]))
+                if (this.dtAutomatedLineMapping_DetailCopy.Rows[i][strColumns].ToString() == MyUtility.Convert.GetString(selectedRow[strColumns]) && this.dtAutomatedLineMapping_DetailCopy.Rows[i]["GroupNo"].ToString() == MyUtility.Convert.GetString(selectedRow["GroupNo"]))
                 {
                     icount++;
                     if (icount == intDT_EditOperaror - 1)
