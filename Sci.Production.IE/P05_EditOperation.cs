@@ -588,22 +588,7 @@ namespace Sci.Production.IE
 
             IEnumerable<dynamic> checkDivSewerBalance;
 
-            if (!this.IsP05)
-            {
-                checkDivSewerBalance = needKeepRows
-                .GroupBy(s => s["TimeStudyDetailUkey"])
-                .Select(groupItem => new
-                {
-                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
-                    OperationId = groupItem.First()["OperationId"].ToString(),
-                    OperationDesc = groupItem.First()["OperationDesc"].ToString(),
-                    SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
-                    SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
-                    TimeStudyDetailUkeyCnt = groupItem.Count(),
-                    DetailRows = groupItem,
-                });
-            }
-            else
+            if (this.IsP05)
             {
                 checkDivSewerBalance = needKeepRows
                 .GroupBy(s => s["TimeStudyDetailUkey"])
@@ -618,6 +603,22 @@ namespace Sci.Production.IE
                     SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
+                });
+            }
+            else
+            {
+                checkDivSewerBalance = needKeepRows
+                .GroupBy(s => new { TimeStudyDetailUkey = s["TimeStudyDetailUkey"], GroupNo = s["GroupNo"] })
+                .Select(groupItem => new
+                {
+                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
+                    OperationId = groupItem.First()["OperationId"].ToString(),
+                    OperationDesc = groupItem.First()["OperationDesc"].ToString(),
+                    SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
+                    SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
+                    TimeStudyDetailUkeyCnt = groupItem.Count(),
+                    DetailRows = groupItem,
+                    GroupNo = groupItem.First()["GroupNo"].ToString(),
                 });
             }
 
@@ -701,7 +702,7 @@ namespace Sci.Production.IE
                 {
                     foreach (var groupItem in checkDivSewerBalance)
                     {
-                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.SumSewerDiff == 100)
+                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.GroupNo == needUpdRow["GroupNo"].ToString() && groupItem.SumSewerDiff == 100)
                         {
                             needUpdRow["SewerDiffPercentageDesc"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                             needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
