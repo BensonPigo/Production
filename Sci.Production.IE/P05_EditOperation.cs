@@ -760,12 +760,11 @@ namespace Sci.Production.IE
         private void BackgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             var groupTimeStudy_DetailUkeyNo = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                                                .Where(x => x["Selected"].ToString() == "TRUE")
                                                 .GroupBy(s => new
                                                 {
-                                                    OperationID = s["TimeStudyDetailUkey"].ToString(),
+                                                    TimeStudyDetailUkey = s["TimeStudyDetailUkey"].ToString(),
                                                     No = s["No"].ToString(),
-                                                });
+                                                }).ToList();
 
             if (groupTimeStudy_DetailUkeyNo.Any(s => s.Count() > 1 && !MyUtility.Check.Empty(s.Key.No)))
             {
