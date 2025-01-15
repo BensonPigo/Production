@@ -971,7 +971,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                                 dr["EmployeeName"] = employeeName;
                                 dr["SewerDiffPercentageDesc"] = 100;
                                 dr["SewerDiffPercentage"] = 1;
-                                var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey)
+                                var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey && MyUtility.Convert.GetInt(row["No"]) != MyUtility.Convert.GetInt(dr["No"]))
                                                                   .Max(row => Convert.ToInt16(row["GroupNo"])) + 1;
                                 dr["GroupNo"] = newGroupNo;
 
@@ -998,6 +998,141 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                             this.GetEstValue(list, dr["No"].ToString());
                             this.IsAddPack_Presser = false;
                         }
+                    }
+                }
+            };
+
+            operation.CellValidating += (s, e) =>
+            {
+                DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    return;
+                }
+
+                if (MyUtility.Convert.GetBool(dr["IsAdd"]) == true)
+                {
+                    if (this.EditMode)
+                    {
+                        string sqlcmd = $@"            
+                        select 
+                        [OperationID] = o.ID,
+                        o.DescEN,
+                        o.SMV,
+                        SMVsec = o.SMV * 60,
+                        o.MachineTypeID,
+                        o.SeamLength,
+                        o.MtlFactorID,
+                        o.Annotation,
+                        o.MasterPlusGroup,
+                        [MachineType_IsSubprocess] = isnull(md.IsSubprocess,0),
+                        o.Junk,
+                        md.IsSubprocess,
+                        [IsNonSewingLine] = isnull(md.IsNonSewingLine, 0),
+                        o.MoldID,
+                        [Motion] = Motion.val
+                        from Operation o WITH (NOLOCK)
+                        left join MachineType_Detail md WITH (NOLOCK) on md.ID = o.MachineTypeID and md.FactoryID = '{Sci.Env.User.Factory}'
+                        OUTER APPLY
+                        (
+	                        select val = stuff((select distinct concat(',',Name)
+	                        from OperationRef a
+	                        inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+	                        where a.CodeType = '00007' and a.id = o.ID  for xml path('') ),1,1,'')
+                        )Motion
+                        where CalibratedCode = 1 and o.DescEN = '{e.FormattedValue}'";
+                        DualResult dualResult = DBProxy.Current.Select(null, sqlcmd, out DataTable dataTable);
+                        if (!dualResult)
+                        {
+                            MyUtility.Msg.WarningBox(dualResult.ToString());
+                            return;
+                        }
+
+                        if (dataTable.Rows.Count == 0)
+                        {
+                            MyUtility.Msg.WarningBox("Operation Code not found");
+                            return;
+                        }
+
+                        string strAnnotation = string.Empty;
+                        int timeStudyUkey = 0;
+
+                        sqlcmd = $@"select  Annotation,TSD.Ukey
+                                        from TimeStudy TS WITH(NOLOCK)
+                                        INNER JOIN TimeStudy_Detail TSD WITH(NOLOCK) ON TS.ID = TSD.ID
+                                        WHERE 
+                                        TS.StyleID = '{this.CurrentMaintain["StyleID"]}' AND
+                                        TS.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
+                                        TS.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
+                                        OperationID = '{dataTable.Rows[0]["OperationID"].ToString()}'
+                                        UNION ALL
+                                        SELECT TOP 1 Annotation,lmdb.TimeStudyDetailUkey
+                                        FROM LineMappingBalancing LMB WITH(NOLOCK)
+                                        INNER JOIN LineMappingBalancing_Detail LMDB WITH(NOLOCK) ON LMDB.id = LMB.id
+                                        where 
+                                        LMB.styleid = '{this.CurrentMaintain["StyleID"]}' AND 
+                                        LMB.SeasonID = '{this.CurrentMaintain["SeasonID"]}' AND
+                                        LMB.BrandID = '{this.CurrentMaintain["BrandID"]}' AND
+                                        LMDB.OperationID = '{dataTable.Rows[0]["OperationID"].ToString()}'
+                                        ";
+                        DualResult dul = DBProxy.Current.Select("Production", sqlcmd, out DataTable dt1);
+                        if (!dul)
+                        {
+                            MyUtility.Msg.WarningBox(dul.ToString());
+                            return;
+                        }
+
+                        if (dt1.Rows.Count > 0)
+                        {
+                            strAnnotation = dt1.Rows[0]["Annotation"].ToString();
+                            timeStudyUkey = MyUtility.Convert.GetInt(dt1.Rows[0]["Ukey"]);
+                        }
+
+                        List<DataRow> list = dt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted && x["No"].ToString() == dr["No"].ToString()).ToList();
+
+                        // 找到第一個 EmployeeID 有值的行
+                        string employeeId = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeID"]?.ToString()))?["EmployeeID"]?.ToString() : string.Empty;
+
+                        string employeeName = list.Count > 0 ? list.FirstOrDefault(x => !string.IsNullOrWhiteSpace(x["EmployeeName"]?.ToString()))?["EmployeeName"]?.ToString() : string.Empty;
+
+                        dr["OperationID"] = dataTable.Rows[0]["OperationID"].ToString();
+                        dr["TimeStudyDetailUkey"] = timeStudyUkey;
+                        dr["GSD"] = dataTable.Rows[0]["SMVsec"].ToString();
+                        dr["Cycle"] = dataTable.Rows[0]["SMVsec"].ToString();
+                        dr["OperationDesc"] = dataTable.Rows[0]["DescEN"].ToString();
+                        dr["MachineTypeID"] = dataTable.Rows[0]["MachineTypeID"].ToString();
+                        dr["Template"] = MyUtility.GetValue.Lookup($"select dbo.GetParseOperationMold('{dataTable.Rows[0]["MoldID"]}', 'Template')");
+                        dr["Annotation"] = strAnnotation;
+                        dr["MasterPlusGroup"] = dataTable.Rows[0]["MasterPlusGroup"].ToString();
+                        dr["Motion"] = dataTable.Rows[0]["Motion"].ToString();
+                        dr["EmployeeID"] = employeeId;
+                        dr["EmployeeName"] = employeeName;
+                        dr["SewerDiffPercentageDesc"] = 100;
+                        dr["SewerDiffPercentage"] = 1;
+                        var newGroupNo = dt.AsEnumerable().Where(row => MyUtility.Convert.GetInt(row["TimeStudyDetailUkey"]) == timeStudyUkey && MyUtility.Convert.GetInt(row["No"]) != MyUtility.Convert.GetInt(dr["No"]))
+                                                          .Max(row => Convert.ToInt16(row["GroupNo"])) + 1;
+                        dr["GroupNo"] = newGroupNo;
+
+                        if (dr["OperationID"].ToString() == "PROCIPF00003" ||
+                        dr["OperationID"].ToString() == "PROCIPF00004")
+                        {
+                            if (dr["OperationID"].ToString() == "PROCIPF00003")
+                            {
+                                this.CurrentMaintain["PackerManpower"] = MyUtility.Convert.GetInt(this.CurrentMaintain["PackerManpower"]) + 1;
+                            }
+                            else
+                            {
+                                this.CurrentMaintain["PresserManpower"] = MyUtility.Convert.GetInt(this.CurrentMaintain["PresserManpower"]) + 1;
+                            }
+                        }
+                        else
+                        {
+                            this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() : 0;
+                        }
+
+                        dr.EndEdit();
                     }
                 }
             };
@@ -1408,7 +1543,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))

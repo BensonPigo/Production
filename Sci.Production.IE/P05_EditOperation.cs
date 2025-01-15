@@ -36,9 +36,6 @@ namespace Sci.Production.IE
         {
             this.IsP05 = isP05;
             this.DialogResult = DialogResult.No;
-
-
-
             this.dtAutomatedLineMapping_Detail = dtAutomatedLineMapping_Detail;
             this.dtAutomatedLineMapping_DetailCopy = dtAutomatedLineMapping_Detail.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted && s["PPA"].ToString() != "C").OrderBy(s => s["No"]).CopyToDataTable();
 
@@ -379,11 +376,11 @@ namespace Sci.Production.IE
             {
                 this.Helper.Controls.Grid.Generator(this.gridEditOperation)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true, settings: colNo)
-               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
-               .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
-               .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: colGroupOperation)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
-               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: colGroupOperation)
+               .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("MachineTypeID", header: "ST/MC", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), iseditingreadonly: true)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "Ori. %", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .Numeric("UpdSewerDiffPercentage", header: "Update %", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: colUpdSewer);
             }
