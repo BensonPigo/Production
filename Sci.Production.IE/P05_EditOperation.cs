@@ -275,8 +275,7 @@ namespace Sci.Production.IE
                                         (x["OperationID"].ToString() == "PROCIPF00003" || x["OperationID"].ToString() == "PROCIPF00004") &&
                                         x["OperationID"].ToString() == selectedResult["OperationID"].ToString()) ||
                                         (x["TimeStudyDetailUkey"].ToString() != "0" && x["TimeStudyDetailUkey"].ToString() == selectedResult["TimeStudyDetailUkey"].ToString())) &&
-                                        !MyUtility.Check.Empty(x["OperationID"].ToString()) &&
-                                        MyUtility.Convert.GetString(x["GroupNo"]) == MyUtility.Convert.GetString(selectedResult["GroupNo"]))
+                                        !MyUtility.Check.Empty(x["OperationID"].ToString()))
                            .TryCopyToDataTable((DataTable)this.gridEditOperationBs.DataSource);
 
                 int intDT_EditOperaror = dT_EditOperaror.Rows.Count;
@@ -668,15 +667,15 @@ namespace Sci.Production.IE
             }
             #endregion
             #region 檢查No是否完整
-            List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
 
-            var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
-            if (listLoseNo.Any())
-            {
-                MyUtility.Msg.WarningBox($@"The following No is missing.
-                {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
-                return;
-            }
+            // List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
+            // var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
+            // if (listLoseNo.Any())
+            // {
+            //     MyUtility.Msg.WarningBox($@"The following No is missing.
+            //     {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+            //     return;
+            // }
             #endregion
 
             if (this.IsP05)
