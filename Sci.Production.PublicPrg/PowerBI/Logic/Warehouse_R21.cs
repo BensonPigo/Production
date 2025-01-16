@@ -174,6 +174,8 @@ group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
     ,[ReturnQty] = round(isnull(fi.ReturnQty, 0),2)
 	,[BalanceQty] = round(isnull(fi.InQty, 0),2) - round(isnull(fi.OutQty, 0),2) + round(isnull(fi.AdjustQty, 0),2) - round(isnull(fi.ReturnQty, 0),2)
 	,[MtlLocationID] = isnull(f.MtlLocationID, '')
+    ,[Checker] = rdcheck.checker
+    ,[Checker Date] = isnull(rdcheck.MINDCheckEditDate, rdcheck.MINDCheckAddDate)
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
@@ -358,6 +360,21 @@ left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
 left join Supp with (nolock) on Supp.id = ps.SuppID 
 left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
 left join #tmp_FIR fp on psd.ID = fp.POID and psd.SEQ1 = fp.SEQ1 and psd.SEQ2 = fp.SEQ2 and fi.Dyelot = fp.Dyelot and fi.Roll = fp.Roll
+outer apply(
+    select checker = iif(isnull(pass1.Name, '') != '', rd.MINDChecker + '-' + pass1.Name, rd.MINDChecker), 
+           rd.MINDCheckAddDate, 
+           rd.MINDCheckEditDate 
+    from Receiving r with (nolock) 
+    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+    left join ManufacturingExecution.dbo.pass1 on rd.MINDChecker = pass1.ID
+    where r.Status = 'Confirmed' 
+    and rd.POID = fi.POID 
+    and rd.Seq1 = fi.Seq1 
+    and rd.Seq2 = fi.Seq2 
+    and rd.Roll = fi.Roll 
+    and rd.Dyelot = fi.Dyelot 
+    and rd.StockType = fi.StockType 
+) rdcheck
 outer apply
 (
 	select MtlLocationID = stuff(
