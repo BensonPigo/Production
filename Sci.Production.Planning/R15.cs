@@ -222,7 +222,7 @@ namespace Sci.Production.Planning
         /// </summary>
         private void RemoveOtherColumn()
         {
-            string[] columnsToRemove = { "RFID AUT Farm In Qty", "RFID AUT Farm Out Qty", "RFID FM Farm In Qty", "RFID FM Farm Out Qty" };
+            string[] columnsToRemove = { "RFID AUT Farm In Qty", "RFID AUT Farm Out Qty", "RFID FM Farm In Qty", "RFID FM Farm Out Qty", "RFID Emboss Farm In Qty", "RFID Emboss Farm Out Qty" };
 
             foreach (string column in columnsToRemove)
             {
