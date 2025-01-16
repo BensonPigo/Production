@@ -291,7 +291,7 @@ namespace Sci.Production.IE
                             this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * (icount - 1));
                             if (this.IsP05)
                             {
-                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["DivSewer"]) * (intUpd * icount)) / 100;
+                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["OriSewer"]) * (intUpd * (icount-1))) / 100;
                             }
                         }
                         else
@@ -299,7 +299,7 @@ namespace Sci.Production.IE
                             this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = intUpd;
                             if (this.IsP05)
                             {
-                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["DivSewer"]) * intUpd) / 100;
+                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["OriSewer"]) * intUpd) / 100;
                             }
                         }
                     }
