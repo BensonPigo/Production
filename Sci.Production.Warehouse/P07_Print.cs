@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.PublicForm;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -470,7 +471,7 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 return true;
             }
 
-            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text).ShowDialog();
+            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P07").ShowDialog();
 
             return true;
         }

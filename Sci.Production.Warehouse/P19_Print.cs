@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -25,6 +26,20 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.PrintButtonStatusChange();
             this.mainCurrentMaintain = drMain;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
         }
 
         private void RadioTransferOutReport_CheckedChanged(object sender, EventArgs e)
@@ -39,7 +54,7 @@ namespace Sci.Production.Warehouse
 
         private void PrintButtonStatusChange()
         {
-            if (this.radioTransferOutReport.Checked)
+            if (this.radioTransferOutReport.Checked || this.radioQRCodeSticker.Checked)
             {
                 this.print.Enabled = true;
                 this.toexcel.Enabled = false;
@@ -161,6 +176,10 @@ order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll
 
                 #endregion
             }
+            else if (this.radioQRCodeSticker.Checked)
+            {
+                return new DualResult(true);
+            }
             else
             {
                 string sql = $@"
@@ -234,6 +253,12 @@ order by td.Dyelot, Len(td.Roll), td.Roll
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToPrint(ReportDefinition report)
         {
+            if (this.radioQRCodeSticker.Checked)
+            {
+                QRCodeSticker(MyUtility.Convert.GetString(this.mainCurrentMaintain["ID"]), this.comboType.Text, "P19");
+                return true;
+            }
+
             this.SetCount(this.dtResult.Rows.Count);
 
             DataRow row = this.mainCurrentMaintain;
@@ -295,6 +320,182 @@ order by td.Dyelot, Len(td.Roll), td.Roll
             frm.Show();
 
             return true;
+        }
+
+        /// <summary>
+        /// Print QRCode Sticker for P19 & P45
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <param name="type">type</param>
+        /// <param name="callFormName">callFormName</param>
+        public static void QRCodeSticker(string id, string type, string callFormName)
+        {
+            string qty;
+            string qtyTo;
+            switch (callFormName)
+            {
+                case "P45":
+                    qty = "isnull(QtyBefore,0.00) - isnull(QtyAfter,0.00)";
+                    qtyTo = "isnull(sd.QtyBefore,0.00) - isnull(sd.QtyAfter,0.00)";
+                    break;
+                default:
+                    qty = "Qty";
+                    qtyTo = "sd.Qty";
+                    break;
+            }
+
+            string sqlcmd = $@"
+select sd.*
+    , From_Barcode = iif(w.From_NewBarcodeSeq = '', w.From_NewBarcode, concat(w.From_NewBarcode, '-', w.From_NewBarcodeSeq))
+    , To_Barcode = iif(w.To_NewBarcodeSeq = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
+into #tmp
+from dbo.{Prgs.GetWHDetailTableName(callFormName)} sd with(nolock)
+inner join PO_Supp_Detail psd with(nolock) on psd.id = sd.POID and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2 and psd.FabricType = 'F'
+inner join WHBarcodeTransaction w with(nolock) on w.TransactionID = sd.id and w.TransactionUkey = sd.Ukey and w.Action = 'Confirm'
+where sd.id = '{id}'
+
+-- From
+select
+      POID= POID
+    , Seq = Concat(Seq1, ' ', Seq2)
+    , Seq1 = Seq1
+    , Seq2 = Seq2
+    , Roll = Roll
+    , Dyelot = Dyelot
+    , StockType = StockType
+    , Qty = Sum({qty})
+    , Barcode = From_Barcode
+into #tmpFrom
+from #tmp
+group by POID,Seq1,Seq2,Roll,Dyelot,StockType,From_Barcode
+
+select
+    Sel = Cast(0 as bit)
+    , sd.*
+    , Weight = isnull(rd.Weight, td.Weight)
+    , ActualWeight = isnull(rd.ActualWeight, td.ActualWeight)
+    , Location = dbo.Getlocation(f.Ukey)
+    , psd.Refno
+    , ColorID = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+    , o.FactoryID
+    , StockTypeName = 
+        case sd.StockType
+        when 'b' then 'Bulk'
+        when 'i' then 'Inventory'
+        when 'o' then 'Scrap'
+        end
+    , o.StyleID
+    , WhseArrival = isnull(rd.WhseArrival, td.IssueDate)
+    , fr.Relaxtime
+from #tmpFrom sd
+inner join PO_Supp_Detail psd with(nolock) on psd.id = sd.POID and psd.SEQ1 = sd.Seq1 and psd.SEQ2 = sd.Seq2 and psd.FabricType = 'F'
+inner join Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
+inner join View_WH_Orders o with(nolock) on o.id = psd.ID
+inner join Ftyinventory f with (nolock) on f.PoId = sd.POID
+                                       and f.Seq1 = sd.Seq1
+                                       and f.Seq2 = sd.Seq2
+                                       and f.Roll = sd.Roll
+                                       and f.Dyelot = sd.Dyelot
+                                       and f.StockType = sd.StockType
+left join PO_Supp_Detail_Spec psdsC with(nolock) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+outer apply(
+    select rd.Weight, rd.ActualWeight, Receiving.WhseArrival
+    from Receiving_Detail rd with(nolock)
+    inner join Receiving with(nolock) on Receiving.id = rd.id
+    where rd.PoId = sd.POID
+    and rd.Seq1 = sd.Seq1
+    and rd.Seq2 = sd.Seq2
+    and rd.Roll = sd.Roll
+    and rd.Dyelot = sd.Dyelot
+    and rd.StockType = sd.StockType
+)rd
+outer apply(
+    select td.Weight, td.ActualWeight, TransferIn.IssueDate
+    from TransferIn_Detail td with(nolock)
+    inner join TransferIn with(nolock) on TransferIn.id = td.id
+    where td.PoId = sd.POID
+    and td.Seq1 = sd.Seq1
+    and td.Seq2 = sd.Seq2
+    and td.Roll = sd.Roll
+    and td.Dyelot = sd.Dyelot
+    and td.StockType = sd.StockType
+)td
+LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
+LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
+ORDER BY POID,Seq,Roll, Dyelot
+
+-- To
+select
+    Sel = Cast(0 as bit)
+    , POID = ToPOID
+    , Seq = Concat(ToSeq1, ' ', ToSeq2)
+    , Seq1 = ToSeq1
+    , Seq2 = ToSeq2
+    , Roll = ''
+    , Dyelot = ''
+    , StockType = ''
+    , [Qty] = {qtyTo}
+    , Barcode = To_Barcode
+    , Weight = isnull(rd.Weight, td.Weight)
+    , ActualWeight = isnull(rd.ActualWeight, td.ActualWeight)
+    , Location = dbo.Getlocation(f.Ukey)
+    , psd.Refno
+    , ColorID = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
+    , o.FactoryID
+    , StockTypeName = ''
+    , o.StyleID
+    , WhseArrival = isnull(rd.WhseArrival, td.IssueDate)
+From #tmp sd
+left join PO_Supp_Detail psd with(nolock) on psd.id = sd.ToPOID and psd.SEQ1 = ToSeq1 and psd.SEQ2 = sd.ToSeq2 and psd.FabricType = 'F'
+left join Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
+left join View_WH_Orders o with(nolock) on o.id = psd.ID
+left join Ftyinventory f with (nolock) on f.PoId = sd.ToPOID
+                                       and f.Seq1 = sd.ToSeq1
+                                       and f.Seq2 = sd.ToSeq2
+left join PO_Supp_Detail_Spec psdsC with(nolock) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+outer apply(
+    select rd.Weight, rd.ActualWeight, Receiving.WhseArrival
+    from Receiving_Detail rd with(nolock)
+    inner join Receiving with(nolock) on Receiving.id = rd.id
+    where rd.PoId = sd.ToPOID
+    and rd.Seq1 = sd.ToSeq1
+    and rd.Seq2 = sd.ToSeq2
+)rd
+outer apply(
+    select td.Weight, td.ActualWeight, TransferIn.IssueDate
+    from TransferIn_Detail td with(nolock)
+    inner join TransferIn with(nolock) on TransferIn.id = td.id
+    where td.PoId = sd.ToPOID
+    and td.Seq1 = sd.ToSeq1
+    and td.Seq2 = sd.ToSeq2
+)td
+ORDER BY POID,Seq,Roll, Dyelot
+
+drop table #tmp,#tmpFrom
+";
+            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, out DataTable[] dts);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return;
+            }
+
+            if (dts[0].Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("No Data can print");
+                return;
+            }
+
+            var barcodeDatasFrom = dts[0].AsEnumerable().Where(s => !MyUtility.Check.Empty(s["Barcode"]));
+            var barcodeDatasTo = dts[1].AsEnumerable().Where(s => !MyUtility.Check.Empty(s["Barcode"]));
+
+            if (barcodeDatasFrom.Count() == 0 && barcodeDatasTo.Count() == 0)
+            {
+                MyUtility.Msg.InfoBox("No Data can print");
+                return;
+            }
+
+            new WH_FromTo_QRCodeSticker(dts[0], dts[1], type, callFormName).ShowDialog();
         }
     }
 }

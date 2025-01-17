@@ -2,6 +2,7 @@
 using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
 using System.Data;
@@ -10,16 +11,22 @@ using System.Linq;
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
-    public partial class P22_Print : Win.Tems.PrintForm
+    public partial class WH_FromTo_Print : Win.Tems.PrintForm
     {
         private DataRow CurrentMaintain;
+        private string callFrom;
+        private string id;
 
         /// <inheritdoc/>
-        public P22_Print(DataRow currentMaintain)
+        public bool IsPrintRDLC = false;
+
+        /// <inheritdoc/>
+        public WH_FromTo_Print(DataRow currentMaintain, string formname)
         {
             this.InitializeComponent();
-            this.Text = "P22 " + currentMaintain["ID"].ToString();
+            this.Text = formname + " " + currentMaintain["ID"].ToString();
             this.CurrentMaintain = currentMaintain;
+            this.callFrom = formname;
 
             DataTable dtPMS_FabricQRCode_LabelSize;
             DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
@@ -40,6 +47,7 @@ namespace Sci.Production.Warehouse
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
+            this.id = this.CurrentDataRow["ID"].ToString();
             return base.ValidateInput();
         }
 
@@ -50,108 +58,56 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        public DataRow CurrentDataRow { get; set; }
+
+        /// <inheritdoc/>
         protected override bool ToPrint()
         {
             if (this.radioTransferSlip.Checked)
             {
-                this.TransferSlip();
+                this.IsPrintRDLC = true;
+                this.Close();
+                return true;
             }
-            else if (this.radioQRCodeSticker.Checked)
+            else if (this.callFrom == "P45")
             {
-                QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, "P22");
+                P19_Print.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, this.callFrom);
+            }
+            else
+            {
+                this.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, this.callFrom);
             }
 
             return true;
         }
 
-        private void TransferSlip()
-        {
-            if (!MyUtility.Check.Seek($"select NameEN from MDivision where id = '{Env.User.Keyword}'", out DataRow dr))
-            {
-                MyUtility.Msg.WarningBox("Data not found!", "Title");
-                return;
-            }
-
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("RptTitle", MyUtility.Convert.GetString(dr["NameEN"])));
-            report.ReportParameters.Add(new ReportParameter("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            report.ReportParameters.Add(new ReportParameter("Remark", MyUtility.Convert.GetString(this.CurrentMaintain["Remark"])));
-            report.ReportParameters.Add(new ReportParameter("issuedate", ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["issuedate"])).ToShortDateString()));
-
-            #region  抓表身資料
-            string cmd = $@"
-select a.FromPOID
-        ,a.FromSeq1+'-'+a.Fromseq2 as SEQ
-        ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
-		    AND(b.seq1 = lag(b.seq1,1,'')over (order by b.ID,b.seq1,b.seq2))
-		    AND(b.seq2 = lag(b.seq2,1,'')over (order by b.ID,b.seq1,b.seq2))) 
-		,'',dbo.getMtlDesc(a.FromPOID,a.FromSeq1,a.Fromseq2,2,0))[DESC]
-		,unit = b.StockUnit
-		,a.FromRoll
-        ,a.FromDyelot
-		,a.Qty
-		,[From_Location]=dbo.Getlocation(fi.ukey)
-        ,[From_ContainerCode] = fi.ContainerCode
-		,a.ToLocation 
-        ,a.ToContainerCode
-        ,[Total]=sum(a.Qty) OVER (PARTITION BY a.FromPOID ,a.FromSeq1,a.Fromseq2 )      
-from dbo.Subtransfer_detail a  WITH (NOLOCK) 
-left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.FromSeq1 and b.SEQ2=a.FromSeq2
-left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2 and a.fromDyelot = fi.Dyelot
-    and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype
-where a.id = '{this.CurrentMaintain["ID"]}'
-";
-            DualResult result = DBProxy.Current.Select(string.Empty, cmd, out DataTable dt);
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            if (dt.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found!");
-                return;
-            }
-
-            // 傳 list 資料
-            report.ReportDataSource = dt.AsEnumerable()
-                .Select(row1 => new P22_PrintData()
-                {
-                    FromPOID = row1["FromPOID"].ToString().Trim(),
-                    SEQ = row1["SEQ"].ToString().Trim(),
-                    DESC = row1["DESC"].ToString().Trim(),
-                    Unit = row1["unit"].ToString().Trim(),
-                    FromRoll = row1["FromRoll"].ToString().Trim(),
-                    FromDyelot = row1["FromDyelot"].ToString().Trim(),
-                    QTY = row1["QTY"].ToString().Trim(),
-                    From_Location = row1["From_Location"].ToString().Trim() + Environment.NewLine + row1["From_ContainerCode"].ToString().Trim(),
-                    ToLocation = row1["ToLocation"].ToString().Trim() + Environment.NewLine + row1["ToContainerCode"].ToString().Trim(),
-                    Total = row1["Total"].ToString().Trim(),
-                }).ToList();
-
-            #endregion
-
-            result = ReportResources.ByEmbeddedResource(typeof(P22_PrintData), "P22_Print.rdlc", out IReportResource reportresource);
-            if (!result)
-            {
-                MyUtility.Msg.ErrorBox(result.ToString());
-                return;
-            }
-
-            report.ReportResource = reportresource;
-            new Win.Subs.ReportView(report) { MdiParent = this.MdiParent }.Show();
-        }
-
         /// <inheritdoc/>
-        public static void QRCodeSticker(string id, string type, string callFormName)
+        private void QRCodeSticker(string id, string type, string callFormName)
         {
+            string qty;
+            string qtyTo;
+            string qtyFrom;
+            switch (callFormName)
+            {
+                case "P32":
+                case "P31":
+                    qty = "qty";
+                    qtyTo = "sd.Qty";
+                    qtyFrom = "qty";
+                    break;
+                default:
+                    qty = "Qty";
+                    qtyTo = "sd.Qty";
+                    qtyFrom = "FromBalanceQty";
+                    break;
+            }
+
             string sqlcmd = $@"
 select sd.*
     , From_Barcode = iif(w.From_NewBarcodeSeq = '', w.From_NewBarcode, concat(w.From_NewBarcode, '-', w.From_NewBarcodeSeq))
     , To_Barcode = iif(w.To_NewBarcodeSeq = '', w.To_NewBarcode, concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq))
 into #tmp
-from SubTransfer_Detail sd with(nolock)
+from dbo.{Prgs.GetWHDetailTableName(callFormName)} sd with(nolock)
 inner join PO_Supp_Detail psd with(nolock) on psd.id = sd.FromPOID and psd.SEQ1 = FromSeq1 and psd.SEQ2 = sd.FromSeq2 and psd.FabricType = 'F'
 inner join WHBarcodeTransaction w with(nolock) on w.TransactionID = sd.id and w.TransactionUkey = sd.Ukey and w.Action = 'Confirm'
 where sd.id = '{id}'
@@ -164,12 +120,12 @@ select
     , Roll = FromRoll
     , Dyelot = FromDyelot
     , StockType = FromStockType
-    , TransQty = Sum(Qty)
-    , Qty = FromBalanceQty
+    , TransQty = Sum({qty})
+    , Qty = {qtyFrom}
     , Barcode = From_Barcode
 into #tmpFrom
 from #tmp
-group by FromPOID,FromSeq1,FromSeq2,FromRoll,FromDyelot,FromStockType,FromBalanceQty,From_Barcode
+group by FromPOID,FromSeq1,FromSeq2,FromRoll,FromDyelot,FromStockType,{qtyFrom},From_Barcode
 
 select
     Sel = Cast(0 as bit)
@@ -236,7 +192,7 @@ select
     , Roll = ToRoll
     , Dyelot = ToDyelot
     , StockType = ToStockType
-    , sd.Qty
+    , Qty = {qtyTo}
     , Barcode = To_Barcode
     , Weight = isnull(rd.Weight, td.Weight)
     , ActualWeight = isnull(rd.ActualWeight, td.ActualWeight)

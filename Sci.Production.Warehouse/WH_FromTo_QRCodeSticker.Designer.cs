@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P22_PrintFabricSticker
+    partial class WH_FromTo_QRCodeSticker
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -152,11 +152,11 @@
             this.grid2.TabStop = false;
             this.grid2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid2_ColumnHeaderMouseClick);
             // 
-            // P22_PrintFabricSticker
+            // WH_FromTo_QRCodeSticker
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
             this.Controls.Add(this.splitContainer1);
-            this.Name = "P22_PrintFabricSticker";
+            this.Name = "WH_FromTo_QRCodeSticker";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Print Fabric Sticker";
             this.Controls.SetChildIndex(this.splitContainer1, 0);

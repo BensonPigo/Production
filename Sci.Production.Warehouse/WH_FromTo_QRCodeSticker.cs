@@ -7,18 +7,19 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
-    public partial class P22_PrintFabricSticker : Win.Tems.QueryForm
+    public partial class WH_FromTo_QRCodeSticker : Win.Tems.QueryForm
     {
         private DataTable fromdt;
         private DataTable todt;
         private string printType;
 
         /// <inheritdoc/>
-        public P22_PrintFabricSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
+        public WH_FromTo_QRCodeSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
         {
             this.InitializeComponent();
             this.fromdt = fromdt;
@@ -40,7 +41,7 @@ namespace Sci.Production.Warehouse
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
+                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0 && !MyUtility.Check.Empty(dr["Barcode"]);
             };
 
             this.grid1.IsEditingReadOnly = false;
@@ -60,6 +61,7 @@ namespace Sci.Production.Warehouse
             {
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
+                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0 && !MyUtility.Check.Empty(dr["Barcode"]);
             };
 
             this.grid2.IsEditingReadOnly = false;
@@ -96,7 +98,7 @@ namespace Sci.Production.Warehouse
                 dt.ImportRow(row);
             }
 
-            P07_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
+            WH_Receive_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
         }
 
         private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

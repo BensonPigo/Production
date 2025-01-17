@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
+using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using Sci.Win.Tools;
 using System;
@@ -202,7 +203,7 @@ namespace Sci.Production.Warehouse
                     return;
                 }
 
-                P07_QRCodeSticker.PrintQRCode_RDLC(new List<DataRow>() { dr }, this.cmbBarcoedType.Text, this.Name);
+                WH_Receive_QRCodeSticker.PrintQRCode_RDLC(new List<DataRow>() { dr }, this.cmbBarcoedType.Text, this.Name);
                 string detailTableName = MyUtility.Convert.GetString(dr["ReceivingSource"]) == "Receiving" ? "Receiving_Detail" : "TransferIn_Detail";
                 string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey ={dr["Ukey"]} and QRCode_PrintDate is null";
                 DualResult result = DBProxy.Current.Execute(null, sqlcmd);
