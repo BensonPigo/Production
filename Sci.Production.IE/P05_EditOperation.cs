@@ -579,7 +579,7 @@ namespace Sci.Production.IE
 
             var checkedNo = this.dtNoSelectItem.AsEnumerable().Select(s => s["No"].ToString()).ToList();
             var needKeepRows = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
-                .Where(s => checkedNo.Contains(s["No"].ToString()) &&
+                .Where(s => checkedNo.Contains(s["No"].ToString()) && !MyUtility.Check.Empty(s["OperationId"]) &&
                 ((!this.IsP05 && ((s["UpdSewerDiffPercentage"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]) > 0) || s["UpdSewerDiffPercentage"] == DBNull.Value)) ||
                 (this.IsP05 && ((s["UpdDivSewer"] != DBNull.Value && MyUtility.Convert.GetDecimal(s["UpdDivSewer"]) > 0) || s["UpdDivSewer"] == DBNull.Value))));
 
@@ -627,7 +627,7 @@ namespace Sci.Production.IE
             {
                 var checkNo = dt.AsEnumerable()
                 .Where(x => x.RowState != DataRowState.Deleted) // 排除已刪除的行
-                .GroupBy(x => new { No = x["No"].ToString(), OperationCode = x["TimeStudyDetailUkey"].ToString() }) // 根據 No 和 TimeStudyDetailUkey 分組
+                .GroupBy(x => new { No = x["No"].ToString(), TimeStudyDetailUkey = x["TimeStudyDetailUkey"].ToString(), OperationID = x["OperationID"].ToString() }) // 根據 No 和 TimeStudyDetailUkey 分組
                 .Where(g => g.Count() > 1) // 找出有多筆相同 No 和 Operation Code 的分組
                 .ToList().Count;
 
@@ -719,6 +719,27 @@ namespace Sci.Production.IE
                 }
             }
 
+            // 將No 總比數 > 1 ，且OperationID = 空的清除
+            var filteredGroups = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
+                                 .Where(x => x.RowState != DataRowState.Deleted) // 排除已刪除的行
+                                 .GroupBy(x => new { No = x["No"].ToString() }) // 根據 No 分組
+                                 .Where(g => g.Count() > 1) // 找出分組數量大於 1 的群組
+                                 .Select(g => new
+                                 {
+                                     GroupKey = g.Key, // 分組鍵
+                                     Rows = g.Where(row => string.IsNullOrEmpty(row["OperationID"]?.ToString())), // 過濾 OperationID 為空的行
+                                 })
+                                 .Where(group => group.Rows.Any()) // 確保分組中有至少一筆符合條件的行
+                                 .ToList();
+
+            foreach (var needRemoveRow in filteredGroups)
+            {
+                foreach (var row in needRemoveRow.Rows)
+                {
+                    this.dtAutomatedLineMapping_DetailCopy.Rows.Remove(row);
+                }
+            }
+
             // 將No空白資料與UpdDivSewer = 0清除
             var needClearDatas = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                                 .Where(s => MyUtility.Check.Empty(s["No"]) ||
@@ -763,6 +784,7 @@ namespace Sci.Production.IE
                                                 {
                                                     TimeStudyDetailUkey = s["TimeStudyDetailUkey"].ToString(),
                                                     No = s["No"].ToString(),
+                                                    OperationID = s["OperationID"].ToString(),
                                                 }).ToList();
 
             if (groupTimeStudy_DetailUkeyNo.Any(s => s.Count() > 1 && !MyUtility.Check.Empty(s.Key.No)))

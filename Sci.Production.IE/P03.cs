@@ -2015,15 +2015,17 @@ WHERE Ukey={item["Ukey"]}
 
             if (this.detailgrid.Rows.Count != 0)
             {
-                if (this.CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
+                if (this.CurrentMaintain["Phase"].ToString().ToUpper() != "FINAL")
                 {
-                    if (MyUtility.Convert.GetDecimal(this.CurrentDetailData["GSD"]) != 0)
+                    if (this.CurrentDetailData["New"].ToString().ToUpper() == "FALSE")
                     {
-                        MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
-                        return;
+                        if (MyUtility.Convert.GetDecimal(this.CurrentDetailData["GSD"]) != 0)
+                        {
+                            MyUtility.Msg.WarningBox("This record is set up by system, can't delete!!");
+                            return;
+                        }
                     }
                 }
-
                 string no = this.CurrentDetailData["No"].ToString(); // 紀錄要被刪除的No
                 string groupkey = this.CurrentDetailData["GroupKey"].ToString();
                 this.SumNoGSDCycleTime(groupkey);
