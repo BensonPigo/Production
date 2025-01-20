@@ -594,6 +594,8 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             {
                 this.CurrentMaintain["TaktTime"] = 0;
             }
+
+            this.detailgridbs.Filter = "IsShow = 'True'";
         }
 
         /// <summary>
@@ -2036,7 +2038,10 @@ WHERE Ukey={item["Ukey"]}
                     this.ReclculateGridGSDCycleTime(no); // 傳算被刪除掉的No的TotalGSD & Total Cycle Time
                 }
 
-                this.ComputeTaktTime();
+                if (this.DetailDatas.Count != 0)
+                {
+                    this.ComputeTaktTime();
+                }
             }
         }
 
