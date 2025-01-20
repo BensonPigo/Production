@@ -1997,6 +1997,11 @@ WHERE Ukey={item["Ukey"]}
         /// </summary>
         protected override void OnDetailGridInsert(int index = 0)
         {
+            if (this.CurrentDetailData == null)
+            {
+                return;
+            }
+
             base.OnDetailGridInsert(index);
             this.CurrentDetailData["OriNo"] = string.Empty;
             this.CurrentDetailData["New"] = false;
