@@ -491,7 +491,7 @@ from (
     )Effi
     where ld.ID = '{masterID}' 
 )ld
-where ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1)
+where ld.IsShow = 1 and (ld.EmployeeJunk is null or  (ld.EmployeeID is not null and ld.IsRow = 1))
 order by case when ld.No = '' then 1
 	    when left(ld.No, 1) = 'P' then 2
 	    else 3 
@@ -594,8 +594,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             {
                 this.CurrentMaintain["TaktTime"] = 0;
             }
-
-            this.detailgridbs.Filter = "IsShow = 'True'";
         }
 
         /// <summary>
