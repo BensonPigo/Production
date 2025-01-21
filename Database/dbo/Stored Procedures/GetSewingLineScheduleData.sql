@@ -2156,11 +2156,10 @@ Create Table #tmpDistinct
 	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[SewingDay] date,
-	[Category] varchar(1)
+	[Category] varchar(10)
 )
 insert into #tmpDistinct
 select distinct StyleUkey,SewingLineID,FactoryID,SewingDay, Category from @APSResult
-
 
 Create Table #tmpProduceDays
 (
@@ -2168,14 +2167,13 @@ Create Table #tmpProduceDays
 	[SewingLineID] [varchar](5) NULL,
 	[FactoryID] [varchar](8) NULL,
 	[SewingDay] date,
-	[Category] varchar(1) null,
-	[SewingInlineCategory] varchar(50)
+	[Category] varchar(8) null,
+	[SewingInlineCategory] varchar(50) null,
 )
 insert into #tmpProduceDays
 select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
 ,SewingInlineCategory =	
 	CASE  WHEN t.Category = 'S' THEN '00005'
-		  WHEN t.StyleUkey like '%,%' then '00001'
 	ELSE 
 		CASE 
 			WHEN ContinuousDaysCalc.ContinuousDays > 29 THEN '00004'
@@ -2189,6 +2187,14 @@ CROSS APPLY (
 SELECT 
 	ContinuousDays = Production.dbo.GetCheckContinusProduceDays(t.StyleUkey, t.SewingLineID, t.FactoryID,null, t.SewingDay)
 ) ContinuousDaysCalc
+where t.StyleUkey not like '%,%'
+
+union all
+
+select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
+,SewingInlineCategory =	'00001'
+from #tmpDistinct t
+where t.StyleUkey like '%,%'
 
 
 --R01 detail and BI
