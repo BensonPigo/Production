@@ -61,7 +61,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel LoadData(DateTime? sDate, DateTime? eDate)
         {
-            Miscellaneous_R02 miscellaneous_R02_ViewModel = new Miscellaneous_R02()
+            Miscellaneous_R02_ViewModel miscellaneous_R02_ViewModel = new Miscellaneous_R02_ViewModel()
             {
                 StartCreateDate = null,
                 EndCreateDate = null,
