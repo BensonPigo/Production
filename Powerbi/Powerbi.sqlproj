@@ -262,6 +262,7 @@
     <Build Include="dbo\Stored Procedures\P_Import_ProdEffAnalysis.sql" />
     <Build Include="dbo\Tables\P_ProdEffAnalysis.sql" />
     <Build Include="dbo\Stored Procedures\P_Import_StationHourlyOutput.sql" />
+    <Build Include="dbo\Tables\P_ESG_Injury.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
