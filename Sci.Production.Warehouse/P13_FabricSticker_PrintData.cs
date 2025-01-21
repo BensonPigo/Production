@@ -25,6 +25,10 @@
         public double Qty { get; set; }
 
         public string Remark { get; set; }
+
+        public string Tone { get; set; }
+
+        public string PreparedBy { get; set; }
     }
 }
 

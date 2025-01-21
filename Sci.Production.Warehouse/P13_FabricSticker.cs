@@ -8,6 +8,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using System.Security.Policy;
 using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
@@ -62,6 +63,7 @@ namespace Sci.Production.Warehouse
             listSqlParameters.Add(new SqlParameter("@ID", this.strSubTransferID));
 
             string col_remarks = "''";
+            string col_PreparedBy = "''";
             if (this.fromTable.ToUpper() == "ISSUELACK_DETAIL")
             {
                 col_remarks = "(select Remark from Issuelack where Id = isd.Id)";
@@ -69,6 +71,7 @@ namespace Sci.Production.Warehouse
             else if (this.fromTable.ToUpper() == "ISSUE_DETAIL")
             {
                 col_remarks = "(select Remark from issue where Id = isd.Id)";
+                col_PreparedBy = "(select PreparedBy = pass1.Name + ' ' + FORMAT(MINDReleaseDate, 'yyyy-MM-dd HH:mm') where Pass1.id = isd.MINDReleaser)";
             }
 
             string gridSql = $@"
@@ -92,6 +95,8 @@ select Sel = 0
         , [StockQty] = (isnull(fi.InQty, 0) - isnull(fi.OutQty, 0) + isnull(fi.AdjustQty, 0)) - isnull(fi.ReturnQty, 0)
         , [BulkLocation] = BulkLocation.val
         , [Remark] = {col_remarks}
+        , [Tone] = fi.Tone
+        , [PreparedBy] = {col_PreparedBy}
 from {this.fromTable} isd with (nolock)
 left join Orders o with (nolock) on o.ID=isd.POID
 left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
@@ -100,6 +105,7 @@ left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
 left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and isnull(psdsC.SpecValue, '') = c.ID 
+left join ManufacturingExecution..Pass1 on Pass1.id = isd.MINDReleaser
 left join FtyInventory fi with (nolock) on  fi.POID = isd.POID and 
                                             fi.Seq1 = isd.Seq1 and 
                                             fi.Seq2 = isd.Seq2 and 
@@ -168,6 +174,8 @@ order by NewRowNo";
                     StockUnit = row["StockUnit"].ToString().Trim(),
                     Qty = Convert.ToDouble(row["Qty"]),
                     Remark = row["Remark"].ToString().Trim(),
+                    Tone = row["Tone"].ToString().Trim(),
+                    PreparedBy = row["PreparedBy"].ToString().Trim(),
                 }).ToList();
 
                 ReportDefinition report = new ReportDefinition();
