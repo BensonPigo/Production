@@ -1577,7 +1577,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
-               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: false, settings: operation)
+               .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
