@@ -64,14 +64,17 @@ namespace Sci.Production.Warehouse
 
             string col_remarks = "''";
             string col_PreparedBy = "''";
+            string joinManufacturingExecution = string.Empty;
             if (this.fromTable.ToUpper() == "ISSUELACK_DETAIL")
             {
                 col_remarks = "(select Remark from Issuelack where Id = isd.Id)";
+
             }
             else if (this.fromTable.ToUpper() == "ISSUE_DETAIL")
             {
                 col_remarks = "(select Remark from issue where Id = isd.Id)";
                 col_PreparedBy = "(select PreparedBy = pass1.Name + ' ' + FORMAT(MINDReleaseDate, 'yyyy-MM-dd HH:mm') where Pass1.id = isd.MINDReleaser)";
+                joinManufacturingExecution = "left join ManufacturingExecution..Pass1 on Pass1.id = isd.MINDReleaser";
             }
 
             string gridSql = $@"
@@ -105,7 +108,7 @@ left join Po_Supp_Detail psd with (nolock) on isd.POID = psd.ID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join Fabric f with (nolock) on psd.SCIRefno = f.SCIRefno
 left join Color c WITH (NOLOCK) on f.BrandID = c.BrandId and isnull(psdsC.SpecValue, '') = c.ID 
-left join ManufacturingExecution..Pass1 on Pass1.id = isd.MINDReleaser
+{joinManufacturingExecution}
 left join FtyInventory fi with (nolock) on  fi.POID = isd.POID and 
                                             fi.Seq1 = isd.Seq1 and 
                                             fi.Seq2 = isd.Seq2 and 
