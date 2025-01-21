@@ -1977,10 +1977,7 @@ WHERE Ukey={item["Ukey"]}
             }
 
             this.SumNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
-
-            // base.OnDetailGridAppendClick();
-            this.OnDetailGridInsert(this.detailgrid.GetSelectedRowIndex());
-
+            this.OnDetailGridInsert(this.detailgrid.GetSelectedRow_IndexOfTable());
             newrow = this.detailgrid.GetDataRow(this.detailgrid.GetSelectedRowIndex());
             newrow.ItemArray = tmp.ItemArray; // 將剛剛紀錄的資料複製到新增的那筆record
             this.CurrentDetailData["New"] = true;
