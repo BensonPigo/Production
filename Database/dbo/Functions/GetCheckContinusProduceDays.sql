@@ -1,101 +1,98 @@
 ﻿
 /****** 更新時 連同MES.Production 一起更新******/
-Create FUNCTION [dbo].[GetCheckContinusProduceDays]
+CREATE FUNCTION [dbo].[GetCheckContinusProduceDays]
 (
-	@StyleUkey bigint ,
-	@SewingLineID varchar(3) ,
-	@FactoryID varchar(5),
-	@Team varchar(3),
-	@SewingDate date
+	@StyleUkey BIGINT,
+	@SewingLineID VARCHAR(3),
+	@FactoryID VARCHAR(5),
+	@Team VARCHAR(3) =  null,
+	@SewingDate DATE
 )
 RETURNS INT
 AS
 BEGIN
-	declare  @Day nvarchar(256);
+	DECLARE @Day INT;
 
-	;WITH tmpStyle AS 
+	WITH tmpStyle AS 
 	(
 		SELECT ID, BrandID
 		FROM Style WITH (NOLOCK)
 		WHERE Ukey = @StyleUkey
 	), tmpSewingOutputDay AS
 	(
-		select distinct top 30 so.OutputDate
-		from SewingOutput so with (nolock)
-		where   so.SewingLineID = @SewingLineID and
-				so.FactoryID = @FactoryID and
-				so.Team = @Team and
-				so.OutputDate < @SewingDate and
-				so.Shift <> 'O' and
-				so.Category = 'O'
-		order by    so.OutputDate desc
+		SELECT DISTINCT TOP 30 so.OutputDate
+		FROM SewingOutput so WITH (NOLOCK)
+		WHERE so.SewingLineID = @SewingLineID
+			AND so.FactoryID = @FactoryID
+			AND　(@Team = null or so.Team = @Team)
+			AND so.OutputDate < @SewingDate
+			AND so.Shift <> 'O'
+			AND so.Category = 'O'
 	), tmpSewingOutputID AS
 	(
-		select  so.ID, so.OutputDate
-		from SewingOutput so with (nolock)
-		where   so.SewingLineID = @SewingLineID and
-				so.FactoryID = @FactoryID and
-				so.Team = @Team and
-				so.OutputDate in (select OutputDate from tmpSewingOutputDay) and
-				so.Shift <> 'O' and
-				so.Category = 'O'
+		SELECT so.ID, so.OutputDate
+		FROM SewingOutput so WITH (NOLOCK)
+		WHERE so.SewingLineID = @SewingLineID
+			AND so.FactoryID = @FactoryID
+			AND　(@Team = null or so.Team = @Team)
+			AND EXISTS (SELECT 1 FROM tmpSewingOutputDay t WHERE so.OutputDate = t.OutputDate)
+			AND so.Shift <> 'O'
+			AND so.Category = 'O'
 	), tmpSewingOutputStyle AS
 	(
-		select  distinct
-		so.OutputDate,
-		o.StyleID,
-		o.BrandID
-		from  tmpSewingOutputID so
-		inner join  SewingOutput_Detail sod with (nolock) on sod.ID = so.ID
-		inner join  Orders o  with (nolock) on o.ID = sod.OrderID
-	),tmpSewingSimlarStyle AS
+		SELECT DISTINCT so.OutputDate, o.StyleID, o.BrandID
+		FROM tmpSewingOutputID so
+		INNER JOIN SewingOutput_Detail sod WITH (NOLOCK) ON sod.ID = so.ID
+		INNER JOIN Orders o WITH (NOLOCK) ON o.ID = sod.OrderID
+	), tmpSewingSimlarStyle AS
 	(
-		select
-		* 
-		from 
+		SELECT * 
+		FROM 
 		(
-			select  OutputDate, StyleID, BrandID from tmpSewingOutputStyle
-			union
-			select  tso.OutputDate, [StyleID] = ss.ChildrenStyleID, [BrandID] = ss.ChildrenBrandID
-			from tmpSewingOutputStyle tso
-			inner join Style_SimilarStyle ss with (nolock) on   ss.MasterBrandID = tso.BrandID and
-																ss.MasterStyleID = tso.StyleID
+			SELECT OutputDate, StyleID, BrandID FROM tmpSewingOutputStyle
+			UNION
+			SELECT tso.OutputDate, ss.ChildrenStyleID AS StyleID, ss.ChildrenBrandID AS BrandID
+			FROM tmpSewingOutputStyle tso
+			INNER JOIN Style_SimilarStyle ss WITH (NOLOCK) ON ss.MasterBrandID = tso.BrandID
+															AND ss.MasterStyleID = tso.StyleID
 		) a
-	),interruptDate AS
+	), interruptDate AS
 	(
-		select   [interruptDate] = max(OutputDate)
-		from    tmpSewingOutputDay
-		where   OutputDate not in (
-					select  distinct OutputDate
-					from tmpSewingSimlarStyle tss
-					where exists(select 1 from tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
-	),tmpEnd AS
+		SELECT MAX(OutputDate) AS interruptDate
+		FROM tmpSewingOutputDay t
+		WHERE NOT EXISTS
+		(
+			SELECT DISTINCT OutputDate
+			FROM tmpSewingSimlarStyle tss
+			WHERE EXISTS (SELECT 1 FROM tmpStyle s WHERE s.ID = tss.StyleID AND s.BrandID = tss.BrandID)
+			AND t.OutputDate = tss.OutputDate
+		)
+	), tmpEnd AS
 	(
 		SELECT 
-			[ContinusDays] = 
-				CASE 
-					WHEN (SELECT [interruptDate] FROM interruptDate) IS NULL 
-						 AND EXISTS (
-							 SELECT 1
-							 FROM tmpSewingSimlarStyle tss
-							 WHERE EXISTS (
-								 SELECT 1 
-								 FROM tmpStyle s 
-								 WHERE s.ID = tss.StyleID AND s.BrandID = tss.BrandID
-							 )
-						 )
-					THEN (SELECT COUNT(1) + 1 FROM tmpSewingOutputDay)
-
-					WHEN (SELECT [interruptDate] FROM interruptDate) IS NULL THEN 1
-
-					ELSE 
-						(SELECT COUNT(1) + 1 
-						 FROM tmpSewingOutputDay 
-						 WHERE OutputDate > (SELECT [interruptDate] FROM interruptDate))
-				END
+			CASE 
+				WHEN (SELECT interruptDate FROM interruptDate) IS NULL 
+					AND EXISTS 
+					(
+						SELECT 1
+						FROM tmpSewingSimlarStyle tss
+						WHERE EXISTS 
+						(
+							SELECT 1 
+							FROM tmpStyle s 
+							WHERE s.ID = tss.StyleID AND s.BrandID = tss.BrandID
+						)
+					)
+				THEN (SELECT COUNT(1) + 1 FROM tmpSewingOutputDay)
+				WHEN (SELECT interruptDate FROM interruptDate) IS NULL THEN 1
+				ELSE 
+					(SELECT COUNT(1) + 1 
+					FROM tmpSewingOutputDay t 
+					WHERE EXISTS (SELECT 1 FROM interruptDate i WHERE t.OutputDate > i.interruptDate))
+			END AS ContinusDays
 	)
 
-	SELECT @Day = [ContinusDays] FROM tmpEnd
+	SELECT @Day = ContinusDays FROM tmpEnd;
 
-	RETURN @Day
+	RETURN @Day;
 END
