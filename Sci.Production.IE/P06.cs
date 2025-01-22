@@ -1864,6 +1864,19 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         }
                     }
 
+                    int iPROCIPF00003 = this.detailgrid.GetTable().AsEnumerable().Where(x => x["OperationID"].ToString() == "PROCIPF00003").ToList().Count;
+                    int iPROCIPF00004 = this.detailgrid.GetTable().AsEnumerable().Where(x => x["OperationID"].ToString() == "PROCIPF00004").ToList().Count;
+
+                    if (iPROCIPF00003 > 0)
+                    {
+                        this.CurrentMaintain["PresserManpower"] = iPROCIPF00004;
+                    }
+
+                    if (iPROCIPF00004 > 0)
+                    {
+                        this.CurrentMaintain["PackerManpower"] = iPROCIPF00003;
+                    }
+
                     this.RefreshLineMappingBalancingSummary();
                 }
             }
