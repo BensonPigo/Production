@@ -151,6 +151,15 @@ namespace Sci.Production.IE
                 return false;
             }
 
+
+            string strDuplicated = MyUtility.GetValue.Lookup($@"Select 1 FROM EmployeeAllocationSetting WITH (NOLOCK) WHERE FactoryID = '{this.txtfactory1.Text}' AND Dept = '{this.txtDept.Text}' AND Position = '{this.txtPosition.Text}'");
+
+            if (strDuplicated == "1")
+            {
+                MyUtility.Msg.WarningBox($"Factory:<{this.txtfactory1.Text}>, Dept:<{this.txtDept.Text}>, Position:<{this.txtPosition.Text}> already exists!");
+                return false;
+            }
+
             return base.ClickSaveBefore();
         }
     }
