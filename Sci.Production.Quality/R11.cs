@@ -345,6 +345,8 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+	Defect.T2Points,
+	Defect.FactoryPoints,
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0))/100
@@ -358,13 +360,14 @@ select
 INTO #Sheet2
 from #tmp1 t
 outer apply(
-    select
-	    DefectRecord = dbo.SplitDefectNum(x.Data,0),	
-        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
-    from FIR_Physical_Defect
-    outer apply(select  * from SplitString(DefectRecord,'/'))x
-    where FIR_PhysicalDetailUKey = t.DetailUkey
-    group by dbo.SplitDefectNum(x.Data,0)
+    SELECT 
+    FabricdefectID AS DefectRecord,
+    COUNT(CASE WHEN T2 = '1' THEN 1 END) AS T2Points,
+    COUNT(CASE WHEN T2 = '0' THEN 1 END) AS FactoryPoints,
+	COUNT(T2) AS point
+FROM FIR_Physical_Defect_Realtime
+WHERE FIR_PhysicalDetailUkey = t.DetailUkey
+GROUP BY FIR_PhysicalDetailUkey, FabricdefectID
 )Defect
 outer apply (
 	select PointRateOption
@@ -412,6 +415,8 @@ select
 	Defect.DefectRecord,
 	fd.Type,
 	fd.DescriptionEN,
+	Defect.T2Points,
+	Defect.FactoryPoints,
     point = isnull(Defect.point,  0),
 	Defectrate = ISNULL(case when Q.PointRateOption = 1 then Defect.point / NULLIF(t.ActualYds, 0)
 							when Q.PointRateOption = 2 then (Defect.point * 3600 / NULLIF(t.ActualYds * t.ActualWidth , 0))/100
@@ -424,13 +429,14 @@ select
 	,t.Inspector
 from #tmp2 t
 outer apply(
-    select 
-	    DefectRecord = dbo.SplitDefectNum(x.Data,0),
-        point = sum(cast(dbo.SplitDefectNum(x.Data,1) as int))
-    from FIR_Physical_Defect
-    outer apply(select  * from SplitString(DefectRecord,'/'))x
-    where FIR_PhysicalDetailUKey = t.DetailUkey
-    group by dbo.SplitDefectNum(x.Data,0)
+    SELECT 
+    FabricdefectID AS DefectRecord,
+    COUNT(CASE WHEN T2 = '1' THEN 1 END) AS T2Points,
+    COUNT(CASE WHEN T2 = '0' THEN 1 END) AS FactoryPoints,
+	COUNT(T2) AS point
+FROM FIR_Physical_Defect_Realtime
+WHERE FIR_PhysicalDetailUkey = t.DetailUkey
+GROUP BY FIR_PhysicalDetailUkey, FabricdefectID
 )Defect
 outer apply (
 	select PointRateOption
@@ -453,7 +459,7 @@ SELECT
 	Inventory_SEQ,WK,ReceivingID,StyleID,Brandid,Supplier,Refno,ColorID,	
 	IssueDate,	TransferQty,WeaveTypeID,Dyelot,Width,Weight,Composition,
 	Description,ConstructionID,Roll,InspDate,Result,Grade,DefectRecord,
-	Type,DescriptionEN,point,Defectrate,Inspector
+	Type,DescriptionEN,T2Points,FactoryPoints,point,Defectrate,Inspector
 FROM #Sheet2
 
 --Lacking yard分頁
