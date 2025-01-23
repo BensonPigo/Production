@@ -2555,6 +2555,55 @@ and s.BrandID = @brandid ", Env.User.Factory,
             return dt;
         }
 
+        private DataRow GetCurrentDataRow(DataGridView dataGridView)
+        {
+            if (dataGridView.SelectedRows.Count > 0) // 確保有選擇的行
+            {
+                DataGridViewRow selectedRow = dataGridView.SelectedRows[0]; // 獲取第一個選擇的行
+                DataRowView rowView = selectedRow.DataBoundItem as DataRowView; // 將 DataBoundItem 轉換為 DataRowView
+                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted) // 排除刪除的行
+                {
+                    return rowView.Row; // 獲取 DataRow
+                }
+            }
+            return null; // 如果沒有選擇行或轉換失敗，返回 null
+        }
+
+        private int GetDataRowIndex(DataTable dataTable, DataRow targetRow)
+        {
+            if (dataTable == null || targetRow == null)
+            {
+                return -1; // 無效輸入
+            }
+
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                DataRow row = dataTable.Rows[i];
+
+                // 排除已刪除的行
+                if (row.RowState != DataRowState.Deleted)
+                {
+                    // 比較行的內容
+                    bool isMatch = true;
+                    foreach (DataColumn column in dataTable.Columns)
+                    {
+                        if (row[column.ColumnName].ToString() != targetRow[column.ColumnName].ToString())
+                        {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (isMatch)
+                    {
+                        return i; // 返回匹配行的索引
+                    }
+                }
+            }
+
+            return -1; // 如果未找到匹配的行，返回 -1
+        }
+
         /// <summary>
         /// DetailGrid Insert、Append (index = -1)
         /// </summary>
@@ -2592,7 +2641,10 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 if (lastLocationDT.Any())
                 {
                     DataTable dataTable = lastLocationDT.CopyToDataTable();
-                    int i = this.detailgrid.GetSelectedRowIndex() == 0 ? this.detailgrid.GetSelectedRowIndex() + 1 : this.detailgrid.GetSelectedRowIndex() - 1;
+                    DataRow dataRow = this.GetCurrentDataRow(this.detailgrid);
+                    int dataTable_index = this.GetDataRowIndex(dataTable, dataRow);
+                    int insert_index = dataTable_index < 0 ? 0 : dataTable_index;
+                    int i = insert_index == 0 ? insert_index + 1 : insert_index - 1;
                     DataRow dr = dataTable.Rows[i];
                     location = MyUtility.Convert.GetString(dr["Location"]); // 最後一筆 Row
                 }
