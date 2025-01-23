@@ -2557,16 +2557,27 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
         private DataRow GetCurrentDataRow(DataGridView dataGridView)
         {
-            if (dataGridView.SelectedRows.Count > 0) // 確保有選擇的行
+            if (dataGridView.SelectionMode == DataGridViewSelectionMode.FullRowSelect && dataGridView.SelectedRows.Count > 0)
             {
-                DataGridViewRow selectedRow = dataGridView.SelectedRows[0]; // 獲取第一個選擇的行
-                DataRowView rowView = selectedRow.DataBoundItem as DataRowView; // 將 DataBoundItem 轉換為 DataRowView
-                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted) // 排除刪除的行
+                // 如果設置為 FullRowSelect，從 SelectedRows 獲取
+                DataGridViewRow selectedRow = dataGridView.SelectedRows[0];
+                DataRowView rowView = selectedRow.DataBoundItem as DataRowView;
+                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted)
                 {
-                    return rowView.Row; // 獲取 DataRow
+                    return rowView.Row;
                 }
             }
-            return null; // 如果沒有選擇行或轉換失敗，返回 null
+            else if (dataGridView.SelectionMode == DataGridViewSelectionMode.CellSelect && dataGridView.CurrentRow != null)
+            {
+                // 如果設置為 CellSelect，從 CurrentRow 獲取
+                DataRowView rowView = dataGridView.CurrentRow.DataBoundItem as DataRowView;
+                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted)
+                {
+                    return rowView.Row;
+                }
+            }
+
+            return null; // 沒有找到有效的 DataRow
         }
 
         private int GetDataRowIndex(DataTable dataTable, DataRow targetRow)
