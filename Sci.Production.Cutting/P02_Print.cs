@@ -993,7 +993,7 @@ Where Cutref = '{0}'", cutref);
                 var distinct_CutQtyTb = from r1 in this.CutQtyTb.AsEnumerable()
                                         group r1 by new
                                         {
-                                            Cutno = r1.Field<decimal>("Cutno"),
+                                            Cutno = r1.Field<decimal?>("Cutno"),
                                             Colorid = r1.Field<string>("Colorid"),
                                             Layer = r1.Field<decimal>("Layer"),
                                             workorderukey = r1.Field<long>("workorderukey"),
