@@ -2281,7 +2281,7 @@ select distinct
 	apm.AddDate,
 	apm.EditDate,
     factory.LastDownloadAPSDate,
-	pd.SewingInlineCategory
+	[SewingInlineCategory] = iif(pd.SewingInlineCategory = '00005',cast('' as varchar(50)),(select CONCAT(pd.SewingInlineCategory, '-' + SR.Description) from SewingReason sr where sr.ID = pd.SewingInlineCategory and sr.Type='IC'))
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category

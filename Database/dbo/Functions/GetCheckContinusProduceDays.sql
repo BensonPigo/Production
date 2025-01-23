@@ -24,7 +24,7 @@ BEGIN
 		from SewingOutput so with (nolock)
 		where   so.SewingLineID = @SewingLineID 
 		and		so.FactoryID = @FactoryID 
-		and		(@Team = null or so.Team = @Team)
+		and		(isnull(@Team,'') = '' or so.Team = @Team)
 		and		so.OutputDate < @SewingDate 
 		and		so.Shift <> 'O' 
 		and		so.Category = 'O'
@@ -35,7 +35,7 @@ BEGIN
 		from SewingOutput so with (nolock)
 		where   so.SewingLineID = @SewingLineID 
 		and		so.FactoryID = @FactoryID 
-		and		(@Team = null or so.Team = @Team)
+		and		(isnull(@Team,'') = '' or so.Team = @Team)
 		and		so.OutputDate in (select OutputDate from tmpSewingOutputDay) 
 		and		so.Shift <> 'O' 
 		and		so.Category = 'O'
