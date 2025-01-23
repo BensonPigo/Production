@@ -44,9 +44,9 @@ namespace Sci.Production.Sewing
             worksheet.Cells[2, 1] = string.Format("{0} Daily CMP Report, DD.{1} {2}", factory, Convert.ToDateTime(date).ToString("MM/dd"), "(Included Subcon-IN)");
 
             object[,] objArray = new object[1, 26];
-            string[] subTtlRowInOut = new string[8];
-            string[] subTtlRowExOut = new string[8];
-            string[] subTtlRowExInOut = new string[8];
+            string[] subTtlRowInOut = new string[9];
+            string[] subTtlRowExOut = new string[9];
+            string[] subTtlRowExInOut = new string[9];
 
             if (printData.Rows.Count > 0 && !MyUtility.Check.Empty(printData))
             {
@@ -190,7 +190,7 @@ namespace Sci.Production.Sewing
                 }
 
                 // 刪除多出來的Shift Record
-                for (int i = 1; i <= (8 - ttlShift) * 6; i++)
+                for (int i = 1; i <= (9 - ttlShift) * 6; i++)
                 {
                     Microsoft.Office.Interop.Excel.Range rng = (Microsoft.Office.Interop.Excel.Range)excel.Rows[insertRow + 1, Type.Missing];
                     rng.Select();
@@ -223,7 +223,7 @@ namespace Sci.Production.Sewing
                             #region 組公式
                             if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "2")
                             {
-                                for (int j = 0; j < 8; j++)
+                                for (int j = 0; j < 9; j++)
                                 {
                                     if (!MyUtility.Check.Empty(subTtlRowInOut[j]))
                                     {
@@ -239,7 +239,7 @@ namespace Sci.Production.Sewing
                             }
                             else if (MyUtility.Convert.GetString(selectRow[i]["Sort"]) == "3")
                             {
-                                for (int j = 0; j < 8; j++)
+                                for (int j = 0; j < 9; j++)
                                 {
                                     if (!MyUtility.Check.Empty(subTtlRowExOut[j]))
                                     {
@@ -255,7 +255,7 @@ namespace Sci.Production.Sewing
                             }
                             else
                             {
-                                for (int j = 0; j < 8; j++)
+                                for (int j = 0; j < 9; j++)
                                 {
                                     if (!MyUtility.Check.Empty(subTtlRowExInOut[j]))
                                     {
