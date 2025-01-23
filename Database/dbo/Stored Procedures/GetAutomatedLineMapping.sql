@@ -631,7 +631,7 @@ BEGIN
 				   '**Pressing',
 				   @SewerDiffPercentage * 100,
 				   0,
-				   0)
+				   (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PR' and FactoryID = @FactoryID))
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
@@ -692,7 +692,7 @@ BEGIN
 				   '**Packing',
 				   @SewerDiffPercentage * 100,
 				   0,
-				   0)
+				  (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PA' and FactoryID = @FactoryID))
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
