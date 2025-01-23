@@ -2148,6 +2148,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 #region 主表插入
                 int iDel = oriDt.AsEnumerable().Where(x => x.RowState == DataRowState.Deleted).ToList().Count;
                 DataRow nextDataRow = oriDt.Rows[insert_index];
+                DataRow dataRow_Location = insert_index == 0 ? oriDt.Rows[insert_index + 1] : oriDt.Rows[insert_index - 1];
                 var list = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).ToList();
                 nextDataRow["Selected"] = "False";
                 nextDataRow["FactoryID"] = Env.User.Factory;
@@ -2159,7 +2160,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 nextDataRow["OriSewer"] = DBNull.Value;
                 nextDataRow["No"] = insert_index == 0 ? "01" : oriDt.Rows[insert_index + 1]["No"];
                 nextDataRow["IsNotShownInP06"] = false;
-                nextDataRow["Location"] = list[insert_index + 1]["Location"].ToString();
+                nextDataRow["Location"] = dataRow_Location["Location"].ToString();
                 nextDataRow["Location1"] = !MyUtility.Check.Empty(list[insert_index + 1]["Location"].ToString()) ? list[insert_index + 1]["Location"].ToString().Substring(2, list[insert_index + 1]["Location"].ToString().Length - 2) : string.Empty;
                 List<DataRow> rowsToMainAdd = new List<DataRow>();
 

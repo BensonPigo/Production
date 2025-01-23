@@ -2568,17 +2568,38 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            string location;
-            var lastLocation = dt.AsEnumerable()
-                .Where(row => (dt.Rows.IndexOf(row) <= index || index == -1) &&
-                               row.RowState != DataRowState.Deleted);
-            if (lastLocation.Any())
+            string location = string.Empty;
+
+            if (index == -1)
             {
-                location = MyUtility.Convert.GetString(lastLocation.Last()["Location"]); // 最後一筆 Row
+                EnumerableRowCollection<DataRow> lastLocation = dt.AsEnumerable()
+               .Where(row => (dt.Rows.IndexOf(row) <= index || index == -1) &&
+                              row.RowState != DataRowState.Deleted);
+
+                if (lastLocation.Any())
+                {
+                    location = MyUtility.Convert.GetString(lastLocation.Last()["Location"]); // 最後一筆 Row
+                }
+                else
+                {
+                    location = string.Empty; // 或其他預設值
+                }
             }
             else
             {
-                location = string.Empty; // 或其他預設值
+                var lastLocationDT = dt.AsEnumerable()
+               .Where(row => row.RowState != DataRowState.Deleted);
+                if (lastLocationDT.Any())
+                {
+                    DataTable dataTable = lastLocationDT.CopyToDataTable();
+                    int i = this.detailgrid.GetSelectedRowIndex() == 0 ? this.detailgrid.GetSelectedRowIndex() + 1 : this.detailgrid.GetSelectedRowIndex() - 1;
+                    DataRow dr = dataTable.Rows[i];
+                    location = MyUtility.Convert.GetString(dr["Location"]); // 最後一筆 Row
+                }
+                else
+                {
+                    location = string.Empty; // 或其他預設值
+                }
             }
 
             base.OnDetailGridInsert(index);

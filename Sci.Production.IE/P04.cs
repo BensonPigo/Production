@@ -191,7 +191,7 @@ SELECT
                  --再排序 Version: 目的在同一 Phase 中取最大 Version
                 l.Version DESC
         )
-    ,[LineMapping] = 'IE P03'
+    ,[LineMapping] = 'IE P06'
     ,Team
     ,Phase
     ,Version
