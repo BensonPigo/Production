@@ -204,6 +204,10 @@ namespace Sci.Production.Planning
 
             Planning_R15 planning_R15 = new Planning_R15();
             Base_ViewModel resultReport = planning_R15.GetPlanning_R15(r15_vm, this.dtArtworkType);
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
+            }
 
             this.printData = resultReport.DtArr[0];
             this.subprocessInoutColumnCount = resultReport.DtArr[1].Rows.Count > 0 ? MyUtility.Convert.GetInt(resultReport.DtArr[1].Rows[0]["subprocessInoutColumnCount"]) : 0;

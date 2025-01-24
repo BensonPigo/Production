@@ -28,8 +28,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// Get SqlCmd
         /// </summary>
         /// <param name="model">查詢資料</param>
+        /// <param name="dtArtworkType">ArtworkType DataTable</param>
         /// <returns>String Where</returns>
-        public Base_ViewModel GetPlanning_R15(Planning_R15_ViewModel model, System.Data.DataTable dtArtworkType)
+        public Base_ViewModel GetPlanning_R15(Planning_R15_ViewModel model, DataTable dtArtworkType)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
@@ -70,8 +71,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string sqlCmd = string.Empty;
             string strHead = model.SummaryBy == "1" ? ", O.Qty " : ", Oq.Qty, oq.Article, oq.SizeCode";
             string strJoin = model.SummaryBy == "1" ? "left join Pass1 WITH (NOLOCK) on Pass1.ID = O.InspHandle" : "left join Order_Qty oq WITH (NOLOCK) on oq.ID = o.ID";
+            bool isR15 = model.FormParameter == "1";
 
-            DualResult dualResult = DBProxy.Current.Select(null, this.SqlTMP_SubProcess(model.FormParameter, true), out DataTable dtTMP_SubProcess);
+            // 先取得加工段對照表，後續做動態推算
+            DualResult dualResult = DBProxy.Current.Select(null, this.SqlTMP_SubProcess(false), out DataTable dtTMP_SubProcess);
 
             if (!dualResult)
             {
@@ -80,9 +83,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             #region 組SQL
-            sqlCmd = $@"
-            {this.SqlTMP_SubProcess(model.FormParameter)}
-            
+            sqlCmd = this.SqlTMP_SubProcess(true); // 產生加工段暫存表
+            sqlCmd += $@"            
             select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
             , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
             , O.CustPONo        , O.BrandID    , O.CustCDID        , O.ProgramID         , O.CdCodeID      , O.CPU
@@ -115,12 +117,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
             into #cte 
             from dbo.Orders o WITH (NOLOCK)
             inner join factory f WITH (NOLOCK) on o.FactoryID= f.id and f.IsProduceFty=1
-            left join Style s on s.Ukey = o.StyleUkey
+            left join Style s WITH (NOLOCK) on s.Ukey = o.StyleUkey
             {strJoin}
             OUTER APPLY(
                 SELECT [Val]=STUFF((
                 SELECT  DISTINCT ','+ Cast(CFAFinalInspectDate as varchar)
-                from Order_QtyShip oqs
+                from Order_QtyShip oqs WITH (NOLOCK)
                 WHERE ID = o.id
                 FOR XML PATH('')
                 ),1,1,'')
@@ -128,7 +130,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             OUTER APPLY(
                 SELECT [Val]=STUFF((
                 SELECT  DISTINCT ','+ CFAFinalInspectResult 
-                from Order_QtyShip oqs
+                from Order_QtyShip oqs WITH (NOLOCK)
                 WHERE ID = o.id AND CFAFinalInspectResult <> '' AND CFAFinalInspectResult IS NOT NULL
                 FOR XML PATH('')
                 ),1,1,'')
@@ -136,7 +138,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             OUTER APPLY(
                 SELECT [Val]=STUFF((
                 SELECT  DISTINCT ','+ CFAFinalInspectHandle +'-'+ p.Name
-                from Order_QtyShip oqs
+                from Order_QtyShip oqs WITH (NOLOCK)
                 LEFT JOIN Pass1 p WITH (NOLOCK) ON oqs.CFAFinalInspectHandle = p.ID
                 WHERE oqs.ID = o.id AND CFAFinalInspectHandle <> '' AND CFAFinalInspectHandle IS NOT NULL
                 FOR XML PATH('')
@@ -259,7 +261,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             List<string> subprocessIDs = dtTMP_SubProcess.AsEnumerable().Select(x => x.Field<string>("ID")).ToList();
             List<string> subprocessArtworkTypeIds = dtTMP_SubProcess.AsEnumerable().Select(x => x.Field<string>("ArtworkTypeId")).ToList();
 
-            if (model.FormParameter == "2")
+            // R15-1的 subprocessQtyColumnsSource 需要另外處理。
+            if (!isR15)
             {
                 int iType = model.SummaryBy == "1" ? 0 : 1;
                 subprocessIDs = model.SubprocessID.Split(',').ToList();
@@ -295,13 +298,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 where exists (select 1 from #cte t where s.OrderID = t.OrderID)
                 group by s.OrderID, s.SubProcessID
                 ";
-                string sqlWhere = model.FormParameter == "1" ? $@"and ArtworkTypeId in ('{string.Join("','", subprocessArtworkTypeIds)}')" :
-                                                               $@"and SubProcessID in ('{string.Join("','", subprocessIDs)}')";
+
+                // R15需看到 By ArtworkTypeID，R15-1需看到 By SubProcessID
+                string sqlWhere = isR15 ? $@"and ArtworkTypeId in ('{string.Join("','", subprocessArtworkTypeIds)}')" :
+                                          $@"and SubProcessID in ('{string.Join("','", subprocessIDs)}')";
                 if (model.SummaryBy == "1")
                 {
                     qtyBySetPerSubprocess += $@"
                     select s.OrderID
-                        {(model.FormParameter == "1" ? ",s.ArtworkTypeId" : ", s.SubprocessID")}
+                        {(isR15 ? ",s.ArtworkTypeId" : ", s.SubprocessID")}
                         , InQtyBySet = SUM(s.InQtyBySet)
 	                    , OutQtyBySet = SUM(s.OutQtyBySet)
 	                    , FinishedQtyBySet = SUM(s.FinishedQtyBySet)
@@ -311,17 +316,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
                         select s.OrderID
                             , s.Article
                             , s.SizeCode 
-                            {(model.FormParameter == "1" ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
+                            {(isR15 ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
 	                        , InQtyBySet = MIN(s.InQtyBySet)
 	                        , OutQtyBySet = MIN(s.OutQtyBySet)
 	                        , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
                         from SetQtyBySubprocess s WITH (NOLOCK)
-                        inner join #tmp t on t.ID = s.SubprocessID
+                        inner join #tmp_SubProcess_ArtworkTypeID_Map t on t.ID = s.SubprocessID
                         where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
                         {sqlWhere}
-                        group by s.OrderID, s.Article, s.SizeCode{(model.FormParameter == "1" ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
+                        group by s.OrderID, s.Article, s.SizeCode{(isR15 ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
                     )s
-                    group by s.OrderID{(model.FormParameter == "1" ? ",s.ArtworkTypeId" : ", s.SubprocessID")}" + Environment.NewLine;
+                    group by s.OrderID{(isR15 ? ",s.ArtworkTypeId" : ", s.SubprocessID")}" + Environment.NewLine;
                 }
                 else
                 {
@@ -329,25 +334,25 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     select s.OrderID
                         , s.Article
                         , s.SizeCode 
-                        {(model.FormParameter == "1" ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
+                        {(isR15 ? ",t.ArtworkTypeId" : ", s.SubprocessID")}
                         , InQtyBySet = MIN(s.InQtyBySet)
                         , OutQtyBySet = MIN(s.OutQtyBySet)
                         , FinishedQtyBySet = MIN(s.FinishedQtyBySet)
                     into #tmp_SetQtyBySubprocess
                     from SetQtyBySubprocess s WITH (NOLOCK)
-                    inner join #tmp t on t.ID = s.SubprocessID
+                    inner join #tmp_SubProcess_ArtworkTypeID_Map t on t.ID = s.SubprocessID
                     where exists (select 1 from #tmp_SetQtyBySubprocess_Last t where t.OrderID = s.OrderID and t.SubProcessID = s.SubProcessID and t.TransferTime = s.TransferTime)
                     {sqlWhere}
-                    group by s.OrderID, s.Article, s.SizeCode{(model.FormParameter == "1" ? ",t.ArtworkTypeId" : ", s.SubprocessID")}" + Environment.NewLine;
+                    group by s.OrderID, s.Article, s.SizeCode{(isR15 ? ",t.ArtworkTypeId" : ", s.SubprocessID")}" + Environment.NewLine;
                 }
 
-                if (model.FormParameter == "1")
+                if (isR15)
                 {
                     foreach (DataRow item in dtTMP_SubProcess.Rows)
                     {
                         string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(item["ID"].ToString());
                         dropTmp += $"#{subprocessIDtmp},";
-                        qtyBySetPerSubprocess += $@"select * into #{subprocessIDtmp} from #tmp_SetQtyBySubprocess where {(model.FormParameter == "1" ? "ArtworkTypeId" : "SubprocessID")} = '{item["ArtworkTypeId"].ToString()}'" + Environment.NewLine;
+                        qtyBySetPerSubprocess += $@"select * into #{subprocessIDtmp} from #tmp_SetQtyBySubprocess where ArtworkTypeId = '{item["ArtworkTypeId"].ToString()}'" + Environment.NewLine;
                     }
                 }
                 else
@@ -391,7 +396,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 select pd.OrderId, pd.ScanQty
                 into #tmp_PackingList_Detail
-                from PackingList_Detail pd
+                from PackingList_Detail pd WITH (NOLOCK)
                 inner join #cte t on pd.OrderID = t.OrderID
 
                 select t.OrderID
@@ -511,7 +516,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 , t.StyleID
                 , t.OrderTypeID
                 , t.ShipModeList
-	            , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WHERE ID = t.OrderID) >=2 ,'Y' ,'')
+	            , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WITH (NOLOCK) WHERE ID = t.OrderID) >=2 ,'Y' ,'')
                 , [OrderNo] = t.Customize1
                 , t.CustPONo
                 , t.CustCDID
@@ -629,7 +634,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 select pd.OrderId,  pd.Article, pd.SizeCode, pd.ScanQty
                 into #tmp_PackingList_Detail
-                from PackingList_Detail pd
+                from PackingList_Detail pd WITH (NOLOCK)
                 inner join #cte t on pd.OrderId = t.OrderID and pd.Article = t.Article and pd.SizeCode = t.SizeCode
 
                 select 
@@ -745,7 +750,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 , t.StyleID
                 , t.OrderTypeID
                 , t.ShipModeList
-	            , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WHERE ID = t.OrderID) >=2 ,'Y' ,'')
+	            , [PartialShipping]=IIF( (SELECT COUNT(ID) FROM Order_QtyShip WITH (NOLOCK) WHERE ID = t.OrderID) >=2 ,'Y' ,'')
                 , [OrderNo] = t.Customize1
                 , t.CustPONo
                 , t.CustCDID
@@ -840,7 +845,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 string tmpbyline = model.SummaryBy == "3" ? @"
                 ,t.FOCQty
-                ,AlloQty =(select sum(sdd.AlloQty) from SewingSchedule_Detail sdd where sdd.OrderID  = t.OrderID and sdd.Article =t.Article and sdd.SizeCode = t.SizeCode)
+                ,AlloQty =(select sum(sdd.AlloQty) from SewingSchedule_Detail sdd WITH (NOLOCK) where sdd.OrderID  = t.OrderID and sdd.Article =t.Article and sdd.SizeCode = t.SizeCode)
                 into #lasttmp" : string.Empty;
 
                 sqlCmd += $@"
@@ -848,7 +853,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 from #cte t 
                 left join #cte2 on #cte2.OrderID = t.OrderID and #cte2.Article = t.Article and #cte2.SizeCode = t.SizeCode
                 left join Country with (Nolock) on Country.id= t.Dest
-                left join View_SewingInfoArticleSize vsis on t.OrderID = vsis.OrderID and t.Article = vsis.Article and t.SizeCode = vsis.SizeCode";
+                left join View_SewingInfoArticleSize vsis WITH (NOLOCK) on t.OrderID = vsis.OrderID and t.Article = vsis.Article and t.SizeCode = vsis.SizeCode";
             }
 
             if (model.IncludeAtworkData)
@@ -979,13 +984,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     where pd.OrderId = t.OrderID
                 )PackDetail";
                 sqlCmd += $@" order by {model.OrderBy}" + Environment.NewLine;
-
                 sqlCmd += $@" drop table #cte, #cte2, #tmp_PackingList_Detail, #imp_LastSewnDate;" + Environment.NewLine;
-                //foreach (string subprocess in subprocessIDs)
-                //{
-                //    string whereSubprocess = Prgs.SubprocesstmpNoSymbol(subprocess);
-                //    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
-                //}
             }
             else
             {
@@ -1033,7 +1032,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 			                select distinct [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
 			                from(
 				                SELECT bda1.SubprocessId
-				                FROM Bundle b1
+				                FROM Bundle b1 WITH (NOLOCK)
 				                INNER JOIN Bundle_Detail_Order bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
 				                INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
 				                WHERE bd1.Orderid=t.OrderID AND b1.Article=t.Article AND b1.SizeCode=t.SizeCode
@@ -1077,7 +1076,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                select concat('+',ArtworkTypeID)
 		                from(
 			                SELECT DISTINCT [ArtworkTypeId]=IIF(s1.ArtworkTypeId='',s1.ID,s1.ArtworkTypeId)
-			                FROM Bundle b1
+			                FROM Bundle b1 WITH (NOLOCK)
 			                INNER JOIN Bundle_Detail_Order bd1 WITH (NOLOCK) ON b1.ID = bd1.iD
 			                INNER JOIN Bundle_Detail_Art bda1 WITH (NOLOCK) ON bd1.BundleNo = bda1.Bundleno
 			                INNER JOIN Subprocess s1 WITH (NOLOCK) ON s1.ID=bda1.SubprocessId
@@ -1131,12 +1130,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 )PackDetail";
 
                 sqlCmd += $@" order by {model.OrderBy}, t.Article, t.SizeCode" + Environment.NewLine;
-                sqlCmd += $@" drop table #cte, #cte2, #tmp_PackingList_Detail,#TMP_SubProcess,#tmp,#tmp_SetQtyBySubprocess_Last,#tmp_SetQtyBySubprocess;" + Environment.NewLine;
-                sqlCmd +=  dropTmp.Substring(0, dropTmp.Length - 1) + Environment.NewLine;
-                //foreach (string subprocess in subprocessIDs)
-                //{
-                //    sqlCmd += $@" drop table #{Prgs.SubprocesstmpNoSymbol(subprocess)};" + Environment.NewLine;
-                //}
+                sqlCmd += $@" drop table #cte, #cte2, #tmp_PackingList_Detail,#TMP_SubProcess,#tmp_SubProcess_ArtworkTypeID_Map,#tmp_SetQtyBySubprocess_Last,#tmp_SetQtyBySubprocess;" + Environment.NewLine;
+                sqlCmd += dropTmp.Substring(0, dropTmp.Length - 1) + Environment.NewLine;
             }
 
             if (model.SummaryBy == "3")
@@ -1192,7 +1187,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 )ss
                 ";
                 string subprocessQtyColumnGroup = ", ss.SubProcessStatus";
-                if (model.FormParameter == "2")
+
+                // R15-1
+                if (!isR15)
                 {
                     subprocessQtyColumns_Line = model.SubprocessID.Split(',').Length > 1 ? this.MultiSuboricessColumns(2, model.SubprocessID, 2) : this.SingleSubprocessColumn(2, model.SubprocessID, 2);
                     subprocessQtyColumnsSource_Line = string.Empty;
@@ -1576,7 +1573,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 strWhere1 += $@" and o.Category in ({model.Category})";
             }
 
-            strWhere1 += " and exists (select 1 from Factory where o.FactoryId = id and IsProduceFty = 1)";
+            strWhere1 += " and exists (select 1 from Factory with (nolock) where o.FactoryId = id and IsProduceFty = 1)";
 
             return Tuple.Create(strWhere1, strWhere2);
         }
@@ -1631,11 +1628,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
         private string FarmInColmun(string subprocessColumnName, string strSubprocessID, int summaryBy = 0, int type = 0)
         {
             string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
-            if (summaryBy == 1 || summaryBy == 2)
-            {
-                subprocessIDtmp = subprocessIDtmp;
-            }
-
             if (type == 2)
             {
                 return $@"
@@ -1669,10 +1661,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
         private string FarmOutColumn(string subprocessColumnName, string strSubprocessID, int summaryBy = 0, int type = 0)
         {
             string subprocessIDtmp = Prgs.SubprocesstmpNoSymbol(strSubprocessID);
-            //if (summaryBy == 1 || summaryBy == 2)
-            //{
-            //    subprocessIDtmp = "QtyBySetPerSubprocess" + subprocessIDtmp;
-            //}
 
             if (type == 2)
             {
@@ -1704,33 +1692,29 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
         }
 
-        private string SqlTMP_SubProcess(string formParameter, bool isInd = false)
+        /// <summary>
+        /// 產生 SubProcess.ID 對應到 ArtworkTypeID 的對照表
+        /// </summary>
+        /// <param name="isNeedToTemp">是否須為暫存表</param>
+        /// <returns>SQL String</returns>
+        private string SqlTMP_SubProcess(bool isNeedToTemp = false)
         {
-            // 查詢SubProcessID、ArtworkTypeId
-            string strUnion = $@" 
-            UNION 
-            SELECT S.ID, [ArtworkTypeId] = IIF(S.ArtworkTypeId = '', S.ID, S.ArtworkTypeId)
-            FROM  SubProcess S
-            INNER JOIN #TMP_SubProcess T ON S.ArtworkTypeId = T.ArtworkTypeId
-            WHERE T.ArtworkTypeId <> ''";
-
-            string sqlcmd = $@"
-            SELECT [ArtworkTypeId] = IIF(S.ArtworkTypeId = '', S.ID, S.ArtworkTypeId)
-	            , S.ID
-            INTO #TMP_SubProcess
+            return $@"
+            SELECT [ArtworkTypeId] = IIF(S.ArtworkTypeId = '', S.ID, S.ArtworkTypeId), S.ID
+            INTO #tmp_SubProcess
             FROM SubProcess S
             WHERE S.Id IN ('Sorting', 'Loading', 'Emb', 'BO', 'PRT', 'AT', 'PAD-PRT', 'SubCONEMB', 'HT', 'AUT', 'FM', 'SewingLine')
-            SELECT
-            *
-            {(!isInd ? "into #tmp" : string.Empty)}
-            FROM
-            (
+            SELECT *
+            {(isNeedToTemp ? "INTO #tmp_SubProcess_ArtworkTypeID_Map" : string.Empty)}
+            FROM (
                 SELECT ID, ArtworkTypeId
-                FROM #TMP_SubProcess 
-               {(formParameter == "1" ? strUnion : string.Empty)}
-            )A";
-
-            return sqlcmd;
+                FROM #tmp_SubProcess
+                UNION 
+                SELECT S.ID, [ArtworkTypeId] = IIF(S.ArtworkTypeId = '', S.ID, S.ArtworkTypeId)
+                FROM SubProcess S
+                INNER JOIN #tmp_SubProcess T ON S.ArtworkTypeId = T.ArtworkTypeId
+                WHERE T.ArtworkTypeId <> ''
+            ) A";
         }
     }
 }
