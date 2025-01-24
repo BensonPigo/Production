@@ -161,40 +161,6 @@ namespace Sci.Production.IE
 
                 this.detailgrid.Rows[e.RowIndex].Cells["SewingSeq"].ReadOnly = MyUtility.Convert.GetBool(curRow["IsNonSewingLine"]);
             }
-
-            // 確保只處理列索引為 0 的格式化事件（避免多次處理同一行）
-            if (e.RowIndex >= 0 && e.ColumnIndex == 0)
-            {
-                // 重設所有行的背景色為白色
-                foreach (DataGridViewRow row in this.detailgrid.Rows)
-                {
-                    row.DefaultCellStyle.BackColor = Color.White;
-                }
-
-                // 遍歷所有行檢查條件
-                foreach (DataGridViewRow row in this.detailgrid.Rows)
-                {
-                    // 取得欄位 DesignateSeq 和 SewingSeq 的值
-                    var designateSeqValue = row.Cells["DesignateSeq"].Value;
-                    var sewingSeqValue = row.Cells["SewingSeq"].Value;
-
-                    // 1. 若 DesignateSeq 欄位有值，該行設為黃色
-                    if (!MyUtility.Check.Empty(designateSeqValue))
-                    {
-                        row.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-
-                        // 2. 找出所有 DesignateSeq == SewingSeq 的行，並設為黃色
-                        foreach (DataGridViewRow otherRow in this.detailgrid.Rows)
-                        {
-                            var otherSewingSeqValue = otherRow.Cells["SewingSeq"].Value; // SewingSeq
-                            if (designateSeqValue.ToString() == MyUtility.Convert.GetString(otherSewingSeqValue))
-                            {
-                                otherRow.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -461,6 +427,8 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             {
                 ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
             }
+
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -1359,6 +1327,10 @@ and Name = @PPA
                         dr.EndEdit();
                         this.UpdateRowIndexBasedOnSewingSeqAndSeq(oldValue); // 從有值 → 清空 SewingSeq
                     }
+                    else
+                    {
+                        this.ChangeRowColor();
+                    }
 
                     return;
                 }
@@ -1377,6 +1349,7 @@ and Name = @PPA
                     // 左邊補 0 至 4 碼
                     dr[columnName] = e.FormattedValue.ToString().PadLeft(4, '0');
                     this.MappingDesignateSeqSewingSeq(dr);
+                    this.ChangeRowColor();
                 }
 
                 dr.EndEdit();
@@ -1390,7 +1363,6 @@ and Name = @PPA
             var matchingRow = this.DetailDatas.FirstOrDefault(r => r["SewingSeq"].EqualString(drDesignateSeq["DesignateSeq"]));
             drDesignateSeq["DesignateSeqIdetityKey"] = matchingRow != null ? matchingRow["IdetityKey"] : DBNull.Value;
         }
-
 
         private DataGridViewGeneratorCheckBoxColumnSettings Col_IsNonSewingLine()
         {
@@ -1539,6 +1511,7 @@ and Name = @PPA
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 this.HideRows();
+                this.ChangeRowColor();
                 return false;
             }
 
@@ -1894,6 +1867,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             this.p01_OperationList.Clear();
             this.HideRows();
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -3074,6 +3048,8 @@ and s.BrandID = @brandid";
                     row["SewingSeq"] = (currentSeq + 1).ToString("D4"); // 確保格式為四碼數字
                 }
             }
+
+            this.ChangeRowColor();
         }
 
         /// <summary>
@@ -3180,6 +3156,8 @@ and s.BrandID = @brandid";
             {
                 row["DesignateSeq"] = this.GetDesignateSeq(row["DesignateSeqIdetityKey"].ToString());
             }
+
+            this.ChangeRowColor();
         }
 
         /// <summary>
@@ -3376,6 +3354,39 @@ and s.BrandID = @brandid";
         {
             var matchingRow = this.DetailDatas.FirstOrDefault(r => r["IdetityKey"].ToString() == designateSeqIdetityKey);
             return matchingRow != null ? matchingRow["SewingSeq"].ToString() : string.Empty;
+        }
+
+        private void ChangeRowColor()
+        {
+            // 重設所有行的背景色為白色
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.White;
+            }
+
+            // 遍歷所有行檢查條件
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                // 取得欄位 DesignateSeq 和 SewingSeq 的值
+                var designateSeqValue = row.Cells["DesignateSeq"].Value;
+                var sewingSeqValue = row.Cells["SewingSeq"].Value;
+
+                // 1. 若 DesignateSeq 欄位有值，該行設為黃色
+                if (!MyUtility.Check.Empty(designateSeqValue))
+                {
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+
+                    // 2. 找出所有 DesignateSeq == SewingSeq 的行，並設為黃色
+                    foreach (DataGridViewRow otherRow in this.detailgrid.Rows)
+                    {
+                        var otherSewingSeqValue = otherRow.Cells["SewingSeq"].Value; // SewingSeq
+                        if (designateSeqValue.ToString() == MyUtility.Convert.GetString(otherSewingSeqValue))
+                        {
+                            otherRow.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+                        }
+                    }
+                }
+            }
         }
     }
 }
