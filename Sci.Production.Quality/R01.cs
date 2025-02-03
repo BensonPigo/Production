@@ -369,6 +369,9 @@ select
     ,[MCHandle_id] = COALESCE(pass1_MCHandle.id, TPEPass1_MCHandle.id)
     ,[MCHandle_name] = COALESCE(pass1_MCHandle.name, TPEPass1_MCHandle.name)
     ,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
+    ,[KPILETA] = O.KPILETA
+    ,[ACT ETA] = Export.Eta
+    ,[Total Packges] = isnull(Export.Packages,0)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -383,7 +386,7 @@ cross apply(
     group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
 inner join (
-    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID,MCHandle
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID,MCHandle,o.KPILETA
     from dbo.Orders o WITH (NOLOCK)  
     {oWhere}
 ) O on O.id = F.POID
@@ -396,6 +399,8 @@ left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = 
 inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
 LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
+left join Receiving on f.ReceivingID = Receiving.ID
+left join Export on Receiving.ExportId = Export.ID
 OUTER APPLY(
 	SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno
 )C
@@ -629,6 +634,9 @@ select
 	,tf.ExportId
 	,tf.InvNo
     ,tf.[Cutting Date]
+    ,tf.[KPILETA]
+    ,tf.[ACT ETA]
+    ,tf.[Total Packges]
 	,tf.WhseArrival
 	,tf.StockQty1
     ,tf.InvStock
