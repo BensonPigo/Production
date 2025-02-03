@@ -134,6 +134,7 @@ where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
             }
 
             string sql = $@"
+
 -- 先限縮資料量
 
 SELECT DISTINCT o.FactoryID
@@ -377,6 +378,8 @@ select distinct [KPIGroup] = f.KPICode
 	, oqs.BuyerDelivery
 	, [PackingListID] = p.ID
 	, [CtnNo] = pld.CTNStartNo
+	, [Refno] = pld.Refno
+	, [Description] = LocalItem.Description
 	, [Size] = ISNULL(Size.val, '')
 	, [CartonQty] = ISNULL(CartonQty.val, 0)
 	, [Status] = case 
@@ -534,6 +537,7 @@ inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
 inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
 inner join #PackingList_Detail pld  on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
 inner join #PackingList p with (nolock) on p.ID = pld.ID
+left join Production.dbo.LocalItem with (nolock) on LocalItem.Refno = pld.Refno
 left join Production.dbo.DropDownList d with (nolock) on d.Type = 'Category' AND d.ID = o.Category	
 outer apply(
 	select [val] = Stuff((select distinct concat('/',SizeCode) 

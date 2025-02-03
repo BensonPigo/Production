@@ -1919,6 +1919,7 @@
     <EmbeddedResource Include="P64_Print.rdlc" />
     <EmbeddedResource Include="P06.resx">
       <DependentUpon>P06.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P19_TransferWKImport.resx">
       <DependentUpon>P19_TransferWKImport.cs</DependentUpon>
@@ -2544,6 +2545,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P38.resx">
       <DependentUpon>P38.cs</DependentUpon>
@@ -2794,6 +2796,7 @@
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
+    <None Include="Properties\DataSources\P15_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />

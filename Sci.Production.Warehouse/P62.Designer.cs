@@ -249,7 +249,7 @@
             this.DefaultOrder = "issuedate,id";
             this.DefaultSubDetailOrder = "poid,seq1,seq2,dyelot,roll";
             this.GridAlias = "Issue_Summary";
-            this.GridUniqueKey = "poid,scirefno,colorid";
+            this.GridUniqueKey = "poid,scirefno,colorid,Seq1,Seq2";
             this.IsSupportClip = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;

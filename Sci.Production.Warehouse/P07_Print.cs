@@ -96,14 +96,14 @@ namespace Sci.Production.Warehouse
                 this.ShowErr(titleResult);
             }
 
+            string strBLNO = MyUtility.GetValue.Lookup($@"Select Blno from dbo.export WITH (NOLOCK) where id='{this.Wk}'");
             this.rptTitle = dtTitle.Rows[0]["nameEN"].ToString();
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", this.rptTitle));
-
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ETA", this.ETA));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", this.Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", this.FTYID));
-
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Blno", strBLNO));
             DualResult result = this.LoadData();
             if (!result)
             {

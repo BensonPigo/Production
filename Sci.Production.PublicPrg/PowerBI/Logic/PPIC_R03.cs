@@ -975,7 +975,7 @@ GROUP BY s.OrderID
 SELECT
     {seq}
     [M] = o.MDivisionID
-   ,[FactoryID] = o.FactoryID
+   ,[Factory] = o.FactoryID
    ,[Delivery] = o.BuyerDelivery
    ,[Delivery(YYYYMM)] = FORMAT(o.BuyerDelivery, 'yyyyMM')
    ,[Earliest SCIDlv] = #tmp_EarliestSCIDlv.EarliestSCIDlv
@@ -1175,7 +1175,7 @@ SELECT
 
    ,[Organic Cotton/Recycle Polyester/Recycle Nylon] = IIF(o.OrganicCotton = 1, 'Y', 'N')
    ,[Direct Ship] = IIF(o.DirectShip = 1, 'V', '')
-   ,[StyleCarryover] = IIF(s.NewCO = '2', 'V', '')
+   ,[Style-Carryover] = IIF(s.NewCO = '2', 'V', '')
    {ttl_tms}
    {biColunn}
 FROM #tmpOrders o

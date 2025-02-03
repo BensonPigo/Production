@@ -14,7 +14,7 @@ BEGIN
 
 	select distinct SewingDate = CONVERT(date,@SDate),FactoryID  
 	into #tmpMain
-	from  [MainServer].Production.dbo.SewingSchedule s
+	from  [MainServer].Production.dbo.SewingSchedule s with(nolock)
 	where @SDate >=CONVERT(date, s.Inline) and @EDate <= CONVERT(date, s.Offline)
 
 	create table #P_LineBalancingRate
@@ -174,7 +174,6 @@ BEGIN
 	from #P_LineBalancingRate t
 
 
-
 	delete t
 	from P_LineBalancingRate t
 	where not exists(
@@ -222,19 +221,7 @@ BEGIN
 		and s.FactoryID = t.FactoryID
 	)
 
-	if exists(select 1 from BITableInfo where Id = 'P_LineBalancingRate')
-	begin
-		update BITableInfo set TransferDate = @SDate
-		where Id = 'P_LineBalancingRate'
-	end
-	else
-	begin
-		insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineBalancingRate', @SDate, 0)
-	end
-
-
-	drop table #tmpMain,#P_LineBalancingRate
-
-end
+	drop table #tmpMain,#P_LineBalancingRate,#tmpLoop
+end;
 
 GO

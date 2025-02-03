@@ -98,11 +98,25 @@ BEGIN
 	INNER JOIN #Trade_MeasurementTranslate s ON t.Ukey=s.Ukey
 	;
 
-	update t set MeasurementTranslateUkey = isnull(MeasurementTranslateUk.Ukey, 0)
-	from ManufacturingExecution.dbo.Measurement t with (nolock)
-	outer apply(select top 1 ukey from ManufacturingExecution.dbo.MeasurementTranslate mt with (nolock) where ManufacturingExecution.dbo.MeasurementTrim(mt.DescEN) = ManufacturingExecution.dbo.MeasurementTrim(t.Description)) MeasurementTranslateUk
-	where t.MeasurementTranslateUkey = 0
-    AND MeasurementTranslateUk.Ukey is not null
+	SELECT t.Ukey
+		, [DescSHA1] = HASHBYTES('SHA1', ManufacturingExecution.dbo.MeasurementTrim(t.Description))
+	INTO #tmp_Measurement
+	FROM ManufacturingExecution.dbo.Measurement t WITH (NOLOCK) 
+	WHERE t.MeasurementTranslateUkey = 0
+	AND t.AddDate >= DATEADD(MONTH, -6, GETDATE())
 
+	SELECT [MeasurementTranslateUkey] = Ukey
+		, [DescSHA1] = HASHBYTES('SHA1', ManufacturingExecution.dbo.MeasurementTrim(mt.DescEN))
+	INTO #tmp_MeasurementTranslate
+	FROM ManufacturingExecution.dbo.MeasurementTranslate mt WITH (NOLOCK) 
+	 
+	UPDATE m 
+		SET m.MeasurementTranslateUkey = isnull(tm.MeasurementTranslateUkey, 0)
+	FROM ManufacturingExecution.dbo.Measurement m WITH (NOLOCK) 
+	INNER JOIN #tmp_Measurement t on m.Ukey = t.Ukey
+	INNER JOIN #tmp_MeasurementTranslate tm on t.DescSHA1 = tm.DescSHA1
+
+
+	DROP TABLE #tmp_Measurement, #tmp_MeasurementTranslate
 	DROP TABLE #Trade_MeasurementTranslate
 END

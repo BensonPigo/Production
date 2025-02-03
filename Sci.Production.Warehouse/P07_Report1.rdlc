@@ -932,7 +932,7 @@
           <Top>4.13191cm</Top>
           <Left>5.9949cm</Left>
           <Height>0.6cm</Height>
-          <Width>1.05361cm</Width>
+          <Width>1.73016cm</Width>
           <ZIndex>11</ZIndex>
           <Style>
             <Border>
@@ -961,10 +961,10 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox3</rd:DefaultName>
-          <Top>4.13191cm</Top>
-          <Left>7.18962cm</Left>
+          <Top>4.16719cm</Top>
+          <Left>7.86617cm</Left>
           <Height>0.6cm</Height>
-          <Width>3.1432cm</Width>
+          <Width>3.47658cm</Width>
           <ZIndex>12</ZIndex>
           <Style>
             <Border>
@@ -1229,6 +1229,66 @@
           <Height>0.6cm</Height>
           <Width>2.0414cm</Width>
           <ZIndex>20</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Textbox12">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>BL/AWB#</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Textbox3</rd:DefaultName>
+          <Top>3.3908cm</Top>
+          <Left>5.9949cm</Left>
+          <Height>0.6cm</Height>
+          <Width>1.73016cm</Width>
+          <ZIndex>21</ZIndex>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <PaddingLeft>2pt</PaddingLeft>
+            <PaddingRight>2pt</PaddingRight>
+            <PaddingTop>2pt</PaddingTop>
+            <PaddingBottom>2pt</PaddingBottom>
+          </Style>
+        </Textbox>
+        <Textbox Name="Blno">
+          <CanGrow>true</CanGrow>
+          <KeepTogether>true</KeepTogether>
+          <Paragraphs>
+            <Paragraph>
+              <TextRuns>
+                <TextRun>
+                  <Value>=Parameters!Blno.Value</Value>
+                  <Style />
+                </TextRun>
+              </TextRuns>
+              <Style />
+            </Paragraph>
+          </Paragraphs>
+          <rd:DefaultName>Blno</rd:DefaultName>
+          <Top>3.3908cm</Top>
+          <Left>7.86617cm</Left>
+          <Height>0.6cm</Height>
+          <Width>3.47658cm</Width>
+          <ZIndex>22</ZIndex>
           <Style>
             <Border>
               <Style>None</Style>
@@ -1538,6 +1598,10 @@
       <DataType>String</DataType>
       <Nullable>true</Nullable>
       <AllowBlank>true</AllowBlank>
+      <Prompt>ReportParameter1</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Blno">
+      <DataType>String</DataType>
       <Prompt>ReportParameter1</Prompt>
     </ReportParameter>
   </ReportParameters>

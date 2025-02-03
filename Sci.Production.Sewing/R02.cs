@@ -699,12 +699,14 @@ select  FactoryID = s.FactoryID
 ,sd.QAQty
 ,ot.Price
 ,ot.ArtworkTypeID
-,ttlPrice = Round(sum(sd.QAQty*isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100 * ot.Price)over(partition by s.FactoryID,sd.OrderId,s.Team,s.OutputDate,s.SewingLineID, IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) ,s.Category,sd.ComboType,s.SubconOutFty,s.SubConOutContractNumber),3)
+,ttlPrice = Round(sum(sd.QAQty*isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100 * ot.Price)over(partition by s.FactoryID,sd.OrderId,s.Team,s.OutputDate,s.SewingLineID, IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) ,s.Category,sd.ComboType,s.SubconOutFty,s.SubConOutContractNumber,ot.ArtworkTypeID),3)
+,ta.rs
 into #tmpFinal
 from SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
 inner join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o.id
+inner join #tmpArtwork ta WITH (NOLOCK) on ot.ArtworkTypeID = ta.ID
 where 1=1 
 and  exists(
 	select 1 from #tmpSubConR16 s 
@@ -729,10 +731,12 @@ group by t.ArtworkTypeID,a.ProductionUnit
 
 declare　@TTLCPU float = (select sum(Price) from #tmpFinal#tmpArtwork where rs ='CPU')
 declare　@AMT float = (select sum(Price) from #tmpFinal#tmpArtwork where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
-declare @SubConOut float = (select [TTL_Price] = sum(ttlPrice) from #tmpFinal)
+declare @SubConOutCPU float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='CPU')
+declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
+
 
 -- 取得SPH Total CPU
-select [SPH_ttlCPU] = isnull(@TTLCPU,0) + ((isnull(@AMT,0) - isnull(@SubConOut,0))/2.5)
+select [SPH_ttlCPU] = isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5)
 
 drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tmpSewingGroup,#TPEtmp,#tmpFinal#tmpArtwork,#tmpFinal,#tmpSubConR16
 ";
@@ -841,13 +845,15 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
 
             this.DeleteExcelRow(2, insertRow, excel);
 
+            string region = MyUtility.GetValue.Lookup("select Region from System");
+
             #region 呼叫Pams API for [GPH] [SPH] [VPH]
             AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
             {
-                FactoryID = this.factory,
+                FactoryID = this.factory == "SPR" ? "SXR" : this.factory,
                 StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
                 EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
-                IsContainShare = false,
+                IsContainShare = region == "PH",
                 IsLocal = false,
             };
 

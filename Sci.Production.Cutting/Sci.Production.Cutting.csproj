@@ -144,6 +144,42 @@
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
     </Compile>
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.Designer.cs">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_SetHoliday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_SetHoliday.Designer.cs">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13.Designer.cs">
+      <DependentUpon>B13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.Designer.cs">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Set.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Set.Designer.cs">
+      <DependentUpon>B13_Set.cs</DependentUpon>
+    </Compile>
     <Compile Include="P02_ExcludefabriccomboinWIP.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -626,6 +662,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_ImportFromPMS.resx">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_SetHoliday.resx">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13.resx">
+      <DependentUpon>B13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Batch assign special time.resx">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Set.resx">
+      <DependentUpon>B13_Set.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>

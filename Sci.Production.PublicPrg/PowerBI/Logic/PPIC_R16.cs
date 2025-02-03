@@ -22,13 +22,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public Base_ViewModel GetOustandingPO(PPIC_R16_ViewModel model)
         {
-            string sqlWhere = $"AND oq.BuyerDelivery >= '{model.BuyerDeliveryFrom.Value.ToString("yyyy/MM/dd")}' AND oq.BuyerDelivery <= '{model.BuyerDeliveryTo.Value.ToString("yyyy/MM/dd")}'";
+            string sqlWhere = $"where oq.BuyerDelivery >= '{model.BuyerDeliveryFrom.Value.ToString("yyyy/MM/dd")}' AND oq.BuyerDelivery <= '{model.BuyerDeliveryTo.Value.ToString("yyyy/MM/dd")}'";
             string sqlWhereOutstanding = string.Empty;
 
             #region WHERE條件
             if (model.Is7DayEdit)
             {
-                sqlWhere = $" AND ((oq.BuyerDelivery >= '{model.BuyerDeliveryFrom.Value.ToString("yyyy/MM/dd")}' AND oq.BuyerDelivery <= '{model.BuyerDeliveryTo.Value.ToString("yyyy/MM/dd")}') \r\n\tor (o.EditDate >= Cast(getdate()-7 as date))\r\n\tor (o.PulloutCmplDate >= Cast(getdate()-7 as date) AND o.PulloutCmplDate <= getdate())\r\n)" + Environment.NewLine;
+                sqlWhere = $@" 
+where ((oq.BuyerDelivery >= '{model.BuyerDeliveryFrom.Value.ToString("yyyy/MM/dd")}' AND oq.BuyerDelivery <= '{model.BuyerDeliveryTo.Value.ToString("yyyy/MM/dd")}')
+    or (o.EditDate >= Cast(getdate()-7 as date))
+    or (o.PulloutCmplDate >= Cast(getdate()-7 as date) AND o.PulloutCmplDate <= getdate())
+)" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(model.BrandID))
@@ -82,7 +86,7 @@ SELECT
 	,o.CustPONo
 	,o.StyleID
 	,oq.BuyerDelivery
-	,oq.Seq
+	,[Seq] = ISNULL(oq.Seq,'')
 	,oq.ShipmodeID
     ,[Dest] = c.Alias
 	,[Category] =  CASE WHEN o.Category='B' THEN 'Bulk' 
@@ -132,8 +136,9 @@ outer apply(
         for xml path('')
         ),1,1,'')
 ) OrderQtyGarment 
-where o.Category IN ('B','G') and o.Qty <> 0
-      {sqlWhere}
+{sqlWhere}
+and o.Category IN ('B','G') and o.Qty <> 0
+      
 
 select 
     pd.OrderID,
@@ -166,8 +171,8 @@ from openquery([ExtendServer],'
         INNER JOIN [Production].[dbo].Factory f WITH(NOLOCK) ON f.ID=o.FactoryID
         LEFT JOIN  [Production].[dbo].Order_QtyShip oq WITH(NOLOCK) ON o.ID=oq.ID
         LEFT JOIN [Production].[dbo].OrderType ot WITH(NOLOCK) ON o.OrderTypeID=ot.ID AND o.BrandID = ot.BrandID
-        where o.ID = ins.OrderID 
         {sqlWhere.ToString().Replace("'", "''")}
+        and o.ID = ins.OrderID 
     )
     and ins.Status in (''Pass'',''Fixed'')
     group by ins.OrderId,ins.Location,ins.article,ins.size

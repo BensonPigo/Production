@@ -26,6 +26,8 @@
     WashResult varchar(1)  CONSTRAINT [DF_GarmentTest_Detail_WashResult] default('') NOT NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_GarmentTest_Detail_ReportNo] default '',
 	FabricationType varchar(10) not null CONSTRAINT [DF_GarmentTest_Detail_FabricationType] default '',
+	--ReceiveDate DATE NULL,
+	Approver varchar(10) NOT NULL CONSTRAINT [DF_FIR_Laboratory_CrockingApprover] DEFAULT '',
     CONSTRAINT [PK_GarmentTest_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [No] ASC)
 );
 

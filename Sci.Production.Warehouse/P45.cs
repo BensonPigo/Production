@@ -860,7 +860,7 @@ and seq2 = '{seq[1]}'
                 return;
             }
 
-            DataRow curDr = ((DataTable)this.detailgridbs.DataSource).Rows[e.RowIndex];
+            DataRow curDr = this.detailgrid.GetDataRow(e.RowIndex);
             if (curDr["reasonid"].Equals("00001"))
             {
                 this.col_ToPoid.IsEditingReadOnly = false;

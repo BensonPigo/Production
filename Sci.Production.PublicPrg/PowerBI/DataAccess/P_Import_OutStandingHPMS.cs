@@ -14,12 +14,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_OutStandingHPMS
     {
         /// <inheritdoc/>
-        public P_Import_OutStandingHPMS()
-        {
-            DBProxy.Current.DefaultTimeout = 1800;
-        }
-
-        /// <inheritdoc/>
         public Base_ViewModel P_OutStandingHPMS(DateTime? sDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();

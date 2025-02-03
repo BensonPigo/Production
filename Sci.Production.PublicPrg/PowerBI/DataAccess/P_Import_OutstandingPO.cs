@@ -83,7 +83,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                     new SqlParameter("@EndDate", eDate),
                 };
-                string sql = @"	
+
+                string sql = @"
+alter table #tmp alter column FactoryID varchar(8)
+alter table #tmp alter column ID varchar(13)
+alter table #tmp alter column Seq varchar(2)
+
                 update t
                 SET 
 	            t.CustPONo							= ISNULL(s.CustPONo,''),
@@ -98,9 +103,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            t.OrderQty							= ISNULL(s.OrderQty,0),
 	            t.PackingCtn						= ISNULL(s.PackingCarton,0),
 	            t.PackingQty						= ISNULL(s.PackingQty,0),
-	            t.ClogRcvCtn						= ISNULL(s.ClogReceivedQty,0),
+	            t.ClogRcvCtn                        = ISNULL(s.ClogReceivedCarton,0),
+	            t.ClogRcvQty                        = ISNULL(s.ClogReceivedQty,0),
 	            t.LastCMPOutputDate					= s.LastCMPOutputDate,
-	            t.CMPQty							= ISNULL(s.CMPQty,''),
+	            t.CMPQty							= ISNULL(s.CMPQty,0),
 	            t.LastDQSOutputDate					= s.LastDQSOutputDate,
 	            t.DQSQty							= ISNULL(s.DQSQty,''),
 	            t.OSTPackingQty						= ISNULL(s.OSTPackingQty,''),
@@ -118,9 +124,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate
                 from P_OustandingPO t
                 inner join #tmp s  
-		                ON t.FactoryID=ISNULL(s.FactoryID ,'') 
-		                AND t.orderid = ISNULL(s.id,'')
-		                AND t.seq = ISNULL(s.seq,'')
+		                ON t.FactoryID = s.FactoryID
+		                AND t.OrderID = s.ID
+		                AND t.Seq = s.Seq
 
                 insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
                 , [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
@@ -142,9 +148,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		        [PackingCtn]							= ISNULL(s.PackingCarton,0),
 		        [PackingQty]							= ISNULL(s.PackingQty,0),
 		        [ClogRcvCtn]							= ISNULL(s.ClogReceivedCarton,0),
-		        [ClogRcvQty]							= ISNULL(s.ClogReceivedQty,''),
+		        [ClogRcvQty]							= ISNULL(s.ClogReceivedQty,0),
 		        [LastCMPOutputDate]						= s.LastCMPOutputDate,
-		        [CMPQty]								= ISNULL(s.CMPQty,''),
+		        [CMPQty]								= ISNULL(s.CMPQty,0),
 		        [LastDQSOutputDate]						= s.LastDQSOutputDate,
 		        [DQSQty]								= ISNULL(s.DQSQty,''),
 		        [OSTPackingQty]							= ISNULL(s.OSTPackingQty,''),
@@ -164,16 +170,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 from #tmp s
                 where not exists(
 	                select 1 from P_OustandingPO t 
-	                where t.FactoryID = ISNULL(s.FactoryID ,'')
-	                AND t.orderid = ISNULL(s.id,'') 
-	                AND t.seq = ISNULL(s.seq,'') 
+	                where t.FactoryID = s.FactoryID
+	                AND t.OrderID = s.ID
+	                AND t.Seq = s.Seq
                 )
 
                 delete t
                 from P_OustandingPO t
-                left join #tmp s on t.FactoryID = ISNULL(s.FactoryID ,'') 
-	                AND t.orderid = ISNULL(s.id,'') 
-	                AND t.seq = ISNULL(s.seq,'') 
+                left join #tmp s on t.FactoryID = s.FactoryID
+	                AND t.OrderID = s.ID
+	                AND t.Seq = s.Seq
                 where t.BuyerDelivery between @StartDate and @EndDate
 	                and s.ID IS NULL
 
@@ -191,6 +197,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 from BITableInfo b
                 where b.id = 'P_OustandingPO'
                 ";
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

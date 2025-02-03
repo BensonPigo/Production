@@ -299,7 +299,7 @@ select	distinct psd.id as [poid]
         , ColorMultipleID = isnull(dbo.GetColorMultipleID(psd.BrandId, isnull(bomType.Color, '')), '')
         , f.MTLTYPEID
         , CompareBoAExpandSeq1 = case 
-                                    when psd.Seq1 like '7_' then psd.OutputSeq1
+                                    when psd.Seq1 like '7%' then psd.OutputSeq1
                                     else psd.Seq1
                                  end
 		, [Garment Size]=dbo.GetGarmentSizeByOrderIDSeq(psd.id ,psd.SEQ1 ,psd.SEQ2)
