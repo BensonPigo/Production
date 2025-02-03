@@ -47,7 +47,7 @@ namespace Sci.Production.Sewing
                 .Text("Barcode", header: "Barcode", iseditingreadonly: false)
                 .Text("ScanBy", header: "Scan By", iseditingreadonly: false)
                 .Text("ScanTime", header: "Scan Time", iseditingreadonly: false)
-                .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
+                .Text("HaulingStatus", header: "Hauling Status", iseditingreadonly: false)
                 .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
                 .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
             #endregion
@@ -142,7 +142,11 @@ select [ScanDate] = c.HaulingDate
 	,[ScanBy] = isnull(mesp1.IdAndName, c.AddName)
 	,[ScanTime] = Format(c.AddDate, 'yyyy/MM/dd HH:mm:ss')
     ,c.Remark
-    ,[ReturntoProduction] = iif(c.Status = 'Return', 'Yes', '')
+    ,[HaulingStatus] = CASE    WHEN c.Status = 'Return' THEN 'Return'
+								WHEN c.Status = 'Haul 'THEN 'Hauled'
+							ELSE c.Status
+						END
+
     ,[SewingLineID] = sw_Line.val
 from CTNHauling c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
