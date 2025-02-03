@@ -41,7 +41,7 @@ namespace Sci.Production.PPIC
                 this.Close();
             }
 
-            this.labShowDateRange.Text = $@"Download from: {DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}〜{DateTime.Now.AddDays(160).ToString("yyyy-MM-dd")}";
+            this.labShowDateRange.Text = $@"Download from: {DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}〜{DateTime.Now.AddDays(365).ToString("yyyy-MM-dd")}";
         }
 
         // Download
