@@ -408,21 +408,21 @@ namespace Sci.Production.Warehouse
                 var q = from p in tmpPacking.AsEnumerable()
                         group p by new
                         {
-                            poid = p.Field<string>("poid"),
-                            seq1 = p.Field<string>("seq1"),
-                            seq2 = p.Field<string>("seq2"),
-                            Roll = p.Field<string>("Roll"),
-                            Dyelot = p.Field<string>("Dyelot"),
+                            poid = p.Field<string>("poid").Trim(),
+                            seq1 = p.Field<string>("seq1").Trim(),
+                            seq2 = p.Field<string>("seq2").Trim(),
+                            Roll = p.Field<string>("Roll").Trim(),
+                            Dyelot = p.Field<string>("Dyelot").Trim(),
                         }
                         into m
                         where m.Count() > 1 // 只顯示超過一次以上的
                         select new
                         {
-                            poid = m.First().Field<string>("poid"),
-                            Seq1 = m.First().Field<string>("seq1"),
-                            Seq2 = m.First().Field<string>("seq2"),
-                            Roll = m.First().Field<string>("Roll"),
-                            Dyelot = m.First().Field<string>("Dyelot"),
+                            poid = m.First().Field<string>("poid").Trim(),
+                            Seq1 = m.First().Field<string>("seq1").Trim(),
+                            Seq2 = m.First().Field<string>("seq2").Trim(),
+                            Roll = m.First().Field<string>("Roll").Trim(),
+                            Dyelot = m.First().Field<string>("Dyelot").Trim(),
                             count = m.Count(),
                         };
                 if (q.ToList().Count > 0)
