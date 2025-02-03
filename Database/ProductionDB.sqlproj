@@ -2929,6 +2929,7 @@
     <Build Include="dbo\Stored Procedures\GetEndlineTargeteff.sql" />
     <Build Include="dbo\Functions\GetCheckContinusProduceDays.sql" />
     <Build Include="dbo\Tables\FIR_Physical_QCTime.sql" />
+    <Build Include="dbo\Tables\EmployeeAllocationSetting.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

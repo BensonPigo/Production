@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
@@ -29,6 +30,7 @@ namespace Sci.Production.IE
         private AutoLineMappingGridSyncScroll lineMappingGrids;
         private AutoLineMappingGridSyncScroll centralizedPPAGrids;
 
+        private int iBarchart = 0;
         private Win.UI.Button[] chartLBRButtons = new Win.UI.Button[]
         {
                 new Win.UI.Button(),
@@ -43,11 +45,14 @@ select  ad.*,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
+        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower),
+        [IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 from    AutomatedLineMapping_DetailAuto ad with (nolock) 
+left join AutomatedLineMapping alm on alm.ID = ad.ID
+left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
-where {0}
+where {0} and isnull(md.IsNotShownInP06,0) = 0
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
 
@@ -56,10 +61,14 @@ select  ad.*,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower)
+        [TimeStudyDetailUkeyCnt] = Count(ad.TimeStudyDetailUkey) over (partition by ad.TimeStudyDetailUkey, ad.SewerManpower),
+        [IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 from    AutomatedLineMapping_DetailTemp ad with (nolock) 
+left join AutomatedLineMapping alm on alm.ID = ad.ID
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
+left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID
+
 where {0}
 order by ad.SewerManpower, ad.No, ad.Seq
 ";
@@ -70,11 +79,14 @@ select  cast(0 as bit) as Selected,
         [PPADesc] = isnull(d.Name, ''),
         [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
         [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
+        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+		[IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 from AutomatedLineMapping_Detail ad WITH (NOLOCK)
 left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
 left join Operation op with (nolock) on op.ID = ad.OperationID
-where {0}
+inner join AutomatedLineMapping alm on alm.id = ad.ID
+LEFT join MachineType_Detail md on md.ID = ad.MachineTypeID and md.FactoryID = alm.FactoryID
+where {0} --and isnull(md.IsNotShownInP05,0) = 0
 order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
         private decimal StandardLBR
@@ -112,6 +124,8 @@ AND ALMCS.Junk = 0
             this.gridCentralizedPPALeft.SupportEditMode = Win.UI.AdvEditModesReadOnly.True;
             this.gridCentralizedPPALeft.DataSource = this.gridCentralizedPPALeftBS;
 
+            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS.DataSource;
+
             this.detailgrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
             this.gridCentralizedPPALeft.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
 
@@ -148,6 +162,7 @@ AND ALMCS.Junk = 0
             this.chartLBR.Paint += this.ChartLBR_Paint;
 
             this.numericLBRByGSDTime.ValueChanged += this.NumericLBRByGSDTime_ValueChanged;
+            // this.masterpanel.Height = this.masterpanel.Controls.Cast<Control>().Max(c => c.Bottom);
         }
 
         private void NumericLBRByGSDTime_ValueChanged(object sender, EventArgs e)
@@ -170,7 +185,7 @@ AND ALMCS.Junk = 0
         private void Detailgrid_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-            if (dr["OperationID"].ToString() == "PROCIPF00003" ||
+             if (dr["OperationID"].ToString() == "PROCIPF00003" ||
                 dr["OperationID"].ToString() == "PROCIPF00004")
             {
                 this.detailgrid.Rows[e.RowIndex].ReadOnly = true;
@@ -269,7 +284,6 @@ AND ALMCS.Junk = 0
             this.dtAutomatedLineMapping_DetailAuto.Clear();
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(this.sqlGetAutomatedLineMapping_Detail, $" ad.ID = '{masterID}'");
-
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -332,17 +346,36 @@ AND ALMCS.Junk = 0
                     col.DefaultCellStyle.ForeColor = Color.Black;
                 }
             }
+
+            if (!MyUtility.Check.Empty(this.CurrentMaintain["TotalGSDTime"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["SewerManpower"]) &&
+                !MyUtility.Check.Empty(this.CurrentMaintain["WorkHour"]))
+            {
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
+            }
+            else
+            {
+                this.CurrentMaintain["TaktTime"] = 0;
+            }
         }
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.btnMachineSummary.Enabled = false;
             P05_CreateNewLineMapping p05_CreateNewLineMapping = new P05_CreateNewLineMapping(this, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
             p05_CreateNewLineMapping.ShowDialog();
             if (this.DetailDatas.Count == 0)
             {
                 base.ClickNewAfter();
                 this.DoDetailUndo(false);
+                this.btnMachineSummary.Enabled = true;
                 return;
             }
 
@@ -352,6 +385,7 @@ AND ALMCS.Junk = 0
             base.ClickNewAfter();
             this.txtfactory.ReadOnly = true;
             this.comboPhase.ReadOnly = true;
+            this.btnMachineSummary.Enabled = true;
 
         }
 
@@ -467,6 +501,12 @@ delete AutomatedLineMapping_NotHitTargetReason where ID = '{this.CurrentMaintain
         /// <inheritdoc/>
         protected override void ClickConfirm()
         {
+
+            if (MyUtility.Msg.InfoBox("Are you sure you want to Confirm?", buttons: MessageBoxButtons.YesNo) == DialogResult.No)
+            {
+                return;
+            }
+
             decimal checkLBRCondition = this.StandardLBR;
 
             if (checkLBRCondition > 0 &&
@@ -557,7 +597,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
         StyleID = '{this.CurrentMaintain["StyleID"]}' and
         SeasonID = '{this.CurrentMaintain["SeasonID"]}' and
         BrandID = '{this.CurrentMaintain["BrandID"]}' and
-        ComboType = '{this.CurrentMaintain["ComboType"]}'
+        ComboType = '{this.CurrentMaintain["ComboType"]}' and 
+        Phase = '{this.CurrentMaintain["Phase"]}'
 ";
                 this.CurrentMaintain["Version"] = MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(sqlGetVersion));
             }
@@ -657,26 +698,27 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
                 bool isChecked = MyUtility.Convert.GetBool(e.FormattedValue);
 
+
                 // 第一筆勾選時，將上下各五筆No保留Enable，其餘disable不能勾選
-                if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
-                {
-                    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
-                    int targetIndex = listNo.IndexOf(dr["No"].ToString());
-                    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
-                    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
+                //if (isChecked && !this.DetailDatas.Any(row => (bool)row["Selected"]))
+                //{
+                //    var listNo = this.DetailDatas.OrderBy(row => row["No"]).Select(row => row["No"].ToString()).Distinct().ToList();
+                //    int targetIndex = listNo.IndexOf(dr["No"].ToString());
+                //    int skipCount = Math.Max(targetIndex - 5, 0); // 計算要跳過的元素個數
+                //    int takeCount = (targetIndex < 6) ? targetIndex + 6 : 11; // 計算要取出的元素個數
 
-                    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
+                //    var listEnableNo = listNo.Skip(skipCount).Take(takeCount).Where(row => row != dr["No"].ToString());
 
-                    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
-                    {
-                        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
-                        {
-                            continue;
-                        }
+                //    foreach (DataGridViewRow gridRow in this.detailgrid.Rows)
+                //    {
+                //        if (gridRow.Cells["No"].Value.ToString() == dr["No"].ToString())
+                //        {
+                //            continue;
+                //        }
 
-                        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
-                    }
-                }
+                //        gridRow.Cells["Selected"].ReadOnly = !listEnableNo.Contains(gridRow.Cells["No"].Value.ToString());
+                //    }
+                //}
 
                 this.SelectedSameTimeStudyDetailUkey(dr["No"].ToString(), isChecked);
 
@@ -696,20 +738,20 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
                .Text("Location", header: "Location", width: Widths.AnsiChars(13), iseditingreadonly: true)
-               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(13), iseditingreadonly: true)
+               .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC type", this, width: Widths.AnsiChars(10))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(23), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
-               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
+               .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(10))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
-               .Numeric("GSD", header: "GSD Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
-               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(6), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori. Sewer", decimal_places: 4, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
+               .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(3), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
-               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(13));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
@@ -722,11 +764,12 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellPartID("SewingMachineAttachmentID", "Part ID", this, width: Widths.AnsiChars(25))
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD Time", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(20));
 
             this.Helper.Controls.Grid.Generator(this.gridLineMappingRight)
                .Text("No", header: "No. Of" + Environment.NewLine + "Station", width: Widths.AnsiChars(10))
-               .Text("TotalGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
+               .Text("sumGSDTime", header: "Total" + Environment.NewLine + "GSD Time", width: Widths.AnsiChars(10))
+               .Text("TotalGSDTime", header: "Total GSD" + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10))
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10));
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPARight)
@@ -903,14 +946,18 @@ from #tmp
 
             if (this.tabDetail.SelectedIndex == 0)
             {
-                this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0";
+                this.detailgridbs.Filter = "PPA <> 'C' and IsNonSewingLine = 0 and IsNotShownInP05 = 0";
                 this.lineMappingGrids.RefreshSubData();
             }
             else
             {
-                this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0";
+                this.gridCentralizedPPALeftBS.Filter = "PPA = 'C' and IsNonSewingLine = 0 and IsNotShownInP05 = 0";
                 this.centralizedPPAGrids.RefreshSubData();
             }
+
+            this.gridLineMappingRightBS.DataSource = this.gridLineMappingRight.DataSource;
+            this.gridLineMappingRightBS.Filter = "IsNotShownInP05 = 'False' and No <> '' and No is not null";
+            this.detailgridbs.Filter = "IsNotShownInP05 = 'False' and No <> '' and No is not null"; // ISP20240132 隱藏工段
         }
 
         private void RefreshAutomatedLineMappingSummary()
@@ -967,7 +1014,13 @@ from #tmp
             // TaktTime
             if (s4 != 0 && s5 != 0)
             {
-                this.CurrentMaintain["TaktTime"] = MyUtility.Math.Round(3600 * MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]) / MyUtility.Convert.GetDecimal(this.CurrentMaintain["DailyDemand"]), 2);
+                decimal decTotalGSD = MyUtility.Convert.GetDecimal(this.CurrentMaintain["TotalGSDTime"]);
+                decimal decCurrentOperators = MyUtility.Convert.GetDecimal(this.CurrentMaintain["SewerManpower"]);
+                decimal decWorkhour = MyUtility.Convert.GetDecimal(this.CurrentMaintain["WorkHour"]);
+
+                decimal decTargetHr = 3600 * decCurrentOperators / decTotalGSD;
+                decimal decDailyDemand_Shift = decTargetHr * decWorkhour;
+                this.CurrentMaintain["TaktTime"] = Math.Round(3600 * decWorkhour / decDailyDemand_Shift, 2);
             }
             else
             {
@@ -1112,6 +1165,7 @@ from #tmp
                 if (point.XValue.ToString() == this.CurrentMaintain["SewerManpower"].ToString())
                 {
                     this.chartLBRButtons[i].FlatAppearance.BorderColor = this.BackColor;
+                    this.iBarchart = MyUtility.Convert.GetInt(point.XValue.ToString());
                 }
                 else
                 {
@@ -1147,7 +1201,7 @@ from #tmp
                 return;
             }
 
-            using (P05_EditOperation p05_EditOperation = new P05_EditOperation((DataTable)this.detailgridbs.DataSource))
+            using (P05_EditOperation p05_EditOperation = new P05_EditOperation(this.detailgrid.GetTable()))
             {
                 DialogResult dialogResult = p05_EditOperation.ShowDialog();
                 if (dialogResult == DialogResult.OK)
@@ -1156,6 +1210,8 @@ from #tmp
                     this.ShowLBRChart(this.CurrentMaintain);
                 }
             }
+
+            this.detailgrid.Sort(this.detailgrid.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
         }
 
         private void ChartBtn_Click(object sender, EventArgs e)
@@ -1166,19 +1222,21 @@ from #tmp
             }
 
             int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
-            if (this.EditMode)
-            {
-                P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-                DialogResult dialogResult = p05_LBR.ShowDialog();
-                this.FilterGrid(dialogResult == DialogResult.OK);
-                this.RefreshAutomatedLineMappingSummary();
-                this.ShowLBRChart(this.CurrentMaintain);
-            }
-            else
-            {
-                P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
-                p05_Compare.ShowDialog();
-            }
+            new P05_Chart(firstDisplaySewermanpower, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
+            //int firstDisplaySewermanpower = MyUtility.Convert.GetInt(((Win.UI.Button)sender).Text);
+            //if (this.EditMode)
+            //{
+            //    P05_LBR p05_LBR = new P05_LBR(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            //    DialogResult dialogResult = p05_LBR.ShowDialog();
+            //    this.FilterGrid(dialogResult == DialogResult.OK);
+            //    this.RefreshAutomatedLineMappingSummary();
+            //    this.ShowLBRChart(this.CurrentMaintain);
+            //}
+            //else
+            //{
+            //    P05_Compare p05_Compare = new P05_Compare(firstDisplaySewermanpower, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            //    p05_Compare.ShowDialog();
+            //}
         }
 
         private void BtnH_Click(object sender, EventArgs e)
@@ -1203,110 +1261,121 @@ from #tmp
             }
 
             string sqlInsertLineMappingBalancing = $@"
-INSERT INTO LineMappingBalancing (
-		AutomatedLineMappingID
-	   ,StyleUKey
-	   ,Phase
-	   ,Version
-	   ,FactoryID
-	   ,StyleID
-	   ,SeasonID
-	   ,BrandID
-	   ,ComboType
-	   ,StyleCPU
-	   ,SewerManpower
-	   ,PackerManpower
-	   ,PresserManpower
-	   ,TotalGSDTime
-       ,TotalCycleTime
-	   ,HighestGSDTime
-       ,HighestCycleTime
-	   ,TimeStudyID
-	   ,TimeStudyStatus
-	   ,TimeStudyVersion
-	   ,WorkHour
-	   ,Status
-	   ,AddName
-	   ,AddDate)
-SELECT
-		alm.ID
-	   ,alm.StyleUKey
-	   ,'Final'
-	   ,0
-	   ,alm.FactoryID
-	   ,alm.StyleID
-	   ,alm.SeasonID
-	   ,alm.BrandID
-	   ,alm.ComboType
-	   ,alm.StyleCPU
-	   ,alm.SewerManpower
-	   ,alm.PackerManpower
-	   ,alm.PresserManpower
-	   ,alm.TotalGSDTime
-       ,alm.TotalGSDTime
-	   ,alm.HighestGSDTime
-       ,alm.HighestGSDTime
-	   ,alm.TimeStudyID
-	   ,alm.TimeStudyStatus
-	   ,alm.TimeStudyVersion
-	   ,alm.WorkHour
-	   ,'New'
-	   ,'{Env.User.UserID}'
-	   ,GETDATE()
-FROM AutomatedLineMapping alm
-WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
+            INSERT INTO LineMappingBalancing 
+            (
+	            AutomatedLineMappingID
+	            ,StyleUKey
+	            ,Phase
+	            ,Version
+	            ,FactoryID
+	            ,StyleID
+	            ,SeasonID
+	            ,BrandID
+	            ,ComboType
+	            ,StyleCPU
+	            ,SewerManpower
+	            ,PackerManpower
+	            ,PresserManpower
+	            ,TotalGSDTime
+                ,TotalCycleTime
+	            ,HighestGSDTime
+                ,HighestCycleTime
+	            ,TimeStudyID
+	            ,TimeStudyStatus
+	            ,TimeStudyVersion
+	            ,WorkHour
+	            ,Status
+	            ,AddName
+	            ,AddDate
+                ,OriNoNumber
+                ,Reason
+                ,OriTotalGSDTime
+            )
+            SELECT
+            alm.ID
+            ,alm.StyleUKey
+            ,'Final'
+            ,0
+            ,alm.FactoryID
+            ,alm.StyleID
+            ,alm.SeasonID
+            ,alm.BrandID
+            ,alm.ComboType
+            ,alm.StyleCPU
+            ,alm.SewerManpower
+            ,alm.PackerManpower
+            ,alm.PresserManpower
+            ,alm.TotalGSDTime
+            ,alm.TotalGSDTime
+            ,alm.HighestGSDTime
+            ,alm.HighestGSDTime
+            ,alm.TimeStudyID
+            ,alm.TimeStudyStatus
+            ,alm.TimeStudyVersion
+            ,alm.WorkHour
+            ,'New'
+            ,'{Env.User.UserID}'
+            ,GETDATE()
+            ,{this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count()}
+            ,''
+            ,alm.TotalGSDTime
+            FROM AutomatedLineMapping alm
+            WHERE alm.ID = '{this.CurrentMaintain["ID"]}';
 
-DECLARE @ID INT = @@identity
+            DECLARE @ID INT = @@identity
 
-INSERT INTO LineMappingBalancing_Detail (
-	 ID
-	,No
-	,Seq
-	,Location
-	,PPA
-	,MachineTypeID
-	,MasterPlusGroup
-	,OperationID
-	,Annotation
-	,Attachment
-	,SewingMachineAttachmentID
-	,Template
-	,GSD
-    ,Cycle
-	,SewerDiffPercentage
-	,DivSewer
-	,OriSewer
-	,TimeStudyDetailUkey
-	,ThreadComboID
-	,Notice
-	,IsNonSewingLine
-)
-SELECT
-   @ID
-   ,almd.No
-   ,almd.Seq
-   ,almd.Location
-   ,almd.PPA
-   ,almd.MachineTypeID
-   ,almd.MasterPlusGroup
-   ,almd.OperationID
-   ,almd.Annotation
-   ,almd.Attachment
-   ,almd.SewingMachineAttachmentID
-   ,almd.Template
-   ,almd.GSD
-   ,almd.GSD
-   ,almd.SewerDiffPercentage
-   ,almd.DivSewer
-   ,almd.OriSewer
-   ,almd.TimeStudyDetailUkey
-   ,almd.ThreadComboID
-   ,''
-   ,almd.IsNonSewingLine
-FROM AutomatedLineMapping_Detail almd
-WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
+            INSERT INTO LineMappingBalancing_Detail 
+            (
+                ID
+                ,No
+                ,Seq
+                ,Location
+                ,PPA
+                ,MachineTypeID
+                ,MasterPlusGroup
+                ,OperationID
+                ,Annotation
+                ,Attachment
+                ,SewingMachineAttachmentID
+                ,Template
+                ,GSD
+                ,Cycle
+                ,SewerDiffPercentage
+                ,DivSewer
+                ,OriSewer
+                ,TimeStudyDetailUkey
+                ,ThreadComboID
+                ,Notice
+                ,IsNonSewingLine
+                ,GroupNo
+            )
+            SELECT
+            @ID
+            ,almd.No
+            ,almd.Seq
+            ,almd.Location
+            ,almd.PPA
+            ,almd.MachineTypeID
+            ,almd.MasterPlusGroup
+            ,almd.OperationID
+            ,almd.Annotation
+            ,almd.Attachment
+            ,almd.SewingMachineAttachmentID
+            ,almd.Template
+            ,almd.GSD
+            ,almd.GSD
+            ,almd.SewerDiffPercentage
+            ,almd.DivSewer
+            ,almd.OriSewer
+            ,almd.TimeStudyDetailUkey
+            ,almd.ThreadComboID
+            ,''
+            ,almd.IsNonSewingLine
+            ,[GroupNo] = 1
+            FROM AutomatedLineMapping_Detail almd
+            WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
 
-select [ID] = @ID
+            select [ID] = @ID
 ";
             DataTable dtOutID;
             DualResult result = DBProxy.Current.Select(null, sqlInsertLineMappingBalancing, out dtOutID);
@@ -1372,6 +1441,26 @@ select [ID] = @ID
                 callP06.MdiParent = this.MdiParent;
                 callP06.ShowDirectQueryID(id);
             }
+        }
+
+        private void BtnLineMappingComparison_Click(object sender, EventArgs e)
+        {
+            P05_Compare p05_Compare = new P05_Compare(this.iBarchart, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            p05_Compare.ShowDialog();
+        }
+
+        private void BtnViewOperator_Click(object sender, EventArgs e)
+        {
+            P05_LBR p05_LBR = new P05_LBR(this.iBarchart, this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, this.dtAutomatedLineMapping_DetailTemp, this.dtAutomatedLineMapping_DetailAuto);
+            DialogResult dialogResult = p05_LBR.ShowDialog();
+            this.FilterGrid(dialogResult == DialogResult.OK);
+            this.RefreshAutomatedLineMappingSummary();
+            this.ShowLBRChart(this.CurrentMaintain);
+        }
+
+        private void BtnMachineSummary_Click(object sender, EventArgs e)
+        {
+            new P05_MachineSummary(MyUtility.Convert.GetString(this.CurrentMaintain["ID"])).ShowDialog();
         }
     }
 }

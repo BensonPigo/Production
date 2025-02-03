@@ -53,6 +53,7 @@ namespace Sci.Production.IE
             this.styleCPU = styleCPU;
             this.radioU_Left.Checked = true;
             this.radioDescription.Checked = true;
+            this.rbDetail.Checked = true;
             MyUtility.Tool.SetupCombox(this.comboLanguage, 2, 1, "en,English,cn,Chinese,vn,Vietnam,kh,Cambodia");
             this.comboLanguage.SelectedIndex = 0;
         }
@@ -663,7 +664,7 @@ group by ID
 
 select No,CT = COUNT(1),[ActCycle] = Max(ld.ActCycle)
 ,[ActCycleTime(average)]=ActCycle.Value
-into #tmp
+into #tmp1
 from LineMapping_Detail ld WITH (NOLOCK) 
 inner join #tmp t on ld.ID = t.ID
 OUTER APPLY(
@@ -697,7 +698,7 @@ order by no
 SELECT 
     t.*,
     [Name] = e.val
-FROM #tmp t
+FROM #tmp1 t
 OUTER APPLY (
    SELECT val = STUFF((
         SELECT distinct CONCAT(' / ', tmp.[Name])
@@ -711,7 +712,7 @@ OUTER APPLY (
     ), 1, 1, '')
 ) e;
 
-drop TABLE #tmp
+drop TABLE #tmp,#tmp1
 ";
                 result = DBProxy.Current.Select(null, sqlCmd, out this.nodist2);
                 if (!result)
@@ -966,6 +967,7 @@ drop TABLE #tmp1
 
             string strXltName = Env.Cfg.XltPathDir + "\\IE_P03_Print.xltx";
             Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName);
+
 #if DEBUG
             // excel.Visible = true;
 #endif
@@ -1065,16 +1067,48 @@ drop TABLE #tmp1
             #region 第二頁
             if (this.change)
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, this.count1, "Line Mapping");
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[5], excel.ActiveWorkbook.Worksheets[6], excel.ActiveWorkbook.Worksheets[7], factory, style, this.nodist2, this.count2, "Line Mapping");
+                if (this.rbDetail.Checked)
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, this.count1, "Line Mapping", isDetail: true);
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[5], excel.ActiveWorkbook.Worksheets[6], excel.ActiveWorkbook.Worksheets[7], factory, style, this.nodist2, this.count2, "Line Mapping", isDetail: true);
+                    excel.ActiveWorkbook.Worksheets[14].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[16].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[17].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[15].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                }
+                else
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[14], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, this.count1, "Line Mapping");
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[16], excel.ActiveWorkbook.Worksheets[6], excel.ActiveWorkbook.Worksheets[7], factory, style, this.nodist2, this.count2, "Line Mapping");
+                    excel.ActiveWorkbook.Worksheets[2].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[5].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[17].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                }
             }
             else
             {
+
                 decimal currentOperators = this.masterData["CurrentOperators"] == null ? 0 : Convert.ToDecimal(this.masterData["CurrentOperators"]);
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators, "Line Mapping");
+                if (this.rbDetail.Checked)
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[2], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators, "Line Mapping", isDetail: true);
+                    excel.ActiveWorkbook.Worksheets[14].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[16].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[17].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[15].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                }
+                else
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[14], excel.ActiveWorkbook.Worksheets[3], excel.ActiveWorkbook.Worksheets[4], factory, style, this.nodist, currentOperators, "Line Mapping");
+                    excel.ActiveWorkbook.Worksheets[2].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[16].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                    excel.ActiveWorkbook.Worksheets[17].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                }
+
                 excel.ActiveWorkbook.Worksheets[5].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[6].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[7].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+
             }
             #endregion
 
@@ -1086,7 +1120,16 @@ drop TABLE #tmp1
             }
             else
             {
-                this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, "PPA & non-sewing", true);
+                if (this.rbDetail.Checked)
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[8], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, "PPA & non-sewing", true);
+                }
+                else
+                {
+                    this.ExcelMainData(excel.ActiveWorkbook.Worksheets[15], excel.ActiveWorkbook.Worksheets[9], excel.ActiveWorkbook.Worksheets[10], factory, style, this.nodistPPA, this.count1PPA, "PPA & non-sewing", true);
+                    excel.ActiveWorkbook.Worksheets[8].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
+                }
+
                 excel.ActiveWorkbook.Worksheets[11].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[12].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
                 excel.ActiveWorkbook.Worksheets[13].Visible = Microsoft.Office.Interop.Excel.XlSheetVisibility.xlSheetHidden;
@@ -1114,45 +1157,58 @@ drop TABLE #tmp1
 
         private void AddLineMappingFormula(Microsoft.Office.Interop.Excel.Worksheet worksheet, int rownum)
         {
+            int iSimplify = this.rbDetail.Checked ? 0 : 1;
             // Operation
-            worksheet.Cells[rownum, 5] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,3,0)),\"\",VLOOKUP(D{rownum},Operation,3,0))";
-            worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,3,0)),\"\",VLOOKUP(S{rownum},Operation,3,0))";
+            worksheet.Cells[rownum, 5 - iSimplify] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,3,0)),\"\",VLOOKUP(AI{rownum},Operation,3,0))";
+            worksheet.Cells[rownum, 20 - iSimplify] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,3,0)),\"\",VLOOKUP(AJ{rownum},Operation,3,0))";
 
             // GSD
-            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,9,0)),\"\",VLOOKUP(D{rownum},Operation,9,0))";
-            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,9,0)),\"\",VLOOKUP(S{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 3] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,9,0)),\"\",VLOOKUP(AI{rownum},Operation,9,0))";
+            worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,9,0)),\"\",VLOOKUP(AJ{rownum},Operation,9,0))";
 
             // TMS
-            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,10,0)),\"\",VLOOKUP(D{rownum},Operation,10,0))";
-            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,10,0)),\"\",VLOOKUP(S{rownum},Operation,10,0))";
+            worksheet.Cells[rownum, 2] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,10,0)),\"\",VLOOKUP(AI{rownum},Operation,10,0))";
+            worksheet.Cells[rownum, 24] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,10,0)),\"\",VLOOKUP(AJ{rownum},Operation,10,0))";
 
             // ST/MC type
-            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,13,0)))";
-            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,13,0)))";
+            worksheet.Cells[rownum, 10] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum},Operation,13,0)))";
+            worksheet.Cells[rownum, 17] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum},Operation,13,0)))";
 
             // Machine Group
-            worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,5,0)),\"\",IF(VLOOKUP(D{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum - 1},Operation,5,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
-            worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,5,0)),\"\",IF(VLOOKUP(S{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum - 1},Operation,5,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
+            if (this.rbDetail.Checked)
+            {
+                worksheet.Cells[rownum, 12] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,5,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AI{rownum},Operation,5,0)))";
+                worksheet.Cells[rownum, 16] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,5,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,5,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,5,0)),\"\",VLOOKUP(AJ{rownum},Operation,5,0)))";
+
+            }
 
             // Attachment
-            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
-            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 31] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,6,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
+            worksheet.Cells[rownum, 21] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,6,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,6,0)=\"\",\"\",\"Attachment\"))";
 
             // Template
-            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(D{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(D{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
-            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(S{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(S{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 32] = $"=IF(OR(ISNA(VLOOKUP(AI{rownum},Operation,8,0)),J{rownum}=\"\"),\"\",IF(VLOOKUP(AI{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
+            worksheet.Cells[rownum, 22] = $"=IF(OR(ISNA(VLOOKUP(AJ{rownum},Operation,8,0)),Q{rownum}=\"\"),\"\",IF(VLOOKUP(AJ{rownum},Operation,8,0)=\"\",\"\",\"Template\"))";
 
             // only Machine Type
-            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,13,0)),\"\",IF(VLOOKUP(D{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum - 1},Operation,13,0)),\"\",VLOOKUP(D{rownum},Operation,4,0)))";
-            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,13,0)),\"\",IF(VLOOKUP(S{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum - 1},Operation,13,0)),\"\",VLOOKUP(S{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 27] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AI{rownum},Operation,4,0)))";
+            worksheet.Cells[rownum, 28] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,13,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,13,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,13,0)),\"\",VLOOKUP(AJ{rownum},Operation,4,0)))";
 
             // Machine Group
-            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(D{rownum},Operation,14,0)),\"\",IF(VLOOKUP(D{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum - 1},Operation,14,0)),\"\",VLOOKUP(D{rownum},Operation,5,0)))";
-            worksheet.Cells[rownum, 30] = $"=IF(ISNA(VLOOKUP(S{rownum},Operation,14,0)),\"\",IF(VLOOKUP(S{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum - 1},Operation,14,0)),\"\",VLOOKUP(S{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 29] = $"=IF(ISNA(VLOOKUP(AI{rownum},Operation,14,0)),\"\",IF(VLOOKUP(AI{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(AI{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AI{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AI{rownum},Operation,5,0)))";
+            worksheet.Cells[rownum, 30] = $"=IF(ISNA(VLOOKUP(AJ{rownum},Operation,14,0)),\"\",IF(VLOOKUP(AJ{rownum},Operation,14,0)=IF(ISNA(VLOOKUP(AJ{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AJ{rownum - 1},Operation,14,0)),\"\",VLOOKUP(AJ{rownum},Operation,5,0)))";
         }
 
-        private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, string sheetName, bool showMachineType = false)
+        private void ExcelMainData(Microsoft.Office.Interop.Excel.Worksheet worksheet, Microsoft.Office.Interop.Excel.Worksheet cycleTimeSheet, Microsoft.Office.Interop.Excel.Worksheet gcTimeSheet, string factory, string style, DataTable nodist, decimal currentOperators, string sheetName, bool showMachineType = false, bool isDetail = false)
         {
+            #region 列印設置
+            // 設置列印設置
+            worksheet.PageSetup.PaperSize = Microsoft.Office.Interop.Excel.XlPaperSize.xlPaperA4; // 設置紙張大小為 A4
+            worksheet.PageSetup.Orientation = Microsoft.Office.Interop.Excel.XlPageOrientation.xlPortrait; // 設置為縱向列印
+            worksheet.PageSetup.Zoom = false; // 禁用默認縮放比例
+            worksheet.PageSetup.FitToPagesWide = 1; // 將內容縮放以適合一頁寬
+            worksheet.PageSetup.FitToPagesTall = false;
+            #endregion
             #region 第二或三頁
 
             #region 固定資料
@@ -1433,7 +1489,17 @@ drop TABLE #tmp1
                     for (int k = 3; k < maxct; k++)
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                        worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        if (isDetail)
+                        {
+                            worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                            worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        }
+                        else
+                        {
+                            worksheet.get_Range(string.Format("S{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                            worksheet.get_Range(string.Format("D{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        }
+
                         addct++;
                     }
 
@@ -1499,7 +1565,8 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
+                            //worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString(); // 左邊排的No. Column:35
+                            worksheet.Cells[norow + ridx, 35] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -1527,7 +1594,8 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
+                            //worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString(); // 右邊排的No.; Column:36
+                            worksheet.Cells[norow + ridx, 36] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -1535,6 +1603,7 @@ drop TABLE #tmp1
                         m--;
                     }
                 }
+
             }
             #endregion
 
@@ -1574,7 +1643,17 @@ drop TABLE #tmp1
                     for (int k = 3; k < maxct; k++)
                     {
                         rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                        worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        if (isDetail)
+                        {
+                            worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                            worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        }
+                        else
+                        {
+                            worksheet.get_Range(string.Format("S{0}:V{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                            worksheet.get_Range(string.Format("D{0}:I{0}", MyUtility.Convert.GetString(norow + k))).Merge(false); // 合併儲存格
+                        }
+
                         addct++;
                     }
 
@@ -1704,7 +1783,16 @@ drop TABLE #tmp1
                         for (int i = 3; i < maxct; i++)
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                            worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            if (isDetail)
+                            {
+                                worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                                worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            }
+                            else
+                            {
+                                worksheet.get_Range(string.Format("S{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                                worksheet.get_Range(string.Format("D{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            }
                             addct++;
                         }
 
@@ -1836,7 +1924,16 @@ drop TABLE #tmp1
                         for (int i = 3; i < maxct; i++)
                         {
                             rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown);
-                            worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            if (isDetail)
+                            {
+                                worksheet.get_Range(string.Format("T{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                                worksheet.get_Range(string.Format("E{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            }
+                            else
+                            {
+                                worksheet.get_Range(string.Format("S{0}:V{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                                worksheet.get_Range(string.Format("D{0}:I{0}", MyUtility.Convert.GetString(norow + i))).Merge(false); // 合併儲存格
+                            }
                             addct++;
                         }
 

@@ -66,6 +66,62 @@ where   i.Type = '{0}'
             this.detailgrid.RowsAdded += this.Detailgrid_RowsAdded;
 
             this.detailgrid.Columns["Junk"].DefaultCellStyle.BackColor = Color.Pink;
+
+            this.detailgrid.EditingControlShowing += this.DataGridView_EditingControlShowing;
+        }
+
+        private void DataGridView_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            var dataGridView = sender as DataGridView;
+            if (dataGridView == null)
+            {
+                return;
+            }
+
+            var textBox = e.Control as TextBox;
+            if (this.CurrentMaintain["ID"].ToString() != "LL")
+            {
+                if (textBox != null)
+                {
+                    textBox.KeyPress -= this.TextBox_False_KeyPress;
+                    textBox.KeyPress += this.TextBox_False_KeyPress;
+                }
+
+                return;
+            }
+
+            if (dataGridView.CurrentCell.ColumnIndex == 1)
+            {
+                if (textBox != null)
+                {
+                    textBox.KeyPress -= this.TextBox_KeyPress;
+                    textBox.KeyPress += this.TextBox_KeyPress;
+                }
+            }
+            else
+            {
+                if (textBox != null)
+                {
+                    textBox.KeyPress -= this.TextBox_False_KeyPress;
+                    textBox.KeyPress += this.TextBox_False_KeyPress;
+                }
+            }
+        }
+
+        private void TextBox_False_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = false;
+            }
+        }
+
+        private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+            {
+                e.Handled = true;
+            }
         }
 
         /// <inheritdoc/>

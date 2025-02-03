@@ -53,6 +53,11 @@ namespace Sci.Production.Class
         public bool IsMultiselect { get; set; } = false;
 
         /// <summary>
+        /// IE走這
+        /// </summary>
+        public bool IsIE { get; set; } = false;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Txtfactory"/> class.
         /// </summary>
         public Txtfactory()
@@ -93,21 +98,29 @@ namespace Sci.Production.Class
             #endregion
             #region SQL CMD
 
-            // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
             string strShowColumn = string.Empty;
-            if (this.BoolFtyGroupList)
+            string strOrderBy = string.Empty;
+            string sqlcmd = string.Empty;
+            if (!this.IsIE)
             {
-                strShowColumn = "DISTINCT FtyGroup";
+                // 依boolFtyGroupList=true 顯示FtyGroup 反之顯示ID
+                if (this.BoolFtyGroupList)
+                {
+                    strShowColumn = "DISTINCT FtyGroup";
+                }
+                else
+                {
+                    strShowColumn = "ID";
+                    strOrderBy = "order by FtyGroup";
+                }
+
+                sqlcmd = $@"Select {strShowColumn} as Factory from Production.dbo.Factory WITH (NOLOCK) {((listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty)} {strOrderBy}";
             }
             else
             {
-                strShowColumn = "ID";
+                sqlcmd = "SELECT DISTINCT FactoryID FROM Employee";
             }
 
-            string sqlcmd = string.Format(
-                "Select {1} as Factory from Production.dbo.Factory WITH (NOLOCK) {0} order by FtyGroup",
-                (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty,
-                strShowColumn);
             #endregion
             if (this.IsMultiselect)
             {
@@ -187,6 +200,11 @@ namespace Sci.Production.Class
 
             string where = (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty;
             string sqlcmd = $"Select {strShowColumn} from Production.dbo.Factory WITH (NOLOCK) {where}";
+
+            if (IsIE)
+            {
+                sqlcmd = $@"SELECT DISTINCT FactoryID FROM Employee where FactoryID = @str";
+            }
             if (this.IsMultiselect)
             {
                 string[] factorys = this.Text.Split(',');
