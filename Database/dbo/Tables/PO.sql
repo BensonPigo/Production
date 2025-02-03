@@ -1,219 +1,287 @@
-﻿CREATE TABLE [dbo].[PO] (
-    [ID]                                   VARCHAR (13)   CONSTRAINT [DF_PO_ID] DEFAULT ('') NOT NULL,
-    [StyleID]                              VARCHAR (15)   CONSTRAINT [DF_PO_StyleID] DEFAULT ('') NOT NULL,
-    [SeasonId]                             VARCHAR (10)   CONSTRAINT [DF_PO_SeasonId] DEFAULT ('') NOT NULL,
-    [StyleUkey]                            BIGINT         CONSTRAINT [DF_PO_StyleUkey] DEFAULT ((0)) NOT NULL,
-    [BrandID]                              VARCHAR (8)    CONSTRAINT [DF_PO_BrandID] DEFAULT ('') NOT NULL,
-    [POSMR]                                VARCHAR (10)   CONSTRAINT [DF_PO_POSMR] DEFAULT ('') NOT NULL,
-    [POHandle]                             VARCHAR (10)   CONSTRAINT [DF_PO_POHandle] DEFAULT ('') NOT NULL,
-    [PCHandle]                             VARCHAR (10)   CONSTRAINT [DF_PO_PCHandle] DEFAULT ('') NOT NULL,
-    [PCSMR]                                VARCHAR (10)   CONSTRAINT [DF_PO_PCSMR] DEFAULT ('') NOT NULL,
-    [McHandle]                             VARCHAR (10)   CONSTRAINT [DF_PO_McHandle] DEFAULT ('') NOT NULL,
-    [ShipMark]                             NVARCHAR (MAX) CONSTRAINT [DF_PO_ShipMark] DEFAULT ('') NOT NULL,
-    [FTYMark]                              VARCHAR (10)   CONSTRAINT [DF_PO_FTYMark] DEFAULT ('') NOT NULL,
-    [Complete]                             BIT            CONSTRAINT [DF_PO_Complete] DEFAULT ((0)) NOT NULL,
-    [PoRemark]                             NVARCHAR (MAX) CONSTRAINT [DF_PO_PoRemark] DEFAULT ('') NOT NULL,
-    [CostRemark]                           NVARCHAR (MAX) CONSTRAINT [DF_PO_CostRemark] DEFAULT ('') NOT NULL,
-    [IrregularRemark]                      NVARCHAR (MAX) CONSTRAINT [DF_PO_IrregularRemark] DEFAULT ('') NOT NULL,
-    [FirstPoError]                         VARCHAR (3)    CONSTRAINT [DF_PO_FirstPoError] DEFAULT ('') NOT NULL,
-    [FirstEditName]                        VARCHAR (10)   CONSTRAINT [DF_PO_FirstEditName] DEFAULT ('') NOT NULL,
-    [FirstEditDate]                        DATETIME       NULL,
-    [FirstAddDate]                         DATETIME       NULL,
-    [FirstCostDate]                        DATETIME       NULL,
-    [LastPoError]                          VARCHAR (3)    CONSTRAINT [DF_PO_LastPoError] DEFAULT ('') NOT NULL,
-    [LastEditName]                         VARCHAR (10)   CONSTRAINT [DF_PO_LastEditName] DEFAULT ('') NOT NULL,
-    [LastEditDate]                         DATETIME       NULL,
-    [LastAddDate]                          DATETIME       NULL,
-    [LastCostDate]                         DATETIME       NULL,
-    [AddName]                              VARCHAR (10)   CONSTRAINT [DF_PO_AddName] DEFAULT ('') NOT NULL,
-    [AddDate]                              DATETIME       NULL,
-    [EditName]                             VARCHAR (10)   CONSTRAINT [DF_PO_EditName] DEFAULT ('') NOT NULL,
-    [EditDate]                             DATETIME       NULL,
-    [FIRRemark]                            VARCHAR (60)   CONSTRAINT [DF_PO_FIRRemark] DEFAULT ('') NOT NULL,
-    [AIRRemark]                            VARCHAR (60)   CONSTRAINT [DF_PO_AIRRemark] DEFAULT ('') NOT NULL,
-    [FIRLaboratoryRemark]                  VARCHAR (60)   CONSTRAINT [DF_PO_FIRLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [AIRLaboratoryRemark]                  VARCHAR (60)   CONSTRAINT [DF_PO_AIRLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [OvenLaboratoryRemark]                 VARCHAR (60)   CONSTRAINT [DF_PO_OvenLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [ColorFastnessLaboratoryRemark]        VARCHAR (60)   CONSTRAINT [DF_PO_ColorFastnessLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [MTLDelay]                             DATE           NULL,
-    [MinSciDelivery]                       DATE           NULL,
-    [FIRInspPercent]                       NUMERIC (5, 2) DEFAULT ((0.00)) NOT NULL,
-    [AIRInspPercent]                       NUMERIC (5, 2) DEFAULT ((0.00)) NOT NULL,
-    [FIRLabInspPercent]                    NUMERIC (5, 2) CONSTRAINT [DF_PO_FIRLabInspPercent] DEFAULT ((0)) NOT NULL,
-    [LabColorFastnessPercent]              NUMERIC (5, 2) CONSTRAINT [DF_PO_LabColorFastnessPercent] DEFAULT ((0)) NOT NULL,
-    [LabOvenPercent]                       NUMERIC (5, 2) CONSTRAINT [DF_PO_LabOvenPercent] DEFAULT ((0)) NOT NULL,
-    [AIRLabInspPercent]                    NUMERIC (5, 2) CONSTRAINT [DF_PO_AIRLabInspPercent] DEFAULT ((0)) NOT NULL,
-    [ThreadVersion]                        VARCHAR (5)    CONSTRAINT [DF_PO_ThreadVersion] DEFAULT ('') NOT NULL,
-    [WaterFastnessLaboratoryRemark]        VARCHAR (60)   CONSTRAINT [DF_PO_WaterFastnessLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [LabWaterFastnessPercent]              NUMERIC (5, 2) CONSTRAINT [DF_PO_LabWaterFastnessPercent] DEFAULT ((0)) NOT NULL,
-    [PerspirationFastnessLaboratoryRemark] VARCHAR (60)   CONSTRAINT [DF_PO_PerspirationFastnessLaboratoryRemark] DEFAULT ('') NOT NULL,
-    [LabPerspirationFastnessPercent]       NUMERIC (5, 2) CONSTRAINT [DF_PO_LabPerspirationFastnessPercent] DEFAULT ((0)) NOT NULL,
-    CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED ([ID] ASC)
-);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+﻿CREATE TABLE [dbo].[PO](
+	[ID] [varchar](13) NOT NULL,
+	[StyleID] [varchar](15) NOT NULL,
+	[SeasonId] [varchar](10) NOT NULL,
+	[StyleUkey] [bigint] NOT NULL,
+	[BrandID] [varchar](8) NOT NULL,
+	[POSMR] [varchar](10) NOT NULL,
+	[POHandle] [varchar](10) NOT NULL,
+	[PCHandle] [varchar](10) NOT NULL,
+	[PCSMR] [varchar](10) NOT NULL,
+	[McHandle] [varchar](10) NOT NULL,
+	[ShipMark] [nvarchar](max) NOT NULL,
+	[FTYMark] [varchar](20) NOT NULL,
+	[Complete] [bit] NOT NULL,
+	[PoRemark] [nvarchar](max) NOT NULL,
+	[CostRemark] [nvarchar](max) NOT NULL,
+	[IrregularRemark] [nvarchar](max) NOT NULL,
+	[FirstPoError] [varchar](3) NOT NULL,
+	[FirstEditName] [varchar](10) NOT NULL,
+	[FirstEditDate] [datetime] NULL,
+	[FirstAddDate] [datetime] NULL,
+	[FirstCostDate] [datetime] NULL,
+	[LastPoError] [varchar](3) NOT NULL,
+	[LastEditName] [varchar](10) NOT NULL,
+	[LastEditDate] [datetime] NULL,
+	[LastAddDate] [datetime] NULL,
+	[LastCostDate] [datetime] NULL,
+	[AddName] [varchar](10) NOT NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NOT NULL,
+	[EditDate] [datetime] NULL,
+	[FIRRemark] [varchar](60) NOT NULL,
+	[AIRRemark] [varchar](60) NOT NULL,
+	[FIRLaboratoryRemark] [varchar](60) NOT NULL,
+	[AIRLaboratoryRemark] [varchar](60) NOT NULL,
+	[OvenLaboratoryRemark] [varchar](60) NOT NULL,
+	[ColorFastnessLaboratoryRemark] [varchar](60) NOT NULL,
+	[MTLDelay] [date] NULL,
+	[MinSciDelivery] [date] NULL,
+	[FIRInspPercent] [numeric](5, 2) NOT NULL,
+	[AIRInspPercent] [numeric](5, 2) NOT NULL,
+	[FIRLabInspPercent] [numeric](5, 2) NOT NULL,
+	[LabColorFastnessPercent] [numeric](5, 2) NOT NULL,
+	[LabOvenPercent] [numeric](5, 2) NOT NULL,
+	[AIRLabInspPercent] [numeric](5, 2) NOT NULL,
+	[ThreadVersion] [varchar](5) NOT NULL,
+	[WaterFastnessLaboratoryRemark] [varchar](60) NOT NULL,
+	[LabWaterFastnessPercent] [numeric](5, 2) NOT NULL,
+	[PerspirationFastnessLaboratoryRemark] [varchar](60) NOT NULL,
+	[LabPerspirationFastnessPercent] [numeric](5, 2) NOT NULL,
+ CONSTRAINT [PK_PO] PRIMARY KEY CLUSTERED 
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_ID]  DEFAULT ('') FOR [ID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購單號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'ID';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_StyleID]  DEFAULT ('') FOR [StyleID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'StyleID';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_SeasonId]  DEFAULT ('') FOR [SeasonId]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'季節', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'SeasonId';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_StyleUkey]  DEFAULT ((0)) FOR [StyleUkey]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'款式的唯一值', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'StyleUkey';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_BrandID]  DEFAULT ('') FOR [BrandID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'品牌', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'BrandID';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_POSMR]  DEFAULT ('') FOR [POSMR]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購主管', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'POSMR';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_POHandle]  DEFAULT ('') FOR [POHandle]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'po Handle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'POHandle';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_PCHandle]  DEFAULT ('') FOR [PCHandle]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排船表的PC', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'PCHandle';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_PCSMR]  DEFAULT ('') FOR [PCSMR]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'PC的主管', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'PCSMR';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_McHandle]  DEFAULT ('') FOR [McHandle]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠MC handle', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'McHandle';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_ShipMark]  DEFAULT ('') FOR [ShipMark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'由 <工廠> 代入', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'ShipMark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FTYMark]  DEFAULT ('') FOR [FTYMark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠嘜頭', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FTYMark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_Complete]  DEFAULT ((0)) FOR [Complete]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'結清', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'Complete';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_PoRemark]  DEFAULT ('') FOR [PoRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'PoRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_CostRemark]  DEFAULT ('') FOR [CostRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'<COST>備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'CostRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_IrregularRemark]  DEFAULT ('') FOR [IrregularRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'<IRRE L/ETA>的備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'IrregularRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FirstPoError]  DEFAULT ('') FOR [FirstPoError]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購成本異常代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FirstPoError';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FirstEditName]  DEFAULT ('') FOR [FirstEditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購成本異常修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FirstEditName';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LastPoError]  DEFAULT ('') FOR [LastPoError]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'採購成本異常修改日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FirstEditDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LastEditName]  DEFAULT ('') FOR [LastEditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'異常代碼第一次填入日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FirstAddDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_AddName]  DEFAULT ('') FOR [AddName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'第一次 COST異常發生日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FirstCostDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_EditName]  DEFAULT ('') FOR [EditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後採購成本異常代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'LastPoError';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FIRRemark]  DEFAULT ('') FOR [FIRRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後採購成本異常修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'LastEditName';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_AIRRemark]  DEFAULT ('') FOR [AIRRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後採購成本異常修改日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'LastEditDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FIRLaboratoryRemark]  DEFAULT ('') FOR [FIRLaboratoryRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後異常代碼第一次填入日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'LastAddDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_AIRLaboratoryRemark]  DEFAULT ('') FOR [AIRLaboratoryRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後COST異常發生日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'LastCostDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_OvenLaboratoryRemark]  DEFAULT ('') FOR [OvenLaboratoryRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'AddName';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_ColorFastnessLaboratoryRemark]  DEFAULT ('') FOR [ColorFastnessLaboratoryRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'AddDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  DEFAULT ((0.00)) FOR [FIRInspPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'EditName';
 
-
+ALTER TABLE [dbo].[PO] ADD  DEFAULT ((0.00)) FOR [AIRInspPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'EditDate';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_FIRLabInspPercent]  DEFAULT ((0)) FOR [FIRLabInspPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主料檢驗備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FIRRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LabColorFastnessPercent]  DEFAULT ((0)) FOR [LabColorFastnessPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'輔料檢驗備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = 'AIRRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LabOvenPercent]  DEFAULT ((0)) FOR [LabOvenPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主料水洗房備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'FIRLaboratoryRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_AIRLabInspPercent]  DEFAULT ((0)) FOR [AIRLabInspPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'輔料水洗房備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'AIRLaboratoryRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_ThreadVersion]  DEFAULT ('') FOR [ThreadVersion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'烘箱備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'OvenLaboratoryRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_WaterFastnessLaboratoryRemark]  DEFAULT ('') FOR [WaterFastnessLaboratoryRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'掉色備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'ColorFastnessLaboratoryRemark';
 
-
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LabWaterFastnessPercent]  DEFAULT ((0)) FOR [LabWaterFastnessPercent]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MTL contiguous delay', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PO', @level2type = N'COLUMN', @level2name = N'MTLDelay';
 
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_PerspirationFastnessLaboratoryRemark]  DEFAULT ('') FOR [PerspirationFastnessLaboratoryRemark]
+GO
+
+ALTER TABLE [dbo].[PO] ADD  CONSTRAINT [DF_PO_LabPerspirationFastnessPercent]  DEFAULT ((0)) FOR [LabPerspirationFastnessPercent]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'ID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'StyleID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'季節' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'SeasonId'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'款式的唯一值' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'StyleUkey'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'品牌' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'BrandID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購主管' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'POSMR'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'po Handle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'POHandle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'排船表的PC' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'PCHandle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'PC的主管' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'PCSMR'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠MC handle' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'McHandle'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'由 <工廠> 代入' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'ShipMark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠嘜頭' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FTYMark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'結清' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'Complete'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'PoRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'<COST>備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'CostRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'<IRRE L/ETA>的備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'IrregularRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購成本異常代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FirstPoError'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購成本異常修改人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FirstEditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購成本異常修改日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FirstEditDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'異常代碼第一次填入日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FirstAddDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'第一次 COST異常發生日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FirstCostDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後採購成本異常代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'LastPoError'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後採購成本異常修改人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'LastEditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後採購成本異常修改日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'LastEditDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後異常代碼第一次填入日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'LastAddDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後COST異常發生日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'LastCostDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'AddName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'AddDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改人員' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'EditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'最後修改時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主料檢驗備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FIRRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'輔料檢驗備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'AIRRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'主料水洗房備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'FIRLaboratoryRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'輔料水洗房備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'AIRLaboratoryRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'烘箱備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'OvenLaboratoryRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'掉色備註' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'ColorFastnessLaboratoryRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MTL contiguous delay' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO', @level2type=N'COLUMN',@level2name=N'MTLDelay'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'採購單' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PO'
+GO

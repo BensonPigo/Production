@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using Sci.Production.Prg;
 using Sci.Utility.Excel;
 using System;
@@ -38,6 +39,7 @@ namespace Sci.Production.IE
         private string display;
         private string content;
         private string language;
+        private string driection;
 
         private DataTable dtHeadInfo;
         private DataTable dtSewing;
@@ -58,12 +60,14 @@ namespace Sci.Production.IE
         /// <param name="display">導出方式</param>
         /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
         /// <param name="language">工段顯示語系</param>
-        public P05_PrintData(string almID = "", string display = "", string content = "", string language = "")
+        /// <param name="direction">排列方向</param>
+        public P05_PrintData(string almID = "", string display = "", string content = "", string language = "", string direction = "")
         {
             this.almID = almID;
             this.display = display;
             this.content = content;
             this.language = language;
+            this.driection = direction;
         }
 
         /// <summary>
@@ -73,12 +77,14 @@ namespace Sci.Production.IE
         /// <param name="display">導出方式</param>
         /// <param name="content">工段資訊要導出[Operation] or [Annotation]的模式</param>
         /// <param name="language">工段顯示語系</param>
-        public void SetCondition(string almID, string display, string content, string language)
+        /// <param name="direction">排列方向</param>
+        public void SetCondition(string almID, string display, string content, string language, string direction)
         {
             this.almID = almID;
             this.display = display;
             this.content = content;
             this.language = language;
+            this.driection = direction;
         }
 
         /// <summary>
@@ -91,7 +97,7 @@ namespace Sci.Production.IE
 DECLARE @ALMID bigint = {this.almID}
 DECLARE @Content varchar(1) = '{this.content}'
 DECLARE @Language varchar(2) = '{this.language}'";
-
+            /* 修改SQL時，P05_Chart、P05_MachineSummary也要一起修改，因為公式一模一樣 */
             var sql = $@"
 /*{testVar}
 */
@@ -152,8 +158,8 @@ SELECT almd.No
 , Attachment = REPLACE(almd.Attachment, ',', CHAR(13) + CHAR(10))
 , SewingMachineAttachmentID = REPLACE(almd.SewingMachineAttachmentID, ',', CHAR(13) + CHAR(10))
 , Template = REPLACE(almd.Template, ',', CHAR(13) + CHAR(10))
-, almd.GSD
-, almd.SewerDiffPercentage
+, GSD = sum(almd.GSD)
+, SewerDiffPercentage = sum(almd.SewerDiffPercentage)
 , almd.ThreadComboID
 , almd.OperationID
 FROM AutomatedLineMapping_Detail almd
@@ -161,6 +167,11 @@ LEFT JOIN Operation o on almd.OperationID = o.ID
 WHERE almd.ID = @ALMID
 AND almd.PPA != 'C'
 AND almd.IsNonSewingLine = 0
+GROUP BY 
+    almd.No, almd.Seq, almd.Location, almd.Annotation,
+    almd.MachineTypeID, almd.MasterPlusGroup, almd.ThreadComboID, almd.OperationID,
+    almd.Attachment, almd.SewingMachineAttachmentID, almd.Template
+	, o.DescEN, o.DescKH, o.DescVN, o.DescCH,o.ID--, almd.GSD,almd.SewerDiffPercentage
 ORDER BY almd.Seq ASC
 
 -- Excel [Centralized PPA Operation] 表身
@@ -180,8 +191,8 @@ SELECT almd.No
 , Attachment = REPLACE(almd.Attachment, ',', CHAR(13) + CHAR(10))
 , SewingMachineAttachmentID = REPLACE(almd.SewingMachineAttachmentID, ',', CHAR(13) + CHAR(10))
 , Template = REPLACE(almd.Template, ',', CHAR(13) + CHAR(10))
-, almd.GSD
-, almd.SewerDiffPercentage
+, GSD = sum(almd.GSD)
+, SewerDiffPercentage = sum(almd.SewerDiffPercentage)
 , almd.ThreadComboID
 , almd.OperationID
 FROM AutomatedLineMapping_Detail almd
@@ -189,6 +200,11 @@ LEFT JOIN Operation o on almd.OperationID = o.ID
 WHERE almd.ID = @ALMID
 AND almd.PPA = 'C'
 AND almd.IsNonSewingLine = 0
+GROUP BY 
+almd.No, almd.Seq, almd.Location, almd.Annotation,
+almd.MachineTypeID, almd.MasterPlusGroup, almd.ThreadComboID, almd.OperationID,
+almd.Attachment, almd.SewingMachineAttachmentID, almd.Template
+, o.DescEN, o.DescKH, o.DescVN, o.DescCH,o.ID--, almd.GSD,almd.SewerDiffPercentage
 ORDER BY almd.Seq ASC
 
 -- Excel [Centralized PPA Operation] 表身
@@ -402,7 +418,7 @@ group by almd.No
             };
 
             DataTable[] dtResults;
-            DualResult result = DBProxy.Current.Select(null, sql, paras, out dtResults);
+             DualResult result = DBProxy.Current.Select(null, sql, paras, out dtResults);
 
             if (!result)
             {
@@ -461,6 +477,25 @@ group by almd.No
 
             // Sheet - Centralized PPA
             this.SetLineMappingSheet(excel.ActiveWorkbook.Worksheets[3], this.dtPPA_MachineArea, OperationType.PPA);
+
+            for (int i = 1; i < 4; i++)
+            {
+                Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets[i];
+
+                // 設置列印設置
+                worksheet.PageSetup.PaperSize = Excel.XlPaperSize.xlPaperA4; // 設置紙張大小為 A4
+                worksheet.PageSetup.Orientation = Excel.XlPageOrientation.xlPortrait; // 設置為縱向列印
+                worksheet.PageSetup.Zoom = false; // 禁用默認縮放比例
+                worksheet.PageSetup.FitToPagesWide = 1; // 將內容縮放以適合一頁寬
+                worksheet.PageSetup.FitToPagesTall = false;
+
+                // 設置頁邊距，使得頁邊距最小
+                worksheet.PageSetup.LeftMargin = excel.InchesToPoints(0.25); // 左邊距 0.25 英寸
+                worksheet.PageSetup.RightMargin = excel.InchesToPoints(0.25); // 右邊距 0.25 英寸
+                worksheet.PageSetup.TopMargin = excel.InchesToPoints(0.25); // 上邊距 0.25 英寸
+                worksheet.PageSetup.BottomMargin = excel.InchesToPoints(0.25); // 下邊距 0.25 英寸
+            }
+
 
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("IE_P05_Print");
@@ -639,7 +674,7 @@ group by almd.No
                 }
             }
 
-            sheet.Rows.AutoFit();
+            //sheet.Rows.AutoFit();
             ((Excel.Range)sheet.Cells[1, 1]).RowHeight = 48;
         }
 
@@ -826,7 +861,7 @@ group by almd.No
                 Excel.Series series1_actTime = seriesCollection_actTime.NewSeries();
                 series1_actTime.Values = chartData.get_Range("D2", $"D{chartDataEndRow}");
                 series1_actTime.XValues = chartData.get_Range("A2", $"A{chartDataEndRow}");
-                series1_actTime.Name = "Act GSD Time(average)";
+                series1_actTime.Name = "Avg. GSD Time";
                 series1_actTime.ChartType = Excel.XlChartType.xlLine;
 
                 // 更改圖表版面配置 && 填入圖表標題 & 座標軸標題
@@ -834,7 +869,7 @@ group by almd.No
                 chartPage.ChartTitle.Select();
                 chartPage.ChartTitle.Text = "Line Balancing Graph";
                 Excel.Axis z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlValue, Excel.XlAxisGroup.xlPrimary);
-                z.AxisTitle.Text = "Act GSD Time (in secs)";
+                z.AxisTitle.Text = "Avg. GSD Time";
                 z = (Excel.Axis)chartPage.Axes(Excel.XlAxisType.xlCategory, Excel.XlAxisGroup.xlPrimary);
                 z.AxisTitle.Text = "Operator No.";
 
@@ -864,7 +899,8 @@ group by almd.No
             }
             #endregion
 
-            int norow = 17 + (ttlLineRowCnt * 5) - 5; // No格子上的位置Excel Y軸
+            // Direction排序
+            int norow = this.driection == "F" ? 17 + (ttlLineRowCnt * 5) - 5 : 17; // No格子上的位置Excel Y軸
 
             string sheetName = operationType == OperationType.Sewing ? "Sewing Operation" : "Centralized PPA Operation";
             int rowTotalGSDTime = operationType == OperationType.Sewing ? this.SewingRowTotalGSDTime : this.PPARowTotalGSDTime;
@@ -878,11 +914,11 @@ group by almd.No
                 int di = dtSort.Rows.Count;
                 int addct = 0;
                 bool flag = true;
-                decimal dd = Math.Ceiling((decimal)di / 2);
+                decimal dd = Math.Ceiling((decimal)di / 2); // 每行各別數量
                 List<int> listMax_ct = new List<int>();
                 for (int i = 0; i < dd; i++)
                 {
-                    int a = MyUtility.Convert.GetInt(dtSort.Rows[i]["ct"]);
+                    int a = MyUtility.Convert.GetInt(dtSort.Rows[i]["ct"]); // Operaror 筆數
                     int d = 0;
                     if (di % 2 == 1 && flag)
                     {
@@ -912,13 +948,15 @@ group by almd.No
                         addct++;
                     }
 
-                    // 將公式填入對應的格子中
-                    for (int q = 1; q <= maxct; q++)
+                    if (this.driection == "F")
                     {
-                        this.AddLineMappingFormula(sheet, norow + q + 1, alias);
+                        norow -= 5;
+                    }
+                    else
+                    {
+                        norow += 5;
                     }
 
-                    norow -= 5;
                     maxct = 3;
                 }
 
@@ -932,7 +970,8 @@ group by almd.No
                     listMax_ct.Add(0);
                 }
 
-                norow = MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1);
+                // 寫入Operator區域的值進去
+                norow = this.driection == "F" ? MyUtility.Convert.GetInt(endRow) - (listMax_ct[0] + 1) : 17;
 
                 foreach (DataRow nodr in dtSort.Rows)
                 {
@@ -940,6 +979,10 @@ group by almd.No
                     int loadingTimecolumn = leftDirection ? 4 : 25;
                     int seqcolumn = leftDirection ? 5 : 22;
                     int nocolumn = leftDirection ? 14 : 18;
+                    int stmcColumn = leftDirection ? 13 : 19;
+
+                    int MG = leftDirection ? 12 : 20;
+                    int tc = leftDirection ? 11 : 21;
 
                     if (reverse)
                     {
@@ -947,6 +990,10 @@ group by almd.No
                         loadingTimecolumn = leftDirection ? 25 : 4;
                         seqcolumn = leftDirection ? 22 : 5;
                         nocolumn = leftDirection ? 18 : 14;
+                        stmcColumn = leftDirection ? 19 : 13;
+
+                        MG = leftDirection ? 20 : 12;
+                        tc = leftDirection ? 21 : 11;
                     }
 
                     // Operator loading (%)
@@ -957,33 +1004,99 @@ group by almd.No
 
                     DataRow[] nodrs = dtSewingData.Select($@"No = '{MyUtility.Convert.GetString(nodr["No"])}'").OrderBy(x => MyUtility.Convert.GetInt(x["Seq"])).ToArray();
                     int ridx = 2;
-                    foreach (DataRow item in nodrs)
-                    {
-                        // Seq.
-                        sheet.Cells[norow + ridx, seqcolumn] = item["Seq"].ToString();
 
+                    for (int x = 0; x < nodrs.Length; x++)
+                    {
+                        // 將公式填入對應的格子中
+                        this.AddLineMappingFormula(sheet, norow + ridx, alias);
+
+                        // Seq.
+                        sheet.Cells[norow + ridx, seqcolumn] = nodrs[x]["Seq"].ToString();
+
+                        // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                        if (x > 0)
+                        {
+                            if (nodrs[x]["MachineTypeID"].ToString() == nodrs[x - 1]["MachineTypeID"].ToString() &&
+                                nodrs[x]["Attachment"].ToString() == nodrs[x - 1]["Attachment"].ToString() &&
+                                nodrs[x]["MasterPlusGroup"].ToString() == nodrs[x - 1]["MasterPlusGroup"].ToString() &&
+                                nodrs[x]["ThreadComboId"].ToString() == nodrs[x - 1]["ThreadComboId"].ToString() &&
+                                nodrs[x]["Template"].ToString() == nodrs[x - 1]["Template"].ToString())
+                            {
+
+                                    sheet.Cells[norow + ridx, tc] = string.Empty;
+                                    sheet.Cells[norow + ridx, MG] = string.Empty;
+                                    sheet.Cells[norow + ridx, stmcColumn] = string.Empty;
+
+                            }
+                        }
+
+                        /******* ISP20240132：字形大小切換 *******/
+                        Excel.Range cell = sheet.Cells[norow + ridx, stmcColumn];
+                        var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[x]["Seq"])).ToList();
+                        int i = list.AsEnumerable().Where(row =>
+                                                        (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
+                                                        (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
+                                                        (row["Template"].ToString() != string.Empty ? 1 : 0) >= 2)
+                                                    .ToList().Count();
+
+                        cell.Font.Size = i > 0 ? 16 : 18;
+                        /****************************************/
                         ridx++;
                     }
 
                     // Loading Time (第一行)
                     sheet.Cells[norow, loadingTimecolumn] = string.Format("=SUM({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(loadingTimecolumn), norow + 2, norow + ridx - 1);
 
-                    if (!reverse)
+                    if (this.driection == "F")
                     {
-                        m++;
-                        if (m == dd)
+                        if (!reverse)
                         {
-                            reverse = true;
-                            m--;
-                            continue;
-                        }
+                            m++;
+                            if (m == dd)
+                            {
+                                reverse = true;
+                                m--;
+                                continue;
+                            }
 
-                        norow = norow - 5 - (listMax_ct[m] - 3);
+                            norow = norow - 5 - (listMax_ct[m] - 3);
+                        }
+                        else
+                        {
+                            norow = norow + 5 + (listMax_ct[m] - 3);
+                            m--;
+                        }
                     }
                     else
                     {
-                        norow = norow + 5 + (listMax_ct[m] - 3);
-                        m--;
+                        if (!reverse)
+                        {
+                            if (di % 2 == 0)
+                            {
+                                if (m == dd - 1)
+                                {
+                                    reverse = true;
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                if (m == dd - 1)
+                                {
+                                    reverse = true;
+                                    m--;
+                                    continue;
+                                }
+                            }
+
+                            norow = norow + 5 + (listMax_ct[m] - 3);
+                            m++;
+                        }
+                        else
+                        {
+                            norow = norow - 5 - (listMax_ct[m] - 3);
+                            m--;
+                        }
                     }
                 }
             }
@@ -1023,7 +1136,15 @@ group by almd.No
                             this.AddLineMappingFormula(sheet, norow + q + 1, alias);
                         }
 
-                        norow -= 5;
+                        if(this.driection == "F")
+                        {
+                            norow -= 5;
+                        }
+                        else
+                        {
+                            norow += 5;
+                        }
+
                         ct = 0;
                         maxct = 3;
                     }
@@ -1033,12 +1154,27 @@ group by almd.No
 
                 int leftright_count = 2; // S字型列印用
                 indx = 0;
-                norow = MyUtility.Convert.GetInt(endRow) + 1;
+
+                norow = this.driection == "F" ? MyUtility.Convert.GetInt(endRow) + 1 : 17;
                 foreach (DataRow nodr in dtSort.Rows)
                 {
                     if (dtSort.Rows.IndexOf(nodr) % 2 == 0)
                     {
-                        norow -= listMax_ct[indx] + 2;
+                        if (this.driection == "F")
+                        {
+                            norow -= listMax_ct[indx] + 2;
+                        }
+                        else
+                        {
+                            if (indx == 0)
+                            {
+                                norow = 17;
+                            }
+                            else
+                            {
+                                norow += listMax_ct[indx - 1] + 2;
+                            }
+                        }
                         indx++;
                     }
 
@@ -1054,11 +1190,38 @@ group by almd.No
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        foreach (DataRow item in nodrs)
+
+                        for(int i = 0; i < nodrs.Length; i++)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 5] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 5] = nodrs[i]["Seq"].ToString();
 
+                            // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                            if (i > 0)
+                            {
+                                if (nodrs[i]["MachineTypeID"].ToString() == nodrs[i - 1]["MachineTypeID"].ToString() &&
+                                    nodrs[i]["Attachment"].ToString() == nodrs[i - 1]["Attachment"].ToString() &&
+                                    nodrs[i]["MasterPlusGroup"].ToString() == nodrs[i - 1]["MasterPlusGroup"].ToString() &&
+                                    nodrs[i]["ThreadComboId"].ToString() == nodrs[i - 1]["ThreadComboId"].ToString() &&
+                                    nodrs[i]["Template"].ToString() == nodrs[i - 1]["Template"].ToString())
+                                {
+                                    sheet.Cells[norow + ridx, 11] = string.Empty;
+                                    sheet.Cells[norow + ridx, 12] = string.Empty;
+                                    sheet.Cells[norow + ridx, 13] = string.Empty;
+                                }
+                            }
+
+                            /******* ISP20240132：字形大小切換 *******/
+                            Excel.Range cell = sheet.Cells[norow + ridx, 13];
+                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[i]["Seq"])).ToList();
+                            list = list.AsEnumerable().Where(row =>
+                                                            (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
+                                                            (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
+                                                            (row["Template"].ToString() != string.Empty ? 1 : 0) >= 2)
+                                                        .ToList();
+
+                            cell.Font.Size = list.Count > 0 ? 16 : 18;
+                            /****************************************/
                             ridx++;
                         }
 
@@ -1094,10 +1257,37 @@ group by almd.No
                         int ridx = 2;
                         string machinetype = string.Empty;
                         string machinetypeL = string.Empty;
-                        foreach (DataRow item in nodrs)
+                        for (int i = 0; i < nodrs.Length; i++)
                         {
                             // Seq.
-                            sheet.Cells[norow + ridx, 22] = item["Seq"].ToString();
+                            sheet.Cells[norow + ridx, 22] = nodrs[i]["Seq"].ToString();
+
+                            // 相同MachineTypeID Attachment MasterPlusGroup ThreadComboId Template的值，Excel：MC Group、ST/MC、Thread Combination 欄位清空
+                            if (i > 0)
+                            {
+                                if (nodrs[i]["MachineTypeID"].ToString() == nodrs[i - 1]["MachineTypeID"].ToString() &&
+                                    nodrs[i]["Attachment"].ToString() == nodrs[i - 1]["Attachment"].ToString() &&
+                                    nodrs[i]["MasterPlusGroup"].ToString() == nodrs[i - 1]["MasterPlusGroup"].ToString() &&
+                                    nodrs[i]["ThreadComboId"].ToString() == nodrs[i - 1]["ThreadComboId"].ToString() &&
+                                    nodrs[i]["Template"].ToString() == nodrs[i - 1]["Template"].ToString())
+                                {
+                                    sheet.Cells[norow + ridx, 19] = string.Empty;
+                                    sheet.Cells[norow + ridx, 20] = string.Empty;
+                                    sheet.Cells[norow + ridx, 21] = string.Empty;
+                                }
+                            }
+
+                            /******* ISP20240132：字形大小切換 *******/
+                            Excel.Range cell = sheet.Cells[norow + ridx, 19];
+                            var list = this.dtSewing.AsEnumerable().Where(row => row.Field<short>("Seq") == MyUtility.Convert.GetInt(nodrs[i]["Seq"])).ToList();
+                            list = list.AsEnumerable().Where(row =>
+                                                            (row["MachineTypeID"].ToString() != string.Empty ? 1 : 0) +
+                                                            (row["Attachment"].ToString() != string.Empty ? 1 : 0) +
+                                                            (row["Template"].ToString() != string.Empty ? 1 : 0) >= 2)
+                                                        .ToList();
+
+                            cell.Font.Size = list.Count > 0 ? 16 : 18;
+                            /****************************************/
 
                             ridx++;
                         }
@@ -1126,7 +1316,7 @@ group by almd.No
             }
             #endregion
 
-            sheet.Rows.AutoFit();
+            // sheet.Rows.AutoFit();
         }
 
         private void AddLineMappingFormula(Excel.Worksheet worksheet, int rownum, string alias)
@@ -1148,9 +1338,9 @@ group by almd.No
             worksheet.Cells[rownum, 23] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},3,0)),\"\",VLOOKUP(V{rownum},{alias},3,0))";
 
             // Attachment / Template (兩者串起後換行)
-            worksheet.Cells[rownum, 11] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},6,0) & VLOOKUP(E{rownum},{alias},8,0)),\"\",VLOOKUP(E{rownum},{alias},6,0) & IF(ISBLANK(VLOOKUP(E{rownum},{alias},8,0)), \"\", CHAR(10) & VLOOKUP(E{rownum},{alias},8,0)))";
+            worksheet.Cells[rownum, 11] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},11,0)),\"\",VLOOKUP(E{rownum},{alias},11,0))";
             worksheet.Cells[rownum, 11].WrapText = true;
-            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},6,0) & VLOOKUP(V{rownum},{alias},8,0)),\"\",VLOOKUP(V{rownum},{alias},6,0) & IF(ISBLANK(VLOOKUP(V{rownum},{alias},8,0)), \"\", CHAR(10) & VLOOKUP(V{rownum},{alias},8,0)))";
+            worksheet.Cells[rownum, 21] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},11,0)),\"\",VLOOKUP(V{rownum},{alias},11,0))";
             worksheet.Cells[rownum, 21].WrapText = true;
 
             // MC Group
@@ -1158,8 +1348,14 @@ group by almd.No
             worksheet.Cells[rownum, 20] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},5,0)),\"\",IF(ISBLANK(VLOOKUP(V{rownum},{alias},5,0)),\"\",VLOOKUP(V{rownum},{alias},5,0)))";
 
             // ST/MC
-            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},4,0)),\"\",VLOOKUP(E{rownum},{alias},4,0))";
-            worksheet.Cells[rownum, 19] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},4,0)),\"\",VLOOKUP(V{rownum},{alias},4,0))";
+            worksheet.Cells[rownum, 13] = $"=IF(ISNA(VLOOKUP(E{rownum},{alias},4,0)),\"\",VLOOKUP(E{rownum},{alias},4,0) & IF(VLOOKUP(E{rownum},{alias},6,0) =\"\", \"\", CHAR(10) & VLOOKUP(E{rownum},{alias},6,0)) & IF(VLOOKUP(E{rownum},{alias},8,0) =\"\" , \"\", CHAR(10) & VLOOKUP(E{rownum},{alias},8,0)))";
+            worksheet.Cells[rownum, 19] = $"=IF(ISNA(VLOOKUP(V{rownum},{alias},4,0)),\"\",VLOOKUP(V{rownum},{alias},4,0) & IF(VLOOKUP(V{rownum},{alias},6,0) =\"\", \"\", CHAR(10) & VLOOKUP(V{rownum},{alias},6,0)) & IF(VLOOKUP(V{rownum},{alias},8,0) =\"\" , \"\", CHAR(10) & VLOOKUP(V{rownum},{alias},8,0)))";
+
+            //worksheet.Cells[rownum, 13] = $"=IF(OR(ISNA(VLOOKUP(E{rownum},{alias},4,0)), VLOOKUP(E{rownum},{alias},4,0)=IF(ISNA(VLOOKUP(INDIRECT(\"E\" & ROW()-1),{alias},4,0)), \"\", VLOOKUP(INDIRECT(\"E\" & ROW()-1),{alias},4,0))), \"\", VLOOKUP(E{rownum},{alias},4,0))";
+            //worksheet.Cells[rownum, 19] = $"=IF(OR(ISNA(VLOOKUP(V{rownum},{alias},4,0)), VLOOKUP(V{rownum},{alias},4,0)=IF(ISNA(VLOOKUP(INDIRECT(\"V\" & ROW()-1),{alias}, 4,0)), \"\",VLOOKUP(INDIRECT(\"V\" & ROW()-1),{alias},4,0))), \"\", VLOOKUP(V{rownum},{alias},4,0))";
+
+       
+
         }
     }
 }

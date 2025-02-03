@@ -86,6 +86,7 @@
             this.label7 = new Sci.Win.UI.Label();
             this.numericStdSMV = new Sci.Win.UI.NumericBox();
             this.btnATSummary = new Sci.Win.UI.Button();
+            this.btnSewSeq = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -103,6 +104,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnSewSeq);
             this.masterpanel.Controls.Add(this.btnATSummary);
             this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.numericFtySMV);
@@ -211,11 +213,12 @@
             this.masterpanel.Controls.SetChildIndex(this.numericFtySMV, 0);
             this.masterpanel.Controls.SetChildIndex(this.label6, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnATSummary, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnSewSeq, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 209);
-            this.detailpanel.Size = new System.Drawing.Size(1000, 346);
+            this.detailpanel.Size = new System.Drawing.Size(1000, 352);
             // 
             // gridicon
             // 
@@ -229,32 +232,32 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1000, 346);
+            this.detailgridcont.Size = new System.Drawing.Size(1000, 352);
             // 
             // detail2
             // 
-            this.detail2.Size = new System.Drawing.Size(1000, 593);
+            this.detail2.Size = new System.Drawing.Size(892, 387);
             // 
             // detailgridcont2
             // 
-            this.detailgridcont2.Size = new System.Drawing.Size(994, 547);
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
             // 
             // detailpanel2
             // 
-            this.detailpanel2.Size = new System.Drawing.Size(994, 40);
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1000, 593);
+            this.detail.Size = new System.Drawing.Size(1000, 599);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1000, 555);
+            this.detailcont.Size = new System.Drawing.Size(1000, 561);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnStdGSDList);
-            this.detailbtm.Location = new System.Drawing.Point(0, 555);
+            this.detailbtm.Location = new System.Drawing.Point(0, 561);
             this.detailbtm.Size = new System.Drawing.Size(1000, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
@@ -265,11 +268,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1000, 593);
+            this.browse.Size = new System.Drawing.Size(1000, 599);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1008, 622);
+            this.tabs.Size = new System.Drawing.Size(1008, 628);
             // 
             // createby
             // 
@@ -912,10 +915,21 @@
             this.btnATSummary.UseVisualStyleBackColor = true;
             this.btnATSummary.Click += new System.EventHandler(this.BtnATSummary_Click);
             // 
+            // btnSewSeq
+            // 
+            this.btnSewSeq.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnSewSeq.Location = new System.Drawing.Point(672, 172);
+            this.btnSewSeq.Name = "btnSewSeq";
+            this.btnSewSeq.Size = new System.Drawing.Size(106, 30);
+            this.btnSewSeq.TabIndex = 192;
+            this.btnSewSeq.Text = "Sew Seq";
+            this.btnSewSeq.UseVisualStyleBackColor = true;
+            this.btnSewSeq.Click += new System.EventHandler(this.BtnSewSeq_Click);
+            // 
             // P01
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1008, 655);
+            this.ClientSize = new System.Drawing.Size(1008, 661);
             this.DefaultControl = "txtStyle";
             this.DefaultControlForEdit = "txtStyle";
             this.DefaultOrder = "StyleID";
@@ -1014,5 +1028,6 @@
         private Win.UI.Label label7;
         private Win.UI.NumericBox numericStdSMV;
         private Win.UI.Button btnATSummary;
+        private Win.UI.Button btnSewSeq;
     }
 }

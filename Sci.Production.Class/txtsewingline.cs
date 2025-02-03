@@ -15,6 +15,8 @@ namespace Sci.Production.Class
     {
         private string fty = string.Empty;
 
+        public bool FilterFtyGrop { get; set; } = false;
+
         /// <summary>
         /// SewingLine.FactoryID
         /// </summary>
@@ -43,13 +45,7 @@ namespace Sci.Production.Class
                 this.fty = this.FactoryobjectName.Text;
             }
 
-            string ftyWhere = string.Empty;
-            if (!this.fty.Empty())
-            {
-                ftyWhere = string.Format("Where FactoryId = '{0}'", this.fty);
-            }
-
-            string sql = string.Format("Select ID,FactoryID,Description From Production.dbo.SewingLine WITH (NOLOCK) {0} ", ftyWhere);
+            string sql = this.GetSql(this.FactoryobjectName.Text, this.fty); // string.Format("Select ID,FactoryID,Description From Production.dbo.SewingLine s WITH (NOLOCK) {0} ", ftyWhere);
             Win.Tools.SelectItem item = new Win.Tools.SelectItem(sql, "2,6,16", this.Text, false, ",");
             DialogResult result = item.ShowDialog();
             if (result == DialogResult.Cancel)
@@ -82,7 +78,8 @@ namespace Sci.Production.Class
                 {
                     if (!string.IsNullOrWhiteSpace((string)this.FactoryobjectName.Text))
                     {
-                        string selectCommand = string.Format("select ID from Production.dbo.SewingLine WITH (NOLOCK) where FactoryID = '{0}' and ID = '{1}'", (string)this.FactoryobjectName.Text, this.Text.ToString());
+                        // string selectCommand = string.Format("select ID from Production.dbo.SewingLine WITH (NOLOCK) where FactoryID = '{0}' and ID = '{1}'", (string)this.FactoryobjectName.Text, this.Text.ToString());
+                        string selectCommand = this.GetSql(this.FactoryobjectName.Text, this.Text);
                         if (!MyUtility.Check.Seek(selectCommand, null))
                         {
                             e.Cancel = true;
@@ -93,6 +90,36 @@ namespace Sci.Production.Class
                     }
                 }
             }
+        }
+
+        private string GetSql(string factoryobjectName = "", string currentID = "")
+        {
+            string sql = string.Empty;
+            string ftyWhere = " WHERE 1=1";
+
+            if (this.FilterFtyGrop)
+            {
+                ftyWhere += $@" and s.FactoryID in (select ID from Factory where FTYGroup = '{factoryobjectName}')";
+            }
+            else
+            {
+                if (MyUtility.Check.Empty(factoryobjectName))
+                {
+                    currentID = string.Empty;
+                }
+                else
+                {
+                    currentID = factoryobjectName;
+                }
+
+                if (!MyUtility.Check.Empty(currentID))
+                {
+                    ftyWhere += $@" and s.FactoryId = '{currentID}'";
+                }
+            }
+
+            sql = $@" select ID,FactoryID,Description from Production.dbo.SewingLine s WITH (NOLOCK) {ftyWhere}";
+            return sql;
         }
 
         /// <summary>

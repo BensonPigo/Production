@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label3 = new Sci.Win.UI.Label();
@@ -59,11 +59,11 @@
             this.tabPageLineMapping = new System.Windows.Forms.TabPage();
             this.splitLineMapping = new System.Windows.Forms.SplitContainer();
             this.gridLineMappingRight = new Sci.Win.UI.Grid();
+            this.gridLineMappingRightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.tabPageCentralizedPPA = new System.Windows.Forms.TabPage();
             this.splitCentralizedPPA = new System.Windows.Forms.SplitContainer();
             this.gridCentralizedPPALeft = new Sci.Win.UI.Grid();
             this.gridCentralizedPPARight = new Sci.Win.UI.Grid();
-            this.gridLineMappingRightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridCentralizedPPALeftBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.gridCentralizedPPARightBS = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.label12 = new Sci.Win.UI.Label();
@@ -94,6 +94,9 @@
             this.btnTransferToP06 = new Sci.Win.UI.Button();
             this.btnEditOperation = new Sci.Win.UI.Button();
             this.btnH = new Sci.Win.UI.Button();
+            this.btnViewOperator = new Sci.Win.UI.Button();
+            this.btnLineMappingComparison = new Sci.Win.UI.Button();
+            this.btnMachineSummary = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -113,6 +116,7 @@
             this.splitLineMapping.Panel2.SuspendLayout();
             this.splitLineMapping.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
             this.tabPageCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitCentralizedPPA)).BeginInit();
             this.splitCentralizedPPA.Panel1.SuspendLayout();
@@ -120,7 +124,6 @@
             this.splitCentralizedPPA.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartLBR)).BeginInit();
@@ -128,6 +131,10 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.btnMachineSummary);
+            this.masterpanel.Controls.Add(this.btnLineMappingComparison);
+            this.masterpanel.Controls.Add(this.btnViewOperator);
             this.masterpanel.Controls.Add(this.btnH);
             this.masterpanel.Controls.Add(this.btnTransferToP06);
             this.masterpanel.Controls.Add(this.btnNotHitTargetReason);
@@ -180,7 +187,7 @@
             this.masterpanel.Controls.Add(this.label3);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.label1);
-            this.masterpanel.Size = new System.Drawing.Size(1252, 187);
+            this.masterpanel.Size = new System.Drawing.Size(1408, 217);
             this.masterpanel.Controls.SetChildIndex(this.label1, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.label3, 0);
@@ -234,22 +241,25 @@
             this.masterpanel.Controls.SetChildIndex(this.btnTransferToP06, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnH, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnViewOperator, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnLineMappingComparison, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnMachineSummary, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 187);
-            this.detailpanel.Size = new System.Drawing.Size(1252, 445);
+            this.detailpanel.Location = new System.Drawing.Point(0, 217);
+            this.detailpanel.Size = new System.Drawing.Size(1408, 415);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(8, 174);
+            this.gridicon.Location = new System.Drawing.Point(8, 251);
             this.gridicon.Visible = false;
             // 
             // detailgridcont
             // 
             this.detailgridcont.Controls.Add(this.btnEditOperation);
             this.detailgridcont.Controls.Add(this.tabDetail);
-            this.detailgridcont.Size = new System.Drawing.Size(1252, 445);
+            this.detailgridcont.Size = new System.Drawing.Size(1408, 415);
             this.detailgridcont.Controls.SetChildIndex(this.tabDetail, 0);
             this.detailgridcont.Controls.SetChildIndex(this.btnEditOperation, 0);
             // 
@@ -267,24 +277,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1252, 670);
+            this.detail.Size = new System.Drawing.Size(1408, 670);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1252, 632);
+            this.detailcont.Size = new System.Drawing.Size(1408, 632);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 632);
-            this.detailbtm.Size = new System.Drawing.Size(1252, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1408, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1271, 670);
+            this.browse.Size = new System.Drawing.Size(1408, 670);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1260, 699);
+            this.tabs.Size = new System.Drawing.Size(1416, 699);
             // 
             // label1
             // 
@@ -454,6 +464,8 @@
             this.txtfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(383, 8);
@@ -598,7 +610,7 @@
             this.tabDetail.Location = new System.Drawing.Point(0, 0);
             this.tabDetail.Name = "tabDetail";
             this.tabDetail.SelectedIndex = 0;
-            this.tabDetail.Size = new System.Drawing.Size(1252, 445);
+            this.tabDetail.Size = new System.Drawing.Size(1408, 415);
             this.tabDetail.TabIndex = 1;
             this.tabDetail.SelectedIndexChanged += new System.EventHandler(this.TabDetail_SelectedIndexChanged);
             // 
@@ -608,7 +620,7 @@
             this.tabPageLineMapping.Location = new System.Drawing.Point(4, 25);
             this.tabPageLineMapping.Name = "tabPageLineMapping";
             this.tabPageLineMapping.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageLineMapping.Size = new System.Drawing.Size(1244, 416);
+            this.tabPageLineMapping.Size = new System.Drawing.Size(1400, 386);
             this.tabPageLineMapping.TabIndex = 0;
             this.tabPageLineMapping.Text = "Line Mapping";
             // 
@@ -622,8 +634,8 @@
             // splitLineMapping.Panel2
             // 
             this.splitLineMapping.Panel2.Controls.Add(this.gridLineMappingRight);
-            this.splitLineMapping.Size = new System.Drawing.Size(1238, 410);
-            this.splitLineMapping.SplitterDistance = 884;
+            this.splitLineMapping.Size = new System.Drawing.Size(1394, 380);
+            this.splitLineMapping.SplitterDistance = 1038;
             this.splitLineMapping.TabIndex = 0;
             // 
             // gridLineMappingRight
@@ -634,6 +646,7 @@
             this.gridLineMappingRight.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridLineMappingRight.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridLineMappingRight.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridLineMappingRight.DataSource = this.gridLineMappingRightBS;
             this.gridLineMappingRight.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gridLineMappingRight.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
             this.gridLineMappingRight.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
@@ -646,7 +659,7 @@
             this.gridLineMappingRight.RowTemplate.Height = 24;
             this.gridLineMappingRight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingRight.ShowCellToolTips = false;
-            this.gridLineMappingRight.Size = new System.Drawing.Size(350, 410);
+            this.gridLineMappingRight.Size = new System.Drawing.Size(352, 380);
             this.gridLineMappingRight.TabIndex = 0;
             // 
             // tabPageCentralizedPPA
@@ -655,7 +668,7 @@
             this.tabPageCentralizedPPA.Location = new System.Drawing.Point(4, 25);
             this.tabPageCentralizedPPA.Name = "tabPageCentralizedPPA";
             this.tabPageCentralizedPPA.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 133);
+            this.tabPageCentralizedPPA.Size = new System.Drawing.Size(884, 103);
             this.tabPageCentralizedPPA.TabIndex = 1;
             this.tabPageCentralizedPPA.Text = "Centralized PPA";
             // 
@@ -673,7 +686,7 @@
             // splitCentralizedPPA.Panel2
             // 
             this.splitCentralizedPPA.Panel2.Controls.Add(this.gridCentralizedPPARight);
-            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 127);
+            this.splitCentralizedPPA.Size = new System.Drawing.Size(878, 97);
             this.splitCentralizedPPA.SplitterDistance = 524;
             this.splitCentralizedPPA.TabIndex = 0;
             // 
@@ -697,7 +710,7 @@
             this.gridCentralizedPPALeft.RowTemplate.Height = 24;
             this.gridCentralizedPPALeft.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPALeft.ShowCellToolTips = false;
-            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(524, 127);
+            this.gridCentralizedPPALeft.Size = new System.Drawing.Size(524, 97);
             this.gridCentralizedPPALeft.TabIndex = 0;
             // 
             // gridCentralizedPPARight
@@ -720,7 +733,7 @@
             this.gridCentralizedPPARight.RowTemplate.Height = 24;
             this.gridCentralizedPPARight.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridCentralizedPPARight.ShowCellToolTips = false;
-            this.gridCentralizedPPARight.Size = new System.Drawing.Size(350, 127);
+            this.gridCentralizedPPARight.Size = new System.Drawing.Size(350, 97);
             this.gridCentralizedPPARight.TabIndex = 0;
             // 
             // label12
@@ -881,7 +894,6 @@
             // 
             this.numericTaktTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericTaktTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "TaktTime", true));
-            this.numericTaktTime.DecimalPlaces = 2;
             this.numericTaktTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericTaktTime.IsSupportEditMode = false;
             this.numericTaktTime.Location = new System.Drawing.Point(774, 9);
@@ -927,7 +939,7 @@
             // 
             this.numericPPH.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericPPH.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "PPH", true));
-            this.numericPPH.DecimalPlaces = 2;
+            this.numericPPH.DecimalPlaces = 4;
             this.numericPPH.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericPPH.IsSupportEditMode = false;
             this.numericPPH.Location = new System.Drawing.Point(774, 67);
@@ -1058,8 +1070,8 @@
             // 
             this.chartLBR.Location = new System.Drawing.Point(845, 8);
             this.chartLBR.Name = "chartLBR";
-            series1.Name = "Series1";
-            this.chartLBR.Series.Add(series1);
+            series2.Name = "Series1";
+            this.chartLBR.Series.Add(series2);
             this.chartLBR.Size = new System.Drawing.Size(270, 173);
             this.chartLBR.TabIndex = 51;
             // 
@@ -1067,9 +1079,9 @@
             // 
             this.btnNotHitTargetReason.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnNotHitTargetReason.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1121, 60);
+            this.btnNotHitTargetReason.Location = new System.Drawing.Point(1253, 53);
             this.btnNotHitTargetReason.Name = "btnNotHitTargetReason";
-            this.btnNotHitTargetReason.Size = new System.Drawing.Size(126, 47);
+            this.btnNotHitTargetReason.Size = new System.Drawing.Size(125, 47);
             this.btnNotHitTargetReason.TabIndex = 52;
             this.btnNotHitTargetReason.Text = "Not Hit\r\nTarget Reason";
             this.btnNotHitTargetReason.UseVisualStyleBackColor = true;
@@ -1079,10 +1091,10 @@
             // 
             this.btnTransferToP06.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
             this.btnTransferToP06.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
-            this.btnTransferToP06.Location = new System.Drawing.Point(1121, 113);
+            this.btnTransferToP06.Location = new System.Drawing.Point(1252, 106);
             this.btnTransferToP06.Name = "btnTransferToP06";
-            this.btnTransferToP06.Size = new System.Drawing.Size(126, 47);
-            this.btnTransferToP06.TabIndex = 53;
+            this.btnTransferToP06.Size = new System.Drawing.Size(125, 47);
+            this.btnTransferToP06.TabIndex = 58;
             this.btnTransferToP06.Text = "Transfer to P06";
             this.btnTransferToP06.UseVisualStyleBackColor = true;
             this.btnTransferToP06.Click += new System.EventHandler(this.BtnTransferToP06_Click);
@@ -1110,12 +1122,48 @@
             this.btnH.UseVisualStyleBackColor = true;
             this.btnH.Click += new System.EventHandler(this.BtnH_Click);
             // 
+            // btnViewOperator
+            // 
+            this.btnViewOperator.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnViewOperator.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnViewOperator.Location = new System.Drawing.Point(1121, 53);
+            this.btnViewOperator.Name = "btnViewOperator";
+            this.btnViewOperator.Size = new System.Drawing.Size(125, 47);
+            this.btnViewOperator.TabIndex = 56;
+            this.btnViewOperator.Text = "View No of Operator";
+            this.btnViewOperator.UseVisualStyleBackColor = true;
+            this.btnViewOperator.Click += new System.EventHandler(this.BtnViewOperator_Click);
+            // 
+            // btnLineMappingComparison
+            // 
+            this.btnLineMappingComparison.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnLineMappingComparison.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnLineMappingComparison.Location = new System.Drawing.Point(1121, 106);
+            this.btnLineMappingComparison.Name = "btnLineMappingComparison";
+            this.btnLineMappingComparison.Size = new System.Drawing.Size(125, 47);
+            this.btnLineMappingComparison.TabIndex = 57;
+            this.btnLineMappingComparison.Text = "Line Mapping Comparison";
+            this.btnLineMappingComparison.UseVisualStyleBackColor = true;
+            this.btnLineMappingComparison.Click += new System.EventHandler(this.BtnLineMappingComparison_Click);
+            // 
+            // btnMachineSummary
+            // 
+            this.btnMachineSummary.FlatAppearance.BorderSize = 0;
+            this.btnMachineSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnMachineSummary.Location = new System.Drawing.Point(1121, 159);
+            this.btnMachineSummary.Name = "btnMachineSummary";
+            this.btnMachineSummary.Size = new System.Drawing.Size(125, 47);
+            this.btnMachineSummary.TabIndex = 59;
+            this.btnMachineSummary.Text = "Machine Summary";
+            this.btnMachineSummary.UseVisualStyleBackColor = true;
+            this.btnMachineSummary.Click += new System.EventHandler(this.BtnMachineSummary_Click);
+            // 
             // P05
             // 
             this.ApvChkValue = "New";
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1260, 732);
+            this.ClientSize = new System.Drawing.Size(1416, 732);
             this.ExpressQuery = true;
             this.GridAlias = "AutomatedLineMapping_Detail";
             this.IsSupportClip = false;
@@ -1149,6 +1197,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitLineMapping)).EndInit();
             this.splitLineMapping.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRight)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
             this.tabPageCentralizedPPA.ResumeLayout(false);
             this.splitCentralizedPPA.Panel1.ResumeLayout(false);
             this.splitCentralizedPPA.Panel2.ResumeLayout(false);
@@ -1156,7 +1205,6 @@
             this.splitCentralizedPPA.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARight)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridLineMappingRightBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPALeftBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridCentralizedPPARightBS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartLBR)).EndInit();
@@ -1230,5 +1278,8 @@
         private Win.UI.Button btnNotHitTargetReason;
         private Win.UI.Button btnEditOperation;
         private Win.UI.Button btnH;
+        private Win.UI.Button btnLineMappingComparison;
+        private Win.UI.Button btnViewOperator;
+        private Win.UI.Button btnMachineSummary;
     }
 }
