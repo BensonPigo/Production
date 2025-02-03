@@ -2531,7 +2531,8 @@ and s.BrandID = @brandid ", Env.User.Factory,
 
         private DataRow GetCurrentDataRow(DataGridView dataGridView)
         {
-            if (dataGridView.SelectionMode == DataGridViewSelectionMode.FullRowSelect && dataGridView.SelectedRows.Count > 0)
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            if (dataGridView.SelectedRows.Count > 0)
             {
                 // 如果設置為 FullRowSelect，從 SelectedRows 獲取
                 DataGridViewRow selectedRow = dataGridView.SelectedRows[0];
@@ -2541,10 +2542,13 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     return rowView.Row;
                 }
             }
-            else if (dataGridView.SelectionMode == DataGridViewSelectionMode.CellSelect && dataGridView.CurrentRow != null)
+            else if (dataGridView.CurrentRow != null)
             {
+                int iIndex = dataGridView.CurrentRow.Index;
+                DataGridViewRow selectedRow = dataGridView.Rows[iIndex - 1];
+
                 // 如果設置為 CellSelect，從 CurrentRow 獲取
-                DataRowView rowView = dataGridView.CurrentRow.DataBoundItem as DataRowView;
+                DataRowView rowView = selectedRow.DataBoundItem as DataRowView;
                 if (rowView != null && rowView.Row.RowState != DataRowState.Deleted)
                 {
                     return rowView.Row;
@@ -2632,6 +2636,7 @@ and s.BrandID = @brandid ", Env.User.Factory,
                     int i = insert_index == 0 ? insert_index + 1 : insert_index - 1;
                     DataRow dr = dataTable.Rows[i];
                     location = MyUtility.Convert.GetString(dr["Location"]); // 最後一筆 Row
+                    index = insert_index;
                 }
                 else
                 {
