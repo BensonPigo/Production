@@ -102,8 +102,19 @@ select Machine = stuff((
 
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"select i.Ukey from IETMS i WITH (NOLOCK) where  i.ID = '{this.masterData["IETMSID"]}' and i.Version='{this.masterData["IETMSversion"]}'");
             sqlCmd = $@"
+--準備 SewingSeq , 同 P01 OnDetailSelectCommandPrepare 這段
+SELECT
+    td.Ukey
+    ,SewingSeq = RIGHT('0000' + CAST(((ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4)
+INTO #tmpSewingSeq
+FROM TimeStudy_Detail td
+where ID = '{this.masterData["ID"]}'
+and td.OperationID NOT LIKE '--%'
+AND td.IsNonSewingLine = 0
+
 select 
     seq = '0',
+    SewingSeq = '0',
 	OperationID = '--CUTTING',	
 	MachineTypeID = null,
     PPA = '',
@@ -126,6 +137,7 @@ and  ArtworkTypeID in ({this.artworktype})
 union all
 select 
     seq = '0',
+    SewingSeq = '0',
 	OperationID = 'PROCIPF00001',	
 	MachineTypeID = 'CUT',
     PPA = '',
@@ -150,6 +162,7 @@ union all
             sqlCmd += $@"
 select DISTINCT
     td.Seq
+    , SewingSeq = iif(td.SewingSeq = '' ,isnull(tmp.SewingSeq,''), td.SewingSeq)
     , td.OperationID
     , td.MachineTypeID
     , PPA = ISNULL(d.Name,'')
@@ -166,6 +179,7 @@ select DISTINCT
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
+left join #tmpSewingSeq tmp on tmp.ukey = td.ukey
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
@@ -180,6 +194,7 @@ union all
 -- OperationID like '--%' 都要顯示, 不依據 artworktype
 select DISTINCT
     td.Seq
+    , SewingSeq = iif(td.SewingSeq = '' ,isnull(tmp.SewingSeq,''), td.SewingSeq)
     , td.OperationID
     , td.MachineTypeID
     , PPA =  ISNULL(d.Name,'')
@@ -196,6 +211,7 @@ select DISTINCT
     , o.MasterPlusGroup
     , td.Template
 from TimeStudy_Detail td WITH (NOLOCK) 
+left join #tmpSewingSeq tmp on tmp.ukey = td.ukey
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join MachineType m WITH (NOLOCK) on td.MachineTypeID = m.ID
 left join MachineType_Detail md WITH (NOLOCK) on m.ID = md.ID 
@@ -211,6 +227,7 @@ and td.OperationID like '--%'
 union all
 select 
     seq = '9960',
+    SewingSeq = '9960',
 	OperationID = '--IPF',	
 	MachineTypeID = null,
     PPA = '',
@@ -235,6 +252,7 @@ and  ArtworkTypeID in ({this.artworktype})
 union all
 select
     seq = '9970',
+    SewingSeq = '9970',
 	OperationID = 'PROCIPF00002',	
 	MachineTypeID = 'M',
     PPA = '',
@@ -257,6 +275,7 @@ and  ArtworkTypeID in ({this.artworktype})
 union all
 select 
     seq = '9980',
+    SewingSeq = '9980',
 	OperationID = 'PROCIPF00004',	
 	MachineTypeID = 'MM2',
     PPA = '',
@@ -279,6 +298,7 @@ and  ArtworkTypeID in ({this.artworktype})
 union all
 select 	
     seq = '9990',
+    SewingSeq = '9990',
 	OperationID = 'PROCIPF00003',	
 	MachineTypeID = 'MM2',
     PPA = '',
@@ -297,7 +317,7 @@ select
 from [IETMS_Summary]
 where location = '' and [IETMSUkey] = '{ietmsUKEY}' and ArtworkTypeID = 'Packing'
 and  ArtworkTypeID in ({this.artworktype})
-order by seq
+order by SewingSeq
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out this.printData);
             if (!result)
@@ -424,26 +444,27 @@ group by isnull(m.ArtworkTypeID,'')",
 
             // 填內容值
             int intRowsStart = 5;
-            object[,] objArray = new object[1, 15];
+            object[,] objArray = new object[1, 16];
             foreach (DataRow dr in this.printData.Rows)
             {
                 objArray[0, 0] = intRowsStart - 4;
                 objArray[0, 1] = dr["Seq"];
-                objArray[0, 2] = dr["OperationID"];
-                objArray[0, 3] = dr["MachineTypeID"];
-                objArray[0, 4] = dr["MasterPlusGroup"];
-                objArray[0, 5] = dr["PPA"];
-                objArray[0, 6] = dr["Mold"];
-                objArray[0, 7] = dr["Template"];
-                objArray[0, 8] = dr["DescEN"];
-                objArray[0, 9] = dr["Annotation"];
-                objArray[0, 10] = dr["Frequency"];
-                objArray[0, 11] = dr["SMV"];
-                objArray[0, 12] = dr["PcsPerHour"];
-                objArray[0, 13] = dr["Sewer"];
-                objArray[0, 14] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
+                objArray[0, 2] = dr["SewingSeq"];
+                objArray[0, 3] = dr["OperationID"];
+                objArray[0, 4] = dr["MachineTypeID"];
+                objArray[0, 5] = dr["MasterPlusGroup"];
+                objArray[0, 6] = dr["PPA"];
+                objArray[0, 7] = dr["Mold"];
+                objArray[0, 8] = dr["Template"];
+                objArray[0, 9] = dr["DescEN"];
+                objArray[0, 10] = dr["Annotation"];
+                objArray[0, 11] = dr["Frequency"];
+                objArray[0, 12] = dr["SMV"];
+                objArray[0, 13] = dr["PcsPerHour"];
+                objArray[0, 14] = dr["Sewer"];
+                objArray[0, 15] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(dr["PcsPerHour"]) * (this.efficiency / 100), 1);
 
-                worksheet.Range[string.Format("A{0}:O{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:P{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

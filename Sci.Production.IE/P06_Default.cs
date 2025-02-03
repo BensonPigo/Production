@@ -32,17 +32,20 @@ namespace Sci.Production.IE
             this.gridMain.CellFormatting += this.GridMain_CellFormatting;
 
             string sqlGetAutomatedLineMappingID = $@"
-select  cast(0 as bit) as Selected,
-        ad.*,
-        [PPADesc] = isnull(d.Name, ''),
-        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey)
-from AutomatedLineMapping_Detail ad WITH (NOLOCK)
-left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
-left join Operation op with (nolock) on op.ID = ad.OperationID
-where ad.ID = '{automatedLineMappingID}'
-order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
+            select  cast(0 as bit) as Selected,
+                    ad.*,
+                    [PPADesc] = isnull(d.Name, ''),
+                    [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+                    [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+                    [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey),
+                    [IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
+            from AutomatedLineMapping_Detail ad WITH (NOLOCK)
+            left join AutomatedLineMapping alm on alm.ID = ad.ID
+            left join MachineType_Detail md on md.ID = ad.MachineTypeID  and md.FactoryID = alm.FactoryID
+            left join DropDownList d with (nolock) on d.ID = ad.PPA  and d.Type = 'PMS_IEPPA'
+            left join Operation op with (nolock) on op.ID = ad.OperationID
+            where ad.ID = '{automatedLineMappingID}' and isnull(md.IsNotShownInP06,0) = 0
+            order by iif(ad.No = '', 'ZZ', ad.No), ad.Seq";
 
             DataTable dtAutomatedLineMapping_Detail;
 

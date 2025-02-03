@@ -100,7 +100,6 @@
             this.numHighestTimeDiff = new Sci.Win.UI.NumericBox();
             this.numEffieiency = new Sci.Win.UI.NumericBox();
             this.labelOprts = new Sci.Win.UI.Label();
-            this.txtsewingline = new Sci.Production.Class.Txtsewingline();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -113,6 +112,13 @@
             this.labVersionWarning = new System.Windows.Forms.Label();
             this.comboSewingTeam1 = new Sci.Production.Class.ComboSewingTeam(this.components);
             this.comboPhase = new Sci.Win.UI.ComboBox();
+            this.txtSewingLine = new Sci.Win.UI.TextBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.numEstLBR = new Sci.Win.UI.NumericBox();
+            this.btnPrintDetail = new Sci.Win.UI.Button();
+            this.numOriTotalGSD = new Sci.Win.UI.NumericBox();
+            this.label2 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -134,6 +140,12 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.numOriTotalGSD);
+            this.masterpanel.Controls.Add(this.label2);
+            this.masterpanel.Controls.Add(this.btnPrintDetail);
+            this.masterpanel.Controls.Add(this.numEstLBR);
+            this.masterpanel.Controls.Add(this.label1);
+            this.masterpanel.Controls.Add(this.txtSewingLine);
             this.masterpanel.Controls.Add(this.comboPhase);
             this.masterpanel.Controls.Add(this.comboSewingTeam1);
             this.masterpanel.Controls.Add(this.labVersionWarning);
@@ -178,7 +190,6 @@
             this.masterpanel.Controls.Add(this.numCPUPC);
             this.masterpanel.Controls.Add(this.labelCPUPC);
             this.masterpanel.Controls.Add(this.label14);
-            this.masterpanel.Controls.Add(this.txtsewingline);
             this.masterpanel.Controls.Add(this.numTaktTimeIdeal);
             this.masterpanel.Controls.Add(this.numDailydemandshiftIdeal);
             this.masterpanel.Controls.Add(this.numTargetHrIdeal);
@@ -230,7 +241,6 @@
             this.masterpanel.Controls.SetChildIndex(this.numTargetHrIdeal, 0);
             this.masterpanel.Controls.SetChildIndex(this.numDailydemandshiftIdeal, 0);
             this.masterpanel.Controls.SetChildIndex(this.numTaktTimeIdeal, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtsewingline, 0);
             this.masterpanel.Controls.SetChildIndex(this.label14, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCPUPC, 0);
             this.masterpanel.Controls.SetChildIndex(this.numCPUPC, 0);
@@ -276,6 +286,12 @@
             this.masterpanel.Controls.SetChildIndex(this.labVersionWarning, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboSewingTeam1, 0);
             this.masterpanel.Controls.SetChildIndex(this.comboPhase, 0);
+            this.masterpanel.Controls.SetChildIndex(this.txtSewingLine, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numEstLBR, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.numOriTotalGSD, 0);
             // 
             // detailpanel
             // 
@@ -1314,17 +1330,6 @@
             this.labelOprts.TextStyle.ExtBorderColor = System.Drawing.Color.Black;
             this.labelOprts.TextStyle.GradientColor = System.Drawing.Color.Black;
             // 
-            // txtsewingline
-            // 
-            this.txtsewingline.BackColor = System.Drawing.Color.White;
-            this.txtsewingline.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
-            this.txtsewingline.FactoryobjectName = null;
-            this.txtsewingline.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtsewingline.Location = new System.Drawing.Point(322, 147);
-            this.txtsewingline.Name = "txtsewingline";
-            this.txtsewingline.Size = new System.Drawing.Size(60, 21);
-            this.txtsewingline.TabIndex = 16;
-            // 
             // grid1
             // 
             this.grid1.AllowUserToAddRows = false;
@@ -1345,7 +1350,7 @@
             this.grid1.RowTemplate.Height = 24;
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
-            this.grid1.Size = new System.Drawing.Size(285, 417);
+            this.grid1.Size = new System.Drawing.Size(287, 417);
             this.grid1.TabIndex = 2;
             // 
             // splitContainer1
@@ -1358,7 +1363,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.grid1);
             this.splitContainer1.Size = new System.Drawing.Size(1153, 417);
-            this.splitContainer1.SplitterDistance = 864;
+            this.splitContainer1.SplitterDistance = 862;
             this.splitContainer1.TabIndex = 3;
             // 
             // txtFactory
@@ -1368,6 +1373,7 @@
             this.txtFactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtFactory.FilteMDivision = false;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsIE = false;
             this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = false;
@@ -1376,6 +1382,7 @@
             this.txtFactory.Name = "txtFactory";
             this.txtFactory.Size = new System.Drawing.Size(66, 21);
             this.txtFactory.TabIndex = 75;
+            this.txtFactory.Validated += new System.EventHandler(this.TxtFactory_Validated);
             // 
             // lbGSDVersion
             // 
@@ -1472,6 +1479,99 @@
             this.comboPhase.Size = new System.Drawing.Size(88, 23);
             this.comboPhase.TabIndex = 244;
             // 
+            // txtSewingLine
+            // 
+            this.txtSewingLine.BackColor = System.Drawing.Color.White;
+            this.txtSewingLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
+            this.txtSewingLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSewingLine.Location = new System.Drawing.Point(324, 148);
+            this.txtSewingLine.MaxLength = 10;
+            this.txtSewingLine.Name = "txtSewingLine";
+            this.txtSewingLine.Size = new System.Drawing.Size(61, 21);
+            this.txtSewingLine.TabIndex = 245;
+            this.txtSewingLine.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLine_PopUp);
+            this.txtSewingLine.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Txtsewingline_MouseDown);
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(839, 62);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(80, 21);
+            this.label1.TabIndex = 246;
+            this.label1.Text = "Est. LBR";
+            // 
+            // shapeContainer3
+            // 
+            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer3.Name = "shapeContainer3";
+            this.shapeContainer3.Size = new System.Drawing.Size(1153, 206);
+            this.shapeContainer3.TabIndex = 27;
+            this.shapeContainer3.TabStop = false;
+            // 
+            // numEstLBR
+            // 
+            this.numEstLBR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numEstLBR.DecimalPlaces = 2;
+            this.numEstLBR.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numEstLBR.IsSupportEditMode = false;
+            this.numEstLBR.Location = new System.Drawing.Point(922, 61);
+            this.numEstLBR.Name = "numEstLBR";
+            this.numEstLBR.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numEstLBR.ReadOnly = true;
+            this.numEstLBR.Size = new System.Drawing.Size(58, 21);
+            this.numEstLBR.TabIndex = 248;
+            this.numEstLBR.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // btnPrintDetail
+            // 
+            this.btnPrintDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnPrintDetail.Location = new System.Drawing.Point(890, 170);
+            this.btnPrintDetail.Name = "btnPrintDetail";
+            this.btnPrintDetail.Size = new System.Drawing.Size(139, 30);
+            this.btnPrintDetail.TabIndex = 249;
+            this.btnPrintDetail.Text = "Print Detail";
+            this.btnPrintDetail.UseVisualStyleBackColor = true;
+            this.btnPrintDetail.Click += new System.EventHandler(this.BtnPrintDetail_Click);
+            // 
+            // numOriTotalGSD
+            // 
+            this.numOriTotalGSD.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numOriTotalGSD.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "OriTotalGSD", true));
+            this.numOriTotalGSD.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numOriTotalGSD.IsSupportEditMode = false;
+            this.numOriTotalGSD.Location = new System.Drawing.Point(922, 88);
+            this.numOriTotalGSD.Name = "numOriTotalGSD";
+            this.numOriTotalGSD.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numOriTotalGSD.ReadOnly = true;
+            this.numOriTotalGSD.Size = new System.Drawing.Size(58, 21);
+            this.numOriTotalGSD.TabIndex = 251;
+            this.numOriTotalGSD.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(807, 91);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(112, 21);
+            this.label2.TabIndex = 250;
+            this.label2.Text = "Ori. Total GSD time";
+            // 
             // P03
             // 
             this.ApvChkValue = "New";
@@ -1551,7 +1651,6 @@
         private Win.UI.NumericBox numCPUPC;
         private Win.UI.Label labelCPUPC;
         private Win.UI.Label label14;
-        private Class.Txtsewingline txtsewingline;
         private Win.UI.NumericBox numTaktTimeIdeal;
         private Win.UI.NumericBox numDailydemandshiftIdeal;
         private Win.UI.NumericBox numTargetHrIdeal;
@@ -1604,5 +1703,12 @@
         private System.Windows.Forms.Label labVersionWarning;
         private Class.ComboSewingTeam comboSewingTeam1;
         private Win.UI.ComboBox comboPhase;
+        private Win.UI.TextBox txtSewingLine;
+        private Win.UI.Label label1;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer3;
+        private Win.UI.NumericBox numEstLBR;
+        private Win.UI.Button btnPrintDetail;
+        private Win.UI.NumericBox numOriTotalGSD;
+        private Win.UI.Label label2;
     }
 }

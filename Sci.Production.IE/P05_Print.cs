@@ -28,12 +28,13 @@ namespace Sci.Production.IE
             this.InitializeComponent();
             this.almID = almID;
             this.printData = new P05_PrintData();
+            MyUtility.Tool.SetupCombox(this.cbDirection, 1, 1, "F,B");
         }
 
         /// <inheritdoc/>
         protected override bool ValidateInput()
         {
-            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString());
+            this.printData.SetCondition(this.almID, this.comboDisplayBy.SelectedValue.ToString(), this.comboContentBy.SelectedValue.ToString(), this.comboLanguageBy.SelectedValue.ToString(), this.cbDirection.SelectedValue.ToString());
 
             return base.ValidateInput();
         }

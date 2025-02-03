@@ -22,6 +22,11 @@
     [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     [IsHide] BIT NULL , 
     [IEReasonLBRNotHit_DetailUkey] BIGINT NULL, 
+    [EstCycleTime]          NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstCycleTime]    DEFAULT ((0))  NOT NULL, 
+    [EstTotalCycleTime]     NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstTotalCycleTime]    DEFAULT ((0))  NOT NULL, 
+    [EstOutputHr]           NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstOutputHr]    DEFAULT ((0))  NOT NULL, 
+    [EstLBR]                NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstLBR]    DEFAULT ((0))  NOT NULL, 
+    [Append] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -131,3 +136,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping_Detail',
     @level2type = N'COLUMN',
     @level2name = N'IEReasonLBRNotHit_DetailUkey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估的CycleTime',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstCycleTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估站台的TotalCycleTime',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstTotalCycleTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估每小時產量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstOutputHr'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估的LBR',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstLBR'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'手動插入',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Append'

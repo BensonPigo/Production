@@ -63,13 +63,13 @@
             this.gridEditOperation.RowTemplate.Height = 24;
             this.gridEditOperation.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridEditOperation.ShowCellToolTips = false;
-            this.gridEditOperation.Size = new System.Drawing.Size(887, 364);
+            this.gridEditOperation.Size = new System.Drawing.Size(976, 364);
             this.gridEditOperation.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.gridEditOperation.TabIndex = 1;
             // 
             // gridIconEditOperation
             // 
-            this.gridIconEditOperation.Location = new System.Drawing.Point(-30, 3);
+            this.gridIconEditOperation.Location = new System.Drawing.Point(4, 3);
             this.gridIconEditOperation.Name = "gridIconEditOperation";
             this.gridIconEditOperation.Size = new System.Drawing.Size(100, 32);
             this.gridIconEditOperation.TabIndex = 2;
@@ -78,7 +78,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.gridIconEditOperation);
-            this.panel1.Location = new System.Drawing.Point(849, 0);
+            this.panel1.Location = new System.Drawing.Point(934, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(39, 37);
             this.panel1.TabIndex = 3;
@@ -86,7 +86,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(724, 409);
+            this.btnSave.Location = new System.Drawing.Point(813, 409);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(80, 30);
             this.btnSave.TabIndex = 4;
@@ -97,7 +97,7 @@
             // btnCancel
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(810, 409);
+            this.btnCancel.Location = new System.Drawing.Point(899, 409);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 5;
@@ -115,7 +115,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(896, 450);
+            this.ClientSize = new System.Drawing.Size(985, 450);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.panel1);

@@ -37,7 +37,8 @@ where	t.StyleID = @StyleID and
 
 select	td.ID,
 		td.Ukey,
-		td.Seq,
+		[Seq] = iif(td.DesignateSeq <> '',td.DesignateSeq,td.SewingSeq),
+		--td.Seq,
 		ts.TotalSewer,
 		[Sewer] = Round(ts.TotalSewer * (td.SMV / @TotalSMV), 4),
 		td.PPA,
@@ -415,10 +416,36 @@ where	td.ID = @TimeStudyID and
 		td.OperationID like '-%' and
 		td.SMV = 0
 order by td.Seq
+/*************************************** ISP20240132 需求***************************************/
+DECLARE @EndSeq varchar(4)
+SET @EndSeq = (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = @TimeStudyID ORDER BY Seq DESC);
+ SELECT 
+td.Seq
+,[NextSeq] = CASE 
+        WHEN LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq) = 0 
+        THEN @EndSeq
+        ELSE LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq)
+    END
+,td.OperationID
+into #tmpOperation
+from TimeStudy_Detail td WITH(NOLOCK)
+where td.id = @TimeStudyID and td.OperationID LIKE '-%' and td.smv = 0 
+
+SELECT
+SewingSeq = iif(td.DesignateSeq <> '' ,td.DesignateSeq,RIGHT('0000' + CAST((10 * (ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4))
+,td.Ukey
+into #tmpSewingSeq
+FROM TimeStudy_Detail td
+where ID = @TimeStudyID and td.OperationID NOT LIKE '--%' AND td.IsNonSewingLine = 0
+ORDER by iif(td.DesignateSeq <> '' ,td.DesignateSeq,RIGHT('0000' + CAST((10 * (ROW_NUMBER() OVER (ORDER BY td.[Seq])) ) AS VARCHAR(4)), 4))
+
+--------------------------------------------------------------------------------------------------
+
+
 
 select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)), 2), ''),
-		[Seq] = ROW_NUMBER() OVER (PARTITION BY tb.TotalSewer ORDER BY td.Seq),
-		[Location] = isnull(tl.OperationID, ''),
+		[Seq] =  ROW_NUMBER() OVER (PARTITION BY tb.TotalSewer ORDER BY  iif(td.SewingSeq = '' ,isnull(tmp.SewingSeq,''),isnull(td.SewingSeq,''))),
+		[Location] = iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),
 		td.PPA,
 		td.MachineTypeID,
 		o.MasterPlusGroup,
@@ -448,12 +475,22 @@ select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)),
 		[TotalSewer] = isnull(tb.TotalSewer, 0),
 		[OperationDesc] = iif(isnull(o.DescEN, '') = '', td.OperationID, o.DescEN),
         [SewerDiffPercentageDesc] = iif(td.PPA = 'C', 1, round(Round(tb.DivSewer / tb.OriSewer, 2) * 100, 0)),
-        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey, TotalSewer)
+        [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey, TotalSewer),
+		[IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
 into #tmpAutomatedLineMapping_Detail
 from  TimeStudy_Detail td
 left join #tmpReaultBase tb with (nolock) on tb.TimeStudyDetailUkey = td.Ukey
+LEFT join MachineType_Detail md on md.ID = td.MachineTypeID and md.FactoryID = @FactoryID
 left join Operation o with (nolock) on td.OperationID = o.ID
+LEFT join #tmpSewingSeq tmp on tmp.ukey =td.ukey
 left join #tmpLocation tl on td.Seq >= tl.Seq and (td.Seq < tl.NextSeq or tl.NextSeq = 0)
+OUTER APPLY
+        (
+	        SELECT TOP 1
+	        OperationID FROM #tmpOperation t1 
+	        WHERE t1.NextSeq = @EndSeq  OR t1.NextSeq > td.Seq  
+	        ORDER BY t1.Seq asc
+        )t1
 where	td.ID = @TimeStudyID and
 		td.OperationID not like '-%'
 
@@ -522,7 +559,7 @@ group by tmd.TotalSewer
 
 -- insert **Pressing與**Packing資料
 DECLARE Create_detailPackerPresser CURSOR FOR 
-	select	TotalSewer, PackerManpower, PresserManpower
+	select	TotalSewer, PresserManpower,PackerManpower
 	from #detailSummary
 
 Declare @TotalSewerAdditional int
@@ -570,7 +607,8 @@ BEGIN
 													TotalSewer,
 													OperationDesc,
 													SewerDiffPercentageDesc,
-													TimeStudyDetailUkeyCnt)
+													TimeStudyDetailUkeyCnt,
+													IsNotShownInP05)
 			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
 				   0,
 				   '',
@@ -592,7 +630,8 @@ BEGIN
 				   @TotalSewerAdditional,
 				   '**Pressing',
 				   @SewerDiffPercentage * 100,
-				   0)
+				   0,
+				   (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PR' and FactoryID = @FactoryID))
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
@@ -629,7 +668,8 @@ BEGIN
 													TotalSewer,
 													OperationDesc,
 													SewerDiffPercentageDesc,
-													TimeStudyDetailUkeyCnt)
+													TimeStudyDetailUkeyCnt,
+													IsNotShownInP05)
 			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
 				   0,
 				   '',
@@ -651,7 +691,8 @@ BEGIN
 				   @TotalSewerAdditional,
 				   '**Packing',
 				   @SewerDiffPercentage * 100,
-				   0)
+				   0,
+				  (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PA' and FactoryID = @FactoryID))
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
@@ -731,5 +772,5 @@ where tmd.TotalSewer = 0
 order by [SewerManpower], No, Seq
 
 drop table #tmpTotalSewerRange, #tmpTimeStudy_Detail, #tmpGroupSewer, #tmpReaultBase, #tmpLocation, #tmpAutomatedLineMapping_Detail, #detailSummary, #tmpCheckLimit, #tmpFixSewerDiffPercentage
-
+,#tmpOperation,#tmpSewingSeq
 end
