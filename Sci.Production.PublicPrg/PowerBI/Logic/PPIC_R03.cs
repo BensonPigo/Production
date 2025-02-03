@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -464,6 +465,8 @@ SELECT
    ,o.OrderTypeID
    ,o.ProjectID
    ,o.HangerPack
+   ,o.JokerTag
+   ,o.HeatSeal
    ,o.Customize1
    ,o.CustPONo
    ,o.Customize4
@@ -571,6 +574,24 @@ SELECT
    ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
    ,ClogRcvDate = MAX(ReceiveDate)
    ,ActPulloutDate = MAX(pl.PulloutDate)
+    ,HaulingDate = MAX(pld.HaulingDate)
+    ,HaulingStatus = IIF( SUM(IIF( pld.HaulingStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HaulingFailQty = SUM(pld.HaulingFailQty)
+    ,PackingAuditDate = MAX(pld.PackingAuditDate)
+    ,PackingAuditStatus = IIF( SUM(IIF( pld.PackingAuditStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,PackingAuditFailQty = SUM(pld.PackingAuditFailQty)
+    ,M360MDScanDate = MAX(pld.M360MDScanDate)
+    ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,M360MDFailQty = SUM(pld.M360MDFailQty)
+    ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
+    ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
+    ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
@@ -612,6 +633,24 @@ SELECT
    ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
    ,ClogRcvDate = MAX(ReceiveDate)
    ,ActPulloutDate = MAX(pl.PulloutDate)
+    ,HaulingDate = MAX(pld.HaulingDate)
+    ,HaulingStatus = IIF( SUM(IIF( pld.HaulingStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HaulingFailQty = SUM(pld.HaulingFailQty)
+    ,PackingAuditDate = MAX(pld.PackingAuditDate)
+    ,PackingAuditStatus = IIF( SUM(IIF( pld.PackingAuditStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,PackingAuditFailQty = SUM(pld.PackingAuditFailQty)
+    ,M360MDScanDate = MAX(pld.M360MDScanDate)
+    ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,M360MDFailQty = SUM(pld.M360MDFailQty)
+    ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
+    ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
+    ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
@@ -888,6 +927,24 @@ GROUP BY s.OrderID
    ,[SewQtyOuter] = SewQtyOuter
    ,[Dest] = o.Dest
    ,[Country] = Country.Alias
+    ,HaulingDate         = pld.HaulingDate
+    ,HaulingStatus       = pld.HaulingStatus
+    ,HaulingFailQty      = ISNULL( pld.HaulingFailQty ,0)
+    ,PackingAuditDate    = pld.PackingAuditDate
+    ,PackingAuditStatus  = pld.PackingAuditStatus
+    ,PackingAuditFailQty = ISNULL( pld.PackingAuditFailQty ,0)
+    ,M360MDScanDate      = pld.M360MDScanDate
+    ,M360MDStatus        = pld.M360MDStatus
+    ,M360MDFailQty       = ISNULL( pld.M360MDFailQty ,0)
+    ,HangerPackScanTime  = pld.HangerPackScanTime
+    ,HangerPackStatus    = pld.HangerPackStatus
+    ,HangerPackFailQty   = ISNULL( pld.HangerPackFailQty ,0)
+    ,JokerTagScanTime    = pld.JokerTagScanTime
+    ,JokerTagStatus      = pld.JokerTagStatus
+    ,JokerTagFailQty     = ISNULL( pld.JokerTagFailQty ,0)
+    ,HeatSealScanTime    = pld.HeatSealScanTime
+    ,HeatSealStatus      = pld.HeatSealStatus
+    ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
 ";
             }
             else
@@ -971,6 +1028,8 @@ SELECT
    ,[Project] = o.ProjectID
    ,[PackingMethod] = d1.Name
    ,[Hanger pack] = o.HangerPack
+   ,[Joker Tag] = o.JokerTag
+   ,[Heat Seal] = o.HeatSeal
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
    ,[PONO] = o.CustPONo
