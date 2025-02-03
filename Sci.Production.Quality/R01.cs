@@ -369,9 +369,9 @@ select
     ,[MCHandle_id] = COALESCE(pass1_MCHandle.id, TPEPass1_MCHandle.id)
     ,[MCHandle_name] = COALESCE(pass1_MCHandle.name, TPEPass1_MCHandle.name)
     ,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
-    ,[KPILETA] = O.KPILETA
+    ,[KPI LETA] = O.KPILETA
     ,[ACT ETA] = Export.Eta
-    ,[Total Packges] = isnull(Export.Packages,0)
+    ,[Total Packages] = isnull(Export.Packages,0)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -634,9 +634,9 @@ select
 	,tf.ExportId
 	,tf.InvNo
     ,tf.[Cutting Date]
-    ,tf.[KPILETA]
+    ,tf.[KPI LETA]
     ,tf.[ACT ETA]
-    ,tf.[Total Packges]
+    ,tf.[Total Packages]
 	,tf.WhseArrival
 	,tf.StockQty1
     ,tf.InvStock
