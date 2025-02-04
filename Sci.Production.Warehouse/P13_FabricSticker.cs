@@ -68,13 +68,12 @@ namespace Sci.Production.Warehouse
             if (this.fromTable.ToUpper() == "ISSUELACK_DETAIL")
             {
                 col_remarks = "(select Remark from Issuelack where Id = isd.Id)";
-
             }
             else if (this.fromTable.ToUpper() == "ISSUE_DETAIL")
             {
                 col_remarks = "(select Remark from issue where Id = isd.Id)";
                 col_PreparedBy = "(select PreparedBy = pass1.Name + ' ' + FORMAT(MINDReleaseDate, 'yyyy-MM-dd HH:mm') where Pass1.id = isd.MINDReleaser)";
-                joinManufacturingExecution = "left join ManufacturingExecution..Pass1 on Pass1.id = isd.MINDReleaser";
+                joinManufacturingExecution = "left join SciMES_Pass1 as Pass1 on Pass1.id = isd.MINDReleaser";
             }
 
             string gridSql = $@"
