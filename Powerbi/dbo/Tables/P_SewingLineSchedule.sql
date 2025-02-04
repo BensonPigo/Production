@@ -80,7 +80,8 @@ CREATE TABLE [dbo].[P_SewingLineSchedule](
 	[SewingLineID] ASC,
 	[Sewer] ASC,
 	[FactoryID] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY], 
+    [SewingInlineCategory] VARCHAR(50) NOT NULL DEFAULT ('')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
@@ -98,3 +99,11 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingLineSchedule.EditDate' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SewingLineSchedule', @level2type=N'COLUMN',@level2name=N'EditDate'
 GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Sewing output InlineCategory By Style',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_SewingLineSchedule',
+    @level2type = N'COLUMN',
+    @level2name = N'SewingInlineCategory'

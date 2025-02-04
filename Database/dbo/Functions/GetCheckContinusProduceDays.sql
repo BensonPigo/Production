@@ -5,7 +5,7 @@ Create FUNCTION [dbo].[GetCheckContinusProduceDays]
 	@StyleUkey bigint ,
 	@SewingLineID varchar(3) ,
 	@FactoryID varchar(5),
-	@Team varchar(3),
+	@Team VARCHAR(3) =  null,
 	@SewingDate date
 )
 RETURNS INT
@@ -22,23 +22,23 @@ BEGIN
 	(
 		select distinct top 30 so.OutputDate
 		from SewingOutput so with (nolock)
-		where   so.SewingLineID = @SewingLineID and
-				so.FactoryID = @FactoryID and
-				so.Team = @Team and
-				so.OutputDate < @SewingDate and
-				so.Shift <> 'O' and
-				so.Category = 'O'
+		where   so.SewingLineID = @SewingLineID 
+		and		so.FactoryID = @FactoryID 
+		and		(isnull(@Team,'') = '' or so.Team = @Team)
+		and		so.OutputDate < @SewingDate 
+		and		so.Shift <> 'O' 
+		and		so.Category = 'O'
 		order by    so.OutputDate desc
 	), tmpSewingOutputID AS
 	(
 		select  so.ID, so.OutputDate
 		from SewingOutput so with (nolock)
-		where   so.SewingLineID = @SewingLineID and
-				so.FactoryID = @FactoryID and
-				so.Team = @Team and
-				so.OutputDate in (select OutputDate from tmpSewingOutputDay) and
-				so.Shift <> 'O' and
-				so.Category = 'O'
+		where   so.SewingLineID = @SewingLineID 
+		and		so.FactoryID = @FactoryID 
+		and		(isnull(@Team,'') = '' or so.Team = @Team)
+		and		so.OutputDate in (select OutputDate from tmpSewingOutputDay) 
+		and		so.Shift <> 'O' 
+		and		so.Category = 'O'
 	), tmpSewingOutputStyle AS
 	(
 		select  distinct

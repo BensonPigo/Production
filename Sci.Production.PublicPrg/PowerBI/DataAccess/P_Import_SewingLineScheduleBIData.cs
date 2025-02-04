@@ -157,6 +157,7 @@ where isnull(t.SewingStartTime,'1900/01/01') <>  isnull(s.SewingStartTime,'1900/
    or isnull(t.StyleSeason,'') <> isnull(s.StyleSeason,'')
    or isnull(t.AddDate,'1900/01/01') <> isnull(s.AddDate,'1900/01/01')
    or isnull(t.EditDate,'1900/01/01') <> isnull(s.EditDate,'1900/01/01')
+   or isnull(t.SewingInlineCategory,'') <> isnull(s.SewingInlineCategory,'')
 
 UPDATE t 
 	SET t.SewingStartTime =  s.SewingStartTime,
@@ -226,7 +227,8 @@ UPDATE t
 		t.StyleSeason = s.StyleSeason,
 		t.AddDate = s.AddDate,
 		t.EditDate = s.EditDate,
-		t.LastDownloadAPSDate = iif(u.LastDownloadAPSDate is not null, u.LastDownloadAPSDate, t.LastDownloadAPSDate)
+		t.LastDownloadAPSDate = iif(u.LastDownloadAPSDate is not null, u.LastDownloadAPSDate, t.LastDownloadAPSDate),
+		t.SewingInlineCategory = s.SewingInlineCategory
 from P_SewingLineSchedule t 
 inner join #tmp s on t.APSNo = s.APSNo 
 				AND t.SewingDay = s.SewingDay 
@@ -250,7 +252,7 @@ insert into P_SewingLineSchedule ([APSNo], [SewingLineID], [SewingDay], [SewingS
 , [SewingCPU], [BrandID], [Orig_WorkHourPerDay], [New_SwitchTime], [FirststCuttingOutputDate], [TTL_PRINTING (PCS)]
 , [TTL_PRINTING PPU (PPU)], [SubCon], [CDCodeNew], [ProductType], [FabricType], [Lining], [Gender], [Construction]
 , [Subcon Qty], [Std Qty for printing], [StyleName], [StdQtyEMB], [EMBStitch], [EMBStitchCnt], [TtlQtyEMB]
-, [PrintPcs], [InlineCategory], [StyleSeason], [AddDate], [EditDate],[LastDownloadAPSDate])
+, [PrintPcs], [InlineCategory], [StyleSeason], [AddDate], [EditDate],[LastDownloadAPSDate],[SewingInlineCategory])
 select 	s.APSNo, s.SewingLineID, s.SewingDay, s.SewingStartTime, s.SewingEndTime,
 	s.MDivisionID, s.FactoryID, s.PO, s.POCount, s.SP, s.SPCount, s.EarliestSCIdelivery, s.LatestSCIdelivery,
 	s.EarliestBuyerdelivery, s.LatestBuyerdelivery, s.Category, s.Colorway, s.ColorwayCount, s.CDCode,
@@ -261,7 +263,7 @@ select 	s.APSNo, s.SewingLineID, s.SewingDay, s.SewingStartTime, s.SewingEndTime
 	s.SewingCPU, s.BrandID, s.Orig_WorkHourPerDay, s.New_SwitchTime, s.FirststCuttingOutputDate, s.[TTL_PRINTING (PCS)],
 	s.[TTL_PRINTING PPU (PPU)], s.SubCon, s.CDCodeNew, s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 	s.[Subcon Qty],	s.[Std Qty for printing], s.StyleName, s.StdQtyEMB, s.EMBStitch, s.EMBStitchCnt, s.TtlQtyEMB,
-	s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate
+	s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory
 from #tmp s
 where not exists (select 1 from P_SewingLineSchedule t WITH(NOLOCK) where t.APSNo = s.APSNo 
 														AND t.SewingDay = s.SewingDay 
