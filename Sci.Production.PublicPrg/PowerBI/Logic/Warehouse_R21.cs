@@ -366,7 +366,7 @@ outer apply(
            rd.MINDCheckEditDate 
     from Receiving r with (nolock) 
     inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
-    left join ManufacturingExecution.dbo.pass1 with (nolock) on rd.MINDChecker = pass1.ID
+    left join SciMES_Pass1 pass1 with (nolock) on rd.MINDChecker = pass1.ID
     where r.Status = 'Confirmed' 
     and rd.POID = fi.POID 
     and rd.Seq1 = fi.Seq1 
