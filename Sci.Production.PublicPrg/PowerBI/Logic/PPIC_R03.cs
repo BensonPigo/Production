@@ -1026,6 +1026,7 @@ SELECT
    ,[Garment L/T] = ISNULL(#tmpGMTLT.[Garment L/T], 0)
    ,[Order Type] = o.OrderTypeID
    ,[Project] = o.ProjectID
+   ,[Tech Concept] = d4.Description
    ,[PackingMethod] = d1.Name
    ,[Hanger pack] = o.HangerPack
    ,[Joker Tag] = o.JokerTag
@@ -1218,6 +1219,7 @@ Group by pd.OrderID {pdseq}
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
 LEFT JOIN DropDownList d3 WITH (NOLOCK) ON d3.Type = 'FactoryDisclaimer' AND s.ExpectionFormStatus = d3.ID
+LEFT JOIN DropDownList d4 WITH (NOLOCK) ON d4.ID = s.TechConceptID AND d4.Type = 'TechConcept'
 LEFT JOIN Reason r1 WITH (NOLOCK) ON r1.ReasonTypeID = 'Fabric_Kind' AND s.FabricType = r1.ID
 LEFT JOIN Reason r2 WITH (NOLOCK) ON r2.ReasonTypeID = 'Style_Apparel_Type' AND s.ApparelType = r2.ID
 LEFT JOIN Reason r3 WITH (NOLOCK) ON r3.ReasonTypeID = 'Order_BuyerDelivery' AND o.KPIChangeReason = r3.ID

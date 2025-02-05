@@ -88,6 +88,7 @@
     [IETMSID_Thread]      VARCHAR (10)   CONSTRAINT [DF_Style_IETMSID_Thread] DEFAULT ('') NOT NULL,
     [IETMSVersion_Thread] VARCHAR (3)    CONSTRAINT [DF_Style_IETMSVersion_Thread] DEFAULT ('') NOT NULL,
     [IsGSPPlus]           BIT            CONSTRAINT [DF_Style_IsGSPPlus] DEFAULT ((0)) NOT NULL,
+    [TechConceptID] VARCHAR(50) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 
@@ -429,3 +430,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Style',
     @level2type = N'COLUMN',
     @level2name = N'BrandGender'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'科技檢驗項目',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Style',
+    @level2type = N'COLUMN',
+    @level2name = N'TechConceptID'

@@ -147,6 +147,7 @@ a.Ukey	= isnull( b.Ukey             ,0)
 ,a.IETMSID_Thread = isnull(b.IETMSID_Thread,'')
 ,a.IETMSVersion_Thread = isnull(b.IETMSVersion_Thread,'')
 ,a.IsGSPPlus = isnull(b.IsGSPPlus, 0)
+,a.TechConceptID = isnull(b.TechConceptID,'')
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
@@ -243,6 +244,7 @@ ID
 ,IETMSID_Thread
 ,IETMSVersion_Thread
 ,IsGSPPlus
+,TechConceptID
 )
 output	inserted.ID,
 		inserted.SeasonID,
@@ -326,6 +328,7 @@ select
 ,isnull(b.IETMSID_Thread,'')
 ,isnull(b.IETMSVersion_Thread,'')
 ,isnull(b.IsGSPPlus, 0)
+,isnull(b.TechConceptID, 0)
 from Trade_To_Pms.dbo.Style as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.ID=b.ID and a.BrandID=b.BrandID and a.SeasonID=b.SeasonID and a.LocalStyle=1)
 AND not exists(select id from Production.dbo.Style as a WITH (NOLOCK) where a.Ukey=b.Ukey )
