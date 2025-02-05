@@ -761,9 +761,7 @@ else
 				t.HangerPack = isnull( s.HangerPack,                           0),
 				t.DelayCode = isnull( s.DelayCode,                             ''),
 				t.DelayDesc = isnull( s.DelayDesc,                             ''),
-				t.SizeUnitWeight = isnull( s.SizeUnitWeight,                   ''),
-				t.JokerTag  = isnull( s.JokerTag ,                           0),
-				t.HeatSeal  = isnull( s.HeatSeal ,                           0)
+				t.SizeUnitWeight = isnull( s.SizeUnitWeight,                   '')
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -796,7 +794,7 @@ else
 			, ForecastCategory		, OnSiteSample			, PulloutCmplDate		, NeedProduction		, KeepPanels
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
-			, SizeUnitWeight		, JokerTag 		, HeatSeal 
+			, SizeUnitWeight
 		) 
        VALUES
        (
@@ -946,9 +944,7 @@ else
               isnull(s.hangerpack ,              0),
               isnull(s.delaycode ,               ''),
               isnull(s.delaydesc ,               ''),
-              isnull(s.sizeunitweight,           ''),
-              isnull(s.JokerTag  ,               0),
-              isnull(s.HeatSeal  ,               0)
+              isnull(s.sizeunitweight,           '')
        );
 
 -----------------------------------------------------------------------------------------------------------
