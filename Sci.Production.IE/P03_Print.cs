@@ -1565,7 +1565,7 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            //worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString(); // 左邊排的No. Column:35
+                            // 左邊排的No. Column:35
                             worksheet.Cells[norow + ridx, 35] = item["rn"].ToString();
                             ridx++;
                         }
@@ -1594,7 +1594,7 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            //worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString(); // 右邊排的No.; Column:36
+                            // 右邊排的No.; Column:36
                             worksheet.Cells[norow + ridx, 36] = item["rn"].ToString();
                             ridx++;
                         }
@@ -1719,8 +1719,8 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
-
+                            // 右邊排的No.; Column:36
+                            worksheet.Cells[norow + ridx, 36] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -1748,8 +1748,8 @@ drop TABLE #tmp1
                         int row = norow + ridx;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
-
+                            // 左邊排的No. Column:35
+                            worksheet.Cells[norow + ridx, 35] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -1860,8 +1860,8 @@ drop TABLE #tmp1
                         string machinetypeL = string.Empty;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
-
+                            // 左邊排的No. Column:35
+                            worksheet.Cells[norow + ridx, 35] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -1885,8 +1885,8 @@ drop TABLE #tmp1
                         string machinetypeL = string.Empty;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
-
+                            // 右邊排的No.; Column:36
+                            worksheet.Cells[norow + ridx, 36] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -2001,8 +2001,8 @@ drop TABLE #tmp1
                         string machinetypeL = string.Empty;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn - 6] = item["rn"].ToString();
-
+                            // 左邊排的No. Column:35
+                            worksheet.Cells[norow + ridx, 35] = item["rn"].ToString();
                             ridx++;
                         }
 
@@ -2026,8 +2026,8 @@ drop TABLE #tmp1
                         string machinetypeL = string.Empty;
                         foreach (DataRow item in nodrs)
                         {
-                            worksheet.Cells[norow + ridx, nocolumn + 2] = item["rn"].ToString();
-
+                            // 右邊排的No.; Column:36
+                            worksheet.Cells[norow + ridx, 36] = item["rn"].ToString();
                             ridx++;
                         }
 
