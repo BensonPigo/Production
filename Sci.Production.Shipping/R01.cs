@@ -476,7 +476,7 @@ where 1=1 {0}";
 
             if (!MyUtility.Check.Empty(this.shipmode))
             {
-                sqlCmd_where.Append(string.Format(" and g.ShipModeID = '{0}'", this.brand));
+                sqlCmd_where.Append(string.Format(" and g.ShipModeID = '{0}'", this.shipmode));
             }
 
             if (!MyUtility.Check.Empty(this.shipterm))
