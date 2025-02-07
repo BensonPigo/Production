@@ -2357,9 +2357,7 @@ where not exists(
 
             DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
 
-
             string sqlcmd = string.Empty;
-
             for (int i = 0; i < deleteDataTable.Rows.Count; i++)
             {
                 if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
@@ -2369,7 +2367,12 @@ where not exists(
                     sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
                 }
             }
-            var dual = DBProxy.Current.Execute(null, sqlcmd);
+
+            result = DBProxy.Current.Execute(null, sqlcmd);
+            if (!result)
+            {
+                return result;
+            }
 
             return base.ClickSavePost();
         }
