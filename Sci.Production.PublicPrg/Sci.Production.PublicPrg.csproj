@@ -228,6 +228,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ChangeoverCheckList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CMPByDate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingBCS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />

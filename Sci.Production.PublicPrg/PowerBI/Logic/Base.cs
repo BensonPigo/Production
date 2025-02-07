@@ -66,6 +66,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_SewingDailyOutputStatusRecord,
             P_LineBalancingRate,
             P_ChangeoverCheckList,
+            P_CMPByDate,
         }
 
         /// <summary>
@@ -497,6 +498,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate, ListName.P_LineBalancingRate.ToString());
                 case ListName.P_ChangeoverCheckList:
                     return new P_Import_ChangeoverCheckList().P_ChangeoverCheckList(item.SDate, item.EDate, ListName.P_ChangeoverCheckList.ToString());
+                case ListName.P_CMPByDate:
+                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate, ListName.P_CMPByDate.ToString());
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
