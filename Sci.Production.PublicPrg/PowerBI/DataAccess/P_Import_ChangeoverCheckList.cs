@@ -178,7 +178,8 @@ and p.[InlineDate] >= @EndDate
 
             string sqlcmd = $@"
 update p
-	set p.[DaysLeft] =  t.[DaysLeft]
+	set p.[Line] = t.[Line]
+     , p.[DaysLeft] =  t.[DaysLeft]
 	 , p.[OverDays] = t.[OverDays]
 	 , p.[ChgOverCheck] = t.[ChgOverCheck]
 	 , p.[CompletionDate] = t.[CompletionDate]
@@ -189,6 +190,7 @@ from P_ChangeoverCheckList_Detail p
 inner join #tmp t on  p.[FactoryID] = t.[FactoryID] 
 				 AND p.[SP] = t.[SP] 
 				 AND p.[Style] = t.[Style]
+				 AND p.[ComboType] = t.[ComboType]
 				 AND p.[Category] = t.[Category]
 				 AND p.[ProductType] = t.[ProductType]
 				 AND p.[Cell] = t.[Cell]
@@ -197,12 +199,13 @@ inner join #tmp t on  p.[FactoryID] = t.[FactoryID]
 
 
 
-insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [Category], [ProductType], [Cell], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
-select [FactoryID], [SP], [Style], [Category], [ProductType], [Cell], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
+insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
+select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[FactoryID] = t.[FactoryID] 
 														 AND p.[SP] = t.[SP] 
 														 AND p.[Style] = t.[Style]
+														 AND p.[ComboType] = t.[ComboType]
 														 AND p.[Category] = t.[Category]
 														 AND p.[ProductType] = t.[ProductType]
 														 AND p.[Cell] = t.[Cell]
@@ -217,6 +220,7 @@ from P_ChangeoverCheckList_Detail p
 where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID] 
 										 AND p.[SP] = t.[SP] 
 										 AND p.[Style] = t.[Style]
+										 AND p.[ComboType] = t.[ComboType]
 										 AND p.[Category] = t.[Category]
 										 AND p.[ProductType] = t.[ProductType]
 										 AND p.[Cell] = t.[Cell]
