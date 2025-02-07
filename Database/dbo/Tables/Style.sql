@@ -88,7 +88,7 @@
     [IETMSID_Thread]      VARCHAR (10)   CONSTRAINT [DF_Style_IETMSID_Thread] DEFAULT ('') NOT NULL,
     [IETMSVersion_Thread] VARCHAR (3)    CONSTRAINT [DF_Style_IETMSVersion_Thread] DEFAULT ('') NOT NULL,
     [IsGSPPlus]           BIT            CONSTRAINT [DF_Style_IsGSPPlus] DEFAULT ((0)) NOT NULL,
-    [TechConceptID] VARCHAR(50) NOT NULL DEFAULT (''), 
+    [TechConceptID]       VARCHAR(50)    CONSTRAINT [DF_Style_TechConceptID] DEFAULT ('') NOT NULL, 
     CONSTRAINT [PK_Style] PRIMARY KEY CLUSTERED ([ID] ASC, [BrandID] ASC, [SeasonID] ASC)
 );
 
