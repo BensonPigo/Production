@@ -1341,13 +1341,14 @@ SELECT
     ,FakeID = ''
     ,ColumnN = 'Printing LT'
     ,ColumnSeq = -1 
-
+    ,''
 UNION ALL
 SELECT
     ID = 'PRINTING'
     ,FakeID = ''
     ,ColumnN = 'InkType/Color/Size'
     ,ColumnSeq = 0 
+    ,''
 ";
                 sql_printingDetail_Select = $@"
 SELECT DISTINCT
