@@ -379,7 +379,7 @@ inner join (
 )MP on MP.ID = SciMachine_MachinePending_Detail.ID
 left join Production.dbo.SciMachine_Machine with (nolock) on SciMachine_Machine.ID = SciMachine_MachinePending_Detail.MachineID
 outer apply(select Days=DATEDIFF(DAY,SciMachine_Machine.ArriveDate, MP.cDate)+1)UsefulLife_ArriveDate
-outer apply(select Days=DATEDIFF(DAY,MP.cDate, a.CreateDate)+1)UsefulLife_ObtainedDate
+outer apply(select Days=DATEDIFF(DAY, a.CreateDate, MP.cDate)+1)UsefulLife_ObtainedDate
 
 END
 
