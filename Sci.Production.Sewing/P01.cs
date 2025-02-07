@@ -2133,6 +2133,7 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
                 KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
+                    this.ShowErr(resultInlineCategory.Value);
                     return resultInlineCategory.Value;
                 }
 
