@@ -178,8 +178,7 @@ and p.[InlineDate] >= @EndDate
 
             string sqlcmd = $@"
 update p
-	set p.[Line] = t.[Line]
-     , p.[DaysLeft] =  t.[DaysLeft]
+	set p.[DaysLeft] =  t.[DaysLeft]
 	 , p.[OverDays] = t.[OverDays]
 	 , p.[ChgOverCheck] = t.[ChgOverCheck]
 	 , p.[CompletionDate] = t.[CompletionDate]
@@ -194,6 +193,7 @@ inner join #tmp t on  p.[FactoryID] = t.[FactoryID]
 				 AND p.[Category] = t.[Category]
 				 AND p.[ProductType] = t.[ProductType]
 				 AND p.[Cell] = t.[Cell]
+                 AND p.[Line] = t.[Line]
 				 AND p.[InlineDate] = t.[InlineDate]
 				 AND p.[CheckListNo] = t.[CheckListNo]
 
@@ -209,6 +209,7 @@ where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[Factory
 														 AND p.[Category] = t.[Category]
 														 AND p.[ProductType] = t.[ProductType]
 														 AND p.[Cell] = t.[Cell]
+                                                         AND p.[Line] = t.[Line]
 														 AND p.[InlineDate] = t.[InlineDate]
 														 AND p.[CheckListNo] = t.[CheckListNo])
 
@@ -224,6 +225,7 @@ where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID]
 										 AND p.[Category] = t.[Category]
 										 AND p.[ProductType] = t.[ProductType]
 										 AND p.[Cell] = t.[Cell]
+										 AND p.[Line] = t.[Line]
 										 AND p.[InlineDate] = t.[InlineDate]
 										 AND p.[CheckListNo] = t.[CheckListNo])
 and p.[InlineDate] >= @EndDate
