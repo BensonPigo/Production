@@ -228,7 +228,5 @@ update  SewingOutput set SewingReasonIDForTypeIC = '{inlineCategoryResult.Key}' 
 
             return new DualResult(true);
         }
-
-        
     }
 }
