@@ -2356,25 +2356,6 @@ where not exists(
             }
             #endregion
 
-            DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
-
-            string sqlcmd = string.Empty;
-            for (int i = 0; i < deleteDataTable.Rows.Count; i++)
-            {
-                if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
-                {
-                    var ukey = deleteDataTable.Rows[i]["Ukey", DataRowVersion.Original];
-
-                    sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
-                }
-            }
-
-            result = DBProxy.Current.Execute(null, sqlcmd);
-            if (!result)
-            {
-                return result;
-            }
-
             return base.ClickSavePost();
         }
 
