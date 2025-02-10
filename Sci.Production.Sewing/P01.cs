@@ -2133,6 +2133,7 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
                 KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
+                    this.ShowErr(resultInlineCategory.Value);
                     return resultInlineCategory.Value;
                 }
 
@@ -2354,22 +2355,6 @@ where not exists(
                 }
             }
             #endregion
-
-            DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
-
-
-            string sqlcmd = string.Empty;
-
-            for (int i = 0; i < deleteDataTable.Rows.Count; i++)
-            {
-                if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
-                {
-                    var ukey = deleteDataTable.Rows[i]["Ukey", DataRowVersion.Original];
-
-                    sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
-                }
-            }
-            var dual = DBProxy.Current.Execute(null, sqlcmd);
 
             return base.ClickSavePost();
         }

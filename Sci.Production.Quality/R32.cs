@@ -100,7 +100,7 @@ FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
 INNER JOIN Orders O ON o.ID = co.OrderID
 WHERE 1=1
-and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
+and exists (select 1 from Factory f where o.Ftygroup = id and f.IsProduceFty = 1)
 
 ");
 
@@ -386,7 +386,7 @@ FROm CFAInspectionRecord  c
 INNER JOIN CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
 INNER JOIN Orders O ON o.ID = co.OrderID
 WHERE 1=1
-and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
+and exists (select 1 from Factory f where o.FtyGroup = id and f.IsProduceFty = 1)
 ");
 
                 #region Where
@@ -721,7 +721,7 @@ outer apply(
 	) , 1, 1, '')
 ) s
 WHERE 1=1
-and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
+and exists (select 1 from Factory f where o.FtyGroup = id and f.IsProduceFty = 1)
 ");
 
                 #region Where

@@ -189,23 +189,27 @@ from P_ChangeoverCheckList_Detail p
 inner join #tmp t on  p.[FactoryID] = t.[FactoryID] 
 				 AND p.[SP] = t.[SP] 
 				 AND p.[Style] = t.[Style]
+				 AND p.[ComboType] = t.[ComboType]
 				 AND p.[Category] = t.[Category]
 				 AND p.[ProductType] = t.[ProductType]
 				 AND p.[Cell] = t.[Cell]
+                 AND p.[Line] = t.[Line]
 				 AND p.[InlineDate] = t.[InlineDate]
 				 AND p.[CheckListNo] = t.[CheckListNo]
 
 
 
-insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [Category], [ProductType], [Cell], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
-select [FactoryID], [SP], [Style], [Category], [ProductType], [Cell], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
+insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
+select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[FactoryID] = t.[FactoryID] 
 														 AND p.[SP] = t.[SP] 
 														 AND p.[Style] = t.[Style]
+														 AND p.[ComboType] = t.[ComboType]
 														 AND p.[Category] = t.[Category]
 														 AND p.[ProductType] = t.[ProductType]
 														 AND p.[Cell] = t.[Cell]
+                                                         AND p.[Line] = t.[Line]
 														 AND p.[InlineDate] = t.[InlineDate]
 														 AND p.[CheckListNo] = t.[CheckListNo])
 
@@ -217,9 +221,11 @@ from P_ChangeoverCheckList_Detail p
 where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID] 
 										 AND p.[SP] = t.[SP] 
 										 AND p.[Style] = t.[Style]
+										 AND p.[ComboType] = t.[ComboType]
 										 AND p.[Category] = t.[Category]
 										 AND p.[ProductType] = t.[ProductType]
 										 AND p.[Cell] = t.[Cell]
+										 AND p.[Line] = t.[Line]
 										 AND p.[InlineDate] = t.[InlineDate]
 										 AND p.[CheckListNo] = t.[CheckListNo])
 and p.[InlineDate] >= @EndDate

@@ -861,6 +861,7 @@ OPTION (RECOMPILE)"
                 BundleID = row1["BundleID"].ToString(),
                 CutCell = row1["CutCell"].ToString(),
                 Dyelot = row1["Dyelot"].ToString(),
+                BundleNo = row1["Bundle"].ToString(),
             }).ToList();
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
