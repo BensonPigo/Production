@@ -101,7 +101,9 @@ WHEN MATCHED THEN
 	t.TtlQtyEMB = s.TtlQtyEMB,
 	t.PrintPcs = s.PrintPcs,
 	t.InlineCategory = s.InlineCategory,
-	t.StyleSeason = s.StyleSeason'
+	t.StyleSeason = s.StyleSeason,
+	t.SewingInlineCategory = s.SewingInlineCategory
+	'	
 
 set @SqlCmd2 = '
 WHEN NOT MATCHED BY TARGET THEN
@@ -171,6 +173,7 @@ WHEN NOT MATCHED BY TARGET THEN
 	  ,PrintPcs
 	  ,InlineCategory
 	  ,StyleSeason
+	  ,SewingInlineCategory
 	)
 	VALUES(
 	s.APSNo,
@@ -237,7 +240,8 @@ WHEN NOT MATCHED BY TARGET THEN
 	s.TtlQtyEMB,
 	s.PrintPcs,
 	s.InlineCategory,
-	s.StyleSeason
+	s.StyleSeason,
+	s.SewingInlineCategory
 	)
 WHEN NOT MATCHED BY SOURCE AND T.SewingDay between '''+@SDate+''' and '''+@EDate+''' THEN
 DELETE ;

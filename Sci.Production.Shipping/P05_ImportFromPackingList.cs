@@ -80,7 +80,7 @@ select stuff(
             List<SqlParameter> listPar = new List<SqlParameter>();
             #region 組SQL語法
             sqlCmd.Append($@"
-with IniBulkPack as (
+
     select  1 as Selected
             , p.id
             , pd.OrderID
@@ -103,6 +103,7 @@ with IniBulkPack as (
                             from PackingList_Detail pd1 WITH (NOLOCK) 
                             where   pd1.ID = p.ID 
                                     and pd1.ReceiveDate is not null)
+    into #IniBulkPack
     from PackingList p WITH (NOLOCK) 
     left Join PackingList_Detail pd WITH (NOLOCK) on p.ID = pd.ID
     Left Join Order_QtyShip oq WITH (NOLOCK) on  pd.OrderID = oq.Id 
@@ -117,7 +118,7 @@ with IniBulkPack as (
             and p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}'
             and p.OrderCompanyID = {this.masterData["OrderCompanyID"]}
             and o.junk = 0
-), IniSamplePack as (
+
     select  iif(p.CustCDID = '{MyUtility.Convert.GetString(this.masterData["CustCDID"])}',1,0) as Selected
             , p.id
             , pd.OrderID
@@ -137,6 +138,7 @@ with IniBulkPack as (
             , p.Status
             , p.InspDate
             , 0 as ClogCTNQty
+    into #IniSamplePack
     from PackingList p WITH (NOLOCK) 
     left join PackingList_Detail pd WITH (NOLOCK) on pd.ID = p.ID
     left join Order_QtyShip oq WITH (NOLOCK) on  oq.Id = pd.OrderID 
@@ -149,17 +151,24 @@ with IniBulkPack as (
             and p.ShipModeID = '{MyUtility.Convert.GetString(this.masterData["ShipModeID"])}'
             and p.OrderCompanyID = {this.masterData["OrderCompanyID"]}
             and o.junk = 0
-), AllPackData as (
+
+
+select * 
+into #AllPackData
+from (
     select * 
-    from IniBulkPack
-    
+    from #IniBulkPack   
     union all
     select * 
-    from IniSamplePack
-), InvalidData as (
+    from #IniSamplePack
+	) tmp
+
+
     select  distinct ID
-    from AllPackData
-    where   1=1");
+    into #InvalidData
+    from #AllPackData
+    where 1=1 
+");
 
             if (!MyUtility.Check.Empty(this.dateSDPDate.Value1))
             {
@@ -204,14 +213,14 @@ with IniBulkPack as (
                 sqlCmd.Append($@"AND  exists(select 1 
                                             from PackingList_Detail pld WITH (NOLOCK) 
                                             inner join Order_QtyShip oqs with (nolock) on oqs.ID = pld.OrderID and oqs.Seq = pld.OrderShipmodeSeq
-                                            where pld.ID = AllPackData.id and oqs.IDD = @IDD ) ");
+                                            where pld.ID = #AllPackData.id and oqs.IDD = @IDD ) ");
                 listPar.Add(new SqlParameter("@IDD", this.dateIDD.Value));
             }
 
             string pLFromRgCode = this.txtmultifactoryFactory.IsDataFromA2B ? this.txtmultifactoryFactory.SystemName : string.Empty;
 
             sqlCmd.Append($@"
-), PackData as (
+
     select  Selected
             , ID
             , CustCDID
@@ -230,13 +239,14 @@ with IniBulkPack as (
             , Status
             , InspDate
             , ClogCTNQty
-    from AllPackData 
+    into #PackData
+    from #AllPackData 
     where   id in (
                 select ID 
-                from InvalidData 
+                from #InvalidData 
                 where ID is not null)
     group by Selected,ID,CustCDID,ShipQty,CTNQty,NW,NNW,GMTBookingLock,MDivisionID,CargoReadyDate,PulloutDate,GW,CBM,Status,InspDate,ClogCTNQty
-)
+
 select  pd.Selected
         , pd.ID
         , OrderID = stuff ((select ',' + cast(a.OrderID as nvarchar) 
@@ -277,7 +287,7 @@ select  pd.Selected
                           from PackingList_Detail pld with(Nolock)
                           where pld.id = pd.id), 0)
         , [PLFromRgCode] = '{pLFromRgCode}'
-from PackData pd");
+from #PackData pd");
             #endregion
 
             DualResult result;
