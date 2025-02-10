@@ -56,6 +56,7 @@ namespace Sci.Production.Warehouse
             .Text("ID", header: "ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Date("IssueDate", header: "Issue Date", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .Text("Request#", header: "Request#", width: Widths.AnsiChars(20), iseditingreadonly: true)
+            .Text("OrderID", header: "SP#", width: Widths.AnsiChars(20), iseditingreadonly: true)
             .EditText("Remark", header: "Remark", width: Widths.AnsiChars(25), iseditingreadonly: true)
             .Text("Releaser", header: "Releaser", width: Widths.AnsiChars(30), iseditingreadonly: true, settings: releaser)
             ;
@@ -72,6 +73,7 @@ namespace Sci.Production.Warehouse
             ,[IssueDate]
             ,[Status]
             ,[Request#] = [CutplanID]
+            ,[OrderID] = o.POID
             ,[Remark]
             ,[Releaser] = Releaser.val
             FROM Issue I WITH(NOLOCK)
@@ -87,6 +89,10 @@ namespace Sci.Production.Warehouse
 		            )tmp for xml path('')   
 	            ),1,1,'')
             )Releaser
+            OUTER APPLY
+            (
+                select top(1) POID from Issue_Detail where id = I.Id
+            ) o
             WHERE 1=1 and Type='A' and I.ISSUEDATE >= '{this.dateIssueDate.DateBox1.Text}' AND I.ISSUEDATE <= '{this.dateIssueDate.DateBox2.Text}' AND I.MDivisionID = '{Env.User.Keyword}'
             ORDER BY I.ISSUEDATE, I.ID";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Sci.Production.Prg.PowerBI.Model
 {
     /// <inheritdoc/>
-    public class Miscellaneous_R02
+    public class Miscellaneous_R02_ViewModel
     {
         /// <inheritdoc/>
         public DateTime? StartCreateDate { get; set; }

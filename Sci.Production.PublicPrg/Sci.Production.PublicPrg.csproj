@@ -231,6 +231,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingBCS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ESG_Injury.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />
@@ -315,7 +316,8 @@
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
     <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
-    <Compile Include="PowerBI\Model\Miscellaneous_R02.cs" />
+    <Compile Include="PowerBI\Model\Miscellaneous_R02_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\OHS_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Planning_P08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\IE_R22_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
