@@ -547,7 +547,7 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
             if (this.rdbtnShippingMarkKHAdidas.Checked)
             {
-                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping Mark (for KH Adidas).dotx";
+                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping Mark_ForKHAdidas.dotx";
             }
             else
             {
