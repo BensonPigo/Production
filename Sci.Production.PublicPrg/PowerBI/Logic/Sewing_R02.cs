@@ -1121,7 +1121,7 @@ declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from
 
 
 -- 取得SPH Total CPU
-select [SPH_ttlCPU] = CAST(isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5) as decimal(9,4))
+select [SPH_ttlCPU] = CAST(isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5) as decimal(12,4))
 
 drop table #tmp,#tmpAllSubprocess,#tmpArtwork,#TPEtmp,#tmpFinalArtwork,#tmpFinal,#tmpSubConR16";
 

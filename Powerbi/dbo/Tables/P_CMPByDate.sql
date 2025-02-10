@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [dbo].[P_CMPByDate](
 	[FactoryID] [varchar](8) NOT NULL,
 	[OutputDate] [date] NOT NULL,
-	[GPHCPU] [decimal](9, 3) NOT NULL,
-	[SPHCPU] [decimal](9, 3) NOT NULL,
-	[VPHCPU] [decimal](9, 3) NOT NULL,
+	[GPHCPU] [decimal](12, 3) NOT NULL,
+	[SPHCPU] [decimal](12, 3) NOT NULL,
+	[VPHCPU] [decimal](12, 3) NOT NULL,
 	[GPHManhours] [decimal](9, 3) NOT NULL,
 	[SPHManhours] [decimal](9, 3) NOT NULL,
 	[VPHManhours] [decimal](9, 3) NOT NULL,
