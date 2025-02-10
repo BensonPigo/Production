@@ -1424,6 +1424,22 @@ FROM #tmpPrintingValue";
             #endregion
 
             #region step 3 處理顯示的欄位名稱 & 不同 ArtworkTypeID 不同計算規則
+            string strColumnN1 = string.Empty;
+            string strColumnN2 = string.Empty;
+            string strcolArtworkType = string.Empty;
+
+            if (!model.IsPowerBI)
+            {
+                strColumnN1 = "#tmpSubProcess.colArtworkType + ColumnN";
+                strColumnN2 = "ColumnN = CASE WHEN colArtworkType IS NOT NULL AND colArtworkType <> '' THEN colArtworkType + 'TTL_' + ColumnN ELSE 'TTL_' + ColumnN END";
+                strcolArtworkType = "ArtworkType.seq + '-' FROM ArtworkType WITH (NOLOCK) WHERE Junk <> 1 and ID = 'EMBROIDERY'";
+            }
+            else
+            {
+                strColumnN1 = "ColumnN";
+                strColumnN2 = "'TTL_' + ColumnN";
+                strcolArtworkType = "''";
+            }
 
             // 處理顯示的欄位名稱
             string sqlcmd = $@"
@@ -1473,18 +1489,14 @@ SELECT
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
-    ,colArtworkType = ArtworkType.seq + '-'
-FROM ArtworkType WITH (NOLOCK)
-WHERE Junk <> 1 and ID = 'EMBROIDERY'
+    ,colArtworkType = {strcolArtworkType}
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
-    ,colArtworkType = ArtworkType.seq + '-'
-FROM ArtworkType WITH (NOLOCK)
-WHERE Junk <> 1 and ID = 'EMBROIDERY'
+    ,colArtworkType = {strcolArtworkType}
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
@@ -1514,7 +1526,7 @@ FROM (
     SELECT 
     ID,
     FakeID,
-    ColumnN = #tmpSubProcess.colArtworkType + ColumnN,
+    ColumnN = {strColumnN1},
     ColumnSeq,
     rno
     FROM #tmpSubProcess WITH (NOLOCK)
@@ -1531,11 +1543,7 @@ FROM (
     SELECT
         ID = 'TTL' + ID
         ,FakeID = 'T' + FakeID
-        ,ColumnN = CASE 
-                WHEN colArtworkType IS NOT NULL AND colArtworkType <> '' 
-                THEN colArtworkType + 'TTL_' + ColumnN
-                ELSE 'TTL_' + ColumnN
-              END
+        ,{strColumnN2}
         ,ColumnSeq
         ,rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000--在 TTL_TMS 999 之後
     FROM #tmpSubProcess WITH (NOLOCK)
