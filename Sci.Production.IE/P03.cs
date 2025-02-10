@@ -2652,6 +2652,7 @@ select distinct
     ,[EstTotalCycleTime] = 0
     ,[EstOutputHr] = 0
     ,[EstLBR] = 0
+    ,[IsResignationDate] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Cutting' and op.ID='PROCIPF00001'
@@ -2706,6 +2707,7 @@ select ID = null
        ,[EstTotalCycleTime] = 0
        ,[EstOutputHr] = 0
        ,[EstLBR] = 0
+        ,[IsResignationDate] = 0
 from TimeStudy_Detail td WITH (NOLOCK)
 left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
 left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
@@ -2753,6 +2755,7 @@ select distinct
     ,[EstTotalCycleTime] = 0
     ,[EstOutputHr] = 0
     ,[EstLBR] = 0
+    ,[IsResignationDate] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Inspection' and op.ID='PROCIPF00002'
@@ -2792,6 +2795,7 @@ select distinct
     ,[EstTotalCycleTime] = 0
     ,[EstOutputHr] = 0
     ,[EstLBR] = 0
+    ,[IsResignationDate] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Pressing' and op.ID='PROCIPF00004'
@@ -2831,6 +2835,7 @@ select distinct
     ,[EstTotalCycleTime] = 0
     ,[EstOutputHr] = 0
     ,[EstLBR] = 0
+    ,[IsResignationDate] = 0
 from [IETMS_Summary] i, Operation op
 left join MachineType_Detail md WITH (NOLOCK) on md.ID = op.MachineTypeID and md.FactoryID = '{2}'
 where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' and op.ID='PROCIPF00003'
