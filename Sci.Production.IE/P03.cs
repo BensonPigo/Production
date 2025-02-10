@@ -218,7 +218,7 @@ from (
         , [ReasonName] = lbr.Name
         , [EmployeeJunk] = e.junk
         , [IsRow] = ROW_NUMBER() OVER(PARTITION BY ld.EmployeeID,ld.Ukey ORDER by e.Junk asc) 
-		, [OperatorEffi] = isnull(iif(Effi.Effi_3_year = '' or Effi.Effi_3_year is null ,Effi_90_day.Effi_90_day,Effi.Effi_3_year) ,'0.00')
+		, [OperatorEffi] = isnull(iif(isnull(Effi.Effi_3_year, 0.0) = 0.0, Effi_90_day.Effi_90_day, Effi.Effi_3_year) , 0)
 		, [TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
 		, [Motion] = Motion.val
         , [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0)
@@ -301,7 +301,7 @@ from (
 	OUTER APPLY
     (
 		SELECT
-		[Effi_90_day] = CAST(SUM(GSD)/SUM(Cycle) * 100 as numeric(7,4))
+		[Effi_90_day] = CAST(SUM(GSD) / SUM(Cycle) * 100 as numeric(9,4))
 		FROM
 		(
 			SELECT
@@ -360,7 +360,7 @@ from (
     OUTER APPLY
     (
         SELECT
-        [Effi_3_year] = ISNULL(FORMAT(((SUM(a.GSD) / SUM(a.Cycle))*100), '0.00'), '0.00')
+        [Effi_3_year] = CAST(ISNULL(((SUM(a.GSD) / SUM(a.Cycle)) * 100), 0) as numeric(9,4))
         From
         (
 			SELECT
@@ -2904,18 +2904,18 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             .Select(g => new GridList()
             {
                 No = g.Key.No,
-                ActCycle = g.Max(x => x.Field<decimal?>("ActCycle")), // 假設ActCycle相同項取最大值
-                TotalGSD = g.Max(x => x.Field<decimal?>("TotalGSD")), // 假設TotalGSD相同項取最大值
-                TotalCycle = g.Max(x => x.Field<decimal?>("TotalCycle")), // 假設TotalCycle相同項取最大值
-                ReasonName = g.First().Field<string>("ReasonName"),
+                ActCycle = g.Max(x => MyUtility.Convert.GetDecimal(x["ActCycle"])), // 假設ActCycle相同項取最大值
+                TotalGSD = g.Max(x => MyUtility.Convert.GetDecimal(x["TotalGSD"])), // 假設TotalGSD相同項取最大值
+                TotalCycle = g.Max(x => MyUtility.Convert.GetDecimal(x["TotalCycle"])), // 假設TotalCycle相同項取最大值
+                ReasonName = MyUtility.Convert.GetString(g.First()["ReasonName"]),
                 SortA = g.Key.No.Substring(0, 1),
                 SortB = g.Key.No.Substring(1, g.Key.No.Length - 1),
-                EmployeeID = g.First().Field<string>("EmployeeID"),
-                EmployeeName = g.First().Field<string>("EmployeeName"),
-                EmployeeSkill = g.First().Field<string>("EmployeeSkill"),
-                EstTotalCycleTime = g.Max(x => x.Field<double?>("EstTotalCycleTime")),
-                EstOutputHr = g.Max(x => x.Field<double?>("EstOutputHr")),
-                IsResignationDate = g.First().Field<int>("IsResignationDate"),
+                EmployeeID = MyUtility.Convert.GetString(g.First()["EmployeeID"]),
+                EmployeeName = MyUtility.Convert.GetString(g.First()["EmployeeName"]),
+                EmployeeSkill = MyUtility.Convert.GetString(g.First()["EmployeeSkill"]),
+                EstTotalCycleTime = g.Max(x => MyUtility.Convert.GetDouble(x["EstTotalCycleTime"])),
+                EstOutputHr = g.Max(x => MyUtility.Convert.GetDouble(x["EstOutputHr"])),
+                IsResignationDate = MyUtility.Convert.GetInt(g.First()["IsResignationDate"]),
             })
             .OrderByDescending(x => x.SortA)
             .ThenBy(x => x.SortB)
