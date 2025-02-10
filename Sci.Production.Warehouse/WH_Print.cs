@@ -60,21 +60,49 @@ namespace Sci.Production.Warehouse
             return Ict.Result.True;
         }
 
+        /// <inheritdoc/>
+        public DataTable GetP19Data()
+        {
+            DataTable retrunDt = new DataTable();
+            this.id = this.CurrentDataRow["ID"].ToString();
+            DualResult result = this.LoadData();
+            if (!result)
+            {
+                this.ShowErr(result);
+                return retrunDt;
+            }
+
+            retrunDt = this.dt;
+            return retrunDt;
+        }
+
         private DualResult LoadData()
         {
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.id.Length) { Value = this.id });
             string qty;
+            string minQRCode;
 
             switch (this.callFrom)
             {
                 case "P34":
                 case "P35":
                 case "P43":
+                case "P45":
                     qty = "isnull(t.QtyAfter,0.00) - isnull(t.QtyBefore,0.00)";
+                    minQRCode = @"
+,[MINDQRCode] = case when w.From_NewBarcodeSeq = '' then w.From_NewBarcode
+                     when w.From_NewBarcode = ''  then ''
+                else Concat(w.From_NewBarcode, '-', w.From_NewBarcodeSeq)   
+				end";
                     break;
                 default:
                     qty = "t.Qty";
+                    minQRCode = @"
+,[MINDQRCode] = case when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
+                        when w.To_NewBarcode = ''  then ''
+                else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)   
+				end";
                     break;
             }
 
@@ -83,10 +111,7 @@ namespace Sci.Production.Warehouse
 
 select  
 [Sel] = 0
-,[MINDQRCode] = case when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
-                        when w.To_NewBarcode = ''  then ''
-                else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)   
-				end
+{minQRCode}
 ,t2.*
 into #tmp
 from dbo.{Prgs.GetWHDetailTableName(this.callFrom)} t2 WITH (NOLOCK) 
@@ -105,7 +130,6 @@ select
     , StockType = t.StockType
     , StockQty = {qty}
     , MINDQRCode = t.MINDQRCode
-
     , Weight = isnull(rd.Weight, td.Weight)
     , ActualWeight = isnull(rd.ActualWeight, td.ActualWeight)
     , Location = dbo.Getlocation(f.Ukey)
@@ -218,7 +242,7 @@ drop table #tmp
                 return true;
             }
 
-            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, callFrom: "P17").ShowDialog();
+            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, callFrom: this.callFrom).ShowDialog();
 
             return true;
         }

@@ -317,7 +317,7 @@ Reason can’t be empty!!",
                 return false;
             }
 
-            WH_FromTo_Print p = new WH_FromTo_Print(this.CurrentMaintain, "P45")
+            WH_Print p = new WH_Print(this.CurrentMaintain, "P45")
             {
                 CurrentDataRow = this.CurrentMaintain,
             };

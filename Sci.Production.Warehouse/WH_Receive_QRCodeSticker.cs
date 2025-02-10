@@ -99,10 +99,10 @@ namespace Sci.Production.Warehouse
                                 .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                                .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                                .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Widths.AnsiChars(6), iseditingreadonly: true)
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
             }
@@ -117,7 +117,7 @@ namespace Sci.Production.Warehouse
                                 .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                                 .Text("StockUnit", header: "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
@@ -131,7 +131,7 @@ namespace Sci.Production.Warehouse
                     .Text("fabrictype", header: "Material" + Environment.NewLine + "Type", iseditingreadonly: true)
                     .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                    .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                    .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                     .Text("MINDQRCode", header: "Issue QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     ;
             }
@@ -238,7 +238,7 @@ namespace Sci.Production.Warehouse
                     FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
                     StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
                     StyleID = "ST:" + MyUtility.Convert.GetString(s["StyleID"]),
-                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty: ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
+                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty : ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
                     Relaxtime = "RELAXATION:" + MyUtility.Convert.GetFloat(s["Relaxtime"]) + "HRS",
                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
                 }).ToList();

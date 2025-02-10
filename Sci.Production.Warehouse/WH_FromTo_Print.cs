@@ -69,10 +69,6 @@ namespace Sci.Production.Warehouse
                 this.Close();
                 return true;
             }
-            else if (this.callFrom == "P45")
-            {
-                P19_Print.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, this.callFrom);
-            }
             else
             {
                 this.QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, this.callFrom);
@@ -87,18 +83,21 @@ namespace Sci.Production.Warehouse
             string qty;
             string qtyTo;
             string qtyFrom;
+            string balanceQty;
             switch (callFormName)
             {
-                case "P32":
-                case "P31":
-                    qty = "qty";
-                    qtyTo = "sd.Qty";
-                    qtyFrom = "qty";
-                    break;
-                default:
+                case "P22":
+                case "P23":
                     qty = "Qty";
                     qtyTo = "sd.Qty";
                     qtyFrom = "FromBalanceQty";
+                    balanceQty = "sd.Qty";
+                    break;
+                default:
+                    qty = "qty";
+                    qtyTo = "sd.Qty";
+                    qtyFrom = "qty";
+                    balanceQty = "f.InQty - f.OutQty + f.AdjustQty - f.ReturnQty";
                     break;
             }
 
@@ -129,7 +128,16 @@ group by FromPOID,FromSeq1,FromSeq2,FromRoll,FromDyelot,FromStockType,{qtyFrom},
 
 select
     Sel = Cast(0 as bit)
-    , sd.*
+    , sd.POID
+    , sd.Seq 
+    , sd.Seq1
+    , sd.Seq2
+    , sd.Roll
+    , sd.Dyelot
+    , sd.StockType
+    , sd.TransQty
+    , Qty = {balanceQty}
+    , sd.Barcode
     , Weight = isnull(rd.Weight, td.Weight)
     , ActualWeight = isnull(rd.ActualWeight, td.ActualWeight)
     , Location = dbo.Getlocation(f.Ukey)
