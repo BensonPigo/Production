@@ -397,6 +397,7 @@ order by x.[Bundle]");
                     RFIDScan = MyUtility.Convert.GetBool(row1["RFIDScan"]),
                     CutCell = row1["CutCell"].ToString(),
                     Dyelot = row1["Dyelot"].ToString(),
+                    BundleNo = row1["BundleNo"].ToString(),
                 }).ToList();
                 string fileName = "Cutting_P10_Layout1";
                 Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
@@ -760,6 +761,33 @@ order by x.[Bundle]");
 
             if (strPagetype == 9)
             {
+                /*
+                 Level L (Low)      7%  of codewords can be restored.
+                 Level M (Medium)   15% of codewords can be restored.
+                 Level Q (Quartile) 25% of codewords can be restored.
+                 Level H (High)     30% of codewords can be restored.
+                */
+                BarcodeWriter writer = new BarcodeWriter
+                {
+                    Format = BarcodeFormat.QR_CODE,
+                    Options = new QrCodeEncodingOptions
+                    {
+                        // Create Photo
+                        Height = 120,
+                        Width = 120,
+                        Margin = 0,
+                        CharacterSet = "UTF-8",
+                        PureBarcode = true,
+
+                        // 錯誤修正容量
+                        // L水平    7%的字碼可被修正
+                        // M水平    15%的字碼可被修正
+                        // Q水平    25%的字碼可被修正
+                        // H水平    30%的字碼可被修正
+                        ErrorCorrection = ErrorCorrectionLevel.L,
+                    },
+                };
+
                 data.ForEach(r =>
                 {
                     // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
@@ -772,27 +800,47 @@ Cut#: {r.Body_Cut}
 Color: {r.Color}
 Size: {r.Size}     Part: {r.Parts}     Dyelot: {r.Dyelot}
 Sea: {r.Season}     Brand: {r.ShipCode}
-MK#: {r.MarkerNo}     Cut/L:
+MK#: {r.MarkerNo}    Cut/L:
 Sub Process: {r.Artwork}
 Desc: {r.Desc}
 Qty: {r.Quantity}(#{no})  Item: {r.Item}";
 
                     row_ref = i / 3;
-                    row_ref = (row_ref * 5) - (row_ref / 3);
+                    row_ref = (row_ref * 7) - (row_ref / 3);
                     col_ref = (i % 3) * 4;
                     int cutindex = contian.IndexOf("Cut/L");
                     worksheet.Cells[1 + row_ref, 1 + col_ref] = contian;
                     worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(1, 8).Font.Bold = true; // 部分粗體
                     worksheet.Cells[1 + row_ref, 1 + col_ref].Characters(cutindex, 6).Font.Bold = true; // 部分粗體
-                    worksheet.Cells[2 + row_ref, 1 + col_ref] = r.EXCESS1;
-                    worksheet.Cells[2 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
-                    worksheet.Cells[3 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
+                    worksheet.Cells[4 + row_ref, 1 + col_ref] = r.EXCESS1;
+                    worksheet.Cells[4 + row_ref, 2 + col_ref] = r.NoBundleCardAfterSubprocess1;
+                    worksheet.Cells[5 + row_ref, 1 + col_ref] = "*" + r.Barcode + "*";
+
+                    Bitmap newQRCode = writer.Write(r.BundleNo.ToString().Trim());
+
+                    // 將圖片存儲為暫時檔案
+                    string tempFilePath = System.IO.Path.GetTempFileName();
+                    newQRCode.Save(tempFilePath);
+                    Excel.Range rng = worksheet.Cells[2 + row_ref, 2 + col_ref];
+
+                    // 將圖片插入到工作表中的指定位置
+                    Excel.Shape pictureShape = worksheet.Shapes.AddPicture(
+                        tempFilePath,
+                        Microsoft.Office.Core.MsoTriState.msoFalse,
+                        Microsoft.Office.Core.MsoTriState.msoCTrue,
+                        (float)rng.Left,
+                        (float)rng.Top,
+                        (float)rng.Height,
+                        (float)rng.Height);
+
+                    // 刪除暫時檔案
+                    System.IO.File.Delete(tempFilePath);
 
                     // 邊框 」貼紙裁線
                     if (i % 3 != 2 && (i / 3) % 3 != 2)
                     {
                         string colN = MyUtility.Excel.ConvertNumericToExcelColumn(3 + col_ref);
-                        Excel.Range excelRange = worksheet.get_Range($"{colN}{4 + row_ref}");
+                        Excel.Range excelRange = worksheet.get_Range($"{colN}{6 + row_ref}");
                         excelRange.Borders[Excel.XlBordersIndex.xlEdgeBottom].LineStyle = 1;
                         excelRange.Borders[Excel.XlBordersIndex.xlEdgeRight].LineStyle = 1;
                     }
