@@ -10,7 +10,7 @@
 	[DaysLeft] [varchar](10) NULL,
 	[InlineDate] [datetime] NOT NULL,
 	[OverDays] [int] NOT NULL,
-	[ChgOverCheck] [bit] NOT NULL,
+	[ChgOverCheck] [varchar](1) NOT NULL,
 	[CompletionDate] [datetime] NULL,
 	[ResponseDep] [nvarchar](200) NOT NULL,
 	[CheckListNo] [int] NOT NULL,
@@ -25,6 +25,7 @@
 	[Category] ASC,
 	[ProductType] ASC,
 	[Cell] ASC,
+	[Line] ASC,
 	[InlineDate] ASC,
 	[CheckListNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
