@@ -748,8 +748,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .CellTemplate("Template", "Template", this, width: Widths.AnsiChars(10))
                .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(4), decimal_places: 2, iseditingreadonly: true)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(3), iseditingreadonly: true)
-               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
-               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 1, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("DivSewer", header: "Div.\r\nSewer", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
+               .Numeric("OriSewer", header: "Ori.\r\nSewer", decimal_places: 2, width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(13));
 
