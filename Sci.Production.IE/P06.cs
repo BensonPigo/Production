@@ -1877,6 +1877,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         this.CurrentMaintain["PackerManpower"] = iPROCIPF00003;
                     }
 
+                    this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() : 0;
                     this.ReorderDetailDatas();
                     this.RefreshLineMappingBalancingSummary();
                 }
