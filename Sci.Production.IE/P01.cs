@@ -2146,6 +2146,7 @@ begin
 				where t.ID = {0}
 			)ver
 		)
+　　where id  = {0}
 end
 
 insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -2241,6 +2242,7 @@ begin
 				where t.ID = {0}
 			)ver
 		)
+　　where id  = {0}
 end
 
 insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
