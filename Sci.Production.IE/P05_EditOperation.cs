@@ -666,20 +666,21 @@ namespace Sci.Production.IE
                 return;
             }
             #endregion
-            #region 檢查No是否完整
-
-            // List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
-            // var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
-            // if (listLoseNo.Any())
-            // {
-            //     MyUtility.Msg.WarningBox($@"The following No is missing.
-            //     {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
-            //     return;
-            // }
-            #endregion
 
             if (this.IsP05)
             {
+                #region 檢查No是否完整, 只有P05才檢查
+
+                List<string> curNo = needKeepRows.Select(s => s["No"].ToString()).Distinct().ToList();
+                var listLoseNo = this.dtNoSelectItem.AsEnumerable().Where(s => !curNo.Contains(s["No"].ToString())).ToList();
+                if (listLoseNo.Any())
+                {
+                    MyUtility.Msg.WarningBox($@"The following No is missing.
+                 {listLoseNo.Select(s => s["No"].ToString()).JoinToString(",")}");
+                    return;
+                }
+                #endregion
+
                 // 更新調整過的DivSewer與SewerDiffPercentage
                 foreach (var needUpdRow in needKeepRows.Where(s => !MyUtility.Check.Empty(s["UpdDivSewer"])))
                 {

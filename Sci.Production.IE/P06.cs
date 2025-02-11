@@ -1877,6 +1877,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                         this.CurrentMaintain["PackerManpower"] = iPROCIPF00003;
                     }
 
+                    this.CurrentMaintain["SewerManpower"] = this.GetSewer() > 0 ? this.GetSewer() : 0;
+                    this.ReorderDetailDatas();
                     this.RefreshLineMappingBalancingSummary();
                 }
             }
@@ -2919,6 +2921,28 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             }
 
             this.gridLineMappingRight.DataSource = dtRight;
+        }
+
+        /// <summary>
+        /// 重新排序No
+        /// </summary>
+        private void ReorderDetailDatas()
+        {
+            List<string> orderedDetailDatas = this.DetailDatas
+                .Select(row => row["No"].ToString())
+                .Distinct()
+                .OrderBy(no => no)
+                .ToList();
+            int newNo = 1;
+            foreach (string no in orderedDetailDatas)
+            {
+                foreach (DataRow innerRow in this.DetailDatas.Where(r => r["No"].ToString() == no))
+                {
+                    innerRow["No"] = newNo.ToString("D2");
+                }
+
+                newNo++;
+            }
         }
     }
 }
