@@ -88,7 +88,7 @@ namespace Sci.Production.Warehouse
                     this.labTo.Text = "To Inventory";
                     break;
                 case "P24":
-                    this.labFrom.Text = "From Bulk";
+                    this.labFrom.Text = "From Inventory";
                     this.labTo.Text = "To Scrap";
                     break;
                 case "P25":

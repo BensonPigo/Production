@@ -24,12 +24,7 @@ namespace Sci.Production.Warehouse
 
         // P07 或者 P18
         private bool IsP07;
-        private bool IsP17;
         private bool IsP18;
-        private bool IsP34;
-        private bool IsP35;
-        private bool IsP43;
-        private bool IsP37;
         private string rgCode;
 
         /// <summary>

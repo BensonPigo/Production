@@ -269,7 +269,7 @@ order by td.Dyelot, Len(td.Roll), td.Roll
                     return true;
                 }
 
-                var qrCodeSticker = new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, callFrom: "P45");
+                var qrCodeSticker = new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, callFrom: "P19");
                 System.Windows.Forms.DialogResult dialogResult = qrCodeSticker.ShowDialog();
 
                 // 在這裡進行任何額外的操作

@@ -89,7 +89,7 @@ namespace Sci.Production.Warehouse
                 case "P35":
                 case "P43":
                 case "P45":
-                    qty = "isnull(t.QtyAfter,0.00) - isnull(t.QtyBefore,0.00)";
+                    qty = "isnull(t.QtyAfter,0.00)";
                     minQRCode = @"
 ,[MINDQRCode] = case when w.From_NewBarcodeSeq = '' then w.From_NewBarcode
                      when w.From_NewBarcode = ''  then ''
