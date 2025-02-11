@@ -378,7 +378,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>ISSUE TIME:</Value>
+                  <Value>PRINT TIME:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>
