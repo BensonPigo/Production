@@ -213,6 +213,9 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 ExcludeNonRevenue = this.chkExcludeNonRevenue.Checked,
                 ExcludeSampleFactory = this.checkSampleFty.Checked,
                 ExcludeOfMockUp = this.checkExcludeOfMockUp.Checked,
+                IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
+                StartDate = (DateTime)this.dateDateStart.Value,
+                EndDate = (DateTime)this.dateDateEnd.Value,
             };
 
             Base_ViewModel resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
@@ -383,15 +386,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             #endregion
 
             #region 整理工作天數
-            sewing_R02_Model = new Sewing_R02_ViewModel()
-            {
-                IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
-                M = this.mDivision,
-                Factory = this.factory,
-                StartDate = this.date1.Value,
-                EndDate = this.date2.Value,
-            };
-
             resultReport = biModel.GetWorkDay(this.SewOutPutData, sewing_R02_Model);
             if (!resultReport.Result)
             {
@@ -403,351 +397,18 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             #endregion
 
             #region Direct Manpower(From PAMS)
-            sewing_R02_Model = new Sewing_R02_ViewModel()
-            {
-                M = this.mDivision,
-                Factory = this.factory,
-                StartDate = this.date1.Value,
-                EndDate = this.date2.Value,
-            };
-
             this.pams = biModel.GetPAMS(sewing_R02_Model);
             #endregion
 
             #region SewingR04 外發加工段計算 + SPH TotalCPU 計算
-            List<SqlParameter> listPar = new List<SqlParameter>()
+            resultReport = biModel.GetSubprocessAndSPHTotalCPU(this.SewOutPutData, sewing_R02_Model);
+            if (!resultReport.Result)
             {
-                new SqlParameter("@Md", this.mDivision),
-                new SqlParameter("@F", this.factory),
-                new SqlParameter("@SDate",  this.date1),
-                new SqlParameter("@EDate",  this.date2),
-                new SqlParameter("@Include_Artwork", true),
-                new SqlParameter("@SewinglineStart", this.line1),
-                new SqlParameter("@SewinglineEnd", this.line2),
-            };
-
-            string sqlwhere = string.Empty;
-
-            if (!this.line1.Empty())
-            {
-                sqlwhere += " and s.SewingLineID >= @line1";
-            }
-
-            if (!this.line1.Empty())
-            {
-                sqlwhere += " and s.SewingLineID <= @line2";
-            }
-
-            string sqlGetSubConPo = $@"
-declare @StartDate date = @SDate
-declare @EndDate date = @EDate
-declare @Factory varchar(10) = @F
-declare @M varchar(10) = @Md
-declare @line1 varchar(10) = @SewinglineStart
-declare @line2 varchar(10) = @SewinglineEnd
-
-
-select  s.OutputDate
-		, s.Category
-		, s.Shift
-		, s.SewingLineID
-		, [ActManPower] = s.Manpower
-		, s.Team
-		, sd.OrderId
-		, sd.ComboType
-		, sd.WorkHour
-		, sd.QAQty
-		, sd.InlineQty
-		, [OrderCategory] = isnull(o.Category,'')
-		, o.LocalOrder
-		, s.FactoryID
-		, f.MDivisionID
-		, [OrderProgram] = isnull(o.ProgramID,'') 
-		, [MockupProgram] = isnull(mo.ProgramID,'')
-		, [OrderCPU] = isnull(o.CPU,0)
-		, [OrderCPUFactor] = isnull(o.CPUFactor,0)
-		, [MockupCPU] = isnull(mo.Cpu,0)
-		, [MockupCPUFactor] = isnull(mo.CPUFactor,0)
-		, [OrderStyle] = isnull(o.StyleID,'')
-		, [MockupStyle] = isnull(mo.StyleID,'')
-        , [Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id ,sd.ComboType),100)/100
-		, System.StdTMS
-        , o.SubconInType
-        , [SubconOutFty] = iif(sf.id is null,'Other',s.SubconOutFty)
-INTO #tmpSewingDetail
-from System,SewingOutput s WITH (NOLOCK) 
-inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId 
-left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
-left join SCIFty sf WITH (NOLOCK) on sf.ID = s.SubconOutFty
-left join factory f WITH (NOLOCK) on f.id=s.FactoryID
-where	(o.CateGory NOT IN ('G','A') or s.Category='M') 
-and	s.OutputDate between @StartDate and @EndDate
-and s.FactoryID = @Factory and s.MDivisionID = @M
-{sqlwhere}
-
-select OutputDate,Category
-	   , Shift
-	   , SewingLineID
-	   , ActManPower1 = ActManPower
-	   , Team
-	   , OrderId
-	   , ComboType
-	   , WorkHour = Round(sum(WorkHour),3)
-	   , QAQty = sum(QAQty)
-	   , InlineQty = sum(InlineQty)
-	   , OrderCategory
-	   , LocalOrder
-	   , FactoryID
-	   , MDivisionID
-	   , OrderProgram
-	   , MockupProgram
-	   , OrderCPU
-	   , OrderCPUFactor
-	   , MockupCPU
-	   , MockupCPUFactor
-	   , OrderStyle
-	   , MockupStyle
-	   , Rate
-	   , StdTMS
-	   , IIF(Shift <> 'O' and Category <> 'M' and LocalOrder = 1, 'I',Shift) as LastShift
-       , SubconInType
-       , [SubconOutFty] = isnull(SubconOutFty,'')
-INTO #tmpSewingGroup
-from #tmpSewingDetail
-group by OutputDate, Category, Shift, SewingLineID, Team, OrderId, ComboType
-		 , OrderCategory, LocalOrder, FactoryID, MDivisionID, OrderProgram, MockupProgram
-		 , OrderCPU, OrderCPUFactor, MockupCPU, MockupCPUFactor, OrderStyle
-		 , MockupStyle, Rate, StdTMS,SubconInType,isnull(SubconOutFty,'')
-        ,ActManPower
-
-select t.*
-	   , isnull(w.Holiday, 0) as Holiday
-	   , ActManPower1 as ActManPower
-INTO #tmp1stFilter
-from #tmpSewingGroup t
-left join WorkHour w WITH (NOLOCK) on w.FactoryID = t.FactoryID 
-									  and w.Date = t.OutputDate 
-									  and w.SewingLineID = t.SewingLineID
-
-select OutputDate
-	   , Shift = IIF(LastShift = 'D', 'Day'
-									, IIF(LastShift = 'N', 'Night'
-														 , IIF(LastShift = 'O', 'Subcon-Out'
-														 					  , 'Subcon-In')))
-	   , Team
-	   , SewingLineID
-	   , OrderId
-	   , Style = IIF(Category = 'M', MockupStyle, OrderStyle)
-	   , QAQty
-	   , ActManPower
-	   , Program = IIF(Category = 'M',MockupProgram,OrderProgram)
-	   , WorkHour
-	   , StdTMS
-	   , MockupCPU
-	   , MockupCPUFactor
-	   , OrderCPU
-	   , OrderCPUFactor
-	   , Rate
-	   , Category
-	   , LastShift
-	   , ComboType
-	   , FactoryID
-	   , MDivisionID
-       , SubconInType
-       , SubconOutFty
-into #tmp
-from #tmp1stFilter
-
-alter table #tmp alter column OrderId varchar(13)
-alter table #tmp alter column ComboType varchar(1)
-alter table #tmp alter column QAQty int
-alter table #tmp alter column LastShift varchar(1)
-alter table #tmp alter column SubconInType varchar(1)
-
-Select ID
-		, rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   								, iif(ProductionUnit = 'QTY', 'AMT'
-		   															, '')),
-        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							    when ProductionUnit = 'TMS' then 3
-							    else 0 end
-into #tmpArtwork
-from ArtworkType WITH (NOLOCK)
-where Classify in ('I','A','P') 
-		and IsTtlTMS = 0
-        and IsPrintToCMP=1
-union all
-select distinct ID = ap.LocalSuppID + ' ' + a.ID
-, rs = iif(ProductionUnit = 'TMS', 'CPU'
-		   								, iif(ProductionUnit = 'QTY', 'AMT'
-		   															, '')),
-        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
-							    when ProductionUnit = 'TMS' then 3
-							    else 0 end
-from ArtworkType a WITH (NOLOCK)
-inner join artworkpo ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
-
---準備台北資料(須排除這些)
-select ps.ID
-into #TPEtmp
-from PO_Supp ps
-inner join PO_Supp_Detail psd on ps.ID=psd.id and ps.SEQ1=psd.Seq1
-inner join Fabric fb on psd.SCIRefno = fb.SCIRefno 
-inner join MtlType ml on ml.id = fb.MtlTypeID
-where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
-and ml.isThread=1 
-and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
-    
-SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
-						else ot.ArtworkTypeID end
-	   , a.OrderId
-	   , a.ComboType
-       , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-into #tmpAllSubprocess
-from #tmp a
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
-inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
-left join (		
-	  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
-	  from ArtworkPO ap
-	  inner join ArtworkPO_Detail apd on ap.ID= apd.ID
-) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID and apd.LocalSuppID in ('G168','SPP')
-where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
-        --排除 subcon in non sister的數值
-      and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
-      and ot.Price > 0 		    
-	  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-		  or ot.ArtworkTypeID <> 'SP_THREAD')
-group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
-
---FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
--- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
-
-update s set s.Price = 0
-    from #tmpAllSubprocess s
-    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
-    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
-
-select ArtworkTypeID = t1.ID
-	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
-	   , rs
-into #tmpFinal#tmpArtwork 
-from #tmpArtwork t1
-left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
-group by t1.ID, rs
-order by t1.ID
-
--- 取得SubConOut 數值
---先抓出SubCon_R16 
---有在Subcon_R16 [Subcon Purchase order]且狀態為Approve=>視同外發
-;with cte
-as
-(
-	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType WITH (NOLOCK) ,
-	(
-		select distinct (select orders.poid from orders WITH (NOLOCK) where id=b.OrderId) orderid 
-		from dbo.artworkpo a	WITH (NOLOCK) 
-		inner join dbo.ArtworkPo_Detail b WITH (NOLOCK) on b.id = a.id
-		where 1=1
-		and (a.issuedate between @StartDate and @EndDate) 
-		and a.mdivisionid = @M and a.factoryid = @Factory
-		AND a.Status = 'Approved'
-	)t
-	where Artworktype.IsSubprocess=1 
-)
-select aa.FactoryID
-,cte.artworktypeid
-,aa.POID
-,aa.MDivisionID
-into #tmpSubConR16
-from cte
-left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
-left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
-outer apply (
-	select isnull(sum(t.po_amt),0.00) po_amt, isnull(sum(t.po_qty),0) po_qty from (
-	select po.currencyid,
-			pod.Price,
-			pod.poQty po_qty
-			,pod.poQty*pod.Price*dbo.getRate('FX',po.CurrencyID,'USD',po.issuedate) po_amt
-			,dbo.getRate('FX',po.CurrencyID,'USD',po.issuedate) rate
-	from ArtworkPo po WITH (NOLOCK) 
-    inner join ArtworkPo_Detail pod WITH (NOLOCK) on pod.id = po.Id 
-    inner join orders WITH (NOLOCK) on orders.id = pod.orderid
-		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID    
-        AND Orders.Category=aa.Category and po.LocalSuppID not in ('SPP','G168')
-    ) t
-) x		
-where po_qty > 0
-
-select  FactoryID = s.FactoryID
-,OrderId = sd.OrderId
-,Team = s.Team
-,OutputDate = s.OutputDate
-,SewingLineID = s.SewingLineID
-,LastShift = IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) 
-,Category = s.Category
-,ComboType = sd.ComboType
-,SubconOutFty = s.SubconOutFty
-,SubConOutContractNumber = s.SubConOutContractNumber
-,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100
-,sd.QAQty
-,ot.Price
-,ot.ArtworkTypeID
-,ttlPrice = Round(sum(sd.QAQty*isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100 * ot.Price)over(partition by s.FactoryID,sd.OrderId,s.Team,s.OutputDate,s.SewingLineID, IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) ,s.Category,sd.ComboType,s.SubconOutFty,s.SubConOutContractNumber,ot.ArtworkTypeID),3)
-,ta.rs
-into #tmpFinal
-from SewingOutput s WITH (NOLOCK) 
-inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
-inner join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
-inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o.id
-inner join #tmpArtwork ta WITH (NOLOCK) on ot.ArtworkTypeID = ta.ID
-where 1=1 
-and  exists(
-	select 1 from #tmpSubConR16 s 
-	where s.POID = sd.OrderID
-	and s.FactoryID = s.FactoryID
-	and s.MDivisionID = s.MDivisionID
-	and s.artworktypeid = ot.ArtworkTypeID
-)
-and (@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null or s.OutputDate <= @EndDate) and
-((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
-			  or ot.ArtworkTypeID <> 'SP_THREAD')
-{sqlwhere}
-
--- 取得外發清單
-select ArtworkTypeID
-,[ProductionUnit] = iif(a.ProductionUnit = 'TMS', 'CPU'
-		   			, iif(a.ProductionUnit = 'QTY', 'AMT', ''))
-,[TTL_Price] = sum(ttlPrice) 
-from #tmpFinal t
-left join ArtworkType a WITH (NOLOCK) on t.ArtworkTypeID = a.ID
-group by t.ArtworkTypeID,a.ProductionUnit
-
-declare　@TTLCPU float = (select sum(Price) from #tmpFinal#tmpArtwork where rs ='CPU')
-declare　@AMT float = (select sum(Price) from #tmpFinal#tmpArtwork where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
-declare @SubConOutCPU float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='CPU')
-declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
-
-
--- 取得SPH Total CPU
-select [SPH_ttlCPU] = isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5)
-
-drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tmpSewingGroup,#TPEtmp,#tmpFinal#tmpArtwork,#tmpFinal,#tmpSubConR16
-";
-
-            DualResult result = DBProxy.Current.Select(null, sqlGetSubConPo, listPar, out this.SewingR04);
-            if (!result)
-            {
-                failResult = new DualResult(false, "Query data fail\r\n" + result.ToString());
+                failResult = new DualResult(false, "Query data fail\r\n" + resultReport.Result.ToString());
                 return failResult;
             }
 
+            this.SewingR04 = resultReport.DtArr;
             #endregion
 
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
@@ -883,7 +544,7 @@ drop table #tmp,#tmp1stFilter,#tmpAllSubprocess,#tmpArtwork,#tmpSewingDetail,#tm
 
                 insertRow++;
 
-                // [GPH]
+                // P_Import_CMPByDate 也要一起異動
                 switch (i)
                 {
                     // [GPH]
