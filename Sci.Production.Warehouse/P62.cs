@@ -6,6 +6,7 @@ using Sci.Production.Automation;
 using Sci.Production.Automation.LogicLayer;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
@@ -958,9 +960,188 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            P62_Print callForm;
-            callForm = new P62_Print(this.CurrentMaintain);
-            callForm.ShowDialog(this);
+            WH_Print p = new WH_Print(this.CurrentMaintain, "P62")
+            {
+                CurrentDataRow = this.CurrentMaintain,
+            };
+
+            p.ShowDialog();
+
+            // 代表要列印 RDLC
+            if (p.IsPrintRDLC)
+            {
+                string sqlcmd = $@"update Issue set  PrintName = '{Env.User.UserID}' , PrintDate = GETDATE()
+                                where id = '{this.CurrentMaintain["id"]}'";
+
+                DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return false;
+                }
+
+                string id = this.CurrentMaintain["ID"].ToString();
+                string remark = this.CurrentMaintain["Remark"].ToString();
+                string cutplanID = this.CurrentMaintain["cutplanID"].ToString();
+                string issuedate = ((DateTime)MyUtility.Convert.GetDate(this.CurrentMaintain["issuedate"])).ToShortDateString();
+                string factoryID = this.CurrentMaintain["FactoryID"].ToString();
+                string confirmTime = this.CurrentMaintain["Status"].EqualString("CONFIRMED") ? MyUtility.Convert.GetDate(this.CurrentMaintain["EditDate"]).Value.ToString("yyyy/MM/dd HH:mm:ss") : string.Empty;
+
+                #region  抓表頭資料
+                List<SqlParameter> pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@MDivision", Env.User.Keyword),
+                };
+                result = DBProxy.Current.Select(string.Empty, @"select NameEN from MDivision where id = @MDivision", pars, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+
+                string rptTitle = dt.Rows[0]["NameEn"].ToString();
+                ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("cutplanID", cutplanID));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuetime", DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("confirmTime", confirmTime));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Factory", "Factory: " + factoryID));
+                #endregion
+
+                #region  抓表身資料
+                sqlcmd = @"
+select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
+
+                        AND(t.seq1 = lag(t.seq1, 1, '') over(order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
+
+                        AND(t.seq2 = lag(t.seq2, 1, '') over(order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)))
+			          , ''
+                      , t.poid) 
+        , [Seq] = IIF((t.poid = lag(t.poid, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
+
+                         AND(t.seq1 = lag(t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
+			             AND(t.seq2 = lag(t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+			            , ''
+                        , t.seq1+ '-' +t.seq2)
+        , [GroupPoid] = t.poid 
+        , [GroupSeq] = t.seq1+ '-' +t.seq2 
+        , [desc] = IIF((t.poid = lag(t.poid, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
+                          AND(t.seq1 = lag(t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
+			              AND(t.seq2 = lag(t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+				        , ''
+                        , (SELECT Concat(stock7X.value
+                                         , char(10)
+                                            , rtrim(fbr.DescDetail)
+                                            , char (10)
+                                            , char (10)
+                                            , (Select concat(ID, '-', Name) from Color WITH(NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
+                                        )
+									FROM fabric fbr WITH(NOLOCK) WHERE SCIRefno = p.SCIRefno))
+		, Mdesc = IIF((t.poid = lag(t.poid, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
+                          AND(t.seq1 = lag(t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
+			              AND(t.seq2 = lag(t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+                          ,Mdesc2.value,Mdesc.value)
+        , t.Roll
+        , t.Dyelot
+        , t.Qty
+        , p.StockUnit
+        , [location]=dbo.Getlocation(b.ukey)  
+        , b.ContainerCode
+        , [Total]=sum(t.Qty) OVER(PARTITION BY t.POID , t.Seq1, t.Seq2 )
+        , [ToneGrp] =b .Tone
+from dbo.Issue_Detail t WITH (NOLOCK)
+inner join Issue_Summary iss WITH (NOLOCK) on t.Issue_SummaryUkey = iss.Ukey
+left join dbo.PO_Supp_Detail p  WITH (NOLOCK) on    p.id= t.poid
+                                                    and p.SEQ1 = t.Seq1
+                                                    and p.seq2 = t.Seq2
+left join FtyInventory b WITH (NOLOCK) on   b.poid = t.poid
+                                            and b.seq1 = t.seq1
+                                            and b.seq2= t.seq2
+                                            and b.Roll = t.Roll
+                                            and b.Dyelot = t.Dyelot
+                                            and b.StockType = t.StockType
+outer apply(select value = Concat( 'Relaxation Type：'
+                         ,(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
+                         ,CHAR(13) + CHAR(10)
+                         ,CHAR(13) + CHAR(10)
+                         ,(Select iss.Seq1 + '-' + iss.Seq2 + ':' + psdsS.SpecValue + pd.Special + '=' + convert(varchar, pd.Qty) 
+                            from PO_Supp_Detail_Spec psdsS WITH (NOLOCK) 
+                            join PO_Supp_Detail pd on pd.ID = psdsS.ID and pd.seq1 = psdsS.seq1 and pd.seq2 = psdsS.seq2
+                           where psdsS.ID = iss.POID and psdsS.seq1 = iss.seq1 and psdsS.seq2 = iss.seq2 and psdsS.SpecColumnID = 'Size'))) Mdesc
+outer apply(select value = Concat(CHAR(13) + CHAR(10),CHAR(13) + CHAR(10)
+                         ,(Select iss.Seq1 + '-' + iss.Seq2 + ':' + psdsS.SpecValue + pd.Special + '=' + convert(varchar, pd.Qty) 
+                            from PO_Supp_Detail_Spec psdsS WITH (NOLOCK) 
+                            join PO_Supp_Detail pd on pd.ID = psdsS.ID and pd.seq1 = psdsS.seq1 and pd.seq2 = psdsS.seq2
+                           where psdsS.ID = iss.POID and psdsS.seq1 = iss.seq1 and psdsS.seq2 = iss.seq2 and psdsS.SpecColumnID = 'Size'))) Mdesc2
+outer apply (
+    select value = iif(left(t.seq1, 1) != '7', ''
+                                               , '**PLS USE STOCK FROM SP#:' + iif(isnull(concat(p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '', concat(p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')
+) as stock7X
+where t.id= @ID";
+
+                pars = new List<SqlParameter>
+                {
+                    new SqlParameter("@ID", this.CurrentMaintain["ID"].ToString()),
+                };
+
+                result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtExcel);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
+
+                if (dtExcel == null || dtExcel.Rows.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not found !!!", string.Empty);
+                    return false;
+                }
+
+                // 傳 list 資料 (直接利用P10_PrintData的結構)
+                List<P10_PrintData> data = dtExcel.AsEnumerable()
+                    .Select(row1 => new P10_PrintData()
+                    {
+                        GroupPoid = row1["GroupPoid"].ToString().Trim(),
+                        GroupSeq = row1["GroupSeq"].ToString().Trim(),
+                        Poid = row1["poid"].ToString().Trim(),
+                        Seq = row1["SEQ"].ToString().Trim(),
+                        Desc = row1["desc"].ToString().Trim(),
+                        MDesc = row1["Mdesc"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
+                        Unit = row1["StockUnit"].ToString().Trim(),
+                        Roll = row1["Roll"].ToString().Trim(),
+                        Dyelot = row1["Dyelot"].ToString().Trim(),
+                        Qty = row1["Qty"].ToString().Trim(),
+                        Total = row1["Total"].ToString().Trim(),
+                        ToneGrp = row1["ToneGrp"].ToString().Trim(),
+                    }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
+
+                report.ReportDataSource = data;
+                #endregion
+
+                #region  指定是哪個 RDLC
+
+                // DualResult result;
+                Type reportResourceNamespace = typeof(P10_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P62_Print.rdlc";
+
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+                {
+                    return false;
+                }
+
+                report.ReportResource = reportresource;
+
+                // 開啟 report view
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                };
+                frm.Show();
+
+                #endregion
+            }
 
             return true;
         }

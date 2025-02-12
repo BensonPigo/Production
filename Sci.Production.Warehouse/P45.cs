@@ -317,18 +317,28 @@ Reason can’t be empty!!",
                 return false;
             }
 
-            DateTime? issueDate = MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"]);
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new ReportParameter("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
-            report.ReportParameters.Add(new ReportParameter("IssueDate", issueDate.HasValue ? issueDate.Value.ToString("yyyy/MM/dd") : string.Empty));
-            report.ReportParameters.Add(new ReportParameter("Remark", MyUtility.Convert.GetString(this.CurrentMaintain["Remark"])));
+            WH_Print p = new WH_Print(this.CurrentMaintain, "P45")
+            {
+                CurrentDataRow = this.CurrentMaintain,
+            };
 
-            List<SqlParameter> pars = new List<SqlParameter>
+            p.ShowDialog();
+
+            // 代表要列印 RDLC
+            if (p.IsPrintRDLC)
+            {
+                DateTime? issueDate = MyUtility.Convert.GetDate(this.CurrentMaintain["IssueDate"]);
+                ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new ReportParameter("ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+                report.ReportParameters.Add(new ReportParameter("IssueDate", issueDate.HasValue ? issueDate.Value.ToString("yyyy/MM/dd") : string.Empty));
+                report.ReportParameters.Add(new ReportParameter("Remark", MyUtility.Convert.GetString(this.CurrentMaintain["Remark"])));
+
+                List<SqlParameter> pars = new List<SqlParameter>
             {
                 new SqlParameter("@ID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
             };
 
-            string sqlcmd = @"
+                string sqlcmd = @"
 select  ad.POID
 	, [Seq] = concat(ad.Seq1, '-', ad.Seq2)
 	, ad.Roll
@@ -355,54 +365,55 @@ left join FtyInventory fi WITH (NOLOCK) on fi.POID = ad.POID and fi.Seq1 = ad.Se
 where a.ID = @ID
 and a.Status = 'Confirmed'
 ";
-            DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
-            if (!result)
-            {
-                this.ShowErr(sqlcmd, result);
-            }
-
-            if (dtDetail == null || dtDetail.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtDetail");
-                return false;
-            }
-
-            // 傳 list 資料
-            List<P45_PrintData> data = dtDetail.AsEnumerable()
-                .Select(row1 => new P45_PrintData()
+                DualResult result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
+                if (!result)
                 {
-                    POID = row1["POID"].ToString().Trim(),
-                    SEQ = row1["SEQ"].ToString().Trim(),
-                    Roll = row1["Roll"].ToString().Trim(),
-                    Dyelot = row1["Dyelot"].ToString().Trim(),
-                    ColorID = row1["ColorID"].ToString().Trim(),
-                    Description = row1["Description"].ToString().Trim(),
-                    AdjustQty = row1["AdjustQty"].ToString().Trim(),
-                    StockUnit = row1["StockUnit"].ToString().Trim(),
-                    Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
-                    Total = row1["Total"].ToString().Trim(),
-                }).ToList();
+                    this.ShowErr(sqlcmd, result);
+                }
 
-            report.ReportDataSource = data;
+                if (dtDetail == null || dtDetail.Rows.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not found !!!", "DataTable dtDetail");
+                    return false;
+                }
 
-            // 指定是哪個 RDLC
-            Type reportResourceNamespace = typeof(P45_PrintData);
-            System.Reflection.Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P45_Print.rdlc";
+                // 傳 list 資料
+                List<P45_PrintData> data = dtDetail.AsEnumerable()
+                    .Select(row1 => new P45_PrintData()
+                    {
+                        POID = row1["POID"].ToString().Trim(),
+                        SEQ = row1["SEQ"].ToString().Trim(),
+                        Roll = row1["Roll"].ToString().Trim(),
+                        Dyelot = row1["Dyelot"].ToString().Trim(),
+                        ColorID = row1["ColorID"].ToString().Trim(),
+                        Description = row1["Description"].ToString().Trim(),
+                        AdjustQty = row1["AdjustQty"].ToString().Trim(),
+                        StockUnit = row1["StockUnit"].ToString().Trim(),
+                        Location = row1["Location"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
+                        Total = row1["Total"].ToString().Trim(),
+                    }).ToList();
 
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
-            {
-                return false;
+                report.ReportDataSource = data;
+
+                // 指定是哪個 RDLC
+                Type reportResourceNamespace = typeof(P45_PrintData);
+                System.Reflection.Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P45_Print.rdlc";
+
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+                {
+                    return false;
+                }
+
+                report.ReportResource = reportresource;
+
+                // 開啟 report view
+                var frm = new Win.Subs.ReportView(report)
+                {
+                    MdiParent = this.MdiParent,
+                };
+                frm.Show();
             }
-
-            report.ReportResource = reportresource;
-
-            // 開啟 report view
-            var frm = new Win.Subs.ReportView(report)
-            {
-                MdiParent = this.MdiParent,
-            };
-            frm.Show();
 
             return base.ClickPrint();
         }

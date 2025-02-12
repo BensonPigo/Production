@@ -1169,44 +1169,21 @@ namespace Sci.Production.Warehouse
                 return;
             }
 
-            DualResult result;
-            #region store procedure parameters
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
+            string sqlcmd = $@"
+DECLARE @MaterialItemList dbo.MaterialItemList 
 
-            System.Data.SqlClient.SqlParameter sp_StocktakingID = new System.Data.SqlClient.SqlParameter
-            {
-                ParameterName = "@Ukey",
-                Value = this.dr["ukey"].ToString(),
-            };
-            cmds.Add(sp_StocktakingID);
+INSERT INTO @MaterialItemList
+VALUES ('{this.dr["id"]}', '{this.dr["seq1"]}', '{this.dr["seq2"]}')
 
-            System.Data.SqlClient.SqlParameter sp_poid = new System.Data.SqlClient.SqlParameter
-            {
-                ParameterName = "@poid",
-                Value = this.dr["id"].ToString(),
-            };
-            cmds.Add(sp_poid);
+EXEC usp_MutipleItemRecaculate @MaterialItemList
+";
 
-            System.Data.SqlClient.SqlParameter sp_seq1 = new System.Data.SqlClient.SqlParameter
+            this.ShowWaitMessage($"Data Processing....");
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            this.HideWaitMessage();
+            if (!result)
             {
-                ParameterName = "@seq1",
-                Value = this.dr["seq1"].ToString(),
-            };
-            cmds.Add(sp_seq1);
-
-            System.Data.SqlClient.SqlParameter sp_seq2 = new System.Data.SqlClient.SqlParameter
-            {
-                ParameterName = "@seq2",
-                Value = this.dr["seq2"].ToString(),
-            };
-            cmds.Add(sp_seq2);
-
-            #endregion
-            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_SingleItemRecaculate", cmds)))
-            {
-                // MyUtility.Msg.WarningBox(result.Messages[1].ToString());
-                Exception ex = result.GetException();
-                MyUtility.Msg.WarningBox(ex.Message);
+                this.ShowErr(result);
                 return;
             }
 
