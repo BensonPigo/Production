@@ -90,7 +90,7 @@ SET
       ,t.[Sp] = s.[Sp]
       ,t.[MasterSP] = s.[MasterSP]
       ,t.[M] = s.[M]
-      ,t.[Factory] = s.[Factory]
+      ,t.[FactoryID] = s.[Factory]
       ,t.[Category] = s.[Category]
       ,t.[Program] = s.[Program]
       ,t.[Style] = s.[Style]
@@ -142,7 +142,7 @@ AND t.SubprocessID = s.SubprocessID
 
 insert into P_SubprocessWIP (
    [Bundleno]   ,[RFIDProcessLocationID]   ,[EXCESS]  ,[FabricKind]  ,[CutRef]  ,[Sp]  ,[MasterSP]
-      ,[M] ,[Factory],[Category],[Program],[Style],[Season],[Brand],[Comb],[CutNo],[FabPanelCode],[Article]
+      ,[M] ,[FactoryID],[Category],[Program],[Style],[Season],[Brand],[Comb],[CutNo],[FabPanelCode],[Article]
       ,[Color],[ScheduledLineID],[ScannedLineID],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Artwork]
       ,[Qty],[SubprocessID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess],[Location],[BundleCreateDate]
       ,[BuyerDeliveryDate],[SewingInline],[SubprocessQAInspectionDate],[InTime],[OutTime],[POSupplier]
