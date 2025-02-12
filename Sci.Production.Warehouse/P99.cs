@@ -6721,79 +6721,39 @@ WHERE FTI.StockType='O'
                 case "P31":
                 case "P32":
                     sqlcmd = @"
-use Production
-
-declare @POID as varchar(13) 
-	, @SEQ1 as varchar(3) 
-	, @SEQ2 as varchar(2) 
-	, @ukey as bigint 
+USE PRODUCTION
 
 -- From
-DECLARE P99_tempTable_From_cur 
-CURSOR FOR 
-	select distinct  t.FromPOID, t.FromSeq1, t.FromSeq2, m.Ukey
-	from #tmp t
-	left join MDivisionPODetail m on t.FromPoId = m.POID and t.FromSeq1 = m.Seq1 and t.FromSeq2 = m.Seq2
+DECLARE @MaterialItemList dbo.MaterialItemList 
 
-OPEN P99_tempTable_From_cur --開始run cursor                   
-FETCH NEXT FROM P99_tempTable_From_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
-	
-	FETCH NEXT FROM P99_tempTable_From_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-END
-CLOSE P99_tempTable_From_cur
-DEALLOCATE P99_tempTable_From_cur
+INSERT INTO @MaterialItemList
+SELECT DISTINCT FromPOID, FromSeq1, FromSeq2
+FROM #tmp
+
+EXEC usp_MutipleItemRecaculate @MaterialItemList
 
 -- To
-DECLARE P99_tempTable_To_cur 
-CURSOR FOR 
-	select distinct  t.ToPOID, t.ToSeq1, t.ToSeq2, m.Ukey
-	from #tmp t
-	left join MDivisionPODetail m on t.ToPoId = m.POID and t.ToSeq1 = m.Seq1 and t.ToSeq2 = m.Seq2
+DELETE @MaterialItemList
 
-OPEN P99_tempTable_To_cur --開始run cursor                   
-FETCH NEXT FROM P99_tempTable_To_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
-	
-	FETCH NEXT FROM P99_tempTable_To_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-END
-CLOSE P99_tempTable_To_cur
-DEALLOCATE P99_tempTable_To_cur
+INSERT INTO @MaterialItemList
+SELECT DISTINCT ToPOID, ToSeq1, ToSeq2
+FROM #tmp
 
-drop table #tmp
+EXEC usp_MutipleItemRecaculate @MaterialItemList
 ";
                     break;
                 default:
                     sqlcmd = @"
-use Production
+USE PRODUCTION
 
-declare @POID as varchar(13) 
-	, @SEQ1 as varchar(3) 
-	, @SEQ2 as varchar(2) 
-	, @ukey as bigint 
+-- From
+DECLARE @MaterialItemList dbo.MaterialItemList 
 
-DECLARE P99_tempTable_cur 
-CURSOR FOR 
-	select distinct  t.POID, t.Seq1, t.Seq2, m.Ukey
-	from #tmp t
-	left join MDivisionPODetail m on t.PoId = m.POID and t.Seq1 = m.Seq1 and t.Seq2 = m.Seq2
+INSERT INTO @MaterialItemList
+SELECT DISTINCT POID, Seq1, Seq2
+FROM #tmp
 
-OPEN P99_tempTable_cur --開始run cursor                   
-FETCH NEXT FROM P99_tempTable_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-WHILE @@FETCH_STATUS = 0
-BEGIN
-	exec dbo.usp_SingleItemRecaculate @ukey,@POID,@SEQ1,@SEQ2
-	
-	FETCH NEXT FROM P99_tempTable_cur INTO @POID,@SEQ1,@SEQ2,@ukey
-END
-CLOSE P99_tempTable_cur
-DEALLOCATE P99_tempTable_cur
-
-drop table #tmp
+EXEC usp_MutipleItemRecaculate @MaterialItemList
 ";
                     break;
             }
