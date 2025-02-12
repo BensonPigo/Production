@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.PublicForm;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -256,7 +257,7 @@ WHERE a.ID = '{id}'
                 return true;
             }
 
-            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P18").ShowDialog();
+            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P18").ShowDialog();
 
             return true;
         }

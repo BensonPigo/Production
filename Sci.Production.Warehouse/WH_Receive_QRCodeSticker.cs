@@ -16,9 +16,9 @@ namespace Sci.Production.Warehouse
     /// <summary>
     /// P07_QRCodeSticker
     /// </summary>
-    public partial class P07_QRCodeSticker : Win.Subs.Base
+    public partial class WH_Receive_QRCodeSticker : Win.Subs.Base
     {
-        private DataTable dtP07_QRCodeSticker;
+        private DataTable dt_QRCodeSticker;
         private string printType;
         private string callFrom;
 
@@ -34,10 +34,10 @@ namespace Sci.Production.Warehouse
         /// <param name="printType">printType</param>
         /// <param name="callFrom">callFrom</param>
         /// <inheritdoc/>
-        public P07_QRCodeSticker(DataTable dtSource, string printType, string callFrom = "P07")
+        public WH_Receive_QRCodeSticker(DataTable dtSource, string printType, string callFrom)
         {
             this.InitializeComponent();
-            this.dtP07_QRCodeSticker = dtSource;
+            this.dt_QRCodeSticker = dtSource;
             this.printType = printType;
             this.callFrom = callFrom;
             this.IsP07 = callFrom == "P07";
@@ -46,37 +46,17 @@ namespace Sci.Production.Warehouse
             this.radioPanel1.Visible = this.IsP07;
             this.listControlBindingSource.DataSource = dtSource;
             this.rgCode = MyUtility.GetValue.Lookup("select RgCode from system");
-            this.dtP07_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
-            foreach (DataRow dr in this.dtP07_QRCodeSticker.Rows)
+            this.dt_QRCodeSticker.Columns.Add("IsQRCodeCreatedByPMS", typeof(bool));
+            foreach (DataRow dr in this.dt_QRCodeSticker.Rows)
             {
-                if (this.IsP07)
-                {
-                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
-                }
-                else if (this.IsP18)
+                if (this.IsP18)
                 {
                     dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS() && dr["MINDQRCode"].ToString().Left(3) == this.rgCode;
                 }
-            }
-
-            if (this.IsP07)
-            {
-                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
-                this.comboFilterQRCode.Text = "Create by PMS";
-                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
-                this.RadioPanel1_ValueChanged(null, null);
-            }
-            else if (this.IsP18)
-            {
-                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, $"All,Create by {this.rgCode},Not Create by {this.rgCode}");
-                this.comboFilterQRCode.Text = $"Create by {this.rgCode}";
-                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
-                this.RadioPanel1_ValueChanged(null, null);
-            }
-            else
-            {
-                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Partial Release");
-                this.comboFilterQRCode.Text = "Partial Release";
+                else
+                {
+                    dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
+                }
             }
         }
 
@@ -114,10 +94,10 @@ namespace Sci.Production.Warehouse
                                 .Numeric("actualweight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Numeric("ActualQty", header: "Actual Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                                 .Text("pounit", header: "Purchase" + Environment.NewLine + "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("TtlQty", header: "Total Qty", width: Widths.AnsiChars(13), iseditingreadonly: true)
-                                .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                                .Numeric("stockqty", header: "Receiving Qty" + Environment.NewLine + "(Stock Unit)", decimal_places: 2, width: Widths.AnsiChars(6), iseditingreadonly: true)
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
             }
@@ -132,7 +112,7 @@ namespace Sci.Production.Warehouse
                                 .Numeric("ActualWeight", header: "Act.(kg)", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                                .Numeric("StockQty", header: "In Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                                 .Text("StockUnit", header: "Unit", width: Widths.AnsiChars(9), iseditingreadonly: true)
                                 .Text("MINDQRCode", header: "QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 ;
@@ -146,7 +126,7 @@ namespace Sci.Production.Warehouse
                     .Text("fabrictype", header: "Material" + Environment.NewLine + "Type", iseditingreadonly: true)
                     .Text("Roll", header: "Roll#", width: Widths.AnsiChars(7), iseditingreadonly: true)
                     .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: true)
-                    .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                    .Numeric("StockQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
                     .Text("MINDQRCode", header: "Issue QR Code", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     ;
             }
@@ -168,7 +148,7 @@ namespace Sci.Production.Warehouse
                 dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
                 DataTable sortedtable1 = dv.ToTable();
 
-                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => (int)s["Sel"] == 1).ToList();
+                var barcodeDatas = sortedtable1.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["Sel"])).ToList();
                 string type = this.printType;
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
@@ -253,7 +233,7 @@ namespace Sci.Production.Warehouse
                     FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
                     StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
                     StyleID = "ST:" + MyUtility.Convert.GetString(s["StyleID"]),
-                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty: ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
+                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty : ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
                     Relaxtime = "RELAXATION:" + MyUtility.Convert.GetFloat(s["Relaxtime"]) + "HRS",
                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
                 }).ToList();
@@ -269,33 +249,6 @@ namespace Sci.Production.Warehouse
 
             // 開啟 report view 直接列印
             new Win.Subs.ReportView(report) { DirectPrint = true }.Show();
-        }
-
-        private void ComboFilterQRCode_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (this.comboFilterQRCode.SelectedIndex < 0)
-            {
-                return;
-            }
-
-            switch (this.comboFilterQRCode.SelectedIndex)
-            {
-                case 1:
-                    if (this.IsP07 || this.IsP18) {
-                        this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
-                    }
-                    else {
-                        this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
-                    }
-
-                    break;
-                case 2:
-                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
-                    break;
-                default:
-                    this.listControlBindingSource.Filter = string.Empty;
-                    break;
-            }
         }
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
