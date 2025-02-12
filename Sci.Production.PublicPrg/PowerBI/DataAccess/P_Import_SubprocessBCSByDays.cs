@@ -18,20 +18,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = @"	
 -- P_SubprocessBCSByDays
 with TTLBD as(
-	select SewingInline,Factory
+	select SewingInline,FactoryID
 	,[TTLBundle] = count(1)
 	from P_SubprocessWIP
 	where SubprocessID='Loading'
-	group by SewingInline,Factory
+	group by SewingInline,FactoryID
 )
 , TTLLBD as(
-	select SewingInline,Factory	
+	select SewingInline,FactoryID	
 	,[TTLLoadedBundle] =  sum(IIF(InTime is not null, 1,0))
 	from P_SubprocessWIP
 	where SubprocessID='Loading'
-	group by SewingInline,Factory
+	group by SewingInline,FactoryID
 )
-select a.SewingInline, a.Factory
+select a.SewingInline, a.FactoryID
 , [SubprocessBCS] = 
 	case when b.[TTLLoadedBundle] = 0 then 0
 	else  ROUND(CONVERT(float,b.TTLLoadedBundle)/CONVERT(float,a.TTLBundle),4)*100
@@ -40,7 +40,7 @@ select a.SewingInline, a.Factory
 ,[TTLBundle]
 into #tmpByDays
 from TTLBD a
-inner join TTLLBD b on a.Factory = b.Factory and a.SewingInline = b.SewingInline
+inner join TTLLBD b on a.FactoryID = b.FactoryID and a.SewingInline = b.SewingInline
 
 
 update  t
@@ -48,14 +48,14 @@ set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLBundle = s.TTLBundle
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
 from P_SubprocessBCSByDays t
-inner join #tmpByDays s on t.Factory = s.Factory and t.SewingInline = s.SewingInline
+inner join #tmpByDays s on t.Factory = s.FactoryID and t.SewingInline = s.SewingInline
 
 insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle)
-select SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle
+select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle
 from #tmpByDays t
 where not exists(
 	select * from P_SubprocessBCSByDays s
-	where t.Factory = s.Factory
+	where t.FactoryID = s.Factory
 	and t.SewingInline = s.SewingInline
 )
 
@@ -64,7 +64,7 @@ delete t
 from P_SubprocessBCSByDays t
 where not exists(
 	select 1 from #tmpByDays s
-	where t.Factory = s.Factory
+	where t.Factory = s.FactoryID
 	and t.SewingInline = s.SewingInline
 )
 
