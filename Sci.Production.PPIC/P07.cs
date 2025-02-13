@@ -5,6 +5,8 @@ using Ict;
 using Sci.Data;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
@@ -86,6 +88,53 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
                 this.ShowErr(sqlCmd, result);
                 this.HideWaitMessage();
                 return;
+            }
+
+            string sql = $@"Select distinct Category, StyleType from ChgOverCheckList where FactoryID = '{Env.User.Factory}'";
+            DataTable dt = new DataTable();
+            result = DBProxy.Current.Select(null, sql, out dt);
+
+            foreach (DataRow row in dt.Rows)
+            {
+                var sqlUpdate = @"
+declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime)
+
+-- 找出符合以下條件的ChgOver
+-- 1. Inline >= 今天
+insert into @ChgOver (ID, FactoryID, Inline)
+select co.ID, co.FactoryID, co.Inline
+from ChgOver co with (nolock)
+where co.Category = @Category
+and co.Type = @StyleType
+and co.FactoryID = @FactoryID
+and co.Inline >= Convert(date, GETDATE())
+and co.Inline >= '2025-01-01'
+
+-- 刪除並重新寫入ChgOver_Check資料
+if @@RowCount > 0
+begin
+	delete ChgOver_Check where ID in (select ID from @ChgOver)
+
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
+	from @ChgOver co
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
+	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+end
+";
+                List<SqlParameter> listPar = new List<SqlParameter>()
+                {
+                    new SqlParameter("@Category", row["Category"]),
+                    new SqlParameter("@StyleType", row["StyleType"]),
+                    new SqlParameter("@FactoryID", Env.User.Factory),
+                };
+
+                DualResult updateChgOver = DBProxy.Current.Execute(null, sqlUpdate, listPar);
+                if (!updateChgOver)
+                {
+                    this.ShowErr(updateChgOver);
+                }
             }
 
             if (dsForAutomation[0].Rows.Count > 0)

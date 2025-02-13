@@ -284,19 +284,15 @@ WHERE NOT EXISTS (
 declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime)
 
 -- 找出符合以下條件的ChgOver
--- 1. Inline >= 今天
--- 2. ChgOver_Check有資料但皆尚未Check
--- 3. ChgOver_Check沒有資料
+-- 1. Inline >= 今天，並日期大於2025-01-01
 insert into @ChgOver (ID, FactoryID, Inline)
 select co.ID, co.FactoryID, co.Inline
 from ChgOver co with (nolock)
 where co.Category = @Category
 and co.Type = @StyleType
+and co.FactoryID = @FactoryID
 and co.Inline >= Convert(date, GETDATE())
-and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
-        and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
-    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)) 
-    and co.FactoryID = @FactoryID
+and co.Inline >= '2025-01-01'
 
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0
