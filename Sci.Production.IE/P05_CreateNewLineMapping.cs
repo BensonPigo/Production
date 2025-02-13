@@ -190,6 +190,24 @@ where   ts.StyleID = '{this.txtStyleCreate.Text}' and
                 return;
             }
 
+            string checkSewseq = $@"
+select *
+from TimeStudy t with (nolock)
+inner join TimeStudy_Detail td with (nolock) on t.ID = td.ID
+where	t.StyleID = '{this.txtStyleCreate.Text}' and
+		t.BrandID = '{this.txtBrandCreate.Text}' and
+		t.SeasonID = '{this.txtSeasonCreate.Text}' and
+		t.ComboType = '{this.txtStyleLocationCreate.Text}' and
+		td.OperationID not like '-%' and
+		td.SewingSeq <> ''
+";
+            DataRow drInfoSeq;
+            if (!MyUtility.Check.Seek(checkSewseq, out drInfoSeq))
+            {
+                MyUtility.Msg.WarningBox("All [Sew Seq] values in IE P01 are empty. Unable to create IE P05!");
+                return;
+            }
+
             DataTable[] dtResults;
             string sqlGetAutomatedLineMapping = $@"
 exec dbo.GetAutomatedLineMapping    '{this.txtFactoryCreate.Text}',
