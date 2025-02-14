@@ -95,74 +95,6 @@ where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumbe
             return base.OnDetailSelectCommandPrepare(e);
         }
 
-        protected void ReloadGrid(string subConOutFty, string contractNumber)
-        {
-            DataTable tmp = new DataTable();
-            string cmd = $@"
-select 
-    sd.SubConOutFty,
-    sd.ContractNumber,
-    sd.OrderId,
-    o.StyleID,
-    sd.ComboType,
-    sd.Article,
-    [OrderQty] = (select isnull(sum(Qty),0) from Order_Qty with (nolock) where ID = sd.OrderID and Article = sd.Article),
-    sd.OutputQty,
-    [AccuOutputQty] = (
-        select isnull(sum(sod.QAQty),0) 
-        from SewingOutput s with (nolock)
-        inner join SewingOutput_Detail sod with (nolock) on s.ID = sod.ID
-        where   s.SubConOutContractNumber = sd.ContractNumber and
-                s.SubconOutFty = sd.SubConOutFty  and
-                sod.OrderID = sd.OrderID and
-                sod.Article = sd.Article and
-                sod.Combotype  = sd.Combotype
-        ),
-    UnitPrice = sd.UnitPrice,
-    UnitPriceByComboType = sd.UnitPrice * r.rate,
-    SewingCPU = tms.SewingCPU*r.rate,
-    CuttingCPU = tms.CuttingCPU*r.rate,
-    InspectionCPU = tms.InspectionCPU*r.rate,
-    OtherCPU = tms.OtherCPU*r.rate,
-    OtherAmt = tms.OtherAmt*r.rate,
-    EMBAmt = tms.EMBAmt*r.rate,
-    PrintingAmt = tms.PrintingAmt*r.rate,
-    OtherPrice = tms.OtherPrice*r.rate,
-    EMBPrice = tms.EMBPrice*r.rate,
-    PrintingPrice = tms.PrintingPrice*r.rate,
-    LocalCurrencyID = LocalCurrencyID,
-    LocalUnitPrice = isnull(LocalUnitPrice,0),
-    Vat = isnull(Vat,0),
-
-    UPIncludeVAT = isnull(LocalUnitPrice,0)+isnull(Vat,0),
-    KpiRate = isnull(KpiRate,0),
-    [Addrow] = '',
-    [old_OrderId] = ''
-from dbo.SubconOutContract_Detail sd with (nolock)
-left join Orders o with (nolock) on sd.Orderid = o.ID
-OUTER apply (
-    select  
-    [SewingCPU] = sum(iif(ArtworkTypeID = 'SEWING',TMS/1400,0)),
-    [CuttingCPU]= sum(iif(ArtworkTypeID = 'CUTTING',TMS/1400,0)),
-    [InspectionCPU]= sum(iif(ArtworkTypeID = 'INSPECTION',TMS/1400,0)),
-    [OtherCPU]= sum(iif(ArtworkTypeID in ('INSPECTION','CUTTING','SEWING'),0,TMS/1400)),
-    [OtherAmt]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)) * sd.OutputQty,
-    [EMBAmt] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)) * sd.OutputQty,
-    [PrintingAmt] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0)) * sd.OutputQty,
-    [OtherPrice]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)),
-    [EMBPrice] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)),
-    [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0))
-    from Order_TmsCost with (nolock)
-    where ID = sd.OrderID
-) as tms
-outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
-,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
-where sd.SubConOutFty = '{subConOutFty}' and sd.ContractNumber = '{contractNumber}'
-";
-            DBProxy.Current.Select(null, cmd, out tmp);
-            this.detailgrid.DataSource = tmp;
-        }
-
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
@@ -1040,12 +972,12 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                         this.CurrentDetailData["OtherAmt"] = (decimal)this.CurrentDetailData["OtherPrice"] * output;
                         this.CurrentDetailData["EMBAmt"] = (decimal)this.CurrentDetailData["EMBPrice"] * output;
                         this.CurrentDetailData["PrintingAmt"] = (decimal)this.CurrentDetailData["PrintingPrice"] * output;
+                        this.CurrentDetailData.EndEdit();
                     }
 
                     i++;
                 }
 
-                this.CurrentDetailData.EndEdit();
                 this.RenewData();
             }
         }
@@ -1107,11 +1039,17 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 
         private void Btn_JunkSP_Click(object sender, EventArgs e)
         {
-            DataTable table = this.CurrentDetailData.Table.Copy();
+            DataTable dtDetail = this.CurrentDetailData.Table;
+            if (dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox(" Contract detail is empty.");
+                return;
+            }
 
+            DataTable table = dtDetail.Copy();
             var form = new P11_JunkSP(table);
             form.ShowDialog();
-            this.ReloadGrid(this.txtSubConOutFty.TextBox1.Text, this.txtContractnumber.Text);
+            this.OnDetailEntered();
         }
 
         private void Btn_JunkHis_Click(object sender, EventArgs e)
