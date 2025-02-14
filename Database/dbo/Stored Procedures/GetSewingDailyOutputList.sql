@@ -20,13 +20,14 @@
 	 ,@SubconOut				bit = 0
 AS
 begin
+
 create table #CategoryCondition(
 	Category varchar(5)
 )
 
 if(@Category like '%MOCKUP%')
 	insert #CategoryCondition(Category) values('M')
-
+	  
 if(@Category like '%Bulk%')
 	insert #CategoryCondition(Category) values('B')
 
@@ -98,7 +99,7 @@ select s.id
     ,o.SciDelivery 
     ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
-    ,[InlineCategoryID] = InlineCategoryID.val
+    ,[InlineCategoryID] = s.SewingReasonIDForTypeIC
 	,[Inline Category] = iif(s.SewingReasonIDForTypeLO = '00005',cast('' as varchar(50)),(select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'))
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
     ,[New Style/Repeat style] = cast('' as varchar(20))
@@ -112,22 +113,26 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
-OUTER APPLY
-(
-	select val = 
-	CASE  WHEN o.Category = 'S' THEN '00005'
-		  ELSE 
-            CASE 
-                WHEN dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate) > 29 THEN '00004'
-                WHEN dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate) > 14 THEN '00003'
-                WHEN dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate) > 3 THEN '00002'
-                ELSE '00001'
-            END
-	END
-	from SewingReason sr
-	where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'
+--OUTER APPLY
+--(
+--	select val = 
+--	CASE  WHEN o.Category = 'S' THEN '00005'
+--		  ELSE 
+--            CASE 
+--                WHEN ContinuousDaysCalc.ContinuousDays > 29 THEN '00004'
+--                WHEN ContinuousDaysCalc.ContinuousDays > 14 THEN '00003'
+--                WHEN ContinuousDaysCalc.ContinuousDays > 3 THEN '00002'
+--                ELSE '00001'
+--            END
+--	END
+--	from SewingReason sr
+--	CROSS APPLY (
+--    SELECT 
+--        ContinuousDays = dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate)
+--	) ContinuousDaysCalc
+--	where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'
 	
-)InlineCategoryID
+--)InlineCategoryID
 outer apply
 (
 	select [SewingReasonDesc]=stuff((
@@ -175,7 +180,8 @@ INTO	#tmpNewStyleRepeatStyle
 from (	select distinct FactoryID, OutputDate, SewinglineID, Team, StyleUkey
 		from #tmpSewingDetail ) a
 
-update t set t.[New Style/Repeat style] = tp.NewStyleRepeatStyle,[Inline Category] = iif(SewingReasonIDForTypeIC = '00005',(select CONCAT(t.InlineCategoryID, '-' + SR.Description) from SewingReason sr where sr.ID = t.InlineCategoryID and sr.Type='IC'),t.[Inline Category])
+update t set t.[New Style/Repeat style] = tp.NewStyleRepeatStyle
+	,　[Inline Category] = iif(SewingReasonIDForTypeIC = '00005',(select CONCAT(t.InlineCategoryID, '-' + SR.Description) from SewingReason sr where sr.ID = t.InlineCategoryID and sr.Type='IC'),t.[Inline Category])
 from #tmpSewingDetail t
 inner join #tmpNewStyleRepeatStyle tp on	tp.FactoryID = t.FactoryID and
 											tp.OutputDate = t.OutputDate and 
