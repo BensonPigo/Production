@@ -1039,7 +1039,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 
         private void Btn_JunkSP_Click(object sender, EventArgs e)
         {
-            DataTable dtDetail = this.CurrentDetailData.Table;
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
             if (dtDetail.Rows.Count == 0)
             {
                 MyUtility.Msg.WarningBox(" Contract detail is empty.");
