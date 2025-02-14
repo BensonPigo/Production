@@ -634,12 +634,12 @@ select
 	al.APSNo,
 	al.SewingLineID,
 	[CustPO] = CustPO.val,
-	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��CustPO�ƶq
+	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
 	[SP] = SP.val,
 	[SP_Combotype] = SP.SP_Combotype,
 	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
 	[Colorway] = Colorway.val,
-	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��Colorway�ƶq
+	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
 	[CDCode] = CDCode.val,
 	[ProductionFamilyID] = ProductionFamilyID.val,
 	[Style] = Style.val,
@@ -2172,16 +2172,7 @@ Create Table #tmpProduceDays
 )
 insert into #tmpProduceDays
 select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
-,SewingInlineCategory =	
-	CASE  WHEN t.Category = 'S' THEN '00005'
-	ELSE 
-		CASE 
-			WHEN ContinuousDaysCalc.ContinuousDays > 29 THEN '00004'
-			WHEN ContinuousDaysCalc.ContinuousDays > 14 THEN '00003'
-			WHEN ContinuousDaysCalc.ContinuousDays > 3 THEN '00002'
-			ELSE '00001'
-		END
-	END
+	, SewingInlineCategory = ''
 from #tmpDistinct t
 CROSS APPLY (
 SELECT 
@@ -2192,7 +2183,7 @@ where t.StyleUkey not like '%,%'
 union all
 
 select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
-,SewingInlineCategory =	'00001'
+	, SewingInlineCategory = ''
 from #tmpDistinct t
 where t.StyleUkey like '%,%'
 
@@ -2281,7 +2272,7 @@ select distinct
 	apm.AddDate,
 	apm.EditDate,
     factory.LastDownloadAPSDate,
-	[SewingInlineCategory] = (select CONCAT(pd.SewingInlineCategory, '-' + SR.Description) from SewingReason sr where sr.ID = pd.SewingInlineCategory and sr.Type='IC')	
+	[SewingInlineCategory] = ''
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category
