@@ -3,7 +3,10 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System;
+using System.CodeDom;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
@@ -29,13 +32,55 @@ namespace Sci.Production.Subcon
         private string sp_b;
         private string sp_e;
         private string titleStitch = string.Empty;
-        private string sqlFarmOutApply = @"OUTER APPLY(
+        private string sqlFarmOutApply = string.Empty;
+        private bool subconFarmInOutNotFromRFID = false;
+
+        private string sqlFarmOutApplyNotFromRFID = @"
+OUTER APPLY(
+	select [Value]= SUM(appd.APQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    inner join	ArtworkAP_Detail appd with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq ar with (nolock)
+        inner join ArtworkReq_Detail ard with (nolock) on ard.ID = ar.ID
+        where	ard.uKey = apod.ArtworkReq_DetailUkey and 
+        		ard.Orderid = bar.Orderid and
+        		ard.Article = bar.Article and
+        		ard.SizeCode = bar.SizeCode and
+        		ar.ArtworkTypeID = '{0}' and
+        		ard.Patterncode = bar.PatternCode and
+        		ard.PatternDesc = bar.PatternDesc)
+) FarmOut
+OUTER APPLY(	
+	select [Value]= SUM(apod.PoQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq ar with (nolock)
+        inner join ArtworkReq_Detail ard with (nolock) on ard.ID = ar.ID
+        where	ard.uKey = apod.ArtworkReq_DetailUkey and 
+        		ard.Orderid = bar.Orderid and
+        		ard.Article = bar.Article and
+        		ard.SizeCode = bar.SizeCode and
+        		ar.ArtworkTypeID = '{0}' and
+        		ard.Patterncode = bar.PatternCode and
+        		ard.PatternDesc = bar.PatternDesc)
+) FarmIn
+";
+
+        private string sqlFarmOutApplyFromRFID = @"
+OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
 	WHERE bd.Orderid = bar.Orderid 
     AND (bd.Article = bar.Article or bar.Article = '')
     AND (bd.SizeCode = bar.SizeCode or bar.SizeCode = '')
-	AND bd.ArtworkTypeId = bar.ArtworkTypeID
+	AND bd.ArtworkTypeId = '{0}'
 	AND bd.Patterncode = bar.PatternCode 
 	AND bd.PatternDesc = bar.PatternDesc
 	AND bd.OutGoing IS NOT NULL 
@@ -46,11 +91,12 @@ OUTER APPLY(
 	WHERE bd.Orderid = bar.Orderid 
     AND (bd.Article = bar.Article or bar.Article = '')
     AND (bd.SizeCode = bar.SizeCode or bar.SizeCode = '')
-	AND bd.ArtworkTypeId = bar.ArtworkTypeID
+	AND bd.ArtworkTypeId = '{0}'
 	AND bd.Patterncode = bar.PatternCode 
 	AND bd.PatternDesc = bar.PatternDesc
 	AND bd.InComing IS NOT NULL
-)FarmIn";
+)FarmIn
+";
 
         /// <summary>
         /// P01_Import
@@ -64,6 +110,8 @@ OUTER APPLY(
             this.InitializeComponent();
             this.dr_artworkpo = master;
             this.dt_artworkpoDetail = detail;
+            List<SqlParameter> sqlpar = new List<SqlParameter>() { new SqlParameter("@ArtworkTypeID", master["ArtworkTypeID"]) };
+            this.subconFarmInOutNotFromRFID = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SubconFarmInOutNotFromRFID from ArtworkType with (nolock) where ID = @ArtworkTypeID", sqlpar));
             this.flag = fuc == "P01";
             if (this.flag)
             {
@@ -74,6 +122,15 @@ OUTER APPLY(
             {
                 this.poType = "I";
                 this.Text += " (In-House Requisition)";
+            }
+
+            if (this.subconFarmInOutNotFromRFID)
+            {
+                this.sqlFarmOutApply = string.Format(this.sqlFarmOutApplyNotFromRFID, master["ArtworkTypeID"]);
+            }
+            else
+            {
+                this.sqlFarmOutApply = string.Format(this.sqlFarmOutApplyFromRFID, master["ArtworkTypeID"]);
             }
 
             this.Text += string.Format(" : {0}", this.dr_artworkpo["LocalSuppID"].ToString());
@@ -162,7 +219,7 @@ OUTER APPLY(
                 sqlWhere += $@" and ai.SubconReasonID in ({whereReasonID})";
             }
 
-            strSQLCmd += $@"
+                strSQLCmd += $@"
 select  orderid = ard.OrderID
         , OrderQty = OrderQty.val
         , IssueQty.IssueQty 
@@ -219,8 +276,11 @@ where   f.IsProduceFty=1 and
         ar.LocalSuppId = '{this.dr_artworkpo["localsuppid"]}' and
         (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
         {sqlWhere} 
+";
 
-
+            if (!this.subconFarmInOutNotFromRFID)
+            {
+                strSQLCmd += $@"
 SELECT BDO.QTY 
 	,BDO.Orderid 
     ,bdl.Article
@@ -239,6 +299,7 @@ INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
 WHERE   bio.RFIDProcessLocationID='' and
         exists (select 1 from #baseArtworkReq bar where bar.orderid = bdl.Orderid)
 ";
+            }
 
             if (this.isNeedPlanningB03Quote)
             {
@@ -257,32 +318,43 @@ WHERE   bio.RFIDProcessLocationID='' and
             }
 
             DualResult result;
-            if (result = DBProxy.Current.Select(null, strSQLCmd, out this.dtArtwork))
+            SqlConnection sqlConnection;
+            result = DBProxy.Current.OpenConnection("Production", out sqlConnection);
+            if (!result)
             {
-                DualResult resultGetSpecialRecordData = this.GetSpecialRecordData();
-                if (!resultGetSpecialRecordData)
-                {
-                    this.ShowErr(resultGetSpecialRecordData);
-                }
-
-                if (this.dtArtwork.Rows.Count == 0)
-                {
-                    MyUtility.Msg.WarningBox("Data not found!!");
-                }
-
-                this.listControlBindingSource1.DataSource = this.dtArtwork;
-                this.gridBatchImport.AutoResizeColumns();
-
-                foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
-                {
-                    this.DetalGridCellEditChange(dr.Index);
-                }
-
-                this.gridBatchImport.ClearSelection();
+                this.ShowErr(result);
+                return;
             }
-            else
+
+            using (sqlConnection)
             {
-                this.ShowErr(strSQLCmd, result);
+                if (result = DBProxy.Current.SelectByConn(sqlConnection, strSQLCmd, out this.dtArtwork))
+                {
+                    DualResult resultGetSpecialRecordData = this.GetSpecialRecordData(sqlConnection);
+                    if (!resultGetSpecialRecordData)
+                    {
+                        this.ShowErr(resultGetSpecialRecordData);
+                    }
+
+                    if (this.dtArtwork.Rows.Count == 0)
+                    {
+                        MyUtility.Msg.WarningBox("Data not found!!");
+                    }
+
+                    this.listControlBindingSource1.DataSource = this.dtArtwork;
+                    this.gridBatchImport.AutoResizeColumns();
+
+                    foreach (DataGridViewRow dr in this.gridBatchImport.Rows)
+                    {
+                        this.DetalGridCellEditChange(dr.Index);
+                    }
+
+                    this.gridBatchImport.ClearSelection();
+                }
+                else
+                {
+                    this.ShowErr(strSQLCmd, result);
+                }
             }
         }
 
@@ -608,7 +680,7 @@ where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
             return strSQLCmd;
         }
 
-        private DualResult GetSpecialRecordData()
+        private DualResult GetSpecialRecordData(SqlConnection sqlConnection)
         {
             string sqlWhere = string.Empty;
             if (!(this.dateSCIDelivery.Value1 == null))
@@ -646,19 +718,19 @@ where  ((o.Category = 'B' and  oa.price > 0) or (o.category !='B'))
 select	Selected = 0
         , ar.LocalSuppId
         , id = ''
-        , ard.orderid
+        , bar.orderid
         , OrderQty = o.qty
         , IssueQty.IssueQty 
-        , [PoQty] = ard.ReqQty
+        , [PoQty] = bar.ReqQty
         , ar.ArtworkTypeID
-        , ard.ArtworkID
-        , ard.PatternCode
+        , bar.ArtworkID
+        , bar.PatternCode
         , o.SewInLIne
         , o.SciDelivery
         , coststitch = 1
-        , ard.Stitch 
-        , ard.PatternDesc
-        , ard.QtyGarment
+        , bar.Stitch 
+        , bar.PatternDesc
+        , bar.QtyGarment
         , Cost = 0.0
         , unitprice = 0.0
         , price = 0.0
@@ -666,33 +738,36 @@ select	Selected = 0
         , Style = o.StyleID
 		, o.POID
         , [ArtworkReqID] = ar.ID
-        , ard.Article
-        , ard.SizeCode
+        , bar.Article
+        , bar.SizeCode
         , o.Category
         , o.FactoryID
         , f.IsProduceFty 
-        , ArtworkReq_DetailUkey = ard.Ukey
+        , ArtworkReq_DetailUkey = bar.Ukey
         , oa.Remark
+        , [Farmout] = ISNULL(FarmOut.Value,0)
+		, [FarmIn] = ISNULL(FarmIn.Value,0)
 from ArtworkReq ar  with (nolock)
-inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
-left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
-left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
+inner join ArtworkReq_Detail bar with (nolock) on ar.ID = bar.ID 
+left join Order_Artwork oa on bar.OrderArtworkUkey = oa.Ukey
+left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = bar.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and bar.ExceedQty > 0
 left join SubconReason sr with (nolock) on sr.Type = 'SQ' and sr.ID = ai.SubconReasonID
-inner join orders o WITH (NOLOCK) on ard.OrderId = o.ID  
+inner join orders o WITH (NOLOCK) on bar.OrderId = o.ID  
 left join Factory f with (nolock) on f.ID = o.FactoryID
 inner join ArtworkType at with (nolock) on ar.ArtworkTypeID = at.ID
+{this.sqlFarmOutApply}
 outer apply (
         select IssueQty = ISNULL(sum(PoQty),0)
         from ArtworkPO_Detail AD, ArtworkPO A
-        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= ard.PatternCode
+        where AD.ID = A.ID and A.Status = 'Approved' and OrderID = o.ID and ad.PatternCode= bar.PatternCode
 ) IssueQty
-where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status = 'Approved' and ar.LocalSuppId = '{this.dr_artworkpo["LocalSuppId"]}' and  ard.ArtworkPOID = '' and
+where  ar.ArtworkTypeID = '{this.dr_artworkpo["artworktypeid"]}' and ar.Status = 'Approved' and ar.LocalSuppId = '{this.dr_artworkpo["LocalSuppId"]}' and  bar.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
 	or 
 	(o.category = 'S')
 	) and
-    not exists( select 1 from #tmpArtwork t where t.OrderID = ard.orderid)
+    not exists( select 1 from #tmpArtwork t where t.OrderID = bar.orderid)
     {sqlWhere}
 union all
 select  Selected = 0
@@ -725,11 +800,13 @@ select  Selected = 0
         , f.IsProduceFty 
         , t.ArtworkReq_DetailUkey
         , t.Remark
+        , t.Farmout
+        , t.FarmIn
 from #tmpArtwork t
 inner join dbo.Orders o with (nolock) on t.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
 ";
-            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, null, sqlGetSpecialRecordData, out this.dtArtwork, temptablename: "#tmpArtwork");
+            DualResult result = MyUtility.Tool.ProcessWithDatatable(this.dtArtwork, null, sqlGetSpecialRecordData, out this.dtArtwork, temptablename: "#tmpArtwork", conn: sqlConnection);
 
             if (!result)
             {
