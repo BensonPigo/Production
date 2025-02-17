@@ -79,6 +79,7 @@ namespace Sci.Production.PPIC
             var gen = this.Helper.Controls.Grid.Generator(this.gridQtyBDown);
             this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(9));
+            this.CreateGrid(gen, "string", "ArticleName", "Colorway Name", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -115,12 +116,14 @@ namespace Sci.Production.PPIC
 
             btop.Rows.Add(btopdr);
             this.listControlBindingSource5.DataSource = btop;
+
             // 設定Grid3的顯示欄位
             this.gridColorway.IsEditingReadOnly = true;
             this.gridColorway.DataSource = this.listControlBindingSource3;
             gen = this.Helper.Controls.Grid.Generator(this.gridColorway);
             this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "ArticleName", "Colorway Name", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -136,6 +139,7 @@ namespace Sci.Production.PPIC
             this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             this.CreateGrid(gen, "date", "BuyerDelivery", "Buyer Delivery", Widths.AnsiChars(10));
             this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "ArticleName", "Colorway Name", Widths.AnsiChars(8));
             if (headerData != null && headerData.Rows.Count > 0)
             {
                 foreach (DataRow dr in headerData.Rows)
@@ -162,15 +166,19 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
+             , sa.ArticleName
              , oq.SizeCode
              , oq.Qty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
       inner join SortBy sb on oq.Article = sb.Article
+      left join orders o on oq.id = o.id
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where oq.ID = '{0}'
 ),
 SubTotal as (
       select 'TTL' as Article
+             , '' as ArticleName
              , SizeCode
              , SUM(Qty) as Qty
              , '9999' as RowNo
@@ -209,15 +217,19 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
+             , sa.ArticleName
              , oq.SizeCode
              , oq.OriQty
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
       inner join SortBy sb on oq.Article = sb.Article
+      left join orders o on oq.id = o.id
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where oq.ID = '{0}'
 ),
 SubTotal as (
       select 'TTL' as Article
+             , '' as ArticleName
              , SizeCode
              , SUM(OriQty) as Qty
              , '9999' as RowNo
@@ -252,6 +264,7 @@ order by RowNo",
 with tmpData as (
       select o.ID
              , oq.Article
+             , sa.ArticleName
              , Order_ColorCombo.ColorID
 			 , c.Alias
 			 , o.CustCDID
@@ -264,6 +277,7 @@ with tmpData as (
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       outer apply (
@@ -276,6 +290,7 @@ with tmpData as (
 SubTotal as (
       select ID = ''
              , Article = 'TTL'
+             , ArticleName = ''
              , ColorID = ''
 			 , Alias = ''
 			 , CustCDID = ''
@@ -315,6 +330,7 @@ order by rnk",
 with tmpData as (
       select o.ID
              , oq.Article
+             , sa.ArticleName
              , Order_ColorCombo.ColorID
 			 , c.Alias
 			 , o.CustCDID
@@ -328,6 +344,7 @@ with tmpData as (
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       left join Brand b with(nolock) on o.BrandID = b.ID
@@ -341,6 +358,7 @@ with tmpData as (
 SubTotal as (
       select ID = ''
              , Article = 'TTL'
+             , ArticleName = ''
              , ColorID = ''
 			 , Alias = ''
 			 , CustCDID = ''
@@ -383,6 +401,7 @@ order by rnk",
             this.CreateGrid(gen, "int", "TotalQty", "Total", Widths.AnsiChars(6));
             this.CreateGrid(gen, "string", "ID", "SP#", Widths.AnsiChars(15));
             this.CreateGrid(gen, "string", "Article", "Colorway", Widths.AnsiChars(8));
+            this.CreateGrid(gen, "string", "ArticleName", "Colorway Name", Widths.AnsiChars(8));
             this.CreateGrid(gen, "string", "ColorID", "Color", Widths.AnsiChars(8));
             this.CreateGrid(gen, "string", "Alias", "Destination", Widths.AnsiChars(15));
             this.CreateGrid(gen, "string", "CustCDID", "CustCD", Widths.AnsiChars(12));
@@ -428,16 +447,20 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
+             , sa.ArticleName
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.Qty) as Qty 
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
-      select 'TTL' as Article,SizeCode,SUM(Qty) as Qty
+      select 'TTL' as Article
+             , '' as ArticleName
+             , SizeCode,SUM(Qty) as Qty
              , '9999' as RowNo
       from tmpData
       group by SizeCode
@@ -476,16 +499,19 @@ with SortBy as (
 ),
 tmpData as (
       select oq.Article
+             , sa.ArticleName
              , iif(o.junk = 1 , '' ,oq.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oq.OriQty) as OriQty
              , sb.RowNo
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID      
       inner join SortBy sb on oq.Article = sb.Article
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
       select 'TTL' as Article
+             , '' as ArticleName
              , SizeCode
              , SUM(OriQty) as Qty
              , '9999' as RowNo
@@ -529,6 +555,7 @@ with SortBy as (
 tmpData as (
       select oq.BuyerDelivery
              , oqd.Article
+             , sa.ArticleName
              , iif(o.junk = 1 , '' ,oqd.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oqd.Qty) as Qty
              , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
@@ -537,11 +564,13 @@ tmpData as (
       inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
       inner join SortBy sb on oqd.Article = sb.Article
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and oqd.Article = sa.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
       select null as BuyerDelivery
              , 'TTL' as Article
+             , '' as ArticleName
              , SizeCode
              , SUM(Qty) as Qty
              , 99999 as rnk
@@ -584,6 +613,7 @@ with SortBy as (
 tmpData as (
       select oq.BuyerDelivery
              , oqd.Article
+             , sa.ArticleName
              , iif(o.junk = 1 , '' ,oqd.SizeCode) as SizeCode
              , iif(o.junk = 1 , 0 ,oqd.OriQty) as OriQty
              , DENSE_RANK() OVER (ORDER BY oq.BuyerDelivery) as rnk
@@ -592,11 +622,13 @@ tmpData as (
       inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
       inner join SortBy sb on oqd.Article = sb.Article
+      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and oqd.Article = sa.Article
       where o.POID = '{0}'  
 ),
 SubTotal as (
       select null as BuyerDelivery
              , 'TTL' as Article
+             , '' as ArticleName
              , SizeCode
              , SUM(OriQty) as Qty
              , 99999 as rnk
