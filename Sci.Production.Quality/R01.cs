@@ -317,7 +317,8 @@ select
 	,F.PhysicalDate
 	,TotalYardage = TotalYardage.Val
     ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
-	,fta.ActualYds
+	,ActTotalRollsInspection.Cnt ActTotalRollsInspection
+    ,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
     ,TotalLotNumber
     ,InspectedLotNumber
@@ -501,6 +502,7 @@ outer apply(
 ) ActTotalYdsArrDate
 outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
+outer apply(select count(1) Cnt from FIR_Physical fp where fp.id = f.id) ActTotalRollsInspection
 outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
 	,HeatInspector = (select name from Pass1 where id = HeatInspector)
 	,WashInspector = (select name from Pass1 where id = WashInspector)
@@ -669,6 +671,7 @@ select
 	,tf.PhysicalDate
 	,tf.TotalYardage
 	,tf.TotalYardageArrDate
+    ,tf.ActTotalRollsInspection
 	,tf.ActualYds
     ,tf.InspectionRate
     ,tf.TotalLotNumber

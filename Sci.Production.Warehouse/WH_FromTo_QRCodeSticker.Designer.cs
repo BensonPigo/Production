@@ -1,6 +1,6 @@
 ﻿namespace Sci.Production.Warehouse
 {
-    partial class P22_PrintFabricSticker
+    partial class WH_FromTo_QRCodeSticker
     {
         /// <summary>
         /// 設計工具所需的變數。
@@ -33,8 +33,8 @@
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
+            this.labFrom = new Sci.Win.UI.Label();
+            this.labTo = new Sci.Win.UI.Label();
             this.grid2 = new Sci.Win.UI.Grid();
             this.listControlBindingSource2 = new Sci.Win.UI.ListControlBindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
@@ -96,33 +96,33 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.label1);
+            this.splitContainer1.Panel1.Controls.Add(this.labFrom);
             this.splitContainer1.Panel1.Controls.Add(this.grid1);
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.label2);
+            this.splitContainer1.Panel2.Controls.Add(this.labTo);
             this.splitContainer1.Panel2.Controls.Add(this.grid2);
             this.splitContainer1.Panel2.Controls.Add(this.btnPrint);
             this.splitContainer1.Size = new System.Drawing.Size(1008, 661);
             this.splitContainer1.SplitterDistance = 316;
             this.splitContainer1.TabIndex = 2;
             // 
-            // label1
+            // labFrom
             // 
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 23);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "From Inventory";
+            this.labFrom.Location = new System.Drawing.Point(9, 9);
+            this.labFrom.Name = "labFrom";
+            this.labFrom.Size = new System.Drawing.Size(102, 23);
+            this.labFrom.TabIndex = 2;
+            this.labFrom.Text = "From Inventory";
             // 
-            // label2
+            // labTo
             // 
-            this.label2.Location = new System.Drawing.Point(9, 7);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(102, 23);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "To Bulk";
+            this.labTo.Location = new System.Drawing.Point(9, 7);
+            this.labTo.Name = "labTo";
+            this.labTo.Size = new System.Drawing.Size(102, 23);
+            this.labTo.TabIndex = 3;
+            this.labTo.Text = "To Bulk";
             // 
             // grid2
             // 
@@ -152,11 +152,11 @@
             this.grid2.TabStop = false;
             this.grid2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.Grid2_ColumnHeaderMouseClick);
             // 
-            // P22_PrintFabricSticker
+            // WH_FromTo_QRCodeSticker
             // 
             this.ClientSize = new System.Drawing.Size(1008, 661);
             this.Controls.Add(this.splitContainer1);
-            this.Name = "P22_PrintFabricSticker";
+            this.Name = "WH_FromTo_QRCodeSticker";
             this.OnLineHelpID = "Sci.Win.Subs.Base";
             this.Text = "Print Fabric Sticker";
             this.Controls.SetChildIndex(this.splitContainer1, 0);
@@ -178,8 +178,8 @@
         private Win.UI.Grid grid1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private Win.UI.Grid grid2;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
+        private Win.UI.Label labFrom;
+        private Win.UI.Label labTo;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.ListControlBindingSource listControlBindingSource2;
     }

@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
@@ -565,7 +566,7 @@ where t.id= @ID
                     return true;
                 }
 
-                new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P10").ShowDialog();
+                new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P10").ShowDialog();
             }
 
             return true;

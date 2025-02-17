@@ -7,27 +7,30 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicForm;
 
 namespace Sci.Production.Warehouse
 {
     /// <inheritdoc/>
-    public partial class P22_PrintFabricSticker : Win.Tems.QueryForm
+    public partial class WH_FromTo_QRCodeSticker : Win.Tems.QueryForm
     {
         private DataTable fromdt;
         private DataTable todt;
         private string printType;
+        private string callFrom;
 
         /// <inheritdoc/>
-        public P22_PrintFabricSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
+        public WH_FromTo_QRCodeSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
         {
             this.InitializeComponent();
             this.fromdt = fromdt;
             this.todt = todt;
+            this.callFrom = callFormName;
             this.printType = printType;
             if (callFormName == "P22")
             {
-                this.label1.Text = "From Bulk";
-                this.label2.Text = "To Inventory";
+                this.labFrom.Text = "From Bulk";
+                this.labTo.Text = "To Inventory";
             }
         }
 
@@ -40,7 +43,7 @@ namespace Sci.Production.Warehouse
             col_Selected.CellEditable += (s, e) =>
             {
                 DataRow dr = this.grid1.GetDataRow(e.RowIndex);
-                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
+                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0 && !MyUtility.Check.Empty(dr["Barcode"]);
             };
 
             this.grid1.IsEditingReadOnly = false;
@@ -51,7 +54,7 @@ namespace Sci.Production.Warehouse
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
                 .Text("TransQty", header: "Total Trans. Qty", iseditingreadonly: true)
-                .Text("Qty", header: "Balance Qty", iseditingreadonly: true)
+                .Numeric("Qty", header: "Balance Qty", decimal_places: 2, iseditingreadonly: true)
                 .Text("Barcode", header: "QR Code", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  ;
 
@@ -60,6 +63,7 @@ namespace Sci.Production.Warehouse
             {
                 DataRow dr = this.grid2.GetDataRow(e.RowIndex);
                 e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0;
+                e.IsEditable = MyUtility.Convert.GetDecimal(dr["Qty"]) > 0 && !MyUtility.Check.Empty(dr["Barcode"]);
             };
 
             this.grid2.IsEditingReadOnly = false;
@@ -69,12 +73,44 @@ namespace Sci.Production.Warehouse
                 .Text("Seq", header: "Seq#", iseditingreadonly: true)
                 .Text("Roll", header: "Roll", iseditingreadonly: true)
                 .Text("Dyelot", header: "Dyelot", iseditingreadonly: true)
-                .Text("Qty", header: "Receive Qty", iseditingreadonly: true)
+                .Numeric("Qty", header: "Receive Qty", decimal_places: 2, iseditingreadonly: true)
                 .Text("Barcode", header: "QR Code", width: Widths.AnsiChars(30), iseditingreadonly: true)
                  ;
 
             this.listControlBindingSource1.DataSource = this.fromdt;
             this.listControlBindingSource2.DataSource = this.todt;
+
+            #region 更改To From label text
+            switch (this.callFrom)
+            {
+                case "P22":
+                    this.labFrom.Text = "From Bulk";
+                    this.labTo.Text = "To Inventory";
+                    break;
+                case "P24":
+                    this.labFrom.Text = "From Inventory";
+                    this.labTo.Text = "To Scrap";
+                    break;
+                case "P25":
+                    this.labFrom.Text = "From Bulk";
+                    this.labTo.Text = "To Scrap";
+                    break;
+                case "P36":
+                    this.labFrom.Text = "From Scrap";
+                    this.labTo.Text = "To Inventory";
+                    break;
+                case "P31":
+                    this.labFrom.Text = "Borrow From";
+                    this.labTo.Text = "Borrow To";
+                    break;
+                case "P32":
+                    this.labFrom.Text = "Borrow From";
+                    this.labTo.Text = "Borrow To";
+                    break;
+                default:
+                    break;
+            }
+            #endregion
         }
 
         private void BtnPrint_Click(object sender, EventArgs e)
@@ -96,7 +132,7 @@ namespace Sci.Production.Warehouse
                 dt.ImportRow(row);
             }
 
-            P07_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
+            WH_Receive_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
         }
 
         private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

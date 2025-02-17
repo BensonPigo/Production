@@ -38,31 +38,31 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(424, 21);
+            this.print.Location = new System.Drawing.Point(407, 21);
             // 
             // toexcel
             // 
             this.toexcel.Enabled = false;
-            this.toexcel.Location = new System.Drawing.Point(424, 57);
+            this.toexcel.Location = new System.Drawing.Point(407, 57);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(424, 93);
+            this.close.Location = new System.Drawing.Point(407, 93);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(378, 125);
+            this.buttonCustomized.Location = new System.Drawing.Point(361, 125);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(404, 134);
+            this.checkUseCustomized.Location = new System.Drawing.Point(387, 134);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(404, 134);
+            this.txtVersion.Location = new System.Drawing.Point(387, 134);
             // 
             // radioTransferSlip
             // 
