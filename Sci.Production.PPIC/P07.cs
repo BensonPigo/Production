@@ -111,39 +111,37 @@ and co.Inline >= '2025-01-01'
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0
 begin
-	
+    
     Delete cc
     From ChgOver_Check cc
     Where Not exists ( 
                        Select 1
-				       From  ChgOverCheckList ckl 
-			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
-				       Where cc.ChgOverCheckListID = ckl.ID 
+                       From  ChgOverCheckList ckl 
+                       Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
+                       Where cc.ChgOverCheckListID = ckl.ID 
                        and cc.No = ckd.ChgOverCheckListBaseID 
                      )
     And cc.ID in (select ID from #ChgOver)
 
-	Insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
-	Select * From (
-					Select COID = co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID) as s , ckd.ChgOverCheckListBaseID, ckd.LeadTime, ckd.ResponseDep
-					From #ChgOver co
-					Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
-					Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
-				   ) x
-	Where Not exists ( 
-						Select 1
-						From ChgOver_Check cc
-						Where cc.id = x.COID
-						and cc.ChgOverCheckListID = x.ID
-						AND cc.No = x.ChgOverCheckListBaseID
+    Insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+    Select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID) as s , ckd.ChgOverCheckListBaseID, ckd.LeadTime, ckd.ResponseDep
+    From #ChgOver co
+    Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
+    Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+    Where Not exists ( 
+                        Select 1
+                        From ChgOver_Check cc
+                        Where cc.id = co.ID
+                        and cc.ChgOverCheckListID = ck.ID
+                        AND cc.No = ckd.ChgOverCheckListBaseID
                      )
 
     Update cc Set Deadline = dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID),
                   LeadTime = ckd.LeadTime, 
                   ResponseDep = ckd.ResponseDep
-	From ChgOver_Check cc
-	Inner join #ChgOver co on cc.ID = co.ID
-	Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
+    From ChgOver_Check cc
+    Inner join #ChgOver co on cc.ID = co.ID
+    Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
     Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID and cc.No = ckd.ChgOverCheckListBaseID
     
 end
