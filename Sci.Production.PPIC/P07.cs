@@ -97,12 +97,10 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
             foreach (DataRow row in dt.Rows)
             {
                 var sqlUpdate = @"
-declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime)
-
 -- 找出符合以下條件的ChgOver
--- 1. Inline >= 今天
-insert into @ChgOver (ID, FactoryID, Inline)
-select co.ID, co.FactoryID, co.Inline
+-- 1. Inline >= 今天，並日期大於2025-01-01
+select *
+into #ChgOver
 from ChgOver co with (nolock)
 where co.Category = @Category
 and co.Type = @StyleType
@@ -113,14 +111,41 @@ and co.Inline >= '2025-01-01'
 -- 刪除並重新寫入ChgOver_Check資料
 if @@RowCount > 0
 begin
-	delete ChgOver_Check where ID in (select ID from @ChgOver)
+	
+    Delete cc
+    From ChgOver_Check cc
+    Where Not exists ( 
+                       Select 1
+				       From  ChgOverCheckList ckl 
+			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
+				       Where cc.ChgOverCheckListID = ckl.ID 
+                       and cc.No = ckd.ChgOverCheckListBaseID 
+                     )
+    And cc.ID in (select ID from #ChgOver)
 
-	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
-	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
-	from @ChgOver co
-	inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
-	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
-	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+	Insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	Select * From (
+					Select COID = co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID) as s , ckd.ChgOverCheckListBaseID, ckd.LeadTime, ckd.ResponseDep
+					From #ChgOver co
+					Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
+					Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+				   ) x
+	Where Not exists ( 
+						Select 1
+						From ChgOver_Check cc
+						Where cc.id = x.COID
+						and cc.ChgOverCheckListID = x.ID
+						AND cc.No = x.ChgOverCheckListBaseID
+                     )
+
+    Update cc Set Deadline = dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID),
+                  LeadTime = ckd.LeadTime, 
+                  ResponseDep = ckd.ResponseDep
+	From ChgOver_Check cc
+	Inner join #ChgOver co on cc.ID = co.ID
+	Inner join ChgOverCheckList ck with (nolock) on ck.Category = @Category and ck.StyleType = @StyleType and ck.FactoryID = co.FactoryID
+    Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID and cc.No = ckd.ChgOverCheckListBaseID
+    
 end
 ";
                 List<SqlParameter> listPar = new List<SqlParameter>()

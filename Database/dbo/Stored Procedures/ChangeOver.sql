@@ -181,14 +181,23 @@ BEGIN
 	where c.ID = ChgOver.ID
 
 	----------------ChgOver_Check-------------------------------
-	SELECT ID, Category, Type, FactoryID, Inline
+
+	SELECT *
 	INTO #tmp
-	FROM ChgOver co WITH (NOLOCK)
-	WHERE (SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 1 AND ID = CO.ID) = 0 AND CO.Inline > '2024-07-01'
+	FROM ChgOver co WITH (nolock)
+	WHERE co.Inline >= Convert(date, GETDATE())
+	AND co.Inline >= '2025-01-01'
 
 	DELETE CC
 	FROM ChgOver_Check CC
 	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID
+    Where Not exists ( 
+                       Select 1
+				       From  ChgOverCheckList ckl 
+			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
+				       Where cc.ChgOverCheckListID = ckl.ID 
+                       and cc.No = ckd.ChgOverCheckListBaseID 
+                     )
 	
 	INSERT INTO ChgOver_Check
 	(
@@ -220,10 +229,25 @@ BEGIN
 	,[EditName] = ''
 	,[EditDate] = NULL
 	,[ResponseDep] = ISNULL(CCD.ResponseDep,'')
-	FROM #TMP T WITH(NOLOCK)
-	INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	From #tmp t
+    INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
 	INNER JOIN ChgOverCheckList_Detail CCD ON CCD.ID = CC.ID
 	INNER JOIN ChgOverCheckListBase cb with (nolock) on CCD.ChgOverCheckListBaseID = cb.ID
+	Where Not exists ( 
+						Select 1
+						From ChgOver_Check cc
+						Where cc.id = t.ID
+						and cc.ChgOverCheckListID = CCD.ID
+						AND cc.No = CCD.ChgOverCheckListBaseID
+					 )
+
+	Update cc Set Deadline = dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID),
+	LeadTime = ckd.LeadTime, 
+	ResponseDep = ckd.ResponseDep
+	From ChgOver_Check cc
+	Inner join #tmp co on cc.ID = co.ID
+	Inner join ChgOverCheckList ck with (nolock) ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID and cc.No = ckd.ChgOverCheckListBaseID
 
 	DROP TABLE #tmp
 END
