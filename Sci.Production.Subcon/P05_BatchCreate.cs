@@ -281,7 +281,7 @@ namespace Sci.Production.Subcon
                                              t8 = row.Field<string>("Article"),
                                              t9 = row.Field<string>("SizeCode"),
                                              t10 = row.Field<decimal>("QtyGarment") == 0 ? 1 : row.Field<decimal>("QtyGarment"),
-                                             t11 = row.Field<string>("OrderArtworkUkey"),
+                                             t11 = row.Field<long>("OrderArtworkUkey"),
                                          }
                                         into m
                                          select new

@@ -123,8 +123,8 @@ Select 1 as Selected
         ,b.qtygarment
         ,b.price
         ,b.poqty
-		,[Farmout] = ISNULL(FarmOut.Value,0)
-		,[FarmIn] = ISNULL(FarmIn.Value,0)
+		, [Farmout] = iif(at.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmOutNotFromRFID.Value,0), ISNULL(FarmOut.Value,0))
+		, [FarmIn] = iif(at.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmInNotFromRFID.Value,0), ISNULL(FarmIn.Value,0))
         ,[AccumulatedQty] = b.ApQty
         ,[Balance] = b.PoQty - b.ApQty
 		,[ApQty]= IIF(MinQty.Val - b.ApQty < 0 , 0 ,MinQty.Val - b.ApQty )
@@ -140,6 +140,7 @@ Select 1 as Selected
 from ArtworkPO a WITH (NOLOCK) 
 INNER JOIN ArtworkPO_Detail b WITH (NOLOCK)  ON  a.id = b.id 
 inner join dbo.Orders o with (nolock) on b.OrderID = o.id
+inner join ArtworkType at with (nolock) on at.ID = a.ArtworkTypeID
 left join Factory f with (nolock) on f.ID = o.FactoryID
 left join ArtworkReq_Detail ard with (nolock) on b.ArtworkReq_DetailUkey = ard.Ukey
 left join Order_Artwork oa with (nolock) on ard.OrderArtworkUkey = oa.Ukey
@@ -165,6 +166,41 @@ OUTER APPLY(
 	AND bd.PatternDesc =b.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
+OUTER APPLY(
+	select [Value]= SUM(appd.APQty)
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = a.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmInNotFromRFID
+OUTER APPLY(	
+	select [Value]= SUM(apod.PoQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = a.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmOutNotFromRFID
 OUTER APPLY(
 	SELECT [Val]=MIN(Qty)
 	FROM (
