@@ -38,10 +38,10 @@ namespace Sci.Production.Subcon
         private string sqlFarmOutApplyNotFromRFID = @"
 OUTER APPLY(
 	select [Value]= SUM(appd.APQty)
-    from    ArtworkPO apo with (nolock)
-    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
-    inner join	ArtworkAP_Detail appd with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
-    where apo.Status != 'New' and
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
     exists (
         SELECT 1
         from ArtworkReq ar with (nolock)
@@ -53,7 +53,7 @@ OUTER APPLY(
         		ar.ArtworkTypeID = '{0}' and
         		ard.Patterncode = bar.PatternCode and
         		ard.PatternDesc = bar.PatternDesc)
-) FarmOut
+) FarmIn
 OUTER APPLY(	
 	select [Value]= SUM(apod.PoQty)
     from    ArtworkPO apo with (nolock)
@@ -70,7 +70,7 @@ OUTER APPLY(
         		ar.ArtworkTypeID = '{0}' and
         		ard.Patterncode = bar.PatternCode and
         		ard.PatternDesc = bar.PatternDesc)
-) FarmIn
+) FarmOut
 ";
 
         private string sqlFarmOutApplyFromRFID = @"

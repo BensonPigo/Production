@@ -775,10 +775,10 @@ OUTER APPLY(
 )FarmIn
 OUTER APPLY(
 	select [Value]= SUM(appd.APQty)
-    from    ArtworkPO apo with (nolock)
-    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
-    inner join	ArtworkAP_Detail appd with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
-    where apo.Status != 'New' and
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
     exists (
         SELECT 1
         from ArtworkReq arr with (nolock)
@@ -790,7 +790,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmOutNotFromRFID
+) FarmInNotFromRFID
 OUTER APPLY(	
 	select [Value]= SUM(apod.PoQty)
     from    ArtworkPO apo with (nolock)
@@ -807,7 +807,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmInNotFromRFID
+) FarmOutNotFromRFID
 WHERE 	 o.IsForecast = 0      
 		AND (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 		AND factory.mdivisionid = '{0}'
@@ -967,10 +967,10 @@ OUTER APPLY(
 )FarmIn
 OUTER APPLY(
 	select [Value]= SUM(appd.APQty)
-    from    ArtworkPO apo with (nolock)
-    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
-    inner join	ArtworkAP_Detail appd with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
-    where apo.Status != 'New' and
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
     exists (
         SELECT 1
         from ArtworkReq arr with (nolock)
@@ -982,7 +982,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmOutNotFromRFID
+) FarmInNotFromRFID
 OUTER APPLY(	
 	select [Value]= SUM(apod.PoQty)
     from    ArtworkPO apo with (nolock)
@@ -999,7 +999,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmInNotFromRFID
+) FarmOutNotFromRFID
 WHERE 	ard.ArtworkPOID = '' and
         factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
@@ -1203,10 +1203,10 @@ OUTER APPLY(
 )FarmIn
 OUTER APPLY(
 	select [Value]= SUM(appd.APQty)
-    from    ArtworkPO apo with (nolock)
-    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
-    inner join	ArtworkAP_Detail appd with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
-    where apo.Status != 'New' and
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
     exists (
         SELECT 1
         from ArtworkReq arr with (nolock)
@@ -1218,7 +1218,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmOutNotFromRFID
+) FarmInNotFromRFID
 OUTER APPLY(	
 	select [Value]= SUM(apod.PoQty)
     from    ArtworkPO apo with (nolock)
@@ -1235,7 +1235,7 @@ OUTER APPLY(
         		arr.ArtworkTypeID = ar.ArtworkTypeID and
         		arrd.Patterncode = ard.PatternCode and
         		arrd.PatternDesc = ard.PatternDesc)
-) FarmInNotFromRFID
+) FarmOutNotFromRFID
 where  ar.ArtworkTypeID = '{this.artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 
