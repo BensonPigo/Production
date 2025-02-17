@@ -241,13 +241,13 @@ BEGIN
 						AND cc.No = CCD.ChgOverCheckListBaseID
 					 )
 
-	Update cc Set Deadline = dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID),
-	LeadTime = ckd.LeadTime, 
-	ResponseDep = ckd.ResponseDep
-	From ChgOver_Check cc
-	Inner join #tmp co on cc.ID = co.ID
-	Inner join ChgOverCheckList ck with (nolock) ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
-	Inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID and cc.No = ckd.ChgOverCheckListBaseID
+	Update cck Set Deadline = dbo.CalculateWorkDate(t.Inline, -CCD.LeadTime, t.FactoryID),
+	LeadTime = CCD.LeadTime, 
+	ResponseDep = CCD.ResponseDep
+	From ChgOver_Check cck
+	INNER JOIN #tmp t on t.ID = cck.ID
+    INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	INNER JOIN ChgOverCheckList_Detail CCD with (nolock) on CC.ID = CCD.ID and cck.No = CCD.ChgOverCheckListBaseID
 
 	DROP TABLE #tmp
 END
