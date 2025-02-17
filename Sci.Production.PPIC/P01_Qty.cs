@@ -172,8 +172,8 @@ tmpData as (
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
       inner join SortBy sb on oq.Article = sb.Article
-      left join orders o on oq.id = o.id
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join orders o WITH (NOLOCK) on oq.id = o.id
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where oq.ID = '{0}'
 ),
 SubTotal as (
@@ -223,8 +223,8 @@ tmpData as (
              , sb.RowNo
       from Order_Qty oq WITH (NOLOCK) 
       inner join SortBy sb on oq.Article = sb.Article
-      left join orders o on oq.id = o.id
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join orders o WITH (NOLOCK) on oq.id = o.id
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where oq.ID = '{0}'
 ),
 SubTotal as (
@@ -277,7 +277,7 @@ with tmpData as (
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       outer apply (
@@ -344,7 +344,7 @@ with tmpData as (
              , BuyerDelivery = o.BuyerDelivery
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
 	  left join Country c  WITH (NOLOCK) on c.ID = o.Dest
 	  left join CustCD WITH (NOLOCK) on CustCD.BrandID  = o.BrandID  and CustCD.ID = o.CustCDID 
       left join Brand b with(nolock) on o.BrandID = b.ID
@@ -454,7 +454,7 @@ tmpData as (
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID
       inner join SortBy sb on oq.Article = sb.Article
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
@@ -506,7 +506,7 @@ tmpData as (
       from Orders o WITH (NOLOCK) 
       inner join Order_Qty oq WITH (NOLOCK) on o.ID = oq.ID      
       inner join SortBy sb on oq.Article = sb.Article
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and sa.Article = oq.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
@@ -563,8 +563,8 @@ tmpData as (
       from Orders o WITH (NOLOCK) 
       inner join Order_QtyShip oq WITH (NOLOCK) on o.ID = oq.ID
       inner join Order_QtyShip_Detail oqd WITH (NOLOCK) on oq.ID = oqd.ID and oq.Seq = oqd.Seq
-      inner join SortBy sb on oqd.Article = sb.Article
-      left join Style_Article sa on sa.StyleUkey = o.StyleUkey and oqd.Article = sa.Article
+      inner join SortBy sb WITH (NOLOCK) on oqd.Article = sb.Article
+      left join Style_Article sa WITH (NOLOCK) on sa.StyleUkey = o.StyleUkey and oqd.Article = sa.Article
       where o.POID = '{0}' 
 ),
 SubTotal as (
