@@ -443,19 +443,18 @@ select  t.TotalSewer,
 		[OriSewer] = tg.Sewer ,
 		t.GroupSeq,
 		t.Seq,
-		[AccuSumDivSewer] = sum(Round(t.DivSewer / t.OriSewer * tg.Sewer, 4)) OVER (PARTITION by tg.Ukey order by tg.Ukey, t.StationNo),
-		[IsLast] = iif(LEAD(tg.Sewer) OVER (PARTITION by tg.Ukey order by tg.Ukey, t.StationNo) is null, 1, 0)
+		[AccuSumDivSewer] = sum(Round(t.DivSewer / t.OriSewer * tg.Sewer, 4)) OVER (PARTITION by tg.Ukey, tg.TotalSewer order by tg.Ukey, t.StationNo),
+		[IsLast] = iif(LEAD(tg.Sewer) OVER (PARTITION by tg.Ukey, tg.TotalSewer order by tg.Ukey, t.StationNo) is null, 1, 0)
 into #tmpReaultBaseForDesignSeq
 from #tmpReaultBase t
 inner join #tmpTimeStudy_Detail tg on t.TotalSewer = tg.TotalSewer and t.GroupSeq = tg.GroupSeq and t.Seq = tg.seq
 where t.TimeStudyDetailUkey = -1
-order by tg.Ukey, t.StationNo
 
 insert into #tmpReaultBase(TotalSewer, StationNo, TimeStudyDetailUkey, DivSewer, OriSewer, GroupSeq, Seq)
 SELECT  t.TotalSewer,
 		t.StationNo,
 		t.TimeStudyDetailUkey,
-		[DivSewer] = iif(t.IsLast = 1,t.OriSewer - LAG(t.AccuSumDivSewer) OVER (PARTITION by t.TimeStudyDetailUkey order by t.TimeStudyDetailUkey, t.StationNo), t.DivSewer),
+		[DivSewer] = iif(t.IsLast = 1,t.OriSewer - LAG(t.AccuSumDivSewer) OVER (PARTITION by t.TimeStudyDetailUkey, t.TotalSewer order by t.TimeStudyDetailUkey, t.StationNo), t.DivSewer),
 		t.OriSewer,
 		t.GroupSeq,
 		t.Seq
