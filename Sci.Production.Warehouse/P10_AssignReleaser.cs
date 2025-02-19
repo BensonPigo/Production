@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -78,7 +79,7 @@ namespace Sci.Production.Warehouse
                 drList.Add(newRow);
 
                 // 將 List 轉換回陣列
-                drArray = drList.ToArray();
+                this.drArray = drList.ToArray();
             }
         }
 
@@ -162,14 +163,14 @@ namespace Sci.Production.Warehouse
         {
             string sqlcmd = $@"
             select 
-             im.ID
+             im.Ukey
+            ,im.ID
             ,im.Releaser
             ,im.AddName
             ,im.AddDate
             ,ReleaserName = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = im.Releaser)
             ,AddNameDisplay = Concat(AddName, '-' + (select Name from pass1 where id = im.AddName))
-            from Issue_MIND im where ID IN ('{this.id}')
-            Group by id,im.Releaser,im.AddName, im.AddDate";
+            from Issue_MIND im where ID IN ('{this.id}')";
 
             // 批次assign不需要帶出資料，保留DataTable結構就好了
             if (this._isBatchAssign)
@@ -227,7 +228,13 @@ namespace Sci.Production.Warehouse
 
         private bool CheckReleaser(DataRow dr)
         {
-            string sqlcmd = $@"select 1 from Issue_Detail where ID in('{this.id}') and MINDReleaser = '{dr["Releaser"]}'";
+            string sqlcmd = string.Empty;
+
+            if (dr["Releaser"].ToString() != string.Empty)
+            {
+                sqlcmd = $@"select 1 from Issue_Detail where ID in('{this.id}') and MINDReleaser = '{dr["Releaser"]}'";
+            }
+
             return MyUtility.Check.Seek(sqlcmd);
         }
 
@@ -297,6 +304,27 @@ namespace Sci.Production.Warehouse
                     }
                 }
 
+                var duplicateCombinations = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
+                    .Where(row => row.RowState != DataRowState.Deleted)
+                          .GroupBy(row => new { ID = row["ID"], Releaser = row["Releaser"] })
+                          .Where(group => group.Count() > 1)
+                          .Select(group => new { ID = group.Key.ID, Releaser = group.Key.Releaser })
+                          .ToList();
+
+                if (duplicateCombinations.Count > 0)
+                {
+                    MyUtility.Msg.InfoBox("duplicate Releaser!!");
+                    return;
+                }
+
+                DataTable tmp = new DataTable();
+                tmp.Columns.Add("ID", typeof(string));
+                tmp.Columns.Add("Releaser", typeof(string));
+                tmp.Columns.Add("ReleaserName", typeof(string));
+                tmp.Columns.Add("AddName", typeof(string));
+                tmp.Columns.Add("AddNameDisplay", typeof(string));
+                tmp.Columns.Add("AddDate", typeof(DateTime));
+
                 foreach (DataRow dataRow in this.drArray)
                 {
                     string strReleaser = string.Empty;
@@ -317,14 +345,14 @@ namespace Sci.Production.Warehouse
                             }
                             else
                             {
-                                DataRow newRow = ((DataTable)this.listControlBindingSource1.DataSource).NewRow();
+                                DataRow newRow = tmp.NewRow();
                                 newRow["ID"] = dataRow["ID"].ToString();
                                 newRow["Releaser"] = dr == null ? string.Empty : dr["Releaser"];
                                 newRow["ReleaserName"] = dr == null ? string.Empty : dr["ReleaserName"];
                                 newRow["AddName"] = Sci.Env.User.UserID;
                                 newRow["AddNameDisplay"] = Sci.Env.User.UserID + "-" + Sci.Env.User.UserName;
                                 newRow["AddDate"] = DBNull.Value;
-                                ((DataTable)this.listControlBindingSource1.DataSource).Rows.Add(newRow);
+                                tmp.Rows.Add(newRow);
                             }
                         }
                     }
@@ -338,6 +366,8 @@ namespace Sci.Production.Warehouse
                         dataRow["Releaser"] = string.Empty;
                     }
                 }
+
+                ((DataTable)this.listControlBindingSource1.DataSource).Merge(tmp);
 
                 DualResult result = DBProxy.Current.GetTableSchema(null, "Issue_MIND", out ITableSchema tableSchema);
                 if (!result)
@@ -397,7 +427,6 @@ namespace Sci.Production.Warehouse
 
             this.EditMode = !this.EditMode;
             this.ControlButton();
-
         }
 
         private void ControlButton()
