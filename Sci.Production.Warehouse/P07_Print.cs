@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Production.Class.Command;
 using Sci.Production.PublicForm;
 using Sci.Win;
 using System;
@@ -104,7 +105,7 @@ namespace Sci.Production.Warehouse
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Invoice", this.Invoice));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Wk", this.Wk));
             e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("FTYID", this.FTYID));
-            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Blno", strBLNO));
+            e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Blno", strBLNO.IsNullOrWhiteSpace() ? " " : strBLNO));
             DualResult result = this.LoadData();
             if (!result)
             {
