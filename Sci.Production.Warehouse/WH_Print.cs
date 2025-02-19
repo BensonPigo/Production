@@ -80,8 +80,13 @@ namespace Sci.Production.Warehouse
         {
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.id.Length) { Value = this.id });
-            string qty;
-            string minQRCode;
+            string qty = "t.Qty";
+            string minQRCode = @"
+,[MINDQRCode] = case when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
+                        when w.To_NewBarcode = ''  then ''
+                else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)   
+				end";
+            string fromOldBarcode = string.Empty;
 
             switch (this.callFrom)
             {
@@ -96,13 +101,23 @@ namespace Sci.Production.Warehouse
                 else Concat(w.From_NewBarcode, '-', w.From_NewBarcodeSeq)   
 				end";
                     break;
+                case "P13":
+                case "P16":
+                case "P19":
+                case "P62":
+                    fromOldBarcode = @"
+,From_OldBarcode = (
+        select case when wbt.From_OldBarcodeSeq = '' then wbt.From_OldBarcode
+                    when wbt.From_OldBarcode = '' then ''
+                    else Concat(wbt.From_OldBarcode, '-', wbt.From_OldBarcodeSeq) end
+        from WHBarcodeTransaction wbt with (nolock)
+        where wbt.TransactionUkey = t.Ukey
+        and wbt.TransactionID = t.id
+        and wbt.Action = 'Confirm'
+    )
+";
+                    break;
                 default:
-                    qty = "t.Qty";
-                    minQRCode = @"
-,[MINDQRCode] = case when w.To_NewBarcodeSeq = '' then w.To_NewBarcode
-                        when w.To_NewBarcode = ''  then ''
-                else Concat(w.To_NewBarcode, '-', w.To_NewBarcodeSeq)   
-				end";
                     break;
             }
 
@@ -148,6 +163,7 @@ select
     ,[FabricType] = case when psd.FabricType = 'F' then 'Fabric'
                          when psd.FabricType = 'A' then 'Accessory'
                          else 'Other' end
+    {fromOldBarcode}
 From #tmp t
 inner join PO_Supp_Detail psd with(nolock) on psd.id = t.POID and psd.SEQ1 = t.Seq1 and psd.SEQ2 = t.Seq2 and psd.FabricType = 'F'
 inner join Fabric with(nolock) on Fabric.SCIRefno = psd.SCIRefno
