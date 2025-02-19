@@ -5,7 +5,8 @@ CREATE PROCEDURE [dbo].[usp_switchWorkorder]
 	 @WorkType  varChar(1),
 	 @Cuttingid  varChar(13),
 	 @mDivisionid varchar(8),
-	 @username varchar(10)
+	 @username varchar(10),
+	 @UseCutRefToRequestFabric tinyint
 	)
 AS
 BEGIN
@@ -14,7 +15,7 @@ BEGIN
 		SET NOCOUNT ON;
 	
 	--�NCutting ��JWorkType
-	update cutting set WorkType =@WorkType where id = @Cuttingid
+	update cutting set WorkType =@WorkType,UseCutRefToRequestFabric = @UseCutRefToRequestFabric where id = @Cuttingid
     -- Insert statements for procedure here
 	-- ���X�Ҧ�Cuttingid ��SP#
 	--Declare @sptable Table(id varchar(13))

@@ -43,7 +43,6 @@ namespace Sci.Production.PublicForm
             where o.id = '{this.cuttingid}'";
 
             DBProxy.Current.Execute(null, upSqlCmdDate);
-
         }
 
         /// <inheritdoc/>
@@ -52,6 +51,23 @@ namespace Sci.Production.PublicForm
             base.OnFormLoaded();
             this.GridSetup();
             this.Query();
+
+            // 預設UseCutRefToRequestFabric
+            string strUseCutRefToRequestFabric = MyUtility.Convert.GetString(MyUtility.GetValue.Lookup("select UseCutRefToRequestFabric from System "));
+            if (strUseCutRefToRequestFabric == "1")
+            {
+                this.radioButtonYes.Checked = true;
+            }
+            else if (strUseCutRefToRequestFabric == "2")
+            {
+                this.radioButtonNo.Checked = true;
+            }
+            else
+            {
+                this.radioButtonYes.Checked = false;
+                this.radioButtonNo.Checked = false;
+            }
+
         }
 
         private void GridSetup()
@@ -317,12 +333,12 @@ select distinct '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #
                     string exswitch;
                     if (worktype == "1")
                     {
-                        exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
+                        exswitch = $"exec dbo.usp_switchWorkorder '{worktype}','{this.cuttingid}','{this.keyWord}','{this.loginID}','{this.radioUseCutRefToRequestFabric.Value}'";
                     }
                     else
                     {
                         // By SP worktype = 2
-                        exswitch = string.Format("exec dbo.usp_switchWorkorder_BySP '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
+                        exswitch = $"exec dbo.usp_switchWorkorder_BySP '{worktype}','{this.cuttingid}','{this.keyWord}','{this.loginID}','{this.radioUseCutRefToRequestFabric.Value}'";
                     }
 
                     DBProxy sp_excute = new DBProxy

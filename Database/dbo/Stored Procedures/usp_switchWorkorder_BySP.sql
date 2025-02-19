@@ -3,14 +3,17 @@
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
 	 @mDivisionid varchar(8),
-	 @username varchar(10)
+	 @username varchar(10),
+	 @UseCutRefToRequestFabric tinyint
 	)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 SET NOCOUNT ON;
-update cutting set WorkType =2 where id = @Cuttingid
+update cutting set WorkType =2 
+,UseCutRefToRequestFabric = @UseCutRefToRequestFabric
+where id = @Cuttingid
 
 Declare @POID varchar(13) 
 Declare @FactoryID varchar(8) 
