@@ -5,7 +5,6 @@
 	[ComboType] [varchar](1) NOT NULL,
 	[Category] [varchar](1) NOT NULL,
 	[ProductType] [nvarchar](100) NOT NULL,
-	[Cell] [varchar](2) NOT NULL,
 	[Line] [varchar](5) NOT NULL,
 	[DaysLeft] [varchar](10) NULL,
 	[InlineDate] [datetime] NOT NULL,
@@ -24,7 +23,6 @@
 	[ComboType] ASC,
 	[Category] ASC,
 	[ProductType] ASC,
-	[Cell] ASC,
 	[Line] ASC,
 	[InlineDate] ASC,
 	[CheckListNo] ASC
@@ -48,9 +46,6 @@ ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_Changeove
 GO
 
 ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_ProductType]  DEFAULT ('') FOR [ProductType]
-GO
-
-ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Cell]  DEFAULT ('') FOR [Cell]
 GO
 
 ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_Line]  DEFAULT ('') FOR [Line]
@@ -93,9 +88,6 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單分類' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Reason table 的 ReasonTypeID = Style_Apparel_Type' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'ProductType'
-GO
-
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線組別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'Cell'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'Line'

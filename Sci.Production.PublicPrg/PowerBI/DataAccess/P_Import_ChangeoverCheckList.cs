@@ -88,6 +88,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 #endregion
 
+                resultReport = this.UpdateBIData_Delete();
+                if (!resultReport.Result)
+                {
+                    throw resultReport.Result.GetException();
+                }
+
                 #region Update BI Table Info
                 if (resultReport.Result)
                 {
@@ -98,6 +104,48 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             catch (Exception ex)
             {
                 finalResult.Result = new Ict.DualResult(false, ex);
+            }
+
+            return finalResult;
+        }
+
+        private Base_ViewModel UpdateBIData_Delete()
+        {
+            Base_ViewModel finalResult;
+            Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string sqlcmd = $@"
+select *
+into #tmpP_ChangeoverCheckList
+from P_ChangeoverCheckList p
+where not exists (
+	select 1 from [MainServer].[Production].[dbo].[ChgOver] co 
+	where p.FactoryID = co.FactoryID 
+	and cast(p.InlineDate as date) = cast(co.Inline as date)
+	and p.Line = co.SewingLineID 
+	and p.NewSP = co.OrderID 
+	and p.NewStyle = co.StyleID 
+	and p.NewComboType = co.ComboType
+)
+
+delete pd
+from P_ChangeoverCheckList_Detail pd
+where exists (select 1 from #tmpP_ChangeoverCheckList p where pd.FactoryID = p.FactoryID and pd.InlineDate = p.InlineDate and pd.Line = p.Line and pd.SP = p.NewSP and pd.Style = p.NewStyle and pd.ComboType = p.NewComboType)
+
+delete p
+from P_ChangeoverCheckList p
+inner join #tmpP_ChangeoverCheckList t on p.FactoryID = t.FactoryID and p.InlineDate = t.InlineDate and p.Line = t.Line 
+									and p.OldSP = t.OldSP and p.OldStyle = t.OldStyle and p.OldComboType = t.OldComboType
+									and p.NewSP = t.NewSP and p.NewStyle = t.NewStyle and p.NewComboType = t.NewComboType
+            ";
+
+            using (sqlConn)
+            {
+                List<SqlParameter> sqlParameters = new List<SqlParameter>();
+                finalResult = new Base_ViewModel()
+                {
+                    Result = TransactionClass.ExecuteByConnTransactionScope(sqlConn, sqlcmd, sqlParameters),
+                };
             }
 
             return finalResult;
@@ -192,15 +240,14 @@ inner join #tmp t on  p.[FactoryID] = t.[FactoryID]
 				 AND p.[ComboType] = t.[ComboType]
 				 AND p.[Category] = t.[Category]
 				 AND p.[ProductType] = t.[ProductType]
-				 AND p.[Cell] = t.[Cell]
                  AND p.[Line] = t.[Line]
 				 AND p.[InlineDate] = t.[InlineDate]
 				 AND p.[CheckListNo] = t.[CheckListNo]
 
 
 
-insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
-select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Cell], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
+insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
+select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[FactoryID] = t.[FactoryID] 
 														 AND p.[SP] = t.[SP] 
@@ -208,7 +255,6 @@ where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[Factory
 														 AND p.[ComboType] = t.[ComboType]
 														 AND p.[Category] = t.[Category]
 														 AND p.[ProductType] = t.[ProductType]
-														 AND p.[Cell] = t.[Cell]
                                                          AND p.[Line] = t.[Line]
 														 AND p.[InlineDate] = t.[InlineDate]
 														 AND p.[CheckListNo] = t.[CheckListNo])
@@ -224,7 +270,6 @@ where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID]
 										 AND p.[ComboType] = t.[ComboType]
 										 AND p.[Category] = t.[Category]
 										 AND p.[ProductType] = t.[ProductType]
-										 AND p.[Cell] = t.[Cell]
 										 AND p.[Line] = t.[Line]
 										 AND p.[InlineDate] = t.[InlineDate]
 										 AND p.[CheckListNo] = t.[CheckListNo])
