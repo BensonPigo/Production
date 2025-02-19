@@ -18,7 +18,7 @@
                 components.Dispose();
             }
             base.Dispose(disposing);
-        }   
+        }
 
         #region Windows Form 設計工具產生的程式碼
 
@@ -32,6 +32,8 @@
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.btnPrint = new Sci.Win.UI.Button();
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboFilterQRCode = new Sci.Win.UI.ComboBox();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
             this.radioEncodeSeq = new Sci.Win.UI.RadioButton();
             this.radiobySP = new Sci.Win.UI.RadioButton();
@@ -47,8 +49,8 @@
             this.grid1.AllowUserToAddRows = false;
             this.grid1.AllowUserToDeleteRows = false;
             this.grid1.AllowUserToResizeRows = false;
-            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.grid1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.grid1.BackgroundColor = System.Drawing.SystemColors.Control;
             this.grid1.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
@@ -79,12 +81,33 @@
             this.btnPrint.UseVisualStyleBackColor = true;
             this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(9, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(75, 23);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "QR Code";
+            // 
+            // comboFilterQRCode
+            // 
+            this.comboFilterQRCode.BackColor = System.Drawing.Color.White;
+            this.comboFilterQRCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFilterQRCode.FormattingEnabled = true;
+            this.comboFilterQRCode.IsSupportUnselect = true;
+            this.comboFilterQRCode.Location = new System.Drawing.Point(87, 8);
+            this.comboFilterQRCode.Name = "comboFilterQRCode";
+            this.comboFilterQRCode.OldText = "";
+            this.comboFilterQRCode.Size = new System.Drawing.Size(140, 24);
+            this.comboFilterQRCode.TabIndex = 4;
+            this.comboFilterQRCode.SelectedIndexChanged += new System.EventHandler(this.ComboFilterQRCode_SelectedIndexChanged);
+            // 
             // radioPanel1
             // 
             this.radioPanel1.Controls.Add(this.radioEncodeSeq);
             this.radioPanel1.Controls.Add(this.radiobySP);
             this.radioPanel1.IsSupportEditMode = false;
-            this.radioPanel1.Location = new System.Drawing.Point(121, 3);
+            this.radioPanel1.Location = new System.Drawing.Point(343, 4);
             this.radioPanel1.Name = "radioPanel1";
             this.radioPanel1.Size = new System.Drawing.Size(339, 31);
             this.radioPanel1.TabIndex = 66;
@@ -119,7 +142,7 @@
             // 
             // labSortBy
             // 
-            this.labSortBy.Location = new System.Drawing.Point(8, 7);
+            this.labSortBy.Location = new System.Drawing.Point(230, 8);
             this.labSortBy.Name = "labSortBy";
             this.labSortBy.Size = new System.Drawing.Size(110, 23);
             this.labSortBy.TabIndex = 65;
@@ -134,11 +157,13 @@
             this.shapeContainer1.TabIndex = 54;
             this.shapeContainer1.TabStop = false;
             // 
-            // WH_Receive_QRCodeSticker
+            // P07_QRCodeSticker
             // 
             this.ClientSize = new System.Drawing.Size(854, 410);
             this.Controls.Add(this.radioPanel1);
             this.Controls.Add(this.labSortBy);
+            this.Controls.Add(this.comboFilterQRCode);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.btnPrint);
             this.Controls.Add(this.grid1);
             this.Name = "WH_Receive_QRCodeSticker";
@@ -157,6 +182,8 @@
         private Win.UI.Grid grid1;
         private Win.UI.Button btnPrint;
         private Win.UI.ListControlBindingSource listControlBindingSource;
+        private Win.UI.Label label1;
+        private Win.UI.ComboBox comboFilterQRCode;
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioEncodeSeq;
         private Win.UI.RadioButton radiobySP;
