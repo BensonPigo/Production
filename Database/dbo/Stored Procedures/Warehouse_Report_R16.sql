@@ -67,6 +67,7 @@ begin
 			,[PickingCompletion] = isnull(CompletionNum.value, 0)
 			,[NeedUnroll] = iif (id.NeedUnroll = 1, 'Y', '')
 			,[UnrollScanName] = concat(isnull(fu.UnrollScanner, ''), '-', isnull((select Name from Pass1 where Pass1.id =fu.UnrollScanner ), ''))
+			,[UnrollMachine] = MIOT.MachineID
 			,[UnrollStartTime] = isnull(format(fu.UnrollStartTime, 'yyyy/MM/dd HH:mm'), '')
 			,[UnrollEndTime] = isnull(format(fu.UnrollEndTime, 'yyyy/MM/dd HH:mm'), '')
 			,[RelaxationStartTime] = isnull(format(fu.RelaxationStartTime,'yyyy/MM/dd HH:mm'), '')
@@ -105,6 +106,7 @@ begin
 	                                                and w.TransactionUkey = id.Ukey
 	                                                and w.Action = 'Confirm'
 	left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
+		left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fu.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
 	outer apply(
 		select cutref = stuff((
 			Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
