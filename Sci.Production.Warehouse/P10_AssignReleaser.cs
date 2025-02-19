@@ -161,11 +161,15 @@ namespace Sci.Production.Warehouse
         private void Query()
         {
             string sqlcmd = $@"
-            select
-            im.*
+            select 
+             im.ID
+            ,im.Releaser
+            ,im.AddName
+            ,im.AddDate
             ,ReleaserName = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = im.Releaser)
             ,AddNameDisplay = Concat(AddName, '-' + (select Name from pass1 where id = im.AddName))
-            from Issue_MIND im where ID IN ('{this.id}')";
+            from Issue_MIND im where ID IN ('{this.id}')
+            Group by id,im.Releaser,im.AddName, im.AddDate";
 
             // 批次assign不需要帶出資料，保留DataTable結構就好了
             if (this._isBatchAssign)
