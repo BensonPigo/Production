@@ -58,6 +58,26 @@ namespace Sci.Production.Warehouse
                     dr["IsQRCodeCreatedByPMS"] = dr["MINDQRCode"].ToString().IsQRCodeCreatedByPMS();
                 }
             }
+
+            if (this.IsP07)
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Create by PMS,Not create by PMS");
+                this.comboFilterQRCode.Text = "Create by PMS";
+                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
+                this.RadioPanel1_ValueChanged(null, null);
+            }
+            else if (this.IsP18)
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, $"All,Create by {this.rgCode},Not Create by {this.rgCode}");
+                this.comboFilterQRCode.Text = $"Create by {this.rgCode}";
+                this.grid1.ColumnHeaderMouseClick += this.Grid1_ColumnHeaderMouseClick;
+                this.RadioPanel1_ValueChanged(null, null);
+            }
+            else if (this.callFrom == "P10" || this.callFrom == "P13" || this.callFrom == "P16" || this.callFrom == "P19" || this.callFrom == "P62")
+            {
+                MyUtility.Tool.SetupCombox(this.comboFilterQRCode, 1, 1, "All,Partial Release");
+                this.comboFilterQRCode.Text = "Partial Release";
+            }
         }
 
         private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -249,6 +269,35 @@ namespace Sci.Production.Warehouse
 
             // 開啟 report view 直接列印
             new Win.Subs.ReportView(report) { DirectPrint = true }.Show();
+        }
+
+        private void ComboFilterQRCode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboFilterQRCode.SelectedIndex < 0)
+            {
+                return;
+            }
+
+            switch (this.comboFilterQRCode.SelectedIndex)
+            {
+                case 1:
+                    if (this.IsP07 || this.IsP18)
+                    {
+                        this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = true";
+                    }
+                    else
+                    {
+                        this.listControlBindingSource.Filter = "MINDQRCode <> From_OldBarcode";
+                    }
+
+                    break;
+                case 2:
+                    this.listControlBindingSource.Filter = "IsQRCodeCreatedByPMS = false";
+                    break;
+                default:
+                    this.listControlBindingSource.Filter = string.Empty;
+                    break;
+            }
         }
 
         private void RadioPanel1_ValueChanged(object sender, EventArgs e)
