@@ -385,7 +385,7 @@ namespace Sci.Production.Warehouse
                         // batch ：舊資料全部刪除
                         DBProxy.Current.Execute(null, $@"delete from Issue_MIND where id IN ('{this.listID.JoinToString("','")}')");
 
-                        foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                        foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                         {
                             dr["AddDate"] = datenow;
                             result = DBProxy.Current.Insert(null, tableSchema, dr);
