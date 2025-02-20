@@ -38,6 +38,7 @@ namespace Sci.Production.Prg
         private bool enableDragCell;
         private List<string> excludeDragCols = new List<string>();
         private BackgroundWorker backgroundScrollMainGrid = new BackgroundWorker();
+        private List<int> selectedRowIndices = new List<int>();
 
         private DataTable DataMain
         {
@@ -57,18 +58,21 @@ namespace Sci.Production.Prg
         }
 
         /// <summary>
-        /// GridRowDrag
+        /// GridRowDrag 建構子 (建立拖曳功能)
         /// </summary>
         /// <param name="tarGrid">tarGrid</param>
         /// <param name="afterRowDragDo">afterRowDragDo</param>
         /// <param name="beforeRowDragDo">beforeRowDragDo</param>
         /// <param name="enableDragCell">enableDragCell</param>
         /// <param name="excludeDragCols">excludeDragCols</param>
-        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null, bool enableDragCell = true, List<string> excludeDragCols = null)
+        /// <param name="mutiSelect">mutiSelect</param>
+        public GridRowDrag(Grid tarGrid, Action<DataRow> afterRowDragDo = null, Action<DataRow> beforeRowDragDo = null, bool enableDragCell = true, List<string> excludeDragCols = null, bool mutiSelect = false)
         {
             this.mainGrid = tarGrid;
             this.mainGrid.AllowDrop = true;
             this.backgroundScrollMainGrid.WorkerSupportsCancellation = true;
+            this.mainGrid.MultiSelect = mutiSelect;
+
             // 處理拖曳開始事件
             this.mainGrid.MouseDown += this.DataGridView_MouseDown;
 
@@ -222,16 +226,46 @@ namespace Sci.Production.Prg
 
                 if (rowIndex >= 0)
                 {
-                    // 開始拖曳操作
+                    // 儲存目前選取的資料列索引
+                    this.selectedRowIndices.Clear();
+                    foreach (DataGridViewRow row in this.mainGrid.SelectedRows)
+                    {
+                        this.selectedRowIndices.Add(row.Index);
+                    }
+
+                    if (!this.selectedRowIndices.Contains(rowIndex))
+                    {
+                        this.selectedRowIndices.Add(rowIndex);
+                    }
+
+                    // 在拖曳操作開始前，恢復選取的資料列
                     this.mainGrid.BeginInvoke(new Action(() =>
                     {
+                        this.mainGrid.ClearSelection();
+
+                        // 恢復選取狀態
+                        foreach (int index in this.selectedRowIndices)
+                        {
+                            if (index >= 0 && index < this.mainGrid.Rows.Count)
+                            {
+                                this.mainGrid.Rows[index].Selected = true;
+                            }
+                        }
+
+                        // 開始拖曳操作
                         this.scrollDirection = ScrollDirection.None;
                         if (!this.backgroundScrollMainGrid.IsBusy)
                         {
                             this.backgroundScrollMainGrid.RunWorkerAsync();
                         }
 
-                        this.mainGrid.DoDragDrop(this.mainGrid.Rows[rowIndex], DragDropEffects.Move);
+                        List<DataGridViewRow> selectedRows = new List<DataGridViewRow>();
+                        foreach (int index in this.selectedRowIndices)
+                        {
+                            selectedRows.Add(this.mainGrid.Rows[index]);
+                        }
+
+                        this.mainGrid.DoDragDrop(selectedRows, DragDropEffects.Move);
                         this.scrollDirection = ScrollDirection.None;
                         if (this.backgroundScrollMainGrid.IsBusy)
                         {
@@ -251,7 +285,7 @@ namespace Sci.Production.Prg
             this.scrollDirection = ScrollDirection.None;
 
             // 確保拖曳的是資料列
-            if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row"))
+            if (e.Data.GetDataPresent(typeof(List<DataGridViewRow>)))
             {
                 e.Effect = DragDropEffects.Move;
             }
@@ -270,7 +304,7 @@ namespace Sci.Production.Prg
             int targetRowIndex = this.mainGrid.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
             // 設定拖曳效果
-            if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row") && targetRowIndex != -1)
+            if (e.Data.GetDataPresent(typeof(List<DataGridViewRow>)) && targetRowIndex != -1)
             {
                 e.Effect = DragDropEffects.Move;
                 this.mouseLocation = clientPoint;
@@ -285,7 +319,7 @@ namespace Sci.Production.Prg
         private void DataGridView_DragDrop(object sender, DragEventArgs e)
         {
             // 確保拖曳的是資料列
-            if (e.Data.GetDataPresent("Ict.Win.UI.DataGridView+Row"))
+            if (e.Data.GetDataPresent(typeof(List<DataGridViewRow>)))
             {
                 // 取得目標行的索引
                 Point clientPoint = this.mainGrid.PointToClient(new Point(e.X, e.Y));
@@ -296,20 +330,21 @@ namespace Sci.Production.Prg
                     int tarDataRowIndex = this.DataMain.Rows.IndexOf(this.mainGrid.GetDataRow(targetGridRowIndex));
 
                     // 取得被拖曳的資料列
-                    DataGridViewRow draggedRow = (DataGridViewRow)e.Data.GetData("Ict.Win.UI.DataGridView+Row");
-                    int draggedRowIndex = this.DataMain.Rows.IndexOf(this.mainGrid.GetDataRow(draggedRow.Index));
-
-                    // 判斷被拖曳的資料列是否與目標行相同，若相同則不進行任何操作
-                    if (draggedRowIndex != tarDataRowIndex)
+                    List<DataGridViewRow> draggedRows = (List<DataGridViewRow>)e.Data.GetData(typeof(List<DataGridViewRow>));
+                    List<int> draggedRowIndices = draggedRows.Select(row => this.DataMain.Rows.IndexOf(this.mainGrid.GetDataRow(row.Index))).ToList();
+                    this.finalDragIndex = -1;
+                    foreach (DataRow dataRow in draggedRows.OrderBy(s => s.Index).Select(s => this.mainGrid.GetDataRow(s.Index)))
                     {
-                        if (this.beforeRowDragDo != null)
+                        // 更新資料綁定
+                        DataRow newRow = this.MoveDataRow(this.DataMain, dataRow, tarDataRowIndex);
+
+                        tarDataRowIndex = this.DataMain.Rows.IndexOf(newRow) + 1;
+
+                        if (this.finalDragIndex == -1)
                         {
-                            this.beforeRowDragDo(this.mainGrid.GetDataRow(draggedRow.Index));
+                            this.finalDragIndex = this.DataMain.Rows.IndexOf(newRow);
                         }
 
-                        // 更新資料綁定的資料
-                        DataRow newRow = this.MoveDataRow(this.DataMain, draggedRowIndex, tarDataRowIndex);
-                        this.finalDragIndex = targetGridRowIndex;
                         if (this.afterRowDragDo != null)
                         {
                             this.afterRowDragDo(newRow);
@@ -317,7 +352,7 @@ namespace Sci.Production.Prg
                     }
                 }
 
-                // 重設拖移相關變數
+                // 重置拖曳相關變數
                 this.dragImage?.Dispose();
                 this.dragImage = null;
                 this.mainGrid.BeginInvoke(new Action(() =>
@@ -327,25 +362,27 @@ namespace Sci.Production.Prg
             }
         }
 
-        private DataRow MoveDataRow(DataTable dataTable, int sourceIndex, int targetIndex)
+        private DataRow MoveDataRow(DataTable dataTable, DataRow sourceRow, int targetIndex)
         {
             if (dataTable.Rows.Count < 2)
             {
                 return null;
             }
 
-            DataRow dataRow = dataTable.Rows[sourceIndex];
             DataRow newRow = dataTable.NewRow();
-            DataRowState oriRowState = dataRow.RowState;
+            DataRowState oriRowState = sourceRow.RowState;
 
-            newRow.ItemArray = oriRowState == DataRowState.Modified ? this.GetRowItemArrayByVersion(dataRow, DataRowVersion.Original) : dataRow.ItemArray;
-            object[] currentRowData = dataRow.ItemArray;
+            newRow.ItemArray = oriRowState == DataRowState.Modified ? this.GetRowItemArrayByVersion(sourceRow, DataRowVersion.Original) : sourceRow.ItemArray;
+            object[] currentRowData = sourceRow.ItemArray;
 
-            // 從 DataTable 中移除資料列
-            dataTable.Rows.Remove(dataRow);
+            sourceRow.Delete();
 
             // 插入資料列至目標位置
             dataTable.Rows.InsertAt(newRow, targetIndex);
+
+            // 從 DataTable 中移除資料列
+            dataTable.Rows.Remove(sourceRow);
+
             if (oriRowState == DataRowState.Unchanged)
             {
                 newRow.AcceptChanges();
