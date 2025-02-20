@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -97,28 +98,34 @@ namespace Sci.Production.Subcon
                 new System.Data.SqlClient.SqlParameter("@id", this.CurrentMaintain["id"].ToString()),
             };
 
-            // FarmOut_Detail/FarmIn_Detail
-            string sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID=@id";
-            DBProxy.Current.Select(null, sqlcmd, paras, out DataTable dt);
+            List<SqlParameter> sqlpar = new List<SqlParameter>() { new SqlParameter("@ArtworkTypeID", this.CurrentMaintain["ArtworkTypeID"]) };
+            bool subconFarmInOutNotFromRFID = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SubconFarmInOutNotFromRFID from ArtworkType with (nolock) where ID = @ArtworkTypeID", sqlpar));
 
-            // 有則return
-            if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0) ||
-                dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmout"]) > 0))
+            if (!subconFarmInOutNotFromRFID)
             {
-                MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
-                return false;
-            }
+                // FarmOut_Detail/FarmIn_Detail
+                string sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID=@id";
+                DBProxy.Current.Select(null, sqlcmd, paras, out DataTable dt);
 
-            string chkP10exists = $@"
+                // 有則return
+                if (dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmin"]) > 0) ||
+                    dt.AsEnumerable().Any(r => MyUtility.Convert.GetInt(r["Farmout"]) > 0))
+                {
+                    MyUtility.Msg.WarningBox(string.Format("Some SP# already have Farm In/Out data!!!"), "Warning");
+                    return false;
+                }
+
+                string chkP10exists = $@"
 select 1
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
 where  apd.id = '{this.CurrentMaintain["id"]}' 
 ";
-            if (MyUtility.Check.Seek(chkP10exists))
-            {
-                MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
-                return false;
+                if (MyUtility.Check.Seek(chkP10exists))
+                {
+                    MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
+                    return false;
+                }
             }
 
             return base.ClickDeleteBefore();
