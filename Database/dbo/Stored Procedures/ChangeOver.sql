@@ -185,7 +185,7 @@ BEGIN
 	SELECT *
 	INTO #tmp
 	FROM ChgOver co WITH (nolock)
-	WHERE co.Inline >= Convert(date, GETDATE())
+	WHERE co.Inline >= DATEADD(year, -1, GETDATE())
 	AND co.Inline >= '2025-01-01'
 
 	DELETE CC

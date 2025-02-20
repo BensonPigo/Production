@@ -105,7 +105,7 @@ from ChgOver co with (nolock)
 where co.Category = @Category
 and co.Type = @StyleType
 and co.FactoryID = @FactoryID
-and co.Inline >= Convert(date, GETDATE())
+and co.Inline >= DATEADD(year, -1, GETDATE())
 and co.Inline >= '2025-01-01'
 
 -- 刪除並重新寫入ChgOver_Check資料
