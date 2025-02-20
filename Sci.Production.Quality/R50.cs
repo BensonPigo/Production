@@ -67,9 +67,11 @@ select
      CheckTimes.[Top],
      CheckTimes.Middle,
      CheckTimes.Bottom,
+     CheckTimes.[T/M/B],
      RollDyelot.InspRatio,
-     InspectQty = RollDyelot.DataCnt,
+     InspectQty = CR.InspectQty,
      RejectQty = RollDyelot.NotEmptyCnt,
+     DefectQty = CR.DefectQty,
      Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = CR.AddName),
      CR.Remark,
      CR.AddDate	
@@ -86,6 +88,7 @@ outer apply (
 select [Top]=sum(iif(TMB = '1',1,0)),
       Middle=sum(iif(TMB = '2',1,0)),
       Bottom=sum(iif(TMB = '3',1,0)),
+      [T/M/B] = sum(iif(TMB = '4',1,0)),
       isnull(count(1),0) TotalCnt
  from CutInsRecord_RollDyelot
 where CutInsRecordUkey = CR.Ukey ) CheckTimes
