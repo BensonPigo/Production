@@ -94,7 +94,7 @@ namespace Sci.Production.Warehouse
             .Numeric("IssueQty", header: "Issue Qty", width: Widths.AnsiChars(9), decimal_places: 2, iseditingreadonly: true)
             .DateTime("MINDReleaseDate", header: "Pick Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("UnrollStartTime", header: "Unroll\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
-            .DateTime("UnrollEndTime", header: "Unroll\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
+            .DateTime("UnrollMachine", header: "Unroll\r\nMachine", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("RelaxationStartTime", header: "Relax\r\nStart Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("RelaxationEndTime", header: "Relax\r\nEnd Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
             .DateTime("DispatchTime", header: "Dispatch Time", width: Widths.AnsiChars(18), iseditingreadonly: true)
@@ -232,7 +232,7 @@ namespace Sci.Production.Warehouse
 			select cl.ID, cl.Refno, cl.Color, cl.NeedUnroll, cl.Relaxtime
 					, isud.POID, isud.Seq1, isud.Seq2, isud.Roll, isud.Dyelot, isud.Qty
                     , isud.MINDReleaseDate
-					, fur.UnrollStartTime, fur.UnrollEndTime
+					, fur.UnrollStartTime, [UnrollMachine] = MIOT.MachineID
 					, [UnrollDone] = IIF (cl.NeedUnroll = 1 and UnrollStatus != '', 1, 0)
 					, fur.RelaxationStartTime, fur.RelaxationEndTime
 					, [RelaxationDone] = IIF (cl.Relaxtime > 0 and fur.RelaxationStartTime is not null, 1, 0)
@@ -260,6 +260,7 @@ namespace Sci.Production.Warehouse
 													and isud.ukey = wbt.TransactionUkey
 													and wbt.Action = 'Confirm'
 			left join Fabric_UnrollandRelax fur on wbt.To_NewBarcode = fur.Barcode
+            left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fur.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
 			left join M360MINDDispatch mmd on isud.M360MINDDispatchUkey = mmd.Ukey
             left join FtyInventory f on f.POID = isud.POID
                                     and f.Seq1 = isud.Seq1
@@ -377,8 +378,8 @@ namespace Sci.Production.Warehouse
 			idt.Roll,
 			idt.Dyelot,
 			[IssueQty] = idt.Qty, 
-			idt.UnrollStartTime, 
-			idt.UnrollEndTime, 
+			idt.UnrollStartTime,
+            idt.UnrollMachine,
 			idt.RelaxationStartTime, 
 			idt.RelaxationEndTime, 
 			idt.DispatchTime,
