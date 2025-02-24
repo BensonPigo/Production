@@ -121,7 +121,7 @@ from P_ChangeoverCheckList p
 where not exists (
 	select 1 from [MainServer].[Production].[dbo].[ChgOver] co 
 	where p.FactoryID = co.FactoryID 
-	and cast(p.InlineDate as date) = cast(co.Inline as date)
+	and p.InlineDate = co.Inline
 	and p.Line = co.SewingLineID 
 	and p.NewSP = co.OrderID 
 	and p.NewStyle = co.StyleID 
@@ -225,6 +225,29 @@ and p.[InlineDate] >= @EndDate
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+-- 刪除重複的資料
+delete t
+from #tmp t
+inner join (
+    select t.[FactoryID], t.[SP], t.[Style], t.[ComboType], t.[Category], t.[ProductType], t.[Line], t.[CheckListNo]
+        , [InlineDate] = MAX(t.[InlineDate])
+    from (
+        select t.[FactoryID], t.[SP], t.[Style], t.[ComboType], t.[Category], t.[ProductType], t.[Line], t.[InlineDate], t.[CheckListNo]
+        from #tmp t
+        group by t.[FactoryID], t.[SP], t.[Style], t.[ComboType], t.[Category], t.[ProductType], t.[Line], t.[InlineDate], t.[CheckListNo]
+        having count(1) > 1
+    ) t
+    group by t.[FactoryID], t.[SP], t.[Style], t.[ComboType], t.[Category], t.[ProductType], t.[Line], t.[CheckListNo]
+) t2 on  t.[FactoryID]     = t2.[FactoryID] 
+	 AND t.[SP]            = t2.[SP] 
+	 AND t.[Style]         = t2.[Style]
+	 AND t.[ComboType]     = t2.[ComboType]
+	 AND t.[Category]      = t2.[Category]
+	 AND t.[ProductType]   = t2.[ProductType]
+     AND t.[Line]          = t2.[Line]
+	 AND t.[InlineDate]    < t2.[InlineDate]
+	 AND t.[CheckListNo]   = t2.[CheckListNo]
+
 update p
 	set p.[DaysLeft] =  t.[DaysLeft]
 	 , p.[OverDays] = t.[OverDays]

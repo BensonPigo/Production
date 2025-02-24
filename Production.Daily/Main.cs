@@ -209,7 +209,7 @@ namespace Production.Daily
         {
             // MyUtility.FTP
             DualResult result;
-            result = transferPMS.SFtp_Ping(Sftp_Path,sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+            result = transferPMS.SFtp_Ping(Sftp_Path, sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
 
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
 
@@ -354,7 +354,7 @@ namespace Production.Daily
         {
             SqlConnection conn;
 
-            if (!DBProxy.Current.OpenConnection("Production",out conn)) { return; }
+            if (!DBProxy.Current.OpenConnection("Production", out conn)) { return; }
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             DualResult result;
@@ -732,14 +732,14 @@ Region      Succeeded       Message
             #endregion
 
 
-            
+
             #region 檢查FTP檔案的日期是否正確
             bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
                 DualResult result1;
-                result1 = transferPMS.SFtp_Ping(Sftp_Path,this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
-                if (!transferPMS.CheckRar_CreateDate(importRegion,Sftp_Path + importRegion.RarName, isSkipRarCheckDate))
+                result1 = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+                if (!transferPMS.CheckRar_CreateDate(importRegion, Sftp_Path + importRegion.RarName, isSkipRarCheckDate))
                 {
                     fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
@@ -798,7 +798,7 @@ Region      Succeeded       Message
                         //    ftp = ftp + ":" + Sci.Env.Cfg.FtpServerPort;
                         //}
 
-                        if(transferPMS.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar))
+                        if (transferPMS.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar))
                         {
                             break;
                         }
@@ -1044,25 +1044,23 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
             #endregion
 
             #region Import_Trade_To_Pms(包含下傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
-            for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
+            int retryTimes = Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]);
+            int attempts = 0;
+            bool success;
+
+            do
             {
-                if (!transferPMS.Import_Trade_To_Pms(Sftp_Path,sftpIP, sftpID, sftpPwd))
-                {
-                    if (i == Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]))
-                    {
-                        return new DualResult(false, "Update failed!");
-                    }
-                    // String subject = "PMS transfer data (New) ERROR";
-                    // String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
-                    // SendMail(subject, desc);
-                    // this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
-                    // return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
-                }
-                else
-                {
-                    break;
-                }
+                success = transferPMS.Import_Trade_To_Pms(Sftp_Path, sftpIP, sftpID, sftpPwd);
+                if (success) break;
+
+                attempts++;
                 Thread.Sleep(2500);
+            }
+            while (attempts < retryTimes);
+
+            if (!success)
+            {
+                return new DualResult(false, "Update failed!");
             }
             #endregion
             return Ict.Result.True;

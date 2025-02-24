@@ -45,7 +45,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 --Summary
 SELECT  distinct
      [FactoryID] = co.FactoryID,
-     [InlineDate] = CONVERT(varchar, co.Inline, 23),
+     [InlineDate] = co.Inline,
      [Ready] = iif ((SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 0 AND ID = CO.ID) > 0 ,'','V'),
      [Line] = co.SewingLineID,
      [OldSP] = oldco.OrderID,
@@ -159,7 +159,7 @@ SELECT Distinct
     [Cell] = sl.SewingCell,
     [Line] = co.SewingLineID,
     [DaysLeft] = iif(cc.Checked = 1 ,'-' ,  CONVERT( VARCHAR(10),iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val ))),
-    [InlineDate] = CONVERT(varchar, co.Inline, 23),
+    [InlineDate] = co.Inline,
     [OverDays] = iif(cc.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL)),
     [ChgOverCheck] = IIF(cc.Checked = 0, '', 'V'),
     [CompletionDate] = CONVERT(varchar, cc.CompletionDate, 23),
