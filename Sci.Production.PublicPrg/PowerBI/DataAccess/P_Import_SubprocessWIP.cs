@@ -167,6 +167,19 @@ where not exists (
     AND t.SubprocessID = s.SubprocessID
 )
 
+-- delete P_SubprocessWIP 一次30萬筆分批刪除
+WHILE 1 = 1
+BEGIN
+    DELETE TOP (300000) ps
+    FROM P_SubprocessWIP ps WITH (NOLOCK)
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
+        WHERE ps.Bundleno = bd.BundleNo
+    )
+
+    IF @@ROWCOUNT = 0
+        BREAK;
+END
 
 if exists (select 1 from BITableInfo b where b.id = 'P_SubprocessWIP')
 begin
