@@ -115,10 +115,6 @@ namespace Sci.Production.Warehouse
             if (this.ReportResourceName == "P07_Report2.rdlc")
             {
                 e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", this.Date2));
-                foreach (DataRow dr in this.dt.Rows)
-                {
-                    dr["Desc"] = dr["Desc"] + "\n\r" + dr["OrderCompany"];
-                }
 
                 List<P07_PrintData> data = this.dt.AsEnumerable()
                                 .Select(row1 => new P07_PrintData()
@@ -173,8 +169,15 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.id.Length) { Value = this.id });
 
-            string sql = @"
-select  
+            string strOrderCompany = string.Empty;
+            if (this.ReportResourceName == "P07_Report2.rdlc")
+            {
+                strOrderCompany = " + Company.NameEN";
+            }
+
+            string sql = string.Format(
+                @"
+    select  
 	[Sel] = 0
     ,R.Roll
 	,R.Dyelot
@@ -187,7 +190,7 @@ select
 	,IIF((psd.ID = lag(psd.ID,1,'')over (order by psd.ID,psd.seq1,psd.seq2)  
 			AND (psd.seq1 = lag(psd.seq1,1,'')over (order by psd.ID,psd.seq1,psd.seq2))  
 			AND(psd.seq2 = lag(psd.seq2,1,'')over (order by psd.ID,psd.seq1,psd.seq2))) 
-				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
+				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0){0})[Desc]            
 	,R.ShipQty
 	,R.pounit
 	,R.StockQty
@@ -303,7 +306,7 @@ OUTER APPLY(
 LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
 LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 where R.id = @ID
-";
+", strOrderCompany);
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
