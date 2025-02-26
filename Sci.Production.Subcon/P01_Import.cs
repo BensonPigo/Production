@@ -614,6 +614,8 @@ select  Selected = 0
         , bar.IrregularQtyReason
         , bar.ArtworkReq_DetailUkey
         , oa.Remark
+        , [Farmout] = ISNULL(FarmOut.Value,0)
+		, [FarmIn] = ISNULL(FarmIn.Value,0)
 from #baseArtworkReq bar
 left join Order_Artwork oa on bar.OrderArtworkUkey = oa.Ukey
 inner join dbo.Orders o with (nolock) on o.ID = bar.OrderID
