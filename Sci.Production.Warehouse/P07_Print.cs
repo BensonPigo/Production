@@ -115,6 +115,7 @@ namespace Sci.Production.Warehouse
             if (this.ReportResourceName == "P07_Report2.rdlc")
             {
                 e.Report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Date2", this.Date2));
+
                 List<P07_PrintData> data = this.dt.AsEnumerable()
                                 .Select(row1 => new P07_PrintData()
                                 {
@@ -168,8 +169,15 @@ namespace Sci.Production.Warehouse
             List<SqlParameter> pars = new List<SqlParameter>();
             pars.Add(new SqlParameter("@ID", SqlDbType.VarChar, size: this.id.Length) { Value = this.id });
 
-            string sql = @"
-select  
+            string strOrderCompany = string.Empty;
+            if (this.ReportResourceName == "P07_Report2.rdlc")
+            {
+                strOrderCompany = " + Company.NameEN";
+            }
+
+            string sql = string.Format(
+                @"
+    select  
 	[Sel] = 0
     ,R.Roll
 	,R.Dyelot
@@ -182,7 +190,7 @@ select
 	,IIF((psd.ID = lag(psd.ID,1,'')over (order by psd.ID,psd.seq1,psd.seq2)  
 			AND (psd.seq1 = lag(psd.seq1,1,'')over (order by psd.ID,psd.seq1,psd.seq2))  
 			AND(psd.seq2 = lag(psd.seq2,1,'')over (order by psd.ID,psd.seq1,psd.seq2))) 
-				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0))[Desc]            
+				,'',dbo.getMtlDesc(R.poid,R.seq1,R.seq2,2,0){0})[Desc]            
 	,R.ShipQty
 	,R.pounit
 	,R.StockQty
@@ -244,6 +252,7 @@ select
     ,[Article] = isnull(psdsA.SpecValue, '')
     ,[Size] = isnull(psdsS.SpecValue, '')
     ,fr.Relaxtime
+    ,[OrderCompany] = Company.NameEN
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 left join Receiving WITH (NOLOCK) on Receiving.id = R.id
 LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
@@ -257,6 +266,8 @@ left join Ftyinventory  fi with (nolock) on    R.POID = fi.POID and
                                                R.Dyelot  = fi.Dyelot and
                                                R.StockType = fi.StockType
 left join View_WH_Orders o WITH (NOLOCK) on o.ID = r.PoId
+left join Orders on Orders.ID = o.ID
+left join Company on Company.ID = Orders.OrderCompanyID
 LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo=f.SCIRefNo
 LEFT JOIN color c on c.id = isnull(psdsC.SpecValue, '') and c.BrandId = psd.BrandId 
 left join FIR with (nolock) on  FIR.ReceivingID = r.ID and 
@@ -295,7 +306,7 @@ OUTER APPLY(
 LEFT JOIN [SciMES_RefnoRelaxtime] rr WITH (NOLOCK) ON rr.Refno = psd.Refno
 LEFT JOIN [SciMES_FabricRelaxation] fr WITH (NOLOCK) ON rr.FabricRelaxationID = fr.ID
 where R.id = @ID
-";
+", strOrderCompany);
 
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
@@ -364,24 +375,25 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 {
                     objSheets.Cells[nRow, 1] = dr["Roll"].ToString();
                     objSheets.Cells[nRow, 2] = dr["Dyelot"].ToString();
-                    objSheets.Cells[nRow, 3] = dr["PoId"].ToString();
-                    objSheets.Cells[nRow, 4] = dr["SEQ"].ToString();
-                    objSheets.Cells[nRow, 5] = dr["Refno"].ToString();
-                    objSheets.Cells[nRow, 6] = dr["Article"].ToString();
-                    objSheets.Cells[nRow, 7] = dr["ColorID"].ToString();
-                    objSheets.Cells[nRow, 8] = dr["ColorName"].ToString();
-                    objSheets.Cells[nRow, 9] = dr["Size"].ToString();
-                    objSheets.Cells[nRow, 10] = dr["WeaveTypeID"].ToString();
-                    objSheets.Cells[nRow, 11] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 12] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 13] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 14] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 15] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 16] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 17] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
+                    objSheets.Cells[nRow, 3] = dr["OrderCompany"].ToString();
+                    objSheets.Cells[nRow, 4] = dr["PoId"].ToString();
+                    objSheets.Cells[nRow, 5] = dr["SEQ"].ToString();
+                    objSheets.Cells[nRow, 6] = dr["Refno"].ToString();
+                    objSheets.Cells[nRow, 7] = dr["Article"].ToString();
+                    objSheets.Cells[nRow, 8] = dr["ColorID"].ToString();
+                    objSheets.Cells[nRow, 9] = dr["ColorName"].ToString();
+                    objSheets.Cells[nRow, 10] = dr["Size"].ToString();
+                    objSheets.Cells[nRow, 11] = dr["WeaveTypeID"].ToString();
+                    objSheets.Cells[nRow, 12] = dr["BrandID"].ToString();
+                    objSheets.Cells[nRow, 13] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 15] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 16] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 17] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 18] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
                         string.Empty : dr["TotalReceivingQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 18] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 19] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 19] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 20] = dr["Remark"].ToString();
                     nRow++;
                 }
 
