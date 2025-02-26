@@ -5,6 +5,8 @@ using Ict;
 using Sci.Data;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
