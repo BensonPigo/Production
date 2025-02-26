@@ -202,6 +202,7 @@ select  p.GMTBookingLock
                             for xml path('')
                           ), 1, 1, '')         , Pullout.sendtotpe
     ,pl2.APPBookingVW,pl2.APPEstAmtVW,[PLFromRgCode] = '{0}'
+    ,p.Expressid
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
 outer apply(
@@ -443,6 +444,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
+                .Text("Expressid", header: "H/C NO.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SewingOutputQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -1937,6 +1939,8 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         {
             base.ClickConfirm();
 
+            DataTable dtdetailgridbs = (DataTable)this.detailgridbs.DataSource;
+
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
@@ -1955,6 +1959,31 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 MyUtility.Msg.WarningBox("S/O not yet confirmed, can't confirm!");
+                return;
+            }
+
+            // ship mode為E/C、E/P、E/P-C, 在Garment Booking Confirm 時, 任一 Packing 沒有 HC No. 則不可 Confirm
+            bool isHCNo = true;
+            if (dtdetailgridbs.Rows.Count > 0)
+            {
+                foreach (DataRow drdetailgridbs in dtdetailgridbs.Rows)
+                {
+                    if (MyUtility.Check.Empty(drdetailgridbs["Expressid"]))
+                    {
+                        isHCNo = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                isHCNo = false;
+            }
+
+            string strShipModeID = this.CurrentMaintain["ShipModeID"].ToString();
+            if (((strShipModeID == "E/C") || (strShipModeID == "E/P") || (strShipModeID == "E/P-C")) && !isHCNo)
+            {
+                MyUtility.Msg.WarningBox("Ship Mode is E/C, E/P, or E/P-C,  need create HC frist than can confirm GB");
                 return;
             }
 
