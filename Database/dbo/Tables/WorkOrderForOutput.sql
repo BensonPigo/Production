@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[WorkOrderForOutput] (
+﻿CREATE TABLE [dbo].[WorkOrderForOutput] (
     [Ukey]                     INT             IDENTITY (1, 1) NOT NULL,
     [ID]                       VARCHAR (13)    CONSTRAINT [DF_WorkOrderForOutput_ID] DEFAULT ('') NOT NULL,
     [FactoryID]                VARCHAR (8)     CONSTRAINT [DF_WorkOrderForOutput_FactoryID] DEFAULT ('') NOT NULL,
@@ -40,13 +40,16 @@ CREATE TABLE [dbo].[WorkOrderForOutput] (
     [SourceFrom]               VARCHAR (1)     CONSTRAINT [DF_WorkOrderForOutput_SourceFrom] DEFAULT ('') NOT NULL,
     [CuttingMethod]            BIT             CONSTRAINT [DF_WorkOrderForOutput_CuttingMethod] DEFAULT ((0)) NOT NULL,
     [Order_EachconsUkey]       BIGINT          CONSTRAINT [DF_WorkOrderForOutput_Order_EachconsUkey] DEFAULT ((0)) NOT NULL,
-    [CuttingPlannerRemark]     NVARCHAR (500)  CONSTRAINT [DF_WorkOrderForOutput_CuttingPlannerRemark] DEFAULT ('') NOT NULL ,
+    [CuttingPlannerRemark]     NVARCHAR (500)  CONSTRAINT [DF_WorkOrderForOutput_CuttingPlannerRemark] DEFAULT ('') NOT NULL,
     [AddName]                  VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_AddName] DEFAULT ('') NOT NULL,
     [AddDate]                  DATETIME        NULL,
     [EditName]                 VARCHAR (10)    CONSTRAINT [DF_WorkOrderForOutput_EditName] DEFAULT ('') NOT NULL,
     [EditDate]                 DATETIME        NULL,
+    [LastCreateCutRefDate]     DATETIME        NULL,
     CONSTRAINT [PK_WorkOrderForOutput] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 	GO
 
@@ -173,3 +176,10 @@ CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_CutRef]
 GO
 CREATE NONCLUSTERED INDEX [IDX_WorkOrderForOutput_BundleESCDate]
     ON [dbo].[WorkOrderForOutput]([ID] ASC, [MDivisionID] ASC, [CutRef] ASC);
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排裁剪計劃人的備註', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'CuttingPlannerRemark';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後創立CutRef的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'LastCreateCutRefDate';
+

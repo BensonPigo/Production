@@ -16,6 +16,9 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class Cutting_BatchAssign : Win.Subs.Base
     {
+#pragma warning disable SA1401 // Fields should be private
+#pragma warning disable SA1600 // Elements should be documented
+        public bool editByUseCutRefToRequestFabric = true; // P09 useCutRefToRequestFabric = 1 為 False
         private List<DataRow> detailDatas_Ori; // 原始Detail
         private DataTable dt_CurentDetail; // 用來修改的 DataTable
         private DataTable sp; // 用在 Filter 開窗選項
@@ -26,6 +29,8 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09 才有
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09 才有
         private DataTable dtAllSEQ_FabricCode;
+#pragma warning restore SA1600 // Elements should be documented
+#pragma warning restore SA1401 // Fields should be private
 
         /// <summary>
         /// Batch Assign
@@ -53,6 +58,18 @@ namespace Sci.Production.Cutting
             this.BtnFilter_Click(null, null);
         }
 
+        /// <inheritdoc/>
+        protected override void OnFormLoaded()
+        {
+            base.OnFormLoaded();
+            this.txtMakerName.Enabled = this.editByUseCutRefToRequestFabric;
+            this.dateWKETA.Enabled = this.editByUseCutRefToRequestFabric;
+            this.txtMarkerLength.Enabled = this.editByUseCutRefToRequestFabric;
+            this.txtSeq1.Enabled = this.editByUseCutRefToRequestFabric;
+            this.txtSeq2.Enabled = this.editByUseCutRefToRequestFabric;
+            this.txtSpreadingNo.Enabled = this.editByUseCutRefToRequestFabric;
+        }
+
         private void GridSetup()
         {
             this.gridBatchAssign.IsEditingReadOnly = false;
@@ -72,7 +89,7 @@ namespace Sci.Production.Cutting
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_Seq2)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Article_CONCAT", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("SizeCode_CONCAT", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -80,7 +97,7 @@ namespace Sci.Production.Cutting
                 .Text("TotalCutQty_CONCAT", header: "Total CutQty", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
+                .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditNotWithUseCutRefToRequestFabric)
                 .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 ;
             }
@@ -97,7 +114,7 @@ namespace Sci.Production.Cutting
                 .Text("OrderId", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("SEQ1", header: "SEQ1", width: Widths.AnsiChars(3)).Get(out this.col_Seq1)
                 .Text("SEQ2", header: "SEQ2", width: Widths.AnsiChars(2)).Get(out this.col_Seq2)
-                .Text("Article", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Article_CONCAT", header: "Article", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Colorid", header: "Color", width: Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Widths.AnsiChars(10), iseditingreadonly: false)
                 .Text("SizeCode_CONCAT", header: "Size", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -130,7 +147,7 @@ namespace Sci.Production.Cutting
 
             if (!MyUtility.Check.Empty(this.txtArticle.Text))
             {
-                filter += $" AND Article like '%{this.txtArticle.Text}%'";
+                filter += $" AND Article_CONCAT like '%{this.txtArticle.Text}%'";
             }
 
             if (!MyUtility.Check.Empty(this.txtMarkerName_Filter.Text))
@@ -172,7 +189,7 @@ namespace Sci.Production.Cutting
                     dr["EstCutDate"] = MyUtility.Convert.GetDate(this.dateBoxEstCutDate.Value);
                 }
 
-                if (this.txtMarkerLength.Text != "00Y00-0/0+0\"" && this.txtMarkerLength.Text != "Y  - / + \"")
+                if (this.txtMarkerLength.HasValue)
                 {
                     dr["MarkerLength"] = dr["MarkerLength_Mask"] = this.txtMarkerLength.Text;
                 }
@@ -333,11 +350,6 @@ namespace Sci.Production.Cutting
                 return;
             }
         }
-
-        private void TxtMakerLength_Validating(object sender, CancelEventArgs e)
-        {
-            this.txtMarkerLength.Text = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
-        }
         #endregion
 
         #region Grid 單筆資料的欄位開窗/驗證
@@ -350,7 +362,7 @@ namespace Sci.Production.Cutting
             ConfigureSeqColumnEvents(this.col_Seq1, this.gridBatchAssign, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
-            BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditData);
+            BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
             if (this.form == CuttingForm.P09)
             {
                 BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditData);
@@ -359,14 +371,24 @@ namespace Sci.Production.Cutting
         #endregion
 
         #region Other
+        private bool CanEditNotWithUseCutRefToRequestFabric(DataRow dr)
+        {
+            return true;
+        }
+
         private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
-            return true; // 能帶進來的資料必定是能編輯的
+            if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID"))
+            {
+                return this.CanEditNotWithUseCutRefToRequestFabric(dr);
+            }
+
+            return this.CanEditData(dr);
         }
 
         private bool CanEditData(DataRow dr)
         {
-            return true; // 能帶進來的資料必定是能編輯的
+            return this.editByUseCutRefToRequestFabric;
         }
         #endregion
     }

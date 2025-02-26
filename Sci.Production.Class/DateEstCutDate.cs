@@ -16,7 +16,7 @@ namespace Sci.Production.Class
         /// <inheritdoc/>
         protected override void OnValidating(CancelEventArgs e)
         {
-            if (!MyUtility.Check.Empty(this.Value))
+            if (!MyUtility.Check.Empty(this.Value) && this.OldValue != this.Value)
             {
                 if (DateTime.Compare(DateTime.Today, Convert.ToDateTime(this.Value)) > 0)
                 {
