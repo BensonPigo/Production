@@ -5,48 +5,21 @@ CREATE PROCEDURE P_Import_Capacity
 AS
 
 BEGIN
-	DECLARE @GroupByTable as table　
-	(
-　　	  Year int NOT NULL,
-　　	  FactoryID varchar(20),
-　　	  Type varchar(100)　　
-	)
-
-	INSERT INTO @GroupByTable
 	select　DISTINCT c.Year
 			,c.FactoryID
 			,c.Type
+	into #GroupByTable
 	from TradeDB.ProductionTPE.dbo.Capacity c
 	inner join TradeDB.Trade.dbo.Factory f on c.FactoryID=f.ID
 	where 1=1
 	AND c.Status = 'Approved' 
 
-	
-	DECLARE @LatestApprovedOnly as table　
-	(
-		ID varchar(100) NOT NULL,
-		Status varchar(20) NOT NULL,
-		FactoryID varchar(20) NOT NULL,
-		Type varchar(30) NOT NULL,
-		Year int NULL,
-		Applicant varchar(40) NOT NULL,
-		RequestDate date NULL,
-		ApvName varchar(30) NOT NULL,
-		ApvDate date NULL,
-		Reason varchar(max) NOT NULL,
-		AddName varchar(20) NOT NULL,
-		AddDate datetime NULL,
-		EditName varchar(20) NOT NULL,
-		EditDate datetime NULL,
-		SendDate date NULL,
-		PreviousID varchar(12) NOT NULL,
-		RejectReason varchar(max) NOT NULL,
-		Mails varchar(500) NULL
-	)
+
 	----取得每一組資料最新Approve的ID
-	INSERT INTO @LatestApprovedOnly
+
 	select　distinct a.*
-	from @GroupByTable t
+	into #LatestApprovedOnly
+	from #GroupByTable t
 	outer apply(
 		SELECT  * 
 		FROM TradeDB.ProductionTPE.dbo.Capacity  
@@ -73,48 +46,6 @@ BEGIN
 		AND ApvDate IS NOT NULL
 	)a
 	
-	
-	DECLARE @tmp as table　
-	(
-		ID varchar(20) NOT NULL,
-		Status varchar(20) NOT NULL,
-		FactoryID varchar(10) NOT NULL,
-		MDivisionID varchar(10) NOT NULL,
-		Year int NULL,
-		Month int NULL,
-		yyyyMM varchar(6) NOT NULL,
-		CapaItem varchar(10) NOT NULL,
-		[Key] varchar(10) NOT NULL,
-		ArtworkTypeID varchar(50) NOT NULL,
-		WorkDays varchar(50) NULL,
-		WorkingHourDaily varchar(50) NULL,
-		TotalIndirectManpower varchar(50) NULL,
-		NoofCells varchar(50) NULL,
-		NoofSewerCells varchar(50) NULL,
-		NoofSewers varchar(50) NULL,
-		AbsentRate varchar(50) NULL,
-		TotalAvailableSewers varchar(50) NULL,
-		AverageProductivity varchar(50) NULL,
-		FtyCPU varchar(50) NULL,
-		SubconCPU varchar(50) NULL,
-		TtlCPU varchar(50) NULL,
-		AverageEfficiency varchar(50) NULL,
-		RemarkDayOffDate varchar(50) NULL,
-		MachineAvailable varchar(50) NULL,
-		TtlPrinter varchar(50) NULL,
-		AverageAttendance varchar(50) NULL,
-		AverageOutputPerHour varchar(50) NULL,
-		OvalMachineOutputPerDay varchar(50) NULL,
-		AverageStitchesPerHour varchar(50) NULL,
-		SubconOutMins varchar(50) NULL,
-		SubconOutPcs varchar(50) NULL,
-		Shift varchar(50) NULL,
-		ApprovedDate varchar(50) NULL,
-		MachineCapacity varchar(50) NULL,
-		Unit varchar(500) NULL
-	)
-
-	INSERT INTO @tmp
 	select c.ID
 		,c.Status
 		,c.FactoryID
@@ -178,6 +109,7 @@ BEGIN
 		,[MachineCapacity]=IIF(d.ID IN
 			('CE9','BS9','GMDYE9','GW9','HSP9','CM6','PADP9','CPc9','CPu11'),cd.Value,'0')
 		,Unit = IIF(a.ArtworkUnit IS NULL OR a.ArtworkUnit = '','TMS',a.ArtworkUnit )
+    into #tmp
 	from TradeDB.ProductionTPE.dbo.Capacity c
 	inner join TradeDB.ProductionTPE.dbo.Capacity_Detail cd on c.ID = cd.ID
 	left join TradeDB.Trade.dbo.Factory f on c.FactoryID = f.ID
@@ -185,29 +117,15 @@ BEGIN
 	left join TradeDB.Trade.dbo.DropDownList d ON d.Type like 'Capa%' ANd  cd.CapaItem = d.ID
 	where c.id IN(
 		select   c.ID
-		from @LatestApprovedOnly c
+		from #LatestApprovedOnly c
 		inner join TradeDB.Trade.dbo.Factory f on c.FactoryID=f.ID
 		left join TradeDB.Trade.dbo.Pass1fty pf on c.Applicant = pf.ID
 		left join TradeDB.Trade.dbo.Pass1 p on c.Applicant = p.ID
 	)
 	
-	DECLARE @keyTable as table　
-	(
-		ID varchar(12) NOT NULL,
-		Status varchar(10) NOT NULL,
-		FactoryID varchar(10) NOT NULL,
-		MDivisionID varchar(10) NOT NULL,
-		Year int NULL,
-		Month int NULL,
-		yyyyMM varchar(6) NOT NULL,
-		[Key] varchar(10) NOT NULL,
-		ArtworkTypeID varchar(50) NOT NULL,
-		ApprovedDate varchar(50) NULL
-	)
-	
-	INSERT INTO @keyTable
 	select distinct ID,Status,FactoryID,MDivisionID,Year,Month ,yyyyMM,[Key],ArtworkTypeID,ApprovedDate
-	from @tmp
+	into #keyTable
+	from #tmp
 	order by yyyyMM
 
 	
@@ -250,74 +168,74 @@ BEGIN
 		,SubconOutPcs = CONVERT(float, u.val )
 		,Shift = CONVERT(float, v.val )
 		,MachineCapacity= CONVERT(float, w.val )
-		,Unit = (select TOP 1 Unit from @tmp t where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month AND t.Unit <> '')
+		,Unit = (select TOP 1 Unit from #tmp t where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month AND t.Unit <> '')
 		,ApprovedDate
 		,AverageEfficiency = CONVERT(float, x.val )
-	from @keyTable k
+	from #keyTable k
 	outer apply(
 		select val =  Sum(cast(t.WorkDays as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)a
 	outer apply(
 		select val =  Sum(cast(t.WorkingHourDaily as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)b
 	outer apply(
 		select val =  Sum(cast(t.TotalIndirectManpower as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)c
 	outer apply(
 		select val =  Sum(cast(t.NoofCells as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)d
 	outer apply(
 		select val =  Sum(cast(t.NoofSewerCells as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)e
 	outer apply(
 		select val =  Sum(cast(t.NoofSewers as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)f
 	outer apply(
 		select val =  Sum(cast(t.AbsentRate as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)g
 	outer apply(
 		select val =  Sum(cast(t.TotalAvailableSewers as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)h
 	outer apply(
 		select val =  Sum(cast(t.AverageProductivity as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)i
 	outer apply(
 		select val =  Sum(cast(t.FtyCPU as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)j
 	outer apply(
 		select val =  Sum(cast(t.SubconCPU as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)kk
 	outer apply(
 		select val =  Sum(cast(t.TtlCPU as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)l
 	outer apply(
 		select Val = STUFF((
 			select distinct ',' + t.RemarkDayOffDate 
-			from @tmp t
+			from #tmp t
 			where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 			for xml path('')
 		),1,2,'')
@@ -325,60 +243,61 @@ BEGIN
 
 	outer apply(
 		select val =  Sum(cast(t.MachineAvailable as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)n
 	outer apply(
 		select val =  Sum(cast(t.TtlPrinter as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)o
 	outer apply(
 		select val =  Sum(cast(t.AverageAttendance as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)p
 	outer apply(
 		select val =  Sum(cast(t.AverageOutputPerHour as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)q
 	outer apply(
 		select val =  Sum(cast(t.OvalMachineOutputPerDay as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)r
 	outer apply(
 		select val =  Sum(cast(t.AverageStitchesPerHour as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)s
 	outer apply(
 		select val =  Sum(cast(t.SubconOutMins as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)t
 	outer apply(
 		select val =  Sum(cast(t.SubconOutPcs as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)u
 	outer apply(
 		select val =  Sum(cast(t.Shift as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)v
 	outer apply(
 		select val =  Sum(cast(t.MachineCapacity as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)w
 	outer apply(
 		select val =  Sum(cast(t.AverageEfficiency as float ))
-		from @tmp t
+		from #tmp t
 		where t.ID = k.ID and t.Year=k.Year AND t.ArtworkTypeID=k.ArtworkTypeID AND t.Month = k.Month
 	)x
 	where NOT EXISTS( select 1 from P_Capacity p WHERE p.ID=k.ID)
+
 
 
 	update b
