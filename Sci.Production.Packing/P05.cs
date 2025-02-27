@@ -1287,6 +1287,7 @@ Packing list is locked in the hanger system.";
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
 
             // 檢查表身欄位 CTNStartNo 不可為空值

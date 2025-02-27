@@ -1226,6 +1226,7 @@ Packing list is locked in the hanger system.";
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
 
             // 還沒有Invoice No就不可以做Confirm

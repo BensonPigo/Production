@@ -1817,6 +1817,7 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
 
             // 檢查表身欄位 CTNStartNo 不可為空值
