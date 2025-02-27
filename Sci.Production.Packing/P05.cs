@@ -1289,6 +1289,20 @@ Packing list is locked in the hanger system.";
         {
             base.ClickConfirm();
 
+            // 檢查表身欄位 CTNStartNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["CTNStartNo"])))
+            {
+                MyUtility.Msg.WarningBox("<1st CTN#> cannot be empty!");
+                return;
+            }
+
+            // 檢查表身欄位 RefNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["RefNo"])))
+            {
+                MyUtility.Msg.WarningBox("<Ref No.> cannot be empty!");
+                return;
+            }
+
             // 檢查累計Pullout數不可超過訂單數量
             if (!Prgs.CheckPulloutQtyWithOrderQty(this.CurrentMaintain["ID"].ToString()))
             {
