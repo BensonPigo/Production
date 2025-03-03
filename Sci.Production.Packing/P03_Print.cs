@@ -598,8 +598,8 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                         tables.Cell(1, 3).Range.Text = cTNStartno;
                         tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
                         tables.Cell(3, 2).Range.Text = country;
-                        tables.Cell(4, 1).Range.Text = "GROSS WEIGHT:" + gw + "K.G.";
-                        tables.Cell(5, 1).Range.Text = "NET WEIGHT:" + nw + "K.G.";
+                        tables.Cell(4, 1).Range.Text = "G.W.:  " + gw + "K.G.";
+                        tables.Cell(5, 1).Range.Text = "N.W.:  " + nw + "K.G.";
                     }
                     else
                     {
