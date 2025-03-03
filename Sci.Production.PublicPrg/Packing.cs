@@ -2375,6 +2375,7 @@ select  pd.ID
 		, pd.CustCTN
         , o.StyleID
         , o.BrandFTYCode
+        , o.CustCDID
         , p.Dest
         , [NewSizeCode] = case  when checkMixSize.value > 1 then 'Mix'
 						        else isnull(NewSizeCode.val, pd.SizeCode) end
