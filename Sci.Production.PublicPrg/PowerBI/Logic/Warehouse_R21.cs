@@ -34,6 +34,7 @@ group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
 						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
 						else ''
 					end
+    ,[OrderCompay] = isnull(Company.NameEN, '')
 	,[OrderTypeID] = isnull(o.OrderTypeID, '')
 	,[WeaveTypeID] = isnull(d.WeaveTypeID, '')
     ,[BuyerDelivery] = o.BuyerDelivery
@@ -189,6 +190,7 @@ group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
 	,[OrderType] = o.OrderTypeID
+    ,[OrderCompay] = isnull(Company.NameEN, '')
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
@@ -349,6 +351,7 @@ group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
                 #region 主要sql Detail
                 sqlcmd.Append($@" 
 from View_WH_Orders o with (nolock)
+inner join Company on Company.ID = o.OrderCompanyID
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
@@ -414,6 +417,7 @@ where 1=1
                 #region 主要sql summary
                 sqlcmd.Append($@"
 from View_WH_Orders o with (nolock)
+inner join Company on Company.ID = o.OrderCompanyID
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
