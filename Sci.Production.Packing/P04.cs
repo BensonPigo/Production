@@ -1226,12 +1226,27 @@ Packing list is locked in the hanger system.";
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
 
             // 還沒有Invoice No就不可以做Confirm
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", this.CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
                 MyUtility.Msg.WarningBox("Shipping is not yet booking so can't confirm!");
+                return;
+            }
+
+            // 檢查表身欄位 CTNStartNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["CTNStartNo"])))
+            {
+                MyUtility.Msg.WarningBox("<1st CTN#> cannot be empty!");
+                return;
+            }
+
+            // 檢查表身欄位 RefNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["RefNo"])))
+            {
+                MyUtility.Msg.WarningBox("<Ref No.> cannot be empty!");
                 return;
             }
 
