@@ -698,6 +698,26 @@ HAVING COUNT([UKey]) > 1
                     }
                 }
 
+                // 最後檢查 每一筆 pullout_detail 對應的 Packing_Detai.PulloutID,PulloutStatus 是否正確
+                string sqlCmd = $@"
+SELECT DISTINCT pld.ID
+FROM Packinglist_detail pld WITH(NOLOCK)
+INNER JOIN PackingList pl WITH(NOLOCK) ON pl.ID = pld.ID
+INNER JOIN Pullout_Detail pod WITH(NOLOCK) ON pl.ID = pod.PackingListID
+INNER JOIN Pullout p WITH(NOLOCK) ON p.ID = pod.ID
+WHERE pod.ID = '{this.CurrentMaintain["ID"]}'
+AND (pl.PulloutID <> pod.ID OR pl.PulloutStatus <> p.Status)
+";
+                DBProxy.Current.Select(null, sqlCmd, out DataTable dtCheckPulloutID);
+                if (dtCheckPulloutID.Rows.Count > 0)
+                {
+                    scope.Dispose();
+                    string pkIds = dtCheckPulloutID.AsEnumerable().Select(s => s["ID"].ToString()).JoinToString(",");
+                    string msg = $@"Packing list update failed. Please report to the IT department.
+Packing List: {pkIds}";
+                    return new DualResult(false, msg);
+                }
+
                 scope.Complete();
             }
 
@@ -1062,6 +1082,9 @@ AND b.type in ('B', 'L')
 
             IList<string> updateCmds = new List<string>();
             updateCmds.Add(string.Format("update Pullout set Status = 'Confirmed', EditName = '{0}', EditDate = GETDATE() where ID = '{1}';", Env.User.UserID, MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
+
+            // 更新 PackingList.PulloutStatus
+            updateCmds.Add($@"update PackingList set PulloutStatus = 'Confirmed' where ID in (select PackingListID from Pullout_Detail where ID = '{this.CurrentMaintain["ID"]}');");
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SendToTPE"]))
             {
                 updateCmds.Add(string.Format(
