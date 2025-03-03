@@ -706,7 +706,7 @@ INNER JOIN PackingList pl WITH(NOLOCK) ON pl.ID = pld.ID
 INNER JOIN Pullout_Detail pod WITH(NOLOCK) ON pl.ID = pod.PackingListID
 INNER JOIN Pullout p WITH(NOLOCK) ON p.ID = pod.ID
 WHERE pod.ID = '{this.CurrentMaintain["ID"]}'
-AND (pl.PulloutID <> pod.ID OR pl.PulloutStatus <> p.Status)
+AND pl.PulloutID <> pod.ID
 ";
                 DBProxy.Current.Select(null, sqlCmd, out DataTable dtCheckPulloutID);
                 if (dtCheckPulloutID.Rows.Count > 0)
@@ -2763,59 +2763,6 @@ where p.id='{dr["PackingListID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Cate
             Prgs.CheckIDDSamePulloutDate(listOrder_QtyShipKey);
             #endregion
 
-        }
-
-        private bool GMTCompleteCheck()
-        {
-            string cmd = string.Empty;
-            DataTable dt;
-
-            #region 表身任一筆Orders.ID的Orders.GMTComplete 不可為 'S'
-            DataTable isGMTComplete = new DataTable();
-            isGMTComplete.ColumnsStringAdd("SP#");
-            isGMTComplete.ColumnsDateTimeAdd("Complete Date");
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                // 拆解Order ID
-                List<string> orders = MyUtility.Convert.GetString(dr["OrderID"]).Split(',').ToList();
-                foreach (var order in orders)
-                {
-                    cmd = $@"SELECT [SP#]=ID ,[Complete Date]=CMPLTDATE FROM Orders WITH(NOLOCK) WHERE GMTComplete='S' AND ID = '{order}'";
-                    DBProxy.Current.Select(null, cmd, out dt);
-                    bool find = dt.Rows.Count > 0;
-                    if (find)
-                    {
-                        foreach (DataRow r in dt.Rows)
-                        {
-                            isGMTComplete.ImportRow(r);
-                        }
-                    }
-                }
-            }
-
-            string sqlChk = $@"
-select p.ID,P.AddDate,P.EditDate,PD.AddDate,PD.EditDate--,
-from Pullout_Detail pd with (nolock)
-INNER JOIN Pullout P with (nolock) ON P.ID=PD.ID
-inner join Orders o with (nolock) on pd.OrderID = o.ID
-where pd.id ='{this.CurrentMaintain["ID"]}'
-and o.GMTComplete = 'S'
-";
-
-            if (isGMTComplete.Rows.Count > 0 && MyUtility.Check.Seek(sqlChk))
-            {
-                var m = MyUtility.Msg.ShowMsgGrid(isGMTComplete, "GMT Complete Status is updated to S on following dates, assuming the shipment is still to be arranged, please contact TPE Finance Dept. to update GMT Complete Status", "GMT Complete Status check");
-                m.Width = 800;
-                m.grid1.Columns[0].Width = 150;
-                m.grid1.Columns[1].Width = 150;
-                m.TopMost = true;
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-            #endregion
         }
     }
 }
