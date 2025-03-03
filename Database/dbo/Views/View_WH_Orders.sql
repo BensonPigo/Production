@@ -1,6 +1,6 @@
 ﻿Create view [dbo].[View_WH_Orders]
 as
-select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Category], [OrderTypeID], [BuyMonth], [Dest]
+select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Category], [OrderTypeID], [OrderCompanyID], [BuyMonth], [Dest]
 	, [Model], [HsCode1], [HsCode2], [PayTermARID], [ShipTermID], [ShipModeList], [CdCodeID], [CPU], [Qty], [StyleUnit]
 	, [PoPrice], [CFMPrice], [CurrencyID], [Commission], [FactoryID], [BrandAreaCode], [BrandFTYCode], [CTNQty], [CustCDID]
 	, [CustPONo], [Customize1], [Customize2], [Customize3], [CFMDate], [BuyerDelivery], [SciDelivery], [SewInLine], [SewOffLine]
@@ -23,7 +23,7 @@ select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Catego
 	, [Customer_PO], [AFS_STOCK_CATEGORY], [CMPLTDATE], [DelayCode], [DelayDesc], [HangerPack], [CDCodeNew], [SizeUnitWeight]
 from DBO.Orders WITH (NOLOCK)
 union ALL
-select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Category], [OrderTypeID], [BuyMonth], [Dest]
+select [ID], [BrandID], [ProgramID], [StyleID], [SeasonID], [ProjectID], [Category], [OrderTypeID], [OrderCompanyID], [BuyMonth], [Dest]
 	, [Model], [HsCode1], [HsCode2], [PayTermARID], [ShipTermID], [ShipModeList], [CdCodeID], [CPU], [Qty], [StyleUnit]
 	, [PoPrice], [CFMPrice], [CurrencyID], [Commission], [FactoryID], [BrandAreaCode], [BrandFTYCode], [CTNQty], [CustCDID]
 	, [CustPONo], [Customize1], [Customize2], [Customize3], [CFMDate], [BuyerDelivery], [SciDelivery], [SewInLine], [SewOffLine]
