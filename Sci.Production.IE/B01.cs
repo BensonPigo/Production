@@ -297,16 +297,17 @@ and co.Inline >= '2025-01-01'
 if @@RowCount > 0
 begin
 	
-    Delete cc
-    From ChgOver_Check cc
+    DELETE CC
+	FROM ChgOver_Check CC
+	INNER JOIN #ChgOver t WITH(NOLOCK) on t.ID = CC.ID
     Where Not exists ( 
                        Select 1
 				       From  ChgOverCheckList ckl 
 			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
 				       Where cc.ChgOverCheckListID = ckl.ID 
+					   and  ckl.Category = T.Category AND ckl.StyleType = t.Type and ckl.FactoryID = T.FactoryID
                        and cc.No = ckd.ChgOverCheckListBaseID 
                      )
-    And cc.ID in (select ID from #ChgOver)
 
 	Insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
 	Select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID) as s , ckd.ChgOverCheckListBaseID, ckd.LeadTime, ckd.ResponseDep

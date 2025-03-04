@@ -196,6 +196,7 @@ BEGIN
 				       From  ChgOverCheckList ckl 
 			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
 				       Where cc.ChgOverCheckListID = ckl.ID 
+					   and  ckl.Category = T.Category AND ckl.StyleType = t.Type and ckl.FactoryID = T.FactoryID
                        and cc.No = ckd.ChgOverCheckListBaseID 
                      )
 	
