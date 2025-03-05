@@ -1451,6 +1451,11 @@ order by p.EditDate desc
 
         private bool CanEditDataByGrid(Grid grid, DataRow dr, string columNname)
         {
+            if (this.CurrentDetailData == null)
+            {
+                return false;
+            }
+
             switch (grid.Name)
             {
                 case "detailgrid":
