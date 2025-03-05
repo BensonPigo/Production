@@ -5,6 +5,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
@@ -99,13 +100,18 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool OnGridSetup()
         {
-            // DataGridViewGeneratorTextColumnSettings
-            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings rk = new DataGridViewGeneratorTextColumnSettings();
 
+            // DataGridViewGeneratorCheckBoxColumnSettings
+            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
+
+            // 設置CellValidating事件來處理CheckBox變動
             cbs.CellValidating += (s, e) =>
             {
-                DataRow row = this.chgOverChkList.Rows[e.RowIndex];
+                DataRowView drv = this.grid.SelectedRows[0].DataBoundItem as DataRowView;
+                int index = this.chgOverChkList.Rows.IndexOf(drv.Row);
+
+                DataRow row = this.chgOverChkList.Rows[index];
                 var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
 
                 if (!MyUtility.Convert.GetBool(oridr["Checked"]))
@@ -142,6 +148,7 @@ namespace Sci.Production.IE
                 this.gridbs.EndEdit();
             };
 
+            // 設置Grid欄位顯示
             this.Helper.Controls.Grid.Generator(this.grid)
                 .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
