@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29102.190
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ProductionDB", "ProductionDB.sqlproj", "{C49ACBBA-9650-48F0-8B2D-DE8D798C7F43}"
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "FPS", "..\FPS\FPS.sqlproj", "{ED6C7887-1EC6-4AD0-B79E-0604A54E4053}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "PMSHistory", "..\PMSHistory\PMSHistory.sqlproj", "{D2CC0A44-9CCE-4759-8FC9-867141234548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +27,12 @@ Global
 		{ED6C7887-1EC6-4AD0-B79E-0604A54E4053}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED6C7887-1EC6-4AD0-B79E-0604A54E4053}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ED6C7887-1EC6-4AD0-B79E-0604A54E4053}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2CC0A44-9CCE-4759-8FC9-867141234548}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
