@@ -155,6 +155,9 @@ SELECT Distinct
     [Style] = co.StyleID,
     [ComboType] = co.ComboType,
     [Category] = co.Category,
+    [Style Type] =  Case when co.Type = 'R' then 'Repeat' 
+                         when co.Type = 'N' then 'New'
+				    end,
     [ProductType] = r.Name,
     [Cell] = sl.SewingCell,
     [Line] = co.SewingLineID,
@@ -166,7 +169,9 @@ SELECT Distinct
     [ResponseDep] = CC.ResponseDep,
     [CheckListNo] = cc.No,
     [CheckListItem] = colb.CheckList,
-    [LateReason] = cc.Remark
+    [LateReason] = cc.Remark,
+    [Deadline] = CONVERT(varchar, CC.Deadline, 23),
+    [Completed in Time] = iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), '')
 FROM ChgOver_Check CC WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
