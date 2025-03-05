@@ -6,7 +6,7 @@
     [Seq1]           VARCHAR (3)  NULL,
     [Seq2]           VARCHAR (2)  NULL,
     [Refno]          VARCHAR (20) NULL,
-    [Article]        VARCHAR (50) NULL,
+    [Article]        VARCHAR (200) NULL,
     [ColorID]        VARCHAR (6)  NULL,
     [SizeCode]       VARCHAR (50) NULL,
     [CmdTime]        DATETIME     NOT NULL,

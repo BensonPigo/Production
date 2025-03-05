@@ -403,7 +403,7 @@ BEGIN
 	[Seq1] [VARCHAR](3) NULL,	
 	[Seq2] [VARCHAR](2) NULL,	
 	[Refno] [VARCHAR](20) NULL,	
-	[Article] [VARCHAR](50) NULL,	
+	[Article] [VARCHAR](200) NULL,	
 	[ColorID] [VARCHAR](6) NULL,
 	[SizeCode] [VARCHAR](50) NULL,
 	[CmdTime] [DATETIME] NOT NULL,
@@ -712,7 +712,7 @@ USING(
 	,[Seq1] = wo.SEQ1
 	,[Seq2] = wo.SEQ2
 	,[Refno] = wo.Refno
-	,[Article] = wo.Article
+	,[Article] = Article.value
 	,cp2.Colorid
 	,[SizeCode] = SizeCode.value
 	,[CmdTime] = GETDATE()
@@ -730,7 +730,19 @@ USING(
 				)s
 				for xml path('')
 			),1,1,'')
-	) SizeCode
+	) SizeCode	
+	outer apply(
+		select value = STUFF((
+			select CONCAT(',',Article)
+			from(
+				select distinct Article
+				from Production.dbo.WorkOrderForPlanning_Distribute
+				where WorkOrderForPlanningUkey = wo.Ukey
+				and Article !=''
+				)s
+		for xml path('')
+		),1,1,'')
+	) Article
 	where (convert(date,cp1.EditDate) = @Today or convert(date,cp1.AddDate) = @Today)
 	and exists(select 1 from Issue_Detail where cp2.ID = CutplanID)
 ) as S
