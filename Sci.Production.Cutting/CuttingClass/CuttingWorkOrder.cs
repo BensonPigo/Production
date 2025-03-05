@@ -3742,9 +3742,9 @@ Select a.AddDate
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutCellID")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutNo")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutPlanID")}
-,{this.CheckAndGetColumns(cuttingForm, "a.Article")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.Seq")}
-, a.CutRef
+,Article = Article_CONCAT
+,a.CutRef
 ,a.EditDate
 ,a.EditName
 ,a.EstCutDate
@@ -3778,7 +3778,15 @@ Select a.AddDate
 from {tableName} a WITH (NOLOCK)
 Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno
 Left Join Order_EachCons oe with (nolock) on oe.Ukey = a.Order_EachconsUkey
-outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
+outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc        
+OUTER APPLY (
+    SELECT Article_CONCAT = STUFF((
+        SELECT DISTINCT CONCAT('/', Article)
+        FROM {tbDistribute} WITH (NOLOCK)
+        WHERE {tbUkey} = a.Ukey
+        AND Article != ''
+        FOR XML PATH ('')), 1, 1, '')
+) Article_CONCAT    
 Where {sqlWhereByType}
 and a.id='{drInfoFrom["ID"]}'
 {this.OrderByWithCheckColumns(cuttingForm, strOrderby)}
@@ -3798,7 +3806,6 @@ and a.id='{drInfoFrom["ID"]}'
             if (isTbDistribute)
             {
                 tbDistributeColumns = @"
---,b.WorkOrderForOutputUkey
 ,b.ID
 ,b.OrderID
 ,b.Article

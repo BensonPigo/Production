@@ -1257,6 +1257,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             dr.Delete();
 
             UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.dt_Distribute, this.formType);
+            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+            UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
         }
 
         private void MenuItemInsertDistribute_Click(object sender, EventArgs e)
@@ -1296,6 +1298,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             dr.Delete();
 
             UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.dt_Distribute, this.formType);
+            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+            UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
         }
         #endregion
 
