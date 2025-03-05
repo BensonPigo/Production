@@ -3425,18 +3425,118 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
         {
             errMsg = string.Empty;
             string xltxName = cuttingForm == CuttingForm.P02 ? "Cutting_P02. Import Marker Template Download" : "Cutting_P09. Import Marker Template Download";
-
-            string style = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{mRow["ID"]}'");
             try
             {
-                string strXltName = Env.Cfg.XltPathDir + $@"\{xltxName}.xltx";
-                Microsoft.Office.Interop.Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
-                string strExcelName = Class.MicrosoftFile.GetName(xltxName);
-                Microsoft.Office.Interop.Excel.Workbook workbook = excel.ActiveWorkbook;
-                Microsoft.Office.Interop.Excel.Worksheet worksheet = excel.ActiveWorkbook.Worksheets["Upload"];
-                worksheet.Cells[2, 2] = mRow["ID"].ToString();
-                worksheet.Cells[2, 7] = style;
+                DataTable dt = this.GetSampleFileData(mRow["ID"].ToString());
+                if (dt.Rows.Count == 0)
+                {
+                    throw new Exception("no data");
+                }
 
+                string iD = mRow["ID"].ToString();
+                string styleID = dt.Rows[0]["StyleID"].ToString();
+                List<string> fabricPanelcodes = dt.AsEnumerable().Select(x => x.Field<string>("FabricPanelCode")).Distinct().ToList();
+
+                string strXltName = Env.Cfg.XltPathDir + $@"\{xltxName}.xltx";
+                Excel.Application excel = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
+                Excel.Workbook workbook = excel.ActiveWorkbook;
+                Excel.Worksheet worksheetUpload = workbook.Worksheets["Upload"];
+                Excel.Worksheet workSheetSample = workbook.Worksheets["Sample"];
+
+                for (int i = 1; i <= fabricPanelcodes.Count() - 1; i++)
+                {
+                    worksheetUpload.Copy(Type.Missing, worksheetUpload);
+                }
+
+                for (int i = 0; i <= fabricPanelcodes.Count() - 1; i++)
+                {
+                    string fabricPanelcode = fabricPanelcodes[i];
+                    Excel.Worksheet worksheet = workbook.Worksheets[i + 1];
+                    worksheet.Select();
+                    worksheet.Name = fabricPanelcode; // 依fabricPanelcode 複製sheet且命名
+                    worksheet.Cells[2, 2] = iD;
+                    worksheet.Cells[2, 7] = styleID;
+
+                    // 依ColorID、PatternNo、SEQ、PatternPanel複製格子並填寫內容
+                    var contents = dt.AsEnumerable()
+                        .Where(x => x.Field<string>("FabricPanelCode").EqualString(fabricPanelcode))
+                        .Select(x => new
+                        {
+                            ColorID = x.Field<string>("ColorID"),
+                            PatternNo = x.Field<string>("PatternNo"),
+                            SEQ = x.Field<string>("SEQ"),
+                            PatternPanel = x.Field<string>("PatternPanel"),
+                        })
+                        .Distinct()
+                        .ToList();
+
+                    int nowRow = 0;
+                    int no = 1;
+                    for (int j = 0; j <= contents.Count() - 1; j++)
+                    {
+                        string colorID = contents[j].ColorID;
+                        string patternNo = contents[j].PatternNo;
+                        string seq = contents[j].SEQ;
+                        string patternPanel = contents[j].PatternPanel;
+                        int insertRow = j == 0 ? nowRow : nowRow - 3; // 後續的Grid的偏移量。
+
+                        worksheet.Cells[3 + insertRow, 2] = no;
+                        worksheet.Cells[3 + insertRow, 6] = patternNo;
+                        worksheet.Cells[3 + insertRow, 11] = seq;
+                        worksheet.Cells[4 + insertRow, 2] = fabricPanelcode;
+                        worksheet.Cells[5 + insertRow, 2] = colorID;
+                        worksheet.Cells[10 + insertRow, 1] = patternPanel;
+
+                        var sizeQtys = dt.AsEnumerable()
+                            .Where(x => x.Field<string>("FabricPanelCode").EqualString(fabricPanelcode) &&
+                                x.Field<string>("ColorID").EqualString(colorID) &&
+                                x.Field<string>("PatternNo").EqualString(patternNo) &&
+                                x.Field<string>("SEQ").EqualString(seq) &&
+                                x.Field<string>("PatternPanel").EqualString(patternPanel))
+                            .Select(x => new
+                            {
+                                SizeCode = x.Field<string>("SizeCode"),
+                                SizeGroup = x.Field<string>("SizeGroup"),
+                                Seq = x.Field<string>("Seq"),
+                                Qty = x.Field<int>("Qty"),
+                            })
+                            .OrderBy(x => x.SizeGroup)
+                            .ThenBy(x => x.Seq)
+                            .ToList();
+
+                        int column = 1;
+                        foreach (var sizeQty in sizeQtys)
+                        {
+                            string sizeCode = sizeQty.SizeCode;
+                            int qty = sizeQty.Qty;
+                            worksheet.Cells[5 + insertRow, 2 + column] = sizeCode;
+                            worksheet.Cells[6 + insertRow, 2 + column] = qty;
+                            column++;
+                        }
+
+                        nowRow = no == 1 ? nowRow + 26 : nowRow + 23;
+                        no++;
+
+                        if (j < contents.Count() - 1)
+                        {
+                            Excel.Range rangeToCopy = workSheetSample.get_Range("A1:A23").EntireRow; // 選取要被複製的資料
+                            Excel.Range rangeToPaste = worksheet.get_Range($"A{nowRow}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                            rangeToCopy.Copy(Type.Missing);
+                            rangeToPaste.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+                        }
+
+                        worksheet.Cells[1, 1].Select(); // 避開最後一個區塊選擇問題。
+                    }
+                }
+
+                if (workSheetSample != null)
+                {
+                    workSheetSample.Delete();
+                    workSheetSample.Visible = Excel.XlSheetVisibility.xlSheetVeryHidden;
+                }
+
+                excel.ActiveWorkbook.Worksheets[1].Select();
+                string strExcelName = Class.MicrosoftFile.GetName(xltxName);
                 workbook.SaveAs(strExcelName);
                 workbook.Close();
                 excel.Quit();
@@ -3450,6 +3550,66 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                 errMsg = ex.Message;
                 return false;
             }
+        }
+
+        private DataTable GetSampleFileData(string id)
+        {
+            List<SqlParameter> parameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@ID", id),
+            };
+
+            string sqlcmd = @"
+select oe.Id
+	, o.StyleID
+	, [FabricPanelCode] = oe.FabricPanelCode
+	, oec.ColorID
+	, [PatternNo] = oe.MarkerNo
+	, [SEQ] = ListSD.SEQ
+	, oecp.PatternPanel
+	, oes.SizeCode
+    , oes.SizeGroup
+    , oes.Seq
+	, oes.Qty
+from Order_EachCons oe
+inner join Orders o on oe.Id = o.ID
+inner join Order_EachCons_Color oec on oec.Order_EachConsUkey = oe.Ukey
+inner join Order_BOF ob on ob.Id = oe.Id and ob.FabricCode = oe.FabricCode
+outer apply (
+	select top 1 [SEQ] = CONCAT(psd.SEQ1, '-', psd.SEQ2)
+	from PO_Supp_Detail psd
+	inner join PO_Supp_Detail_Spec psds on psd.ID = psds.ID
+										and psd.SEQ1 = psds.Seq1
+										and psd.SEQ2 = psds.Seq2
+										and psds.SpecColumnID = 'Color'
+	where psd.ID = ob.Id
+	and psd.SCIRefno = ob.SCIRefno
+	and psds.SpecValue = oec.ColorID
+) ListSD
+outer apply (
+    SELECT PatternPanel = STUFF((
+        SELECT DISTINCT CONCAT('+', PatternPanel)
+        FROM dbo.Order_EachCons_PatternPanel oecp WITH (NOLOCK)
+        WHERE oecp.Order_EachConsUkey = oe.Ukey
+        FOR XML PATH ('')),1,1,'')
+) AS oecp
+outer apply (
+	select oes.SizeCode, os.SizeGroup, os.Seq
+		, [Qty] = SUM(ISNULL(oq.Qty, 0))
+	from Order_EachCons_SizeQty oes
+	inner join Order_SizeCode os on os.Id = oes.Id and oes.SizeCode = os.SizeCode
+	inner join Orders o on oes.Id = o.POID
+	left join Order_Qty oq on oq.ID = o.ID and oes.SizeCode = oq.SizeCode
+	where oes.Order_EachConsUkey = oe.Ukey
+	group by oes.SizeCode, os.SizeGroup, os.Seq
+) oes
+where oe.Id = @ID
+and oe.CuttingPiece = 0
+order by oe.Id,  oe.FabricPanelCode, oec.ColorID, oe.MarkerNo
+	, oecp.PatternPanel, oes.SizeGroup, oes.Seq, oes.SizeCode
+";
+            DBProxy.Current.Select(null, sqlcmd, parameters, out DataTable dt);
+            return dt;
         }
 
         /// <summary>
