@@ -311,7 +311,7 @@
             this.displayCuttingSPNo.Location = new System.Drawing.Point(196, 21);
             this.displayCuttingSPNo.Name = "displayCuttingSPNo";
             this.displayCuttingSPNo.Size = new System.Drawing.Size(113, 23);
-            this.displayCuttingSPNo.TabIndex = 1;
+            this.displayCuttingSPNo.TabIndex = 0;
             // 
             // displayStyleNo
             // 
@@ -329,7 +329,7 @@
             this.displayProject.Location = new System.Drawing.Point(196, 121);
             this.displayProject.Name = "displayProject";
             this.displayProject.Size = new System.Drawing.Size(113, 23);
-            this.displayProject.TabIndex = 5;
+            this.displayProject.TabIndex = 7;
             // 
             // displaySeason
             // 
@@ -338,7 +338,7 @@
             this.displaySeason.Location = new System.Drawing.Point(196, 71);
             this.displaySeason.Name = "displaySeason";
             this.displaySeason.Size = new System.Drawing.Size(113, 23);
-            this.displaySeason.TabIndex = 3;
+            this.displaySeason.TabIndex = 4;
             // 
             // dateCuttingInLine
             // 
@@ -347,7 +347,7 @@
             this.dateCuttingInLine.Name = "dateCuttingInLine";
             this.dateCuttingInLine.ReadOnly = true;
             this.dateCuttingInLine.Size = new System.Drawing.Size(130, 23);
-            this.dateCuttingInLine.TabIndex = 6;
+            this.dateCuttingInLine.TabIndex = 18;
             // 
             // dateSewingScheduleCuttingOffLine
             // 
@@ -356,7 +356,7 @@
             this.dateSewingScheduleCuttingOffLine.Name = "dateSewingScheduleCuttingOffLine";
             this.dateSewingScheduleCuttingOffLine.ReadOnly = true;
             this.dateSewingScheduleCuttingOffLine.Size = new System.Drawing.Size(130, 23);
-            this.dateSewingScheduleCuttingOffLine.TabIndex = 7;
+            this.dateSewingScheduleCuttingOffLine.TabIndex = 20;
             // 
             // dateSewingScheduleLastMtlETA
             // 
@@ -365,7 +365,7 @@
             this.dateSewingScheduleLastMtlETA.Name = "dateSewingScheduleLastMtlETA";
             this.dateSewingScheduleLastMtlETA.ReadOnly = true;
             this.dateSewingScheduleLastMtlETA.Size = new System.Drawing.Size(130, 23);
-            this.dateSewingScheduleLastMtlETA.TabIndex = 8;
+            this.dateSewingScheduleLastMtlETA.TabIndex = 21;
             // 
             // dateSewingScheduleRMtlETA
             // 
@@ -374,7 +374,7 @@
             this.dateSewingScheduleRMtlETA.Name = "dateSewingScheduleRMtlETA";
             this.dateSewingScheduleRMtlETA.ReadOnly = true;
             this.dateSewingScheduleRMtlETA.Size = new System.Drawing.Size(130, 23);
-            this.dateSewingScheduleRMtlETA.TabIndex = 9;
+            this.dateSewingScheduleRMtlETA.TabIndex = 22;
             // 
             // labelSwitchtoWorkOrder
             // 
@@ -431,7 +431,7 @@
             this.displayCategory.Location = new System.Drawing.Point(196, 96);
             this.displayCategory.Name = "displayCategory";
             this.displayCategory.Size = new System.Drawing.Size(113, 23);
-            this.displayCategory.TabIndex = 4;
+            this.displayCategory.TabIndex = 6;
             // 
             // displaySwitchtoWorkOrder
             // 
@@ -440,7 +440,7 @@
             this.displaySwitchtoWorkOrder.Location = new System.Drawing.Point(591, 46);
             this.displaySwitchtoWorkOrder.Name = "displaySwitchtoWorkOrder";
             this.displaySwitchtoWorkOrder.Size = new System.Drawing.Size(107, 23);
-            this.displaySwitchtoWorkOrder.TabIndex = 12;
+            this.displaySwitchtoWorkOrder.TabIndex = 3;
             // 
             // labelEarliestSewingOffline
             // 
@@ -468,7 +468,7 @@
             this.dateWorkOrderLastCutDate.Name = "dateWorkOrderLastCutDate";
             this.dateWorkOrderLastCutDate.ReadOnly = true;
             this.dateWorkOrderLastCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateWorkOrderLastCutDate.TabIndex = 22;
+            this.dateWorkOrderLastCutDate.TabIndex = 19;
             // 
             // dateWorkOrderFirstCutDate
             // 
@@ -478,7 +478,7 @@
             this.dateWorkOrderFirstCutDate.Name = "dateWorkOrderFirstCutDate";
             this.dateWorkOrderFirstCutDate.ReadOnly = true;
             this.dateWorkOrderFirstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateWorkOrderFirstCutDate.TabIndex = 21;
+            this.dateWorkOrderFirstCutDate.TabIndex = 17;
             // 
             // dateWorkOrderCuttingOffLine
             // 
@@ -488,7 +488,7 @@
             this.dateWorkOrderCuttingOffLine.Name = "dateWorkOrderCuttingOffLine";
             this.dateWorkOrderCuttingOffLine.ReadOnly = true;
             this.dateWorkOrderCuttingOffLine.Size = new System.Drawing.Size(130, 23);
-            this.dateWorkOrderCuttingOffLine.TabIndex = 20;
+            this.dateWorkOrderCuttingOffLine.TabIndex = 11;
             // 
             // dateWorkOrderCuttingInLine
             // 
@@ -498,7 +498,7 @@
             this.dateWorkOrderCuttingInLine.Name = "dateWorkOrderCuttingInLine";
             this.dateWorkOrderCuttingInLine.ReadOnly = true;
             this.dateWorkOrderCuttingInLine.Size = new System.Drawing.Size(130, 23);
-            this.dateWorkOrderCuttingInLine.TabIndex = 19;
+            this.dateWorkOrderCuttingInLine.TabIndex = 8;
             // 
             // labelWorkOrderLastCutDate
             // 
@@ -538,7 +538,7 @@
             this.btnMarkerList.Location = new System.Drawing.Point(734, 14);
             this.btnMarkerList.Name = "btnMarkerList";
             this.btnMarkerList.Size = new System.Drawing.Size(151, 24);
-            this.btnMarkerList.TabIndex = 23;
+            this.btnMarkerList.TabIndex = 26;
             this.btnMarkerList.Text = "Marker List";
             this.btnMarkerList.UseVisualStyleBackColor = true;
             this.btnMarkerList.Click += new System.EventHandler(this.BtnMarkerList_Click);
@@ -549,7 +549,7 @@
             this.btnEachCons.Location = new System.Drawing.Point(734, 44);
             this.btnEachCons.Name = "btnEachCons";
             this.btnEachCons.Size = new System.Drawing.Size(151, 24);
-            this.btnEachCons.TabIndex = 24;
+            this.btnEachCons.TabIndex = 27;
             this.btnEachCons.Text = "Each Cons.";
             this.btnEachCons.UseVisualStyleBackColor = true;
             this.btnEachCons.Click += new System.EventHandler(this.BtnEachCons_Click);
@@ -560,7 +560,7 @@
             this.btnBundleCard.Location = new System.Drawing.Point(734, 74);
             this.btnBundleCard.Name = "btnBundleCard";
             this.btnBundleCard.Size = new System.Drawing.Size(151, 24);
-            this.btnBundleCard.TabIndex = 25;
+            this.btnBundleCard.TabIndex = 28;
             this.btnBundleCard.Text = "Bundle Card";
             this.btnBundleCard.UseVisualStyleBackColor = true;
             this.btnBundleCard.Click += new System.EventHandler(this.BtnBundleCard_Click);
@@ -571,7 +571,7 @@
             this.btnQuantitybreakdown.Location = new System.Drawing.Point(734, 104);
             this.btnQuantitybreakdown.Name = "btnQuantitybreakdown";
             this.btnQuantitybreakdown.Size = new System.Drawing.Size(151, 24);
-            this.btnQuantitybreakdown.TabIndex = 28;
+            this.btnQuantitybreakdown.TabIndex = 29;
             this.btnQuantitybreakdown.Text = "Quantity breakdown";
             this.btnQuantitybreakdown.UseVisualStyleBackColor = true;
             this.btnQuantitybreakdown.Click += new System.EventHandler(this.BtnQuantitybreakdown_Click);
@@ -582,7 +582,7 @@
             this.btnGarmentList.Location = new System.Drawing.Point(734, 194);
             this.btnGarmentList.Name = "btnGarmentList";
             this.btnGarmentList.Size = new System.Drawing.Size(151, 24);
-            this.btnGarmentList.TabIndex = 31;
+            this.btnGarmentList.TabIndex = 32;
             this.btnGarmentList.Text = "Garment List";
             this.btnGarmentList.UseVisualStyleBackColor = true;
             this.btnGarmentList.Click += new System.EventHandler(this.BtnGarmentList_Click);
@@ -593,7 +593,7 @@
             this.btnProductionkit.Location = new System.Drawing.Point(734, 164);
             this.btnProductionkit.Name = "btnProductionkit";
             this.btnProductionkit.Size = new System.Drawing.Size(151, 24);
-            this.btnProductionkit.TabIndex = 30;
+            this.btnProductionkit.TabIndex = 31;
             this.btnProductionkit.Text = "Production kit";
             this.btnProductionkit.UseVisualStyleBackColor = true;
             this.btnProductionkit.Click += new System.EventHandler(this.BtnProductionkit_Click);
@@ -604,7 +604,7 @@
             this.btnColorCombo.Location = new System.Drawing.Point(734, 134);
             this.btnColorCombo.Name = "btnColorCombo";
             this.btnColorCombo.Size = new System.Drawing.Size(151, 24);
-            this.btnColorCombo.TabIndex = 29;
+            this.btnColorCombo.TabIndex = 30;
             this.btnColorCombo.Text = "Color Combo";
             this.btnColorCombo.UseVisualStyleBackColor = true;
             this.btnColorCombo.Click += new System.EventHandler(this.BtnColorCombo_Click);
@@ -617,7 +617,7 @@
             this.dateEarliestSewingOffline.Name = "dateEarliestSewingOffline";
             this.dateEarliestSewingOffline.ReadOnly = true;
             this.dateEarliestSewingOffline.Size = new System.Drawing.Size(137, 23);
-            this.dateEarliestSewingOffline.TabIndex = 18;
+            this.dateEarliestSewingOffline.TabIndex = 15;
             // 
             // dateEarliestSewingInline
             // 
@@ -627,7 +627,7 @@
             this.dateEarliestSewingInline.Name = "dateEarliestSewingInline";
             this.dateEarliestSewingInline.ReadOnly = true;
             this.dateEarliestSewingInline.Size = new System.Drawing.Size(137, 23);
-            this.dateEarliestSewingInline.TabIndex = 17;
+            this.dateEarliestSewingInline.TabIndex = 13;
             // 
             // dateEachConsApvDate
             // 
@@ -636,7 +636,7 @@
             this.dateEachConsApvDate.Name = "dateEachConsApvDate";
             this.dateEachConsApvDate.ReadOnly = true;
             this.dateEachConsApvDate.Size = new System.Drawing.Size(130, 23);
-            this.dateEachConsApvDate.TabIndex = 13;
+            this.dateEachConsApvDate.TabIndex = 1;
             // 
             // editPOCombo
             // 
@@ -647,8 +647,8 @@
             this.editPOCombo.Multiline = true;
             this.editPOCombo.Name = "editPOCombo";
             this.editPOCombo.ReadOnly = true;
-            this.editPOCombo.Size = new System.Drawing.Size(557, 51);
-            this.editPOCombo.TabIndex = 10;
+            this.editPOCombo.Size = new System.Drawing.Size(689, 51);
+            this.editPOCombo.TabIndex = 24;
             // 
             // editCuttingCombo
             // 
@@ -659,8 +659,8 @@
             this.editCuttingCombo.Multiline = true;
             this.editCuttingCombo.Name = "editCuttingCombo";
             this.editCuttingCombo.ReadOnly = true;
-            this.editCuttingCombo.Size = new System.Drawing.Size(557, 51);
-            this.editCuttingCombo.TabIndex = 11;
+            this.editCuttingCombo.Size = new System.Drawing.Size(689, 51);
+            this.editCuttingCombo.TabIndex = 25;
             // 
             // displayOrderQty
             // 
@@ -669,7 +669,7 @@
             this.displayOrderQty.Location = new System.Drawing.Point(265, 146);
             this.displayOrderQty.Name = "displayOrderQty";
             this.displayOrderQty.Size = new System.Drawing.Size(44, 23);
-            this.displayOrderQty.TabIndex = 16;
+            this.displayOrderQty.TabIndex = 10;
             // 
             // numFOCQty
             // 
@@ -685,7 +685,7 @@
             0});
             this.numFOCQty.ReadOnly = true;
             this.numFOCQty.Size = new System.Drawing.Size(113, 23);
-            this.numFOCQty.TabIndex = 14;
+            this.numFOCQty.TabIndex = 12;
             this.numFOCQty.Value = new decimal(new int[] {
             0,
             0,
@@ -706,7 +706,7 @@
             0});
             this.numOrderQty.ReadOnly = true;
             this.numOrderQty.Size = new System.Drawing.Size(67, 23);
-            this.numOrderQty.TabIndex = 15;
+            this.numOrderQty.TabIndex = 9;
             this.numOrderQty.Value = new decimal(new int[] {
             0,
             0,
@@ -731,7 +731,7 @@
             this.dateBox1.Name = "dateBox1";
             this.dateBox1.ReadOnly = true;
             this.dateBox1.Size = new System.Drawing.Size(130, 23);
-            this.dateBox1.TabIndex = 41;
+            this.dateBox1.TabIndex = 16;
             // 
             // dateBox2
             // 
@@ -741,7 +741,7 @@
             this.dateBox2.Name = "dateBox2";
             this.dateBox2.ReadOnly = true;
             this.dateBox2.Size = new System.Drawing.Size(130, 23);
-            this.dateBox2.TabIndex = 40;
+            this.dateBox2.TabIndex = 14;
             // 
             // label2
             // 
@@ -776,8 +776,8 @@
             this.txtRemark.Location = new System.Drawing.Point(196, 393);
             this.txtRemark.Multiline = true;
             this.txtRemark.Name = "txtRemark";
-            this.txtRemark.Size = new System.Drawing.Size(557, 51);
-            this.txtRemark.TabIndex = 94;
+            this.txtRemark.Size = new System.Drawing.Size(689, 51);
+            this.txtRemark.TabIndex = 23;
             // 
             // label4
             // 
@@ -791,7 +791,7 @@
             // 
             this.comboUseCutRefToRequestFabric.AddAllItem = false;
             this.comboUseCutRefToRequestFabric.BackColor = System.Drawing.Color.White;
-            this.comboUseCutRefToRequestFabric.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "UseCutRefToRequestFabric", true));
+            this.comboUseCutRefToRequestFabric.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "UseCutRefToRequestFabric", true));
             this.comboUseCutRefToRequestFabric.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboUseCutRefToRequestFabric.FormattingEnabled = true;
             this.comboUseCutRefToRequestFabric.IsSupportUnselect = true;
@@ -799,8 +799,9 @@
             this.comboUseCutRefToRequestFabric.Name = "comboUseCutRefToRequestFabric";
             this.comboUseCutRefToRequestFabric.OldText = "";
             this.comboUseCutRefToRequestFabric.Size = new System.Drawing.Size(107, 24);
-            this.comboUseCutRefToRequestFabric.TabIndex = 96;
+            this.comboUseCutRefToRequestFabric.TabIndex = 5;
             this.comboUseCutRefToRequestFabric.Type = "Pms_UseCutRefType";
+            this.comboUseCutRefToRequestFabric.SelectedValueChanged += new System.EventHandler(this.ComboUseCutRefToRequestFabric_SelectedValueChanged);
             // 
             // label17
             // 
@@ -816,7 +817,7 @@
             this.label5.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.label5.Location = new System.Drawing.Point(30, 384);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(720, 2);
+            this.label5.Size = new System.Drawing.Size(850, 2);
             this.label5.TabIndex = 98;
             this.label5.Text = "label5";
             // 

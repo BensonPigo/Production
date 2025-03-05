@@ -56,7 +56,9 @@ select	ID,
 		FabricPanelCode,
 		Order_eachconsUkey,
 		Article,
-		[newKey]=0 into #tmp_Workorder from WorkOrderForPlanning where 1=0
+		[newKey]=0 
+into #tmp_Workorder 
+from WorkOrderForPlanning where 1=0
 select *,newKey=0 into #tmp_WorkOrder_SizeRatio from WorkOrderForPlanning_SizeRatio where 1=0
 select *,newKey=0 into #tmp_WorkOrder_PatternPanel from WorkOrderForPlanning_PatternPanel where 1=0
 Select *,newKey=0 InTo #tmp_WorkOrder_PatternPaneltmp From WorkOrderForPlanning_PatternPanel WITH (NOLOCK) Where 1 = 0
@@ -471,8 +473,9 @@ Begin
 										FabricCombo,
 										FabricCode,
 										FabricPanelCode,
-										Order_eachconsUkey,
-										Article)
+										Order_eachconsUkey
+										--Article --ISP20250026 移除
+										)
 	Select	ID,
 			FactoryID,
 			MDivisionid,
@@ -495,8 +498,8 @@ Begin
 			FabricCombo,
 			FabricCode,
 			FabricPanelCode,
-			Order_eachconsUkey,
-			Article
+			Order_eachconsUkey
+		--	Article --ISP20250026 移除
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------�N���X��Ident �g�J----------
@@ -504,6 +507,9 @@ Begin
 	update #tmp_WorkOrder_PatternPanel set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	update #tmp_WorkOrder_SizeRatio set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	------Insert into �lTable-------------
+	insert into WorkOrderForPlanning_Distribute(WorkOrderForPlanningUkey,id,Orderid,Article,SizeCode,Qty)
+			(Select WorkOrderUkey,id,Orderid,Article,SizeCode,Qty
+			From #NewWorkOrder_Distribute Where newkey=@insertRow)
 	insert into WorkOrderForPlanning_PatternPanel(WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel)
 		(Select WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel
 		From #tmp_WorkOrder_PatternPanel Where newkey=@insertRow)

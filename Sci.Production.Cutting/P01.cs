@@ -13,6 +13,7 @@ namespace Sci.Production.Cutting
         private string StyleUkey;
         private string keyWord = Env.User.Keyword;
         private string histype;
+        private string defaultUseCutRefToRequestFabric;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P01"/> class.
@@ -55,6 +56,8 @@ namespace Sci.Production.Cutting
 
                 this.ReloadDatas();
             };
+
+            this.defaultUseCutRefToRequestFabric = MyUtility.Convert.GetString(MyUtility.GetValue.Lookup("select UseCutRefToRequestFabric from System "));
         }
 
         /// <inheritdoc/>
@@ -265,6 +268,16 @@ where CuttingSp = '{0}'",
             #endregion
         }
 
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            if (this.CurrentMaintain != null)
+            {
+                this.comboUseCutRefToRequestFabric.Enabled = MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"])) ? true : false;
+            }
+        }
+
         // Marker List
         private void BtnMarkerList_Click(object sender, EventArgs e)
         {
@@ -381,6 +394,26 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
+        }
+
+        private void ComboUseCutRefToRequestFabric_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain != null)
+            {
+                string useCutRefToRequestFabric = this.CurrentMaintain["UseCutRefToRequestFabric"].ToString();
+                if (useCutRefToRequestFabric == "0")
+                {
+                    if (this.CurrentMaintain["UseCutRefToRequestFabric"].ToString() == this.defaultUseCutRefToRequestFabric)
+                    {
+                        MyUtility.Msg.InfoBox("Once saved, no changes are allowed, need to use \"Switch to Workorder\" for changes.");
+                    }
+                    else
+                    {
+                        MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.]");
+                    }
+
+                }
+            }
         }
     }
 }

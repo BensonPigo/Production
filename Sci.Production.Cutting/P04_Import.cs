@@ -39,7 +39,6 @@ namespace Sci.Production.Cutting
             .Text("Cuttingid", header: "Cutting SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Brandid", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Styleid", header: "Style#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-            //.Text("SpreadingNoID", header: "Spreading No", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .Text("Cutcellid", header: "Cut Cell", width: Widths.AnsiChars(2), iseditingreadonly: true)
             .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(40), iseditingreadonly: true);
             this.gridImport.Columns["Sel"].DefaultCellStyle.BackColor = Color.Pink;
@@ -76,7 +75,7 @@ namespace Sci.Production.Cutting
             ,[sizecode] = ''
             ,'' as sewinglineid
             ,1 as sel 
-            from WorkOrderForPlanning wofp
+            from WorkOrderForPlanning wofp with (nolock)
             where cutplanid='' 
             and wofp.CutRef != ''   
             and mDivisionid ='{this.keyWord}' 
@@ -88,7 +87,6 @@ namespace Sci.Production.Cutting
                 sqlcmd += string.Format(" and wofp.factoryid = '{0}'", factory);
             }
 
-
             DualResult dResult = DBProxy.Current.Select(null, sqlcmd, out this.detailTable);
             if (dResult)
             {
@@ -96,6 +94,14 @@ namespace Sci.Production.Cutting
                 {
                     foreach (DataRow dr in this.detailTable.Rows)
                     {
+                        string sqlGetCuttingOrderInfo = string.Format("Select top(1) OrderId, Article, Sizecode from WorkOrderForPlanning_Distribute with (nolock) where WorkOrderForPlanningUkey = '{0}' and orderid !='' and orderid !='Excess'", dr["Ukey"]);
+                        if (MyUtility.Check.Seek(sqlGetCuttingOrderInfo, null, out DataRow queryRow))
+                        {
+                            dr["orderid_b"] = queryRow["OrderId"];
+                            dr["article_b"] = queryRow["Article"];
+                            dr["sizecode"] = queryRow["Sizecode"];
+                        }
+
                         string line = MyUtility.GetValue.Lookup(string.Format("Select SewingLineid from Sewingschedule_Detail Where Orderid = '{0}' and article ='{1}' and sizecode = '{2}'", dr["orderid_b"], dr["article_b"], dr["sizecode"]), null);
                         if (MyUtility.Check.Empty(line))
                         {
@@ -119,7 +125,6 @@ and cutcellid ='{dr["cutcellid"]}' ";
                             newdr["Cuttingid"] = dr["ID"];
                             newdr["brandid"] = ordersRow["brandid"];
                             newdr["Styleid"] = ordersRow["styleid"];
-                            // newdr["SpreadingNoID"] = dr["SpreadingNoID"];
                             newdr["Cutcellid"] = dr["cutcellid"];
                             newdr["cutref"] = dr["cutref"];
                             this.gridTable.Rows.Add(newdr);
@@ -193,14 +198,12 @@ insert into Cutplan(id,cuttingid,mDivisionid,CutCellid,EstCutDate,Status,AddName
                                 foreach (DataRow ddr in importay)
                                 {
                                     string sqlcmd = $@"
-                                    Select 
-			                        [OrderID] = wofp.OrderID
-			                        ,[Article] = wofp.Article
-			                        ,[SizeCode] = wofps.SizeCode
-			                        ,[Qty] = wofp.Layer * wofps.Qty
-                                    from WorkOrderForPlanning wofp
-                                    inner join WorkOrderForPlanning_SizeRatio wofps WITH(NOLOCK) on wofps.WorkOrderForPlanningUkey = wofp.Ukey
-                                    Where wofp.Ukey = '{ddr["Ukey"]}'
+                                    Select  OrderID,
+                                            Article,
+                                            SizeCode,
+                                            Qty
+                                    from WorkOrderForPlanning_Distribute with (nolock)
+                                    Where WorkOrderForPlanningUkey = '{ddr["Ukey"]}'
                                     ";
 
                                     DualResult result = DBProxy.Current.Select(null,sqlcmd, out DataTable cutplan_DetailTb);

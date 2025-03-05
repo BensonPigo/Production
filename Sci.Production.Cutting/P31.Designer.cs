@@ -43,6 +43,7 @@
             this.txtSP = new Sci.Win.UI.TextBox();
             this.label5 = new Sci.Win.UI.Label();
             this.btnReviseSchedule = new Sci.Win.UI.Button();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -82,7 +83,7 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 107);
-            this.detailpanel.Size = new System.Drawing.Size(955, 226);
+            this.detailpanel.Size = new System.Drawing.Size(955, 249);
             // 
             // gridicon
             // 
@@ -92,11 +93,11 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.refresh.Location = new System.Drawing.Point(704, 37);
+            this.refresh.Location = new System.Drawing.Point(704, 66);
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(955, 226);
+            this.detailgridcont.Size = new System.Drawing.Size(955, 249);
             // 
             // detail2
             // 
@@ -112,18 +113,19 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(955, 413);
+            this.detail.Size = new System.Drawing.Size(955, 465);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(955, 333);
+            this.detailcont.Size = new System.Drawing.Size(955, 356);
             // 
             // detailbtm
             // 
+            this.detailbtm.Controls.Add(this.label6);
             this.detailbtm.Controls.Add(this.btnDefault);
             this.detailbtm.Controls.Add(this.label4);
-            this.detailbtm.Location = new System.Drawing.Point(0, 333);
-            this.detailbtm.Size = new System.Drawing.Size(955, 80);
+            this.detailbtm.Location = new System.Drawing.Point(0, 356);
+            this.detailbtm.Size = new System.Drawing.Size(955, 109);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -131,6 +133,7 @@
             this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
             this.detailbtm.Controls.SetChildIndex(this.label4, 0);
             this.detailbtm.Controls.SetChildIndex(this.btnDefault, 0);
+            this.detailbtm.Controls.SetChildIndex(this.label6, 0);
             // 
             // browse
             // 
@@ -138,23 +141,23 @@
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(963, 442);
+            this.tabs.Size = new System.Drawing.Size(963, 494);
             // 
             // createby
             // 
-            this.createby.Location = new System.Drawing.Point(70, 49);
+            this.createby.Location = new System.Drawing.Point(70, 78);
             // 
             // editby
             // 
-            this.editby.Location = new System.Drawing.Point(400, 49);
+            this.editby.Location = new System.Drawing.Point(400, 78);
             // 
             // lblcreateby
             // 
-            this.lblcreateby.Location = new System.Drawing.Point(5, 55);
+            this.lblcreateby.Location = new System.Drawing.Point(5, 84);
             // 
             // lbleditby
             // 
-            this.lbleditby.Location = new System.Drawing.Point(352, 55);
+            this.lbleditby.Location = new System.Drawing.Point(352, 84);
             // 
             // label1
             // 
@@ -206,7 +209,7 @@
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
             this.label4.ForeColor = System.Drawing.Color.Red;
-            this.label4.Location = new System.Drawing.Point(11, 33);
+            this.label4.Location = new System.Drawing.Point(11, 43);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(510, 13);
             this.label4.TabIndex = 3;
@@ -217,7 +220,7 @@
             // 
             this.btnDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnDefault.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnDefault.Location = new System.Drawing.Point(8, 2);
+            this.btnDefault.Location = new System.Drawing.Point(8, 8);
             this.btnDefault.Name = "btnDefault";
             this.btnDefault.Size = new System.Drawing.Size(80, 30);
             this.btnDefault.TabIndex = 4;
@@ -311,11 +314,23 @@
             this.btnReviseSchedule.UseVisualStyleBackColor = true;
             this.btnReviseSchedule.Click += new System.EventHandler(this.BtnReviseSchedule_Click);
             // 
+            // label6
+            // 
+            this.label6.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
+            this.label6.ForeColor = System.Drawing.Color.Red;
+            this.label6.Location = new System.Drawing.Point(11, 59);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(222, 13);
+            this.label6.TabIndex = 5;
+            this.label6.Text = "Red CutPlan# Est. Cut Date already changed";
+            // 
             // P31
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(963, 475);
+            this.ClientSize = new System.Drawing.Size(963, 527);
             this.GridAlias = "SpreadingSchedule_Detail";
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
@@ -364,5 +379,6 @@
         private Win.UI.TextBox txtSP;
         private Win.UI.Label label5;
         private Win.UI.Button btnReviseSchedule;
+        private System.Windows.Forms.Label label6;
     }
 }

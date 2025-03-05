@@ -120,43 +120,43 @@ SELECT
     ,Consumption = SUM(w.ConsPC  * wd.Qty)
 INTO #tmpByOrderIDConsumption
 FROM #tmpOrderID o
-INNER JOIN WorkOrder_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
-INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
+INNER JOIN WorkOrderForOutput_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
+INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
 GROUP BY o.OrderID
 
--- 找出 OrderID 有的 WorkOrderUkey 底下所有數量
+-- 找出 OrderID 有的 WorkOrderForOutputUkey 底下所有數量
 SELECT
-     wd.WorkOrderUkey
+     wd.WorkOrderForOutputUkey
     ,wd.OrderID
     ,wd.Qty
     ,w.Cons
-INTO #tmpAllWorkOrder
-FROM WorkOrder_Distribute wd WITH (NOLOCK)
-INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
-WHERE EXISTS ( -- 找到有哪些 WorkOrderUkey
+INTO #tmpAllWorkOrderForOutput
+FROM WorkOrderForOutput_Distribute wd WITH (NOLOCK)
+INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
+WHERE EXISTS ( -- 找到有哪些 WorkOrderForOutputUkey
     SELECT 1
     FROM #tmpOrderID o 
-    INNER JOIN WorkOrder_Distribute wdo WITH (NOLOCK) ON wdo.OrderID = o.OrderID
-    INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderUkey = wdo.WorkOrderUkey -- 只計算已經建立 P20, 同 Cutting P03 規則
-    WHERE wdo.WorkOrderUkey = wd.WorkOrderUkey
+    INNER JOIN WorkOrderForOutput_Distribute wdo WITH (NOLOCK) ON wdo.OrderID = o.OrderID
+    INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderForOutputUkey = wdo.WorkOrderForOutputUkey -- 只計算已經建立 P20, 同 Cutting P03 規則
+    WHERE wdo.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
 )
 
 SELECT
-     WorkOrderUkey
-    ,Qty = SUM(Qty) -- by WorkOrderUkey 分母
+     WorkOrderForOutputUkey
+    ,Qty = SUM(Qty) -- by WorkOrderForOutputUkey 分母
     ,A.Cons
 INTO #tmpDenominator
-FROM #tmpAllWorkOrder A
-GROUP BY A.WorkOrderUkey, A.Cons
+FROM #tmpAllWorkOrderForOutput A
+GROUP BY A.WorkOrderForOutputUkey, A.Cons
 
 SELECT
-     WorkOrderUkey
+     WorkOrderForOutputUkey
     ,A.OrderID
-    ,Qty = SUM(Qty) -- by WorkOrderUkey, OrderID 分子
+    ,Qty = SUM(Qty) -- by WorkOrderForOutputUkey, OrderID 分子
 INTO #tmpNumerator
-FROM #tmpAllWorkOrder A
+FROM #tmpAllWorkOrderForOutput A
 INNER JOIN #tmpOrderID o ON o.OrderID = A.OrderID
-GROUP BY A.WorkOrderUkey, A.OrderID
+GROUP BY A.WorkOrderForOutputUkey, A.OrderID
 
 -- by OrderID 計算 Cons 比例
 SELECT
@@ -164,7 +164,7 @@ SELECT
     ,ActConsOutput = SUM(d.Cons * IIF(d.Qty = 0, 0, (n.Qty / d.Qty)))
 INTO #tmpByOrderIDActConsumption
 FROM #tmpNumerator n
-INNER JOIN #tmpDenominator d ON d.WorkOrderUkey = n.WorkOrderUkey
+INNER JOIN #tmpDenominator d ON d.WorkOrderForOutputUkey = n.WorkOrderForOutputUkey
 GROUP BY n.OrderID
 
 SELECT

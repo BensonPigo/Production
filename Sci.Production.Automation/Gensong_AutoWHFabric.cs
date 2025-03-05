@@ -639,7 +639,7 @@ select distinct
             select CONCAT(',',SizeCode)
             from(
                 select distinct SizeCode
-                from Production.dbo.WorkOrderForPlanning_SizeRatio
+                from Production.dbo.WorkOrderForPlanning_Distribute
                 where WorkOrderForPlanningUkey = wo.Ukey
                 )s
                 for xml path('')
@@ -650,8 +650,8 @@ select distinct
             select CONCAT(',',Article)
             from(
                 select distinct Article
-                from Production.dbo.WorkOrderForPlanning
-                where ukey = wo.Ukey
+                from Production.dbo.WorkOrderForPlanning_Distribute
+                where WorkOrderForPlanningUkey = wo.Ukey
                 and Article !=''
                 )s
             for xml path('')
