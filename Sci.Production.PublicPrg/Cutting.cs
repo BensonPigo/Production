@@ -5,9 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Transactions;
 
@@ -18,6 +16,7 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+#pragma warning disable SA1611 // Element parameters should be documented
         /// <summary>
         /// 取得哪些 annotation 是次要
         /// </summary>
@@ -1302,5 +1301,6 @@ where TableName = @TableName and [Column] = @ColumnName
 
             return newValue;
         }
+#pragma warning restore SA1611 // Element parameters should be documented
     }
 }

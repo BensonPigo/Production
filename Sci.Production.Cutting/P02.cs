@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Ict.Win.UI;
 using Sci.Andy;
 using Sci.Data;
 using Sci.Production.Class.Command;
@@ -13,10 +12,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
-using Button = Sci.Win.UI.Button;
 
 namespace Sci.Production.Cutting
 {
@@ -25,24 +22,27 @@ namespace Sci.Production.Cutting
     public partial class P02 : Win.Tems.Input6
     {
         #region 全域變數
-        private readonly Win.UI.BindingSource2 bindingSourceDetail = new Win.UI.BindingSource2();
+        private readonly CuttingForm formType = CuttingForm.P02;
+        private readonly BindingSource2 bindingSourceDetail = new BindingSource2();
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutRef;
-        private Ict.Win.UI.DataGridViewNumericBoxColumn col_seq;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_Article;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
-        //private Ict.Win.UI.DataGridViewMaskedTextBoxColumn col_MarkerLength;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_SP;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Article;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_Size;
+        private Ict.Win.UI.DataGridViewNumericBoxColumn col_Distribute_Qty;
         private DataTable dt_SizeRatio; // 第3層表:新刪修
+        private DataTable dt_Distribute; // 第3層表:新刪修
         private DataTable dt_PatternPanel; // 第3層表:新刪修
         private DataTable dt_Layers;
-        private DataTable dt_OrderList;
         private DataRow drBeforeDoPrintDetailData;  // 紀錄目前表身選擇的資料，因為base.DoPrint() 時會LOAD資料,並將this.CurrentDetailData移動到第一筆
-        private string detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+        private string detailSort = "SORT_NUM, PatternPanel_CONCAT, multisize DESC, Article_CONCAT, Order_SizeCode_Seq DESC, MarkerName, Ukey";
+        private bool editByUseCutRefToRequestFabric;
         #endregion
 
         #region 程式開啟時
@@ -57,19 +57,16 @@ namespace Sci.Production.Cutting
             {
                 this.Text = "P02. WorkOrder For Planning";
                 this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 0";
-                this.IsSupportEdit = true;
-                this.btnAutoRef.Enabled = true;
-                this.insertSizeRatioToolStripMenuItem.Enabled = true;
-                this.deleteSizeRatioToolStripMenuItem.Enabled = true;
             }
             else
             {
                 this.Text = "P02. WorkOrder For Planning(History)";
-                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
                 this.IsSupportEdit = false;
+                this.DefaultFilter = $"MDivisionid = '{Sci.Env.User.Keyword}' AND WorkType <> '' AND Finished = 1";
+                this.btnAutoRef.EditMode = AdvEditModes.None;
                 this.btnAutoRef.Enabled = false;
-                this.insertSizeRatioToolStripMenuItem.Enabled = false;
-                this.deleteSizeRatioToolStripMenuItem.Enabled = false;
+                this.gridSizeRatio.ContextMenuStrip = null;
+                this.gridDistributeToSP.ContextMenuStrip = null;
             }
 
             this.displayBoxFabricTypeRefno.DataBindings.Add(new Binding("Text", this.bindingSourceDetail, "FabricTypeRefNo", true));
@@ -126,6 +123,7 @@ SELECT
     wo.*
    ,wp1.PatternPanel_CONCAT
    ,wp2.FabricPanelCode_CONCAT
+   ,Article_CONCAT
    ,ws1.SizeCode_CONCAT
    ,ws2.TotalCutQty_CONCAT
    ,Fabeta = FabricArrDate.val
@@ -166,6 +164,14 @@ OUTER APPLY (
         FOR XML PATH (''))
     , 1, 1, '')
 ) wp2
+OUTER APPLY (
+    SELECT Article_CONCAT = STUFF((
+        SELECT DISTINCT CONCAT('/', Article)
+        FROM WorkOrderForPlanning_Distribute WITH (NOLOCK)
+        WHERE WorkOrderForPlanningUkey = wo.Ukey
+        AND Article != ''
+        FOR XML PATH ('')), 1, 1, '')
+) wd
 OUTER APPLY (
     SELECT SizeCode_CONCAT = STUFF((
         SELECT CONCAT(', ', ws.SizeCode, '/ ', ws.Qty)
@@ -241,7 +247,11 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
-            this.BtnImportMarkerEnabled();
+            int useCutRefToRequestFabric = MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]);
+            this.editByUseCutRefToRequestFabric = useCutRefToRequestFabric != 0 && useCutRefToRequestFabric != 2;
+
+            this.btnImportMarker.Enabled = !this.Text.Contains("History") && !this.EditMode && this.editByUseCutRefToRequestFabric;
+            this.btnAutoRef.Enabled = !this.EditMode;
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => row["MarkerLength_Mask"] = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(row["MarkerLength"].ToString()))); // _Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
@@ -267,23 +277,19 @@ OUTER APPLY(SELECT TOP 1 osc.SizeGroup,osc.Seq FROM Order_SizeCode osc WITH (NOL
 WHERE wp.ID = '{cuttingID}'
 ORDER BY ws.WorkOrderForPlanningUkey,osc.SizeGroup,osc.Seq,ws.SizeCode
 
----- Date有值的話，然後根據Date ASC、OrderID ASC排序
----- Date沒有值的話排最後面，然後根據OrderID ASC排序
-SELECT
-    InlineDate = CONVERT(DATE, MIN(s.Inline), 111)
-   ,SP = o.ID
-   ,Qty = SUM(ISNULL(o.Qty,0) + ISNULL(o.FOC,0))
-FROM Orders o WITH (NOLOCK)
-LEFT JOIN SewingSchedule s WITH (NOLOCK) ON s.OrderID = o.ID
-WHERE o.POID = '{cuttingID}'
-GROUP BY o.ID
-ORDER BY 
-    CASE 
-        WHEN CONVERT(DATE, MIN(s.Inline), 111) IS NULL THEN 1 
-        ELSE 0 
-    END, 
-    InlineDate ASC,
-    SP ASC;
+SELECT *
+    ,tmpKey = CAST(0 AS BIGINT)
+    ,Sewinline = (
+        SELECT MIN(ss.Inline)
+        FROM SewingSchedule_Detail ssd WITH (NOLOCK)
+        LEFT JOIN SewingSchedule ss WITH (NOLOCK) ON ssd.ID = ss.ID
+        WHERE ssd.OrderID = wd.OrderID
+        AND ssd.Article = wd.Article
+        AND ssd.SizeCode = wd.SizeCode
+    )
+FROM WorkOrderForPlanning_Distribute wd WITH (NOLOCK)
+WHERE wd.ID = '{this.CurrentMaintain["ID"]}'
+ORDER BY wd.OrderID, wd.Article, wd.SizeCode
 ";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable[] dts);
             if (!result)
@@ -294,21 +300,24 @@ ORDER BY
 
             this.dt_PatternPanel = dts[0];
             this.dt_SizeRatio = dts[1];
-            this.dt_OrderList = dts[2];
+            this.dt_Distribute = dts[2];
 
             foreach (DataRow dr in this.dt_SizeRatio.Rows)
             {
                 if (dr.RowState != DataRowState.Deleted)
                 {
-                    dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                    dr["TotalCutQty_CONCAT"] = ConcatTTLCutQty(dr);
                 }
             }
 
+            // 右下角 Qty Break Down
+            this.qtybreakds.DataSource = QueryQtyBreakDown(cuttingID, this.formType);
+
             // set Size Ratio data source
             this.sizeRatiobs.DataSource = this.dt_SizeRatio;
+            this.distributebs.DataSource = this.dt_Distribute;
 
-            // set Order List data source
-            this.orderListBindingSource.DataSource = this.dt_OrderList;
+            this.ChangeQtyBreakDownRow();
             this.ChangeBtnColor();
         }
 
@@ -327,11 +336,9 @@ ORDER BY
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .NumericNull("Seq", "Seq", Ict.Win.Widths.AnsiChars(5), this.CanEditData)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                //.MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
-                //.MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(13), this.CanEditData).Get(out this.col_MarkerLength)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
-                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(10)).Get(out this.col_Article)
+                .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("ColorId", header: "Color", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Tone", header: "Tone", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Tone)
                 .Text("SizeCode_CONCAT", header: "Size", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -357,12 +364,21 @@ ORDER BY
                 .Numeric("Layer", header: "Layers", width: Ict.Win.Widths.AnsiChars(5), integer_places: 5, maximum: 99999, iseditingreadonly: true)
                 .Text("TotalCutQty_CONCAT", header: "Tlt. Qty", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
                 ;
-
-            this.Helper.Controls.Grid.Generator(this.gridOrderList)
-                .Date("InlineDate", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("SP", header: "SP#", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
-                .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+            this.Helper.Controls.Grid.Generator(this.gridDistributeToSP)
+                .Text("OrderID", header: "SP#", width: Ict.Win.Widths.AnsiChars(13)).Get(out this.col_Distribute_SP)
+                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(6)).Get(out this.col_Distribute_Article)
+                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(4)).Get(out this.col_Distribute_Size)
+                .Numeric("Qty", header: "Qty", width: Ict.Win.Widths.AnsiChars(3), integer_places: 6, maximum: 999999, minimum: 0).Get(out this.col_Distribute_Qty)
+                .Date("SewInline", header: "Inline Date", width: Ict.Win.Widths.AnsiChars(8), iseditingreadonly: true)
                 ;
+            this.Helper.Controls.Grid.Generator(this.gridQtyBreakDown)
+                .Text("ID", header: "SP#", width: Ict.Win.Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("Article", header: "Article", width: Ict.Win.Widths.AnsiChars(7), iseditingreadonly: true)
+                .Text("SizeCode", header: "Size", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("Qty", header: "Order\nQty", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("Balance", header: "Balance", width: Ict.Win.Widths.AnsiChars(5), iseditingreadonly: true)
+                ;
+
             this.GridEventSet();
 
             // 設定所有欄位的 AutoSizeMode
@@ -382,9 +398,18 @@ ORDER BY
 
             // 變更子表可否編輯
             bool canEdit = this.CanEditData(this.CurrentDetailData);
+            this.btnEdit.Enabled = canEdit;
             this.cmsSizeRatio.Enabled = canEdit;
             this.numUnitCons.ReadOnly = !canEdit;
+            this.txtPatternNo.ReadOnly = !canEdit;
+            this.txtMarkerLength.ReadOnly = !canEdit;
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
+
+            bool canEditDisturbute = this.CanEditDistribute(this.CurrentDetailData);
+            this.btnDistributeThisCutRef.Enabled = canEditDisturbute;
+            this.btnAllSPDistribute.Enabled = canEditDisturbute;
+            this.cmsDistribute.Enabled = canEditDisturbute;
+            this.gridDistributeToSP.IsEditingReadOnly = !canEditDisturbute;
 
             // 避免後面炸掉, 即使 0 筆上面也要執行
             if (this.CurrentDetailData == null)
@@ -445,10 +470,44 @@ ORDER BY
             #endregion
 
             // 根據左邊Grid Filter 右邊 Size Ratio 資訊
-            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
+            string filter = GetFilter(this.CurrentDetailData, this.formType);
             this.sizeRatiobs.Filter = filter;
+            this.distributebs.Filter = filter;
 
+            this.ChangeQtyBreakDownRow();
             Grid_ClickBeginEdit((object)this.detailgrid, null);
+        }
+
+        private void GridDistributeToSP_SelectionChanged(object sender, EventArgs e)
+        {
+            this.ChangeQtyBreakDownRow();
+        }
+
+        private void ChangeQtyBreakDownRow()
+        {
+            // 更換qtybreakdown index
+            DataRow dr = this.gridDistributeToSP.CurrentDataRow;
+            if (MyUtility.Check.Empty(dr))
+            {
+                return;
+            }
+
+            string article = MyUtility.Convert.GetString(dr["Article"]);
+            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            string spNo = MyUtility.Convert.GetString(dr["Orderid"]);
+
+            if (this.dt_Distribute.Rows.Count > 1)
+            {
+                var findRow = this.gridQtyBreakDown.Rows
+                    .Cast<DataGridViewRow>()
+                    .Select((row, index) => new { Row = row, Index = index })
+                    .FirstOrDefault(x =>
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["article"]) == article &&
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["SizeCode"]) == sizeCode &&
+                        MyUtility.Convert.GetString(((DataRowView)x.Row.DataBoundItem).Row["id"]) == spNo)?.Index ?? 0;
+
+                this.gridQtyBreakDown.SelectRowTo(findRow);
+            }
         }
 
         protected override void DoPrint()
@@ -479,21 +538,6 @@ ORDER BY
             return base.ClickPrint();
         }
 
-        /// <inheritdoc/>
-        protected override void OnEditModeChanged()
-        {
-            base.OnEditModeChanged();
-            this.BtnImportMarkerEnabled();
-        }
-
-        private void BtnImportMarkerEnabled()
-        {
-            if (this.btnImportMarker != null)
-            {
-                this.btnImportMarker.Enabled = !this.Text.Contains("History") && !this.EditMode;
-            }
-        }
-
         private void Sorting()
         {
             this.detailgrid.ValidateControl();
@@ -503,7 +547,18 @@ ORDER BY
             }
 
             DataView dv = ((DataTable)this.detailgridbs.DataSource).DefaultView;
-            dv.Sort = "SORT_NUM,PatternPanel_CONCAT,multisize DESC,Article,Order_SizeCode_Seq DESC,MarkerName,Ukey";
+            dv.Sort = this.detailSort;
+        }
+
+        protected override bool ClickEditBefore()
+        {
+            if (MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]) == 0)
+            {
+                MyUtility.Msg.WarningBox("[Please go to Cutting_P01 to set [Use Cutting Cutref# to Request Fabric].]");
+                return false;
+            }
+
+            return base.ClickEditBefore();
         }
 
         /// <inheritdoc/>
@@ -549,25 +604,46 @@ ORDER BY
 
             #region 清除 第3層 空值
             this.dt_SizeRatio.Select("Qty = 0 OR SizeCode = ''").Delete();
+            this.dt_Distribute.Select("Qty = 0 OR OrderID = '' OR SizeCode = ''").Delete();
+            this.dt_Distribute.Select("OrderID <> 'EXCESS' AND Article = ''").Delete(); // EXCESS 項 Article 為空
             #endregion
 
             #region 檢查 SizeRatio、PatternPanel 重複 Key
 
             var checkSizeRatio = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "SizeCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dt_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas, CuttingForm.P02))
+            if (!CheckDuplicateAndShowMessage(this.dt_SizeRatio, checkSizeRatio, "SizeRatio", this.DetailDatas, this.formType))
+            {
+                return false;
+            }
+
+            var checkDistribute = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "OrderID", "Article", "SizeCode" }; // 檢查的 Key
+            if (!CheckDuplicateAndShowMessage(this.dt_Distribute, checkDistribute, "Distribute", this.DetailDatas, this.formType))
             {
                 return false;
             }
 
             var checkPatternPanel = new List<string> { "WorkOrderForPlanningUkey", "tmpKey", "PatternPanel", "FabricPanelCode" }; // 檢查的 Key
-            if (!CheckDuplicateAndShowMessage(this.dt_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, CuttingForm.P02))
+            if (!CheckDuplicateAndShowMessage(this.dt_PatternPanel, checkPatternPanel, "PatternPanel", this.DetailDatas, this.formType))
             {
                 return false;
+            }
+
+            // 檢查第3層 Total distributionQty 是否大於 TotalCutQty 總和
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string filter = GetFilter(dr, this.formType);
+                decimal ttlCutQty = this.dt_SizeRatio.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"])) * MyUtility.Convert.GetDecimal(dr["Layer"]);
+                decimal ttlDisQty = this.dt_Distribute.Select(filter).Sum(row => MyUtility.Convert.GetInt(row["Qty"]));
+                if (ttlCutQty < ttlDisQty)
+                {
+                    MyUtility.Msg.WarningBox($"CutRef:{dr["CutRef"]},Seq:{dr["Seq"]},MarkerName:{dr["MarkerName"]} Distribution Qty can not exceed total Cut qty");
+                    return false;
+                }
             }
             #endregion
 
             // 刪除 SizeRatio 之後重算 ConsPC
-            BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, CuttingForm.P02);
+            BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, this.formType);
 
             return base.ClickSaveBefore();
         }
@@ -580,6 +656,7 @@ ORDER BY
                 long ukey = MyUtility.Convert.GetLong(dr["Ukey"]); // ClickSavePost 時,底層已取得 Key 值
                 string filterAddData = $"tmpkey = {dr["tmpkey"]} ";
                 this.dt_SizeRatio.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForPlanningUkey"] = ukey);
+                this.dt_Distribute.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForPlanningUkey"] = ukey);
                 this.dt_PatternPanel.Select(filterAddData).AsEnumerable().ToList().ForEach(row => row["WorkOrderForPlanningUkey"] = ukey);
             }
 
@@ -657,6 +734,56 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             }
 
             if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_PatternPanel, string.Empty, sqlInsertPatternPanel, out DataTable dtInsertPatternPanel)))
+            {
+                return result;
+            }
+            #endregion
+
+            #region 處理 Distribute
+
+            // API需要 Distribute 新刪修 同時 out 資訊
+            string sqlDeleteDistribute = $@"
+DELETE wd
+OUTPUT DELETED.*
+FROM WorkOrderForPlanning_Distribute wd
+LEFT JOIN #tmp t ON t.WorkOrderForPlanningUkey = wd.WorkOrderForPlanningUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND t.WorkOrderForPlanningUkey IS NULL
+";
+            string sqlUpdateDistribute = $@"
+UPDATE wd
+SET wd.Qty = t.Qty
+OUTPUT INSERTED.*
+FROM WorkOrderForPlanning_Distribute wd
+INNER JOIN #tmp t ON t.WorkOrderForPlanningUkey = wd.WorkOrderForPlanningUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.id = '{this.CurrentMaintain["ID"]}'
+AND wd.Qty <> t.Qty
+";
+            string sqlInsertDistribute = $@"
+INSERT INTO WorkOrderForPlanning_Distribute (WorkOrderForPlanningUkey, ID, OrderID, Article, SizeCode, Qty)
+OUTPUT INSERTED.*
+SELECT
+    t.WorkOrderForPlanningUkey
+    ,t.ID
+    ,t.OrderID
+    ,ISNULL(t.Article, '')
+    ,t.SizeCode
+    ,t.Qty
+FROM #tmp t
+LEFT JOIN WorkOrderForPlanning_Distribute wd ON t.WorkOrderForPlanningUkey = wd.WorkOrderForPlanningUkey AND t.OrderID = wd.OrderID AND t.Article = wd.Article AND t.SizeCode = wd.SizeCode
+WHERE wd.WorkOrderForPlanningUkey IS NULL
+";
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_Distribute, string.Empty, sqlDeleteDistribute, out DataTable dtDeleteDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_Distribute, string.Empty, sqlUpdateDistribute, out DataTable dtUpdateDistribute)))
+            {
+                return result;
+            }
+
+            if (!(result = MyUtility.Tool.ProcessWithDatatable(this.dt_Distribute, string.Empty, sqlInsertDistribute, out DataTable dtInsertDistribute)))
             {
                 return result;
             }
@@ -790,14 +917,22 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         {
             var form = new P02_ActionCutRef();
             form.Action = action;
-            form.CurrentDetailData = this.CurrentDetailData;
             form.CurrentMaintain = this.CurrentMaintain;
-            form.dtWorkOrderForPlanning_OrderList = this.dt_OrderList;
-            form.dtWorkOrderForPlanning_SizeRatio_Ori = this.dt_SizeRatio;
-            form.dtWorkOrderForPlanning_PatternPanel_Ori = this.dt_PatternPanel;
-            string filter = GetFilter(this.CurrentDetailData, CuttingForm.P02);
-            form.dtWorkOrderForPlanning_SizeRatio = this.dt_SizeRatio.Select(filter).TryCopyToDataTable(this.dt_SizeRatio);
-            form.dtWorkOrderForPlanning_PatternPanel = this.dt_PatternPanel.Select(filter).TryCopyToDataTable(this.dt_PatternPanel);
+            form.CurrentDetailData_Ori = this.CurrentDetailData;
+            form.dt_SizeRatio_Ori = this.dt_SizeRatio;
+            form.dt_Distribute_Ori = this.dt_Distribute;
+            form.dt_PatternPanel_Ori = this.dt_PatternPanel;
+            string filter = GetFilter(this.CurrentDetailData, this.formType);
+
+            DataTable clonedTable = this.CurrentDetailData.Table.Clone();
+            DataRow newRow = clonedTable.NewRow();
+            newRow.ItemArray = this.CurrentDetailData.ItemArray.Clone() as object[];
+            clonedTable.Rows.Add(newRow);
+            form.CurrentDetailData = newRow;
+
+            form.dt_SizeRatio = this.dt_SizeRatio.Select(filter).TryCopyToDataTable(this.dt_SizeRatio);
+            form.dt_Distribute = this.dt_Distribute.Select(filter).TryCopyToDataTable(this.dt_Distribute);
+            form.dt_PatternPanel = this.dt_PatternPanel.Select(filter).TryCopyToDataTable(this.dt_PatternPanel);
             return form.ShowDialog();
         }
 
@@ -845,7 +980,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             // 按+號 = -1, 其它 = 按插入, 複製原先停留row的部分欄位資訊
             if (index != -1)
             {
-                // 不複製 CutRef, CutNo, 以及(這4個底層會自動處理 Addname, AddDate, EditName, EditDate)
+                // 不複製 CutRef, Seq, 以及(這4個底層會自動處理 Addname, AddDate, EditName, EditDate)
                 // 定義不需要複製的欄位名稱列表
                 HashSet<string> excludeColumns = new HashSet<string>
                 {
@@ -854,7 +989,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     "ID", // 對應 Cutting 的 Key, 在 base.OnDetailGridInsert 會自動寫入
                     "Seq",
                     "CutRef",
-                    "CutNo",
                     "CutPlanID",
                     "CanEdit",
                     "Addname",
@@ -876,8 +1010,20 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 }
 
                 // 複製第3層資訊,並對應到新的 this.CurrentMaintain
-                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_SizeRatio, CuttingForm.P02);
-                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_PatternPanel, CuttingForm.P02);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_SizeRatio, this.formType);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_Distribute, this.formType);
+                AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_PatternPanel, this.formType);
+
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]) == 2)
+                {
+                    var p09_AutoDistToSP = new P09_AutoDistToSP(this.CurrentDetailData, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
+                    DualResult resultDis = p09_AutoDistToSP.DoAutoDistribute();
+                    if (!resultDis)
+                    {
+                        this.ShowErr(resultDis);
+                        return;
+                    }
+                }
             }
 
             DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
@@ -896,15 +1042,33 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 return;
             }
 
-            if (!MyUtility.Check.Empty(this.CurrentDetailData) && MyUtility.Convert.GetInt(this.CurrentDetailData["Ukey"]) != 0 && !this.CanEditData(this.CurrentDetailData))
+            // 選擇多筆刪除時,先檢查是否有不可刪除的資料
+            foreach (DataGridViewRow item in this.detailgrid.SelectedRows)
             {
-                MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
-                return;
+                if (item.DataBoundItem is DataRowView dataRowView)
+                {
+                    DataRow currentDetailData = dataRowView.Row;
+                    if (!MyUtility.Check.Empty(currentDetailData) && MyUtility.Convert.GetInt(currentDetailData["Ukey"]) != 0 && !this.CanEditData(currentDetailData))
+                    {
+                        MyUtility.Msg.WarningBox("There is cut plan ,so can not be modified.");
+                        return;
+                    }
+                }
             }
 
-            this.dt_SizeRatio.Select(GetFilter(this.CurrentDetailData, CuttingForm.P02)).Delete();
-            this.dt_PatternPanel.Select(GetFilter(this.CurrentDetailData, CuttingForm.P02)).Delete();
-            base.OnDetailGridDelete();
+            // 刪除第3層資訊
+            foreach (DataGridViewRow item in this.detailgrid.SelectedRows)
+            {
+                if (item.DataBoundItem is DataRowView dataRowView)
+                {
+                    DataRow currentDetailData = dataRowView.Row;
+                    this.dt_SizeRatio.Select(GetFilter(currentDetailData, this.formType)).Delete();
+                    this.dt_Distribute.Select(GetFilter(currentDetailData, this.formType)).Delete();
+                    this.dt_PatternPanel.Select(GetFilter(currentDetailData, this.formType)).Delete();
+                }
+            }
+
+            base.OnDetailGridDelete(); // 刪除表身
         }
         #endregion
 
@@ -918,6 +1082,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             // 可否編輯 && 顏色
             ConfigureColumnEvents(this.detailgrid, this.CanEditDataByGrid);
             ConfigureColumnEvents(this.gridSizeRatio, this.CanEditDataByGrid);
+            ConfigureColumnEvents(this.gridDistributeToSP, this.CanEditDataByGrid);
 
             #region 主表
 
@@ -949,30 +1114,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 }
             };
 
-            this.col_Article.EditingMouseDown += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                ArticleEditingMouseDown(s, e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"]));
-            };
-            this.col_Article.CellValidating += (s, e) =>
-            {
-                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
-                if (!this.CanEditData(dr))
-                {
-                    return;
-                }
-
-                if (!ArticleCellValidating(s, e, this, this.detailgrid, this.CurrentMaintain["ID"].ToString(), MyUtility.Convert.GetString(this.CurrentMaintain["WorkType"])))
-                {
-                    e.Cancel = true;
-                }
-            };
-
             // Seq 兩個欄位
             ConfigureSeqColumnEvents(this.col_Seq1, this.detailgrid, this.CanEditData);
             ConfigureSeqColumnEvents(this.col_Seq2, this.detailgrid, this.CanEditData);
@@ -988,31 +1129,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     return;
                 }
 
-                int oldvalue = MyUtility.Convert.GetInt(dr["Layer"]);
-                int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
-                if (oldvalue == newvalue)
-                {
-                    return;
-                }
-
-                dr["Layer"] = newvalue;
-
-                // 更新右邊的Size Ratio Grid
-                var workOrderForPlanningUkey = MyUtility.Convert.GetLong(dr["Ukey"]);
-                var tmpKey = MyUtility.Convert.GetLong(dr["tmpKey"]);
-
-                this.dt_SizeRatio.AsEnumerable()
-                .Where(o => o.RowState != DataRowState.Deleted && MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
-                .ToList()
-                .ForEach(o =>
-                {
-                    o["Layer"] = newvalue;
-                    o["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(o);
-                });
-
-                dr["Cons"] = CalculateCons(dr, MyUtility.Convert.GetDecimal(dr["ConsPC"]), MyUtility.Convert.GetDecimal(dr["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
-                UpdateConcatString(dr, this.dt_SizeRatio, CuttingForm.P02);
-                dr.EndEdit();
+                P02_ValidatingLayers(this.CurrentMaintain, this.CurrentDetailData, MyUtility.Convert.GetInt(e.FormattedValue), this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
             };
 
             this.col_Tone.MaxLength = 15;
@@ -1021,70 +1138,78 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
             {
-                if (e.Button == MouseButtons.Right)
+                if (SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, this.dt_Distribute, this.formType, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
-                    if (e.RowIndex < 0)
-                    {
-                        return;
-                    }
-
-                    DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
-
-                    if (!this.CanEditData(this.CurrentDetailData))
-                    {
-                        return;
-                    }
-
-                    if (SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData, null, CuttingForm.P02))
-                    {
-                        dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
-                        dr.EndEdit();
-                        UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
-                    }
+                    UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, this.formType);
                 }
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
-                if (e.RowIndex < 0)
+                if (this.CurrentDetailData != null && SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, this.dt_Distribute, this.formType, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
-                    return;
-                }
-
-                DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
-
-                if (!this.CanEditData(this.CurrentDetailData))
-                {
-                    return;
-                }
-
-                if (SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData, null, CuttingForm.P02))
-                {
-                    dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
+                    DataRow dr = this.gridSizeRatio.GetDataRow(e.RowIndex);
+                    dr["TotalCutQty_CONCAT"] = ConcatTTLCutQty(dr);
                     dr.EndEdit();
-                    UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
+                    UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+                    UpdateTotalDistributeQty(this.CurrentDetailData, this.dt_Distribute, this.formType);
                 }
             };
 
-            this.BindQtyEvents(this.col_SizeRatio_Qty);
+            this.col_SizeRatio_Qty.CellValidating += (s, e) =>
+            {
+                P02_SizeRationQtyValidating(this.gridSizeRatio, e, this.CurrentMaintain, this.CurrentDetailData, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
+            };
             #endregion
+
+            #region Distribute
+            this.BindDistributeEvents(this.col_Distribute_SP);
+            this.BindDistributeEvents(this.col_Distribute_Article);
+            this.BindDistributeEvents(this.col_Distribute_Size);
+            this.BindQtyEvents(this.col_Distribute_Qty);
+            #endregion
+        }
+
+        private void BindDistributeEvents(Ict.Win.UI.DataGridViewTextBoxColumn column)
+        {
+            column.EditingMouseDown += (s, e) =>
+            {
+                if (Distribute3CellEditingMouseDown(e, this.CurrentDetailData, this.dt_SizeRatio, this.gridDistributeToSP, this.formType, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                {
+                    UpdateMinSewinline(this.CurrentDetailData, this.dt_Distribute, this.formType);
+                    string columnName = ((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower();
+                    UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+                    UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
+                }
+            };
+            column.CellValidating += (s, e) =>
+            {
+                if (this.CurrentDetailData != null && Distribute3CellValidating(e, this.CurrentDetailData, this.dt_SizeRatio, this.gridDistributeToSP, this.formType, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                {
+                    UpdateMinSewinline(this.CurrentDetailData, this.dt_Distribute, this.formType);
+                    string columnName = ((DataGridViewElement)s).DataGridView.Columns[e.ColumnIndex].Name.ToLower();
+                    switch (columnName)
+                    {
+                        case "orderid":
+                            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+                            break;
+                        case "article":
+                            UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
+                            break;
+                    }
+
+                    this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
+                }
+            };
         }
 
         private void BindQtyEvents(Ict.Win.UI.DataGridViewNumericBoxColumn column)
         {
             column.CellValidating += (s, e) =>
             {
-                Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-
-                if (this.CurrentDetailData != null && QtyCellValidating(e, this.CurrentDetailData, grid, this.dt_SizeRatio, null, CuttingForm.P02, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
+                Grid grid = (Grid)((DataGridViewColumn)s).DataGridView;
+                if (this.CurrentDetailData != null && QtyCellValidating(e, this.CurrentDetailData, grid, this.dt_SizeRatio, this.dt_Distribute, this.formType, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"])))
                 {
-                    DataRow dr = grid.GetDataRow(e.RowIndex);
-                    dr["TotalCutQty_CONCAT"] = this.ConcatTTLCutQty(dr);
-                    dr.EndEdit();
-                    UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
-                    if (grid.Name == "gridSizeRatio")
-                    {
-                        this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
-                    }
+                    UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, this.formType);
                 }
             };
         }
@@ -1092,7 +1217,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
         #region Grid 右鍵 Menu
 
-        private void InsertSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
+        private void MenuItemInsertSizeRatio_Click(object sender, EventArgs e)
         {
             if (!this.CanEditData(this.CurrentDetailData))
             {
@@ -1104,6 +1229,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             ndr["tmpKey"] = this.CurrentDetailData["tmpKey"];
             ndr["WorkOrderForPlanningUkey"] = this.CurrentDetailData["Ukey"];
             ndr["Qty"] = 0;
+            ndr["SizeCode"] = string.Empty;
 
             int layer = MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]);
             ndr["Layer"] = layer;
@@ -1112,7 +1238,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             this.dt_SizeRatio.Rows.Add(ndr);
         }
 
-        private void DeleteSizeRatioToolStripMenuItem_Click(object sender, EventArgs e)
+        private void MenuItemDeleteSizeRatio_Click(object sender, EventArgs e)
         {
             var selectRow = this.gridSizeRatio.GetSelecteds(SelectedSort.Index);
             if (!this.CanEditData(this.CurrentDetailData) || selectRow.Count == 0)
@@ -1122,21 +1248,58 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             DataRow dr = ((DataRowView)selectRow[0]).Row;
 
-            // 刪除 SizeRatio
+            // 先刪除 Distribute
+            string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
+            string filter = GetFilter(this.CurrentDetailData, this.formType);
+            this.dt_Distribute.Select(filter + $" AND SizeCode = '{sizeCode}'").Delete();
+
+            // 後刪除 SizeRatio
             dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.dt_Distribute, this.formType);
+            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+            UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
         }
-        #endregion
 
-        #region 右邊Size Ratio表格相關
-
-        /// <summary>
-        /// SizeRatio 表格個欄位計算Total Cut Qty，Layer使用自己身上的就好
-        /// </summary>
-        /// <returns>TotalCutQty_CONCAT</returns>
-        private string ConcatTTLCutQty(DataRow dr)
+        private void MenuItemInsertDistribute_Click(object sender, EventArgs e)
         {
-            int layerQty = MyUtility.Convert.GetInt(dr["Layer"]) * MyUtility.Convert.GetInt(dr["Qty"]);
-            return $"{dr["SizeCode"]}/{layerQty}";
+            if (this.dt_SizeRatio.DefaultView.ToTable().Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Please insert size ratio data first!");
+                return;
+            }
+
+            DataRow newrow = this.dt_Distribute.NewRow();
+            newrow["ID"] = this.CurrentDetailData["ID"];
+            newrow["WorkOrderForPlanningUkey"] = this.CurrentDetailData["Ukey"];
+            newrow["tmpKey"] = this.CurrentDetailData["tmpKey"];
+            newrow["Qty"] = 0;
+            newrow["OrderID"] = string.Empty;
+            newrow["Article"] = string.Empty;
+            newrow["SizeCode"] = string.Empty;
+            this.dt_Distribute.Rows.Add(newrow);
+        }
+
+        private void MenuItemDeleteDistribute_Click(object sender, EventArgs e)
+        {
+            var selectRow = this.gridDistributeToSP.GetSelecteds(SelectedSort.Index);
+            if (!this.CanEditDistribute(this.CurrentDetailData) || selectRow.Count == 0)
+            {
+                return;
+            }
+
+            // Excess 不可刪除
+            DataRow dr = ((DataRowView)selectRow[0]).Row;
+            if (dr["OrderID"].ToString().Equals("EXCESS", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
+            dr.Delete();
+
+            UpdateExcess(this.CurrentDetailData, MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.dt_Distribute, this.formType);
+            UpdateMinOrderID(this.CurrentMaintain["WorkType"].ToString(), this.CurrentDetailData, this.dt_Distribute, this.formType);
+            UpdateArticle_CONCAT(this.CurrentDetailData, this.dt_Distribute, this.formType);
         }
         #endregion
 
@@ -1152,7 +1315,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         private void BtnAutoRef_Click(object sender, EventArgs e)
         {
             this.OnRefreshClick();
-            AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, CuttingForm.P02);
+            AutoCutRef(this.CurrentMaintain["ID"].ToString(), Sci.Env.User.Keyword, (DataTable)this.detailgridbs.DataSource, this.formType);
             this.OnRefreshClick();
         }
 
@@ -1166,7 +1329,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                 return;
             }
 
-            var frm = new Cutting_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), CuttingForm.P02);
+            var frm = new Cutting_BatchAssign(detailDatas, this.CurrentMaintain["ID"].ToString(), this.formType);
             frm.ShowDialog(this);
         }
 
@@ -1174,7 +1337,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
         {
             CuttingWorkOrder cw = new CuttingWorkOrder();
             this.ShowWaitMessage("Processing...");
-            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, CuttingForm.P02);
+            DualResult result = cw.ImportMarkerExcel(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), Sci.Env.User.Keyword, Sci.Env.User.Factory, this.formType);
             this.HideWaitMessage();
             if (!result)
             {
@@ -1208,7 +1371,7 @@ order by p.EditDate desc
             if (MyUtility.Check.Seek(sqlcmd, out DataRow drSMNotice))
             {
                 string styleUkey = MyUtility.GetValue.Lookup($@"select o.StyleUkey from Orders o where o.id = '{id}'");
-                var form = new ImportML(CuttingForm.P02, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
+                var form = new ImportML(this.formType, styleUkey, id, drSMNotice, (DataTable)this.detailgridbs.DataSource);
                 form.ShowDialog();
             }
             else
@@ -1252,7 +1415,7 @@ order by p.EditDate desc
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(CuttingForm.P02, this.CurrentMaintain, out errMsg))
+            if (!cuttingWorkOrder.DownloadSampleFile(this.formType, this.CurrentMaintain, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
@@ -1265,7 +1428,7 @@ order by p.EditDate desc
                 return;
             }
 
-            var frm = new Cutpartcheck(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio);
+            var frm = new Cutpartcheck(this.formType, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio, this.dt_Distribute);
             frm.ShowDialog(this);
         }
 
@@ -1276,7 +1439,7 @@ order by p.EditDate desc
                 return;
             }
 
-            var frm = new Cutpartchecksummary(CuttingForm.P02, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio);
+            var frm = new Cutpartchecksummary(this.formType, this.CurrentMaintain["ID"].ToString(), this.DetailDatas, this.dt_SizeRatio, this.dt_Distribute);
             frm.ShowDialog(this);
         }
 
@@ -1286,21 +1449,43 @@ order by p.EditDate desc
         }
         #endregion
 
-        private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
+        private bool CanEditDataByGrid(Grid grid, DataRow dr, string columNname)
         {
-            if (grid.Name == "detailgrid")
+            if (this.CurrentDetailData == null)
             {
-                if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
-                {
-                    return false;
-                }
+                return false;
+            }
 
-                return this.CanEditData(dr);
-            }
-            else
+            switch (grid.Name)
             {
-                return this.CanEditData(this.CurrentDetailData);
+                case "detailgrid":
+                    if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
+                    {
+                        return false;
+                    }
+
+                    return this.CanEditData(dr);
+                case "gridDistributeToSP":
+                    if (dr["OrderID"].ToString().EqualString("EXCESS"))
+                    {
+                        return false;
+                    }
+
+                    return this.CanEditDistribute(this.CurrentDetailData);
+                default:
+                    return this.CanEditData(this.CurrentDetailData);
             }
+        }
+
+        private bool CanEditDistribute(DataRow dr)
+        {
+            if (MyUtility.Check.Empty(dr))
+            {
+                return false;
+            }
+
+            bool canEdit = this.CanEditData(dr);
+            return canEdit && this.editByUseCutRefToRequestFabric;
         }
 
         private bool CanEditData(DataRow dr)
@@ -1320,6 +1505,7 @@ order by p.EditDate desc
             // 例如 P09:在最大值的 Cutno:5 按下 Backspace 此 cell 還沒結束編輯, 直接點 Auto CutNo 功能, 下一筆會編碼成 6, 且原本 5 這筆會是空白, 所以要先結束 Cell 編輯狀態
             this.detailgrid.ValidateControl();
             this.gridSizeRatio.ValidateControl();
+            this.gridDistributeToSP.ValidateControl();
         }
 
         // 用在傳入 Column 使用, 因為 gridset 是一開啟就會跑完, 直接傳 WorkType 字串, 換筆資料就不會變動了
@@ -1330,7 +1516,7 @@ order by p.EditDate desc
 
         private void NumUnitCons_Validated(object sender, EventArgs e)
         {
-            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, CuttingForm.P02);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
 
         protected override void ClickUndo()
@@ -1364,7 +1550,6 @@ order by p.EditDate desc
         private void BtnAutoSeq_Click(object sender, EventArgs e)
         {
             this.gridSizeRatio.ValidateControl();
-            this.gridOrderList.ValidateControl();
             this.detailgrid.ValidateControl();
             int maxSeq;
 
@@ -1392,7 +1577,6 @@ order by p.EditDate desc
         private void BtnPackingMethod_Click(object sender, EventArgs e)
         {
             this.gridSizeRatio.ValidateControl();
-            this.gridOrderList.ValidateControl();
             this.detailgrid.ValidateControl();
             var dr = this.CurrentMaintain;
             if (dr == null)
@@ -1432,19 +1616,69 @@ order by p.EditDate desc
 
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            string markerLength = Prgs.SetMarkerLengthMaskString(this.txtMarkerLength.Text);
+            this.CurrentDetailData["MarkerLength"] = this.txtMarkerLength.FullText;
             decimal totlaLayer = MyUtility.Convert.GetInt(this.numTotalLayer.Value) + MyUtility.Convert.GetDecimal(this.numBalanceLayer.Value);
-            this.txtMarkerLength.Text = markerLength;
-
-            this.numUnitCons.Value = CalculateConsPC(this.txtMarkerLength.Text, this.CurrentDetailData, this.dt_SizeRatio, CuttingForm.P02);
-            this.numCons.Value = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numUnitCons.Value), totlaLayer, this.dt_SizeRatio, CuttingForm.P02);
+            this.numUnitCons.Value = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+            this.numCons.Value = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numUnitCons.Value), totlaLayer, this.dt_SizeRatio, this.formType);
         }
 
-        private void btnExcludeSetting_Click(object sender, EventArgs e)
+        private void BtnExcludeSetting_Click(object sender, EventArgs e)
         {
             // 當 P091 History, IsSupportEdit = false
             var exwip = new P02_ExcludeSetting(this.CurrentMaintain["ID"].ToString(), this.IsSupportEdit);
             exwip.ShowDialog();
+        }
+
+        private bool CheckContinue(DataRow dr)
+        {
+            if (dr == null)
+            {
+                return false;
+            }
+
+            // 此欄位是和表身一起撈取 (若及時去DB判斷會卡到爆炸)
+            return MyUtility.Convert.GetBool(dr["CanEdit"]);
+        }
+
+        private void BtnAllSPDistribute_Click(object sender, EventArgs e)
+        {
+            if (!this.EditMode)
+            {
+                return;
+            }
+
+            this.detailgrid.EndEdit();
+
+            // 先將可分配的WorkOrderForOutput 下面的WorkOrderForOutput_Distribute清空
+            var canEditDetailDatas = this.DetailDatas.Where(row => this.CheckContinue(row));
+            foreach (DataRow drWorkOrder in canEditDetailDatas)
+            {
+                this.dt_Distribute.Select(GetFilter(drWorkOrder, this.formType)).Delete();
+            }
+
+            // 開始重新分配WorkOrderForOutput_Distribute
+            foreach (DataRow drWorkOrder in canEditDetailDatas)
+            {
+                var p09_AutoDistToSP = new P09_AutoDistToSP(drWorkOrder, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
+                DualResult result = p09_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+            }
+        }
+
+        private void BtnDistributeThisCutRef_Click(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
+            this.detailgrid.ValidateControl();
+            var frm = new P09_AutoDistToSP(this.CurrentDetailData, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
+            frm.ShowDialog(this);
         }
     }
 #pragma warning restore SA1600 // Elements should be documented

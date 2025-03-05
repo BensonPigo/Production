@@ -22,12 +22,14 @@ using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
 using ZXing.QrCode.Internal;
+using static Sci.Production.Cutting.CuttingWorkOrder;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Cutting
 {
 #pragma warning disable SA1600 // Elements should be documented
 #pragma warning disable SA1602 // Enumeration items should be documented
+#pragma warning disable SA1204 // Static elements should appear before instance elements
     /// <summary>
     /// P02, P09共用
     /// </summary>
@@ -47,7 +49,6 @@ namespace Sci.Production.Cutting
 
         #region Import & 分配 Distribute
 
-        private List<long> listWorkOrderUkey;
         private string CuttingPOID = string.Empty;
         private string MDivisionid = string.Empty;
         private string FactoryID = string.Empty;
@@ -178,7 +179,7 @@ namespace Sci.Production.Cutting
                         }
 
                         // 開始Distribute，P02則自動跳過
-                        InsertWorkOrder_Distribute(this.CuttingPOID, newWorkOrderUkey, sqlConn, form);
+                        this.InsertWorkOrder_Distribute(this.CuttingPOID, newWorkOrderUkey, sqlConn, form);
                     }
 
                     transactionScope.Complete();
@@ -443,10 +444,7 @@ namespace Sci.Production.Cutting
                             nwk.MarkerLength = markerLength;
                             nwk.Markername = markerName;
                             nwk.MarkerVersion = "-1";
-
-                            //var wks = this.TransWorkOrder(nwk);
                             workOrders.Add(nwk);
-                            //workOrders.AddRange(wks);
                         }
 
                         // 當前區域的X Y 範圍已經處理完畢，設定下一個起點
@@ -601,21 +599,8 @@ WHERE o.POID IN ('{poIDs.JoinToString("','")}' )
         private List<long> InsertWorkOrder(List<WorkOrder> workOrders, SqlConnection sqlConnection, CuttingForm form)
         {
             List<long> listWorkOrderUkey = new List<long>();
-            string tableName = string.Empty;
+            string tableName = GetTableName(form);
             string keyColumn = GetWorkOrderUkeyName(form);
-
-            switch (form)
-            {
-                case CuttingForm.P02:
-                    tableName = "WorkOrderForPlanning";
-                    break;
-                case CuttingForm.P09:
-                    tableName = "WorkOrderForOutput";
-                    break;
-                default:
-                    tableName = string.Empty;
-                    break;
-            }
 
             foreach (var wk in workOrders)
             {
@@ -777,19 +762,16 @@ select @newWorkOrderUkey
         /// <param name="sqlConnection">sqlConnection</param>
         /// <param name="form">P02/P09</param>
         /// <returns>DualResult</returns>
-        public static DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, SqlConnection sqlConnection, CuttingForm form)
+        public DualResult InsertWorkOrder_Distribute(string id, List<long> listWorkOrderUkey, SqlConnection sqlConnection, CuttingForm form)
         {
-            if (form == CuttingForm.P02)
-            {
-                return new DualResult(true);
-            }
-
+            string tableName = GetTableName(form);
+            string ukeyName = GetWorkOrderUkeyName(form);
             string whereWorkOrderUkey = listWorkOrderUkey.Select(s => s.ToString()).JoinToString(",");
             string sqlInsertWorkOrder_Distribute = $@"
 select w.Ukey, w.Colorid, w.FabricCombo, ws.SizeCode, [CutQty] = isnull(ws.Qty * w.Layer, 0)
 into #tmpCutting
-from WorkOrderForOutput w with (nolock)
-inner join WorkOrderForOutput_SizeRatio ws with (nolock) on ws.WorkOrderForOutputUkey = w.Ukey
+from {tableName} w with (nolock)
+inner join {tableName}_SizeRatio ws with (nolock) on ws.{tableName}Ukey = w.Ukey
 where w.Ukey in ({whereWorkOrderUkey})
 order by ukey
 
@@ -849,7 +831,7 @@ Qty > 0
                     drDistributeOrderQty["Qty"] = MyUtility.Convert.GetInt(drDistributeOrderQty["Qty"]) - distributrQty;
 
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
+insert into {tableName}_Distribute({ukeyName}, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDistributeOrderQty["Article"]}', '{itemDistribute["SizeCode"]}', '{distributrQty}')
 ";
                 }
@@ -858,7 +840,7 @@ values({itemDistribute["Ukey"]}, '{id}', '{drDistributeOrderQty["ID"]}', '{drDis
                 if (MyUtility.Convert.GetInt(itemDistribute["CutQty"]) > 0)
                 {
                     sqlInsertWorkOrderDistribute += $@"
-insert into WorkOrderForOutput_Distribute(WorkOrderForOutputUkey, ID, OrderID, Article, SizeCode, Qty)
+insert into {tableName}_Distribute({ukeyName}, ID, OrderID, Article, SizeCode, Qty)
 values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCode"]}', '{itemDistribute["CutQty"]}')
 ";
                 }
@@ -972,7 +954,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             string outerApply = string.Empty;
             string nColumn = string.Empty;
 
-            string workOrder_tableName = $@"WorkorderFor{GetWorkOrderName(form)}";
+            string tableName = GetTableName(form);
             string tableKey = GetWorkOrderUkeyName(form);
 
             // 額外條件
@@ -998,7 +980,7 @@ OUTER APPLY (
         SELECT ',' + b.SizeCode + ':' + CAST(b.Qty AS VARCHAR)
         FROM (
             SELECT SizeCode, Qty 
-            FROM {workOrder_tableName}_SizeRatio ws 
+            FROM {tableName}_SizeRatio ws 
             WHERE ws.{tableKey} = w.Ukey AND w.ID = ws.ID
         ) b FOR XML PATH('')
     ), 1, 1, '') AS SizeRatio
@@ -1053,14 +1035,14 @@ ORDER BY w.FabricCombo, w.{colName}";
             #region 組合SQL：寫入空的CutRef
 
             string updateCutRef = $@"
-CREATE TABLE #tmp{workOrder_tableName} (Ukey BIGINT);
+CREATE TABLE #tmp{tableName} (Ukey BIGINT);
 DECLARE @chk TINYINT = 0;
 BEGIN TRANSACTION [Trans_Name];";
 
             foreach (DataRow dr in workordertmp.Rows)
             {
                 string newCutRef = string.Empty;
-                string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo(workOrder_tableName, "CutRef");
+                string maxref = Sci.Production.PublicPrg.Prgs.GetColumnValueNo(tableName, "CutRef");
                 string spreadingStatus = "Ready";
                 if (form == CuttingForm.P02)
                 {
@@ -1105,24 +1087,16 @@ BEGIN TRANSACTION [Trans_Name];";
                     }
                 }
 
-                string spreadingStatus_Col = form == CuttingForm.P02 ? string.Empty : $", SpreadingStatus = '{spreadingStatus}'";
+                string spreadingStatus_Col = form == CuttingForm.P02 ? string.Empty : $", SpreadingStatus = '{spreadingStatus}',LastCreateCutRefDate = GETDATE()";
                 updateCutRef += $@"
-    IF (SELECT COUNT(1) FROM {workOrder_tableName} WITH (NOLOCK) WHERE CutRef = '{newCutRef}' AND id != '{cuttingID}') > 0
+    IF (SELECT COUNT(1) FROM {tableName} WITH (NOLOCK) WHERE CutRef = '{newCutRef}' AND id != '{cuttingID}') > 0
     BEGIN
         RAISERROR ('Duplicate CutRef. Please redo Auto Ref#', 12, 1);
         ROLLBACK TRANSACTION [Trans_Name];
     END
-    UPDATE {workOrder_tableName} SET CutRef = '{newCutRef}' {spreadingStatus_Col}
-    OUTPUT INSERTED.Ukey INTO #tmp{workOrder_tableName}
+    UPDATE {tableName} SET CutRef = '{newCutRef}' {spreadingStatus_Col}
+    OUTPUT INSERTED.Ukey INTO #tmp{tableName}
     WHERE ukey = '{dr["ukey"]}';";
-                if (form == CuttingForm.P09)
-                {
-                    updateCutRef += $@"
-    UPDATE {workOrder_tableName} SET SpreadingStatus = '{spreadingStatus}'
-    WHERE ukey <> '{dr["ukey"]}'-- 排除被咬住的
-    AND SpreadingStatus <> '{spreadingStatus}'-- 排除被咬住的
-    AND CutRef = '{newCutRef}' ";
-                }
             }
 
             updateCutRef += $@"
@@ -1134,8 +1108,8 @@ END
 ELSE
 BEGIN
     SELECT w.* 
-    FROM #tmp{workOrder_tableName} tw
-    INNER JOIN {workOrder_tableName} w WITH (NOLOCK) ON tw.Ukey = w.Ukey;
+    FROM #tmp{tableName} tw
+    INNER JOIN {tableName} w WITH (NOLOCK) ON tw.Ukey = w.Ukey;
     COMMIT TRANSACTION [Trans_Name];
 END";
 
@@ -2229,6 +2203,56 @@ WHERE o.POID = '{id}'
         }
         #endregion
 
+        #region GridCell/TextBox Layers P02
+        public static void P02_ValidatingLayers(
+            DataRow currentMaintain,
+            DataRow currentDetailData,
+            int newvalue,
+            DataTable dt_SizeRatio,
+            DataTable dt_Distribute,
+            DataTable dt_PatternPanel,
+            CuttingForm formType)
+        {
+            int oldvalue = MyUtility.Convert.GetInt(currentDetailData["Layer"]);
+            if (oldvalue == newvalue)
+            {
+                return;
+            }
+
+            currentDetailData["Layer"] = newvalue;
+            UpdateExcess(currentDetailData, MyUtility.Convert.GetInt(currentDetailData["Layer"]), dt_SizeRatio, dt_Distribute, formType);
+
+            // 更新右邊的Size Ratio Grid
+            var workOrderForPlanningUkey = MyUtility.Convert.GetLong(currentDetailData["Ukey"]);
+            var tmpKey = MyUtility.Convert.GetLong(currentDetailData["tmpKey"]);
+
+            dt_SizeRatio.AsEnumerable()
+            .Where(o => o.RowState != DataRowState.Deleted
+                && MyUtility.Convert.GetLong(o["WorkOrderForPlanningUkey"]) == workOrderForPlanningUkey && MyUtility.Convert.GetLong(o["tmpKey"]) == tmpKey)
+            .ToList().ForEach(o =>
+            {
+                o["Layer"] = newvalue;
+                o["TotalCutQty_CONCAT"] = ConcatTTLCutQty(o);
+            });
+
+            currentDetailData["Cons"] = CalculateCons(currentDetailData, MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(currentDetailData["Layer"]), dt_SizeRatio, formType);
+            UpdateConcatString(currentDetailData, dt_SizeRatio, formType);
+
+            if (MyUtility.Convert.GetInt(currentMaintain["UseCutRefToRequestFabric"]) == 2)
+            {
+                var p09_AutoDistToSP = new P09_AutoDistToSP(currentDetailData, dt_SizeRatio, dt_Distribute, dt_PatternPanel, formType);
+                DualResult result = p09_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return;
+                }
+            }
+
+            currentDetailData.EndEdit();
+        }
+        #endregion
+
         #region GridCell SizeRatio SizeCode
         public static SelectItem PopupSizeCode(string id, string defaults)
         {
@@ -2341,6 +2365,60 @@ ORDER BY SizeCode
         }
         #endregion
 
+        #region GridCell SizeRatio Qty
+
+        /// <summary>
+        /// grid SizeRatio Qty 欄位驗證
+        /// </summary>
+        /// <inheritdoc/>
+        public static bool P02_SizeRationQtyValidating(
+            Sci.Win.UI.Grid grid,
+            Ict.Win.UI.DataGridViewCellValidatingEventArgs e,
+            DataRow currentMaintain,
+            DataRow currentDetailData,
+            DataTable dtSizeRatio,
+            DataTable dtDistribute,
+            DataTable dtPatternPanel,
+            CuttingForm form)
+        {
+            DataRow dr = grid.GetDataRow(e.RowIndex);
+            if (grid.IsEditingReadOnly || dr == null)
+            {
+                return false;
+            }
+
+            int oldvalue = MyUtility.Convert.GetInt(dr["Qty"]);
+            int newvalue = MyUtility.Convert.GetInt(e.FormattedValue);
+            if (oldvalue == newvalue)
+            {
+                return false;
+            }
+
+            dr["Qty"] = newvalue;
+            dr.EndEdit();
+
+            int layer = MyUtility.Convert.GetInt(currentDetailData["Layer"]);
+            UpdateExcess(currentDetailData, layer, dtSizeRatio, dtDistribute, form);
+
+            dr["TotalCutQty_CONCAT"] = ConcatTTLCutQty(dr);
+            UpdateConcatString(currentDetailData, dtSizeRatio, form);
+            currentDetailData["ConsPC"] = CalculateConsPC(currentDetailData, MyUtility.Convert.GetDecimal(currentDetailData["Cons"]), MyUtility.Convert.GetDecimal(currentDetailData["Layer"]), dtSizeRatio, form);
+            if (MyUtility.Convert.GetInt(currentMaintain["UseCutRefToRequestFabric"]) == 2)
+            {
+                var p09_AutoDistToSP = new P09_AutoDistToSP(currentDetailData, dtSizeRatio, dtDistribute, dtPatternPanel, form);
+                DualResult result = p09_AutoDistToSP.DoAutoDistribute();
+                if (!result)
+                {
+                    MyUtility.Msg.WarningBox(result.ToString());
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        #endregion
+
         #region GridCell SizeRatio / Distribute Qty
 
         /// <summary>
@@ -2380,6 +2458,10 @@ ORDER BY SizeCode
 
         #region GridCell Distribute OrderID, Article, SizeCode
 
+        /// <summary>
+        /// Distribute
+        /// </summary>
+        /// <inheritdoc/>
         public static bool Distribute3CellEditingMouseDown(
             Ict.Win.UI.DataGridViewEditingControlMouseEventArgs e,
             DataRow currentDetailData,
@@ -2935,6 +3017,12 @@ ORDER BY FabricPanelCode,PatternPanel
         /// <inheritdoc/>
         public static void UpdateMinSewinline(DataRow currentDetailData, DataTable dtDistribute, CuttingForm form)
         {
+            // P02 沒有顯示 Sewinline
+            if (form == CuttingForm.P02)
+            {
+                return;
+            }
+
             DateTime? sewinline = dtDistribute.Select(GetFilter(currentDetailData, form)).AsEnumerable().Min(row => MyUtility.Convert.GetDate(row["Sewinline"]));
             currentDetailData["Sewinline"] = sewinline ?? (object)DBNull.Value;
         }
@@ -3008,11 +3096,6 @@ ORDER BY FabricPanelCode,PatternPanel
         /// <inheritdoc/>
         public static void UpdateDistribute_Size(DataRow currentDetailData, DataTable dtDistribute, string oldvalue, string newvalue, CuttingForm form)
         {
-            if (form == CuttingForm.P02)
-            {
-                return;
-            }
-
             if (newvalue == string.Empty)
             {
                 dtDistribute.Select(GetFilter(currentDetailData, form) + $" AND SizeCode = '{oldvalue}'").Delete();
@@ -3032,10 +3115,7 @@ ORDER BY FabricPanelCode,PatternPanel
         /// <inheritdoc/>
         public static void UpdateExcess(DataRow currentDetailData, int layer, DataTable dtSizeRatio, DataTable dtDistribute, CuttingForm form)
         {
-            if (form == CuttingForm.P02)
-            {
-                return;
-            }
+            string workOrderUkey = GetWorkOrderUkeyName(form);
 
             string filter = GetFilter(currentDetailData, form);
             foreach (DataRow dr in dtSizeRatio.Select(filter))
@@ -3055,13 +3135,14 @@ ORDER BY FabricPanelCode,PatternPanel
                 {
                     distributeExcessRows[0]["Qty"] = excess;
                 }
-                else
+                else if (excess > 0)
                 {
                     DataRow newExcessRow = dtDistribute.NewRow();
-                    newExcessRow["WorkOrderForOutputUKey"] = currentDetailData["Ukey"];
+                    newExcessRow[workOrderUkey] = currentDetailData["Ukey"];
                     newExcessRow["tmpkey"] = currentDetailData["tmpkey"];
                     newExcessRow["ID"] = currentDetailData["ID"];
                     newExcessRow["OrderID"] = "EXCESS";
+                    newExcessRow["Article"] = string.Empty;
                     newExcessRow["SizeCode"] = sizeCode;
                     newExcessRow["Qty"] = excess;
                     dtDistribute.Rows.Add(newExcessRow);
@@ -3082,24 +3163,7 @@ ORDER BY FabricPanelCode,PatternPanel
 
         public static string GetWorkOrderUkeyName(CuttingForm form)
         {
-            return $"WorkOrderFor{GetWorkOrderName(form)}Ukey";
-        }
-
-        /// <summary>
-        /// Cutting P02/P09 資料表名稱的中間字串 WorkOrderFor____
-        /// </summary>
-        /// <inheritdoc/>
-        public static string GetWorkOrderName(CuttingForm form)
-        {
-            switch (form)
-            {
-                case CuttingForm.P02:
-                    return "Planning";
-                case CuttingForm.P09:
-                    return "Output";
-                default:
-                    return string.Empty;
-            }
+            return form == CuttingForm.P02 ? $"WorkOrderForPlanningUkey" : $"WorkOrderForOutputUkey";
         }
 
         /// <summary>
@@ -3179,6 +3243,65 @@ ORDER BY FabricPanelCode,PatternPanel
                 control.Font = new Font(control.Font.FontFamily, fontSize);
             }
         }
+
+        /// <summary>
+        /// P02 SizeRatio 表格個欄位計算Total Cut Qty，Layer使用自己身上的就好
+        /// </summary>
+        /// <returns>TotalCutQty_CONCAT</returns>
+        /// <inheritdoc/>
+        public static string ConcatTTLCutQty(DataRow dr)
+        {
+            int layerQty = MyUtility.Convert.GetInt(dr["Layer"]) * MyUtility.Convert.GetInt(dr["Qty"]);
+            return $"{dr["SizeCode"]}/{layerQty}";
+        }
+
+        public static DataTable QueryQtyBreakDown(string cuttingID, CuttingForm form)
+        {
+            string tableName = GetTableName(form);
+
+            string sqlcmd = $@"
+SELECT
+    wd.OrderID
+   ,wd.Article
+   ,wd.SizeCode
+   ,wo.FabricCombo
+   ,Qty = SUM(wd.Qty)
+INTO #tmp
+FROM {tableName} wo WITH (NOLOCK)
+INNER JOIN {tableName}_Distribute wd WITH (NOLOCK) ON wo.ukey = wd.{GetWorkOrderUkeyName(form)}
+WHERE wo.id = '{cuttingID}'
+GROUP BY wo.FabricCombo
+        ,wd.article
+        ,wd.SizeCode
+        ,wd.OrderID
+
+SELECT
+    oq.ID
+   ,oq.Article
+   ,oq.SizeCode
+   ,oq.Qty
+   ,Balance = ISNULL(balc.minQty - oq.qty, 0)
+FROM Order_Qty oq WITH (NOLOCK)
+INNER JOIN Orders o WITH (NOLOCK) ON oq.id = o.id
+OUTER APPLY (
+    SELECT minQty = MIN(Qty)
+    FROM #tmp t
+    WHERE t.OrderID = oq.ID
+    AND t.article = oq.Article
+    AND t.SizeCode = oq.SizeCode
+) balc
+WHERE o.CuttingSP = '{cuttingID}'
+ORDER BY ID, Article, SizeCode
+DROP TABLE #tmp";
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dtQtyBreakDown);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox(result.ToString());
+                return null;
+            }
+
+            return dtQtyBreakDown;
+        }
         #endregion
 
         #region CutPartCheck
@@ -3195,7 +3318,7 @@ ORDER BY FabricPanelCode,PatternPanel
         {
             string ukeyName = GetWorkOrderUkeyName(form);
             var query = from t1 in detailDatas.AsEnumerable()
-                        join t2 in (form == CuttingForm.P02 ? dtSizeRatio : dtDistribute).AsEnumerable()
+                        join t2 in dtDistribute.AsEnumerable()
                         on new
                         {
                             ukey = MyUtility.Convert.GetInt(t1["Ukey"]),
@@ -3208,8 +3331,8 @@ ORDER BY FabricPanelCode,PatternPanel
                         }
                         group new { t1, t2 } by new
                         {
-                            ID = MyUtility.Convert.GetString(form == CuttingForm.P02 ? t1["ID"] : t2["OrderID"]), // P02 By POID 加總
-                            Article = MyUtility.Convert.GetString(form == CuttingForm.P02 ? t1["Article"] : t2["Article"]),
+                            ID = MyUtility.Convert.GetString(t2["OrderID"]),
+                            Article = MyUtility.Convert.GetString(t2["Article"]),
                             SizeCode = MyUtility.Convert.GetString(t2["SizeCode"]),
                             PatternPanel = MyUtility.Convert.GetString(t1["FabricCombo"]),
                         }
@@ -3220,7 +3343,7 @@ ORDER BY FabricPanelCode,PatternPanel
                             g.Key.Article,
                             g.Key.SizeCode,
                             g.Key.PatternPanel,
-                            CutQty = g.Sum(x => MyUtility.Convert.GetInt(x.t2["Qty"]) * (form == CuttingForm.P02 ? MyUtility.Convert.GetInt(x.t2["Layer"]) : 1)),
+                            CutQty = g.Sum(x => MyUtility.Convert.GetInt(x.t2["Qty"])),
                         };
             return query.ToList().ToDataTable();
         }
@@ -3235,7 +3358,8 @@ ORDER BY FabricPanelCode,PatternPanel
         /// <returns>DualResult</returns>
         public static DualResult GetBase_CutPartCheck(CuttingForm form, string cuttingID, DataTable dtWorkOrder, out DataTable dt)
         {
-            string columnID = form == CuttingForm.P02 ? string.Empty : ",o.ID";
+            // P02 加回 Distribute, 可以 by OrderID 計算
+            string columnID = ",o.ID";
             string sqlcmd = $@"
 --基本資訊 Order_Qty 
 SELECT o.POID, oq.ID, oq.Article, oq.SizeCode, oq.Qty
@@ -3282,7 +3406,7 @@ SELECT
    ,Variance = w.CutQty - o.Qty
 INTO #tmpFinal
 FROM #tmpOrder o
-LEFT JOIN #tmp w ON w.ID = {(form == CuttingForm.P02 ? "o.POID" : "o.ID")} -- 此處 P09 會把 EXCESS 排除, P02 用 POID
+LEFT JOIN #tmp w ON w.ID = o.ID -- 此處 P09 會把 EXCESS 排除, P02 用 POID
                 AND w.Article = o.Article
                 AND w.SizeCode = o.SizeCode
                 AND w.PatternPanel = o.PatternPanel
@@ -3302,7 +3426,7 @@ FROM #tmpGroup o WITH (NOLOCK)
 
 -- 取 SizeCode 排序
 SELECT    
-   {(form == CuttingForm.P02 ? "ID = o.POID" : "o.ID")}
+   o.ID
    , o.Article, o.SizeCode, o.Qty, o.ColorID, o.Patternpanel, o.IsCancel, o.CutQty, o.Variance
 FROM #tmpFinal o
 INNER JOIN Order_SizeCode os WITH (NOLOCK) ON os.ID = o.POID AND os.SizeCode = o.SizeCode
@@ -3390,6 +3514,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
             return resultTable;
         }
         #endregion
+
         #region 列印
 
         /// <summary>
@@ -3625,11 +3750,10 @@ order by oe.Id,  oe.FabricPanelCode, oec.ColorID, oe.MarkerNo
         /// <returns>DualResult</returns>
         public DualResult GetPrintData(CuttingForm cuttingForm, DataRow drInfoFrom, string s1, string s2, string printType, string sortType, out DataTable[] arrDtType)
         {
-            string tableName = this.GetTableName(cuttingForm);
+            string tableName = GetTableName(cuttingForm);
             string tbPatternPanel = tableName + "_PatternPanel";
             string tbDistribute = tableName + "_Distribute";
             string tbSizeRatio = tableName + "_SizeRatio";
-            //bool isTbPatternPanel = this.CheckTableExist(tbPatternPanel);
             bool isTbDistribute = this.CheckTableExist(tbDistribute); // 基本上P09(也就是ForOutput才有Distribute表)
             bool isTbSizeRatio = this.CheckTableExist(tbSizeRatio);
             string tbUkey = tableName + "Ukey";
@@ -3778,9 +3902,9 @@ Select a.AddDate
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutCellID")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutNo")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.CutPlanID")}
-,{this.CheckAndGetColumns(cuttingForm, "a.Article")}
 ,{this.CheckAndGetColumns(cuttingForm, "a.Seq")}
-, a.CutRef
+,Article = Article_CONCAT
+,a.CutRef
 ,a.EditDate
 ,a.EditName
 ,a.EstCutDate
@@ -3814,7 +3938,15 @@ Select a.AddDate
 from {tableName} a WITH (NOLOCK)
 Left Join Fabric b WITH (NOLOCK) on a.SciRefno = b.SciRefno
 Left Join Order_EachCons oe with (nolock) on oe.Ukey = a.Order_EachconsUkey
-outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc            
+outer apply(select RefNo from ShrinkageConcern where RefNo=a.RefNo and Junk=0) shc        
+OUTER APPLY (
+    SELECT Article_CONCAT = STUFF((
+        SELECT DISTINCT CONCAT('/', Article)
+        FROM {tbDistribute} WITH (NOLOCK)
+        WHERE {tbUkey} = a.Ukey
+        AND Article != ''
+        FOR XML PATH ('')), 1, 1, '')
+) Article_CONCAT    
 Where {sqlWhereByType}
 and a.id='{drInfoFrom["ID"]}'
 {this.OrderByWithCheckColumns(cuttingForm, strOrderby)}
@@ -3834,7 +3966,6 @@ and a.id='{drInfoFrom["ID"]}'
             if (isTbDistribute)
             {
                 tbDistributeColumns = @"
---,b.WorkOrderForOutputUkey
 ,b.ID
 ,b.OrderID
 ,b.Article
@@ -4045,7 +4176,7 @@ drop table #forPlan,#forOutput
         /// <returns>true代表無該欄位</returns>
         public bool CheckTableLostColumns(CuttingForm cuttingForm, string column)
         {
-            string tableNameWorkOrder = this.GetTableName(cuttingForm);
+            string tableNameWorkOrder = GetTableName(cuttingForm);
             return this.DicTableLostColumns.ContainsKey(tableNameWorkOrder)
                 && this.DicTableLostColumns[tableNameWorkOrder].FindIndex(x => x.Equals(column, StringComparison.OrdinalIgnoreCase)) != -1;
         }
@@ -4092,7 +4223,7 @@ drop table #forPlan,#forOutput
         /// </summary>
         /// <param name="cuttingForm">From P02、P09</param>
         /// <returns>string</returns>
-        private string GetTableName(CuttingForm cuttingForm)
+        private static string GetTableName(CuttingForm cuttingForm)
         {
             return cuttingForm == CuttingForm.P02 ? "WorkOrderForPlanning" : "WorkOrderForOutput";
         }
@@ -4158,11 +4289,6 @@ WHERE TABLE_NAME = N'{tableName}'";
                 worksheet.Cells[3, 2] = DateTime.Now.ToShortDateString();
 
                 // P02 不會有Spreading No、Cut Cell
-                //worksheet.Cells[3, 5] = string.Empty;
-                //worksheet.Cells[3, 10] = string.Empty;
-                //worksheet.Cells[3, 7] = string.Empty;
-                //worksheet.Cells[3, 12] = string.Empty;
-
                 worksheet.Cells[9, 2] = orderDr["Styleid"];
                 worksheet.Cells[10, 2] = orderDr["Seasonid"];
                 worksheet.Cells[9, 13] = arrDtType[(int)TableType.CutDisOrderIDTb].Rows[0]["SewLineList"].ToString();
@@ -4543,13 +4669,13 @@ WHERE TABLE_NAME = N'{tableName}'";
         private bool ByCutrefExcel(string id, DataTable[] arrDtType, CuttingForm cuttingForm, out string errMsg)
         {
             errMsg = string.Empty;
-            string tableName = this.GetTableName(cuttingForm);
+            string tableName = GetTableName(cuttingForm);
             string tbDistribute = tableName + "_Distribute";
             string tbUkey = tableName + "Ukey";
             bool isTbDistribute = this.CheckTableExist(tbDistribute);
             try
             {
-                bool isP02 = cuttingForm == CuttingWorkOrder.CuttingForm.P02;
+                bool isP02 = cuttingForm == CuttingForm.P02;
                 int nSizeColumn;
                 int sheetCount = arrDtType[(int)TableType.CutrefTb].Rows.Count;
                 if (sheetCount == 0)
@@ -5118,6 +5244,7 @@ Where Cutref = '{cutref}'";
         }
         #endregion
     }
+#pragma warning restore SA1204 // Static elements should appear before instance elements
 #pragma warning restore SA1600 // Elements should be documented
 #pragma warning restore SA1602 // Enumeration items should be documented
 }

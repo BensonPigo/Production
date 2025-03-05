@@ -48,7 +48,6 @@ namespace Sci.Production.Cutting
             this.label9 = new Sci.Win.UI.Label();
             this.txtMarkerNo = new Sci.Win.UI.TextBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.label11 = new Sci.Win.UI.Label();
             this.txtActCuttingPerimeter = new Sci.Win.UI.TextBox();
             this.label12 = new Sci.Win.UI.Label();
@@ -87,6 +86,7 @@ namespace Sci.Production.Cutting
             this.txtCell = new Sci.Production.Class.TxtCell();
             this.txtSpreadingNo = new Sci.Win.UI.TextBox();
             this.numConsPC = new Sci.Win.UI.NumericBox();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).BeginInit();
             this.cmsPatternPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).BeginInit();
@@ -258,17 +258,6 @@ namespace Sci.Production.Cutting
             this.label10.Size = new System.Drawing.Size(123, 23);
             this.label10.TabIndex = 34;
             this.label10.Text = "Pattern No.";
-            // 
-            // txtMarkerLength
-            // 
-            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(135, 349);
-            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
-            this.txtMarkerLength.Name = "txtMarkerLength";
-            this.txtMarkerLength.Size = new System.Drawing.Size(114, 23);
-            this.txtMarkerLength.TabIndex = 10;
-            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // label11
             // 
@@ -666,11 +655,24 @@ namespace Sci.Production.Cutting
             0,
             0,
             0});
-            this.numConsPC.Validating += new System.ComponentModel.CancelEventHandler(this.NumConsPC_Validating);
+            this.numConsPC.Validated += new System.EventHandler(this.NumConsPC_Validated);
+            // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(135, 349);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(114, 23);
+            this.txtMarkerLength.TabIndex = 10;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // P09_ActionCutRef
             // 
             this.ClientSize = new System.Drawing.Size(739, 488);
+            this.Controls.Add(this.txtMarkerLength);
             this.Controls.Add(this.numConsPC);
             this.Controls.Add(this.txtSpreadingNo);
             this.Controls.Add(this.txtCell);
@@ -696,7 +698,6 @@ namespace Sci.Production.Cutting
             this.Controls.Add(this.label13);
             this.Controls.Add(this.txtActCuttingPerimeter);
             this.Controls.Add(this.label12);
-            this.Controls.Add(this.txtMarkerLength);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.txtMarkerNo);
             this.Controls.Add(this.label10);
@@ -737,7 +738,6 @@ namespace Sci.Production.Cutting
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.txtMarkerNo, 0);
             this.Controls.SetChildIndex(this.label11, 0);
-            this.Controls.SetChildIndex(this.txtMarkerLength, 0);
             this.Controls.SetChildIndex(this.label12, 0);
             this.Controls.SetChildIndex(this.txtActCuttingPerimeter, 0);
             this.Controls.SetChildIndex(this.label13, 0);
@@ -763,6 +763,7 @@ namespace Sci.Production.Cutting
             this.Controls.SetChildIndex(this.txtCell, 0);
             this.Controls.SetChildIndex(this.txtSpreadingNo, 0);
             this.Controls.SetChildIndex(this.numConsPC, 0);
+            this.Controls.SetChildIndex(this.txtMarkerLength, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).EndInit();
             this.cmsPatternPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).EndInit();
@@ -796,7 +797,6 @@ namespace Sci.Production.Cutting
         private Win.UI.Label label9;
         private Win.UI.TextBox txtMarkerNo;
         private Win.UI.Label label10;
-        private Win.UI.TextBox txtMarkerLength;
         private Win.UI.Label label11;
         private Win.UI.TextBox txtActCuttingPerimeter;
         private Win.UI.Label label12;
@@ -835,5 +835,6 @@ namespace Sci.Production.Cutting
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertDistribute;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteDistribute;
         private DateEstCutDate dateBoxEstCutDate;
+        private TxtMarkerLength txtMarkerLength;
     }
 }

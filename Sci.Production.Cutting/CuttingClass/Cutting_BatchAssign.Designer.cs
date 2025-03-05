@@ -35,12 +35,10 @@
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.btnConfirm = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label17 = new Sci.Win.UI.Label();
             this.dateWKETA = new Sci.Win.UI.DateBox();
-            this.dateBoxEstCutDate = new Sci.Production.Class.DateEstCutDate();
             this.panel_P09 = new System.Windows.Forms.Panel();
             this.label5 = new Sci.Win.UI.Label();
-            this.txtSpreadingNo = new Sci.Production.Class.TxtSpreadingNo();
-            this.txtMarkerLength = new Sci.Win.UI.TextBox();
             this.txtMakerName = new Sci.Win.UI.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
@@ -66,8 +64,10 @@
             this.DateEstCutDate = new Sci.Win.UI.DateBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelFabricCombo = new Sci.Win.UI.Label();
-            this.label17 = new Sci.Win.UI.Label();
             this.txtCell = new Sci.Production.Class.TxtCell();
+            this.dateBoxEstCutDate = new Sci.Production.Class.DateEstCutDate();
+            this.txtSpreadingNo = new Sci.Production.Class.TxtSpreadingNo();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssign)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -139,12 +139,12 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.txtMarkerLength);
             this.panel1.Controls.Add(this.txtCell);
             this.panel1.Controls.Add(this.label17);
             this.panel1.Controls.Add(this.dateWKETA);
             this.panel1.Controls.Add(this.dateBoxEstCutDate);
             this.panel1.Controls.Add(this.panel_P09);
-            this.panel1.Controls.Add(this.txtMarkerLength);
             this.panel1.Controls.Add(this.txtMakerName);
             this.panel1.Controls.Add(this.label4);
             this.panel1.Controls.Add(this.label1);
@@ -160,19 +160,21 @@
             this.panel1.Size = new System.Drawing.Size(1006, 99);
             this.panel1.TabIndex = 50;
             // 
+            // label17
+            // 
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label17.Location = new System.Drawing.Point(245, 63);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(96, 23);
+            this.label17.TabIndex = 78;
+            this.label17.Text = "Cut Cell";
+            // 
             // dateWKETA
             // 
             this.dateWKETA.Location = new System.Drawing.Point(102, 34);
             this.dateWKETA.Name = "dateWKETA";
             this.dateWKETA.Size = new System.Drawing.Size(130, 23);
-            this.dateWKETA.TabIndex = 7;
-            // 
-            // dateBoxEstCutDate
-            // 
-            this.dateBoxEstCutDate.Location = new System.Drawing.Point(102, 5);
-            this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
-            this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.dateBoxEstCutDate.TabIndex = 77;
+            this.dateWKETA.TabIndex = 9;
             // 
             // panel_P09
             // 
@@ -192,28 +194,6 @@
             this.label5.TabIndex = 72;
             this.label5.Text = "Spreading No";
             // 
-            // txtSpreadingNo
-            // 
-            this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
-            this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSpreadingNo.IncludeJunk = true;
-            this.txtSpreadingNo.Location = new System.Drawing.Point(99, 0);
-            this.txtSpreadingNo.MDivision = "";
-            this.txtSpreadingNo.Name = "txtSpreadingNo";
-            this.txtSpreadingNo.Size = new System.Drawing.Size(108, 23);
-            this.txtSpreadingNo.TabIndex = 71;
-            // 
-            // txtMarkerLength
-            // 
-            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(344, 34);
-            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
-            this.txtMarkerLength.Name = "txtMarkerLength";
-            this.txtMarkerLength.Size = new System.Drawing.Size(108, 23);
-            this.txtMarkerLength.TabIndex = 46;
-            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMakerLength_Validating);
-            // 
             // txtMakerName
             // 
             this.txtMakerName.BackColor = System.Drawing.Color.White;
@@ -221,7 +201,7 @@
             this.txtMakerName.Location = new System.Drawing.Point(344, 5);
             this.txtMakerName.Name = "txtMakerName";
             this.txtMakerName.Size = new System.Drawing.Size(108, 23);
-            this.txtMakerName.TabIndex = 25;
+            this.txtMakerName.TabIndex = 12;
             // 
             // label4
             // 
@@ -260,7 +240,7 @@
             this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(494, 5);
             this.btnBatchUpdateEstCutDate.Name = "btnBatchUpdateEstCutDate";
             this.btnBatchUpdateEstCutDate.Size = new System.Drawing.Size(125, 30);
-            this.btnBatchUpdateEstCutDate.TabIndex = 12;
+            this.btnBatchUpdateEstCutDate.TabIndex = 16;
             this.btnBatchUpdateEstCutDate.Text = "Batch Assign";
             this.btnBatchUpdateEstCutDate.UseVisualStyleBackColor = true;
             this.btnBatchUpdateEstCutDate.Click += new System.EventHandler(this.BtnBatchUpdate_Click);
@@ -290,7 +270,7 @@
             this.txtSeq2.Location = new System.Drawing.Point(168, 63);
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(41, 23);
-            this.txtSeq2.TabIndex = 14;
+            this.txtSeq2.TabIndex = 11;
             this.txtSeq2.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             this.txtSeq2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq_Validating);
             // 
@@ -301,7 +281,7 @@
             this.txtSeq1.Location = new System.Drawing.Point(102, 63);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(41, 23);
-            this.txtSeq1.TabIndex = 13;
+            this.txtSeq1.TabIndex = 10;
             this.txtSeq1.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSeq_PopUp);
             this.txtSeq1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSeq_Validating);
             // 
@@ -344,7 +324,7 @@
             this.txtArticle.Location = new System.Drawing.Point(138, 32);
             this.txtArticle.Name = "txtArticle";
             this.txtArticle.Size = new System.Drawing.Size(108, 23);
-            this.txtArticle.TabIndex = 4;
+            this.txtArticle.TabIndex = 1;
             // 
             // txtMarkerName_Filter
             // 
@@ -353,7 +333,7 @@
             this.txtMarkerName_Filter.Location = new System.Drawing.Point(340, 61);
             this.txtMarkerName_Filter.Name = "txtMarkerName_Filter";
             this.txtMarkerName_Filter.Size = new System.Drawing.Size(108, 23);
-            this.txtMarkerName_Filter.TabIndex = 3;
+            this.txtMarkerName_Filter.TabIndex = 5;
             // 
             // txtSizeCode
             // 
@@ -362,7 +342,7 @@
             this.txtSizeCode.Location = new System.Drawing.Point(340, 32);
             this.txtSizeCode.Name = "txtSizeCode";
             this.txtSizeCode.Size = new System.Drawing.Size(109, 23);
-            this.txtSizeCode.TabIndex = 5;
+            this.txtSizeCode.TabIndex = 4;
             // 
             // labelMarkerName
             // 
@@ -395,7 +375,7 @@
             this.checkOnlyShowEmptyEstCutDate.Location = new System.Drawing.Point(11, 90);
             this.checkOnlyShowEmptyEstCutDate.Name = "checkOnlyShowEmptyEstCutDate";
             this.checkOnlyShowEmptyEstCutDate.Size = new System.Drawing.Size(221, 21);
-            this.checkOnlyShowEmptyEstCutDate.TabIndex = 8;
+            this.checkOnlyShowEmptyEstCutDate.TabIndex = 6;
             this.checkOnlyShowEmptyEstCutDate.Text = "Only show empty Est. Cut Date";
             this.checkOnlyShowEmptyEstCutDate.UseVisualStyleBackColor = true;
             // 
@@ -404,7 +384,7 @@
             this.btnFilter.Location = new System.Drawing.Point(494, 3);
             this.btnFilter.Name = "btnFilter";
             this.btnFilter.Size = new System.Drawing.Size(80, 30);
-            this.btnFilter.TabIndex = 24;
+            this.btnFilter.TabIndex = 7;
             this.btnFilter.Text = "Filter";
             this.btnFilter.UseVisualStyleBackColor = true;
             this.btnFilter.Click += new System.EventHandler(this.BtnFilter_Click);
@@ -431,7 +411,7 @@
             this.DateEstCutDate.Location = new System.Drawing.Point(340, 3);
             this.DateEstCutDate.Name = "DateEstCutDate";
             this.DateEstCutDate.Size = new System.Drawing.Size(130, 23);
-            this.DateEstCutDate.TabIndex = 6;
+            this.DateEstCutDate.TabIndex = 3;
             // 
             // txtSPNo
             // 
@@ -451,15 +431,6 @@
             this.labelFabricCombo.TabIndex = 5;
             this.labelFabricCombo.Text = "Fabric Panel Code";
             // 
-            // label17
-            // 
-            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label17.Location = new System.Drawing.Point(245, 63);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(96, 23);
-            this.label17.TabIndex = 78;
-            this.label17.Text = "Cut Cell";
-            // 
             // txtCell
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
@@ -468,7 +439,36 @@
             this.txtCell.MDivisionID = "";
             this.txtCell.Name = "txtCell";
             this.txtCell.Size = new System.Drawing.Size(108, 23);
-            this.txtCell.TabIndex = 79;
+            this.txtCell.TabIndex = 14;
+            // 
+            // dateBoxEstCutDate
+            // 
+            this.dateBoxEstCutDate.Location = new System.Drawing.Point(102, 5);
+            this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
+            this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
+            this.dateBoxEstCutDate.TabIndex = 8;
+            // 
+            // txtSpreadingNo
+            // 
+            this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
+            this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSpreadingNo.IncludeJunk = true;
+            this.txtSpreadingNo.Location = new System.Drawing.Point(99, 0);
+            this.txtSpreadingNo.MDivision = "";
+            this.txtSpreadingNo.Name = "txtSpreadingNo";
+            this.txtSpreadingNo.Size = new System.Drawing.Size(108, 23);
+            this.txtSpreadingNo.TabIndex = 15;
+            // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(344, 34);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(108, 23);
+            this.txtMarkerLength.TabIndex = 13;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
             // 
             // Cutting_BatchAssign
             // 
@@ -528,7 +528,6 @@
         private Win.UI.TextBox txtSPNo;
         private Win.UI.Label labelFabricCombo;
         private Win.UI.Label label1;
-        private Win.UI.TextBox txtMarkerLength;
         private Win.UI.TextBox txtMakerName;
         private Win.UI.Label label4;
         private Class.TxtSpreadingNo txtSpreadingNo;
@@ -538,5 +537,6 @@
         private Win.UI.DateBox dateWKETA;
         private Class.TxtCell txtCell;
         private Win.UI.Label label17;
+        private Class.TxtMarkerLength txtMarkerLength;
     }
 }
