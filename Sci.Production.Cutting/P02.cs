@@ -1451,29 +1451,37 @@ order by p.EditDate desc
 
         private bool CanEditDataByGrid(Grid grid, DataRow dr, string columNname)
         {
-            if (this.CurrentDetailData == null)
+            try
             {
-                return false;
+                if (this.CurrentDetailData == null)
+                {
+                    return false;
+                }
+
+                switch (grid.Name)
+                {
+                    case "detailgrid":
+                        if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
+                        {
+                            return false;
+                        }
+
+                        return this.CanEditData(dr);
+                    case "gridDistributeToSP":
+                        if (dr["OrderID"].ToString().EqualString("EXCESS"))
+                        {
+                            return false;
+                        }
+
+                        return this.CanEditDistribute(this.CurrentDetailData);
+                    default:
+                        return this.CanEditData(this.CurrentDetailData);
+                }
             }
-
-            switch (grid.Name)
+            catch (Exception)
             {
-                case "detailgrid":
-                    if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() != "2")
-                    {
-                        return false;
-                    }
-
-                    return this.CanEditData(dr);
-                case "gridDistributeToSP":
-                    if (dr["OrderID"].ToString().EqualString("EXCESS"))
-                    {
-                        return false;
-                    }
-
-                    return this.CanEditDistribute(this.CurrentDetailData);
-                default:
-                    return this.CanEditData(this.CurrentDetailData);
+                // DY的電腦在雙螢幕時,edit彈窗在另一個螢幕create→UNDO , this.CurrentDetailData 會出現不是 null 的錯誤, 連 null 都無法判定
+                throw;
             }
         }
 
