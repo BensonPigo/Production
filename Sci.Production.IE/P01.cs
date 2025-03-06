@@ -3242,6 +3242,11 @@ and s.BrandID = @brandid";
         /// </summary>
         private void FillAllLocation()
         {
+            if (this.DetailDatas.Count == 0)
+            {
+                return;
+            }
+
             // 填入與前一筆相同的 Location
             string preLocation = string.Empty;
             foreach (DataRow dr in this.DetailDatas)
