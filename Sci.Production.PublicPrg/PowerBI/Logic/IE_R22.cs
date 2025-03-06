@@ -170,7 +170,7 @@ SELECT Distinct
     [CheckListNo] = cc.No,
     [CheckListItem] = colb.CheckList,
     [LateReason] = cc.Remark,
-    [Deadline] = CONVERT(varchar, CC.Deadline, 23),
+    [Deadline] = CC.Deadline,
     [Completed in Time] = iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), '')
 FROM ChgOver_Check CC WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
