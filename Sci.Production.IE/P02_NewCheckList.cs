@@ -104,6 +104,7 @@ namespace Sci.Production.IE
 
             // DataGridViewGeneratorCheckBoxColumnSettings
             DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
+            cbs.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
 
             // 設置CellValidating事件來處理CheckBox變動
             cbs.CellValidating += (s, e) =>
