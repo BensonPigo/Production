@@ -558,6 +558,19 @@ where   mo.Junk = 0
 
             #endregion
 
+            #region 重新計算 InlineCategory
+            listSqlParmeter = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.CurrentMaintain["ID"]),
+            };
+
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateSewingInlineCategory", listSqlParmeter)))
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+
+            #endregion
+
             base.ClickSaveAfter();
             this.txtsewinglineLine.Enabled = true;
         }

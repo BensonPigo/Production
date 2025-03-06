@@ -460,6 +460,37 @@ DEALLOCATE cursorSewingOutput
             }
             #endregion
 
+            #region 重新計算 Inline Category
+            sqlcmd = $@"
+DECLARE @ID varchar(13)
+
+DECLARE cursorSewingOutput 
+CURSOR FOR
+	select distinct s.ID
+    from SewingOutput s
+    where s.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
+
+OPEN cursorSewingOutput
+FETCH NEXT FROM cursorSewingOutput INTO @ID
+
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    exec RecalculateSewingInlineCategory @ID
+
+    FETCH NEXT FROM cursorSewingOutput INTO @ID
+END
+
+
+CLOSE cursorSewingOutput
+DEALLOCATE cursorSewingOutput
+";
+            result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out dataTable);
+            if (!result)
+            {
+                return result;
+            }
+            #endregion
+
             #region 重算第2層 WorkHour (在重算完 第2層 QAQty 之後) ※Sewing_P01
             foreach (DataRow item in sumQaQty.Rows)
             {
