@@ -301,7 +301,7 @@ from (
 	OUTER APPLY
     (
 		SELECT
-		[Effi_90_day] = CAST(SUM(GSD) / SUM(Cycle) * 100 as numeric(9,4))
+		[Effi_90_day] = iif(isnull(SUM(Cycle), 0) = 0, 0, CAST(isnull(SUM(GSD), 0) / SUM(Cycle) * 100 as numeric(9,4))) 
 		FROM
 		(
 			SELECT
@@ -360,7 +360,7 @@ from (
     OUTER APPLY
     (
         SELECT
-        [Effi_3_year] = CAST(ISNULL(((SUM(a.GSD) / SUM(a.Cycle)) * 100), 0) as numeric(9,4))
+        [Effi_3_year] = iif(isnull(SUM(a.Cycle), 0) = 0, 0, CAST(isnull(SUM(a.GSD), 0) / SUM(a.Cycle) * 100 as numeric(9,4)))
         From
         (
 			SELECT

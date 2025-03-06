@@ -1,13 +1,11 @@
 ﻿using Ict;
 using OnBarcode.Barcode;
-using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -175,6 +173,7 @@ namespace Sci.Production.Packing
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["NewSizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
                                 string dest = "Dest: " + printData.Rows[i]["Dest"];
+                                string custCDID = "Cust CD: " + printData.Rows[i]["CustCDID"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
@@ -189,7 +188,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(3, 2).Range.Text = brandFTYCode;
-                                tables.Cell(5, 3).Range.Text = dest;
+                                tables.Cell(5, 3).Range.Text = dest + "\r\n" + custCDID;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
@@ -231,8 +230,8 @@ namespace Sci.Production.Packing
                             }
                         }
                         #endregion
-                        // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                        // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
                         #region Save & Show Word
                         winword.Visible = true;
                         Marshal.ReleaseComObject(winword);
@@ -291,8 +290,7 @@ namespace Sci.Production.Packing
             {
                 document.Activate();
 
-                //winword.Visible = true;
-
+                // winword.Visible = true;
                 Word.Tables table = document.Tables;
 
                 #region 計算頁數
