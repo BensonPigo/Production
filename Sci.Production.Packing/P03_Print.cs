@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Word = Microsoft.Office.Interop.Word;
 using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Production.Prg;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Packing
 {
@@ -521,10 +522,13 @@ select * from(
 		WHERE f.ID='{Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
+      {(this.txtCTNStart.Text.IsNullOrWhiteSpace() ? string.Empty : string.Format(" and pd.CTNStartNo >= {0}", this.txtCTNStart.Text))}
+      {(this.txtCTNEnd.Text.IsNullOrWhiteSpace() ? string.Empty : string.Format(" and pd.CTNStartNo <= {0}", this.txtCTNEnd.Text))}
 		  and pd.CTNQty > 0
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 ";
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
 
             if (this.printData == null || this.printData.Rows.Count == 0)
@@ -541,7 +545,15 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            if (this.rdbtnShippingMarkKHAdidas.Checked)
+            {
+                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping Mark_ForKHAdidas.dotx";
+            }
+            else
+            {
+                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            }
+
             document = winword.Documents.Add(ref printFile);
             try
             {
@@ -580,15 +592,27 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                     string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
                     #endregion
 
-                    tables.Cell(1, 2).Range.Text = customize1;
-                    tables.Cell(1, 3).Range.Text = cTNStartno;
-                    tables.Cell(2, 2).Range.Text = custPOno;
-                    tables.Cell(3, 2).Range.Text = article;
-                    tables.Cell(4, 2).Range.Text = sizeCode;
-                    tables.Cell(5, 2).Range.Text = qty;
-                    tables.Cell(6, 2).Range.Text = country;
-                    tables.Cell(7, 1).Range.Text = "GROSS WEIGHT:" + gw;
-                    tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
+                    if (this.rdbtnShippingMarkKHAdidas.Checked)
+                    {
+                        tables.Cell(1, 2).Range.Text = custPOno;
+                        tables.Cell(1, 3).Range.Text = cTNStartno;
+                        tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
+                        tables.Cell(3, 2).Range.Text = country;
+                        tables.Cell(4, 2).Range.Text = gw + "K.G.";
+                        tables.Cell(5, 2).Range.Text = nw + "K.G.";
+                    }
+                    else
+                    {
+                        tables.Cell(1, 2).Range.Text = customize1;
+                        tables.Cell(1, 3).Range.Text = cTNStartno;
+                        tables.Cell(2, 2).Range.Text = custPOno;
+                        tables.Cell(3, 2).Range.Text = article;
+                        tables.Cell(4, 2).Range.Text = sizeCode;
+                        tables.Cell(5, 2).Range.Text = qty;
+                        tables.Cell(6, 2).Range.Text = country;
+                        tables.Cell(7, 1).Range.Text = "GROSS WEIGHT:" + gw;
+                        tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
+                    }
                 }
                 #endregion
 
