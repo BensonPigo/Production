@@ -594,6 +594,12 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 
                     if (this.rdbtnShippingMarkKHAdidas.Checked)
                     {
+                        if (custPOno.Contains("-"))
+                        {
+                            int index = custPOno.IndexOf('-');
+                            custPOno = custPOno.Substring(0, index);
+                        }
+
                         tables.Cell(1, 2).Range.Text = custPOno;
                         tables.Cell(1, 3).Range.Text = cTNStartno;
                         tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
