@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Office.Interop.Word;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
@@ -14,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Cutting
 {
@@ -41,7 +43,7 @@ namespace Sci.Production.Cutting
         private string Cell;
         private string size;
         private DualResult result;
-        private DataTable dtt;
+        private System.Data.DataTable dtt;
         private string Addname;
         private DateTime? AddDate;
         private string Cutno;
@@ -792,7 +794,7 @@ OPTION (RECOMPILE)"
                 return;
             }
 
-            DataTable selects = r.CopyToDataTable();
+            System.Data.DataTable selects = r.CopyToDataTable();
 
             string fileName = "Cutting_P12";
             string fieldList = "Bundle,CutRef,POID,SP,Group,Dyelot,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
@@ -816,7 +818,7 @@ OPTION (RECOMPILE)"
             }
 
             // DefaultView 是依據使用者排序列印
-            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            System.Data.DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -897,7 +899,7 @@ OPTION (RECOMPILE)"
                 }
 
                 // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
-                DataTable allNoDatas = null;
+                System.Data.DataTable allNoDatas = null;
                 data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
                 {
                     if (allNoDatas == null)
@@ -1004,8 +1006,8 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
-            DataTable dtSelect = querydr.ToList().CopyToDataTable();
-            DataTable allNoDatas = null;
+            System.Data.DataTable dtSelect = querydr.ToList().CopyToDataTable();
+            System.Data.DataTable allNoDatas = null;
             dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
             {
                 POID = dr["POID"].ToString(),
@@ -1092,7 +1094,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         }
 
                         filter = $@" RFPrintDate is null";
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        ((System.Data.DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
 
                     case false:
@@ -1102,7 +1104,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         }
 
                         filter = string.Empty;
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        ((System.Data.DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
                 }
             }
@@ -1119,7 +1121,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
             }
 
             // DefaultView 是依據使用者排序列印
-            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            System.Data.DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -1127,7 +1129,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
-            this.ShowWaitMessage("Process Excel!");
+            this.ShowWaitMessage("Process File!");
             List<P10_PrintData> data = dtSelect.AsEnumerable().Select(row1 => new P10_PrintData()
             {
                 Group_right = row1["Group"].ToString(),
@@ -1168,10 +1170,13 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 BundleNo = row1["Bundle"].ToString(),
                 PatternDesc = row1["Description"].ToString(),
             }).ToList();
-            string fileName = "Cutting_P10_Layout2";
-            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
-            Excel.Workbook workbook = excelApp.ActiveWorkbook;
-            this.strPagetype = 2;
+
+            // 使用Word來產生QRCode
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
 
             if (this.checkChangepagebyCut.Checked)
             {
@@ -1191,18 +1196,8 @@ where bd.BundleNo = '{dr["Bundle"]}'
                          DenseRank = s.Rank,
                      }).ToList();
 
-                int page = x.GroupBy(g => g.DenseRank).Select(s => ((s.Count() - 1) / this.strPagetype) + 1).Sum();
-                for (int i = 1; i < page; i++)
-                {
-                    Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
-                    Excel.Worksheet worksheetn = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[i + 1];
-                    worksheet1.Copy(worksheetn);
-                    Marshal.ReleaseComObject(worksheet1);
-                    Marshal.ReleaseComObject(worksheetn);
-                }
-
                 // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
-                DataTable allNoDatas = null;
+                System.Data.DataTable allNoDatas = null;
                 data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
                 {
                     if (allNoDatas == null)
@@ -1215,7 +1210,6 @@ where bd.BundleNo = '{dr["Bundle"]}'
                     }
                 });
 
-                int pp = 1;
                 x.Select(s => s.DenseRank).Distinct().OrderBy(o => o).ToList().ForEach(denseRank =>
                 {
                     data.Clear();
@@ -1225,18 +1219,12 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         data.Add(r.Item);
                     });
 
-                    for (int s = 1; s <= ((data.Count - 1) / this.strPagetype) + 1; s++)
-                    {
-                        var writedata = data.Skip((s - 1) * this.strPagetype).Take(this.strPagetype).ToList();
-                        Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
-                        P10_Print.ProcessPrint(writedata, worksheet, allNoDatas, this.strPagetype);
-                        pp++;
-                    }
+                    P10_Print.Print_Word_QRCode(data, winword, allNoDatas);
                 });
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp, this.strPagetype);
+                P10_Print.Print_Word_QRCode(data, winword);
             }
 
             // 有按才更新列印日期printdate。
@@ -1262,8 +1250,10 @@ where bd.BundleNo = '{dr["Bundle"]}'
             if (pd.ShowDialog() == DialogResult.OK)
             {
                 string printer = pd.PrinterSettings.PrinterName;
-                workbook.PrintOutEx(ActivePrinter: printer);
+                winword.ActivePrinter = printer;
+                winword.PrintOut();
 
+                Marshal.ReleaseComObject(winword);
                 DualResult result = DBProxy.Current.Execute(null, ups.ToString());
                 if (!result)
                 {
@@ -1278,13 +1268,6 @@ where bd.BundleNo = '{dr["Bundle"]}'
                     this.listControlBindingSource1.Position = pos;
                 }
             }
-
-            string excelName = Class.MicrosoftFile.GetName(fileName);
-            excelApp.ActiveWorkbook.SaveAs(excelName);
-            workbook.Close();
-            excelApp.Quit();
-            Marshal.ReleaseComObject(excelApp);
-            File.Delete(excelName);
         }
     }
 }

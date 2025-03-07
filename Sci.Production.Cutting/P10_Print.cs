@@ -18,6 +18,7 @@ using ZXing;
 using static Sci.Production.Automation.Guozi_AGV;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Cutting
 {
@@ -588,7 +589,7 @@ order by x.[Bundle]");
 
                 this.SetCount(this.dt.Rows.Count);
 
-                this.ShowWaitMessage("Process Excel!");
+                this.ShowWaitMessage("Process Files!");
                 List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
                 {
                     Group_right = row1["Group_right"].ToString(),
@@ -627,30 +628,142 @@ order by x.[Bundle]");
                     BundleNo = row1["BundleNo"].ToString(),
                     PatternDesc = row1["PatternDesc"].ToString(),
                 }).ToList();
-                string fileName = "Cutting_P10_Layout2";
-                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
-                Excel.Workbook workbook = excelApp.ActiveWorkbook;
-                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                this.strPagetype = 2;
-                RunPagePrint(data, excelApp, this.strPagetype);
-                this.HideWaitMessage();
+                Word._Application winword = new Word.Application
+                {
+                    FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                    Visible = false,
+                };
+
+                Print_Word_QRCode(data, winword);
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
                 {
                     string printer = pd.PrinterSettings.PrinterName;
-                    workbook.PrintOutEx(ActivePrinter: printer);
+                    winword.ActivePrinter = printer;
+                    winword.PrintOut();
                 }
 
-                string excelName = Class.MicrosoftFile.GetName(fileName);
-                excelApp.ActiveWorkbook.SaveAs(excelName);
-                workbook.Close();
-                excelApp.Quit();
-                Marshal.ReleaseComObject(excelApp);
-                File.Delete(excelName);
+                Marshal.ReleaseComObject(winword);
+                this.HideWaitMessage();
                 this.WritePrintDate();
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        internal static void Print_Word_QRCode(List<P10_PrintData> data, Word._Application winword, DataTable allNoDatas = null)
+        {
+            // 使用Word來產生QRCode
+            winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
+            object printFile;
+            Word._Document document;
+            Word.Table tables = null;
+            string strPrintFile = "\\Cutting_P10_PrintQRCode.dotx";
+            printFile = Env.Cfg.XltPathDir + strPrintFile;
+            document = winword.Documents.Add(ref printFile);
+            try
+            {
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                // winword.Visible = true;
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = data.Count;
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+                #endregion
+                #region 填入資料
+                for (int i = 0; i < page; i++)
+                {
+                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard GetSettingText() 一併修改。
+                    string no = allNoDatas == null ? string.Empty : GetNo(data[i].Barcode, allNoDatas);
+
+                    tables = table[i + 1];
+                    tables.Cell(1, 1).Range.Text = "Grp:" + data[i].Group_right;
+                    tables.Cell(1, 2).Range.Text = "Tone:" + data[i].Tone;
+                    tables.Cell(1, 3).Range.Text = data[i].NoBundleCardAfterSubprocess1;
+                    tables.Cell(2, 1).Range.Text = "Line#:" + data[i].Line;
+                    tables.Cell(2, 2).Range.Text = data[i].Group_left;
+                    tables.Cell(3, 1).Range.Text = "SP#:" + data[i].SP;
+                    tables.Cell(4, 1).Range.Text = "Style#:" + data[i].Style;
+                    tables.Cell(4, 2).Range.Text = "Cell:" + data[i].Cell;
+                    tables.Cell(5, 1).Range.Text = "Cut#:" + data[i].Body_Cut;
+                    tables.Cell(6, 1).Range.Text = "Color:" + data[i].Color;
+                    tables.Cell(7, 1).Range.Text = "Size:" + data[i].Size;
+                    tables.Cell(7, 2).Range.Text = "Part:" + data[i].Parts + " Dyelot:" + data[i].Dyelot;
+                    tables.Cell(8, 1).Range.Text = "Sea:" + data[i].Season;
+                    tables.Cell(8, 2).Range.Text = "Brand:" + data[i].Brand;
+                    tables.Cell(9, 1).Range.Text = "MK#:" + data[i].MarkerNo;
+                    tables.Cell(9, 2).Range.Text = "Cut/L:" + data[i].CutCell;
+                    tables.Cell(9, 3).Range.Text = "*" + data[i].Barcode + "*";
+                    tables.Cell(10, 1).Range.Text = "Sub Process:" + data[i].Artwork;
+                    tables.Cell(11, 1).Range.Text = "Desc:" + data[i].PatternDesc;
+                    tables.Cell(12, 1).Range.Text = "Qty:" + data[i].Quantity + $"(#{no})";
+                    tables.Cell(12, 2).Range.Text = "Item:" + data[i].Item;
+
+                    // 將圖片存儲為暫時檔案
+                    BarcodeWriter writer = new BarcodeWriter
+                    {
+                        Format = BarcodeFormat.QR_CODE,
+                        Options = new QrCodeEncodingOptions
+                        {
+                            // Create Photo
+                            Height = 120,
+                            Width = 120,
+                            Margin = 0,
+                            CharacterSet = "UTF-8",
+                            PureBarcode = true,
+
+                            // 錯誤修正容量
+                            // L水平    7%的字碼可被修正
+                            // M水平    15%的字碼可被修正
+                            // Q水平    25%的字碼可被修正
+                            // H水平    30%的字碼可被修正
+                            ErrorCorrection = ErrorCorrectionLevel.L,
+                        },
+                    };
+
+                    Bitmap newQRCode = writer.Write(data[i].BundleNo.ToString().Trim());
+                    string tempPath = Path.GetTempFileName();
+                    newQRCode.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+                    Word.InlineShape qrCodeImg = tables.Cell(4, 3).Range.InlineShapes.AddPicture(tempPath);
+                    qrCodeImg.Width = 90;
+                    qrCodeImg.Height = 90;
+                }
+                #endregion
+
+                winword.Visible = true;
+                Marshal.ReleaseComObject(table);
+            }
+            catch (Exception ex)
+            {
+                if (winword != null)
+                {
+                    winword.Quit();
+                }
+
+                MyUtility.Msg.ErrorBox(ex.ToString());
+            }
+            finally
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+            }
         }
 
         private void ExcelProcess(bool print = false)
@@ -779,18 +892,18 @@ order by x.[Bundle]");
                         CharacterSet = "UTF-8",
                         PureBarcode = true,
 
-                        // 錯誤修正容量
-                        // L水平    7%的字碼可被修正
-                        // M水平    15%的字碼可被修正
-                        // Q水平    25%的字碼可被修正
-                        // H水平    30%的字碼可被修正
+                         // 錯誤修正容量
+                         // L水平    7%的字碼可被修正
+                         // M水平    15%的字碼可被修正
+                         // Q水平    25%的字碼可被修正
+                         // H水平    30%的字碼可被修正
                         ErrorCorrection = ErrorCorrectionLevel.L,
                     },
                 };
 
                 data.ForEach(r =>
                 {
-                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
+                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard GetSettingText() 一併修改。
                     string no = GetNo(r.Barcode, allNoDatas);
                     string contian;
                     contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}
@@ -868,11 +981,11 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
                         CharacterSet = "UTF-8",
                         PureBarcode = true,
 
-                        // 錯誤修正容量
-                        // L水平    7%的字碼可被修正
-                        // M水平    15%的字碼可被修正
-                        // Q水平    25%的字碼可被修正
-                        // H水平    30%的字碼可被修正
+                         // 錯誤修正容量
+                         // L水平    7%的字碼可被修正
+                         // M水平    15%的字碼可被修正
+                         // Q水平    25%的字碼可被修正
+                         // H水平    30%的字碼可被修正
                         ErrorCorrection = ErrorCorrectionLevel.L,
                     },
                 };
