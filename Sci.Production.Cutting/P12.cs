@@ -1178,6 +1178,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 Visible = false,
             };
 
+            bool isprint = false;
             if (this.checkChangepagebyCut.Checked)
             {
                 var x = data.GroupBy(g => new { g.Comb, g.Cut })
@@ -1219,12 +1220,12 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         data.Add(r.Item);
                     });
 
-                    P10_Print.Print_Word_QRCode(data, winword, allNoDatas);
+                    P10_Print.Print_Word_QRCode(data, out isprint, allNoDatas);
                 });
             }
             else
             {
-                P10_Print.Print_Word_QRCode(data, winword);
+                P10_Print.Print_Word_QRCode(data, out isprint);
             }
 
             // 有按才更新列印日期printdate。
@@ -1246,14 +1247,8 @@ where bd.BundleNo = '{dr["Bundle"]}'
             }
 
             this.HideWaitMessage();
-            PrintDialog pd = new PrintDialog();
-            if (pd.ShowDialog() == DialogResult.OK)
+            if (isprint)
             {
-                string printer = pd.PrinterSettings.PrinterName;
-                winword.ActivePrinter = printer;
-                winword.PrintOut();
-
-                Marshal.ReleaseComObject(winword);
                 DualResult result = DBProxy.Current.Execute(null, ups.ToString());
                 if (!result)
                 {

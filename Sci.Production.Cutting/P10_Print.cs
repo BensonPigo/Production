@@ -628,22 +628,8 @@ order by x.[Bundle]");
                     BundleNo = row1["BundleNo"].ToString(),
                     PatternDesc = row1["PatternDesc"].ToString(),
                 }).ToList();
-                Word._Application winword = new Word.Application
-                {
-                    FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
-                    Visible = false,
-                };
-
-                Print_Word_QRCode(data, winword);
-                PrintDialog pd = new PrintDialog();
-                if (pd.ShowDialog() == DialogResult.OK)
-                {
-                    string printer = pd.PrinterSettings.PrinterName;
-                    winword.ActivePrinter = printer;
-                    winword.PrintOut();
-                }
-
-                Marshal.ReleaseComObject(winword);
+                bool isprint = false;
+                Print_Word_QRCode(data, out isprint);
                 this.HideWaitMessage();
                 this.WritePrintDate();
             }
@@ -652,26 +638,28 @@ order by x.[Bundle]");
         }
 
         /// <inheritdoc/>
-        internal static void Print_Word_QRCode(List<P10_PrintData> data, Word._Application winword, DataTable allNoDatas = null)
+        internal static void Print_Word_QRCode(List<P10_PrintData> data, out bool isprint, DataTable allNoDatas = null)
         {
-            // 使用Word來產生QRCode
-            winword = new Word.Application
-            {
-                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
-                Visible = false,
-            };
-            object printFile;
-            Word._Document document;
-            Word.Table tables = null;
-            string strPrintFile = "\\Cutting_P10_PrintQRCode.dotx";
-            printFile = Env.Cfg.XltPathDir + strPrintFile;
-            document = winword.Documents.Add(ref printFile);
+            isprint = false;
+            Word._Application winword = null;
+            Word._Document document = null;
+
             try
             {
+                // 初始化 Word 應用程式
+                winword = new Word.Application
+                {
+                    FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                    Visible = false,
+                };
+
+                // 加載模板文件
+                object printFile = Env.Cfg.XltPathDir + "\\Cutting_P10_PrintQRCode.dotx";
+                document = winword.Documents.Add(ref printFile);
+
                 document.Activate();
                 Word.Tables table = document.Tables;
 
-                // winword.Visible = true;
                 #region 計算頁數
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
@@ -687,53 +675,56 @@ order by x.[Bundle]");
                     winword.Selection.Paste();
                 }
                 #endregion
+
                 #region 填入資料
                 for (int i = 0; i < page; i++)
                 {
-                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard GetSettingText() 一併修改。
                     string no = allNoDatas == null ? string.Empty : GetNo(data[i].Barcode, allNoDatas);
+                    string contian = $@"Grp: {data[i].Group_right}  Tone: {data[i].Tone}  Line#: {data[i].Line}  {data[i].Group_left}
+SP#:{data[i].SP}
+Style#: {data[i].Style} Cell: {data[i].CutCell}
+Cut#: {data[i].Body_Cut}
+Color: {data[i].Color}
+Size: {data[i].Size}     Part: {data[i].Parts}     Dyelot: {data[i].Dyelot}
+Sea: {data[i].Season}     Brand: {data[i].ShipCode}
+MK#: {data[i].MarkerNo}    Cut/L:
+Sub Process: {data[i].Artwork}
+Desc: {data[i].Desc}
+Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
 
-                    tables = table[i + 1];
-                    tables.Cell(1, 1).Range.Text = "Grp:" + data[i].Group_right;
-                    tables.Cell(1, 2).Range.Text = "Tone:" + data[i].Tone;
-                    tables.Cell(1, 3).Range.Text = data[i].NoBundleCardAfterSubprocess1;
-                    tables.Cell(2, 1).Range.Text = "Line#:" + data[i].Line;
-                    tables.Cell(2, 2).Range.Text = data[i].Group_left;
-                    tables.Cell(3, 1).Range.Text = "SP#:" + data[i].SP;
-                    tables.Cell(4, 1).Range.Text = "Style#:" + data[i].Style;
-                    tables.Cell(4, 2).Range.Text = "Cell:" + data[i].Cell;
-                    tables.Cell(5, 1).Range.Text = "Cut#:" + data[i].Body_Cut;
-                    tables.Cell(6, 1).Range.Text = "Color:" + data[i].Color;
-                    tables.Cell(7, 1).Range.Text = "Size:" + data[i].Size;
-                    tables.Cell(7, 2).Range.Text = "Part:" + data[i].Parts + " Dyelot:" + data[i].Dyelot;
-                    tables.Cell(8, 1).Range.Text = "Sea:" + data[i].Season;
-                    tables.Cell(8, 2).Range.Text = "Brand:" + data[i].Brand;
-                    tables.Cell(9, 1).Range.Text = "MK#:" + data[i].MarkerNo;
-                    tables.Cell(9, 2).Range.Text = "Cut/L:" + data[i].CutCell;
-                    tables.Cell(9, 3).Range.Text = "*" + data[i].Barcode + "*";
-                    tables.Cell(10, 1).Range.Text = "Sub Process:" + data[i].Artwork;
-                    tables.Cell(11, 1).Range.Text = "Desc:" + data[i].PatternDesc;
-                    tables.Cell(12, 1).Range.Text = "Qty:" + data[i].Quantity + $"(#{no})";
-                    tables.Cell(12, 2).Range.Text = "Item:" + data[i].Item;
+                    Word.Table tables = table[i + 1];
+                    tables.Cell(1, 1).Range.Text = contian;
 
-                    // 將圖片存儲為暫時檔案
+                    // 部分粗體
+                    Word.Range cellRange = tables.Cell(1, 1).Range;
+                    cellRange.Text = contian;
+
+                    Word.Range boldRange = cellRange.Duplicate;
+                    boldRange.SetRange(cellRange.Start, cellRange.Start + 8);
+                    boldRange.Font.Bold = 1;
+
+                    int cutIndex = cellRange.Text.IndexOf("Cut/L");
+                    if (cutIndex != -1)
+                    {
+                        boldRange = cellRange.Duplicate;
+                        boldRange.SetRange(cellRange.Start + cutIndex, cellRange.Start + cutIndex + "Cut/L".Length);
+                        boldRange.Font.Bold = 1;
+                    }
+
+                    tables.Cell(1, 2).Range.Text = data[i].NoBundleCardAfterSubprocess1;
+                    tables.Cell(3, 2).Range.Text = "*" + data[i].Barcode + "*";
+
+                    // 生成 QR Code 並插入圖片
                     BarcodeWriter writer = new BarcodeWriter
                     {
                         Format = BarcodeFormat.QR_CODE,
                         Options = new QrCodeEncodingOptions
                         {
-                            // Create Photo
                             Height = 120,
                             Width = 120,
                             Margin = 0,
                             CharacterSet = "UTF-8",
                             PureBarcode = true,
-
-                            // 錯誤修正容量
-                            // L水平    7%的字碼可被修正
-                            // M水平    15%的字碼可被修正
-                            // Q水平    25%的字碼可被修正
-                            // H水平    30%的字碼可被修正
                             ErrorCorrection = ErrorCorrectionLevel.L,
                         },
                     };
@@ -741,22 +732,25 @@ order by x.[Bundle]");
                     Bitmap newQRCode = writer.Write(data[i].BundleNo.ToString().Trim());
                     string tempPath = Path.GetTempFileName();
                     newQRCode.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
-                    Word.InlineShape qrCodeImg = tables.Cell(4, 3).Range.InlineShapes.AddPicture(tempPath);
+                    Word.InlineShape qrCodeImg = tables.Cell(2, 2).Range.InlineShapes.AddPicture(tempPath);
                     qrCodeImg.Width = 90;
                     qrCodeImg.Height = 90;
                 }
                 #endregion
 
-                winword.Visible = true;
-                Marshal.ReleaseComObject(table);
+                //winword.Visible = true;
+
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
+                {
+                    string printer = pd.PrinterSettings.PrinterName;
+                    winword.ActivePrinter = printer;
+                    document.PrintOut();
+                    isprint = true;
+                }
             }
             catch (Exception ex)
             {
-                if (winword != null)
-                {
-                    winword.Quit();
-                }
-
                 MyUtility.Msg.ErrorBox(ex.ToString());
             }
             finally
