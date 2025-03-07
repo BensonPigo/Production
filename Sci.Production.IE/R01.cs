@@ -1580,7 +1580,8 @@ select distinct
                     ,0
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ))
                 ,0),
-
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal),
+    [Ori. Total GSD Time] = Cast(lm.OriTotalGSD as decimal),
 	[Total GSD Time] = lm.TotalGSD * 1.0,
 	[Total Cycle Time] = lm.TotalCycle * 1.0,
 	
@@ -1663,6 +1664,12 @@ select distinct
 from #LineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
+left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
+					and lm.SeasonID = t.SeasonID 
+					and lm.BrandID = t.BrandID 
+					and lm.ComboType = t.ComboType 
+					and lm.TimeStudyVersion = t.Version 
+					and lm.TimeStudyPhase = t.Phase 
 outer apply(
 	select top 1 c.Target
 	from factory f
@@ -1670,6 +1677,10 @@ outer apply(
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )LinebalancingTarget 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+)tdd 
 where 1 = 1
 ");
 
@@ -1806,8 +1817,10 @@ select distinct
                     IIF( CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ) = 0
                     ,0
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ) )
-                ,0),
+                ,2),
 
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal),
+    [Ori. Total GSD Time] =  Cast(NULL as decimal),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = Cast( NULL as decimal),
 	
@@ -1858,6 +1871,11 @@ select distinct
 from #AutomatedLineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
+left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
+					and lm.SeasonID = t.SeasonID 
+					and lm.BrandID = t.BrandID 
+					and lm.ComboType = t.ComboType 
+					and lm.TimeStudyID = t.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason
@@ -1866,6 +1884,10 @@ outer apply(
 		FOR XML PATH('')
 		),1,1,'')
 )NotHitTargetReason
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+)tdd 
 where 1 = 1
 ");
 
@@ -2001,8 +2023,10 @@ select distinct
                     IIF( CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ) = 0
                     ,0
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ) )
-                ,0),
+                ,2),
 
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal),
+    [Ori. Total GSD Time] =  Cast(lm.OriTotalGSDTime as decimal),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
 	
@@ -2055,6 +2079,11 @@ select distinct
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
+left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
+					and lm.SeasonID = t.SeasonID 
+					and lm.BrandID = t.BrandID 
+					and lm.ComboType = t.ComboType 
+					and lm.TimeStudyID = t.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason
@@ -2070,6 +2099,10 @@ outer apply(
 	where f.id = lm.factoryid
 	order by EffectiveDate desc
 )LinebalancingTarget 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+)tdd 
 where 1 = 1
 ");
 

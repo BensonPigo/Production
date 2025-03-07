@@ -266,6 +266,7 @@ namespace Sci.Production.Centralized
 
                 if (!result)
                 {
+                    continue;
                     DBProxy.Current.DefaultTimeout = 300;
                     //this.HideWaitMessage();
                     this.ShowErr(result);
@@ -383,6 +384,8 @@ and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy
             #endregion
 
             string detailQuery = string.Empty;
+            string spQuery = string.Empty;
+            string spQuery2 = string.Empty;
             #region detailQuery
             if (!MyUtility.Check.Empty(this.brand))
             {
@@ -396,12 +399,14 @@ and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy
 
             if (!MyUtility.Check.Empty(this.style))
             {
-                detailQuery += $@"and o.StyleID = '{this.style}'" + Environment.NewLine;
+                detailQuery += $@"and s.ID = '{this.style}'" + Environment.NewLine;
             }
 
             if (!MyUtility.Check.Empty(this.category))
             {
                 detailQuery += $@"and o.Category = '{this.category}'" + Environment.NewLine;
+                spQuery += $@"and Category = '{this.category}'" + Environment.NewLine;
+                spQuery2 += $@"and o.Category = '{this.category}'" + Environment.NewLine;
             }
             #endregion
 
@@ -410,7 +415,7 @@ and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy
 select DISTINCT a.*
 into #SewingOutput
 from SewingOutput a
-INNER JOIN SewingOutput_Detail b  on a.ID = b.ID
+INNER JOIN SewingOutput_Detail b WITH (NOLOCK) on a.ID = b.ID
 INNER JOIN SewingSchedule ss ON b.OrderId = ss.OrderID
 where 1=1
 {headQuery}
@@ -419,8 +424,8 @@ select DISTINCT o.StyleUkey
     ,Program = IIF(o.Category='M', MockupProgram.Program, OrderProgram.Program)
     ,Category = cc.Val
 INTO #OrderInfo
-from SewingOutput a
-inner join SewingOutput_Detail b on a.ID = b.ID
+from #SewingOutput a
+inner join SewingOutput_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Orders o on b.OrderId = o.ID
 OUTER APPLY(
 	select Val = STUFF((
@@ -433,7 +438,7 @@ OUTER APPLY(
                     ELSE x.Category
                 END
 		from Orders x
-		where x.StyleUkey = o.StyleUkey
+		where x.StyleUkey = o.StyleUkey {spQuery}
 		FOR XML PATH('')
 	),1,1,'')
 )cc
@@ -454,6 +459,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )MockupProgram
+where 1=1 {spQuery2}
 
 select b.ID
 	,o.StyleUkey
@@ -476,7 +482,7 @@ select b.ID
 	,CumulateSimilar = SUM(b.CumulateSimilar)
 INTO #SewingOutput_Detail
 from #SewingOutput a
-inner join SewingOutput_Detail b on a.ID = b.ID
+inner join SewingOutput_Detail b WITH (NOLOCK) on a.ID = b.ID
 inner join Factory c on a.FactoryID=c.ID
 inner join Orders o on b.OrderId = o.ID
 inner join Style s on o.StyleUkey = s.Ukey
@@ -517,7 +523,7 @@ INTO #P03MaxVer ---- P03
 from LineMapping lm 
 where exists(
 	select 1 from #BaseData a
-	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID /*and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team*/ and a.ComboType=lm.ComboType
 ) and lm.Status = 'Confirmed'
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
@@ -627,7 +633,7 @@ ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,E
 ---- Before Data的找法：
 ---- (1) 資料來源只有P03、P05 (因為P06是從P05轉過去的，所以只需要找出P06來源的P05即可)
 ---- (2) P03、P05找出Phase = Initial 或 Prelim 的產線計畫
----- (3) P03每筆的Key值為 factory, brand, style, season, combo type, Line, Team，但P05沒有 Line, Team
+---- (3) P03每筆的Key值為 factory, brand, style, season, combo type,，before本來就不會知道會在哪一條線生產，不要加Line、Team、Sewer等等判斷
 ---- (4) P03、P05先各自處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
 ---- (5) 再從P03或P05取一個，取的方式： 若After為 P06 ，Before 只需要找 P05；若After為 P03 ，Before 只需要找 P03
 
@@ -661,7 +667,7 @@ WHERE RowNum = 1
 	from #P05MaxVer maxVer
 	inner join AutomatedLineMapping p05 on maxVer.ID = p05.ID
 	where maxVer.Phase IN ('Prelim','Initial')
-	and exists(
+	/*and exists(
 		select p06.SewerManpower
 		from #AfterData a
 		inner join LineMappingBalancing p06 on a.ID = p06.ID
@@ -669,7 +675,7 @@ WHERE RowNum = 1
 			and a.StyleUKey = maxVer.StyleUKey
 			and a.FactoryID = maxVer.FactoryID  
 			and a.ComboType = maxVer.ComboType  
-	)
+	)*/
 )
 
 SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
@@ -684,7 +690,7 @@ select p03.*
 ,SourceTable = 'IE P03'
 INTO #BeforeData
 from #BaseData a
-INNER join #P03Rank p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType
+INNER join #P03Rank p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and a.ComboType=p03.ComboType
 UNION
 --P05的Before (必須在 P06.AutomatedLineMappingID 當中)
 select p05.*
@@ -727,9 +733,21 @@ select a.*,b.Status
 	,b.CurrentOperators
 	,b.HighestCycle
 	,b.HighestGSD
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal)
+    ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal)
 INTO #FinalAfterData 
 from #AfterData a
 inner join LineMapping b on a.ID = b.ID ---- P03
+left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
+					and b.SeasonID = t.SeasonID 
+					and b.BrandID = t.BrandID 
+					and b.ComboType = t.ComboType 
+					and b.TimeStudyVersion = t.Version 
+					and b.TimeStudyPhase = t.Phase 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+)tdd 
 WHERE a.SourceTable='IE P03'
 UNION ALL
 select a.*,b.Status
@@ -738,8 +756,19 @@ select a.*,b.Status
 	,CurrentOperators = b.SewerManpower
 	,HighestCycle = b.HighestCycleTime
 	,HighestGSD = b.HighestGSDTime
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal)
+    ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal)
 from #AfterData a
 inner join LineMappingBalancing b on a.ID = b.ID ---- P06
+left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
+					and b.SeasonID = t.SeasonID 
+					and b.BrandID = t.BrandID 
+					and b.ComboType = t.ComboType 
+					and b.TimeStudyID = t.ID
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+)tdd 
 WHERE a.SourceTable='IE P06'
 
 
@@ -775,9 +804,11 @@ select
 	,[Inline Category] = CONCAT(a.SewingReasonIDForTypeIC, '-' + sr.Description) 
 	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
 	------------------------------------------------After ------------------------------------------------
+    ,[Std. SMV] =  AfterData.[Std. SMV]
 	,[Phase after inline] = AfterData.Phase
 	,[Version after inline] = AfterData.Version
 	,[Optrs after inline] = AfterData.CurrentOperators
+    ,[Ori. Total GSD Time] = AfterData.[Ori. Total GSD Time]
 	,[Cycle Time] = AfterData.TotalCycle
 	,[Avg. Cycle] = AfterData.AvgCycle
 	,[LBR after inline] = AfterData.LBR
@@ -844,7 +875,7 @@ Outer Apply(
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	from #FinalBeforeData lm
-	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType 
 
 )BeforeDataP03
 Outer Apply(
