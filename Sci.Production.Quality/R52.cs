@@ -228,7 +228,7 @@ drop table #tmp
 
             string filename = "Quality_R52_Subprocess MD Inspection Report.xltx";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + filename); // 預先開啟excel app
-            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 2, false, null, excelApp, wSheet: excelApp.Sheets[1]);
+            MyUtility.Excel.CopyToXls(this.PrintData, string.Empty, filename, 1, false, null, excelApp, wSheet: excelApp.Sheets[1]);
 
             excelApp.Visible = true;
             #region Save & Show Excel
