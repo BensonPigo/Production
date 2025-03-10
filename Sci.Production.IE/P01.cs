@@ -3244,6 +3244,7 @@ and s.BrandID = @brandid";
         {
             if (this.DetailDatas.Count == 0)
             {
+                MyUtility.Msg.WarningBox($"This Style#<{this.CurrentMaintain["StyleID"]}> does not exist in Trade IE P03.");
                 return;
             }
 
