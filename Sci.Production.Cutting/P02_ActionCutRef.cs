@@ -80,8 +80,8 @@ namespace Sci.Production.Cutting
             bindingSource.DataSource = this.CurrentDetailData.Table;
             bindingSource.Position = this.CurrentDetailData.Table.Rows.IndexOf(this.CurrentDetailData);
 
+            // 不要綁 Layer, 驗證會有新舊值檢查
             this.txtSP.DataBindings.Add(new Binding("Text", bindingSource, "OrderID", true, DataSourceUpdateMode.OnPropertyChanged));
-            this.numLayers.DataBindings.Add(new Binding("Value", bindingSource, "Layer", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtSeq1.DataBindings.Add(new Binding("Text", bindingSource, "SEQ1", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtSeq2.DataBindings.Add(new Binding("Text", bindingSource, "SEQ2", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtRefNo.DataBindings.Add(new Binding("Text", bindingSource, "RefNo", true, DataSourceUpdateMode.OnPropertyChanged));
@@ -91,6 +91,7 @@ namespace Sci.Production.Cutting
             this.txtMarkerName.DataBindings.Add(new Binding("Text", bindingSource, "MarkerName", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtMarkerNo.DataBindings.Add(new Binding("Text", bindingSource, "MarkerNo", true, DataSourceUpdateMode.OnPropertyChanged));
             this.dateBoxEstCutDate.DataBindings.Add(new Binding("Value", bindingSource, "EstCutDate", true, DataSourceUpdateMode.OnPropertyChanged));
+            this.numLayers.Value = MyUtility.Convert.GetInt(this.CurrentDetailData["Layer"]);
 
             this.txtMarkerLength.Text = Prgs.ConvertFullWidthToHalfWidth(FormatMarkerLength(this.CurrentDetailData_Ori["MarkerLength"].ToString()));
             this.txtWKETA.Text = MyUtility.Convert.GetDate(this.CurrentDetailData_Ori["WKETA"]).HasValue ? MyUtility.Convert.GetDate(this.CurrentDetailData_Ori["WKETA"]).Value.ToString("yyyy/MM/dd") : string.Empty;

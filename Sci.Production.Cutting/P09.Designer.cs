@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             this.displayLastCreateCutRef = new Sci.Win.UI.DisplayBox();
             this.label16 = new Sci.Win.UI.Label();
             this.txtPatternNo = new Sci.Win.UI.TextBox();
@@ -97,7 +98,6 @@
             this.btnAllSPDistribute = new Sci.Win.UI.Button();
             this.btnPackingMethod = new Sci.Win.UI.Button();
             this.btnImportFromWorkOrderForPlanning = new Sci.Win.UI.Button();
-            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -164,7 +164,7 @@
             // refresh
             // 
             this.refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refresh.Location = new System.Drawing.Point(13002, 5);
+            this.refresh.Location = new System.Drawing.Point(13390, 5);
             this.refresh.Size = new System.Drawing.Size(80, 32);
             this.refresh.TabIndex = 17;
             this.refresh.Visible = false;
@@ -271,6 +271,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(422, 614);
             this.panel1.TabIndex = 4;
+            // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(331, 83);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(85, 23);
+            this.txtMarkerLength.TabIndex = 43;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // displayLastCreateCutRef
             // 
@@ -477,7 +489,7 @@
             this.gridQtyBreakDown.RowTemplate.Height = 24;
             this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridQtyBreakDown.ShowCellToolTips = false;
-            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 125);
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(416, 124);
             this.gridQtyBreakDown.TabIndex = 30;
             // 
             // gridSpreadingFabric
@@ -1112,18 +1124,6 @@
             this.btnImportFromWorkOrderForPlanning.Text = "Import From Work Order For Planning";
             this.btnImportFromWorkOrderForPlanning.UseVisualStyleBackColor = true;
             this.btnImportFromWorkOrderForPlanning.Click += new System.EventHandler(this.BtnImportFromWorkOrderForPlanning_Click);
-            // 
-            // txtMarkerLength
-            // 
-            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(331, 83);
-            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
-            this.txtMarkerLength.Name = "txtMarkerLength";
-            this.txtMarkerLength.Size = new System.Drawing.Size(85, 23);
-            this.txtMarkerLength.TabIndex = 43;
-            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
-            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // P09
             // 

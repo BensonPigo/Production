@@ -250,6 +250,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             int useCutRefToRequestFabric = MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]);
             this.editByUseCutRefToRequestFabric = useCutRefToRequestFabric != 0 && useCutRefToRequestFabric != 2;
 
+            this.btnAllSPDistribute.Enabled = this.EditMode && this.editByUseCutRefToRequestFabric;
             this.btnImportMarker.Enabled = !this.Text.Contains("History") && !this.EditMode && this.editByUseCutRefToRequestFabric;
             this.btnAutoRef.Enabled = !this.EditMode;
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
@@ -407,7 +408,6 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
 
             bool canEditDisturbute = this.CanEditDistribute(this.CurrentDetailData);
             this.btnDistributeThisCutRef.Enabled = canEditDisturbute;
-            this.btnAllSPDistribute.Enabled = canEditDisturbute;
             this.cmsDistribute.Enabled = canEditDisturbute;
             this.gridDistributeToSP.IsEditingReadOnly = !canEditDisturbute;
 
@@ -554,7 +554,8 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
         {
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]) == 0)
             {
-                MyUtility.Msg.WarningBox("[Please go to Cutting_P01 to set [Use Cutting Cutref# to Request Fabric].]");
+                this.OnRefreshClick();
+                MyUtility.Msg.WarningBox("Please go to Cutting_P01 to set [Use Cutting Cutref# to Request Fabric].");
                 return false;
             }
 
@@ -1480,7 +1481,7 @@ order by p.EditDate desc
             }
             catch (Exception)
             {
-                // DY的電腦在雙螢幕時,edit彈窗在另一個螢幕create→UNDO , this.CurrentDetailData 會出現不是 null 的錯誤, 連 null 都無法判定
+                // 不接錯誤是因為 新增一筆 後 undo 時,底層取 CurrentDetailData index 跳錯, 不是 null
                 throw;
             }
         }

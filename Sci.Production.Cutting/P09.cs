@@ -464,7 +464,8 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
         {
             if (MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"]) == 0)
             {
-                MyUtility.Msg.WarningBox("[Please go to Cutting_P01 to set [Use Cutting Cutref# to Request Fabric].]");
+                this.OnRefreshClick();
+                MyUtility.Msg.WarningBox("Please go to Cutting_P01 to set [Use Cutting Cutref# to Request Fabric].");
                 return false;
             }
 
@@ -1474,33 +1475,41 @@ DEALLOCATE CURSOR_
 
         private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
-            if (grid.Name == "detailgrid")
+            try
             {
-                if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() == "1")
+                if (grid.Name == "detailgrid")
                 {
-                    return false;
-                }
+                    if (columNname.ToLower() == "orderid" && this.CurrentMaintain["WorkType"].ToString() == "1")
+                    {
+                        return false;
+                    }
 
-                if (columNname.ToLower() == "cuttingplannerremark" && this.EditMode)
+                    if (columNname.ToLower() == "cuttingplannerremark" && this.EditMode)
+                    {
+                        return true;
+                    }
+
+                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID"))
+                    {
+                        return this.CanEditNotWithUseCutRefToRequestFabric(dr);
+                    }
+
+                    return this.CanEditData(dr);
+                }
+                else
                 {
-                    return true;
-                }
+                    if (grid.Name == "gridDistributeToSP" && dr["OrderID"].ToString().EqualString("EXCESS"))
+                    {
+                        return false;
+                    }
 
-                if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID"))
-                {
-                    return this.CanEditNotWithUseCutRefToRequestFabric(dr);
+                    return this.CanEditData(this.CurrentDetailData);
                 }
-
-                return this.CanEditData(dr);
             }
-            else
+            catch (Exception)
             {
-                if (grid.Name == "gridDistributeToSP" && dr["OrderID"].ToString().EqualString("EXCESS"))
-                {
-                    return false;
-                }
-
-                return this.CanEditData(this.CurrentDetailData);
+                // 不接錯誤是因為 新增一筆 後 undo 時,底層取 CurrentDetailData index 跳錯, 不是 null
+                throw;
             }
         }
 
