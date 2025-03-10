@@ -3242,6 +3242,12 @@ and s.BrandID = @brandid";
         /// </summary>
         private void FillAllLocation()
         {
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox($"This Style#<{this.CurrentMaintain["StyleID"]}> does not exist in Trade IE P03.");
+                return;
+            }
+
             // 填入與前一筆相同的 Location
             string preLocation = string.Empty;
             foreach (DataRow dr in this.DetailDatas)
