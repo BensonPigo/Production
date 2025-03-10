@@ -1,7 +1,9 @@
 ﻿using Ict;
 using Sci.Data;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -27,6 +29,7 @@ namespace Sci.Production.Quality
         private DateTime? dateBundleInspectDate1;
         private DateTime? dateBundleInspectDate2;
         private DataTable PrintData;
+        private List<SqlParameter> sqlParameter = new List<SqlParameter>();
 
         /// <inheritdoc/>
         public R52(ToolStripMenuItem menuitem)
@@ -91,6 +94,7 @@ namespace Sci.Production.Quality
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
+            this.sqlParameter.Clear();
             this.sqlCmd = new StringBuilder();
 
             this.sqlCmd.Append(@"
@@ -129,62 +133,74 @@ where 1 = 1
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
             {
-                this.sqlCmd.Append(string.Format(@" and Bundle.Cdate >= '{0}'", Convert.ToDateTime(this.dateBundle1).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateBundle1", this.dateBundle1.Value));
+                this.sqlCmd.Append(" and Bundle.Cdate >= @dateBundle1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle2))
             {
-                this.sqlCmd.Append(string.Format(@" and Bundle.Cdate <= '{0}'", Convert.ToDateTime(this.dateBundle2).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateBundle2", this.dateBundle2));
+                this.sqlCmd.Append(" and Bundle.Cdate <= @dateBundle2");
             }
 
-            if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef1)))
+            if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef2)))
             {
-                this.sqlCmd.Append(string.Format(@" and Bundle.CutRef between '{0}' and '{1}'", this.CutRef1, this.CutRef2));
+                this.sqlParameter.Add(new SqlParameter("@CutRef1", this.CutRef1));
+                this.sqlParameter.Add(new SqlParameter("@CutRef2", this.CutRef2));
+                this.sqlCmd.Append(" and Bundle.CutRef between @CutRef1 and @CutRef2");
             }
 
             if (!MyUtility.Check.Empty(this.SP))
             {
-                this.sqlCmd.Append(string.Format(@" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = Bundle_Detail.bundleNo and Orderid= '{0}')", this.SP));
+                this.sqlParameter.Add(new SqlParameter("@SP", this.SP));
+                this.sqlCmd.Append(" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = Bundle_Detail.bundleNo and Orderid = @SP)");
             }
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate1))
             {
-                this.sqlCmd.Append(string.Format(@" and WorkOrder.EstCutDate >= '{0}'", Convert.ToDateTime(this.dateEstCutDate1).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate1", this.dateEstCutDate1.Value));
+                this.sqlCmd.Append(" and WorkOrder.EstCutDate >= @dateEstCutDate1");
             }
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate2))
             {
-                this.sqlCmd.Append(string.Format(@" and WorkOrder.EstCutDate <= '{0}'", Convert.ToDateTime(this.dateEstCutDate2).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate2", this.dateEstCutDate2.Value));
+                this.sqlCmd.Append(" and WorkOrder.EstCutDate <= @dateEstCutDate2");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate1))
             {
-                this.sqlCmd.Append(string.Format(@" and BundleMDScan.AddDate >= '{0}'", Convert.ToDateTime(this.dateBundleInspectDate1).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate1", this.dateBundleInspectDate1.Value));
+                this.sqlCmd.Append(" and BundleMDScan.AddDate >= @dateBundleInspectDate1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate2))
             {
-                this.sqlCmd.Append(string.Format(@" and BundleMDScan.AddDate <= '{0}'", Convert.ToDateTime(this.dateBundleInspectDate2).ToString("yyyy/MM/dd")));
+                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate2", this.dateBundleInspectDate2.Value));
+                this.sqlCmd.Append(" and BundleMDScan.AddDate <= @dateBundleInspectDate2");
             }
 
             if (!MyUtility.Check.Empty(this.SubProcess))
             {
-                this.sqlCmd.Append($@" and (BundleMDScan.SubprocessID in ('{this.SubProcess.Replace(",", "','")}') or '{this.SubProcess}'='')" + Environment.NewLine);
+                this.sqlCmd.Append($@" and BundleMDScan.SubprocessID in ('{this.SubProcess.Replace(",", "','")}')" + Environment.NewLine);
             }
 
             if (!MyUtility.Check.Empty(this.M))
             {
-                this.sqlCmd.Append(string.Format(@" and Bundle.MDivisionid = '{0}'", this.M));
+                this.sqlParameter.Add(new SqlParameter("@M", this.M));
+                this.sqlCmd.Append(" and Bundle.MDivisionid = @M");
             }
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
-                this.sqlCmd.Append(string.Format(@" and Orders.FtyGroup = '{0}'", this.Factory));
+                this.sqlParameter.Add(new SqlParameter("@Factory", this.Factory));
+                this.sqlCmd.Append(" and Orders.FtyGroup = @Factory");
             }
 
             if (!MyUtility.Check.Empty(this.LastResult))
             {
-                this.sqlCmd.Append(string.Format(
+                this.sqlParameter.Add(new SqlParameter("@LastResult", this.LastResult));
+                this.sqlCmd.Append(
                     @" and BundleMDScan.BundleNo IN (
                         SELECT BundleNo
                         FROM BundleMDScan
@@ -192,7 +208,7 @@ where 1 = 1
                             SELECT MAX(AddDate)
                             FROM BundleMDScan sub
                             WHERE sub.BundleNo = BundleMDScan.BundleNo and sub.SubProcessID = BundleMDScan.SubProcessID
-                        ) AND Result = {0})", this.LastResult));
+                        ) AND Result = @LastResult)");
             }
 
             this.sqlCmd.Append(@"
@@ -211,7 +227,7 @@ outer apply (
 drop table #tmp
 ");
 
-            return DBProxy.Current.Select(null, this.sqlCmd.ToString(), out this.PrintData);
+            return DBProxy.Current.Select(null, this.sqlCmd.ToString(), this.sqlParameter, out this.PrintData);
         }
 
         /// <inheritdoc/>
