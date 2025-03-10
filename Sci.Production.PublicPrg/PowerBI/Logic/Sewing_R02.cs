@@ -1029,47 +1029,6 @@ group by t1.ID, rs
 order by t1.ID
 
 -- 取得SubConOut 數值
---先抓出SubCon_R16 
---有在Subcon_R16 [Subcon Purchase order]且狀態為Approve=>視同外發
-;with cte
-as
-(
-	select t.*,ArtworkType.ID artworktypeid
-	from dbo.ArtworkType WITH (NOLOCK) ,
-	(
-		select distinct (select orders.poid from orders WITH (NOLOCK) where id=b.OrderId) orderid 
-		from dbo.ArtworkPO a WITH (NOLOCK) 
-		inner join dbo.ArtworkPo_Detail b WITH (NOLOCK) on b.id = a.id
-		where 1=1
-		and (a.issuedate between @StartDate and @EndDate) 
-		and a.mdivisionid = @M and a.factoryid = @Factory
-		AND a.Status = 'Approved'
-	)t
-	where Artworktype.IsSubprocess=1 
-)
-select aa.FactoryID
-    ,cte.artworktypeid
-    ,aa.POID
-    ,aa.MDivisionID
-into #tmpSubConR16
-from cte
-left join orders aa WITH (NOLOCK) on aa.id = cte.orderid
-left join Order_TmsCost bb WITH (NOLOCK) on bb.id = aa.ID and bb.ArtworkTypeID = cte.artworktypeid
-outer apply (
-	select isnull(sum(t.po_amt),0.00) po_amt, isnull(sum(t.po_qty),0) po_qty from (
-	select po.currencyid,
-			pod.Price,
-			pod.poQty po_qty
-			,pod.poQty*pod.Price*dbo.getRate('FX',po.CurrencyID,'USD',po.issuedate) po_amt
-			,dbo.getRate('FX',po.CurrencyID,'USD',po.issuedate) rate
-	from ArtworkPo po WITH (NOLOCK) 
-    inner join ArtworkPo_Detail pod WITH (NOLOCK) on pod.id = po.Id 
-    inner join orders WITH (NOLOCK) on orders.id = pod.orderid
-		where po.ArtworkTypeID = cte.artworktypeid and orders.POId = aa.POID    
-        AND Orders.Category=aa.Category and po.LocalSuppID not in ('SPP','G168')
-    ) t
-) x		
-where po_qty > 0
 
 select  FactoryID = s.FactoryID
     ,OrderId = sd.OrderId
@@ -1094,11 +1053,16 @@ inner join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o.id
 inner join #tmpArtwork ta WITH (NOLOCK) on ot.ArtworkTypeID = ta.ID
 where exists(
-	select 1 from #tmpSubConR16 s 
-	where s.POID = sd.OrderID
-	and s.FactoryID = s.FactoryID
-	and s.MDivisionID = s.MDivisionID
-	and s.artworktypeid = ot.ArtworkTypeID
+	SELECT 1 
+	from ArtworkPo po with (nolock)
+	inner join ArtworkPo_Detail apd with (nolock) on po.ID = apd.ID
+	inner join Orders oo with (nolock) on oo.ID = apd.OrderID
+	where	apd.PoQty > 0 
+			AND oo.POID = sd.OrderID
+			and po.FactoryID = s.FactoryID
+			and po.MDivisionID = s.MDivisionID
+			and po.artworktypeid = ot.ArtworkTypeID
+			and po.LocalSuppID not in ('SPP','G168')
 )
 and (@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null or s.OutputDate <= @EndDate) and
 ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
@@ -1123,7 +1087,7 @@ declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from
 -- 取得SPH Total CPU
 select [SPH_ttlCPU] = CAST(isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5) as decimal(12,4))
 
-drop table #tmp,#tmpAllSubprocess,#tmpArtwork,#TPEtmp,#tmpFinalArtwork,#tmpFinal,#tmpSubConR16";
+drop table #tmp,#tmpAllSubprocess,#tmpArtwork,#TPEtmp,#tmpFinalArtwork,#tmpFinal";
 
             this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
             Base_ViewModel resultReport = new Base_ViewModel
