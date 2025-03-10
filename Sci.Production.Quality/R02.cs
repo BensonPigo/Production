@@ -220,7 +220,8 @@ select A.POID
 	,[OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
     ,m.ALocation
 	,A.Result
-	,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
+	,[% of Inspection] = iif(isnull(A.InspQty,0) = 0 ,0 ,round((A.InspQty / A.ArriveQty)*100 ,2))
+    ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
 	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
 	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
