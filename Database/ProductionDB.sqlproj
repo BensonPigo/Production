@@ -2926,6 +2926,7 @@
     <Build Include="dbo\Tables\CTNHeatSeal.sql" />
     <Build Include="dbo\Tables\CTNHangerPack.sql" />
     <Build Include="dbo\Stored Procedures\usp_MutipleItemRecaculate.sql" />
+    <Build Include="dbo\Tables\Order_PatternPanelList.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -300,5 +300,165 @@ FROM Production.dbo.SubProcess a WITH (NOLOCK)
 INNER JOIN Production.dbo.Pattern_Annotation_Artwork b  WITH (NOLOCK) ON a.ID=b.ID
 ------------------------------------------------------------------------------------------
 
+------------Order_PatternPanelList--------------------
+--找出【裁剪母單清單】
+select distinct CuttingSP 
+into #tmpCuttingSP
+from Trade_To_Pms.dbo.orders where EachConsApv is not null
+
+
+--列出裁剪母單下須要找的【色組與尺寸】清單 
+SELECT	DISTINCT	o.CuttingSP,
+					oq.Article,
+					oq.SizeCode,
+					[PatternUkey] = cast(0 as BIGINT),
+					[ArticleGroup] = cast('' as varchar(6)),
+					[FabricPanelCode] = cast('' as varchar(2)),
+					[PatternPanel] = cast('' as varchar(2)),
+					o.StyleUkey
+INTO	#tmpOrder_PatternPanelList_step1
+from #tmpCuttingSP cs
+inner join Production.dbo.Orders o with (nolock) on o.CuttingSP = cs.CuttingSP
+inner join Production.dbo.Order_Qty oq with (nolock) on oq.ID = o.ID
+where o.Junk = 0 and o.Category in ('B', 'S')
+
+--更新【PatternUkey】
+SELECT  distinct
+		cs.CuttingSP,
+		[Article] = isnull(oea.Article, ''),
+		oes.SizeCode,
+		[PatternUkey] = p.UKey
+into #tmpPatternUkey
+from #tmpCuttingSP cs
+inner join Production.dbo.Order_EachCons oe with (nolock) on oe.ID = cs.CuttingSP
+inner join Production.dbo.Marker m with (nolock) on m.ID = oe.SMNoticeID and m.Version = oe.MarkerVersion
+left join Production.dbo.Order_EachCons_Article oea with (nolock) on oea.Order_EachConsUkey = oe.Ukey
+inner join Production.dbo.Order_EachCons_SizeQty oes with (nolock) on oes.Order_EachConsUkey = oe.Ukey
+inner join Production.dbo.Pattern p with (nolock) on p.ID = m.PatternID and p.Version = m.PatternVersion
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.Article = topp.Article and tpu.SizeCode = topp.SizeCode
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.Article = '' and tpu.SizeCode = topp.SizeCode
+where topp.PatternUkey = 0
+
+--還未取到PatternUkey資料，從Production.dbo.GetPatternUkey取得
+SELECT	a.StyleUkey,
+		a.CuttingSP,
+		a.SizeCode,
+		[PatternUkey] = PatternUkey.val
+into #tmpFromGetPatternUkey
+from (	select distinct StyleUkey, CuttingSP, SizeCode
+		from #tmpOrder_PatternPanelList_step1 where PatternUkey = 0) a
+inner join Production.dbo.Orders o with (nolock) on o.ID = a.CuttingSP
+outer APPLY (	select top 1 [val] = os.SizeGroup
+				from Production.dbo.Order_SizeCode os with (nolock)
+				where os.ID = o.POID and os.SizeCode = a.SizeCode) SizeGroup
+outer APPLY (	select top 1 [val] = gp.PatternUkey	from Production.dbo.GetPatternUkey(a.CuttingSP, '', '', a.StyleUkey, SizeGroup.val) gp) PatternUkey
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpFromGetPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.SizeCode = topp.SizeCode
+where topp.PatternUkey = 0
+
+--update ArticleGroup drop table #tmpArticleGroup
+--因為同一個PatternUkey+Article會有多筆，先找第一筆再update回temp table
+select	pgl.PatternUKEY,
+		pgl.Article,
+		pgl.ArticleGroup
+into #tmpArticleGroup
+from Production.dbo.Pattern_GL_Article pgl with (nolock)
+where	exists(select 1 from #tmpOrder_PatternPanelList_step1 topp where topp.PatternUkey = pgl.PatternUkey) AND
+		pgl.App in ('', '0') AND
+		pgl.ArticleGroup in (select max(pgl2.ArticleGroup) 
+							from Production.dbo.Pattern_GL_Article pgl2 with (nolock) 
+							where	pgl.PatternUKEY = pgl2.PatternUKEY and pgl.Article = pgl2.Article  AND
+									pgl2.App in ('', '0'))
+
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.Article = topp.Article
+
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.Article = ''
+where topp.ArticleGroup = ''
+
+--update FabricPanelCode select * from #tmpFabricPanelCode
+select	distinct	pgl.PatternUKEY,
+					pgl.ArticleGroup,
+					pgl.FabricPanelCode
+into #tmpFabricPanelCode
+from Production.dbo.Pattern_GL_LectraCode pgl with (nolock)
+where	exists(select 1 from #tmpOrder_PatternPanelList_step1 topp where topp.PatternUkey = pgl.PatternUKEY and topp.ArticleGroup = pgl.ArticleGroup) AND
+		pgl.FabricPanelCode like '[A-Z]' and LEN(pgl.FabricPanelCode) = 1
+
+-- 因為同PatternUKEY, ArticleGroup下會有多個FabricPanelCode，所以上面先distinct後，這邊重新join產生最終的結果
+SELECT	topp.CuttingSP,
+		topp.Article,
+		topp.SizeCode,
+		topp.PatternUkey,
+		topp.ArticleGroup,
+		tfp.FabricPanelCode,
+		topp.PatternPanel
+into #tmpOrder_PatternPanelList
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpFabricPanelCode tfp on tfp.PatternUKEY = topp.PatternUKEY and tfp.ArticleGroup = topp.ArticleGroup
+
+
+--update PatternPanel 
+UPDATE topp set topp.PatternPanel = oc.PatternPanel
+from #tmpOrder_PatternPanelList topp
+inner join Production.dbo.Order_ColorCombo oc with (nolock) on	oc.ID = topp.CuttingSP and
+																oc.Article = topp.Article and
+																oc.FabricPanelCode = topp.FabricPanelCode and
+																oc.FabricType = 'F'
+
+--更新Order_PatternPanelList select * from #tmpOrder_PatternPanelList
+--delete
+DELETE oppl
+from Order_PatternPanelList oppl
+where	exists(select 1 from #tmpCuttingSP tcs where tcs.CuttingSP = oppl.CuttingSP) AND
+		not exists(select 1 from #tmpOrder_PatternPanelList topp 
+					where oppl.CuttingSP = topp.CuttingSP
+					and oppl.Article = topp.Article
+					and oppl.SizeCode = topp.SizeCode
+					and oppl.PatternUkey = topp.PatternUkey
+					and oppl.ArticleGroup = topp.ArticleGroup
+					and oppl.FabricPanelCode = topp.FabricPanelCode
+					and oppl.PatternPanel = topp.PatternPanel
+					)
+
+insert into Order_PatternPanelList(CuttingSP
+									,Article
+									,SizeCode
+									,FabricPanelCode
+									,PatternPanel
+									,PatternUkey
+									,ArticleGroup)
+SELECT	topp.CuttingSP
+		,topp.Article
+		,topp.SizeCode
+		,topp.FabricPanelCode
+		,topp.PatternPanel
+		,topp.PatternUkey
+		,topp.ArticleGroup
+from #tmpOrder_PatternPanelList topp
+WHERE	not exists(select 1 from Order_PatternPanelList oppl with (nolock) 
+					where oppl.CuttingSP = topp.CuttingSP
+					and oppl.Article = topp.Article
+					and oppl.SizeCode = topp.SizeCode
+					and oppl.PatternUkey = topp.PatternUkey
+					and oppl.ArticleGroup = topp.ArticleGroup
+					and oppl.FabricPanelCode = topp.FabricPanelCode
+					and oppl.PatternPanel = topp.PatternPanel)
+
+
+drop table #tmpCuttingSP, #tmpOrder_PatternPanelList_step1, #tmpOrder_PatternPanelList, #tmpPatternUkey, #tmpFromGetPatternUkey, #tmpFabricPanelCode, #tmpArticleGroup
+------------Order_PatternPanelList END--------------------
+
 END
 
