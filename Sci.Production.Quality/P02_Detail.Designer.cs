@@ -711,6 +711,7 @@
             this.numeric_ofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numeric_ofInspection.DecimalPlaces = 2;
             this.numeric_ofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numeric_ofInspection.IsSupportEditMode = false;
             this.numeric_ofInspection.Location = new System.Drawing.Point(119, 243);
             this.numeric_ofInspection.Name = "numeric_ofInspection";
             this.numeric_ofInspection.NullValue = new decimal(new int[] {
