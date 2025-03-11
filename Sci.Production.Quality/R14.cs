@@ -78,19 +78,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                if (this.radioDetail.Checked)
-                {
-                    this.sqlWherelist.Add($" sp.val like '{this.txtSP.Text}%' ");
-                }
-                else
-                {
-                    this.sqlWherelist.Add(@"exists(select 1
-                                       from SciProduction_WorkOrder_Distribute swd
-			                           where swd.WorkOrderUkey=pms_wo.Ukey and swd.orderid = @SP)
-                                       ");
-                }
-
-                this.lisSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
+                this.sqlWherelist.Add($" sp.val like '{this.txtSP.Text}%' ");
             }
 
             if (!MyUtility.Check.Empty(this.comboShift.SelectedValue))
