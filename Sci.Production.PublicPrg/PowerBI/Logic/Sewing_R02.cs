@@ -1056,17 +1056,19 @@ where exists(
 	SELECT 1 
 	from ArtworkPo po with (nolock)
 	inner join ArtworkPo_Detail apd with (nolock) on po.ID = apd.ID
-	inner join Orders oo with (nolock) on oo.ID = apd.OrderID
 	where	apd.PoQty > 0 
-			AND oo.POID = sd.OrderID
+			and apd.OrderID = sd.OrderID
 			and po.FactoryID = s.FactoryID
 			and po.MDivisionID = s.MDivisionID
 			and po.artworktypeid = ot.ArtworkTypeID
 			and po.LocalSuppID not in ('SPP','G168')
+            and po.Status = 'Approved'
 )
 and (@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null or s.OutputDate <= @EndDate) and
 ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
+--排除subcon-in的資料
+and not (s.Shift <> 'O' and o.LocalOrder = 1 and o.SubconInType <> 0)
 {sqlwhere}
 
 -- 取得外發清單
