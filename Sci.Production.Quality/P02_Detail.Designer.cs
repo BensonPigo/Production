@@ -75,27 +75,11 @@
             this.txtInspectedQty = new Sci.Win.UI.NumericBox();
             this.txtRejectedQty = new Sci.Win.UI.NumericBox();
             this.txtRejectPercent = new Sci.Win.UI.NumericBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.label3 = new Sci.Win.UI.Label();
-            this.label4 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
-            this.comboBox1 = new Sci.Win.UI.ComboBox();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
             this.button1 = new Sci.Win.UI.Button();
             this.button2 = new Sci.Win.UI.Button();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.comboBox2 = new Sci.Win.UI.ComboBox();
-            this.textBox1 = new Sci.Win.UI.TextBox();
-            this.label6 = new Sci.Win.UI.Label();
-            this.label7 = new Sci.Win.UI.Label();
-            this.editBox1 = new Sci.Win.UI.EditBox();
-            this.dateBox1 = new Sci.Win.UI.DateBox();
-            this.txtuser1 = new Sci.Production.Class.Txtuser();
-            this.label8 = new Sci.Win.UI.Label();
-            this.numericBox1 = new Sci.Win.UI.NumericBox();
-            this.numericBox2 = new Sci.Win.UI.NumericBox();
-            this.numericBox3 = new Sci.Win.UI.NumericBox();
             this.label_ofInspection = new Sci.Win.UI.Label();
             this.numeric_ofInspection = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -650,58 +634,6 @@
             0,
             0});
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(15, 274);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 23);
-            this.label1.TabIndex = 105;
-            this.label1.Text = "Inspected Qty";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(15, 309);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(91, 23);
-            this.label2.TabIndex = 119;
-            this.label2.Text = "Rejected Qty";
-            // 
-            // label3
-            // 
-            this.label3.Location = new System.Drawing.Point(15, 343);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(91, 23);
-            this.label3.TabIndex = 121;
-            this.label3.Text = "Inspect Date";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(15, 408);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(91, 23);
-            this.label4.TabIndex = 125;
-            this.label4.Text = "Inspector";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(15, 443);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(91, 23);
-            this.label5.TabIndex = 127;
-            this.label5.Text = "Result";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.BackColor = System.Drawing.Color.White;
-            this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.IsSupportUnselect = true;
-            this.comboBox1.Location = new System.Drawing.Point(109, 443);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.OldText = "";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 129;
-            // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -766,133 +698,6 @@
             this.comboBox2.TabIndex = 136;
             this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.CmbDefectPicture_SelectedIndexChanged);
             // 
-            // textBox1
-            // 
-            this.textBox1.BackColor = System.Drawing.Color.White;
-            this.textBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.textBox1.Location = new System.Drawing.Point(109, 478);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(287, 23);
-            this.textBox1.TabIndex = 142;
-            // 
-            // label6
-            // 
-            this.label6.Location = new System.Drawing.Point(15, 478);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(91, 23);
-            this.label6.TabIndex = 141;
-            this.label6.Text = "Remark";
-            // 
-            // label7
-            // 
-            this.label7.Location = new System.Drawing.Point(261, 274);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(76, 23);
-            this.label7.TabIndex = 140;
-            this.label7.Text = "Defect";
-            // 
-            // editBox1
-            // 
-            this.editBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.editBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.editBox1.IsSupportEditMode = false;
-            this.editBox1.Location = new System.Drawing.Point(261, 300);
-            this.editBox1.Multiline = true;
-            this.editBox1.Name = "editBox1";
-            this.editBox1.ReadOnly = true;
-            this.editBox1.Size = new System.Drawing.Size(288, 97);
-            this.editBox1.TabIndex = 143;
-            this.editBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.EditDefect_MouseDown);
-            // 
-            // dateBox1
-            // 
-            this.dateBox1.Location = new System.Drawing.Point(110, 343);
-            this.dateBox1.Name = "dateBox1";
-            this.dateBox1.Size = new System.Drawing.Size(145, 23);
-            this.dateBox1.TabIndex = 145;
-            // 
-            // txtuser1
-            // 
-            this.txtuser1.AllowSelectResign = false;
-            this.txtuser1.DisplayBox1Binding = "";
-            this.txtuser1.Location = new System.Drawing.Point(110, 408);
-            this.txtuser1.Name = "txtuser1";
-            this.txtuser1.Size = new System.Drawing.Size(301, 23);
-            this.txtuser1.TabIndex = 144;
-            this.txtuser1.TextBox1Binding = "";
-            // 
-            // label8
-            // 
-            this.label8.Location = new System.Drawing.Point(15, 374);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(117, 23);
-            this.label8.TabIndex = 150;
-            this.label8.Text = "Reject Percentage";
-            // 
-            // numericBox1
-            // 
-            this.numericBox1.BackColor = System.Drawing.Color.White;
-            this.numericBox1.DecimalPlaces = 2;
-            this.numericBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox1.Location = new System.Drawing.Point(110, 274);
-            this.numericBox1.Name = "numericBox1";
-            this.numericBox1.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox1.Size = new System.Drawing.Size(143, 23);
-            this.numericBox1.TabIndex = 153;
-            this.numericBox1.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox1.Validating += new System.ComponentModel.CancelEventHandler(this.TxtInspectedQty_Validating);
-            // 
-            // numericBox2
-            // 
-            this.numericBox2.BackColor = System.Drawing.Color.White;
-            this.numericBox2.DecimalPlaces = 2;
-            this.numericBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numericBox2.Location = new System.Drawing.Point(109, 309);
-            this.numericBox2.Name = "numericBox2";
-            this.numericBox2.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.Size = new System.Drawing.Size(143, 23);
-            this.numericBox2.TabIndex = 154;
-            this.numericBox2.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox2.Validating += new System.ComponentModel.CancelEventHandler(this.TxtRejectedQty_Validating);
-            // 
-            // numericBox3
-            // 
-            this.numericBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.numericBox3.DecimalPlaces = 2;
-            this.numericBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.numericBox3.IsSupportEditMode = false;
-            this.numericBox3.Location = new System.Drawing.Point(135, 374);
-            this.numericBox3.Name = "numericBox3";
-            this.numericBox3.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.numericBox3.ReadOnly = true;
-            this.numericBox3.Size = new System.Drawing.Size(118, 23);
-            this.numericBox3.TabIndex = 155;
-            this.numericBox3.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            // 
             // label_ofInspection
             // 
             this.label_ofInspection.Location = new System.Drawing.Point(15, 243);
@@ -927,42 +732,27 @@
             this.ClientSize = new System.Drawing.Size(873, 563);
             this.Controls.Add(this.numeric_ofInspection);
             this.Controls.Add(this.label_ofInspection);
-            this.Controls.Add(this.numericBox3);
             this.Controls.Add(this.txtRejectPercent);
-            this.Controls.Add(this.numericBox2);
             this.Controls.Add(this.txtRejectedQty);
-            this.Controls.Add(this.numericBox1);
             this.Controls.Add(this.txtInspectedQty);
-            this.Controls.Add(this.label8);
             this.Controls.Add(this.labReject);
             this.Controls.Add(this.txtMaterialType);
             this.Controls.Add(this.txtSPNo);
             this.Controls.Add(this.labSP);
             this.Controls.Add(this.labMaterialType);
-            this.Controls.Add(this.txtuser1);
             this.Controls.Add(this.txtInspector);
-            this.Controls.Add(this.dateBox1);
             this.Controls.Add(this.dateInspectDate);
-            this.Controls.Add(this.editBox1);
             this.Controls.Add(this.editDefect);
-            this.Controls.Add(this.label7);
             this.Controls.Add(this.labelDefect);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.labelRemark);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.txtRemark);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupDefectPicture);
             this.Controls.Add(this.btnSendMail);
-            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.txtsupplier);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.comboResult);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.labelResult);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.labelInspector);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.labelInspectDate);
             this.Controls.Add(this.labelRejectedQty);
             this.Controls.Add(this.btnAmend);
@@ -982,7 +772,6 @@
             this.Controls.Add(this.labelArriveQty);
             this.Controls.Add(this.labelSize);
             this.Controls.Add(this.labelColor);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.labelUnit);
             this.Controls.Add(this.labelInspectedQty);
             this.Name = "P02_Detail";
@@ -992,7 +781,6 @@
             this.WorkAlias = "AIR";
             this.Controls.SetChildIndex(this.labelInspectedQty, 0);
             this.Controls.SetChildIndex(this.labelUnit, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.labelColor, 0);
             this.Controls.SetChildIndex(this.labelSize, 0);
             this.Controls.SetChildIndex(this.labelArriveQty, 0);
@@ -1012,43 +800,28 @@
             this.Controls.SetChildIndex(this.btnAmend, 0);
             this.Controls.SetChildIndex(this.labelRejectedQty, 0);
             this.Controls.SetChildIndex(this.labelInspectDate, 0);
-            this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.labelInspector, 0);
-            this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.labelResult, 0);
-            this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.comboResult, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.txtsupplier, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.btnSendMail, 0);
             this.Controls.SetChildIndex(this.groupDefectPicture, 0);
             this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.txtRemark, 0);
-            this.Controls.SetChildIndex(this.textBox1, 0);
             this.Controls.SetChildIndex(this.labelRemark, 0);
-            this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.labelDefect, 0);
-            this.Controls.SetChildIndex(this.label7, 0);
             this.Controls.SetChildIndex(this.editDefect, 0);
-            this.Controls.SetChildIndex(this.editBox1, 0);
             this.Controls.SetChildIndex(this.dateInspectDate, 0);
-            this.Controls.SetChildIndex(this.dateBox1, 0);
             this.Controls.SetChildIndex(this.txtInspector, 0);
-            this.Controls.SetChildIndex(this.txtuser1, 0);
             this.Controls.SetChildIndex(this.labMaterialType, 0);
             this.Controls.SetChildIndex(this.labSP, 0);
             this.Controls.SetChildIndex(this.txtSPNo, 0);
             this.Controls.SetChildIndex(this.txtMaterialType, 0);
             this.Controls.SetChildIndex(this.labReject, 0);
-            this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.txtInspectedQty, 0);
-            this.Controls.SetChildIndex(this.numericBox1, 0);
             this.Controls.SetChildIndex(this.txtRejectedQty, 0);
-            this.Controls.SetChildIndex(this.numericBox2, 0);
             this.Controls.SetChildIndex(this.txtRejectPercent, 0);
-            this.Controls.SetChildIndex(this.numericBox3, 0);
             this.Controls.SetChildIndex(this.label_ofInspection, 0);
             this.Controls.SetChildIndex(this.numeric_ofInspection, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
@@ -1111,27 +884,11 @@
         private Win.UI.NumericBox txtInspectedQty;
         private Win.UI.NumericBox txtRejectedQty;
         private Win.UI.NumericBox txtRejectPercent;
-        private Win.UI.Label label1;
-        private Win.UI.Label label2;
-        private Win.UI.Label label3;
-        private Win.UI.Label label4;
-        private Win.UI.Label label5;
-        private Win.UI.ComboBox comboBox1;
         private Win.UI.GroupBox groupBox1;
         private Win.UI.Button button1;
         private Win.UI.Button button2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private Win.UI.ComboBox comboBox2;
-        private Win.UI.TextBox textBox1;
-        private Win.UI.Label label6;
-        private Win.UI.Label label7;
-        private Win.UI.EditBox editBox1;
-        private Win.UI.DateBox dateBox1;
-        private Class.Txtuser txtuser1;
-        private Win.UI.Label label8;
-        private Win.UI.NumericBox numericBox1;
-        private Win.UI.NumericBox numericBox2;
-        private Win.UI.NumericBox numericBox3;
         private Win.UI.Label label_ofInspection;
         private Win.UI.NumericBox numeric_ofInspection;
     }
