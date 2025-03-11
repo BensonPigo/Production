@@ -2548,6 +2548,7 @@ order by case when ld.No = '' then 1
                 this.CurrentMaintain["TotalCycle"] = callNextForm.P03CopyLineMapping["TotalCycle"].ToString();
                 this.CurrentMaintain["HighestGSD"] = callNextForm.P03CopyLineMapping["HighestGSD"].ToString();
                 this.CurrentMaintain["HighestCycle"] = callNextForm.P03CopyLineMapping["HighestCycle"].ToString();
+                this.CurrentMaintain["TimeStudyID"] = callNextForm.P03CopyLineMapping["TimeStudyID"].ToString();
                 this.CurrentMaintain["TimeStudyPhase"] = callNextForm.P03CopyLineMapping["TimeStudyPhase"].ToString();
                 this.CurrentMaintain["TimeStudyVersion"] = callNextForm.P03CopyLineMapping["TimeStudyVersion"].ToString();
                 this.CalculateValue(0);
@@ -2874,6 +2875,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             this.CurrentMaintain["TotalCycle"] = sumSMV;
             this.CurrentMaintain["HighestGSD"] = maxSMV;
             this.CurrentMaintain["HighestCycle"] = maxSMV;
+            this.CurrentMaintain["TimeStudyID"] = timeStudy["ID"];
             this.CurrentMaintain["TimeStudyPhase"] = timeStudy["phase"];
             this.CurrentMaintain["TimeStudyVersion"] = timeStudy["version"];
             this.CalculateValue(0);
