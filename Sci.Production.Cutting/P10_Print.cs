@@ -738,7 +738,7 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 }
                 #endregion
 
-                //winword.Visible = true;
+                // winword.Visible = true;
 
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
