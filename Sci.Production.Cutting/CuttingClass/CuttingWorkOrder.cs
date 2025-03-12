@@ -4167,7 +4167,7 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                     worksheet = excel.ActiveWorkbook.Worksheets[nSheet];
                     worksheet.Select();
-                    worksheet.Name = cutrefdr1["Cutplanid"].ToString() + "-" + MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"]).Value.ToString("yyyy-MM-dd");
+                    worksheet.Name = cutrefdr1["Cutplanid"].ToString(); // + "-" + MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"]).Value.ToString("yyyy-MM-dd");
                     worksheet.Cells[3, 19] = cutrefdr1["Cutplanid"].ToString();
                     worksheet.Cells[8, 13] = ((DateTime)MyUtility.Convert.GetDate(cutrefdr1["Estcutdate"])).ToShortDateString();
                     nSheet++;
@@ -4402,7 +4402,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                             nRow = lfirstComb ? nRow : nRow + 4;
                             lfirstComb = false;
                             totConsRowS = nRow; // 第一個Cons
-                            foreach (DataRow cutqtydr in cutQtyArray)
+                            foreach (DataRow cutqtydr in cutQtyArray.OrderBy(x => x.Field<int>("seq")))
                             {
                                 if (copyrow > 0)
                                 {
@@ -4801,11 +4801,11 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
                             }
 
-                            arrayrow = i * 2;
-                            worksheet.Cells[nrow, 1] = workorderDisArry[arrayrow]["OrderID"].ToString();
-                            worksheet.Cells[nrow, 4] = workorderDisArry[arrayrow]["Article"].ToString();
-                            worksheet.Cells[nrow, 7] = workorderDisArry[arrayrow]["SizeCode"].ToString();
-                            worksheet.Cells[nrow, 9] = workorderDisArry[arrayrow]["Qty"].ToString();
+                            arrayrow = (nDisCount / 2) + i;
+                            worksheet.Cells[nrow, 1] = workorderDisArry[i]["OrderID"].ToString();
+                            worksheet.Cells[nrow, 4] = workorderDisArry[i]["Article"].ToString();
+                            worksheet.Cells[nrow, 7] = workorderDisArry[i]["SizeCode"].ToString();
+                            worksheet.Cells[nrow, 9] = workorderDisArry[i]["Qty"].ToString();
                             if (arrayrow + 1 < nDisCount)
                             {
                                 worksheet.Cells[nrow, 11] = workorderDisArry[arrayrow + 1]["OrderID"].ToString();
