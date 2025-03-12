@@ -7,6 +7,7 @@ using Ict;
 using System.Linq;
 using Sci.Data;
 using System.Data;
+using System;
 
 namespace Sci.Production.Class
 {
@@ -39,6 +40,28 @@ namespace Sci.Production.Class
         [Description("M元件")]
         public object MDivision { get; set; }
 
+        private bool _needInitialFactory = false;
+
+        /// <summary>
+        /// 是否需要初始化 Factory
+        /// </summary>
+        public bool NeedInitialFactory
+        {
+            get
+            {
+                return this._needInitialFactory;
+            }
+
+            set
+            {
+                this._needInitialFactory = value;
+                if (this._needInitialFactory)
+                {
+                    this.Text = Env.User.Factory;
+                }
+            }
+        }
+
         /// <summary>
         /// boolFtyGroupList
         /// 預設值 True
@@ -63,6 +86,12 @@ namespace Sci.Production.Class
         public Txtfactory()
         {
             this.Size = new System.Drawing.Size(66, 23);
+        }
+
+        /// <inheritdoc/>
+        protected override void OnHandleCreated(EventArgs e)
+        {
+            base.OnHandleCreated(e);
         }
 
         /// <inheritdoc/>
@@ -201,10 +230,11 @@ namespace Sci.Production.Class
             string where = (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty;
             string sqlcmd = $"Select {strShowColumn} from Production.dbo.Factory WITH (NOLOCK) {where}";
 
-            if (IsIE)
+            if (this.IsIE)
             {
                 sqlcmd = $@"SELECT DISTINCT FactoryID FROM Employee where FactoryID = @str";
             }
+
             if (this.IsMultiselect)
             {
                 string[] factorys = this.Text.Split(',');
