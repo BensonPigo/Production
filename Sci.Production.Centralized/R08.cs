@@ -733,8 +733,8 @@ select a.*,b.Status
 	,b.CurrentOperators
 	,b.HighestCycle
 	,b.HighestGSD
-    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal)
-    ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal)
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2))
+    ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal(10,2))
 INTO #FinalAfterData 
 from #AfterData a
 inner join LineMapping b on a.ID = b.ID ---- P03
@@ -742,8 +742,7 @@ left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID
 					and b.SeasonID = t.SeasonID 
 					and b.BrandID = t.BrandID 
 					and b.ComboType = t.ComboType 
-					and b.TimeStudyVersion = t.Version 
-					and b.TimeStudyPhase = t.Phase 
+                    and b.TimeStudyID = t.ID
 outer apply(
 	select StdSMV =  SUM(td.StdSMV)
 	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
@@ -756,8 +755,8 @@ select a.*,b.Status
 	,CurrentOperators = b.SewerManpower
 	,HighestCycle = b.HighestCycleTime
 	,HighestGSD = b.HighestGSDTime
-    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal)
-    ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal)
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2))
+    ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
 from #AfterData a
 inner join LineMappingBalancing b on a.ID = b.ID ---- P06
 left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
