@@ -925,15 +925,12 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             form.dt_PatternPanel_Ori = this.dt_PatternPanel;
             string filter = GetFilter(this.CurrentDetailData, this.formType);
 
-            DataTable clonedTable = this.CurrentDetailData.Table.Clone();
-            DataRow newRow = clonedTable.NewRow();
-            newRow.ItemArray = this.CurrentDetailData.ItemArray.Clone() as object[];
-            clonedTable.Rows.Add(newRow);
-            form.CurrentDetailData = newRow;
-
-            form.dt_SizeRatio = this.dt_SizeRatio.Select(filter).TryCopyToDataTable(this.dt_SizeRatio);
-            form.dt_Distribute = this.dt_Distribute.Select(filter).TryCopyToDataTable(this.dt_Distribute);
-            form.dt_PatternPanel = this.dt_PatternPanel.Select(filter).TryCopyToDataTable(this.dt_PatternPanel);
+            // 設定當前這筆資訊
+            DataTable detailDatas = this.CurrentDetailData.Table.Copy();
+            form.CurrentDetailData = detailDatas.Select($"Ukey = {this.CurrentDetailData["Ukey"]} AND tmpKey = {this.CurrentDetailData["tmpKey"]}")[0];
+            form.dt_SizeRatio = this.dt_SizeRatio.Copy();
+            form.dt_Distribute = this.dt_Distribute.Copy();
+            form.dt_PatternPanel = this.dt_PatternPanel.Copy();
             return form.ShowDialog();
         }
 

@@ -19,7 +19,7 @@ namespace Sci.Production.Cutting
     {
 #pragma warning disable SA1600 // Elements should be documented
 #pragma warning disable SA1401 // Elements should be documented
-        private static CuttingForm formType = CuttingForm.P02;
+        private readonly CuttingForm formType = CuttingForm.P02;
         public string WorkType;
         public DialogAction Action;
         public DataRow CurrentMaintain;
@@ -73,6 +73,11 @@ namespace Sci.Production.Cutting
 
         private void SetData()
         {
+            // 去掉 Delete 的資料
+            this.dt_SizeRatio.AcceptChanges();
+            this.dt_Distribute.AcceptChanges();
+            this.dt_PatternPanel.AcceptChanges();
+
             this.CuttingID = this.CurrentMaintain["ID"].ToString();
 
             // 使用 BindingSource 進行綁定
@@ -101,6 +106,11 @@ namespace Sci.Production.Cutting
             this.patternpanelbs.DataSource = this.dt_PatternPanel;
             this.sizeRatiobs.DataSource = this.dt_SizeRatio;
             this.distributebs.DataSource = this.dt_Distribute;
+
+            string filter = GetFilter(this.CurrentDetailData, this.formType);
+            this.patternpanelbs.Filter = filter;
+            this.sizeRatiobs.Filter = filter;
+            this.distributebs.Filter = filter;
         }
 
         private void GridSetup()
@@ -148,7 +158,7 @@ namespace Sci.Production.Cutting
             this.dt_PatternPanel.AcceptChanges();
 
             // 把 PatternPanel 刪光, 這些要清空
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, formType);
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, this.formType);
             if (minFabricPanelCode == null)
             {
                 this.txtSeq1.Text = string.Empty;
@@ -184,28 +194,28 @@ namespace Sci.Production.Cutting
             }
 
             // Size Ratio補上Layer和計算Ttl Qty
-            this.dt_SizeRatio.AsEnumerable().ToList().ForEach(row =>
+            string filter = GetFilter(this.CurrentDetailData_Ori, this.formType);
+            this.dt_SizeRatio.Select(filter).AsEnumerable().ToList().ForEach(row =>
             {
                 row["Layer"] = this.numLayers.Value;
                 row["TotalCutQty_CONCAT"] = ConcatTTLCutQty(row);
             });
 
-            UpdateConcatString(this.CurrentDetailData_Ori, this.dt_SizeRatio, formType);
-            UpdateArticle_CONCAT(this.CurrentDetailData_Ori, this.dt_Distribute, formType);
-            UpdateMinSewinline(this.CurrentDetailData_Ori, this.dt_Distribute, formType);
-            UpdatebyPatternPanel(this.CurrentDetailData_Ori, this.dt_PatternPanel, formType);
+            UpdateConcatString(this.CurrentDetailData_Ori, this.dt_SizeRatio, this.formType);
+            UpdateArticle_CONCAT(this.CurrentDetailData_Ori, this.dt_Distribute, this.formType);
+            UpdateMinSewinline(this.CurrentDetailData_Ori, this.dt_Distribute, this.formType);
+            UpdatebyPatternPanel(this.CurrentDetailData_Ori, this.dt_PatternPanel, this.formType);
 
             this.CurrentDetailData_Ori.EndEdit();
 
             // Edit 先刪除, 再把修改的塞回去
-            string filter = GetFilter(this.CurrentDetailData_Ori, formType);
             this.dt_SizeRatio_Ori.Select(filter).Delete();
             this.dt_Distribute_Ori.Select(filter).Delete();
             this.dt_PatternPanel_Ori.Select(filter).Delete();
 
-            this.dt_SizeRatio_Ori.Merge(this.dt_SizeRatio);
-            this.dt_Distribute_Ori.Merge(this.dt_Distribute);
-            this.dt_PatternPanel_Ori.Merge(this.dt_PatternPanel);
+            this.dt_SizeRatio.Select(filter).AsEnumerable().ToList().ForEach(row => this.dt_SizeRatio_Ori.ImportRow(row));
+            this.dt_Distribute.Select(filter).AsEnumerable().ToList().ForEach(row => this.dt_Distribute_Ori.ImportRow(row));
+            this.dt_PatternPanel.Select(filter).AsEnumerable().ToList().ForEach(row => this.dt_PatternPanel_Ori.ImportRow(row));
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -276,7 +286,7 @@ namespace Sci.Production.Cutting
 
         private void TxtSeq_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
         {
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, formType);
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, this.formType);
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
@@ -359,7 +369,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, formType);
+            DataRow minFabricPanelCode = GetMinFabricPanelCode(this.CurrentDetailData_Ori, this.dt_PatternPanel, this.formType);
             if (minFabricPanelCode == null)
             {
                 MyUtility.Msg.WarningBox("Please select Pattern Panel first!");
@@ -405,18 +415,18 @@ namespace Sci.Production.Cutting
 
         private void NumConsPC_Validated(object sender, EventArgs e)
         {
-            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, formType);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
 
         private void NumLayers_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            P02_ValidatingLayers(this.CurrentMaintain, this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, formType);
+            P02_ValidatingLayers(this.CurrentMaintain, this.CurrentDetailData, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
         }
 
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData_Ori, this.dt_SizeRatio, formType);
-            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, formType);
+            this.numConsPC.Value = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData_Ori, this.dt_SizeRatio, this.formType);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
 
         private void TxtMarkerNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
@@ -469,15 +479,15 @@ namespace Sci.Production.Cutting
             #region SizeRatio
             this.col_SizeRatio_Size.EditingMouseDown += (s, e) =>
             {
-                SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData_Ori, this.dt_Distribute, formType);
+                SizeCodeCellEditingMouseDown(e, this.gridSizeRatio, this.CurrentDetailData_Ori, this.dt_Distribute, this.formType);
             };
             this.col_SizeRatio_Size.CellValidating += (s, e) =>
             {
-                SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData_Ori, this.dt_Distribute, formType);
+                SizeCodeCellValidating(e, this.gridSizeRatio, this.CurrentDetailData_Ori, this.dt_Distribute, this.formType);
             };
             this.col_SizeRatio_Qty.CellValidating += (s, e) =>
             {
-                P02_SizeRationQtyValidating(this.gridSizeRatio, e, this.CurrentMaintain, this.CurrentDetailData, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, formType);
+                P02_SizeRationQtyValidating(this.gridSizeRatio, e, this.CurrentMaintain, this.CurrentDetailData, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
             };
             #endregion
 
@@ -495,7 +505,7 @@ namespace Sci.Production.Cutting
             column.CellValidating += (s, e) =>
             {
                 Sci.Win.UI.Grid grid = (Sci.Win.UI.Grid)((DataGridViewColumn)s).DataGridView;
-                QtyCellValidating(e, this.CurrentDetailData_Ori, grid, this.dt_SizeRatio, this.dt_Distribute, formType, MyUtility.Convert.GetInt(this.numLayers.Value));
+                QtyCellValidating(e, this.CurrentDetailData_Ori, grid, this.dt_SizeRatio, this.dt_Distribute, this.formType, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
         }
 
@@ -503,11 +513,11 @@ namespace Sci.Production.Cutting
         {
             column.EditingMouseDown += (s, e) =>
             {
-                Distribute3CellEditingMouseDown(e, this.CurrentDetailData_Ori, this.dt_SizeRatio, this.gridDistributeToSP, formType, MyUtility.Convert.GetInt(this.numLayers.Value));
+                Distribute3CellEditingMouseDown(e, this.CurrentDetailData_Ori, this.dt_SizeRatio, this.gridDistributeToSP, this.formType, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
             column.CellValidating += (s, e) =>
             {
-                Distribute3CellValidating(e, this.CurrentDetailData_Ori, this.dt_SizeRatio, this.gridDistributeToSP, formType, MyUtility.Convert.GetInt(this.numLayers.Value));
+                Distribute3CellValidating(e, this.CurrentDetailData_Ori, this.dt_SizeRatio, this.gridDistributeToSP, this.formType, MyUtility.Convert.GetInt(this.numLayers.Value));
             };
         }
         #endregion
@@ -558,13 +568,13 @@ namespace Sci.Production.Cutting
 
             // 先刪除 Distribute
             string sizeCode = MyUtility.Convert.GetString(dr["SizeCode"]);
-            string filter = GetFilter(this.CurrentDetailData_Ori, formType);
+            string filter = GetFilter(this.CurrentDetailData_Ori, this.formType);
             this.dt_Distribute.Select(filter + $" AND SizeCode = '{sizeCode}'").Delete();
 
             // 後刪除 SizeRatio
             dr.Delete();
 
-            UpdateExcess(this.CurrentDetailData_Ori, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, formType);
+            UpdateExcess(this.CurrentDetailData_Ori, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, this.formType);
         }
 
         private void MenuItemInsertDistribute_Click(object sender, EventArgs e)
@@ -608,7 +618,7 @@ namespace Sci.Production.Cutting
 
             dr.Delete();
 
-            UpdateExcess(this.CurrentDetailData_Ori, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, formType);
+            UpdateExcess(this.CurrentDetailData_Ori, MyUtility.Convert.GetInt(this.numLayers.Value), this.dt_SizeRatio, this.dt_Distribute, this.formType);
         }
         #endregion
 
