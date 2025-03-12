@@ -741,11 +741,8 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 #endregion
 
                 // winword.Visible = true;
-                string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
-                document.SaveAs2(wordName);
-
-                // 確保文件已經完全保存
-                document.Saved = true;
+                //string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
+                //document.SaveAs2(wordName);
 
                 // 打印文件
                 PrintDialog pd = new PrintDialog();
@@ -753,33 +750,24 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 {
                     string printer = pd.PrinterSettings.PrinterName;
                     winword.ActivePrinter = printer;
-                    document.PrintOut(Background: true);
+                    document.PrintOut(Background: false);
                     isprint = true;
 
-                    // 等待打印完成
-                    Task.Run(() =>
+                    // 釋放資源
+                    if (document != null)
                     {
-                        // 等待一段時間以確保打印完成
-                        System.Threading.Thread.Sleep(3000);
-                    }).ContinueWith(
-                        t =>
+                        document.Close(false);
+                        Marshal.ReleaseComObject(document);
+                    }
+
+                    if (winword != null)
                     {
-                        // 釋放資源
-                        if (document != null)
-                        {
-                            document.Close(false);
-                            Marshal.ReleaseComObject(document);
-                        }
+                        winword.Quit(false);
+                        Marshal.ReleaseComObject(winword);
+                    }
 
-                        if (winword != null)
-                        {
-                            winword.Quit(false);
-                            Marshal.ReleaseComObject(winword);
-                        }
-
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                    }, TaskScheduler.FromCurrentSynchronizationContext());
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
                 }
             }
             catch (Exception ex)
