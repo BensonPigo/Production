@@ -19,6 +19,8 @@ using static Sci.Production.Automation.Guozi_AGV;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
 using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices.ComTypes;
+using Sci.Production.Class;
 
 namespace Sci.Production.Cutting
 {
@@ -739,24 +741,50 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 #endregion
 
                 // winword.Visible = true;
+                string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
+                document.SaveAs2(wordName);
 
+                // 確保文件已經完全保存
+                document.Saved = true;
+
+                // 打印文件
                 PrintDialog pd = new PrintDialog();
                 if (pd.ShowDialog() == DialogResult.OK)
                 {
                     string printer = pd.PrinterSettings.PrinterName;
                     winword.ActivePrinter = printer;
-                    document.PrintOut();
+                    document.PrintOut(Background: true);
                     isprint = true;
+
+                    // 等待打印完成
+                    Task.Run(() =>
+                    {
+                        // 等待一段時間以確保打印完成
+                        System.Threading.Thread.Sleep(3000);
+                    }).ContinueWith(
+                        t =>
+                    {
+                        // 釋放資源
+                        if (document != null)
+                        {
+                            document.Close(false);
+                            Marshal.ReleaseComObject(document);
+                        }
+
+                        if (winword != null)
+                        {
+                            winword.Quit(false);
+                            Marshal.ReleaseComObject(winword);
+                        }
+
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                    }, TaskScheduler.FromCurrentSynchronizationContext());
                 }
             }
             catch (Exception ex)
             {
                 MyUtility.Msg.ErrorBox(ex.ToString());
-            }
-            finally
-            {
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
             }
         }
 
