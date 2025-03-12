@@ -740,35 +740,28 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 }
                 #endregion
 
-                // winword.Visible = true;
+                // 增加密碼,防止user變動檔案導致跑版
+                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
+                winword.Visible = true;
+
+                // 存檔
                 //string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
                 //document.SaveAs2(wordName);
 
-                // 打印文件
-                PrintDialog pd = new PrintDialog();
-                if (pd.ShowDialog() == DialogResult.OK)
+                // 釋放資源
+                if (document != null)
                 {
-                    string printer = pd.PrinterSettings.PrinterName;
-                    winword.ActivePrinter = printer;
-                    document.PrintOut(Background: false);
-                    isprint = true;
-
-                    // 釋放資源
-                    if (document != null)
-                    {
-                        document.Close(false);
-                        Marshal.ReleaseComObject(document);
-                    }
-
-                    if (winword != null)
-                    {
-                        winword.Quit(false);
-                        Marshal.ReleaseComObject(winword);
-                    }
-
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
+                    Marshal.ReleaseComObject(document);
                 }
+
+                if (winword != null)
+                {
+                    Marshal.ReleaseComObject(winword);
+                }
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                isprint = true;
             }
             catch (Exception ex)
             {
