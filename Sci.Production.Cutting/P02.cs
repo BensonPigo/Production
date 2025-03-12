@@ -923,9 +923,8 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
             form.dt_SizeRatio_Ori = this.dt_SizeRatio;
             form.dt_Distribute_Ori = this.dt_Distribute;
             form.dt_PatternPanel_Ori = this.dt_PatternPanel;
-            string filter = GetFilter(this.CurrentDetailData, this.formType);
 
-            // 設定當前這筆資訊
+            // 複製開窗使用的資料, 取消時不用還原
             DataTable detailDatas = this.CurrentDetailData.Table.Copy();
             form.CurrentDetailData = detailDatas.Select($"Ukey = {this.CurrentDetailData["Ukey"]} AND tmpKey = {this.CurrentDetailData["tmpKey"]}")[0];
             form.dt_SizeRatio = this.dt_SizeRatio.Copy();
