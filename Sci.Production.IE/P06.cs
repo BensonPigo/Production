@@ -308,7 +308,7 @@ AND ALMCS.Junk = 0
                     [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
 												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
 												 END,
-                    [EmployeeName] = e.Name,
+                    [EmployeeName] = e.LastName + ',' + e.FirstName,
                     [EmployeeSkill] = e.Skill,
                     [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
                     [Junk] = e.junk,
