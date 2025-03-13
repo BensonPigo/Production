@@ -740,28 +740,35 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                 }
                 #endregion
 
-                // 增加密碼,防止user變動檔案導致跑版
-                winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
-                winword.Visible = true;
-
-                // 存檔
+                // winword.Visible = true;
                 //string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
                 //document.SaveAs2(wordName);
 
-                // 釋放資源
-                if (document != null)
+                // 打印文件
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
                 {
-                    Marshal.ReleaseComObject(document);
-                }
+                    string printer = pd.PrinterSettings.PrinterName;
+                    winword.ActivePrinter = printer;
+                    document.PrintOut(Background: false);
+                    isprint = true;
 
-                if (winword != null)
-                {
-                    Marshal.ReleaseComObject(winword);
-                }
+                    // 釋放資源
+                    if (document != null)
+                    {
+                        document.Close(false);
+                        Marshal.ReleaseComObject(document);
+                    }
 
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                isprint = true;
+                    if (winword != null)
+                    {
+                        winword.Quit(false);
+                        Marshal.ReleaseComObject(winword);
+                    }
+
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
             }
             catch (Exception ex)
             {
@@ -895,11 +902,11 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                         CharacterSet = "UTF-8",
                         PureBarcode = true,
 
-                         // 錯誤修正容量
-                         // L水平    7%的字碼可被修正
-                         // M水平    15%的字碼可被修正
-                         // Q水平    25%的字碼可被修正
-                         // H水平    30%的字碼可被修正
+                        // 錯誤修正容量
+                        // L水平    7%的字碼可被修正
+                        // M水平    15%的字碼可被修正
+                        // Q水平    25%的字碼可被修正
+                        // H水平    30%的字碼可被修正
                         ErrorCorrection = ErrorCorrectionLevel.L,
                     },
                 };
@@ -984,11 +991,11 @@ Qty: {r.Quantity}(#{no})  Item: {r.Item}";
                         CharacterSet = "UTF-8",
                         PureBarcode = true,
 
-                         // 錯誤修正容量
-                         // L水平    7%的字碼可被修正
-                         // M水平    15%的字碼可被修正
-                         // Q水平    25%的字碼可被修正
-                         // H水平    30%的字碼可被修正
+                        // 錯誤修正容量
+                        // L水平    7%的字碼可被修正
+                        // M水平    15%的字碼可被修正
+                        // Q水平    25%的字碼可被修正
+                        // H水平    30%的字碼可被修正
                         ErrorCorrection = ErrorCorrectionLevel.L,
                     },
                 };
