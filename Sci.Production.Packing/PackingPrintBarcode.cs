@@ -321,11 +321,19 @@ namespace Sci.Production.Packing
                     string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                     #endregion
 
-                    Bitmap oriBitmap = this.NewBarcode_NoText(barcode);
-                    Bitmap resized = new Bitmap(oriBitmap, new Size(810, 145));
+                    using (Bitmap oriBitmap = this.NewBarcode_NoText(barcode))
+                    {
+                        using (Bitmap resized = new Bitmap(oriBitmap, new Size(810, 145)))
+                        {
+                            // 複製貼上的動作增加等待時間，確保操作已完成
+                            Clipboard.SetImage(resized);
+                            System.Threading.Thread.Sleep(50);
 
-                    Clipboard.SetImage(resized);
-                    tables.Cell(1, 1).Range.Paste();
+                            tables.Cell(1, 1).Range.Paste();
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    }
+
                     tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
                     tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;

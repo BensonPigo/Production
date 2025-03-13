@@ -5,6 +5,8 @@ using System.Windows.Forms;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq.Dynamic;
+using System.Linq;
 
 namespace Sci.Production.Packing
 {
@@ -139,8 +141,7 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             this.Close();
         }
 
-        // To Excel
-        private void BtnToExcel_Click(object sender, EventArgs e)
+        private void BtnPrint_Click(object sender, EventArgs e)
         {
             this.ShowWaitMessage("Data Loading....");
             if (MyUtility.Check.Empty(this.gridData))
@@ -155,15 +156,38 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                 return;
             }
 
-            DataSet dsPrintdata = new DataSet();
-            DataSet dsctnDim = new DataSet();
-            DataSet dsqtyBDown = new DataSet();
-
-            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            DataTable dtSource = (DataTable)this.listControlBindingSource1.DataSource;
+            var selectList = dtSource.AsEnumerable().Where(r => r["selected"].EqualString("1"));
+            if (!selectList.Any())
             {
-                if (MyUtility.Convert.GetString(dr["selected"]) == "1")
+                this.HideWaitMessage();
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            if (this.radioBarcodePrintOther.Checked)
+            {
+                foreach (DataRow dr in selectList)
                 {
-                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), this.radioFormA.Checked ? "1" : "2", out this.printData, out this.ctnDim, out this.qtyBDown);
+                    DualResult result = new PackingPrintBarcode().PrintBarcodeOtherSize(MyUtility.Convert.GetString(dr["ID"]), string.Empty, string.Empty);
+                    if (!result)
+                    {
+                        this.HideWaitMessage();
+                        MyUtility.Msg.WarningBox(result.ToString());
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                DataSet dsPrintdata = new DataSet();
+                DataSet dsctnDim = new DataSet();
+                DataSet dsqtyBDown = new DataSet();
+
+                string reportType = this.radioFormA.Checked ? "1" : "2";
+                foreach (DataRow dr in selectList)
+                {
+                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), reportType, out this.printData, out this.ctnDim, out this.qtyBDown);
                     if (!result)
                     {
                         this.HideWaitMessage();
@@ -182,7 +206,7 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
                     this.qtyBDown.TableName = dr["ID"].ToString();
                     dsqtyBDown.Tables.Add(this.qtyBDown);
 
-                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
+                    PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, reportType, dsPrintdata, dsctnDim, dsqtyBDown);
                 }
             }
 
@@ -208,46 +232,50 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             this.gridDetail.ValidateControl();
             this.listControlBindingSource1.EndEdit();
 
-            DataTable dt = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(row => row["selected"].EqualDecimal(1)).CopyToDataTable();
+            DataTable dtSource = (DataTable)this.listControlBindingSource1.DataSource;
+            var selectList = dtSource.AsEnumerable().Where(r => r["selected"].EqualString("1"));
+            if (!selectList.Any())
+            {
+                this.HideWaitMessage();
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
 
             DataSet dsPrintdata = new DataSet();
             DataSet dsctnDim = new DataSet();
             DataSet dsqtyBDown = new DataSet();
 
-            DataRow[] drSelect = dt.Select("selected = 1");
-            if (drSelect.Length == 0)
+            string reportType = this.radioFormA.Checked ? "1" : "2";
+            DataTable dt = selectList.CopyToDataTable();
+            foreach (DataRow dr in selectList)
             {
-                MyUtility.Msg.WarningBox("Please select data first!");
-                return;
-            }
-
-            foreach (DataRow dr in drSelect)
-            {
-                if (MyUtility.Convert.GetString(dr["selected"]) == "1")
+                DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), reportType, out this.printData, out this.ctnDim, out this.qtyBDown);
+                if (!result)
                 {
-                    DualResult result = PublicPrg.Prgs.QueryPackingListReportData(MyUtility.Convert.GetString(dr["ID"]), this.radioFormA.Checked ? "1" : "2", out this.printData, out this.ctnDim, out this.qtyBDown);
-                    if (!result)
-                    {
-                        this.HideWaitMessage();
-                        MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
-                        return;
-                    }
-
-                    this.printData.TableName = dr["ID"].ToString();
-                    dsPrintdata.Tables.Add(this.printData);
-
-                    this.ctnDim.TableName = dr["ID"].ToString();
-                    dsctnDim.Tables.Add(this.ctnDim);
-
-                    this.qtyBDown.TableName = dr["ID"].ToString();
-                    dsqtyBDown.Tables.Add(this.qtyBDown);
+                    this.HideWaitMessage();
+                    MyUtility.Msg.WarningBox("Query Data Fail --\r\n" + result.ToString());
+                    return;
                 }
+
+                this.printData.TableName = dr["ID"].ToString();
+                dsPrintdata.Tables.Add(this.printData);
+
+                this.ctnDim.TableName = dr["ID"].ToString();
+                dsctnDim.Tables.Add(this.ctnDim);
+
+                this.qtyBDown.TableName = dr["ID"].ToString();
+                dsqtyBDown.Tables.Add(this.qtyBDown);
             }
 
-            PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, this.radioFormA.Checked ? "1" : "2", dsPrintdata, dsctnDim, dsqtyBDown);
+            PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dt, reportType, dsPrintdata, dsctnDim, dsqtyBDown);
 
             this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Complete.");
+        }
+
+        private void RadioBarcodePrintOther_CheckedChanged(object sender, EventArgs e)
+        {
+            this.btnToExcelCombo.Enabled = !this.radioBarcodePrintOther.Checked;
         }
     }
 }
