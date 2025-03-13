@@ -29,6 +29,7 @@ namespace Sci.Production.Cutting
         private string NameEN;
         private string strExcelName;
         private string selected_splitWorksheet = "CutCell";
+        private DataTable printActualData;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="R02"/> class.
@@ -743,6 +744,9 @@ drop table #tmp{i}
                 return failResult;
             }
 
+            // 抓到原始DB資料
+            this.printActualData = this.printData[0].Copy();
+
             this.cuttings = new string[sheetsCount];
             for (int i = 0; i < sheetsCount; i++)
             {
@@ -862,7 +866,8 @@ drop table #tmp{i}
         /// <inheritdoc/>
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
-            this.SetCount(this.printData[0].Rows.Count);
+            // 要用實際的資料比數來顯示數量
+            this.SetCount(this.printActualData.Rows.Count);
 
             int cutCellcount = this.Maintb.Rows.Count; // CutCel總數
             bool countrow = false;

@@ -64,6 +64,13 @@ namespace Sci.Production.Cutting
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain != null)
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["UseCutRefToRequestFabric"]))
+                {
+                    this.comboUseCutRefToRequestFabric.Text = string.Empty;
+                }
+            }
             #region from Orders Base
             if (MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out DataRow orderdr))
             {
@@ -274,7 +281,7 @@ where CuttingSp = '{0}'",
             base.ClickEditAfter();
             if (this.CurrentMaintain != null)
             {
-                this.comboUseCutRefToRequestFabric.Enabled = MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"])) ? true : false;
+                this.comboUseCutRefToRequestFabric.ReadOnly = MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"])) ? false : true;
             }
         }
 
@@ -403,15 +410,16 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                 string useCutRefToRequestFabric = this.CurrentMaintain["UseCutRefToRequestFabric"].ToString();
                 if (useCutRefToRequestFabric == "0")
                 {
-                    if (this.CurrentMaintain["UseCutRefToRequestFabric"].ToString() == this.defaultUseCutRefToRequestFabric)
+                    if (this.comboUseCutRefToRequestFabric.SelectedValue.ToString() == this.defaultUseCutRefToRequestFabric)
                     {
                         MyUtility.Msg.InfoBox("Once saved, no changes are allowed, need to use \"Switch to Workorder\" for changes.");
                     }
                     else
                     {
-                        MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.]");
+                        MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.");
                     }
 
+                    this.CurrentMaintain["UseCutRefToRequestFabric"] = this.comboUseCutRefToRequestFabric.SelectedValue;
                 }
             }
         }

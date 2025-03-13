@@ -1,4 +1,4 @@
-﻿CREATE PROCEDURE [dbo].[usp_switchWorkorder_BySP]
+﻿Create PROCEDURE [dbo].[usp_switchWorkorder_BySP]
 	(
 	 @WorkType  varChar(1)=2,--By SP = 2
 	 @Cuttingid  varChar(13),
@@ -21,7 +21,7 @@ Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Wher
 
 CREATE TABLE #tmp_WorkOrder_Distribute
 (	
-	WorkOrderUkey BIGINT ,
+	WorkOrderForPlanningUkey BIGINT ,
 	ID  VARCHAR(13)  ,
 	OrderID VARCHAR(13)  ,
 	Article VARCHAR(8)  ,
@@ -55,7 +55,6 @@ select	ID,
 		FabricCode,
 		FabricPanelCode,
 		Order_eachconsUkey,
-		Article,
 		[newKey]=0 
 into #tmp_Workorder 
 from WorkOrderForPlanning where 1=0
@@ -392,9 +391,9 @@ Begin
 		where sizecode = @FirstSizeCode and Order_EachConsUkey = @Order_EachConsUkey and colorid = @colorid and newkey = @tmpUkey2 order by orderid
 		set @Cons = @FLayer * @SumRatio * @ConsPC
 		Insert Into #tmp_Workorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerLength,ConsPC,Cons,Refno,SCIRefno,
-		Markerno,MarkerVersion,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey, Article)
+		Markerno,MarkerVersion,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
 		values(@id,@FactoryID,@MDivisionid,@Seq1,@Seq2,@orderid,@FLayer,@ColorID,@MarkerName,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,
-		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey, @Article1)
+		@MarkerNo,@MarkerVersion,@type,@username,@AddDate,@FabricCombo,@FabricCode,@FabricPanelCode,@tmpUkey2,@Order_EachConsUkey)
 		--SizeRatio
 		DECLARE Size CURSOR FOR Select SizeCode,qty	From Order_EachCons_SizeQty WITH (NOLOCK) Where Order_EachConsUkey = @Order_EachConsUkey order by Qty desc	
 		OPEN Size
@@ -503,13 +502,13 @@ Begin
 	From #tmp_Workorder Where newkey = @insertRow
 	select @iden = @@IDENTITY 
 	--------�N���X��Ident �g�J----------
-	update #tmp_WorkOrder_Distribute set WorkOrderUkey = @iden Where newkey = @insertRow
+	update #tmp_WorkOrder_Distribute set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	update #tmp_WorkOrder_PatternPanel set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	update #tmp_WorkOrder_SizeRatio set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 	------Insert into �lTable-------------
 	insert into WorkOrderForPlanning_Distribute(WorkOrderForPlanningUkey,id,Orderid,Article,SizeCode,Qty)
-			(Select WorkOrderUkey,id,Orderid,Article,SizeCode,Qty
-			From #NewWorkOrder_Distribute Where newkey=@insertRow)
+			(Select WorkOrderForPlanningUkey,id,Orderid,Article,SizeCode,Qty
+			From #tmp_WorkOrder_Distribute Where newkey=@insertRow)
 	insert into WorkOrderForPlanning_PatternPanel(WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel)
 		(Select WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel
 		From #tmp_WorkOrder_PatternPanel Where newkey=@insertRow)
