@@ -240,6 +240,7 @@
             this.txtfactoryByM.BoolFtyGroupList = true;
             this.txtfactoryByM.FilteMDivision = true;
             this.txtfactoryByM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM.IsIE = false;
             this.txtfactoryByM.IsMultiselect = false;
             this.txtfactoryByM.IsProduceFty = false;
             this.txtfactoryByM.IssupportJunk = false;

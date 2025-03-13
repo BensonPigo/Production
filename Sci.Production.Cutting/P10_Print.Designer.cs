@@ -173,9 +173,9 @@
             this.radioBundlewithQR.AutoSize = true;
             this.radioBundlewithQR.Location = new System.Drawing.Point(12, 154);
             this.radioBundlewithQR.Name = "radioBundlewithQR";
-            this.radioBundlewithQR.Size = new System.Drawing.Size(123, 21);
+            this.radioBundlewithQR.Size = new System.Drawing.Size(152, 21);
             this.radioBundlewithQR.TabIndex = 106;
-            this.radioBundlewithQR.Text = "Bundle with QR";
+            this.radioBundlewithQR.Text = "Bundle with QR(KH)";
             this.radioBundlewithQR.UseVisualStyleBackColor = true;
             this.radioBundlewithQR.CheckedChanged += new System.EventHandler(this.RadioBundlewithQR_CheckedChanged);
             // 
