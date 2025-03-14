@@ -564,45 +564,106 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
                 int page = this.printData.Rows.Count;
-                for (int i = 1; i < page; i++)
-                {
-                    winword.Selection.MoveDown();
-                    if (page > 1)
-                    {
-                        winword.Selection.InsertNewPage();
-                    }
 
-                    winword.Selection.Paste();
-                }
                 #endregion
                 #region 填入資料
-                for (int i = 0; i < page; i++)
+                if (this.rdbtnShippingMarkKHAdidas.Checked)
                 {
-                    tables = table[i + 1];
-
-                    #region
-                    string customize1 = this.printData.Rows[i]["Customize1"].ToString();
-                    string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
-                    string article = this.printData.Rows[i]["Article"].ToString();
-                    string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
-                    string qty = this.printData.Rows[i]["qty"].ToString();
-                    string country = this.printData.Rows[i]["CountryName"].ToString();
-                    string gw = this.printData.Rows[i]["gw"].ToString();
-                    string nw = this.printData.Rows[i]["nw"].ToString();
-                    string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
-                    #endregion
-
-                    if (this.rdbtnShippingMarkKHAdidas.Checked)
+                    for (int i = 1; i <= page; i++)
                     {
-                        tables.Cell(1, 2).Range.Text = custPOno;
-                        tables.Cell(1, 3).Range.Text = cTNStartno;
-                        tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
-                        tables.Cell(3, 2).Range.Text = country;
-                        tables.Cell(4, 2).Range.Text = gw + "K.G.";
-                        tables.Cell(5, 2).Range.Text = nw + "K.G.";
+                        winword.Selection.MoveDown();
+
+                        // 如果已經有一頁資料，並且該頁資料滿兩筆後才插入新頁
+                        if (i % 2 == 0)
+                        {
+                            winword.Selection.InsertNewPage();
+                            winword.Selection.Paste();
+                        }
                     }
-                    else
+
+                    int tableIndex = 1;
+
+                    for (int i = 0; i < page; i++)
                     {
+                        tables = table[tableIndex];
+                        #region
+                        string customize1 = this.printData.Rows[i]["Customize1"].ToString();
+                        string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
+                        string article = this.printData.Rows[i]["Article"].ToString();
+                        string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
+                        string qty = this.printData.Rows[i]["qty"].ToString();
+                        string country = this.printData.Rows[i]["CountryName"].ToString();
+                        string gw = this.printData.Rows[i]["gw"].ToString();
+                        string nw = this.printData.Rows[i]["nw"].ToString();
+                        string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
+                        #endregion
+
+                        if (custPOno.Contains("-"))
+                        {
+                            int index = custPOno.IndexOf('-');
+                            custPOno = custPOno.Substring(0, index);
+                        }
+
+                        if (i + 1 > 0 && (i + 1) % 2 == 0)
+                        {
+                            tableIndex++; // 增加表格索引
+
+                            tables.Cell(7, 2).Range.Text = custPOno;
+                            tables.Cell(7, 3).Range.Text = cTNStartno;
+                            tables.Cell(8, 2).Range.Text = qty.Replace("PCS", string.Empty);
+                            tables.Cell(9, 2).Range.Text = country;
+                            tables.Cell(10, 2).Range.Text = gw + "K.G.";
+                            tables.Cell(11, 2).Range.Text = nw + "K.G.";
+                        }
+                        else
+                        {
+                            tables.Cell(1, 2).Range.Text = custPOno;
+                            tables.Cell(1, 3).Range.Text = cTNStartno;
+                            tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
+                            tables.Cell(3, 2).Range.Text = country;
+                            tables.Cell(4, 2).Range.Text = gw + "K.G.";
+                            tables.Cell(5, 2).Range.Text = nw + "K.G.";
+
+                            if (i + 1 == page)
+                            {
+                                tables.Cell(7, 1).Range.Text = string.Empty;
+                                tables.Cell(8, 1).Range.Text = string.Empty;
+                                tables.Cell(9, 1).Range.Text = string.Empty;
+                                tables.Cell(10, 1).Range.Text = string.Empty;
+                                tables.Cell(11, 1).Range.Text = string.Empty;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < page; i++)
+                    {
+                        winword.Selection.MoveDown();
+                        if (page > 1)
+                        {
+                            winword.Selection.InsertNewPage();
+                        }
+
+                        winword.Selection.Paste();
+                    }
+
+                    for (int i = 0; i < page; i++)
+                    {
+                        tables = table[i + 1];
+
+                        #region
+                        string customize1 = this.printData.Rows[i]["Customize1"].ToString();
+                        string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
+                        string article = this.printData.Rows[i]["Article"].ToString();
+                        string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
+                        string qty = this.printData.Rows[i]["qty"].ToString();
+                        string country = this.printData.Rows[i]["CountryName"].ToString();
+                        string gw = this.printData.Rows[i]["gw"].ToString();
+                        string nw = this.printData.Rows[i]["nw"].ToString();
+                        string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
+                        #endregion
+
                         tables.Cell(1, 2).Range.Text = customize1;
                         tables.Cell(1, 3).Range.Text = cTNStartno;
                         tables.Cell(2, 2).Range.Text = custPOno;

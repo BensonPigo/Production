@@ -47,6 +47,7 @@ namespace Sci.Production.Quality
 select MtlTypeID = isnull(f.MtlTypeID,'')
 ,[DefectDesc] = DefectDesc.ValList
 ,a.* 
+,[% of Inspection] = iif(isnull(a.InspQty,0) = 0 ,0 ,round((a.InspQty / a.ArriveQty)*100 ,2))
 from air a WITH (NOLOCK) 
 left join Fabric f on a.SCIRefno = f.SCIRefno
 outer apply(
@@ -75,6 +76,7 @@ where a.id='{this.id}'
                 this.txtMaterialType.Text = dr["MtlTypeID"].ToString();
                 this.defect = dr["Defect"].ToString();
                 this.editDefect.Text = dr["DefectDesc"].ToString();
+                this.numeric_ofInspection.Value = (decimal)dr["% of Inspection"];
             }
             else
             {

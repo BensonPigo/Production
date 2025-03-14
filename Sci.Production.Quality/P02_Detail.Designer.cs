@@ -75,17 +75,26 @@
             this.txtInspectedQty = new Sci.Win.UI.NumericBox();
             this.txtRejectedQty = new Sci.Win.UI.NumericBox();
             this.txtRejectPercent = new Sci.Win.UI.NumericBox();
+            this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.button1 = new Sci.Win.UI.Button();
+            this.button2 = new Sci.Win.UI.Button();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.comboBox2 = new Sci.Win.UI.ComboBox();
+            this.label_ofInspection = new Sci.Win.UI.Label();
+            this.numeric_ofInspection = new Sci.Win.UI.NumericBox();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.btmcont.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.groupDefectPicture.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // btmcont
             // 
             this.btmcont.Controls.Add(this.btnEdit);
             this.btmcont.Controls.Add(this.btnClose);
-            this.btmcont.Location = new System.Drawing.Point(0, 490);
+            this.btmcont.Location = new System.Drawing.Point(0, 523);
             this.btmcont.Size = new System.Drawing.Size(873, 40);
             this.btmcont.Controls.SetChildIndex(this.left, 0);
             this.btmcont.Controls.SetChildIndex(this.right, 0);
@@ -369,7 +378,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.Location = new System.Drawing.Point(6, 95);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(305, 371);
+            this.pictureBox1.Size = new System.Drawing.Size(305, 404);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 138;
             this.pictureBox1.TabStop = false;
@@ -385,7 +394,7 @@
             this.groupDefectPicture.Controls.Add(this.cmbDefectPicture);
             this.groupDefectPicture.Location = new System.Drawing.Point(555, 12);
             this.groupDefectPicture.Name = "groupDefectPicture";
-            this.groupDefectPicture.Size = new System.Drawing.Size(318, 472);
+            this.groupDefectPicture.Size = new System.Drawing.Size(318, 505);
             this.groupDefectPicture.TabIndex = 139;
             this.groupDefectPicture.TabStop = false;
             this.groupDefectPicture.Text = "Defect Picture";
@@ -403,7 +412,7 @@
             // 
             // labelInspectedQty
             // 
-            this.labelInspectedQty.Location = new System.Drawing.Point(15, 244);
+            this.labelInspectedQty.Location = new System.Drawing.Point(15, 274);
             this.labelInspectedQty.Name = "labelInspectedQty";
             this.labelInspectedQty.Size = new System.Drawing.Size(91, 23);
             this.labelInspectedQty.TabIndex = 105;
@@ -411,7 +420,7 @@
             // 
             // labelRejectedQty
             // 
-            this.labelRejectedQty.Location = new System.Drawing.Point(15, 279);
+            this.labelRejectedQty.Location = new System.Drawing.Point(15, 309);
             this.labelRejectedQty.Name = "labelRejectedQty";
             this.labelRejectedQty.Size = new System.Drawing.Size(91, 23);
             this.labelRejectedQty.TabIndex = 119;
@@ -419,7 +428,7 @@
             // 
             // labelInspectDate
             // 
-            this.labelInspectDate.Location = new System.Drawing.Point(15, 313);
+            this.labelInspectDate.Location = new System.Drawing.Point(15, 343);
             this.labelInspectDate.Name = "labelInspectDate";
             this.labelInspectDate.Size = new System.Drawing.Size(91, 23);
             this.labelInspectDate.TabIndex = 121;
@@ -427,7 +436,7 @@
             // 
             // labelInspector
             // 
-            this.labelInspector.Location = new System.Drawing.Point(15, 378);
+            this.labelInspector.Location = new System.Drawing.Point(15, 408);
             this.labelInspector.Name = "labelInspector";
             this.labelInspector.Size = new System.Drawing.Size(91, 23);
             this.labelInspector.TabIndex = 125;
@@ -435,7 +444,7 @@
             // 
             // labelResult
             // 
-            this.labelResult.Location = new System.Drawing.Point(15, 413);
+            this.labelResult.Location = new System.Drawing.Point(15, 443);
             this.labelResult.Name = "labelResult";
             this.labelResult.Size = new System.Drawing.Size(91, 23);
             this.labelResult.TabIndex = 127;
@@ -448,7 +457,7 @@
             this.comboResult.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboResult.FormattingEnabled = true;
             this.comboResult.IsSupportUnselect = true;
-            this.comboResult.Location = new System.Drawing.Point(109, 413);
+            this.comboResult.Location = new System.Drawing.Point(109, 443);
             this.comboResult.Name = "comboResult";
             this.comboResult.OldText = "";
             this.comboResult.Size = new System.Drawing.Size(121, 24);
@@ -456,9 +465,10 @@
             // 
             // txtInspector
             // 
+            this.txtInspector.AllowSelectResign = false;
             this.txtInspector.DataBindings.Add(new System.Windows.Forms.Binding("TextBox1Binding", this.mtbs, "Inspector", true));
             this.txtInspector.DisplayBox1Binding = "";
-            this.txtInspector.Location = new System.Drawing.Point(110, 378);
+            this.txtInspector.Location = new System.Drawing.Point(110, 408);
             this.txtInspector.Name = "txtInspector";
             this.txtInspector.Size = new System.Drawing.Size(301, 23);
             this.txtInspector.TabIndex = 144;
@@ -467,7 +477,7 @@
             // dateInspectDate
             // 
             this.dateInspectDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "InspDate", true));
-            this.dateInspectDate.Location = new System.Drawing.Point(110, 313);
+            this.dateInspectDate.Location = new System.Drawing.Point(110, 343);
             this.dateInspectDate.Name = "dateInspectDate";
             this.dateInspectDate.Size = new System.Drawing.Size(145, 23);
             this.dateInspectDate.TabIndex = 145;
@@ -477,7 +487,7 @@
             this.editDefect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editDefect.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editDefect.IsSupportEditMode = false;
-            this.editDefect.Location = new System.Drawing.Point(261, 270);
+            this.editDefect.Location = new System.Drawing.Point(261, 300);
             this.editDefect.Multiline = true;
             this.editDefect.Name = "editDefect";
             this.editDefect.ReadOnly = true;
@@ -487,7 +497,7 @@
             // 
             // labelDefect
             // 
-            this.labelDefect.Location = new System.Drawing.Point(261, 244);
+            this.labelDefect.Location = new System.Drawing.Point(261, 274);
             this.labelDefect.Name = "labelDefect";
             this.labelDefect.Size = new System.Drawing.Size(76, 23);
             this.labelDefect.TabIndex = 140;
@@ -495,7 +505,7 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(15, 448);
+            this.labelRemark.Location = new System.Drawing.Point(15, 478);
             this.labelRemark.Name = "labelRemark";
             this.labelRemark.Size = new System.Drawing.Size(91, 23);
             this.labelRemark.TabIndex = 141;
@@ -506,7 +516,7 @@
             this.txtRemark.BackColor = System.Drawing.Color.White;
             this.txtRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.txtRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRemark.Location = new System.Drawing.Point(109, 448);
+            this.txtRemark.Location = new System.Drawing.Point(109, 478);
             this.txtRemark.Name = "txtRemark";
             this.txtRemark.Size = new System.Drawing.Size(287, 23);
             this.txtRemark.TabIndex = 142;
@@ -552,7 +562,7 @@
             // 
             // labReject
             // 
-            this.labReject.Location = new System.Drawing.Point(15, 344);
+            this.labReject.Location = new System.Drawing.Point(15, 374);
             this.labReject.Name = "labReject";
             this.labReject.Size = new System.Drawing.Size(117, 23);
             this.labReject.TabIndex = 150;
@@ -564,7 +574,7 @@
             this.txtInspectedQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "InspQty", true));
             this.txtInspectedQty.DecimalPlaces = 2;
             this.txtInspectedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtInspectedQty.Location = new System.Drawing.Point(110, 244);
+            this.txtInspectedQty.Location = new System.Drawing.Point(110, 274);
             this.txtInspectedQty.Name = "txtInspectedQty";
             this.txtInspectedQty.NullValue = new decimal(new int[] {
             0,
@@ -586,7 +596,7 @@
             this.txtRejectedQty.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "RejectQty", true));
             this.txtRejectedQty.DecimalPlaces = 2;
             this.txtRejectedQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRejectedQty.Location = new System.Drawing.Point(109, 279);
+            this.txtRejectedQty.Location = new System.Drawing.Point(109, 309);
             this.txtRejectedQty.Name = "txtRejectedQty";
             this.txtRejectedQty.NullValue = new decimal(new int[] {
             0,
@@ -608,7 +618,7 @@
             this.txtRejectPercent.DecimalPlaces = 2;
             this.txtRejectPercent.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtRejectPercent.IsSupportEditMode = false;
-            this.txtRejectPercent.Location = new System.Drawing.Point(135, 344);
+            this.txtRejectPercent.Location = new System.Drawing.Point(135, 374);
             this.txtRejectPercent.Name = "txtRejectPercent";
             this.txtRejectPercent.NullValue = new decimal(new int[] {
             0,
@@ -624,9 +634,105 @@
             0,
             0});
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.button1);
+            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.pictureBox2);
+            this.groupBox1.Controls.Add(this.comboBox2);
+            this.groupBox1.Location = new System.Drawing.Point(555, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(318, 505);
+            this.groupBox1.TabIndex = 139;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Defect Picture";
+            // 
+            // button1
+            // 
+            this.button1.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button1.Location = new System.Drawing.Point(111, 23);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(99, 30);
+            this.button1.TabIndex = 139;
+            this.button1.Text = "Remove";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.BtnRemove_Click);
+            // 
+            // button2
+            // 
+            this.button2.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.button2.Location = new System.Drawing.Point(6, 23);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(99, 30);
+            this.button2.TabIndex = 136;
+            this.button2.Text = "Upload";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.BtnUploadDefectPicture_Click);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Location = new System.Drawing.Point(6, 95);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(305, 404);
+            this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox2.TabIndex = 138;
+            this.pictureBox2.TabStop = false;
+            // 
+            // comboBox2
+            // 
+            this.comboBox2.BackColor = System.Drawing.Color.White;
+            this.comboBox2.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboBox2.FormattingEnabled = true;
+            this.comboBox2.IsSupportUnselect = true;
+            this.comboBox2.Location = new System.Drawing.Point(6, 63);
+            this.comboBox2.Name = "comboBox2";
+            this.comboBox2.OldText = "";
+            this.comboBox2.Size = new System.Drawing.Size(309, 24);
+            this.comboBox2.TabIndex = 136;
+            this.comboBox2.SelectedIndexChanged += new System.EventHandler(this.CmbDefectPicture_SelectedIndexChanged);
+            // 
+            // label_ofInspection
+            // 
+            this.label_ofInspection.Location = new System.Drawing.Point(15, 243);
+            this.label_ofInspection.Name = "label_ofInspection";
+            this.label_ofInspection.Size = new System.Drawing.Size(101, 23);
+            this.label_ofInspection.TabIndex = 156;
+            this.label_ofInspection.Text = "% of Inspection";
+            // 
+            // numeric_ofInspection
+            // 
+            this.numeric_ofInspection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numeric_ofInspection.DecimalPlaces = 2;
+            this.numeric_ofInspection.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numeric_ofInspection.IsSupportEditMode = false;
+            this.numeric_ofInspection.Location = new System.Drawing.Point(119, 243);
+            this.numeric_ofInspection.Name = "numeric_ofInspection";
+            this.numeric_ofInspection.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numeric_ofInspection.ReadOnly = true;
+            this.numeric_ofInspection.Size = new System.Drawing.Size(134, 23);
+            this.numeric_ofInspection.TabIndex = 157;
+            this.numeric_ofInspection.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
             // P02_Detail
             // 
-            this.ClientSize = new System.Drawing.Size(873, 530);
+            this.ClientSize = new System.Drawing.Size(873, 563);
+            this.Controls.Add(this.numeric_ofInspection);
+            this.Controls.Add(this.label_ofInspection);
             this.Controls.Add(this.txtRejectPercent);
             this.Controls.Add(this.txtRejectedQty);
             this.Controls.Add(this.txtInspectedQty);
@@ -641,6 +747,7 @@
             this.Controls.Add(this.labelDefect);
             this.Controls.Add(this.labelRemark);
             this.Controls.Add(this.txtRemark);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupDefectPicture);
             this.Controls.Add(this.btnSendMail);
             this.Controls.Add(this.txtsupplier);
@@ -700,6 +807,7 @@
             this.Controls.SetChildIndex(this.txtsupplier, 0);
             this.Controls.SetChildIndex(this.btnSendMail, 0);
             this.Controls.SetChildIndex(this.groupDefectPicture, 0);
+            this.Controls.SetChildIndex(this.groupBox1, 0);
             this.Controls.SetChildIndex(this.btmcont, 0);
             this.Controls.SetChildIndex(this.txtRemark, 0);
             this.Controls.SetChildIndex(this.labelRemark, 0);
@@ -715,10 +823,14 @@
             this.Controls.SetChildIndex(this.txtInspectedQty, 0);
             this.Controls.SetChildIndex(this.txtRejectedQty, 0);
             this.Controls.SetChildIndex(this.txtRejectPercent, 0);
+            this.Controls.SetChildIndex(this.label_ofInspection, 0);
+            this.Controls.SetChildIndex(this.numeric_ofInspection, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             this.btmcont.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.groupDefectPicture.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -773,5 +885,12 @@
         private Win.UI.NumericBox txtInspectedQty;
         private Win.UI.NumericBox txtRejectedQty;
         private Win.UI.NumericBox txtRejectPercent;
+        private Win.UI.GroupBox groupBox1;
+        private Win.UI.Button button1;
+        private Win.UI.Button button2;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private Win.UI.ComboBox comboBox2;
+        private Win.UI.Label label_ofInspection;
+        private Win.UI.NumericBox numeric_ofInspection;
     }
 }
