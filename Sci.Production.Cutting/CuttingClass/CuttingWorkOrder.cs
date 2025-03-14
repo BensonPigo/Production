@@ -3716,7 +3716,8 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                 if (workSheetSample != null)
                 {
                     workSheetSample.Delete();
-                    workSheetSample.Visible = Excel.XlSheetVisibility.xlSheetVeryHidden;
+                    Marshal.ReleaseComObject(workSheetSample);
+                    workSheetSample = null;
                 }
 
                 excel.ActiveWorkbook.Worksheets[1].Select();
