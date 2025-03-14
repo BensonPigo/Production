@@ -78,11 +78,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                this.sqlWherelist.Add(@"exists(select 1
-                                       from SciProduction_WorkOrder_Distribute swd
-			                           where swd.WorkOrderUkey=pms_wo.Ukey and swd.orderid = @SP)
-                                       ");
-                this.lisSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
+                this.sqlWherelist.Add($" sp.val like '{this.txtSP.Text}%' ");
             }
 
             if (!MyUtility.Check.Empty(this.comboShift.SelectedValue))
@@ -557,12 +553,10 @@ namespace Sci.Production.Quality
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + $"\\{excelName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printTable, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: excelRow, excelApp: objApp);
-
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
 
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-
             workbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

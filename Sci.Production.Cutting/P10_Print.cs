@@ -18,6 +18,9 @@ using ZXing;
 using static Sci.Production.Automation.Guozi_AGV;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
+using System.Runtime.InteropServices.ComTypes;
+using Sci.Production.Class;
 
 namespace Sci.Production.Cutting
 {
@@ -588,7 +591,7 @@ order by x.[Bundle]");
 
                 this.SetCount(this.dt.Rows.Count);
 
-                this.ShowWaitMessage("Process Excel!");
+                this.ShowWaitMessage("Process Files!");
                 List<P10_PrintData> data = this.dt.AsEnumerable().Select(row1 => new P10_PrintData()
                 {
                     Group_right = row1["Group_right"].ToString(),
@@ -627,30 +630,150 @@ order by x.[Bundle]");
                     BundleNo = row1["BundleNo"].ToString(),
                     PatternDesc = row1["PatternDesc"].ToString(),
                 }).ToList();
-                string fileName = "Cutting_P10_Layout2";
-                Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
-                Excel.Workbook workbook = excelApp.ActiveWorkbook;
-                Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
-                this.strPagetype = 2;
-                RunPagePrint(data, excelApp, this.strPagetype);
+                bool isprint = false;
+                Print_Word_QRCode(data, out isprint);
                 this.HideWaitMessage();
-                PrintDialog pd = new PrintDialog();
-                if (pd.ShowDialog() == DialogResult.OK)
-                {
-                    string printer = pd.PrinterSettings.PrinterName;
-                    workbook.PrintOutEx(ActivePrinter: printer);
-                }
-
-                string excelName = Class.MicrosoftFile.GetName(fileName);
-                excelApp.ActiveWorkbook.SaveAs(excelName);
-                workbook.Close();
-                excelApp.Quit();
-                Marshal.ReleaseComObject(excelApp);
-                File.Delete(excelName);
                 this.WritePrintDate();
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        internal static void Print_Word_QRCode(List<P10_PrintData> data, out bool isprint, DataTable allNoDatas = null)
+        {
+            isprint = false;
+            Word._Application winword = null;
+            Word._Document document = null;
+
+            try
+            {
+                // 初始化 Word 應用程式
+                winword = new Word.Application
+                {
+                    FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                    Visible = false,
+                };
+
+                // 加載模板文件
+                object printFile = Env.Cfg.XltPathDir + "\\Cutting_P10_PrintQRCode.dotx";
+                document = winword.Documents.Add(ref printFile);
+
+                document.Activate();
+                Word.Tables table = document.Tables;
+
+                #region 計算頁數
+                winword.Selection.Tables[1].Select();
+                winword.Selection.Copy();
+                int page = data.Count;
+                for (int i = 1; i < page; i++)
+                {
+                    winword.Selection.MoveDown();
+                    if (page > 1)
+                    {
+                        winword.Selection.InsertNewPage();
+                    }
+
+                    winword.Selection.Paste();
+                }
+                #endregion
+
+                #region 填入資料
+                for (int i = 0; i < page; i++)
+                {
+                    string no = allNoDatas == null ? string.Empty : GetNo(data[i].Barcode, allNoDatas);
+                    string contian = $@"Grp: {data[i].Group_right}  Tone: {data[i].Tone}  Line#: {data[i].Line}  {data[i].Group_left}
+SP#:{data[i].SP}
+Style#: {data[i].Style} Cell: {data[i].CutCell}
+Cut#: {data[i].Body_Cut}
+Color: {data[i].Color}
+Size: {data[i].Size}     Part: {data[i].Parts}     Dyelot: {data[i].Dyelot}
+Sea: {data[i].Season}     Brand: {data[i].ShipCode}
+MK#: {data[i].MarkerNo}    Cut/L:
+Sub Process: {data[i].Artwork}
+Desc: {data[i].Desc}
+Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
+
+                    Word.Table tables = table[i + 1];
+                    tables.Cell(1, 1).Range.Text = contian;
+
+                    // 部分粗體
+                    Word.Range cellRange = tables.Cell(1, 1).Range;
+                    cellRange.Text = contian;
+
+                    Word.Range boldRange = cellRange.Duplicate;
+                    boldRange.SetRange(cellRange.Start, cellRange.Start + 8);
+                    boldRange.Font.Bold = 1;
+
+                    int cutIndex = cellRange.Text.IndexOf("Cut/L");
+                    if (cutIndex != -1)
+                    {
+                        boldRange = cellRange.Duplicate;
+                        boldRange.SetRange(cellRange.Start + cutIndex, cellRange.Start + cutIndex + "Cut/L".Length);
+                        boldRange.Font.Bold = 1;
+                    }
+
+                    tables.Cell(1, 2).Range.Text = data[i].NoBundleCardAfterSubprocess1;
+                    tables.Cell(3, 2).Range.Text = "*" + data[i].Barcode + "*";
+
+                    // 生成 QR Code 並插入圖片
+                    BarcodeWriter writer = new BarcodeWriter
+                    {
+                        Format = BarcodeFormat.QR_CODE,
+                        Options = new QrCodeEncodingOptions
+                        {
+                            Height = 120,
+                            Width = 120,
+                            Margin = 0,
+                            CharacterSet = "UTF-8",
+                            PureBarcode = true,
+                            ErrorCorrection = ErrorCorrectionLevel.L,
+                        },
+                    };
+
+                    Bitmap newQRCode = writer.Write(data[i].BundleNo.ToString().Trim());
+                    string tempPath = Path.GetTempFileName();
+                    newQRCode.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
+                    Word.InlineShape qrCodeImg = tables.Cell(2, 2).Range.InlineShapes.AddPicture(tempPath);
+                    qrCodeImg.Width = 90;
+                    qrCodeImg.Height = 90;
+                }
+                #endregion
+
+                // winword.Visible = true;
+                //string wordName = Class.MicrosoftFile.GetName("Cutting_P10", WordFileeNameExtension.Docx);
+                //document.SaveAs2(wordName);
+
+                // 打印文件
+                PrintDialog pd = new PrintDialog();
+                if (pd.ShowDialog() == DialogResult.OK)
+                {
+                    string printer = pd.PrinterSettings.PrinterName;
+                    winword.ActivePrinter = printer;
+                    document.PrintOut(Background: false);
+                    isprint = true;
+
+                    // 釋放資源
+                    if (document != null)
+                    {
+                        document.Close(false);
+                        Marshal.ReleaseComObject(document);
+                    }
+
+                    if (winword != null)
+                    {
+                        winword.Quit(false);
+                        Marshal.ReleaseComObject(winword);
+                    }
+
+                    GC.Collect();
+                    GC.WaitForPendingFinalizers();
+                }
+            }
+            catch (Exception ex)
+            {
+                MyUtility.Msg.ErrorBox(ex.ToString());
+            }
         }
 
         private void ExcelProcess(bool print = false)
@@ -790,7 +913,7 @@ order by x.[Bundle]");
 
                 data.ForEach(r =>
                 {
-                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard  GetSettingText() 一併修改。
+                    // 有改格式的話要連 Sci.Production.Prg.BundelRFCard GetSettingText() 一併修改。
                     string no = GetNo(r.Barcode, allNoDatas);
                     string contian;
                     contian = $@"Grp: {r.Group_right}  Tone: {r.Tone}  Line#: {r.Line}  {r.Group_left}

@@ -193,7 +193,7 @@ from (
 	    , ld.ThreadColor
 	    , ld.Notice
 	    , ld.EmployeeID
-	    , e.Name as EmployeeName
+	    , e.LastName + ',' + e.FirstName as EmployeeName
         , e.Skill as EmployeeSkill
 	    , iif(ld.Cycle = 0,0,ROUND(ld.GSD/ld.Cycle,2)*100) as Efficiency
         , [IsGroupHeader] = cast(iif(SUBSTRING(ld.OperationID, 1, 2) = '--', 1, 0) as bit)
