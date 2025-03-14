@@ -359,6 +359,9 @@ select [SP] =
                 // 篩選
                 dt.BoAddFilter = true;
 
+                // 不包含欄位名稱
+                dt.ShowHeader = false;
+
                 sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
 
                 sxr.BoOpenFile = true;

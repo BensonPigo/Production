@@ -407,8 +407,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             if (this.CurrentMaintain != null)
             {
-                string useCutRefToRequestFabric = this.CurrentMaintain["UseCutRefToRequestFabric"].ToString();
-                if (useCutRefToRequestFabric == "0")
+                string currentDBValue = MyUtility.GetValue.Lookup($"select UseCutRefToRequestFabric from cutting where ID='{this.CurrentMaintain["ID"]}'");
+                if (currentDBValue == "0")
                 {
                     if (this.comboUseCutRefToRequestFabric.SelectedValue.ToString() == this.defaultUseCutRefToRequestFabric)
                     {
@@ -419,7 +419,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.");
                     }
 
-                    this.CurrentMaintain["UseCutRefToRequestFabric"] = this.comboUseCutRefToRequestFabric.SelectedValue;
+                    //this.CurrentMaintain["UseCutRefToRequestFabric"] = this.comboUseCutRefToRequestFabric.SelectedValue;
                 }
             }
         }
