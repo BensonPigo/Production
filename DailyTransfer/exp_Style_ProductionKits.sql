@@ -35,6 +35,6 @@ FtyLastDate, FtyRemark
 ,Reject
 INTO  Style_ProductionKits
 FROM [Production].dbo.Style_ProductionKits
-WHERE CONVERT(DATE,FtyLastDate) >= @DateStart
+WHERE (CONVERT(DATE, AddDate) >= @DateStart OR CONVERT(DATE, EditDate) >= @DateStart)
 
 END
