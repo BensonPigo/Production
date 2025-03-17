@@ -383,6 +383,21 @@ select distinct [KPIGroup] = f.KPICode
 	, [Size] = ISNULL(Size.val, '')
 	, [CartonQty] = ISNULL(CartonQty.val, 0)
 	, [Status] = case 
+			when p.PulloutDate is not null
+					then 'Pullout'
+			when ClogReceiveTime.val is not null 
+					and (CFAReceiveTime.val is null 
+						or ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101')
+						or FtyTransferToClogTime.val > isnull(CFAReturnTime.val, '19710101'))
+					then 'Clog'
+			when CFAReceiveTime.val is not null and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
+					then 'CFA'
+			when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
+					then 'CFA transit to CLOG'
+			when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
+					then 'CLOG transit to CFA'
+			when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
+					then 'Fty transit to CLOG'
 			when HaulingScanTime.val is null 
 					and PackingAuditScanTime.val is null 
 					and M360MDScanTime.val is null
@@ -465,16 +480,6 @@ select distinct [KPIGroup] = f.KPICode
 					and pld.ScanEditDate > isnull(CTNJokerTagTime.val, '19710101') 
 					and pld.ScanEditDate > isnull(CTNHeatSealTime.val, '19710101') 
 					then 'Scan & Pack'
-			when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
-					then 'Fty transit to CLOG'
-			when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
-					then 'CLOG transit to CFA'
-			when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
-					then 'CFA transit to CLOG'
-			when CFAReceiveTime.val is not null and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
-					then 'CFA'
-			when ClogReceiveTime.val is not null and (CFAReceiveTime.val is null or ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101') )
-					then 'Clog'
 		else '' end 
 	, [HaulingScanTime] = HaulingScanTime.val
 	, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
