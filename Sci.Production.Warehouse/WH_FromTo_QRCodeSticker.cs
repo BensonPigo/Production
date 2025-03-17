@@ -7,7 +7,9 @@ using System.Windows.Forms;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.Prg.Entity;
 using Sci.Production.PublicForm;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Warehouse
 {
@@ -16,16 +18,18 @@ namespace Sci.Production.Warehouse
     {
         private DataTable fromdt;
         private DataTable todt;
+        private string printPaper;
         private string printType;
         private string callFrom;
 
         /// <inheritdoc/>
-        public WH_FromTo_QRCodeSticker(DataTable fromdt, DataTable todt, string printType, string callFormName)
+        public WH_FromTo_QRCodeSticker(DataTable fromdt, DataTable todt, string printPaper, string printType, string callFormName)
         {
             this.InitializeComponent();
             this.fromdt = fromdt;
             this.todt = todt;
             this.callFrom = callFormName;
+            this.printPaper = printPaper;
             this.printType = printType;
             if (callFormName == "P22")
             {
@@ -132,7 +136,15 @@ namespace Sci.Production.Warehouse
                 dt.ImportRow(row);
             }
 
-            WH_Receive_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
+            switch (this.printPaper)
+            {
+                case "Sticker":
+                    WH_Receive_QRCodeSticker.PrintQRCode_RDLC(dt.AsEnumerable().ToList(), this.printType, "P22");
+                    break;
+                case "Paper":
+                    WH_Receive_QRCodeSticker.PrintQRCode_A4(dt.AsEnumerable().ToList(), this.printType, "P22");
+                    break;
+            }
         }
 
         private void Grid1_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

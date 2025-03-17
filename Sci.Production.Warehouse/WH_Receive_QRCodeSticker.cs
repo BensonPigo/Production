@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Office.Interop.Excel;
 using Sci.Data;
 using Sci.Production.Prg;
 using Sci.Production.Prg.Entity;
@@ -9,7 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using DataTable = System.Data.DataTable;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
 {
@@ -19,6 +23,7 @@ namespace Sci.Production.Warehouse
     public partial class WH_Receive_QRCodeSticker : Win.Subs.Base
     {
         private DataTable dt_QRCodeSticker;
+        private string printPaper;
         private string printType;
         private string callFrom;
 
@@ -30,14 +35,16 @@ namespace Sci.Production.Warehouse
         /// <summary>
         /// P07_QRCodeSticker
         /// </summary>
-        /// <param name="dtSource">dtSource</param>
-        /// <param name="printType">printType</param>
-        /// <param name="callFrom">callFrom</param>
+        /// <param name="dtSource">資料源</param>
+        /// <param name="printPaper">使用哪種紙列印</param>
+        /// <param name="printType">用哪種格式列印</param>
+        /// <param name="callFrom">來源</param>
         /// <inheritdoc/>
-        public WH_Receive_QRCodeSticker(DataTable dtSource, string printType, string callFrom)
+        public WH_Receive_QRCodeSticker(DataTable dtSource, string printPaper, string printType, string callFrom)
         {
             this.InitializeComponent();
             this.dt_QRCodeSticker = dtSource;
+            this.printPaper = printPaper;
             this.printType = printType;
             this.callFrom = callFrom;
             this.IsP07 = callFrom == "P07";
@@ -162,29 +169,37 @@ namespace Sci.Production.Warehouse
         {
             DataTable dtPrint = (DataTable)this.listControlBindingSource.DataSource;
             if (dtPrint != null
-                && dtPrint.AsEnumerable().Any(row => Convert.ToBoolean(row["Sel"])))
+                && dtPrint.AsEnumerable().Any(row => System.Convert.ToBoolean(row["Sel"])))
             {
                 DataView dv = dtPrint.DefaultView;
                 dv.Sort = ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort;
                 DataTable sortedtable1 = dv.ToTable();
 
                 var barcodeDatas = sortedtable1.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["Sel"])).ToList();
-                string type = this.printType;
+
                 #region Print
                 this.ShowWaitMessage("Data Loading ...");
 
-                PrintQRCode_RDLC(barcodeDatas, type);
-
-                if (this.IsP07 || this.IsP18)
+                switch (this.printPaper)
                 {
-                    string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
-                    WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
-                    string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey in ({ukeys}) and QRCode_PrintDate is null";
-                    DualResult result = DBProxy.Current.Execute(null, sqlcmd);
-                    if (!result)
-                    {
-                        this.ShowErr(result);
-                    }
+                    case "Sticker":
+                        PrintQRCode_RDLC(barcodeDatas, this.printType);
+                        if (this.IsP07 || this.IsP18)
+                        {
+                            string ukeys = barcodeDatas.Select(s => s["Ukey"].ToString()).JoinToString(",");
+                            WHTableName detailTableName = Prgs.GetWHDetailTableName(this.callFrom);
+                            string sqlcmd = $@"update {detailTableName} set QRCode_PrintDate = Getdate() where ukey in ({ukeys}) and QRCode_PrintDate is null";
+                            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+                            if (!result)
+                            {
+                                this.ShowErr(result);
+                            }
+                        }
+
+                        break;
+                    case "Paper":
+                        PrintQRCode_A4(barcodeDatas, this.printType);
+                        break;
                 }
 
                 this.HideWaitMessage();
@@ -197,11 +212,11 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
-        public static void PrintQRCode_RDLC(List<DataRow> barcodeDatas, string type, string form = "")
+        public static void PrintQRCode_RDLC(List<DataRow> barcodeDatas, string printType, string form = "")
         {
             int qrCodeWidth;
             string rdlcName;
-            switch (type)
+            switch (printType)
             {
                 case "5X5":
                     qrCodeWidth = 90;
@@ -217,46 +232,10 @@ namespace Sci.Production.Warehouse
                     break;
             }
 
-            string qrcode;
-            string qty;
-            switch (form)
+            ReportDefinition report = new ReportDefinition
             {
-                case "P21":
-                    qrcode = "Barcode";
-                    qty = "StockQty";
-                    break;
-                case "P22":
-                case "P23":
-                    qrcode = "Barcode";
-                    qty = "Qty";
-                    break;
-                default:
-                    qrcode = "MINDQRCode";
-                    qty = "StockQty";
-                    break;
-            }
-
-            ReportDefinition report = new ReportDefinition();
-            report.ReportDataSource = barcodeDatas
-                .Select(s => new P21_PrintBarcode_Data()
-                {
-                    SP = "SP#:" + MyUtility.Convert.GetString(s["PoId"]),
-                    Seq = "SEQ:" + (form == "P21" ? MyUtility.Convert.GetString(s["SEQ1"]) + "-" + MyUtility.Convert.GetString(s["SEQ2"]) : MyUtility.Convert.GetString(s["SEQ"])),
-                    GW = "GW:" + (s.IsNull("Weight") ? " " : MyUtility.Convert.GetString(s["Weight"]) + "KG"),
-                    AW = "AW:" + (s.IsNull("ActualWeight") ? " " : MyUtility.Convert.GetString(s["ActualWeight"]) + "KG"),
-                    Location = "Lct:" + MyUtility.Convert.GetString(s["Location"]),
-                    Refno = "REF#:" + MyUtility.Convert.GetString(s["RefNo"]),
-                    Roll = "Roll#:" + MyUtility.Convert.GetString(s["Roll"]),
-                    Color = "Color:" + MyUtility.Convert.GetString(s["ColorID"]),
-                    Dyelot = "Lot#:" + MyUtility.Convert.GetString(s["Dyelot"]),
-                    Qty = "Yd#:" + MyUtility.Convert.GetString(s[qty]),
-                    FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
-                    StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
-                    StyleID = "ST:" + MyUtility.Convert.GetString(s["StyleID"]),
-                    WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty : ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
-                    Relaxtime = "RELAXATION:" + MyUtility.Convert.GetFloat(s["Relaxtime"]) + "HRS",
-                    Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
-                }).ToList();
+                ReportDataSource = GetPrintDatas(barcodeDatas, form, qrCodeWidth),
+            };
 
             DualResult result = ReportResources.ByEmbeddedResource(typeof(P21_PrintBarcode_Data), rdlcName, out IReportResource reportresource);
             if (!result)
@@ -269,6 +248,151 @@ namespace Sci.Production.Warehouse
 
             // 開啟 report view 直接列印
             new Win.Subs.ReportView(report) { DirectPrint = true }.Show();
+        }
+
+        /// <summary>
+        /// Print QRCode For A4
+        /// </summary>
+        /// <param name="barcodeDatas">基本資料</param>
+        /// <param name="printType">直式還橫式</param>
+        /// <param name="form">來源</param>
+        public static void PrintQRCode_A4(List<DataRow> barcodeDatas, string printType, string form = "")
+        {
+            // A4 是用 7*7的方式列印，大小是90
+            List<P21_PrintBarcode_Data> barcode_Datas = GetPrintDatas(barcodeDatas, form, 90);
+            int maxRow = barcode_Datas.Count();
+            int maxPage = (maxRow / 6) + (maxRow % 6 == 0 ? 0 : 1);
+            string xltxName = "Warehouse_PrintBarcode_A4";
+            string strXltName = Env.Cfg.XltPathDir + $@"\{xltxName}.xltx";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            Excel.Worksheet worksheet = workbook.Worksheets[printType];
+            excelApp.Visible = false; // 隱藏 Excel 應用程式
+            excelApp.DisplayAlerts = false; // 停用警告訊息
+            switch (printType)
+            {
+                case "Horizontal": // 橫式
+                    // 1 27 58 89
+                    for (int i = 0; i < maxPage - 1; i++)
+                    {
+                        int nowRow = i == 0 ? 27 : 27 + (31 * i);
+                        Excel.Range rangeToCopy = worksheet.get_Range("A1:A21").EntireRow; // 選取要被複製的資料
+                        Excel.Range rangeToPaste = worksheet.get_Range($"A{nowRow}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                        rangeToCopy.Copy(Type.Missing);
+                        rangeToPaste.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+                    }
+
+                    for (int j = 0; j <= maxRow - 1; j++)
+                    {
+                        int nowRow = (j / 6) == 0 ? 1 :
+                                     (j / 6) == 1 ? 27 : 27 + (31 * (j / 6));
+                        nowRow += ((j / 3) % 2) * 11;
+                        int nowCol = 1 + ((j % 3) * 7);
+                        P21_PrintBarcode_Data data = barcode_Datas[j];
+
+                        Excel.Range cellQrCodeLeft = worksheet.Cells[nowRow + 4, nowCol];
+                        Excel.Range cellQrCodeRight = worksheet.Cells[nowRow + 4, nowCol + 4];
+                        string imgPath = ExcelPrg.ConvertImgPath(data.Image);
+                        int colorLength = data.Color.Length;
+
+                        worksheet.Cells[nowRow, nowCol] = data.SP;
+                        worksheet.Cells[nowRow, nowCol + 3] = data.Seq;
+                        worksheet.Cells[nowRow + 1, nowCol] = data.GW;
+                        worksheet.Cells[nowRow + 2, nowCol] = data.AW;
+                        worksheet.Cells[nowRow + 1, nowCol + 3] = data.StockType;
+                        worksheet.Cells[nowRow + 2, nowCol + 3] = data.Dyelot;
+                        worksheet.Cells[nowRow + 3, nowCol] = data.Refno;
+                        worksheet.Cells[nowRow + 3, nowCol + 3] = data.Location;
+
+                        worksheet.Cells[nowRow + 4, nowCol + 2] = data.FactoryID;
+                        worksheet.Shapes.AddPicture(imgPath, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellQrCodeLeft.Left + 5, cellQrCodeLeft.Top + 5, 85, 85);
+                        worksheet.Shapes.AddPicture(imgPath, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellQrCodeRight.Left + 5, cellQrCodeRight.Top + 5, 85, 85);
+
+                        worksheet.Cells[nowRow + 7, nowCol] = data.Roll;
+                        worksheet.Cells[nowRow + 7, nowCol + 3] = data.Dyelot;
+
+                        worksheet.Cells[nowRow + 8, nowCol] = data.Color;
+                        worksheet.Cells[nowRow + 8, nowCol].Font.Size = colorLength > 36 ? 5 : colorLength > 31 ? 6.5 : 7;
+                        worksheet.Cells[nowRow + 8, nowCol + 3] = data.Qty;
+
+                        worksheet.Cells[nowRow + 9, nowCol] = data.WhseArrival + data.Relaxtime;
+                    }
+
+                    break;
+                case "Straight": // 直式
+                    // 1 40 86 132
+                    for (int i = 0; i < maxPage - 1; i++)
+                    {
+                        int nowRow = i == 0 ? 40 : 40 + (46 * i);
+                        Excel.Range rangeToCopy = worksheet.get_Range("A1:A32").EntireRow; // 選取要被複製的資料
+                        Excel.Range rangeToPaste = worksheet.get_Range($"A{nowRow}", Type.Missing).EntireRow; // 選擇要被貼上的位置
+                        rangeToCopy.Copy(Type.Missing);
+                        rangeToPaste.PasteSpecial(Excel.XlPasteType.xlPasteAll);
+                    }
+
+                    for (int i = 0; i <= maxPage - 1; i++)
+                    {
+                        for (int j = 0; j <= maxRow - 1; j++)
+                        {
+                            int nowRow = (j / 6) == 0 ? 1 :
+                                            (j / 6) == 1 ? 40 : 40 + (46 * (j / 6));
+                            nowRow += ((j / 2) % 3) * 11;
+                            int nowCol = 1 + ((j % 2) * 7);
+                            P21_PrintBarcode_Data data = barcode_Datas[j];
+
+                            Excel.Range cellQrCodeLeft = worksheet.Cells[nowRow + 4, nowCol];
+                            Excel.Range cellQrCodeRight = worksheet.Cells[nowRow + 4, nowCol + 4];
+                            string imgPath = ExcelPrg.ConvertImgPath(data.Image);
+                            int colorLength = data.Color.Length;
+
+                            worksheet.Cells[nowRow, nowCol] = data.SP;
+                            worksheet.Cells[nowRow, nowCol + 3] = data.Seq;
+                            worksheet.Cells[nowRow + 1, nowCol] = data.GW;
+                            worksheet.Cells[nowRow + 2, nowCol] = data.AW;
+                            worksheet.Cells[nowRow + 1, nowCol + 3] = data.StockType;
+                            worksheet.Cells[nowRow + 2, nowCol + 3] = data.Dyelot;
+                            worksheet.Cells[nowRow + 3, nowCol] = data.Refno;
+                            worksheet.Cells[nowRow + 3, nowCol + 3] = data.Location;
+
+                            worksheet.Cells[nowRow + 4, nowCol + 2] = data.FactoryID;
+                            worksheet.Shapes.AddPicture(imgPath, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellQrCodeLeft.Left + 5, cellQrCodeLeft.Top + 5, 85, 85);
+                            worksheet.Shapes.AddPicture(imgPath, Microsoft.Office.Core.MsoTriState.msoFalse, Microsoft.Office.Core.MsoTriState.msoCTrue, cellQrCodeRight.Left + 5, cellQrCodeRight.Top + 5, 85, 85);
+
+                            worksheet.Cells[nowRow + 7, nowCol] = data.Roll;
+                            worksheet.Cells[nowRow + 7, nowCol + 3] = data.Dyelot;
+
+                            worksheet.Cells[nowRow + 8, nowCol] = data.Color;
+                            worksheet.Cells[nowRow + 8, nowCol].Font.Size = colorLength > 36 ? 5 : colorLength > 31 ? 6.5 : 7;
+                            worksheet.Cells[nowRow + 8, nowCol + 3] = data.Qty;
+
+                            worksheet.Cells[nowRow + 9, nowCol] = data.WhseArrival + data.Relaxtime;
+                        }
+                    }
+
+                    break;
+            }
+
+            worksheet.Select();
+            worksheet.Cells[1, 1].Select();
+
+            // 刪除其他sheet
+            foreach (Excel.Worksheet othersheet in workbook.Worksheets)
+            {
+                if (othersheet.Name != printType)
+                {
+                    othersheet.Delete();
+                    Marshal.ReleaseComObject(othersheet);
+                }
+            }
+
+            string strExcelName = Class.MicrosoftFile.GetName(xltxName);
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelApp.Quit();
+            Marshal.ReleaseComObject(excelApp);
+            Marshal.ReleaseComObject(workbook);
+            Marshal.ReleaseComObject(worksheet);
+            strExcelName.OpenFile();
         }
 
         private void ComboFilterQRCode_SelectedIndexChanged(object sender, EventArgs e)
@@ -315,6 +439,51 @@ namespace Sci.Production.Warehouse
                     ((DataTable)this.listControlBindingSource.DataSource).DefaultView.Sort = string.Empty;
                 }
             }
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1204:Static elements should appear before instance elements", Justification = "<暫止>")]
+        private static List<P21_PrintBarcode_Data> GetPrintDatas(List<DataRow> barcodeDatas, string form, int qrCodeWidth)
+        {
+            string qrcode;
+            string qty;
+            switch (form)
+            {
+                case "P21":
+                    qrcode = "Barcode";
+                    qty = "StockQty";
+                    break;
+                case "P22":
+                case "P23":
+                    qrcode = "Barcode";
+                    qty = "Qty";
+                    break;
+                default:
+                    qrcode = "MINDQRCode";
+                    qty = "StockQty";
+                    break;
+            }
+
+            List<P21_PrintBarcode_Data> dataRows = barcodeDatas
+                .Select(s => new P21_PrintBarcode_Data()
+                 {
+                     SP = "SP#:" + MyUtility.Convert.GetString(s["PoId"]),
+                     Seq = "SEQ:" + (form == "P21" ? MyUtility.Convert.GetString(s["SEQ1"]) + "-" + MyUtility.Convert.GetString(s["SEQ2"]) : MyUtility.Convert.GetString(s["SEQ"])),
+                     GW = "GW:" + (s.IsNull("Weight") ? " " : MyUtility.Convert.GetString(s["Weight"]) + "KG"),
+                     AW = "AW:" + (s.IsNull("ActualWeight") ? " " : MyUtility.Convert.GetString(s["ActualWeight"]) + "KG"),
+                     Location = "Lct:" + MyUtility.Convert.GetString(s["Location"]),
+                     Refno = "REF#:" + MyUtility.Convert.GetString(s["RefNo"]),
+                     Roll = "Roll#:" + MyUtility.Convert.GetString(s["Roll"]),
+                     Color = "Color:" + MyUtility.Convert.GetString(s["ColorID"]),
+                     Dyelot = "Lot#:" + MyUtility.Convert.GetString(s["Dyelot"]),
+                     Qty = "Yd#:" + MyUtility.Convert.GetString(s[qty]),
+                     FactoryID = MyUtility.Convert.GetString(s["FactoryID"]),
+                     StockType = "Stock Type:" + MyUtility.Convert.GetString(s["StockTypeName"]),
+                     StyleID = "ST:" + MyUtility.Convert.GetString(s["StyleID"]),
+                     WhseArrival = "Arrive WH Date:" + (MyUtility.Check.Empty(s["WhseArrival"]) ? string.Empty : ((DateTime)s["WhseArrival"]).ToString("yyyy/MM/dd")),
+                     Relaxtime = "RELAXATION:" + MyUtility.Convert.GetFloat(s["Relaxtime"]) + "HRS",
+                     Image = Prgs.ImageToByte(MyUtility.Convert.GetString(s[qrcode]).ToBitmapQRcode(qrCodeWidth, qrCodeWidth)),
+                 }).ToList();
+            return dataRows;
         }
     }
 }

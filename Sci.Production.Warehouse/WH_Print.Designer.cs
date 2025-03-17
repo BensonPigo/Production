@@ -33,6 +33,8 @@
             this.label2 = new Sci.Win.UI.Label();
             this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.radioPrint = new Sci.Win.UI.RadioButton();
+            this.comboPrint = new Sci.Win.UI.ComboBox();
+            this.lbPrint = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,13 +53,15 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboPrint);
+            this.radioPanel1.Controls.Add(this.lbPrint);
             this.radioPanel1.Controls.Add(this.comboType);
             this.radioPanel1.Controls.Add(this.label2);
             this.radioPanel1.Controls.Add(this.radioQRCodeSticker);
             this.radioPanel1.Controls.Add(this.radioPrint);
             this.radioPanel1.Location = new System.Drawing.Point(44, 25);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(394, 102);
+            this.radioPanel1.Size = new System.Drawing.Size(394, 128);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "P/L Rcv Report";
             // 
@@ -67,7 +71,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(218, 56);
+            this.comboType.Location = new System.Drawing.Point(220, 89);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
@@ -76,7 +80,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(176, 57);
+            this.label2.Location = new System.Drawing.Point(178, 90);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 23);
             this.label2.TabIndex = 5;
@@ -111,6 +115,29 @@
             this.radioPrint.Value = "P/L Rcv Report";
             this.radioPrint.CheckedChanged += new System.EventHandler(this.RadioPrint_CheckedChanged);
             // 
+            // comboPrint
+            // 
+            this.comboPrint.BackColor = System.Drawing.Color.White;
+            this.comboPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPrint.FormattingEnabled = true;
+            this.comboPrint.IsSupportUnselect = true;
+            this.comboPrint.Location = new System.Drawing.Point(220, 58);
+            this.comboPrint.Name = "comboPrint";
+            this.comboPrint.OldText = "";
+            this.comboPrint.Size = new System.Drawing.Size(121, 24);
+            this.comboPrint.TabIndex = 8;
+            this.comboPrint.SelectedIndexChanged += new System.EventHandler(this.ComboPrint_SelectedIndexChanged);
+            // 
+            // lbPrint
+            // 
+            this.lbPrint.BackColor = System.Drawing.Color.Transparent;
+            this.lbPrint.Location = new System.Drawing.Point(178, 59);
+            this.lbPrint.Name = "lbPrint";
+            this.lbPrint.Size = new System.Drawing.Size(39, 23);
+            this.lbPrint.TabIndex = 7;
+            this.lbPrint.Text = "Print:";
+            this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // WH_Print
             // 
             this.ClientSize = new System.Drawing.Size(553, 178);
@@ -139,5 +166,7 @@
         private Win.UI.ComboBox comboType;
         private Win.UI.Label label2;
         private Win.UI.RadioButton radioQRCodeSticker;
+        private Win.UI.ComboBox comboPrint;
+        private Win.UI.Label lbPrint;
     }
 }
