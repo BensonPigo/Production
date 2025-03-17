@@ -3903,7 +3903,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 return dResult;
             }
 
-            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,seq,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName,seq", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
 
             if (!dResult)
             {
@@ -4788,8 +4788,22 @@ WHERE TABLE_NAME = N'{tableName}'";
                     #region Distribute to SP#
                     if (workorderDisArry.Length > 0)
                     {
+                        var workorderDisGroup = workorderDisArry
+                            .GroupBy(x => new
+                            {
+                                OrderID = x.Field<string>("OrderID"),
+                                Article = x.Field<string>("Article"),
+                                SizeCode = x.Field<string>("SizeCode"),
+                            })
+                            .Select(x => new {
+                                x.Key.OrderID,
+                                x.Key.Article,
+                                x.Key.SizeCode,
+                                Qty = x.Sum(y => y.Field<decimal>("Qty")),
+                            }).ToList();
+
                         nrow = 16; // 到Distribute ROW
-                        nDisCount = workorderDisArry.Length;
+                        nDisCount = workorderDisGroup.Count;
                         disRow = Math.Ceiling(Convert.ToDouble(nDisCount) / 2); // 每一個Row 有兩個可以用
                         int arrayrow = 0;
                         for (int i = 0; i < disRow; i++)
@@ -4802,16 +4816,16 @@ WHERE TABLE_NAME = N'{tableName}'";
                             }
 
                             arrayrow = (nDisCount / 2) + i;
-                            worksheet.Cells[nrow, 1] = workorderDisArry[i]["OrderID"].ToString();
-                            worksheet.Cells[nrow, 4] = workorderDisArry[i]["Article"].ToString();
-                            worksheet.Cells[nrow, 7] = workorderDisArry[i]["SizeCode"].ToString();
-                            worksheet.Cells[nrow, 9] = workorderDisArry[i]["Qty"].ToString();
+                            worksheet.Cells[nrow, 1] = workorderDisGroup[i].OrderID;
+                            worksheet.Cells[nrow, 4] = workorderDisGroup[i].Article;
+                            worksheet.Cells[nrow, 7] = workorderDisGroup[i].SizeCode;
+                            worksheet.Cells[nrow, 9] = workorderDisGroup[i].Qty.ToString();
                             if (arrayrow + 1 < nDisCount)
                             {
-                                worksheet.Cells[nrow, 11] = workorderDisArry[arrayrow + 1]["OrderID"].ToString();
-                                worksheet.Cells[nrow, 14] = workorderDisArry[arrayrow + 1]["Article"].ToString();
-                                worksheet.Cells[nrow, 17] = workorderDisArry[arrayrow + 1]["SizeCode"].ToString();
-                                worksheet.Cells[nrow, 19] = workorderDisArry[arrayrow + 1]["Qty"].ToString();
+                                worksheet.Cells[nrow, 11] = workorderDisGroup[arrayrow + 1].OrderID;
+                                worksheet.Cells[nrow, 14] = workorderDisGroup[arrayrow + 1].Article;
+                                worksheet.Cells[nrow, 17] = workorderDisGroup[arrayrow + 1].SizeCode;
+                                worksheet.Cells[nrow, 19] = workorderDisGroup[arrayrow + 1].Qty.ToString();
                             }
                             else
                             {
@@ -4823,8 +4837,6 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                             nrow++;
                         }
-
-                        // nrow = nrow + Convert.ToInt16(disRow);
                     }
                     #endregion
 
