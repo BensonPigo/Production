@@ -3638,6 +3638,7 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                     Excel.Worksheet worksheet = workbook.Worksheets[i + 1];
                     worksheet.Select();
                     worksheet.Name = fabricPanelcode; // 依fabricPanelcode 複製sheet且命名
+                    worksheet.Cells[1, 34] = DateTime.Now.ToString("yyyy/MM/dd");
                     worksheet.Cells[2, 2] = iD;
                     worksheet.Cells[2, 7] = styleID;
 
