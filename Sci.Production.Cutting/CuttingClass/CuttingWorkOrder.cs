@@ -3867,7 +3867,7 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 return dResult;
             }
 
-            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(cuttingForm, "a.Cutno")},{this.CheckAndGetColumns(cuttingForm, "a.seq")}, a.colorid,a.FabricPanelCode,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.seq";
+            workorder_cmd = $"Select {sqlColByType},a.MarkerName,a.MarkerNo,a.MarkerLength,a.Cons,a.Layer,{this.CheckAndGetColumns(cuttingForm, "a.Cutno")},{this.CheckAndGetColumns(cuttingForm, "a.seq")}, a.colorid,a.FabricPanelCode,[SizeCodeSeq] = c.Seq,b.* from {tableName} a WITH (NOLOCK) ,{tbSizeRatio} b WITH (NOLOCK) ,Order_SizeCode c WITH (NOLOCK) Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and a.ukey = b.{tbUkey} and a.id = c.id and b.id = c.id and b.sizecode = c.sizecode order by c.Seq";
             dResult = DBProxy.Current.Select(null, workorder_cmd, paras, out arrDtType[(int)TableType.WorkorderSizeTb]);
             if (!dResult)
             {
@@ -3903,14 +3903,19 @@ Where {sqlWhereByType} and a.id='{drInfoFrom["ID"]}' and {tbDistributeWhere}
                 return dResult;
             }
 
-            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds From #tmp order by FabricPanelCode,MarkerName", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode,SizeCodeSeq", $"Select distinct {sqlColByType},MarkerName,MarkerNo,MarkerLength,SizeCode,Cons,Qty,FabricPanelCode,dbo.MarkerLengthToYDS(MarkerLength) as yds,SizeCodeSeq From #tmp order by FabricPanelCode,MarkerName,SizeCodeSeq", out arrDtType[(int)TableType.CutSizeTb]); // 整理SizeGroup,Qty
 
             if (!dResult)
             {
                 return dResult;
             }
 
-            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},SizeCode,seq", $"Select distinct {sqlColByType},SizeCode,seq From #tmp order by seq ", out arrDtType[(int)TableType.SizeTb]); // 整理Size
+            workorder_cmd = $@"
+select distinct {sqlColByType}, t.SizeCode, os.Seq
+from #tmp t
+inner join Order_SizeCode os with(nolock) on t.ID = os.Id and t.SizeCode = os.SizeCode
+order by os.Seq";
+            dResult = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"{sqlColByType},SizeCode,seq,ID", workorder_cmd, out arrDtType[(int)TableType.SizeTb]); // 整理Size
 
             if (!dResult)
             {
@@ -4422,7 +4427,7 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 foreach (string s in sizeCodeDistinct)
                                 {
                                     var currentSeq = sizeCodeArry.AsEnumerable()
-                                        .Where(o => o["Seq"].ToString() == cutqtydr["Seq"].ToString() && o["SizeCode"].ToString() == s)
+                                        .Where(o => o["SizeCode"].ToString() == s)
                                         .Select(o => new { Seq = o["Seq"].ToString(), SizeCode = o["SizeCode"].ToString() });
                                     if (currentSeq.Any())
                                     {
@@ -4857,16 +4862,17 @@ WHERE TABLE_NAME = N'{tableName}'";
 
                     pivot_cmd =
                         $@"
-Select Cutno,Seq,Colorid,SizeCode,Cons,Layer,{tbUkey},(Qty*Layer) as TotalQty from 
+Select Cutno,Seq,SizeCodeSeq,Colorid,SizeCode,Cons,Layer,{tbUkey},(Qty*Layer) as TotalQty from 
 #tmp
-Where Cutref = '{cutref}'";
+Where Cutref = '{cutref}'
+order by SizeCodeSeq";
 
                     if (arrDtType[(int)TableType.CutQtyTb] != null)
                     {
                         arrDtType[(int)TableType.CutQtyTb].Clear();
                     }
 
-                    drwst = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"Cutno,Seq,Colorid,SizeCode,Qty,Layer,Cutref,Cons,{tbUkey}", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
+                    drwst = MyUtility.Tool.ProcessWithDatatable(arrDtType[(int)TableType.WorkorderSizeTb], $"Cutno,Seq,SizeCodeSeq,Colorid,SizeCode,Qty,Layer,Cutref,Cons,{tbUkey}", pivot_cmd, out arrDtType[(int)TableType.CutQtyTb]);
                     if (!drwst)
                     {
                         MyUtility.Msg.ErrorBox("SQL command Pivot_cmd error!");
