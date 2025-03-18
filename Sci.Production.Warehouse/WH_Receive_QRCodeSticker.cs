@@ -267,15 +267,14 @@ namespace Sci.Production.Warehouse
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(strXltName); // 預先開啟excel app
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
             Excel.Worksheet worksheet = workbook.Worksheets[printType];
-            excelApp.Visible = false; // 隱藏 Excel 應用程式
             excelApp.DisplayAlerts = false; // 停用警告訊息
             switch (printType)
             {
                 case "Horizontal": // 橫式
-                    // 1 27 58 89
+                    // 1 27 53 79
                     for (int i = 0; i < maxPage - 1; i++)
                     {
-                        int nowRow = i == 0 ? 27 : 27 + (31 * i);
+                        int nowRow = 27 + (26 * i);
                         Excel.Range rangeToCopy = worksheet.get_Range("A1:A21").EntireRow; // 選取要被複製的資料
                         Excel.Range rangeToPaste = worksheet.get_Range($"A{nowRow}", Type.Missing).EntireRow; // 選擇要被貼上的位置
                         rangeToCopy.Copy(Type.Missing);
@@ -284,8 +283,7 @@ namespace Sci.Production.Warehouse
 
                     for (int j = 0; j <= maxRow - 1; j++)
                     {
-                        int nowRow = (j / 6) == 0 ? 1 :
-                                     (j / 6) == 1 ? 27 : 27 + (31 * (j / 6));
+                        int nowRow = 1 + (26 * (j / 6));
                         nowRow += ((j / 3) % 2) * 11;
                         int nowCol = 1 + ((j % 3) * 7);
                         P21_PrintBarcode_Data data = barcode_Datas[j];
@@ -320,10 +318,10 @@ namespace Sci.Production.Warehouse
 
                     break;
                 case "Straight": // 直式
-                    // 1 40 86 132
+                    // 1 40 79 118
                     for (int i = 0; i < maxPage - 1; i++)
                     {
-                        int nowRow = i == 0 ? 40 : 40 + (46 * i);
+                        int nowRow = 40 + (39 * i);
                         Excel.Range rangeToCopy = worksheet.get_Range("A1:A32").EntireRow; // 選取要被複製的資料
                         Excel.Range rangeToPaste = worksheet.get_Range($"A{nowRow}", Type.Missing).EntireRow; // 選擇要被貼上的位置
                         rangeToCopy.Copy(Type.Missing);
@@ -334,8 +332,7 @@ namespace Sci.Production.Warehouse
                     {
                         for (int j = 0; j <= maxRow - 1; j++)
                         {
-                            int nowRow = (j / 6) == 0 ? 1 :
-                                            (j / 6) == 1 ? 40 : 40 + (46 * (j / 6));
+                            int nowRow = 1 + ((j / 6) * 39);
                             nowRow += ((j / 2) % 3) * 11;
                             int nowCol = 1 + ((j % 2) * 7);
                             P21_PrintBarcode_Data data = barcode_Datas[j];
