@@ -930,7 +930,6 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
                 new SqlParameter("@Factory", model.Factory),
                 new SqlParameter("@StartDate",  model.StartOutputDate),
                 new SqlParameter("@EndDate",  model.EndOutputDate),
-                new SqlParameter("@Include_Artwork", true),
                 new SqlParameter("@line1", model.StartSewingLine),
                 new SqlParameter("@line2", model.EndSewingLine),
             };
@@ -944,6 +943,16 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             if (!model.EndSewingLine.Empty())
             {
                 sqlwhere += " and s.SewingLineID <= @line2";
+            }
+
+            if (!MyUtility.Check.Empty(model.Factory))
+            {
+                sqlwhere += " and s.FactoryID = @Factory ";
+            }
+
+            if (!MyUtility.Check.Empty(model.M))
+            {
+                sqlwhere += " and s.MDivisionID = @M ";
             }
 
             string sql = $@"
