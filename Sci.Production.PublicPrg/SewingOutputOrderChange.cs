@@ -464,25 +464,25 @@ DEALLOCATE cursorSewingOutput
             sqlcmd = $@"
 DECLARE @ID varchar(13)
 
-DECLARE cursorSewingOutput 
+DECLARE cursorInlineCategory
 CURSOR FOR
 	select distinct s.ID
     from SewingOutput s
     where s.id in(select distinct id from #tmp t where t.WillTransferQty > 0 )
 
-OPEN cursorSewingOutput
-FETCH NEXT FROM cursorSewingOutput INTO @ID
+OPEN cursorInlineCategory
+FETCH NEXT FROM cursorInlineCategory INTO @ID
 
 WHILE @@FETCH_STATUS = 0
 BEGIN
     exec RecalculateSewingInlineCategory @ID
 
-    FETCH NEXT FROM cursorSewingOutput INTO @ID
+    FETCH NEXT FROM cursorInlineCategory INTO @ID
 END
 
 
-CLOSE cursorSewingOutput
-DEALLOCATE cursorSewingOutput
+CLOSE cursorInlineCategory
+DEALLOCATE cursorInlineCategory
 ";
             result = this.proxyPMS.ProcessWithDatatable("Production", toDt, string.Empty, sqlcmd, out dataTable);
             if (!result)
