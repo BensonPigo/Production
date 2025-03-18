@@ -4446,7 +4446,6 @@ WHERE TABLE_NAME = N'{tableName}'";
                             #region Total Cons
                             nRow = nRow + 1;
                             worksheet.Cells[nRow, 20] = string.Format("=SUM(T{0}:T{1})", totConsRowS, totConsRowE);
-                            worksheet.Cells[nRow, 18] = fabColor;
                             #endregion
                         }
                     }
