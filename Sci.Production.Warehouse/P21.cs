@@ -142,7 +142,7 @@ namespace Sci.Production.Warehouse
                  .CheckBox("select", header: string.Empty, trueValue: 1, falseValue: 0, settings: col_Select)
                  .Text("ID", header: "Receiving ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                  .Text("ExportID", header: "WK#", width: Widths.AnsiChars(14), iseditingreadonly: true)
-                 .Numeric("Packages", header: "Packages", width: Widths.AnsiChars(10), decimal_places: 0, integer_places: 5, iseditingreadonly: true)
+                 .Numeric("Packages", header: "Packages(B/L No.)", width: Widths.AnsiChars(10), decimal_places: 0, integer_places: 5, iseditingreadonly: true)
                  .Date("WhseArrival", header: "Arrive WH Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                  .Text("poid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
                  .Text("Seq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
