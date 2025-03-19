@@ -418,8 +418,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                     {
                         MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.");
                     }
-
-                    //this.CurrentMaintain["UseCutRefToRequestFabric"] = this.comboUseCutRefToRequestFabric.SelectedValue;
                 }
             }
         }
