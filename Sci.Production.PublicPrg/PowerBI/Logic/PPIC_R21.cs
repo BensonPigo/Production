@@ -385,19 +385,6 @@ select distinct [KPIGroup] = f.KPICode
 	, [Status] = case 
 			when p.PulloutDate is not null
 					then 'Pullout'
-			when ClogReceiveTime.val is not null 
-					and (CFAReceiveTime.val is null 
-						or ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101')
-						or FtyTransferToClogTime.val > isnull(CFAReturnTime.val, '19710101'))
-					then 'Clog'
-			when CFAReceiveTime.val is not null and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
-					then 'CFA'
-			when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
-					then 'CFA transit to CLOG'
-			when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
-					then 'CLOG transit to CFA'
-			when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
-					then 'Fty transit to CLOG'
 			when HaulingScanTime.val is null 
 					and PackingAuditScanTime.val is null 
 					and M360MDScanTime.val is null
@@ -480,6 +467,28 @@ select distinct [KPIGroup] = f.KPICode
 					and pld.ScanEditDate > isnull(CTNJokerTagTime.val, '19710101') 
 					and pld.ScanEditDate > isnull(CTNHeatSealTime.val, '19710101') 
 					then 'Scan & Pack'
+			when pld.TransferDate is not null and
+				((ClogReceiveTime.val > isnull(FtyTransferToClogTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(ClogReturnTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(ClogTransferToCFATime.val, '19710101')
+				and ClogReceiveTime.val > isnull(CFAReceiveTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(CFAReturnTime.val, '19710101'))
+				or
+				(ClogReceiveFromCFATime.val > isnull(FtyTransferToClogTime.val, '19710101') 
+				and ClogReceiveFromCFATime.val > isnull(ClogReturnTime.val, '19710101')
+				and ClogReceiveFromCFATime.val > isnull(ClogTransferToCFATime.val, '19710101')
+				and ClogReceiveFromCFATime.val > isnull(CFAReceiveTime.val, '19710101')
+				and ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101')))
+					then 'Clog'
+			when pld.TransferDate is not null 
+					and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
+					then 'CFA'
+			when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
+					then 'CFA transit to CLOG'
+			when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
+					then 'CLOG transit to CFA'
+			when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
+					then 'Fty transit to CLOG'
 		else '' end 
 	, [HaulingScanTime] = HaulingScanTime.val
 	, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
