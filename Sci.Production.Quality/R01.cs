@@ -372,7 +372,7 @@ select
     ,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
     ,[KPI LETA] = O.KPILETA
     ,[ACT ETA] = Export.Eta
-    ,[Total Packages] = isnull(Export.Packages,0)
+    ,[Packages(B/L No.)] = isnull(e.Packages,0)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -402,6 +402,16 @@ LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1
 left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
 left join Receiving on f.ReceivingID = Receiving.ID
 left join Export on Receiving.ExportId = Export.ID
+outer apply(
+		select [Packages] = sum(e.Packages)
+		from Export e with (nolock)
+		where exists(
+			select 1
+			from export e2 with(nolock)
+			where e2.Blno = e.Blno
+			and Receiving.ExportId = e2.ID
+		)
+	)e
 OUTER APPLY(
 	SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno
 )C
@@ -638,7 +648,7 @@ select
     ,tf.[Cutting Date]
     ,tf.[KPI LETA]
     ,tf.[ACT ETA]
-    ,tf.[Total Packages]
+    ,tf.[Packages(B/L No.)]
 	,tf.WhseArrival
 	,tf.StockQty1
     ,tf.InvStock
