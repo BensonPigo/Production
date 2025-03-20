@@ -595,6 +595,7 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateE
             this.OnRefreshClick();
             new P31_ReviseSchedule(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource).ShowDialog();
             this.OnRefreshClick();
+            this.ReloadDatas();
         }
     }
 }

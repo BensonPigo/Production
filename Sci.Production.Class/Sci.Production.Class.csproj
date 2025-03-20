@@ -267,6 +267,12 @@
     <Compile Include="DateEstCutDate.Designer.cs">
       <DependentUpon>DateEstCutDate.cs</DependentUpon>
     </Compile>
+    <Compile Include="TxtMarkerLength.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtMarkerLength.Designer.cs">
+      <DependentUpon>TxtMarkerLength.cs</DependentUpon>
+    </Compile>
     <Compile Include="TxtMtlType.cs">
       <SubType>Component</SubType>
     </Compile>

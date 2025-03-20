@@ -264,6 +264,7 @@ INNER JOIN WorkOrderForPlanning_SizeRatio wsr WITH(NOLOCK) ON t.WorkOrderForPlan
 SELECT
     sel = CAST(1 AS BIT)
    ,wo.*
+   ,[Article] = ISNULL(Article.VALUE,'')
    ,wp1.PatternPanel_CONCAT
    ,wp2.FabricPanelCode_CONCAT
    ,ws1.SizeCode_CONCAT
@@ -352,12 +353,24 @@ OUTER APPLY (
     FROM WorkOrderForOutputDelete wd WITH (NOLOCK)
     INNER JOIN WorkOrderForOutput woo WITH (NOLOCK) ON woo.ID = wd.ID and woo.GroupID = wd.GroupID and woo.ID = wo.ID and wd.CutRef = wo.CutRef
 ) ExistDelete
+outer apply(
+    select value = STUFF((
+        select CONCAT(',',Article)
+        from(
+            select distinct Article
+            from Production.dbo.WorkOrderForPlanning_Distribute
+            where WorkOrderForPlanningUkey = WO.Ukey
+            and Article !=''
+            )s
+    for xml path('')
+    ),1,1,'')
+) Article
 WHERE wo.ID = @ID
 AND t.WorkOrderForPlanningUkey IS NULL
 AND ExistHistory.value IS NULL
 AND ExistDelete.value IS NULL
 AND NOT EXISTS (SELECT 1 FROM WorkOrderForOutput woo WITH (NOLOCK) WHERE woo.CutRef = wo.CutRef)
-ORDER BY CutRef,Seq,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,CutPlanID,Edituser,EditDate,Adduser,AddDate
+ORDER BY CutRef,Seq,MarkerName,MarkerNo,MarkerLength_Mask,PatternPanel_CONCAT,FabricPanelCode_CONCAT,Article.Value,ColorId,Tone,SizeCode_CONCAT,Layer,TotalCutQty_CONCAT,OrderId,Seq1,Seq2,Fabeta,WKETA,EstCutDate,CutPlanID,Edituser,EditDate,Adduser,AddDate
 
 ";
             DataTable dtImport = new DataTable();

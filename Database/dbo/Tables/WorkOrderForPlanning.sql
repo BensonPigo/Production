@@ -16,7 +16,6 @@
     [FabricCombo]        VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_FabricCombo] DEFAULT ('') NOT NULL,
     [FabricCode]         VARCHAR (3)     CONSTRAINT [DF_WorkOrderForPlanning_FabricCode] DEFAULT ('') NOT NULL,
     [FabricPanelCode]    VARCHAR (2)     CONSTRAINT [DF_WorkOrderForPlanning_FabricPanelCode] DEFAULT ('') NOT NULL,
-    [Article]            VARCHAR (8)     CONSTRAINT [DF_WorkOrderForPlanning_Article] DEFAULT ('') NOT NULL,
     [RefNo]              VARCHAR (36)    CONSTRAINT [DF_WorkOrderForPlanning_RefNo] DEFAULT ('') NOT NULL,
     [SCIRefNo]           VARCHAR (30)    CONSTRAINT [DF_WorkOrderForPlanning_SCIRefNo] DEFAULT ('') NOT NULL,
     [ColorID]            VARCHAR (6)     CONSTRAINT [DF_WorkOrderForPlanning_ColorID] DEFAULT ('') NOT NULL,
@@ -75,7 +74,7 @@
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'部位別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'FabricPanelCode'
 	GO
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'色組' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'Article'
+	
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'客戶物料編號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForPlanning', @level2type=N'COLUMN',@level2name=N'RefNo'
 	GO
