@@ -2920,6 +2920,7 @@
     <Build Include="dbo\Tables\FIR_PointRateFormula.sql" />
     <Build Include="dbo\Tables\StatementReport.sql" />
     <Build Include="dbo\Tables\WorkOrderForPlanning_Distribute.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_print_CuttingWorkOrderForPlanning.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

@@ -34,7 +34,7 @@ namespace Sci.Production.Cutting
             ,[WeaveTypeID] = f.WeaveTypeID
             ,[SCIRefno] = wo.SCIRefno
             ,[Refno] = wo.Refno
-            ,[Article] = wo.Article
+            ,[Article] = Article.val
             ,[ColorID] = cddh.Colorid
             ,[SEQ1] = wo.SEQ1
             ,[SEQ2] = wo.SEQ2
@@ -67,6 +67,16 @@ namespace Sci.Production.Cutting
 
 	            ),1,1,'')
             ) AS TotalCutQty
+            OUTER APPLY
+            (
+	            select val = stuff(
+	            (
+		            Select distinct CONCAT('/ ', wpd.Article)
+                    From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+                    Where wpd.WorkOrderForPlanningUkey = wo.Ukey and wpd.Article!=''
+                    For XML path('')
+	            ),1,1,'')
+            ) AS Article
             WHERE cddh.id = '{ID}'";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)

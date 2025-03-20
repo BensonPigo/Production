@@ -353,8 +353,11 @@ select [SP] =
                 dt.HeaderColor = Color.LawnGreen;
                 dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(20) { ColumnWidth = (decimal)20 });
 
+                // 不包含表頭欄位名稱
+                dt.ShowHeader = false;
+
                 // 凍結窗格
-                dt.BoFreezePanes = true;
+                //dt.BoFreezePanes = true;
 
                 // 篩選
                 dt.BoAddFilter = true;

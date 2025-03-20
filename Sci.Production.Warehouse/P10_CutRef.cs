@@ -35,11 +35,17 @@ namespace Sci.Production.Warehouse
 ,b.CutRef
 ,c.FabricCombo
 ,b.CutNo
-,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrderForPlanning t WITH (NOLOCK) where t.Ukey = c.Ukey) x for xml path('')) article
+,[Article] = Article.val
 ,C.Markername
 from dbo.Cutplan a WITH (NOLOCK) 
 inner join dbo.Cutplan_Detail b WITH (NOLOCK) on b.id= a.ID
 inner join dbo.WorkOrderForPlanning c WITH (NOLOCK) on c.Ukey = b.WorkorderForPlanningUkey
+outer apply(  
+    select val  = stuff((Select distinct CONCAT(',', wpd.Article)
+    From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+    Where wpd.WorkOrderForPlanningUkey = c.Ukey and wpd.Article!=''
+    For XML path('')),1,1,'')
+) Article
 where a.ID = '{0}'
 order by b.POID,c.seq1,c.seq2,b.Cutno
 

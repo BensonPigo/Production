@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [dbo].[GetSpreadingSchedule]
+﻿Create FUNCTION [dbo].[GetSpreadingSchedule]
 (	
 	@FactoryID varchar(8),
 	@EstCutDate Date,
@@ -23,7 +23,12 @@ RETURN
 		w.Markername,
 		w.FabricCombo,
 		w.FabricPanelCode,
-		w.article,
+		Article = stuff((
+				Select distinct concat('/' ,b.Article)
+				From dbo.WorkOrderForPlanning_Distribute b WITH (NOLOCK) 
+				Where b.WorkOrderForPlanningUkey = w.Ukey and b.Article!=''
+				For XML path('')
+			),1,1,''),
 		w.Colorid,
 		size.multisize,
 		w.Layer,
@@ -42,6 +47,7 @@ RETURN
 		w.Cons,
 		w.Refno,
 		f.WeaveTypeID
+		,[diffEstCutDate] = IIF(w.EstCutDate <> s.EstCutDate, 1,0)
 	from WorkOrderForPlanning w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
 	LEFT join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef
@@ -77,6 +83,7 @@ RETURN
 
 	where 1=1
 	and o.Finished = 0
+	and w.CutPlanID!=''
 	and w.FactoryID = @FactoryID
 	and (
 		(

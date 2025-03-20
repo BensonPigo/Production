@@ -5,7 +5,8 @@ CREATE PROCEDURE [dbo].[usp_switchWorkorder]
 	 @WorkType  varChar(1),
 	 @Cuttingid  varChar(13),
 	 @mDivisionid varchar(8),
-	 @username varchar(10)
+	 @username varchar(10),
+	 @UseCutRefToRequestFabric tinyint
 	)
 AS
 BEGIN
@@ -14,7 +15,7 @@ BEGIN
 		SET NOCOUNT ON;
 	
 	--�NCutting ��JWorkType
-	update cutting set WorkType =@WorkType where id = @Cuttingid
+	update cutting set WorkType =@WorkType,UseCutRefToRequestFabric = @UseCutRefToRequestFabric where id = @Cuttingid
     -- Insert statements for procedure here
 	-- ���X�Ҧ�Cuttingid ��SP#
 	--Declare @sptable Table(id varchar(13))
@@ -116,11 +117,14 @@ BEGIN
 	FabricCode,
 	FabricPanelCode,
 	Order_eachconsUkey,
-	Article,
+	-- Article, -- ISP20250026 移除
 	-- ActCuttingPerimeter, --ISP20240588移除掉
 	-- StraightLength, --ISP20240588移除掉
 	-- CurvedLength, --ISP20240588移除掉
-	0 as newKey InTo #NewWorkorder From WorkOrderForPlanning a  WITH (NOLOCK)  Where 1 =0
+	0 as newKey 
+	InTo #NewWorkorder 
+	From WorkOrderForPlanning a  WITH (NOLOCK)  
+	Where 1 =0
 
 	CREATE TABLE #NewWorkOrder_Distribute
 	(	
@@ -268,7 +272,7 @@ BEGIN
 			Select 
 			@maxLayer = MaxLayer,
 			@ID = a.id,
-			@Article = Article.Article,
+			--@Article = Article.Article,
 			@Colorid = a.colorid,
 			@MarkerName = markername,
 			@MarkerLength = MarkerLength,
@@ -288,12 +292,14 @@ BEGIN
 			-- @StraightLength = StraightLength,			    --ISP20240588移除掉
 			-- @CurvedLength = CurvedLength				    --ISP20240588移除掉
 			From #WorkOrderMix a
+			/*
 			OUTER APPLY
 			(
 				Select top 1 Article
 				from #_tmpdisQty b 
 				where a.ColorID = b.ColorID and a.FabricCombo = b.PatternPanel and a.SCIRefno = b.SCIRefno and a.FabricPanelCode = b.FabricPanelCode
 			)Article
+			*/
 			Where RowID = @WorkOrderMixRowID;
 
 			select distinct Article into #LongArticle from Order_EachCons_Article  WITH (NOLOCK)  where Order_EachConsUkey=@Order_EachConsUkey
@@ -376,8 +382,8 @@ BEGIN
 					SET @Cons = @Layer * @SizeRatioQty * @ConsPC
 					if(@oldWorkerordernum != @newWorkerordernum)
 					Begin--byworkorder��Group�P�e�@�����@��,�h�s�W�@��
-						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerVersion,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey,Article)
-						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerVersion,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@Type,@username,GETDATE(),@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey,@Article)
+						Insert Into #NewWorkorder(ID,FactoryID,MDivisionid,SEQ1,SEQ2,OrderID,Layer,Colorid,MarkerName,MarkerVersion,MarkerLength,ConsPC,Cons,Refno,SCIRefno,Markerno,Type,AddName,AddDate,FabricCombo,FabricCode,FabricPanelCode,newKey,Order_eachconsUkey)
+						Values(@Cuttingid,@Factoryid,@mDivisionid,@seq1,@seq2,@Cuttingid,@Layer,@Colorid,@Markername,@MarkerVersion,@MarkerLength,@ConsPC,@Cons,@Refno,@SCIRefno,@MarkerNo,@Type,@username,GETDATE(),@FabricCombo,@FabricCode,@FabricPanelCode,@NewKey,@Order_EachConsUkey)
 						SET @NewKey += 1--�o��N���[�F,�U���P��insert���n��1�~�|������
 						set @oldWorkerordernum = @newWorkerordernum
 					End						
@@ -546,8 +552,8 @@ BEGIN
 										FabricCombo,
 										FabricCode,
 										FabricPanelCode,
-										Order_eachconsUkey,
-										Article)
+										Order_eachconsUkey
+										)
 										-- ActCuttingPerimeter, --ISP20240588移除掉
 										-- StraightLength, --ISP20240588移除掉
 										-- CurvedLength) --ISP20240588移除掉
@@ -574,8 +580,7 @@ BEGIN
 								FabricCombo,
 								FabricCode,
 								FabricPanelCode,
-								Order_eachconsUkey,
-								Article
+								Order_eachconsUkey
 								-- ActCuttingPerimeter, --ISP20240588移除掉
 								-- StraightLength, --ISP20240588移除掉
 								-- CurvedLength --ISP20240588移除掉
@@ -586,11 +591,11 @@ BEGIN
 		update #NewWorkOrder_PatternPanel set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 		update #NewWorkOrder_SizeRatio set WorkOrderForPlanningUkey = @iden Where newkey = @insertRow
 		------Insert into �lTable-------------
-		/* ISP20240588移除掉
-		insert into WorkOrder_Distribute(WorkOrderUkey,id,Orderid,Article,SizeCode,Qty)
+	
+			insert into WorkOrderForPlanning_Distribute(WorkOrderForPlanningUkey,id,Orderid,Article,SizeCode,Qty)
 			(Select WorkOrderUkey,id,Orderid,Article,SizeCode,Qty
 			From #NewWorkOrder_Distribute Where newkey=@insertRow)
-		*/
+		
 			insert into WorkOrderForPlanning_PatternPanel(WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel)
 			(Select WorkOrderForPlanningUkey,ID,FabricPanelCode,PatternPanel
 			From #NewWorkOrder_PatternPanel Where newkey=@insertRow)

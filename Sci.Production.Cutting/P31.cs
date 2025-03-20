@@ -22,6 +22,8 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P31 : Win.Tems.Input6
     {
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_CutplanID;
+
         /// <inheritdoc/>
         public P31(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -120,7 +122,7 @@ namespace Sci.Production.Cutting
             string estCutDate = (e.Master == null) ? string.Empty : ((DateTime)e.Master["EstCutDate"]).ToString("yyyy/MM/dd");
             string cutCellID = (e.Master == null) ? string.Empty : e.Master["CutCellID"].ToString();
             this.DetailSelectCommand = $@"
-select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')";
+select distinct *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')";
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -223,6 +225,12 @@ select *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{es
                     return;
                 }
 
+                if (MyUtility.Check.Empty(dr["CutplanID"]))
+                {
+                    MyUtility.Msg.WarningBox("The CutPlan# has not been created yet, unable to proceed.");
+                    return;
+                }
+
                 string sqlcmd = $@"
 select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.FormattedValue}')";
                 DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
@@ -269,10 +277,33 @@ select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.
                .Text("Refno", header: "Ref#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                .Text("WeaveTypeID", header: "WeaveType", width: Widths.AnsiChars(15), iseditingreadonly: true)
                .Numeric("Cons", header: "Cons", width: Widths.AnsiChars(10), decimal_places: 4, iseditingreadonly: true)
-               .Text("CutplanID", header: "CutPlan#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+               .Text("CutplanID", header: "CutPlan#", width: Widths.AnsiChars(14), iseditingreadonly: true).Get(out this.col_CutplanID)
                .Text("IssueID", header: "Issue ID", width: Widths.AnsiChars(14), iseditingreadonly: true)
                .Text("IsOutStanding", header: "Is OutStanding", width: Widths.AnsiChars(3), iseditingreadonly: true)
                ;
+
+            this.Change_record();
+        }
+
+        private void Change_record()
+        {
+            this.col_CutplanID.CellFormatting += (s, e) =>
+            {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                if (!MyUtility.Check.Empty(dr["diffEstCutDate"]))
+                {
+                    e.CellStyle.ForeColor = Color.Red;
+                }
+                else
+                {
+                    e.CellStyle.ForeColor = Color.Black;
+                }
+            };
         }
 
         /// <inheritdoc/>

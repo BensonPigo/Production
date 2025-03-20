@@ -69,7 +69,10 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string cmdsql = string.Format(
             @"
             Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,e.Refno,
-            e.Article,
+            [Article] = stuff((Select distinct CONCAT('/ ', wpd.Article)
+                            From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+                            Where wpd.WorkOrderForPlanningUkey = a.WorkOrderForPlanningUkey and wpd.Article!=''
+                            For XML path('')),1,1,''),
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
                 From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
@@ -351,50 +354,60 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             }
 
             string cmdsql = string.Format(
-            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey 
-                
-                For XML path('')
-            ) as SizeCode,
-            w.article,cd.colorid,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = w.Ukey
-               
-                For XML path('')
-            ) as CutQty,
-            cd.cons,isnull(f.DescDetail,'') as DescDetail
-            ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate)
-            ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
-            ,[FabricIssued] = 
-            (
-                select val = iif(SUM(1) >= 1 ,'Y','N') 
-	            from Issue i WITH (NOLOCK)
-	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
-	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
-            )
-            ,cd.remark 
+@"select    cd.id,
+            cd.sewinglineid,
+            cd.orderid,
+            w.seq1,
+            w.seq2,
+            cd.StyleID,
+            cd.cutref,
+            cd.cutno,
+            w.FabricCombo,
+            w.FabricCode,
+            [SizeCode] = (
+                            Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+                            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                            Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey 
+                            For XML path('')
+                        ),
+            [Article] = stuff((Select distinct CONCAT('/ ', wpd.Article)
+                            From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+                            Where wpd.WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUkey and wpd.Article!=''
+                            For XML path('')),1,1,''),
+            cd.colorid,
+            [CutQty] = (
+                            Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
+                            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                            Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = w.Ukey
+                            For XML path('')
+                        ),
+            cd.cons,
+            isnull(f.DescDetail,'') as DescDetail,
+            [EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate),
+            [Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , ''),
+            [FabricIssued] = (
+                                 select val = iif(SUM(1) >= 1 ,'Y','N') 
+                              from Issue i WITH (NOLOCK)
+                              inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
+                              where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
+                             ),
+            cd.remark 
             from Cutplan_Detail cd WITH (NOLOCK) 
             inner join Cutplan b WITH(NOLOCK) on cd.id = b.ID
-            inner join WorkOrderForPlanning w on cd.WorkOrderForPlanningUkey = w.Ukey
+            inner join WorkOrderForPlanning w with (nolock) on cd.WorkOrderForPlanningUkey = w.Ukey
             left join Fabric f on f.SCIRefno = w.SCIRefno
-            OUTER APPLY
-            (
-	            select 
-	            [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0)
-	            ,[EstCutDate] = isnull(ci.EstCutDate,'')
-	            ,[Reason] = isnull(Reason.[Description],'')
-                ,[EditName] = isnull(ci.EditName,'')
-                ,[EditDate] = ci.EditDate
-                ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
-	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
-                LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
-	            where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
-            )IsCutPlan_IssueCutDate
+            OUTER APPLY (
+                         select 
+                         [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0),
+                         [EstCutDate] = isnull(ci.EstCutDate,''),
+                         [Reason] = isnull(Reason.[Description],''),
+                            [EditName] = isnull(ci.EditName,''),
+                            [EditDate] = ci.EditDate,
+                            [RequestorRemark] = isnull(ci.RequestorRemark,'')
+                         from CutPlan_IssueCutDate ci WITH(NOLOCK)
+                         LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
+                         where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
+                        )IsCutPlan_IssueCutDate
             where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);
 
