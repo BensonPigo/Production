@@ -1412,7 +1412,7 @@ order by p.EditDate desc
         {
             CuttingWorkOrder cuttingWorkOrder = new CuttingWorkOrder();
             string errMsg;
-            if (!cuttingWorkOrder.DownloadSampleFile(this.formType, this.CurrentMaintain, out errMsg))
+            if (!cuttingWorkOrder.DownloadFile(this.formType, this.CurrentMaintain, out errMsg))
             {
                 MyUtility.Msg.ErrorBox(errMsg);
             }
