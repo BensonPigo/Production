@@ -107,7 +107,7 @@
             this.radioRelaxationSticker.TabIndex = 1;
             this.radioRelaxationSticker.Text = "Relaxation Sticker";
             this.radioRelaxationSticker.UseVisualStyleBackColor = true;
-            this.radioRelaxationSticker.Value = "4";
+            this.radioRelaxationSticker.Value = "3";
             // 
             // radioFabricsRelaxationLogsheet
             // 
@@ -120,7 +120,7 @@
             this.radioFabricsRelaxationLogsheet.TabIndex = 2;
             this.radioFabricsRelaxationLogsheet.Text = "Fabrics Relaxation Logsheet";
             this.radioFabricsRelaxationLogsheet.UseVisualStyleBackColor = true;
-            this.radioFabricsRelaxationLogsheet.Value = "5";
+            this.radioFabricsRelaxationLogsheet.Value = "4";
             // 
             // radioGroup1
             // 
