@@ -33,20 +33,9 @@ namespace Sci.Production.Warehouse
             this.CheckControlEnable();
             this.poidList = polist;
             this.curMain = currentMain;
-            DataTable dtPMS_FabricQRCode_LabelSize;
-            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
 
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.comboType.DisplayMember = "Name";
-            this.comboType.ValueMember = "ID";
-            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
-
-            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         private List<string> poidList;
@@ -349,6 +338,7 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
         private void CheckControlEnable()
         {
             this.txtSPNo.Enabled = this.radioArriveWHReport.Checked;
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
             this.comboType.Enabled = this.radioQRCodeSticker.Checked;
             this.toexcel.Enabled = !this.radioQRCodeSticker.Checked;
         }
@@ -488,9 +478,55 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                 return true;
             }
 
-            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P07").ShowDialog();
+            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboPrint.Text, this.comboType.Text, "P07").ShowDialog();
 
             return true;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
+            {
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
+            }
+            else
+            {
+                this.BindComboTypeSticker();
+            }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }
