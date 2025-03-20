@@ -21,30 +21,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             if (!sDate.HasValue)
             {
                 sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+            }
+
+            if (!eDate.HasValue)
+            {
                 eDate = DateTime.Parse(Convert.ToDateTime(sDate).AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Base_ViewModel resultReport = this.LoadData(sDate, eDate);
-                if (resultReport.Result)
+                if (!resultReport.Result)
                 {
-                    DataTable detailTable = resultReport.Dt;
-
-                    // insert into PowerBI
-                    finalResult = this.UpdateBIData(detailTable);
-                    if (!finalResult.Result)
-                    {
-                        throw finalResult.Result.GetException();
-                    }
-
-                    finalResult.Result = new Ict.DualResult(true);
-                }
-                else
-                {
-                    finalResult.Result = new Ict.DualResult(false, null, resultReport.Result.ToMessages());
+                    throw finalResult.Result.GetException();
                 }
 
+                DataTable detailTable = resultReport.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(detailTable);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
             }
             catch (Exception ex)
             {
@@ -144,19 +143,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,ISNULL([Status]             ,'')
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_ESG_Injury P WITH(NOLOCK) WHERE P.ID = T.ID AND P.FactoryID = T.FactoryID)
-
-                IF EXISTS (select 1 from BITableInfo b where b.id = 'P_ESG_Injury')
-                BEGIN
-	                update BITableInfo set TransferDate = getdate()
-	                where ID = 'P_ESG_Injury'
-                END
-                ELSE 
-                BEGIN
-	                insert into BITableInfo(Id, TransferDate)
-	                values('P_ESG_Injury', getdate())
-                END
                 ";
-
+                sql += new Base().SqlBITableInfo("P_ESG_Injury", true);
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn);
             }
 

@@ -494,15 +494,15 @@ ORDER BY [Group], [SEQ], [NAME]";
                 case ListName.P_DailyAccuCPULoading:
                     return new P_Import_DailyAccuCPULoading().P_DailyAccuCPULoading(item.SDate, item.EDate);
                 case ListName.P_SewingDailyOutputStatusRecord:
-                    return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate, ListName.P_SewingDailyOutputStatusRecord.ToString());
+                    return new P_Import_DailyOutputStatusRecord().P_DailyOutputStatusRecord(item.SDate, item.EDate);
                 case ListName.P_LineBalancingRate:
-                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate, ListName.P_LineBalancingRate.ToString());
+                    return new P_Import_LineBalancingRate().P_LineBalancingRate(item.SDate, item.EDate, className.ToString());
                 case ListName.P_ChangeoverCheckList:
-                    return new P_Import_ChangeoverCheckList().P_ChangeoverCheckList(item.SDate, item.EDate, ListName.P_ChangeoverCheckList.ToString());
+                    return new P_Import_ChangeoverCheckList().P_ChangeoverCheckList(item.SDate, item.EDate, className.ToString());
                 case ListName.P_ESG_Injury:
                     return new P_Import_ESG_Injury().P_ESG_Injury(item.SDate, item.EDate);
                 case ListName.P_CMPByDate:
-                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate, ListName.P_CMPByDate.ToString());
+                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
@@ -641,6 +641,21 @@ insert into TransLog([FunctionName], [Description], [StartTime], [EndTime])
 values(@functionName, @description, @startTime, @endTime)
 ";
             DualResult result = DBProxy.Current.Execute("Production", sqlCmd, sqlParameter);
+        }
+
+        /// <summary>
+        /// Update BI Data
+        /// </summary>
+        /// <param name="biTableInfoID">BITableInfo.ID</param>
+        /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
+        /// <returns>Base_ViewModel</returns>
+        public Base_ViewModel UpdateBIData(string biTableInfoID, bool is_Trans)
+        {
+            string sql = this.SqlBITableInfo(biTableInfoID, is_Trans);
+            return new Base_ViewModel()
+            {
+                Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
+            };
         }
     }
 }

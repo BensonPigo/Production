@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_DailyOutputStatusRecord
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_DailyOutputStatusRecord(DateTime? sDate, DateTime? eDate, string biTableInfoID)
+        public Base_ViewModel P_DailyOutputStatusRecord(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
@@ -43,7 +43,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value, biTableInfoID);
+                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -59,7 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate, string biTableInfoID)
+        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -254,7 +254,7 @@ WHERE NOT EXISTS(
 ";
 
                 // 加上 BITableInfo 更新字串
-                sql += new Base().SqlBITableInfo(biTableInfoID, false);
+                sql += new Base().SqlBITableInfo("P_SewingDailyOutputStatusRecord", false);
 
                 // 執行 SQL 並回傳 Base_ViewModel
                 return new Base_ViewModel()

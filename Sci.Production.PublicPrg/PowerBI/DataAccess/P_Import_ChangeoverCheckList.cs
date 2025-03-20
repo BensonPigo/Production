@@ -97,7 +97,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 #region Update BI Table Info
                 if (resultReport.Result)
                 {
-                    finalResult = this.UpdateBIData(biTableInfoID);
+                    finalResult = new Base().UpdateBIData(biTableInfoID, true);
                 }
                 #endregion
             }
@@ -312,15 +312,6 @@ and p.[InlineDate] >= @EndDate
             }
 
             return finalResult;
-        }
-
-        private Base_ViewModel UpdateBIData(string biTableInfoID)
-        {
-            string sql = new Base().SqlBITableInfo(biTableInfoID, true);
-            return new Base_ViewModel()
-            {
-                Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
-            };
         }
     }
 }

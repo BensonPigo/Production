@@ -3,13 +3,8 @@ using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -58,8 +53,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -71,16 +64,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
-            Base_ViewModel finalResult = new Base_ViewModel();
-            try
+            Base_ViewModel finalResult;
+            DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+            using (sqlConn)
             {
-                DualResult result;
-                DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                using (sqlConn)
-                {
-                    string sDateS = sDate.ToString("yyyy/MM/dd");
-                    string eDateS = sDate.ToString("yyyy/MM/dd");
-                    string sql = $@"	
+                string sDateS = sDate.ToString("yyyy/MM/dd");
+                string eDateS = sDate.ToString("yyyy/MM/dd");
+                string sql = $@"	
 /************* 刪除P_CuttingScheduleOutputList的資料，規則刪除相同的WorkOrder.ID*************/
 Delete P_CuttingScheduleOutputList
 from P_CuttingScheduleOutputList as a 
@@ -234,32 +224,12 @@ update p set
 	p.[LackingLayers] = t.[LackingLayers]
 from P_CuttingScheduleOutputList p with(nolock)
 inner join #Integrate t with(nolock) on t.[FactoryID] = p.[FactoryID] and t.[ID] = p.[POID] and p.[CutRef] = t.[CutRef]
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_CuttingScheduleOutputList')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_CuttingScheduleOutputList'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_CuttingScheduleOutputList', getdate())
-END
 ";
-                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null);
-                    if (!result.Result)
-                    {
-                        throw result.GetException();
-                    }
-                }
-
-                finalResult.Result = new DualResult(true);
-            }
-            catch (Exception ex)
-            {
-                finalResult.Result = new DualResult(false, ex);
+                sql += new Base().SqlBITableInfo("P_CuttingScheduleOutputList", true);
+                finalResult = new Base_ViewModel()
+                {
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmp", conn: sqlConn, paramters: null),
+                };
             }
 
             return finalResult;
