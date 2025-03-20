@@ -34,6 +34,8 @@
             this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.radioP18ExcelImport = new Sci.Win.UI.RadioButton();
             this.radioTransferOutReport = new Sci.Win.UI.RadioButton();
+            this.comboPrint = new Sci.Win.UI.ComboBox();
+            this.lbPrint = new Sci.Win.UI.Label();
             this.radioPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,6 +65,8 @@
             // 
             // radioPanel
             // 
+            this.radioPanel.Controls.Add(this.comboPrint);
+            this.radioPanel.Controls.Add(this.lbPrint);
             this.radioPanel.Controls.Add(this.comboType);
             this.radioPanel.Controls.Add(this.label2);
             this.radioPanel.Controls.Add(this.radioQRCodeSticker);
@@ -81,7 +85,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(231, 82);
+            this.comboType.Location = new System.Drawing.Point(226, 110);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
@@ -90,7 +94,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(189, 83);
+            this.label2.Location = new System.Drawing.Point(184, 111);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 23);
             this.label2.TabIndex = 104;
@@ -137,6 +141,29 @@
             this.radioTransferOutReport.UseVisualStyleBackColor = true;
             this.radioTransferOutReport.Value = "1";
             // 
+            // comboPrint
+            // 
+            this.comboPrint.BackColor = System.Drawing.Color.White;
+            this.comboPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPrint.FormattingEnabled = true;
+            this.comboPrint.IsSupportUnselect = true;
+            this.comboPrint.Location = new System.Drawing.Point(226, 78);
+            this.comboPrint.Name = "comboPrint";
+            this.comboPrint.OldText = "";
+            this.comboPrint.Size = new System.Drawing.Size(121, 24);
+            this.comboPrint.TabIndex = 107;
+            this.comboPrint.SelectedIndexChanged += new System.EventHandler(this.ComboPrint_SelectedIndexChanged);
+            // 
+            // lbPrint
+            // 
+            this.lbPrint.BackColor = System.Drawing.Color.Transparent;
+            this.lbPrint.Location = new System.Drawing.Point(184, 79);
+            this.lbPrint.Name = "lbPrint";
+            this.lbPrint.Size = new System.Drawing.Size(39, 23);
+            this.lbPrint.TabIndex = 106;
+            this.lbPrint.Text = "Print:";
+            this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P18_Print
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -146,13 +173,13 @@
             this.Name = "P18_Print";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "P18_Print";
+            this.Controls.SetChildIndex(this.radioPanel, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.radioPanel, 0);
             this.radioPanel.ResumeLayout(false);
             this.radioPanel.PerformLayout();
             this.ResumeLayout(false);
@@ -168,5 +195,7 @@
         private Win.UI.ComboBox comboType;
         private Win.UI.Label label2;
         private Win.UI.RadioButton radioQRCodeSticker;
+        private Win.UI.ComboBox comboPrint;
+        private Win.UI.Label lbPrint;
     }
 }

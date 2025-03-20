@@ -26,20 +26,8 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.PrintButtonStatusChange();
             this.mainCurrentMaintain = drMain;
-            DataTable dtPMS_FabricQRCode_LabelSize;
-            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.comboType.DisplayMember = "Name";
-            this.comboType.ValueMember = "ID";
-            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
-
-            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         private void RadioTransferOutReport_CheckedChanged(object sender, EventArgs e)
@@ -54,16 +42,11 @@ namespace Sci.Production.Warehouse
 
         private void PrintButtonStatusChange()
         {
-            if (this.radioTransferOutReport.Checked || this.radioQRCodeSticker.Checked)
-            {
-                this.print.Enabled = true;
-                this.toexcel.Enabled = false;
-            }
-            else
-            {
-                this.print.Enabled = false;
-                this.toexcel.Enabled = true;
-            }
+            bool isTransferOutOrQRCodeChecked = this.radioTransferOutReport.Checked || this.radioQRCodeSticker.Checked;
+            this.print.Enabled = isTransferOutOrQRCodeChecked;
+            this.toexcel.Enabled = !isTransferOutOrQRCodeChecked;
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
         }
 
         /// <inheritdoc/>
@@ -269,7 +252,7 @@ order by td.Dyelot, Len(td.Roll), td.Roll
                     return true;
                 }
 
-                var qrCodeSticker = new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, callFrom: "P19");
+                var qrCodeSticker = new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboPrint.Text, this.comboType.Text, callFrom: "P19");
                 System.Windows.Forms.DialogResult dialogResult = qrCodeSticker.ShowDialog();
 
                 // 在這裡進行任何額外的操作
@@ -338,6 +321,52 @@ order by td.Dyelot, Len(td.Roll), td.Roll
             frm.MdiParent = this.MdiParent;
             frm.Show();
             return true;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
+            {
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
+            }
+            else
+            {
+                this.BindComboTypeSticker();
+            }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }
