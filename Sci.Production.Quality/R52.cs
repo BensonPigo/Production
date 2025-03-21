@@ -119,15 +119,15 @@ select
 [TransferDate] = BundleMDScan.AddDate,
 [Result] = BundleMDScan.Result,
 [Operator ID#] = BundleMDScan.OperatorID,
-[Operator Name] = ManufacturingExecution.dbo.Pass1.Name
+[Operator Name] = pass1.Name
 into #tmp 
 from BundleMDScan
-inner join Bundle_Detail on BundleMDScan.BundleNo = Bundle_Detail.BundleNo
-inner join Bundle on Bundle_Detail.ID = Bundle.ID
-inner join Bundle_Detail_Order on Bundle_Detail_Order.BundleNo = BundleMDScan.BundleNo
+inner join Bundle_Detail WITH (NOLOCK) on BundleMDScan.BundleNo = Bundle_Detail.BundleNo
+inner join Bundle WITH (NOLOCK) on Bundle_Detail.ID = Bundle.ID
+inner join Bundle_Detail_Order WITH (NOLOCK) on Bundle_Detail_Order.BundleNo = BundleMDScan.BundleNo
 inner join Orders WITH (NOLOCK) on Bundle_Detail_Order.OrderId = Orders.ID
-inner join WorkOrder on WorkOrder.id = Bundle.POID and WorkOrder.CutRef = Bundle.CutRef
-left join ManufacturingExecution.dbo.Pass1 on BundleMDScan.OperatorId = ManufacturingExecution.dbo.Pass1.ID
+inner join WorkOrder WITH (NOLOCK) on WorkOrder.id = Bundle.POID and WorkOrder.CutRef = Bundle.CutRef
+left join [ExtendServer].ManufacturingExecution.dbo.Pass1 pass1 on BundleMDScan.OperatorId = pass1.ID
 where 1 = 1
 ");
 
