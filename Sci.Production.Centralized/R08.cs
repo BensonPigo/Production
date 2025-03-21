@@ -479,7 +479,7 @@ select b.ID
 	,WorkHour = SUM(b.WorkHour)
 	,InlineQty = SUM(b.InlineQty)
 	,QAQty = SUM(b.QAQty)
-	,CumulateSimilar = SUM(b.CumulateSimilar)
+	,b.CumulateSimilar
 INTO #SewingOutput_Detail
 from #SewingOutput a
 inner join SewingOutput_Detail b WITH (NOLOCK) on a.ID = b.ID
@@ -490,7 +490,7 @@ inner join #OrderInfo p on p.StyleUkey=  s.Ukey
 where 1=1
 {detailQuery}
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
-	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category
+	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category,b.CumulateSimilar
 
 
 ---- 2. 根據Sewing的群組條件，挑出可以拿來篩選Line Mapping的欄位
