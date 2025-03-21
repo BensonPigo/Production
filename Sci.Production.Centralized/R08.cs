@@ -52,15 +52,30 @@ namespace Sci.Production.Centralized
                     return string.Empty;
                 }
 
-                // 透過反射取得屬性
-                var property = typeof(OrderCategory).GetProperty(propertyName, BindingFlags.Public | BindingFlags.Static);
-                if (property == null)
+                // 用 '+' 分隔出多個屬性名稱
+                var propertyNames = propertyName.Split(new char[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+
+                // 用來存放各屬性的對應值
+                var values = new List<string>();
+
+                foreach (var name in propertyNames)
                 {
-                    throw new ArgumentException($"Property '{propertyName}' does not exist in OrderCategory.");
+                    // 去除前後空白
+                    var trimmedName = name.Trim();
+
+                    // 利用反射找出對應的靜態屬性
+                    var property = typeof(OrderCategory).GetProperty(trimmedName, BindingFlags.Public | BindingFlags.Static);
+                    if (property == null)
+                    {
+                        throw new ArgumentException($"Property '{trimmedName}' does not exist in OrderCategory.");
+                    }
+
+                    // 取得屬性的值，轉成字串後放進集合
+                    values.Add(property.GetValue(null)?.ToString());
                 }
 
-                // 獲取屬性的值
-                return property.GetValue(null)?.ToString();
+                // 依需求組合字串，這裡示範回傳格式：'B','S'
+                return $"'{string.Join("','", values)}'";
             }
         }
 
@@ -404,9 +419,9 @@ and (convert(date,ss.Offline) <= '{this.dtSewingDate.Value2.Value.ToString("yyyy
 
             if (!MyUtility.Check.Empty(this.category))
             {
-                detailQuery += $@"and o.Category = '{this.category}'" + Environment.NewLine;
-                spQuery += $@"and Category = '{this.category}'" + Environment.NewLine;
-                spQuery2 += $@"and o.Category = '{this.category}'" + Environment.NewLine;
+                detailQuery += $@"and o.Category IN ({this.category}) " + Environment.NewLine;
+                spQuery += $@"and Category IN ({this.category}) " + Environment.NewLine;
+                spQuery2 += $@"and o.Category IN ({this.category}) " + Environment.NewLine;
             }
             #endregion
 
