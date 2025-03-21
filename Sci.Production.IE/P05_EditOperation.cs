@@ -770,7 +770,10 @@ namespace Sci.Production.IE
 
         private void MergeSameTimeStudy_DetailUkeyByNo()
         {
-            this.backgroundWorker.RunWorkerAsync();
+            if (!this.backgroundWorker.IsBusy)
+            {
+                this.backgroundWorker.RunWorkerAsync();
+            }
         }
 
         private void BackgroundWorker_DoWork(object sender, DoWorkEventArgs e)
