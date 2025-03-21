@@ -90,7 +90,7 @@ namespace Sci.Production.Centralized
             this.comboM.SetDefalutIndex();
             this.comboFty.SetDefalutIndex(string.Empty);
 
-            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Local Order,Garment,Mockup,Bulk+Sample,Bulk+Sample+Garment");
+            MyUtility.Tool.SetupCombox(this.comboCategory, 1, 1, ",Bulk,Sample,Garment,Material,Sample,SMTL,Bulk+Sample,Bulk+Sample+Garment");
             this.comboCategory.SelectedIndex = 0;
             this.InitAllRegionData();
         }
