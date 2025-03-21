@@ -23,7 +23,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>

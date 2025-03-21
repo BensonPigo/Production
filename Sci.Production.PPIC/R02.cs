@@ -25,12 +25,10 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable mDivision;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            this.comboM.Text = Env.User.Keyword;
+            this.comboM.SetDefalutIndex(true);
             MyUtility.Tool.SetupCombox(this.comboPrintType, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
             this.comboPrintType.SelectedIndex = 0;
+            this.comboM.Enabled = false;
         }
 
         /// <inheritdoc/>

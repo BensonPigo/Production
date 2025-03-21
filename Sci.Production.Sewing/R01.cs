@@ -33,10 +33,9 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            DBProxy.Current.Select(null, "select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup", out DataTable factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+
             this.dateDate.Value = DateTime.Today.AddDays(-1);
-            this.comboFactory.Text = Env.User.Factory;
+            this.comboFactory.SetDataSource();
             this.comboSewingTeam1.SetDataSource();
         }
 

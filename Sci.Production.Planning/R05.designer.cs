@@ -47,11 +47,11 @@
             this.radioMonthly = new Sci.Win.UI.RadioButton();
             this.radioSemiMonthly = new Sci.Win.UI.RadioButton();
             this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
-            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.chkCMPLockDate = new Sci.Win.UI.CheckBox();
             this.dateOutputDate = new Sci.Win.UI.DateBox();
             this.label8 = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).BeginInit();
             this.SuspendLayout();
             // 
@@ -288,22 +288,8 @@
             this.comboMDivision.Location = new System.Drawing.Point(123, 111);
             this.comboMDivision.Name = "comboMDivision";
             this.comboMDivision.OldText = "";
-            this.comboMDivision.Size = new System.Drawing.Size(80, 26);
+            this.comboMDivision.Size = new System.Drawing.Size(80, 24);
             this.comboMDivision.TabIndex = 117;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.FilteMDivision = false;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IssupportJunk = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(123, 173);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 26);
-            this.comboFactory.TabIndex = 118;
             // 
             // chkIncludeCancelOrder
             // 
@@ -313,7 +299,7 @@
             this.chkIncludeCancelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkIncludeCancelOrder.Location = new System.Drawing.Point(9, 399);
             this.chkIncludeCancelOrder.Name = "chkIncludeCancelOrder";
-            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(162, 22);
+            this.chkIncludeCancelOrder.Size = new System.Drawing.Size(157, 21);
             this.chkIncludeCancelOrder.TabIndex = 119;
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
@@ -324,7 +310,7 @@
             this.chkCMPLockDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.chkCMPLockDate.Location = new System.Drawing.Point(9, 345);
             this.chkCMPLockDate.Name = "chkCMPLockDate";
-            this.chkCMPLockDate.Size = new System.Drawing.Size(210, 22);
+            this.chkCMPLockDate.Size = new System.Drawing.Size(197, 21);
             this.chkCMPLockDate.TabIndex = 120;
             this.chkCMPLockDate.Text = "By CMP Monthly Lock Date";
             this.chkCMPLockDate.UseVisualStyleBackColor = true;
@@ -333,7 +319,7 @@
             // 
             this.dateOutputDate.Location = new System.Drawing.Point(123, 314);
             this.dateOutputDate.Name = "dateOutputDate";
-            this.dateOutputDate.Size = new System.Drawing.Size(130, 24);
+            this.dateOutputDate.Size = new System.Drawing.Size(130, 23);
             this.dateOutputDate.TabIndex = 125;
             // 
             // label8
@@ -344,16 +330,30 @@
             this.label8.TabIndex = 124;
             this.label8.Text = "Output Date";
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(124, 171);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(79, 24);
+            this.comboFactory.TabIndex = 564;
+            // 
             // R05
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(591, 458);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.dateOutputDate);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.chkCMPLockDate);
             this.Controls.Add(this.chkIncludeCancelOrder);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboMDivision);
             this.Controls.Add(this.radioSemiMonthly);
             this.Controls.Add(this.radioMonthly);
@@ -399,11 +399,11 @@
             this.Controls.SetChildIndex(this.radioMonthly, 0);
             this.Controls.SetChildIndex(this.radioSemiMonthly, 0);
             this.Controls.SetChildIndex(this.comboMDivision, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkCMPLockDate, 0);
             this.Controls.SetChildIndex(this.label8, 0);
             this.Controls.SetChildIndex(this.dateOutputDate, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numYear)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -430,10 +430,10 @@
         private Win.UI.RadioButton radioMonthly;
         private Win.UI.RadioButton radioSemiMonthly;
         private Class.ComboMDivision comboMDivision;
-        private Class.ComboFactory comboFactory;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkCMPLockDate;
         private Win.UI.DateBox dateOutputDate;
         private Win.UI.Label label8;
+        private Class.ComboFactory comboFactory;
     }
 }

@@ -28,6 +28,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>

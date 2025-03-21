@@ -59,19 +59,19 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(420, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             this.print.TabIndex = 4;
             this.print.TabStop = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(420, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             this.toexcel.TabIndex = 5;
             this.toexcel.TabStop = false;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(420, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             this.close.TabIndex = 6;
             this.close.TabStop = false;
             // 
@@ -319,6 +319,7 @@
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
@@ -332,6 +333,7 @@
             // 
             // comboInvStatus
             // 
+            this.comboInvStatus.AddAllItem = false;
             this.comboInvStatus.BackColor = System.Drawing.Color.White;
             this.comboInvStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboInvStatus.FormattingEnabled = true;
@@ -375,11 +377,16 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(120, 202);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 8;
             // 
@@ -388,13 +395,14 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(120, 170);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 7;
             // 
             // R14
             // 
-            this.ClientSize = new System.Drawing.Size(512, 417);
+            this.ClientSize = new System.Drawing.Size(526, 432);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
@@ -427,6 +435,9 @@
             this.Name = "R14";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R14. Adidas Specific Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);

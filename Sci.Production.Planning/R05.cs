@@ -34,7 +34,8 @@ namespace Sci.Production.Planning
             this.comboFtyZone.IsIncludeSampleRoom = false;
             this.comboFtyZone.SetDataSource(Sci.Env.User.Keyword);
             this.comboMDivision.SetDefalutIndex(true);
-            this.comboFactory.SetDataSource();
+            this.comboFactory.SetDataSource(this.comboMDivision.Text);
+            this.comboMDivision.Enabled = false;
         }
 
         private int Year;

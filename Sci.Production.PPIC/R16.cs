@@ -32,15 +32,13 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
-
-            this.txtMdivision.Text = Env.User.Keyword;
-            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

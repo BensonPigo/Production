@@ -46,7 +46,7 @@ where   MDivisionID = '{0}'
                 this.dateUpdate.Value2 = Convert.ToDateTime(drOC["UpdateDate"]);
             }
 
-            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtMdivision.Enabled = false;
             this.txtfactory.Text = Env.User.Factory;
             #endregion
         }

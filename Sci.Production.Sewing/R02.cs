@@ -57,23 +57,16 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
-            DataTable factory, mDivision;
-            DBProxy.Current.Select(
-                null,
-                string.Format(@"select '' as FtyGroup 
-union all
-select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
-                out factory);
 
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line,By Sewing Line By Team");
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
             this.comboReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
             this.comboOrderBy.SelectedIndex = 0;
-            this.comboM.Text = Env.User.Keyword;
+
         }
 
         // Date
