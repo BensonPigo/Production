@@ -78,7 +78,7 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false, mutiSelect: true);
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false, mutiSelect: true);
         }
 
         private void Detailgrid_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
