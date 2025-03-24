@@ -148,37 +148,73 @@ BEGIN
 									);
 
 	--填Category欄位值
-	update ChgOver set Category = c.Category
-	from (
-		select
+	;WITH CoData AS (
+		SELECT 
+			co.ID,
+			co.FactoryID,
+			co.SewingLineID,
+			co.StyleID,
+			co.ComboType,
+			co.Inline,
+			ProductionType = CASE 
+				WHEN s.StyleUnit = 'PCS'
+					THEN (SELECT r.Name 
+						  FROM Reason r 
+						  WHERE r.ReasonTypeID = 'Style_Apparel_Type' 
+							AND r.ID = s.ApparelType)
+				ELSE (SELECT r.Name 
+					  FROM Style_Location sl 
+					  INNER JOIN Reason r ON r.ID = sl.ApparelType 
+					  WHERE r.ReasonTypeID = 'Style_Apparel_Type' 
+						AND sl.StyleUkey = s.Ukey 
+						AND sl.Location = co.ComboType)
+			 END,
+			 FabricType = CASE 
+				WHEN s.StyleUnit = 'PCS'
+					THEN s.FabricType
+				ELSE (SELECT sl.FabricType 
+					  FROM Style_Location sl 
+					  WHERE sl.StyleUkey = s.Ukey 
+						AND sl.Location = co.ComboType)
+			 END
+		FROM ChgOver co
+		INNER JOIN orders o ON o.id = co.OrderID
+		INNER JOIN Style s ON s.Ukey = o.StyleUkey
+	),
+	LagData AS (
+		SELECT 
 			ID,
-			Category = iif(b.LastProdType <> '' and b.ProductionType <> '', 
-				(
-				case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
-					when b.ProductionType <> b.LastProdType and b.FabricType = b.LastFabType then 'B'
-					when b.ProductionType = b.LastProdType and b.FabricType <> b.LastFabType then 'C'
-					when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
-					else ''
-					end),'') 
-		from (
-			select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
-			LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
-			from (
-				select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
-				ProductionType = case when s.StyleUnit = 'PCS'
-									  then (select r.Name from Reason r where ReasonTypeID = 'Style_Apparel_Type' and r.ID = s.ApparelType)
-									  else (select r.Name from Style_Location sl inner join Reason r on r.ID = sl.ApparelType where ReasonTypeID = 'Style_Apparel_Type' and sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
-									  end,
-				FabricType = case when s.StyleUnit = 'PCS' then s.FabricType
-									  else (select sl.FabricType from Style_Location sl where sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
-									  end
-			from ChgOver co
-			inner join orders o on o.id = co.OrderID
-			inner join Style s on s.Ukey = o.StyleUkey
-			) a
-		) b
-	) c
-	where c.ID = ChgOver.ID
+			FactoryID,
+			SewingLineID,
+			Inline,
+			ProductionType,
+			FabricType,
+			LAG(ProductionType, 1, '') OVER (PARTITION BY FactoryID, SewingLineID ORDER BY Inline, ID) AS LastProdType,
+			LAG(FabricType, 1, '') OVER (PARTITION BY FactoryID, SewingLineID ORDER BY Inline, ID) AS LastFabType
+		FROM CoData
+	),
+	CategoryCalc AS (
+		SELECT
+			ID,
+			Category = CASE 
+				-- 若沒有上一筆資料，則直接更新為 'A'
+				WHEN LastProdType = '' THEN 'A'
+				ELSE 
+					CASE 
+						WHEN ProductionType <> LastProdType AND FabricType <> LastFabType THEN 'A'
+						WHEN ProductionType <> LastProdType AND FabricType = LastFabType THEN 'B'
+						WHEN ProductionType = LastProdType AND FabricType <> LastFabType THEN 'C'
+						WHEN ProductionType = LastProdType AND FabricType = LastFabType THEN 'D'
+						ELSE ''
+					END
+			END
+		FROM LagData
+	)
+	UPDATE co
+	SET co.Category = cc.Category
+	FROM ChgOver co
+	INNER JOIN CategoryCalc cc ON co.ID = cc.ID;
+
 
 	----------------ChgOver_Check-------------------------------
 
