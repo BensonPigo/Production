@@ -240,7 +240,7 @@
             // comboFtyZone
             // 
             this.comboFtyZone.BackColor = System.Drawing.Color.White;
-            this.comboFtyZone.FilteMDivision = false;
+            this.comboFtyZone.FilteMDivision = true;
             this.comboFtyZone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboFtyZone.FormattingEnabled = true;
             this.comboFtyZone.IsIncludeSampleRoom = false;
