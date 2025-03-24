@@ -117,9 +117,12 @@ select
 [Qty] = Bundle_Detail.Qty,
 [Sub-process] = BundleMDScan.SubprocessID,
 [TransferDate] = BundleMDScan.AddDate,
-[Result] = BundleMDScan.Result,
-[Operator ID#] = BundleMDScan.OperatorID,
-[Operator Name] = pass1.Name
+[Result] = CASE BundleMDScan.Result
+              WHEN 1 THEN 'Pass'
+              WHEN 0 THEN 'Fail'
+           END,
+[MD Operator ID#] = BundleMDScan.OperatorID,
+[MD Operator Name] = pass1.Name
 into #tmp 
 from BundleMDScan
 inner join Bundle_Detail WITH (NOLOCK) on BundleMDScan.BundleNo = Bundle_Detail.BundleNo
@@ -215,7 +218,7 @@ where 1 = 1
 select distinct [Bundleno],
 	[Spno] = Spno.val,
 	[MasterSP],[M],[Factory],[Style],[Season],[Brand],[Cut Ref#],[Comb],[Cut#],[Article],
-	[Color],[Group],[Size],[Qty],[Sub-process],[TransferDate],[Result],[Operator ID#],[Operator Name]
+	[Color],[Group],[Size],[Qty],[Sub-process],[TransferDate],[Result],[MD Operator ID#],[MD Operator Name]
 from #tmp tmp
 outer apply (
 	select val = case when (select count(1) from Bundle_Detail_Order WITH (NOLOCK) where BundleNo = tmp.[Bundleno]) = 1 
