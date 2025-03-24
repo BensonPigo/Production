@@ -176,6 +176,7 @@ namespace Sci.Production.Warehouse
 	, [ColorID]=Color.Value 
 	,f.WeaveTypeID
 	,o.BrandID
+    ,[Supplier] = Supp.ID + '-' + Supp.NameEN
 	,IIF((psd.ID = lag(psd.ID,1,'')over (order by psd.ID,psd.seq1,psd.seq2)  
 			AND (psd.seq1 = lag(psd.seq1,1,'')over (order by psd.ID,psd.seq1,psd.seq2))  
 			AND(psd.seq2 = lag(psd.seq2,1,'')over (order by psd.ID,psd.seq1,psd.seq2))) 
@@ -245,6 +246,8 @@ namespace Sci.Production.Warehouse
 from dbo.Receiving_Detail R WITH (NOLOCK) 
 left join Receiving WITH (NOLOCK) on Receiving.id = R.id
 LEFT join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = R.POID and  psd.SEQ1 = R.Seq1 and psd.seq2 = R.Seq2 
+inner join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
+inner join Supp on Supp.ID = ps.SuppID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsA WITH (NOLOCK) on psdsA.ID = psd.id and psdsA.seq1 = psd.seq1 and psdsA.seq2 = psd.seq2 and psdsA.SpecColumnID = 'Article'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
@@ -375,15 +378,16 @@ order by R.EncodeSeq, SortCmbPOID, SortCmbSeq1, SortCmbSeq2, SortCmbRoll, SortCm
                     objSheets.Cells[nRow, 10] = dr["Size"].ToString();
                     objSheets.Cells[nRow, 11] = dr["WeaveTypeID"].ToString();
                     objSheets.Cells[nRow, 12] = dr["BrandID"].ToString();
-                    objSheets.Cells[nRow, 13] = dr["Desc"].ToString();
-                    objSheets.Cells[nRow, 14] = dr["Weight"].ToString();
-                    objSheets.Cells[nRow, 15] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 16] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 17] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
-                    objSheets.Cells[nRow, 18] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
+                    objSheets.Cells[nRow, 13] = dr["Supplier"].ToString();
+                    objSheets.Cells[nRow, 14] = dr["Desc"].ToString();
+                    objSheets.Cells[nRow, 15] = dr["Weight"].ToString();
+                    objSheets.Cells[nRow, 16] = dr["ShipQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 17] = dr["ActualQty"].ToString() + " " + dr["POUnit"].ToString();
+                    objSheets.Cells[nRow, 18] = dr["StockQty"].ToString() + " " + dr["StockUnit"].ToString();
+                    objSheets.Cells[nRow, 19] = MyUtility.Check.Empty(dr["TotalReceivingQty"]) ?
                         string.Empty : dr["TotalReceivingQty"].ToString() + " " + dr["POUnit"].ToString();
-                    objSheets.Cells[nRow, 19] = dr["QtyVaniance"].ToString();
-                    objSheets.Cells[nRow, 20] = dr["Remark"].ToString();
+                    objSheets.Cells[nRow, 20] = dr["QtyVaniance"].ToString();
+                    objSheets.Cells[nRow, 21] = dr["Remark"].ToString();
                     nRow++;
                 }
 
