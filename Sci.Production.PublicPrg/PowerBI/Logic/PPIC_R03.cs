@@ -945,8 +945,8 @@ GROUP BY s.OrderID
     ,HeatSealScanTime    = pld.HeatSealScanTime
     ,HeatSealStatus      = pld.HeatSealStatus
     ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
-    ,JokerTag = IIF(o.JokerTag = 1, 'Y', 'N')
-    ,HeatSeal = IIF(o.HeatSeal = 1, 'Y', 'N')
+    ,o.JokerTag
+    ,o.HeatSeal
 ";
             }
             else

@@ -181,8 +181,8 @@
     CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED ([Ukey] DESC), 
     [Original CustPO] VARCHAR(30) NOT NULL DEFAULT (''), 
     [Line Aggregator] VARCHAR(30) NOT NULL DEFAULT (''), 
-    [JokerTag] VARCHAR NOT NULL DEFAULT (''), 
-    [HeatSeal] VARCHAR NOT NULL DEFAULT ('')
+    [JokerTag] BIT NOT NULL DEFAULT ((0)), 
+    [HeatSeal] BIT NOT NULL DEFAULT ((0))
 );
 
 

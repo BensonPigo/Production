@@ -268,8 +268,8 @@ update p
 		, p.[Shortage] = ISNULL(t.[Shortage],0)
 		, p.[Original CustPO] = ISNULL(t.[Original CustPO],'')
 		, p.[Line Aggregator] = ISNULL(t.[Line Aggregator],'')
-		, p.[JokerTag] = t.[JokerTag]
-		, p.[HeatSeal] = t.[HeatSeal]
+		, p.[JokerTag] = ISNULL(t.[JokerTag], 0)
+		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -476,8 +476,8 @@ select ISNULL(t.[M], '')
 	, ISNULL([Shortage],0)
 	, ISNULL([Original CustPO],'')
 	, ISNULL([Line Aggregator],'')
-	, ISNULL([JokerTag], '')
-	, ISNULL([HeatSeal], '')
+	, ISNULL([JokerTag], 0)
+	, ISNULL([HeatSeal], 0)
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
