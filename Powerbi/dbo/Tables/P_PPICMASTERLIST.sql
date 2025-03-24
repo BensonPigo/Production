@@ -180,7 +180,9 @@
     [Shortage]                     NUMERIC(6,0)    CONSTRAINT [DF_P_PPICMasterList_Shortage] DEFAULT 0 NOT NULL
     CONSTRAINT [PK_P_PPICMASTERLIST] PRIMARY KEY CLUSTERED ([Ukey] DESC), 
     [Original CustPO] VARCHAR(30) NOT NULL DEFAULT (''), 
-    [Line Aggregator] VARCHAR(30) NOT NULL DEFAULT ('')
+    [Line Aggregator] VARCHAR(30) NOT NULL DEFAULT (''), 
+    [JokerTag] VARCHAR NOT NULL DEFAULT (''), 
+    [HeatSeal] VARCHAR NOT NULL DEFAULT ('')
 );
 
 
