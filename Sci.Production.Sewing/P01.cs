@@ -4000,6 +4000,10 @@ order by a.OrderId,os.Seq
         {
             string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
             string rftfrommes = $@"
+ALTER TABLE #tmp ALTER COLUMN OrderId VARCHAR(13)
+ALTER TABLE #tmp ALTER COLUMN Article VARCHAR(8)
+ALTER TABLE #tmp ALTER COLUMN ComboType VARCHAR(1)
+
 select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
@@ -4096,10 +4100,11 @@ drop table #tmp,#tmp2
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
             {
+                string columns = "OrderId,Article,ComboType";
                 mesConn.Open();
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(
                     (DataTable)this.detailgridbs.DataSource,
-                    string.Empty,
+                    columns,
                     rftfrommes,
                     out this.rftDT,
                     conn: mesConn);
