@@ -8,10 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace Sci.Production.IE
 {
@@ -84,7 +81,7 @@ namespace Sci.Production.IE
                 this.gridIconEditOperation.Append.Visible = false;
                 this.gridIconEditOperation.Insert.Visible = true;
                 this.gridIconEditOperation.Remove.Visible = false;
-                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage", "UpdDivSewer" });
+                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "No", "Location", "MachineTypeID", "MasterPlusGroup", "OperationDesc", "Annotation", "OriSewer", "SewerDiffPercentageDesc", "DivSewer", "UpdSewerDiffPercentage", "UpdDivSewer" });
             }
             else
             {
@@ -92,7 +89,7 @@ namespace Sci.Production.IE
                 this.gridIconEditOperation.Append.Visible = true;
                 this.gridIconEditOperation.Insert.Visible = false;
                 this.gridIconEditOperation.Remove.Visible = false;
-                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "UpdSewerDiffPercentage" });
+                new GridRowDrag(this.gridEditOperation, this.AfterRowDragDo, excludeDragCols: new List<string>() { "No", "Location", "MachineTypeID", "MasterPlusGroup", "OperationDesc", "Annotation", "SewerDiffPercentageDesc", "UpdSewerDiffPercentage" });
             }
 
             this.IsP05 = isP05;
@@ -291,7 +288,7 @@ namespace Sci.Production.IE
                             this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdSewerDiffPercentage"] = 100 - (intUpd * (icount - 1));
                             if (this.IsP05)
                             {
-                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["OriSewer"]) * (intUpd * (icount-1))) / 100;
+                                this.dtAutomatedLineMapping_DetailCopy.Rows[i]["UpdDivSewer"] = (MyUtility.Convert.GetDecimal(selectedResult["OriSewer"]) * (intUpd * (icount - 1))) / 100;
                             }
                         }
                         else
@@ -461,7 +458,7 @@ namespace Sci.Production.IE
 
             DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
 
-            if (MyUtility.Check.Empty(selectedRow["OperationID"].ToString())|| MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"].ToString()))
+            if (MyUtility.Check.Empty(selectedRow["OperationID"].ToString()) || MyUtility.Check.Empty(selectedRow["TimeStudyDetailUkey"].ToString()))
             {
                 return;
             }
