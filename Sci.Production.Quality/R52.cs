@@ -118,8 +118,8 @@ select
 [Sub-process] = BundleMDScan.SubprocessID,
 [TransferDate] = BundleMDScan.AddDate,
 [Result] = CASE BundleMDScan.Result
-              WHEN 1 THEN 'Pass'
-              WHEN 0 THEN 'Fail'
+              WHEN 1 THEN 'Passed'
+              WHEN 0 THEN 'Failed'
            END,
 [MD Operator ID#] = BundleMDScan.OperatorID,
 [MD Operator Name] = pass1.Name
