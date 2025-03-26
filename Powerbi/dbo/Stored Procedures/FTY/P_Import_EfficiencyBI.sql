@@ -670,7 +670,8 @@ select OrderID from #FinalDt s
 	AND t.Article=s.Article 
 	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
-	AND t.OutputDate = s.OutputDate);
+	AND t.OutputDate = s.OutputDate
+	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
 			
 update b
     set b.TransferDate = getdate()
