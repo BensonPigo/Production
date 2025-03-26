@@ -725,9 +725,34 @@ select a.*,b.Status
 	,b.TaktTime
 	,b.Workhour
 	,b.HighestGSD
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2))
 INTO #FinalBeforeData
 from #BeforeData a
 inner join LineMapping b on a.ID = b.ID　---- P03
+left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
+					and b.SeasonID = t.SeasonID 
+					and b.BrandID = t.BrandID 
+					and b.ComboType = t.ComboType 
+                    and b.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on b.StyleID = th.StyleID 
+					and b.SeasonID = th.SeasonID 
+					and b.BrandID = th.BrandID 
+					and b.ComboType = th.ComboType  
+                    and b.TimeStudyID = th.ID
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tdd 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudyHistory_Detail td WITH (NOLOCK) where th.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tddh
 WHERE a.SourceTable='IE P03'
 UNION 
 select a.*,b.Status
@@ -738,6 +763,7 @@ select a.*,b.Status
 	,TaktTime = 0
 	,b.Workhour
 	,HighestGSD = b.HighestGSDTime
+    ,[Std. SMV] = Cast(NULL as decimal(10,2))
 from #BeforeData a
 inner join AutomatedLineMapping b on a.ID = b.ID　---- P05
 WHERE a.SourceTable='IE P05'
@@ -748,20 +774,10 @@ select a.*,b.Status
 	,b.CurrentOperators
 	,b.HighestCycle
 	,b.HighestGSD
-    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2))
     ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal(10,2))
 INTO #FinalAfterData 
 from #AfterData a
 inner join LineMapping b on a.ID = b.ID ---- P03
-left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
-					and b.SeasonID = t.SeasonID 
-					and b.BrandID = t.BrandID 
-					and b.ComboType = t.ComboType 
-                    and b.TimeStudyID = t.ID
-outer apply(
-	select StdSMV =  SUM(td.StdSMV)
-	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
-)tdd 
 WHERE a.SourceTable='IE P03'
 UNION ALL
 select a.*,b.Status
@@ -770,19 +786,10 @@ select a.*,b.Status
 	,CurrentOperators = b.SewerManpower
 	,HighestCycle = b.HighestCycleTime
 	,HighestGSD = b.HighestGSDTime
-    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2))
     ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
 from #AfterData a
 inner join LineMappingBalancing b on a.ID = b.ID ---- P06
-left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
-					and b.SeasonID = t.SeasonID 
-					and b.BrandID = t.BrandID 
-					and b.ComboType = t.ComboType 
-					and b.TimeStudyID = t.ID
-outer apply(
-	select StdSMV =  SUM(td.StdSMV)
-	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
-)tdd 
+
 WHERE a.SourceTable='IE P06'
 
 
@@ -818,7 +825,7 @@ select
 	,[Inline Category] = CONCAT(a.SewingReasonIDForTypeIC, '-' + sr.Description) 
 	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
 	------------------------------------------------After ------------------------------------------------
-    ,[Std. SMV] =  AfterData.[Std. SMV]
+    ,[Std. SMV] = ISNULL(BeforeDataP03.[Std. SMV], BeforeDataP05.[Std. SMV])
 	,[Phase after inline] = AfterData.Phase
 	,[Version after inline] = AfterData.Version
 	,[Optrs after inline] = AfterData.CurrentOperators

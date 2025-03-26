@@ -1580,7 +1580,7 @@ select distinct
                     ,0
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ))
                 ,0),
-    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2)),
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
     [Ori. Total GSD Time] = Cast(lm.OriTotalGSD as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSD * 1.0,
 	[Total Cycle Time] = lm.TotalCycle * 1.0,
@@ -1669,6 +1669,11 @@ left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID
 					and lm.BrandID = t.BrandID 
 					and lm.ComboType = t.ComboType  
                     and lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
+					and lm.SeasonID = th.SeasonID 
+					and lm.BrandID = th.BrandID 
+					and lm.ComboType = th.ComboType  
+                    and lm.TimeStudyID = th.ID
 outer apply(
 	select top 1 c.Target
 	from factory f
@@ -1679,7 +1684,17 @@ outer apply(
 outer apply(
 	select StdSMV =  SUM(td.StdSMV)
 	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
 )tdd 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudyHistory_Detail td WITH (NOLOCK) where th.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tddh
 where 1 = 1
 ");
 
@@ -1818,7 +1833,7 @@ select distinct
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalGSDTime = 0,0 , ROUND( ( 3600.0 * lm.SewerManpower ) / lm.TotalGSDTime, 0)  ) as int) * lm.WorkHour ,0) as int ) )
                 ,2),
 
-    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2)),
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
     [Ori. Total GSD Time] =  Cast(NULL as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = Cast( NULL as decimal),
@@ -1875,6 +1890,11 @@ left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID
 					and lm.BrandID = t.BrandID 
 					and lm.ComboType = t.ComboType 
 					and lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
+					and lm.SeasonID = th.SeasonID 
+					and lm.BrandID = th.BrandID 
+					and lm.ComboType = th.ComboType  
+                    and lm.TimeStudyID = th.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason
@@ -1886,7 +1906,17 @@ outer apply(
 outer apply(
 	select StdSMV =  SUM(td.StdSMV)
 	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
 )tdd 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudyHistory_Detail td WITH (NOLOCK) where th.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tddh
 where 1 = 1
 ");
 
@@ -2024,7 +2054,7 @@ select distinct
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycleTime=0 ,0  ,ROUND( (3600.0 * lm.SewerManpower) / lm.TotalCycleTime, 0)) as int) * lm.WorkHour ,0) as int ) )
                 ,2),
 
-    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,0) as decimal(10,2)),
+    [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
     [Ori. Total GSD Time] =  Cast(lm.OriTotalGSDTime as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
@@ -2083,6 +2113,11 @@ left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID
 					and lm.BrandID = t.BrandID 
 					and lm.ComboType = t.ComboType 
 					and lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
+					and lm.SeasonID = th.SeasonID 
+					and lm.BrandID = th.BrandID 
+					and lm.ComboType = th.ComboType  
+                    and lm.TimeStudyID = th.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason
@@ -2101,7 +2136,17 @@ outer apply(
 outer apply(
 	select StdSMV =  SUM(td.StdSMV)
 	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
 )tdd 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudyHistory_Detail td WITH (NOLOCK) where th.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tddh
 where 1 = 1
 ");
 
