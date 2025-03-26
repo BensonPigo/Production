@@ -410,17 +410,16 @@ namespace Sci.Production.IE
                 caculateRow["UpdSewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["UpdDivSewer"]) / MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * 100, 0);
             }
 
-            // 如果有同TimeStudyDetailUkey的資料剛好兩筆，會進行互補維護
+            // 如果有同TimeStudyDetailUkey(同工段)的資料剛好兩筆，會進行UpdDivSewer跟UpdSewerDiffPercentage的互補維護
             var sameTimeStudyDetailUkeyData = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                           .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(caculateRow["TimeStudyDetailUkey"]));
-
-            DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
-            if (sameTimeStudyDetailUkeyData.Count() == 2) // 判斷資料量須符合兩筆
+            if (sameTimeStudyDetailUkeyData.Count() == 2) // 判斷是否兩筆
             {
-                // 不同No但同OperationID (不同號碼但同工段)
-                var anotherRow = sameTimeStudyDetailUkeyData
-                    .Where(s => MyUtility.Convert.GetString(s["No"]) != MyUtility.Convert.GetString(selectedRow["No"])
-                    && MyUtility.Convert.GetString(s["OperationID"]) == MyUtility.Convert.GetString(selectedRow["OperationID"]));
+                // 取得當前選擇的列
+                DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
+
+                // 取得跟當前選擇列不同No(不同號碼、不同站台)的列
+                var anotherRow = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Convert.GetString(s["No"]) != MyUtility.Convert.GetString(selectedRow["No"]));
                 DataRow targetFixRow = anotherRow.First();
                 decimal accuUpdDivSewer = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * MyUtility.Convert.GetDecimal(caculateRow["UpdSewerDiffPercentage"]) / 100, 4);
                 decimal accuUpdDivSewerPercentage = MyUtility.Convert.GetInt(selectedRow["UpdSewerDiffPercentage"]);
