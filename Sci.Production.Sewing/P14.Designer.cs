@@ -73,6 +73,7 @@
             // chkNyDCP
             // 
             this.chkNyDCP.AutoSize = true;
+            this.chkNyDCP.ForeColor = System.Drawing.Color.Red;
             this.chkNyDCP.Location = new System.Drawing.Point(10, 72);
             this.chkNyDCP.Name = "chkNyDCP";
             this.chkNyDCP.Size = new System.Drawing.Size(187, 21);
