@@ -90,7 +90,7 @@ BEGIN
 	INNER JOIN #MtlList m ON  m.POID = f.POID AND m.SEQ1 = f.SEQ1 AND m.SEQ2 = f.SEQ2
 	WHERE NOT EXISTS(
 		select * from #TransactionGroupByRollDyelot t
-		where t.POID=f.POID and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll and t.Dyelot = f.Dyelot  
+		where t.POID=f.POID and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll and t.Dyelot = f.Dyelot 
 	)
 
     /*
@@ -128,6 +128,24 @@ BEGIN
         ON t.POID = MDivisionPoDetail.POID
         AND t.SEQ1 = MDivisionPoDetail.SEQ1
         AND t.SEQ2 = MDivisionPoDetail.SEQ2
+    /*
+	    7. 該物料完全沒有交易紀錄則歸零
+    */
+    UPDATE md
+    SET InQty = 0
+       ,OutQty = 0
+       ,AdjustQty = 0
+       ,LInvQty = 0
+       ,LObQty = 0
+       ,ReturnQty = 0
+    FROM MDivisionPoDetail md WITH (NOLOCK)
+	INNER JOIN #MtlList m ON  m.POID = md.POID AND m.SEQ1 = md.SEQ1 AND m.SEQ2 = md.SEQ2
+	WHERE NOT EXISTS(
+		SELECT 1 FROM #TransactionGroupBySeq t
+			WHERE t.POID = md.POID
+			AND t.SEQ1 = md.SEQ1
+			AND t.SEQ2 = md.SEQ2
+	)
 
     DROP TABLE #MtlList, #TransactionGroupByRollDyelot, #TransactionGroupBySeq
 
