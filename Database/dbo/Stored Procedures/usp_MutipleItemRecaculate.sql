@@ -82,9 +82,10 @@ BEGIN
     ;
 	
     /*
-	    4. 若沒有交易紀錄，則清空庫存資料
+	    4. 若沒有任何倉的交易紀錄，則清空FtyInventory庫存資料
     */
-	DELETE f
+	UPDATE f
+	SET InQty = 0, OutQty = 0 , AdjustQty = 0, ReturnQty = 0
 	FROM FtyInventory f
 	INNER JOIN #MtlList m ON  m.POID = f.POID AND m.SEQ1 = f.SEQ1 AND m.SEQ2 = f.SEQ2
 	WHERE NOT EXISTS(
