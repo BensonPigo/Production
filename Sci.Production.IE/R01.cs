@@ -1581,6 +1581,9 @@ select distinct
                     ,3600 * lm.Workhour / CAST(  ROUND( CAST( IIF(lm.TotalCycle=0, 0, ROUND( (3600.0 * lm.CurrentOperators) / lm.TotalCycle, 0) ) as int) * lm.Workhour ,0) as int ))
                 ,0),
     [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
+    [GSD Style]= ISNULL(t.StyleID,th.StyleID),
+    [GSD Season]= ISNULL(t.SeasonID,th.SeasonID),
+    [GSD BrandID]= ISNULL(t.BrandID,th.BrandID),
     [Ori. Total GSD Time] = Cast(lm.OriTotalGSD as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSD * 1.0,
 	[Total Cycle Time] = lm.TotalCycle * 1.0,
@@ -1664,16 +1667,8 @@ select distinct
 from #LineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
-left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
-					and lm.SeasonID = t.SeasonID 
-					and lm.BrandID = t.BrandID 
-					and lm.ComboType = t.ComboType  
-                    and lm.TimeStudyID = t.ID
-left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
-					and lm.SeasonID = th.SeasonID 
-					and lm.BrandID = th.BrandID 
-					and lm.ComboType = th.ComboType  
-                    and lm.TimeStudyID = th.ID
+left join TimeStudy t WITH (NOLOCK) on lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.TimeStudyID = th.ID
 outer apply(
 	select top 1 c.Target
 	from factory f
@@ -1834,6 +1829,9 @@ select distinct
                 ,2),
 
     [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
+    [GSD Style]= ISNULL(t.StyleID,th.StyleID),
+    [GSD Season]= ISNULL(t.SeasonID,th.SeasonID),
+    [GSD BrandID]= ISNULL(t.BrandID,th.BrandID),
     [Ori. Total GSD Time] =  Cast(NULL as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = Cast( NULL as decimal),
@@ -1885,16 +1883,8 @@ select distinct
 from #AutomatedLineMapping lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
-left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
-					and lm.SeasonID = t.SeasonID 
-					and lm.BrandID = t.BrandID 
-					and lm.ComboType = t.ComboType 
-					and lm.TimeStudyID = t.ID
-left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
-					and lm.SeasonID = th.SeasonID 
-					and lm.BrandID = th.BrandID 
-					and lm.ComboType = th.ComboType  
-                    and lm.TimeStudyID = th.ID
+left join TimeStudy t WITH (NOLOCK) on  lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.TimeStudyID = th.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason
@@ -2055,6 +2045,9 @@ select distinct
                 ,2),
 
     [Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2)),
+    [GSD Style]= ISNULL(t.StyleID,th.StyleID),
+    [GSD Season]= ISNULL(t.SeasonID,th.SeasonID),
+    [GSD BrandID]= ISNULL(t.BrandID,th.BrandID),
     [Ori. Total GSD Time] =  Cast(lm.OriTotalGSDTime as decimal(10,2)),
 	[Total GSD Time] = lm.TotalGSDTime * 1.0,
 	[Total Cycle Time] = lm.TotalCycleTime * 1.0,
@@ -2108,16 +2101,8 @@ select distinct
 from #LineMappingBalancing lm WITH (NOLOCK) 
 inner join Factory f on f.ID = lm.FactoryID
 inner join Style s on s.Ukey = lm.StyleUKey
-left join TimeStudy t WITH (NOLOCK) on lm.StyleID = t.StyleID 
-					and lm.SeasonID = t.SeasonID 
-					and lm.BrandID = t.BrandID 
-					and lm.ComboType = t.ComboType 
-					and lm.TimeStudyID = t.ID
-left join TimeStudyHistory th WITH (NOLOCK) on lm.StyleID = th.StyleID 
-					and lm.SeasonID = th.SeasonID 
-					and lm.BrandID = th.BrandID 
-					and lm.ComboType = th.ComboType  
-                    and lm.TimeStudyID = th.ID
+left join TimeStudy t WITH (NOLOCK) on lm.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on lm.TimeStudyID = th.ID
 outer apply(
 	select Val = STUFF( (
         select DISTINCT ',' + Reason

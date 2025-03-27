@@ -726,19 +726,14 @@ select a.*,b.Status
 	,b.Workhour
 	,b.HighestGSD
     ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2))
+    ,[GSD Style]= ISNULL(t.StyleID,th.StyleID)
+    ,[GSD Season]= ISNULL(t.SeasonID,th.SeasonID)
+    ,[GSD BrandID]= ISNULL(t.BrandID,th.BrandID)
 INTO #FinalBeforeData
 from #BeforeData a
 inner join LineMapping b on a.ID = b.ID　---- P03
-left join TimeStudy t WITH (NOLOCK) on b.StyleID = t.StyleID 
-					and b.SeasonID = t.SeasonID 
-					and b.BrandID = t.BrandID 
-					and b.ComboType = t.ComboType 
-                    and b.TimeStudyID = t.ID
-left join TimeStudyHistory th WITH (NOLOCK) on b.StyleID = th.StyleID 
-					and b.SeasonID = th.SeasonID 
-					and b.BrandID = th.BrandID 
-					and b.ComboType = th.ComboType  
-                    and b.TimeStudyID = th.ID
+left join TimeStudy t WITH (NOLOCK) on b.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on b.TimeStudyID = th.ID
 outer apply(
 	select StdSMV =  SUM(td.StdSMV)
 	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
@@ -764,6 +759,9 @@ select a.*,b.Status
 	,b.Workhour
 	,HighestGSD = b.HighestGSDTime
     ,[Std. SMV] = Cast(NULL as decimal(10,2))
+    ,[GSD Style]= ''
+    ,[GSD Season]= ''
+    ,[GSD BrandID]= ''
 from #BeforeData a
 inner join AutomatedLineMapping b on a.ID = b.ID　---- P05
 WHERE a.SourceTable='IE P05'
@@ -826,6 +824,9 @@ select
 	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
 	------------------------------------------------After ------------------------------------------------
     ,[Std. SMV] = ISNULL(BeforeDataP03.[Std. SMV], BeforeDataP05.[Std. SMV])
+    ,[GSD Style]= ISNULL(BeforeDataP03.[GSD Style],BeforeDataP05.[GSD Style])
+    ,[GSD Season]= ISNULL(BeforeDataP03.[GSD Season],BeforeDataP05.[GSD Season])
+    ,[GSD BrandID]= ISNULL(BeforeDataP03.[GSD BrandID],BeforeDataP05.[GSD BrandID])
 	,[Phase after inline] = AfterData.Phase
 	,[Version after inline] = AfterData.Version
 	,[Optrs after inline] = AfterData.CurrentOperators
