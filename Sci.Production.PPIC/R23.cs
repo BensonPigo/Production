@@ -279,7 +279,7 @@ and @ID in (Select Data From dbo.SplitString(OrderList,','))
                     objSheets.Range[objSheets.Cells[3 + initIdx, 2], objSheets.Cells[4 + initIdx, 2]].Merge();
                     objSheets.Cells[3 + initIdx, 4] = "Cons/PC";
 
-                    if (tmpRef.Count == dtDetail.Count)
+                    if (tmpRef.Count >= 1)
                     {
                         for (int i = 0; i < tmpRef.Count;)
                         {
@@ -324,9 +324,25 @@ and @ID in (Select Data From dbo.SplitString(OrderList,','))
                     initIdx = initIdx + 3;
                 }
 
+                if (groupedByRefNo.Count == 0)
+                {
+                    for (int i = 0; i < dtDetail.Count;)
+                    {
+                        objSheets.Cells[3 + initIdx, i + 5] = 0;
+                        objSheets.Cells[4 + initIdx, i + 5] = 0;
+                        objSheets.Cells[4 + initIdx, i + 5].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Plum);
+                        i++;
+                    }
+
+                    totalC = 4 + initIdx;
+                    objSheets.Cells[4 + initIdx, 5 + dtDetail.Count].Value = string.Format("=SUM({0}{1}:{2}{1})", "E", totalC, chars);
+
+                    initIdx = initIdx + 3;
+                }
+
                 objSheets.Range[$"A:{MyExcelPrg.GetExcelColumnName(columnsCnt)}"].Columns.AutoFit();
 
-                objSheets.Range[objSheets.Cells[2 + stratcol, 3], objSheets.Cells[initIdx + 1 , 3]].Merge();
+                objSheets.Range[objSheets.Cells[2 + stratcol, 3], objSheets.Cells[initIdx + 1, 3]].Merge();
 
                 excelrange = objSheets.get_Range(string.Format("A{1}:{0}{2}", MyExcelPrg.GetExcelColumnName(columnsCnt), stratcol, MyUtility.Convert.GetString(initIdx + 1)), Type.Missing);
                 excelrange.Borders[Excel.XlBordersIndex.xlEdgeTop].Weight = Excel.XlBorderWeight.xlThin;
@@ -338,60 +354,6 @@ and @ID in (Select Data From dbo.SplitString(OrderList,','))
 
                 initIdx = initIdx + 2;
             }
-
-            // objSheets.Range[string.Format("A{0}:C{0}", 1 + initIdx)].Merge();
-            //objSheets.Cells[2 + initIdx, 1] = "Kpi_Fail";
-            //objSheets.Cells[2 + initIdx, 2] = "Brand";
-            //objSheets.Cells[2 + initIdx, 3] = "SMR";
-
-            //rowsCnt = dt.Rows.Count;
-            //columnsCnt = dt.Columns.Count;
-            //objSheets.Cells[3 + initIdx, 1] = dt.Rows[0]["KPIFailed"].ToString();
-            //objSheets.Range[string.Format("A{0}:A{1}", 3 + initIdx, rowsCnt + 2 + initIdx)].Merge();
-            //excelrange = objSheets.GetRanges(string.Format("D{0}:{1}{0}", 1 + initIdx, MyExcelPrg.GetExcelColumnName(columnsCnt + 1)));
-            //excelrange.Merge();
-            //excelrange.HorizontalAlignment = Excel.Constants.xlCenter; // 水平置中對齊
-            //excelrange.VerticalAlignment = Excel.Constants.xlCenter; // 垂直置中對齊
-            //excelrange.WrapText = true; // 自動換列
-            //objSheets.Cells[1 + initIdx, 4] = $"=\"SCI Del-Today {today} checking away from sci del.\"&CHAR(10)&\"({today} checking 距離 SCI 剩下天數)\"";
-            //objSheets.Cells[1 + initIdx, 4].RowHeight = 30;
-
-            //for (int i = 0; i <= columnsCnt - 4; i++)
-            //{
-            //    objSheets.Cells[2 + initIdx, i + 4] = dt.Columns[i + 3].ToString();
-            //    objSheets.Cells[rowsCnt + 3 + initIdx, i + 4] = string.Format("=Sum({0}{1}:{0}{2})", MyExcelPrg.GetExcelColumnName(i + 4), 3 + initIdx, rowsCnt + 2 + initIdx);
-            //}
-
-            //objSheets.Cells[2 + initIdx, columnsCnt + 1] = "Grand Total";
-
-            //object[,] objArray = new object[1, columnsCnt - 1];
-            //for (int i = 0; i <= rowsCnt - 1; i++)
-            //{
-            //    DataRow dr = dt.Rows[i];
-            //    for (int j = 0; j <= columnsCnt - 2; j++)
-            //    {
-            //        objArray[0, j] = dr[j + 1];
-            //    }
-
-            //    objSheets.Range[string.Format("B{0}:{1}{0}", i + 3 + initIdx, MyExcelPrg.GetExcelColumnName(columnsCnt))].Value2 = objArray;
-            //    objSheets.Range[string.Format("{1}{0}", i + 3 + initIdx, MyExcelPrg.GetExcelColumnName(columnsCnt + 1))].Value = string.Format("=Sum(D{0}:{1}{0})", i + 3 + initIdx, MyExcelPrg.GetExcelColumnName(columnsCnt));
-            //}
-
-            //objSheets.Cells[rowsCnt + 3 + initIdx, 1] = "Already failed Total";
-            //objSheets.Range[string.Format("A{0}:C{0}", rowsCnt + 3 + initIdx)].Merge();
-            //objSheets.Cells[rowsCnt + 3 + initIdx, columnsCnt + 1] = string.Format("=Sum(D{0}:{1}{0})", rowsCnt + 3 + initIdx, MyExcelPrg.GetExcelColumnName(columnsCnt));
-            //objSheets.Range["A:C"].Columns.AutoFit();
-            //objSheets.Range[string.Format("{0}:{1}", MyExcelPrg.GetExcelColumnName(columnsCnt + 1), MyExcelPrg.GetExcelColumnName(columnsCnt + 2))].Columns.AutoFit();
-
-            //excelrange = objSheets.get_Range(string.Format("A{1}:{0}{2}", MyExcelPrg.GetExcelColumnName(columnsCnt + 1), 1 + initIdx, MyUtility.Convert.GetString(rowsCnt + 3 + initIdx)), Type.Missing);
-            //excelrange.Borders[Excel.XlBordersIndex.xlEdgeTop].Weight = Excel.XlBorderWeight.xlThin;
-            //excelrange.Borders[Excel.XlBordersIndex.xlEdgeBottom].Weight = Excel.XlBorderWeight.xlThin;
-            //excelrange.Borders[Excel.XlBordersIndex.xlEdgeLeft].Weight = Excel.XlBorderWeight.xlThin;
-            //excelrange.Borders[Excel.XlBordersIndex.xlEdgeRight].Weight = Excel.XlBorderWeight.xlThin;
-            //excelrange.Borders[Excel.XlBordersIndex.xlInsideHorizontal].Weight = Excel.XlBorderWeight.xlThin;
-            //excelrange.Borders[Excel.XlBordersIndex.xlInsideVertical].Weight = Excel.XlBorderWeight.xlThin;
-
-            //objSheets.Range["A:C"].VerticalAlignment = Excel.Constants.xlCenter;
         }
     }
 }
