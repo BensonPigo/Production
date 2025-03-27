@@ -546,6 +546,7 @@ select distinct [KPIGroup] = f.KPICode
     , [HeatSealName] = isnull(HeatSealName.val,'')
 	, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 	, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
+    , [MDMachineNo] = pld.MDMachineNo
 	, [ScanAndPackTime] = pld.ScanEditDate
 	, [ScanQty] = ISNULL(ScanQty.val, 0)
 	, [FtyTransferToClogTime] = FtyTransferToClogTime.val

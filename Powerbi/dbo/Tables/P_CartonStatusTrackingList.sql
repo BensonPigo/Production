@@ -43,6 +43,8 @@
 	[DisposeDate] [date] NULL,
 	[PulloutComplete] [varchar](1) NOT NULL,
 	[PulloutDate] [date] NULL,
+    [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
 	[RefNo] [varchar](21) NOT NULL,
 	[Description] [nvarchar](max) NOT NULL,
 	[HaulingStatus] [varchar](10) NOT NULL,
@@ -117,6 +119,9 @@ ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatu
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CartonQty]  DEFAULT ((0)) FOR [CartonQty]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_MDMachineNo]  DEFAULT ((0)) FOR [MDMachineNo]
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_HauledQty]  DEFAULT ((0)) FOR [HauledQty]
@@ -195,6 +200,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Line' ,
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SP'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD機器代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'MDMachineNo'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SeqNo'
