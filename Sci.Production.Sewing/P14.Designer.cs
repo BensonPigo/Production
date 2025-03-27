@@ -30,6 +30,11 @@
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new Sci.Win.UI.Panel();
+            this.chkNyDCP = new System.Windows.Forms.CheckBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.lbSP = new Sci.Win.UI.Label();
             this.lbPackID = new Sci.Win.UI.Label();
             this.lbScanDate = new Sci.Win.UI.Label();
@@ -39,10 +44,6 @@
             this.txtPackID = new Sci.Win.UI.TextBox();
             this.grid = new Sci.Win.UI.Grid();
             this.bindingSource = new Sci.Win.UI.BindingSource(this.components);
-            this.label3 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtfactory1 = new Sci.Production.Class.Txtfactory();
-            this.txtMdivision1 = new Sci.Production.Class.TxtMdivision();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource)).BeginInit();
@@ -52,6 +53,7 @@
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Controls.Add(this.chkNyDCP);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtfactory1);
@@ -65,8 +67,65 @@
             this.panel1.Controls.Add(this.txtPackID);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(946, 71);
+            this.panel1.Size = new System.Drawing.Size(946, 101);
             this.panel1.TabIndex = 1;
+            // 
+            // chkNyDCP
+            // 
+            this.chkNyDCP.AutoSize = true;
+            this.chkNyDCP.Location = new System.Drawing.Point(10, 72);
+            this.chkNyDCP.Name = "chkNyDCP";
+            this.chkNyDCP.Size = new System.Drawing.Size(187, 21);
+            this.chkNyDCP.TabIndex = 11;
+            this.chkNyDCP.Text = "Not Yet Done Scan & Pack";
+            this.chkNyDCP.UseVisualStyleBackColor = true;
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label3.Location = new System.Drawing.Point(470, 41);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(77, 23);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Factory";
+            this.label3.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label2
+            // 
+            this.label2.BackColor = System.Drawing.Color.LightSkyBlue;
+            this.label2.Location = new System.Drawing.Point(470, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(77, 23);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "M";
+            this.label2.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // txtfactory1
+            // 
+            this.txtfactory1.BackColor = System.Drawing.Color.White;
+            this.txtfactory1.BoolFtyGroupList = true;
+            this.txtfactory1.FilteMDivision = false;
+            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsIE = false;
+            this.txtfactory1.IsMultiselect = false;
+            this.txtfactory1.IsProduceFty = false;
+            this.txtfactory1.IssupportJunk = false;
+            this.txtfactory1.Location = new System.Drawing.Point(550, 41);
+            this.txtfactory1.MDivision = null;
+            this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.NeedInitialFactory = false;
+            this.txtfactory1.Size = new System.Drawing.Size(121, 23);
+            this.txtfactory1.TabIndex = 4;
+            // 
+            // txtMdivision1
+            // 
+            this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision1.Location = new System.Drawing.Point(550, 6);
+            this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.NeedInitialMdivision = false;
+            this.txtMdivision1.Size = new System.Drawing.Size(121, 23);
+            this.txtMdivision1.TabIndex = 1;
             // 
             // lbSP
             // 
@@ -101,7 +160,7 @@
             // buttonFindNow
             // 
             this.buttonFindNow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonFindNow.Location = new System.Drawing.Point(838, 26);
+            this.buttonFindNow.Location = new System.Drawing.Point(838, 56);
             this.buttonFindNow.Name = "buttonFindNow";
             this.buttonFindNow.Size = new System.Drawing.Size(99, 30);
             this.buttonFindNow.TabIndex = 5;
@@ -165,58 +224,15 @@
             this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.grid.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.grid.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.grid.Location = new System.Drawing.Point(3, 73);
+            this.grid.Location = new System.Drawing.Point(3, 110);
             this.grid.Name = "grid";
             this.grid.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(946, 478);
+            this.grid.Size = new System.Drawing.Size(946, 441);
             this.grid.TabIndex = 2;
-            // 
-            // label3
-            // 
-            this.label3.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label3.Location = new System.Drawing.Point(470, 41);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(77, 23);
-            this.label3.TabIndex = 10;
-            this.label3.Text = "Factory";
-            this.label3.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // label2
-            // 
-            this.label2.BackColor = System.Drawing.Color.LightSkyBlue;
-            this.label2.Location = new System.Drawing.Point(470, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(77, 23);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "M";
-            this.label2.TextStyle.Color = System.Drawing.Color.Black;
-            // 
-            // txtfactory1
-            // 
-            this.txtfactory1.BackColor = System.Drawing.Color.White;
-            this.txtfactory1.BoolFtyGroupList = true;
-            this.txtfactory1.FilteMDivision = false;
-            this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory1.IsProduceFty = false;
-            this.txtfactory1.IssupportJunk = false;
-            this.txtfactory1.Location = new System.Drawing.Point(550, 41);
-            this.txtfactory1.MDivision = null;
-            this.txtfactory1.Name = "txtfactory1";
-            this.txtfactory1.Size = new System.Drawing.Size(121, 23);
-            this.txtfactory1.TabIndex = 4;
-            // 
-            // txtMdivision1
-            // 
-            this.txtMdivision1.BackColor = System.Drawing.Color.White;
-            this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision1.Location = new System.Drawing.Point(550, 6);
-            this.txtMdivision1.Name = "txtMdivision1";
-            this.txtMdivision1.Size = new System.Drawing.Size(121, 23);
-            this.txtMdivision1.TabIndex = 1;
             // 
             // P14
             // 
@@ -255,5 +271,6 @@
         private Win.UI.Label label2;
         private Class.Txtfactory txtfactory1;
         private Class.TxtMdivision txtMdivision1;
+        private System.Windows.Forms.CheckBox chkNyDCP;
     }
 }

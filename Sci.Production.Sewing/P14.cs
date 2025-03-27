@@ -83,6 +83,7 @@ namespace Sci.Production.Sewing
 
             #region BuyerDelivery Filte
             string strWhere = string.Empty;
+            string strPdWhere = string.Empty;
             if (!this.dateScanDate.Value1.Empty() && !this.dateScanDate.Value2.Empty())
             {
                 strWhere = " and c.HaulingDate between @ScanDate_S and @ScanDate_E";
@@ -114,6 +115,12 @@ namespace Sci.Production.Sewing
             if (!MyUtility.Check.Empty(this.txtfactory1.Text))
             {
                 strWhere += $@" and o.FactoryID = @fty";
+            }
+
+            if (this.chkNyDCP.Checked)
+            {
+                strWhere += $@" and c.Status  <> 'Return'";
+                strPdWhere += $@" and isnull(pd.ScanEditDate, '') = ''";
             }
 
             #endregion
@@ -156,12 +163,14 @@ outer apply (
 	select Qty = SUM(QtyPerCTN)
 	from PackingList_Detail pd WITH(NOLOCK)
 	where pd.SCICtnNo = c.SCICtnNo
+{strPdWhere}
 )pd_QtyPerCTN
 outer apply (
 	SELECT Barcode = Stuff((
 		select distinct concat('/',Barcode) 
 		from PackingList_Detail pd WITH(NOLOCK)
 		where pd.SCICtnNo = c.SCICtnNo
+{strPdWhere}
 		FOR XML PATH(''))
 	,1,1,'')
 )pd_Barcode
