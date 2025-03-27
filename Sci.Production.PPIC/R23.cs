@@ -124,6 +124,7 @@ Left Join dbo.CustCD WITH (NOLOCK) On CustCD.BrandID = Orders.BrandID And CustCD
 Left Join dbo.Factory WITH (NOLOCK) On Factory.ID = Orders.FactoryID
 Where 1 = 1
 {sqlWhere}
+and Orders.ID in ('25070167HH001','25020159IC007')
 
 ";
             return base.ValidateInput();
@@ -181,61 +182,12 @@ Where 1 = 1
             int initIdx = 0;
 
             Excel.Range excelrange;
-            int stratcol, columnsCnt, rowsCnt;
+            int stratcol, columnsCnt, rowsCnt, totalC;
             string today = DateTime.Now.ToString("MM/dd");
 
             foreach (string id in dt.AsEnumerable().Select(s => s["ID"].ToString()).Distinct())
             {
                 var dtDetail = dt.AsEnumerable().Where(s => s["ID"].ToString() == id).OrderBy(o => o["Seq"]).ToList();
-                columnsCnt = 4 + dtDetail.Count + 1;
-                stratcol = 1 + initIdx;
-
-                objSheets.Cells[1 + initIdx, 1] = "LINE";
-                objSheets.Cells[1 + initIdx, 1].Font.Bold = true;
-                objSheets.Cells[1 + initIdx, 2] = "ITEM";
-                objSheets.Cells[1 + initIdx, 3] = "COLOR";
-                objSheets.Cells[1 + initIdx, 4] = "COLOR NAME";
-
-                for (int i = 2; i <= 4;)
-                {
-                    objSheets.Cells[1 + initIdx, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LavenderBlush);
-                    objSheets.Cells[1 + initIdx, i].Font.Bold = true;
-                    i++;
-                }
-
-                objSheets.Cells[2 + initIdx, 1] = dtDetail[0]["SewingLineID"];
-                objSheets.Cells[2 + initIdx, 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Pink);
-                objSheets.Cells[2 + initIdx, 2] = dtDetail[0]["Article"];
-                objSheets.Cells[2 + initIdx, 3] = dtDetail[0]["ColorID"];
-                objSheets.Cells[2 + initIdx, 3].Font.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Red);
-                objSheets.Cells[2 + initIdx, 4] = dtDetail[0]["ColorName"];
-                objSheets.Cells[3 + initIdx, 1] = dtDetail[0]["ID"];
-                objSheets.Cells[3 + initIdx, 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Pink);
-
-                for (int i = 2; i <= 4;)
-                {
-                    objSheets.Cells[2 + initIdx, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightBlue);
-                    i++;
-                }
-
-                for (int i = 0; i < dtDetail.Count;)
-                {
-                    DataRow row = dtDetail[i];
-                    objSheets.Cells[1 + initIdx, i + 5] = row["SizeCode"];
-                    objSheets.Cells[1 + initIdx, i + 5].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Lavender);
-                    objSheets.Cells[1 + initIdx, i + 5].Font.Bold = true;
-                    double qty;
-                    double.TryParse(row["Qty"].ToString(), out qty);
-                    objSheets.Cells[2 + initIdx, i + 5] = qty;
-                    i++;
-                }
-
-                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count] = "Total Cons";
-                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Lavender);
-                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count].Font.Bold = true;
-                char chars = (char)('D' + dtDetail.Count);
-                int totalC = 2 + initIdx;
-                objSheets.Cells[2 + initIdx, 5 + dtDetail.Count].Value = string.Format("=SUM({0}{1}:{2}{1})", "E", totalC, chars);
 
                 string sql = @"
 If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
@@ -267,55 +219,107 @@ and @ID in (Select Data From dbo.SplitString(OrderList,','))
                 paras.Add(new SqlParameter("@Color", dtDetail[0]["ColorID"].ToString()));
                 var result = DBProxy.Current.Select(null, sql, paras, out tmp);
 
+                columnsCnt = 4 + dtDetail.Count + 1;
+                stratcol = 1 + initIdx;
+
+                objSheets.Cells[1 + initIdx, 1] = "LINE";
+                objSheets.Cells[1 + initIdx, 1].Font.Bold = true;
+                objSheets.Cells[1 + initIdx, 2] = "ITEM";
+                objSheets.Cells[1 + initIdx, 3] = "COLOR";
+                objSheets.Cells[1 + initIdx, 4] = "COLOR NAME";
+
+                for (int i = 2; i <= 4;)
+                {
+                    objSheets.Cells[1 + initIdx, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LavenderBlush);
+                    objSheets.Cells[1 + initIdx, i].Font.Bold = true;
+                    i++;
+                }
+
+                objSheets.Cells[2 + initIdx, 1] = dtDetail[0]["SewingLineID"];
+                objSheets.Cells[2 + initIdx, 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Pink);
+                objSheets.Cells[2 + initIdx, 2] = dtDetail[0]["Article"];
+                objSheets.Cells[2 + initIdx, 3] = dtDetail[0]["ColorID"];
+                objSheets.Cells[2 + initIdx, 3].Font.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Red);
+                objSheets.Cells[2 + initIdx, 4] = dtDetail[0]["ColorName"];
+                objSheets.Cells[3 + initIdx, 1] = dtDetail[0]["ID"];
+                objSheets.Cells[3 + initIdx, 1].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Pink);
+
+                for (int i = 2; i <= 4;)
+                {
+                    objSheets.Cells[2 + initIdx, i].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.LightBlue);
+                    i++;
+                }
+
                 var groupedByRefNo = tmp.AsEnumerable().Select(x => x["RefNo"].ToString())
                 .Distinct()
                 .ToList();
 
+                for (int i = 0; i < dtDetail.Count;)
+                {
+                    DataRow row = dtDetail[i];
+                    objSheets.Cells[1 + initIdx, i + 5] = row["SizeCode"];
+                    objSheets.Cells[1 + initIdx, i + 5].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Lavender);
+                    objSheets.Cells[1 + initIdx, i + 5].Font.Bold = true;
+
+                    double qty;
+                    double.TryParse(row["Qty"].ToString(), out qty);
+                    objSheets.Cells[2 + initIdx, i + 5] = qty;
+                    i++;
+                }
+
+                char chars = (char)('D' + dtDetail.Count);
+                totalC = 2 + initIdx;
+                objSheets.Cells[2 + initIdx, 5 + dtDetail.Count].Value = string.Format("=SUM({0}{1}:{2}{1})", "E", totalC, chars);
+                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count] = "Total Cons";
+                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Lavender);
+                objSheets.Cells[1 + initIdx, 5 + dtDetail.Count].Font.Bold = true;
+
                 foreach (var group in groupedByRefNo)
                 {
-                    var tmpRef = tmp.AsEnumerable().Where(s => s["RefNo"].ToString() == group.ToString()).ToList();
-
                     objSheets.Cells[3 + initIdx, 2] = group.ToString();
                     objSheets.Range[objSheets.Cells[3 + initIdx, 2], objSheets.Cells[4 + initIdx, 2]].Merge();
                     objSheets.Cells[3 + initIdx, 4] = "Cons/PC";
 
-                    if (tmpRef.Count >= 1)
+                    for (int i = 0; i < dtDetail.Count;)
                     {
-                        for (int i = 0; i < tmpRef.Count;)
+                        DataRow row = dtDetail[i];
+                        var tmpRef = tmp.AsEnumerable().Where(x => x["SizeCode"].ToString() == row["SizeCode"].ToString() && x["RefNo"].ToString() == group.ToString()).ToList();
+
+                        if (tmpRef.Count > 0)
                         {
-                            DataRow row = tmpRef[i];
-                            string tmpSizeCode = row["SizeCode"].ToString();
-                            DataRow matchedRows = dtDetail.AsEnumerable().FirstOrDefault(r => r["SizeCode"].ToString() == tmpSizeCode);
+                            DataRow rowRef = tmpRef[0];
 
                             double usageQty, orderQty, scQty;
-                            double.TryParse(row["UsageQty"]?.ToString(), out usageQty);
-                            double.TryParse(row["OrderQty"]?.ToString(), out orderQty);
-                            double.TryParse(matchedRows["Qty"]?.ToString(), out scQty);
-                            double qty = Math.Round(usageQty / orderQty, 3);
+                            double.TryParse(rowRef["UsageQty"]?.ToString(), out usageQty);
+                            double.TryParse(rowRef["OrderQty"]?.ToString(), out orderQty);
+                            double.TryParse(row["Qty"]?.ToString(), out scQty);
+                            double matchqty = Math.Round(usageQty / orderQty, 3);
 
-                            objSheets.Cells[3 + initIdx, i + 5] = qty;
-                            objSheets.Cells[4 + initIdx, i + 5] = scQty * qty;
+                            objSheets.Cells[3 + initIdx, i + 5] = matchqty;
+                            objSheets.Cells[4 + initIdx, i + 5] = scQty * matchqty;
                             objSheets.Cells[4 + initIdx, i + 5].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Plum);
-                            i++;
                         }
-                    }
-                    else if (tmpRef.Count == 1)
-                    {
-                        for (int i = 0; i < dtDetail.Count;)
+
+                        var tmpSizeCodefEmpty = tmp.AsEnumerable()
+                    .Where(x => (x["SizeCode"] == DBNull.Value || string.IsNullOrEmpty(x["SizeCode"].ToString())) && x["RefNo"].ToString() == group.ToString())
+                    .Distinct()
+                    .ToList();
+
+                        if (tmpSizeCodefEmpty.Count > 0)
                         {
-                            DataRow matchedRows = dtDetail[i];
-                            DataRow row = tmpRef[0];
+                            DataRow rowRef = tmpSizeCodefEmpty[0];
                             double usageQty, orderQty, scQty;
-                            double.TryParse(row["UsageQty"].ToString(), out usageQty);
-                            double.TryParse(row["OrderQty"].ToString(), out orderQty);
-                            double.TryParse(matchedRows["Qty"]?.ToString(), out scQty);
-                            double qty = Math.Round(usageQty / orderQty, 3);
+                            double.TryParse(rowRef["UsageQty"].ToString(), out usageQty);
+                            double.TryParse(rowRef["OrderQty"].ToString(), out orderQty);
+                            double.TryParse(row["Qty"]?.ToString(), out scQty);
+                            double matchqty = Math.Round(usageQty / orderQty, 3);
 
-                            objSheets.Cells[3 + initIdx, i + 5] = qty;
-                            objSheets.Cells[4 + initIdx, i + 5] = scQty * qty;
+                            objSheets.Cells[3 + initIdx, i + 5] = matchqty;
+                            objSheets.Cells[4 + initIdx, i + 5] = scQty * matchqty;
                             objSheets.Cells[4 + initIdx, i + 5].Interior.Color = System.Drawing.ColorTranslator.ToOle(System.Drawing.Color.Plum);
-                            i++;
                         }
+
+                        i++;
                     }
 
                     totalC = 4 + initIdx;
