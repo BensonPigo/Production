@@ -136,13 +136,13 @@ where 1 = 1
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateBundle1", this.dateBundle1.Value));
+                this.sqlParameter.Add(new SqlParameter("@dateBundle1", ((DateTime)this.dateBundle1.Value).ToString("yyyy-MM-dd")));
                 this.sqlCmd.Append(" and Bundle.Cdate >= @dateBundle1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle2))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateBundle2", this.dateBundle2));
+                this.sqlParameter.Add(new SqlParameter("@dateBundle2", ((DateTime)this.dateBundle2.Value).ToString("yyyy-MM-dd")));
                 this.sqlCmd.Append(" and Bundle.Cdate <= @dateBundle2");
             }
 
@@ -161,26 +161,26 @@ where 1 = 1
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate1))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate1", this.dateEstCutDate1.Value));
+                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate1", ((DateTime)this.dateEstCutDate1.Value).ToString("yyyy-MM-dd")));
                 this.sqlCmd.Append(" and WorkOrder.EstCutDate >= @dateEstCutDate1");
             }
 
             if (!MyUtility.Check.Empty(this.dateEstCutDate2))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate2", this.dateEstCutDate2.Value));
+                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate2", ((DateTime)this.dateEstCutDate2.Value).ToString("yyyy-MM-dd")));
                 this.sqlCmd.Append(" and WorkOrder.EstCutDate <= @dateEstCutDate2");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate1))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate1", this.dateBundleInspectDate1.Value));
-                this.sqlCmd.Append(" and BundleMDScan.AddDate >= @dateBundleInspectDate1");
+                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate1", ((DateTime)this.dateBundleInspectDate1.Value).ToString("yyyy-MM-dd")));
+                this.sqlCmd.Append(" and CONVERT(date, BundleMDScan.AddDate) >= @dateBundleInspectDate1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate2))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate2", this.dateBundleInspectDate2.Value));
-                this.sqlCmd.Append(" and BundleMDScan.AddDate <= @dateBundleInspectDate2");
+                this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate2", ((DateTime)this.dateBundleInspectDate2.Value).ToString("yyyy-MM-dd")));
+                this.sqlCmd.Append(" and CONVERT(date, BundleMDScan.AddDate) <= @dateBundleInspectDate2");
             }
 
             if (!MyUtility.Check.Empty(this.SubProcess))
