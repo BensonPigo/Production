@@ -188,7 +188,8 @@ namespace Sci.Production.Class
             sql = @"select 	ID, 
 		                    Name, 
 		                    Ext= ExtNo, 
-		                    Mail = email
+		                    Mail = email,
+                            Supervisor = dbo.getPass1 (Supervisor)
                     from Pass1 WITH (NOLOCK) 
                     where id = @id";
             sqlpar.Add(new SqlParameter("@id", this.TextBox1.Text.ToString()));
