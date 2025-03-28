@@ -36,6 +36,8 @@
             this.label3 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
             this.label1 = new Sci.Win.UI.Label();
+            this.displayBox5 = new Sci.Win.UI.DisplayBox();
+            this.label5 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // displayBox4
@@ -87,7 +89,6 @@
             // 
             // label4
             // 
-            this.label4.Lines = 0;
             this.label4.Location = new System.Drawing.Point(8, 137);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(75, 23);
@@ -96,7 +97,6 @@
             // 
             // label3
             // 
-            this.label3.Lines = 0;
             this.label3.Location = new System.Drawing.Point(8, 96);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(75, 23);
@@ -105,7 +105,6 @@
             // 
             // label2
             // 
-            this.label2.Lines = 0;
             this.label2.Location = new System.Drawing.Point(8, 56);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
@@ -114,18 +113,38 @@
             // 
             // label1
             // 
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(8, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(75, 23);
             this.label1.TabIndex = 12;
             this.label1.Text = "ID";
             // 
-            // userData
+            // displayBox5
+            // 
+            this.displayBox5.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.displayBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox5.ForeColor = System.Drawing.Color.Blue;
+            this.displayBox5.Location = new System.Drawing.Point(87, 179);
+            this.displayBox5.Name = "displayBox5";
+            this.displayBox5.Size = new System.Drawing.Size(244, 22);
+            this.displayBox5.TabIndex = 21;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(8, 179);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(75, 23);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "TL/SUP";
+            // 
+            // UserData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(339, 176);
+            this.ClientSize = new System.Drawing.Size(339, 214);
+            this.Controls.Add(this.displayBox5);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.displayBox4);
             this.Controls.Add(this.displayBox3);
             this.Controls.Add(this.displayBox2);
@@ -134,7 +153,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "userData";
+            this.Name = "UserData";
             this.Text = "userData";
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -151,6 +170,7 @@
         private Win.UI.Label label3;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
-
+        private Win.UI.DisplayBox displayBox5;
+        private Win.UI.Label label5;
     }
 }
