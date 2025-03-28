@@ -54,10 +54,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.Dt;
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
@@ -65,8 +61,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -170,22 +164,12 @@ where not exists (
 	AND t.Roll = s.Roll
 	AND t.Dyelot = s.Dyelot
 )
-and ((t.AddDate >= @SDate or t.EditDate >= @SDate) and (t.AddDate <= @EDate or t.EditDate <= @EDate))
-
-if exists(select 1 from BITableInfo where Id = 'P_BatchUpdateRecevingInfoTrackingList')
-begin
-    update b
-	    set b.TransferDate = getdate()
-		    , b.IS_Trans = 0
-    from BITableInfo b
-    where b.id = 'P_BatchUpdateRecevingInfoTrackingList'
-end
-else
-begin
-    insert into BITableInfo (Id, TransferDate, IS_Trans)
-    values ('P_BatchUpdateRecevingInfoTrackingList', getDate(), 0)
-end
+and (
+    (t.AddDate >= @SDate and t.AddDate <= @EDate) or
+    (t.EditDate >= @SDate and t.EditDate <= @EDate)
+)
 ";
+                sql += new Base().SqlBITableInfo("P_BatchUpdateRecevingInfoTrackingList", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

@@ -68,14 +68,14 @@ begin
 	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_LoadingvsCapacity'')
 	BEGIN
 		update b
-			set b.TransferDate = getdate()
+			set b.TransferDate = getdate(), IS_Trans = 1
 		from BITableInfo b
 		where b.id = ''P_LoadingvsCapacity''
 	END
 	ELSE 
 	BEGIN
-		insert into BITableInfo(Id, TransferDate)
-		values(''P_LoadingvsCapacity'', getdate())
+		insert into BITableInfo(Id, TransferDate, IS_Trans)
+		values(''P_LoadingvsCapacity'', getdate(), 1)
 	END
 	';
 

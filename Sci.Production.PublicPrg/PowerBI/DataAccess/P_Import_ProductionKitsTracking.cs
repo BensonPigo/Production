@@ -49,8 +49,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -192,19 +190,8 @@ WHERE NOT EXISTS (
 )
 AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
   OR (EditDate >= @StartDate AND EditDate <= @EndDate))
-
-IF EXISTS (SELECT 1 FROM BITableInfo b WHERE b.id = 'P_ProductionKitsTracking')
-BEGIN
-    UPDATE BITableInfo
-    SET TransferDate = GETDATE()
-    WHERE id = 'P_ProductionKitsTracking'
-END
-ELSE
-BEGIN
-    INSERT INTO BITableInfo (Id, TransferDate)
-    VALUES ('P_ProductionKitsTracking', GETDATE())
-END
 ";
+                sql += new Base().SqlBITableInfo("P_ProductionKitsTracking", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

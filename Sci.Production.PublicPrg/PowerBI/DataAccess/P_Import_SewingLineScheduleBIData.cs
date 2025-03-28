@@ -59,8 +59,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -300,12 +298,8 @@ and((t.AddDate >= @SDate and  t.AddDate <= @EDate)
 DELETE FROM P_SewingLineSchedule
 WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)
 
-update b
-	set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.id = 'P_SewingLineSchedule'
 ";
+                sql += new Base().SqlBITableInfo("P_SewingLineSchedule", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
