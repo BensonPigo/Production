@@ -76,9 +76,9 @@
             this.chkNyDCP.ForeColor = System.Drawing.Color.Red;
             this.chkNyDCP.Location = new System.Drawing.Point(10, 72);
             this.chkNyDCP.Name = "chkNyDCP";
-            this.chkNyDCP.Size = new System.Drawing.Size(187, 21);
+            this.chkNyDCP.Size = new System.Drawing.Size(196, 21);
             this.chkNyDCP.TabIndex = 11;
-            this.chkNyDCP.Text = "Not Yet Done Scan & Pack";
+            this.chkNyDCP.Text = "Not Yet Done Scan && Pack";
             this.chkNyDCP.UseVisualStyleBackColor = true;
             // 
             // label3
