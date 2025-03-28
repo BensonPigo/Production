@@ -104,7 +104,9 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
                 .EditText("Article", header: "ColorWay", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .EditText("ReasonName", header: "DOC", width: Widths.AnsiChars(20), iseditingreadonly: true)
                 .Date("SendDate", header: "TW send date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("AWBNO", header: "AWB#", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Date("ReceiveDate", header: "FTY MR rcv date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("Reject", header: "Reject", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, iseditable: false)
                 .Date("SendToQA", header: "Fty send to QA", width: Widths.AnsiChars(10))
                 .Date("QAReceived", header: "QA rcv date", width: Widths.AnsiChars(10))
                 .Date("ProvideDate", header: "Provide date", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -189,7 +191,7 @@ where sp.StyleUkey = {0} order by sp.ProductionKitsGroup", this.KeyValue1);
 
             if (this.checkFactorynotReceived.Checked)
             {
-                filter.Append(" SendDate is not null and ReceiveDate is null and");
+                filter.Append(" SendDate is not null and ReceiveDate is null and reject = 1 and");
             }
 
             if (filter.Length > 0)

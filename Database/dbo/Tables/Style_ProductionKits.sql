@@ -36,8 +36,12 @@
     [AddDate]             DATETIME       NULL,
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Style_ProductionKits_EditName] DEFAULT ('') NOT NULL,
     [EditDate]            DATETIME       NULL,
+    [Reject]              BIT            CONSTRAINT [DF_Style_ProductionKits_Reject] DEFAULT ((0)) NOT NULL,
+    [AWBNO]               VARCHAR (30)   CONSTRAINT [DF_Style_ProductionKits_AWBNO] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_Style_ProductionKits] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -184,4 +188,8 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'不寄送�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Manufacturing Division ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'MDivisionID';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠紀錄是否有收到文件', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Style_ProductionKits', @level2type = N'COLUMN', @level2name = N'Reject';
 

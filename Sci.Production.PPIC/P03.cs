@@ -50,6 +50,21 @@ namespace Sci.Production.PPIC
                     MyUtility.Msg.WarningBox("< FTY MR Rcv date > is invalid, it exceeds +/-180 days!!");
                     return;
                 }
+
+                dr["ReceiveDate"] = e.FormattedValue ?? DBNull.Value;
+                if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
+                {
+                    dr["Reject"] = 0;
+                }
+
+                dr.EndEdit();
+            };
+
+            DataGridViewGeneratorCheckBoxColumnSettings col_reject = new DataGridViewGeneratorCheckBoxColumnSettings();
+            col_reject.CellEditable += (s, e) =>
+            {
+                DataRow dr = this.gridProductionKitsConfirm.GetDataRow<DataRow>(e.RowIndex);
+                e.IsEditable = MyUtility.Check.Empty(dr["ReceiveDate"]);
             };
 
             this.gridProductionKitsConfirm.DataSource = this.listControlBindingSource1;
@@ -61,7 +76,9 @@ namespace Sci.Production.PPIC
                 .EditText("Article", header: "Colorway", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Text("ReasonName", header: "Doc", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Date("SendDate", header: "TW Send date", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("AWBNO", header: "AWB#", width: Widths.AnsiChars(22), iseditingreadonly: true)
                 .Date("ReceiveDate", header: "FTY MR Rcv date", width: Widths.AnsiChars(8), settings: this.rcvDate)
+                .CheckBox("Reject", header: "Reject", width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0, settings: col_reject)
                 .Text("FtyRemark", header: "Remark for factory", width: Widths.AnsiChars(15), settings: this.ftyRemark)
                 .Date("ProvideDate", header: "Provide date", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("OrderID", header: "SP No.", width: Widths.AnsiChars(13), iseditingreadonly: true)
@@ -120,6 +137,8 @@ isnull((sp.PoHandle+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) wher
 isnull((sp.POSMR+' '+(select Name+' #'+ExtNo from TPEPass1 WITH (NOLOCK) where ID = sp.POSMR)),sp.POSMR) as POSMRName,
 iif(sp.IsPF = 1,'Y','N') as CPF
 ,sp.MRLastDate
+,sp.Reject
+,sp.AWBNO
 from Style_ProductionKits sp WITH (NOLOCK) 
 left join Style s WITH (NOLOCK) on s.Ukey = sp.StyleUkey
 where sp.ReceiveDate is null and sp.SendDate is not null and ReasonID=''
@@ -194,7 +213,12 @@ and sp.ProductionKitsGroup='{Env.User.Keyword}'
                 if (dr.RowState == DataRowState.Modified)
                 {
                     cmds.Clear();
-                    cmds.Append(string.Format(@"update Style_ProductionKits set ReceiveDate = {0}, FtyRemark = '{1}'", MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("yyyy/MM/dd") + "'", dr["FtyRemark"].ToString()));
+                    cmds.Append($@"
+update Style_ProductionKits
+set ReceiveDate = {(MyUtility.Check.Empty(dr["ReceiveDate"]) ? "null" : "'" + Convert.ToDateTime(dr["ReceiveDate"]).ToString("yyyy/MM/dd") + "'")}
+    ,FtyRemark = '{dr["FtyRemark"]}'
+    ,Reject = {(MyUtility.Convert.GetBool(dr["Reject"]) ? 1 : 0)}
+");
                     if (!MyUtility.Check.Empty(dr["ReceiveDate"]))
                     {
                         cmds.Append(string.Format(@", FtyHandle = '{0}', FtyLastDate = GETDATE()", Env.User.UserID));

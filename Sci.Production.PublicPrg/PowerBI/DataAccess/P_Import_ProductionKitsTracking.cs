@@ -99,6 +99,8 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.ProductionKitsGroup = ISNULL(t.ProductionKitsGroup, '')
    ,p.AddDate = t.AddDate
    ,p.EditDate = t.EditDate
+   ,p.AWBNO = ISNULL(t.AWBNO, '')
+   ,p.Reject = ISNULL(t.Reject, '')
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON t.Article = p.Article
@@ -134,6 +136,8 @@ INSERT INTO P_ProductionKitsTracking (
 	,ProductionKitsGroup
 	,AddDate
 	,EditDate
+    ,AWBNO
+    ,Reject
 )
 SELECT
     ISNULL(t.BrandID, '')
@@ -162,6 +166,8 @@ SELECT
    ,ISNULL(t.ProductionKitsGroup, '')
    ,t.AddDate
    ,t.EditDate
+   ,ISNULL(t.AWBNO, '')
+   ,ISNULL(t.Reject, '')
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
