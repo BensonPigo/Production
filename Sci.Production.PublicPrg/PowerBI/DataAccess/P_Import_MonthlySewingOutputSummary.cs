@@ -126,8 +126,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -299,19 +297,8 @@ update p
 from P_MonthlySewingOutputSummary p
 inner join #tmp t on t.[Fty] = p.[Fty] and t.[Period] = p.[Period]
 
-if exists (select 1 from BITableInfo b where b.id = 'P_MonthlySewingOutputSummary')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_MonthlySewingOutputSummary'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_MonthlySewingOutputSummary', getdate())
-end
 ";
+                sql += new Base().SqlBITableInfo("P_MonthlySewingOutputSummary", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataList.ToDataTable(), null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),

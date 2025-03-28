@@ -49,8 +49,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -654,15 +652,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	from P_SDP p
 	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.id is null
-
-	IF EXISTS (select 1 from BITableInfo b where b.id = 'P_SDP')
-	BEGIN
-		update b
-			set b.TransferDate = getdate()
-		from BITableInfo b
-		where b.id = 'P_SDP'
-	END
 ";
+                sql += new Base().SqlBITableInfo("P_SDP", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

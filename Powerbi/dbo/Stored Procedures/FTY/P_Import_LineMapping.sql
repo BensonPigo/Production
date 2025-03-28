@@ -352,12 +352,12 @@ where not exists(
 
 if exists(select 1 from BITableInfo where Id = 'P_LineMapping')
 begin
-	update BITableInfo set TransferDate = getdate()
+	update BITableInfo set TransferDate = getdate(), IS_Trans = 1
 	where Id = 'P_LineMapping'
 end
 else
 begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineMapping', GETDATE(), 0)
+	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineMapping', GETDATE(), 1)
 end
 
 
@@ -538,12 +538,12 @@ where not exists(
 
 if exists(select 1 from BITableInfo where Id = 'P_LineMapping_Detail')
 begin
-	update BITableInfo set TransferDate = getdate()
+	update BITableInfo set TransferDate = getdate(), IS_Trans = 1
 	where Id = 'P_LineMapping_Detail'
 end
 else
 begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineMapping_Detail', GETDATE(), 0)
+	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_LineMapping_Detail', GETDATE(), 1)
 end
 
 drop table #tmpMain,#tmpDetail

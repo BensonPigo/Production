@@ -73,14 +73,14 @@ BEGIN
 	if exists (select 1 from BITableInfo b where b.id = 'P_StyleChangeover')
 	begin
 		update b
-			set b.TransferDate = getdate()
+			set b.TransferDate = getdate(), IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_StyleChangeover'
 	end
 	else 
 	begin
-		insert into BITableInfo(Id, TransferDate)
-		values('P_StyleChangeover', getdate())
+		insert into BITableInfo(Id, TransferDate, IS_Trans)
+		values('P_StyleChangeover', getdate(), 1)
 	end
 
 END

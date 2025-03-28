@@ -179,7 +179,6 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R16.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_ActualCutOutputReport.sql" />
     <Build Include="dbo\Tables\P_SubprocessWIP.sql" />
@@ -266,6 +265,7 @@
     <Build Include="dbo\Tables\P_ChangeoverCheckList_Detail.sql" />
     <Build Include="dbo\Tables\P_ESG_Injury.sql" />
     <Build Include="dbo\Tables\P_CMPByDate.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEffAnalysis.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
