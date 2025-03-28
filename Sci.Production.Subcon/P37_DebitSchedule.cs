@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
+using System.Windows.Forms;
 using Ict.Win;
 
 namespace Sci.Production.Subcon
 {
     public partial class P37_DebitSchedule : Win.Subs.Input4
     {
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
         private DataRow Master;
         private string _FromFuncton;
         private bool _isTaipeiDBC;
@@ -52,7 +54,27 @@ namespace Sci.Production.Subcon
                  }
              };
 
+            this.grid.CellBeginEdit += (s, e) =>
+            {
+                int colVoucherid = this.grid.Columns["voucherid"].Index;
+                int colBadDebit = this.grid.Columns["BadDebit"].Index;
+
+                DataGridViewRow row = this.grid.Rows[e.RowIndex];
+
+                if (row.Cells[colVoucherid].Value != null && !string.IsNullOrWhiteSpace(row.Cells[colVoucherid].Value.ToString()))
+                {
+                    row.Cells[colBadDebit].ReadOnly = true;
+                    row.Cells[colBadDebit].Style.BackColor = Color.LightGray;
+                }
+                else
+                {
+                    row.Cells[colBadDebit].ReadOnly = false;
+                    row.Cells[colBadDebit].Style.BackColor = Color.White;
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.grid)
+                .CheckBox("BadDebit", header: "Bad Debit", width: Widths.AnsiChars(10))
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
                 .Text("CurrencyID", header: "Debit Currency", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2, settings: amountSetting)
