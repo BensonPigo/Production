@@ -136,6 +136,7 @@ update p
         , p.[HeatSealScanTime]				= t.[HeatSealScanTime]
         , p.[HeatSealStatus]				= t.[HeatSealStatus]
         , p.[HeatSealName]					= t.[HeatSealName]
+        , p.[MDMachineNo]                   = t.[MDMachineNo]
 from P_CartonStatusTrackingList p
 inner join #tmp t on p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo]
 
