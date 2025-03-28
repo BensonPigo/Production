@@ -1,4 +1,4 @@
-﻿Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
+﻿CREATE PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -404,6 +404,7 @@ CREATE TABLE #APSColumnGroup (
 	[OrderID] [varchar](13) NULL,
 	[MatchFabric] varchar(8) NULL,
 	[StyleSeason] varchar(10) null,
+	[StyleUkey] bigint null,
     INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
 insert into #APSColumnGroup
@@ -428,7 +429,8 @@ oq.MinBuyerDelivery,
 [BrandID] = o.BrandID,
 s.OrderID,
 [MatchFabric] = iif(o.IsNotRepeatOrMapping = 0, 'Y','N'),
-[StyleSeason] = Style.SeasonID
+[StyleSeason] = Style.SeasonID,
+[StyleUkey] = style.Ukey
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 inner join Style with (nolock) on Style.Ukey = o.StyleUkey
@@ -623,6 +625,7 @@ declare @APSMain TABLE(
 	[EMBStitchCnt] int,
 	[PrintPcs] int,
 	[StyleSeason] NVARCHAR(MAX),
+	[StyleUkey] [nvarchar](500) NULL,
 	[AddDate] [date] NULL,
 	[EditDate] [date] NULL
 )
@@ -631,12 +634,12 @@ select
 	al.APSNo,
 	al.SewingLineID,
 	[CustPO] = CustPO.val,
-	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��CustPO�ƶq
+	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
 	[SP] = SP.val,
 	[SP_Combotype] = SP.SP_Combotype,
 	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
 	[Colorway] = Colorway.val,
-	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��Colorway�ƶq
+	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
 	[CDCode] = CDCode.val,
 	[ProductionFamilyID] = ProductionFamilyID.val,
 	[Style] = Style.val,
@@ -683,6 +686,7 @@ select
 	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
 	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from #StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
 	[StyleSeason] = ISNULL(SP.StyleSeason, ''),
+	[StyleUkey] = ISNULL(SP.StyleUkey, ''),
 	s.AddDate,
 	s.EditDate
 from #APSList al
@@ -695,7 +699,8 @@ outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
 		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
-		  ,[StyleSeason] = Stuff((select concat( ',',StyleSeason)   from #APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason order by SP FOR XML PATH('')),1,1,'')
+		  ,[StyleSeason] = Stuff((select distinct concat( ',',StyleSeason)   from #APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason FOR XML PATH('')),1,1,'')
+		  ,[StyleUkey] = Stuff((select distinct concat( ',',StyleUkey)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrderForOutput_Distribute wd2 WITH (NOLOCK)
@@ -1235,6 +1240,7 @@ declare  @APSResult TABLE(
 	TtlQtyEMB int null,
 	PrintPcs int null,
 	StyleSeason NVARCHAR(MAX),
+	StyleUkey NVARCHAR(500),
 	[AddDate] [date] NULL,
 	[EditDate] [date] NULL
 )
@@ -1316,6 +1322,7 @@ insert into @APSResult(
 	TtlQtyEMB,
 	PrintPcs,
 	StyleSeason,
+	StyleUkey,
 	AddDate,
 	EditDate
 )
@@ -1391,6 +1398,7 @@ select
 	apf.TtlQtyEMB,
 	apm.PrintPcs,
 	apm.StyleSeason,
+	apm.StyleUkey,
 	apm.AddDate,
 	apm.EditDate
 from @APSMain apm
@@ -1922,7 +1930,7 @@ select  c.FactoryID
         ,[BuyerDelivery] = min(BuyerDelivery)
 	    ,StadOutPutQtyPerDay = sum(s.StdQ)
 	    ,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
-        ,[IsSample] = max(IsSample)
+        ,[IsSample] = min(IsSample)
 	    ,c.IsRepeatStyle
 	    ,c.OriStyle
 from @c c 
@@ -2140,10 +2148,49 @@ outer apply (   select val = max(WorkDays)
             ) workDays
 where t.StyleID <> ''
 
+-- use Value Function [GetCheckContinusProduceDays]
+
+Create Table #tmpDistinct 
+(
+	[StyleUkey] [nvarchar](500) NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[SewingDay] date,
+	[Category] varchar(10)
+)
+insert into #tmpDistinct
+select distinct StyleUkey,SewingLineID,FactoryID,SewingDay, Category from @APSResult
+
+Create Table #tmpProduceDays
+(
+	[StyleUkey]  [nvarchar](500) NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[SewingDay] date,
+	[Category] varchar(8) null,
+	[SewingInlineCategory] varchar(50) null,
+)
+insert into #tmpProduceDays
+select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
+	, SewingInlineCategory = ''
+from #tmpDistinct t
+CROSS APPLY (
+SELECT 
+	ContinuousDays = Production.dbo.GetCheckContinusProduceDays(t.StyleUkey, t.SewingLineID, t.FactoryID,null, t.SewingDay)
+) ContinuousDaysCalc
+where t.StyleUkey not like '%,%'
+
+union all
+
+select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
+	, SewingInlineCategory = ''
+from #tmpDistinct t
+where t.StyleUkey like '%,%'
+
 
 --R01 detail and BI
 -- print 'Final' + FORMAT(getdate(), 'hh:mm:ss') 
-select
+select distinct
 	apm.APSNo,
 	apm.SewingLineID,
 	apm.Sewer,
@@ -2224,9 +2271,11 @@ select
 	apm.StyleSeason,
 	apm.AddDate,
 	apm.EditDate,
-    factory.LastDownloadAPSDate
+    factory.LastDownloadAPSDate,
+	[SewingInlineCategory] = ''
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
+left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category
 outer apply (select fac.LastDownloadAPSDate from factory fac where fac.id = (select f.KPICode from factory f where f.id = apm.FactoryID)) factory
 order by apm.APSNo,apm.SewingStartTime
 
@@ -2265,4 +2314,6 @@ DROP TABLE
     ,#ConcatStyle
     ,#tmpTotalWT
     ,#tmpGantt
+	,#tmpProduceDays
+	,#tmpDistinct
 END

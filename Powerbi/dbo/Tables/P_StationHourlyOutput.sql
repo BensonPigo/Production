@@ -14,7 +14,8 @@
 		[Ukey] [int] Not Null Constraint [DF_P_StationHourlyOutput_Ukey] Default '', 
 		[StyleID] [varchar] (200) Not Null Constraint [DF_P_StationHourlyOutput_StyleID] Default '',
 		[OrderID] [varchar] (MAX) Not Null Constraint [DF_P_StationHourlyOutput_OrderID] Default '', 
-	CONSTRAINT [PK_P_StationHourlyOutput] PRIMARY KEY CLUSTERED 
+	[Problems4MSDesc] VARCHAR(MAX) NOT NULL DEFAULT '', 
+    CONSTRAINT [PK_P_StationHourlyOutput] PRIMARY KEY CLUSTERED 
 		(
 			[FactoryID] ASC,
 			[Ukey] ASC

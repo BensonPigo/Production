@@ -16,7 +16,7 @@
 	[StyleDescription] [varchar](100) NOT NULL,
 	[Season] [varchar](10) NOT NULL,
 	[TotalQty] [numeric](15, 2) NOT NULL,
-	[TotalCPU] [numeric](18, 3) NOT NULL,
+	[TotalCPU] [numeric](19, 4) NOT NULL,
 	[TotalManHours] [varchar](15) NOT NULL,
 	[PPH] [varchar](15) NOT NULL,
 	[EFF] [varchar](15) NOT NULL,

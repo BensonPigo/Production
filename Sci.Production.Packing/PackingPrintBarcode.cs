@@ -1,13 +1,11 @@
 ﻿using Ict;
 using OnBarcode.Barcode;
-using Sci.Production.PublicPrg;
 using System;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Threading;
 using System.Windows.Forms;
 using ZXing;
 using ZXing.QrCode;
@@ -175,6 +173,7 @@ namespace Sci.Production.Packing
                                 string sizeQty = "Size/Qty: " + printData.Rows[i]["NewSizeCode"] + "/" + printData.Rows[i]["ShipQty"];
                                 string brandFTYCode = "Fty Code: " + printData.Rows[i]["BrandFTYCode"].ToString();
                                 string dest = "Dest: " + printData.Rows[i]["Dest"];
+                                string custCDID = "Cust CD: " + printData.Rows[i]["CustCDID"];
                                 #endregion
 
                                 Bitmap oriBitmap = this.NewBarcode(barcode, barcodeShowText);
@@ -189,7 +188,7 @@ namespace Sci.Production.Packing
                                 tables.Cell(2, 1).Range.Text = spNo;
                                 tables.Cell(3, 1).Range.Text = style;
                                 tables.Cell(3, 2).Range.Text = brandFTYCode;
-                                tables.Cell(5, 3).Range.Text = dest;
+                                tables.Cell(5, 3).Range.Text = dest + "\r\n" + custCDID;
                                 tables.Cell(2, 2).Range.Text = cartonNo;
                                 tables.Cell(1, 2).Range.Text = sizeQty;
                                 if (country)
@@ -231,8 +230,8 @@ namespace Sci.Production.Packing
                             }
                         }
                         #endregion
-                        // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
 
+                        // winword.ActiveDocument.Protect(Word.WdProtectionType.wdAllowOnlyComments, Password: "ScImIs");
                         #region Save & Show Word
                         winword.Visible = true;
                         Marshal.ReleaseComObject(winword);
@@ -291,8 +290,7 @@ namespace Sci.Production.Packing
             {
                 document.Activate();
 
-                //winword.Visible = true;
-
+                // winword.Visible = true;
                 Word.Tables table = document.Tables;
 
                 #region 計算頁數
@@ -323,11 +321,19 @@ namespace Sci.Production.Packing
                     string cartonNo = "CTN#.: " + printData.Rows[i]["CTNStartNo"] + " OF " + printData.Rows[i]["CtnQty"];
                     #endregion
 
-                    Bitmap oriBitmap = this.NewBarcode_NoText(barcode);
-                    Bitmap resized = new Bitmap(oriBitmap, new Size(810, 145));
+                    using (Bitmap oriBitmap = this.NewBarcode_NoText(barcode))
+                    {
+                        using (Bitmap resized = new Bitmap(oriBitmap, new Size(810, 145)))
+                        {
+                            // 複製貼上的動作增加等待時間，確保操作已完成
+                            Clipboard.SetImage(resized);
+                            System.Threading.Thread.Sleep(50);
 
-                    Clipboard.SetImage(resized);
-                    tables.Cell(1, 1).Range.Paste();
+                            tables.Cell(1, 1).Range.Paste();
+                            System.Threading.Thread.Sleep(50);
+                        }
+                    }
+
                     tables.Cell(1, 1).Range.InlineShapes[1].ScaleHeight = 20f;
                     tables.Cell(1, 1).Range.InlineShapes[1].LockAspectRatio = Microsoft.Office.Core.MsoTriState.msoFalse;
                     tables.Cell(1, 1).Range.InlineShapes[1].ConvertToShape().WrapFormat.Type = Word.WdWrapType.wdWrapSquare;

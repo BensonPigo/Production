@@ -296,7 +296,7 @@ OUTER APPLY (SELECT
     AND cl.Refno = idt.Refno
     AND cl.Color = idt.Color) FinPickTime
 OUTER APPLY (SELECT
-        [FinDate] = MAX(UnrollEndTime)
+        [FinDate] = MAX(UnrollStartTime)
     FROM #issueDtl idt
     WHERE cl.ID = idt.ID
     AND cl.Refno = idt.Refno
@@ -358,9 +358,10 @@ SELECT
    ,[Location] = dbo.Getlocation(f.ukey)
    ,isud.Qty
    ,isud.MINDReleaseDate
-   , --pick time
-    fur.UnrollStartTime
-   ,fur.UnrollEndTime
+   --pick time
+   ,fur.UnrollStartTime
+   ,[UnrollMachine] = MIOT.MachineID
+   --,fur.UnrollEndTime
    --,[UnrollDone] = IIF(cl.NeedUnroll = 1 AND UnrollStatus != '', 1, 0)
    ,fur.RelaxationStartTime
    ,fur.RelaxationEndTime
@@ -389,6 +390,7 @@ INNER JOIN WHBarcodeTransaction wbt
         AND wbt.Action = 'Confirm'
 LEFT JOIN Fabric_UnrollandRelax fur
     ON wbt.To_NewBarcode = fur.Barcode
+left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fur.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
 LEFT JOIN M360MINDDispatch mmd
     ON isud.M360MINDDispatchUkey = mmd.Ukey
 LEFT JOIN FtyInventory f

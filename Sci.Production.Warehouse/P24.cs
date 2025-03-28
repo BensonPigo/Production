@@ -698,38 +698,48 @@ Where a.id = '{masterID}'
         /// <inheritdoc/>
         protected override bool ClickPrint()
         {
-            DataRow row = this.CurrentMaintain;
-            string id = row["ID"].ToString();
-            string remark = row["Remark"].ToString();
-            string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
-            #region  抓表頭資料
-            List<SqlParameter> pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
-            DataTable dt;
-            DualResult result = DBProxy.Current.Select(string.Empty, @"select NameEn from MDivision where id = @MDivision", pars, out dt);
-            if (!result)
+            WH_FromTo_Print p = new WH_FromTo_Print(this.CurrentMaintain, "P24")
             {
-                this.ShowErr(result);
-            }
+                CurrentDataRow = this.CurrentMaintain,
+            };
 
-            if (dt == null || dt.Rows.Count == 0)
+            p.ShowDialog();
+
+            // 代表要列印 RDLC
+            if (p.IsPrintRDLC)
             {
-                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt");
-                return false;
-            }
+                DataRow row = this.CurrentMaintain;
+                string id = row["ID"].ToString();
+                string remark = row["Remark"].ToString();
+                string issuedate = ((DateTime)MyUtility.Convert.GetDate(row["issuedate"])).ToShortDateString();
+                #region  抓表頭資料
+                List<SqlParameter> pars = new List<SqlParameter>();
+                pars.Add(new SqlParameter("@MDivision", Env.User.Keyword));
+                DataTable dt;
+                DualResult result = DBProxy.Current.Select(string.Empty, @"select NameEn from MDivision where id = @MDivision", pars, out dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                }
 
-            string rptTitle = dt.Rows[0]["NameEn"].ToString();
-            ReportDefinition report = new ReportDefinition();
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
-            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
-            #endregion
-            #region  抓表身資料
-            pars = new List<SqlParameter>();
-            pars.Add(new SqlParameter("@ID", id));
-            DataTable dd;
-            string cmdd = @"
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not found!!", "DataTable dt");
+                    return false;
+                }
+
+                string rptTitle = dt.Rows[0]["NameEn"].ToString();
+                ReportDefinition report = new ReportDefinition();
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+                report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("issuedate", issuedate));
+                #endregion
+                #region  抓表身資料
+                pars = new List<SqlParameter>();
+                pars.Add(new SqlParameter("@ID", id));
+                DataTable dd;
+                string cmdd = @"
 select a.FromPOID
         ,a.FromSeq1+'-'+a.FromSeq2 as SEQ
 	    ,IIF((b.ID = lag(b.ID,1,'')over (order by b.ID,b.seq1,b.seq2) 
@@ -754,57 +764,58 @@ left join dbo.PO_Supp_Detail b WITH (NOLOCK) on b.id=a.FromPOID and b.SEQ1=a.Fro
 left join dbo.FtyInventory FI on a.fromPoid = fi.poid and a.fromSeq1 = fi.seq1 and a.fromSeq2 = fi.seq2
     and a.fromRoll = fi.roll and a.fromStocktype = fi.stocktype and a.fromDyelot = fi.Dyelot
 where a.id= @ID";
-            result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dd);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            if (dd == null || dd.Rows.Count == 0)
-            {
-                MyUtility.Msg.InfoBox("Data not found!!", "DataTable dd");
-                return false;
-            }
-
-            // 傳 list 資料
-            List<P24_PrintData> data = dd.AsEnumerable()
-                .Select(row1 => new P24_PrintData()
+                result = DBProxy.Current.Select(string.Empty, cmdd, pars, out dd);
+                if (!result)
                 {
-                    FromPOID = row1["FromPOID"].ToString().Trim(),
-                    SEQ = row1["SEQ"].ToString().Trim(),
-                    DESC = row1["DESC"].ToString().Trim(),
-                    MTLTYPE = row1["MTLTYPE"].ToString().Trim(),
-                    Unit = row1["unit"].ToString().Trim(),
-                    FromRoll = row1["FromRoll"].ToString().Trim(),
-                    FromDyelot = row1["FromDyelot"].ToString().Trim(),
-                    FromLocation = row1["FromLocation"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
-                    QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
-                    Total = row1["Total"].ToString().Trim(),
-                }).ToList();
+                    this.ShowErr(result);
+                }
 
-            report.ReportDataSource = data;
-            #endregion
+                if (dd == null || dd.Rows.Count == 0)
+                {
+                    MyUtility.Msg.InfoBox("Data not found!!", "DataTable dd");
+                    return false;
+                }
 
-            // 指定是哪個 RDLC
-            #region  指定是哪個 RDLC
-            Type reportResourceNamespace = typeof(P24_PrintData);
-            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
-            string reportResourceName = "P24_Print.rdlc";
+                // 傳 list 資料
+                List<P24_PrintData> data = dd.AsEnumerable()
+                    .Select(row1 => new P24_PrintData()
+                    {
+                        FromPOID = row1["FromPOID"].ToString().Trim(),
+                        SEQ = row1["SEQ"].ToString().Trim(),
+                        DESC = row1["DESC"].ToString().Trim(),
+                        MTLTYPE = row1["MTLTYPE"].ToString().Trim(),
+                        Unit = row1["unit"].ToString().Trim(),
+                        FromRoll = row1["FromRoll"].ToString().Trim(),
+                        FromDyelot = row1["FromDyelot"].ToString().Trim(),
+                        FromLocation = row1["FromLocation"].ToString().Trim() + Environment.NewLine + row1["ContainerCode"].ToString().Trim(),
+                        QTY = MyUtility.Convert.GetDecimal(row1["QTY"]),
+                        Total = row1["Total"].ToString().Trim(),
+                    }).ToList();
 
-            IReportResource reportresource;
-            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
-            {
-                // this.ShowException(result);
-                return false;
+                report.ReportDataSource = data;
+                #endregion
+
+                // 指定是哪個 RDLC
+                #region  指定是哪個 RDLC
+                Type reportResourceNamespace = typeof(P24_PrintData);
+                Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+                string reportResourceName = "P24_Print.rdlc";
+
+                IReportResource reportresource;
+                if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out reportresource)))
+                {
+                    // this.ShowException(result);
+                    return false;
+                }
+
+                report.ReportResource = reportresource;
+                #endregion
+
+                // 開啟 report view
+                var frm = new Win.Subs.ReportView(report);
+                frm.MdiParent = this.MdiParent;
+                frm.Show();
             }
-
-            report.ReportResource = reportresource;
-            #endregion
-
-            // 開啟 report view
-            var frm = new Win.Subs.ReportView(report);
-            frm.MdiParent = this.MdiParent;
-            frm.Show();
 
             return true;
         }

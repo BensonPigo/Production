@@ -30,7 +30,9 @@
 	[TimeStudyVersion] [varchar](2) NOT NULL,
 	[IEReasonLBRNotHit_1stUkey] [bigint] NULL,
 	[Phase] [varchar](20) NOT NULL,
- CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED 
+	[OriTotalGSD] INT NULL DEFAULT ((0)), 
+	TimeStudyID bigint not NULL CONSTRAINT [DF_LineMapping_TimeStudyID] DEFAULT 0,
+    CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED 
 (
 	[StyleUKey] ASC,
 	[Version] ASC,
@@ -211,4 +213,17 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'IEReasonLBRNot
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Line Mapping' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping'
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'P01  TotalGSD',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'OriTotalGSD'
+Go
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Fty GSD編號OTP驗證功能' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'LineMapping', @level2type=N'COLUMN',@level2name=N'TimeStudyID'
 GO

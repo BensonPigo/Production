@@ -74,6 +74,7 @@ select s.id
 	,[Remark] = cast('' as varchar(max))
 	,[SPFactory] = o.FactoryID
 	,[NonRevenue] = iif(o.NonRevenue = 1, 'Y', 'N')
+	,[InlineCategoryID] = s.SewingReasonIDForTypeIC
 	,[Inline_Category] = cast('' as nvarchar(65))
 	,[Low_output_Reason] = cast('' as nvarchar(65))
 	,[New_Style_Repeat_style] = cast('' as varchar(20))
@@ -101,7 +102,7 @@ and f.Type != 'S'
 update s
 set [SewingReasonDesc]=isnull(sr.SewingReasonDesc,''),
 	[Remark] = isnull(ssd.SewingOutputRemark,''),
-	[Inline_Category]=isnull(srICReason.Inline_Category, ''),
+	[Inline_Category] = iif(s.SewingReasonIDForTypeIC = '00005', (select CONCAT(s.InlineCategoryID, '-' + SR.Description) from Production.dbo.SewingReason sr where sr.ID = s.InlineCategoryID and sr.Type='IC') , isnull(srICReason.Inline_Category, '')),
 	[Low_output_Reason]=isnull(srLOReason.Low_output_Reason, ''),
 	[ArtworkType]=isnull(apd.ArtworkType, '')
 from #tmpSewingDetail s
@@ -669,7 +670,8 @@ select OrderID from #FinalDt s
 	AND t.Article=s.Article 
 	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
-	AND t.OutputDate = s.OutputDate);
+	AND t.OutputDate = s.OutputDate
+	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
 			
 update b
     set b.TransferDate = getdate()

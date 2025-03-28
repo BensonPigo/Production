@@ -87,7 +87,7 @@ order by ID",
                 .Date("WhseArrival", header: "Arrive W/H Date", width: Widths.AnsiChars(12))
                 .Text("Seq", header: "Main SEQ", width: Widths.AnsiChars(15))
                 .Text("Consignee", header: "Consignee", width: Widths.AnsiChars(8))
-                .Text("ShipMark", header: "Shipping Mark", width: Widths.AnsiChars(10))
+                .Text("ShipMark", header: "Shipping Mark", width: Widths.AnsiChars(20))
                 .Text("Vessel", header: "Vessel Name", width: Widths.AnsiChars(25))
                 .Text("CYCFS", header: "Container Type", width: Widths.AnsiChars(3));
         }

@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
+using Sci.Production.PublicForm;
 using Sci.Win;
 using System;
 using System.Collections.Generic;
@@ -25,24 +26,8 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.mainCurrentMaintain = drMain;
             this.radioPanel.Value = "1";
-            this.ComboType_Init();
-        }
-
-        private void ComboType_Init()
-        {
-            DataTable dtPMS_FabricQRCode_LabelSize;
-            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.comboType.DisplayMember = "Name";
-            this.comboType.ValueMember = "ID";
-            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
-            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         private void RadioPanel_ValueChanged(object sender, EventArgs e)
@@ -53,6 +38,7 @@ namespace Sci.Production.Warehouse
 
             this.IsSupportToPrint = !this.radioP18ExcelImport.Checked;
             this.IsSupportToExcel = this.radioP18ExcelImport.Checked;
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
             this.comboType.Enabled = this.radioQRCodeSticker.Checked;
         }
 
@@ -256,7 +242,7 @@ WHERE a.ID = '{id}'
                 return true;
             }
 
-            new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P18").ShowDialog();
+            new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboPrint.Text, this.comboType.Text, "P18").ShowDialog();
 
             return true;
         }
@@ -379,6 +365,52 @@ where td.id = @ID";
             Marshal.ReleaseComObject(objApp);
             this.HideWaitMessage();
             return true;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
+            {
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
+            }
+            else
+            {
+                this.BindComboTypeSticker();
+            }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }

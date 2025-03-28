@@ -65,12 +65,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                , p.TTLRFIDSewInlineQty = t.TTLRFIDSewInlineQty
 	                , p.TTLSewQty = t.TTLSewQty
             FROM P_WBScanRate p
-            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.Factory
+            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID
 
-            INSERT INTO P_WBScanRate([Date], Factory, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
+            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
             SELECT [Date], FTYGroup, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty]
             FROM #tmp_P_WBScanRate t 
-            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.Factory)
+            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID)
 
             if exists (select 1 from BITableInfo b where b.id = 'P_WBScanRate')
             begin

@@ -190,19 +190,21 @@ where   ts.StyleID = '{this.txtStyleCreate.Text}' and
                 return;
             }
 
-            bool isAlreadyCreate = MyUtility.Check.Seek($@"
-SELECT 1
-FROM AutomatedLineMapping ALM
-WHERE   ALM.FactoryID = '{this.txtFactoryCreate.Text}'
-AND ALM.StyleID = '{this.txtStyleCreate.Text}'
-AND ALM.SeasonID = '{this.txtSeasonCreate.Text}'
-AND ALM.BrandID = '{this.txtBrandCreate.Text}'
-AND ALM.ComboType = '{this.txtStyleLocationCreate.Text}'
-AND ALM.OriSewerManpower = '{this.numSewer.Text}'
-");
-            if (isAlreadyCreate)
+            string checkSewseq = $@"
+select *
+from TimeStudy t with (nolock)
+inner join TimeStudy_Detail td with (nolock) on t.ID = td.ID
+where	t.StyleID = '{this.txtStyleCreate.Text}' and
+		t.BrandID = '{this.txtBrandCreate.Text}' and
+		t.SeasonID = '{this.txtSeasonCreate.Text}' and
+		t.ComboType = '{this.txtStyleLocationCreate.Text}' and
+		td.OperationID not like '-%' and
+		td.SewingSeq <> ''
+";
+            DataRow drInfoSeq;
+            if (!MyUtility.Check.Seek(checkSewseq, out drInfoSeq))
             {
-                MyUtility.Msg.WarningBox($"This [*Create Auto Line Mapping][No. of Sewer] is {this.numSewer.Text} already exists, cannot create a new line mapping.");
+                MyUtility.Msg.WarningBox("All [Sew Seq] values in IE P01 are empty. Unable to create IE P05!");
                 return;
             }
 
@@ -223,6 +225,25 @@ exec dbo.GetAutomatedLineMapping    '{this.txtFactoryCreate.Text}',
             if (!result)
             {
                 this.ShowErr(result);
+                return;
+            }
+
+            bool isAlreadyCreate = MyUtility.Check.Seek($@"
+             SELECT 1
+             FROM AutomatedLineMapping ALM
+             WHERE   ALM.FactoryID = '{this.txtFactoryCreate.Text}'
+             AND ALM.StyleID = '{this.txtStyleCreate.Text}'
+             AND ALM.SeasonID = '{this.txtSeasonCreate.Text}'
+             AND ALM.BrandID = '{this.txtBrandCreate.Text}'
+             AND ALM.ComboType = '{this.txtStyleLocationCreate.Text}'
+             AND ALM.Phase = '{this.comboPhase.Text}'
+             AND ALM.SewerManpower = '{this.numSewer.Value}'
+             AND ALM.OriSewerManpower = '{this.numSewer.Text}'
+             AND (ALM.Phase + ' ' +ALM.TimeStudyVersion) = '{MyUtility.Convert.GetString(dtResults[0].Rows[0]["Phase"]) + " " + MyUtility.Convert.GetString(dtResults[0].Rows[0]["TimeStudyVersion"])}'
+             ");
+            if (isAlreadyCreate)
+            {
+                MyUtility.Msg.WarningBox($"This [*Create Auto Line Mapping][No. of Sewer] is {this.numSewer.Text} already exists, cannot create a new line mapping.");
                 return;
             }
 

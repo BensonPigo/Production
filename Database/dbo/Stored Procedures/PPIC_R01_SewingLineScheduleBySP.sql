@@ -191,7 +191,7 @@ select  s.SewingLineID
             , InspDate = InspctDate.Val
             , s.StandardOutput
             , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+                      ELSE ROUND(CONVERT(float ,(sa.TTlAlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
                       END
             , o.KPILETA
 			, o.SewETA
@@ -259,6 +259,11 @@ select  s.SewingLineID
 	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
 	    where s.Ukey = o.StyleUkey
     )sty
+    OUTER APPLY(
+        SELECT TTlAlloQty = SUM (AlloQty)
+        FROM SewingSchedule WITH (NOLOCK)
+        WHERE APSNo = s.APSNo
+    ) sa
     where   s.ID in (select ID from @tmpSewingScheduleID)
 
 -----------------------------------------------------------------

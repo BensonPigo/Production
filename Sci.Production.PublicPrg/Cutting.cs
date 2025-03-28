@@ -975,6 +975,8 @@ order by o.SewInLine
             public string BundleNo { get; set; }
             public bool RFIDScan { get; set; }
             public string Dyelot { get; set; }
+            public string ID { get; set; }
+            public string PatternDesc { get; set; }
         }
 #pragma warning restore SA1516 // Elements should be separated by blank line
 #pragma warning restore SA1600 // Elements should be documented

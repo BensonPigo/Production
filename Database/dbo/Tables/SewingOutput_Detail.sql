@@ -19,6 +19,8 @@
 	[AutoSplit] [bit] NULL,
 	[Cumulate] [int] NOT NULL,
 	[CumulateSimilar] [int] NOT NULL,
+	[DQSOutput] [int] NOT NULL,
+	[InlineCategoryCumulate] [int] NOT NULL,
  CONSTRAINT [PK_SewingOutput_Detail] PRIMARY KEY CLUSTERED 
 (
 	[UKey] ASC
@@ -80,6 +82,12 @@ GO
 ALTER TABLE [dbo].[SewingOutput_Detail] ADD  CONSTRAINT [DF_SewingOutput_Detail_CumulateSimilar]  DEFAULT ((0)) FOR [CumulateSimilar]
 GO
 
+ALTER TABLE [dbo].[SewingOutput_Detail] ADD  DEFAULT ((0)) FOR [DQSOutput]
+GO
+
+ALTER TABLE [dbo].[SewingOutput_Detail] ADD  CONSTRAINT [DF_SewingOutput_Detail_InlineCategoryCumulate]  DEFAULT ((0)) FOR [InlineCategoryCumulate]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SewingOutput Id' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingOutput_Detail', @level2type=N'COLUMN',@level2name=N'ID'
 GO
 
@@ -126,6 +134,12 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'累積天數' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'相似款式累積天數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingOutput_Detail', @level2type=N'COLUMN',@level2name=N'CumulateSimilar'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'生產完且通過檢驗(‘Pass’ or ‘Fixed’)的數量(工廠無法修改)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingOutput_Detail', @level2type=N'COLUMN',@level2name=N'DQSOutput'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'InlineCategory 累計天數' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingOutput_Detail', @level2type=N'COLUMN',@level2name=N'InlineCategoryCumulate'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Dailiy output(車縫日報明細檔)' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingOutput_Detail'

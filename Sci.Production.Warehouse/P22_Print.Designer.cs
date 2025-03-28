@@ -33,36 +33,38 @@
             this.comboType = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
             this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
+            this.comboPrint = new Sci.Win.UI.ComboBox();
+            this.lbPrint = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(424, 21);
+            this.print.Location = new System.Drawing.Point(373, 21);
             // 
             // toexcel
             // 
             this.toexcel.Enabled = false;
-            this.toexcel.Location = new System.Drawing.Point(424, 57);
+            this.toexcel.Location = new System.Drawing.Point(373, 57);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(424, 93);
+            this.close.Location = new System.Drawing.Point(373, 93);
             // 
             // buttonCustomized
             // 
             this.buttonCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCustomized.Location = new System.Drawing.Point(378, 125);
+            this.buttonCustomized.Location = new System.Drawing.Point(327, 125);
             // 
             // checkUseCustomized
             // 
             this.checkUseCustomized.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkUseCustomized.Location = new System.Drawing.Point(404, 134);
+            this.checkUseCustomized.Location = new System.Drawing.Point(353, 134);
             // 
             // txtVersion
             // 
             this.txtVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtVersion.Location = new System.Drawing.Point(404, 134);
+            this.txtVersion.Location = new System.Drawing.Point(353, 134);
             // 
             // radioTransferSlip
             // 
@@ -81,6 +83,8 @@
             // 
             // radioGroup1
             // 
+            this.radioGroup1.Controls.Add(this.comboPrint);
+            this.radioGroup1.Controls.Add(this.lbPrint);
             this.radioGroup1.Controls.Add(this.comboType);
             this.radioGroup1.Controls.Add(this.label2);
             this.radioGroup1.Controls.Add(this.radioQRCodeSticker);
@@ -91,6 +95,7 @@
             this.radioGroup1.TabIndex = 95;
             this.radioGroup1.TabStop = false;
             this.radioGroup1.Value = "1";
+            this.radioGroup1.ValueChanged += new System.EventHandler(this.RadioGroup_ValueChanged);
             // 
             // comboType
             // 
@@ -98,7 +103,7 @@
             this.comboType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboType.FormattingEnabled = true;
             this.comboType.IsSupportUnselect = true;
-            this.comboType.Location = new System.Drawing.Point(214, 60);
+            this.comboType.Location = new System.Drawing.Point(208, 87);
             this.comboType.Name = "comboType";
             this.comboType.OldText = "";
             this.comboType.Size = new System.Drawing.Size(121, 24);
@@ -107,7 +112,7 @@
             // label2
             // 
             this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(172, 61);
+            this.label2.Location = new System.Drawing.Point(166, 88);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(39, 23);
             this.label2.TabIndex = 10;
@@ -126,6 +131,29 @@
             this.radioQRCodeSticker.Text = "QR Code Sticker";
             this.radioQRCodeSticker.UseVisualStyleBackColor = true;
             this.radioQRCodeSticker.Value = "2";
+            // 
+            // comboPrint
+            // 
+            this.comboPrint.BackColor = System.Drawing.Color.White;
+            this.comboPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPrint.FormattingEnabled = true;
+            this.comboPrint.IsSupportUnselect = true;
+            this.comboPrint.Location = new System.Drawing.Point(208, 60);
+            this.comboPrint.Name = "comboPrint";
+            this.comboPrint.OldText = "";
+            this.comboPrint.Size = new System.Drawing.Size(121, 24);
+            this.comboPrint.TabIndex = 13;
+            this.comboPrint.SelectedIndexChanged += new System.EventHandler(this.ComboPrint_SelectedIndexChanged);
+            // 
+            // lbPrint
+            // 
+            this.lbPrint.BackColor = System.Drawing.Color.Transparent;
+            this.lbPrint.Location = new System.Drawing.Point(166, 61);
+            this.lbPrint.Name = "lbPrint";
+            this.lbPrint.Size = new System.Drawing.Size(39, 23);
+            this.lbPrint.TabIndex = 12;
+            this.lbPrint.Text = "Print:";
+            this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // P22_Print
             // 
@@ -154,5 +182,7 @@
         private Win.UI.RadioButton radioQRCodeSticker;
         private Win.UI.ComboBox comboType;
         private Win.UI.Label label2;
+        private Win.UI.ComboBox comboPrint;
+        private Win.UI.Label lbPrint;
     }
 }

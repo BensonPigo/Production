@@ -671,7 +671,8 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
 
                 // 注意！因為是新增模式下，DB絕對不會有這個PO的價格異常紀錄，所以這邊直接給他空資料
                 sql.Clear();
-
+                sql.Append("Alter table #TmpSource alter column OrderID varchar(13) " + Environment.NewLine);
+                sql.Append("Alter table #TmpSource alter column ArtworkTypeID varchar(20) " + Environment.NewLine);
                 sql.Append(" SELECT DISTINCT al.POID ,al.ArtworkTypeID ,o.BrandID ,o.StyleID ,al.POPrice, al.StandardPrice ,al.SubconReasonID ,al.AddDate ,al.AddName ,al.EditDate ,al.EditName " + Environment.NewLine);
 
                 sql.Append(" FROM #TmpSource t" + Environment.NewLine);
@@ -679,7 +680,7 @@ DROP TABLE #tmp_AllOrders ,#total_PO ,#Embroidery_List ,#TmpSource
                 sql.Append(" INNER JOIN ArtworkPO_IrregularPrice al ON al.POID = o.POID AND al.ArtworkTypeID = t.ArtworkTypeID" + Environment.NewLine);
                 sql.Append(" INNER JOIN SubconReason sr ON sr.Type = 'IP' AND sr.ID = al.SubconReasonID" + Environment.NewLine);
 
-                result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, string.Empty, sql.ToString(), out irregularPriceReason_InDB, "#TmpSource", null);
+                result = MyUtility.Tool.ProcessWithDatatable(this._detailDatas, "OrderID,ArtworkTypeID", sql.ToString(), out irregularPriceReason_InDB, "#TmpSource", null);
 
                 if (!result)
                 {

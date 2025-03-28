@@ -115,6 +115,11 @@ exec dbo.Inline_R08  @SDate,
             DataTable detailTable = dt[0];
             DataTable summaryTable = dt[1];
             TransactionScope transactionscope = new TransactionScope();
+            var paramters = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", sDate),
+                new SqlParameter("@EDate", eDate),
+            };
             using (transactionscope)
             {
                 try
@@ -124,33 +129,36 @@ exec dbo.Inline_R08  @SDate,
                     using (sqlConn)
                     {
                         string sql = @"	
+DELETE FROM P_InlineDefectSummary
+WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
+
 insert into P_InlineDefectSummary
 (
     [FirstInspectedDate]
-  ,[FactoryID]
-  ,[BrandID]
-  ,[StyleID]
-  ,[CustPoNo]
-  ,[OrderID]
-  ,[Article]
-  ,[Alias]
-  ,[CDCodeID]
-  ,[CDCodeNew]
-  ,[ProductType]
-  ,[FabricType]
-  ,[Lining]
-  ,[Gender]
-  ,[Construction]
-  ,[ProductionFamilyID]
-  ,[Team]
-  ,[QCName]
-  ,[Shift]
-  ,[Line]
-  ,[SewingCell]
-  ,[InspectedQty]
-  ,[RejectWIP]
-  ,[InlineWFT]
-  ,[InlineRFT]
+   ,[FactoryID]
+   ,[BrandID]
+   ,[StyleID]
+   ,[CustPoNo]
+   ,[OrderID]
+   ,[Article]
+   ,[Alias]
+   ,[CDCodeID]
+   ,[CDCodeNew]
+   ,[ProductType]
+   ,[FabricType]
+   ,[Lining]
+   ,[Gender]
+   ,[Construction]
+   ,[ProductionFamilyID]
+   ,[Team]
+   ,[QCName]
+   ,[Shift]
+   ,[Line]
+   ,[SewingCell]
+   ,[InspectedQty]
+   ,[RejectWIP]
+   ,[InlineWFT]
+   ,[InlineRFT]
 )
 select
     t.[First Inspection Date]
@@ -194,13 +202,16 @@ BEGIN
 	values('P_InlineDefectSummary', getdate())
 END
 ";
-                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
                         if (!result.Result)
                         {
                             throw result.GetException();
                         }
 
-                        sql = @"	
+                        sql = @"
+DELETE FROM P_InlineDefectDetail
+WHERE FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate
+
 insert into P_InlineDefectDetail
 (
    [Zone]
@@ -265,7 +276,7 @@ BEGIN
 	values('P_InlineDefectDetail', getdate())
 END
 ";
-                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
                         if (!result.Result)
                         {
                             throw result.GetException();

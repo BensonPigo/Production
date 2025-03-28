@@ -173,6 +173,8 @@
       <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
     </Compile>
     <Compile Include="Command\DualDisposableResult.cs" />
+    <Compile Include="Command\MachineCalendar.cs" />
+    <Compile Include="Command\Mathtime.cs" />
     <Compile Include="Command\ProductionEnv.cs" />
     <Compile Include="Command\ProductionSystem.cs" />
     <Compile Include="Command\SQL.cs" />
@@ -199,8 +201,27 @@
     <Compile Include="DualResultGeneric.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
     <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />
+    <Compile Include="ExtendedMethods\DataGridViewGenerator.cs" />
     <Compile Include="ExtendedMethods\MiscExtensions.cs" />
     <Compile Include="FileDownload_UpData.cs" />
+    <Compile Include="Controls\CalendarGrid.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\CalendarGrid.Designer.cs">
+      <DependentUpon>CalendarGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PublicForm\EditCalendar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PublicForm\EditCalendar.Designer.cs">
+      <DependentUpon>EditCalendar.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PublicForm\MachineEditCalendar.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PublicForm\MachineEditCalendar.Designer.cs">
+      <DependentUpon>MachineEditCalendar.cs</DependentUpon>
+    </Compile>
     <Compile Include="InchTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -893,6 +914,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CameraDisplay_ShowOnly.resx">
       <DependentUpon>CameraDisplay_ShowOnly.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\CalendarGrid.resx">
+      <DependentUpon>CalendarGrid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PublicForm\EditCalendar.resx">
+      <DependentUpon>EditCalendar.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PublicForm\MachineEditCalendar.resx">
+      <DependentUpon>MachineEditCalendar.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Holiday.resx">
       <DependentUpon>Holiday.cs</DependentUpon>

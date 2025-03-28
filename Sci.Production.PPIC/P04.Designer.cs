@@ -135,6 +135,8 @@
             this.txtcdcode = new Sci.Production.Class.Txtcdcode();
             this.btnPadPrintColor = new Sci.Win.UI.Button();
             this.checkTeamWear = new Sci.Win.UI.CheckBox();
+            this.labelTechConcept = new Sci.Win.UI.Label();
+            this.displayTechConcept = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -152,6 +154,8 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayTechConcept);
+            this.detailcont.Controls.Add(this.labelTechConcept);
             this.detailcont.Controls.Add(this.checkTeamWear);
             this.detailcont.Controls.Add(this.btnPadPrintColor);
             this.detailcont.Controls.Add(this.txtcdcodenew);
@@ -1417,6 +1421,23 @@
             this.checkTeamWear.Text = "TeamWear";
             this.checkTeamWear.UseVisualStyleBackColor = true;
             // 
+            // labelTechConcept
+            // 
+            this.labelTechConcept.Location = new System.Drawing.Point(535, 223);
+            this.labelTechConcept.Name = "labelTechConcept";
+            this.labelTechConcept.Size = new System.Drawing.Size(103, 23);
+            this.labelTechConcept.TabIndex = 97;
+            this.labelTechConcept.Text = "Tech Concept";
+            // 
+            // displayTechConcept
+            // 
+            this.displayTechConcept.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTechConcept.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTechConcept.Location = new System.Drawing.Point(641, 223);
+            this.displayTechConcept.Name = "displayTechConcept";
+            this.displayTechConcept.Size = new System.Drawing.Size(111, 23);
+            this.displayTechConcept.TabIndex = 98;
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1008, 632);
@@ -1555,5 +1576,7 @@
         private Class.ComboPictureSize comboPictureSize1;
         private Win.UI.Button btnPadPrintColor;
         private Win.UI.CheckBox checkTeamWear;
+        private Win.UI.DisplayBox displayTechConcept;
+        private Win.UI.Label labelTechConcept;
     }
 }

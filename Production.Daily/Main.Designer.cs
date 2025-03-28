@@ -79,6 +79,8 @@
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnTestWebApi = new Sci.Win.UI.Button();
+            this.btnFileCopy = new Sci.Win.UI.Button();
+            this.btnRARCheck = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -226,7 +228,7 @@
             this.panelMail.DrawBorder = true;
             this.panelMail.Location = new System.Drawing.Point(12, 219);
             this.panelMail.Name = "panelMail";
-            this.panelMail.Size = new System.Drawing.Size(823, 191);
+            this.panelMail.Size = new System.Drawing.Size(928, 191);
             this.panelMail.TabIndex = 3;
             // 
             // txtMailServerPort
@@ -556,7 +558,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnClose.Location = new System.Drawing.Point(729, 183);
+            this.btnClose.Location = new System.Drawing.Point(730, 180);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(106, 30);
             this.btnClose.TabIndex = 7;
@@ -569,9 +571,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.labelProgress});
-            this.statusStrip.Location = new System.Drawing.Point(0, 414);
+            this.statusStrip.Location = new System.Drawing.Point(0, 547);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(844, 22);
+            this.statusStrip.Size = new System.Drawing.Size(949, 22);
             this.statusStrip.TabIndex = 8;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -598,13 +600,39 @@
             this.btnTestWebApi.UseVisualStyleBackColor = true;
             this.btnTestWebApi.Click += new System.EventHandler(this.btnTestWebApi_Click);
             // 
+            // btnFileCopy
+            // 
+            this.btnFileCopy.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnFileCopy.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnFileCopy.Location = new System.Drawing.Point(840, 37);
+            this.btnFileCopy.Name = "btnFileCopy";
+            this.btnFileCopy.Size = new System.Drawing.Size(106, 30);
+            this.btnFileCopy.TabIndex = 10;
+            this.btnFileCopy.Text = "Test File Upload";
+            this.btnFileCopy.UseVisualStyleBackColor = true;
+            this.btnFileCopy.Click += new System.EventHandler(this.btnFileCopy_Click);
+            // 
+            // btnRARCheck
+            // 
+            this.btnRARCheck.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnRARCheck.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnRARCheck.Location = new System.Drawing.Point(840, 74);
+            this.btnRARCheck.Name = "btnRARCheck";
+            this.btnRARCheck.Size = new System.Drawing.Size(106, 30);
+            this.btnRARCheck.TabIndex = 11;
+            this.btnRARCheck.Text = "Test RAR Check";
+            this.btnRARCheck.UseVisualStyleBackColor = true;
+            this.btnRARCheck.Click += new System.EventHandler(this.btnRARCheck_Click);
+            // 
             // Main
             // 
             this.AcceptButton = this.btnUpdate;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(844, 436);
+            this.ClientSize = new System.Drawing.Size(949, 569);
+            this.Controls.Add(this.btnRARCheck);
+            this.Controls.Add(this.btnFileCopy);
             this.Controls.Add(this.btnTestWebApi);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
@@ -631,6 +659,8 @@
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.statusStrip, 0);
             this.Controls.SetChildIndex(this.btnTestWebApi, 0);
+            this.Controls.SetChildIndex(this.btnFileCopy, 0);
+            this.Controls.SetChildIndex(this.btnRARCheck, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).EndInit();
             this.panelFTP.ResumeLayout(false);
@@ -698,5 +728,7 @@
         private Sci.Win.UI.Button btnTestWebApi;
         private Sci.Win.UI.Label label1;
         private Sci.Win.UI.TextBox txtMailServerPort;
+        private Sci.Win.UI.Button btnFileCopy;
+        private Sci.Win.UI.Button btnRARCheck;
     }
 }

@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿using Sci;
+using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,16 @@ namespace Production.Daily
         [STAThread]
         static void Main(string[] args = null)
         {
+            // build時先將原本的appconfig加密
+            if (args.Length > 0 && args[0] == "Encryption")
+            {
+                ConfigEncryptionHelper.EncryptAESConfigFile(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+                return;
+            }
+
+            ConfigEncryptionHelper.CopyAndEncryptAppConfig();
+
+
             string pStartForm = (args.Length == 0) ? "" : args[0].ToString();
             Sci.Env.User = new DailyUser();
             Application.EnableVisualStyles();

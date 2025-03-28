@@ -93,6 +93,7 @@ select  selected = 0
 		, [Size]= isnull(psdsS.SpecValue, '')
         , [GMTWash] = isnull(GMTWash.val, '')
         , [Grade] = phy.Grade
+        , [FIRemark] = c.Remark
         ,[Refno] = psd.Refno
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
@@ -287,6 +288,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .EditText("FIRemark", header: "MTL. Lock/Unlock Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Text("Color_SpecValue", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
 

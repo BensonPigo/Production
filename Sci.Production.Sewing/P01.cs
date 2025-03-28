@@ -2133,6 +2133,7 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
                 KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
+                    this.ShowErr(resultInlineCategory.Value);
                     return resultInlineCategory.Value;
                 }
 
@@ -2354,22 +2355,6 @@ where not exists(
                 }
             }
             #endregion
-
-            DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
-
-
-            string sqlcmd = string.Empty;
-
-            for (int i = 0; i < deleteDataTable.Rows.Count; i++)
-            {
-                if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
-                {
-                    var ukey = deleteDataTable.Rows[i]["Ukey", DataRowVersion.Original];
-
-                    sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
-                }
-            }
-            var dual = DBProxy.Current.Execute(null, sqlcmd);
 
             return base.ClickSavePost();
         }
@@ -2613,6 +2598,19 @@ drop table #Child, #updateChild
             };
 
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateCumulateDay", listSqlParmeter)))
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+
+            #endregion
+
+            #region 重新計算 InlineCategory
+            listSqlParmeter = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.CurrentMaintain["ID"]),
+            };
+
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateSewingInlineCategory", listSqlParmeter)))
             {
                 MyUtility.Msg.WarningBox(result.Description);
             }
@@ -4015,6 +4013,10 @@ order by a.OrderId,os.Seq
         {
             string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
             string rftfrommes = $@"
+ALTER TABLE #tmp ALTER COLUMN OrderId VARCHAR(13)
+ALTER TABLE #tmp ALTER COLUMN Article VARCHAR(8)
+ALTER TABLE #tmp ALTER COLUMN ComboType VARCHAR(1)
+
 select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
@@ -4111,10 +4113,11 @@ drop table #tmp,#tmp2
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
             {
+                string columns = "OrderId,Article,ComboType";
                 mesConn.Open();
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(
                     (DataTable)this.detailgridbs.DataSource,
-                    string.Empty,
+                    columns,
                     rftfrommes,
                     out this.rftDT,
                     conn: mesConn);

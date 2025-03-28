@@ -202,6 +202,8 @@ CREATE TABLE [dbo].[Orders] (
     [Customize4]             VARCHAR (30)    CONSTRAINT [DF_Orders_Customize4] DEFAULT ('') NOT NULL,
     [Customize5]             VARCHAR (30)    CONSTRAINT [DF_Orders_Customize5] DEFAULT ('') NOT NULL,
     [OrderCompanyID]   NUMERIC(2, 0) NOT NULL CONSTRAINT [DF_Orders_OrderCompanyID]  DEFAULT ((0)),
+    JokerTag bit NOT NULL CONSTRAINT [DF_Orders_JokerTag] DEFAULT 0	,
+    HeatSeal bit NOT NULL CONSTRAINT [DF_Orders_HeatSeal] DEFAULT 0	,
     CONSTRAINT [PK_Orders] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 GO
@@ -757,4 +759,10 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'自訂欄�
 GO
 
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'自訂欄位4', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Orders', @level2type = N'COLUMN', @level2name = N'Customize4';
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M360 Carton Transfer 其中一個節點，來源為TradeOTP驗證功能' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'JokerTag'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M360 Carton Transfer 其中一個節點，來源為Trade' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Orders', @level2type=N'COLUMN',@level2name=N'HeatSeal'
 GO

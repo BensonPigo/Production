@@ -180,12 +180,14 @@
             this.txtfactory1.BoolFtyGroupList = true;
             this.txtfactory1.FilteMDivision = false;
             this.txtfactory1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory1.IsIE = false;
             this.txtfactory1.IsMultiselect = false;
             this.txtfactory1.IsProduceFty = false;
             this.txtfactory1.IssupportJunk = false;
             this.txtfactory1.Location = new System.Drawing.Point(251, 12);
             this.txtfactory1.MDivision = null;
             this.txtfactory1.Name = "txtfactory1";
+            this.txtfactory1.NeedInitialFactory = true;
             this.txtfactory1.Size = new System.Drawing.Size(66, 23);
             this.txtfactory1.TabIndex = 1;
             // 
@@ -211,6 +213,7 @@
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision1.Location = new System.Drawing.Point(100, 12);
             this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.NeedInitialMdivision = true;
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision1.TabIndex = 0;
             // 

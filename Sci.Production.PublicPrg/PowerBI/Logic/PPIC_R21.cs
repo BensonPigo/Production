@@ -25,111 +25,97 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 new SqlParameter("@BuyerDeliveryFrom", SqlDbType.Date) { Value = (object)model.BuyerDeliveryFrom ?? DBNull.Value },
                 new SqlParameter("@BuyerDeliveryTo", SqlDbType.Date) { Value = (object)model.BuyerDeliveryTo ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessFrom", SqlDbType.Date) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessTo", SqlDbType.Date) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar) { Value = model.MDivisionID },
                 new SqlParameter("@FactoryID", SqlDbType.VarChar) { Value = model.FactoryID },
             };
 
             string sqlWhere = string.Empty;
+            string sqlMdWhere = string.Empty;
+			string sqlPKAuditWhere = string.Empty;
+
             if (model.BuyerDeliveryFrom.HasValue)
             {
-                sqlWhere += " and o.BuyerDelivery >= @BuyerDeliveryFrom ";
+                sqlWhere += " and s.BuyerDelivery >= @BuyerDeliveryFrom ";
             }
 
             if (model.BuyerDeliveryTo.HasValue)
             {
-                sqlWhere += " and o.BuyerDelivery <= @BuyerDeliveryTo ";
+                sqlWhere += " and s.BuyerDelivery <= @BuyerDeliveryTo ";
             }
 
             switch (model.ComboProcess)
             {
                 case "Dry Room Receive":
-                    sqlWhere += @" and exists(select 1 from DRYReceive a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN DRYReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Dry Room Transfer":
-                    sqlWhere += @" and exists(select 1 from DRYTransfer a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN DRYTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Transfer To Packing Error":
-                    sqlWhere += @" and exists(select 1 from PackErrTransfer a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN PackErrTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Confirm Packing Error Revise":
-                    sqlWhere += @" and exists(select 1 from PackErrCFM a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN PackErrCFM a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Scan & Pack":
-                    sqlWhere += @" and pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlMdWhere += @" where	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    break;
+                case "Packing Audit":
+                    sqlMdWhere += @"
+INNER JOIN CTNPackingAudit  a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
+";
+                    sqlPKAuditWhere = " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "MD Scan":
-                    sqlWhere += @" and exists(select 1 from MDScan a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN MDScan a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Fty Transfer To Clog":
-                    sqlWhere += @" and exists(select 1 from TransferToClog a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN TransferToClog a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive":
-                    sqlWhere += @" and exists(select 1 from ClogReceive a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN ClogReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Return":
-                    sqlWhere += @" and exists(select 1 from ClogReturn a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN ClogReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Transfer To CFA":
-                    sqlWhere += @" and exists(select 1 from TransferToCFA a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN TransferToCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive From CFA":
-                    sqlWhere += @" and exists(select 1 from ClogReceiveCFA a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN ClogReceiveCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Receive":
-                    sqlWhere += @" and exists(select 1 from CFAReceive a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN CFAReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Return":
-                    sqlWhere += @" and exists(select 1 from CFAReturn a with (nolock) 
-												where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo and
-														a.PackingListID = pld.ID and
-														a.CTNStartNo = pld.CTNStartNo and
-														a.OrderID = pld.OrderID)";
+                    sqlMdWhere += @" 
+INNER JOIN CFAReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 default:
                     break;
@@ -137,12 +123,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (!MyUtility.Check.Empty(model.MDivisionID))
             {
-                sqlWhere += $" and o.MDivisionID = '{model.MDivisionID}'";
+                sqlWhere += $" and s.MDivisionID = '{model.MDivisionID}'";
             }
 
             if (!MyUtility.Check.Empty(model.FactoryID))
             {
-                sqlWhere += $" and o.FTYGroup = '{model.FactoryID}'";
+                sqlWhere += $" and s.FTYGroup = '{model.FactoryID}'";
             }
 
             if (model.ExcludeSisterTransferOut)
@@ -152,290 +138,708 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (!model.IsBI && !model.IncludeCancelOrder)
             {
-                sqlWhere += $" and o.Junk = 0";
+                sqlWhere += $" and s.Junk = 0";
             }
 
             string sql = $@"
-	select distinct [KPIGroup] = f.KPICode
-		, [Fty] = o.FactoryID
-		, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
-		, [SP] = o.ID
-		, [SeqNo] = oqs.Seq
-		, [Category] = ISNULL(d.Name, '')
-		, [Brand] = o.BrandID
-		, [Style] = o.StyleID
-		, [PONO] = o.CustPONo
-		, [Season] = o.SeasonID
-		, [Destination] = ISNULL(p.Dest, '')
-		, o.SciDelivery
-		, oqs.BuyerDelivery
-		, [PackingListID] = p.ID
-		, [CtnNo] = pld.CTNStartNo
-		, [Size] = ISNULL(Size.val, '')
-		, [CartonQty] = ISNULL(CartonQty.val, 0)
-		, [Status] = case 
-				when HaulingScanTime.val is null 
-						and PackingAuditScanTime.val is null 
-						and M360MDScanTime.val is null
-						and pld.ScanEditDate  is null 
-						and pld.TransferDate is null 
-						then 'Fty'
-				when pld.TransferDate is null and 
-					((ClogReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
-					and ClogReturnTime.val > isnull(M360MDScanTime.val, '19710101') 
-					and ClogReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
-					and ClogReturnTime.val > isnull(HaulingScanTime.val, '19710101')) 
-					or 
-					(CFAReturnTime.val > isnull(PackingAuditScanTime.val, '19710101') 
-					and CFAReturnTime.val > isnull(M360MDScanTime.val, '19710101')
-					and CFAReturnTime.val > isnull(pld.ScanEditDate, '19710101') 
-					and CFAReturnTime.val > isnull(HaulingScanTime.val, '19710101')))
-						then 'Fty'
-				when pld.TransferDate is null and PackingAuditScanTime.val > isnull(HaulingScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
-						then 'Packing Audit'
-				when pld.TransferDate is null and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
-						then 'Hauling'
-				when pld.TransferDate is null and M360MDScanTime.val > isnull(PackingAuditScanTime.val, '19710101') and M360MDScanTime.val > isnull(HaulingScanTime.val, '19710101') and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
-						then 'M360 MD'
-				when pld.TransferDate is null and pld.ScanEditDate > isnull(PackingAuditScanTime.val, '19710101') and pld.ScanEditDate > isnull(HaulingScanTime.val, '19710101') and pld.ScanEditDate > isnull(M360MDScanTime.val, '19710101') 
-						then 'Scan & Pack'
-				when pld.TransferDate is not null and pld.TransferDate > isnull(pld.ReceiveDate, '19710101')
-						then 'Fty transit to CLOG'
-				when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
-						then 'CLOG transit to CFA'
-				when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
-						then 'CFA transit to CLOG'
-				when CFAReceiveTime.val is not null and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
-						then 'CFA'
-				when ClogReceiveTime.val is not null and (CFAReceiveTime.val is null or ClogReceiveFromCFATime.val > isnull(CFAReturnTime.val, '19710101') )
-						then 'Clog'
-			else '' end 
-		, [HaulingScanTime] = HaulingScanTime.val
-		, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
-		, [HaulingReturn] = IIF(HauledReturn.val = 'Return', 'Yes', '')
-		, [DryRoomReceiveTime] = DryRoomReceiveTime.val
-		, [DryRoomTransferTime] = DryRoomTransferTime.val 
-		, [MDScanTime] = MDScan.val
-		, [MDFailQty] = ISNULL(MDFailQty.val, 0)
-		, [PackingAuditScanTime] = PackingAuditScanTime.val
-		, [PackingAuditFailQty] = PackingAuditFailQty.val
-		, [PackingAuditReturn] = IIF(PackingAuditReturn.val = 'Return', 'Yes', '')
-		, [M360MDScanTime] = M360MDScanTime.val
-		, [M360MDFailQty] = M360MDFailQty.val
-		, [M360MDReturn] = IIF(M360MDReturn.val = 'Return', 'Yes', '')
-		, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
-		, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
-		, [ScanAndPackTime] = pld.ScanEditDate
-		, [ScanQty] = ISNULL(ScanQty.val, 0)
-		, [FtyTransferToClogTime] = FtyTransferToClogTime.val
-		, [ClogReceiveTime] = ClogReceiveTime.val
-		, [ClogLocation] = ISNULL(pld.ClogLocationId, '')
-		, [ClogReturnTime] = ClogReturnTime.val
-		, [ClogTransferToCFATime] = ClogTransferToCFATime.val
-		, [CFAReceiveTime] = CFAReceiveTime.val
-		, [CFAReturnTime] = CFAReturnTime.val
-		, [CFAReturnDestination] = ISNULL(CFAReturnDestination.val, '')
-		, [ClogReceiveFromCFATime] = ClogReceiveFromCFATime.val
-		, pld.DisposeDate
-		, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
-		, p.PulloutDate
-	from Production.dbo.Orders o with (nolock)
-	inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
-	inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
-	inner join Production.dbo.PackingList_Detail pld with (nolock) on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
-	inner join Production.dbo.PackingList p with (nolock) on p.ID = pld.ID
-	left join Production.dbo.DropDownList d with (nolock) on d.Type = 'Category' AND d.ID = o.Category	
-	outer apply(
-		select [val] = Stuff((select distinct concat('/',SizeCode) 
-								from Production.dbo.PackingList_Detail pd with(nolock)
-								where	pd.ID = pld.ID and
-									pd.CtnStartNo = pld.CtnStartNo
-								FOR XML PATH('')), 1, 1, '')
-	) Size
-	outer apply(
-		select [val] = (select sum(pd.shipQty)
-						from Production.dbo.PackingList_Detail pd with(nolock)
-						where	pd.ID = pld.ID and
-								pd.CtnStartNo = pld.CtnStartNo and
-								pd.OrderID = pld.OrderID)
-	) CartonQty
-	outer apply(
-		select [val] = (select sum(pd.ScanQty)
-						from Production.dbo.PackingList_Detail pd with(nolock)
-						where	pd.ID = pld.ID and
-								pd.CtnStartNo = pld.CtnStartNo and
-								pd.OrderID = pld.OrderID)
-	) ScanQty
-	outer apply(
-		select [val] = (select max(ch.AddDate)
-						from Production.dbo.CTNHauling ch with(nolock)
-						where	ch.PackingListID = pld.ID and
-								ch.CtnStartNo = pld.CtnStartNo and
-								ch.OrderID = pld.OrderID)
-	) HaulingScanTime
-	outer apply(
-		select [val] = (select isnull(sum(QtyPerCtn),0) 
-						from Production.dbo.PackingList_Detail pd with(nolock)
-						where pd.ID = pld.ID
-						and exists (select 1 from Production.dbo.CTNHauling ch with(nolock)
-									where ch.PackingListID = pld.ID
-									and ch.CTNStartNo = pld.CTNStartNo
-									and ch.OrderID = pld.OrderID
-									and ch.SCICtnNo = pd.SCICtnNo))
-	) HauledQty
-	outer apply(
-		select [val] = (select max(ch.Status)
-						from Production.dbo.CTNHauling ch with(nolock)
-						where ch.PackingListID = pld.ID 
-						and ch.CTNStartNo = pld.CTNStartNo
-						and ch.OrderID = pld.OrderID)
 
-	) HauledReturn
-	outer apply(
-		select [val] = (select max(dr.AddDate)
-						from Production.dbo.DryReceive dr with(nolock)
-						where	dr.PackingListID = pld.ID and
-								dr.CtnStartNo = pld.CtnStartNo and
-								dr.OrderID = pld.OrderID)
-	) DryRoomReceiveTime
-	outer apply(
-		select [val] = (select max(dr.AddDate)
-						from Production.dbo.DryTransfer dr with(nolock)
-						where	dr.PackingListID = pld.ID and
-								dr.CtnStartNo = pld.CtnStartNo and
-								dr.OrderID = pld.OrderID)
-	) DryRoomTransferTime
-	outer apply( 
-		select [val] = (select max(AddDate)
-						from Production.dbo.MDScan md with (nolock) 
-						where	md.DataRemark = 'Create from PMS' and
-								md.PackingListID = pld.ID and 
-								md.CTNStartNo = pld.CTNStartNo and 
-								md.OrderID = pld.OrderID)
-	) MDScan
-	outer apply(
-		select [val] = (select  MAX(MDFailQty)
-				from Production.dbo.MDScan md with (nolock) 
-				where	md.PackingListID = pld.ID and 
-						md.CTNStartNo = pld.CTNStartNo and 
-						md.OrderID = pld.OrderID and
-						md.AddDate = MDScan.val)
-	) MDFailQty
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.CTNPackingAudit pa with (nolock) 
-				where	pa.PackingListID = pld.ID and 
-						pa.SCICtnNo = pld.SCICtnNo)
-	) PackingAuditScanTime
-	outer apply(
-		select [val] = (select isnull(sum(pa.Qty), 0)
-				from Production.dbo.CTNPackingAudit pa with (nolock) 
-				where	pa.PackingListID = pld.ID and 
-						pa.SCICtnNo = pld.SCICtnNo and 
-						pa.AddDate = PackingAuditScanTime.val)
-	) PackingAuditFailQty
-	outer apply(
-		select [val] = (select max(pa.Status)
-				from Production.dbo.CTNPackingAudit pa with (nolock)
-				where	pa.packingListID = pld.ID and
-						pa.SCICtnNo = pld.SCICtnNo)
-	) PackingAuditReturn	
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.MDScan md with (nolock) 
-				where	md.DataRemark = 'Create from M360' and
-						md.PackingListID = pld.ID and 
-						md.SCICtnNo = pld.SCICtnNo)
-	) M360MDScanTime
-	outer apply(
-		select [val] = (select isnull(sum(md.MDFailQty), 0)
-				from Production.dbo.MDScan md with (nolock) 
-				where	md.DataRemark = 'Create from M360' and
-						md.PackingListID = pld.ID and 
-						md.SCICtnNo = pld.SCICtnNo and
-						md.AddDate = M360MDScanTime.val)
-	) M360MDFailQty
-	outer apply(
-		select [val] = (select max(md.Status)
-				from Production.dbo.MDScan md with (nolock)
-				where	md.DataRemark = 'Create from M360' and
-						md.PackingListID = pld.ID and
-						md.SCICtnNo = pld.SCICtnNo)
-	) M360MDReturn
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.PackErrTransfer pe with (nolock) 
-				where	pe.PackingListID = pld.ID and 
-						pe.CTNStartNo = pld.CTNStartNo and
-						pe.OrderID = pld.OrderID)
-	) TransferToPackingErrorTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.PackErrCFM pe with (nolock) 
-				where	pe.PackingListID = pld.ID and 
-						pe.CTNStartNo = pld.CTNStartNo and
-						pe.OrderID = pld.OrderID)
-	) ConfirmPackingErrorReviseTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.TransferToClog tc with (nolock) 
-				where	tc.PackingListID = pld.ID and 
-						tc.CTNStartNo = pld.CTNStartNo and
-						tc.OrderID = pld.OrderID)
-	) FtyTransferToClogTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.ClogReceive cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID)
-	) ClogReceiveTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.ClogReturn cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID)
-	) ClogReturnTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.TransferToCFA tc with (nolock) 
-				where	tc.PackingListID = pld.ID and 
-						tc.CTNStartNo = pld.CTNStartNo and
-						tc.OrderID = pld.OrderID)
-	) ClogTransferToCFATime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.CFAReceive cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID)
-	) CFAReceiveTime
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.CFAReturn cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID)
-	) CFAReturnTime
-	outer apply(
-		select [val] = (select distinct cr.ReturnTo
-				from Production.dbo.CFAReturn cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID and 
-						cr.AddDate = CFAReturnTime.val)
-	) CFAReturnDestination
-	outer apply(
-		select [val] = (select MAX(AddDate)
-				from Production.dbo.ClogReceiveCFA cr with (nolock) 
-				where	cr.PackingListID = pld.ID and 
-						cr.CTNStartNo = pld.CTNStartNo and
-						cr.OrderID = pld.OrderID)
-	) ClogReceiveFromCFATime
-	where o.Category in ('B', 'G')
-	{sqlWhere}	
+-- 先限縮資料量
+
+SELECT DISTINCT o.FactoryID
+	,o.ID
+	,o.BrandID
+	,o.StyleID
+	,o.CustPONo
+	,o.SeasonID
+	,o.Category	
+	,o.SciDelivery
+	,o.PulloutComplete
+	,o.SewLine
+INTO #Orders
+FROM (
+	SELECT s.*
+	FROM Production.dbo.Orders s
+	INNER JOIN Production.dbo.Factory f with (nolock) on f.ID = s.FactoryID
+	WHERE s.Category in ('B', 'G') {sqlWhere}	
+) o
+INNER JOIN Production.dbo.PackingList_Detail pld WITH (NOLOCK) on o.ID  = pld.OrderID
+{sqlMdWhere}
+
+SELECT pld.*
+INTO #PackingList_Detail
+FROM Production.dbo.PackingList_Detail pld WITH (NOLOCK)
+WHERE EXISTS (
+	select 1 
+	from #Orders o
+	WHERE pld.OrderID = o.ID 	
+)
+
+SELECT p.*
+INTO #PackingList
+FROM Production.dbo.PackingList p WITH (NOLOCK)
+WHERE EXISTS (
+	select 1 
+	from #PackingList_Detail pld
+	WHERE pld.ID = p.ID 	
+)
+
+SELECT ch.*
+INTO #CTNHauling
+FROM Production.dbo.CTNHauling ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+
+SELECT ch.*
+INTO #DryReceive
+FROM Production.dbo.DryReceive ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+
+SELECT ch.*
+INTO #DryTransfer
+FROM Production.dbo.DryTransfer ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #MDScan
+FROM Production.dbo.MDScan t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #CTNPackingAudit
+FROM Production.dbo.CTNPackingAudit t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #PackErrTransfer
+FROM Production.dbo.PackErrTransfer t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #PackErrCFM
+FROM Production.dbo.PackErrCFM t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #TransferToClog
+FROM Production.dbo.TransferToClog t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #ClogReceive
+FROM Production.dbo.ClogReceive t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #ClogReturn
+FROM Production.dbo.ClogReturn t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #TransferToCFA
+FROM Production.dbo.TransferToCFA t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #CFAReceive
+FROM Production.dbo.CFAReceive t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #CFAReturn
+FROM Production.dbo.CFAReturn t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT t.*
+INTO #ClogReceiveCFA
+FROM Production.dbo.ClogReceiveCFA t
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE t.PackingListID = pld.ID
+      AND t.CtnStartNo = pld.CtnStartNo
+      AND t.OrderID = pld.OrderID
+);
+
+SELECT ch.*
+INTO #CTNHangerPack
+FROM Production.dbo.CTNHangerPack ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+
+SELECT ch.*
+INTO #CTNJokerTag
+FROM Production.dbo.CTNJokerTag ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+
+SELECT ch.*
+INTO #CTNHeatSeal 
+FROM Production.dbo.CTNHeatSeal  ch
+WHERE EXISTS (
+    SELECT 1
+    FROM #PackingList_Detail pld
+    WHERE ch.PackingListID = pld.ID
+      AND ch.CtnStartNo = pld.CtnStartNo
+      AND ch.OrderID = pld.OrderID
+);
+---------開始整理報表-------
+
+select distinct [KPIGroup] = f.KPICode
+	, [Fty] = o.FactoryID
+	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
+	, [SP] = o.ID
+	, [SeqNo] = oqs.Seq
+	, [Category] = ISNULL(d.Name, '')
+	, [Brand] = o.BrandID
+	, [Style] = o.StyleID
+	, [PONO] = o.CustPONo
+	, [Season] = o.SeasonID
+	, [Destination] = ISNULL(p.Dest, '')
+	, o.SciDelivery
+	, oqs.BuyerDelivery
+	, [PackingListID] = p.ID
+	, [CtnNo] = pld.CTNStartNo
+	, [Refno] = isnull(pld.Refno,'')
+	, [Description] = isnull(LocalItem.Description,'')
+	, [Size] = ISNULL(Size.val, '')
+	, [CartonQty] = ISNULL(CartonQty.val, 0)
+	, [Status] = case 
+			when p.PulloutDate is not null
+					then 'Pullout'
+			when HaulingScanTime.val is null 
+					and PackingAuditScanTime.val is null 
+					and M360MDScanTime.val is null
+					and CTNHangerPackTime.val is null
+					and CTNJokerTagTime.val is null
+					and CTNHeatSealTime.val is null
+					and pld.ScanEditDate  is null 
+					and pld.TransferDate is null 
+					then 'Fty'
+			when pld.TransferDate is null and 
+				((ClogReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+				and ClogReturnTime.val >= isnull(M360MDScanTime.val, '19710101') 
+				and ClogReturnTime.val >= isnull(pld.ScanEditDate, '19710101') 
+				and ClogReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')) 
+				or 
+				(CFAReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+				and CFAReturnTime.val >= isnull(M360MDScanTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(pld.ScanEditDate, '19710101') 
+				and CFAReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')))
+					then 'Fty'
+			when pld.TransferDate is null 
+					and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Hauling'
+			when pld.TransferDate is null 
+					and PackingAuditScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Packing Audit'
+			when pld.TransferDate is null 
+					and M360MDScanTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and M360MDScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'M360 MD'
+			when pld.TransferDate is null 
+					and CTNHangerPackTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNHangerPackTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and CTNHangerPackTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(CTNJokerTagTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101') 
+					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Hanger Pack'
+			when pld.TransferDate is null 
+					and CTNJokerTagTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and CTNJokerTagTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNJokerTagTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and CTNJokerTagTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and CTNJokerTagTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Joker Tag'
+			when pld.TransferDate is null 
+					and CTNHeatSealTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and CTNHeatSealTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and CTNHeatSealTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and CTNHeatSealTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and CTNHeatSealTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101') 
+					then 'Heat Seal'
+			when pld.TransferDate is null 
+					and pld.ScanEditDate >= isnull(PackingAuditScanTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(HaulingScanTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(M360MDScanTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(CTNHangerPackTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(CTNJokerTagTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(CTNHeatSealTime.val, '19710101') 
+					then 'Scan & Pack'
+			when pld.TransferDate is not null and
+				((ClogReceiveTime.val >= isnull(FtyTransferToClogTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(ClogReturnTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(ClogTransferToCFATime.val, '19710101')
+				and ClogReceiveTime.val > isnull(CFAReceiveTime.val, '19710101')
+				and ClogReceiveTime.val > isnull(CFAReturnTime.val, '19710101'))
+				or
+				(ClogReceiveFromCFATime.val >= isnull(FtyTransferToClogTime.val, '19710101') 
+				and ClogReceiveFromCFATime.val >= isnull(ClogReturnTime.val, '19710101')
+				and ClogReceiveFromCFATime.val >= isnull(ClogTransferToCFATime.val, '19710101')
+				and ClogReceiveFromCFATime.val >= isnull(CFAReceiveTime.val, '19710101')
+				and ClogReceiveFromCFATime.val >= isnull(CFAReturnTime.val, '19710101')))
+					then 'Clog'
+			when pld.TransferDate is not null 
+					and CFAReceiveTime.val > isnull(CFAReturnTime.val, '19710101') 
+					then 'CFA'
+			when pld.CFAReturnClogDate is not null and pld.ClogLocationID = '2Clog'
+					then 'CFA transit to CLOG'
+			when pld.TransferCFADate is not null and pld.ClogLocationID = '2CFA'
+					then 'CLOG transit to CFA'
+			when pld.TransferDate is not null 
+					and FtyTransferToClogTime.val > isnull(ClogReceiveTime.val, '19710101')
+					then 'Fty transit to CLOG'
+		else '' end 
+	, [HaulingScanTime] = HaulingScanTime.val
+	, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
+	, [HaulingStatus] = CASE    WHEN HauledReturn.val = 'Return' THEN 'Return'
+								WHEN HauledReturn.val = 'Haul 'THEN 'Hauled'
+							ELSE isnull(HauledReturn.val,'')
+						END
+	, [HaulerName] = isnull(HaulerNanme.val,'')
+	, [DryRoomReceiveTime] = DryRoomReceiveTime.val
+	, [DryRoomTransferTime] = DryRoomTransferTime.val 
+	, [MDScanTime] = MDScan.val
+	, [MDFailQty] = ISNULL(MDFailQty.val, 0)
+	, [PackingAuditScanTime] = PackingAuditScanTime.val
+	, [PackingAuditFailQty] = PackingAuditFailQty.val
+	, [PackingAuditStatus] = CASE 　WHEN PackingAuditReturn.val = 'Return' THEN 'Return'
+									WHEN PackingAuditReturn.val = 'Pass 'THEN 'Pass'
+									WHEN PackingAuditReturn.val = 'Hold 'THEN 'Hold'
+								ELSE isnull(PackingAuditReturn.val,'')
+							END
+	, [PackingAuditName] = isnull(PackingAuditName.val,'')
+	, [M360MDScanTime] = M360MDScanTime.val
+	, [M360MDFailQty] = M360MDFailQty.val
+	, [M360MDStatus] =	CASE 　 WHEN M360MDReturn.val = 'Return'THEN 'Return'
+								WHEN M360MDReturn.val = 'Pass 'THEN 'Pass'
+								WHEN M360MDReturn.val = 'Hold 'THEN 'Hold'
+							ELSE isnull(M360MDReturn.val,'')
+						END
+	, [M360MDName] = isnull(M360MDName.val,'')
+	, [HangerPackScanTime] = CTNHangerPackTime.val
+	, [HangerPackStatus] = CASE WHEN pld.HangerPackStatus = 'Return'THEN 'Return'
+									WHEN pld.HangerPackStatus = 'Pass 'THEN 'Done'
+								ELSE isnull(pld.HangerPackStatus,'')
+							END
+	, [HangerPackName] = isnull(HangerPackName.val,'')
+	, [JokerTagScanTime] = CTNJokerTagTime.val 
+	, [JokerTagStatus] = CASE WHEN pld.JokerTagStatus = 'Return'THEN 'Return'
+								WHEN pld.JokerTagStatus = 'Pass 'THEN 'Done'
+								ELSE isnull(pld.JokerTagStatus,'')
+							END
+	, [JokerTagName] = isnull(JokerTagName.val,'')
+	, [HeatSealScanTime] = CTNHeatSealTime.val
+	, [HeatSealStatus] = CASE WHEN pld.HeatSealStatus = 'Return'THEN 'Return'
+								WHEN pld.HeatSealStatus = 'Pass 'THEN 'Done'
+								ELSE isnull(pld.HeatSealStatus,'')
+							END
+    , [HeatSealName] = isnull(HeatSealName.val,'')
+	, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
+	, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
+	, [ScanAndPackTime] = pld.ScanEditDate
+	, [ScanQty] = ISNULL(ScanQty.val, 0)
+	, [FtyTransferToClogTime] = FtyTransferToClogTime.val
+	, [ClogReceiveTime] = ClogReceiveTime.val
+	, [ClogLocation] = ISNULL(pld.ClogLocationId, '')
+	, [ClogReturnTime] = ClogReturnTime.val
+	, [ClogTransferToCFATime] = ClogTransferToCFATime.val
+	, [CFAReceiveTime] = CFAReceiveTime.val
+	, [CFAReturnTime] = CFAReturnTime.val
+	, [CFAReturnDestination] = ISNULL(CFAReturnDestination.val, '')
+	, [ClogReceiveFromCFATime] = ClogReceiveFromCFATime.val
+	, pld.DisposeDate
+	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
+	, p.PulloutDate
+from #Orders o
+inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
+inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
+inner join #PackingList_Detail pld  on pld.OrderID = oqs.ID and pld.OrderShipmodeSeq = oqs.Seq and pld.CTNQty = 1
+inner join #PackingList p with (nolock) on p.ID = pld.ID
+left join Production.dbo.LocalItem with (nolock) on LocalItem.Refno = pld.Refno
+left join Production.dbo.DropDownList d with (nolock) on d.Type = 'Category' AND d.ID = o.Category	
+outer apply(
+	select [val] = Stuff((select distinct concat('/',SizeCode) 
+							from #PackingList_Detail pd with(nolock)
+							where	pd.ID = pld.ID and
+								pd.CtnStartNo = pld.CtnStartNo
+							FOR XML PATH('')), 1, 1, '')
+) Size
+outer apply(
+	select [val] = (select sum(pd.shipQty)
+					from #PackingList_Detail pd with(nolock)
+					where	pd.ID = pld.ID and
+							pd.CtnStartNo = pld.CtnStartNo and
+							pd.OrderID = pld.OrderID)
+) CartonQty
+outer apply(
+	select [val] = (select sum(pd.ScanQty)
+					from #PackingList_Detail pd with(nolock)
+					where	pd.ID = pld.ID and
+							pd.CtnStartNo = pld.CtnStartNo and
+							pd.OrderID = pld.OrderID)
+) ScanQty
+outer apply(
+	select [val] = (select max(ch.AddDate)
+					from #CTNHauling ch with(nolock)
+					where	ch.PackingListID = pld.ID and
+							ch.CtnStartNo = pld.CtnStartNo and
+							ch.OrderID = pld.OrderID)
+) HaulingScanTime
+outer apply(
+	select [val] = (select isnull(sum(QtyPerCtn),0) 
+					from #PackingList_Detail pd with(nolock)
+					where pd.ID = pld.ID
+					and exists (select 1 from #CTNHauling ch with(nolock)
+								where ch.PackingListID = pld.ID
+								and ch.CTNStartNo = pld.CTNStartNo
+								and ch.OrderID = pld.OrderID
+								and ch.SCICtnNo = pd.SCICtnNo))
+) HauledQty
+outer apply(
+	select [val] = (select max(ch.Status)
+					from #CTNHauling ch with(nolock)
+					where ch.PackingListID = pld.ID 
+					and ch.CTNStartNo = pld.CTNStartNo
+					and ch.OrderID = pld.OrderID)
+
+) HauledReturn
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHauling ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HaulerNanme
+outer apply(
+	select [val] = (select max(dr.AddDate)
+					from #DryReceive dr with(nolock)
+					where	dr.PackingListID = pld.ID and
+							dr.CtnStartNo = pld.CtnStartNo and
+							dr.OrderID = pld.OrderID)
+) DryRoomReceiveTime
+outer apply(
+	select [val] = (select max(dr.AddDate)
+					from #DryTransfer dr with(nolock)
+					where	dr.PackingListID = pld.ID and
+							dr.CtnStartNo = pld.CtnStartNo and
+							dr.OrderID = pld.OrderID)
+) DryRoomTransferTime
+outer apply( 
+	select [val] = (select max(AddDate)
+					from #MDScan md with (nolock) 
+					where	md.DataRemark = 'Create from PMS' and
+							md.PackingListID = pld.ID and 
+							md.CTNStartNo = pld.CTNStartNo and 
+							md.OrderID = pld.OrderID)
+) MDScan
+outer apply(
+	select [val] = (select  MAX(MDFailQty)
+			from #MDScan md with (nolock) 
+			where	md.PackingListID = pld.ID and 
+					md.CTNStartNo = pld.CTNStartNo and 
+					md.OrderID = pld.OrderID and
+					md.AddDate = MDScan.val)
+) MDFailQty
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CTNPackingAudit pa with (nolock) 
+			where	pa.PackingListID = pld.ID and 
+					pa.SCICtnNo = pld.SCICtnNo)
+) PackingAuditScanTime
+outer apply(
+	select [val] = (select isnull(sum(pa.Qty), 0)
+			from #CTNPackingAudit pa with (nolock) 
+			where	pa.PackingListID = pld.ID and 
+					pa.SCICtnNo = pld.SCICtnNo and 
+					pa.AddDate = PackingAuditScanTime.val)
+) PackingAuditFailQty
+outer apply(
+	select [val] = (select max(pa.Status)
+			from #CTNPackingAudit pa with (nolock)
+			where	pa.packingListID = pld.ID and
+					pa.SCICtnNo = pld.SCICtnNo)
+) PackingAuditReturn	
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNPackingAudit ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) PackingAuditName
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #MDScan md with (nolock) 
+			where	md.DataRemark = 'Create from M360' and
+					md.PackingListID = pld.ID and 
+					md.SCICtnNo = pld.SCICtnNo)
+) M360MDScanTime
+outer apply(
+	select [val] = (select isnull(sum(md.MDFailQty), 0)
+			from #MDScan md with (nolock) 
+			where	md.DataRemark = 'Create from M360' and
+					md.PackingListID = pld.ID and 
+					md.SCICtnNo = pld.SCICtnNo and
+					md.AddDate = M360MDScanTime.val)
+) M360MDFailQty
+outer apply(
+	select [val] = (select max(md.Status)
+			from #MDScan md with (nolock)
+			where	md.DataRemark = 'Create from M360' and
+					md.PackingListID = pld.ID and
+					md.SCICtnNo = pld.SCICtnNo)
+) M360MDReturn
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #MDScan ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) M360MDName
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #PackErrTransfer pe with (nolock) 
+			where	pe.PackingListID = pld.ID and 
+					pe.CTNStartNo = pld.CTNStartNo and
+					pe.OrderID = pld.OrderID)
+) TransferToPackingErrorTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #PackErrCFM pe with (nolock) 
+			where	pe.PackingListID = pld.ID and 
+					pe.CTNStartNo = pld.CTNStartNo and
+					pe.OrderID = pld.OrderID)
+) ConfirmPackingErrorReviseTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #TransferToClog tc with (nolock) 
+			where	tc.PackingListID = pld.ID and 
+					tc.CTNStartNo = pld.CTNStartNo and
+					tc.OrderID = pld.OrderID)
+) FtyTransferToClogTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #ClogReceive cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) ClogReceiveTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #ClogReturn cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) ClogReturnTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #TransferToCFA tc with (nolock) 
+			where	tc.PackingListID = pld.ID and 
+					tc.CTNStartNo = pld.CTNStartNo and
+					tc.OrderID = pld.OrderID)
+) ClogTransferToCFATime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CFAReceive cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) CFAReceiveTime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CFAReturn cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) CFAReturnTime
+outer apply(
+	select [val] = (select distinct cr.ReturnTo
+			from #CFAReturn cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID and 
+					cr.AddDate = CFAReturnTime.val)
+) CFAReturnDestination
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #ClogReceiveCFA cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) ClogReceiveFromCFATime
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CTNHangerPack cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) CTNHangerPackTime
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHangerPack ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HangerPackName
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CTNJokerTag cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) CTNJokerTagTime
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNJokerTag ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) JokerTagName
+outer apply(
+	select [val] = (select MAX(AddDate)
+			from #CTNHeatSeal cr with (nolock) 
+			where	cr.PackingListID = pld.ID and 
+					cr.CTNStartNo = pld.CTNStartNo and
+					cr.OrderID = pld.OrderID)
+) CTNHeatSealTime
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHeatSeal ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HeatSealName
+where 1=1
+{sqlPKAuditWhere}
 ";
+
             Base_ViewModel resultReport = new Base_ViewModel
             {
                 Result = DBProxy.Current.Select("Production", sql, listPar, out DataTable dataTable),

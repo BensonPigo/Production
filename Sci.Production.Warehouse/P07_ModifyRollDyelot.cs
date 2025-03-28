@@ -644,6 +644,42 @@ and exists(
             }
             #endregion
 
+            #region 有任何交易紀錄都不能更改
+
+            // 撈DB檢查是否有交易紀錄
+            this.GetgridDyelotData();
+            if (this.dtGridDyelot.Rows.Count > 0)
+            {
+                // 顯示有交易紀錄的訊息
+                Class.MsgGridPrg form = new Class.MsgGridPrg(this.dtGridDyelot, "There are transaction records, cannot commit.");
+                form.ShowDialog();
+
+                // 還原回原本的資料
+                foreach (var drModify in modifyDrList)
+                {
+                    bool existsDetail = this.dtGridDyelot.AsEnumerable()
+                     .Where(s => s["poid"].Equals(drModify["poid", DataRowVersion.Original]) &&
+                                 s["seq"].Equals(drModify["seq", DataRowVersion.Original]) &&
+                                 s["roll"].Equals(drModify["roll", DataRowVersion.Original]) &&
+                                 s["dyelot"].Equals(drModify["dyelot", DataRowVersion.Original])).Any();
+                    if (existsDetail)
+                    {
+                        // 還原回原本的資料
+                        drModify["Roll"] = drModify["Roll", DataRowVersion.Original];
+                        drModify["dyelot"] = drModify["dyelot", DataRowVersion.Original];
+                        drModify["ActualQty"] = drModify["ActualQty", DataRowVersion.Original];
+                        string rate = MyUtility.GetValue.Lookup(string.Format(
+                           @"select RateValue from dbo.View_Unitrate v
+                    where v.FROM_U ='{0}' and v.TO_U='{1}'", drModify["pounit", DataRowVersion.Original], drModify["stockunit"]));
+                        drModify["stockqty"] = MyUtility.Math.Round(decimal.Parse(drModify["ActualQty", DataRowVersion.Original].ToString()) * decimal.Parse(rate), 2);
+                        drModify["FullDyelot"] = drModify["FullDyelot", DataRowVersion.Original];
+                        drModify["FullRoll"] = drModify["FullRoll", DataRowVersion.Original];
+                    }
+                }
+            }
+
+            #endregion
+
             var allDatas = this.source.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted);
             if (allDatas.GroupBy(o => new
             {

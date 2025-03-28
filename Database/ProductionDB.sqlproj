@@ -1866,14 +1866,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\usp_StockRecaculate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\usp_SingleItemRecaculate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\KHGoodsHSCode.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2921,6 +2913,15 @@
     <Build Include="dbo\Tables\StatementReport.sql" />
     <Build Include="dbo\Tables\WorkOrderForPlanning_Distribute.sql" />
     <Build Include="dbo\Stored Procedures\Cutting_P01_print_CuttingWorkOrderForPlanning.sql" />
+    <Build Include="dbo\Stored Procedures\GetEndlineTargeteff.sql" />
+    <Build Include="dbo\Functions\GetCheckContinusProduceDays.sql" />
+    <Build Include="dbo\Tables\FIR_Physical_QCTime.sql" />
+    <Build Include="dbo\Tables\EmployeeAllocationSetting.sql" />
+    <Build Include="dbo\Tables\CTNJokerTag.sql" />
+    <Build Include="dbo\Tables\CTNHeatSeal.sql" />
+    <Build Include="dbo\Tables\CTNHangerPack.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MutipleItemRecaculate.sql" />
+    <Build Include="dbo\Stored Procedures\RecalculateSewingInlineCategory.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

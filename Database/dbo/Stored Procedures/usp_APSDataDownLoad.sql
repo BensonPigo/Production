@@ -5,7 +5,7 @@ BEGIN
 	DECLARE @cmd VARCHAR(MAX)
 	DECLARE	@_i int
 	declare @Workhour_StartDate int = -31
-	declare @DateRange int = 190
+	declare @DateRange int = 395
 	declare @Special_StartDate varchar(30) = DATEADD(DAY,-30, GETDATE())
 
 	--避免Divide by zero error encountered

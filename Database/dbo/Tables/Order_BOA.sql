@@ -16,7 +16,7 @@
     [Remark]                  NVARCHAR (MAX)  CONSTRAINT [DF_Order_BOA_Remark] DEFAULT ('') NOT NULL,
     [ProvidedPatternRoom]     BIT             CONSTRAINT [DF_Order_BOA_ProvidedPatternRoom] DEFAULT ((0)) NOT NULL,
     [ColorDetail]             NVARCHAR (100)  CONSTRAINT [DF_Order_BOA_ColorDetail] DEFAULT ('') NOT NULL,
-    [isCustCD]                DECIMAL (1)     CONSTRAINT [DF_Order_BOA_isCustCD] DEFAULT ((0)) NOT NULL,
+    [isCustCD]                NUMERIC (2, 0)  CONSTRAINT [DF_Order_BOA_isCustCD] DEFAULT ((0)) NOT NULL,
     [lossType]                DECIMAL (1)     CONSTRAINT [DF_Order_BOA_lossType] DEFAULT ((0)) NOT NULL,
     [LossPercent]             DECIMAL (3, 1)  CONSTRAINT [DF_Order_BOA_LossPercent] DEFAULT ((0)) NOT NULL,
     [LossQty]                 DECIMAL (3)     CONSTRAINT [DF_Order_BOA_LossQty] DEFAULT ((0)) NOT NULL,

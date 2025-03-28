@@ -229,10 +229,14 @@
     <Compile Include="PowerBI\DataAccess\P_Import_CFAMasterListRelatedrate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonScanRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CartonStatusTrackingList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ChangeoverCheckList.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_CMPByDate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingBCS.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CuttingScheduleOutputList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyAccuCPULoading.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_ESG_Injury.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricDispatchRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_RecevingInfoTrackingSummary.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterListByDays.cs" />
@@ -288,8 +292,10 @@
     </Compile>
     <Compile Include="PowerBI\Logic\Base.cs" />
     <Compile Include="PowerBI\Logic\Cutting_R13.cs" />
+    <Compile Include="PowerBI\Logic\HttpHelpers.cs" />
     <Compile Include="PowerBI\Logic\Packing_R01.cs" />
     <Compile Include="PowerBI\Logic\Planning_P08.cs" />
+    <Compile Include="PowerBI\Logic\IE_R22.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R04.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R08.cs" />
     <Compile Include="PowerBI\Logic\PPIC_R16.cs" />
@@ -313,8 +319,10 @@
     <Compile Include="PowerBI\Model\Inline_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
     <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
-    <Compile Include="PowerBI\Model\Miscellaneous_R02.cs" />
+    <Compile Include="PowerBI\Model\Miscellaneous_R02_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\OHS_R01_ViewModel.cs" />
     <Compile Include="PowerBI\Model\Planning_P08_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\IE_R22_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R04_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R08_ViewModel.cs" />
     <Compile Include="PowerBI\Model\PPIC_R16_ViewModel.cs" />

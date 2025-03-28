@@ -1489,7 +1489,7 @@ union all
 select  [InvNo] = g.ID,
         g.ShipModeID,
         [GW] = sum(pd.GW),
-        [CBM] = sum(l.CBM),
+        [CBM] = sum(isnull(l.CBM, 0)),
         s.CurrencyID,
         s.Type, 
         iif(g.BLNo is null or g.BLNo='', isnull (g.BL2No, ''), g.BLNo) as BLNo,
@@ -1499,7 +1499,7 @@ inner join GMTBooking g WITH (NOLOCK) on  exists (select 1 from ShareExpense se 
 inner join PackingList p with (nolock) on p.INVNo = g.ID and p.Type != 'L'
 inner join PackingList_Detail pd with (nolock) on  pd.ID = p.ID and pd.CTNQty > 0
 inner join Orders o with (nolock) on o.ID = pd.OrderID
-inner join LocalItem l with (nolock) on l.Refno = pd.Refno
+left join LocalItem l with (nolock) on l.Refno = pd.Refno
 where   s.id = '{shippingAPID}' 
 group by    g.ID,
             g.ShipModeID,

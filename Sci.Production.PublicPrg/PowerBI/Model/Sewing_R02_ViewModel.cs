@@ -58,6 +58,7 @@ namespace Sci.Production.Prg.PowerBI.Model
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Reviewed")]
     public class AttendanceSummary_APICondition
     {
         /// <summary>
@@ -88,6 +89,7 @@ namespace Sci.Production.Prg.PowerBI.Model
     }
 
     /// <inheritdoc/>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Reviewed")]
     public class AttendanceSummaryResult
     {
         /// <summary>
@@ -178,5 +180,105 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public List<P_MonthlySewingOutputSummary_ViewModel> DataList;
+    }
+
+    /// <summary>
+    /// BI table P_CMPByDate
+    /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "Reviewed")]
+    public class P_CMPByDate
+    {
+        /// <summary>
+        /// factory id
+        /// </summary>
+        public string FactoryID { get; set; }
+
+        /// <summary>
+        /// output date
+        /// </summary>
+        public DateTime OutputDate { get; set; }
+
+        /// <summary>
+        /// gph cpu
+        /// </summary>
+        public decimal GPHCPU { get; set; }
+
+        /// <summary>
+        /// sph cpu
+        /// </summary>
+        public decimal SPHCPU { get; set; }
+
+        /// <summary>
+        /// vph cpu
+        /// </summary>
+        public decimal VPHCPU { get; set; }
+
+        /// <summary>
+        /// gph manhours
+        /// </summary>
+        public decimal GPHManhours { get; set; }
+
+        /// <summary>
+        /// sph manhours
+        /// </summary>
+        public decimal SPHManhours { get; set; }
+
+        /// <summary>
+        /// vph manhours
+        /// </summary>
+        public decimal VPHManhours { get; set; }
+
+        /// <summary>
+        /// Garment per hour
+        /// </summary>
+        public decimal GPH
+        {
+            get
+            {
+                return this.GPHManhours == 0 ? 0 : this.GPHCPU / this.GPHManhours;
+            }
+        }
+
+        /// <summary>
+        /// Subprocess per hour
+        /// </summary>
+        public decimal SPH
+        {
+            get
+            {
+                return this.SPHManhours == 0 ? 0 : this.SPHCPU / this.SPHManhours;
+            }
+        }
+
+        /// <summary>
+        /// Value per hour
+        /// </summary>
+        public decimal VPH
+        {
+            get
+            {
+                return this.VPHManhours == 0 ? 0 : this.VPHCPU / this.VPHManhours;
+            }
+        }
+
+        /// <summary>
+        /// 工時比率
+        /// </summary>
+        public decimal ManhoursRatio { get; set; }
+
+        /// <summary>
+        /// 總人力
+        /// </summary>
+        public decimal TotalActiveHeadcount { get; set; }
+
+        /// <summary>
+        /// 收入部門人頭數
+        /// </summary>
+        public decimal RevenumDeptHeadcount { get; set; }
+
+        /// <summary>
+        /// 人力比率
+        /// </summary>
+        public decimal ManpowerRatio { get; set; }
     }
 }

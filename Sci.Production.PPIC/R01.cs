@@ -181,6 +181,7 @@ namespace Sci.Production.PPIC
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             List<DataRow> filteredRows;
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
             bool result;
@@ -209,6 +210,7 @@ namespace Sci.Production.PPIC
                 this.printData.Columns.Remove("StyleName");
                 this.printData.Columns.Remove("AddDate");
                 this.printData.Columns.Remove("EditDate");
+                this.printData.Columns.Remove("SewingInlineCategory");
 
                 DataTable printDataFilter = this.printData.Copy();
                 if (!this.chkIncludeCompleteSchedule.Checked)

@@ -2375,6 +2375,7 @@ select  pd.ID
 		, pd.CustCTN
         , o.StyleID
         , o.BrandFTYCode
+        , o.CustCDID
         , p.Dest
         , [NewSizeCode] = case  when checkMixSize.value > 1 then 'Mix'
 						        else isnull(NewSizeCode.val, pd.SizeCode) end
@@ -2534,29 +2535,29 @@ select BuyerDelivery = stuff((
                     worksheet.Cells[5, 12] = alias;
                     for (int j = i * 50, k = 10; j < dT.Rows.Count && j < (i + 1) * 50; j++, k++)
                     {
-                        worksheet.Cells[k, 2] = dT.Rows[j]["M360Date"];
+                        worksheet.Cells[k, 2] = dT.Rows[j]["2ndMDDate"];
                         worksheet.Cells[k, 3] = dT.Rows[j]["CTNStartNo"];
                         worksheet.Cells[k, 4] = dT.Rows[j]["SizeCode"];
                         worksheet.Cells[k, 5] = dT.Rows[j]["ShipQty"];
-                        worksheet.Cells[k, 7] = dT.Rows[j]["M360Result"];
-                        if (dT.Rows[j]["M360Result"].ToString() == "Pass")
+                        worksheet.Cells[k, 8] = dT.Rows[j]["2ndMDResult"];
+                        if (dT.Rows[j]["2ndMDResult"].ToString() == "Pass")
                         {
-                            worksheet.Cells[k, 7].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
+                            worksheet.Cells[k, 8].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
                         }
                         else
                         {
-                            worksheet.Cells[k, 7].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
+                            worksheet.Cells[k, 8].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
                         }
 
-                        worksheet.Cells[k, 9] = dT.Rows[j]["M360Signature"];
+                        worksheet.Cells[k, 9] = dT.Rows[j]["2ndMDQC"];
 
                         if (MyUtility.Check.Empty(dT.Rows[j]["DryRoomMDScanDate"]))
                         {
                             continue;
                         }
 
-                        worksheet.Cells[k, 6] = dT.Rows[j]["Result"];
-                        if (dT.Rows[j]["Result"].ToString() == "Pass")
+                        worksheet.Cells[k, 6] = dT.Rows[j]["1stMDResult"];
+                        if (dT.Rows[j]["1stMDResult"].ToString() == "Pass")
                         {
                             worksheet.Cells[k, 6].Interior.Color = System.Drawing.Color.FromArgb(0, 176, 80);
                         }
@@ -2565,7 +2566,7 @@ select BuyerDelivery = stuff((
                             worksheet.Cells[k, 6].Interior.Color = System.Drawing.Color.FromArgb(192, 0, 0);
                         }
 
-                        worksheet.Cells[k, 8] = dT.Rows[j]["Signature"];
+                        worksheet.Cells[k, 7] = dT.Rows[j]["1stMDQC"];
                     }
 
                     page++;
@@ -2627,15 +2628,15 @@ select  pd.CTNStartNo,
         a.SizeCode,
         b.ShipQty,
         o.CustPONo,
-        [Result] = IIF(sum(isnull(pd.DryRoomMDFailQty, 0)) = 0, 'Pass', 'Fail'),
-        [Signature] = Signature.Name,
+        [1stMDResult] = IIF(sum(isnull(pd.DryRoomMDFailQty, 0)) = 0, 'Pass', 'Fail'),
+        [1stMDQC] = Signature.Name,
         pd.DryRoomMDScanDate,
-        [M360Date] = m.ScanDate,
-		[M360Result] = case when sum(m.MDFailQty) = 0 then 'Pass'
+        [2ndMDDate] = m.ScanDate,
+		[2ndMDResult] = case when sum(m.MDFailQty) = 0 then 'Pass'
                             when sum(m.MDFailQty) > 0 then 'Hold'
                             else 'Please check Discrepancy'
                             end,
-		[M360Signature] = m.addName
+		[2ndMDQC] = m.addName
 from #PackingList_Detail pd
 left join Orders o on o.id = pd.OrderID
 left join #MDScan m on m.PackingListID = pd.ID and m.OrderID = pd.OrderID and pd.CTNStartNo = m.CTNStartNo and m.SCICtnNo = pd.SCICtnNo

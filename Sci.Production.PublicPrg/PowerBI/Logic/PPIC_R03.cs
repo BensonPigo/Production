@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -464,6 +465,8 @@ SELECT
    ,o.OrderTypeID
    ,o.ProjectID
    ,o.HangerPack
+   ,o.JokerTag
+   ,o.HeatSeal
    ,o.Customize1
    ,o.CustPONo
    ,o.Customize4
@@ -571,6 +574,24 @@ SELECT
    ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
    ,ClogRcvDate = MAX(ReceiveDate)
    ,ActPulloutDate = MAX(pl.PulloutDate)
+    ,HaulingDate = MAX(pld.HaulingDate)
+    ,HaulingStatus = IIF( SUM(IIF( pld.HaulingStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HaulingFailQty = SUM(pld.HaulingFailQty)
+    ,PackingAuditDate = MAX(pld.PackingAuditDate)
+    ,PackingAuditStatus = IIF( SUM(IIF( pld.PackingAuditStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,PackingAuditFailQty = SUM(pld.PackingAuditFailQty)
+    ,M360MDScanDate = MAX(pld.M360MDScanDate)
+    ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,M360MDFailQty = SUM(pld.M360MDFailQty)
+    ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
+    ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
+    ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
@@ -612,6 +633,24 @@ SELECT
    ,BookingQty = SUM(IIF(pl.Type IN ('B', 'L') AND pl.INVNo <> '', pld.ShipQty, 0))
    ,ClogRcvDate = MAX(ReceiveDate)
    ,ActPulloutDate = MAX(pl.PulloutDate)
+    ,HaulingDate = MAX(pld.HaulingDate)
+    ,HaulingStatus = IIF( SUM(IIF( pld.HaulingStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HaulingFailQty = SUM(pld.HaulingFailQty)
+    ,PackingAuditDate = MAX(pld.PackingAuditDate)
+    ,PackingAuditStatus = IIF( SUM(IIF( pld.PackingAuditStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,PackingAuditFailQty = SUM(pld.PackingAuditFailQty)
+    ,M360MDScanDate = MAX(pld.M360MDScanDate)
+    ,M360MDStatus =  IIF( SUM(IIF( pld.M360MDStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,M360MDFailQty = SUM(pld.M360MDFailQty)
+    ,HangerPackScanTime = MAX(pld.HangerPackScanTime)
+    ,HangerPackStatus = IIF( SUM(IIF( pld.HangerPackStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HangerPackFailQty = SUM(pld.HangerPackFailQty)
+    ,JokerTagScanTime = MAX(pld.JokerTagScanTime)
+    ,JokerTagStatus = IIF( SUM(IIF( pld.JokerTagStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,JokerTagFailQty = SUM(pld.JokerTagFailQty)
+    ,HeatSealScanTime = MAX(pld.HeatSealScanTime)
+    ,HeatSealStatus = IIF( SUM(IIF( pld.HeatSealStatus = 'Return' ,1 ,0)) > 0 ,'Return' ,'Pass')
+    ,HeatSealFailQty = SUM(pld.HeatSealFailQty)
 INTO #tmp_PackingList_Detail
 FROM PackingList_Detail pld WITH (NOLOCK)
 INNER JOIN PackingList pl WITH (NOLOCK) ON pld.ID = pl.ID
@@ -888,6 +927,26 @@ GROUP BY s.OrderID
    ,[SewQtyOuter] = SewQtyOuter
    ,[Dest] = o.Dest
    ,[Country] = Country.Alias
+    ,HaulingDate         = pld.HaulingDate
+    ,HaulingStatus       = pld.HaulingStatus
+    ,HaulingFailQty      = ISNULL( pld.HaulingFailQty ,0)
+    ,PackingAuditDate    = pld.PackingAuditDate
+    ,PackingAuditStatus  = pld.PackingAuditStatus
+    ,PackingAuditFailQty = ISNULL( pld.PackingAuditFailQty ,0)
+    ,M360MDScanDate      = pld.M360MDScanDate
+    ,M360MDStatus        = pld.M360MDStatus
+    ,M360MDFailQty       = ISNULL( pld.M360MDFailQty ,0)
+    ,HangerPackScanTime  = pld.HangerPackScanTime
+    ,HangerPackStatus    = pld.HangerPackStatus
+    ,HangerPackFailQty   = ISNULL( pld.HangerPackFailQty ,0)
+    ,JokerTagScanTime    = pld.JokerTagScanTime
+    ,JokerTagStatus      = pld.JokerTagStatus
+    ,JokerTagFailQty     = ISNULL( pld.JokerTagFailQty ,0)
+    ,HeatSealScanTime    = pld.HeatSealScanTime
+    ,HeatSealStatus      = pld.HeatSealStatus
+    ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
+    ,o.JokerTag
+    ,o.HeatSeal
 ";
             }
             else
@@ -918,7 +977,7 @@ GROUP BY s.OrderID
 SELECT
     {seq}
     [M] = o.MDivisionID
-   ,[FactoryID] = o.FactoryID
+   ,[Factory] = o.FactoryID
    ,[Delivery] = o.BuyerDelivery
    ,[Delivery(YYYYMM)] = FORMAT(o.BuyerDelivery, 'yyyyMM')
    ,[Earliest SCIDlv] = #tmp_EarliestSCIDlv.EarliestSCIDlv
@@ -969,8 +1028,11 @@ SELECT
    ,[Garment L/T] = ISNULL(#tmpGMTLT.[Garment L/T], 0)
    ,[Order Type] = o.OrderTypeID
    ,[Project] = o.ProjectID
+   ,[Tech Concept] = d4.Description
    ,[PackingMethod] = d1.Name
    ,[Hanger pack] = o.HangerPack
+   ,[Joker Tag] = o.JokerTag
+   ,[Heat Seal] = o.HeatSeal
    ,[Order#] = o.Customize1
    ,[Buy Month] = IIF(o.isForecast = 0, o.BuyMonth, '')--和[Est. download date]相反
    ,[PONO] = o.CustPONo
@@ -1116,7 +1178,7 @@ SELECT
 
    ,[Organic Cotton/Recycle Polyester/Recycle Nylon] = IIF(o.OrganicCotton = 1, 'Y', 'N')
    ,[Direct Ship] = IIF(o.DirectShip = 1, 'V', '')
-   ,[StyleCarryover] = IIF(s.NewCO = '2', 'V', '')
+   ,[Style-Carryover] = IIF(s.NewCO = '2', 'V', '')
    {ttl_tms}
    {biColunn}
 FROM #tmpOrders o
@@ -1159,6 +1221,7 @@ Group by pd.OrderID {pdseq}
 LEFT JOIN DropDownList d1 WITH (NOLOCK) ON d1.Type = 'PackingMethod' AND o.CtnType = d1.ID
 LEFT JOIN DropDownList d2 WITH (NOLOCK) ON d2.type = 'StyleConstruction' AND s.Construction = d2.ID
 LEFT JOIN DropDownList d3 WITH (NOLOCK) ON d3.Type = 'FactoryDisclaimer' AND s.ExpectionFormStatus = d3.ID
+LEFT JOIN DropDownList d4 WITH (NOLOCK) ON d4.ID = s.TechConceptID AND d4.Type = 'TechConcept'
 LEFT JOIN Reason r1 WITH (NOLOCK) ON r1.ReasonTypeID = 'Fabric_Kind' AND s.FabricType = r1.ID
 LEFT JOIN Reason r2 WITH (NOLOCK) ON r2.ReasonTypeID = 'Style_Apparel_Type' AND s.ApparelType = r2.ID
 LEFT JOIN Reason r3 WITH (NOLOCK) ON r3.ReasonTypeID = 'Order_BuyerDelivery' AND o.KPIChangeReason = r3.ID
@@ -1282,13 +1345,14 @@ SELECT
     ,FakeID = ''
     ,ColumnN = 'Printing LT'
     ,ColumnSeq = -1 
-
+    ,''
 UNION ALL
 SELECT
     ID = 'PRINTING'
     ,FakeID = ''
     ,ColumnN = 'InkType/Color/Size'
     ,ColumnSeq = 0 
+    ,''
 ";
                 sql_printingDetail_Select = $@"
 SELECT DISTINCT
@@ -1362,6 +1426,22 @@ FROM #tmpPrintingValue";
             #endregion
 
             #region step 3 處理顯示的欄位名稱 & 不同 ArtworkTypeID 不同計算規則
+            string strColumnN1 = string.Empty;
+            string strColumnN2 = string.Empty;
+            string strcolArtworkType = string.Empty;
+
+            if (!model.IsPowerBI)
+            {
+                strColumnN1 = "#tmpSubProcess.colArtworkType + ColumnN";
+                strColumnN2 = "ColumnN = CASE WHEN colArtworkType IS NOT NULL AND colArtworkType <> '' THEN colArtworkType + 'TTL_' + ColumnN ELSE 'TTL_' + ColumnN END";
+                strcolArtworkType = "ArtworkType.seq + '-' FROM ArtworkType WITH (NOLOCK) WHERE Junk <> 1 and ID = 'EMBROIDERY'";
+            }
+            else
+            {
+                strColumnN1 = "ColumnN";
+                strColumnN2 = "'TTL_' + ColumnN";
+                strcolArtworkType = "''";
+            }
 
             // 處理顯示的欄位名稱
             string sqlcmd = $@"
@@ -1372,9 +1452,10 @@ SELECT
     ,FakeID = Seq + 'U1'
     ,ColumnN = RTRIM(ID) + ' (' + ArtworkUnit + ')'
     ,ColumnSeq = '1'
+    ,colArtworkType = ArtworkType.seq + '-'
 INTO #tmpArtworkType
 FROM ArtworkType WITH (NOLOCK)
-WHERE ArtworkUnit <> ''
+WHERE ArtworkUnit <> '' and Junk <> 1
 AND Classify IN ({whereClassify})
 
 UNION ALL
@@ -1383,9 +1464,10 @@ SELECT
     ,FakeID = Seq + 'U2'
     ,ColumnN = RTRIM(ID) + ' (' + IIF(ProductionUnit = 'QTY', 'Price', p.PUnit) + ')'
     ,ColumnSeq = '2'
+    ,colArtworkType = ArtworkType.seq + '-'
 FROM ArtworkType WITH (NOLOCK)
 OUTER APPLY (SELECT PUnit = IIF({byCPUsqlbit} = 1 AND ProductionUnit = 'TMS', 'CPU', ProductionUnit)) p
-WHERE ProductionUnit <> ''
+WHERE ProductionUnit <> '' and Junk <> 1
 AND Classify IN ({whereClassify})
 AND ID <> 'PRINTING PPU'
 
@@ -1395,8 +1477,9 @@ SELECT
     ,FakeID = Seq + 'N'
     ,ColumnN = RTRIM(ID)
     ,ColumnSeq = '3'
+    ,colArtworkType = ArtworkType.seq + '-'
 FROM ArtworkType WITH (NOLOCK)
-WHERE ArtworkUnit = ''
+WHERE ArtworkUnit = '' and Junk <> 1
 AND ProductionUnit = ''
 AND Classify IN ({whereClassify})
 
@@ -1408,24 +1491,28 @@ SELECT
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(SubCon)'
     ,ColumnSeq = '996'
+    ,colArtworkType = {strcolArtworkType}
 UNION ALL
 SELECT
     ID = 'EMBROIDERY'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'EMBROIDERY(POSubcon)'
     ,ColumnSeq = '997'
+    ,colArtworkType = {strcolArtworkType}
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'POSubCon'
     ,ColumnSeq = '998'
+    ,colArtworkType = ''
 UNION ALL
 SELECT
     ID = 'PrintSubCon'
     ,FakeID = '9999ZZ'
     ,ColumnN = 'SubCon'
     ,ColumnSeq = '999'
+    ,colArtworkType = ''
 
 SELECT *, rno = (ROW_NUMBER() OVER (ORDER BY a.ID, a.ColumnSeq))
 INTO #tmpSubProcess
@@ -1438,7 +1525,12 @@ SELECT
    ,rno = (ROW_NUMBER() OVER (ORDER BY a.rno))
 INTO #tmpArtworkData
 FROM (
-    SELECT *
+    SELECT 
+    ID,
+    FakeID,
+    ColumnN = {strColumnN1},
+    ColumnSeq,
+    rno
     FROM #tmpSubProcess WITH (NOLOCK)
     
     UNION ALL
@@ -1453,7 +1545,7 @@ FROM (
     SELECT
         ID = 'TTL' + ID
         ,FakeID = 'T' + FakeID
-        ,ColumnN = 'TTL_' + ColumnN
+        ,{strColumnN2}
         ,ColumnSeq
         ,rno = (ROW_NUMBER() OVER (ORDER BY ID, ColumnSeq)) + 1000--在 TTL_TMS 999 之後
     FROM #tmpSubProcess WITH (NOLOCK)

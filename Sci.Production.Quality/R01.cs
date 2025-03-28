@@ -317,7 +317,8 @@ select
 	,F.PhysicalDate
 	,TotalYardage = TotalYardage.Val
     ,TotalYardageArrDate = {(!this.dateArriveWHDate.Value1.HasValue && !this.dateArriveWHDate.Value2.HasValue ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
-	,fta.ActualYds
+	,ActTotalRollsInspection.Cnt ActTotalRollsInspection
+    ,fta.ActualYds
 	,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
     ,TotalLotNumber
     ,InspectedLotNumber
@@ -366,6 +367,12 @@ select
 	,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
 	,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
     ,[CutTime] = Qty.CutTime
+    ,[MCHandle_id] = COALESCE(pass1_MCHandle.id, TPEPass1_MCHandle.id)
+    ,[MCHandle_name] = COALESCE(pass1_MCHandle.name, TPEPass1_MCHandle.name)
+    ,[MCHandle_extno] = COALESCE(pass1_MCHandle.extno, TPEPass1_MCHandle.extno)
+    ,[KPI LETA] = O.KPILETA
+    ,[ACT ETA] = Export.Eta
+    ,[Packages(B/L No.)] = isnull(e.Packages,0)
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -380,10 +387,12 @@ cross apply(
     group by rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2,rd.StockType
 ) t
 inner join (
-    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID
+    select distinct poid,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,id ,CutInLine, o.OrderTypeID,MCHandle,o.KPILETA
     from dbo.Orders o WITH (NOLOCK)  
     {oWhere}
 ) O on O.id = F.POID
+left join pass1 pass1_MCHandle with(nolock) on pass1_MCHandle.id = O.MCHandle
+left join TPEPass1 TPEPass1_MCHandle with(nolock) on TPEPass1_MCHandle.id = O.MCHandle
 left join DropDownList ddl with(nolock) on o.Category = ddl.ID and ddl.Type = 'Category'
 inner join dbo.PO_Supp SP WITH (NOLOCK) on SP.id = F.POID and SP.SEQ1 = F.SEQ1
 inner join dbo.PO_Supp_Detail P WITH (NOLOCK) on P.ID = F.POID and P.SEQ1 = F.SEQ1 and P.SEQ2 = F.SEQ2
@@ -391,6 +400,18 @@ left join dbo.PO_Supp_Detail_Spec ps WITH (NOLOCK) on P.ID = ps.id and P.SEQ1 = 
 inner join supp s WITH (NOLOCK) on s.id = SP.SuppID 
 LEFT JOIN #balanceTmp BalanceQty ON BalanceQty.poid = f.POID and BalanceQty.seq1 = f.seq1 and BalanceQty.seq2 =f.seq2 AND BalanceQty.ID = f.ReceivingID
 left join MDivisionPoDetail mp on mp.POID=f.POID and mp.Seq1=f.SEQ1 and mp.Seq2=f.SEQ2
+left join Receiving on f.ReceivingID = Receiving.ID
+left join Export on Receiving.ExportId = Export.ID
+outer apply(
+		select [Packages] = sum(e.Packages)
+		from Export e with (nolock)
+		where exists(
+			select 1
+			from export e2 with(nolock)
+			where e2.Blno = e.Blno
+			and Receiving.ExportId = e2.ID
+		)
+	)e
 OUTER APPLY(
 	SELECT * FROM  Fabric C WITH (NOLOCK) WHERE C.SCIRefno = F.SCIRefno
 )C
@@ -491,6 +512,7 @@ outer apply(
 ) ActTotalYdsArrDate
 outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
 outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
+outer apply(select count(1) Cnt from FIR_Physical fp where fp.id = f.id) ActTotalRollsInspection
 outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
 	,HeatInspector = (select name from Pass1 where id = HeatInspector)
 	,WashInspector = (select name from Pass1 where id = WashInspector)
@@ -624,6 +646,9 @@ select
 	,tf.ExportId
 	,tf.InvNo
     ,tf.[Cutting Date]
+    ,tf.[KPI LETA]
+    ,tf.[ACT ETA]
+    ,tf.[Packages(B/L No.)]
 	,tf.WhseArrival
 	,tf.StockQty1
     ,tf.InvStock
@@ -656,6 +681,7 @@ select
 	,tf.PhysicalDate
 	,tf.TotalYardage
 	,tf.TotalYardageArrDate
+    ,tf.ActTotalRollsInspection
 	,tf.ActualYds
     ,tf.InspectionRate
     ,tf.TotalLotNumber
@@ -699,6 +725,7 @@ select
 	,tf.RESULT4
 	,tf.CFInspector
     ,tf.LocalMR
+    ,[MCHandle] = tf.MCHandle_id + '-' + tf.MCHandle_name + '#' + tf.MCHandle_extno
     ,tf.[OrderType]
 from #tmpFinal tf
 ORDER BY POID,SEQ

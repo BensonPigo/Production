@@ -227,7 +227,7 @@ DECLARE @BoaBomTypePo BIT;
 DECLARE @BoaBomTypeSize BIT;
 DECLARE @BoaBomTypeColor BIT;
 DECLARE @BomTypeMatching BIT;
-DECLARE @BoaIsCustCD NUMERIC(1, 0);
+DECLARE @BoaIsCustCD NUMERIC(2, 0);
 DECLARE @BoaCursor TABLE (
 	RowID BIGINT IDENTITY (1, 1) NOT NULL
    ,Ukey BIGINT
@@ -244,7 +244,7 @@ DECLARE @BoaCursor TABLE (
    ,BomTypeColor BIT
    ,BomTypeMatching BIT
    ,Keyword VARCHAR(MAX)
-   ,IsCustCD NUMERIC(1, 0)
+   ,IsCustCD NUMERIC(2, 0)
    ,BomTypeCalculatePCS BIT
    ,SizeItem_PCS VARCHAR(3)
 );

@@ -3,8 +3,10 @@ using Sci.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -623,7 +625,6 @@ namespace Sci.Production.Class.Command
             return lisType;
         }
 
-
         /// <summary>
         /// 如果來源日期是null，則回傳null，否則回傳yyyy-MM-dd
         /// </summary>
@@ -638,6 +639,35 @@ namespace Sci.Production.Class.Command
             {
                 return ((DateTime)source).ToString("yyyy-MM-dd");
             }
+        }
+
+        /// <summary>
+        /// 新增一Row
+        /// </summary>
+        /// <inheritdoc/>
+        public static void RowsAdd(this DataTable dt)
+        {
+            DataRow row = dt.NewRow();
+            dt.Rows.Add(row);
+        }
+
+        public static DataTable ToDataTable<T>(this IEnumerable<T> data)
+        {
+            var properties = typeof(T).GetProperties();
+            DataTable table = new DataTable();
+
+            foreach (var prop in properties)
+            {
+                table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+            }
+
+            foreach (var item in data)
+            {
+                var values = properties.Select(p => p.GetValue(item, null)).ToArray();
+                table.Rows.Add(values);
+            }
+
+            return table;
         }
     }
 }

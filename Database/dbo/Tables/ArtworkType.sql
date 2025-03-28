@@ -28,6 +28,7 @@
     [IsLocalPurchase] BIT            CONSTRAINT [DF_ArtworkType_IsLocalPurchase] DEFAULT ((0)) NOT NULL,
     [IsImportTestDox] BIT            DEFAULT ((0)) NOT NULL,
     [IsSubCon]        BIT            CONSTRAINT [DF_ArtworkType_IsSubCon] DEFAULT ((0)) NOT NULL,
+    [SubconFarmInOutNotFromRFID]     BIT CONSTRAINT [DF_ArtworkType_SubconFarmInOutNotFromRFID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_ArtworkType] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -147,3 +148,16 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'用來判�
 
 GO
 EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'是否需要外發加工，主要應用在 WH P54' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'ArtworkType', @level2type=N'COLUMN',@level2name=N'IsSubCon'
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Subcon Out 單據計算 Farm In 與 Out 時
+數量計算不從 Bundle RFID 計算
+而是根據當下已確認的 Subcon PO 與 AP 計算
+',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ArtworkType',
+    @level2type = N'COLUMN',
+    @level2name = N'SubconFarmInOutNotFromRFID'

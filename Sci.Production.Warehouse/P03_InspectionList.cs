@@ -427,6 +427,7 @@ where a.POID='{0}' and a.seq1='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["s
 END as [Result]--,a.seq1,a.seq2
 ,a.InspDate
 ,dbo.getPass1(a.Inspector) Inspector
+,[% of Inspection] = iif(isnull(a.InspQty,0) = 0 ,0 ,round((a.InspQty / a.ArriveQty)*100 ,2))
 ,a.InspQty
 ,a.RejectQty
 ,a.Defect
@@ -455,6 +456,7 @@ where a.POID='{0}' and a.Seq1 ='{1}' and a.seq2='{2}'", this.dr["id"], this.dr["
                      .Text("Result", header: "Result", width: Widths.AnsiChars(8))
                      .Date("InspDate", header: "Inspection" + Environment.NewLine + "Date", width: Widths.AnsiChars(13))
                      .Text("Inspector", header: "Inspector", width: Widths.AnsiChars(13))
+                     .Numeric("% of Inspection", header: "% of Inspection", width: Widths.AnsiChars(6), decimal_places: 2)
                      .Numeric("InspQty", header: "Inspected" + Environment.NewLine + "Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Numeric("RejectQty", header: "Rejected" + Environment.NewLine + "Qty", width: Widths.AnsiChars(6), integer_places: 9, decimal_places: 2)
                      .Text("Defect", header: "Defect Type", width: Widths.AnsiChars(30))

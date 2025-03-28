@@ -5,6 +5,8 @@ using Ict;
 using Sci.Data;
 using System.Threading.Tasks;
 using Sci.Production.Automation;
+using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Sci.Production.PPIC
 {
@@ -41,7 +43,7 @@ namespace Sci.Production.PPIC
                 this.Close();
             }
 
-            this.labShowDateRange.Text = $@"Download from: {DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}〜{DateTime.Now.AddDays(160).ToString("yyyy-MM-dd")}";
+            this.labShowDateRange.Text = $@"Download from: {DateTime.Now.AddDays(-30).ToString("yyyy-MM-dd")}〜{DateTime.Now.AddDays(365).ToString("yyyy-MM-dd")}";
         }
 
         // Download
@@ -70,6 +72,16 @@ update factory set LastDownloadAPSDate  = getdate() where id = '{2}'
             DBProxy.Current.DefaultTimeout = 2400; // 40分鐘
             DataTable[] dsForAutomation;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dsForAutomation);
+            if (!result)
+            {
+                MyUtility.Msg.WaitClear();
+                this.ShowErr(sqlCmd, result);
+                this.HideWaitMessage();
+                return;
+            }
+
+            // 設定參數控制 0 = 排程執行、1 = 手動執行
+            result = DBProxy.Current.Execute("Production", "exec dbo.ChangeOver 1");
             if (!result)
             {
                 MyUtility.Msg.WaitClear();

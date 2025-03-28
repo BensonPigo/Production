@@ -62,6 +62,7 @@ Select a.id
 ,C.exportid
 ,ArriveQty
 ,InspDeadline
+,[% of Inspection] = iif(isnull(a.InspQty,0) = 0 ,0 ,round((a.InspQty / a.ArriveQty)*100 ,2))
 ,a.InspQty
 ,a.RejectQty
 ,a.Defect
@@ -162,6 +163,7 @@ Where a.poid='{0}' order by seq1,seq2
                 .Numeric("ArriveQty", header: "Arrive Qty", width: Widths.AnsiChars(8), integer_places: 11, decimal_places: 2, iseditingreadonly: true)
                 .Text("unit", header: "Unit", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Date("InspDeadline", header: "Insp. Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("% of Inspection", header: "% of Inspection", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                 .Numeric("InspQty", header: "Inspected Qty", width: Widths.AnsiChars(8), integer_places: 10, decimal_places: 2, iseditingreadonly: true, settings: detail_Int)
                 .Text("RejectQty", header: "Reject Qty", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)
                 .Text("DefectDescription", header: "Defect Type", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: detail)

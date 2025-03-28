@@ -26,15 +26,17 @@ namespace Sci.Production.IE
         private DataTable dtDeful;
         private DataTable dt;
         private string strSewingLineID;
+        private string strTeam;
 
         /// <inheritdoc/>
-        public P03_Operator(DataTable dataTable, string sewingLineID)
+        public P03_Operator(DataTable dataTable, string sewingLineID, string team)
         {
             this.InitializeComponent();
-            this.dtDeful = dataTable;
+            this.dtDeful = dataTable.Copy();
             this.strSewingLineID = sewingLineID;
+            this.strTeam = team;
             bool isEmptySewingLine = MyUtility.Check.Empty(sewingLineID);
-            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{sewingLineID}')";
+            var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{this.strSewingLineID + this.strTeam}')";
             this.dt = dataTable.Select(strSewingWhere).TryCopyToDataTable(dataTable);
         }
 
@@ -69,7 +71,7 @@ namespace Sci.Production.IE
             else
             {
                 bool isEmptySewingLine = MyUtility.Check.Empty(this.strSewingLineID);
-                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(SewingLineID = '{this.strSewingLineID}' or Section = '{this.strSewingLineID}')";
+                var strSewingWhere = isEmptySewingLine ? string.Empty : $"(Section = '{this.strSewingLineID + this.strTeam}')";
                 this.dt = this.dtDeful.Select(strSewingWhere).TryCopyToDataTable(this.dtDeful);
                 this.listControlBindingSource1.DataSource = this.dt;
             }
@@ -92,7 +94,11 @@ namespace Sci.Production.IE
             {
                 for (int i = 0; i < descList.Count; i++)
                 {
-                    filterCondition.Append(" AND (");
+                    if(i > 0)
+                    {
+                        filterCondition.Append(" OR ");
+                    }
+                    filterCondition.Append(" (");
                     foreach (var columnName in new[] { "ID", "FIRSTNAME", "LASTNAME", "SECTION" })
                     {
                         filterCondition.Append($"{columnName} LIKE '%{descList[i]}%'");
@@ -109,14 +115,14 @@ namespace Sci.Production.IE
             if (filterCondition.Length > 0)
             {
                 string filter = filterCondition.ToString();
-                (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = "1=1" + filter;
+                (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = "1=1 AND " + filter;
             }
             else
             {
                 (this.listControlBindingSource1.DataSource as DataTable).DefaultView.RowFilter = string.Empty;
             }
 
-            this.gridDetail.AutoResizeColumns();
+            // this.gridDetail.AutoResizeColumns();
         }
 
         private void BtnSelect_Click(object sender, EventArgs e)

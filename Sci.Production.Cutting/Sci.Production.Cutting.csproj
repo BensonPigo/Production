@@ -81,6 +81,11 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\_Dll\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -143,6 +148,42 @@
     </Compile>
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.Designer.cs">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_SetHoliday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_SetHoliday.Designer.cs">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13.Designer.cs">
+      <DependentUpon>B13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.Designer.cs">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Set.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Set.Designer.cs">
+      <DependentUpon>B13_Set.cs</DependentUpon>
     </Compile>
     <Compile Include="CuttingClass\Cutpartcheck.cs">
       <SubType>Form</SubType>
@@ -652,6 +693,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\Cutpartcheck.resx">
       <DependentUpon>Cutpartcheck.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_ImportFromPMS.resx">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_SetHoliday.resx">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13.resx">
+      <DependentUpon>B13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Batch assign special time.resx">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Set.resx">
+      <DependentUpon>B13_Set.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CuttingClass\Cutpartchecksummary.resx">
       <DependentUpon>Cutpartchecksummary.cs</DependentUpon>

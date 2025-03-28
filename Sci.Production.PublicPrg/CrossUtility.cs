@@ -55,7 +55,6 @@ namespace Sci.Production.PublicPrg
         /// <returns>result</returns>
         public static DualResult ProcessWithDatatable(DataTable source, string tmp_columns, string sqlcmd, out DataTable[] result, string temptablename = "#tmp", SqlConnection conn = null, List<SqlParameter> paramters = null, string initTmpCommand = null, string defaultConnectionName = "", int defaultTimeout = 15 * 60)
         {
-            DBProxy.Current.DefaultTimeout = defaultTimeout;
             DualResult dualResult = null;
             result = null;
             if (string.IsNullOrWhiteSpace(tmp_columns))
@@ -144,7 +143,6 @@ namespace Sci.Production.PublicPrg
                 dualResult = DBProxy.Current.OpenConnection(defaultConnectionName, out conn);
                 if (!dualResult)
                 {
-                    DBProxy.Current.DefaultTimeout = 0;
                     return dualResult;
                 }
 
@@ -153,14 +151,14 @@ namespace Sci.Production.PublicPrg
 
             try
             {
+                DBProxy.Current.DefaultTimeout = defaultTimeout;
                 dualResult = DBProxy.Current.ExecuteByConn(conn, initTmpCommand);
                 if (!dualResult)
                 {
-                    DBProxy.Current.DefaultTimeout = 0;
                     return dualResult;
                 }
 
-                using (System.Data.SqlClient.SqlBulkCopy bulkcopy = new System.Data.SqlClient.SqlBulkCopy(conn))
+                using (SqlBulkCopy bulkcopy = new SqlBulkCopy(conn))
                 {
                     bulkcopy.BulkCopyTimeout = defaultTimeout;
                     if (temptablename.TrimStart().StartsWith("#"))
@@ -184,7 +182,6 @@ namespace Sci.Production.PublicPrg
                 dualResult = DBProxy.Current.SelectByConn(conn, sqlcmd, paramters, out result);
                 if (!dualResult)
                 {
-                    DBProxy.Current.DefaultTimeout = 0;
                     return dualResult;
                 }
             }
@@ -198,8 +195,6 @@ namespace Sci.Production.PublicPrg
                 {
                     conn.Close();
                 }
-
-                DBProxy.Current.DefaultTimeout = 0;
             }
 
             return dualResult;

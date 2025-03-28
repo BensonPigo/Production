@@ -110,66 +110,191 @@ namespace Sci.Production.IE
             }
 
             sqlCmd = $@"
-            select
-            [Factory] = lm.FactoryID
-            , [OperatorID] = e.ID
-            , [OperatorName] = iif(e.Junk = 1 , e.[Name], iif(e.LastName + ',' + e.FirstName <> ',',e.LastName + ',' + e.FirstName,''))
-            , [Style] = lm.StyleID
-            , [Season] = lm.SeasonID
-            , [Brand] = lm.BrandID
-            , [ComboType] = lm.ComboType
-            , [Version] = lm.[Version]
-            , [Phase] = lm.Phase
-            , [Line] = lm.SewingLineID
-            , [Team] = lm.Team
-            , [NO] = lmd.[No]
-            , [OperationCode] = lmd.OperationID
-            , [ST/CM Type] = lmd.MachineTypeID
-            , [MachineGroup] = lmd.MasterPlusGroup
-            , [Operation] = o.DescEN
-            , [Motion] = Motion.val
-            , [Shape] = Shape.val
-            , [Attachment] = lmd.Attachment
-            , [Tmplate] = lmd.Template
-            , [GSDTime] = lmd.GSD
-            , [Cycle Time] = lmd.Cycle
-            into #tmp
-            from LineMapping_Detail lmd
-            LEFT JOIN LineMapping lm WITH(NOLOCK) on lm.ID = lmd.ID
-            LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
-            LEFT JOIN Operation o WITH(NOLOCK) on o.ID = lmd.OperationID
-            OUTER APPLY
-            (
-	            select val = stuff((select distinct concat(',',Name)
-                from OperationRef a
-                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-                where a.CodeType = '00007' and a.id = o.id for xml path('') ),1,1,'')
-            )Motion
-            OUTER APPLY
-            (
-	            select val = stuff((select distinct concat(',',Name)
-                from OperationRef a
-                inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
-                where a.CodeType = '00008' and a.id = o.id for xml path('') ),1,1,'')
-            )Shape
-            Where 1=1 and (e.ID is not null or e.id <> '')
-            and e.junk = 0
-            and lm.Status = 'Confirmed'
-            {sqlWhere}
-            ORDER by OperationCode,Style,Season,Brand,Version
+select
+[Factory] = lm.FactoryID
+, [OperatorID] = e.ID
+, [OperatorName] = iif(e.Junk = 1 , e.[Name], iif(e.LastName + ',' + e.FirstName <> ',',e.LastName + ',' + e.FirstName,''))
+, [Style] = lm.StyleID
+, [Season] = lm.SeasonID
+, [Brand] = lm.BrandID
+, [ComboType] = lm.ComboType
+, [Version] = lm.[Version]
+, [Phase] = lm.Phase
+, [Line] = lm.SewingLineID
+, [Team] = lm.Team
+, [NO] = lmd.[No]
+, [OperationCode] = lmd.OperationID
+, [ST/CM Type] = lmd.MachineTypeID
+, [MachineGroup] = lmd.MasterPlusGroup
+, [Operation] = o.DescEN
+, [Motion] = Motion.val
+, [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
+, [PartID] = PartID.val
+, [Shape] = Shape.val
+, [Attachment] = lmd.Attachment
+, [Tmplate] = lmd.Template
+, [GSDTime] = lmd.GSD
+, [Cycle Time] = lmd.Cycle
+into #tmpP03
+from LineMapping_Detail lmd
+LEFT JOIN LineMapping lm WITH(NOLOCK) on lm.ID = lmd.ID
+LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
+LEFT JOIN Operation o WITH(NOLOCK) on o.ID = lmd.OperationID
+LEFT JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID and ts.Version = lm.TimeStudyVersion
+LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and ts.ID = tsd.ID 
+OUTER APPLY
+(
+	select val = stuff((select distinct concat(',',Name)
+    from OperationRef a
+    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+    where a.CodeType = '00007' and a.id = o.id for xml path('') ),1,1,'')
+)Motion
+OUTER APPLY
+(
+	select val = stuff((select distinct concat(',',Name)
+    from OperationRef a
+    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+    where a.CodeType = '00008' and a.id = o.id for xml path('') ),1,1,'')
+)Shape
+OUTER APPLY
+(
+	SELECT TOP 1
+	OperatorIDss.OperationID
+	FROM
+	(
+		SELECT 
+		td.id
+		,td.Seq
+		,td.OperationID
+		from TimeStudy_Detail td WITH(NOLOCK)
+		where  td.OperationID LIKE '-%' and td.smv = 0
+	)
+	OperatorIDss 
+	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+	ORDER BY SEQ DESC
+)OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmd.OperationID 
+)PartID
+Where 1=1 and (e.ID is not null or e.id <> '')
+and e.junk = 0
+and lm.Status = 'Confirmed'
+{sqlWhere}
+ORDER by OperationCode,Style,Season,Brand,Version
             
-            SELECT
-            *
-            from #tmp t
-            where exists
-            (
-	            select *
-	            from SewingSchedule ss
-	            join Orders o on ss.OrderID = o.ID
-	            where 1=1
-	            {sqlwhereTmp}
-	            and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand
-             )
+SELECT *
+INTO #P03
+from #tmpP03 t
+where exists
+(
+	select *
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{sqlwhereTmp}
+	and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand
+    )
+
+select
+[Factory] = lm.FactoryID
+, [OperatorID] = e.ID
+, [OperatorName] = iif(e.Junk = 1 , e.[Name], iif(e.LastName + ',' + e.FirstName <> ',',e.LastName + ',' + e.FirstName,''))
+, [Style] = lm.StyleID
+, [Season] = lm.SeasonID
+, [Brand] = lm.BrandID
+, [ComboType] = lm.ComboType
+, [Version] = lm.[Version]
+, [Phase] = lm.Phase
+, [Line] = lm.SewingLineID
+, [Team] = lm.Team
+, [NO] = lmd.[No]
+, [OperationCode] = lmd.OperationID
+, [ST/CM Type] = lmd.MachineTypeID
+, [MachineGroup] = lmd.MasterPlusGroup
+, [Operation] = o.DescEN
+, [Motion] = Motion.val
+, [Group_Header] =  ISNULL(IIF(REPLACE(tsd.[location], '--', '') = '', REPLACE(OP.OperationID, '--', '') ,REPLACE(tsd.[location], '--', '')),'')
+, [PartID] = PartID.val
+, [Shape] = Shape.val
+, [Attachment] = lmd.Attachment
+, [Tmplate] = lmd.Template
+, [GSDTime] = lmd.GSD
+, [Cycle Time] = lmd.Cycle
+into #tmpP06
+from LineMappingBalancing_Detail lmd
+LEFT JOIN LineMappingBalancing lm WITH(NOLOCK) on lm.ID = lmd.ID
+LEFT JOIN Employee e WITH(NOLOCK) on lmd.EmployeeID = e.ID
+LEFT JOIN Operation o WITH(NOLOCK) on o.ID = lmd.OperationID
+INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType and ts.[Version] = lm.TimeStudyVersion
+LEFT JOIN TimeStudy_Detail tsd WITH(NOLOCK) ON lmd.OperationID = tsd.OperationID and ts.ID = tsd.ID
+OUTER APPLY
+(
+	select val = stuff((select distinct concat(',',Name)
+    from OperationRef a
+    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+    where a.CodeType = '00007' and a.id = o.id for xml path('') ),1,1,'')
+)Motion
+OUTER APPLY
+(
+	select val = stuff((select distinct concat(',',Name)
+    from OperationRef a
+    inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
+    where a.CodeType = '00008' and a.id = o.id for xml path('') ),1,1,'')
+)Shape
+OUTER APPLY
+(
+	SELECT TOP 1
+	OperatorIDss.OperationID
+	FROM
+	(
+		SELECT 
+		td.id
+		,td.Seq
+		,td.OperationID
+		from TimeStudy_Detail td WITH(NOLOCK)
+		where  td.OperationID LIKE '-%' and td.smv = 0
+	)
+	OperatorIDss 
+	WHERE ID =  TS.ID AND SEQ <= (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = TS.ID AND OperationID = LMD.OperationID ORDER BY Seq DESC)
+	ORDER BY SEQ DESC
+)OP
+OUTER APPLY
+(
+	SELECT val = R.[NAME]
+	FROM Operation O WITH(NOLOCK)
+	LEFT JOIN Reason R WITH(NOLOCK) ON R.ReasonTypeID = 'IE_Component' AND R.ID = SUBSTRING(O.ID,6,2)
+	WHERE O.ID = lmd.OperationID 
+)PartID
+Where 1=1 and (e.ID is not null or e.id <> '')
+and e.junk = 0
+and lm.Status = 'Confirmed'
+{sqlWhere}
+ORDER by OperationCode,Style,Season,Brand,Version
+            
+SELECT *
+INTO #P06
+from #tmpP06 t
+where exists
+(
+	select *
+	from SewingSchedule ss
+	join Orders o on ss.OrderID = o.ID
+	where 1=1
+	{sqlwhereTmp}
+	and o.StyleID = t.Style and o.SeasonID = t.Season and o.BrandID = t.Brand
+    )
+
+select *
+from #P03
+UNION ALL
+select *
+from #P06
+
+drop table #tmpP03, #tmpp06 ,#P03 , #P06           
             ";
 
             DualResult result = DBProxy.Current.Select(null, sqlCmd.ToString(), listParameter, out this.printData);
