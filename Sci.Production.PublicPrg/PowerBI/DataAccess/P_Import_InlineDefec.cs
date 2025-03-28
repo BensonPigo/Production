@@ -197,22 +197,9 @@ select
     ,isnull(t.[Inline WFT(%)] ,0)
     ,isnull(t.[Inline RFT(%)] ,0)
 from #tmpSummy t
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectSummary')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = 'P_InlineDefectSummary'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_InlineDefectSummary', getdate())
-END
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
+                        sql += new Base().SqlBITableInfo("P_InlineDefectSummary", true);
                         if (!result.Result)
                         {
                             throw result.GetException();
@@ -271,22 +258,9 @@ select
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
 From #tmpDetail t
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectDetail')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = 'P_InlineDefectDetail'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_InlineDefectDetail', getdate())
-END
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
+                        sql += new Base().SqlBITableInfo("P_InlineDefectDetail", true);
                         if (!result.Result)
                         {
                             throw result.GetException();

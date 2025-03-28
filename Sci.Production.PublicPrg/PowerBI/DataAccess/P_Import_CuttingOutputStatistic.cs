@@ -51,8 +51,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -123,21 +121,8 @@ Where Not exists ( select 1
                 )
 And P_CuttingOutputStatistic.TransferDate Between @sDate and @eDate
 
-
-if exists (select 1 from BITableInfo b where b.id = 'P_CuttingOutputStatistic')
-begin
-    update b
-        set b.TransferDate = getdate()
-    from BITableInfo b
-    where b.id = 'P_CuttingOutputStatistic'
-end
-else 
-begin
-    insert into BITableInfo(Id, TransferDate)
-    values('P_CuttingOutputStatistic', getdate())
-end
 ";
-
+                sql += new Base().SqlBITableInfo("P_CuttingOutputStatistic", true);
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 

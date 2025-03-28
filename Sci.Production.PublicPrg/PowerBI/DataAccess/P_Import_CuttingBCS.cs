@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -45,8 +46,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -774,17 +773,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQtyByLine]
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
-
-				if exists(select 1 from BITableInfo where Id = 'P_CuttingBCS')
-				begin
-					update BITableInfo set TransferDate = getdate()
-					where Id = 'P_CuttingBCS'
-				end
-				else
-				begin
-					insert into BITableInfo(Id, TransferDate) values('P_CuttingBCS', GETDATE())
-				end
-				";
+				"
+                ;
+                sql += new Base().SqlBITableInfo("P_CuttingBCS", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
