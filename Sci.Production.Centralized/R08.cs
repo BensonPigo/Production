@@ -758,12 +758,28 @@ select a.*,b.Status
 	,TaktTime = 0
 	,b.Workhour
 	,HighestGSD = b.HighestGSDTime
-    ,[Std. SMV] = Cast(NULL as decimal(10,2))
-    ,[GSD Style]= ''
-    ,[GSD Season]= ''
-    ,[GSD BrandID]= ''
+    ,[Std. SMV] = Cast(ISNULL(tdd.StdSMV,tddh.StdSMV) as decimal(10,2))
+    ,[GSD Style]= ISNULL(t.StyleID,th.StyleID)
+    ,[GSD Season]= ISNULL(t.SeasonID,th.SeasonID)
+    ,[GSD BrandID]= ISNULL(t.BrandID,th.BrandID)
 from #BeforeData a
 inner join AutomatedLineMapping b on a.ID = b.ID　---- P05
+left join TimeStudy t WITH (NOLOCK) on b.TimeStudyID = t.ID
+left join TimeStudyHistory th WITH (NOLOCK) on b.TimeStudyID = th.ID
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudy_Detail td WITH (NOLOCK) where t.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tdd 
+outer apply(
+	select StdSMV =  SUM(td.StdSMV)
+	from TimeStudyHistory_Detail td WITH (NOLOCK) where th.id = td.id
+        and td.IsSubprocess = 0
+        and td.IsNonSewingLine =0
+        and td.PPA <> 'C'
+)tddh
 WHERE a.SourceTable='IE P05'
 
 select a.*,b.Status
