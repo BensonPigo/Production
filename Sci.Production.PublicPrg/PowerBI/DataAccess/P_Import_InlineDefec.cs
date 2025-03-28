@@ -105,6 +105,16 @@ exec dbo.Inline_R08  @SDate,
                 return resultReport;
             }
 
+            DataTable detail = dataTables[0].Clone();
+            foreach (DataRow item in dataTables[0].Rows)
+            {
+                for (int i = 0; i < MyUtility.Convert.GetInt(item["RejectWIP"]); i++)
+                {
+                    detail.ImportRow(item);
+                }
+            }
+
+            dataTables[0] = detail;
             resultReport.DtArr = dataTables;
             return resultReport;
         }
