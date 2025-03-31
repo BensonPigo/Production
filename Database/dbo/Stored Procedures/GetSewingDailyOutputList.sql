@@ -99,7 +99,7 @@ select s.id
     ,o.SciDelivery 
     ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
-    ,[InlineCategoryID] = s
+    ,[InlineCategoryID] = InlineCategoryID.val
 	,[Inline Category] = iif(s.SewingReasonIDForTypeLO = '00005',cast('' as varchar(50)),(select CONCAT(InlineCategoryID.val, '-' + SR.Description) from SewingReason sr where sr.ID = InlineCategoryID.val and sr.Type='IC'))
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
     ,[New Style/Repeat style] = cast('' as varchar(20))
