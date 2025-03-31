@@ -9,6 +9,7 @@
     [isResultNotInP01] BIT           CONSTRAINT [DF_FIR_Grade_isResultNotInP01] DEFAULT ((0)) NOT NULL,
     [Description]      VARCHAR (300) CONSTRAINT [DF_FIR_Grade_Description] DEFAULT ('') NOT NULL,
     [ShowGrade]        VARCHAR (10)  CONSTRAINT [DF_FIR_Grade_ShowGrade] DEFAULT ('') NOT NULL,
+    [IsColorFormat] BIT CONSTRAINT [DF_FIR_Grade_IsColorFormat] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_FIR_Grade] PRIMARY KEY CLUSTERED ([InspectionGroup] ASC, [Percentage] ASC, [BrandID] ASC, [WeaveTypeID] ASC)
 );
 
@@ -34,3 +35,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'評等', @l
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Result', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FIR_Grade', @level2type = N'COLUMN', @level2name = N'Result';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'變色判斷',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FIR_Grade',
+    @level2type = N'COLUMN',
+    @level2name = N'IsColorFormat'
