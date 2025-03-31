@@ -28,9 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new Sci.Win.UI.Label();
             this.label2 = new Sci.Win.UI.Label();
-            this.label5 = new Sci.Win.UI.Label();
             this.dateRangeSewDate = new Sci.Win.UI.DateRange();
             this.dateRangeBDate = new Sci.Win.UI.DateRange();
             this.dropDownListTableAdapter1 = new Sci.Production.Planning.GSchemas.GLOTableAdapters.DropDownListTableAdapter();
@@ -39,6 +37,8 @@
             this.txtSP2 = new System.Windows.Forms.TextBox();
             this.label4 = new Sci.Win.UI.Label();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.lb5 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -60,14 +60,6 @@
             // 
             this.txtVersion.Location = new System.Drawing.Point(400, 131);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(9, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(103, 23);
-            this.label1.TabIndex = 97;
-            this.label1.Text = "Sewing Date";
-            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(9, 43);
@@ -75,14 +67,6 @@
             this.label2.Size = new System.Drawing.Size(103, 23);
             this.label2.TabIndex = 98;
             this.label2.Text = "Buyer Delivery";
-            // 
-            // label5
-            // 
-            this.label5.Location = new System.Drawing.Point(9, 74);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(103, 23);
-            this.label5.TabIndex = 101;
-            this.label5.Text = "SP#";
             // 
             // dateRangeSewDate
             // 
@@ -180,11 +164,33 @@
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
+            // lb5
+            // 
+            this.lb5.Location = new System.Drawing.Point(9, 74);
+            this.lb5.Name = "lb5";
+            this.lb5.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.lb5.Size = new System.Drawing.Size(103, 23);
+            this.lb5.TabIndex = 117;
+            this.lb5.Text = "SP#";
+            this.lb5.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(9, 12);
+            this.label5.Name = "label5";
+            this.label5.RectStyle.Color = System.Drawing.Color.SkyBlue;
+            this.label5.Size = new System.Drawing.Size(103, 23);
+            this.label5.TabIndex = 118;
+            this.label5.Text = "Sewing Date";
+            this.label5.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // R23
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 219);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.lb5);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtSP2);
@@ -192,9 +198,7 @@
             this.Controls.Add(this.txtSP1);
             this.Controls.Add(this.dateRangeBDate);
             this.Controls.Add(this.dateRangeSewDate);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
             this.Name = "R23";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R23. Accessory Consumption Report";
@@ -204,9 +208,7 @@
             this.Controls.SetChildIndex(this.buttonCustomized, 0);
             this.Controls.SetChildIndex(this.checkUseCustomized, 0);
             this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
-            this.Controls.SetChildIndex(this.label5, 0);
             this.Controls.SetChildIndex(this.dateRangeSewDate, 0);
             this.Controls.SetChildIndex(this.dateRangeBDate, 0);
             this.Controls.SetChildIndex(this.txtSP1, 0);
@@ -214,16 +216,15 @@
             this.Controls.SetChildIndex(this.txtSP2, 0);
             this.Controls.SetChildIndex(this.label4, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
+            this.Controls.SetChildIndex(this.lb5, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.Label label1;
         private Win.UI.Label label2;
-        private Win.UI.Label label5;
         private Win.UI.DateRange dateRangeSewDate;
         private Win.UI.DateRange dateRangeBDate;
         private Planning.GSchemas.GLOTableAdapters.DropDownListTableAdapter dropDownListTableAdapter1;
@@ -232,5 +233,7 @@
         private System.Windows.Forms.TextBox txtSP2;
         private Win.UI.Label label4;
         private Class.Txtstyle txtstyle;
+        private Win.UI.Label lb5;
+        private Win.UI.Label label5;
     }
 }

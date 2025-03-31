@@ -57,13 +57,15 @@ namespace Sci.Production.PPIC
 
             if (this.dateRangeSewDate.HasValue1)
             {
-                sqlWhere += " and (convert(date,s.Inline)  >= @SewDateFrom or (@SewDateFrom between convert(date,s.Inline) and convert(date,s.Offline)))";
+                sqlWhere += @" and (convert(date,s.Inline)  >= @SewDateFrom 
+                               or (@SewDateFrom between convert(date,s.Inline) and convert(date,s.Offline)))";
                 this.listPar.Add(new SqlParameter("@SewDateFrom", this.dateRangeSewDate.DateBox1.Text));
             }
 
             if (this.dateRangeSewDate.HasValue2)
             {
-                sqlWhere += " and (convert(date,s.Offline) <= @SewDateTo or (@SewDateTo between convert(date,s.Inline) and convert(date,s.Offline))) ";
+                sqlWhere += @" and (convert(date,s.Offline) <= @SewDateTo 
+                               or (@SewDateTo between convert(date,s.Inline) and convert(date,s.Offline))) ";
                 this.listPar.Add(new SqlParameter("@SewDateTo", this.dateRangeSewDate.DateBox2.Text));
             }
 
@@ -124,8 +126,6 @@ Left Join dbo.CustCD WITH (NOLOCK) On CustCD.BrandID = Orders.BrandID And CustCD
 Left Join dbo.Factory WITH (NOLOCK) On Factory.ID = Orders.FactoryID
 Where 1 = 1
 {sqlWhere}
-and Orders.ID in ('25070167HH001','25020159IC007')
-
 ";
             return base.ValidateInput();
         }
@@ -146,11 +146,9 @@ and Orders.ID in ('25070167HH001','25020159IC007')
             if (this.dtPrint == null || this.dtPrint.Rows.Count == 0)
             {
                 MyUtility.Msg.InfoBox("Data not found.");
-                this.SetCount(0);
                 return false;
             }
 
-            this.SetCount(this.dtPrint.Rows.Count);
             this.ShowWaitMessage("Excel processing...");
 
             string excelFile = "\\PPIC_R23.xltx";
