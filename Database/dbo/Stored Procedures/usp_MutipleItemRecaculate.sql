@@ -80,9 +80,21 @@ BEGIN
 	    INSERT (  MDivisionPoDetailUkey,   POID,   SEQ1,   SEQ2,   Roll, Stocktype, Dyelot,   InQty,    OutQty,    AdjustQty,  ReturnQty)
 		VALUES (s.MDivisionPoDetailUkey, S.POID, S.SEQ1, S.SEQ2, S.Roll, 'O',     S.Dyelot, S.CInQty, S.COutQty, S.CAdjustQty, CReturnQty)
     ;
+	
+    /*
+	    4. 若沒有任何倉的交易紀錄，則清空FtyInventory庫存資料
+    */
+	UPDATE f
+	SET InQty = 0, OutQty = 0 , AdjustQty = 0, ReturnQty = 0
+	FROM FtyInventory f
+	INNER JOIN #MtlList m ON  m.POID = f.POID AND m.SEQ1 = f.SEQ1 AND m.SEQ2 = f.SEQ2
+	WHERE NOT EXISTS(
+		select * from #TransactionGroupByRollDyelot t
+		where t.POID=f.POID and t.Seq1 = f.Seq1 and t.Seq2 = f.Seq2 and t.Roll = f.Roll and t.Dyelot = f.Dyelot 
+	)
 
     /*
-	    4. 根據 View 找出對應庫存的累積交易數 By Seq
+	    5. 根據 View 找出對應庫存的累積交易數 By Seq
     */
     SELECT
         a.MDivisionPoDetailUkey
@@ -102,7 +114,7 @@ BEGIN
     GROUP BY a.MDivisionPoDetailUkey, b.POID, b.SEQ1, b.SEQ2
     
     /*
-	    5. 根據交易彙整清單更新 MDivisionPoDetail
+	    6. 根據交易彙整清單更新 MDivisionPoDetail
     */
     UPDATE MDivisionPoDetail
     SET InQty = ISNULL(t.InQty, 0)
@@ -116,6 +128,24 @@ BEGIN
         ON t.POID = MDivisionPoDetail.POID
         AND t.SEQ1 = MDivisionPoDetail.SEQ1
         AND t.SEQ2 = MDivisionPoDetail.SEQ2
+    /*
+	    7. 該物料完全沒有交易紀錄則歸零
+    */
+    UPDATE md
+    SET InQty = 0
+       ,OutQty = 0
+       ,AdjustQty = 0
+       ,LInvQty = 0
+       ,LObQty = 0
+       ,ReturnQty = 0
+    FROM MDivisionPoDetail md WITH (NOLOCK)
+	INNER JOIN #MtlList m ON  m.POID = md.POID AND m.SEQ1 = md.SEQ1 AND m.SEQ2 = md.SEQ2
+	WHERE NOT EXISTS(
+		SELECT 1 FROM #TransactionGroupBySeq t
+			WHERE t.POID = md.POID
+			AND t.SEQ1 = md.SEQ1
+			AND t.SEQ2 = md.SEQ2
+	)
 
     DROP TABLE #MtlList, #TransactionGroupByRollDyelot, #TransactionGroupBySeq
 
