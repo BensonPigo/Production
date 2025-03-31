@@ -2927,6 +2927,7 @@
     <Build Include="dbo\Tables\CTNHangerPack.sql" />
     <Build Include="dbo\Stored Procedures\usp_MutipleItemRecaculate.sql" />
     <Build Include="dbo\Stored Procedures\RecalculateSewingInlineCategory.sql" />
+    <Build Include="dbo\Functions\GetFirPhysicalGrade.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
