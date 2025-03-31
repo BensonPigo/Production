@@ -116,6 +116,11 @@ namespace Sci.Production.Sewing
                 strWhere += $@" and o.FactoryID = @fty";
             }
 
+            if (this.chkNyDCP.Checked)
+            {
+                strWhere += $@" and c.Status  <> 'Return' and exists( Select 1 from PackingList_Detail pd Where pd.SCICtnNo = c.SCICtnNo and isnull(pd.ScanEditDate,'') = '' )";
+            }
+
             #endregion
 
             #region SQL Command

@@ -237,6 +237,7 @@ select
 	rr.CompleteDate,
 	rr.LockDate,
 	Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
+    ReplacementReason = isnull((select Reason.Name from Reason where rrd.AfterCutting = Reason.ID and Reason.ReasonTypeID = 'Damage Reason'),''),
 	POSMR = [dbo].[getTPEPass1_ExtNo](PO.POSMR),
 	POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
 	PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
