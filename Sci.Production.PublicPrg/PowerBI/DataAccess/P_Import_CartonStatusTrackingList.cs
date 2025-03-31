@@ -69,10 +69,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                 };
                 string sql = @"	
-insert into P_CartonStatusTrackingList([KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],[RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],
+insert into P_CartonStatusTrackingList([KPIGroup], [FactoryID], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],[RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],
   [M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
 )
-select [KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],
+select [KPIGroup], [FactoryID], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],
  [RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],[M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
 from #tmp t
 where not exists (select 1 from P_CartonStatusTrackingList p where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
@@ -80,7 +80,7 @@ where not exists (select 1 from P_CartonStatusTrackingList p where p.[SP] = t.[S
 
 update p
 	set p.[KPIGroup]						= t.[KPIGroup]
-		, p.[Fty]							= t.[Fty]
+		, p.[FactoryID]						= t.[FactoryID]
 		, p.[Line]							= t.[Line]
 		, p.[Category]						= t.[Category]
 		, p.[Brand]							= t.[Brand]
