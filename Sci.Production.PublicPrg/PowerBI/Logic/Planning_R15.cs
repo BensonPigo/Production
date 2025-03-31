@@ -74,7 +74,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             bool isR15 = model.FormParameter == "1";
 
             // 先取得加工段對照表，後續做動態推算
-            DualResult dualResult = DBProxy.Current.Select(null, this.SqlTMP_SubProcess(false), out DataTable dtTMP_SubProcess);
+            DualResult dualResult = DBProxy.Current.Select(null, this.SqlTMP_SubProcess(false, isR15, model.SubprocessID), out DataTable dtTMP_SubProcess);
 
             if (!dualResult)
             {
@@ -83,7 +83,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             #region 組SQL
-            sqlCmd = this.SqlTMP_SubProcess(true); // 產生加工段暫存表
+            sqlCmd = this.SqlTMP_SubProcess(true, isR15, model.SubprocessID); // 產生加工段暫存表
             sqlCmd += $@"            
             select o.MDivisionID       , o.FactoryID  , o.SciDelivery     , O.CRDDate           , O.CFMDate       , OrderID = O.ID    
             , O.Dest            , O.StyleID    , O.SeasonID        , O.ProjectID         , O.Customize1    , O.BuyMonth
@@ -1697,13 +1697,23 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// </summary>
         /// <param name="isNeedToTemp">是否須為暫存表</param>
         /// <returns>SQL String</returns>
-        private string SqlTMP_SubProcess(bool isNeedToTemp = false)
+        private string SqlTMP_SubProcess(bool isNeedToTemp = false, bool isR15 = true, string subprocessID = "")
         {
+            string subProcess = "'Sorting', 'Loading'";
+            if (isR15)
+            {
+                subProcess += ", 'Emb', 'BO', 'PRT', 'AT', 'PAD-PRT', 'SubCONEMB', 'HT', 'AUT', 'FM', 'SewingLine'";
+            }
+            else
+            {
+                subProcess += ", '" + subprocessID.Split(',').ToList().JoinToString("','") + "'";
+            }
+
             return $@"
             SELECT [ArtworkTypeId] = IIF(S.ArtworkTypeId = '', S.ID, S.ArtworkTypeId), S.ID
             INTO #tmp_SubProcess
             FROM SubProcess S
-            WHERE S.Id IN ('Sorting', 'Loading', 'Emb', 'BO', 'PRT', 'AT', 'PAD-PRT', 'SubCONEMB', 'HT', 'AUT', 'FM', 'SewingLine')
+            WHERE S.Id IN ({subProcess})
             SELECT *
             {(isNeedToTemp ? "INTO #tmp_SubProcess_ArtworkTypeID_Map" : string.Empty)}
             FROM (

@@ -48,7 +48,6 @@ namespace Sci.Production.Planning
         private DataTable dtArtworkType;
         private StringBuilder artworktypes = new StringBuilder();
         private bool isArtwork;
-        private List<string> notExistsBundle_Detail_Art = new List<string>() { "SORTING", "LOADING", "SEWINGLINE" };
 
         /// <summary>
         /// R15
