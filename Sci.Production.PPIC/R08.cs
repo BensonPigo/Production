@@ -154,7 +154,7 @@ namespace Sci.Production.PPIC
             if (this._printData.Length == 2)
             {
                 worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
-                worksheet.Columns[27].ColumnWidth = 66;
+                worksheet.Columns[28].ColumnWidth = 66;
             }
 
             worksheet.Rows.AutoFit();
