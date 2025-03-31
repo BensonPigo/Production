@@ -69,8 +69,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                 };
                 string sql = @"	
-insert into P_CartonStatusTrackingList([KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate])
-select [KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate]
+insert into P_CartonStatusTrackingList([KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],[RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],
+  [M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
+)
+select [KPIGroup], [Fty], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],
+ [RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],[M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
 from #tmp t
 where not exists (select 1 from P_CartonStatusTrackingList p where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
 
@@ -116,6 +119,24 @@ update p
 		, p.[DisposeDate]					= t.[DisposeDate]
 		, p.[PulloutComplete]				= t.[PulloutComplete]
 		, p.[PulloutDate]					= t.[PulloutDate]
+        , p.[RefNo]							= t.[RefNo]
+        , p.[Description]					= t.[Description]
+        , p.[HaulingStatus]					= t.[HaulingStatus]
+        , p.[HaulerName]					= t.[HaulerName]
+        , p.[PackingAuditStatus]			= t.[PackingAuditStatus]
+        , p.[PackingAuditName]				= t.[PackingAuditName]
+        , p.[M360MDStatus]					= t.[M360MDStatus]
+        , p.[M360MDName]					= t.[M360MDName]
+        , p.[HangerPackScanTime]			= t.[HangerPackScanTime]
+        , p.[HangerPackStatus]				= t.[HangerPackStatus]
+        , p.[HangerPackName]				= t.[HangerPackName]
+        , p.[JokerTagScanTime]				= t.[JokerTagScanTime]
+        , p.[JokerTagStatus]				= t.[JokerTagStatus]
+        , p.[JokerTagName]					= t.[JokerTagName]
+        , p.[HeatSealScanTime]				= t.[HeatSealScanTime]
+        , p.[HeatSealStatus]				= t.[HeatSealStatus]
+        , p.[HeatSealName]					= t.[HeatSealName]
+        , p.[MDMachineNo]                   = t.[MDMachineNo]
 from P_CartonStatusTrackingList p
 inner join #tmp t on p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo]
 
@@ -128,14 +149,15 @@ inner join #tmp t on p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingLis
 if exists (select 1 from BITableInfo b where b.id = 'P_CartonStatusTrackingList')
 begin
 	update b
-		set b.TransferDate = getdate()
+		set b.TransferDate = getdate(),
+            b.IS_Trans = 1
 	from BITableInfo b
 	where b.id = 'P_CartonStatusTrackingList'
 end
 else 
 begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_CartonStatusTrackingList', getdate())
+	insert into BITableInfo(Id, TransferDate,IS_Trans)
+	values('P_CartonStatusTrackingList', getdate(), 1)
 end
 ";
                 finalResult = new Base_ViewModel()

@@ -25,14 +25,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 new SqlParameter("@BuyerDeliveryFrom", SqlDbType.Date) { Value = (object)model.BuyerDeliveryFrom ?? DBNull.Value },
                 new SqlParameter("@BuyerDeliveryTo", SqlDbType.Date) { Value = (object)model.BuyerDeliveryTo ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessFrom", SqlDbType.Date) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessTo", SqlDbType.Date) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar) { Value = model.MDivisionID },
                 new SqlParameter("@FactoryID", SqlDbType.VarChar) { Value = model.FactoryID },
             };
 
             string sqlWhere = string.Empty;
             string sqlMdWhere = string.Empty;
+			string sqlPKAuditWhere = string.Empty;
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -68,6 +69,13 @@ where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Scan & Pack":
                     sqlMdWhere += @" where	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    break;
+                case "Packing Audit":
+                    sqlMdWhere += @"
+INNER JOIN CTNPackingAudit  a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
+";
+                    sqlPKAuditWhere = " and PackingAuditScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "MD Scan":
                     sqlMdWhere += @" 
@@ -378,8 +386,8 @@ select distinct [KPIGroup] = f.KPICode
 	, oqs.BuyerDelivery
 	, [PackingListID] = p.ID
 	, [CtnNo] = pld.CTNStartNo
-	, [Refno] = pld.Refno
-	, [Description] = LocalItem.Description
+	, [Refno] = isnull(pld.Refno,'')
+	, [Description] = isnull(LocalItem.Description,'')
 	, [Size] = ISNULL(Size.val, '')
 	, [CartonQty] = ISNULL(CartonQty.val, 0)
 	, [Status] = case 
@@ -495,8 +503,9 @@ select distinct [KPIGroup] = f.KPICode
 	, [HauledQty] = IIF(HaulingScanTime.val is null, 0, ISNULL(HauledQty.val, 0))
 	, [HaulingStatus] = CASE    WHEN HauledReturn.val = 'Return' THEN 'Return'
 								WHEN HauledReturn.val = 'Haul 'THEN 'Hauled'
-							ELSE HauledReturn.val
+							ELSE isnull(HauledReturn.val,'')
 						END
+	, [HaulerName] = isnull(HaulerNanme.val,'')
 	, [DryRoomReceiveTime] = DryRoomReceiveTime.val
 	, [DryRoomTransferTime] = DryRoomTransferTime.val 
 	, [MDScanTime] = MDScan.val
@@ -506,33 +515,38 @@ select distinct [KPIGroup] = f.KPICode
 	, [PackingAuditStatus] = CASE 　WHEN PackingAuditReturn.val = 'Return' THEN 'Return'
 									WHEN PackingAuditReturn.val = 'Pass 'THEN 'Pass'
 									WHEN PackingAuditReturn.val = 'Hold 'THEN 'Hold'
-								ELSE PackingAuditReturn.val
+								ELSE isnull(PackingAuditReturn.val,'')
 							END
+	, [PackingAuditName] = isnull(PackingAuditName.val,'')
 	, [M360MDScanTime] = M360MDScanTime.val
 	, [M360MDFailQty] = M360MDFailQty.val
 	, [M360MDStatus] =	CASE 　 WHEN M360MDReturn.val = 'Return'THEN 'Return'
 								WHEN M360MDReturn.val = 'Pass 'THEN 'Pass'
 								WHEN M360MDReturn.val = 'Hold 'THEN 'Hold'
-							ELSE M360MDReturn.val
+							ELSE isnull(M360MDReturn.val,'')
 						END
+	, [M360MDName] = isnull(M360MDName.val,'')
 	, [HangerPackScanTime] = CTNHangerPackTime.val
 	, [HangerPackStatus] = CASE WHEN pld.HangerPackStatus = 'Return'THEN 'Return'
 									WHEN pld.HangerPackStatus = 'Pass 'THEN 'Done'
-								ELSE pld.HangerPackStatus
+								ELSE isnull(pld.HangerPackStatus,'')
 							END
-
+	, [HangerPackName] = isnull(HangerPackName.val,'')
 	, [JokerTagScanTime] = CTNJokerTagTime.val 
 	, [JokerTagStatus] = CASE WHEN pld.JokerTagStatus = 'Return'THEN 'Return'
 								WHEN pld.JokerTagStatus = 'Pass 'THEN 'Done'
-								ELSE pld.JokerTagStatus
+								ELSE isnull(pld.JokerTagStatus,'')
 							END
+	, [JokerTagName] = isnull(JokerTagName.val,'')
 	, [HeatSealScanTime] = CTNHeatSealTime.val
 	, [HeatSealStatus] = CASE WHEN pld.HeatSealStatus = 'Return'THEN 'Return'
 								WHEN pld.HeatSealStatus = 'Pass 'THEN 'Done'
-								ELSE pld.HeatSealStatus
+								ELSE isnull(pld.HeatSealStatus,'')
 							END
+    , [HeatSealName] = isnull(HeatSealName.val,'')
 	, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 	, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
+    , [MDMachineNo] = pld.MDMachineNo
 	, [ScanAndPackTime] = pld.ScanEditDate
 	, [ScanQty] = ISNULL(ScanQty.val, 0)
 	, [FtyTransferToClogTime] = FtyTransferToClogTime.val
@@ -601,6 +615,16 @@ outer apply(
 
 ) HauledReturn
 outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHauling ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HaulerNanme
+outer apply(
 	select [val] = (select max(dr.AddDate)
 					from #DryReceive dr with(nolock)
 					where	dr.PackingListID = pld.ID and
@@ -650,6 +674,16 @@ outer apply(
 					pa.SCICtnNo = pld.SCICtnNo)
 ) PackingAuditReturn	
 outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNPackingAudit ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) PackingAuditName
+outer apply(
 	select [val] = (select MAX(AddDate)
 			from #MDScan md with (nolock) 
 			where	md.DataRemark = 'Create from M360' and
@@ -671,6 +705,16 @@ outer apply(
 					md.PackingListID = pld.ID and
 					md.SCICtnNo = pld.SCICtnNo)
 ) M360MDReturn
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #MDScan ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) M360MDName
 outer apply(
 	select [val] = (select MAX(AddDate)
 			from #PackErrTransfer pe with (nolock) 
@@ -749,7 +793,16 @@ outer apply(
 					cr.CTNStartNo = pld.CTNStartNo and
 					cr.OrderID = pld.OrderID)
 ) CTNHangerPackTime
-
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHangerPack ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HangerPackName
 outer apply(
 	select [val] = (select MAX(AddDate)
 			from #CTNJokerTag cr with (nolock) 
@@ -757,7 +810,16 @@ outer apply(
 					cr.CTNStartNo = pld.CTNStartNo and
 					cr.OrderID = pld.OrderID)
 ) CTNJokerTagTime
-
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNJokerTag ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) JokerTagName
 outer apply(
 	select [val] = (select MAX(AddDate)
 			from #CTNHeatSeal cr with (nolock) 
@@ -765,6 +827,18 @@ outer apply(
 					cr.CTNStartNo = pld.CTNStartNo and
 					cr.OrderID = pld.OrderID)
 ) CTNHeatSealTime
+outer apply(
+	select [val] = (
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		from #CTNHeatSeal ch with(nolock)
+		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		where ch.PackingListID = pld.ID 
+		and ch.CTNStartNo = pld.CTNStartNo
+		and ch.OrderID = pld.OrderID
+	)
+) HeatSealName
+where 1=1
+{sqlPKAuditWhere}
 ";
 
             Base_ViewModel resultReport = new Base_ViewModel

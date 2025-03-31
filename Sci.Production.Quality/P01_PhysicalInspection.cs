@@ -1733,33 +1733,33 @@ and id = '{this.maindr["Receivingid"]}'
 
             for (int i = 0; i < gridCounts; i++)
             {
-                excel.Cells[19 + (i * 8) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 2] = dtGrid.Rows[rowcount]["FullRoll"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 4] = dtGrid.Rows[rowcount]["FullDyelot"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 5] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 2] = dtGrid.Rows[rowcount]["FullRoll"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 3] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 4] = dtGrid.Rows[rowcount]["FullDyelot"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 5] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
 
                 // 指定欄位轉型
-                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 8) + addline, 5];
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 10) + addline, 5];
                 worksheet.get_Range(cell, cell).NumberFormat = "0.00";
 
-                excel.Cells[19 + (i * 8) + addline, 6] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 7] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 8] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 9] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 10] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 11] = dtGrid.Rows[rowcount]["pointRate"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 12] = dtGrid.Rows[rowcount]["Grade"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 13] = dtGrid.Rows[rowcount]["Result"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 14] = dtGrid.Rows[rowcount]["Remark"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 6] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 7] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 8] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 9] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 10] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 11] = dtGrid.Rows[rowcount]["pointRate"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 12] = dtGrid.Rows[rowcount]["Grade"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 13] = dtGrid.Rows[rowcount]["Result"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 14] = dtGrid.Rows[rowcount]["Remark"].ToString();
                 rowcount++;
 
                 #region FIR_Physical_Defect
 
                 // 變色 titile
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Interior.colorindex = 38;
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Borders.LineStyle = 1;
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Font.Bold = true;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Interior.colorindex = 38;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Borders.LineStyle = 1;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Font.Bold = true;
 
                 DataTable dtRealTime;
 
@@ -1796,22 +1796,22 @@ order by Yards
 
                             if (cntnextline == 0)
                             {
-                                excel.Cells[20 + (i * 8) + addline, ii] = "Yards";
+                                excel.Cells[20 + (i * 10) + addline, ii] = "Yards";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
+                            excel.Cells[21 + (i * 10) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
                             cntRealTime++;
                         }
                         else
                         {
                             if (cntnextline == 0)
                             {
-                                excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
+                                excel.Cells[20 + (i * 10) + addline, ii] = "Defect";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + dtRealTime.Rows[cntRealTime - 1]["T2"].ToString();
+                            excel.Cells[21 + (i * 10) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + dtRealTime.Rows[cntRealTime - 1]["T2"].ToString();
 
-                            Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 8) + addline}");
+                            Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 10) + addline}");
                             formatRange.NumberFormat = "0.00";
                             formatRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                             cntX += 2;
@@ -1837,11 +1837,11 @@ order by Yards
                     {
                         if (ii % 2 == 1)
                         {
-                            excel.Cells[20 + (i * 8) + addline, ii] = "Yards";
+                            excel.Cells[20 + (i * 10) + addline, ii] = "Yards";
                         }
                         else
                         {
-                            excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
+                            excel.Cells[20 + (i * 10) + addline, ii] = "Defect";
                         }
                     }
 
@@ -1856,7 +1856,7 @@ order by Yards
                                 addline++;
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount]["DefectLocation"];
+                            excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount]["DefectLocation"];
                             pDrowcount++;
                         }
                         else
@@ -1873,17 +1873,60 @@ and t.T2 = 1";
                             string strT2 = MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
                             if (dtDefect.Rows[pDrowcount - 1]["DefectRecord"].ToString().IndexOf('/') != -1)
                             {
-                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
+                                excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
                             }
                             else
                             {
-                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
+                                excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
                             }
                         }
                     }
                 }
 
-                worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 10]].Font.Bold = true;
+                string sql = $@"
+select FabricdefectID, FabricdefectCount = count(fdr.FabricdefectID) 
+from FIR f
+inner join FIR_Physical fp on fp.ID = f.ID
+inner join FIR_Physical_Defect_Realtime fdr on fdr.FIR_PhysicalDetailUkey = fp.DetailUkey
+where PoId = '{this.maindr["POID"]}' 
+and Seq1 = '{this.maindr["Seq1"]}' and Seq2= '{this.maindr["Seq2"]}'
+and fp.Roll ='{dtGrid.Rows[i]["Roll"].ToString()}' 
+and fp.Dyelot ='{dtGrid.Rows[i]["Dyelot"].ToString()}'
+group by FabricdefectID
+";
+                DataTable tmpFabricdefect;
+                DBProxy.Current.Select(null, sql, out tmpFabricdefect);
+
+                if (tmpFabricdefect.Rows.Count > 0)
+                {
+                    for (int tc = 0; tc < tmpFabricdefect.Rows.Count; tc++) // 修正: tc 從 0 開始
+                    {
+                        int col = (tc * 2) + 1; // 修正: 確保欄位對應正確 (Excel欄位從1開始)
+
+                        excel.Cells[22 + (i * 10) + addline, col] = "Defect";
+                        excel.Cells[23 + (i * 10) + addline, col] = tmpFabricdefect.Rows[tc]["FabricdefectID"].ToString();
+
+                        excel.Cells[22 + (i * 10) + addline, col + 1] = "Total";
+                        excel.Cells[23 + (i * 10) + addline, col + 1] = tmpFabricdefect.Rows[tc]["FabricdefectCount"].ToString();
+                    }
+
+                    int ttlc = tmpFabricdefect.Rows.Count * 2;
+
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Font.Bold = true;
+                }
+
+                if (tmpFabricdefect.Rows.Count == 0)
+                {
+                    excel.Cells[22 + (i * 10) + addline, 1] = "Defect";
+                    excel.Cells[22 + (i * 10) + addline, 2] = "Total";
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Font.Bold = true;
+                }
+
+                worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
 
@@ -1929,52 +1972,52 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.FirID, dtGrid.Rows[rowc
                 {
                     if (dtcombo.Rows.Count < 1)
                     {
-                        excel.Cells[22 + (i * 8) + addline, 2] = "Result";
-                        excel.Cells[22 + (i * 8) + addline, 3] = "Comment";
-                        excel.Cells[22 + (i * 8) + addline, 4] = "Inspector";
-                        excel.Cells[23 + (i * 8) + addline, 1] = "Contiunity ";
-                        excel.Cells[24 + (i * 8) + addline, 1] = "Shad band";
-                        excel.Cells[25 + (i * 8) + addline, 1] = "Weight";
-                        excel.Cells[26 + (i * 8) + addline, 1] = "Moisture";
+                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
                     }
                     else
                     {
-                        excel.Cells[22 + (i * 8) + addline, 2] = "Result";
-                        excel.Cells[22 + (i * 8) + addline, 3] = "Comment";
-                        excel.Cells[22 + (i * 8) + addline, 4] = "Inspector";
-                        excel.Cells[23 + (i * 8) + addline, 1] = "Contiunity ";
-                        excel.Cells[24 + (i * 8) + addline, 1] = "Shad band";
-                        excel.Cells[25 + (i * 8) + addline, 1] = "Weight";
-                        excel.Cells[26 + (i * 8) + addline, 1] = "Moisture";
+                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
 
-                        excel.Cells[23 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
-                        excel.Cells[23 + (i * 8) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
-                        excel.Cells[23 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
 
-                        excel.Cells[24 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
 
                         // 開頭加單引號防止特殊字元使excel產生失敗
-                        excel.Cells[24 + (i * 8) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
-                        excel.Cells[24 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
 
-                        excel.Cells[25 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
-                        excel.Cells[25 + (i * 8) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
-                        excel.Cells[25 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
 
                         if ((bool)dtcombo.Rows[0]["Moisture"])
                         {
-                            excel.Cells[26 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
+                            excel.Cells[28 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
                         }
 
-                        excel.Cells[26 + (i * 8) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
-                        excel.Cells[26 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
+                        excel.Cells[28 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
+                        excel.Cells[28 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
                     }
 
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Interior.colorindex = 38;
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Borders.LineStyle = 1;
 
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Font.Bold = true;
-                    worksheet.Range[excel.Cells[23 + (i * 8) + addline, 1], excel.Cells[26 + (i * 8) + addline, 1]].Font.Bold = true;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Font.Bold = true;
+                    worksheet.Range[excel.Cells[25 + (i * 10) + addline, 1], excel.Cells[28 + (i * 10) + addline, 1]].Font.Bold = true;
                 }
             }
 

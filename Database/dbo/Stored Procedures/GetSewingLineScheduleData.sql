@@ -1930,7 +1930,7 @@ select  c.FactoryID
         ,[BuyerDelivery] = min(BuyerDelivery)
 	    ,StadOutPutQtyPerDay = sum(s.StdQ)
 	    ,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
-        ,[IsSample] = max(IsSample)
+        ,[IsSample] = min(IsSample)
 	    ,c.IsRepeatStyle
 	    ,c.OriStyle
 from @c c 

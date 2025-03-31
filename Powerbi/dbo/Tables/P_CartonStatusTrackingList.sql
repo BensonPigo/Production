@@ -43,6 +43,25 @@
 	[DisposeDate] [date] NULL,
 	[PulloutComplete] [varchar](1) NOT NULL,
 	[PulloutDate] [date] NULL,
+    [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
+	[RefNo] [varchar](21) NOT NULL,
+	[Description] [nvarchar](max) NOT NULL,
+	[HaulingStatus] [varchar](10) NOT NULL,
+	[HaulerName] [varchar](50) NOT NULL,
+	[PackingAuditStatus] [varchar](10) NOT NULL,
+	[PackingAuditName] [varchar](50) NOT NULL,
+	[M360MDStatus] [varchar](10) NOT NULL,
+	[M360MDName] [varchar](50) NOT NULL,
+	[HangerPackScanTime] [datetime] NULL,
+	[HangerPackStatus] [varchar](10) NOT NULL,
+	[HangerPackName] [varchar](50) NOT NULL,
+	[JokerTagScanTime] [datetime] NULL,
+	[JokerTagStatus] [varchar](10) NOT NULL,
+	[JokerTagName] [varchar](50) NOT NULL,
+	[HeatSealScanTime] [datetime] NULL,
+	[HeatSealStatus] [varchar](10) NOT NULL,
+	[HeatSealName] [varchar](50) NOT NULL,
  CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
 (
 	[SP] ASC,
@@ -50,7 +69,11 @@
 	[PackingListID] ASC,
 	[CtnNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_KPIGroup]  DEFAULT ('') FOR [KPIGroup]
@@ -98,6 +121,9 @@ GO
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CartonQty]  DEFAULT ((0)) FOR [CartonQty]
 GO
 
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_MDMachineNo]  DEFAULT ((0)) FOR [MDMachineNo]
+GO
+
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_HauledQty]  DEFAULT ((0)) FOR [HauledQty]
 GO
 
@@ -122,6 +148,48 @@ GO
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_PulloutComplete]  DEFAULT ('') FOR [PulloutComplete]
 GO
 
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [RefNo]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [Description]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HaulingStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HaulerName]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [PackingAuditStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [PackingAuditName]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [M360MDStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [M360MDName]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HangerPackStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HangerPackName]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [JokerTagStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [JokerTagName]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HeatSealStatus]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HeatSealName]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SDP KPI Code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'KPIGroup'
 GO
 
@@ -132,6 +200,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Line' ,
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SP'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD機器代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'MDMachineNo'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SeqNo'
@@ -253,3 +324,56 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'This packing list pullout date' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'PulloutDate'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'RefNo' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'RefNo'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Description' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'Description'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Hauling Status' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HaulingStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Hauling Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HaulerName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Packing Audit Status' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'PackingAuditStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Packing Audit Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'PackingAuditName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M360MDStatus' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'M360MDStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'M360 MD Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'M360MDName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Hanger Pack Scan Time' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HangerPackScanTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Hanger Pack Status' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HangerPackStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Hanger Pack Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HangerPackName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Joker Tag Scan Time' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'JokerTagScanTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Joker Tag Status' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'JokerTagStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Joker Tag Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'JokerTagName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Heat Seal Scan Time' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HeatSealScanTime'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Heat Seal Status' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HeatSealStatus'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Heat Seal Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HeatSealName'
+GO
+
+
