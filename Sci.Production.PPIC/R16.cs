@@ -39,6 +39,9 @@ namespace Sci.Production.PPIC
         protected override void OnFormLoaded()
         {
             base.OnFormLoaded();
+
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

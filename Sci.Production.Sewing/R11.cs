@@ -34,6 +34,8 @@ namespace Sci.Production.Sewing
             this.comboM.SetDefalutIndex(true);
             this.comboFactory.SetDataSource(this.comboM.Text);
             this.comboM.Enabled = false;
+            this.comboFactory.Text = Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>

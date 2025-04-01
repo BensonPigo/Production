@@ -29,6 +29,7 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboPrintType, 1, 1, "ALL,MR Not Send,MR Send Not Receive,Factory Receive");
             this.comboPrintType.SelectedIndex = 0;
             this.comboM.Enabled = false;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>

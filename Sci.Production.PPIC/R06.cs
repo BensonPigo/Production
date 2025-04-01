@@ -43,7 +43,7 @@ namespace Sci.Production.PPIC
             this.comboM.Enabled = false;
             MyUtility.Tool.SetupCombox(this.comboOrderType, 1, 1, "Bulk,Sample,Bulk+Sample,Material");
             this.comboOrderType.Text = "Bulk+Sample";
-
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

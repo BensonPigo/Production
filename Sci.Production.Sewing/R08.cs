@@ -53,6 +53,8 @@ namespace Sci.Production.Sewing
             this.comboM.SetDefalutIndex(true);
             this.comboFactory.SetDataSource(this.comboM.Text);
             this.comboM.Enabled = false;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         private string SelectSewingLine(string line)

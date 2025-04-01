@@ -52,6 +52,7 @@ namespace Sci.Production.Sewing
             this.comboGender1.SetDataSource();
             this.comboConstruction1.SetDataSource();
             this.comboM.Enabled = false;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>

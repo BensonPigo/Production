@@ -53,6 +53,8 @@ where Zone <> ''";
             this.comboZone.SelectedIndex = 0;
             this.comboSubProcess.SelectedIndex = 0;
             this.checkBulk.Checked = true;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
 
             if (type != "1")
             {

@@ -37,6 +37,7 @@ namespace Sci.Production.Sewing
             this.dateDate.Value = DateTime.Today.AddDays(-1);
             this.comboFactory.SetDataSource();
             this.comboSewingTeam1.SetDataSource();
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

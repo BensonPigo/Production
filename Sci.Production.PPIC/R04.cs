@@ -47,6 +47,8 @@ namespace Sci.Production.PPIC
 
             this.dateApvDate.Value1 = DateTime.Today.AddDays(-1);
             this.dateApvDate.Value2 = DateTime.Today.AddDays(-1);
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

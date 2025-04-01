@@ -47,6 +47,7 @@ namespace Sci.Production.Sewing
             this.InitializeComponent();
             this.comboFactory.SetDataSource();
             this.comboFtyZone.SetDataSource();
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

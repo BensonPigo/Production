@@ -24,6 +24,7 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
             this.txtMdivision.Enabled = false;
+            this.txtMdivision.Text = Env.User.Keyword;
         }
 
         /// <inheritdoc/>

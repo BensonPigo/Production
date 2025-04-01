@@ -42,6 +42,7 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Fabric,Accessory");
             this.comboReportType.SelectedIndex = 0;
             DataTable mDivision, factory;
+            this.comboM.Text = Env.User.Keyword;
             this.comboFactory.Text = Env.User.Factory;
         }
 

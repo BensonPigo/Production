@@ -43,6 +43,8 @@ namespace Sci.Production.PPIC
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
             this.comboSubProcess.SelectedIndex = 0;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

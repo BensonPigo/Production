@@ -50,6 +50,7 @@ namespace Sci.Production.PPIC
             this.comboM.SetDefalutIndex(true);
             this.comboFactory.SetDataSource(this.comboM.Text);
             this.comboM.Enabled = false;
+            this.comboFactory.Text = Env.User.Factory;
 
             this.comboType.SelectedIndex = 0;
             this.cmbStatus.SelectedIndex = 0;

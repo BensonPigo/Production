@@ -34,6 +34,8 @@ namespace Sci.Production.Planning
         {
             this.InitializeComponent();
             this.txtMdivision.Enabled = false;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, 1, "HT(UA),HT(Non-UA)");
             this.comboArtworkType.SelectedIndex = 0;
             this.dateSewingDate.Value1 = DateTime.Now.Date;

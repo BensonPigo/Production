@@ -60,6 +60,7 @@ namespace Sci.Production.PPIC
             this.comboSummaryBy.Add("Article / Size", "Article / Size");
             this.comboSummaryBy.Add("Style, per each sewing date", "StylePerEachSewingDate");
             this.comboSummaryBy.SelectedIndex = 0;
+            this.comboFactory.Text = Env.User.Factory;
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);

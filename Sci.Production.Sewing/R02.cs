@@ -66,7 +66,8 @@ namespace Sci.Production.Sewing
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
             this.comboReportType.SelectedIndex = 0;
             this.comboOrderBy.SelectedIndex = 0;
-
+            this.comboFactory.Text = Env.User.Factory;
+            this.comboM.Text = Env.User.Keyword;
         }
 
         // Date

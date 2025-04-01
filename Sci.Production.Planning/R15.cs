@@ -75,6 +75,8 @@ namespace Sci.Production.Planning
             this.comboRFIDProcessLocation1.SetDataSource(false);
             this.comboRFIDProcessLocation1.SelectedIndex = 0;
             this.txtMdivision.Enabled = false;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <summary>

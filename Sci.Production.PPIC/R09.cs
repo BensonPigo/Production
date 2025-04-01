@@ -47,6 +47,7 @@ where   MDivisionID = '{0}'
             }
 
             this.txtMdivision.Enabled = false;
+            this.txtMdivision.Text = Env.User.Keyword;
             this.txtfactory.Text = Env.User.Factory;
             #endregion
         }
