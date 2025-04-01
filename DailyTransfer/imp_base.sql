@@ -4216,6 +4216,7 @@ SET  a.WeaveTypeID	= isnull( b.WeaveTypeID,	'')
     ,a.isResultNotInP01 = isnull(b.isResultNotInP01, 0)
     ,a.Description = isnull(b.Description, '')
     ,a.ShowGrade = isnull(b.ShowGrade, '')
+    ,a.IsColorFormat = isnull(b.IsColorFormat, 0)
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
 ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
@@ -4231,7 +4232,8 @@ INSERT INTO Production.dbo.FIR_Grade
            ,isFormatInP01
            ,isResultNotInP01
            ,Description
-           ,ShowGrade)
+           ,ShowGrade
+           ,IsColorFormat)
 SELECT   isnull( WeaveTypeID, '')
 		,isnull( Percentage	, 0)
 		,isnull( Grade		, '')
@@ -4242,6 +4244,7 @@ SELECT   isnull( WeaveTypeID, '')
         ,isnull(isResultNotInP01, 0)
         ,isnull(Description, '')
         ,isnull(ShowGrade, '')
+        ,isnull(IsColorFormat,0)
 FROM Trade_To_Pms.dbo.FIR_Grade b
 WHERE NOT EXISTS(
 	SELECT  1
