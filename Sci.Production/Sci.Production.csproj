@@ -260,9 +260,6 @@
     <None Include="Bhtprtd.lib">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="bin\Debug\XLT\PPIC_R23.xltx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="SCHEMAS.xsc">
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
