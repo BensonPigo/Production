@@ -48,7 +48,7 @@ BEGIN
 				inner join [MainServer].Production.dbo.orders o with(nolock) on s.OrderId = o.id	
 				left join P_LineMapping lm with(nolock) 
 					on lm.StyleUKey = o.StyleUkey 
-					and  s.FactoryID = lm.Factory	
+					and  s.FactoryID = lm.FactoryID	
 					and s.ComboType = lm.ComboType 		
 				where 1=1
 				and CONVERT(date,@SDate) between convert(date,s.Inline) and CONVERT(date,s.Offline)
@@ -62,7 +62,7 @@ BEGIN
 		and exists(
 			select 1 from P_LineMapping lm with(nolock) 
 			where lm.StyleUKey = o.StyleUkey 
-			and  s.FactoryID = lm.Factory	
+			and  s.FactoryID = lm.FactoryID	
 			and s.ComboType = lm.ComboType 
 			and lm.Phase = 'Final'
 		)
@@ -125,7 +125,7 @@ BEGIN
 						ON s.OrderId = o.id    
 					LEFT JOIN P_LineMapping lm WITH(NOLOCK) 
 						ON lm.StyleUKey = o.StyleUkey 
-						AND s.FactoryID = lm.Factory    
+						AND s.FactoryID = lm.FactoryID    
 						AND s.ComboType = lm.ComboType         
 					WHERE 
 						CONVERT(DATE, DATEADD(DAY, @Day, @SDate)) BETWEEN CONVERT(DATE, s.Inline) AND CONVERT(DATE, s.Offline)
@@ -142,7 +142,7 @@ BEGIN
 					SELECT 1 
 					FROM P_LineMapping lm WITH(NOLOCK)
 					WHERE lm.StyleUKey = o.StyleUkey 
-					AND s.FactoryID = lm.Factory    
+					AND s.FactoryID = lm.FactoryID    
 					AND s.ComboType = lm.ComboType 
 					AND lm.Phase = 'Final'
 				)
