@@ -372,7 +372,7 @@ WHERE EXISTS (
 ---------開始整理報表-------
 
 select distinct [KPIGroup] = f.KPICode
-	, [Fty] = o.FactoryID
+	, [FactoryID] = o.FactoryID
 	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
 	, [SP] = o.ID
 	, [SeqNo] = oqs.Seq
