@@ -183,31 +183,80 @@ Where 1 = 1
             int stratcol, columnsCnt, rowsCnt, totalC;
             string today = DateTime.Now.ToString("MM/dd");
 
-            foreach (string id in dt.AsEnumerable().Select(s => s["ID"].ToString()).Distinct())
+            var distinctRows = dt.AsEnumerable().OrderBy(o => o["ID"])
+    .Select(s => new
+    {
+        POID = s["POID"].ToString(),
+        ID = s["ID"].ToString(),
+        StyleID = s["StyleID"].ToString(),
+        Article = s["Article"].ToString(),
+        ColorID = s["ColorID"].ToString(),
+    })
+    .Distinct()
+    .ToList();
+
+            foreach (var id in distinctRows)
             {
-                var dtDetail = dt.AsEnumerable().Where(s => s["ID"].ToString() == id).OrderBy(o => o["Seq"]).ToList();
+                var dtDetail = dt.AsEnumerable()
+                                     .Where(s => s["POID"].ToString() == id.POID
+                                              && s["ID"].ToString() == id.ID
+                                              && s["StyleID"].ToString() == id.StyleID
+                                              && s["Article"].ToString() == id.Article
+                                              && s["ColorID"].ToString() == id.ColorID)
+                                     .OrderBy(o => o["Seq"])
+                                     .ToList();
 
                 string sql = @"
-If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
-	Begin
-		Select Orders.ID ,Article ,SizeCode ,Order_Qty.Qty, OriQty Into #Tmp_Order_Qty
-		  From dbo.Order_Qty
-		 Inner Join dbo.Orders
-			On Orders.ID = Order_Qty.ID
-		 Where Orders.PoID = @POID;
-	End;
+    If Object_ID('tempdb..#Tmp_BoaExpend') Is Null
+         Begin
+	        Create Table #Tmp_BoaExpend
+	        (  ExpendUkey BigInt Identity(1,1) Not Null, ID Varchar(13), Order_BOAUkey BigInt
+				, RefNo VarChar(36), SCIRefNo VarChar(30), Article VarChar(8), ColorID VarChar(6), SuppColor NVarChar(Max)
+				, SizeSeq VarChar(2), SizeCode VarChar(8), SizeSpec VarChar(15), SizeUnit VarChar(8), Remark NVarChar(Max)
+				, OrderQty Numeric(6,0)
+				--, Price Numeric(12,4)--pms does not use this column
+				, UsageQty Numeric(11,2), UsageUnit VarChar(8), SysUsageQty  Numeric(11,2)
+				, BomZipperInsert VarChar(5), BomCustPONo VarChar(30), Keyword VarChar(Max), Keyword_Original VARCHAR(MAX), Keyword_xml VARCHAR(MAX), OrderList varchar(max), ColorDesc varchar(150), Special nvarchar(max)
+				, BomTypeColorID varchar(50), BomTypeSize varchar(50), BomTypeSizeUnit varchar(50), BomTypeZipperInsert varchar(50), BomTypeArticle varchar(50), BomTypeCOO varchar(50)
+				, BomTypeGender varchar(50), BomTypeCustomerSize varchar(50), BomTypeDecLabelSize varchar(50), BomTypeBrandFactoryCode varchar(50), BomTypeStyle varchar(50)
+				, BomTypeStyleLocation varchar(50), BomTypeSeason varchar(50), BomTypeCareCode varchar(50), BomTypeCustomerPO varchar(50), BomTypeBuyMonth varchar(50), BomTypeBuyerDlvMonth varchar(50)
+				, Index Idx_ID NonClustered (ID, Order_BOAUkey, ColorID) -- table index
+			);
+	    End;	
 
-	declare @Tmp_Order_Qty dbo.QtyBreakdown
+    If Object_ID('tempdb..#Tmp_Order_Qty') Is Null
+	    Begin
+		    Select Orders.ID ,Article ,SizeCode ,Order_Qty.Qty, OriQty Into #Tmp_Order_Qty
+		      From dbo.Order_Qty
+		     Inner Join dbo.Orders
+			    On Orders.ID = Order_Qty.ID
+		     Where Orders.PoID = @POID;
+	    End;
+
+			declare @Tmp_Order_Qty dbo.QtyBreakdown
 	insert into @Tmp_Order_Qty
 	select ID ,Article ,SizeCode ,Qty
         --,SewOutputQty ,SewOutputUpdate--pms does not use this column
         ,OriQty
     from #Tmp_Order_Qty
 
-Select * from GetBOAExpend_NEW(@POID, 0, 1, 0, @Tmp_Order_Qty, 0, 0, 1)
 
-where Article = @Art and ColorID = @Color
-and @ID in (Select Data From dbo.SplitString(OrderList,','))
+    Insert Into #Tmp_BoaExpend(ExpendUkey, ID, Order_BOAUkey, RefNo, SCIRefNo, Article, ColorID, SuppColor
+		, SizeSeq, SizeCode, SizeSpec, SizeUnit, Remark, OrderQty
+        --, Price
+        , UsageQty
+		, UsageUnit, SysUsageQty, BomZipperInsert, BomCustPONo, Keyword, Keyword_Original, Keyword_xml, OrderList, ColorDesc, Special
+		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
+		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
+        , BomTypeBuyMonth, BomTypeBuyerDlvMonth)
+    exec dbo.sp_GetBOAExpend_NEW @POID, 0, 1, 0, @Tmp_Order_Qty, 0, 0, 1
+
+    Select * 
+    from #Tmp_BoaExpend
+    where Article = @Art and ColorID = @Color
+    and @ID in (Select Data From dbo.SplitString(OrderList,','))
+
+    Drop Table #Tmp_BoaExpend;
 ";
                 DataTable tmp;
                 List<SqlParameter> paras = new List<SqlParameter>();
