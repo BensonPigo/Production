@@ -99,117 +99,126 @@ namespace Sci.Production.Quality
 
             this.sqlCmd.Append(@"
 select 
-[Bundleno] = BundleMDScan.BundleNo,
-[Spno] = Orders.ID,
-[MasterSP] = Bundle.POID,
-[M] = Bundle.MDivisionid,
-[Factory] = Orders.FtyGroup,
-[Style] = Orders.StyleID,
-[Season] = Orders.SeasonID,
-[Brand] = Orders.BrandID,
-[Cut Ref#] = Bundle.CutRef,
-[Comb] = Bundle.PatternPanel,
-[Cut#] = Bundle.Cutno,
-[Article] = Bundle.Article,
-[Color] = Bundle.ColorId,
-[Group] = Bundle_Detail.BundleGroup,
-[Size] = Bundle_Detail.SizeCode,
-[Qty] = Bundle_Detail.Qty,
-[Sub-process] = BundleMDScan.SubprocessID,
-[TransferDate] = BundleMDScan.AddDate,
-[Result] = CASE BundleMDScan.Result
-              WHEN 1 THEN 'Passed'
-              WHEN 0 THEN 'Failed'
-           END,
-[MD Operator ID#] = BundleMDScan.OperatorID,
-[MD Operator Name] = pass1.Name
+    [Bundleno] = bmd.BundleNo,
+    [Spno] = o.ID,
+    [MasterSP] = b.POID,
+    [M] = b.MDivisionid,
+    [Factory] = o.FtyGroup,
+    [Style] = o.StyleID,
+    [Season] = o.SeasonID,
+    [Brand] = o.BrandID,
+    [Cut Ref#] = b.CutRef,
+    [Comb] = b.PatternPanel,
+    [Cut#] = b.Cutno,
+    [Article] = b.Article,
+    [Color] = b.ColorId,
+    [Group] = bd.BundleGroup,
+    [Size] = bd.SizeCode,
+    [Qty] = bd.Qty,
+    [Sub-process] = bmd.SubprocessID,
+    [TransferDate] = bmd.AddDate,
+    [Result] = CASE bmd.Result
+                  WHEN 1 THEN 'Passed'
+                  WHEN 0 THEN 'Failed'
+               END,
+    [MD Operator ID#] = bmd.OperatorID,
+    [MD Operator Name] = pass1.Name
 into #tmp 
-from BundleMDScan
-inner join Bundle_Detail WITH (NOLOCK) on BundleMDScan.BundleNo = Bundle_Detail.BundleNo
-inner join Bundle WITH (NOLOCK) on Bundle_Detail.ID = Bundle.ID
-inner join Bundle_Detail_Order WITH (NOLOCK) on Bundle_Detail_Order.BundleNo = BundleMDScan.BundleNo
-inner join Orders WITH (NOLOCK) on Bundle_Detail_Order.OrderId = Orders.ID
-inner join WorkOrder WITH (NOLOCK) on WorkOrder.id = Bundle.POID and WorkOrder.CutRef = Bundle.CutRef
-left join [ExtendServer].ManufacturingExecution.dbo.Pass1 pass1 on BundleMDScan.OperatorId = pass1.ID
+from BundleMDScan bmd WITH (NOLOCK)
+inner join Bundle_Detail bd WITH (NOLOCK) on bmd.BundleNo = bd.BundleNo
+inner join Bundle b WITH (NOLOCK) on bd.ID = b.ID
+inner join Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.BundleNo = bmd.BundleNo
+inner join Orders o WITH (NOLOCK) on bdo.OrderId = o.ID
+left join [ExtendServer].ManufacturingExecution.dbo.Pass1 pass1 WITH (NOLOCK) on bmd.OperatorId = pass1.ID
 where 1 = 1
 ");
 
             if (!MyUtility.Check.Empty(this.dateBundle1))
             {
                 this.sqlParameter.Add(new SqlParameter("@dateBundle1", ((DateTime)this.dateBundle1.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and Bundle.Cdate >= @dateBundle1");
+                this.sqlCmd.Append(" and b.Cdate >= @dateBundle1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundle2))
             {
                 this.sqlParameter.Add(new SqlParameter("@dateBundle2", ((DateTime)this.dateBundle2.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and Bundle.Cdate <= @dateBundle2");
+                this.sqlCmd.Append(" and b.Cdate <= @dateBundle2");
             }
 
             if (!MyUtility.Check.Empty(this.CutRef1) && (!MyUtility.Check.Empty(this.CutRef2)))
             {
                 this.sqlParameter.Add(new SqlParameter("@CutRef1", this.CutRef1));
                 this.sqlParameter.Add(new SqlParameter("@CutRef2", this.CutRef2));
-                this.sqlCmd.Append(" and Bundle.CutRef between @CutRef1 and @CutRef2");
+                this.sqlCmd.Append(" and b.CutRef between @CutRef1 and @CutRef2");
             }
 
             if (!MyUtility.Check.Empty(this.SP))
             {
                 this.sqlParameter.Add(new SqlParameter("@SP", this.SP));
-                this.sqlCmd.Append(" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = Bundle_Detail.bundleNo and Orderid = @SP)");
+                this.sqlCmd.Append(" and exists(select 1 from Bundle_Detail_Order with(nolock) where bundleNo = bd.bundleNo and Orderid = @SP)");
             }
 
-            if (!MyUtility.Check.Empty(this.dateEstCutDate1))
+            if (!MyUtility.Check.Empty(this.dateEstCutDate1) || !MyUtility.Check.Empty(this.dateEstCutDate2))
             {
-                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate1", ((DateTime)this.dateEstCutDate1.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and WorkOrder.EstCutDate >= @dateEstCutDate1");
-            }
+                this.sqlCmd.Append(@"
+                and exists (
+                    select 1 from WorkOrder w WITH (NOLOCK) 
+                    where w.id = b.POID 
+                    and w.CutRef = b.CutRef 
+                ");
+                if (!MyUtility.Check.Empty(this.dateEstCutDate1))
+                {
+                    this.sqlParameter.Add(new SqlParameter("@dateEstCutDate1", ((DateTime)this.dateEstCutDate1.Value).ToString("yyyy-MM-dd")));
+                    this.sqlCmd.Append(" and w.EstCutDate >= @dateEstCutDate1 ");
+                }
 
-            if (!MyUtility.Check.Empty(this.dateEstCutDate2))
-            {
-                this.sqlParameter.Add(new SqlParameter("@dateEstCutDate2", ((DateTime)this.dateEstCutDate2.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and WorkOrder.EstCutDate <= @dateEstCutDate2");
+                if (!MyUtility.Check.Empty(this.dateEstCutDate2))
+                {
+                    this.sqlParameter.Add(new SqlParameter("@dateEstCutDate2", ((DateTime)this.dateEstCutDate2.Value).ToString("yyyy-MM-dd")));
+                    this.sqlCmd.Append(" and w.EstCutDate <= @dateEstCutDate2 ");
+                }
+                this.sqlCmd.Append(" ) ");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate1))
             {
                 this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate1", ((DateTime)this.dateBundleInspectDate1.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and CONVERT(date, BundleMDScan.AddDate) >= @dateBundleInspectDate1");
+                this.sqlCmd.Append(" and CONVERT(date, bmd.AddDate) >= @dateBundleInspectDate1");
             }
 
             if (!MyUtility.Check.Empty(this.dateBundleInspectDate2))
             {
                 this.sqlParameter.Add(new SqlParameter("@dateBundleInspectDate2", ((DateTime)this.dateBundleInspectDate2.Value).ToString("yyyy-MM-dd")));
-                this.sqlCmd.Append(" and CONVERT(date, BundleMDScan.AddDate) <= @dateBundleInspectDate2");
+                this.sqlCmd.Append(" and CONVERT(date, bmd.AddDate) <= @dateBundleInspectDate2");
             }
 
             if (!MyUtility.Check.Empty(this.SubProcess))
             {
-                this.sqlCmd.Append($@" and BundleMDScan.SubprocessID in ('{this.SubProcess.Replace(",", "','")}')" + Environment.NewLine);
+                this.sqlCmd.Append($@" and bmd.SubprocessID in ('{this.SubProcess.Replace(",", "','")}')" + Environment.NewLine);
             }
 
             if (!MyUtility.Check.Empty(this.M))
             {
                 this.sqlParameter.Add(new SqlParameter("@M", this.M));
-                this.sqlCmd.Append(" and Bundle.MDivisionid = @M");
+                this.sqlCmd.Append(" and b.MDivisionid = @M");
             }
 
             if (!MyUtility.Check.Empty(this.Factory))
             {
                 this.sqlParameter.Add(new SqlParameter("@Factory", this.Factory));
-                this.sqlCmd.Append(" and Orders.FtyGroup = @Factory");
+                this.sqlCmd.Append(" and o.FtyGroup = @Factory");
             }
 
             if (!MyUtility.Check.Empty(this.LastResult))
             {
                 this.sqlParameter.Add(new SqlParameter("@LastResult", this.LastResult));
                 this.sqlCmd.Append(
-                    @" and BundleMDScan.BundleNo IN (
+                    @" and bmd.BundleNo IN (
                         SELECT BundleNo
-                        FROM BundleMDScan
+                        FROM BundleMDScan WITH (NOLOCK)
                         WHERE AddDate = (
                             SELECT MAX(AddDate)
-                            FROM BundleMDScan sub
+                            FROM BundleMDScan sub WITH (NOLOCK)
                             WHERE sub.BundleNo = BundleMDScan.BundleNo and sub.SubProcessID = BundleMDScan.SubProcessID
                         ) AND Result = @LastResult)");
             }
