@@ -7022,6 +7022,7 @@ DEALLOCATE _cursor
             string sqlcmd = @"
 update fto
 set Tone = f.Tone
+    ,GMTWashStatus = f.GMTWashStatus
 from #tmp sd
 inner join FtyInventory f with(nolock) on f.POID = sd.FromPOID
     and f.Seq1 = sd.FromSeq1

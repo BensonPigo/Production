@@ -1,18 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
-using Sci.DB;
-using Sci.Production.Automation.LogicLayer;
-using Sci.Production.Prg.Entity;
-using Sci.Production.PublicPrg;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -122,12 +117,16 @@ namespace Sci.Production.Warehouse
                 .Text("Seq", header: "Seq", width: Widths.AnsiChars(6), iseditingreadonly: true) // 1
                 .Text("Roll", header: "Roll", width: Widths.AnsiChars(6), iseditingreadonly: true) // 2
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(10), iseditingreadonly: true) // 3
+                .Text("StockTypeDisplay", header: "Stock Type", width: Widths.AnsiChars(4), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(10), iseditingreadonly: true) // 4
                 .Numeric("ReceivingQty", header: "Receiving Qty", decimal_places: 2, width: Widths.AnsiChars(15), iseditingreadonly: true) // 5
                 .Numeric("Qty", header: "Transfer Out Qty", decimal_places: 2, width: Widths.AnsiChars(15), iseditingreadonly: true) // 6
                 .Text("StockUnit", header: "Stock Unit", width: Widths.AnsiChars(13), iseditingreadonly: true) // 7
                 .Text("Description", header: "Description", width: Widths.AnsiChars(50), iseditingreadonly: true) // 8
-            ;
+                .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Numeric("RecvKG", header: "Recv (Kg)", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
+                .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                ;
             #endregion 欄位設定
         }
 
@@ -144,6 +143,7 @@ namespace Sci.Production.Warehouse
             ,psd.Refno
             ,[ReceivingQty] = isnull( rdQty.ActualQty,0) + isnull(tidQty.Qty,0)
             ,td.Qty
+            ,td.RecvKG
             ,[StockUnit] = psd.StockUnit
             ,[Description] = tDescription.val
             ,td.ukey
@@ -151,9 +151,25 @@ namespace Sci.Production.Warehouse
             ,td.seq2
             ,td.ID
             ,td.stocktype
+            ,StockTypeDisplay =
+                 CASE td.StockType
+                     WHEN 'B' THEN 'Bulk'
+                     WHEN 'I' THEN 'Inventory'
+                 END
+            ,fi.Tone
+            ,[Total]=sum(td.Qty) OVER (PARTITION BY td.POID ,td.Seq1, td.Seq2 )
+            ,o.StyleID
             from TransferToSubcon tt with(nolock)
             inner join TransferToSubcon_Detail td with(nolock) on tt.ID = td.ID
             left join PO_Supp_Detail psd with(nolock) on td.POID =  psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
+            INNER JOIN FtyInventory fi WITH (NOLOCK)
+                ON fi.POID = td.PoId
+                    AND fi.Seq1 = td.Seq1
+                    AND fi.Seq2 = td.Seq2
+                    AND fi.Roll = td.Roll
+                    AND fi.Dyelot = td.Dyelot
+                    AND fi.StockType = td.StockType
+            INNER JOIN Orders o WITH (NOLOCK) ON o.ID = td.POID
             outer apply
             (
 	            select rd.ActualQty 
@@ -322,17 +338,20 @@ namespace Sci.Production.Warehouse
                         throw dualResult.GetException();
                     }
 
-                    string sql_up = $@"update f 
-                                        set
-                                        SubConStatus = '{this.CurrentMaintain["Subcon"]}' 
-                                        from FtyInventory as f with(nolock)
-                                        inner join #tmp td with(nolock) on 
-                                        f.POID = td.POID 
-                                        and f.Seq1 = td.Seq1
-                                        and f.Seq2 = td.Seq2
-                                        and f.Roll = td.Roll
-                                        and f.Dyelot = td.Dyelot
-                                        and f.StockType =td.StockType";
+                    string updateColumn = MyUtility.Convert.GetString(this.CurrentMaintain["Subcon"]).EqualString("GMT WASH") ? ",GMTWashStatus = 'Ongoing'" : string.Empty;
+                    string sql_up = $@"
+UPDATE f
+SET SubConStatus = '{this.CurrentMaintain["Subcon"]}'
+    {updateColumn}
+FROM FtyInventory AS f WITH (NOLOCK)
+INNER JOIN #tmp td WITH (NOLOCK)
+    ON f.POID = td.POID
+    AND f.Seq1 = td.Seq1
+    AND f.Seq2 = td.Seq2
+    AND f.Roll = td.Roll
+    AND f.Dyelot = td.Dyelot
+    AND f.StockType = td.StockType
+";
                     if (!(dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sql_up, out DataTable dtt)))
                     {
                         throw dualResult.GetException();
@@ -412,17 +431,20 @@ namespace Sci.Production.Warehouse
                         throw dualResult.GetException();
                     }
 
-                    string sql_up = $@"update f 
-                                        set
-                                        SubConStatus = '' 
-                                        from FtyInventory as f with(nolock)
-                                        inner join #tmp td with(nolock) on 
-                                        f.POID = td.POID 
-                                        and f.Seq1 = td.Seq1
-                                        and f.Seq2 = td.Seq2
-                                        and f.Roll = td.Roll
-                                        and f.Dyelot = td.Dyelot
-                                        and f.StockType =td.StockType";
+                    string updateColumn = MyUtility.Convert.GetString(this.CurrentMaintain["Subcon"]).EqualString("GMT WASH") ? ",GMTWashStatus = ''" : string.Empty;
+                    string sql_up = $@"
+UPDATE f
+SET SubConStatus = ''
+    {updateColumn}
+FROM FtyInventory AS f WITH (NOLOCK)
+INNER JOIN #tmp td WITH (NOLOCK)
+    ON f.POID = td.POID
+    AND f.Seq1 = td.Seq1
+    AND f.Seq2 = td.Seq2
+    AND f.Roll = td.Roll
+    AND f.Dyelot = td.Dyelot
+    AND f.StockType = td.StockType
+";
                     if (!(dualResult = MyUtility.Tool.ProcessWithDatatable(dataTable, string.Empty, sql_up, out DataTable dtt)))
                     {
                         throw dualResult.GetException();
@@ -437,6 +459,74 @@ namespace Sci.Production.Warehouse
             }
 
             MyUtility.Msg.InfoBox("UnConfirmed successful");
+        }
+
+        /// <inheritdoc/>
+        protected override bool ClickPrint()
+        {
+            if (!MyUtility.Convert.GetString(this.CurrentMaintain["Status"]).EqualString("Confirmed"))
+            {
+                MyUtility.Msg.WarningBox("Data is not confirmed, can't print.");
+                return false;
+            }
+
+            // 抓M的EN NAME
+            DualResult result = DBProxy.Current.Select(string.Empty, $@"select NameEN from MDivision where ID='{Env.User.Keyword}'", out DataTable dtNAME);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            string rptTitle = dtNAME.Rows[0]["NameEN"].ToString();
+            string id = this.CurrentMaintain["ID"].ToString();
+            string subcon = this.CurrentMaintain["subcon"].ToString();
+            string remark = this.CurrentMaintain["Remark"].ToString().Trim().Replace("\r", " ").Replace("\n", " ");
+            string date = MyUtility.Convert.GetDate(this.CurrentMaintain["TransferOutDate"]).Value.ToString("yyyy/MM/dd");
+
+            ReportDefinition report = new ReportDefinition();
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("RptTitle", rptTitle));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("ID", id));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Subcon", subcon));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("Remark", remark));
+            report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("date", date));
+
+            // 傳 list 資料
+            List<P54_PrintData> data = this.DetailDatas.AsEnumerable()
+                .Select(row1 => new P54_PrintData()
+                {
+                    POID = row1["POID"].ToString().Trim(),
+                    SEQ = row1["SEQ"].ToString().Trim(),
+                    Roll = row1["Roll"].ToString().Trim(),
+                    Dyelot = row1["Dyelot"].ToString().Trim(),
+                    DESC = (MyUtility.Check.Empty(row1["Description"]) == false) ? row1["Description"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
+                    Tone = row1["Tone"].ToString().Trim(),
+                    Stocktype = row1["stocktype"].ToString().Trim(),
+                    Unit = row1["StockUnit"].ToString().Trim(),
+                    QTY = row1["QTY"].ToString().Trim(),
+                    Total = row1["Total"].ToString().Trim(),
+                }).ToList();
+
+            report.ReportDataSource = data;
+
+            Type reportResourceNamespace = typeof(P54_PrintData);
+            Assembly reportResourceAssembly = reportResourceNamespace.Assembly;
+            string reportResourceName = "P54_Print.rdlc";
+
+            if (!(result = ReportResources.ByEmbeddedResource(reportResourceAssembly, reportResourceNamespace, reportResourceName, out IReportResource reportresource)))
+            {
+                this.ShowErr(result);
+                return false;
+            }
+
+            report.ReportResource = reportresource;
+
+            // 開啟 report view
+            var frm = new Win.Subs.ReportView(report);
+            frm.MdiParent = this.MdiParent;
+            frm.Show();
+
+            return base.ClickPrint();
         }
 
         private void TxtSubcon_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
