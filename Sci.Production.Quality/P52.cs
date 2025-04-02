@@ -1512,7 +1512,7 @@ and sr.DocumentName = @DocumentName
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
-                    parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
+                    parmes.Add(new SqlParameter("@ColorID", mainrow["Color"].ToString()));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
                 case "3":
