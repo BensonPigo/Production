@@ -1478,8 +1478,8 @@ and sr.DocumentName = @DocumentName
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
-                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
+                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"].ToString()));
                     break;
                 case "2":
                     sql = @"
@@ -1511,9 +1511,9 @@ and sr.DocumentName = @DocumentName
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"].ToString()));
-                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"].ToString()));
                     break;
                 case "3":
                     sql = @"
