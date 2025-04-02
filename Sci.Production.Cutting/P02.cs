@@ -1148,7 +1148,6 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     dr["TotalCutQty_CONCAT"] = ConcatTTLCutQty(dr);
                     dr.EndEdit();
                     UpdateConcatString(this.CurrentDetailData, this.dt_SizeRatio, this.formType);
-                    UpdateTotalDistributeQty(this.CurrentDetailData, this.dt_Distribute, this.formType);
                 }
             };
 

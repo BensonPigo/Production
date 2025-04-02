@@ -90,6 +90,12 @@ namespace Sci.Production.Cutting
                 return;
             }
 
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) == this.dateEstCut.Value)
+            {
+                MyUtility.Msg.WarningBox(" [Est Cut Date] and [Cut Cell] are consistent with the current status and cannot be revised.");
+                return;
+            }
+
             /*
                例子: 原本P31操作,兩張單都(大於 操作Today) 12/05, 12/06, 將 12/06(原單) 部分轉移到 12/05(新單)
                1.在 12/05(新單) 編輯新增一筆輸入原本在 12/06 的 Cutref

@@ -23,6 +23,8 @@ namespace Sci.Production.Cutting
         private DataTable WorkOrderForOutput;
         private DataTable WorkOrderForOutput_PatternPanel;
         private DataTable WorkOrderForOutput_SizeRatio;
+        private DataTable workOrderForOutput_Distribute;
+        private bool editByUseCutRefToRequestFabric;
 
         /// <summary>
         /// P09_ImportFromWorkOrderForPlanning，寫入Form表身的資料
@@ -31,13 +33,17 @@ namespace Sci.Production.Cutting
         /// <param name="workOrderForOutput">P09的 this.detailgridbs.DataSource</param>
         /// <param name="workOrderForOutput_PatternPanel">P09的 this.dtWorkOrderForOutput_PatternPanel</param>
         /// <param name="workOrderForOutput_SizeRatio">P09的 this.dtWorkOrderForOutput_SizeRatio</param>
-        public P09_ImportFromWorkOrderForPlanning(string id, DataTable workOrderForOutput, DataTable workOrderForOutput_PatternPanel, DataTable workOrderForOutput_SizeRatio)
+        /// <param name="workOrderForOutput_Distribute">P09的 this.workOrderForOutput_Distribute</param>
+        /// <param name="editByUseCutRefToRequestFabric">P09的 this.editByUseCutRefToRequestFabric</param>
+        public P09_ImportFromWorkOrderForPlanning(string id, DataTable workOrderForOutput, DataTable workOrderForOutput_PatternPanel, DataTable workOrderForOutput_SizeRatio, DataTable workOrderForOutput_Distribute, bool editByUseCutRefToRequestFabric)
         {
             this.InitializeComponent();
             this.id = id;
             this.WorkOrderForOutput = workOrderForOutput;
             this.WorkOrderForOutput_PatternPanel = workOrderForOutput_PatternPanel;
             this.WorkOrderForOutput_SizeRatio = workOrderForOutput_SizeRatio;
+            this.workOrderForOutput_Distribute = workOrderForOutput_Distribute;
+            this.editByUseCutRefToRequestFabric = editByUseCutRefToRequestFabric;
         }
 
         /// <inheritdoc/>
@@ -212,6 +218,39 @@ INNER JOIN WorkOrderForPlanning_SizeRatio wsr WITH(NOLOCK) ON t.WorkOrderForPlan
                     row.ItemArray = data.ItemArray;
                     this.WorkOrderForOutput_SizeRatio.Rows.Add(row);
                 });
+            }
+
+            // 4. WorkOrderForOutput_Distribute
+            if (this.editByUseCutRefToRequestFabric)
+            {
+                sqlcmd = @"
+SELECT
+    WorkOrderForOutputUkey = 0,
+    wdp.ID,
+    wdp.OrderID,
+    wdp.Article,
+    wdp.SizeCode,
+    wdp.Qty,
+    t.tmpKey
+FROM #tmp t
+INNER JOIN WorkOrderForPlanning_Distribute wdp WITH(NOLOCK) ON t.WorkOrderForPlanningUkey = wdp.WorkOrderForPlanningUkey";
+                DataTable dtDistribute = new DataTable();
+                result = MyUtility.Tool.ProcessWithDatatable(import_WorkOrderForOutput, "tmpKey,ID,WorkOrderForPlanningUkey", sqlcmd, out dtDistribute);
+                if (!result)
+                {
+                    MyUtility.Msg.ErrorBox("Get data failure!!!\n" + result.ToString());
+                    return;
+                }
+
+                if (dtDistribute != null && dtDistribute.Rows.Count > 0)
+                {
+                    dtDistribute.AsEnumerable().ToList().ForEach(data =>
+                    {
+                        var row = this.workOrderForOutput_Distribute.NewRow();
+                        row.ItemArray = data.ItemArray;
+                        this.workOrderForOutput_Distribute.Rows.Add(row);
+                    });
+                }
             }
             #endregion
 

@@ -365,7 +365,8 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.btnAllSPDistribute.Enabled = this.EditMode && this.editByUseCutRefToRequestFabric;
             this.btnDistributeThisCutRef.Enabled = this.EditMode && this.editByUseCutRefToRequestFabric;
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
-            this.displayLastCreateCutRef.Text = this.DetailDatas.AsEnumerable().OrderByDescending(row => row["LastCreateCutRefDate"]).ThenByDescending(row => row["CutRef"]).Select(row => row["CutRef"].ToString()).FirstOrDefault();
+            this.displayLastCreateCutRef.Text = this.DetailDatas.AsEnumerable().OrderByDescending(row => MyUtility.Convert.GetDate(row["LastCreateCutRefDate"]))
+                .ThenByDescending(row => MyUtility.Convert.GetString(row["CutRef"])).Select(row => MyUtility.Convert.GetString(row["CutRef"])).FirstOrDefault();
             this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.Sorting();
@@ -616,9 +617,9 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
         #region Import 與 Save 刪除/新增 與 AGV
         private void BtnImportFromWorkOrderForPlanning_Click(object sender, EventArgs e)
         {
-            using (var frm = new P09_ImportFromWorkOrderForPlanning(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.dt_PatternPanel, this.dt_SizeRatio))
+            using (var frm = new P09_ImportFromWorkOrderForPlanning(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource, this.dt_PatternPanel, this.dt_SizeRatio, this.dt_Distribute, this.editByUseCutRefToRequestFabric))
             {
-                if (frm.ShowDialog() == DialogResult.OK)
+                if (frm.ShowDialog() == DialogResult.OK && !this.editByUseCutRefToRequestFabric)
                 {
                     // 開始重新分配WorkOrderForOutput_Distribute
                     var canEditDetailDatas = this.DetailDatas.Where(r => MyUtility.Convert.GetBool(r["ImportWP"])).ToList();
