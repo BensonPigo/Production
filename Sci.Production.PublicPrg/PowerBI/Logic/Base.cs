@@ -10,6 +10,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
+using System.Xml.Linq;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -68,7 +69,22 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ChangeoverCheckList,
             P_ESG_Injury,
             P_CMPByDate,
+            P_LoadingProductionOutput,
+            P_DQSDefect_Summary,
+            P_DQSDefect_Detail,
+            P_CFAInline_Detail,
+            P_CFAInspectionRecord_Detail,
+            P_QA_P09,
+            P_QA_R06,
             P_SewingDailyOutput,
+            P_LoadingvsCapacity,
+            P_PPICMasterList_ArtworkType,
+            P_ActualCutOutputReport,
+            P_FabricInspDailyReport_Detail,
+            P_ICRAnalysis,
+            P_ImportScheduleList,
+            P_AccessoryInspLabStatus,
+            P_ProdEfficiencyByFactorySewingLine,
         }
 
         /// <summary>
@@ -503,9 +519,39 @@ ORDER BY [Group], [SEQ], [NAME]";
                 case ListName.P_ESG_Injury:
                     return new P_Import_ESG_Injury().P_ESG_Injury(item.SDate, item.EDate);
                 case ListName.P_CMPByDate:
-                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
+                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate, ListName.P_CMPByDate.ToString());
+                case ListName.P_LoadingProductionOutput:
+                    return new P_Import_LoadingProductionOutput().P_LoadingProductionOutput(item.SDate);
+                case ListName.P_DQSDefect_Summary:
+                    return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item.SDate);
+                case ListName.P_DQSDefect_Detail:
+                    return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item.SDate);
+                case ListName.P_CFAInline_Detail:
+                    return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item.SDate);
+                case ListName.P_CFAInspectionRecord_Detail:
+                    return new P_Import_CFAInspectionRecord_Detail().P_CFAInspectionRecord_Detail(item.SDate);
+                case ListName.P_QA_P09:
+                    return new P_Import_QA_P09().P_QA_P09(item.SDate, item.EDate);
+                case ListName.P_QA_R06:
+                    return new P_Import_QA_R06().P_QA_R06(item.SDate, item.EDate);
                 case ListName.P_SewingDailyOutput:
                     return new P_Import_SewingDailyOutput().P_SewingDailyOutput(item.SDate, item.EDate);
+                case ListName.P_LoadingvsCapacity:
+                    return new P_Import_LoadingvsCapacity().P_LoadingvsCapacity(item.SDate, item.EDate);
+                case ListName.P_PPICMasterList_ArtworkType:
+                    return new P_Import_PPICMasterList_ArtworkType().P_PPICMasterList_ArtworkType(item.SDate, item.EDate, item.SDate2, item.EDate2);
+                case ListName.P_ActualCutOutputReport:
+                    return new P_Import_ActualCutOutputReport().P_ActualCutOutputReport(item.SDate, item.EDate);
+                case ListName.P_FabricInspDailyReport_Detail:
+                    return new P_Import_FabricInspDailyReport_Detail().P_FabricInspDailyReport_Detail(item.SDate, item.EDate);
+                case ListName.P_ICRAnalysis:
+                    return new P_Import_ICRAnalysis().P_ICRAnalysis(item.SDate, item.EDate);
+                case ListName.P_ImportScheduleList:
+                    return new P_Import_ImportScheduleList().P_ImportScheduleList(item.SDate, item.EDate);
+                case ListName.P_AccessoryInspLabStatus:
+                    return new P_Import_AccessoryInspLabStatus().P_AccessoryInspLabStatus(item.SDate, item.EDate);
+                case ListName.P_ProdEfficiencyByFactorySewingLine:
+                    return new P_Import_ProdEfficiencyByFactorySewingLine().P_ProdEfficiencyByFactorySewingLine(item.SDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
