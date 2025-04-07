@@ -28,20 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelReportType = new Sci.Win.UI.Label();
             this.labelApvDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.comboReportType = new Sci.Win.UI.ComboBox();
             this.dateApvDate = new Sci.Win.UI.DateRange();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.SewingDate = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
             this.BuyerDelivery = new Sci.Win.UI.DateRange();
             this.label2 = new Sci.Win.UI.Label();
             this.SCIDelivery = new Sci.Win.UI.DateRange();
             this.label3 = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -124,30 +125,6 @@
             this.dateApvDate.Name = "dateApvDate";
             this.dateApvDate.Size = new System.Drawing.Size(280, 23);
             this.dateApvDate.TabIndex = 1;
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(114, 200);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(72, 24);
-            this.comboM.TabIndex = 2;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 236);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(72, 24);
-            this.comboFactory.TabIndex = 3;
             // 
             // SewingDate
             // 
@@ -239,17 +216,43 @@
             this.label3.TabIndex = 103;
             this.label3.Text = "SCI Delivery";
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(114, 236);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(72, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(114, 199);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(72, 24);
+            this.comboM.TabIndex = 564;
+            // 
             // R05
             // 
             this.ClientSize = new System.Drawing.Size(530, 296);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.SCIDelivery);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.BuyerDelivery);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.SewingDate);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateApvDate);
             this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.labelFactory);
@@ -274,14 +277,14 @@
             this.Controls.SetChildIndex(this.labelFactory, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
             this.Controls.SetChildIndex(this.dateApvDate, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.SewingDate, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.BuyerDelivery, 0);
             this.Controls.SetChildIndex(this.label3, 0);
             this.Controls.SetChildIndex(this.SCIDelivery, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -295,13 +298,13 @@
         private Win.UI.Label labelFactory;
         private Win.UI.ComboBox comboReportType;
         private Win.UI.DateRange dateApvDate;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange SewingDate;
         private Win.UI.Label label1;
         private Win.UI.DateRange BuyerDelivery;
         private Win.UI.Label label2;
         private Win.UI.DateRange SCIDelivery;
         private Win.UI.Label label3;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

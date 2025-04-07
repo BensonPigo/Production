@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelCutOffDate = new Sci.Win.UI.Label();
@@ -50,8 +51,6 @@
             this.datePlanDate = new Sci.Win.UI.DateRange();
             this.dateOrderCfmDate = new Sci.Win.UI.DateRange();
             this.comboZone = new Sci.Win.UI.ComboBox();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.checkIncludeHistoryOrder = new Sci.Win.UI.CheckBox();
             this.checkIncludeArtworkdata = new Sci.Win.UI.CheckBox();
@@ -77,6 +76,8 @@
             this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -373,30 +374,6 @@
             this.comboZone.Size = new System.Drawing.Size(227, 24);
             this.comboZone.TabIndex = 14;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(119, 376);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 15;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(119, 404);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(66, 24);
-            this.comboFactory.TabIndex = 16;
-            // 
             // comboSubProcess
             // 
             this.comboSubProcess.BackColor = System.Drawing.Color.White;
@@ -626,6 +603,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(119, 293);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 12;
@@ -657,14 +635,43 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(119, 209);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(186, 23);
             this.txtstyle.TabIndex = 9;
             this.txtstyle.TarBrand = null;
             this.txtstyle.TarSeason = null;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(118, 404);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(67, 24);
+            this.comboFactory.TabIndex = 563;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(119, 376);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 562;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(587, 682);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.chkPrintingDetail);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.checkByCPU);
@@ -690,8 +697,6 @@
             this.Controls.Add(this.checkIncludeArtworkdata);
             this.Controls.Add(this.checkIncludeHistoryOrder);
             this.Controls.Add(this.comboSubProcess);
-            this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboZone);
             this.Controls.Add(this.dateOrderCfmDate);
             this.Controls.Add(this.datePlanDate);
@@ -749,8 +754,6 @@
             this.Controls.SetChildIndex(this.datePlanDate, 0);
             this.Controls.SetChildIndex(this.dateOrderCfmDate, 0);
             this.Controls.SetChildIndex(this.comboZone, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.checkIncludeHistoryOrder, 0);
             this.Controls.SetChildIndex(this.checkIncludeArtworkdata, 0);
@@ -776,6 +779,8 @@
             this.Controls.SetChildIndex(this.checkByCPU, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkPrintingDetail, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -805,8 +810,6 @@
         private Win.UI.DateRange datePlanDate;
         private Win.UI.DateRange dateOrderCfmDate;
         private Win.UI.ComboBox comboZone;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.ComboBox comboSubProcess;
         private Win.UI.CheckBox checkIncludeHistoryOrder;
         private Win.UI.CheckBox checkIncludeArtworkdata;
@@ -832,5 +835,7 @@
         private Win.UI.CheckBox checkByCPU;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkPrintingDetail;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

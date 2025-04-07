@@ -36,20 +36,19 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
 
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Fabric,Accessory");
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboLeadtime, 2, 1, "7200,2hrs,10800,3hrs,14400,4hrs");
             this.comboReportType.SelectedIndex = 0;
             this.comboLeadtime.SelectedIndex = 1;
-            this.comboM.Text = Env.User.Keyword;
-            this.comboFactory.Text = Env.User.Factory;
 
             this.dateApvDate.Value1 = DateTime.Today.AddDays(-1);
             this.dateApvDate.Value2 = DateTime.Today.AddDays(-1);
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

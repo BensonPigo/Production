@@ -208,6 +208,8 @@
     <Compile Include="P10_Batch_MIND_Releaser.Designer.cs">
       <DependentUpon>P10_Batch_MIND_Releaser.cs</DependentUpon>
     </Compile>
+    <Compile Include="P55_PrintData.cs" />
+    <Compile Include="P54_PrintData.cs" />
     <Compile Include="P21_PrintBarcode_Data.cs" />
     <Compile Include="WH_FromTo_Print.cs">
       <SubType>Form</SubType>
@@ -1825,6 +1827,8 @@
     <EmbeddedResource Include="P10_Batch_MIND_Releaser.resx">
       <DependentUpon>P10_Batch_MIND_Releaser.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P54_Print.rdlc" />
+    <EmbeddedResource Include="P55_Print.rdlc" />
     <EmbeddedResource Include="WH_FromTo_Print.resx">
       <DependentUpon>WH_FromTo_Print.cs</DependentUpon>
     </EmbeddedResource>

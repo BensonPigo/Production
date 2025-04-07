@@ -35,14 +35,14 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
+
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Fabric,Accessory");
             this.comboReportType.SelectedIndex = 0;
             DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
             this.comboM.Text = Env.User.Keyword;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             this.comboFactory.Text = Env.User.Factory;
         }
 
