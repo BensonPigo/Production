@@ -25,8 +25,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 new SqlParameter("@BuyerDeliveryFrom", SqlDbType.Date) { Value = (object)model.BuyerDeliveryFrom ?? DBNull.Value },
                 new SqlParameter("@BuyerDeliveryTo", SqlDbType.Date) { Value = (object)model.BuyerDeliveryTo ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime2) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime2) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar) { Value = model.MDivisionID },
                 new SqlParameter("@FactoryID", SqlDbType.VarChar) { Value = model.FactoryID },
             };
@@ -51,24 +51,29 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     sqlMdWhere += @" 
 INNER JOIN DRYReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and DryRoomReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Dry Room Transfer":
                     sqlMdWhere += @" 
 INNER JOIN DRYTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and DryRoomTransferTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Transfer To Packing Error":
                     sqlMdWhere += @" 
 INNER JOIN PackErrTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and TransferToPackingErrorTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Confirm Packing Error Revise":
                     sqlMdWhere += @" 
 INNER JOIN PackErrCFM a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ConfirmPackingErrorReviseTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Scan & Pack":
                     sqlMdWhere += @" where	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Packing Audit":
                     sqlMdWhere += @"
@@ -81,41 +86,49 @@ where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                     sqlMdWhere += @" 
 INNER JOIN MDScan a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and MDScan.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Fty Transfer To Clog":
                     sqlMdWhere += @" 
 INNER JOIN TransferToClog a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and FtyTransferToClogTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive":
                     sqlMdWhere += @" 
 INNER JOIN ClogReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Return":
                     sqlMdWhere += @" 
 INNER JOIN ClogReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Transfer To CFA":
                     sqlMdWhere += @" 
 INNER JOIN TransferToCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogTransferToCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive From CFA":
                     sqlMdWhere += @" 
 INNER JOIN ClogReceiveCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReceiveFromCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Receive":
                     sqlMdWhere += @" 
 INNER JOIN CFAReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and CFAReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Return":
                     sqlMdWhere += @" 
 INNER JOIN CFAReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and CFAReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 default:
                     break;
