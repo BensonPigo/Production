@@ -244,6 +244,11 @@ namespace Sci.Production.Warehouse
                         ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
                         ,td.Roll
                         ,td.Dyelot
+                        , StockType =
+                                    CASE td.StockType
+                                        WHEN 'B' THEN 'Bulk'
+                                        WHEN 'I' THEN 'Inventory'
+                                    END
                         ,[Sub con status] = f.SubConStatus 
                         from FtyInventory f with(nolock)
                         inner join #tmp td with(nolock) on 
@@ -275,6 +280,11 @@ namespace Sci.Production.Warehouse
                         ,[seq] = Concat (sd.Seq1, ' ', sd.Seq2 )
                         ,sd.Roll
                         ,sd.Dyelot
+                        , StockType =
+                                    CASE sd.StockType
+                                        WHEN 'B' THEN 'Bulk'
+                                        WHEN 'I' THEN 'Inventory'
+                                    END
                         ,[Sub con Return ID] = sd.ID
                         ,[Sub con Return Status] = s.Status
                         from SubconReturn s with(nolock)
@@ -287,6 +297,7 @@ namespace Sci.Production.Warehouse
                         and sd.Seq2  = ti.Seq2
                         and sd.Roll = ti.Roll 
                         and sd.Dyelot = ti.Dyelot
+                        and sd.StockType = ti.StockType
                         ) 
                         and s.subcon = '{this.CurrentMaintain["Subcon"]}'
                         and s.id <> '{this.CurrentMaintain["ID"]}'";
@@ -338,6 +349,11 @@ namespace Sci.Production.Warehouse
                         ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
                         ,td.Roll
                         ,td.Dyelot
+                        , StockType =
+                                    CASE td.StockType
+                                        WHEN 'B' THEN 'Bulk'
+                                        WHEN 'I' THEN 'Inventory'
+                                    END
                         ,[Sub con status] = f.SubConStatus 
                         from FtyInventory f with(nolock)
                         inner join #tmp td with(nolock) on 
@@ -369,6 +385,11 @@ namespace Sci.Production.Warehouse
                         ,[Seq] = Concat (sd.Seq1, ' ', sd.Seq2 )
                         ,sd.Roll
                         ,sd.Dyelot
+                        , StockType =
+                                    CASE sd.StockType
+                                        WHEN 'B' THEN 'Bulk'
+                                        WHEN 'I' THEN 'Inventory'
+                                    END
                         ,[Sub con Return ID] = sd.ID
                         ,[Sub con Return Status] = s.Status
                         from SubconReturn s with(nolock)
@@ -381,6 +402,7 @@ namespace Sci.Production.Warehouse
                         and sd.Seq2  = ti.Seq2
                         and sd.Roll = ti.Roll 
                         and sd.Dyelot = ti.Dyelot
+                        and sd.StockType = ti.StockType
                         ) 
                         and s.subcon = '{this.CurrentMaintain["Subcon"]}'
                         and s.id <> '{this.CurrentMaintain["ID"]}'";
@@ -465,6 +487,11 @@ INNER JOIN #tmp td WITH (NOLOCK)
                                ,[Seq] = Concat ( td.Seq1, ' ', td.Seq2 )
                                ,td.Roll
                                ,td.Dyelot
+                                , StockType =
+                                         CASE td.StockType
+                                             WHEN 'B' THEN 'Bulk'
+                                             WHEN 'I' THEN 'Inventory'
+                                         END
                                ,[Sub con status] = f.SubConStatus 
                                from FtyInventory f with(nolock)
                                inner join #tmp td with(nolock) on 
@@ -595,7 +622,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
                     Dyelot = row1["Dyelot"].ToString().Trim(),
                     DESC = (MyUtility.Check.Empty(row1["Description"]) == false) ? row1["Description"].ToString().Trim() + Environment.NewLine + row1["Poid"].ToString().Trim() + Environment.NewLine + "Recv(Kg) : " + row1["RecvKG"].ToString().Trim() : "Recv(Kg) :" + row1["RecvKG"].ToString().Trim(),
                     Tone = row1["Tone"].ToString().Trim(),
-                    Stocktype = row1["stocktype"].ToString().Trim(),
+                    Stocktype = row1["StockTypeDisplay"].ToString().Trim(),
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),

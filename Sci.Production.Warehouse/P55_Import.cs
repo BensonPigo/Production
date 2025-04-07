@@ -168,7 +168,6 @@ WHERE NOT EXISTS (
     AND t.ID != '{strID}'
 )
 AND psd.FabricType = 'F'
-AND f.StockType = 'B'
 AND f.SubConStatus = '{strSubCon}'
 ");
 
