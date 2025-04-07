@@ -88,7 +88,7 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
@@ -109,6 +109,7 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(111, 81);
             this.txtMdivision.Name = "txtMdivision";

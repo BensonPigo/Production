@@ -28,16 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelOrderType = new Sci.Win.UI.Label();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.comboOrderType = new Sci.Win.UI.ComboBox();
             this.checkExcludedReplacementItem = new Sci.Win.UI.CheckBox();
             this.checkPOMaterialCompletion = new Sci.Win.UI.CheckBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.lbsp = new Sci.Win.UI.Label();
             this.labelSign = new Sci.Win.UI.Label();
             this.textSPEnd = new Sci.Win.UI.TextBox();
@@ -46,6 +45,8 @@
             this.chkPackingMaterialComplete = new Sci.Win.UI.CheckBox();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -117,18 +118,6 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateSCIDelivery.TabIndex = 2;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(115, 98);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(80, 24);
-            this.comboM.TabIndex = 3;
-            // 
             // comboOrderType
             // 
             this.comboOrderType.BackColor = System.Drawing.Color.White;
@@ -172,18 +161,6 @@
             this.labelFactory.Size = new System.Drawing.Size(99, 23);
             this.labelFactory.TabIndex = 111;
             this.labelFactory.Text = "Factory";
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 127);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 4;
             // 
             // lbsp
             // 
@@ -277,9 +254,37 @@
             this.dateBuyerDelivery.Size = new System.Drawing.Size(280, 23);
             this.dateBuyerDelivery.TabIndex = 119;
             // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(114, 99);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(82, 24);
+            this.comboM.TabIndex = 564;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(114, 128);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(82, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
             // R06
             // 
             this.ClientSize = new System.Drawing.Size(530, 262);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.chkPackingMaterialComplete);
@@ -288,12 +293,10 @@
             this.Controls.Add(this.textSPEnd);
             this.Controls.Add(this.textSPStart);
             this.Controls.Add(this.lbsp);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.checkPOMaterialCompletion);
             this.Controls.Add(this.checkExcludedReplacementItem);
             this.Controls.Add(this.comboOrderType);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.labelOrderType);
             this.Controls.Add(this.labelM);
@@ -304,22 +307,14 @@
             this.Name = "R06";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R06. Monthly Material Completion";
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
             this.Controls.SetChildIndex(this.labelOrderType, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboOrderType, 0);
             this.Controls.SetChildIndex(this.checkExcludedReplacementItem, 0);
             this.Controls.SetChildIndex(this.checkPOMaterialCompletion, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.lbsp, 0);
             this.Controls.SetChildIndex(this.textSPStart, 0);
             this.Controls.SetChildIndex(this.textSPEnd, 0);
@@ -328,6 +323,14 @@
             this.Controls.SetChildIndex(this.chkPackingMaterialComplete, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -339,12 +342,10 @@
         private Win.UI.Label labelM;
         private Win.UI.Label labelOrderType;
         private Win.UI.DateRange dateSCIDelivery;
-        private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboOrderType;
         private Win.UI.CheckBox checkExcludedReplacementItem;
         private Win.UI.CheckBox checkPOMaterialCompletion;
         private Win.UI.Label labelFactory;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.Label lbsp;
         private Win.UI.Label labelSign;
         private Win.UI.TextBox textSPEnd;
@@ -353,5 +354,7 @@
         private Win.UI.CheckBox chkPackingMaterialComplete;
         private Win.UI.Label label1;
         private Win.UI.DateRange dateBuyerDelivery;
+        private Class.ComboMDivision comboM;
+        private Class.ComboFactory comboFactory;
     }
 }

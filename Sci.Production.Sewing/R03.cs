@@ -45,12 +45,9 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboFactory.Text = Env.User.Factory;
-            this.comboDropDownListCategory.SelectedIndex = 0;
+            this.comboFactory.SetDataSource();
             this.comboFtyZone.SetDataSource();
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>

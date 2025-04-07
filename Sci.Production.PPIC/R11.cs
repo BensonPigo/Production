@@ -39,6 +39,7 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
             this.numDateGap.Text = "2";
+			this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -51,7 +52,7 @@ namespace Sci.Production.PPIC
             this.dateRangeReady1 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value1) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value1).ToString("yyyy/MM/dd");
             this.dateRangeReady2 = MyUtility.Check.Empty(this.dateRangeReadyDate.Value2) ? string.Empty : ((DateTime)this.dateRangeReadyDate.Value2).ToString("yyyy/MM/dd");
             this.IsIDD = this.chkIDD.Checked;
-            
+
             this.boolHoliday = string.Empty;
             this.listSQLFilter = new List<string>();
             #region Sql where Filter

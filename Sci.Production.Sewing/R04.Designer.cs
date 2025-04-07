@@ -37,8 +37,6 @@
             this.labelCDCode = new Sci.Win.UI.Label();
             this.dateOoutputDate = new Sci.Win.UI.DateRange();
             this.comboCategory = new Sci.Win.UI.ComboBox();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.chk_Accumulate_output = new Sci.Win.UI.CheckBox();
             this.chk_Include_Artwork = new Sci.Win.UI.CheckBox();
             this.chkExcludeSampleFty = new Sci.Win.UI.CheckBox();
@@ -59,6 +57,8 @@
             this.comboConstruction1 = new Sci.Production.Class.ComboConstruction(this.components);
             this.txtCDCode = new Sci.Production.Class.Txtcdcode();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -157,30 +157,6 @@
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(170, 24);
             this.comboCategory.TabIndex = 1;
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(125, 83);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(73, 24);
-            this.comboM.TabIndex = 2;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(125, 119);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(73, 24);
-            this.comboFactory.TabIndex = 3;
             // 
             // chk_Accumulate_output
             // 
@@ -391,13 +367,42 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(125, 155);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(90, 23);
             this.txtbrand.TabIndex = 4;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(125, 119);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(73, 24);
+            this.comboFactory.TabIndex = 567;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(125, 83);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(73, 24);
+            this.comboM.TabIndex = 566;
+            // 
             // R04
             // 
             this.ClientSize = new System.Drawing.Size(531, 457);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.lbConstruction);
             this.Controls.Add(this.lbGender);
             this.Controls.Add(this.lbLining);
@@ -418,8 +423,6 @@
             this.Controls.Add(this.chk_Accumulate_output);
             this.Controls.Add(this.txtCDCode);
             this.Controls.Add(this.txtbrand);
-            this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.dateOoutputDate);
             this.Controls.Add(this.labelCDCode);
@@ -434,12 +437,6 @@
             this.Name = "R04";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R04. Sewing daily output list";
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelOoutputDate, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
@@ -448,8 +445,6 @@
             this.Controls.SetChildIndex(this.labelCDCode, 0);
             this.Controls.SetChildIndex(this.dateOoutputDate, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtCDCode, 0);
             this.Controls.SetChildIndex(this.chk_Accumulate_output, 0);
@@ -470,6 +465,14 @@
             this.Controls.SetChildIndex(this.lbLining, 0);
             this.Controls.SetChildIndex(this.lbGender, 0);
             this.Controls.SetChildIndex(this.lbConstruction, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -485,8 +488,6 @@
         private Win.UI.Label labelCDCode;
         private Win.UI.DateRange dateOoutputDate;
         private Win.UI.ComboBox comboCategory;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.ComboBox comboFactory;
         private Class.Txtbrand txtbrand;
         private Class.Txtcdcode txtCDCode;
         private Win.UI.CheckBox chk_Accumulate_output;
@@ -507,5 +508,7 @@
         private Class.ComboLining comboLining1;
         private Class.ComboProductType comboProductType1;
         private Class.ComboConstruction comboConstruction1;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

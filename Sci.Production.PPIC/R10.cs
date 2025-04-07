@@ -32,8 +32,7 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtfactory.Text = Env.User.Factory;
-            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtMdivision.Enabled = false;
             this.dateBoxSewingOutput.Value = DateTime.Today.AddDays(-1);
         }
 

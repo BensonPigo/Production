@@ -33,6 +33,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.txtMdivision.Text = Env.User.Keyword;
             this.txtfactory.Text = Env.User.Factory;
+            this.txtMdivision.Enabled = false;
             this.dateSCIDelivery.Value1 = DateTime.Now.AddDays(-DateTime.Now.Day + 1);
             this.dateSCIDelivery.Value2 = DateTime.Now.AddMonths(1).AddDays(-DateTime.Now.AddMonths(1).Day);
         }
