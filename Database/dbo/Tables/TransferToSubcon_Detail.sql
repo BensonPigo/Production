@@ -1,17 +1,20 @@
-﻿	CREATE TABLE [dbo].[TransferToSubcon_Detail]
-	(
-		[ID] [varchar](13)			CONSTRAINT [DF_TransferToSubcon_Detail_ID]			DEFAULT ('') NOT NULL,
-		[POID] [varchar](13)		CONSTRAINT [DF_TransferToSubcon_Detail_POID]		DEFAULT ('') NOT NULL,
-		[Seq1] [varchar](3)			CONSTRAINT [DF_TransferToSubcon_Detail_Seq1]		DEFAULT ('') NOT NULL,
-		[Seq2] [varchar](2)			CONSTRAINT [DF_TransferToSubcon_Detail_Seq2]		DEFAULT ('') NOT NULL,
-		[Roll] [varchar](8)			CONSTRAINT [DF_TransferToSubcon_Detail_Roll]		DEFAULT ('') NOT NULL,
-		[Dyelot] [varchar](8)		CONSTRAINT [DF_TransferToSubcon_Detail_Dyelot]		DEFAULT ('') NOT NULL,
-		[StockType] [varchar](1)	CONSTRAINT [DF_TransferToSubcon_Detail_StockType]	DEFAULT ('') NOT NULL,
-		[Qty] [numeric](11, 2)		CONSTRAINT [DF_TransferToSubcon_Detail_Qty]			DEFAULT ((0)) NOT NULL,
-		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
-		CONSTRAINT [PK_TransferToSubcon_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
-		WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-	) ON [PRIMARY]
+	CREATE TABLE [dbo].[TransferToSubcon_Detail] (
+    [ID]        VARCHAR (13)    CONSTRAINT [DF_TransferToSubcon_Detail_ID] DEFAULT ('') NOT NULL,
+    [POID]      VARCHAR (13)    CONSTRAINT [DF_TransferToSubcon_Detail_POID] DEFAULT ('') NOT NULL,
+    [Seq1]      VARCHAR (3)     CONSTRAINT [DF_TransferToSubcon_Detail_Seq1] DEFAULT ('') NOT NULL,
+    [Seq2]      VARCHAR (2)     CONSTRAINT [DF_TransferToSubcon_Detail_Seq2] DEFAULT ('') NOT NULL,
+    [Roll]      VARCHAR (8)     CONSTRAINT [DF_TransferToSubcon_Detail_Roll] DEFAULT ('') NOT NULL,
+    [Dyelot]    VARCHAR (8)     CONSTRAINT [DF_TransferToSubcon_Detail_Dyelot] DEFAULT ('') NOT NULL,
+    [StockType] VARCHAR (1)     CONSTRAINT [DF_TransferToSubcon_Detail_StockType] DEFAULT ('') NOT NULL,
+    [Qty]       NUMERIC (11, 2) CONSTRAINT [DF_TransferToSubcon_Detail_Qty] DEFAULT ((0)) NOT NULL,
+    [Ukey]      BIGINT          IDENTITY (1, 1) NOT FOR REPLICATION NOT NULL,
+    [RecvKG]    NUMERIC (7, 2)  NULL,
+    CONSTRAINT [PK_TransferToSubcon_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
+);
+
+
+
+
 	GO
 	EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'外發單號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'TransferToSubcon_Detail', @level2type=N'COLUMN',@level2name=N'ID'
 	GO
@@ -36,3 +39,7 @@
 
 	EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'轉出當下的庫存數量' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'TransferToSubcon_Detail', @level2type=N'COLUMN',@level2name=N'Qty'
 	GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'記錄轉出當下
+布卷重量 
+( 資料來源 收料單 )', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferToSubcon_Detail', @level2type = N'COLUMN', @level2name = N'RecvKG';
+

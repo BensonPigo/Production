@@ -89,7 +89,7 @@ select t.poid
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
        , [Tone] = FTY.Tone
-       , [GMTWash] = isnull(GMTWash.val, '')
+       , [GMTWash] = FTY.GMTWashStatus
        , t.SeqKey
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
@@ -124,22 +124,6 @@ outer apply (select  TOP 1 fc.Result
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
 	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
 			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = t.PoId and
-			ttd.Seq1 = t.Seq1 and 
-            ttd.Seq2 = t.Seq2 and
-			ttd.Dyelot = t.Dyelot and 
-            ttd.Roll = t.Roll and
-			ttd.StockType = t.StockType and 
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 order by GroupQty desc, t.dyelot, balanceqty desc
 ";
                 if (!(result = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
