@@ -717,14 +717,6 @@ END
 
                 while (true)
                 {
-                    string markername = "MK-" + markerSerNo.ToString();
-
-                    // 若能轉成int，代表是excel自動產生的Marker Name，因此套用編碼規則；不能轉代表是User自己手Key的，就不異動了
-                    if (int.TryParse(wk.Markername, out int x))
-                    {
-                        wk.Markername = "MK-" + wk.Markername.ToString();
-                    }
-
                     markerSerNo++;
 
                     string sqlInsertWorkOrder = $@"
