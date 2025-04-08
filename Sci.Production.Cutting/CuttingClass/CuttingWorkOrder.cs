@@ -1585,7 +1585,8 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
             {
                 DataTable duplicateTable = new DataTable();
                 duplicateTable.Columns.Add("CutRef", typeof(string));
-                duplicateTable.Columns.Add("CutNo", typeof(string));
+                string col2Name = form == CuttingForm.P02 ? "Seq" : "CutNo";
+                duplicateTable.Columns.Add(col2Name, typeof(string));
                 duplicateTable.Columns.Add("MarkerName", typeof(string));
 
                 // 先去重複
@@ -1602,7 +1603,7 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                     {
                         DataRow newRow = duplicateTable.NewRow();
                         newRow["CutRef"] = MyUtility.Convert.GetString(matchingDetailData["CutRef"]);
-                        newRow["CutNo"] = MyUtility.Convert.GetString(matchingDetailData["CutNo"]);
+                        newRow[col2Name] = MyUtility.Convert.GetString(matchingDetailData[col2Name]);
                         newRow["MarkerName"] = MyUtility.Convert.GetString(matchingDetailData["MarkerName"]);
                         duplicateTable.Rows.Add(newRow);
                     }
@@ -1611,7 +1612,7 @@ Order by S.CutCellID, S.EstCutDate, P.[Name]";
                 if (duplicateTable.AsEnumerable().Any())
                 {
                     string msg = $"The {msgDt} duplicate, Please see below";
-                    new MsgGridForm(duplicateTable, msg, "Duplicate Data", "CutRef,CutNo,MarkerName").ShowDialog();
+                    new MsgGridForm(duplicateTable, msg, "Duplicate Data", $"CutRef,{col2Name},MarkerName").ShowDialog();
                 }
 
                 return false;

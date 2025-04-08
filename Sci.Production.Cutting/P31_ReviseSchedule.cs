@@ -90,7 +90,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            if (MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) == this.dateEstCut.Value)
+            if (MyUtility.Convert.GetDate(this.CurrentMaintain["EstCutDate"]) == this.dateEstCut.Value && MyUtility.Convert.GetString(this.CurrentMaintain["CutCellID"]).EqualString(this.txtCell1.Text))
             {
                 MyUtility.Msg.WarningBox(" [Est Cut Date] and [Cut Cell] are consistent with the current status and cannot be revised.");
                 return;
