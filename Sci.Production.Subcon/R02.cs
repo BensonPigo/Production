@@ -109,16 +109,117 @@ namespace Sci.Production.Subcon
             #endregion
 
             string sqlcmd = $@"
-select 
+SELECT s.SubConOutFty, s.ContractNumber, sd.OrderId, sd.ComboType, sd.Article, o.StyleUkey
+INTO #Main
+FROM dbo.SubconOutContract_Detail sd WITH (NOLOCK)
+LEFT JOIN SubconOutContract s WITH (NOLOCK) ON sd.SubConOutFty = s.SubConOutFty AND sd.ContractNumber = s.ContractNumber
+LEFT JOIN Orders o WITH (NOLOCK) ON sd.Orderid = o.ID
+where 1=1
+{listSQLFilter.JoinToString($"{Environment.NewLine} ")}
+
+-- 主查詢（有資料時執行）
+SELECT 
+	[Ukey] = i.StyleUkey,
+    i.Location, 
+    i.ArtworkTypeID,
+    type = IIF(i.Location = 'T','Top', IIF(i.Location = 'B','Bottom', IIF(i.Location = 'I','Inner', IIF(i.Location = 'O','Outer','')))),
+    tms = CEILING(SUM(i.ProSMV) * 60),
+	[Rate] = CAST(1 AS decimal(7,6))
+into #Tmp
+FROM IETMS_Summary i
+WHERE i.IETMSUkey IN (
+    SELECT DISTINCT ietms.Ukey
+    FROM Style s WITH (NOLOCK)
+    INNER JOIN #Main m WITH (NOLOCK) ON m.StyleUkey = s.Ukey
+    INNER JOIN IETMS ietms WITH (NOLOCK) ON s.IETMSID = ietms.ID AND s.IETMSVersion = ietms.Version
+)
+AND EXISTS (
+    SELECT 1
+    FROM IETMS_Summary i2
+    WHERE i2.IETMSUkey IN (
+        SELECT DISTINCT ietms.Ukey
+        FROM Style s WITH (NOLOCK)
+        INNER JOIN #Main m WITH (NOLOCK) ON m.StyleUkey = s.Ukey
+        INNER JOIN IETMS ietms WITH (NOLOCK) ON s.IETMSID = ietms.ID AND s.IETMSVersion = ietms.Version
+    )
+)
+GROUP BY i.Location, i.ArtworkTypeID,i.StyleUkey
+
+UNION ALL
+
+-- 備案查詢（僅在主查詢沒資料時執行）
+SELECT 
+	[Ukey] = s.Ukey,
+    id.Location,
+    m.ArtworkTypeID,
+    IIF(id.Location = 'T','Top', IIF(id.Location = 'B','Bottom', IIF(id.Location = 'I','Inner', IIF(id.Location = 'O','Outer','')))) AS Type,
+    ROUND(SUM(ISNULL(id.SMV,0) * id.Frequency * (ISNULL(id.MtlFactorRate,0)/100 + 1) * 60), 0) AS tms,
+	[Rate] = CAST(1 AS decimal(7,6))
+FROM Style s WITH (NOLOCK)
+INNER JOIN IETMS i WITH (NOLOCK) ON s.IETMSID = i.ID AND s.IETMSVersion = i.Version
+INNER JOIN IETMS_Detail id WITH (NOLOCK) ON i.Ukey = id.IETMSUkey
+INNER JOIN Operation o WITH (NOLOCK) ON id.OperationID = o.ID
+INNER JOIN MachineType m WITH (NOLOCK) ON o.MachineTypeID = m.ID
+WHERE s.Ukey IN (
+    SELECT DISTINCT StyleUkey FROM #Main
+)
+AND NOT EXISTS (
+    SELECT 1
+    FROM IETMS_Summary i2
+    WHERE i2.IETMSUkey IN (
+        SELECT DISTINCT ietms.Ukey
+        FROM Style s2 WITH (NOLOCK)
+        INNER JOIN #Main m2 WITH (NOLOCK) ON m2.StyleUkey = s2.Ukey
+        INNER JOIN IETMS ietms WITH (NOLOCK) ON s2.IETMSID = ietms.ID AND s2.IETMSVersion = ietms.Version
+    )
+)
+
+GROUP BY id.Location, m.ArtworkTypeID,s.Ukey
+
+SELECT 
+    Ukey,
+    Location,
+    ArtworkTypeID,
+    [Rate] = TMS / NULLIF(SUM(TMS) OVER (PARTITION BY Ukey, ArtworkTypeID), 0)
+INTO #RateTmp
+FROM #Tmp
+ORDER BY Ukey
+
+-- 優先從 Order_Location 更新資料
+UPDATE rt
+SET rt.Location = ol.Location,
+    rt.Rate = ol.Rate/100
+FROM #RateTmp rt
+INNER JOIN #Main m WITH (NOLOCK) ON rt.Ukey = m.StyleUkey
+LEFT JOIN Order_Location ol WITH (NOLOCK) 
+    ON m.OrderId = ol.OrderID AND m.ComboType = ol.Location
+WHERE (rt.Location IS NULL or rt.Location = '') AND ol.Location IS NOT NULL
+
+-- 補用 Style_Location 更新資料（僅當 Order_Location 無資料時）
+UPDATE rt
+SET rt.Location = sl.Location,
+    rt.Rate = sl.Rate/100
+FROM #RateTmp rt
+INNER JOIN #Main m WITH (NOLOCK) ON rt.Ukey = m.StyleUkey
+LEFT JOIN Order_Location ol WITH (NOLOCK) 
+    ON m.OrderId = ol.OrderID AND m.ComboType = ol.Location
+LEFT JOIN Style_Location sl WITH (NOLOCK) 
+    ON m.StyleUkey = sl.StyleUkey
+WHERE (rt.Location IS NULL or rt.Location = '') AND ol.Location IS NULL AND sl.Location IS NOT NULL
+
+select
 [Factory] = s.Factoryid
 ,[OrderFactory]  = o.FactoryID
 ,[Subcon Name]  = sd.SubConOutFty
 ,[Contract No] = sd.ContractNumber
 ,[Style] = o.StyleID
 ,[SP] = o.ID
+,[Buyer Delivery] = o.BuyerDelivery
 ,[OrderQty] = Order_Qty.Qty
 ,[SubconOutQty] = sd.Outputqty
+,[Sewing CPU (Contract CFM date)] = sCPU.[Sewing CPU (Contract CFM date)]
 ,[Sewing_CPU] = ROUND(tms.SewingCPU * r.rate,4,4)
+,[CPU] = totalTMS.CPU
 ,LocalCurrencyID = LocalCurrencyID
 ,LocalUnitPrice = isnull(LocalUnitPrice,0)
 ,Vat = isnull(Vat,0)
@@ -126,20 +227,16 @@ select
 ,KpiRate = isnull(KpiRate,0)
 ,[SubConPrice/CPU] = ROUND(sd.UnitPrice,4,4)
 ,[SubConPrice/CPUByComboType] = ROUND(sd.UnitPrice * r.rate, 4, 4)
-,[Cut] = ROUND(tms.CuttingCPU * r.rate,4,4)
-,[H.T] = ROUND(tms.HeatTransfer,4,4)
-,[Inspection] = ROUND(tms.InspectionCPU * r.rate ,4,4)
-,[OtherCpu] = ROUND(tms.OtherCPU * r.rate,4,4)
+,[Sub (TMS)] = SubTMS.TotalPrice
 ,[EMB] = ROUND(tms.EMBPrice,4,4)
 ,[Print] = ROUND(tms.PrintingPrice,4,4)
 ,[OtherAmt] = ROUND(tms.OtherAmt,4,4)
 ,[Price/CPU] = ROUND(iif((tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )=0,0, (sd.UnitPrice-tms.EMBPrice-tms.PrintingPrice-tms.OtherAmt) / (tms.CuttingCPU * r.rate +tms.HeatTransfer+tms.InspectionCPU * r.rate +tms.OtherCPU * r.rate )),4,4)
-,[Or] = ''
-,[Min Rate Cpu] = ''
-,[TTLCPU] = ROUND(Order_Qty.Qty * tms.SewingCPU * r.rate ,4,4)
-,[Contract Amt] = ROUND(Order_Qty.Qty * sd.UnitPrice,4,4)
+,[TTL Sewing CPU] = ROUND(sd.Outputqty * ROUND(tms.SewingCPU * r.rate,4,4),4,4)
+,[Total CPU] = ROUND(sd.Outputqty * totalTMS.CPU,4,4)
+,[Contract Amt] = ROUND(sd.Outputqty * (isnull(LocalUnitPrice,0)+isnull(Vat,0)),4,4)
 ,[ExchangeRate]=''
-,[Contract Amt_usd]=''
+,[Contract Amt_usd]=ROUND(sd.Outputqty * ROUND(sd.UnitPrice * r.rate, 4, 4),4,4)
 ,[SR]=''
 ,[Remark]=''
 from dbo.SubconOutContract_Detail sd with (nolock)
@@ -152,25 +249,68 @@ outer apply(
 )Order_Qty
 outer apply (
     select  
-    [SewingCPU] = sum(iif(ArtworkTypeID = 'SEWING',TMS/1400,0)),
-    [CuttingCPU]= sum(iif(ArtworkTypeID = 'CUTTING',TMS/1400,0)),
-    [InspectionCPU]= sum(iif(ArtworkTypeID = 'INSPECTION',TMS/1400,0)),
-    [OtherCPU]= sum(iif(ArtworkTypeID in ('INSPECTION','CUTTING','SEWING'),0,TMS/1400)),
-    [OtherAmt]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)) * sd.OutputQty,
-    [EMBAmt] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)) * sd.OutputQty,
-    [PrintingAmt] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0)) * sd.OutputQty,
-    [OtherPrice]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)),
-    [EMBPrice] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)),
-    [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0)),
-	[HeatTransfer] = sum(iif(ArtworkTypeID = 'HEAT TRANSFER',TMS/1400,0))
+    [SewingCPU] = sum(iif(Order_TmsCost.ArtworkTypeID = 'SEWING',TMS/1400,0)),
+    [CuttingCPU]= sum(iif(Order_TmsCost.ArtworkTypeID = 'CUTTING',TMS/1400,0)),
+    [InspectionCPU]= sum(iif(Order_TmsCost.ArtworkTypeID = 'INSPECTION',TMS/1400,0)),
+    [OtherCPU]= sum(iif(Order_TmsCost.ArtworkTypeID in ('INSPECTION','CUTTING','SEWING'),0,TMS/1400)),
+	[OtherAmt]= sum(iif(LEFT(Seq,1) = '3' AND Seq NOT IN ('3010', '3020'), Price*#RateTmp.Rate, 0)),
+    [EMBAmt] = sum(iif(Order_TmsCost.ArtworkTypeID = 'EMBROIDERY',Price,0)) * sd.OutputQty,
+    [PrintingAmt] = sum(iif(Seq = '3020',Price,0)) * sd.OutputQty,
+    [OtherPrice]= sum(iif(Order_TmsCost.ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)),
+    [EMBPrice] = sum(iif(Seq = '3010',Price,0)*#RateTmp.Rate),
+    [PrintingPrice] = sum(iif(Order_TmsCost.ArtworkTypeID = 'PRINTING',Price,0)*#RateTmp.Rate),
+	[HeatTransfer] = sum(iif(Order_TmsCost.ArtworkTypeID = 'HEAT TRANSFER',TMS/1400,0))
     from Order_TmsCost with (nolock)
+	left join #RateTmp on #RateTmp.Ukey = o.StyleUkey and #RateTmp.Location = sd.ComboType and #RateTmp.ArtworkTypeID = Order_TmsCost.ArtworkTypeID
     where ID = sd.OrderID
 ) as tms
 outer apply(
 	select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
 	,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
+outer apply(
+	select CPU = sum(ot.TMS) 
+	from Order_TmsCost ot with (nolock)
+	left join ArtworkType on ot.ArtworkTypeID = ArtworkType.ID
+	where ot.ID = sd.OrderID and ArtworkType.IsTtlTMS  = 1
+	group by ot.ID
+) as totalTMS
+outer apply(
+	select [Sewing CPU (Contract CFM date)] = iif(s.Status = 'Confirmed',totalTMS.CPU*(ol.Rate/100),0)
+	from SubconOutContract_Detail_TMSCost sdt
+	left join Order_Location ol on ol.OrderId = sd.OrderId and ol.Location = sd.ComboType
+	where sd.SubConOutFty = sdt.SubConOutFty and sd.ContractNumber = sdt.ContractNumber and sd.OrderId = sdt.OrderId 
+			and sdt.ArtworkTypeID = 'Sewing'
+) as sCPU
+outer apply(
+	SELECT 
+		SUM(ot.Price* #RateTmp.Rate) AS TotalPrice
+	FROM 
+		Order_TmsCost ot WITH (NOLOCK)
+	LEFT JOIN ArtworkType ON ot.ArtworkTypeID = ArtworkType.ID
+	left join orders on orders.ID = ot.ID
+	left join #RateTmp on #RateTmp.Ukey = orders.StyleUkey and #RateTmp.Location = sd.ComboType and #RateTmp.ArtworkTypeID = ot.ArtworkTypeID
+	WHERE 
+		ArtworkType.Classify = 'I'
+		AND ot.ID = sd.OrderID
+		AND ot.Seq LIKE '1%'
+		AND 
+		(
+			NOT (ot.Seq IN (1200, 1210)) OR
+			ot.Price = 
+			(
+				SELECT MAX(ot2.Price)
+				FROM Order_TmsCost ot2
+				WHERE ot2.ID = ot.ID 
+				AND ot2.ArtworkTypeID = ot.ArtworkTypeID
+				AND ot2.Seq IN (1200, 1210)
+			)
+		)
+) as SubTMS
 where 1=1
 {listSQLFilter.JoinToString($"{Environment.NewLine} ")}
+
+DROP TABLE #Main
+DROP TABLE #RateTmp
 ";
 
             DualResult result = DBProxy.Current.Select(null, sqlcmd.ToString(),  out this.printData);
@@ -202,8 +342,6 @@ where 1=1
             for (int c = 1; c <= this.printData.Rows.Count; c++)
             {
                 int tr = c + 3;
-                wks.Cells[c + 3, 24] = $"=(O{tr}-U{tr}-V{tr}-W{tr})/(I{tr}+Q{tr}+R{tr}+S{tr}+T{tr})";
-                wks.Cells[c + 3, 25] = $"=IF(S{tr}<U{tr},\"<\",\">\")";
                 wks.Cells[c + 3, 30] = $"=W{tr}/X{tr}";
             }
 
@@ -213,7 +351,7 @@ where 1=1
             // 畫框線
             int rowcnt = this.printData.Rows.Count + 3;
             Microsoft.Office.Interop.Excel.Range rg1;
-            rg1 = wks.get_Range("A4", $"AF{this.printData.Rows.Count + 3}");
+            rg1 = wks.get_Range("A4", $"AE{this.printData.Rows.Count + 3}");
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeBottom].Weight = 2;
             rg1.Borders[Microsoft.Office.Interop.Excel.XlBordersIndex.xlEdgeTop].LineStyle = Microsoft.Office.Interop.Excel.XlLineStyle.xlLineStyleNone;
