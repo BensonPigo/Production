@@ -3628,6 +3628,8 @@ ORDER BY o.POID{columnID}, Article, os.Seq, PatternPanel
                 Excel.Worksheet worksheetUpload = workbook.Worksheets["Upload"];
                 Excel.Worksheet workSheetSample = workbook.Worksheets["Sample"];
 
+                excel.DisplayAlerts = false; // 不顯示警告視窗
+
                 for (int i = 1; i <= fabricPanelcodes.Count() - 1; i++)
                 {
                     worksheetUpload.Copy(Type.Missing, worksheetUpload);
