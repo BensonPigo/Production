@@ -273,7 +273,6 @@ namespace Sci.Production.Centralized
 
             DBProxy.Current.DefaultTimeout = 1800;
 
-            //this.ShowWaitMessage("Querry... ");
             foreach (string conString in connectionString)
             {
                 SqlConnection conn = new SqlConnection(conString);
@@ -282,10 +281,6 @@ namespace Sci.Production.Centralized
                 if (!result)
                 {
                     continue;
-                    DBProxy.Current.DefaultTimeout = 300;
-                    //this.HideWaitMessage();
-                    this.ShowErr(result);
-                    return result;
                 }
 
                 if (this.PrintData == null)
@@ -299,7 +294,6 @@ namespace Sci.Production.Centralized
                 }
             }
 
-            //this.HideWaitMessage();
             DBProxy.Current.DefaultTimeout = 300;
 
             return Ict.Result.True;
@@ -530,6 +524,7 @@ select lm.StyleUKey
 	,lm.Team
 	,lm.ComboType
 	,lm.Phase
+    ,lm.Status
 	,Version = MAX(lm.Version)
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
@@ -539,9 +534,9 @@ from LineMapping lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID /*and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team*/ and a.ComboType=lm.ComboType
-) and lm.Status = 'Confirmed'
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
 select lm.StyleUKey
 	,lm.FactoryID
@@ -549,6 +544,7 @@ select lm.StyleUKey
 	,lm.Team
 	,lm.ComboType
 	,lm.Phase
+    ,lm.Status
 	,Version = MAX(lm.Version)
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
@@ -558,9 +554,9 @@ from LineMappingBalancing lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
-) and lm.Status = 'Confirmed'
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
 select lm.StyleUKey
 	,lm.FactoryID
@@ -568,6 +564,7 @@ select lm.StyleUKey
 	,Team = ''
 	,lm.ComboType
 	,lm.Phase
+    ,lm.Status
 	,Version = MAX(lm.Version)
 	,AddDate = MAX(lm.AddDate)
 	,EditDate  = MAX(lm.EditDate )
@@ -577,9 +574,9 @@ from AutomatedLineMapping lm
 where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
-) and lm.Status = 'Confirmed'
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
-ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 
 ---- 4.  開始After Data準備
 ---- After Data的找法：
@@ -782,7 +779,7 @@ outer apply(
 )tddh
 WHERE a.SourceTable='IE P05'
 
-select a.*,b.Status
+select a.*
 	,b.TotalGSD
 	,b.TotalCycle
 	,b.CurrentOperators
@@ -794,7 +791,7 @@ from #AfterData a
 inner join LineMapping b on a.ID = b.ID ---- P03
 WHERE a.SourceTable='IE P03'
 UNION ALL
-select a.*,b.Status
+select a.*
 	,TotalGSD = b.TotalGSDTime
 	,TotalCycle = b.TotalCycleTime
 	,CurrentOperators = b.SewerManpower
@@ -874,9 +871,9 @@ select
 	,[Total % Time diff] = IIF(ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) ) * 100
 	,[By style] = IIF(AfterData.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
-	,[Last Version From] = ISNULL(AfterData.SourceTable, ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) )
-	,[Last Version Phase] = ISNULL(AfterData.Phase, ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase))
-	,[Last Version Status] = ISNULL(AfterData.Status ,ISNULL(BeforeDataP03.Status,BeforeDataP05.Status) )
+	,[Last Version From] = LastVersion.SourceTable
+	,[Last Version Phase] = LastVersion.Phase
+	,[Last Version Status] = LastVersion.Status
 	,[History LBR] = CASE WHEN AfterData.SourceTable = 'IE P03' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
 						  WHEN AfterData.SourceTable = 'IE P06' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
 					 ELSE NULL END
@@ -936,13 +933,24 @@ outer apply(
 	select top 1 ct.Target
 	from factory f
 	left join ChgOverTarget ct on ct.MDivisionID= f.MDivisionID 
-				--and lm.status = 'Confirmed' 
-				--and c.EffectiveDate < lm.Editdate 
 				and ct. Type ='LBR'
 	where f.id = a.FactoryID
 	order by EffectiveDate desc
 )LinebalancingTarget 
-
+outer apply(
+	select top 1 *
+	from (
+		select *,SourceTable='P03' from #P03MaxVer
+		union
+		select *,SourceTable='P05' from #P05MaxVer
+		union
+		select *,SourceTable='P06' from #P06MaxVer
+	)LastData
+	where b.StyleUkey = LastData.StyleUKey 
+		and a.FactoryID = LastData.FactoryID 
+		and b.ComboType = LastData.ComboType 
+	order by ISNULL(EditDate,AddDate) desc
+)LastVersion
 
 drop table #BaseData
 ,#P03MaxVer
