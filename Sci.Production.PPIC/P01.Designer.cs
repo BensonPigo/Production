@@ -30,6 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.btnAccessory = new Sci.Win.UI.Button();
             this.label8 = new Sci.Win.UI.Label();
             this.PCSMRText = new Sci.Production.Class.Txttpeuser();
             this.dateBox2 = new Sci.Win.UI.DateBox();
@@ -556,6 +557,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnAccessory);
             this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.PCSMRText);
             this.tabPage1.Controls.Add(this.dateBox2);
@@ -692,12 +694,22 @@
             this.tabPage1.Controls.Add(this.txttpeuser5);
             this.tabPage1.Controls.Add(this.PcHandleText);
             this.tabPage1.Controls.Add(this.txttpeuser4);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Location = new System.Drawing.Point(4, 24);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(897, 395);
+            this.tabPage1.Size = new System.Drawing.Size(1000, 691);
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "Detail(s)";
+            // 
+            // btnAccessory
+            // 
+            this.btnAccessory.Location = new System.Drawing.Point(204, 658);
+            this.btnAccessory.Name = "btnAccessory";
+            this.btnAccessory.Size = new System.Drawing.Size(194, 27);
+            this.btnAccessory.TabIndex = 244;
+            this.btnAccessory.Text = "Accessory Card";
+            this.btnAccessory.UseVisualStyleBackColor = true;
+            this.btnAccessory.Click += new System.EventHandler(this.btnAccessory_Click);
             // 
             // label8
             // 
@@ -3536,12 +3548,14 @@
             this.txtmfactory.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtmfactory.FilteMDivision = true;
             this.txtmfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtmfactory.IsIE = false;
             this.txtmfactory.IsMultiselect = false;
             this.txtmfactory.IsProduceFty = false;
             this.txtmfactory.IssupportJunk = false;
             this.txtmfactory.Location = new System.Drawing.Point(285, 197);
             this.txtmfactory.MDivision = null;
             this.txtmfactory.Name = "txtmfactory";
+            this.txtmfactory.NeedInitialFactory = false;
             this.txtmfactory.Size = new System.Drawing.Size(66, 21);
             this.txtmfactory.TabIndex = 14;
             this.txtmfactory.Validated += new System.EventHandler(this.Txtmfactory_Validated);
@@ -4128,5 +4142,6 @@
         private Class.Txttpeuser PCSMRText;
         private Win.UI.CheckBox chkHeatSeal;
         private Win.UI.CheckBox chkJokerTag;
+        private Win.UI.Button btnAccessory;
     }
 }
