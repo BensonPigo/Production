@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -98,13 +97,11 @@ namespace Sci.Production.Subcon
                 new System.Data.SqlClient.SqlParameter("@id", this.CurrentMaintain["id"].ToString()),
             };
 
-            List<SqlParameter> sqlpar = new List<SqlParameter>() { new SqlParameter("@ArtworkTypeID", this.CurrentMaintain["ArtworkTypeID"]) };
-            bool subconFarmInOutNotFromRFID = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"select SubconFarmInOutNotFromRFID from ArtworkType with (nolock) where ID = @ArtworkTypeID", sqlpar));
-
-            if (!subconFarmInOutNotFromRFID)
+            bool subconFarmInOutfromSewOutput = Prgs.IsSubconFarmInOutfromSewOutput(this.CurrentMaintain["ArtworkTypeID"].ToString());
+            if (!subconFarmInOutfromSewOutput)
             {
                 // FarmOut_Detail/FarmIn_Detail
-                string sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID=@id";
+                string sqlcmd = @"select a.Farmin,a.Farmout from ArtworkPO_Detail a WITH (NOLOCK) where a.ID = @id";
                 DBProxy.Current.Select(null, sqlcmd, paras, out DataTable dt);
 
                 // 有則return
@@ -119,9 +116,9 @@ namespace Sci.Production.Subcon
 select 1
 from ArtworkPO_detail apd with(nolock)
 inner join ArtworkAP_detail aad with(nolock) on apd.id = aad.artworkpoid and aad.artworkpo_detailukey = apd.ukey
-where  apd.id = '{this.CurrentMaintain["id"]}' 
+where  apd.id = @id 
 ";
-                if (MyUtility.Check.Seek(chkP10exists))
+                if (MyUtility.Check.Seek(chkP10exists, paras.ToList()))
                 {
                     MyUtility.Msg.WarningBox("Some SP# already have Subcon AP data.");
                     return false;
@@ -458,29 +455,29 @@ where  apd.id = '{this.CurrentMaintain["id"]}'
             this.DetailSelectCommand = string.Format(
                 @"
 select 
-		 a.[ID]
-		,a.[OrderID]
-        ,a.[Article]
-        ,a.[SizeCode]
-		,a.[ArtworkId]
-		,a.[PatternCode]
-		,a.[PatternDesc]
-		,a.[CostStitch]
-		,a.[Stitch]
-		,a.[UnitPrice]
-		,a.[Cost]
-		,[QtyGarment]=IIF(a.[QtyGarment] IS NULL OR a.[QtyGarment]=0,1,a.[QtyGarment])
-		,a.[Price]
-		,a.[Amount]
-		,a.[Farmout]
-		,a.[Farmin]
-		,a.[ApQty]
-		,a.[PoQty]
-		,a.[Ukey]
-		,a.[ArtworkTypeID]
-		,a.[ExceedQty]
-        ,a.[ArtworkReqID]
-		,o.*
+		  a.[ID]
+		, a.[OrderID]
+        , a.[Article]
+        , a.[SizeCode]
+		, a.[ArtworkId]
+		, a.[PatternCode]
+		, a.[PatternDesc]
+		, a.[CostStitch]
+		, a.[Stitch]
+		, a.[UnitPrice]
+		, a.[Cost]
+		, [QtyGarment]=IIF(a.[QtyGarment] IS NULL OR a.[QtyGarment]=0,1,a.[QtyGarment])
+		, a.[Amount]
+		, a.[Farmout]
+		, a.[Farmin]
+		, a.[ApQty]
+		, a.[PoQty]
+		, a.[Ukey]
+		, a.[ArtworkTypeID]
+		, a.[ExceedQty]
+        , a.[ArtworkReqID]
+		, o.FactoryID
+        , o.POID
 		, Price = a.unitprice * a.qtygarment
 		, Style = o.styleid
 		, sewinline = o.sewinline
@@ -488,12 +485,65 @@ select
         , f.IsProduceFty
         , a.ArtworkReq_DetailUkey
         , oa.Remark
+		, [AccuFarmOut] = iif(ISNULL(awt.SubconFarmInOutfromSewOutput, 0) = 1, ISNULL(AccuFarmOut.Qty,0), ISNULL(RFIDFarmOut.Value,0))
+		, [AccuFarmIn] = iif(ISNULL(awt.SubconFarmInOutfromSewOutput, 0) = 1, ISNULL(AccuFarmIn.Qty,0), ISNULL(RFIDFarmIn.Value,0))
 from dbo.ArtworkPO_Detail a with (nolock)
+left join ArtworkType awt WITH (NOLOCK) on awt.ID = a.[ArtworkTypeID]
 left join dbo.Orders o with (nolock) on a.OrderID = o.id
 left join Factory f with (nolock) on f.ID = o.FactoryID
 left join ArtworkReq_Detail ard with (nolock) on a.ArtworkReq_DetailUkey = ard.Ukey
 left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
-where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
+OUTER APPLY(
+	SELECT [Value]= SUM(bdo.QTY)
+	FROM Bundle_Detail bd WITH (NOLOCK) 
+	INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
+	INNER JOIN Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.BundleNo = BD.BundleNo
+	INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+	INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+	WHERE bio.RFIDProcessLocationID = ''
+	AND bdo.Orderid= a.OrderID
+    AND (bdl.Article = a.Article or a.Article = '')
+    AND (bd.SizeCode = a.SizeCode or a.SizeCode = '')
+	AND s.ArtworkTypeId = a.ArtworkTypeID
+	AND bd.Patterncode = a.PatternCode 
+	AND bd.PatternDesc = a.PatternDesc
+	AND bio.OutGoing IS NOT NULL 
+) RFIDFarmOut
+OUTER APPLY(	
+	SELECT [Value]= SUM(bdo.QTY)
+	FROM Bundle_Detail bd WITH (NOLOCK) 
+	INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
+	INNER JOIN Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.BundleNo = BD.BundleNo
+	INNER JOIN BundleInOut bio WITH (NOLOCK)  ON bio.BundleNo = bd.BundleNo
+	INNER JOIN SubProcess s WITH (NOLOCK)  ON s.id= bio.SubProcessId
+	WHERE bio.RFIDProcessLocationID = ''
+	AND bdo.Orderid= a.OrderID
+    AND (bdl.Article = a.Article or a.Article = '')
+    AND (bd.SizeCode = a.SizeCode or a.SizeCode = '')
+	AND s.ArtworkTypeId = a.ArtworkTypeID
+	AND bd.Patterncode = a.PatternCode 
+	AND bd.PatternDesc = a.PatternDesc
+	AND bio.InComing IS NOT NULL
+) RFIDFarmIn
+OUTER APPLY(
+	select [Qty] = SUM(v.Qty)
+	from View_SewingOutput_FarmInOutDate v with (nolock) 
+	where a.OrderID = v.OrderId
+	and (a.Article = v.Article or a.Article = '')
+	and (a.SizeCode = v.SizeCode or a.SizeCode = '')
+    and v.FarmOutDate < GETDATE()
+) AccuFarmOut
+OUTER APPLY(
+	select [Qty] = SUM(v.Qty)
+	from View_SewingOutput_FarmInOutDate v with (nolock) 
+	where a.OrderID = v.OrderId
+	and (a.Article = v.Article or a.Article = '')
+	and (a.SizeCode = v.SizeCode or a.SizeCode = '')
+	and v.FarmInDate < GETDATE()
+) AccuFarmIn
+where a.id = '{0}'
+ORDER BY a.OrderID 
+", masterID);
 
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -672,6 +722,125 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
                 }
             };
             #endregion
+
+            #region Accu Farm Out 開窗
+            DataGridViewGeneratorNumericColumnSettings dgsAccuFarmOut = new DataGridViewGeneratorNumericColumnSettings();
+            dgsAccuFarmOut.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (dr == null || int.Parse(dr["AccuFarmOut"].ToString()) == 0)
+                {
+                    return;
+                }
+
+                string sqlCmd;
+                bool subconFarmInOutfromSewOutput = Prgs.IsSubconFarmInOutfromSewOutput(dr["ArtworkTypeID"].ToString());
+                if (subconFarmInOutfromSewOutput)
+                {
+                    sqlCmd = $@"
+                select [Farm Out Date] = FORMAT(v.FarmOutDate, 'yyyy/MM/dd'), Qty = sum(v.Qty)
+                from View_SewingOutput_FarmInOutDate v with(nolock)
+                where v.OrderId = '{dr["Orderid"]}'" +
+                    (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and v.Article = '{dr["Article"]}'" : string.Empty) +
+                    (!string.IsNullOrEmpty(dr["SizeCode"].ToString()) ? $" and v.SizeCode = '{dr["SizeCode"]}'" : string.Empty) +
+                    @" 
+                and v.FarmOutDate < GETDATE() 
+                group by v.FarmOutDate";
+                }
+                else
+                {
+                    sqlCmd = $@"
+                SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId, bio.OutGoing, bio.InComing, bd.Patterncode, bd.PatternDesc
+                INTO #Bundle
+                FROM Bundle_Detail bd WITH (NOLOCK)
+                INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
+                INNER JOIN Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.BundleNo = BD.BundleNo
+                INNER JOIN BundleInOut bio WITH (NOLOCK) ON bio.BundleNo = bd.BundleNo
+                INNER JOIN SubProcess s WITH (NOLOCK) ON s.id= bio.SubProcessId
+                WHERE bio.RFIDProcessLocationID = '' AND s.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
+
+                SELECT [Farm Out Date] = FORMAT(bd.OutGoing, 'yyyy/MM/dd HH:mm:ss'), Qty = SUM(bd.Qty)
+                FROM #Bundle bd
+                WHERE bd.Orderid = '{dr["Orderid"]}'" +
+                    (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and bd.Article = '{dr["Article"]}'" : string.Empty) +
+                    (!string.IsNullOrEmpty(dr["SizeCode"].ToString()) ? $" and bd.SizeCode = '{dr["SizeCode"]}'" : string.Empty) +
+                    $@" 
+                AND bd.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
+                AND bd.Patterncode = '{dr["PatternCode"]}' 
+                AND bd.PatternDesc = '{dr["PatternDesc"]}' 
+                AND bd.OutGoing IS NOT NULL 
+                group by bd.OutGoing";
+                }
+
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid(dt, caption: "Accu Farm Out");
+            };
+            #endregion
+            #region Accu Farm In 開窗
+            DataGridViewGeneratorNumericColumnSettings dgsAccuFarmIn = new DataGridViewGeneratorNumericColumnSettings();
+            dgsAccuFarmIn.CellMouseDoubleClick += (s, e) =>
+            {
+                var dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                if (dr == null || int.Parse(dr["AccuFarmIn"].ToString()) == 0)
+                {
+                    return;
+                }
+
+                string sqlCmd;
+                bool subconFarmInOutfromSewOutput = Prgs.IsSubconFarmInOutfromSewOutput(dr["ArtworkTypeID"].ToString());
+                if (subconFarmInOutfromSewOutput)
+                {
+                    sqlCmd = $@"
+            select [Farm In Date] = FORMAT(v.FarmInDate, 'yyyy/MM/dd'), Qty = sum(v.Qty)
+            from View_SewingOutput_FarmInOutDate v with(nolock)
+            where v.OrderId = '{dr["Orderid"]}'" +
+                    (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and v.Article = '{dr["Article"]}'" : string.Empty) +
+                    (!string.IsNullOrEmpty(dr["SizeCode"].ToString()) ? $" and v.SizeCode = '{dr["SizeCode"]}'" : string.Empty) +
+                    @" 
+            and v.FarmInDate < GETDATE() 
+            group by v.FarmInDate";
+                }
+                else
+                {
+                    sqlCmd = $@"
+            SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId, bio.OutGoing, bio.InComing, bd.Patterncode, bd.PatternDesc
+            INTO #Bundle
+            FROM Bundle_Detail bd WITH (NOLOCK)
+            INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
+            INNER JOIN Bundle_Detail_Order bdo WITH (NOLOCK) on bdo.BundleNo = BD.BundleNo
+            INNER JOIN BundleInOut bio WITH (NOLOCK) ON bio.BundleNo = bd.BundleNo
+            INNER JOIN SubProcess s WITH (NOLOCK) ON s.id= bio.SubProcessId
+            WHERE bio.RFIDProcessLocationID = '' AND s.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
+
+            SELECT [Farm In Date] = FORMAT(bd.InComing, 'yyyy/MM/dd HH:mm:ss'), Qty = SUM(bd.Qty)
+            FROM #Bundle bd
+            WHERE bd.Orderid = '{dr["Orderid"]}'" +
+                    (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and bd.Article = '{dr["Article"]}'" : string.Empty) +
+                    (!string.IsNullOrEmpty(dr["SizeCode"].ToString()) ? $" and bd.SizeCode = '{dr["SizeCode"]}'" : string.Empty) +
+                    $@" 
+            AND bd.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
+            AND bd.Patterncode = '{dr["PatternCode"]}' 
+            AND bd.PatternDesc = '{dr["PatternDesc"]}' 
+            AND bd.InComing IS NOT NULL 
+            group by bd.InComing";
+                }
+
+                DualResult result = DBProxy.Current.Select(null, sqlCmd, out DataTable dt);
+                if (!result)
+                {
+                    this.ShowErr(result);
+                    return;
+                }
+
+                MyUtility.Msg.ShowMsgGrid(dt, caption: "Accu Farm In");
+            };
+            #endregion
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 0
@@ -696,7 +865,10 @@ where a.id = '{0}'  ORDER BY a.OrderID ", masterID);
             .Text("farmout", header: "Farm Out", width: Widths.AnsiChars(5), settings: ts, iseditingreadonly: true) // 15
             .Text("farmin", header: "Farm In", width: Widths.AnsiChars(5), settings: ts2, iseditingreadonly: true) // 16
             .Text("apqty", header: "A/P Qty", width: Widths.AnsiChars(5), settings: ts3, iseditingreadonly: true) // 17
-            .Text("ArtworkReqID", header: "Subcon Req#", width: Widths.AnsiChars(13), iseditingreadonly: true);     // 18
+            .Text("ArtworkReqID", header: "Subcon Req#", width: Widths.AnsiChars(13), iseditingreadonly: true) // 18
+            .Numeric("AccuFarmOut", header: "Accu Farm Out", iseditingreadonly: true, settings: dgsAccuFarmOut)
+            .Numeric("AccuFarmIn", header: "Accu Farm In", iseditingreadonly: true, settings: dgsAccuFarmIn)
+             ;
             #endregion
             #region 可編輯欄位變色
             this.detailgrid.Columns["stitch"].DefaultCellStyle.BackColor = Color.Pink;  // PCS/Stitch

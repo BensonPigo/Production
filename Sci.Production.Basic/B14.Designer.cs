@@ -61,7 +61,7 @@
             this.numericPostSewingDays = new Sci.Win.UI.NumericBox();
             this.checkIsPrintToCMP = new Sci.Win.UI.CheckBox();
             this.checkIsSubcon = new Sci.Win.UI.CheckBox();
-            this.checkSubconFarmInOutNotFromRFID = new Sci.Win.UI.CheckBox();
+            this.checkSubconFarmInOutfromSewOutput = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -76,7 +76,7 @@
             // 
             // detailcont
             // 
-            this.detailcont.Controls.Add(this.checkSubconFarmInOutNotFromRFID);
+            this.detailcont.Controls.Add(this.checkSubconFarmInOutfromSewOutput);
             this.detailcont.Controls.Add(this.checkIsSubcon);
             this.detailcont.Controls.Add(this.checkIsPrintToCMP);
             this.detailcont.Controls.Add(this.numericPostSewingDays);
@@ -512,18 +512,17 @@
             this.checkIsSubcon.Text = "是否需要外發加工 (Is Sub con)";
             this.checkIsSubcon.UseVisualStyleBackColor = true;
             // 
-            // checkSubconFarmInOutNotFromRFID
+            // checkSubconFarmInOutfromSewOutput
             // 
-            this.checkSubconFarmInOutNotFromRFID.AutoSize = true;
-            this.checkSubconFarmInOutNotFromRFID.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconFarmInOutNotFromRFID", true));
-            this.checkSubconFarmInOutNotFromRFID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkSubconFarmInOutNotFromRFID.Location = new System.Drawing.Point(364, 244);
-            this.checkSubconFarmInOutNotFromRFID.Name = "checkSubconFarmInOutNotFromRFID";
-            this.checkSubconFarmInOutNotFromRFID.Size = new System.Drawing.Size(361, 38);
-            this.checkSubconFarmInOutNotFromRFID.TabIndex = 22;
-            this.checkSubconFarmInOutNotFromRFID.Text = "Subcon Farm In/Out 累積不透過 RFID\r\n(Subcon Farm In/Out data Calculate from PO/AP Qty)" +
-    "";
-            this.checkSubconFarmInOutNotFromRFID.UseVisualStyleBackColor = true;
+            this.checkSubconFarmInOutfromSewOutput.AutoSize = true;
+            this.checkSubconFarmInOutfromSewOutput.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SubconFarmInOutfromSewOutput", true));
+            this.checkSubconFarmInOutfromSewOutput.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSubconFarmInOutfromSewOutput.Location = new System.Drawing.Point(364, 244);
+            this.checkSubconFarmInOutfromSewOutput.Name = "checkSubconFarmInOutfromSewOutput";
+            this.checkSubconFarmInOutfromSewOutput.Size = new System.Drawing.Size(349, 21);
+            this.checkSubconFarmInOutfromSewOutput.TabIndex = 22;
+            this.checkSubconFarmInOutfromSewOutput.Text = "Subcon Farm In/Out data calculate from PO/AP Qty";
+            this.checkSubconFarmInOutfromSewOutput.UseVisualStyleBackColor = true;
             // 
             // B14
             // 
@@ -588,6 +587,6 @@
         private Win.UI.Label labelPostSewingDays;
         private Win.UI.CheckBox checkIsPrintToCMP;
         private Win.UI.CheckBox checkIsSubcon;
-        private Win.UI.CheckBox checkSubconFarmInOutNotFromRFID;
+        private Win.UI.CheckBox checkSubconFarmInOutfromSewOutput;
     }
 }
