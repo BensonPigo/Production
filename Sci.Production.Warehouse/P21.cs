@@ -707,6 +707,10 @@ DROP TABLE #tmpStockType, #tmpFinal
         {
             this.dateTimePicker.Value = DateTime.Now;
             this.dateTimeFabric2LabBy.Value = DateTime.Now;
+            if (this.dtReceiving == null)
+            {
+                return;
+            }
 
             var selectedReceiving = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1);
             if (!selectedReceiving.Any())
@@ -1052,6 +1056,43 @@ where m.IsWMS = 0";
                     errMsg = ex;
                 }
             }
+
+            DataTable dtOriFtyInventory;
+
+            #region 傳給WMS P07 Data
+            var filteredRowsPP07 = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1 && s["ReceivingSource"].ToString() == "Receiving");
+            if (filteredRowsPP07.Any())
+            {
+                DataTable dtToWMS_P07 = filteredRowsPP07.CopyToDataTable();
+                if (dtToWMS_P07 != null && dtToWMS_P07.Rows.Count > 0)
+                {
+                    // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+                    result = Prgs.GetFtyInventoryData(dtToWMS_P07, "P07", out dtOriFtyInventory);
+
+                    // AutoWHFabric WebAPI P21 更改料重量後 也要回傳給WMS
+                    Prgs_WMS.WMSprocess(false, dtToWMS_P07, "P07", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+                }
+            }
+
+            #endregion
+
+            #region 傳給WMS P18 Data
+            var filteredRowsP18 = this.dtReceiving.AsEnumerable()
+            .Where(s => (int)s["select"] == 1 && s["ReceivingSource"].ToString() == "TransferIn");
+            if (filteredRowsP18.Any())
+            {
+                DataTable dtToWMS_P18 = filteredRowsP18.CopyToDataTable();
+                if (dtToWMS_P18 != null && dtToWMS_P18.Rows.Count > 0)
+                {
+                    // 取得 FtyInventory 資料 (包含PO_Supp_Detail.FabricType)
+                    result = Prgs.GetFtyInventoryData(dtToWMS_P18, "P18", out dtOriFtyInventory);
+
+                    // AutoWHFabric WebAPI P21 更改料重量後 也要回傳給WMS
+                    Prgs_WMS.WMSprocess(false, dtToWMS_P18, "P18", EnumStatus.New, EnumStatus.Confirm, dtOriFtyInventory);
+                }
+            }
+
+            #endregion
 
             if (!MyUtility.Check.Empty(errMsg))
             {
