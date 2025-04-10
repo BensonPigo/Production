@@ -521,7 +521,7 @@
             this.checkSubconFarmInOutfromSewOutput.Name = "checkSubconFarmInOutfromSewOutput";
             this.checkSubconFarmInOutfromSewOutput.Size = new System.Drawing.Size(349, 21);
             this.checkSubconFarmInOutfromSewOutput.TabIndex = 22;
-            this.checkSubconFarmInOutfromSewOutput.Text = "Subcon Farm In/Out data calculate from PO/AP Qty";
+            this.checkSubconFarmInOutfromSewOutput.Text = "Subcon Farm In/Out data from Sewing Output";
             this.checkSubconFarmInOutfromSewOutput.UseVisualStyleBackColor = true;
             // 
             // B14

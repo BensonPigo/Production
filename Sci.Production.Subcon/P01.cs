@@ -750,7 +750,7 @@ ORDER BY a.OrderID
                 else
                 {
                     sqlCmd = $@"
-                SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId, bio.OutGoing, bio.InComing, bd.Patterncode, bd.PatternDesc
+                SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId,  OutGoing = FORMAT(bio.OutGoing, 'yyyy/MM/dd'), InComing = FORMAT(bio.InComing, 'yyyy/MM/dd'), bd.Patterncode, bd.PatternDesc
                 INTO #Bundle
                 FROM Bundle_Detail bd WITH (NOLOCK)
                 INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
@@ -759,7 +759,7 @@ ORDER BY a.OrderID
                 INNER JOIN SubProcess s WITH (NOLOCK) ON s.id= bio.SubProcessId
                 WHERE bio.RFIDProcessLocationID = '' AND s.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
 
-                SELECT [Farm Out Date] = FORMAT(bd.OutGoing, 'yyyy/MM/dd HH:mm:ss'), Qty = SUM(bd.Qty)
+                SELECT [Farm Out Date] = bd.OutGoing, Qty = SUM(bd.Qty)
                 FROM #Bundle bd
                 WHERE bd.Orderid = '{dr["Orderid"]}'" +
                     (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and bd.Article = '{dr["Article"]}'" : string.Empty) +
@@ -779,7 +779,7 @@ ORDER BY a.OrderID
                     return;
                 }
 
-                MyUtility.Msg.ShowMsgGrid(dt, caption: "Accu Farm Out");
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: "Accu Farm Out");
             };
             #endregion
             #region Accu Farm In 開窗
@@ -809,7 +809,7 @@ ORDER BY a.OrderID
                 else
                 {
                     sqlCmd = $@"
-            SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId, bio.OutGoing, bio.InComing, bd.Patterncode, bd.PatternDesc
+            SELECT bdo.QTY, bdo.Orderid, bdl.Article, bd.SizeCode, s.ArtworkTypeId,  OutGoing = FORMAT(bio.OutGoing, 'yyyy/MM/dd'), InComing = FORMAT(bio.InComing, 'yyyy/MM/dd'), bd.Patterncode, bd.PatternDesc
             INTO #Bundle
             FROM Bundle_Detail bd WITH (NOLOCK)
             INNER JOIN Bundle bdl WITH (NOLOCK) ON bdl.id=bd.id
@@ -818,7 +818,7 @@ ORDER BY a.OrderID
             INNER JOIN SubProcess s WITH (NOLOCK) ON s.id= bio.SubProcessId
             WHERE bio.RFIDProcessLocationID = '' AND s.ArtworkTypeId = '{dr["ArtworkTypeID"]}' 
 
-            SELECT [Farm In Date] = FORMAT(bd.InComing, 'yyyy/MM/dd HH:mm:ss'), Qty = SUM(bd.Qty)
+            SELECT [Farm In Date] = bd.InComing, Qty = SUM(bd.Qty)
             FROM #Bundle bd
             WHERE bd.Orderid = '{dr["Orderid"]}'" +
                     (!string.IsNullOrEmpty(dr["Article"].ToString()) ? $" and bd.Article = '{dr["Article"]}'" : string.Empty) +
@@ -838,7 +838,7 @@ ORDER BY a.OrderID
                     return;
                 }
 
-                MyUtility.Msg.ShowMsgGrid(dt, caption: "Accu Farm In");
+                MyUtility.Msg.ShowMsgGrid_LockScreen(dt, caption: "Accu Farm In");
             };
             #endregion
             #region 欄位設定
