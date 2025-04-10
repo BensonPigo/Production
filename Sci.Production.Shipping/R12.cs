@@ -28,6 +28,7 @@ namespace Sci.Production.Shipping
         private string CustCD;
         private string Dest;
         private string category;
+        private string orderCompany;
         private DataTable printData;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace Sci.Production.Shipping
             this.CustCD = this.txtcustcd.Text;
             this.Dest = this.txtcountryDestination.TextBox1.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
+            this.orderCompany = this.comboOrderCompany.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -75,6 +77,7 @@ o.FactoryID
 ,g.InvSerial
 ,g.InvDate
 ,pd.OrderID
+,OrderCompany.NameEN
 ,o.CustPONo
 ,o.StyleID
 ,o.SeasonID
@@ -103,6 +106,7 @@ Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join Brand b on b.ID = o.BrandID
+Left join Company OrderCompany on OrderCompany.ID = g.OrderCompanyID
 outer apply
 (	
     select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
@@ -195,6 +199,10 @@ Where 1=1
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
+            if (this.orderCompany != "0")
+            {
+                sqlCmd.Append(string.Format(" and g.OrderCompanyID = '{0}'", this.orderCompany));
+            }
             #endregion
 
             sqlCmd.Append(@" ) 
@@ -288,6 +296,7 @@ o.FactoryID
 ,g.InvSerial
 ,g.InvDate
 ,t.OrderID
+,OrderCompany.NameEN
 ,o.CustPONo
 ,o.StyleID
 ,o.SeasonID
@@ -314,6 +323,7 @@ Left join PackingList_Detail pd on p.ID = pd.ID and pd.OrderID = t.OrderID
 Inner join Orders o on t.OrderID = o.ID
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join Brand b on b.ID = o.BrandID
+Left join Company OrderCompany on OrderCompany.ID = g.OrderCompanyID
 outer apply
 (	
     select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
