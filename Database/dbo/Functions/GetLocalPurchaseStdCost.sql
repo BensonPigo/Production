@@ -32,6 +32,7 @@ BEGIN
 				where a.id = f.ArtWorkID 
 				and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
 				and f.isjunk = 0 
+				and f.OrderCompanyID = o.OrderCompanyID
 				and not CostTypeID != 'Factory CMT'
 			)
 			or 
@@ -41,6 +42,7 @@ BEGIN
 				from FirstSaleCostSetting f
 				where a.id = f.ArtWorkID 
 				and o.OrigBuyerDelivery between f.BeginDate and f.EndDate 
+				and f.OrderCompanyID = o.OrderCompanyID
 			)
 		)
 		group by a.id, ot.Price

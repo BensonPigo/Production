@@ -33,9 +33,6 @@
             this.labelBrand = new Sci.Win.UI.Label();
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateFCRDate = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
-            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
             this.labelDestination = new Sci.Win.UI.Label();
             this.labelCustCD = new Sci.Win.UI.Label();
             this.label7 = new Sci.Win.UI.Label();
@@ -46,9 +43,14 @@
             this.labelInvoiceDate = new Sci.Win.UI.Label();
             this.datePulloutDate = new Sci.Win.UI.DateRange();
             this.labelPulloutDate = new Sci.Win.UI.Label();
-            this.txtbuyer = new Sci.Production.Class.Txtbuyer();
             this.labelBuyer = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.comboOrderCompany = new Sci.Production.Class.ComboCompany(this.components);
             this.comboCategory = new Sci.Production.Class.ComboDropDownList(this.components);
+            this.txtbuyer = new Sci.Production.Class.Txtbuyer();
+            this.txtcountryDestination = new Sci.Production.Class.Txtcountry();
+            this.txtcustcd = new Sci.Production.Class.Txtcustcd();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -68,7 +70,7 @@
             // 
             this.labelFCRDate.Location = new System.Drawing.Point(13, 12);
             this.labelFCRDate.Name = "labelFCRDate";
-            this.labelFCRDate.Size = new System.Drawing.Size(95, 23);
+            this.labelFCRDate.Size = new System.Drawing.Size(102, 23);
             this.labelFCRDate.TabIndex = 94;
             this.labelFCRDate.Text = "FCR Date";
             // 
@@ -76,7 +78,7 @@
             // 
             this.labelBrand.Location = new System.Drawing.Point(13, 227);
             this.labelBrand.Name = "labelBrand";
-            this.labelBrand.Size = new System.Drawing.Size(95, 23);
+            this.labelBrand.Size = new System.Drawing.Size(102, 23);
             this.labelBrand.TabIndex = 97;
             this.labelBrand.Text = "Brand";
             // 
@@ -84,7 +86,7 @@
             // 
             this.labelCategory.Location = new System.Drawing.Point(13, 334);
             this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(95, 23);
+            this.labelCategory.Size = new System.Drawing.Size(102, 23);
             this.labelCategory.TabIndex = 101;
             this.labelCategory.Text = "Category";
             // 
@@ -105,44 +107,16 @@
             this.dateFCRDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateFCRDate.DateBox2.TabIndex = 1;
             this.dateFCRDate.IsRequired = false;
-            this.dateFCRDate.Location = new System.Drawing.Point(112, 12);
+            this.dateFCRDate.Location = new System.Drawing.Point(118, 12);
             this.dateFCRDate.Name = "dateFCRDate";
             this.dateFCRDate.Size = new System.Drawing.Size(280, 23);
             this.dateFCRDate.TabIndex = 102;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(112, 227);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(84, 23);
-            this.txtbrand.TabIndex = 105;
-            // 
-            // txtcountryDestination
-            // 
-            this.txtcountryDestination.DisplayBox1Binding = "";
-            this.txtcountryDestination.Location = new System.Drawing.Point(112, 299);
-            this.txtcountryDestination.Name = "txtcountryDestination";
-            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
-            this.txtcountryDestination.TabIndex = 116;
-            this.txtcountryDestination.TextBox1Binding = "";
-            // 
-            // txtcustcd
-            // 
-            this.txtcustcd.BackColor = System.Drawing.Color.White;
-            this.txtcustcd.BrandObjectName = null;
-            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtcustcd.Location = new System.Drawing.Point(112, 262);
-            this.txtcustcd.Name = "txtcustcd";
-            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
-            this.txtcustcd.TabIndex = 115;
             // 
             // labelDestination
             // 
             this.labelDestination.Location = new System.Drawing.Point(13, 299);
             this.labelDestination.Name = "labelDestination";
-            this.labelDestination.Size = new System.Drawing.Size(95, 23);
+            this.labelDestination.Size = new System.Drawing.Size(102, 23);
             this.labelDestination.TabIndex = 114;
             this.labelDestination.Text = "Destination";
             // 
@@ -150,14 +124,14 @@
             // 
             this.labelCustCD.Location = new System.Drawing.Point(13, 262);
             this.labelCustCD.Name = "labelCustCD";
-            this.labelCustCD.Size = new System.Drawing.Size(95, 23);
+            this.labelCustCD.Size = new System.Drawing.Size(102, 23);
             this.labelCustCD.TabIndex = 113;
             this.labelCustCD.Text = "Cust CD";
             // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
-            this.label7.Location = new System.Drawing.Point(370, 122);
+            this.label7.Location = new System.Drawing.Point(376, 122);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(22, 23);
             this.label7.TabIndex = 120;
@@ -171,7 +145,7 @@
             // 
             this.txtGBNoEnd.BackColor = System.Drawing.Color.White;
             this.txtGBNoEnd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtGBNoEnd.Location = new System.Drawing.Point(112, 152);
+            this.txtGBNoEnd.Location = new System.Drawing.Point(118, 152);
             this.txtGBNoEnd.Name = "txtGBNoEnd";
             this.txtGBNoEnd.Size = new System.Drawing.Size(255, 23);
             this.txtGBNoEnd.TabIndex = 119;
@@ -180,7 +154,7 @@
             // 
             this.txtGBNoStart.BackColor = System.Drawing.Color.White;
             this.txtGBNoStart.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtGBNoStart.Location = new System.Drawing.Point(112, 122);
+            this.txtGBNoStart.Location = new System.Drawing.Point(118, 122);
             this.txtGBNoStart.Name = "txtGBNoStart";
             this.txtGBNoStart.Size = new System.Drawing.Size(255, 23);
             this.txtGBNoStart.TabIndex = 118;
@@ -189,7 +163,7 @@
             // 
             this.labelGBNo.Location = new System.Drawing.Point(13, 122);
             this.labelGBNo.Name = "labelGBNo";
-            this.labelGBNo.Size = new System.Drawing.Size(95, 23);
+            this.labelGBNo.Size = new System.Drawing.Size(102, 23);
             this.labelGBNo.TabIndex = 117;
             this.labelGBNo.Text = "GB#";
             // 
@@ -210,7 +184,7 @@
             this.dateInvoiceDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.dateInvoiceDate.DateBox2.TabIndex = 1;
             this.dateInvoiceDate.IsRequired = false;
-            this.dateInvoiceDate.Location = new System.Drawing.Point(112, 48);
+            this.dateInvoiceDate.Location = new System.Drawing.Point(118, 48);
             this.dateInvoiceDate.Name = "dateInvoiceDate";
             this.dateInvoiceDate.Size = new System.Drawing.Size(280, 23);
             this.dateInvoiceDate.TabIndex = 122;
@@ -219,7 +193,7 @@
             // 
             this.labelInvoiceDate.Location = new System.Drawing.Point(13, 48);
             this.labelInvoiceDate.Name = "labelInvoiceDate";
-            this.labelInvoiceDate.Size = new System.Drawing.Size(95, 23);
+            this.labelInvoiceDate.Size = new System.Drawing.Size(102, 23);
             this.labelInvoiceDate.TabIndex = 121;
             this.labelInvoiceDate.Text = "Invoice Date";
             // 
@@ -240,7 +214,7 @@
             this.datePulloutDate.DateBox2.Size = new System.Drawing.Size(129, 23);
             this.datePulloutDate.DateBox2.TabIndex = 1;
             this.datePulloutDate.IsRequired = false;
-            this.datePulloutDate.Location = new System.Drawing.Point(112, 84);
+            this.datePulloutDate.Location = new System.Drawing.Point(118, 84);
             this.datePulloutDate.Name = "datePulloutDate";
             this.datePulloutDate.Size = new System.Drawing.Size(280, 23);
             this.datePulloutDate.TabIndex = 124;
@@ -249,42 +223,98 @@
             // 
             this.labelPulloutDate.Location = new System.Drawing.Point(13, 84);
             this.labelPulloutDate.Name = "labelPulloutDate";
-            this.labelPulloutDate.Size = new System.Drawing.Size(95, 23);
+            this.labelPulloutDate.Size = new System.Drawing.Size(102, 23);
             this.labelPulloutDate.TabIndex = 123;
             this.labelPulloutDate.Text = "Pull-out Date";
-            // 
-            // txtbuyer
-            // 
-            this.txtbuyer.BackColor = System.Drawing.Color.White;
-            this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbuyer.Location = new System.Drawing.Point(112, 191);
-            this.txtbuyer.Name = "txtbuyer";
-            this.txtbuyer.Size = new System.Drawing.Size(66, 23);
-            this.txtbuyer.TabIndex = 125;
             // 
             // labelBuyer
             // 
             this.labelBuyer.Location = new System.Drawing.Point(13, 191);
             this.labelBuyer.Name = "labelBuyer";
-            this.labelBuyer.Size = new System.Drawing.Size(95, 23);
+            this.labelBuyer.Size = new System.Drawing.Size(102, 23);
             this.labelBuyer.TabIndex = 126;
             this.labelBuyer.Text = "Buyer";
             // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(13, 370);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(102, 22);
+            this.label5.TabIndex = 142;
+            this.label5.Text = "Order Company";
+            // 
+            // comboOrderCompany
+            // 
+            this.comboOrderCompany.BackColor = System.Drawing.Color.White;
+            this.comboOrderCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboOrderCompany.FormattingEnabled = true;
+            this.comboOrderCompany.IsAddEmpty = true;
+            this.comboOrderCompany.IsOrderCompany = null;
+            this.comboOrderCompany.IsSupportUnselect = true;
+            this.comboOrderCompany.Junk = null;
+            this.comboOrderCompany.Location = new System.Drawing.Point(118, 370);
+            this.comboOrderCompany.Name = "comboOrderCompany";
+            this.comboOrderCompany.OldText = "";
+            this.comboOrderCompany.Size = new System.Drawing.Size(214, 24);
+            this.comboOrderCompany.TabIndex = 143;
+            // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(111, 333);
+            this.comboCategory.Location = new System.Drawing.Point(117, 333);
             this.comboCategory.Name = "comboCategory";
+            this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(238, 24);
             this.comboCategory.TabIndex = 141;
             this.comboCategory.Type = "Pms_GMT_Simple";
             // 
+            // txtbuyer
+            // 
+            this.txtbuyer.BackColor = System.Drawing.Color.White;
+            this.txtbuyer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbuyer.Location = new System.Drawing.Point(118, 191);
+            this.txtbuyer.Name = "txtbuyer";
+            this.txtbuyer.Size = new System.Drawing.Size(66, 23);
+            this.txtbuyer.TabIndex = 125;
+            // 
+            // txtcountryDestination
+            // 
+            this.txtcountryDestination.DisplayBox1Binding = "";
+            this.txtcountryDestination.Location = new System.Drawing.Point(118, 299);
+            this.txtcountryDestination.Name = "txtcountryDestination";
+            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.TabIndex = 116;
+            this.txtcountryDestination.TextBox1Binding = "";
+            // 
+            // txtcustcd
+            // 
+            this.txtcustcd.BackColor = System.Drawing.Color.White;
+            this.txtcustcd.BrandObjectName = null;
+            this.txtcustcd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtcustcd.Location = new System.Drawing.Point(118, 262);
+            this.txtcustcd.Name = "txtcustcd";
+            this.txtcustcd.Size = new System.Drawing.Size(125, 23);
+            this.txtcustcd.TabIndex = 115;
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(118, 227);
+            this.txtbrand.MyDocumentdName = null;
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(84, 23);
+            this.txtbrand.TabIndex = 105;
+            // 
             // R12
             // 
-            this.ClientSize = new System.Drawing.Size(580, 409);
+            this.ClientSize = new System.Drawing.Size(580, 427);
+            this.Controls.Add(this.comboOrderCompany);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.comboCategory);
             this.Controls.Add(this.labelBuyer);
             this.Controls.Add(this.txtbuyer);
@@ -307,7 +337,11 @@
             this.Controls.Add(this.labelFCRDate);
             this.IsSupportToPrint = false;
             this.Name = "R12";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R12. Factory CMT Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelFCRDate, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
             this.Controls.SetChildIndex(this.labelCategory, 0);
@@ -331,6 +365,8 @@
             this.Controls.SetChildIndex(this.txtbuyer, 0);
             this.Controls.SetChildIndex(this.labelBuyer, 0);
             this.Controls.SetChildIndex(this.comboCategory, 0);
+            this.Controls.SetChildIndex(this.label5, 0);
+            this.Controls.SetChildIndex(this.comboOrderCompany, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,5 +394,7 @@
         private Class.Txtbuyer txtbuyer;
         private Win.UI.Label labelBuyer;
         private Class.ComboDropDownList comboCategory;
+        private Class.ComboCompany comboOrderCompany;
+        private Win.UI.Label label5;
     }
 }
