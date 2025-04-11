@@ -10,7 +10,7 @@
     [AddName]    VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_AddName] DEFAULT ('') NOT NULL,
     [EditDate]   DATETIME     NULL,
     [EditName]   VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_EditName] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED ([CountryID] ASC, [ArtWorkID] ASC, [CostTypeID] ASC, [BeginDate] ASC)
+    CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED ([CountryID] ASC, [ArtWorkID] ASC, [CostTypeID] ASC, [BeginDate] ASC,[OrderCompanyID] ASC)
 );
 
 
