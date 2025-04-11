@@ -855,7 +855,7 @@ select
 
 	------------------------------------------------Before ------------------------------------------------
 	,[Phase before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Phase, BeforeDataP05.Phase)
-	,[Version before inline] = IIF(AfterData.SourceTable = 'PIE P0303', BeforeDataP03.Version, BeforeDataP05.Version)
+	,[Version before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Version, BeforeDataP05.Version)
 	,[Optrs before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
 	,[GSD time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
 	,[Takt time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Takt, BeforeDataP05.Takt)
@@ -939,16 +939,26 @@ outer apply(
 outer apply(
 	select top 1 *
 	from (
-		select *,SourceTable='P03' from #P03MaxVer
-		union
-		select *,SourceTable='P05' from #P05MaxVer
-		union
-		select *,SourceTable='P06' from #P06MaxVer
-	)LastData
-	where b.StyleUkey = LastData.StyleUKey 
-		and a.FactoryID = LastData.FactoryID 
-		and b.ComboType = LastData.ComboType 
-	order by ISNULL(EditDate,AddDate) desc
+		select *
+		from (
+			select *,SourceTable='P03' from #P03MaxVer
+			union
+			select *,SourceTable='P05' from #P05MaxVer
+			union
+			select *,SourceTable='P06' from #P06MaxVer
+		)LastData
+		where b.StyleUkey = LastData.StyleUKey 
+			and a.FactoryID = LastData.FactoryID 
+			and b.ComboType = LastData.ComboType 
+	)aa
+	ORDER BY 
+	  CASE Phase
+		WHEN 'Final' THEN 3
+		WHEN 'Prelim' THEN 2
+		WHEN 'Initial' THEN 1
+		ELSE 0
+	  END DESC,
+	  Version DESC
 )LastVersion
 
 drop table #BaseData
