@@ -245,7 +245,7 @@
             this.comboOrderCompany.Location = new System.Drawing.Point(118, 231);
             this.comboOrderCompany.Name = "comboOrderCompany";
             this.comboOrderCompany.OldText = "";
-            this.comboOrderCompany.Size = new System.Drawing.Size(214, 24);
+            this.comboOrderCompany.Size = new System.Drawing.Size(238, 24);
             this.comboOrderCompany.TabIndex = 150;
             // 
             // label5
