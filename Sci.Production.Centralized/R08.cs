@@ -854,15 +854,15 @@ select
 	------------------------------------------------After ------------------------------------------------
 
 	------------------------------------------------Before ------------------------------------------------
-	,[Phase before inline] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.Phase, BeforeDataP05.Phase)
-	,[Version before inline] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.Version, BeforeDataP05.Version)
-	,[Optrs before inline] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
-	,[GSD time] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
-	,[Takt time] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.Takt, BeforeDataP05.Takt)
+	,[Phase before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Phase, BeforeDataP05.Phase)
+	,[Version before inline] = IIF(AfterData.SourceTable = 'PIE P0303', BeforeDataP03.Version, BeforeDataP05.Version)
+	,[Optrs before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
+	,[GSD time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
+	,[Takt time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Takt, BeforeDataP05.Takt)
 
-	,[LBR before inline] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Before inline Is From] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
-	,[Before inline Status] = IIF(AfterData.SourceTable = 'P03', BeforeDataP03.Status,BeforeDataP05.Status) 
+	,[LBR before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.LBR,BeforeDataP05.LBR) 
+	,[Before inline Is From] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
+	,[Before inline Status] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Status,BeforeDataP05.Status) 
 	------------------------------------------------Before ------------------------------------------------
 
 	,[Optrs Diff] = ISNULL(AfterData.CurrentOperators,0) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
