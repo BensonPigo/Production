@@ -249,7 +249,7 @@
             this.comboOrderCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderCompany.FormattingEnabled = true;
             this.comboOrderCompany.IsAddEmpty = true;
-            this.comboOrderCompany.IsOrderCompany = null;
+            this.comboOrderCompany.IsOrderCompany = true;
             this.comboOrderCompany.IsSupportUnselect = true;
             this.comboOrderCompany.Junk = null;
             this.comboOrderCompany.Location = new System.Drawing.Point(118, 370);
