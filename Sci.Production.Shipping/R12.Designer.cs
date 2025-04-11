@@ -249,13 +249,13 @@
             this.comboOrderCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboOrderCompany.FormattingEnabled = true;
             this.comboOrderCompany.IsAddEmpty = true;
-            this.comboOrderCompany.IsOrderCompany = null;
+            this.comboOrderCompany.IsOrderCompany = true;
             this.comboOrderCompany.IsSupportUnselect = true;
             this.comboOrderCompany.Junk = null;
             this.comboOrderCompany.Location = new System.Drawing.Point(118, 370);
             this.comboOrderCompany.Name = "comboOrderCompany";
             this.comboOrderCompany.OldText = "";
-            this.comboOrderCompany.Size = new System.Drawing.Size(214, 24);
+            this.comboOrderCompany.Size = new System.Drawing.Size(237, 24);
             this.comboOrderCompany.TabIndex = 143;
             // 
             // comboCategory
@@ -286,7 +286,7 @@
             this.txtcountryDestination.DisplayBox1Binding = "";
             this.txtcountryDestination.Location = new System.Drawing.Point(118, 299);
             this.txtcountryDestination.Name = "txtcountryDestination";
-            this.txtcountryDestination.Size = new System.Drawing.Size(232, 22);
+            this.txtcountryDestination.Size = new System.Drawing.Size(237, 22);
             this.txtcountryDestination.TabIndex = 116;
             this.txtcountryDestination.TextBox1Binding = "";
             // 
