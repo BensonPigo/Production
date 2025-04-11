@@ -635,8 +635,8 @@ RankedTable AS (
 )
 
 --SELECT * FROM RankedTable WHERE RowNum = 1;
-INSERT INTO #AfterData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID)
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID
+INSERT INTO #AfterData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID,Status)
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID,Status
 FROM RankedTable
 WHERE RowNum = 1
 ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate 
