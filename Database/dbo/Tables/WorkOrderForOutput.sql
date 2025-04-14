@@ -51,6 +51,8 @@
 
 
 
+
+
 	GO
 
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'流水號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'WorkOrderForOutput', @level2type=N'COLUMN',@level2name=N'Ukey'
@@ -182,4 +184,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排裁剪�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後創立CutRef的時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'WorkOrderForOutput', @level2type = N'COLUMN', @level2name = N'LastCreateCutRefDate';
+
+
+GO
+CREATE NONCLUSTERED INDEX [ForP02]
+    ON [dbo].[WorkOrderForOutput]([WorkOrderForPlanningUkey] ASC);
 
