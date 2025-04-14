@@ -840,42 +840,43 @@ select
     ,[GSD Style]= ISNULL(BeforeDataP03.[GSD Style],BeforeDataP05.[GSD Style])
     ,[GSD Season]= ISNULL(BeforeDataP03.[GSD Season],BeforeDataP05.[GSD Season])
     ,[GSD BrandID]= ISNULL(BeforeDataP03.[GSD BrandID],BeforeDataP05.[GSD BrandID])
-	,[Phase after inline] = AfterData.Phase
-	,[Version after inline] = AfterData.Version
-	,[Optrs after inline] = AfterData.CurrentOperators
-    ,[Ori. Total GSD Time] = AfterData.[Ori. Total GSD Time]
-	,[Cycle Time] = AfterData.TotalCycle
-	,[Avg. Cycle] = AfterData.AvgCycle
-	,[LBR after inline] = AfterData.LBR
-	,[Target LBR] = LinebalancingTarget.Target
-	,[After inline Is From] = AfterData.SourceTable
-	,[After inline Status] =  AfterData.Status
-	,[Est. PPH] = AfterData.EstPPH
+	,[Phase after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Phase, AfterDataP03.Phase)
+	,[Version after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Version, AfterDataP03.Version)
+	,[Optrs after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.CurrentOperators, AfterDataP03.CurrentOperators)
+    ,[Ori. Total GSD Time] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.[Ori. Total GSD Time] , AfterDataP03.[Ori. Total GSD Time] )
+	,[Cycle Time] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.TotalCycle, AfterDataP03.TotalCycle)
+	,[Avg. Cycle] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.AvgCycle, AfterDataP03.AvgCycle)
+	,[LBR after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.LBR, AfterDataP03.LBR)
+	,[Target LBR] = LinebalancingTarget.Target 
+	,[After inline Is From] =  ISNULL(AfterDataP03.SourceTable,AfterDataP06.SourceTable)
+	,[After inline Status] =  IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Status, AfterDataP03.Status)
+	,[Est. PPH] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.EstPPH, AfterDataP03.EstPPH)
 	------------------------------------------------After ------------------------------------------------
 
 	------------------------------------------------Before ------------------------------------------------
-	,[Phase before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Phase, BeforeDataP05.Phase)
-	,[Version before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Version, BeforeDataP05.Version)
-	,[Optrs before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
-	,[GSD time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
-	,[Takt time] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Takt, BeforeDataP05.Takt)
+	,[Phase before inline] = ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase)
+	,[Version before inline] = ISNULL(BeforeDataP03.Version, BeforeDataP05.Version)
+	,[Optrs before inline] = ISNULL(BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
+	,[GSD time] = ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
+	,[Takt time] = ISNULL(BeforeDataP03.Takt, BeforeDataP05.Takt)
 
-	,[LBR before inline] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Before inline Is From] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
-	,[Before inline Status] = IIF(AfterData.SourceTable = 'IE P03', BeforeDataP03.Status,BeforeDataP05.Status) 
+	,[LBR before inline] = ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
+	,[Before inline Is From] = ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
+	,[Before inline Status] = ISNULL(BeforeDataP03.Status,BeforeDataP05.Status) 
 	------------------------------------------------Before ------------------------------------------------
 
-	,[Optrs Diff] = ISNULL(AfterData.CurrentOperators,0) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
-	,[LBR Diff (%)] = ISNULL(AfterData.LBR,0) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Total % Time diff] = IIF(ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - AfterData.TotalCycle) / ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) ) * 100
-	,[By style] = IIF(AfterData.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
-	,[By Line] = IIF(AfterData.Status = 'Confirmed','Y','N')
+	,[Optrs Diff] = ISNULL(AfterDataP03.CurrentOperators,AfterDataP06.CurrentOperators) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
+	,[LBR Diff (%)] = ISNULL(AfterDataP03.LBR,AfterDataP06.LBR) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
+	,[Total % Time diff] = IIF(ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - ISNULL(AfterDataP03.TotalCycle, AfterDataP06.TotalCycle) / ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) )) * 100
+	,[By style] = IIF(AfterDataP03.Status = 'Confirmed'  OR AfterDataP06.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
+	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed' OR AfterDataP06.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
-	,[History LBR] = CASE WHEN AfterData.SourceTable = 'IE P03' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
-						  WHEN AfterData.SourceTable = 'IE P06' and CAST(AfterData.EditDate as Date) = a.OutputDate THEN AfterData.LBR
-					 ELSE NULL END
+	,[History LBR] = IIF(AfterDataP03.EditDate IS NOT NULL and CAST(AfterDataP03.EditDate as Date) = a.OutputDate
+			, AfterDataP03.LBR
+			, AfterDataP06.LBR
+		) 
     ,b.Category
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
@@ -888,18 +889,25 @@ Outer Apply(
 	---- Avg. Cycle 公式: [Total Cycle Time] / [Optrs after inline]
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
 	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
-	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
-				  WHEN lm.SourceTable = 'IE P06' THEN IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
-			 ELSE 0 END
+	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
 	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
-	,[EstPPH] =  CASE WHEN lm.SourceTable = 'IE P03' THEN IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-					  WHEN lm.SourceTable = 'IE P06' THEN  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-				 ELSE 0 END	
+	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #FinalAfterData lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType 
-	--and a.OutputDate = lm.OutputDate
-)AfterData
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P03'
+)AfterDataP03
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Optrs after inline]
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
+	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
+	--- EOLR公式：3600 / [Highest Cycle Time]
+	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
+	from #FinalAfterData lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P06'
+)AfterDataP06
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
@@ -910,7 +918,7 @@ Outer Apply(
 			 ELSE 0 END
 	from #FinalBeforeData lm
 	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType 
-
+	and lm.SourceTable = 'IE P03'
 )BeforeDataP03
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
