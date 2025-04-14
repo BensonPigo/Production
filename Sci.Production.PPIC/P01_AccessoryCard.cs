@@ -223,7 +223,7 @@ WHERE o.ID= @ID
                     sheetCover.Range["B12"].Value = dr["FactoryID"].ToString();
                     sheetCover.Range["B13"].Value = dr["ID"].ToString();
 
-                    if (string.IsNullOrWhiteSpace(dr["Picture1"].ToString()) == false)
+                    if (string.IsNullOrWhiteSpace(dr["Picture1"].ToString()) == false && picturePath != null)
                     {
                         var imgpath = System.IO.Path.Combine(picturePath, dr["Picture1"].ToString());
                         if (System.IO.File.Exists(imgpath))
@@ -240,7 +240,7 @@ WHERE o.ID= @ID
                         }
                     }
 
-                    if (string.IsNullOrWhiteSpace(dr["Picture2"].ToString()) == false)
+                    if (string.IsNullOrWhiteSpace(dr["Picture2"].ToString()) == false && picturePath != null)
                     {
                         var imgpath = System.IO.Path.Combine(picturePath, dr["Picture2"].ToString());
                         if (System.IO.File.Exists(imgpath))

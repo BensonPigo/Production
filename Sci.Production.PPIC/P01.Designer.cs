@@ -709,7 +709,7 @@
             this.btnAccessory.TabIndex = 244;
             this.btnAccessory.Text = "Accessory Card";
             this.btnAccessory.UseVisualStyleBackColor = true;
-            this.btnAccessory.Click += new System.EventHandler(this.btnAccessory_Click);
+            this.btnAccessory.Click += new System.EventHandler(this.BtnAccessory_Click);
             // 
             // label8
             // 
@@ -3711,7 +3711,7 @@
             this.btn_ArtworkTestDox.TabIndex = 255;
             this.btn_ArtworkTestDox.Text = "Artwork Test Dox";
             this.btn_ArtworkTestDox.UseVisualStyleBackColor = true;
-            this.btn_ArtworkTestDox.Click += new System.EventHandler(this.btn_ArtworkTestDox_Click);
+            this.btn_ArtworkTestDox.Click += new System.EventHandler(this.Btn_ArtworkTestDox_Click);
             // 
             // txtOrderType
             // 

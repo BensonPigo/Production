@@ -1952,16 +1952,30 @@ and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDiv
             }
         }
 
-        private void btn_ArtworkTestDox_Click(object sender, EventArgs e)
+        private void Btn_ArtworkTestDox_Click(object sender, EventArgs e)
         {
             P01_ArtworkTestDox frm = new P01_ArtworkTestDox(MyUtility.Convert.GetInt(this.CurrentMaintain["StyleUkey"]));
             frm.ShowDialog();
         }
 
-        private void btnAccessory_Click(object sender, EventArgs e)
+        private void BtnAccessory_Click(object sender, EventArgs e)
         {
-            P01_AccessoryCard frm = new P01_AccessoryCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
-            frm.ShowDialog();
+            if (this.CurrentMaintain["PFETA"].ToString() != string.Empty && Convert.ToDateTime(this.CurrentMaintain["PFETA"]).AddDays(-7) < DateTime.Today)
+            {
+                P01_AccessoryCard frm = new P01_AccessoryCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+                frm.ShowDialog();
+            }
+            else
+            {
+                if (this.CurrentMaintain["PFETA"].ToString() != string.Empty)
+                {
+                    MyUtility.Msg.InfoBox("Trim Card can only downloaded after " + Convert.ToDateTime(this.CurrentMaintain["PFETA"]).AddDays(-7).ToString());
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("Trim Card can not downloaded without PF ETA.");
+                }
+            }
         }
     }
 }

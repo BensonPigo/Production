@@ -30,13 +30,13 @@
         {
             this.components = new System.ComponentModel.Container();
             this.RdbPanel = new Sci.Win.UI.RadioPanel();
+            this.RdbSCI = new System.Windows.Forms.RadioButton();
+            this.RdbNF = new System.Windows.Forms.RadioButton();
             this.btnOK = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
             this.panel = new Sci.Win.UI.Panel();
             this.grid = new Sci.Win.UI.Grid();
             this.gridBS = new Sci.Win.UI.ListControlBindingSource(this.components);
-            this.RdbNF = new System.Windows.Forms.RadioButton();
-            this.RdbSCI = new System.Windows.Forms.RadioButton();
             this.RdbPanel.SuspendLayout();
             this.panel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
@@ -51,6 +51,30 @@
             this.RdbPanel.Name = "RdbPanel";
             this.RdbPanel.Size = new System.Drawing.Size(148, 33);
             this.RdbPanel.TabIndex = 8;
+            // 
+            // RdbSCI
+            // 
+            this.RdbSCI.AutoSize = true;
+            this.RdbSCI.Checked = true;
+            this.RdbSCI.ForeColor = System.Drawing.Color.Red;
+            this.RdbSCI.Location = new System.Drawing.Point(3, 3);
+            this.RdbSCI.Name = "RdbSCI";
+            this.RdbSCI.Size = new System.Drawing.Size(47, 21);
+            this.RdbSCI.TabIndex = 1;
+            this.RdbSCI.TabStop = true;
+            this.RdbSCI.Text = "SCI";
+            this.RdbSCI.UseVisualStyleBackColor = true;
+            // 
+            // RdbNF
+            // 
+            this.RdbNF.AutoSize = true;
+            this.RdbNF.ForeColor = System.Drawing.Color.Red;
+            this.RdbNF.Location = new System.Drawing.Point(56, 3);
+            this.RdbNF.Name = "RdbNF";
+            this.RdbNF.Size = new System.Drawing.Size(75, 21);
+            this.RdbNF.TabIndex = 2;
+            this.RdbNF.Text = "N.FACE";
+            this.RdbNF.UseVisualStyleBackColor = true;
             // 
             // btnOK
             // 
@@ -108,30 +132,6 @@
             this.grid.Size = new System.Drawing.Size(320, 314);
             this.grid.TabIndex = 0;
             this.grid.TabStop = false;
-            // 
-            // RdbNF
-            // 
-            this.RdbNF.AutoSize = true;
-            this.RdbNF.ForeColor = System.Drawing.Color.Red;
-            this.RdbNF.Location = new System.Drawing.Point(56, 3);
-            this.RdbNF.Name = "RdbNF";
-            this.RdbNF.Size = new System.Drawing.Size(75, 21);
-            this.RdbNF.TabIndex = 2;
-            this.RdbNF.TabStop = true;
-            this.RdbNF.Text = "N.FACE";
-            this.RdbNF.UseVisualStyleBackColor = true;
-            // 
-            // RdbSCI
-            // 
-            this.RdbSCI.AutoSize = true;
-            this.RdbSCI.ForeColor = System.Drawing.Color.Red;
-            this.RdbSCI.Location = new System.Drawing.Point(3, 3);
-            this.RdbSCI.Name = "RdbSCI";
-            this.RdbSCI.Size = new System.Drawing.Size(47, 21);
-            this.RdbSCI.TabIndex = 1;
-            this.RdbSCI.TabStop = true;
-            this.RdbSCI.Text = "SCI";
-            this.RdbSCI.UseVisualStyleBackColor = true;
             // 
             // P01_AccessoryCard
             // 
