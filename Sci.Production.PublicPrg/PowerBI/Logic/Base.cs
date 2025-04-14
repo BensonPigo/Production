@@ -68,6 +68,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ChangeoverCheckList,
             P_ESG_Injury,
             P_CMPByDate,
+            P_SewingDailyOutput,
         }
 
         /// <summary>
@@ -503,6 +504,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_ESG_Injury().P_ESG_Injury(item.SDate, item.EDate);
                 case ListName.P_CMPByDate:
                     return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
+                case ListName.P_SewingDailyOutput:
+                    return new P_Import_SewingDailyOutput().P_SewingDailyOutput(item.SDate, item.EDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
