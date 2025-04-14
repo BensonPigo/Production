@@ -1337,13 +1337,13 @@
             this.txtDocumentRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtDocumentRefNo.Location = new System.Drawing.Point(412, 405);
             this.txtDocumentRefNo.Name = "txtDocumentRefNo";
-            this.txtDocumentRefNo.Size = new System.Drawing.Size(120, 23);
+            this.txtDocumentRefNo.Size = new System.Drawing.Size(190, 23);
             this.txtDocumentRefNo.TabIndex = 89;
             // 
             // btnDocumentRefNoFormat
             // 
             this.btnDocumentRefNoFormat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDocumentRefNoFormat.Location = new System.Drawing.Point(538, 405);
+            this.btnDocumentRefNoFormat.Location = new System.Drawing.Point(607, 404);
             this.btnDocumentRefNoFormat.Name = "btnDocumentRefNoFormat";
             this.btnDocumentRefNoFormat.Size = new System.Drawing.Size(30, 25);
             this.btnDocumentRefNoFormat.TabIndex = 90;
