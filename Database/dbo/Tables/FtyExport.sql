@@ -5,7 +5,7 @@
     [ImportCountry] VARCHAR (2)     CONSTRAINT [DF_FtyExport_ImportCountry] DEFAULT ('') NULL,
     [ExportPort]    VARCHAR (20)    CONSTRAINT [DF_FtyExport_ExportPort] DEFAULT ('') NULL,
     [ImportPort]    VARCHAR (20)    CONSTRAINT [DF_FtyExport_ImportPort] DEFAULT ('') NULL,
-    [CYCFS]         VARCHAR (3)     CONSTRAINT [DF_FtyExport_CYCFS] DEFAULT ('') NULL,
+    [CYCFS]         VARCHAR (6)     CONSTRAINT [DF_FtyExport_CYCFS] DEFAULT ('') NULL,
     [ShipModeID]    VARCHAR (10)    CONSTRAINT [DF_FtyExport_ShipModeID] DEFAULT ('') NULL,
     [Consignee]     VARCHAR (8)     CONSTRAINT [DF_FtyExport_Consignee] DEFAULT ('') NULL,
     [Handle]        VARCHAR (10)    CONSTRAINT [DF_FtyExport_Handle] DEFAULT ('') NULL,
@@ -32,6 +32,7 @@
     [ShipDate] DATE NULL, 
     [ETA] DATE NULL, 
     [ExpressID] VARCHAR(13) NOT NULL DEFAULT (''), 
+    [OrderCompanyID] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_FtyExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -160,3 +161,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FtyExport',
     @level2type = N'COLUMN',
     @level2name = N'ETA'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為訂單公司別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FtyExport',
+    @level2type = N'COLUMN',
+    @level2name = N'OrderCompanyID'

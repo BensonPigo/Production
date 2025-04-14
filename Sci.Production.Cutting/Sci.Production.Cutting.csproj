@@ -81,6 +81,11 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Word\14.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Word.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Tools.Excel, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -143,6 +148,42 @@
     </Compile>
     <Compile Include="B09.Designer.cs">
       <DependentUpon>B09.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12.Designer.cs">
+      <DependentUpon>B12.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_ImportFromPMS.Designer.cs">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B12_SetHoliday.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B12_SetHoliday.Designer.cs">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13.Designer.cs">
+      <DependentUpon>B13.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Batch assign special time.Designer.cs">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </Compile>
+    <Compile Include="B13_Set.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B13_Set.Designer.cs">
+      <DependentUpon>B13_Set.cs</DependentUpon>
     </Compile>
     <Compile Include="P02_ExcludefabriccomboinWIP.cs">
       <SubType>Form</SubType>
@@ -604,6 +645,18 @@
     <Compile Include="R13.Designer.cs">
       <DependentUpon>R13.cs</DependentUpon>
     </Compile>
+    <Compile Include="R14.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R14.Designer.cs">
+      <DependentUpon>R14.cs</DependentUpon>
+    </Compile>
+    <Compile Include="R15.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R15.Designer.cs">
+      <DependentUpon>R15.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -614,6 +667,24 @@
     </EmbeddedResource>
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12.resx">
+      <DependentUpon>B12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_ImportFromPMS.resx">
+      <DependentUpon>B12_ImportFromPMS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B12_SetHoliday.resx">
+      <DependentUpon>B12_SetHoliday.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13.resx">
+      <DependentUpon>B13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Batch assign special time.resx">
+      <DependentUpon>B13_Batch assign special time.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B13_Set.resx">
+      <DependentUpon>B13_Set.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
       <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
@@ -842,6 +913,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R13.resx">
       <DependentUpon>R13.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R14.resx">
+      <DependentUpon>R14.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R15.resx">
+      <DependentUpon>R15.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

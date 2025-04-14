@@ -13,8 +13,8 @@
     [Attachment] VARCHAR(100) CONSTRAINT [DF_LineMappingBalancing_Detail_Attachment] DEFAULT ('') NOT NULL, 
     [SewingMachineAttachmentID] VARCHAR(200) CONSTRAINT [DF_LineMappingBalancing_Detail_SewingMachineAttachmentID] DEFAULT ('') NOT NULL, 
     [Template] VARCHAR(100) CONSTRAINT [DF_LineMappingBalancing_Detail_Template] DEFAULT ('') NOT NULL, 
-    [GSD] NUMERIC(6, 2) CONSTRAINT [DF_LineMappingBalancing_Detail_GSD] DEFAULT (0) NOT NULL, 
-    [Cycle] NUMERIC(6, 2) CONSTRAINT [DF_LineMappingBalancing_Detail_Cycle] DEFAULT (0) NOT NULL, 
+    [GSD] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_Detail_GSD] DEFAULT (0) NOT NULL, 
+    [Cycle] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_Detail_Cycle] DEFAULT (0) NOT NULL, 
     [SewerDiffPercentage] NUMERIC(3, 2) CONSTRAINT [DF_LineMappingBalancing_Detail_SewerDiffPercentage] DEFAULT (0) NOT NULL, 
     [DivSewer] NUMERIC(5, 4) CONSTRAINT [DF_LineMappingBalancing_Detail_DivSewer] DEFAULT (0) NOT NULL, 
     [OriSewer] NUMERIC(5, 4) CONSTRAINT [DF_LineMappingBalancing_Detail_OriSewer] DEFAULT (0) NOT NULL, 
@@ -23,6 +23,8 @@
     [Notice] NVARCHAR(200) CONSTRAINT [DF_LineMappingBalancing_Detail_Notice] DEFAULT ('') NOT NULL, 
     [EmployeeID] VARCHAR(10) CONSTRAINT [DF_LineMappingBalancing_Detail_EmployeeID] DEFAULT ('') NOT NULL, 
     [IsNonSewingLine] BIT CONSTRAINT [DF_LineMappingBalancing_Detail_IsNonSewingLine] DEFAULT (0) NOT NULL, 
+    [IsAdd] BIT NULL, 
+    [GroupNo] INT NOT NULL DEFAULT (1), 
     CONSTRAINT [PK_LineMappingBalancing_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
@@ -197,3 +199,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing_Detail',
     @level2type = N'COLUMN',
     @level2name = N'IsNonSewingLine'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷是否工廠自行新增的資料',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'IsAdd'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'判斷該工段是否為新增獨立工段',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'GroupNo'

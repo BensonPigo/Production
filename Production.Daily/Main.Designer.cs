@@ -42,6 +42,7 @@
             this.labelFtpID = new Sci.Win.UI.Label();
             this.labelFtpIP = new Sci.Win.UI.Label();
             this.panelMail = new Sci.Win.UI.Panel();
+            this.txtMailServerPort = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
             this.label4 = new Sci.Win.UI.Label();
             this.checkSendBack = new Sci.Win.UI.CheckBox();
@@ -78,7 +79,8 @@
             this.StatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.labelProgress = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnTestWebApi = new Sci.Win.UI.Button();
-            this.txtMailServerPort = new Sci.Win.UI.TextBox();
+            this.btnFileCopy = new Sci.Win.UI.Button();
+            this.btnRARCheck = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).BeginInit();
             this.panelFTP.SuspendLayout();
@@ -120,7 +122,7 @@
             // 
             this.textFtpPwd.BackColor = System.Drawing.Color.White;
             this.textFtpPwd.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpPwd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpPwd", true));
+            this.textFtpPwd.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpPwd", true));
             this.textFtpPwd.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpPwd.Location = new System.Drawing.Point(573, 10);
             this.textFtpPwd.Name = "textFtpPwd";
@@ -131,7 +133,7 @@
             // 
             this.textFtpID.BackColor = System.Drawing.Color.White;
             this.textFtpID.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpID", true));
+            this.textFtpID.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpID", true));
             this.textFtpID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpID.Location = new System.Drawing.Point(369, 10);
             this.textFtpID.Name = "textFtpID";
@@ -160,7 +162,7 @@
             // 
             this.textFtpIP.BackColor = System.Drawing.Color.White;
             this.textFtpIP.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.textFtpIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FtpIP", true));
+            this.textFtpIP.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SFtpIP", true));
             this.textFtpIP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.textFtpIP.Location = new System.Drawing.Point(79, 10);
             this.textFtpIP.Name = "textFtpIP";
@@ -181,7 +183,7 @@
             this.labelFtpPwd.Name = "labelFtpPwd";
             this.labelFtpPwd.Size = new System.Drawing.Size(90, 21);
             this.labelFtpPwd.TabIndex = 4;
-            this.labelFtpPwd.Text = "FTP Password";
+            this.labelFtpPwd.Text = "SFTP Password";
             // 
             // labelFtpID
             // 
@@ -189,7 +191,7 @@
             this.labelFtpID.Name = "labelFtpID";
             this.labelFtpID.Size = new System.Drawing.Size(66, 21);
             this.labelFtpID.TabIndex = 2;
-            this.labelFtpID.Text = "FTP ID";
+            this.labelFtpID.Text = "SFTP ID";
             // 
             // labelFtpIP
             // 
@@ -197,7 +199,7 @@
             this.labelFtpIP.Name = "labelFtpIP";
             this.labelFtpIP.Size = new System.Drawing.Size(66, 21);
             this.labelFtpIP.TabIndex = 0;
-            this.labelFtpIP.Text = "FTP IP";
+            this.labelFtpIP.Text = "SFTP IP";
             // 
             // panelMail
             // 
@@ -226,8 +228,19 @@
             this.panelMail.DrawBorder = true;
             this.panelMail.Location = new System.Drawing.Point(12, 219);
             this.panelMail.Name = "panelMail";
-            this.panelMail.Size = new System.Drawing.Size(825, 191);
+            this.panelMail.Size = new System.Drawing.Size(928, 191);
             this.panelMail.TabIndex = 3;
+            // 
+            // txtMailServerPort
+            // 
+            this.txtMailServerPort.BackColor = System.Drawing.Color.White;
+            this.txtMailServerPort.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMailServerPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MailServerPort", true));
+            this.txtMailServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMailServerPort.Location = new System.Drawing.Point(321, 10);
+            this.txtMailServerPort.Name = "txtMailServerPort";
+            this.txtMailServerPort.Size = new System.Drawing.Size(44, 21);
+            this.txtMailServerPort.TabIndex = 19;
             // 
             // label1
             // 
@@ -545,7 +558,7 @@
             // 
             this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnClose.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnClose.Location = new System.Drawing.Point(729, 183);
+            this.btnClose.Location = new System.Drawing.Point(730, 180);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(106, 30);
             this.btnClose.TabIndex = 7;
@@ -558,9 +571,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.StatusLabel,
             this.labelProgress});
-            this.statusStrip.Location = new System.Drawing.Point(0, 422);
+            this.statusStrip.Location = new System.Drawing.Point(0, 547);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(846, 22);
+            this.statusStrip.Size = new System.Drawing.Size(949, 22);
             this.statusStrip.TabIndex = 8;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -587,16 +600,29 @@
             this.btnTestWebApi.UseVisualStyleBackColor = true;
             this.btnTestWebApi.Click += new System.EventHandler(this.btnTestWebApi_Click);
             // 
-            // txtMailServerPort
+            // btnFileCopy
             // 
-            this.txtMailServerPort.BackColor = System.Drawing.Color.White;
-            this.txtMailServerPort.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
-            this.txtMailServerPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "MailServerPort", true));
-            this.txtMailServerPort.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMailServerPort.Location = new System.Drawing.Point(321, 10);
-            this.txtMailServerPort.Name = "txtMailServerPort";
-            this.txtMailServerPort.Size = new System.Drawing.Size(44, 21);
-            this.txtMailServerPort.TabIndex = 19;
+            this.btnFileCopy.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnFileCopy.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnFileCopy.Location = new System.Drawing.Point(840, 37);
+            this.btnFileCopy.Name = "btnFileCopy";
+            this.btnFileCopy.Size = new System.Drawing.Size(106, 30);
+            this.btnFileCopy.TabIndex = 10;
+            this.btnFileCopy.Text = "Test File Upload";
+            this.btnFileCopy.UseVisualStyleBackColor = true;
+            this.btnFileCopy.Click += new System.EventHandler(this.btnFileCopy_Click);
+            // 
+            // btnRARCheck
+            // 
+            this.btnRARCheck.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnRARCheck.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnRARCheck.Location = new System.Drawing.Point(840, 74);
+            this.btnRARCheck.Name = "btnRARCheck";
+            this.btnRARCheck.Size = new System.Drawing.Size(106, 30);
+            this.btnRARCheck.TabIndex = 11;
+            this.btnRARCheck.Text = "Test RAR Check";
+            this.btnRARCheck.UseVisualStyleBackColor = true;
+            this.btnRARCheck.Click += new System.EventHandler(this.btnRARCheck_Click);
             // 
             // Main
             // 
@@ -604,7 +630,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnClose;
-            this.ClientSize = new System.Drawing.Size(846, 444);
+            this.ClientSize = new System.Drawing.Size(949, 569);
+            this.Controls.Add(this.btnRARCheck);
+            this.Controls.Add(this.btnFileCopy);
             this.Controls.Add(this.btnTestWebApi);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.btnClose);
@@ -631,6 +659,8 @@
             this.Controls.SetChildIndex(this.btnClose, 0);
             this.Controls.SetChildIndex(this.statusStrip, 0);
             this.Controls.SetChildIndex(this.btnTestWebApi, 0);
+            this.Controls.SetChildIndex(this.btnFileCopy, 0);
+            this.Controls.SetChildIndex(this.btnRARCheck, 0);
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridBS)).EndInit();
             this.panelFTP.ResumeLayout(false);
@@ -698,5 +728,7 @@
         private Sci.Win.UI.Button btnTestWebApi;
         private Sci.Win.UI.Label label1;
         private Sci.Win.UI.TextBox txtMailServerPort;
+        private Sci.Win.UI.Button btnFileCopy;
+        private Sci.Win.UI.Button btnRARCheck;
     }
 }

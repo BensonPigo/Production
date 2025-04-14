@@ -69,7 +69,7 @@ namespace Sci.Production.Class
             #region SQL CMD
             string sqlcmd = string.Format(
                 @"
-select *
+select distinct *
 from (
     Select Factory = ''
 
@@ -80,7 +80,7 @@ from (
 ) a
 order by Factory", (listFilte.Count > 0) ? "where " + listFilte.JoinToString("\n\rand ") : string.Empty);
             #endregion
-            result = DBProxy.Current.Select(null, sqlcmd, listSqlPar, out dtFactoryData);
+            result = DBProxy.Current.Select("Production", sqlcmd, listSqlPar, out dtFactoryData);
             if (result && dtFactoryData != null)
             {
                 this.DataSource = dtFactoryData;

@@ -486,7 +486,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>=iif(Fields!Desc.Value="", "", Fields!MDesc.Value)</Value>
+                                  <Value>=Fields!MDesc.Value</Value>
                                   <Style>
                                     <FontWeight>Bold</FontWeight>
                                     <TextDecoration>None</TextDecoration>
@@ -1206,7 +1206,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>ISSUE DATE:</Value>
+                  <Value>Print Time :</Value>
                   <Style />
                 </TextRun>
               </TextRuns>

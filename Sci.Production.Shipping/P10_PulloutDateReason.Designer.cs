@@ -56,7 +56,7 @@
             // panel2
             // 
             this.panel2.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panel2.Location = new System.Drawing.Point(843, 0);
+            this.panel2.Location = new System.Drawing.Point(1003, 0);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(5, 257);
             this.panel2.TabIndex = 1;
@@ -66,7 +66,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel3.Location = new System.Drawing.Point(5, 0);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(838, 5);
+            this.panel3.Size = new System.Drawing.Size(998, 5);
             this.panel3.TabIndex = 2;
             // 
             // panel4
@@ -76,13 +76,13 @@
             this.panel4.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.panel4.Location = new System.Drawing.Point(5, 214);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(838, 43);
+            this.panel4.Size = new System.Drawing.Size(998, 43);
             this.panel4.TabIndex = 3;
             // 
             // btnClose
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClose.Location = new System.Drawing.Point(755, 6);
+            this.btnClose.Location = new System.Drawing.Point(915, 6);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(80, 30);
             this.btnClose.TabIndex = 4;
@@ -93,7 +93,7 @@
             // btnSave
             // 
             this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSave.Location = new System.Drawing.Point(665, 6);
+            this.btnSave.Location = new System.Drawing.Point(825, 6);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(84, 30);
             this.btnSave.TabIndex = 2;
@@ -109,7 +109,7 @@
             this.panel5.Controls.Add(this.grid);
             this.panel5.Location = new System.Drawing.Point(5, 27);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(838, 187);
+            this.panel5.Size = new System.Drawing.Size(998, 187);
             this.panel5.TabIndex = 4;
             // 
             // grid
@@ -134,7 +134,7 @@
             this.grid.RowTemplate.Height = 24;
             this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid.ShowCellToolTips = false;
-            this.grid.Size = new System.Drawing.Size(838, 187);
+            this.grid.Size = new System.Drawing.Size(998, 187);
             this.grid.SupportEditMode = Sci.Win.UI.AdvEditModesReadOnly.True;
             this.grid.TabIndex = 0;
             this.grid.TabStop = false;
@@ -152,7 +152,7 @@
             // P10_PulloutDateReason
             // 
             this.AcceptButton = this.btnSave;
-            this.ClientSize = new System.Drawing.Size(848, 257);
+            this.ClientSize = new System.Drawing.Size(1008, 257);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.panel4);

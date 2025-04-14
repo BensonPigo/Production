@@ -31,6 +31,7 @@ namespace Sci.Production.Shipping
         private ToolStripMenuItem delete;
         private ToolStripMenuItem print;
         private ToolStripMenuItem batchprint;
+        public static int orderCompanyID = 0;
 
         private string carrierID = string.Empty;
 
@@ -138,6 +139,12 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from FOC PL# (Garment FOC)
         private void ImportFromFOCPL()
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             P02_ImportFromFOCPackingList callFOCPLForm = new P02_ImportFromFOCPackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
@@ -154,6 +161,12 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import Bulk PL#
         private void ImportBulkPL()
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             P02_ImportFromBulkPackingList callFOCPLForm = new P02_ImportFromBulkPackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
@@ -170,6 +183,12 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from FOC PL# (Garment FOC)
         private void ImportFromSamplePL()
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             P02_ImportFromSamplePackingList callFOCPLForm = new P02_ImportFromSamplePackingList(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callFOCPLForm.ShowDialog(this);
@@ -197,6 +216,12 @@ namespace Sci.Production.Shipping
         // Context Menu選擇Import from Raw Material Shipment Data (Fty WK#)
         private void ImportFromMaterialShipment()
         {
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             P02_ImportFromFtyWK callPurchaseForm = new P02_ImportFromFtyWK(this.CurrentMaintain);
             DataTable before_dt = ((DataTable)this.detailgridbs.DataSource).Copy();
             callPurchaseForm.ShowDialog(this);
@@ -552,6 +577,12 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain == null)
+            {
+                return;
+            }
+
+            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
             this.displayFrom.Value = MyUtility.GetValue.Lookup("NameEN", MyUtility.Convert.GetString(this.CurrentMaintain["FromSite"]), "Brand", "ID");
             this.displayTO.Value = string.Empty;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["ToTag"]) == "3")
@@ -614,6 +645,16 @@ where id='{0}' ", this.CurrentMaintain["ID"]);
             var dataTable = (DataTable)this.detailgridbs.DataSource;
             var list = dataTable.Select("CategoryName <> 'Dox'").ToList();
             this.checkBoxDoc.Checked = list.Count == 0 && dataTable.Rows.Count != 0 ? true : false;
+
+            if (!this.EditMode)
+            {
+                this.comboCompany.IsOrderCompany = null;
+                this.comboCompany.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -729,6 +770,7 @@ Order by CTNNo,Seq1,Seq2", masterID);
                         if (e.RowIndex != -1)
                         {
                             DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                            orderCompanyID = MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]);
 
                             if (MyUtility.Convert.GetString(dr["Category"]) == "1" || MyUtility.Convert.GetString(dr["Category"]) == "2" || MyUtility.Convert.GetString(dr["Category"]) == "3")
                             {
@@ -838,6 +880,12 @@ Order by CTNNo,Seq1,Seq2", masterID);
             this.txtCarrier.ReadOnly = true; // 因為Key Down事件，如果按Delete or Backspace按鍵會真的將字元給移除，如果跳出視窗後按Cancel的話，資料會不正確，所以就把此欄位設定為ReadOnly
             this.txtCarrierbyCustomer.ReadOnly = true;
             this.txtCarrierbyFty.ReadOnly = true;
+
+            // 只有新增時才能編輯修改
+            this.comboCompany.ReadOnly = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>
@@ -909,6 +957,9 @@ Order by CTNNo,Seq1,Seq2", masterID);
                 this.editRemark.ReadOnly = true;
                 this.txtCountryDestination.TextBox1.ReadOnly = true;
             }
+
+            // 只有新增時才能修改
+            this.comboCompany.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -1008,6 +1059,13 @@ Order by CTNNo,Seq1,Seq2", masterID);
             {
                 this.txtUserManager.TextBox1.Focus();
                 MyUtility.Msg.WarningBox("Manager can't empty");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.comboCompany.Select();
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
                 return false;
             }
 
@@ -2310,6 +2368,34 @@ and Dest='{this.CurrentMaintain["Dest"]}'
             var frm = new P02_History(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
             frm.Dispose();
+        }
+
+        private void ComboCompany_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCompany.SelectedIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain != null && this.DetailDatas.Count != 0)
+            {
+                bool hasSPNo = this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["OrderID"])).Any();
+
+                // 如果表身有SP# 並且表頭的OrderCompanyID改變就要判斷
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]) != MyUtility.Convert.GetInt(this.comboCompany.SelectedValue) && hasSPNo)
+                {
+                    DialogResult dioResult = MyUtility.Msg.QuestionBox(@" [Order Company] has been changed and all PL data will be clear.", buttons: MessageBoxButtons.YesNo);
+
+                    // Yes 就刪除所有表身資料
+                    if (dioResult == DialogResult.Yes)
+                    {
+                        foreach (DataRow item in this.DetailDatas)
+                        {
+                            item.Delete();
+                        }
+                    }
+                }
+            }
         }
     }
 }

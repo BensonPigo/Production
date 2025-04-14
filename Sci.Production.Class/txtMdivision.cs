@@ -3,6 +3,9 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Sci.Win.UI;
 using System.Data.SqlClient;
+using System;
+using System.Data;
+using Sci.Data;
 
 namespace Sci.Production.Class
 {
@@ -11,6 +14,58 @@ namespace Sci.Production.Class
     /// </summary>
     public partial class TxtMdivision : Win.UI.TextBox
     {
+        private bool _needInitialMdivision = false;
+        private bool _defaultValue = false;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether need initial Mdivision.
+        /// </summary>
+        public bool NeedInitialMdivision
+        {
+            get
+            {
+                return this._needInitialMdivision;
+            }
+
+            set
+            {
+                this._needInitialMdivision = value;
+                if (this._needInitialMdivision)
+                {
+                    List<SqlParameter> listSqlPar = new List<SqlParameter>()
+                    {
+                        new SqlParameter("@Fty", Env.User.Factory),
+                    };
+
+                    this.Text = MyUtility.GetValue.Lookup("Select MdivisionID from Factory with (nolock) where ftygroup = @Fty", listSqlPar, "Production");
+                }
+            }
+        }
+
+        /// <summary>
+        ///  sets a value Mdivision. by Keyword
+        /// </summary>
+        public bool DefaultValue
+        {
+            get
+            {
+                return this._defaultValue;
+            }
+
+            set
+            {
+                this._defaultValue = value;
+                if (this._defaultValue)
+                {
+                    List<SqlParameter> listSqlPar = new List<SqlParameter>()
+                    {
+                        new SqlParameter("@key", Env.User.Keyword),
+                    };
+                    this.Text = MyUtility.GetValue.Lookup("Select ID from MDivision with (nolock) where id = @key", listSqlPar, "Production");
+                }
+            }
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TxtMdivision"/> class.
         /// </summary>

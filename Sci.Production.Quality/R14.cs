@@ -78,11 +78,7 @@ namespace Sci.Production.Quality
 
             if (!MyUtility.Check.Empty(this.txtSP.Text))
             {
-                this.sqlWherelist.Add(@"exists(select 1
-                                       from SciProduction_WorkOrder_Distribute swd
-			                           where swd.WorkOrderUkey=pms_wo.Ukey and swd.orderid = @SP)
-                                       ");
-                this.lisSqlParameter.Add(new SqlParameter("@SP", this.txtSP.Text));
+                this.sqlWherelist.Add($" sp.val like '{this.txtSP.Text}%' ");
             }
 
             if (!MyUtility.Check.Empty(this.comboShift.SelectedValue))
@@ -127,6 +123,7 @@ namespace Sci.Production.Quality
             {
                 sqlcmd = $@"select 
                 [Factory] = pms_wo.FactoryID,
+                [Cut#] = Isnull(m.CutNo,'N/A'),
                 [OuiCutRef] = oui.[ouiCutRef],
                 [SubCutRef] = si.CutRef,
                 [Activate] = case when soc.[count] > sic.[count] then 'Combine'
@@ -153,6 +150,11 @@ namespace Sci.Production.Quality
                 [FabricDefect] = isnull(ip_fd.Result,'N/A'),
                 [FabricHeight] = isnull(ip_fh.Result,'N/A'),
                 [FabricRelaxation] = isnull(ip_fr.Result,'N/A'),
+                [Bow/Skew] = isnull(ip_bs.Result,'N/A'),
+                [Check grouping shade/roll to roll shading] = isnull(ip_cr.Result,'N/A'),
+                [End aligment] = isnull(ip_ea.Result,'N/A'),
+                [Mold] = isnull(ip_m.Result,'N/A'),
+                [Trim Card with Maker(color/Item fabric)] = isnull(ip_tc.Result,'N/A'),
                 [RejectPointQty] = siifc.[count],
                 [Inspector] =p.Name,
                 [StartingTime] = siidata.MaxAddDate,
@@ -171,7 +173,7 @@ namespace Sci.Production.Quality
                 outer apply(select [count] = Count(*) from SpreadingInspection_InsCutRef_Inspection where si.Ukey = SpreadingInspectionInsCutRefUkey and Result='Fail') siifc
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Marker Check')ip_mc
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Hand Feel')ip_hf
-                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Wrong Face Side')ip_ws
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Face Side')ip_ws
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Uneven Width')ip_sw
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Machine Tension')ip_mt
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Fabric Color')ip_fc
@@ -179,6 +181,11 @@ namespace Sci.Production.Quality
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Fabric Defect')ip_fd
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Fabric Height')ip_fh
                 outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Fabric Relaxation')ip_fr
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Bow/Skew')ip_bs
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Check grouping shade/roll to roll shading')ip_cr
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'End aligment')ip_ea
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Mold')ip_m
+                outer apply(select Result from SpreadingInspection_InsCutRef_Inspection  where SpreadingInspectionInsCutRefUkey = si.Ukey and Item = 'Trim Card with Maker(color/Item fabric)')ip_tc
                 outer apply
                 (
 	                select 
@@ -298,9 +305,9 @@ namespace Sci.Production.Quality
 	                tmp for xml path('')),1,1,'')
                 )FabricRoll
                 {this.strSQLWhere}
-                Group by pms_wo.FactoryID,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
+                Group by pms_wo.FactoryID,m.CutNo,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
                 ,color.val,size.val,si.[SpreadingNoID],FabricRoll.val,ip_mc.Result,ip_hf.Result,ip_ws.Result,ip_sw.Result,ip_mt.Result
-                ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
+                ,ip_fc.Result,ip_ip.Result,ip_fd.Result,ip_fh.Result,ip_fr.Result,ip_bs.Result,ip_cr.Result,ip_ea.Result,ip_m.Result,ip_tc.Result,siifc.count,siidata.MaxAddDate,siidata.MinEditDate
                 ,si.Remark,siidata.MaxEditDate,siidata.MinAddDate,si.ukey,p.Name
                 ";
             }
@@ -308,6 +315,7 @@ namespace Sci.Production.Quality
             {
                 sqlcmd = $@"select 
                 [Factory] = pms_wo.FactoryID,
+				[Cut#] = isNull(m.[CutNo], 'N/A'),
                 [OuiCutRef] = oui.[ouiCutRef],
                 [SubCutRef] = si.CutRef,
                 [Activate] = case when soc.[count] > sic.[count] then 'Combine'
@@ -332,6 +340,7 @@ namespace Sci.Production.Quality
 				                when sii.Item = 'Uneven Width' then 'Fabric Width: ' + CONVERT( varchar, pms_f.Width) + CHAR(10) + 'Actual Width:' + siid.val
 				                when sii.Item = 'Machine Tension' then  isnull('Speed:'+ mt.val,'')
 				                when sii.Item = 'Fabric Defect' then isnull( fd.val,'')
+								when sii.Item = 'Fabric Relaxation' then isnull('hrs:' + FR.val, '')
 				                else '' end ,
                 [LastInspectionDate] = iif(sii.Result = '',null, IsNull(sii.EditDate, sii.AddDate)),
                 [Inspector] =iif(sii.Result = '',null,p.[Name]),
@@ -340,7 +349,7 @@ namespace Sci.Production.Quality
                 from SpreadingInspection s 
                 left join SpreadingInspection_InsCutRef si with(nolock) on s.ID = si.ID
                 left join SpreadingInspection_InsCutRef_Inspection sii with(nolock) on si.Ukey = sii.SpreadingInspectionInsCutRefUkey 
-
+                left join SpreadingInspection_OriCutRef so with(nolock) on s.id = so.id
                 --left join SpreadingInspection_InsCutRef_Inspection_Detail siid with(nolock) on siid.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
                 left join Pass1 p with(nolock) on p.ID = iif(sii.EditName='',sii.AddName,sii.EditName)
                 outer apply
@@ -366,7 +375,7 @@ namespace Sci.Production.Quality
                 )pms_wo
                 left join SciProduction_Fabric pms_f with(nolock) on pms_wo.SCIRefno = pms_f.SCIRefno
                 outer apply( 
-	                select top 1 [MarkerNo] = w.MarkerNo
+	                select top 1 [MarkerNo] = w.MarkerNo, [CutRef] = w.CutRef, [CutNo] = w.Cutno
 	                from SciProduction_WorkOrder w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderUkey
 	                where so.id = si.id
@@ -475,7 +484,7 @@ namespace Sci.Production.Quality
                 outer apply
                 (
                 select val= STUFF((
-					select concat('/',Concat(pms_fd.[Type] + '-' + pms_fd.DescriptionEN,Concat('(Roll:',Roll.val,')'))) 
+					select concat(CHAR(10),Concat(pms_fd.[Type] + '-' + pms_fd.DescriptionEN,Concat('(Roll:',Roll.val,')'))) 
                     from SpreadingInspection_InsCutRef_Inspection_Detail siid2
 					Left join SciProduction_FabricDefect pms_fd on pms_fd.ID = siid2.ColumnValue 
 					outer apply(
@@ -490,6 +499,21 @@ namespace Sci.Production.Quality
 				for xml path ('')
 				) , 1, 1, '')
                 )FD
+				outer apply
+                (
+                select val = Stuff((
+	                select concat(char(10), s.[Description])
+	                from (
+			                select [Description]
+			                from SpreadingDefectCode sc
+			                where EXISTS (select 1 from SpreadingInspection_InsCutRef_Inspection_Detail siid2 with(nolock) 
+							                where siid2.SpreadingInspectionInsCutRefInspectionUkey = sii.Ukey
+							                and sc.ID = siid2.ColumnValue )
+			                and [Type] ='FR'
+		                ) s
+	                for xml path ('')
+                ) , 1, 1, '')
+                )FR
                 outer apply(
 					 select min(convert(date,lista.AddDate)) as date1 
 					 from SpreadingInspection_InsCutRef_Inspection lista
@@ -529,12 +553,10 @@ namespace Sci.Production.Quality
 
             Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\" + $"\\{excelName}.xltx"); // 預先開啟excel app
             MyUtility.Excel.CopyToXls(this.printTable, string.Empty, showExcel: false, xltfile: $"{excelName}.xltx", headerRow: excelRow, excelApp: objApp);
-
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName(excelName);
 
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;
-
             workbook.SaveAs(strExcelName);
             objApp.Quit();
             Marshal.ReleaseComObject(objApp);

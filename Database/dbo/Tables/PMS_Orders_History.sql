@@ -180,6 +180,7 @@
     [HangerPack]             BIT             CONSTRAINT [DF_PMS_Orders_History_HangerPack] DEFAULT ((0)) NOT NULL,
     [CDCodeNew]              VARCHAR (5)     CONSTRAINT [DF_PMS_Orders_History_CDCodeNew] DEFAULT ('') NOT NULL,
     [SizeUnitWeight]         VARCHAR (8)     CONSTRAINT [DF_PMS_Orders_History_SizeUnitWeight] DEFAULT ('') NOT NULL,
+    [OrderCompanyID]		 NUMERIC(2, 0)   CONSTRAINT [DF_PMS_Orders_History_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_PMS_Orders_History] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -1007,5 +1008,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'PMS_Orders_History'
 GO
 
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'PMS_Orders_History', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
 
+
+GO
 

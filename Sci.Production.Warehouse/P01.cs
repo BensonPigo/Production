@@ -145,6 +145,7 @@ namespace Sci.Production.Warehouse
             this.displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["KPIChangeReason"])));
             this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Style_SpecialMark sp WITH(NOLOCK) where exists (select 1 from Style s WITH(NOLOCK) where s.Ukey = '{0}' and sp.ID = s.SpecialMark and sp.BrandID = s.BrandID) and sp.Junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"])));
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
+            this.displayOrderCompany.Value = MyUtility.GetValue.Lookup(string.Format("select NameEN from Company WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"])));
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
             DataRow styleData;
@@ -866,50 +867,29 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         private void BtnReCalculate_Click(object sender, EventArgs e)
         {
             // 母單批次Re-Cal
-            DualResult result;
-            DataTable dtPo;
             string sqlcmd = $@"
-select po3.ID as Poid,po3.SEQ1,po3.SEQ2,mdp.Ukey 
-from PO_Supp_Detail po3
-left join MDivisionPoDetail mdp on mdp.POID=po3.ID
-and mdp.Seq1=po3.SEQ1 and mdp.Seq2=po3.SEQ2
-where po3.ID in (select poid from orders where id='{this.CurrentMaintain["id"]}')
-and po3.junk=0
+DECLARE @MaterialItemList dbo.MaterialItemList 
+
+INSERT INTO @MaterialItemList
+SELECT
+    psd.ID
+   ,psd.SEQ1
+   ,psd.SEQ2
+FROM PO_Supp_Detail psd
+WHERE EXISTS (SELECT 1 FROM Orders WITH (NOLOCK) WHERE ID = '{this.CurrentMaintain["id"]}' AND psd.ID = POID)
+AND psd.junk = 0
+
+EXEC usp_MutipleItemRecaculate @MaterialItemList
 ";
-            if (!(result = DBProxy.Current.Select(string.Empty, sqlcmd, out dtPo)))
+            this.ShowWaitMessage($"Data Processing....");
+            DualResult result = DBProxy.Current.Execute(null, sqlcmd);
+            this.HideWaitMessage();
+            if (!result)
             {
                 this.ShowErr(result);
                 return;
             }
 
-            if (dtPo == null)
-            {
-                return;
-            }
-
-            int cnt = 1;
-
-            foreach (DataRow dr in dtPo.Rows)
-            {
-                List<SqlParameter> listSQLParameter = new List<SqlParameter>();
-                listSQLParameter.Add(new SqlParameter("@Ukey", dr["Ukey"]));
-                listSQLParameter.Add(new SqlParameter("@Poid", dr["Poid"]));
-                listSQLParameter.Add(new SqlParameter("@Seq1", dr["Seq1"]));
-                listSQLParameter.Add(new SqlParameter("@Seq2", dr["Seq2"]));
-
-                if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.usp_SingleItemRecaculate", listSQLParameter)))
-                {
-                    Exception ex = result.GetException();
-                    MyUtility.Msg.WarningBox(ex.Message);
-                    this.HideWaitMessage();
-                    return;
-                }
-
-                this.ShowWaitMessage($"Data Processing.... ({cnt}/{dtPo.Rows.Count})");
-                cnt++;
-            }
-
-            this.HideWaitMessage();
             MyUtility.Msg.InfoBox("Finished!!");
         }
 

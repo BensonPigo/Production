@@ -1,9 +1,11 @@
 ﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -22,12 +24,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(-30).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
             if (!eDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(75).ToString("yyyy/MM/dd"));
+                sDate = DateTime.Parse(DateTime.Now.AddDays(75).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -44,8 +46,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -75,11 +75,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MinDate] = CONVERT(DATE, MIN(CONVERT(DATE, Inline)))
 				, [MaxDate] = CONVERT(DATE, Max(CONVERT(DATE, offline)))
 			into #tmp_StdQ_MainDates
-			FROM SewingSchedule s
-			inner join Orders o on o.id = s.OrderID
+			FROM SewingSchedule s WITH(NOLOCK)
+			inner join Orders o WITH(NOLOCK) on o.id = s.OrderID
 			WHERE ([Offline] BETWEEN @StartDate AND GETDATE() -- Filter for the last 30 days
 				OR [Inline] BETWEEN GETDATE() AND @EndDate) -- Filter for the next 75 days
 			AND s.BIPImportCuttingBCSCmdTime IS NULL
+			AND EXISTS(select 1 from Factory f WITH(NOLOCK) where o.FactoryID = f.ID and f.IsSampleRoom = 0)
 			GROUP BY s.FactoryID, OrderID, s.MDivisionID,o.FtyGroup
 
 			-- print concat(format(getdate(), 'HH:mm:ss'), ' #tmp_StdQ_DateRange')
@@ -772,20 +773,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[SupplyCutQtyVSStdQtyByLine]
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
-
-				if exists(select 1 from BITableInfo where Id = 'P_CuttingBCS')
-				begin
-					update BITableInfo set TransferDate = getdate()
-					where Id = 'P_CuttingBCS'
-				end
-				else
-				begin
-					insert into BITableInfo(Id, TransferDate) values('P_CuttingBCS', GETDATE())
-				end
-				";
+				"
+                ;
+                sql += new Base().SqlBITableInfo("P_CuttingBCS", true);
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

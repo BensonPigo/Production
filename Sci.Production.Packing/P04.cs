@@ -45,6 +45,7 @@ namespace Sci.Production.Packing
         private string sqlCmd = string.Empty;
         private string filter = string.Empty;
         private string masterID;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P04
@@ -78,6 +79,15 @@ namespace Sci.Production.Packing
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
 
             #region displayPurchaseCtn
             string sqlcmdC = $@"select 1 from LocalPO_Detail ld with(nolock) inner join LocalPO l with(nolock) on l.id = ld.Id
@@ -159,13 +169,21 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != this.dr["OrderID"].ToString())
                     {
-                        // sql參數
-                        System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString());
-                        System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
+                        // 1.檢查表頭
+                        if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                        {
+                            this.ClearGridRowData(this.dr);
+                            MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                            return;
+                        }
 
-                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                        cmds.Add(sp1);
-                        cmds.Add(sp2);
+                        // sql參數
+                        IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+                        {
+                            new System.Data.SqlClient.SqlParameter("@orderid", e.FormattedValue.ToString()),
+                            new System.Data.SqlClient.SqlParameter("@brandid", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])),
+                            new System.Data.SqlClient.SqlParameter("@OrderCompanyID", MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"])),
+                        };
 
                         string sqlCmd = @"
 Select o.ID
@@ -177,10 +195,10 @@ inner join Factory f on o.FactoryID = f.ID
 where o.ID = @orderid 
 	  and o.Category = 'S' 
 	  and o.BrandID = @brandid
-	  and f.IsProduceFty = 1";
-
-                        DataTable orderData;
-                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
+	  and f.IsProduceFty = 1
+      and o.OrderCompanyID = @OrderCompanyID
+";
+                        DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out DataTable orderData);
                         if (!result)
                         {
                             this.ClearGridRowData(this.dr);
@@ -530,6 +548,9 @@ order by os.Seq", dr["OrderID"].ToString(),
         /// </summary>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex = -1;
             base.ClickNewAfter();
             this.txtshipmode.ReadOnly = false;
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
@@ -582,6 +603,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             this.txtbrand.ReadOnly = true;
 
             // 部分欄位會依某些條件來決定是否可以被修改
@@ -601,7 +623,7 @@ Carton has been output from the hanger system or transferred to clog.";
                 this.gridicon.Insert.Enabled = true;
                 this.gridicon.Remove.Enabled = true;
             }
-            
+
             if (!MyUtility.Check.Empty(this.CurrentMaintain["LocalPOID"]))
             {
                 this.dateCartonEstBooking.ReadOnly = true;
@@ -1170,13 +1192,19 @@ Packing list is locked in the hanger system.";
         // Batch Import
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Brand can't be empty!");
                 return;
             }
 
-            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource);
+            P04_BatchImport callNextForm = new P04_BatchImport(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"]));
             callNextForm.ShowDialog(this);
         }
 
@@ -1198,12 +1226,27 @@ Packing list is locked in the hanger system.";
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
 
             // 還沒有Invoice No就不可以做Confirm
             if (MyUtility.Check.Empty(MyUtility.GetValue.Lookup("INVNo", this.CurrentMaintain["ID"].ToString(), "PackingList", "ID")))
             {
                 MyUtility.Msg.WarningBox("Shipping is not yet booking so can't confirm!");
+                return;
+            }
+
+            // 檢查表身欄位 CTNStartNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["CTNStartNo"])))
+            {
+                MyUtility.Msg.WarningBox("<1st CTN#> cannot be empty!");
+                return;
+            }
+
+            // 檢查表身欄位 RefNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["RefNo"])))
+            {
+                MyUtility.Msg.WarningBox("<Ref No.> cannot be empty!");
                 return;
             }
 
@@ -1454,6 +1497,12 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
         // Import from excel
         private void BtnImportFromExcel_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
                 MyUtility.Msg.WarningBox("Please input < Brand >!!");
@@ -1466,7 +1515,7 @@ Pullout No. < {0} > ", dtt.Rows[0]["PulloutId"].ToString()));
                 return;
             }
 
-            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString());
+            P04_ExcelImport callNextForm = new P04_ExcelImport((DataTable)this.detailgridbs.DataSource, this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["ShipModeID"].ToString(), this.CurrentMaintain["OrderCompanyID"].ToString());
             callNextForm.ShowDialog(this);
         }
 
@@ -1612,6 +1661,26 @@ where InvA.OrderID = '{0}'
                         this.detailgrid.Rows[index].Cells[15].Style.BackColor = Color.Red;
                     }
                 }
+            }
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
             }
         }
     }

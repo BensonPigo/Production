@@ -38,6 +38,10 @@
             this.btnDetail = new Sci.Win.UI.Button();
             this.label3 = new Sci.Win.UI.Label();
             this.panelBasic = new Sci.Win.UI.Panel();
+            this.displayTypeCutting = new Sci.Win.UI.DisplayBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.displayCutWidth = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.displayFabricKind = new Sci.Win.UI.DisplayBox();
             this.lbFabricKind = new Sci.Win.UI.Label();
             this.displayType = new Sci.Win.UI.DisplayBox();
@@ -91,10 +95,8 @@
             this.labelApplyNo = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.btnSwitchtoWorkOrder = new Sci.Win.UI.Button();
-            this.displayCutWidth = new Sci.Win.UI.DisplayBox();
-            this.label1 = new Sci.Win.UI.Label();
-            this.displayTypeCutting = new Sci.Win.UI.DisplayBox();
-            this.label2 = new Sci.Win.UI.Label();
+            this.displayBoxMarkerType = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -274,6 +276,8 @@
             this.panelBasic.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelBasic.Controls.Add(this.displayBoxMarkerType);
+            this.panelBasic.Controls.Add(this.label4);
             this.panelBasic.Controls.Add(this.displayTypeCutting);
             this.panelBasic.Controls.Add(this.label2);
             this.panelBasic.Controls.Add(this.displayCutWidth);
@@ -322,6 +326,44 @@
             this.panelBasic.Name = "panelBasic";
             this.panelBasic.Size = new System.Drawing.Size(622, 349);
             this.panelBasic.TabIndex = 0;
+            // 
+            // displayTypeCutting
+            // 
+            this.displayTypeCutting.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTypeCutting.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Direction", true));
+            this.displayTypeCutting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTypeCutting.Location = new System.Drawing.Point(370, 249);
+            this.displayTypeCutting.Name = "displayTypeCutting";
+            this.displayTypeCutting.Size = new System.Drawing.Size(218, 21);
+            this.displayTypeCutting.TabIndex = 158;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(260, 249);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(107, 21);
+            this.label2.TabIndex = 157;
+            this.label2.Text = "Type of Cutting";
+            this.label2.TextStyle.Color = System.Drawing.Color.White;
+            // 
+            // displayCutWidth
+            // 
+            this.displayCutWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayCutWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CuttingWidth", true));
+            this.displayCutWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayCutWidth.Location = new System.Drawing.Point(92, 249);
+            this.displayCutWidth.Name = "displayCutWidth";
+            this.displayCutWidth.Size = new System.Drawing.Size(100, 21);
+            this.displayCutWidth.TabIndex = 156;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(6, 249);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 21);
+            this.label1.TabIndex = 155;
+            this.label1.Text = "Cut Width(in)";
+            this.label1.TextStyle.Color = System.Drawing.Color.White;
             // 
             // displayFabricKind
             // 
@@ -392,6 +434,7 @@
             this.gridSizeQty.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridSizeQty.RowTemplate.Height = 24;
             this.gridSizeQty.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSizeQty.ShowCellToolTips = false;
             this.gridSizeQty.Size = new System.Drawing.Size(186, 141);
             this.gridSizeQty.TabIndex = 0;
             this.gridSizeQty.TabStop = false;
@@ -683,7 +726,7 @@
             this.displayPatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.displayPatternPanel.Location = new System.Drawing.Point(92, 102);
             this.displayPatternPanel.Name = "displayPatternPanel";
-            this.displayPatternPanel.Size = new System.Drawing.Size(166, 21);
+            this.displayPatternPanel.Size = new System.Drawing.Size(48, 21);
             this.displayPatternPanel.TabIndex = 9;
             // 
             // labelPatternPanel
@@ -880,43 +923,25 @@
             this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
             this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.BtnSwitchtoWorkOrder_Click);
             // 
-            // displayCutWidth
+            // displayBoxMarkerType
             // 
-            this.displayCutWidth.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCutWidth.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CuttingWidth", true));
-            this.displayCutWidth.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutWidth.Location = new System.Drawing.Point(92, 249);
-            this.displayCutWidth.Name = "displayCutWidth";
-            this.displayCutWidth.Size = new System.Drawing.Size(100, 21);
-            this.displayCutWidth.TabIndex = 156;
+            this.displayBoxMarkerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerTypeName", true));
+            this.displayBoxMarkerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBoxMarkerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.Location = new System.Drawing.Point(220, 102);
+            this.displayBoxMarkerType.Name = "displayBoxMarkerType";
+            this.displayBoxMarkerType.Size = new System.Drawing.Size(77, 21);
+            this.displayBoxMarkerType.TabIndex = 185;
             // 
-            // label1
+            // label4
             // 
-            this.label1.Location = new System.Drawing.Point(6, 249);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 21);
-            this.label1.TabIndex = 155;
-            this.label1.Text = "Cut Width(in)";
-            this.label1.TextStyle.Color = System.Drawing.Color.White;
-            // 
-            // displayTypeCutting
-            // 
-            this.displayTypeCutting.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayTypeCutting.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Direction", true));
-            this.displayTypeCutting.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTypeCutting.Location = new System.Drawing.Point(370, 249);
-            this.displayTypeCutting.Name = "displayTypeCutting";
-            this.displayTypeCutting.Size = new System.Drawing.Size(218, 21);
-            this.displayTypeCutting.TabIndex = 158;
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(260, 249);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(107, 21);
-            this.label2.TabIndex = 157;
-            this.label2.Text = "Type of Cutting";
-            this.label2.TextStyle.Color = System.Drawing.Color.White;
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(143, 102);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 22);
+            this.label4.TabIndex = 184;
+            this.label4.Text = "MarkerType";
             // 
             // EachConsumption
             // 
@@ -935,6 +960,7 @@
             this.KeyField1 = "ID";
             this.MasterKeyField = "Ukey";
             this.Name = "EachConsumption";
+            this.OnLineHelpID = "Sci.Win.Subs.Input4Plus";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Each Consumption";
             this.WorkAlias = "Order_EachCons";
@@ -1031,5 +1057,7 @@
         private Win.UI.Label label2;
         private Win.UI.DisplayBox displayCutWidth;
         private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBoxMarkerType;
+        private Win.UI.Label label4;
     }
 }

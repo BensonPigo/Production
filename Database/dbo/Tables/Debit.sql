@@ -51,6 +51,7 @@
     [ResponFTY]      VARCHAR (8)     CONSTRAINT [DF__Debit__ResponFTY__09A67610] DEFAULT ('') NOT NULL,
     [SubName]        NVARCHAR (20)   CONSTRAINT [DF_Debit_SubName] DEFAULT ('') NOT NULL,
     [SubconID]       VARCHAR (12)    CONSTRAINT [DF_Debit_SubconID] DEFAULT ('') NOT NULL,
+    [OrderCompanyID] NUMERIC(2)      CONSTRAINT [DF_Debit_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Debit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -278,3 +279,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠傳�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'外發廠商名稱', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'SubName';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Debit', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+GO

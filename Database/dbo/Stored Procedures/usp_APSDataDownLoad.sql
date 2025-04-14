@@ -1,10 +1,12 @@
-﻿
-CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
+﻿CREATE PROCEDURE [dbo].[usp_APSDataDownLoad]
 @apsservername varchar(50), @apsdatabasename varchar(25), @factoryid varchar(8), @login varchar(10)
 AS
 BEGIN
 	DECLARE @cmd VARCHAR(MAX)
 	DECLARE	@_i int
+	declare @Workhour_StartDate int = -31
+	declare @DateRange int = 395
+	declare @Special_StartDate varchar(30) = DATEADD(DAY,-30, GETDATE())
 
 	--避免Divide by zero error encountered
 	SET ARITHABORT ON 
@@ -383,8 +385,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = DATEADD(DAY,-1, GETDATE())
-		WHILE (@_i < 160)
+		SET @workdate = DATEADD(DAY,@Workhour_StartDate, GETDATE())
+		WHILE (@_i < @DateRange)
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
@@ -605,8 +607,8 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 		set @_i = 0
-		SET @workdate = DATEADD(DAY,-1, GETDATE())
-		WHILE (@_i < 160)
+		SET @workdate = DATEADD(DAY,@Workhour_StartDate, GETDATE())
+		WHILE (@_i < @DateRange)
 		BEGIN
 			SET @workdate = DATEADD(DAY,1,@workdate)			
 			set @Holiday = (select COUNT(FactoryID) from Holiday where FactoryID = @factoryid and HolidayDate = @workdate)
@@ -745,7 +747,7 @@ BEGIN
 	where fa.Code = '''+ @factoryid + '''
 	  	  and f.FactoryID = fa.ID
 		  and s.facilityID = f.ID
-		  and s.SpecialDate >= CONVERT(DATE,GETDATE())
+		  and s.SpecialDate >= '''+@Special_StartDate+ '''
 	group by f.Name, s.SpecialDate'
 	execute (@cmd)
 		
@@ -764,7 +766,7 @@ BEGIN
 	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Facility f ON s.facilityID = f.ID
 	INNER JOIN ['+ @apsservername + '].'+@apsdatabasename+'.dbo.Factory fa ON f.FactoryID = fa.ID
 	WHERE fa.Code ='''+ @factoryid + '''
-		  and s.SpecialDate >= CONVERT(DATE,GETDATE())
+		  and s.SpecialDate >= '''+@Special_StartDate+ '''
 '
 	execute (@cmd)
 

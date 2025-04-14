@@ -520,6 +520,9 @@
             this.gridSelectCartonDetail.AllowUserToAddRows = false;
             this.gridSelectCartonDetail.AllowUserToDeleteRows = false;
             this.gridSelectCartonDetail.AllowUserToResizeRows = false;
+            this.gridSelectCartonDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.gridSelectCartonDetail.BackgroundColor = System.Drawing.SystemColors.Control;
             this.gridSelectCartonDetail.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.gridSelectCartonDetail.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;

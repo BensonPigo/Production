@@ -12,7 +12,7 @@
     [ShipmentTerm] varchar(5) NOT NULL CONSTRAINT [DF_TransferExport_ShipmentTerm] DEFAULT (''), 
     [FromFactoryID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_FromFactoryID] DEFAULT (''),  
     [FactoryID] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_FactoryID] DEFAULT (''),  
-    [ShipMark] VARCHAR(10) NOT NULL CONSTRAINT [DF_TransferExport_ShipMark] DEFAULT (''), 
+    [ShipMark] VARCHAR(20) NOT NULL CONSTRAINT [DF_TransferExport_ShipMark] DEFAULT (''), 
     [ShipMarkDesc] NVARCHAR(MAX) NOT NULL CONSTRAINT [DF_TransferExport_ShipMarkDesc] DEFAULT (''), 
     [Consignee] VARCHAR(8) NOT NULL CONSTRAINT [DF_TransferExport_Consignee] DEFAULT (''), 
     [Handle] VARCHAR(10) NOT NULL CONSTRAINT [DF_TransferExport_Handle] DEFAULT (''), 
@@ -77,6 +77,7 @@
     [ShippingSeparateConfirmDate] DATETIME NULL, 
     [Status] VARCHAR(20) NOT NULL CONSTRAINT [DF_TransferExport_Status] DEFAULT (''), 
     [Remark_Factory] NVARCHAR(2000) NOT NULL CONSTRAINT [DF_TransferExport_Remark_Factory] DEFAULT (''), 
+    [OrderCompanyID]   NUMERIC(2, 0)    CONSTRAINT [DF_LocalDebit_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_TransferExport] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -530,3 +531,8 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'TransferExport',
     @level2type = N'COLUMN',
     @level2name = N'Remark_Factory'
+GO	
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'TransferExport', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+
+GO

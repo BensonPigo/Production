@@ -179,7 +179,6 @@
     <Build Include="dbo\Stored Procedures\FTY\P_Import_WH_R16.sql" />
     <Build Include="dbo\View\P_ArtworkType.sql" />
     <Build Include="dbo\Tables\P_PPICMasterList_Extend.sql" />
-    <Build Include="dbo\Stored Procedures\FTY\P_Import_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_FabricStatus_And_IssueFabricTracking.sql" />
     <Build Include="dbo\Tables\P_ActualCutOutputReport.sql" />
     <Build Include="dbo\Tables\P_SubprocessWIP.sql" />
@@ -236,12 +235,39 @@
     <Build Include="dbo\Tables\P_Changeover.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_Changeover.sql" />
     <Build Include="dbo\Tables\P_FabricInspAvgInspLTInPast7Days.sql" />
+    <Build Include="dbo\Tables\P_CuttingOutputStatisitc.sql" />
     <Build Include="dbo\Tables\P_MaterialCompletionRateByWeek.sql" />
     <Build Include="dbo\Tables\P_RTLStatusByDay.sql" />
     <Build Include="dbo\Tables\P_DailyRTLStatusByLineByStyle.sql" />
     <Build Include="dbo\Tables\P_MonthlySewingOutputSummary.sql" />
     <Build Include="dbo\Tables\P_InventoryStockListReport.sql" />
     <Build Include="dbo\Tables\P_RecevingInfoTrackingSummary.sql" />
+    <Build Include="dbo\Tables\P_MachineMasterListByDays.sql" />
+    <Build Include="dbo\Tables\P_LineMapping.sql" />
+    <Build Include="dbo\Tables\P_LineMapping_Detail.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_LineMapping.sql" />
+    <Build Include="dbo\Tables\P_MaterialLocationIndex.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_MaterialLocationIndex.sql" />
+    <Build Include="dbo\Tables\P_ScanPackList.sql" />
+    <Build Include="dbo\Tables\P_MISCPurchaseOrderList.sql" />
+    <Build Include="dbo\Tables\P_LineBalancingRate.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_LineBalancingRate.sql" />
+    <Build Include="dbo\Tables\P_ReplacementReport.sql" />
+    <Build Include="dbo\Tables\P_DailyAccuCPULoading.sql" />
+    <Build Include="dbo\Tables\P_CuttingOutputStatistic.sql" />
+    <Build Include="dbo\Tables\P_StationHourlyOutput.sql" />
+    <Build Include="dbo\Tables\P_StationHourlyOutput_Detail.sql" />
+    <Build Include="dbo\Tables\P_SewingDailyOutputStatusRecord.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_ProdEffAnalysis.sql" />
+    <Build Include="dbo\Tables\P_ProdEffAnalysis.sql" />
+    <Build Include="dbo\Stored Procedures\P_Import_StationHourlyOutput.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList_Detail.sql" />
+    <Build Include="dbo\Tables\P_ESG_Injury.sql" />
+    <Build Include="dbo\Tables\P_CMPByDate.sql" />
+    <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEffAnalysis.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList_Detail_Histroy.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList_Histroy.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

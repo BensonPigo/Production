@@ -36,10 +36,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.Dt;
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, sDate.Value);
@@ -90,7 +86,7 @@ SET
       ,t.[Sp] = s.[Sp]
       ,t.[MasterSP] = s.[MasterSP]
       ,t.[M] = s.[M]
-      ,t.[Factory] = s.[Factory]
+      ,t.[FactoryID] = s.[Factory]
       ,t.[Category] = s.[Category]
       ,t.[Program] = s.[Program]
       ,t.[Style] = s.[Style]
@@ -142,7 +138,7 @@ AND t.SubprocessID = s.SubprocessID
 
 insert into P_SubprocessWIP (
    [Bundleno]   ,[RFIDProcessLocationID]   ,[EXCESS]  ,[FabricKind]  ,[CutRef]  ,[Sp]  ,[MasterSP]
-      ,[M] ,[Factory],[Category],[Program],[Style],[Season],[Brand],[Comb],[CutNo],[FabPanelCode],[Article]
+      ,[M] ,[FactoryID],[Category],[Program],[Style],[Season],[Brand],[Comb],[CutNo],[FabPanelCode],[Article]
       ,[Color],[ScheduledLineID],[ScannedLineID],[Cell],[Pattern],[PtnDesc],[Group],[Size],[Artwork]
       ,[Qty],[SubprocessID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess],[Location],[BundleCreateDate]
       ,[BuyerDeliveryDate],[SewingInline],[SubprocessQAInspectionDate],[InTime],[OutTime],[POSupplier]
@@ -167,6 +163,19 @@ where not exists (
     AND t.SubprocessID = s.SubprocessID
 )
 
+-- delete P_SubprocessWIP 一次30萬筆分批刪除
+WHILE 1 = 1
+BEGIN
+    DELETE TOP (300000) ps
+    FROM P_SubprocessWIP ps WITH (NOLOCK)
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
+        WHERE ps.Bundleno = bd.BundleNo
+    )
+
+    IF @@ROWCOUNT = 0
+        BREAK;
+END
 
 if exists (select 1 from BITableInfo b where b.id = 'P_SubprocessWIP')
 begin
@@ -183,7 +192,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

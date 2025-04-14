@@ -870,6 +870,8 @@ when matched then
 		,t.IsNonSewingLine	=isnull(s.IsNonSewingLine, 0)	    
 		,t.IsNotShownInP01	=isnull(s.IsNotShownInP01, 0)	    
 		,t.IsNotShownInP03	=isnull(s.IsNotShownInP03, 0)
+		,t.IsNotShownInP05	=isnull(s.IsNotShownInP05, 0)
+		,t.IsNotShownInP06	=isnull(s.IsNotShownInP06, 0)
 when not matched by target then
 	insert(
 		[ID]
@@ -878,6 +880,8 @@ when not matched by target then
 		,[IsNonSewingLine]
 		,[IsNotShownInP01]
 		,[IsNotShownInP03]
+		,[IsNotShownInP05]
+		,[IsNotShownInP06]
 	)
 	values(
 	   isnull(s.[ID], '')
@@ -886,6 +890,8 @@ when not matched by target then
       ,isnull(s.[IsNonSewingLine], 0)
       ,isnull(s.[IsNotShownInP01], 0)
       ,isnull(s.[IsNotShownInP03], 0)
+	  ,isnull(s.[IsNotShownInP05], 0)
+	  ,isnull(s.[IsNotShownInP06], 0)
 	)
 when not matched by source then
 	delete;
@@ -2379,7 +2385,7 @@ where not exists(select id from Production.dbo.Port as a WITH (NOLOCK) where a.i
 ----------------------刪除主TABLE多的資料
 Delete Production.dbo.FSRCpuCost
 from Production.dbo.FSRCpuCost as a left join Trade_To_Pms.dbo.FSRCpuCost as b
-on a.ShipperID = b.ShipperID
+on a.ShipperID = b.ShipperID and a.OrderCompanyID = b.OrderCompany
 where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2390,7 +2396,7 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =isnull(b.EditName	 ,'')
 
-from Production.dbo.FSRCpuCost as a inner join Trade_To_Pms.dbo.FSRCpuCost as b ON a.ShipperID=b.ShipperID
+from Production.dbo.FSRCpuCost as a inner join Trade_To_Pms.dbo.FSRCpuCost as b ON a.ShipperID=b.ShipperID and  a.OrderCompanyID = b.OrderCompany
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FSRCpuCost(
        ShipperID
@@ -2398,7 +2404,7 @@ INSERT INTO Production.dbo.FSRCpuCost(
       ,AddName
       ,EditDate
       ,EditName
-
+	  ,OrderCompanyID
 )
 select 
        isnull(ShipperID,'')
@@ -2406,15 +2412,18 @@ select
       ,isnull(AddName,'')
       ,EditDate
       ,isnull(EditName,'')
+	  ,OrderCompany
 from Trade_To_Pms.dbo.FSRCpuCost as b WITH (NOLOCK)
-where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID)
+where not exists(select ShipperID from Production.dbo.FSRCpuCost as a WITH (NOLOCK) where a.ShipperID = b.ShipperID and a.OrderCompanyID = b.OrderCompany)
 
 
 --DO releasememvar WITH 'FS_CMTPlus1'
 	----------------------刪除主TABLE多的資料
 Delete Production.dbo.FSRCpuCost_Detail
-from Production.dbo.FSRCpuCost_Detail as a left join Trade_To_Pms.dbo.FSRCpuCost_Detail as b
+from Production.dbo.FSRCpuCost_Detail as a 
+left join Trade_To_Pms.dbo.FSRCpuCost_Detail as b
 on a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate
+and a.OrderCompanyID = b.OrderCompany
 where b.ShipperID is null
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
@@ -2428,7 +2437,9 @@ SET
       ,a.EditDate	      =b.EditDate	
       ,a.EditName	      =isnull(b.EditName	,'')
 
-from Production.dbo.FSRCpuCost_Detail as a inner join Trade_To_Pms.dbo.FSRCpuCost_Detail as b ON a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate
+from Production.dbo.FSRCpuCost_Detail as a 
+inner join Trade_To_Pms.dbo.FSRCpuCost_Detail as b 
+ON a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate and a.OrderCompanyID = b.OrderCompany
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.FSRCpuCost_Detail(
        ShipperID
@@ -2439,7 +2450,7 @@ INSERT INTO Production.dbo.FSRCpuCost_Detail(
       ,AddName
       ,EditDate
       ,EditName
-
+	  ,OrderCompanyID
 )
 select 
        isnull(ShipperID,'')
@@ -2450,8 +2461,13 @@ select
       ,isnull(AddName  ,'')
       ,EditDate 
       ,isnull(EditName ,'')
+	  ,isnull(OrderCompany,0)
 from Trade_To_Pms.dbo.FSRCpuCost_Detail as b WITH (NOLOCK)
-where not exists(select ShipperID from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate)
+where not exists(
+	select ShipperID 
+	from Production.dbo.FSRCpuCost_Detail as a WITH (NOLOCK) 
+	where a.ShipperID = b.ShipperID AND a.BeginDate  =b.BeginDate AND  a.EndDate =b.EndDate and a.OrderCompanyID = b.OrderCompany
+)
 
 
 
@@ -2611,6 +2627,7 @@ SET
       ,a.AddDate	      = b.AddDate	
       ,a.EditName	      = isnull(b.EditName	 ,'')
       ,a.EditDate	      =b.EditDate	
+      ,a.IsOrderCompany	  = isnull(b.IsOrderCompany	 ,0)
 
 from Production.dbo.Company as a inner join Trade_To_Pms.dbo.Company as b ON a.id=b.id
 -------------------------- INSERT INTO 抓
@@ -2634,7 +2651,7 @@ INSERT INTO Production.dbo.Company(
       ,AddDate
       ,EditName
       ,EditDate
-
+      ,IsOrderCompany
 )
 select 
        isnull(ID		,'')
@@ -2656,6 +2673,7 @@ select
       ,AddDate
       ,isnull(EditName  ,'')
       ,EditDate
+      ,isnull(IsOrderCompany,0)
 from Trade_To_Pms.dbo.Company as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Company as a WITH (NOLOCK) where a.id = b.id)
 
@@ -2761,7 +2779,8 @@ on t.type=s.type and t.id=s.id
 		t.Name= isnull( s.Name,				 ''),
 		t.RealLength= isnull( s.RealLength,	 0),
 		t.Description= isnull( s.Description,''),
-		t.Seq= isnull( s.Seq				 ,0)
+		t.Seq= isnull( s.Seq				 ,0),
+		t.Conditions = isnull(s.Conditions,'')
 	when not matched by target then
 		insert(Type
 				,ID
@@ -2769,13 +2788,15 @@ on t.type=s.type and t.id=s.id
 				,RealLength
 				,Description
 				,Seq
+				,Conditions
 				)
 						values(isnull(s.Type,''),
 				isnull(s.ID,				 ''),
 				isnull(s.Name,				 ''),
 				isnull(s.RealLength,		 0),
 				isnull(s.Description,		 ''),
-				isnull(s.Seq				 ,0)
+				isnull(s.Seq				 ,0),
+				isnull(s.Conditions,'')
 				)
 	when not matched by source then
 		delete;
@@ -3800,17 +3821,18 @@ from Trade_To_Pms.dbo.SeasonSCI
 ------FirstSaleCostSetting---------------
 Merge Production.dbo.FirstSaleCostSetting as sr
 Using Trade_To_Pms.dbo.FirstSaleCostSetting as tsr 
-on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate
+on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate AND sr.OrderCompanyID = tsr.OrderCompany
 when matched then
       update set 
        sr.EndDate = tsr.EndDate, 
 	   sr.IsJunk = isnull(tsr.IsJunk,  0),
+       sr.OrderCompanyID = isnull(tsr.OrderCompany,0),
 	   sr.AddDate = tsr.AddDate, 
 	   sr.AddName = isnull(tsr.AddName,  ''),
 	   sr.EditDate = tsr.EditDate, 
 	   sr.EditName = isnull(tsr.EditName, '')
 when not matched by target then
-      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, AddDate, AddName, EditDate, EditName) 
+      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, OrderCompanyID, AddDate, AddName, EditDate, EditName) 
 	  values (
 		  isnull(tsr.CountryID	, '')
 		, isnull(tsr.ArtWorkID	, '')
@@ -3818,6 +3840,7 @@ when not matched by target then
 		, tsr.BeginDate	
 		, tsr.EndDate	
 		, isnull(tsr.IsJunk		, 0)
+        , isnull(tsr.OrderCompany,0)
 		, tsr.AddDate	
 		, isnull(tsr.AddName	, '')
 		, tsr.EditDate	
@@ -4195,6 +4218,7 @@ SET  a.WeaveTypeID	= isnull( b.WeaveTypeID,	'')
     ,a.isResultNotInP01 = isnull(b.isResultNotInP01, 0)
     ,a.Description = isnull(b.Description, '')
     ,a.ShowGrade = isnull(b.ShowGrade, '')
+    ,a.IsColorFormat = isnull(b.IsColorFormat, 0)
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
 ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
@@ -4210,7 +4234,8 @@ INSERT INTO Production.dbo.FIR_Grade
            ,isFormatInP01
            ,isResultNotInP01
            ,Description
-           ,ShowGrade)
+           ,ShowGrade
+           ,IsColorFormat)
 SELECT   isnull( WeaveTypeID, '')
 		,isnull( Percentage	, 0)
 		,isnull( Grade		, '')
@@ -4221,6 +4246,7 @@ SELECT   isnull( WeaveTypeID, '')
         ,isnull(isResultNotInP01, 0)
         ,isnull(Description, '')
         ,isnull(ShowGrade, '')
+        ,isnull(IsColorFormat,0)
 FROM Trade_To_Pms.dbo.FIR_Grade b
 WHERE NOT EXISTS(
 	SELECT  1

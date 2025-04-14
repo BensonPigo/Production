@@ -1,4 +1,5 @@
-﻿using Sci.Production.Prg.PowerBI.Model;
+﻿using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -79,12 +80,12 @@ from (
 		, f.FTYGroup
 		, p.BuyerDelivery
 	from P_CartonStatusTrackingList p WITH(NOLOCK)
-	inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+	inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 	left join (
 		select [SPCountWithPulloutCmplt] = count(distinct p.SP)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate
 		and p.BuyerDelivery <= @eDate
 		and p.PulloutComplete = 'Y'
@@ -94,7 +95,7 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate 
 		and p.BuyerDelivery <= @eDate
 		and p.ClogReceiveTime is not null
@@ -104,7 +105,7 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate 
 		and p.BuyerDelivery <= @eDate
 		and p.HaulingScanTime is not null
@@ -114,7 +115,7 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate
 		and p.BuyerDelivery <= @eDate
 		and p.PackingAuditScanTime is not null
@@ -124,7 +125,7 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate
 		and p.BuyerDelivery <= @eDate
 		and p.MDScanTime is not null
@@ -134,7 +135,7 @@ from (
 		select [PiecesQty] = count(*)
 			, f.FTYGroup, p.BuyerDelivery
 		from P_CartonStatusTrackingList p WITH(NOLOCK)
-		inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID and f.IsProduceFty = 1
+		inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID and f.IsProduceFty = 1
 		where p.BuyerDelivery >= @sDate 
 		and p.BuyerDelivery <= @eDate
 		and p.ScanAndPackTime is not null
@@ -176,7 +177,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

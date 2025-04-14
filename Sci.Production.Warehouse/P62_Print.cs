@@ -119,7 +119,10 @@ select[Poid] = IIF((t.poid = lag(t.poid, 1, '') over(order by t.poid, t.seq1, t.
                                             , (Select concat(ID, '-', Name) from Color WITH(NOLOCK) where id = iss.ColorId and BrandId = fbr.BrandID)
                                         )
 									FROM fabric fbr WITH(NOLOCK) WHERE SCIRefno = p.SCIRefno))
-		, Mdesc = 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
+		, Mdesc = IIF((t.poid = lag(t.poid, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)
+                          AND(t.seq1 = lag(t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
+			              AND(t.seq2 = lag(t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+                          ,Mdesc2.value,Mdesc.value)
         , t.Roll
         , t.Dyelot
         , t.Qty
@@ -139,6 +142,19 @@ left join FtyInventory b WITH (NOLOCK) on   b.poid = t.poid
                                             and b.Roll = t.Roll
                                             and b.Dyelot = t.Dyelot
                                             and b.StockType = t.StockType
+outer apply(select value = Concat( 'Relaxation Type：'
+                         ,(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno)
+                         ,CHAR(13) + CHAR(10)
+                         ,CHAR(13) + CHAR(10)
+                         ,(Select iss.Seq1 + '-' + iss.Seq2 + ':' + psdsS.SpecValue + pd.Special + '=' + convert(varchar, pd.Qty) 
+                            from PO_Supp_Detail_Spec psdsS WITH (NOLOCK) 
+                            join PO_Supp_Detail pd on pd.ID = psdsS.ID and pd.seq1 = psdsS.seq1 and pd.seq2 = psdsS.seq2
+                           where psdsS.ID = iss.POID and psdsS.seq1 = iss.seq1 and psdsS.seq2 = iss.seq2 and psdsS.SpecColumnID = 'Size'))) Mdesc
+outer apply(select value = Concat(CHAR(13) + CHAR(10),CHAR(13) + CHAR(10)
+                         ,(Select iss.Seq1 + '-' + iss.Seq2 + ':' + psdsS.SpecValue + pd.Special + '=' + convert(varchar, pd.Qty) 
+                            from PO_Supp_Detail_Spec psdsS WITH (NOLOCK) 
+                            join PO_Supp_Detail pd on pd.ID = psdsS.ID and pd.seq1 = psdsS.seq1 and pd.seq2 = psdsS.seq2
+                           where psdsS.ID = iss.POID and psdsS.seq1 = iss.seq1 and psdsS.seq2 = iss.seq2 and psdsS.SpecColumnID = 'Size'))) Mdesc2
 outer apply (
     select value = iif(left(t.seq1, 1) != '7', ''
                                                , '**PLS USE STOCK FROM SP#:' + iif(isnull(concat(p.StockPOID, p.StockSeq1, p.StockSeq2), '') = '', '', concat(p.StockPOID, p.StockSeq1, p.StockSeq2)) + '**')

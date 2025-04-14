@@ -62,9 +62,13 @@ namespace Sci.Production.Shipping
 
             // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtTransferOutNo.Text.Trim());
+            System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@orderCompanyID", P04.orderCompanyID);
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            {
+                sp1,
+                sp2
+            };
 
             string sqlCmd = @"
 select Selected = 1
@@ -105,6 +109,7 @@ left join Supp s WITH (NOLOCK) on s.ID = ps.SuppID
 left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
 left join Orders o WITH (NOLOCK) on o.ID = td.Poid
 where td.ID = @id
+and o.OrderCompanyID = @orderCompanyID
 
 union all
 
@@ -150,6 +155,7 @@ left join Orders o WITH (NOLOCK) on o.ID = ad.Poid
 where ad.ID = @id
 and r.TransferOut = 1
 and a.Type in ('A','B') -- P34,P35
+and o.OrderCompanyID = @orderCompanyID
 ";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);

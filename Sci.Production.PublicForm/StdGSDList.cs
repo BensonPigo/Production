@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
-using Ict;
-using Ict.Win;
-using Sci.Data;
 
 namespace Sci.Production.PublicForm
 {
@@ -12,7 +12,7 @@ namespace Sci.Production.PublicForm
     public partial class StdGSDList : Win.Subs.Base
     {
         private long styleUkey;
-        public DataTable gridData1;
+        private DataTable gridData1;
         private DataTable gridData2;
         private DataTable gridData3;
         private DataTable tmpData;
@@ -199,6 +199,7 @@ where s.Ukey = {0} order by id.SEQ", this.styleUkey);
                 MyUtility.Msg.ErrorBox("Query IETMS fail!\r\n" + result.ToString());
             }
         }
+
         private void BtnCIPF_Click(object sender, EventArgs e)
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($@"
@@ -364,6 +365,22 @@ from [IETMS_Summary] where location = '' and [IETMSUkey] = {ietmsUKEY} and Artwo
 order by seq
 ";
                 MyUtility.Tool.ProcessWithDatatable((DataTable)this.listControlBindingSource1.DataSource, "Seq,Type,OperationID,MachineDesc,Mold,OperationDescEN,Annotation,Frequency,MtlFactorID,SMV,newSMV,SeamLength,ttlSeamLength,Location", sqlCmd, out excelTable);
+
+                // 在 excelTable 最前面加入兩欄位, StyleID, SeasonID
+                DataColumn dc1 = new DataColumn("StyleID", typeof(string));
+                excelTable.Columns.Add(dc1);
+                excelTable.Columns["StyleID"].SetOrdinal(0); // 設定欄位位置為第一欄
+
+                DataColumn dc2 = new DataColumn("SeasonID", typeof(string));
+                excelTable.Columns.Add(dc2);
+                excelTable.Columns["SeasonID"].SetOrdinal(1); // 設定欄位位置為第二欄
+
+                // 填入 displayStyleNo.Text 和 displaySeason.Text 的值
+                foreach (DataRow row in excelTable.Rows)
+                {
+                    row["StyleID"] = this.displayStyleNo.Text;
+                    row["SeasonID"] = this.displaySeason.Text;
+                }
             }
             catch (Exception ex)
             {
@@ -371,34 +388,13 @@ order by seq
                 return;
             }
 
-            string myDocumentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(Application.StartupPath);
-            SaveFileDialog dlg = new SaveFileDialog
-            {
-                RestoreDirectory = true,
-                InitialDirectory = myDocumentsPath,     // 指定"我的文件"路徑
-                Title = "Save as Excel File",
-
-                // dlg.FileName = "StdGSDList_ToExcel_" + DateTime.Now.ToString("yyyyMMdd") + @".xls";
-                Filter = "Excel Files (*.xls)|*.xls",            // Set filter for file extension and default file extension
-            };
-
-            // if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK && dlg.FileName != null)
-            // {
-
-            // Open document
             bool result = MyUtility.Excel.CopyToXls(excelTable, string.Empty, "PPIC_P01_StdGSDList.xltx", headerRow: 1);
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");
             }
 
-            // }
-            // else
-            // {
             return;
-
-            // }
         }
     }
 }

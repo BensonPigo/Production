@@ -6,17 +6,18 @@ begin
 	declare @SqlCmd nvarchar(max) ='';;
 	set @SqlCmd = '
 	/************* 撈取 Production 資料 *************/
-	SELECT 
-	[MDivisionID],
-	[KpiCode],
-	[Key],
-	[Halfkey],
-	[ArtworkTypeID],
-	[CapacityCPU],
-	[LoadingCPU],
-	[TransferBIDate]
-	into #tmp
-	FROM OPENQUERY(['+ @current_PMS_ServerName +'], ''exec production.[dbo].GetLoadingvsCapacity'')
+	Create table #tmp(
+		[MDivisionID] [varchar](8) NOT NULL,
+		[FactoryID] [varchar](8) NOT NULL,
+		[Key] [varchar](6) NOT NULL,
+		[Halfkey] [varchar](8) NOT NULL,
+		[ArtworkTypeID] [varchar](20) NOT NULL,
+		[Capacity(CPU)] [numeric](38, 6) NOT NULL,
+		[Loading(CPU)] [numeric](38, 6) NOT NULL,
+		[TransferBIDate] [datetime] NULL,
+	)
+	insert into #tmp
+	exec ['+ @current_PMS_ServerName +'].production.[dbo].GetLoadingvsCapacity
 
 	/************* 刪除P_LoadingvsCapacity全資料*************/
 	delete P_LoadingvsCapacity
@@ -67,14 +68,14 @@ begin
 	IF EXISTS (select 1 from BITableInfo b where b.id = ''P_LoadingvsCapacity'')
 	BEGIN
 		update b
-			set b.TransferDate = getdate()
+			set b.TransferDate = getdate(), IS_Trans = 1
 		from BITableInfo b
 		where b.id = ''P_LoadingvsCapacity''
 	END
 	ELSE 
 	BEGIN
-		insert into BITableInfo(Id, TransferDate)
-		values(''P_LoadingvsCapacity'', getdate())
+		insert into BITableInfo(Id, TransferDate, IS_Trans)
+		values(''P_LoadingvsCapacity'', getdate(), 1)
 	END
 	';
 

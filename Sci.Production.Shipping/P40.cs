@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using System;
 using System.ComponentModel;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -410,6 +410,35 @@ Brand, RefNo, HSCode, Customs Code
                     return false;
                 }
             }
+
+            // Group by 和 LINQ 查詢
+            var result = this.DetailDatas
+                .GroupBy(r => new
+                {
+                    HSCode = MyUtility.Convert.GetString(r["HSCode"]),
+                    NLCode = MyUtility.Convert.GetString(r["NLCode"]),
+                    UnitID = MyUtility.Convert.GetString(r["UnitID"]),
+                })
+                .Select(g => new
+                {
+                    g.Key.HSCode,
+                    g.Key.NLCode,
+                    g.Key.UnitID,
+                })
+                .ToList();
+
+            // 檢查是否存在相同 NLCode 但不同 UnitID 的情況
+            var duplicate = result
+                .GroupBy(x => new { x.NLCode })
+                .FirstOrDefault(g => g.Select(x => x.UnitID).Distinct().Count() > 1);
+
+            if (duplicate != null)
+            {
+                var nlCode = duplicate.Key.NLCode;
+                MyUtility.Msg.WarningBox($"Customs Code：{nlCode} contains different customs units, cannot be saved!!");
+                return false;
+            }
+
             #endregion
 
             // Get ID

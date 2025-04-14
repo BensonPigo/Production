@@ -1563,7 +1563,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Issue time:</Value>
+                  <Value>Print time:</Value>
                   <Style>
                     <FontSize>9pt</FontSize>
                   </Style>

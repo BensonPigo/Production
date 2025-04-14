@@ -93,6 +93,18 @@ CREATE TABLE [dbo].[System] (
 	[ImportDataFileNameDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ImportDataFileNameDummy]  DEFAULT (''),
 	[ExportDataPathDummy] [varchar](60) NOT NULL CONSTRAINT [DF_System_ExportDataPathDummy]  DEFAULT (''),
 	IEPath NVARCHAR(120) NOT NULL CONSTRAINT [DF_System_IEPath] Default '',
+    [isNeedOTPFty] BIT NOT NULL DEFAULT ((0)), 
+    [MercuryErrorEmailLastDate] DATE NOT NULL, 
+    [FtpPortDummy] VARCHAR(4) NOT NULL DEFAULT '', 
+    [FtpPort] VARCHAR(5) NOT NULL DEFAULT '', 
+    [SFtpIP] VARCHAR(36) NOT NULL DEFAULT (''), 
+    [SFtpPort] VARCHAR(5) NOT NULL DEFAULT (''), 
+    [SFtpID] VARCHAR(20) NOT NULL DEFAULT (''), 
+    [SFtpPwd] VARCHAR(36) NOT NULL DEFAULT (''), 
+    [SFtpIPDummy] VARCHAR(36) NOT NULL DEFAULT (''), 
+    [SFtpPortDummy] VARCHAR(5) NOT NULL DEFAULT (''), 
+    [SFtpIDDummy] VARCHAR(20) NOT NULL DEFAULT (''), 
+    [SFtpPwdDummy] VARCHAR(36) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go
@@ -268,3 +280,122 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'ExportDataPathDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該工廠是否啟用OTP驗證功能',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+	@level2name = N'isNeedOTPFty'	
+GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該工廠是否啟用OTP驗證功能',
+	@level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+	@level2name = N'isNeedOTPFty'
+go
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Formal的 FTP Port',
+	@level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FtpPort'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SFTP IP',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpIP'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Formal的SFTP連接埠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpPort'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SFTP ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'SFTP Passwor',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpPwd'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dummy的 SFTP IP',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpIPDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dummy的 FTP 連接埠',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'FtpPortDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dummy的 SFTP ID',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpIDDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dummy的 SFTP Pwd',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'SFtpPwdDummy'
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Dummy的 SFTP PortIP',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN', 
+    @level2name = N'SFtpPortDummy'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Mercury Error Email 最後寄出日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN', 
+    @level2name = N'MercuryErrorEmailLastDate'

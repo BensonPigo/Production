@@ -1,12 +1,12 @@
 ﻿CREATE TABLE [dbo].[Company] (
-    [ID]        TINYINT        CONSTRAINT [DF_Company_ID] DEFAULT ((0)) NOT NULL,
+    [ID]        NUMERIC(2)        CONSTRAINT [DF_Company_ID] DEFAULT ((0)) NOT NULL,
     [Title]     NVARCHAR (40)  CONSTRAINT [DF_Company_Title] DEFAULT ('') NOT NULL,
     [Abbr]      VARCHAR (2)    CONSTRAINT [DF_Company_Abbr] DEFAULT ('') NOT NULL,
     [Country]   VARCHAR (2)    CONSTRAINT [DF_Company_Country] DEFAULT ('') NOT NULL,
     [Junk]      BIT            CONSTRAINT [DF_Company_Junk] DEFAULT ((0)) NOT NULL,
     [Currency]  VARCHAR (3)    CONSTRAINT [DF_Company_Currency] DEFAULT ('') NOT NULL,
     [NameCH]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameCH] DEFAULT ('') NOT NULL,
-    [NameEN]    NVARCHAR (40)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NOT NULL,
+    [NameEN]    NVARCHAR (80)  CONSTRAINT [DF_Company_NameEN] DEFAULT ('') NOT NULL,
     [hasTax]    BIT            CONSTRAINT [DF_Company_hasTax] DEFAULT ((0)) NOT NULL,
     [IsDefault] BIT            CONSTRAINT [DF_Company_IsDefault] DEFAULT ((0)) NOT NULL,
     [VatNO]     VARCHAR (25)   CONSTRAINT [DF_Company_VatNO] DEFAULT ('') NOT NULL,
@@ -18,6 +18,7 @@
     [AddDate]   DATETIME       NULL,
     [EditName]  VARCHAR (10)   CONSTRAINT [DF_Company_EditName] DEFAULT ('') NOT NULL,
     [EditDate]  DATETIME       NULL,
+    [IsOrderCompany] BIT CONSTRAINT [DF_Company_IsOrderCompany] DEFAULT ((0)) NOT NULL, 
     CONSTRAINT [PK_Company] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -102,4 +103,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'新增時�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修改人員', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Company', @level2type = N'COLUMN', @level2name = N'EditName';
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否為訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Company', @level2type = N'COLUMN', @level2name = N'IsOrderCompany';
+GO
 

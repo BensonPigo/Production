@@ -55,7 +55,16 @@ BEGIN
                1 -- State.
                );
 		END
-
+        
+        --Avoid using the WH.P01 dual-open program to use the close function
+		IF @FirstClose = 1 AND EXISTS (SELECT 1 FROM Orders o WITH (NOLOCK) WHERE o.POID = @poid AND o.WhseClose IS NOT NULL)
+		BEGIN
+			SET @msg = N'Materials('+@poid+') has been closed'
+			RAISERROR (@msg, -- Message text.
+               16, -- Severity.
+               1 -- State.
+               );
+		END
 
 		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK)WHERE S.ID = @NewID AND S.Status!='Confirmed')
 		BEGIN

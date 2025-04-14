@@ -39,7 +39,7 @@ namespace Sci.Production.PPIC
 
             string sqlCmd = string.Format(
                 @"
-select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,ot.Price,iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
+select ot.Seq,ot.ArtworkTypeID,ot.Qty,ot.ArtworkUnit,ot.TMS,Price = Round(ot.Price,3),iif(a.IsTtlTMS = 1,'Y','N') as ttlTMS,a.Classify
 from Order_TmsCost ot WITH (NOLOCK) 
 left join ArtworkType a WITH (NOLOCK) on ot.ArtworkTypeID = a.ID
 where ot.ID = '{0}' 
@@ -109,17 +109,15 @@ select  [SubProcessCPU] = Round(@subProcessCPU,3),
             if (!MyUtility.Check.Empty(this.orderData["OrigBuyerDelivery"]))
             {
                 string whereSeasonID = $" and fsd.SeasonID = '{this.orderData["SeasonID"]}'";
-                sql = string.Format(
-                    @"select fd.CpuCost
-                                    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-                                    where fsd.BrandID = '{0}'
-                                    and fsd.FactoryID = '{1}'
-                                    and '{2}' between fsd.BeginDate and fsd.EndDate
-                                    and fsd.ShipperID = fd.ShipperID
-                                    and '{2}' between fd.BeginDate and fd.EndDate",
-                    this.orderData["BrandID"].ToString(),
-                    this.orderData["FtyGroup"].ToString(),
-                    Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("yyyy/MM/dd"));
+                sql = $@"select fd.CpuCost
+                    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+                    where fsd.ShipperID = fd.ShipperID
+                    and fsd.BrandID = '{this.orderData["BrandID"].ToString()}'
+                    and fsd.FactoryID = '{this.orderData["FtyGroup"].ToString()}'
+                    and '{Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("yyyy/MM/dd")}' between fsd.BeginDate and fsd.EndDate                    
+                    and '{Convert.ToDateTime(this.orderData["OrigBuyerDelivery"]).ToString("yyyy/MM/dd")}' between fd.BeginDate and fd.EndDate
+                    and fd.OrderCompanyID = '{this.orderData["OrderCompanyID"]}'
+";
                 this.numCPUCost.Value = MyUtility.Convert.GetDecimal(MyUtility.GetValue.Lookup(sql + whereSeasonID));
                 if (MyUtility.Check.Empty(this.numCPUCost.Value))
                 {

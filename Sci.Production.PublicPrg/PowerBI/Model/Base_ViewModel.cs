@@ -90,6 +90,16 @@ namespace Sci.Production.Prg.PowerBI.Model
         public int SEQ { get; set; }
 
         /// <summary>
+        /// 執行程式來源
+        /// </summary>
+        public string Source { get; set; }
+
+        /// <summary>
+        /// BITableInfo.TransferDate
+        /// </summary>
+        public DateTime? TransferDate { get; set; }
+
+        /// <summary>
         /// 執行清單
         /// </summary>
         public List<ExecutedList> ExecutedLists { get; set; }

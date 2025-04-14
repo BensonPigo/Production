@@ -89,7 +89,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = @"	
 update p 
 	set p.[M] = ISNULL(t.[M], '')
-		, p.[FactoryID] = ISNULL(t.[FactoryID], '')
+		, p.[FactoryID] = ISNULL(t.[Factory], '')
 		, p.[Delivery] = t.[Delivery]
 		, p.[Delivery(YYYYMM)] = ISNULL(t.[Delivery(YYYYMM)], '')
 		, p.[Earliest SCIDlv] = t.[Earliest SCIDlv]
@@ -244,7 +244,7 @@ update p
 		, p.[Last ctn recvd date] = t.[Last ctn recvd date]
 		, p.[OrganicCotton] = ISNULL(t.[Organic Cotton/Recycle Polyester/Recycle Nylon], '')
 		, p.[Direct Ship] = ISNULL(t.[Direct Ship], '')
-		, p.[StyleCarryover] = ISNULL(t.[StyleCarryover], '')
+		, p.[StyleCarryover] = ISNULL(t.[Style-Carryover], '')
 		, p.[SCHDL/ETA(SP)] = t.[SCHDL/ETA(SP)]
 		, p.[SewingMtlETA(SPexclRepl)] = t.[SewingMtlETA(SPexclRepl)]
 		, p.[ActualMtlETA(exclRepl)] = t.[ActualMtlETA(exclRepl)]
@@ -266,6 +266,10 @@ update p
 		, p.[ClogToCFATansit] = ISNULL(t.[Clog To CFA Tansit], 0)
 		, p.[CFAToClogTransit] = ISNULL(t.[CFA To Clog Transit], 0)
 		, p.[Shortage] = ISNULL(t.[Shortage],0)
+		, p.[Original CustPO] = ISNULL(t.[Original CustPO],'')
+		, p.[Line Aggregator] = ISNULL(t.[Line Aggregator],'')
+		, p.[JokerTag] = ISNULL(t.[JokerTag], 0)
+		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -290,9 +294,10 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Cutting SP], [Rainwear test], [TMS], [MD room scan date], [Dry Room received date], [Dry room trans date], [Last ctn trans date]
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
-	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage])
+	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal])
 select ISNULL(t.[M], '')
-	, ISNULL(t.[FactoryID], '')
+	, ISNULL(t.[Factory], '')
 	, [Delivery]
 	, ISNULL(t.[Delivery(YYYYMM)], '')
 	, [Earliest SCIDlv]
@@ -447,7 +452,7 @@ select ISNULL(t.[M], '')
 	, [Last ctn recvd date]
 	, ISNULL(t.[Organic Cotton/Recycle Polyester/Recycle Nylon], '')
 	, ISNULL(t.[Direct Ship], '')
-	, ISNULL(t.[StyleCarryover], '')
+	, ISNULL(t.[Style-Carryover], '')
 	, t.[SCHDL/ETA(SP)]
 	, t.[SewingMtlETA(SPexclRepl)]
 	, t.[ActualMtlETA(exclRepl)]
@@ -469,6 +474,10 @@ select ISNULL(t.[M], '')
     , ISNULL([Clog To CFA Tansit], 0)
     , ISNULL([CFA To Clog Transit], 0)
 	, ISNULL([Shortage],0)
+	, ISNULL([Original CustPO],'')
+	, ISNULL([Line Aggregator],'')
+	, ISNULL([JokerTag], 0)
+	, ISNULL([HeatSeal], 0)
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
@@ -484,7 +493,7 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 
@@ -498,10 +507,9 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
             using (sqlConn)
             {
                 string sql = @"	
-update p 
-	set p.[ColumnValue] = ISNULL(t.[ColumnValue], 0)
-from P_PPICMasterList_Extend p 
-inner join #tmp t on t.OrderID = p.OrderID and t.ColumnName = p.ColumnName
+delete p
+  from P_PPICMasterList_Extend p
+  join #tmp t on t.OrderID = p.OrderID
 
 insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
 select OrderID, ColumnName, isnull(ColumnValue, 0)
@@ -527,7 +535,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
                 };
             }
 

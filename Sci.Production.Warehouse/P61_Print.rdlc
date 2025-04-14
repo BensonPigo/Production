@@ -420,7 +420,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Issue time:</Value>
+                  <Value>Print time:</Value>
                   <Style />
                 </TextRun>
               </TextRuns>

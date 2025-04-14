@@ -50,8 +50,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -130,22 +128,11 @@ where not exists (
     AND t.RefNo = s.RefNo
 )
 and t.ReplacementFinishedDate >= @SDate
-
-if exists (select 1 from BITableInfo where Id = 'P_FabricStatus_And_IssueFabricTracking')
-begin
-	update BITableInfo set TransferDate = getdate(), IS_Trans = 1
-	where Id = 'P_FabricStatus_And_IssueFabricTracking'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans)
-	values('P_FabricStatus_And_IssueFabricTracking', getdate(), 1)
-end
-
 ";
+                sql += new Base().SqlBITableInfo("P_FabricStatus_And_IssueFabricTracking", false);
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

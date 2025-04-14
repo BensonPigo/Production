@@ -1510,7 +1510,8 @@ DECLARE @id VARCHAR(13),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
 		@cbm NUMERIC(10,3),
-		@remark NVARCHAR(150)
+		@remark NVARCHAR(150),
+		@OrderCompanyID NUMERIC(2, 0)
 --設定變數值
 SET @id = '{0}'
 SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
@@ -1521,7 +1522,7 @@ DECLARE @brandid VARCHAR(8),
 		@custcdid VARCHAR(16),
         @CtnType VARCHAR(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@CtnType = CtnType FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@CtnType = CtnType, @OrderCompanyID = OrderCompanyID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -1817,8 +1818,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate,OrderCompanyID)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate,@OrderCompanyID)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -1841,7 +1842,8 @@ ELSE
 			AddDate = @adddate,
 			EditName = '',
 			EditDate = null,
-            QueryDate = @adddate
+            QueryDate = @adddate,
+            OrderCompanyID = @OrderCompanyID
 		WHERE ID = @id
 	END
 
@@ -1888,7 +1890,8 @@ DECLARE @id VARCHAR(13),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
 		@cbm NUMERIC(10,3),
-		@remark NVARCHAR(150)
+		@remark NVARCHAR(150),
+        @OrderCompanyID NUMERIC(2,0)
 --設定變數值
 SET @id = '{0}'
 SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WITH (NOLOCK) WHERE Id = @id
@@ -1899,7 +1902,7 @@ DECLARE @brandid VARCHAR(8),
 		@custcdid VARCHAR(16),
         @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype  FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype, @OrderCompanyID = OrderCompanyID  FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -2150,8 +2153,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate,OrderCompanyID)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate,@OrderCompanyID)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -2174,7 +2177,8 @@ ELSE
 			AddDate = @adddate,
 			EditName = '',
 			EditDate = null,
-            QueryDate = @adddate
+            QueryDate = @adddate,
+            OrderCompanyID = @OrderCompanyID
 		WHERE ID = @id
 	END
 
@@ -2223,7 +2227,8 @@ DECLARE @id VARCHAR(13),
 		@shipmodeid VARCHAR(10),
 		@ctnstartno INT,
 		@cbm NUMERIC(8,4),
-		@remark NVARCHAR(125)
+		@remark NVARCHAR(125),
+        @OrderCompanyID NUMERIC(2,0)
 --設定變數值
 SET @id = '{0}'
 SELECT @mdivisionid = MDivisionID, @factoryid = FactoryID, @orderid = OrderID, @ordershipmodeseq = OrderShipmodeSeq, @shipmodeid = ShipModeID, @ctnstartno = CTNStartNo, @cbm = CBM, @remark = Remark  FROM PackingGuide WHERE Id = @id
@@ -2234,7 +2239,7 @@ DECLARE @brandid VARCHAR(8),
 		@custcdid VARCHAR(16),
         @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID, @Ctntype = Ctntype, @OrderCompanyID = OrderCompanyID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -2526,8 +2531,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate,OrderCompanyID)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate, @OrderCompanyID)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -2550,7 +2555,8 @@ ELSE
 			AddDate = @adddate,
 			EditName = '',
 			EditDate = null,
-            QueryDate = @adddate
+            QueryDate = @adddate,
+            OrderCompanyID = @OrderCompanyID
 		WHERE ID = @id
 	END
 
@@ -2599,7 +2605,8 @@ DECLARE @id VARCHAR(13),
 		@ctnstartno INT,
 		@cbm NUMERIC(8,4),
 		@remark NVARCHAR(125),
-		@article VARCHAR(8)
+		@article VARCHAR(8),
+        @OrderCompanyID NUMERIC(2, 0)
 
 --設定變數值
 SET @id = '{0}'
@@ -2611,7 +2618,7 @@ DECLARE @brandid VARCHAR(8),
 		@custcdid VARCHAR(16),
         @Ctntype varchar(1)
 --設定變數值
-SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@Ctntype = Ctntype FROM Orders WITH (NOLOCK) WHERE ID = @orderid
+SELECT @brandid = BrandID, @dest = Dest, @custcdid = CustCDID ,@Ctntype = Ctntype, @OrderCompanyID = OrderCompanyID FROM Orders WITH (NOLOCK) WHERE ID = @orderid
 
 --建立tmpe table存放展開後結果
 DECLARE @tempPackingList TABLE (
@@ -2882,8 +2889,8 @@ BEGIN TRANSACTION
 SELECT @havepl = count(ID) FROM PackingList WITH (NOLOCK) WHERE ID = @id
 IF @havepl = 0
 	BEGIN --新增PackingList
-		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate)
-			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate)
+		INSERT INTO PackingList (ID,Type,MDivisionID,FactoryID,ShipModeID,BrandID,Dest,CustCDID,CTNQty,ShipQty,NW,GW,NNW,CBM,Remark,Status,AddName,AddDate,QueryDate,OrderCompanyID)
+			VALUES (@id, 'B', @mdivisionid, @factoryid, @shipmodeid, @brandid, @dest, @custcdid, @seqcount, @ttlshipqty, @ttlnw, @ttlgw, @ttlnnw, @cbm, @remark, 'New', @addname, @adddate, @adddate, @OrderCompanyID)
 	END
 ELSE
 	BEGIN --更新PackingList
@@ -2906,7 +2913,8 @@ ELSE
 			AddDate = @adddate,
 			EditName = '',
 			EditDate = null,
-            QueryDate = @adddate
+            QueryDate = @adddate,
+            OrderCompanyID = @OrderCompanyID
 		WHERE ID = @id
 	END
 

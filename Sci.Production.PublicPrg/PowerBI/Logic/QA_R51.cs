@@ -15,12 +15,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public QA_R51()
         {
-            DBProxy.Current.DefaultTimeout = 1800;
+             DBProxy.Current.DefaultTimeout = 1800;
         }
 
         /// <inheritdoc/>
         public Base_ViewModel Get_QA_R51(QA_R51_ViewModel model)
         {
+            var srWhere = this.GetSRWhere(model);
+
             var itemWhere = this.GetWhere(model);
 
             var itemCol_Join = this.GetCol_Join(model.FormatType, model.IsBI);
@@ -31,9 +33,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
             into #SubProInsRecord
             from(
 	            select  
-	            * 
-	            ,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by Adddate desc)
-	            from SubProInsRecord 
+	            SR.*,
+	            [Inspector] = CONCAT(a.ID, ':', a.Name)
+	            ,RowNo = ROW_NUMBER() over(partition by BundleNo,SubProcessID order by sr.Adddate desc)
+	            from SubProInsRecord SR
+                LEFT join [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) on a.ID = SR.AddName
+                where 1 = 1
+                {srWhere}
             )aa
             where RowNo = 1
 
@@ -66,7 +72,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        SR.RejectQty,
 	        SR.Machine,
 	        {itemCol_Join.Item1}
-	        Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
+	        Inspector = SR.Inspector,
 	        SR.Remark,
             AddDate2 = SR.AddDate,
             SR.RepairedDatetime,
@@ -81,7 +87,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
             Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
             left join Country on Country.ID = o.Dest
-            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID
             Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
             Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
             Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
@@ -89,13 +95,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                                 from Bundle_Detail_Art bda with (nolock) 
                                                 where bda.Bundleno = BD.Bundleno
                                                 FOR XML PATH('')),1,1,'') ) Artwork
-            outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
+            LEFT JOIN Factory fac WITH(NOLOCK) on fac.ID = SR.FactoryID and fac.Junk =0
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
             outer apply
             (
                 SELECT 
-                VAL = IIF(isnull(R.InspectQty,0) = 0, 0, round(((R.InspectQty-R.RejectQty) / R.InspectQty)*100,2))
+                VAL = IIF(isnull((R.InspectQty+R.RejectQty),0) = 0, 0, round((R.InspectQty / (R.InspectQty+R.RejectQty))*100,2))
                 FROM SewingOutput_Detail sod 
                 inner join SewingOutput so with(nolock) on so.id = sod.id
                 inner join Rft r on r.OrderID = sod.OrderId AND
@@ -140,7 +146,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	        SR.RejectQty,
 	        SR.Machine,
 	        {itemCol_Join.Item1}
-	        Inspector = (SELECT CONCAT(a.ID, ':', a.Name) from [ExtendServer].ManufacturingExecution.dbo.Pass1 a WITH (NOLOCK) where a.ID = SR.AddName),
+	        Inspector = SR.Inspector,
 	        SR.Remark,
             AddDate2 = SR.AddDate,
             SR.RepairedDatetime,
@@ -156,7 +162,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             left join Country on Country.ID = o.Dest
             Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
             Left JOIN Bundle B WITH (NOLOCK) ON BD.ID=B.ID
-            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
+            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID
             Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
             Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
             Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
@@ -164,13 +170,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                                 from Bundle_Detail_Art bda with (nolock) 
                                                 where bda.Bundleno = SR.BundleNo
                                                 FOR XML PATH('')),1,1,'') ) Artwork
-            outer apply(select MDivisionID from Factory f where f.ID = SR.FactoryID and f.Junk =0) Fac
+            LEFT JOIN Factory fac WITH(NOLOCK) on fac.ID = SR.FactoryID and fac.Junk =0
             {itemCol_Join.Item3}
             outer apply(select ttlSecond = DATEDIFF(Second, SR.AddDate, RepairedDatetime)) ttlSecond
             outer apply
             (
                 SELECT 
-                VAL = IIF(isnull(R.InspectQty,0) = 0, 0, round(((R.InspectQty-R.RejectQty) / R.InspectQty)*100,2))
+                VAL = IIF(isnull((R.InspectQty+R.RejectQty),0) = 0, 0, round((R.InspectQty / (R.InspectQty+R.RejectQty))*100,2))
                 FROM SewingOutput_Detail sod 
                 inner join SewingOutput so with(nolock) on so.id = sod.id
                 inner join Rft r on r.OrderID = sod.OrderId AND
@@ -214,16 +220,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@Shift", SqlDbType.VarChar, 5) { Value = (object)model.Shift ?? DBNull.Value },
             };
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
-                };
-                resultReport.DtArr = dataTables;
-                return resultReport;
-            }
+                Result = DBProxy.Current.Select("Production", sqlcmd, listPar, out DataTable[] dataTables),
+            };
+            resultReport.DtArr = dataTables;
+            return resultReport;
         }
 
         /// <inheritdoc/>
@@ -263,13 +265,24 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     string strJunk = isBI ? "m.Junk," : "[Junk] = iif(m.Junk = 1, 'Y', 'N'),";
                     formatJoin = @"
                     left join SubProMachine m on SR.Machine = m.ID and SR.FactoryID = m.FactoryID and SR.SubProcessID = m.SubProcessID
-                    left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey" + sqlDefValue;
+                    left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
+                    outer apply 
+                    (
+                        select OpreatorID = STUFF((
+		                    select CONCAT(',', SubProOperatorEmployeeID)
+		                    from SubProInsRecord_Operator with (nolock)
+		                    where SubProInsRecordUkey = SR.Ukey
+		                    order by SubProOperatorEmployeeID
+		                    for xml path('')
+	                    ),1,1,'')
+                    ) SOE" + sqlDefValue;
                     formatCol1 = $@"
                     m.Serial,
                     {strJunk}
                     m.Description,
-                    SRD.DefectCode,                                
-                    SRD.DefectQty,";
+                    SRD.DefectCode,
+                    SRD.DefectQty,
+                    SOE.OpreatorID,";
                     formatCol2 = string.Empty;
                     return Tuple.Create(formatCol1, formatCol2, formatJoin);
                 case "ResponseTeam":
@@ -306,22 +319,38 @@ namespace Sci.Production.Prg.PowerBI.Logic
         }
 
         /// <inheritdoc/>
-        public Tuple<string, string> GetWhere(QA_R51_ViewModel model)
+        public string GetSRWhere(QA_R51_ViewModel model)
         {
-            string sqlWhere1 = string.Empty;
-            string sqlWhere2 = string.Empty;
+            var srWhere = string.Empty;
 
             if (!model.SubProcess.Empty())
             {
-                sqlWhere1 = $@" and SR.SubProcessID in ({model.SubProcess})";
-                sqlWhere2 = $@" and SR.SubProcessID in ({model.SubProcess})";
+                srWhere = $@" and SR.SubProcessID in ({model.SubProcess})";
             }
 
             if (!model.StartInspectionDate.Value.Empty())
             {
-                sqlWhere1 += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
-                sqlWhere2 += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
+                srWhere += $@" and SR.InspectionDate between @StartInspectionDate and @EndInspectionDate";
             }
+
+            if (!model.Factory.Empty())
+            {
+                srWhere += $@" and SR.FactoryID = @Factory";
+            }
+
+            if (!model.Shift.Empty())
+            {
+                srWhere += $@" and SR.Shift = @Shift";
+            }
+
+            return srWhere;
+        }
+
+        /// <inheritdoc/>
+        public Tuple<string, string> GetWhere(QA_R51_ViewModel model)
+        {
+            string sqlWhere1 = string.Empty;
+            string sqlWhere2 = string.Empty;
 
             if (!model.SP.Empty())
             {
@@ -339,18 +368,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 sqlWhere1 += $@" and Fac.MDivisionID= @M";
                 sqlWhere2 += $@" and Fac.MDivisionID= @M";
-            }
-
-            if (!model.Factory.Empty())
-            {
-                sqlWhere1 += $@" and SR.FactoryID = @Factory";
-                sqlWhere2 += $@" and SR.FactoryID = @Factory";
-            }
-
-            if (!model.Shift.Empty())
-            {
-                sqlWhere1 += $@" and SR.Shift = @Shift";
-                sqlWhere2 += $@" and SR.Shift = @Shift";
             }
 
             return Tuple.Create(sqlWhere1, sqlWhere2);

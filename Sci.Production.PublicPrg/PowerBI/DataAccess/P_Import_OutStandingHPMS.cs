@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -12,12 +13,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     /// <inheritdoc/>
     public class P_Import_OutStandingHPMS
     {
-        /// <inheritdoc/>
-        public P_Import_OutStandingHPMS()
-        {
-            DBProxy.Current.DefaultTimeout = 1800;
-        }
-
         /// <inheritdoc/>
         public Base_ViewModel P_OutStandingHPMS(DateTime? sDate)
         {
@@ -67,30 +62,30 @@ select p.BuyerDelivery
 	, [OSTInCFA] = ISNULL(SUM(p4.OSTInCFA), 0)
 into #tmp_P_OutStandingHPMS
 from (
-	select distinct p.BuyerDelivery, p.Fty 
+	select distinct p.BuyerDelivery, p.FactoryID 
 	from P_CartonStatusTrackingList p 
 	where p.BuyerDelivery >= @sDate
 ) p
-inner join Production.dbo.Factory f WITH(NOLOCK) on p.fty = f.ID  
+inner join Production.dbo.Factory f WITH(NOLOCK) on p.FactoryID = f.ID  
 outer apply (
 	select OSTInHauling = count(*)
 	from P_CartonStatusTrackingList p2
 	where p2.BuyerDelivery = p.BuyerDelivery
-	and p2.Fty = p.fty
+	and p2.FactoryID = p.FactoryID
 	and p2.Status = 'Hauling'	
 ) p2 
 outer apply (
 	select OSTInScanAndPack = count(*)
 	from P_CartonStatusTrackingList  p3
 	where p3.BuyerDelivery = p.BuyerDelivery
-	and p3.Fty = p.fty
+	and p3.FactoryID = p.FactoryID
 	and p3.Status = 'Scan & Pack'
 ) p3
 outer apply (
 	select OSTInCFA = count(*)
 	from P_CartonStatusTrackingList  p4
 	where p4.BuyerDelivery = p.BuyerDelivery
-	and p4.Fty = p.fty
+	and p4.FactoryID = p.FactoryID
 	and p4.Status = 'CFA'
 ) p4
 GROUP BY p.BuyerDelivery, f.FTYGroup
@@ -126,7 +121,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

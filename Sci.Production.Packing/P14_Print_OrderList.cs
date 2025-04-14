@@ -191,6 +191,7 @@ outer apply(
                    PackingListID = row1["PackingListID"].ToString().Trim(),
                    OrderID = row1["OrderID"].ToString().Trim(),
                    CTNStartNo = row1["CTNStartNo"].ToString().Trim(),
+                   Remaining_CTN = row1["Remaining_CTN"].ToString().Trim(),
                    StyleID = row1["StyleID"].ToString().Trim(),
                    BrandID = row1["BrandID"].ToString().Trim(),
                    Customize1 = row1["Customize1"].ToString().Trim(),
@@ -223,6 +224,7 @@ where id in(select tid from #tmp where isnull(TransferSlipNo,'') = '')
 select distinct TransferSlipNo into #tmp_TransferSlipNo from TransferToClog t where id in(select distinct tid from #tmp)
 
 select  *
+        , [Remaining_CTN] = RemainingCTN.val
         , rn = ROW_NUMBER() over(order by Id,OrderID,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
         , rn1 = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
 from (
@@ -256,7 +258,14 @@ from (
 	    where pld.ID = t.PackingListID and pld.CTNStartNo = t.CTNStartNo 
     )b
     where t.MDivisionID = '{1}' and t.TransferSlipNo in (select TransferSlipNo from #tmp_TransferSlipNo)
-) X order by rn
+) X 
+OUTER APPLY
+(
+	select val = COUNT(1)
+	from PackingList_Detail 
+	where OrderID = x.OrderID and ReceiveDate is null AND CTNStartNo != 0 AND CTNQty != 0
+)RemainingCTN
+order by rn
 
 ",
                     this.TransferSlipNo,
@@ -264,10 +273,10 @@ from (
                 MyUtility.Tool.ProcessWithDatatable(this.dt, "tid,TransferSlipNo", sqlcmd, out dtTransferSlipNo);
                 #endregion
                 sqlcmd = @"
-select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID
+select TransferDate,TransferSlipNo,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID,Remaining_CTN
 from #tmp";
 
-                MyUtility.Tool.ProcessWithDatatable(dtTransferSlipNo, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID", sqlcmd, out dtTransferSlipNoDetail);
+                MyUtility.Tool.ProcessWithDatatable(dtTransferSlipNo, @"Selected,TransferSlipNo,TransferDate,PackingListID,OrderID,CTNStartNo,Remaining_CTN,StyleID,BrandID,Customize1,CustPONo,Dest,TTL_PCS,FactoryID,BuyerDelivery,AddDate,tid,SeasonID", sqlcmd, out dtTransferSlipNoDetail);
 
                 List<PackData> slip = (from p in dtTransferSlipNoDetail.AsEnumerable()
                             group p by new
@@ -280,11 +289,13 @@ from #tmp";
                             into m
                             select new PackData
                             {
+
                                 TTL_Qty = m.Count(r => !r["CTNStartNo"].Empty()).ToString(),
                                 PackID = m.First()["PackingListID"].ToString(),
                                 OrderID = m.First()["OrderID"].ToString(),
                                 PONo = m.First()["CustPONo"].ToString(),
                                 Dest = m.First()["Dest"].ToString(),
+                                Remaining_CTN = m.First()["Remaining_CTN"].ToString(),
                                 TTL_PCS = m.Sum(st => st.Field<int>("TTL_PCS")).ToString(),
                                 BuyerDelivery = m.First()["BuyerDelivery"].ToString(),
                                 CartonNum = string.Join(", ", m.Select(r => r["CTNStartNo"].ToString().Trim())),
@@ -294,7 +305,8 @@ from #tmp";
                             }).ToList();
 
                 sqlcmd = @"
-select  t.TTL_Qty, 
+select  t.TTL_Qty,
+        T.Remaining_CTN,
         t.PackID, 
         t.OrderID, 
         t.PONo, 
@@ -330,6 +342,7 @@ outer apply(
                   OrderID = row1["OrderID"].ToString().Trim(),
                   PONo = row1["PONo"].ToString().Trim(),
                   TtlCtn = row1["ttlCtn"].ToString().Trim(),
+                  Remaining_CTN = row1["Remaining_CTN"].ToString().Trim(),
                   ClogLocationId = row1["ClogLocationId"].ToString().Trim(),
                   Dest = row1["Dest"].ToString().Trim(),
                   TTL_PCS = row1["TTL_PCS"].ToString().Trim(),
@@ -580,6 +593,10 @@ outer apply(
             /// </summary>
             public string TTL_PCS { get; set; }
 
+            /// <summary>
+            /// Remaining_CTN
+            /// </summary>
+            public string Remaining_CTN { get; set; }
             /// <summary>
             /// BuyerDelivery
             /// </summary>

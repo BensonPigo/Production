@@ -37,6 +37,9 @@ namespace Sci.Production.Basic
             this.txtMidSWIFTCode.Text = this.Detail.MidSWIFTCode;
             this.txtMidBankName.Text = this.Detail.MidBankName;
             this.txtRemark.Text = this.Detail.Remark;
+            this.txtMSBBranchName.Text = this.Detail.MSBBranchName;
+            this.txtTPBBankCode.Text = this.Detail.TPBBankCode;
+            this.txtTPBBankName.Text = this.Detail.TPBBankName;
         }
 
         /// <inheritdoc/>
@@ -55,6 +58,9 @@ namespace Sci.Production.Basic
             this.Detail.MidSWIFTCode = this.txtMidSWIFTCode.Text;
             this.Detail.MidBankName = this.txtMidBankName.Text;
             this.Detail.Remark = this.txtRemark.Text;
+            this.Detail.MSBBranchName = this.txtMSBBranchName.Text;
+            this.Detail.TPBBankCode = this.txtTPBBankCode.Text;
+            this.Detail.TPBBankName = this.txtTPBBankName.Text;
 
             this.Close();
         }

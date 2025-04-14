@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Data;
 using System.Text;
 using Sci.Data;
-using Sci.Production.Class;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -223,6 +222,9 @@ UNION
 SELECT DISTINCT [Stage]='Final',t.*
 FROM  #tmp t 
 UNION 
+SELECT DISTINCT [Stage]='Final Internal',t.*
+FROM  #tmp t 
+UNION 
 SELECT DISTINCT [Stage]='3rd party',t.*
 FROM  #tmp t 
 INNER JOIN Order_QtyShip oq ON oq.Id = t.Id AND oq.Seq = t.Seq
@@ -263,7 +265,7 @@ CREATE NONCLUSTERED INDEX index_#CFAInspectionRecord ON #CFAInspectionRecord([ID
 ");
 			#region PowerBI
 			string sqlBI = $@"
-select nb = ROW_NUMBER() over(Partition by ID order by iif(Stage = 'Final',1,0) desc,AuditDate desc,EditDate desc,AddDate desc)
+select nb = ROW_NUMBER() over(Partition by ID order by iif(Stage in ('Final' ,'Final Internal'),1,0) desc,AuditDate desc,EditDate desc,AddDate desc)
 ,*
 into #tmpFinal
 from 
@@ -344,6 +346,81 @@ from
 
 	union all
 
+	/*-----Final Internal-----*/
+	select [Stage] = 'Final Internal'
+	,c.AuditDate
+	,[InspResult]=CASE WHEN NOT EXISTS(
+					SELECT 1 
+					FROM #CFAInspectionRecord cr 
+					INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+					WHERE cfoq.OrderID = n.ID AND cfoq.Seq = n.Seq AND cr.Stage = 'Final Internal' AND cr.Status = 'Confirmed' ) 
+				THEN ''
+				WHEN EXISTS(						
+					SELECT 1
+					FROM #NeedCkeck a
+					INNER JOIN Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
+					WHERE a.Stage = 'Final Internal' 
+					AND oq.CFAFinalInspectResult  != 'Pass'
+					AND a.Id = n.Id AND a.Seq = n.Seq
+				)THEN 'Fail'
+				ELSE ''
+				END
+	,[NotYetInspCtn#] = ''
+	,[NotYetInspCtn]  = ''
+	,[Notyetinspqty]  = 0
+	,[FailCtn#]=(
+		SELECt TOP 1  cfoq.Carton
+		FROM #CFAInspectionRecord  cr
+		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+		WHERE cr.Stage = 'Final Internal' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+		AND cfoq.OrderID=n.ID AND cfoq.SEQ=n.Seq
+		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+	)
+	,[FailCtn]=(	
+		SELECT COUNT(DISTINCT data)
+		FROM dbo.SplitString((
+						SELECt TOP 1  cfoq.Carton
+						FROM #CFAInspectionRecord  cr
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cr.Stage = 'Final Internal' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+						AND cfoq.OrderID=n.ID AND cfoq.SEQ=n.Seq
+						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+		),',')
+	)
+	,[FailQty] = 0
+	,n.MDivisionID
+	,n.FactoryID
+	,n.BuyerDelivery
+	,n.BrandID
+	,n.ID
+	,n.Category 
+	,n.OrderTypeID
+	,n.CustPoNo
+	,n.StyleID
+	,n.StyleName
+	,n.SeasonID
+	,n.[Dest]
+	,n.Customize1
+	,n.CustCDID
+	,n.Seq
+	,n.ShipModeID
+	,n.[ColorWay]
+	,n.SewLine
+	,n.[TtlCtn]
+	,n.[StaggeredCtn]
+	,n.[ClogCtn] 
+	,n.[ClogCtn%]
+	,n.[LastCartonReceivedDate]
+	,n.CFAFinalInspectDate
+	,n.CFA3rdInspectDate
+	,n.CFARemark
+	,c.EditDate ,c.AddDate
+	FROM #tmp n
+	left join #CFAInspectionRecord_OrderSEQ co on co.OrderID = n.ID and co.SEQ = n.SEQ
+	left join #CFAInspectionRecord c on c.id = co.id
+	WHERE c.Stage = 'Final Internal'
+
+	union all
 	/*-----Staggered-----*/
 	select [Stage] = 'Stagger'
 	,c.AuditDate
@@ -685,7 +762,7 @@ WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
                 outstandingWHERE.Add(stageSql);
             }
 
-            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Final")
+            if (MyUtility.Check.Empty(model.InspStaged) || model.InspStaged == "Final" || model.InspStaged == "Final Internal")
             {
                 string stageSql = $@"
 
@@ -695,13 +772,13 @@ SELECT need.[Stage]
 						SELECT 1 
 						FROM #CFAInspectionRecord cr 
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cfoq.OrderID = need.ID AND cfoq.Seq = need.Seq AND cr.Stage = 'Final' AND cr.Status = 'Confirmed' ) 
+						WHERE cfoq.OrderID = need.ID AND cfoq.Seq = need.Seq AND cr.Stage in ('Final' ,'Final Internal') AND cr.Status = 'Confirmed' ) 
 					THEN ''
 					WHEN EXISTS(						
 						SELECT 1
 						FROM #NeedCkeck a
 						INNER JOIN Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
-						WHERE a.Stage = 'Final' 
+						WHERE a.Stage in ('Final' ,'Final Internal')
 						AND oq.CFAFinalInspectResult  != 'Pass'
 						AND a.Id = need.Id AND a.Seq = need.Seq
 					)THEN 'Fail'
@@ -713,7 +790,7 @@ SELECT need.[Stage]
 		SELECt TOP 1  cfoq.Carton
 		FROM #CFAInspectionRecord  cr
 		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-		WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+		WHERE cr.Stage in ('Final' ,'Final Internal') AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 		AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 	)
@@ -723,7 +800,7 @@ SELECT need.[Stage]
 						SELECt TOP 1  cfoq.Carton
 						FROM #CFAInspectionRecord  cr
 						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
-						WHERE cr.Stage = 'Final' AND cr.Status='Confirmed' AND cr.Result = 'Fail'
+						WHERE cr.Stage in ('Final' ,'Final Internal') AND cr.Status='Confirmed' AND cr.Result = 'Fail'
 						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
 						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
 		),',')
@@ -755,12 +832,12 @@ SELECT need.[Stage]
 ,need.CFA3rdInspectDate
 ,need.CFARemark
 FROM #NeedCkeck need
-WHERE need.Stage = 'Final'
+WHERE need.Stage in ('Final' ,'Final Internal')
 AND NOT EXISTS (	
 	SELECT *
 	FROM #CFAInspectionRecord a
 	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
-	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = 'Final' AND a.Status='Confirmed' AND (a.Result = 'Pass' OR a.Result='Fail but release')
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage in ('Final' ,'Final Internal') AND a.Status='Confirmed' AND (a.Result = 'Pass' OR a.Result='Fail but release')
 ) 
 
 ";
@@ -858,17 +935,13 @@ AND NOT EXISTS (
                 sqlCmd.Append(outstandingWHERE.JoinToString("UNION") + Environment.NewLine + "DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ");
             }
 
-            DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
-            using (sqlConn)
+            Base_ViewModel resultReport = new Base_ViewModel
             {
-                Base_ViewModel resultReport = new Base_ViewModel
-                {
-                    Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
-                };
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dt),
+            };
 
-                resultReport.Dt = dt;
-                return resultReport;
-            }
+            resultReport.Dt = dt;
+            return resultReport;
         }
 
         /// <summary>

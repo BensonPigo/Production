@@ -109,9 +109,11 @@ else
 		--��欰Cutting�����,����sMDivisionID
 		Update a
 		set a.MDivisionID = isnull(b.MDivisionID, '')
+            ,a.FactoryID = ISNULL(b.Fty_Group, '')
 		from Production.dbo.Cutting a
 		inner join #TOrder b on a.ID = b.ID
-		where a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory)
+		where (a.MDivisionID <> b.MDivisionID and b.MDivisionID in( select distinct MDivisionID from Production..Factory))
+              OR (a.FactoryID <> b.Fty_Group AND EXISTS (SELECT 1 FROM Production.dbo.Factory WHERE ID = b.Fty_Group))
 
 		--轉單為Cutting母單時,覆寫CutPlan母子單的工廠欄位 
 		Update a
@@ -1103,7 +1105,12 @@ else
 				t.Transferdate			= s.Transferdate,
 				t.Max_ScheETAbySP		= s.Max_ScheETAbySP,
 				t.Sew_ScheETAnoReplace	= s.Sew_ScheETAnoReplace,
-				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x
+				t.MaxShipETA_Exclude5x	= s.MaxShipETA_Exclude5x,
+				t.Customize4            = isnull(s.Customize4,''),
+				t.Customize5            = isnull(s.Customize5,''),
+				t.OrderCompanyID	    = isnull(s.OrderCompany, 0),
+				t.JokerTag 			= isnull( s.JokerTag ,                0),
+				t.HeatSeal 			= isnull( s.HeatSeal ,                0)
 		when not matched by target then
 		insert (
 			ID						, BrandID				, ProgramID				, StyleID				, SeasonID
@@ -1137,7 +1144,9 @@ else
 			, IsBuyBack				, BuyBackReason			, IsBuyBackCrossArticle , IsBuyBackCrossSizeCode
 			, KpiEachConsCheck		, CMPLTDATE				, HangerPack			, DelayCode				, DelayDesc
 			, SizeUnitWeight		, OrganicCotton         , DirectShip			, ScheETANoReplace		, SCHDLETA
-			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x
+			, Transferdate			, Max_ScheETAbySP		, Sew_ScheETAnoReplace	, MaxShipETA_Exclude5x  , OrderCompanyID
+			, Customize4            , Customize5			, LocalMR			    , JokerTag 			    , HeatSeal 
+
 		) 
        VALUES
        (
@@ -1295,9 +1304,34 @@ else
 			  s.Transferdate,
 			  s.Max_ScheETAbySP,
 			  s.Sew_ScheETAnoReplace,
-			  s.MaxShipETA_Exclude5x
+			  s.MaxShipETA_Exclude5x,
+			  isnull(s.OrderCompany, 0),
+              isnull(s.Customize4, ''),
+              isnull(s.Customize5, ''),
+			  isnull( 
+			  (
+				select localMR 
+				from Production.dbo.Style 
+				where BrandID = s.BrandID 
+				and id = s.styleid 
+				and SeasonID = s.SeasonID ), 
+				''),
+              isnull(s.JokerTag ,      0),
+              isnull(s.HeatSeal  ,      0)
        )
 		output inserted.id, iif(deleted.id is null,1,0) into @OrderT; --將insert =1 , update =0 把改變過的id output;
+
+
+	------------- Update Local Order CPU--------------
+	update o
+	set o.CPU = s.CPU
+	,o.EditDate = GETDATE()
+	,o.EditName = 'SCIMIS'
+	from Production.dbo.orders o with(nolock) 
+	inner join Production.dbo.Style s with(nolock) on s.Ukey = o.StyleUkey and s.CPU <> 0
+	where o.LocalOrder=1
+	and not exists (select 1 from Production.dbo.SewingOutput_Detail sd with(nolock) where sd.OrderId = o.ID)
+	and o.CPU <> s.CPU
 
 	--------------Order_Qty--------------------------Qty BreakDown
 	--抓出轉入order_qty有異動的資料，作為後續傳送給廠商資料的依據
@@ -2470,7 +2504,8 @@ else
 				t.AddName				= isnull( s.AddName,             ''),
 				t.AddDate				=  s.AddDate,      
 				t.EditName				= isnull( s.EditName,            ''),
-				t.EditDate				= s.EditDate
+				t.EditDate				= s.EditDate,
+				t.MarkerType     		= isnull( s.MarkerType,           0)
 		when not matched by target then
 			insert (
 				Id					, Ukey					, Seq				, MarkerName		, FabricCode
@@ -2479,7 +2514,7 @@ else
 				, Remark			, MixedSizeMarker		, MarkerNo			, MarkerUpdate		, MarkerUpdateName
 				, AllSize			, PhaseID				, SMNoticeID		, MarkerVersion		, Direction
 				, CuttingWidth		, Width					, Type				, AddName			, AddDate
-				, EditName			, EditDate
+				, EditName			, EditDate              , MarkerType
 			)
            VALUES
            (
@@ -2514,7 +2549,8 @@ else
                   isnull(s.addname ,             ''),
                   s.adddate ,
                   isnull(s.editname ,            ''),
-                  s.editdate
+                  s.editdate,
+				  isnull( s.MarkerType,           0)
            )
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then 
 			delete;
@@ -2688,7 +2724,8 @@ else
 				t.EditName				= isnull( s.EditName,           ''),
 				t.EditDate				=  s.EditDate, 
 				t.isQT					= isnull( s.isQT,               0),
-				t.MarkerDownloadID		= isnull( s.MarkerDownloadID,   '')
+				t.MarkerDownloadID		= isnull( s.MarkerDownloadID,   ''),
+				t.MarkerType		    = isnull( s.MarkerType,          0)
 		when not matched by target then 
 			insert (
 				Id					, Ukey				, Seq				, MarkerName			, FabricCombo
@@ -2697,7 +2734,7 @@ else
 				, Remark			, MixedSizeMarker	, MarkerNo			, MarkerUpdate			, MarkerUpdateName
 				, AllSize			, PhaseID			, SMNoticeID		, MarkerVersion			, Direction
 				, CuttingWidth		, Width				, TYPE				, AddName				, AddDate
-				, EditName			, EditDate			, isQT				, MarkerDownloadID		
+				, EditName			, EditDate			, isQT				, MarkerDownloadID		, MarkerType
 			) 
            VALUES
            (
@@ -2734,7 +2771,8 @@ else
                   isnull(s.editname ,           ''),
                   s.editdate ,
                   isnull(s.isqt ,               0),
-                  isnull(s.markerdownloadid ,   '')
+                  isnull(s.markerdownloadid ,   ''),
+				  isnull(s.MarkerType,          0)
            )
 		when not matched by source AND T.ID IN (SELECT ID FROM #Torder) then  
 			delete;

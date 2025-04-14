@@ -20,14 +20,20 @@ namespace Sci.Production.Quality
             : base(menuitem)
         {
             this.InitializeComponent();
-            Env.Cfg.FtpServerIP = "ftp.sportscity.com.tw";
-            Env.Cfg.FtpServerAccount = "insp_rpt";
-            Env.Cfg.FtpServerPassword = "rpt_insp";
+
+            // ISP20240670 暫時註解
+            // Env.Cfg.FtpServerIP = "ftp.sportscity.com.tw";
+            // Env.Cfg.FtpServerAccount = "insp_rpt";
+            // Env.Cfg.FtpServerPassword = "rpt_insp";
+            Env.Cfg.SFTP_Server_IP = "sftp.sportscity.com.tw";
+            Env.Cfg.SFTP_Server_Port = 115;
+            Env.Cfg.SFTP_Server_Account = "insp_rpt";
+            Env.Cfg.SFTP_Server_Password = "Rpt_insp2024";
             this.displayBoxapvSeasonNull.BackColor = Color.FromArgb(190, 190, 190);
             this.displayBox1.BackColor = Color.Yellow;
         }
 
-        private readonly string Filepath = @"MMC\";
+        private readonly string Filepath = @"/SFTP/FactoryFTP/MMC/";
         private DataTable dt1;
         private DataTable dt2;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_ApprovedSeason;
@@ -371,7 +377,7 @@ namespace Sci.Production.Quality
         // 子目錄
         private string Filedic(DataRow dr)
         {
-            string fp = this.Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]) + @"\";
+            string fp = this.Filepath + MyUtility.Convert.GetString(dr["AbbEN"]) + " " + MyUtility.Convert.GetString(dr["SuppID"]);
             return fp;
         }
 
@@ -415,7 +421,7 @@ namespace Sci.Production.Quality
 
             string sqlWEAVETYPEID = string.Empty;
 
-            if (brandID == "LLL")
+            if (brandID == "LLL" ||　brandID.Trim().ToUpper() == "GYMSHARK")
             {
                 sqlWEAVETYPEID = $@"
                 DECLARE @Point as int = {pointRate}
@@ -760,14 +766,21 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
         private void BtnDownloadFile_Click(object sender, EventArgs e)
         {
             DualResult result;
-            IList<MyUtility.FTP.FtpFile> ftpDir = new List<MyUtility.FTP.FtpFile>();
-            result = MyUtility.FTP.FTP_GetFileList(this.Filepath, out ftpDir); // 確認根目錄能正常取得
+            IList<MyUtility.SFTP.SFtpFile> sftpDir = new List<MyUtility.SFTP.SFtpFile>();
+            result = MyUtility.SFTP.SFTP_GetFileList(this.Filepath, out sftpDir); // 確認根目錄能正常取得
             if (!result)
             {
-                MyUtility.Msg.WarningBox("For ftp://ftp.sportscity.con.tw no access, Please find Local IT assistance to open.");
+                MyUtility.Msg.WarningBox("For sftp://sftp.sportscity.con.tw no access, Please find Local IT assistance to open.");
                 return;
             }
 
+            // IList<MyUtility.FTP.FtpFile> ftpDir = new List<MyUtility.FTP.FtpFile>();
+            // result = MyUtility.FTP.FTP_GetFileList(this.Filepath, out sftpDir); // 確認根目錄能正常取得
+            // if (!result)
+            // {
+            //     MyUtility.Msg.WarningBox("For ftp://ftp.sportscity.con.tw no access, Please find Local IT assistance to open.");
+            //     return;
+            // }
             if (this.dt1 == null || this.dt1.Select("selected = 1").Length == 0)
             {
                 MyUtility.Msg.WarningBox("No datas selected.");
@@ -793,17 +806,17 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
                 string filepath = this.Filedic(dr); // 取得根目錄+子目錄
 
                 DualResult result;
-                IList<string> ftpDir = new List<string>();
-                result = MyUtility.FTP.FTP_GetFileList(filepath, out ftpDir);
+                IList<string> sftpDir = new List<string>();
+                result = MyUtility.SFTP.SFTP_GetFileList(filepath, out sftpDir);
                 if (!result)
                 {
                     continue;
                 }
 
-                if (ftpDir.Count > 0)
+                if (sftpDir.Count > 0)
                 {
                     string filename = this.Filename("Refno", dr, type);
-                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    string[] fs = sftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
                     foreach (string item in fs)
                     {
                         filesDic.Add(item, filepath);
@@ -813,7 +826,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
                 if (filesDic.Count == 0)
                 {
                     string filename = this.Filename("BrandRefNo", dr, type);
-                    string[] fs = ftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
+                    string[] fs = sftpDir.Where(r => r.ToUpper().Contains(filename.ToUpper())).ToArray();
                     foreach (string item in fs)
                     {
                         filesDic.Add(item, filepath);
@@ -835,7 +848,7 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
                     DualResult dresult;
                     foreach (var file in filesDic)
                     {
-                        dresult = MyUtility.FTP.FTP_Download(file.Value + @"\" + file.Key, fbd.SelectedPath + @"\" + file.Key);
+                        dresult = MyUtility.SFTP.SFTP_Download(file.Value + @"/" + file.Key, fbd.SelectedPath + @"\" + file.Key);
                         if (!dresult)
                         {
                             this.ShowErr(dresult);
@@ -867,6 +880,9 @@ VALUES(s.ukey,s.InspectionReport,s.TestReport,s.ContinuityCard,isnull(s.T2InspYd
 
         private void TestReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            TransferPms transferPMS = new TransferPms();
+            DualResult result;
+            result = transferPMS.SFtp_Ping(string.Empty, Env.Cfg.SFTP_Server_IP, Env.Cfg.SFTP_Server_Port, Env.Cfg.SFTP_Server_Account, Env.Cfg.SFTP_Server_Password);
             this.Savefile("-test");
         }
         #endregion Tab_Page1
@@ -1066,9 +1082,14 @@ where t.deleteColumn= 0
             DataRow drSystem;
             if (MyUtility.Check.Seek("select * from system", out drSystem))
             {
-                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.SFTP_Server_IP = drSystem["SFtpIP"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Port = ushort.Parse(drSystem["SFtpPort"].ToString());
+                Env.Cfg.SFTP_Server_Account = drSystem["SFtpID"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Password = drSystem["SFtpPwd"].ToString().Trim();
+
+                // Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                // Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                // Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
             }
 
             this.Close();

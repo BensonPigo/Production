@@ -583,6 +583,7 @@
             "Inline",
             "Stagger",
             "Final",
+            "Final Internal",
             "3rd party"});
             this.comboStage.Location = new System.Drawing.Point(604, 62);
             this.comboStage.Name = "comboStage";
@@ -886,12 +887,12 @@
             this.GridUniqueKey = "ID,GarmentDefectCodeID";
             this.IsGridIcon2Visible = false;
             this.IsSupportConfirm = true;
+            this.IsSupportCopy = false;
             this.IsSupportDelete = false;
             this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
-            this.IsSupportCopy = false;
             this.KeyField1 = "ID";
             this.Name = "P32";
             this.OnLineHelpID = "Sci.Win.Tems.Input6";

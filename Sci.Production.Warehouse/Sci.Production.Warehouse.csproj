@@ -202,6 +202,21 @@
     <Compile Include="P03_ItemSeqFiles.Designer.cs">
       <DependentUpon>P03_ItemSeqFiles.cs</DependentUpon>
     </Compile>
+    <Compile Include="P10_Batch_MIND_Releaser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P10_Batch_MIND_Releaser.Designer.cs">
+      <DependentUpon>P10_Batch_MIND_Releaser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P55_PrintData.cs" />
+    <Compile Include="P54_PrintData.cs" />
+    <Compile Include="P21_PrintBarcode_Data.cs" />
+    <Compile Include="WH_FromTo_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_FromTo_Print.Designer.cs">
+      <DependentUpon>WH_FromTo_Print.cs</DependentUpon>
+    </Compile>
     <Compile Include="P68_WHReamrk.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -245,17 +260,11 @@
     <Compile Include="P10_IssueSummary.Designer.cs">
       <DependentUpon>P10_IssueSummary.cs</DependentUpon>
     </Compile>
-    <Compile Include="P23_Print.cs">
+    <Compile Include="WH_FromTo_QRCodeSticker.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P23_Print.Designer.cs">
-      <DependentUpon>P23_Print.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P22_PrintFabricSticker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P22_PrintFabricSticker.Designer.cs">
-      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+    <Compile Include="WH_FromTo_QRCodeSticker.Designer.cs">
+      <DependentUpon>WH_FromTo_QRCodeSticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P22_Print.cs">
       <SubType>Form</SubType>
@@ -275,7 +284,6 @@
     <Compile Include="P19_TKSeparateHistory.Designer.cs">
       <DependentUpon>P19_TKSeparateHistory.cs</DependentUpon>
     </Compile>
-    <Compile Include="P21_PrintBarcode_Data.cs" />
     <Compile Include="P08_ExcelImport.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -287,12 +295,6 @@
     </Compile>
     <Compile Include="P10_AssignReleaser.Designer.cs">
       <DependentUpon>P10_AssignReleaser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P07_QRCodeSticker.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P07_QRCodeSticker.Designer.cs">
-      <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
     </Compile>
     <Compile Include="P26_PrintData.cs" />
     <Compile Include="P54.cs">
@@ -927,12 +929,6 @@
     </Compile>
     <Compile Include="P62_CutRef.Designer.cs">
       <DependentUpon>P62_CutRef.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P62_Print.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P62_Print.Designer.cs">
-      <DependentUpon>P62_Print.cs</DependentUpon>
     </Compile>
     <Compile Include="P11_PrintKarbanCard.cs">
       <SubType>Form</SubType>
@@ -1631,6 +1627,24 @@
     <Compile Include="Report\R07.Designer.cs">
       <DependentUpon>R07.cs</DependentUpon>
     </Compile>
+    <Compile Include="Report\R28.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R28.Designer.cs">
+      <DependentUpon>R28.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R29.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R29.Designer.cs">
+      <DependentUpon>R29.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Report\R30.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Report\R30.Designer.cs">
+      <DependentUpon>R30.cs</DependentUpon>
+    </Compile>
     <Compile Include="Report\R44.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1740,6 +1754,18 @@
     <Compile Include="Report\R48.designer.cs">
       <DependentUpon>R48.cs</DependentUpon>
     </Compile>
+    <Compile Include="WH_Print.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_Print.Designer.cs">
+      <DependentUpon>WH_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WH_Receive_QRCodeSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WH_Receive_QRCodeSticker.Designer.cs">
+      <DependentUpon>WH_Receive_QRCodeSticker.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B01.resx">
@@ -1798,6 +1824,14 @@
     <EmbeddedResource Include="P03_ItemSeqFiles.resx">
       <DependentUpon>P03_ItemSeqFiles.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P10_Batch_MIND_Releaser.resx">
+      <DependentUpon>P10_Batch_MIND_Releaser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P54_Print.rdlc" />
+    <EmbeddedResource Include="P55_Print.rdlc" />
+    <EmbeddedResource Include="WH_FromTo_Print.resx">
+      <DependentUpon>WH_FromTo_Print.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P68_WHReamrk.resx">
       <DependentUpon>P68_WHReamrk.cs</DependentUpon>
     </EmbeddedResource>
@@ -1826,20 +1860,14 @@
       <DependentUpon>P03_ReturnQty.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.rdlc" />
-    <EmbeddedResource Include="P07_QRCodeSticker.resx">
-      <DependentUpon>P07_QRCodeSticker.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P07_PrintAccessorySticker.resx">
       <DependentUpon>P07_PrintAccessorySticker.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_IssueSummary.resx">
       <DependentUpon>P10_IssueSummary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P23_Print.resx">
-      <DependentUpon>P23_Print.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P22_PrintFabricSticker.resx">
-      <DependentUpon>P22_PrintFabricSticker.cs</DependentUpon>
+    <EmbeddedResource Include="WH_FromTo_QRCodeSticker.resx">
+      <DependentUpon>WH_FromTo_QRCodeSticker.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P22_Print.resx">
@@ -1853,12 +1881,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode10.rdlc">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode5.rdlc">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="P21_PrintBarcode7.rdlc">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_ExcelImport.resx">
       <DependentUpon>P08_ExcelImport.cs</DependentUpon>
@@ -1892,6 +1923,7 @@
     <EmbeddedResource Include="P64_Print.rdlc" />
     <EmbeddedResource Include="P06.resx">
       <DependentUpon>P06.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P19_TransferWKImport.resx">
       <DependentUpon>P19_TransferWKImport.cs</DependentUpon>
@@ -2158,9 +2190,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P62_CutRef.resx">
       <DependentUpon>P62_CutRef.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P62_Print.resx">
-      <DependentUpon>P62_Print.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P11_PrintKarbanCard.resx">
       <DependentUpon>P11_PrintKarbanCard.cs</DependentUpon>
@@ -2517,6 +2546,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="P38.resx">
       <DependentUpon>P38.cs</DependentUpon>
@@ -2606,6 +2636,15 @@
     <EmbeddedResource Include="Report\R07.resx">
       <DependentUpon>R07.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Report\R28.resx">
+      <DependentUpon>R28.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R29.resx">
+      <DependentUpon>R29.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Report\R30.resx">
+      <DependentUpon>R30.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Report\R44.resx">
       <DependentUpon>R44.cs</DependentUpon>
     </EmbeddedResource>
@@ -2659,6 +2698,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Report\R48.resx">
       <DependentUpon>R48.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WH_Print.resx">
+      <DependentUpon>WH_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WH_Receive_QRCodeSticker.resx">
+      <DependentUpon>WH_Receive_QRCodeSticker.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -2758,6 +2803,7 @@
     <None Include="Properties\DataSources\P13_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P13_PrintData.datasource" />
     <None Include="Properties\DataSources\P14_PrintData.datasource" />
+    <None Include="Properties\DataSources\P15_PrintData.datasource" />
     <None Include="Properties\DataSources\P16_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_FabricSticker_PrintData.datasource" />
     <None Include="Properties\DataSources\P19_PrintData.datasource" />

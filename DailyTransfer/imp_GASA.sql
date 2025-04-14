@@ -12,6 +12,7 @@ SET NOCOUNT ON;
 	and t.SeasonID = s.SeasonID
 	and t.DocumentName = s.DocumentName
 	and t.BrandID = s.BrandID
+	and t.LOT = s.LOT
 	when matched then update set 
         t.FirstDyelot = s.FirstDyelot,
         t.Period = ISNULL(s.Period, 0),
@@ -22,7 +23,7 @@ SET NOCOUNT ON;
         t.ReceivedDate = s.ReceivedDate,
         t.ReceivedRemark = ISNULL(s.ReceivedRemark, '')
 	when not matched by target then 	
-		insert(TestDocFactoryGroup,  [SuppID],  [ColorID],[FirstDyelot],  SeasonID,   Period,BrandRefno,AWBno,AddName,AddDate,ReceivedDate,ReceivedRemark,DocumentName,BrandID)
+		insert(TestDocFactoryGroup,  [SuppID],  [ColorID],[FirstDyelot],  SeasonID,   Period,BrandRefno,AWBno,AddName,AddDate,ReceivedDate,ReceivedRemark,DocumentName,BrandID,LOT)
         VALUES (
             ISNULL(s.TestDocFactoryGroup, ''),
             ISNULL(s.[SuppID], ''),
@@ -37,7 +38,8 @@ SET NOCOUNT ON;
             s.ReceivedDate,
             ISNULL(s.ReceivedRemark, ''),
             ISNULL(s.DocumentName, ''),
-            ISNULL(s.BrandID, '')
+            ISNULL(s.BrandID, ''),
+			ISNULL(s.LOT, '')
         );
 
 	--GASAClip import update to exclude the data created by pms

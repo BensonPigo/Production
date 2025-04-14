@@ -1,4 +1,5 @@
-﻿using Sci.Production.Prg.PowerBI.Model;
+﻿using Sci.Production.Prg.PowerBI.Logic;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -81,7 +82,7 @@ update p
 from P_OutstandingPOStatus p
 inner join #tmp t on t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup
 
-if exists (select 1 from BITableInfo b where b.id = 'P_CartonScanRate')
+if exists (select 1 from BITableInfo b where b.id = 'P_OutstandingPOStatus')
 begin
 	update b
 		set b.TransferDate = getdate()
@@ -96,7 +97,7 @@ end
 ";
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

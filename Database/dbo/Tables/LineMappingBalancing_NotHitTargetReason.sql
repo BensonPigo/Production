@@ -2,10 +2,10 @@
 (
 	[ID] INT CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_ID] DEFAULT (0) NOT NULL, 
     [No] VARCHAR(2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_No] DEFAULT ('') NOT NULL, 
-    [TotalCycleTimeAuto] NUMERIC(6, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_TotalCycleTimeAuto] DEFAULT (0) NOT NULL, 
-    [TotalCycleTimeFinal] NUMERIC(6, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_TotalCycleTimeFinal] DEFAULT (0) NOT NULL, 
-    [SewerLoadingAuto] NUMERIC(5, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_SewerLoadingAuto] DEFAULT (0) NOT NULL, 
-    [SewerLoadingFinal] NUMERIC(5, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_SewerLoadingFinal] DEFAULT (0) NOT NULL, 
+    [TotalCycleTimeAuto] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_TotalCycleTimeAuto] DEFAULT (0) NOT NULL, 
+    [TotalCycleTimeFinal] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_TotalCycleTimeFinal] DEFAULT (0) NOT NULL, 
+    [SewerLoadingAuto] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_SewerLoadingAuto] DEFAULT (0) NOT NULL, 
+    [SewerLoadingFinal] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_SewerLoadingFinal] DEFAULT (0) NOT NULL, 
     [IEReasonID] VARCHAR(5) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_IEReasonID] DEFAULT ('') NOT NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_LineMappingBalancing_NotHitTargetReason_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL

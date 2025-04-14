@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Linq;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Centralized
 {
@@ -161,14 +162,7 @@ exec GetSewingDailyOutputList   @M
 
             #region --由 appconfig 抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>(); // ←主要是要重組 List connectionString
-            foreach (string ss in strSevers)
-            {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
 
             if (connectionString == null || connectionString.Count == 0)
             {

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelProvideDate = new Sci.Win.UI.Label();
             this.labelFtyMRRcvDate = new Sci.Win.UI.Label();
@@ -43,7 +44,6 @@
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
             this.dateProvideDate = new Sci.Win.UI.DateRange();
             this.dateFtyMRRcvDate = new Sci.Win.UI.DateRange();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.comboPrintType = new Sci.Win.UI.ComboBox();
             this.txtseason = new Sci.Production.Class.Txtseason();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
@@ -52,6 +52,7 @@
             this.txttpeuser_caneditSMR = new Sci.Production.Class.Txttpeuser_canedit();
             this.txttpeuser_caneditPOHandle = new Sci.Production.Class.Txttpeuser_canedit();
             this.txttpeuser_caneditPOSMR = new Sci.Production.Class.Txttpeuser_canedit();
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -71,7 +72,6 @@
             // 
             // labelSCIDelivery
             // 
-            this.labelSCIDelivery.Lines = 0;
             this.labelSCIDelivery.Location = new System.Drawing.Point(13, 12);
             this.labelSCIDelivery.Name = "labelSCIDelivery";
             this.labelSCIDelivery.Size = new System.Drawing.Size(112, 23);
@@ -80,7 +80,6 @@
             // 
             // labelProvideDate
             // 
-            this.labelProvideDate.Lines = 0;
             this.labelProvideDate.Location = new System.Drawing.Point(13, 48);
             this.labelProvideDate.Name = "labelProvideDate";
             this.labelProvideDate.Size = new System.Drawing.Size(112, 23);
@@ -89,7 +88,6 @@
             // 
             // labelFtyMRRcvDate
             // 
-            this.labelFtyMRRcvDate.Lines = 0;
             this.labelFtyMRRcvDate.Location = new System.Drawing.Point(13, 84);
             this.labelFtyMRRcvDate.Name = "labelFtyMRRcvDate";
             this.labelFtyMRRcvDate.Size = new System.Drawing.Size(112, 23);
@@ -98,7 +96,6 @@
             // 
             // labelBrand
             // 
-            this.labelBrand.Lines = 0;
             this.labelBrand.Location = new System.Drawing.Point(13, 120);
             this.labelBrand.Name = "labelBrand";
             this.labelBrand.Size = new System.Drawing.Size(112, 23);
@@ -107,7 +104,6 @@
             // 
             // labelStyle
             // 
-            this.labelStyle.Lines = 0;
             this.labelStyle.Location = new System.Drawing.Point(13, 156);
             this.labelStyle.Name = "labelStyle";
             this.labelStyle.Size = new System.Drawing.Size(112, 23);
@@ -116,7 +112,6 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Lines = 0;
             this.labelSeason.Location = new System.Drawing.Point(13, 192);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(112, 23);
@@ -125,7 +120,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(13, 228);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(112, 23);
@@ -134,7 +128,6 @@
             // 
             // labelMR
             // 
-            this.labelMR.Lines = 0;
             this.labelMR.Location = new System.Drawing.Point(13, 264);
             this.labelMR.Name = "labelMR";
             this.labelMR.Size = new System.Drawing.Size(112, 23);
@@ -143,7 +136,6 @@
             // 
             // labelSMR
             // 
-            this.labelSMR.Lines = 0;
             this.labelSMR.Location = new System.Drawing.Point(13, 300);
             this.labelSMR.Name = "labelSMR";
             this.labelSMR.Size = new System.Drawing.Size(112, 23);
@@ -152,7 +144,6 @@
             // 
             // labelPOHandle
             // 
-            this.labelPOHandle.Lines = 0;
             this.labelPOHandle.Location = new System.Drawing.Point(13, 336);
             this.labelPOHandle.Name = "labelPOHandle";
             this.labelPOHandle.Size = new System.Drawing.Size(112, 23);
@@ -161,7 +152,6 @@
             // 
             // labelPOSMR
             // 
-            this.labelPOSMR.Lines = 0;
             this.labelPOSMR.Location = new System.Drawing.Point(13, 372);
             this.labelPOSMR.Name = "labelPOSMR";
             this.labelPOSMR.Size = new System.Drawing.Size(112, 23);
@@ -170,7 +160,6 @@
             // 
             // labelPrintType
             // 
-            this.labelPrintType.Lines = 0;
             this.labelPrintType.Location = new System.Drawing.Point(13, 408);
             this.labelPrintType.Name = "labelPrintType";
             this.labelPrintType.Size = new System.Drawing.Size(112, 23);
@@ -179,6 +168,20 @@
             // 
             // dateSCIDelivery
             // 
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateSCIDelivery.DateBox1.Name = "";
+            this.dateSCIDelivery.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateSCIDelivery.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateSCIDelivery.DateBox2.Name = "";
+            this.dateSCIDelivery.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateSCIDelivery.DateBox2.TabIndex = 1;
             this.dateSCIDelivery.IsRequired = false;
             this.dateSCIDelivery.Location = new System.Drawing.Point(129, 12);
             this.dateSCIDelivery.Name = "dateSCIDelivery";
@@ -187,6 +190,20 @@
             // 
             // dateProvideDate
             // 
+            // 
+            // 
+            // 
+            this.dateProvideDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateProvideDate.DateBox1.Name = "";
+            this.dateProvideDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateProvideDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateProvideDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateProvideDate.DateBox2.Name = "";
+            this.dateProvideDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateProvideDate.DateBox2.TabIndex = 1;
             this.dateProvideDate.IsRequired = false;
             this.dateProvideDate.Location = new System.Drawing.Point(129, 48);
             this.dateProvideDate.Name = "dateProvideDate";
@@ -195,22 +212,25 @@
             // 
             // dateFtyMRRcvDate
             // 
+            // 
+            // 
+            // 
+            this.dateFtyMRRcvDate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateFtyMRRcvDate.DateBox1.Name = "";
+            this.dateFtyMRRcvDate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateFtyMRRcvDate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateFtyMRRcvDate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateFtyMRRcvDate.DateBox2.Name = "";
+            this.dateFtyMRRcvDate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateFtyMRRcvDate.DateBox2.TabIndex = 1;
             this.dateFtyMRRcvDate.IsRequired = false;
             this.dateFtyMRRcvDate.Location = new System.Drawing.Point(129, 84);
             this.dateFtyMRRcvDate.Name = "dateFtyMRRcvDate";
             this.dateFtyMRRcvDate.Size = new System.Drawing.Size(280, 23);
             this.dateFtyMRRcvDate.TabIndex = 2;
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(129, 228);
-            this.comboM.Name = "comboM";
-            this.comboM.Size = new System.Drawing.Size(80, 24);
-            this.comboM.TabIndex = 6;
             // 
             // comboPrintType
             // 
@@ -220,6 +240,7 @@
             this.comboPrintType.IsSupportUnselect = true;
             this.comboPrintType.Location = new System.Drawing.Point(129, 408);
             this.comboPrintType.Name = "comboPrintType";
+            this.comboPrintType.OldText = "";
             this.comboPrintType.Size = new System.Drawing.Size(194, 24);
             this.comboPrintType.TabIndex = 11;
             // 
@@ -240,14 +261,18 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(129, 156);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 4;
+            this.txtstyle.TarBrand = null;
+            this.txtstyle.TarSeason = null;
             // 
             // txtbrand
             // 
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(129, 120);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 3;
@@ -288,15 +313,27 @@
             this.txttpeuser_caneditPOSMR.TabIndex = 10;
             this.txttpeuser_caneditPOSMR.TextBox1Binding = "";
             // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(129, 227);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(80, 24);
+            this.comboM.TabIndex = 106;
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(562, 470);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.txttpeuser_caneditPOSMR);
             this.Controls.Add(this.txttpeuser_caneditPOHandle);
             this.Controls.Add(this.txttpeuser_caneditSMR);
             this.Controls.Add(this.txttpeuser_caneditMR);
             this.Controls.Add(this.comboPrintType);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.txtbrand);
@@ -319,7 +356,11 @@
             this.DefaultControlForEdit = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R02. Production Kits Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
@@ -341,12 +382,12 @@
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboPrintType, 0);
             this.Controls.SetChildIndex(this.txttpeuser_caneditMR, 0);
             this.Controls.SetChildIndex(this.txttpeuser_caneditSMR, 0);
             this.Controls.SetChildIndex(this.txttpeuser_caneditPOHandle, 0);
             this.Controls.SetChildIndex(this.txttpeuser_caneditPOSMR, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -372,11 +413,11 @@
         private Class.Txtbrand txtbrand;
         private Class.Txtstyle txtstyle;
         private Class.Txtseason txtseason;
-        private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboPrintType;
         private Class.Txttpeuser_canedit txttpeuser_caneditMR;
         private Class.Txttpeuser_canedit txttpeuser_caneditSMR;
         private Class.Txttpeuser_canedit txttpeuser_caneditPOHandle;
         private Class.Txttpeuser_canedit txttpeuser_caneditPOSMR;
+        private Class.ComboMDivision comboM;
     }
 }

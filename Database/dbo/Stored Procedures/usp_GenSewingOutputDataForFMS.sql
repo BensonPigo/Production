@@ -99,10 +99,13 @@ select distinct sd.ID, sd.OrderId, sd.Article, sd.Color
 	,isnull(o.CPU,0) * isnull(o.CPUFactor,0) * 
 		isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100) * sd.QAQty)/ROUND(t.ActManPower * sd.WorkHour,2),0)
 ,[Cumulate Date] = IIF(CumulateDate.val > 180,'>180',CONVERT(VARCHAR,CumulateDate.val))
+,[RFT] = IIF(isnull(RFT.InspectQty,0) = 0, 0, CAST(round(((RFT.InspectQty - RFT.RejectQty) / RFT.InspectQty)*100,2) as decimal(6,2)))
 from SewingOutput_Detail sd
 inner join #tmp t on sd.UKey = t.UKey
 left join Orders o on o.ID = sd.OrderId
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+left join RFT with(nolock) on rft.SewinglineID = t.SewingLineID and t.FactoryID = rft.FactoryID and rft.OrderID = sd.OrderId and rft.Team = t.Team and RFT.Shift = t.Shift
+and rft.CDate = t.OutputDate
 outer apply (	
 	select val = IIF(Count(1)=0, 1, Count(1))
 	from #tmpSewingOutput s
@@ -137,6 +140,7 @@ outer apply (
 (CPU/piece): 請看PMS > Sewing > R04產出excel中的CPU/piece欄位的規則
 (CPU Sewer/HR): 請看PMS > Sewing > R04產出excel中的CPU Sewer/HR欄位的規則
 (Cumulate Date): 請看PMS > Sewing > R04產出excel中的Cumulate Of Days欄位的規則
+(RFT):請參考PMS > Quality > P20 表頭RFT欄位公式
 */
 
 drop table #tmp,#tmpOutputDate,#tmpSewingOutput,#tmpWorkHour

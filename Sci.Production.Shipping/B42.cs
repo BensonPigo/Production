@@ -9,6 +9,7 @@ using Ict.Win;
 using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
+using System.Linq;
 
 namespace Sci.Production.Shipping
 {
@@ -601,12 +602,24 @@ from System WITH (NOLOCK) ");
             }
             #endregion
 
+            DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select("1=1");
             #region 檢查ID,NLCode,HSCode,UnitID Group後是否有ID,NLCode重複的資料
             DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
-            DataRow[] queryData = ((DataTable)this.detailgridbs.DataSource).Select("1=1");
             bool isVNConsumption_Detail_DetailHasDupData = !Prgs.CheckVNConsumption_Detail_Dup(queryData, false);
             if (isVNConsumption_Detail_DetailHasDupData)
             {
+                return false;
+            }
+            #endregion
+
+            #region 檢查相同NLCode是否有不同的waste
+            var diffWasteSameKay = queryData.GroupBy(s => new { NLCode = s["NLCode"], Waste = s["Waste"] })
+                                   .GroupBy(y => new { y.Key.NLCode })
+                                   .Select(z => new { z.Key.NLCode, duplicateData = z.ToList() })
+                                   .Where(x => x.duplicateData.Count > 1);
+            if (diffWasteSameKay.Any())
+            {
+                MyUtility.Msg.WarningBox("The same Customs Code should have the same Waste value" + Environment.NewLine + $"Please recheck the Waste value of <{diffWasteSameKay.First().NLCode}>!");
                 return false;
             }
             #endregion
@@ -681,15 +694,42 @@ from System WITH (NOLOCK) ");
                 return failResult;
             }
 
+            return base.ClickSavePost();
+        }
+
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
             // 回寫VNConsumption_Detail
             string sqlCreateVNConsumption_Detail = $" exec CreateVNConsumption_Detail '{this.CurrentMaintain["ID"].ToString()}'";
             DualResult isCreateVNConsumption_DetailOK = DBProxy.Current.Execute(null, sqlCreateVNConsumption_Detail);
             if (!isCreateVNConsumption_DetailOK)
             {
-                return isCreateVNConsumption_DetailOK;
+                MyUtility.Msg.WarningBox(isCreateVNConsumption_DetailOK.ToString());
+                return;
             }
 
-            return base.ClickSavePost();
+            // 更新Waste,要將相同的合約和物料(Style,Brand,Season,VnContractID,NLCode)
+            // 都一併更新成相同的Waste by ISP20240920
+            string sqlUpdateSameMateriel_Waste = $@"
+update t
+set t.Waste = s.Waste
+FROM VNConsumption_Detail_Detail t
+inner join VNConsumption v on t.ID = v.ID
+inner join (
+	select svd.*,sv.StyleID,sv.BrandID,sv.SeasonID,sv.VNContractID 
+	from VNConsumption_Detail svd
+	inner join VNConsumption sv on svd.ID = sv.ID
+	where svd.ID = '{this.CurrentMaintain["ID"].ToString()}'
+) s on s.NLCode = t.NLCode and s.BrandID = v.BrandID and s.StyleID = v.StyleID and s.SeasonID = v.SeasonID and s.VNContractID = v.VNContractID
+";
+            DualResult resultSameMaterialwaste = DBProxy.Current.Execute(null, sqlUpdateSameMateriel_Waste);
+            if (!resultSameMaterialwaste)
+            {
+                MyUtility.Msg.WarningBox(resultSameMaterialwaste.ToString());
+                return;
+            }
         }
 
         /// <inheritdoc/>

@@ -105,6 +105,16 @@ exec dbo.Inline_R08  @SDate,
                 return resultReport;
             }
 
+            DataTable detail = dataTables[0].Clone();
+            foreach (DataRow item in dataTables[0].Rows)
+            {
+                for (int i = 0; i < MyUtility.Convert.GetInt(item["RejectWIP"]); i++)
+                {
+                    detail.ImportRow(item);
+                }
+            }
+
+            dataTables[0] = detail;
             resultReport.DtArr = dataTables;
             return resultReport;
         }
@@ -115,6 +125,11 @@ exec dbo.Inline_R08  @SDate,
             DataTable detailTable = dt[0];
             DataTable summaryTable = dt[1];
             TransactionScope transactionscope = new TransactionScope();
+            var paramters = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", sDate),
+                new SqlParameter("@EDate", eDate),
+            };
             using (transactionscope)
             {
                 try
@@ -124,33 +139,36 @@ exec dbo.Inline_R08  @SDate,
                     using (sqlConn)
                     {
                         string sql = @"	
+DELETE FROM P_InlineDefectSummary
+WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
+
 insert into P_InlineDefectSummary
 (
     [FirstInspectedDate]
-  ,[FactoryID]
-  ,[BrandID]
-  ,[StyleID]
-  ,[CustPoNo]
-  ,[OrderID]
-  ,[Article]
-  ,[Alias]
-  ,[CDCodeID]
-  ,[CDCodeNew]
-  ,[ProductType]
-  ,[FabricType]
-  ,[Lining]
-  ,[Gender]
-  ,[Construction]
-  ,[ProductionFamilyID]
-  ,[Team]
-  ,[QCName]
-  ,[Shift]
-  ,[Line]
-  ,[SewingCell]
-  ,[InspectedQty]
-  ,[RejectWIP]
-  ,[InlineWFT]
-  ,[InlineRFT]
+   ,[FactoryID]
+   ,[BrandID]
+   ,[StyleID]
+   ,[CustPoNo]
+   ,[OrderID]
+   ,[Article]
+   ,[Alias]
+   ,[CDCodeID]
+   ,[CDCodeNew]
+   ,[ProductType]
+   ,[FabricType]
+   ,[Lining]
+   ,[Gender]
+   ,[Construction]
+   ,[ProductionFamilyID]
+   ,[Team]
+   ,[QCName]
+   ,[Shift]
+   ,[Line]
+   ,[SewingCell]
+   ,[InspectedQty]
+   ,[RejectWIP]
+   ,[InlineWFT]
+   ,[InlineRFT]
 )
 select
     t.[First Inspection Date]
@@ -179,28 +197,18 @@ select
     ,isnull(t.[Inline WFT(%)] ,0)
     ,isnull(t.[Inline RFT(%)] ,0)
 from #tmpSummy t
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectSummary')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = 'P_InlineDefectSummary'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_InlineDefectSummary', getdate())
-END
 ";
-                        result = MyUtility.Tool.ProcessWithDatatable(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
+                        sql += new Base().SqlBITableInfo("P_InlineDefectSummary", true);
                         if (!result.Result)
                         {
                             throw result.GetException();
                         }
 
-                        sql = @"	
+                        sql = @"
+DELETE FROM P_InlineDefectDetail
+WHERE FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate
+
 insert into P_InlineDefectDetail
 (
    [Zone]
@@ -250,22 +258,9 @@ select
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
 From #tmpDetail t
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_InlineDefectDetail')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-			, b.IS_Trans = 1
-	from BITableInfo b
-	where b.id = 'P_InlineDefectDetail'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_InlineDefectDetail', getdate())
-END
 ";
-                        result = MyUtility.Tool.ProcessWithDatatable(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: null);
+                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
+                        sql += new Base().SqlBITableInfo("P_InlineDefectDetail", true);
                         if (!result.Result)
                         {
                             throw result.GetException();

@@ -13,6 +13,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
     {
         private DBProxy DBProxy;
         private string sqlcolumn = @"
+select f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll, [Grade] = MIN(fp.Grade)
+into #tmp_FIR
+from FIR F with (nolock) 
+inner join FIR_Physical FP with (nolock) on fp.id = f.ID
+group by f.POID, f.SEQ1, f.SEQ2, fp.Dyelot, fp.Roll
+
     select
 	 [MDivisionID] = isnull(o.MDivisionID, '')
 	,[FactoryID] = isnull(o.FactoryID, '')
@@ -28,6 +34,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 						when isnull(o.Category,'')=''and isnull(o.ForecastSampleGroup,'')='S' then'Sa. sample fc'
 						else ''
 					end
+    ,[OrderCompay] = isnull(Company.NameEN, '')
 	,[OrderTypeID] = isnull(o.OrderTypeID, '')
 	,[WeaveTypeID] = isnull(d.WeaveTypeID, '')
     ,[BuyerDelivery] = o.BuyerDelivery
@@ -168,11 +175,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
     ,[ReturnQty] = round(isnull(fi.ReturnQty, 0),2)
 	,[BalanceQty] = round(isnull(fi.InQty, 0),2) - round(isnull(fi.OutQty, 0),2) + round(isnull(fi.AdjustQty, 0),2) - round(isnull(fi.ReturnQty, 0),2)
 	,[MtlLocationID] = isnull(f.MtlLocationID, '')
+    ,[Checker] = rdcheck.checker
+    ,[Checker Date] = isnull(rdcheck.MINDCheckEditDate, rdcheck.MINDCheckAddDate)
     ,[MCHandle] = isnull(dbo.getPassEmail(o.MCHandle) ,'')
 	,[POHandle] = isnull(dbo.getPassEmail(p.POHandle) ,'')
 	,[POSMR] = isnull(dbo.getPassEmail(p.POSMR) ,'')
     ,[Supplier] = isnull(concat(Supp.ID, '-' + Supp.AbbEN), '')
     ,[VID] = isnull(VID.CustPONoList,'')
+    ,[Grade] = isnull(fp.Grade, '')
     ";
 
         private string sqlcolumn_sum = @"select
@@ -180,6 +190,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,[Factory] = o.FactoryID
 	,[SP#] = psd.id
 	,[OrderType] = o.OrderTypeID
+    ,[OrderCompay] = isnull(Company.NameEN, '')
 	,[WeaveType] = d.WeaveTypeID
     ,[BuyerDelivery]=o.BuyerDelivery
     ,[OrigBuyerDelivery]=o.OrigBuyerDelivery
@@ -340,16 +351,34 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 #region 主要sql Detail
                 sqlcmd.Append($@" 
 from View_WH_Orders o with (nolock)
+inner join Company on Company.ID = o.OrderCompanyID
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
+{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed with (nolock) ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join FtyInventory fi with (nolock) on fi.POID = psd.id and fi.Seq1 = psd.SEQ1 and fi.Seq2 = psd.SEQ2
 left join Fabric WITH (NOLOCK) on psd.SCIRefno = fabric.SCIRefno
-left join Supp on Supp.id = ps.SuppID 
+left join Supp with (nolock) on Supp.id = ps.SuppID 
 left join Color c with(nolock) on c.id = isnull(psdsc.SpecValue,'')　and c.BrandId = psd.BrandId
+left join #tmp_FIR fp on psd.ID = fp.POID and psd.SEQ1 = fp.SEQ1 and psd.SEQ2 = fp.SEQ2 and fi.Dyelot = fp.Dyelot and fi.Roll = fp.Roll
+outer apply(
+    select checker = iif(isnull(pass1.Name, '') != '', rd.MINDChecker + '-' + pass1.Name, rd.MINDChecker), 
+           rd.MINDCheckAddDate, 
+           rd.MINDCheckEditDate 
+    from Receiving r with (nolock) 
+    inner join Receiving_detail rd with (nolock) on r.Id = rd.Id
+    left join SciMES_Pass1 pass1 with (nolock) on rd.MINDChecker = pass1.ID
+    where r.Status = 'Confirmed' 
+    and rd.POID = fi.POID 
+    and rd.Seq1 = fi.Seq1 
+    and rd.Seq2 = fi.Seq2 
+    and rd.Roll = fi.Roll 
+    and rd.Dyelot = fi.Dyelot 
+    and rd.StockType = fi.StockType 
+    and Fabric.Type = 'F'
+) rdcheck
 outer apply
 (
 	select MtlLocationID = stuff(
@@ -371,9 +400,9 @@ outer apply(
 		select concat(',',CustPONo)
 		from (
 				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
+				from PO_Supp_Detail_OrderList spdo with (nolock)
+				inner join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o with (nolock) on o.ID = spdo.OrderID
 				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
 			) s
 		for xml path ('')
@@ -388,10 +417,11 @@ where 1=1
                 #region 主要sql summary
                 sqlcmd.Append($@"
 from View_WH_Orders o with (nolock)
+inner join Company on Company.ID = o.OrderCompanyID
 inner join PO p with (nolock) on o.id = p.id
 inner join PO_Supp ps with (nolock) on p.id = ps.id
 inner join PO_Supp_Detail psd with (nolock) on p.id = psd.id and ps.seq1 = psd.seq1
-{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
+{(!string.IsNullOrEmpty(model.WorkNo) ? $"INNER JOIN Export_Detail ed with (nolock) ON ed.POID=psd.ID AND ed.Seq1 = psd.SEQ1 and ed.Seq2 = psd.SEQ2 AND ed.ID='{model.WorkNo}'" : string.Empty)}
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 left join MDivisionPoDetail mpd with (nolock) on mpd.POID = psd.id and mpd.Seq1 = psd.SEQ1 and mpd.seq2 = psd.SEQ2
@@ -414,9 +444,9 @@ outer apply(
 		select concat(',',CustPONo)
 		from (
 				select distinct o.CustPONo 
-				from PO_Supp_Detail_OrderList spdo  
-				inner join Fabric f on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
-				inner join orders o on o.ID = spdo.OrderID
+				from PO_Supp_Detail_OrderList spdo with (nolock) 
+				inner join Fabric f with (nolock) on f.SCIRefno = psd.SCIRefno and f.SCIRefno like '%VID%' and f.Type = 'A' and f.MtlTypeID='LABEL' and f.Junk =0
+				inner join orders o with (nolock) on o.ID = spdo.OrderID
 				where spdo.id = psd.ID and spdo.SEQ1 =psd.SEQ1 and spdo.SEQ2 =psd.SEQ2 and spdo.OrderID = o.id
 			) s
 		for xml path ('')

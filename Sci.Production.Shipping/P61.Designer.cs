@@ -57,6 +57,7 @@
             this.dateCDate = new Sci.Win.UI.DateBox();
             this.displayPortofDischarge = new Sci.Win.UI.DisplayBox();
             this.btnSharebyCDC = new Sci.Win.UI.Button();
+            this.btnImport = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -73,6 +74,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.btnImport);
             this.masterpanel.Controls.Add(this.btnSharebyCDC);
             this.masterpanel.Controls.Add(this.displayPortofDischarge);
             this.masterpanel.Controls.Add(this.labDecDate);
@@ -133,6 +135,7 @@
             this.masterpanel.Controls.SetChildIndex(this.labDecDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPortofDischarge, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSharebyCDC, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImport, 0);
             // 
             // detailpanel
             // 
@@ -533,13 +536,25 @@
             // 
             this.btnSharebyCDC.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnSharebyCDC.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.btnSharebyCDC.Location = new System.Drawing.Point(642, 90);
+            this.btnSharebyCDC.Location = new System.Drawing.Point(677, 90);
             this.btnSharebyCDC.Name = "btnSharebyCDC";
             this.btnSharebyCDC.Size = new System.Drawing.Size(164, 30);
             this.btnSharebyCDC.TabIndex = 66;
             this.btnSharebyCDC.Text = "Share By CDC Item";
             this.btnSharebyCDC.UseVisualStyleBackColor = true;
             this.btnSharebyCDC.Click += new System.EventHandler(this.BtnSharebyCDC_Click);
+            // 
+            // btnImport
+            // 
+            this.btnImport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImport.Location = new System.Drawing.Point(595, 90);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(76, 30);
+            this.btnImport.TabIndex = 67;
+            this.btnImport.Text = "Import";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // P61
             // 
@@ -612,5 +627,6 @@
         private Win.UI.DateBox dateCDate;
         private Win.UI.DisplayBox displayPortofDischarge;
         private Win.UI.Button btnSharebyCDC;
+        private Win.UI.Button btnImport;
     }
 }

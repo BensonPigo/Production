@@ -10,7 +10,10 @@
 	 @SciDeliveryFrom date = null,
 	 @SciDeliveryTo date = null,
 	 @BrandID varchar(8) = '',
-	 @SubProcess varchar(20) = ''
+	 @SubProcess varchar(20) = '',
+	 @sEditDate date = null,
+	 @eEditDate date = null,
+	 @IsPowerBI bit = 0
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -35,6 +38,20 @@ where   (s.MDivisionID = @MDivisionID or @MDivisionID = '') and
         (o.SciDelivery <= @SciDeliveryTo or @SciDeliveryTo is null) and
         (o.BrandID = @BrandID or @BrandID = '') and
         (@SubProcess = '' or exists(select 1 from Style_TmsCost st where o.StyleUkey = st.StyleUkey and st.ArtworkTypeID = @SubProcess AND (st.Qty>0 or st.TMS>0 and st.Price>0) ))
+		
+/*
+	因為訂單有做更新，但BI資料沒有做更動，導致沒一致
+	效能太差需要與BI分開處理。
+*/
+IF (@IsPowerBI = 1)
+BEGIN
+	insert into @tmpSewingScheduleID
+	select s.ID
+	from SewingSchedule s WITH (NOLOCK) 
+	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID  
+	WHERE NOT EXISTS(SELECT 1 FROM @tmpSewingScheduleID T WHERE T.ID = S.ID) AND
+	o.EditDate >= @sEditDate AND o.EditDate <= @eEditDate
+END
 
 Declare @tmp_main table(
     SewingLineID varchar(5),
@@ -174,7 +191,7 @@ select  s.SewingLineID
             , InspDate = InspctDate.Val
             , s.StandardOutput
             , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(s.AlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
+                      ELSE ROUND(CONVERT(float ,(sa.TTlAlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
                       END
             , o.KPILETA
 			, o.SewETA
@@ -242,6 +259,11 @@ select  s.SewingLineID
 	    left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
 	    where s.Ukey = o.StyleUkey
     )sty
+    OUTER APPLY(
+        SELECT TTlAlloQty = SUM (AlloQty)
+        FROM SewingSchedule WITH (NOLOCK)
+        WHERE APSNo = s.APSNo
+    ) sa
     where   s.ID in (select ID from @tmpSewingScheduleID)
 
 -----------------------------------------------------------------

@@ -16,7 +16,7 @@ Declare @POID varchar(13)
 Declare @FactoryID varchar(8) 
 Select distinct @POID = POID,@FactoryID=FtyGroup From Orders  WITH (NOLOCK) Where Cuttingsp = @Cuttingid and (Junk=0 or (Junk=1 and NeedProduction=1))
 
-select *,Order_EachConsUkey = 0 into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
+select *,Order_EachConsUkey = cast(0 as bigint) into #tmp_WorkOrder_Distribute from [WorkOrder_Distribute] where 1=0
 alter table #tmp_WorkOrder_Distribute add colorid varchar(6)
 alter table #tmp_WorkOrder_Distribute add newKey int
 select	ID,

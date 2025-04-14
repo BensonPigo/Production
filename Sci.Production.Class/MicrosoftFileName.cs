@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sci.Production.PublicPrg;
+using System;
 using System.IO;
 
 namespace Sci.Production.Class
@@ -16,10 +17,7 @@ namespace Sci.Production.Class
         /// <returns>路徑+檔名+副檔名</returns>
         public static string GetName(string processName, string nameExtension = ExcelFileNameExtension.Xlsx)
         {
-            string fileName = processName.Trim()
-                                + DateTime.Now.ToString("_yyMMdd_HHmmssfff")
-                                + nameExtension;
-            return Path.Combine(Env.Cfg.ReportTempDir, fileName);
+            return Prgs.GetName(processName, nameExtension);
         }
     }
 }

@@ -28,18 +28,11 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
 
-            DualResult result = DBProxy.Current.Select(null, "select '' as ID union all select ID from Factory WITH (NOLOCK) where IsProduceFty = 1", out DataTable dtFty);
-            if (!result)
-            {
-                this.ShowErr(result);
-            }
-
-            this.comboFactory.DataSource = dtFty;
-            this.comboFactory.ValueMember = "ID";
-            this.comboFactory.DisplayMember = "ID";
             this.comboReportType.SelectedIndex = 0;
             this.comboStatus.SelectedIndex = 6;
             this.comboMDivision.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboMDivision.Text);
+            this.comboMDivision.Enabled = false;
         }
 
         /// <summary>

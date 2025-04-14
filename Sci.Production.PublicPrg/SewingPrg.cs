@@ -105,98 +105,11 @@ namespace Sci.Production.Prg
                 return new KeyValuePair<int, DualResult>(0, new DualResult(false, "No pass in Style"));
             }
 
-            string sqlCheck = $@"
---取得比對來源style資訊
-select  ID, BrandID
-into    #tmpStyle
-from Style with (nolock)
-where   Ukey = '{styleUkey}'
-
-select distinct top 30 so.OutputDate
-into #tmpSewingOutputDay
-from SewingOutput so with (nolock)
-where   so.SewingLineID = @SewingLineID and
-        so.FactoryID = @FactoryID and
-        so.Team = @Team and
-        so.OutputDate < @SewingDate and
-        so.Shift <> 'O' and
-        so.Category = 'O'
-order by    so.OutputDate desc
-
-select  so.ID, so.OutputDate
-into #tmpSewingOutputID
-from SewingOutput so with (nolock)
-where   so.SewingLineID = @SewingLineID and
-        so.FactoryID = @FactoryID and
-        so.Team = @Team and
-        so.OutputDate in (select OutputDate from #tmpSewingOutputDay) and
-        so.Shift <> 'O' and
-        so.Category = 'O'
-order by    so.OutputDate desc
-
-select  distinct
-        so.OutputDate,
-        o.StyleID,
-        o.BrandID
-into    #tmpSewingOutputStyle
-from    #tmpSewingOutputID so
-inner join  SewingOutput_Detail sod with (nolock) on sod.ID = so.ID
-inner join  Orders o  with (nolock) on o.ID = sod.OrderID
-
---取得30天前生產的Style與SimlarStyle
-select * into #tmpSewingSimlarStyle
-from (
-        select  OutputDate, StyleID, BrandID from #tmpSewingOutputStyle
-        union
-        select  tso.OutputDate, [StyleID] = ss.ChildrenStyleID, [BrandID] = ss.ChildrenBrandID
-        from #tmpSewingOutputStyle tso
-        inner join Style_SimilarStyle ss with (nolock) on   ss.MasterBrandID = tso.BrandID and
-                                                            ss.MasterStyleID = tso.StyleID
-    ) a
-
-declare @interruptDate date
-
---取得30天內沒生產的日期
-select  @interruptDate = max(OutputDate)
-from    #tmpSewingOutputDay
-where   OutputDate not in (
-            select  distinct OutputDate
-            from #tmpSewingSimlarStyle tss
-            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
-
---抓取區間內連續生產
-if  @interruptDate is null and
-    exists(  select  1
-            from #tmpSewingSimlarStyle tss
-            where exists(select 1 from #tmpStyle s where s.ID = tss.StyleID and s.BrandID = tss.BrandID))
-begin
-    select  [ContinusDays] = count(1) + 1
-    from #tmpSewingOutputDay
-end
---抓取區間內無生產
-else if @interruptDate is null
-begin
-    select  [ContinusDays] = 1
-end
-else
-begin
-    select  [ContinusDays] = count(1) + 1
-    from #tmpSewingOutputDay
-    where   OutputDate  >   @interruptDate
-end
-
-drop table #tmpStyle, #tmpSewingOutputDay, #tmpSewingOutputStyle, #tmpSewingSimlarStyle, #tmpSewingOutputID
-";
+            string sqlcmd = $@"select [ContinusDays] = dbo.GetCheckContinusProduceDays({styleUkey},'{line}','{factoryID}','{team}','{Convert.ToDateTime(sewingDate).ToString("yyyy/MM/dd")}') ";
 
             DataTable dtResult;
-            List<SqlParameter> listPar = new List<SqlParameter>()
-            {
-                new SqlParameter("@SewingLineID", line),
-                new SqlParameter("@FactoryID", factoryID),
-                new SqlParameter("@SewingDate", sewingDate),
-                new SqlParameter("@Team", team),
-            };
-            DualResult result = DBProxy.Current.Select(null, sqlCheck, listPar, out dtResult);
+
+            DualResult result = DBProxy.Current.Select(null, sqlcmd, out dtResult);
 
             if (!result)
             {
@@ -315,7 +228,5 @@ update  SewingOutput set SewingReasonIDForTypeIC = '{inlineCategoryResult.Key}' 
 
             return new DualResult(true);
         }
-
-        
     }
 }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelSewingLine = new Sci.Win.UI.Label();
             this.labelReportType = new Sci.Win.UI.Label();
@@ -40,14 +41,14 @@
             this.label9 = new Sci.Win.UI.Label();
             this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.checkSampleFty = new Sci.Win.UI.CheckBox();
             this.chkExcludeNonRevenue = new Sci.Win.UI.CheckBox();
             this.checkExcludeOfMockUp = new Sci.Win.UI.CheckBox();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -193,18 +194,6 @@
             this.comboReportType.TabIndex = 6;
             this.comboReportType.SelectedIndexChanged += new System.EventHandler(this.ComboReportType_SelectedIndexChanged);
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(97, 159);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(65, 24);
-            this.comboFactory.TabIndex = 7;
-            // 
             // comboOrderBy
             // 
             this.comboOrderBy.BackColor = System.Drawing.Color.White;
@@ -230,18 +219,6 @@
             this.label10.TextStyle.Color = System.Drawing.Color.Red;
             this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label10.TextStyle.GradientColor = System.Drawing.Color.Red;
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(96, 123);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 106;
             // 
             // labelM
             // 
@@ -284,17 +261,43 @@
             this.checkExcludeOfMockUp.Text = "Exclude of Mock up";
             this.checkExcludeOfMockUp.UseVisualStyleBackColor = true;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(96, 159);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(67, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(96, 123);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 564;
+            // 
             // R02
             // 
             this.ClientSize = new System.Drawing.Size(512, 299);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.checkExcludeOfMockUp);
             this.Controls.Add(this.chkExcludeNonRevenue);
             this.Controls.Add(this.checkSampleFty);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.comboOrderBy);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.txtSewingLineEnd);
             this.Controls.Add(this.label9);
@@ -328,17 +331,17 @@
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.txtSewingLineEnd, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboOrderBy, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.checkSampleFty, 0);
             this.Controls.SetChildIndex(this.chkExcludeNonRevenue, 0);
             this.Controls.SetChildIndex(this.checkExcludeOfMockUp, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -358,13 +361,13 @@
         private Win.UI.Label label9;
         private Win.UI.TextBox txtSewingLineEnd;
         private Win.UI.ComboBox comboReportType;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label label10;
-        private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
         private Win.UI.CheckBox checkSampleFty;
         private Win.UI.CheckBox chkExcludeNonRevenue;
         private Win.UI.CheckBox checkExcludeOfMockUp;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

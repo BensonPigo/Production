@@ -32,9 +32,10 @@ namespace Sci.Production.Planning
             MyUtility.Tool.SetupCombox(this.cmbDate, 2, 1, "1,SCI Delivery Date,2,Buyer Delivery Date");
             this.cmbDate.SelectedValue = "1";
             this.comboFtyZone.IsIncludeSampleRoom = false;
-            this.comboFtyZone.SetDataSource(Sci.Env.User.Keyword);
             this.comboMDivision.SetDefalutIndex(true);
-            this.comboFactory.SetDataSource();
+            this.comboFactory.SetDataSource(this.comboMDivision.Text);
+            this.comboFtyZone.SetDataSource(this.comboMDivision.Text);
+            this.comboMDivision.Enabled = false;
         }
 
         private int Year;

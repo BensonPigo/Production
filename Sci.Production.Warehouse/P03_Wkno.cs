@@ -29,7 +29,7 @@ this.dr["seq2"].ToString());
 
             string selectCommand1 = $@"
 SELECT   a.id
-       , a.Packages
+       , e.Packages
        , a.ETD
 	   , a.ETA
 	   , a.WhseArrival
@@ -53,6 +53,11 @@ OUTER APPLY(
 
 	),1,1,'')
 )con
+outer apply (
+    select [Packages] = sum(e.Packages)
+    from Export e with (nolock) 
+    where e.Blno = a.Blno
+)e
 WHERE b.poid = '{this.dr["id"]}'
 And b.seq1 = '{this.dr["Seq1"]}'
 And b.seq2 = '{this.dr["Seq2"]}'

@@ -2,10 +2,10 @@
     [ID]            BIGINT         CONSTRAINT [DF_LineMapping_Detail_ID] DEFAULT ((0)) NOT NULL,
     [No]            VARCHAR (4)    CONSTRAINT [DF_LineMapping_Detail_No] DEFAULT ('') NULL,
     [Annotation]    NVARCHAR (MAX) CONSTRAINT [DF_LineMapping_Detail_Annotation] DEFAULT ('') NULL,
-    [GSD]           NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
-    [TotalGSD]      NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
-    [Cycle]         NUMERIC (6, 2) CONSTRAINT [DF_LineMapping_Detail_Cycle] DEFAULT ((0)) NULL,
-    [TotalCycle]    NUMERIC (7, 2) CONSTRAINT [DF_LineMapping_Detail_TotalCycle] DEFAULT ((0)) NULL,
+    [GSD]           NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_GSD] DEFAULT ((0)) NULL,
+    [TotalGSD]      NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalGSD] DEFAULT ((0)) NULL,
+    [Cycle]         NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_Cycle] DEFAULT ((0)) NULL,
+    [TotalCycle]    NUMERIC (12, 2) CONSTRAINT [DF_LineMapping_Detail_TotalCycle] DEFAULT ((0)) NULL,
     [MachineTypeID] VARCHAR (10)   CONSTRAINT [DF_LineMapping_Detail_MachineTypeID] DEFAULT ('') NULL,
     [OperationID]   VARCHAR (20)   CONSTRAINT [DF_LineMapping_Detail_OperationID] DEFAULT ('') NULL,
     [MoldID]        NVARCHAR (200) CONSTRAINT [DF_LineMapping_Detail_MoldID] DEFAULT ('') NULL,
@@ -18,10 +18,15 @@
     [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
     [ThreadColor]   NVARCHAR    NULL,
     [IsPPA ] BIT NULL, 
-    [ActCycle] NUMERIC(7, 2) NULL,  
+    [ActCycle] NUMERIC(12, 2) NULL,  
     [MasterPlusGroup] VARCHAR(4) NOT NULL DEFAULT (''), 
     [IsHide] BIT NULL , 
     [IEReasonLBRNotHit_DetailUkey] BIGINT NULL, 
+    [EstCycleTime]          NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstCycleTime]    DEFAULT ((0))  NOT NULL, 
+    [EstTotalCycleTime]     NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstTotalCycleTime]    DEFAULT ((0))  NOT NULL, 
+    [EstOutputHr]           NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstOutputHr]    DEFAULT ((0))  NOT NULL, 
+    [EstLBR]                NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstLBR]    DEFAULT ((0))  NOT NULL, 
+    [Append] BIT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -131,3 +136,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping_Detail',
     @level2type = N'COLUMN',
     @level2name = N'IEReasonLBRNotHit_DetailUkey'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估的CycleTime',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstCycleTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估站台的TotalCycleTime',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstTotalCycleTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估每小時產量',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstOutputHr'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'預估的LBR',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'EstLBR'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'手動插入',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Append'

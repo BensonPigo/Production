@@ -97,6 +97,10 @@
 	[GlobalFoundationRange] [bit] NOT NULL,
 	[SampleReason] [varchar](5) NOT NULL,
 	[TMS] [numeric](13, 3) NOT NULL,
+	[RFIDAUTFarmInQty] [numeric](10, 0) NULL,
+	[RFIDAUTFarmOutQty] [numeric](10, 0) NULL,
+	[RFIDFMFarmInQty] [numeric](10, 0) NULL,
+	[RFIDFMFarmOutQty] [numeric](10, 0) NULL,
  CONSTRAINT [PK_P_WIP] PRIMARY KEY CLUSTERED 
 (
 	[SPNO] ASC
@@ -347,4 +351,14 @@ GO
 ALTER TABLE [dbo].[P_WIP] ADD  CONSTRAINT [DF_P_WIP_TMS]  DEFAULT ((0)) FOR [TMS]
 GO
 
+ALTER TABLE [dbo].[P_WIP] ADD  CONSTRAINT [DF_P_WIP_RFIDAUTFarmInQty]  DEFAULT ((0)) FOR [RFIDAUTFarmInQty]
+GO
 
+ALTER TABLE [dbo].[P_WIP] ADD  CONSTRAINT [DF_P_WIP_RFIDAUTFarmOutQty]  DEFAULT ((0)) FOR [RFIDAUTFarmOutQty]
+GO
+
+ALTER TABLE [dbo].[P_WIP] ADD  CONSTRAINT [DF_P_WIP_RFIDFMFarmInQty]  DEFAULT ((0)) FOR [RFIDFMFarmInQty]
+GO
+
+ALTER TABLE [dbo].[P_WIP] ADD  CONSTRAINT [DF_P_WIP_RFIDFMFarmOutQty]  DEFAULT ((0)) FOR [RFIDFMFarmOutQty]
+GO

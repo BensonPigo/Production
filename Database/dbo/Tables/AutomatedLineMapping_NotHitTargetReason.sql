@@ -2,10 +2,10 @@
 (
 	[ID] INT CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_ID] DEFAULT (0) NOT NULL, 
     [No] VARCHAR(2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_No] DEFAULT ('') NOT NULL, 
-    [TotalGSDTimeAuto] NUMERIC(6, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_TotalGSDTimeAuto] DEFAULT (0) NOT NULL, 
-    [TotalGSDTimeFinal] NUMERIC(6, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_TotalGSDTimeFinal] DEFAULT (0) NOT NULL, 
-    [SewerLoadingAuto] NUMERIC(5, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_SewerLoadingAuto] DEFAULT (0) NOT NULL, 
-    [SewerLoadingFinal] NUMERIC(5, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_SewerLoadingFinal] DEFAULT (0) NOT NULL, 
+    [TotalGSDTimeAuto] NUMERIC(12, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_TotalGSDTimeAuto] DEFAULT (0) NOT NULL, 
+    [TotalGSDTimeFinal] NUMERIC(12, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_TotalGSDTimeFinal] DEFAULT (0) NOT NULL, 
+    [SewerLoadingAuto] NUMERIC(12, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_SewerLoadingAuto] DEFAULT (0) NOT NULL, 
+    [SewerLoadingFinal] NUMERIC(12, 2) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_SewerLoadingFinal] DEFAULT (0) NOT NULL, 
     [IEReasonID] VARCHAR(5) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_IEReasonID] DEFAULT ('') NOT NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_NotHitTargetReason_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL

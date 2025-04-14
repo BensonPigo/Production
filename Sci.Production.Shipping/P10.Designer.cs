@@ -60,6 +60,8 @@
             this.btnDeleteGBHistory = new Sci.Win.UI.Button();
             this.lblPolloutDate = new Sci.Win.UI.Label();
             this.disPulloutDate = new Sci.Win.UI.DisplayBox();
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.label6 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -85,6 +87,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboCompany1);
+            this.masterpanel.Controls.Add(this.label6);
             this.masterpanel.Controls.Add(this.disPulloutDate);
             this.masterpanel.Controls.Add(this.lblPolloutDate);
             this.masterpanel.Controls.Add(this.btnDeleteGBHistory);
@@ -135,6 +139,8 @@
             this.masterpanel.Controls.SetChildIndex(this.btnDeleteGBHistory, 0);
             this.masterpanel.Controls.SetChildIndex(this.lblPolloutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.disPulloutDate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label6, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCompany1, 0);
             // 
             // detailpanel
             // 
@@ -215,9 +221,9 @@
             // 
             // labelRemark
             // 
-            this.labelRemark.Location = new System.Drawing.Point(4, 31);
+            this.labelRemark.Location = new System.Drawing.Point(4, 60);
             this.labelRemark.Name = "labelRemark";
-            this.labelRemark.Size = new System.Drawing.Size(55, 23);
+            this.labelRemark.Size = new System.Drawing.Size(102, 23);
             this.labelRemark.TabIndex = 2;
             this.labelRemark.Text = "Remark";
             // 
@@ -236,10 +242,10 @@
             this.editRemark.BackColor = System.Drawing.Color.White;
             this.editRemark.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Remark", true));
             this.editRemark.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.editRemark.Location = new System.Drawing.Point(63, 31);
+            this.editRemark.Location = new System.Drawing.Point(109, 60);
             this.editRemark.Multiline = true;
             this.editRemark.Name = "editRemark";
-            this.editRemark.Size = new System.Drawing.Size(445, 50);
+            this.editRemark.Size = new System.Drawing.Size(399, 52);
             this.editRemark.TabIndex = 2;
             // 
             // btnUpdatePulloutDate
@@ -407,7 +413,7 @@
             // 
             this.displayTTLContainer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTTLContainer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTTLContainer.Location = new System.Drawing.Point(109, 89);
+            this.displayTTLContainer.Location = new System.Drawing.Point(109, 118);
             this.displayTTLContainer.Name = "displayTTLContainer";
             this.displayTTLContainer.Size = new System.Drawing.Size(399, 23);
             this.displayTTLContainer.TabIndex = 70;
@@ -430,7 +436,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(5, 89);
+            this.label3.Location = new System.Drawing.Point(5, 118);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(101, 23);
             this.label3.TabIndex = 73;
@@ -570,6 +576,30 @@
             this.disPulloutDate.Size = new System.Drawing.Size(148, 23);
             this.disPulloutDate.TabIndex = 84;
             // 
+            // comboCompany1
+            // 
+            this.comboCompany1.BackColor = System.Drawing.Color.White;
+            this.comboCompany1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
+            this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCompany1.FormattingEnabled = true;
+            this.comboCompany1.IsOrderCompany = null;
+            this.comboCompany1.IsSupportUnselect = true;
+            this.comboCompany1.Junk = null;
+            this.comboCompany1.Location = new System.Drawing.Point(109, 30);
+            this.comboCompany1.Name = "comboCompany1";
+            this.comboCompany1.OldText = "";
+            this.comboCompany1.Size = new System.Drawing.Size(214, 24);
+            this.comboCompany1.TabIndex = 89;
+            this.comboCompany1.SelectedIndexChanged += new System.EventHandler(this.ComboCompany1_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(4, 31);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(102, 22);
+            this.label6.TabIndex = 88;
+            this.label6.Text = "Order Company";
+            // 
             // P10
             // 
             this.ApvChkValue = "Checked";
@@ -650,5 +680,7 @@
         private Win.UI.Button btnDeleteGBHistory;
         private Win.UI.DisplayBox disPulloutDate;
         private Win.UI.Label lblPolloutDate;
+        private Class.ComboCompany comboCompany1;
+        private Win.UI.Label label6;
     }
 }

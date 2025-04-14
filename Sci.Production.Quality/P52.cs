@@ -714,6 +714,7 @@ namespace Sci.Production.Quality
                     this.Helper.Controls.Grid.Generator(this.grid_Report)
                     .Text("DocSeason", header: "Doc Season", width: Widths.AnsiChars(15), iseditingreadonly: true)
                     .Numeric("Period", header: "Period", width: Widths.AnsiChars(15), integer_places: 3, decimal_places: 0, iseditingreadonly: true)
+                    .Text("LOT", header: "LOT#", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Text("ReceivedRemark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: true)
                     .Text("TestDocFactoryGroup", header: "FTY ", width: Widths.AnsiChars(15), iseditingreadonly: true)
                     .Date("FirstDyelot", header: "Sent Date", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -1477,8 +1478,8 @@ and sr.DocumentName = @DocumentName
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
-                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
+                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"].ToString()));
                     break;
                 case "2":
                     sql = @"
@@ -1510,9 +1511,9 @@ and sr.DocumentName = @DocumentName
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
-                    parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
-                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
+                    parmes.Add(new SqlParameter("@ColorID", mainrow["Color"].ToString()));
+                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"].ToString()));
                     break;
                 case "3":
                     sql = @"
@@ -1538,10 +1539,11 @@ Select DocSeason = f.SeasonID
        ,f.EditDate
        ,FileRule = '3'
        ,f.SuppID
-       ,f.TestDocFactoryGroup
+       ,f.AWBno
        ,f.BrandRefno
        ,f.ColorID
        ,f.SeasonID
+       ,f.LOT
 FROM dbo.FirstDyelot f
 INNER JOIN #probablySeasonList season ON f.SeasonID = season.ID
 INNER JOIN #probablySeasonList seasonSCI ON seasonSCI.ID = @SeasonID
@@ -1551,10 +1553,12 @@ WHERE exists (
     where b.BrandID = f.BrandID
     and b.SuppGroup = f.SuppID
     and b.SuppID = @SuppID)
-and (f.BrandRefno = @BrandRefno  or BrandRefno = @Refno)
+and f.BrandRefno = @BrandRefno
 and f.ColorID = @ColorID 
 and f.BrandID = @BrandID 
 and f.DocumentName = @DocumentName
+and ((@FactoryID = 'SPR' and f.TestDocFactoryGroup in ('SPR', 'SPX'))
+    or (@FactoryID != 'SPR' and f.TestDocFactoryGroup = @FactoryID))
 and f.deleteColumn = 0
 Order by f.SeasonID desc";
                     parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
@@ -1564,6 +1568,7 @@ Order by f.SeasonID desc";
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@SeasonID", mainrow["Season"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    parmes.Add(new SqlParameter("@FactoryID", Env.User.Factory));
                     break;
                 case "4":
                     sql = @"

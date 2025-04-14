@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelID = new Sci.Win.UI.Label();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelInvNo = new Sci.Win.UI.Label();
@@ -50,6 +51,8 @@
             this.labelGW = new Sci.Win.UI.Label();
             this.numCMP = new Sci.Win.UI.NumericBox();
             this.labelCMP = new Sci.Win.UI.Label();
+            this.comboCompany1 = new Sci.Production.Class.ComboCompany(this.components);
+            this.label9 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,6 +69,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboCompany1);
+            this.masterpanel.Controls.Add(this.label9);
             this.masterpanel.Controls.Add(this.btnReCalculate);
             this.masterpanel.Controls.Add(this.txtCustomdeclareno);
             this.masterpanel.Controls.Add(this.displayPortofExport);
@@ -80,7 +85,7 @@
             this.masterpanel.Controls.Add(this.labelDate);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateDate);
-            this.masterpanel.Size = new System.Drawing.Size(830, 99);
+            this.masterpanel.Size = new System.Drawing.Size(830, 134);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -96,15 +101,17 @@
             this.masterpanel.Controls.SetChildIndex(this.displayPortofExport, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtCustomdeclareno, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnReCalculate, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label9, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCompany1, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 99);
-            this.detailpanel.Size = new System.Drawing.Size(830, 262);
+            this.detailpanel.Location = new System.Drawing.Point(0, 134);
+            this.detailpanel.Size = new System.Drawing.Size(830, 297);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(5, 64);
+            this.gridicon.Location = new System.Drawing.Point(5, 99);
             // 
             // refresh
             // 
@@ -112,7 +119,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(830, 262);
+            this.detailgridcont.Size = new System.Drawing.Size(830, 297);
             // 
             // detail2
             // 
@@ -128,11 +135,11 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(830, 430);
+            this.detail.Size = new System.Drawing.Size(830, 500);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(830, 361);
+            this.detailcont.Size = new System.Drawing.Size(830, 431);
             // 
             // detailbtm
             // 
@@ -144,7 +151,7 @@
             this.detailbtm.Controls.Add(this.labelNW);
             this.detailbtm.Controls.Add(this.numQty);
             this.detailbtm.Controls.Add(this.labelQty);
-            this.detailbtm.Location = new System.Drawing.Point(0, 361);
+            this.detailbtm.Location = new System.Drawing.Point(0, 431);
             this.detailbtm.Size = new System.Drawing.Size(830, 69);
             this.detailbtm.Controls.SetChildIndex(this.labelQty, 0);
             this.detailbtm.Controls.SetChildIndex(this.numQty, 0);
@@ -162,11 +169,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(830, 430);
+            this.browse.Size = new System.Drawing.Size(830, 500);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(838, 459);
+            this.tabs.Size = new System.Drawing.Size(838, 529);
             // 
             // createby
             // 
@@ -437,10 +444,34 @@
             this.labelCMP.TabIndex = 9;
             this.labelCMP.Text = "CMP";
             // 
+            // comboCompany1
+            // 
+            this.comboCompany1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.comboCompany1.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.comboCompany1.FormattingEnabled = true;
+            this.comboCompany1.IsOrderCompany = null;
+            this.comboCompany1.IsSupportUnselect = true;
+            this.comboCompany1.Junk = null;
+            this.comboCompany1.Location = new System.Drawing.Point(115, 96);
+            this.comboCompany1.Name = "comboCompany1";
+            this.comboCompany1.OldText = "";
+            this.comboCompany1.ReadOnly = true;
+            this.comboCompany1.Size = new System.Drawing.Size(214, 24);
+            this.comboCompany1.TabIndex = 110;
+            // 
+            // label9
+            // 
+            this.label9.Location = new System.Drawing.Point(8, 96);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(104, 22);
+            this.label9.TabIndex = 109;
+            this.label9.Text = "Order Company";
+            // 
             // P41
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(838, 492);
+            this.ClientSize = new System.Drawing.Size(838, 562);
             this.DefaultControl = "dateDate";
             this.DefaultControlForEdit = "dateDate";
             this.GridAlias = "VNExportDeclaration_Detail";
@@ -503,5 +534,7 @@
         private Win.UI.Label labelNW;
         private Win.UI.NumericBox numQty;
         private Win.UI.Label labelQty;
+        private Class.ComboCompany comboCompany1;
+        private Win.UI.Label label9;
     }
 }

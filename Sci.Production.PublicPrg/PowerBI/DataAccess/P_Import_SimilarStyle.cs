@@ -46,8 +46,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -115,20 +113,9 @@ Where Not exists ( select 1
 				   and P_SimilarStyle.BrandID = t.BrandID 
                 )
 And P_SimilarStyle.OutputDate >= @Date
-
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_SimilarStyle')
-BEGIN
-	update BITableInfo set TransferDate = getdate()
-	where ID = 'P_SimilarStyle'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_SimilarStyle', getdate())
-END
 ";
-
-                result = MyUtility.Tool.ProcessWithDatatable(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
+                sql += new Base().SqlBITableInfo("P_SimilarStyle", true);
+                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
 
             finalResult.Result = result;

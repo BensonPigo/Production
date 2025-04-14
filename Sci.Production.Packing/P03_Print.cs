@@ -1,10 +1,16 @@
-﻿using System;
-using System.Data;
-using Ict;
+﻿using Ict;
 using Sci.Data;
-using System.Runtime.InteropServices;
+using Sci.Win.Tools;
+using System;
+using System.Data;
+using System.Data.SqlTypes;
 using System.Linq;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 using Word = Microsoft.Office.Interop.Word;
+using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.Prg;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Packing
 {
@@ -21,6 +27,7 @@ namespace Sci.Production.Packing
         private string ctn2;
         private string specialInstruction;
         private bool country;
+        private string orderID;
         private DataTable printData;
         private DataTable ctnDim;
         private DataTable qtyCtn;
@@ -98,6 +105,31 @@ namespace Sci.Production.Packing
         /// <returns>bool</returns>
         protected override bool ValidateInput()
         {
+            if (this.radioHandheldMetalDetectionReport.Checked)
+            {
+                if (MyUtility.Check.Empty(this.txtSPNo.Text))
+                {
+                    MyUtility.Msg.WarningBox("Please fill in <SPNo>!");
+                    return false;
+                }
+
+                string sqlcmd = $@"SELECT 1 FROM Orders WITH (NOLOCK) WHERE ID = '{this.txtSPNo.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    MyUtility.Msg.WarningBox($"This SPNo<{this.txtSPNo.Text}> does not exists!");
+                    this.txtSPNo.Text = string.Empty;
+                    return false;
+                }
+
+                sqlcmd = $@"SELECT 1 FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' AND OrderID = '{this.txtSPNo.Text}'";
+                if (!MyUtility.Check.Seek(sqlcmd))
+                {
+                    MyUtility.Msg.WarningBox($"SPNo<{this.txtSPNo.Text}> does not belong to this PackingID<{this.masterData["ID"]}>!");
+                    this.txtSPNo.Text = string.Empty;
+                    return false;
+                }
+            }
+
             this.reportType = this.radioPackingListReportFormA.Checked ? "1" :
                 this.radioPackingListReportFormB.Checked ? "2" :
                 this.radioPackingGuideReport.Checked ? "3" :
@@ -107,11 +139,13 @@ namespace Sci.Production.Packing
                 this.radioMDform.Checked ? "8" :
                 this.radioWeighingform.Checked ? "9" :
                 this.rdbtnShippingMarkLLL.Checked ? "10" :
+                this.radioHandheldMetalDetectionReport.Checked ? "11" :
                 "4";
             this.ctn1 = this.txtCTNStart.Text;
             this.ctn2 = this.txtCTNEnd.Text;
             this.ReportResourceName = "P03_BarcodePrint.rdlc";
             this.country = this.checkBoxCountry.Checked;
+            this.orderID = this.txtSPNo.Text;
             return base.ValidateInput();
         }
 
@@ -144,6 +178,11 @@ namespace Sci.Production.Packing
             if (this.reportType == "10")
             {
                 return this.ShippingmarkLLL(out this.printDataA);
+            }
+
+            if (this.reportType == "11")
+            {
+                return this.HandheldMetalDetection(out this.printData);
             }
 
             return Ict.Result.True;
@@ -255,6 +294,11 @@ namespace Sci.Production.Packing
                 this.ShippingmarkLLLReport();
             }
 
+            if (this.reportType == "11")
+            {
+                this.HandheldMetalDetectionReport();
+            }
+
             this.HideWaitMessage();
             return true;
         }
@@ -349,6 +393,101 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             #endregion
         }
 
+        private DualResult HandheldMetalDetection(out DataTable dt)
+        {
+            string sqlcmd = $@"
+SELECT
+     No = pld.CTNStartNo
+    ,ScanEditDate = FORMAT(pld.ScanEditDate, 'yyyy/MM/dd')
+    ,pld.CTNStartNo
+    ,pld.Article
+    ,pld.Color
+    ,pld.SizeCode
+    ,GarmentQty = pld.ShipQty
+    ,PassedQty = pld.ShipQty
+    ,FailedQty = 0
+FROM PackingList_Detail pld WITH (NOLOCK)
+WHERE ID = '{this.masterData["ID"]}'
+AND OrderID = '{this.orderID}'
+";
+            return DBProxy.Current.Select(null, sqlcmd, out dt);
+        }
+
+        private void HandheldMetalDetectionReport()
+        {
+            // 此報表是給廠商稽核用
+            this.SetCount(this.printData.Rows.Count);
+            if (this.printData.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox("Data not found");
+                return;
+            }
+
+            var listOrderby = this.printData.AsEnumerable().OrderBy(row => MyUtility.Convert.GetString(row["No"]).Trim().PadLeft(4, '0')).ToList();
+            string previousNo = null;
+            foreach (var row in listOrderby)
+            {
+                string currentNo = MyUtility.Convert.GetString(row["No"]).Trim();
+
+                // 若當前的 No 和上一筆相同，則將當前 No 設為空白
+                if (currentNo == previousNo)
+                {
+                    row["No"] = string.Empty;  // 或使用 ""，依需求而定
+                }
+
+                // 更新上一筆的 No
+                previousNo = currentNo;
+            }
+
+            DataTable dtOrderby = listOrderby.CopyToDataTable();
+            string fileName = "Packing_P03_Handheld Metal Detection Report";
+            string fileNamexltx = fileName + ".xltx";
+            Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + fileNamexltx);
+            if (excelApp == null)
+            {
+                return;
+            }
+
+            Excel.Worksheet worksheet = (Excel.Worksheet)excelApp.ActiveSheet;
+
+            // 表頭資訊
+            string sqlcmd = $@"SELECT StyleID, Customize1 FROM Orders WHERE ID = '{this.orderID}'";
+            MyUtility.Check.Seek(sqlcmd, out DataRow dr);
+            worksheet.Cells[3, 2] = dr["StyleID"];
+            worksheet.Cells[4, 2] = dr["Customize1"];
+            worksheet.Cells[5, 2] = this.orderID;
+            worksheet.Cells[3, 8] = listOrderby.Select(row => MyUtility.Convert.GetString(row["CTNStartNo"])).Distinct().Count(); // Ttl Ctns
+            worksheet.Cells[4, 8] = listOrderby.Sum(row => MyUtility.Convert.GetInt(row["GarmentQty"])); // Ttl Garments
+            worksheet.Cells[5, 8] = "1.0"; // Sensitivity Used
+
+            // 表身
+            int headerRow = 7;
+            int insertRowIndex = headerRow + 2;
+
+            // 先增加需要幾 Row , 範本只有1列
+            for (int i = 0; i < listOrderby.Count() - 1; i++)
+            {
+                Excel.Range insertRow = worksheet.Rows[insertRowIndex];
+                insertRow.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromLeftOrAbove);
+            }
+
+            int ttlRow = headerRow + listOrderby.Count() + 1;
+            worksheet.Cells[ttlRow, 7].Formula = $"=SUM(G{headerRow + 1}:G{ttlRow - 1})";
+            worksheet.Cells[ttlRow, 8].Formula = $"=SUM(H{headerRow + 1}:H{ttlRow - 1})";
+
+            MyUtility.Excel.CopyToXls(dtOrderby, string.Empty, fileNamexltx, headerRow, false, null, excelApp);
+            worksheet.Columns[2].ColumnWidth = 20;
+
+            #region Save & Show Excel
+            string strExcelName = Class.MicrosoftFile.GetName(fileName);
+            Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            workbook.SaveAs(strExcelName);
+            workbook.Close();
+            excelApp.Quit();
+            strExcelName.OpenFile();
+            #endregion
+        }
+
         /// <inheritdoc/>
         private DualResult PrintShippingmark()
         {
@@ -383,10 +522,13 @@ select * from(
 		WHERE f.ID='{Env.User.Factory}'
 	)c
     where pd.id = '{this.masterData["ID"]}'
+      {(this.txtCTNStart.Text.IsNullOrWhiteSpace() ? string.Empty : string.Format(" and pd.CTNStartNo >= {0}", this.txtCTNStart.Text))}
+      {(this.txtCTNEnd.Text.IsNullOrWhiteSpace() ? string.Empty : string.Format(" and pd.CTNStartNo <= {0}", this.txtCTNEnd.Text))}
 		  and pd.CTNQty > 0
 )a
 order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
 ";
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out this.printData);
 
             if (this.printData == null || this.printData.Rows.Count == 0)
@@ -403,7 +545,15 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             Word._Document document;
             Word.Table tables = null;
 
-            printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            if (this.rdbtnShippingMarkKHAdidas.Checked)
+            {
+                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping Mark_ForKHAdidas.dotx";
+            }
+            else
+            {
+                printFile = Env.Cfg.XltPathDir + "\\Packing_P03_Shipping mark.dotx";
+            }
+
             document = winword.Documents.Add(ref printFile);
             try
             {
@@ -414,43 +564,116 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
                 winword.Selection.Tables[1].Select();
                 winword.Selection.Copy();
                 int page = this.printData.Rows.Count;
-                for (int i = 1; i < page; i++)
-                {
-                    winword.Selection.MoveDown();
-                    if (page > 1)
-                    {
-                        winword.Selection.InsertNewPage();
-                    }
 
-                    winword.Selection.Paste();
-                }
                 #endregion
                 #region 填入資料
-                for (int i = 0; i < page; i++)
+                if (this.rdbtnShippingMarkKHAdidas.Checked)
                 {
-                    tables = table[i + 1];
+                    for (int i = 1; i <= page; i++)
+                    {
+                        winword.Selection.MoveDown();
 
-                    #region
-                    string customize1 = this.printData.Rows[i]["Customize1"].ToString();
-                    string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
-                    string article = this.printData.Rows[i]["Article"].ToString();
-                    string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
-                    string qty = this.printData.Rows[i]["qty"].ToString();
-                    string country = this.printData.Rows[i]["CountryName"].ToString();
-                    string gw = this.printData.Rows[i]["gw"].ToString();
-                    string nw = this.printData.Rows[i]["nw"].ToString();
-                    string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
-                    #endregion
+                        // 如果已經有一頁資料，並且該頁資料滿兩筆後才插入新頁
+                        if (i % 2 == 0)
+                        {
+                            winword.Selection.InsertNewPage();
+                            winword.Selection.Paste();
+                        }
+                    }
 
-                    tables.Cell(1, 2).Range.Text = customize1;
-                    tables.Cell(1, 3).Range.Text = cTNStartno;
-                    tables.Cell(2, 2).Range.Text = custPOno;
-                    tables.Cell(3, 2).Range.Text = article;
-                    tables.Cell(4, 2).Range.Text = sizeCode;
-                    tables.Cell(5, 2).Range.Text = qty;
-                    tables.Cell(6, 2).Range.Text = country;
-                    tables.Cell(7, 1).Range.Text = "GROSS WEIGHT:" + gw;
-                    tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
+                    int tableIndex = 1;
+
+                    for (int i = 0; i < page; i++)
+                    {
+                        tables = table[tableIndex];
+                        #region
+                        string customize1 = this.printData.Rows[i]["Customize1"].ToString();
+                        string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
+                        string article = this.printData.Rows[i]["Article"].ToString();
+                        string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
+                        string qty = this.printData.Rows[i]["qty"].ToString();
+                        string country = this.printData.Rows[i]["CountryName"].ToString();
+                        string gw = this.printData.Rows[i]["gw"].ToString();
+                        string nw = this.printData.Rows[i]["nw"].ToString();
+                        string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
+                        #endregion
+
+                        if (custPOno.Contains("-"))
+                        {
+                            int index = custPOno.IndexOf('-');
+                            custPOno = custPOno.Substring(0, index);
+                        }
+
+                        if (i + 1 > 0 && (i + 1) % 2 == 0)
+                        {
+                            tableIndex++; // 增加表格索引
+
+                            tables.Cell(7, 2).Range.Text = custPOno;
+                            tables.Cell(7, 3).Range.Text = cTNStartno;
+                            tables.Cell(8, 2).Range.Text = qty.Replace("PCS", string.Empty);
+                            tables.Cell(9, 2).Range.Text = country;
+                            tables.Cell(10, 2).Range.Text = gw + "K.G.";
+                            tables.Cell(11, 2).Range.Text = nw + "K.G.";
+                        }
+                        else
+                        {
+                            tables.Cell(1, 2).Range.Text = custPOno;
+                            tables.Cell(1, 3).Range.Text = cTNStartno;
+                            tables.Cell(2, 2).Range.Text = qty.Replace("PCS", string.Empty);
+                            tables.Cell(3, 2).Range.Text = country;
+                            tables.Cell(4, 2).Range.Text = gw + "K.G.";
+                            tables.Cell(5, 2).Range.Text = nw + "K.G.";
+
+                            if (i + 1 == page)
+                            {
+                                tables.Cell(7, 1).Range.Text = string.Empty;
+                                tables.Cell(8, 1).Range.Text = string.Empty;
+                                tables.Cell(9, 1).Range.Text = string.Empty;
+                                tables.Cell(10, 1).Range.Text = string.Empty;
+                                tables.Cell(11, 1).Range.Text = string.Empty;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < page; i++)
+                    {
+                        winword.Selection.MoveDown();
+                        if (page > 1)
+                        {
+                            winword.Selection.InsertNewPage();
+                        }
+
+                        winword.Selection.Paste();
+                    }
+
+                    for (int i = 0; i < page; i++)
+                    {
+                        tables = table[i + 1];
+
+                        #region
+                        string customize1 = this.printData.Rows[i]["Customize1"].ToString();
+                        string custPOno = this.printData.Rows[i]["CustPOno"].ToString();
+                        string article = this.printData.Rows[i]["Article"].ToString();
+                        string sizeCode = this.printData.Rows[i]["SizeCode"].ToString();
+                        string qty = this.printData.Rows[i]["qty"].ToString();
+                        string country = this.printData.Rows[i]["CountryName"].ToString();
+                        string gw = this.printData.Rows[i]["gw"].ToString();
+                        string nw = this.printData.Rows[i]["nw"].ToString();
+                        string cTNStartno = this.printData.Rows[i]["CTNStartno"].ToString();
+                        #endregion
+
+                        tables.Cell(1, 2).Range.Text = customize1;
+                        tables.Cell(1, 3).Range.Text = cTNStartno;
+                        tables.Cell(2, 2).Range.Text = custPOno;
+                        tables.Cell(3, 2).Range.Text = article;
+                        tables.Cell(4, 2).Range.Text = sizeCode;
+                        tables.Cell(5, 2).Range.Text = qty;
+                        tables.Cell(6, 2).Range.Text = country;
+                        tables.Cell(7, 1).Range.Text = "GROSS WEIGHT:" + gw;
+                        tables.Cell(8, 1).Range.Text = "NET WEIGHT:" + nw;
+                    }
                 }
                 #endregion
 
@@ -817,6 +1040,39 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
             this.checkBoxCountry.Enabled = this.radioNewBarcodePrint.Checked;
             this.checkBoxCountry.Checked = this.radioNewBarcodePrint.Checked;
+        }
+
+        private void RadioHandheldMetalDetectionReport_CheckedChanged(object sender, EventArgs e)
+        {
+            this.ControlPrintFunction(!((Win.UI.RadioButton)sender).Checked);
+            this.txtSPNo.ReadOnly = !((Win.UI.RadioButton)sender).Checked;
+            if (!((Win.UI.RadioButton)sender).Checked)
+            {
+                this.txtSPNo.Text = string.Empty;
+            }
+            else
+            {
+                string sqlcmd = $@"SELECT DISTINCT OrderID FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' ORDER BY OrderID";
+                DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
+
+                // 只有一個 OrderID 才自動帶入
+                if (dt.Rows.Count == 1)
+                {
+                    this.txtSPNo.Text = MyUtility.Convert.GetString(dt.Rows[0]["OrderID"]);
+                }
+            }
+        }
+
+        private void TxtSPNo_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = $@"SELECT DISTINCT OrderID FROM PackingList_Detail WITH (NOLOCK) WHERE ID = '{this.masterData["ID"]}' ORDER BY OrderID";
+            SelectItem item = new SelectItem(sqlcmd, "20", this.txtSPNo.Text);
+            if (item.ShowDialog() == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtSPNo.Text = item.GetSelectedString();
         }
     }
 }

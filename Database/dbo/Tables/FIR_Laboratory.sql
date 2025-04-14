@@ -32,6 +32,14 @@ CREATE TABLE [dbo].[FIR_Laboratory] (
 	nonIron bit not null CONSTRAINT [DF_FIR_Laboratory_nonIron] DEFAULT 0,
 	IronEncode bit not null CONSTRAINT [DF_FIR_Laboratory_IronEncode] DEFAULT 0,
 	IronInspector varchar(10) not null CONSTRAINT [DF_FIR_Laboratory_IronInspector] DEFAULT '',
+	CrockingReceiveDate DATE NULL,
+	CrockingApprover varchar(10) NOT NULL CONSTRAINT [DF_FIR_Laboratory_CrockingApprover] DEFAULT '',
+	HeatReceiveDate DATE NULL,
+	HeatApprover varchar(10) NOT NULL CONSTRAINT [DF_FIR_Laboratory_HeatApprover] DEFAULT '',
+	IronReceiveDate DATE NULL,
+	IronApprover varchar(10) NOT NULL CONSTRAINT [DF_FIR_Laboratory_IronApprover] DEFAULT '',
+	WashReceiveDate DATE NULL,
+	WashApprover  varchar(10) NOT NULL CONSTRAINT [DF_FIR_Laboratory_WashApprover] DEFAULT ''
     CONSTRAINT [PK_FIR_Laboratory] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

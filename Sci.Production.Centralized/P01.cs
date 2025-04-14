@@ -10,6 +10,8 @@ using System.Configuration;
 using Ict;
 using Sci.Data;
 using Ict.Win;
+using static Sci.CfgSection;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Centralized
 {
@@ -284,14 +286,7 @@ order by O.FactoryID, O.ID
             #endregion
             #region 由 appconfig 取得所有連線路徑
             this.ShowWaitMessage("Load connections...");
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            string[] strServers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>();
-            foreach (string ss in strServers)
-            {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
 
             if (connectionString == null || connectionString.Count == 0)
             {

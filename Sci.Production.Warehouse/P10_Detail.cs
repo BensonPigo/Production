@@ -41,9 +41,27 @@ namespace Sci.Production.Warehouse
         protected override void OnAttached()
         {
             base.OnAttached();
-            DataTable temp = (DataTable)this.gridbs.DataSource;
-            if (!temp.Columns.Contains("balanceqty"))
+            DataTable dtSubDetail = (DataTable)this.gridbs.DataSource;
+
+            if (!dtSubDetail.Columns.Contains("balanceqty"))
             {
+                if (!dtSubDetail.Columns.Contains("SeqKey"))
+                {
+                    dtSubDetail.Columns.Add("SeqKey", typeof(int));
+                }
+
+                int seqKey = 0;
+                foreach (DataRow dr in dtSubDetail.Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        continue;
+                    }
+
+                    dr["SeqKey"] = seqKey;
+                    seqKey++;
+                }
+
                 DataTable dtFtyinventory;
                 DualResult result;
                 string cmdd = @"
@@ -71,7 +89,8 @@ select t.poid
 	   , GroupQty = Sum(FTY.InQty - FTY.OutQty + FTY.AdjustQty - FTY.ReturnQty) over (partition by t.dyelot)
        , [DetailFIR] = concat(isnull(Physical.Result,' '),'/',isnull(Weight.Result,' '),'/',isnull(Shadebone.Result,' '),'/',isnull(Continuity.Result,' '),'/',isnull(Odor.Result,' '))
        , [Tone] = FTY.Tone
-       , [GMTWash] = isnull(GMTWash.val, '')
+       , [GMTWash] = FTY.GMTWashStatus
+       , t.SeqKey
 from #tmp t
 Left join dbo.FtyInventory FTY WITH (NOLOCK) on t.FtyInventoryUkey=FTY.Ukey
 left join dbo.Issue_Summary isum with (nolock) on t.Issue_SummaryUkey = isum.Ukey
@@ -105,31 +124,42 @@ outer apply (select  TOP 1 fc.Result
 	        inner join dbo.FIR_Odor fc with (nolock) on f.ID = fc.ID and fc.Roll = t.Roll and fc.Dyelot = t.Dyelot
 	        where poid = t.poid and seq1 = t.seq1 and seq2 = t.seq2 and SCIRefno = isum.SCIRefno
 			order by ISNULL(fc.EditDate,fc.AddDate) DESC ) Odor
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = t.PoId and
-			ttd.Seq1 = t.Seq1 and 
-            ttd.Seq2 = t.Seq2 and
-			ttd.Dyelot = t.Dyelot and 
-            ttd.Roll = t.Roll and
-			ttd.StockType = t.StockType and 
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 order by GroupQty desc, t.dyelot, balanceqty desc
 ";
-                if (!(result = MyUtility.Tool.ProcessWithDatatable(temp, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
+                if (!(result = MyUtility.Tool.ProcessWithDatatable(dtSubDetail, string.Empty, cmdd, out dtFtyinventory, "#tmp")))
                 {
                     MyUtility.Msg.WarningBox(result.ToString());
                     return;
                 }
 
-                this.gridbs.DataSource = dtFtyinventory;
+                foreach (DataColumn colFtyinventory in dtFtyinventory.Columns)
+                {
+                    if (!dtSubDetail.Columns.Contains(colFtyinventory.ColumnName))
+                    {
+                        dtSubDetail.Columns.Add(colFtyinventory.ColumnName, colFtyinventory.DataType);
+                    }
+                }
+
+                foreach (DataRow dr in dtFtyinventory.Rows)
+                {
+                    DataRow[] drOri = dtSubDetail.Select($"SeqKey = {dr["SeqKey"]}");
+                    if (drOri.Length > 0)
+                    {
+                        drOri[0]["UnrollStatus"] = dr["UnrollStatus"];
+                        drOri[0]["RelaxationStatus"] = dr["RelaxationStatus"];
+                        drOri[0]["InQty"] = dr["InQty"];
+                        drOri[0]["OutQty"] = dr["OutQty"];
+                        drOri[0]["AdjustQty"] = dr["AdjustQty"];
+                        drOri[0]["ReturnQty"] = dr["ReturnQty"];
+                        drOri[0]["balanceqty"] = dr["balanceqty"];
+                        drOri[0]["location"] = dr["location"];
+                        drOri[0]["ContainerCode"] = dr["ContainerCode"];
+                        drOri[0]["GroupQty"] = dr["GroupQty"];
+                        drOri[0]["DetailFIR"] = dr["DetailFIR"];
+                        drOri[0]["Tone"] = dr["Tone"];
+                        drOri[0]["GMTWash"] = dr["GMTWash"];
+                    }
+                }
             }
 
             this.displayID.Text = this.CurrentDetailData["id"].ToString();

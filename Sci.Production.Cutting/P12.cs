@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Microsoft.Office.Interop.Word;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.Prg;
@@ -14,6 +15,7 @@ using System.Text;
 using System.Windows.Forms;
 using static Sci.Production.PublicPrg.Prgs;
 using Excel = Microsoft.Office.Interop.Excel;
+using Word = Microsoft.Office.Interop.Word;
 
 namespace Sci.Production.Cutting
 {
@@ -41,11 +43,12 @@ namespace Sci.Production.Cutting
         private string Cell;
         private string size;
         private DualResult result;
-        private DataTable dtt;
+        private System.Data.DataTable dtt;
         private string Addname;
         private DateTime? AddDate;
         private string Cutno;
         private string SpreadingNoID;
+        private int strPagetype;
 
         private void GridSetup()
         {
@@ -253,6 +256,52 @@ declare @FtyGroup varchar(8) = '{this.txtfactoryByM.Text}'
 declare @Comb varchar(2) = '{this.txtComb.Text}'
 {declare}
 set arithabort on
+
+SELECT e1.*
+,Seq1 = Isnull(sd.Seq, s.Seq)
+,Seq2 = IsNull(sd.SubProcessID, s.Id)
+INTO #TempSubProcessData 
+FROM dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+LEFT JOIN SubProcessSeq_Detail sd WITH (NOLOCK) ON sd.SubProcessID = e1.SubprocessId
+LEFT JOIN SubProcess s WITH (NOLOCK) ON s.Id = e1.SubprocessId
+where  EXISTS(
+	select b.id,a.BundleNo, a.PatternCode
+	 from dbo.Bundle_Detail a WITH (NOLOCK)
+	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    {sqlWhere} 
+        and a.Patterncode != 'ALLPARTS' 
+        and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+)
+order by Seq1 , Seq2
+
+
+select distinct x.ID, x.PatternCode,x.PatternDesc,x.Parts
+INTO #Bundle_Detail_Allpart
+from Bundle_Detail_Allpart x with(nolock)
+where  EXISTS(
+	select b.id,a.BundleNo, a.PatternCode
+	 from dbo.Bundle_Detail a WITH (NOLOCK)
+	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    {sqlWhere} 
+        and a.Patterncode != 'ALLPARTS' 
+        and x.id=b.id
+)
+
+
 select 
     Convert(bit,0) as selected
     , a.PrintDate
@@ -296,6 +345,7 @@ select
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
     , a.Dyelot
+    , a.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -306,10 +356,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 )as SubProcess
@@ -317,10 +367,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -328,10 +378,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -389,26 +439,21 @@ select
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
     , a.Dyelot
+    , a.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+left join #Bundle_Detail_Allpart bda on bda.ID = b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
 inner join dbo.Orders c WITH (NOLOCK) on c.id = bdo.OrderID and c.MDivisionID  = b.MDivisionID 
 inner join brand WITH (NOLOCK) on brand.id = c.brandid
 outer apply
 (
-	select distinct x.PatternCode,x.PatternDesc,x.Parts
-	from Bundle_Detail_Allpart x with(nolock)
-	where x.id=b.id
-
-)bda
-outer apply
-(
     select SubProcess = 
     stuff((
-        select iif(e1.SubprocessId is null or e1.SubprocessId='','',e1.SubprocessId+'+')
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 )as SubProcess
@@ -416,10 +461,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -427,10 +472,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= bda.PatternCode and e1.PostSewingSubProcess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -483,6 +528,31 @@ declare @FtyGroup varchar(8) = '{this.txtfactoryByM.Text}'
 declare @Comb varchar(2) = '{this.txtComb.Text}'
 {declare}
 set arithabort on
+
+SELECT e1.*
+,Seq1 = Isnull(sd.Seq, s.Seq)
+,Seq2 = IsNull(sd.SubProcessID, s.Id)
+INTO #TempSubProcessData 
+FROM dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+LEFT JOIN SubProcessSeq_Detail sd WITH (NOLOCK) ON sd.SubProcessID = e1.SubprocessId
+LEFT JOIN SubProcess s WITH (NOLOCK) ON s.Id = e1.SubprocessId
+where  EXISTS(
+	select b.id,a.BundleNo, a.PatternCode
+	 from dbo.Bundle_Detail a WITH (NOLOCK)
+	inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
+    inner join dbo.Orders c WITH (NOLOCK) on c.id = b.OrderID -- 引入 c 表
+    OUTER APPLY (
+        SELECT TOP 1 
+            MarkerNo, EstCutDate, SpreadingNoID
+        FROM dbo.WorkOrder WITH (NOLOCK) 
+        WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
+    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    {sqlWhere} 
+        and a.Patterncode != 'ALLPARTS' 
+        and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
+)
+order by Seq1 , Seq2
+
 select 
     Convert(bit,0) as selected
     , a.PrintDate
@@ -526,6 +596,7 @@ select
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
     , a.Dyelot
+    , a.ID
 into #tmp
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
@@ -536,10 +607,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 )as SubProcess 
@@ -547,10 +618,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -558,10 +629,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -619,6 +690,7 @@ select
     , a.RFIDScan
     , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
     , a.Dyelot
+    , a.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
 inner join dbo.bundle b WITH (NOLOCK) on a.id=b.ID
 outer apply(select top 1 OrderID from Bundle_Detail_Order where BundleNo = a.BundleNo order by OrderID)bdo
@@ -628,10 +700,10 @@ outer apply
 (
     select SubProcess = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select concat('+',iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', '')))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 )as SubProcess 
@@ -639,10 +711,10 @@ outer apply
 (
     select NoBundleCardAfterSubprocess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.NoBundleCardAfterSubprocess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as ps
@@ -650,10 +722,10 @@ outer apply
 (
     select PostSewingSubProcess_String = 
     stuff((
-        select concat('+',e1.Subprocessid)
-        from dbo.Bundle_Detail_Art e1 WITH (NOLOCK)
+        select iif(e1.SubprocessId is null or e1.SubprocessId='','','+'+e1.SubprocessId + iif(e1.PostSewingSubProcess = 1, '(S)', ''))
+        from #TempSubProcessData e1
         where e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode and e1.PostSewingSubProcess = 1
-		Order by e1.Ukey
+		order by Seq1 , Seq2
         for xml path('')
     ),1,1,'')
 ) as nbs
@@ -722,7 +794,7 @@ OPTION (RECOMPILE)"
                 return;
             }
 
-            DataTable selects = r.CopyToDataTable();
+            System.Data.DataTable selects = r.CopyToDataTable();
 
             string fileName = "Cutting_P12";
             string fieldList = "Bundle,CutRef,POID,SP,Group,Dyelot,Line,SpreadingNoID,Cell,Style,Item,Comb,Cut,Article,Color,Size,SizeSpec,Cutpart,Description,SubProcess,Parts,Qty";
@@ -746,7 +818,7 @@ OPTION (RECOMPILE)"
             }
 
             // DefaultView 是依據使用者排序列印
-            DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            System.Data.DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
             if (dtSelect.Rows.Count == 0)
             {
                 this.grid1.Focus();
@@ -791,10 +863,12 @@ OPTION (RECOMPILE)"
                 BundleID = row1["BundleID"].ToString(),
                 CutCell = row1["CutCell"].ToString(),
                 Dyelot = row1["Dyelot"].ToString(),
+                BundleNo = row1["Bundle"].ToString(),
             }).ToList();
             string fileName = "Cutting_P10_Layout1";
             Excel.Application excelApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + $"\\{fileName}.xltx");
             Excel.Workbook workbook = excelApp.ActiveWorkbook;
+            this.strPagetype = 9;
 
             if (this.checkChangepagebyCut.Checked)
             {
@@ -814,7 +888,7 @@ OPTION (RECOMPILE)"
                          DenseRank = s.Rank,
                      }).ToList();
 
-                int page = x.GroupBy(g => g.DenseRank).Select(s => ((s.Count() - 1) / 9) + 1).Sum();
+                int page = x.GroupBy(g => g.DenseRank).Select(s => ((s.Count() - 1) / this.strPagetype) + 1).Sum();
                 for (int i = 1; i < page; i++)
                 {
                     Excel.Worksheet worksheet1 = (Excel.Worksheet)excelApp.ActiveWorkbook.Worksheets[1];
@@ -825,7 +899,7 @@ OPTION (RECOMPILE)"
                 }
 
                 // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
-                DataTable allNoDatas = null;
+                System.Data.DataTable allNoDatas = null;
                 data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
                 {
                     if (allNoDatas == null)
@@ -848,18 +922,18 @@ OPTION (RECOMPILE)"
                         data.Add(r.Item);
                     });
 
-                    for (int s = 1; s <= ((data.Count - 1) / 9) + 1; s++)
+                    for (int s = 1; s <= ((data.Count - 1) / this.strPagetype) + 1; s++)
                     {
-                        var writedata = data.Skip((s - 1) * 9).Take(9).ToList();
+                        var writedata = data.Skip((s - 1) * this.strPagetype).Take(this.strPagetype).ToList();
                         Excel.Worksheet worksheet = excelApp.ActiveWorkbook.Worksheets[pp];
-                        P10_Print.ProcessPrint(writedata, worksheet, allNoDatas);
+                        P10_Print.ProcessPrint(writedata, worksheet, allNoDatas, this.strPagetype);
                         pp++;
                     }
                 });
             }
             else
             {
-                P10_Print.RunPagePrint(data, excelApp);
+                P10_Print.RunPagePrint(data, excelApp, this.strPagetype);
             }
 
             // 有按才更新列印日期printdate。
@@ -932,8 +1006,8 @@ where bd.BundleNo = '{dr["Bundle"]}'
                 return;
             }
 
-            DataTable dtSelect = querydr.ToList().CopyToDataTable();
-            DataTable allNoDatas = null;
+            System.Data.DataTable dtSelect = querydr.ToList().CopyToDataTable();
+            System.Data.DataTable allNoDatas = null;
             dtSelect.AsEnumerable().Select(dr => new P10_PrintData()
             {
                 POID = dr["POID"].ToString(),
@@ -1020,7 +1094,7 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         }
 
                         filter = $@" RFPrintDate is null";
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        ((System.Data.DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
 
                     case false:
@@ -1030,8 +1104,163 @@ where bd.BundleNo = '{dr["Bundle"]}'
                         }
 
                         filter = string.Empty;
-                        ((DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
+                        ((System.Data.DataTable)this.listControlBindingSource1.DataSource).DefaultView.RowFilter = filter;
                         break;
+                }
+            }
+        }
+
+        private void BtnBundlewithQR_Click(object sender, EventArgs e)
+        {
+            this.grid1.ValidateControl();
+            if (this.dtt == null || this.dtt.Rows.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            // DefaultView 是依據使用者排序列印
+            System.Data.DataTable dtSelect = this.dtt.DefaultView.ToTable().AsEnumerable().Where(row => (bool)row["selected"]).TryCopyToDataTable(this.dtt);
+            if (dtSelect.Rows.Count == 0)
+            {
+                this.grid1.Focus();
+                MyUtility.Msg.ErrorBox("Grid must be chose one");
+                return;
+            }
+
+            this.ShowWaitMessage("Process File!");
+            List<P10_PrintData> data = dtSelect.AsEnumerable().Select(row1 => new P10_PrintData()
+            {
+                Group_right = row1["Group"].ToString(),
+                Group_left = row1["left"].ToString(),
+                CutRef = row1["CutRef"].ToString(),
+                Tone = MyUtility.Convert.GetString(row1["Tone"]),
+                Line = row1["Line"].ToString(),
+                Cell = row1["Cell"].ToString(),
+                POID = row1["POID"].ToString(),
+                SP = row1["SP"].ToString(),
+                Style = row1["Style"].ToString(),
+                MarkerNo = row1["MarkerNo"].ToString(),
+                Body_Cut = row1["Body_Cut"].ToString() + (MyUtility.Check.Empty(row1["SubCutNo"]) ? string.Empty : $"-{row1["SubCutNo"]}"),
+                Parts = row1["Parts"].ToString(),
+                Color = row1["Color2"].ToString(),
+                Article = row1["Article"].ToString(),
+                Size = row1["Size"].ToString(),
+                SizeSpec = row1["SizeSpec"].ToString(),
+                Desc = row1["Patterncode"].ToString() + row1["Description"].ToString(),
+                Artwork = row1["SubProcess"].ToString(),
+                Quantity = row1["Qty"].ToString(),
+                Barcode = row1["Bundle"].ToString(),
+                Season = row1["Seasonid"].ToString(),
+                Brand = row1["brand"].ToString(),
+                Item = row1["item"].ToString(),
+                EXCESS1 = MyUtility.Convert.GetBool(row1["IsEXCESS"]) ? "EXCESS" : string.Empty,
+                NoBundleCardAfterSubprocess1 = MyUtility.Check.Empty(row1["NoBundleCardAfterSubprocess_String"]) ? string.Empty : "X",
+                Replacement1 = string.Empty,
+                ShipCode = MyUtility.Convert.GetString(row1["ShipCode"]),
+                FabricPanelCode = MyUtility.Convert.GetString(row1["FabricPanelCode"]),
+                Comb = MyUtility.Convert.GetString(row1["Comb"]),
+                Cut = MyUtility.Convert.GetString(row1["cut"]),
+                GroupCombCut = 0,
+                BundleID = row1["BundleID"].ToString(),
+                CutCell = row1["CutCell"].ToString(),
+                Dyelot = row1["Dyelot"].ToString(),
+                ID = row1["ID"].ToString(),
+                BundleNo = row1["Bundle"].ToString(),
+                PatternDesc = row1["Description"].ToString(),
+            }).ToList();
+
+            // 使用Word來產生QRCode
+            Word._Application winword = new Word.Application
+            {
+                FileValidation = Microsoft.Office.Core.MsoFileValidationMode.msoFileValidationSkip,
+                Visible = false,
+            };
+
+            bool isprint = false;
+            if (this.checkChangepagebyCut.Checked)
+            {
+                var x = data.GroupBy(g => new { g.Comb, g.Cut })
+                     .Where(@group => @group.Any())
+                     .OrderBy(@group => @group.Key.Comb ?? string.Empty)
+                     .ThenBy(@group => @group.Key.Cut ?? string.Empty)
+                     .AsEnumerable()
+                     .Select((@group, i) => new
+                     {
+                         Items = @group,
+                         Rank = ++i,
+                     })
+                     .SelectMany(v => v.Items, (s, i) => new
+                     {
+                         Item = i,
+                         DenseRank = s.Rank,
+                     }).ToList();
+
+                // 先批次取得 BundleNo, No 資料, by POID, FabricPanelCode, Article, Size
+                System.Data.DataTable allNoDatas = null;
+                data.Select(s => new { s.POID, s.FabricPanelCode, s.Article, s.Size }).Distinct().ToList().ForEach(r =>
+                {
+                    if (allNoDatas == null)
+                    {
+                        allNoDatas = GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size);
+                    }
+                    else
+                    {
+                        allNoDatas.Merge(GetNoDatas(r.POID, r.FabricPanelCode, r.Article, r.Size));
+                    }
+                });
+
+                x.Select(s => s.DenseRank).Distinct().OrderBy(o => o).ToList().ForEach(denseRank =>
+                {
+                    data.Clear();
+                    x.Where(w => w.DenseRank == denseRank).ToList().ForEach(r =>
+                    {
+                        r.Item.GroupCombCut = r.DenseRank;
+                        data.Add(r.Item);
+                    });
+
+                    P10_Print.Print_Word_QRCode(data, out isprint, allNoDatas);
+                });
+            }
+            else
+            {
+                P10_Print.Print_Word_QRCode(data, out isprint);
+            }
+
+            // 有按才更新列印日期printdate。
+            StringBuilder ups = new StringBuilder();
+            foreach (DataRow dr in dtSelect.Rows)
+            {
+                ups.Append($@"
+update bd
+set bd.PrintDate = GETDATE()
+from Bundle_Detail bd
+where bd.BundleNo = '{dr["Bundle"]}'
+
+update b
+set b.PrintDate = GETDATE()
+from Bundle b
+inner join Bundle_Detail bd on b.id=bd.ID
+where bd.BundleNo = '{dr["Bundle"]}'
+");
+            }
+
+            this.HideWaitMessage();
+            if (isprint)
+            {
+                DualResult result = DBProxy.Current.Execute(null, ups.ToString());
+                if (!result)
+                {
+                    this.ShowErr("Update PrintDate Error!", result);
+                    return;
+                }
+
+                int pos = this.listControlBindingSource1.Position;
+                this.Query();
+                if (this.listControlBindingSource1.Count >= pos + 1)
+                {
+                    this.listControlBindingSource1.Position = pos;
                 }
             }
         }

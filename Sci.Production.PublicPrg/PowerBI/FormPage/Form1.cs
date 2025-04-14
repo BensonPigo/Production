@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <returns>FactoryTaskJobInfo Class</returns>
         public FactoryTaskJobInfo GetJobInfo()
         {
-            return new FactoryTaskJobInfo("Power BI", "1.2.1", "工廠端BI執行, 增加群組機制, 調整排序");
+            return new FactoryTaskJobInfo("Power BI", "1.3", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制");
         }
 
         /// <summary>
@@ -73,12 +73,14 @@ namespace Sci.Production.Prg.PowerBI.FormPage
             Logic.Base biBase = new Logic.Base();
             if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
             {
-                var query = this.executedList.Where(x => x.RunOnSunday).ToList();
-                foreach (var item in query)
-                {
-                    this.executedList.Remove(item);
-                }
+                this.executedList.RemoveAll(x => x.RunOnSunday);
             }
+
+            // 執行尚未跑的
+            this.executedList = this.executedList
+                .Where(x => !x.TransferDate.HasValue
+                            || x.TransferDate.Value < DateTime.Today)
+                .ToList();
 
             biBase.ExecuteAll(this.executedList);
         }
@@ -138,6 +140,16 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                     item.RunOnSunday = itemBase.RunOnSunday;
                     item.Group = itemBase.Group;
                     item.SEQ = itemBase.SEQ;
+                    if (MyUtility.Check.Empty(item.SDate) && itemBase.Source.ToUpper() == "SP")
+                    {
+                        item.SDate = MyUtility.Convert.GetDate("1911/01/01");
+                    }
+
+                    if (MyUtility.Check.Empty(item.EDate) && itemBase.Source.ToUpper() == "SP")
+                    {
+                        item.EDate = MyUtility.Convert.GetDate("2999/12/31");
+                    }
+
                     executedList.Add(item);
                 }
             }

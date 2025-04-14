@@ -205,7 +205,7 @@
             // 
             this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer1";
+            this.shapeContainer2.Name = "shapeContainer2";
             this.shapeContainer2.Size = new System.Drawing.Size(954, 186);
             this.shapeContainer2.TabIndex = 75;
             this.shapeContainer2.TabStop = false;
@@ -264,7 +264,7 @@
             // 
             this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
             this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer1";
+            this.shapeContainer3.Name = "shapeContainer3";
             this.shapeContainer3.Size = new System.Drawing.Size(977, 184);
             this.shapeContainer3.TabIndex = 54;
             this.shapeContainer3.TabStop = false;
@@ -301,7 +301,6 @@
             this.GridNew = 0;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
-            this.IsSupportPrint = false;
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "ID";
             this.Name = "P54";

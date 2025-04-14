@@ -21,20 +21,9 @@ namespace Sci.Production.Warehouse
             this.Text = "P22 " + currentMaintain["ID"].ToString();
             this.CurrentMaintain = currentMaintain;
 
-            DataTable dtPMS_FabricQRCode_LabelSize;
-            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.comboType.DisplayMember = "Name";
-            this.comboType.ValueMember = "ID";
-            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
-
-            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+            this.ButtonEnable();
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         /// <inheritdoc/>
@@ -58,7 +47,7 @@ namespace Sci.Production.Warehouse
             }
             else if (this.radioQRCodeSticker.Checked)
             {
-                QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboType.Text, "P22");
+                QRCodeSticker(MyUtility.Convert.GetString(this.CurrentMaintain["ID"]), this.comboPrint.Text, this.comboType.Text, "P22");
             }
 
             return true;
@@ -144,7 +133,7 @@ where a.id = '{this.CurrentMaintain["ID"]}'
         }
 
         /// <inheritdoc/>
-        public static void QRCodeSticker(string id, string type, string callFormName)
+        public static void QRCodeSticker(string id, string print, string type, string callFormName)
         {
             string sqlcmd = $@"
 select sd.*
@@ -303,7 +292,64 @@ drop table #tmp,#tmpFrom
                 return;
             }
 
-            new P22_PrintFabricSticker(dts[0], dts[1], type, callFormName).ShowDialog();
+            new WH_FromTo_QRCodeSticker(dts[0], dts[1], print, type, callFormName).ShowDialog();
+        }
+
+        private void RadioGroup_ValueChanged(object sender, EventArgs e)
+        {
+            this.ButtonEnable();
+        }
+
+        private void ButtonEnable()
+        {
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
+            {
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
+            }
+            else
+            {
+                this.BindComboTypeSticker();
+            }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }

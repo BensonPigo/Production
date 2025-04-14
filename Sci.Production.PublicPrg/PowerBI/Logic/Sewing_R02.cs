@@ -1,10 +1,15 @@
 ﻿using Ict;
+using Ict.Win.UI;
+using Newtonsoft.Json;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 
 namespace Sci.Production.Prg.PowerBI.Logic
 {
@@ -304,7 +309,8 @@ alter table #tmp alter column QAQty int
 alter table #tmp alter column LastShift varchar(1)
 alter table #tmp alter column SubconInType varchar(1)
 
-    Select ID
+      
+      Select ID
 		   , rs = iif(ProductionUnit = 'TMS', 'CPU'
 		   									, iif(ProductionUnit = 'QTY', 'AMT'
 		   																, '')),
@@ -316,6 +322,17 @@ alter table #tmp alter column SubconInType varchar(1)
 	where Classify in ('I','A','P') 
 		  and IsTtlTMS = 0
           and IsPrintToCMP=1
+	union all
+    -- 取得特殊的轉移訂單ArtworkTypeID 
+	select distinct ID = ap.LocalSuppID + ' ' + a.ID
+	, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   									, iif(ProductionUnit = 'QTY', 'AMT'
+		   																, '')),
+           [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							        when ProductionUnit = 'TMS' then 3
+							        else 0 end
+	from ArtworkType a WITH (NOLOCK)
+	inner join artworkpo ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
 
 	--準備台北資料(須排除這些)
 	select ps.ID
@@ -328,21 +345,27 @@ alter table #tmp alter column SubconInType varchar(1)
 	and ml.isThread=1 
 	and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
     
-    select ot.ArtworkTypeID
+    SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
+							else ot.ArtworkTypeID end
 		   , a.OrderId
 		   , a.ComboType
            , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
-    into  #tmpAllSubprocess
+    into #tmpAllSubprocess
 	from #tmp a
 	inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
 	inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+	left join (		
+		  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
+		  from ArtworkPO ap
+		  inner join ArtworkPO_Detail apd on ap.ID= apd.ID
+	) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID and apd.LocalSuppID in ('G168','SPP')
 	where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
             --排除 subcon in non sister的數值
           and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
           and ot.Price > 0 		    
 		  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
 			  or ot.ArtworkTypeID <> 'SP_THREAD')
-	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price
+	group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
 
     --FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
     -- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
@@ -362,7 +385,9 @@ select ArtworkTypeID = t1.ID
 from #tmpArtwork t1
 left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
 group by t1.ID, rs
-order by t1.ID");
+order by case when t1.ID like 'SPP%' or t1.ID like 'G168%' then 1 else 0 end, t1.ID
+
+");
                 Base_ViewModel resultReport = new Base_ViewModel
                 {
                     Result = MyUtility.Tool.ProcessWithDatatable(dt, "OrderId,ComboType,QAQty,LastShift,SubconInType", sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
@@ -793,6 +818,300 @@ select FactoryID from #tmpResult where IsSampleRoom = 1
             }
 
             return pams;
+        }
+
+        /// <inheritdoc/>
+        public DualResult GetPamsAttendanceSummaryAsync(AttendanceSummary_APICondition model, out DataSet returnResult)
+        {
+            returnResult = new DataSet();
+            string url = MyUtility.GetValue.Lookup(@"select top 1 URL from WebApiUrl where Description like 'PAMS WEB API%'", "ManufacturingExecution");
+            string api = "api/AttendanceSummary/AttendanceSummary_Summary";
+
+            #region 台北端PMSDB連線
+            DataTable dtQry;
+            // Port同Pmsdb IIS設定
+            var resultQry = this.DBProxy.Select(
+                null,
+@"select APIPort = Case @@SERVERNAME
+       When 'PMSDB\ESP' Then '9530'
+       When 'PMSDB\SNP' Then '9531'
+       When 'PMSDB\SPT' Then '9532'
+       When 'PMSDB\PH1' Then '9533'
+       When 'PMSDB\PH2' Then '9534'
+       When 'PMSDB\PAN' Then '9535'
+       When 'PMSDB\SPR' Then '9536'
+       When 'PMSDB\SPS' Then '9537'
+       When 'PMSDB\HZG' Then '9538'
+       When 'PMSDB\SWR' Then '9539'
+       When 'Testing\ESP' Then '9530'
+       When 'Testing\SNP' Then '9531'
+       When 'Testing\SPT' Then '9532'
+       When 'Testing\PH1' Then '9533'
+       When 'Testing\PH2' Then '9534'
+       When 'Testing\PAN' Then '9535'
+       When 'Testing\SPR' Then '9536'
+       When 'Testing\SPS' Then '9537'
+       When 'Testing\HZG' Then '9538'
+       When 'Testing\SWR' Then '9539'
+       Else ''
+       End ", out dtQry);
+
+            if (!resultQry)
+            {
+                return new DualResult(false, resultQry.Messages.ToString());
+            }
+
+            if (dtQry != null && dtQry.Rows.Count > 0 && !dtQry.Rows[0]["APIPort"].ToString().Empty())
+            {
+                // 目前是call各環境 pmsdb api
+                url = "http://172.17.11.98:" + dtQry.Rows[0]["APIPort"].ToString();
+            }
+
+            #endregion 台北端PMSDB連線
+
+            if (MyUtility.Check.Empty(url))
+            {
+                return new DualResult(false, "PAMS WEB API not exists");
+            }
+
+            try
+            {
+                // 初始化 HttpClient 來發送請求
+                using (HttpClient client = new HttpClient())
+                {
+                    // 將Model 轉成Json格式
+                    string jsonBody = JsonConvert.SerializeObject(model);
+
+                    // 再將JSON 字串轉換為跳脫的字串
+                    string escapedJson = JsonConvert.SerializeObject(jsonBody);
+
+                    // 建立 HttpContent 物件，指定內容類型為 application/json
+                    var content = new StringContent(escapedJson, Encoding.UTF8, "application/json");
+
+                    // 發送同步Post 請求
+                    HttpResponseMessage response = client.PostAsync(url + "//" + api, content).Result;
+
+                    // 確認回應是成功的
+                    response.EnsureSuccessStatusCode();
+
+                    // 將回應的 JSON 內容轉換為字串
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
+
+                    AttendanceSummaryResult result = JsonConvert.DeserializeObject<AttendanceSummaryResult>(responseBody);
+
+                    if (!MyUtility.Check.Empty(result.Exception))
+                    {
+                        return new DualResult(false, result.Exception);
+                    }
+
+                    // 將 JSON 字串轉換為 DataSet
+                    returnResult = result.QueryResult;
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+
+            return new DualResult(true);
+        }
+
+        /// <summary>
+        /// SewingR04 外發加工段計算 + SPH TotalCPU 計算
+        /// </summary>
+        /// <param name="dt">GetMonthlyProductionOutputReport Table 1</param>
+        /// <param name="model">Sewing_R02_ViewModel</param>
+        /// <returns>Base_ViewModel</returns>
+        public Base_ViewModel GetSubprocessAndSPHTotalCPU(DataTable dt, Sewing_R02_ViewModel model)
+        {
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@M", model.M),
+                new SqlParameter("@Factory", model.Factory),
+                new SqlParameter("@StartDate",  model.StartOutputDate),
+                new SqlParameter("@EndDate",  model.EndOutputDate),
+                new SqlParameter("@line1", model.StartSewingLine),
+                new SqlParameter("@line2", model.EndSewingLine),
+            };
+
+            string sqlwhere = string.Empty;
+            if (!model.StartSewingLine.Empty())
+            {
+                sqlwhere += " and s.SewingLineID >= @line1";
+            }
+
+            if (!model.EndSewingLine.Empty())
+            {
+                sqlwhere += " and s.SewingLineID <= @line2";
+            }
+
+            if (!MyUtility.Check.Empty(model.Factory))
+            {
+                sqlwhere += " and s.FactoryID = @Factory ";
+            }
+
+            if (!MyUtility.Check.Empty(model.M))
+            {
+                sqlwhere += " and s.MDivisionID = @M ";
+            }
+
+            string sql = $@"
+Select ID
+		, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   								, iif(ProductionUnit = 'QTY', 'AMT'
+		   															, '')),
+        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							    when ProductionUnit = 'TMS' then 3
+							    else 0 end
+into #tmpArtwork
+from ArtworkType WITH (NOLOCK)
+where Classify in ('I','A','P') 
+		and IsTtlTMS = 0
+        and IsPrintToCMP=1
+union all
+select distinct ID = ap.LocalSuppID + ' ' + a.ID
+, rs = iif(ProductionUnit = 'TMS', 'CPU'
+		   								, iif(ProductionUnit = 'QTY', 'AMT'
+		   															, '')),
+        [DecimalNumber] =case    when ProductionUnit = 'QTY' then 4
+							    when ProductionUnit = 'TMS' then 3
+							    else 0 end
+from ArtworkType a WITH (NOLOCK)
+inner join ArtworkPO ap WITH (NOLOCK) on ap.ArtworkTypeID = a.ID and LocalSuppID in ('G168','SPP')
+
+--準備台北資料(須排除這些)
+select ps.ID
+into #TPEtmp
+from PO_Supp ps WITH (NOLOCK)
+inner join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Fabric fb WITH (NOLOCK) on psd.SCIRefno = fb.SCIRefno 
+inner join MtlType ml WITH (NOLOCK) on ml.id = fb.MtlTypeID
+where ml.Junk = 0 
+and psd.Junk = 0 
+and fb.Junk = 0
+and ml.isThread = 1 
+and ps.SuppID <> 'FTY' 
+and ps.Seq1 not Like '5%'
+    
+SELECT  ArtworkTypeID = case when isnull(apd.ArtworkTypeID,'') !='' then apd.LocalSuppID + ' ' + apd.ArtworkTypeID
+						else ot.ArtworkTypeID end
+	   , a.OrderId
+	   , a.ComboType
+       , Price = sum(a.QAQty) * ot.Price * (isnull([dbo].[GetOrderLocation_Rate](a.OrderId ,a.ComboType), 100) / 100)
+into #tmpAllSubprocess
+from #tmp a
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.ID = a.OrderId
+inner join Orders o WITH (NOLOCK) on o.ID = a.OrderId and o.Category NOT IN ('G','A')
+left join (		
+	  select distinct apd.ArtworkTypeID,apd.OrderID,ap.LocalSuppID 
+	  from ArtworkPO ap WITH (NOLOCK)
+	  inner join ArtworkPO_Detail apd WITH (NOLOCK) on ap.ID= apd.ID
+      where ap.LocalSuppID in ('G168','SPP')
+) apd on apd.OrderID = a.OrderID and ot.ArtworkTypeID = apd.ArtworkTypeID
+where ((a.LastShift = 'O' and o.LocalOrder <> 1) or (a.LastShift <> 'O') ) 
+        --排除 subcon in non sister的數值
+      and ((a.LastShift <> 'I') or ( a.LastShift = 'I' and a.SubconInType not in ('0','3') ))           
+      and ot.Price > 0 		    
+	  and ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+		  or ot.ArtworkTypeID <> 'SP_THREAD')
+group by ot.ArtworkTypeID, a.OrderId, a.ComboType, ot.Price,apd.ArtworkTypeID,apd.LocalSuppID
+
+--FMS傳票部分顯示AT不分Hand/Machine，是因為政策問題，但比對Sewing R02時，會有落差，請根據SP#落在Hand CPU:10 /Machine:5，則只撈出Hand CPU:10這筆，抓其大值，以便加總總和等同於FMS傳票AT
+-- 當AT(Machine) = AT(Hand)時, 也要將Price歸0 (ISP20190520)
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (HAND)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (MACHINE)'  and s.Price <= a.Price
+
+update s set s.Price = 0
+    from #tmpAllSubprocess s
+    inner join (select * from #tmpAllSubprocess where ArtworkTypeID = 'AT (MACHINE)') a on s.OrderId = a.OrderId and s.ComboType = a.ComboType
+    where s.ArtworkTypeID = 'AT (HAND)'  and s.Price <= a.Price
+
+select ArtworkTypeID = t1.ID
+	   , Price = isnull(sum(Round(t2.Price,t1.DecimalNumber)), 0)
+	   , rs
+into #tmpFinalArtwork 
+from #tmpArtwork t1
+left join #tmpAllSubprocess t2 on t2.ArtworkTypeID = t1.ID
+group by t1.ID, rs
+order by t1.ID
+
+-- 取得SubConOut 數值
+
+select  FactoryID = s.FactoryID
+    ,OrderId = sd.OrderId
+    ,Team = s.Team
+    ,OutputDate = s.OutputDate
+    ,SewingLineID = s.SewingLineID
+    ,LastShift = IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) 
+    ,Category = s.Category
+    ,ComboType = sd.ComboType
+    ,SubconOutFty = s.SubconOutFty
+    ,SubConOutContractNumber = s.SubConOutContractNumber
+    ,[Rate] = isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100
+    ,sd.QAQty
+    ,ot.Price
+    ,ot.ArtworkTypeID
+    ,ttlPrice = Round(sum(sd.QAQty*isnull([dbo].[GetOrderLocation_Rate](o.id,sd.ComboType),100)/100 * ot.Price)over(partition by s.FactoryID,sd.OrderId,s.Team,s.OutputDate,s.SewingLineID, IIF(s.Shift <> 'O' and s.Category <> 'M' and o.LocalOrder = 1, 'I',s.Shift) ,s.Category,sd.ComboType,s.SubconOutFty,s.SubConOutContractNumber,ot.ArtworkTypeID),3)
+    ,ta.rs
+into #tmpFinal
+from SewingOutput s WITH (NOLOCK) 
+inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
+inner join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
+inner join Order_TmsCost ot WITH (NOLOCK) on ot.id = o.id
+inner join #tmpArtwork ta WITH (NOLOCK) on ot.ArtworkTypeID = ta.ID
+where exists(
+	SELECT 1 
+	from ArtworkPo po with (nolock)
+	inner join ArtworkPo_Detail apd with (nolock) on po.ID = apd.ID
+	where	apd.PoQty > 0 
+			and apd.OrderID = sd.OrderID
+			and po.FactoryID = s.FactoryID
+			and po.MDivisionID = s.MDivisionID
+			and po.artworktypeid = ot.ArtworkTypeID
+			and po.LocalSuppID not in ('SPP','G168')
+            and po.Status = 'Approved'
+)
+and (@StartDate is null or s.OutputDate >= @StartDate) and (@EndDate is null or s.OutputDate <= @EndDate) and
+((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
+--排除subcon-in的資料
+and not (s.Shift <> 'O' and o.LocalOrder = 1 and o.SubconInType <> 0)
+{sqlwhere}
+
+-- 取得外發清單
+select ArtworkTypeID
+    ,[ProductionUnit] = iif(a.ProductionUnit = 'TMS', 'CPU'
+		   			    , iif(a.ProductionUnit = 'QTY', 'AMT', ''))
+    ,[TTL_Price] = sum(ttlPrice) 
+from #tmpFinal t
+left join ArtworkType a WITH (NOLOCK) on t.ArtworkTypeID = a.ID
+group by t.ArtworkTypeID,a.ProductionUnit
+
+declare　@TTLCPU float = (select sum(Price) from #tmpFinalArtwork where rs ='CPU')
+declare　@AMT float = (select sum(Price) from #tmpFinalArtwork where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
+declare @SubConOutCPU float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='CPU')
+declare @SubConOutAMT float = (select [TTL_Price] = isnull(sum(ttlPrice),0) from #tmpFinal where rs ='AMT' and ArtworkTypeID in ('EMBROIDERY','Garment Dye','GMT WASH','PRINTING'))
+
+
+-- 取得SPH Total CPU
+select [SPH_ttlCPU] = CAST(isnull(@TTLCPU,0) - @SubConOutCPU + ((isnull(@AMT,0) - isnull(@SubConOutAMT,0))/2.5) as decimal(12,4))
+
+drop table #tmp,#tmpAllSubprocess,#tmpArtwork,#TPEtmp,#tmpFinalArtwork,#tmpFinal";
+
+            this.DBProxy.OpenConnection("Production", out SqlConnection sqlConn);
+            Base_ViewModel resultReport = new Base_ViewModel
+            {
+                Result = PublicPrg.CrossUtility.ProcessWithDatatable(dt, string.Empty, sqlcmd: sql, result: out DataTable[] dtarr, conn: sqlConn, paramters: listPar),
+            };
+            if (!resultReport.Result)
+            {
+                return resultReport;
+            }
+
+            resultReport.DtArr = dtarr;
+            return resultReport;
         }
     }
 }

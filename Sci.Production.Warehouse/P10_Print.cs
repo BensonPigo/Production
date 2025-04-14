@@ -3,6 +3,7 @@ using Ict.Win;
 using Microsoft.Reporting.WinForms;
 using Sci.Data;
 using Sci.Production.Prg;
+using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
 using Sci.Win;
 using System;
@@ -37,21 +38,8 @@ namespace Sci.Production.Warehouse
             this.editBy = editBy;
 
             this.ButtonEnable();
-
-            DataTable dtPMS_FabricQRCode_LabelSize;
-            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
-
-            if (!result)
-            {
-                this.ShowErr(result);
-                return;
-            }
-
-            this.comboType.DisplayMember = "Name";
-            this.comboType.ValueMember = "ID";
-            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
-
-            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         /// <inheritdoc/>
@@ -462,6 +450,39 @@ where t.id= @ID
                     return false;
                 }
 
+                string startStr = "LAYER1", endStr_Nylon = "RECYCLED NYLON", endStr_Polyester = "RECYCLED POLYESTER";
+
+                // 處理GRS
+                bb.AsEnumerable().ToList().ForEach(r =>
+                {
+                    // 檢查Desc字串
+                    string str = r["Desc"].ToString().ToUpper();
+
+                    // 確認字串位置
+                    int pStart = str.IndexOf(startStr) + 1;
+                    int pEnd_Nylon = str.IndexOf(endStr_Nylon);
+                    int pEnd_Polyester = str.IndexOf(endStr_Polyester);
+
+                    // 確認結束字串位置
+                    string endStr = pEnd_Nylon > 0 ? endStr_Nylon : (pEnd_Polyester > 0 ? endStr_Polyester : string.Empty);
+                    int pEnd = pEnd_Nylon > 0 ? pEnd_Nylon : (pEnd_Polyester > 0 ? pEnd_Polyester : 0);
+
+                    // 若開始與結束字串都存在則繼續
+                    if (pStart > 0 && pEnd > 0)
+                    {
+                        // 擷取字串
+                        string subStr = str.Substring(pStart + startStr.Length, pEnd - (pStart + startStr.Length));
+                        string numStr = subStr.Replace(" ", string.Empty).Replace("%", string.Empty);
+
+                        // 是否能轉換成數字，若能則判斷數字是否大於50，是則 MDesc 欄位加入 "GRS" 字串
+                        decimal num;
+                        if (decimal.TryParse(numStr, out num))
+                        {
+                            r["MDesc"] = r["MDesc"].ToString() + Environment.NewLine + (num > 50 ? "GRS" : string.Empty);
+                        }
+                    }
+                });
+
                 // 傳 list 資料
                 List<P10_PrintData> data = bb.AsEnumerable()
                     .Select(row1 => new P10_PrintData()
@@ -532,7 +553,7 @@ where t.id= @ID
                     return true;
                 }
 
-                new P07_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboType.Text, "P10").ShowDialog();
+                new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboPrint.Text, this.comboType.Text, "P10").ShowDialog();
             }
 
             return true;
@@ -545,16 +566,57 @@ where t.id= @ID
 
         private void ButtonEnable()
         {
-            if (this.radioFabricsRelaxationLogsheet.Checked)
+            bool isFabricsRelaxationLogsheetChecked = this.radioFabricsRelaxationLogsheet.Checked;
+            this.print.Enabled = !isFabricsRelaxationLogsheetChecked;
+            this.toexcel.Enabled = isFabricsRelaxationLogsheetChecked;
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
             {
-                this.print.Enabled = false;
-                this.toexcel.Enabled = true;
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
             }
             else
             {
-                this.print.Enabled = true;
-                this.toexcel.Enabled = false;
+                this.BindComboTypeSticker();
             }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }

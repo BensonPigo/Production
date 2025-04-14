@@ -4,6 +4,8 @@ using System.Drawing;
 using Ict.Win;
 using Ict;
 using Sci.Data;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace Sci.Production.IE
 {
@@ -12,6 +14,9 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P02_NewCheckList : Win.Subs.Input4
     {
+        private DataTable copyDt;
+        private DataTable chgOverChkList;
+
         /// <summary>
         /// P02_NewCheckList
         /// </summary>
@@ -24,15 +29,69 @@ namespace Sci.Production.IE
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
         {
             this.InitializeComponent();
+            this.append.Visible = false;
+            this.revise.Visible = false;
+            this.delete.Visible = false;
+            this.Text = "Check List";
+        }
 
-            if (changeoverType == "R")
+        /// <inheritdoc/>
+        protected override DualResult OnRequery()
+        {
+            string selectCommand = $@"
+            SELECT 
+            [ID] = CC.ID
+            ,[ChgOverCheckListID] = CC.ChgOverCheckListID
+            ,[No] = CB.No
+            ,[CHECKLISTS]  = CB.CheckList
+            ,[Dep] = CC.ResponseDep
+            ,[LeadTime] = CC.LeadTime
+            ,[DaysLeft] = iif(CC.[Checked] = 1 ,'-' ,  CONVERT( VARCHAR(10),iif(DaysLefCnt.val < 0 , 0 ,DaysLefCnt.val )))
+            ,[Deadline] = CC.Deadline
+            ,CC.[Checked]
+            ,[CompletionDate] = CC.CompletionDate
+            ,[OverDays] = iif(CC.[Checked] = 0 , iif(OverDay_Check_0.VAL < 0,0,OverDay_Check_0.VAL) ,iif(OverDay_Check_1.VAL < 0,0,OverDay_Check_1.VAL))
+            ,CC.Remark
+            ,[EditName] = CC.EditName
+            ,[EditDate] = CC.EditDate
+            ,[OverDay_Check_0] = iif(OverDay_Check_0.VAL < 0,0, OverDay_Check_0.VAL)
+            ,[OverDay_Check_1] = iif(OverDay_Check_1.VAL < 0,0, OverDay_Check_1.VAL)
+            ,[DaysLeft1] = iif(DaysLefCnt.val < 0 , 0 ,isnull(DaysLefCnt.val,0))
+            ,CO.FactoryID
+            FROM ChgOver_Check CC WITH(NOLOCK)
+            INNER JOIN ChgOver CO WITH(NOLOCK) ON CO.ID  = CC.ID
+            LEFT JOIN ChgOverCheckListBase Cb WITH(NOLOCK) ON CB.[ID] = CC.[No]
+            OUTER APPLY
+            (
+	            SELECT val = isnull(iif((CC.Deadline IS NULL), 0, DATEDIFF(day,GETDATE(),CC.DeadLine) - (COUNT(1) + dbo.getDateRangeSundayCount(GETDATE(),cc.Deadline))),0)
+	            FROM Holiday WITH(NOLOCK)
+	            WHERE HolidayDate BETWEEN GETDATE() AND CC.Deadline AND FactoryID = CO.FactoryID
+            )DaysLefCnt
+            OUTER APPLY
+            (
+	            SELECT val = isnull(iif((CC.Deadline IS NULL), 0, DATEDIFF(day,CC.DeadLine,GETDATE()) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,GETDATE()))),0)
+	            FROM Holiday WITH(NOLOCK)
+	            WHERE HolidayDate BETWEEN CC.Deadline AND GETDATE() AND FactoryID = CO.FactoryID
+            )OverDay_Check_0
+            OUTER APPLY
+            (
+	            SELECT val = isnull(iif((CC.CompletionDate IS NULL) OR (CC.Deadline IS NULL), 0, DATEDIFF(day,CC.DeadLine,CC.CompletionDate) -(COUNT(1) + dbo.getDateRangeSundayCount(CC.DeadLine,CC.CompletionDate))),0)
+	            FROM Holiday WITH(NOLOCK)
+	            WHERE HolidayDate BETWEEN CC.Deadline AND CC.CompletionDate AND FactoryID = CO.FactoryID
+            )OverDay_Check_1
+            WHERE CC.id = {this.KeyValue1} AND CC.[NO] <> 0
+            order by  CB.No";
+            DualResult returnResult;
+            returnResult = DBProxy.Current.Select(null, selectCommand, out this.chgOverChkList);
+            if (!returnResult)
             {
-                this.Text = "Check List - Repeat";
+                return returnResult;
             }
-            else
-            {
-                this.Text = "Check List - New";
-            }
+
+            this.gridbs.DataSource = this.chgOverChkList;
+
+            this.copyDt = this.chgOverChkList.Copy();
+            return Ict.Result.True;
         }
 
         /// <summary>
@@ -41,49 +100,108 @@ namespace Sci.Production.IE
         /// <returns>bool</returns>
         protected override bool OnGridSetup()
         {
-            this.Helper.Controls.Grid.Generator(this.grid)
-                .Numeric("DayBe4Inline", header: "Days before", width: Widths.AnsiChars(5), iseditingreadonly: true)
-                .Text("BaseOnDesc", header: "Base On", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                .Text("ChkListDesc", header: "Activities", width: Widths.AnsiChars(30), iseditingreadonly: true)
-                .Date("ScheduleDate", header: "Schedule Date")
-                .Date("ActualDate", header: "Actual Date")
-                .Text("Remark", header: "Remark", width: Widths.AnsiChars(30));
+            DataGridViewGeneratorTextColumnSettings rk = new DataGridViewGeneratorTextColumnSettings();
 
-            this.grid.Columns["ScheduleDate"].DefaultCellStyle.BackColor = Color.Pink;
-            this.grid.Columns["ActualDate"].DefaultCellStyle.BackColor = Color.Pink;
+            // DataGridViewGeneratorCheckBoxColumnSettings
+            DataGridViewGeneratorCheckBoxColumnSettings cbs = new DataGridViewGeneratorCheckBoxColumnSettings();
+            cbs.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+
+            // 設置CellValidating事件來處理CheckBox變動
+            cbs.CellValidating += (s, e) =>
+            {
+                DataRowView drv = this.grid.SelectedRows[0].DataBoundItem as DataRowView;
+                int index = this.chgOverChkList.Rows.IndexOf(drv.Row);
+
+                DataRow row = this.chgOverChkList.Rows[index];
+                var oridr = this.copyDt.AsEnumerable().Where(x => x.Field<int>("No") == MyUtility.Convert.GetInt(row["No"])).FirstOrDefault();
+
+                if (!MyUtility.Convert.GetBool(oridr["Checked"]))
+                {
+                    if ((bool)e.FormattedValue)
+                    {
+                        string sqlcmd = $@"
+                        DECLARE @CompletionDate Date = '{((DateTime)row["Deadline"]).ToString("yyyy/MM/dd")}'
+                        DECLARE @Holiday int;
+                        SELECT @Holiday = isnull(DATEDIFF(day,@CompletionDate,GETDATE()) - (COUNT(1) + dbo.getDateRangeSundayCount(@CompletionDate,GETDATE())),0)
+                        FROM Holiday WITH(NOLOCK)
+                        WHERE HolidayDate BETWEEN @CompletionDate and GETDATE() AND FactoryID = '{row["FactoryID"]}'
+                        SELECT VAL = IIF(@Holiday <= 0, 0 , @Holiday)
+                        ";
+                        var Holiday = MyUtility.GetValue.Lookup(sqlcmd);
+                        row["Checked"] = true;
+                        row["DaysLeft"] = '-';
+                        row["OverDays"] = MyUtility.Convert.GetInt(Holiday);
+                        row["CompletionDate"] = DateTime.Now.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        row["Checked"] = false;
+                        row["DaysLeft"] = row["DaysLeft1"];
+                        row["OverDays"] = row["OverDay_Check_0"];
+                        row["CompletionDate"] = DBNull.Value;
+                    }
+                }
+                else
+                {
+                    row["Checked"] = true;
+                }
+
+                this.gridbs.EndEdit();
+            };
+
+            // 設置Grid欄位顯示
+            this.Helper.Controls.Grid.Generator(this.grid)
+                .Numeric("No", header: "No", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("CHECKLISTS", header: "CHECKLISTS", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("Dep", header: "Dep", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Numeric("LeadTime", header: "Lead Time", iseditingreadonly: true)
+                .Text("DaysLeft", header: "Days Left", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Date("Deadline", header: "Deadline", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .CheckBox("Checked", header: "Check", width: Widths.AnsiChars(6), trueValue: 1, falseValue: 0, settings: cbs)
+                .Date("CompletionDate", header: "Completion Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .Numeric("OverDays", header: "Over Days", width: Widths.AnsiChars(9), iseditingreadonly: true)
+                .Text("Remark", header: "Late Reason", width: Widths.AnsiChars(15))
+                .Text("EditName", header: "Edit Name", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .DateTime("EditDate", header: "Edit Date", width: Widths.AnsiChars(15), iseditingreadonly: true);
+
+            this.grid.Columns["Checked"].DefaultCellStyle.BackColor = Color.Pink;
             this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             return true;
         }
 
-        /// <summary>
-        /// OnRequery
-        /// </summary>
-        /// <returns>bool</returns>
-        protected override DualResult OnRequery()
+        /// <inheritdoc/>
+        protected override bool OnSaveBefore()
         {
-            string selectCommand = string.Format(
-                @"select cc.*,iif(cc.BaseOn = 1,'Change Over','SCI Delivery') as BaseOnDesc,
-cl.Description as ChkListDesc
-     from ChgOver_Check cc WITH (NOLOCK) 
-left join ChgOverCheckList cl WITH (NOLOCK) on cc.ChgOverCheckListID = cl.ID
-where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
-            DualResult returnResult;
-            DataTable chgOverChkList = new DataTable();
-            returnResult = DBProxy.Current.Select(null, selectCommand, out chgOverChkList);
-            if (!returnResult)
+
+            string strErrorMes = string.Empty;
+            this.gridbs.EndEdit();
+            foreach (DataRow dr in this.chgOverChkList.Rows)
             {
-                return returnResult;
+                if (MyUtility.Convert.GetBool(dr["Checked"]) &&
+                    MyUtility.Convert.GetInt(dr["OverDays"]) > 0 &&
+                    MyUtility.Check.Empty(dr["Remark"]))
+                {
+                    strErrorMes += $@"Please fill in [Late Reason] since NO.<{dr["No"]}> already passed the Deadline." + Environment.NewLine;
+                }
+
+                string da = MyUtility.Convert.GetString(dr["Remark"]);
+                if (da.Length >= 60)
+                 {
+                    MyUtility.Msg.WarningBox("Input exceeds the 60 character limit. Please shorten your input.");
+                    return false;
+                }
+
             }
 
-            this.SetGrid(chgOverChkList);
-            return Ict.Result.True;
+            if (!MyUtility.Check.Empty(strErrorMes))
+            {
+                MyUtility.Msg.WarningBox(strErrorMes);
+                return false;
+            }
+
+            return base.OnSaveBefore();
         }
 
-        /// <summary>
-        /// Save -- Append/Revise/Delete按鈕要隱藏
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
         private void Save_Click(object sender, EventArgs e)
         {
             this.append.Visible = false;
@@ -91,32 +209,5 @@ where cc.ID = {0} order by cc.ChgOverCheckListID", this.KeyValue1);
             this.delete.Visible = false;
         }
 
-        /// <summary>
-        /// To Excel
-        /// </summary>
-        /// <param name="sender">sender</param>
-        /// <param name="e">e</param>
-        private void BtnToExcel_Click(object sender, EventArgs e)
-        {
-            DataTable excelTable;
-            try
-            {
-                if (MyUtility.Check.Empty(((DataTable)this.gridbs.DataSource).Rows.Count))
-                {
-                    MyUtility.Msg.WarningBox("Data not found!");
-                    return;
-                }
-
-                MyUtility.Tool.ProcessWithDatatable((DataTable)this.gridbs.DataSource, "DayBe4Inline,BaseOnDesc,ChkListDesc,ScheduleDate,ActualDate,Remark", "select * from #tmp", out excelTable);
-            }
-            catch (Exception ex)
-            {
-                MyUtility.Msg.ErrorBox("To Excel error.\r\n" + ex.ToString());
-                return;
-            }
-
-            Microsoft.Office.Interop.Excel.Application objApp = MyUtility.Excel.ConnectExcel(Env.Cfg.XltPathDir + "\\IE_P02_ChkListNew.xltx");
-            MyUtility.Excel.CopyToXls(excelTable, string.Empty, "IE_P02_ChkListNew.xltx", 2, true, string.Empty, objApp);
-        }
     }
 }

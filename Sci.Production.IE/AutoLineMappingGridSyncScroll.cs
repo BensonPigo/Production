@@ -251,6 +251,9 @@ namespace Sci.Production.IE
 
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("No", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("NoCnt", typeof(int)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumEffi", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumGSDTime", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("sumCycleTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalGSDTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("TotalCycleTime", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorLoading", typeof(decimal)));
@@ -258,9 +261,15 @@ namespace Sci.Production.IE
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EmployeeID", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EmployeeName", typeof(string)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EmployeeSkill", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("Effi", typeof(decimal)));
             this.dtGridDetailRightSummary.Columns.Add(new DataColumn("OperatorEffi", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstTotalCycleTime", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("EstOutputHr", typeof(decimal)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP05", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsNotShownInP06Cnt", typeof(string)));
+            this.dtGridDetailRightSummary.Columns.Add(new DataColumn("IsResignationDate", typeof(string)));
             this.dtGridDetailRightSummary.PrimaryKey = new DataColumn[] { this.dtGridDetailRightSummary.Columns["No"] };
-
             this.gridSub.DataSource = this.dtGridDetailRightSummary;
         }
 
@@ -456,7 +465,7 @@ namespace Sci.Production.IE
         /// RefreshSubData
         /// </summary>
         /// <param name="doReload">doReload</param>
-        public void RefreshSubData(bool doReload = true)
+        public void RefreshSubData(bool doReload = true, bool isSort = true)
         {
             DataTable dtSub = this.SubData;
 
@@ -493,23 +502,37 @@ namespace Sci.Production.IE
                                         DataRow newRow = dtSub.NewRow();
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
+                                        // newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
+                                        newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
                                         newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
                                         newRow["OperatorLoading"] = MyUtility.Check.Empty(avgGSD) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / avgGSD * 100, 0);
+                                        newRow["IsNotShownInP05"] = groupItem.Select(s => s["IsNotShownInP05"].ToString()).First();
                                         return newRow;
                                     }).ToList();
                     break;
                 case SubGridType.LineMappingBalancing:
-                    this.gridMain.BeginInvoke(new Action(() =>
+
+                    // 假設你的數據源是一個 DataTable
+                    DataTable dataTableMain = this.gridMain.DataSource as DataTable;
+
+                    if (dataTableMain != null)
                     {
-                        this.gridMain.Sort(this.gridMain.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                    }));
+                        dataTableMain.DefaultView.Sort = "No ASC";
+                        this.gridMain.DataSource = dataTableMain;
+                    }
+
+                    // 對 gridSub 進行相似操作
+                    DataTable dataTableSub = this.gridSub.DataSource as DataTable;
+
+                    if (dataTableSub != null)
+                    {
+                        dataTableSub.DefaultView.Sort = "No ASC";
+                        this.gridSub.DataSource = dataTableSub;
+                    }
+
                     this.gridMain.Columns.DisableSortable();
-                    this.gridSub.BeginInvoke(new Action(() =>
-                    {
-                        this.gridSub.Sort(this.gridSub.Columns["No"], System.ComponentModel.ListSortDirection.Ascending);
-                    }));
                     this.gridSub.Columns.DisableSortable();
                     decimal avgCycle = this.AvgCycleTime;
                     resultRows = mainData.Where(s => s["PPA"].ToString() != "C" &&
@@ -521,17 +544,30 @@ namespace Sci.Production.IE
                                     .Select(groupItem =>
                                     {
                                         DataRow newRow = dtSub.NewRow();
+
+                                        decimal decEffi = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Effi"])) > 0 ? groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Effi"])): 0;
+
                                         newRow["No"] = groupItem.Key.No;
                                         newRow["NoCnt"] = groupItem.Count();
-                                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
-                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentage"])), 2);
+                                        newRow["SumEffi"] = groupItem.Select(s => s["SumEffi"].ToString()).First();
+                                        newRow["sumGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"])), 2);
+                                        newRow["sumCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["Cycle"])), 2);
+                                        newRow["TotalGSDTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["GSD"]) * MyUtility.Convert.GetDecimal(s["SewerDiffPercentageDesc"])), 2);
+                                        newRow["TotalCycleTime"] = MyUtility.Math.Round(groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["TotalCycleTime"])), 2);
                                         newRow["NeedExclude"] = groupItem.Any(s => s["OperationID"].ToString() == "PROCIPF00004" ||
                                                                                    s["OperationID"].ToString() == "PROCIPF00003");
                                         newRow["OperatorLoading"] = MyUtility.Check.Empty(avgCycle) || (bool)newRow["NeedExclude"] ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) / avgCycle * 100, 0);
                                         newRow["EmployeeID"] = groupItem.Select(s => s["EmployeeID"].ToString()).First();
                                         newRow["EmployeeName"] = groupItem.Select(s => s["EmployeeName"].ToString()).First();
                                         newRow["EmployeeSkill"] = groupItem.Select(s => s["EmployeeSkill"].ToString()).First();
-                                        newRow["OperatorEffi"] = MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) == 0 ? 0 : MyUtility.Math.Round(MyUtility.Convert.GetDecimal(newRow["TotalGSDTime"]) / MyUtility.Convert.GetDecimal(newRow["TotalCycleTime"]) * 100, 2);
+                                        newRow["OperatorEffi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["OperatorEffi"])).First();
+                                        newRow["Effi"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["Effi"])).First();
+                                        newRow["EstOutputHr"] = groupItem.Select(s => MyUtility.Convert.GetDecimal(s["EstOutputHr"])).First();
+                                        newRow["EstTotalCycleTime"] = groupItem.Select(s => s["EstTotalCycleTime"].ToString()).First();
+                                        newRow["IsNotShownInP06"] = groupItem.Select(s => s["IsNotShownInP06"].ToString()).First();
+                                        newRow["IsNotShownInP06Cnt"] = groupItem.Where(x => x["IsNotShownInP06"].ToString() == "True").Select(s => s["IsNotShownInP06"].ToString()).Count();
+                                        newRow["IsResignationDate"] = groupItem.Select(s => s["IsResignationDate"].ToString()).First();
+
                                         return newRow;
                                     }).ToList();
                     break;
@@ -596,6 +632,9 @@ namespace Sci.Production.IE
                 default:
                     break;
             }
+
+            // 設定主鍵
+            dtSub.PrimaryKey = new DataColumn[] { dtSub.Columns["No"] };
 
             foreach (DataRow dr in resultRows)
             {

@@ -6,12 +6,15 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Shipping
 {
     /// <inheritdoc/>
     public partial class P62 : Sci.Win.Tems.Input6
     {
+        private int previousCompanySelectIndex = -1;
+
         /// <inheritdoc/>
         public P62(ToolStripMenuItem menuitem)
             : base(menuitem)
@@ -31,6 +34,15 @@ namespace Sci.Production.Shipping
 
             this.ReCalculat();
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
         }
 
         /// <inheritdoc/>
@@ -129,11 +141,15 @@ where ked2.id = '{masterID}'
         {
             this.InitReadOnly(true);
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
         }
 
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             this.CurrentMaintain["Status"] = "New";
             this.InitReadOnly(false);
             base.ClickNewAfter();
@@ -370,6 +386,12 @@ where id = '{this.CurrentMaintain["ID"]}'
 
         private void BtnBatchImport_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             if (MyUtility.Check.Empty(this.CurrentMaintain["shipModeID"]))
             {
                 MyUtility.Msg.WarningBox("[Shipmode] cannot be empty!");
@@ -412,6 +434,26 @@ where id = '{this.CurrentMaintain["ID"]}'
                 {
                     this.CurrentMaintain["ExportPort"] = dr["ID"];
                 }
+            }
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
             }
         }
     }

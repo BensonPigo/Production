@@ -284,12 +284,12 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             this.CurrentMaintain["factoryid"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.btnBatchImport.Enabled = true;
-
             this.gridicon.Append.Enabled = true;
             this.gridicon.Insert.Enabled = true;
             this.gridicon.Remove.Enabled = true;
         }
 
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             base.ClickEditBefore();
@@ -312,6 +312,7 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.dateIssuedate.ReadOnly = true;
+                this.btn_JunkSP.Enabled = false;
 
                 // Confirmed下表身不能編輯
                 this.gridicon.Append.Enabled = false;
@@ -376,6 +377,7 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             }
         }
 
+        /// <inheritdoc/>
         protected override void ClickClose()
         {
             base.ClickClose();
@@ -429,8 +431,9 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
             this.label10.Text = this.CurrentMaintain["Status"].ToString();
             this.FirstCheckOutputQty = true;
 
-            this.btnBatchImport.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"));
-            this.btnSplitSP.Enabled = (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED"));
+            this.btnBatchImport.Enabled = this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW");
+            this.btnSplitSP.Enabled = this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("CONFIRMED");
+            this.btn_JunkHis.Enabled = !this.EditMode;
 
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
@@ -442,6 +445,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
                 this.col_LocalUnitPrice.IsEditingReadOnly = true;
                 this.col_Vat.IsEditingReadOnly = true;
                 this.col_KpiRate.IsEditingReadOnly = true;
+                this.btn_JunkSP.Enabled = true;
             }
             else
             {
@@ -453,6 +457,7 @@ and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
                 this.col_LocalUnitPrice.IsEditingReadOnly = false;
                 this.col_Vat.IsEditingReadOnly = false;
                 this.col_KpiRate.IsEditingReadOnly = false;
+                this.btn_JunkSP.Enabled = false;
             }
 
             if (this.EditMode && this.CurrentMaintain["Status"].Equals("Confirmed"))
@@ -942,7 +947,7 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             this.CurrentDetailData["AccuOutputQty"] = MyUtility.GetValue.Lookup(getAccuOutputQty);
         }
 
-        private void btnBatchImport_Click(object sender, System.EventArgs e)
+        private void BtnBatchImport_Click(object sender, System.EventArgs e)
         {
             if (this.EditMode == true && this.CurrentMaintain["Status"].ToString().ToUpper().EqualString("NEW"))
             {
@@ -967,17 +972,17 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
                         this.CurrentDetailData["OtherAmt"] = (decimal)this.CurrentDetailData["OtherPrice"] * output;
                         this.CurrentDetailData["EMBAmt"] = (decimal)this.CurrentDetailData["EMBPrice"] * output;
                         this.CurrentDetailData["PrintingAmt"] = (decimal)this.CurrentDetailData["PrintingPrice"] * output;
+                        this.CurrentDetailData.EndEdit();
                     }
 
                     i++;
                 }
 
-                this.CurrentDetailData.EndEdit();
                 this.RenewData();
             }
         }
 
-        private void btnSplitSP_Click(object sender, System.EventArgs e)
+        private void BtnSplitSP_Click(object sender, System.EventArgs e)
         {
             this.detailgrid.EndEdit();
             var frm = new P11_SplitSP((DataTable)this.detailgridbs.DataSource);
@@ -1011,22 +1016,46 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
             this.RenewData();
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridAppendClick()
         {
             base.OnDetailGridAppendClick();
             this.FirstCheckOutputQty = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridInsertClick()
         {
             base.OnDetailGridInsertClick();
             this.FirstCheckOutputQty = true;
         }
 
+        /// <inheritdoc/>
         protected override void OnDetailGridRemoveClick()
         {
             base.OnDetailGridRemoveClick();
             this.FirstCheckOutputQty = true;
+        }
+
+        private void Btn_JunkSP_Click(object sender, EventArgs e)
+        {
+            DataTable dtDetail = (DataTable)this.detailgridbs.DataSource;
+            if (dtDetail.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox(" Contract detail is empty.");
+                return;
+            }
+
+            DataTable table = dtDetail.Copy();
+            var form = new P11_JunkSP(table);
+            form.ShowDialog();
+            this.OnDetailEntered();
+        }
+
+        private void Btn_JunkHis_Click(object sender, EventArgs e)
+        {
+            var form = new P11_History(this.CurrentMaintain);
+            form.ShowDialog();
         }
     }
 }

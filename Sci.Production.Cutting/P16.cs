@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
@@ -94,16 +95,17 @@ namespace Sci.Production.Cutting
             };
 
             this.Helper.Controls.Grid.Generator(this.gridCuttingReasonInput)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
                 .Text("MDivisionID", header: "M", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("FtyGroup", header: "Factory", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("WeaveTypeID", header: "Fabrication", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("FinalETA", header: "ETA", width: Widths.Auto(), iseditingreadonly: true)
                 .Date("EstCutDate", header: "Est." + Environment.NewLine + "Cutting Date", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(12), iseditingreadonly: true)
+                .Text("BrandID", header: "Brand", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("StyleID", header: "Style#", width: Widths.AnsiChars(12), iseditingreadonly: true)
                 .Text("Refno", header: "FabRef#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(6), iseditingreadonly: true)
+                .Text("CutRef", header: "Ref#", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Cutno", header: "Cut#", width: Widths.AnsiChars(2), iseditingreadonly: true)
                 .Text("FabricCombo", header: "Combination", width: Widths.Auto(), iseditingreadonly: true)
                 .Text("ColorWay", header: "Color Way", width: Widths.Auto(), iseditingreadonly: true)
@@ -119,19 +121,27 @@ namespace Sci.Production.Cutting
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
+            this.gridCuttingReasonInput.ColumnFrozen(this.gridCuttingReasonInput.Columns["Selected"].Index);
         }
 
         private void Query()
         {
-            if (!this.dateEstCutDate.HasValue || !this.dateEstCutDate.HasValue1)
+            if (!this.dateEstCutDate.HasValue && !this.dateEstCutDate.HasValue1 &&
+                this.txtSPNo.Text.IsEmpty() && this.dateETA.Value.IsEmpty())
             {
-                MyUtility.Msg.WarningBox("Please input first < Est. Cut Date >!");
+                MyUtility.Msg.WarningBox("Please input <Est. Cut Date> or <ETA> or <SP#> first!");
                 return;
             }
 
             string sqlGetDate = string.Empty;
             string sqlWhere = string.Empty;
-            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@EstCutDateFrom", this.dateEstCutDate.DateBox1.Value) };
+            List<SqlParameter> listPar = new List<SqlParameter>();
+
+            if (this.dateEstCutDate.HasValue1)
+            {
+                sqlWhere += " and w.EstCutDate >= @EstCutDateFrom";
+                listPar.Add(new SqlParameter("@EstCutDateFrom", this.dateEstCutDate.DateBox1.Value));
+            }
 
             if (this.dateEstCutDate.HasValue2)
             {
@@ -145,8 +155,21 @@ namespace Sci.Production.Cutting
                 listPar.Add(new SqlParameter("@FtyGroup", this.txtfactory.Text));
             }
 
+            if (!this.dateETA.Value.IsEmpty())
+            {
+                sqlWhere += " and psd.FinalETA = @ETA";
+                listPar.Add(new SqlParameter("@ETA", this.dateETA.Value));
+            }
+
+            if (!this.txtSPNo.Text.IsEmpty())
+            {
+                sqlWhere += " and o.ID = @SPNo";
+                listPar.Add(new SqlParameter("@SPNo", this.txtSPNo.Text));
+            }
+
             sqlGetDate = $@"
 select
+    [Selected] = 0,
 	w.MDivisionID,
 	o.FtyGroup,
     f.WeaveTypeID,
@@ -224,7 +247,9 @@ outer apply(
 	for xml path(''))
 	,1,1,'')
 )Artwork
-where   w.EstCutDate >= @EstCutDateFrom {sqlWhere} and (w.Layer - isnull(acc.AccuCuttingLayer,0)) > 0
+where 1=1
+{sqlWhere}
+and (w.Layer - isnull(acc.AccuCuttingLayer,0)) > 0
 
 group by w.MDivisionID,o.FtyGroup, f.WeaveTypeID,psd.FinalETA,w.EstCutDate,w.ID,o.BrandID,o.StyleID,
     w.Refno,w.CutRef,w.Cutno,w.FabricCombo,Article.Article,w.ColorID,Artwork.Artwork,Size.Size,
@@ -286,8 +311,81 @@ update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCutting
                     return;
                 }
 
-                MyUtility.Msg.InfoBox("Save success");
+                MyUtility.Msg.InfoBox("Save success.");
                 this.Query();
+            }
+        }
+
+        private void TxtReason_PopUp(object sender, Win.UI.TextBoxPopUpEventArgs e)
+        {
+            string sqlcmd = @"select Name from DropDownList with (nolock) where type = 'PMS_UnFinCutReason' order by Seq";
+            SelectItem item = new SelectItem(sqlcmd, "35",null, headercaptions: "Name");
+            item.Width = 400;
+            DialogResult dialogResult = item.ShowDialog();
+            if (dialogResult == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txtReason.Text = item.GetSelectedString();
+        }
+
+        private void btnBatchUpdate_Click(object sender, EventArgs e)
+        {
+            this.gridCuttingReasonInput.ValidateControl();
+            string reasonName = this.txtReason.Text.Trim();
+            string reasonID = MyUtility.GetValue.Lookup($@"select ID from DropDownList with (nolock) where type = 'PMS_UnFinCutReason' and Name='{reasonName}'");
+            string remark = this.txtRemark.Text;
+            DataTable dt = (DataTable)this.gridCuttingReasonInput.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.InfoBox("Please select data first!");
+                return;
+            }
+
+            DataRow[] selectedData = dt.Select("Selected = 1");
+            if (selectedData.Length == 0)
+            {
+                MyUtility.Msg.WarningBox("Please select data first!");
+                return;
+            }
+
+            foreach (DataRow currentRecord in selectedData)
+            {
+                currentRecord["UnfinishedCuttingReason"] = reasonID;
+                currentRecord["UnfinishedCuttingReasonDesc"] = reasonName;
+                currentRecord["Remark"] = remark;
+                currentRecord.EndEdit();
+            }
+
+            this.gridCuttingReasonInput.SuspendLayout();
+        }
+
+        private void txtReason_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.txtReason.Text.IsEmpty())
+            {
+                return;
+            }
+
+            List<SqlParameter> listPar = new List<SqlParameter>() { new SqlParameter("@Name", this.txtReason.Text) };
+            string selcmd = @"select Name from DropDownList with (nolock) where type = 'PMS_UnFinCutReason' and Name = @Name";
+            DualResult result = DBProxy.Current.Select(null, selcmd, listPar, out DataTable dt);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            if (dt.Rows.Count == 0)
+            {
+                MyUtility.Msg.WarningBox($"Reason {this.txtReason.Text} not found!");
+                this.txtReason.Text = string.Empty;
+                this.txtReason.Focus();
+            }
+            else
+            {
+                this.txtReason.Text = dt.Rows[0]["Name"].ToString();
             }
         }
     }

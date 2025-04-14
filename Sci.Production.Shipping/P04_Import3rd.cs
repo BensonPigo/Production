@@ -66,25 +66,63 @@ namespace Sci.Production.Shipping
             // sql參數
             System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@poid", this.txtSPNo.Text.Trim());
             System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter("@suppid", this.txtsupplier.TextBox1.Text.Trim());
+            System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter("@OrderCompanyID", P04.orderCompanyID);
 
-            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-            cmds.Add(sp1);
-            cmds.Add(sp2);
+            IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>
+            {
+                sp1,
+                sp2,
+                sp3
+            };
 
             string sqlCmd = @"
-select 1 as Selected,psd.ID as POID,psd.SEQ1,psd.SEQ2, (left(psd.SEQ1+' ',3)+'-'+psd.SEQ2) as Seq,ps.SuppID,
-(ps.SuppID+'-'+(select AbbEN from Supp WITH (NOLOCK) where ID = ps.SuppID)) as Supp,psd.Refno,psd.SCIRefno,
-isnull(f.DescDetail,'') as Description, psd.FabricType, (case when psd.FabricType = 'F' then 'Fabric' when psd.FabricType = 'A' then 'Accessory' else '' end) as Type, 
-isnull(f.MtlTypeID,'') as MtlTypeID,psd.POUnit as UnitId,psd.ShipQty,psd.ShipFOC
-,(psd.ShipQty+psd.ShipFOC) as Qty,0.0 as NetKg,0.0 as WeightKg,
-o.BuyerDelivery,isnull(o.BrandID,'') as BrandID,isnull(o.FactoryID,'') as FactoryID,o.SciDelivery
-from PO_Supp ps WITH (NOLOCK) 
-left join PO_Supp_Detail psd WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-left join Fabric f WITH (NOLOCK) on f.SCIRefno = psd.SCIRefno
-left join Orders o WITH (NOLOCK) on o.ID = ps.ID
-where ps.ID = @poid
-and psd.ShipQty+psd.ShipFOC <>0
-and ps.SuppID = @suppid";
+SELECT 
+    1 AS Selected,
+    psd.ID AS POID,
+    psd.SEQ1,
+    psd.SEQ2,
+    (LEFT(psd.SEQ1 + ' ', 3) + '-' + psd.SEQ2) AS Seq,
+    ps.SuppID,
+    (ps.SuppID + '-' + 
+        (SELECT AbbEN 
+         FROM Supp WITH (NOLOCK) 
+         WHERE ID = ps.SuppID)) AS Supp,
+    psd.Refno,
+    psd.SCIRefno,
+    ISNULL(f.DescDetail, '') AS Description,
+    psd.FabricType,
+    (CASE 
+        WHEN psd.FabricType = 'F' THEN 'Fabric' 
+        WHEN psd.FabricType = 'A' THEN 'Accessory' 
+        ELSE '' 
+     END) AS Type, 
+    ISNULL(f.MtlTypeID, '') AS MtlTypeID,
+    psd.POUnit AS UnitId,
+    psd.ShipQty,
+    psd.ShipFOC,
+    (psd.ShipQty + psd.ShipFOC) AS Qty,
+    0.0 AS NetKg,
+    0.0 AS WeightKg,
+    o.BuyerDelivery,
+    ISNULL(o.BrandID, '') AS BrandID,
+    ISNULL(o.FactoryID, '') AS FactoryID,
+    o.SciDelivery
+FROM 
+    PO_Supp ps WITH (NOLOCK)
+LEFT JOIN 
+    PO_Supp_Detail psd WITH (NOLOCK) ON ps.ID = psd.ID AND ps.SEQ1 = psd.SEQ1
+LEFT JOIN 
+    Fabric f WITH (NOLOCK) ON f.SCIRefno = psd.SCIRefno
+LEFT JOIN 
+    Orders o WITH (NOLOCK) ON o.ID = ps.ID
+WHERE 
+    ps.ID = @poid
+    AND (psd.ShipQty + psd.ShipFOC) <> 0
+    AND ps.SuppID = @suppid
+    AND o.OrderCompanyID = @OrderCompanyID
+;
+
+";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out selectData);
             if (!result)

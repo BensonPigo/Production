@@ -21,6 +21,7 @@ namespace Sci.Production.Quality
             this.ht.Add("Formula1", "(Total Points / Act. Yds Inspected ) x 100");
             this.ht.Add("Formula2", "(Total Points × 3600) ÷ (Act. Yds Inspected × Actual Width)");
             this.ht.Add("Formula3", "Knit = (Total Points × 3600) ÷ (Ticket Length × Cut. Width)\r\nWoven = (Total Points × 3600) ÷ (Act. Yds Inspected × Cut. Width)\r\n");
+            this.ht.Add("Formula4", "Linear yard = (Total Points / Act. Yds Inspected ) x 100\r\nSquared yard = (Total Points*3600) / (Act. Yds Inspected * Cut. Width)");
 
             // HashTabe add key,Value
             this.SkewnessHt.Add("Formula1", "100 × [ 2 × ( AC - BD ) / ( AC + BD ) ]");
@@ -94,6 +95,22 @@ namespace Sci.Production.Quality
                 this.btnMoistureStandardList.ForeColor = System.Drawing.Color.Black;
             }
 
+            string sqlcmd = $@"
+select 1
+from FIR_PointRateFormula fp with(nolock)
+left join Supp s with(nolock) on s.ID = fp.SuppID
+where fp.brandid = '{this.CurrentMaintain["BrandID"]}'
+";
+
+            if (MyUtility.Check.Seek(sqlcmd))
+            {
+                this.btnSuppStandard.ForeColor = System.Drawing.Color.Blue;
+            }
+            else
+            {
+                this.btnSuppStandard.ForeColor = System.Drawing.Color.Black;
+            }
+
             if (this.CurrentMaintain.Empty())
             {
                 this.txtSkewnessFormula.Text = string.Empty;
@@ -161,6 +178,60 @@ Group 4：X < {listData[6]} = Grade A; {listData[6]} <= X < {listData[7]} = Grad
 Group 5：TBC";
                 this.txtFacbricGrade.Text = strMsg;
             }
+            else if (MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]) == "N.FACE")
+            {
+                List<string> listGroup = new List<string>() { "A", "B" };
+                List<string> listWeaveType = new List<string> { "KNIT", "WOVEN" };
+                List<string> listData = new List<string>();
+                foreach (var head in listWeaveType)
+                {
+                    foreach (var item in listGroup)
+                    {
+                        string strSQL = $@"select Percentage from FIR_Grade
+                                           where BrandID ='N.FACE' 
+                                           and WeaveTypeID = '{head}' and Grade = '{item}' 
+                                           and InspectionGroup =''";
+                        string strGrade = MyUtility.GetValue.Lookup(strSQL, "Production");
+                        listData.Add(strGrade);
+                    }
+                }
+                string strMsg = $@"X = Point Rate per 100 square yds (Linear yard)
+X = Point Rate per 100 square yds2 (Squared yard)
+KNIT
+X <= {listData[0]} = Grade A; {listData[0]} < X <= {listData[1]} = Grade B; X > {listData[1]} = Grand C 
+WOVEN
+X <= {listData[2]} = Grade A; {listData[2]} < X <= {listData[3]} = Grade B; X > {listData[3]} = Grand C
+
+";
+                this.txtFacbricGrade.Text = strMsg;
+            }
+            else if (MyUtility.Convert.GetString(this.CurrentMaintain["brandid"]).Trim().ToUpper() == "GYMSHARK")
+            {
+                List<string> listGroup = new List<string>() { "A", "B" };
+                List<string> listData = new List<string>();
+                for (int i = 0; i < 5; i++)
+                {
+                    foreach (var item in listGroup)
+                    {
+                        string strSQL = $@"select Percentage from FIR_Grade
+                                           where BrandID ='GYMSHARK' 
+                                           and WeaveTypeID = iif({i + 1} in (1, 2),'WOVEN','KNIT') and Grade = '{item}' 
+                                           and InspectionGroup = '{i + 1}'";
+                        string strGrade = MyUtility.GetValue.Lookup(strSQL, "Production");
+                        listData.Add(strGrade);
+                    }
+                }
+
+                string strMsg = $@"X = Point Rate per 100 square yds
+WOVEN
+Group 1：X <= {listData[0]} = Grade A; {listData[0]} < X <= {listData[1]} = Grade B; X > {listData[1]} = Grade C 
+Group 2：X <= {listData[2]} = Grade A; {listData[2]} < X <= {listData[3]} = Grade B; X > {listData[3]} = Grade C
+KNIT
+Group 3：X <= {listData[4]} = Grade A; {listData[4]} < X <= {listData[5]} = Grade B; X > {listData[5]} = Grade C 
+Group 4：X <= {listData[6]} = Grade A; {listData[6]} < X <= {listData[7]} = Grade B; X > {listData[7]} = Grade C
+";
+                this.txtFacbricGrade.Text = strMsg;
+            }
             else
             {
                 List<string> listGroup = new List<string>() { "A", "B" };
@@ -177,7 +248,9 @@ Group 5：TBC";
                         string strSQL = $@"select Percentage from FIR_Grade
                                            where BrandID ='{strBrandID}'
                                            and WeaveTypeID = '{head}' 
-                                           and Grade = '{item}'";
+                                           and Grade = '{item}'
+                                           and InspectionGroup  = ''
+";
                         string strGrade = MyUtility.GetValue.Lookup(strSQL, "Production");
                         listData.Add(strGrade);
                     }
@@ -225,6 +298,9 @@ X < {listData[2]} = Grade A; {listData[2]}<= X < {listData[3]} = Grade B; X > {l
                 case "3":
                     strFormula = this.ht["Formula3"].ToString();
                     break;
+                case "4":
+                    strFormula = this.ht["Formula4"].ToString();
+                    break;
                 default:
                     break;
             }
@@ -260,6 +336,12 @@ X < {listData[2]} = Grade A; {listData[2]}<= X < {listData[3]} = Grade B; X > {l
             }
 
             this.txtSkewnessFormula.Text = formula;
+        }
+
+        private void btnSuppStandard_Click(object sender, EventArgs e)
+        {
+            var frm = new B10_Supp_Standard(MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"]));
+            frm.ShowDialog();
         }
     }
 }

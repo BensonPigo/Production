@@ -1,19 +1,20 @@
-﻿using System;
+﻿using Ict;
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
+using Sci.Data;
+using Sci.Production.Prg;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Windows.Forms;
-using Ict;
-using Sci.Data;
-using System.IO;
 using System.Configuration;
-using System.Transactions;
+using System.Data;
 using System.Data.SqlClient;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Transactions;
+using System.Windows.Forms;
 using System.Xml.Linq;
-using Sci.Production.Prg;
 using static Sci.AuthenticationAPI.AuthenticationAD;
 
 namespace Sci.Production.Win
@@ -26,6 +27,7 @@ namespace Sci.Production.Win
         private Main app;
         private DualResult result;
         private string flagPathFile = Path.Combine(Application.StartupPath, "sql_update.txt");
+        private static bool isNeedOTP;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Login"/> class.
@@ -103,6 +105,18 @@ namespace Sci.Production.Win
                 return;
             }
 
+            // mfa 驗證
+            bool isNeedOTPFty = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup("Select isNeedOTPFty from system"));
+            if (isNeedOTP && isNeedOTPFty)
+            {
+                var otpForm = new OTPVerification(userInfo);
+                DialogResult otpDialog = otpForm.ShowDialog();
+                if (otpDialog == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             user = userInfo;
             if (!(this.result = this.app.DoLogin(user)))
             {
@@ -110,7 +124,6 @@ namespace Sci.Production.Win
                 return;
             }
 
-            // Sci.Env.App.Text = string.Format("Production Management System-({2})-{0}-({1})", Sci.Env.User.Factory, Sci.Env.User.UserID, Environment.MachineName);
             var appVerText = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
             var appDirName = new DirectoryInfo(Application.StartupPath).Name;
             ConfigurationManager.AppSettings["formTextSufix"] = string.Format(
@@ -248,6 +261,8 @@ namespace Sci.Production.Win
                 LoginName = drPass1.Field<string>("ADAccount"),
             };
 
+            isNeedOTP = MyUtility.Convert.GetBool(drPass1["IsNeedOTP"]);
+
             #region 登入時將SYSTEM資料表相關設定載入Sci.Env.Cfg中
             bool isLoginCheckADAccount = true;
             DataRow drSystem;
@@ -261,9 +276,14 @@ namespace Sci.Production.Win
                 Env.Cfg.MailFrom = drSystem["Sendfrom"].ToString().Trim();
                 Env.Cfg.MailServerAccount = drSystem["EmailID"].ToString().Trim();
                 Env.Cfg.MailServerPassword = drSystem["EmailPwd"].ToString().Trim();
-                Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
-                Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
-                Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
+                Env.Cfg.SFTP_Server_IP = drSystem["SFtpIP"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Port = ushort.Parse(drSystem["SFtpPort"].ToString());
+                Env.Cfg.SFTP_Server_Account = drSystem["SFtpID"].ToString().Trim();
+                Env.Cfg.SFTP_Server_Password = drSystem["SFtpPwd"].ToString().Trim();
+
+                // Env.Cfg.FtpServerIP = drSystem["FtpIP"].ToString().Trim();
+                // Env.Cfg.FtpServerAccount = drSystem["FtpID"].ToString().Trim();
+                // Env.Cfg.FtpServerPassword = drSystem["FtpPwd"].ToString().Trim();
                 Env.Cfg.ClipDir = drSystem["ClipPath"].ToString().Trim();
                 Env.Cfg.MailServerPort = MyUtility.Check.Empty(drSystem["MailServerPort"]) ? Convert.ToUInt16(25) : Convert.ToUInt16(drSystem["MailServerPort"]);
                 isLoginCheckADAccount = drSystem.Field<bool>("IsLoginCheckADAccount");
@@ -317,94 +337,6 @@ namespace Sci.Production.Win
             return result;
         }
 
-        private void CheckUpdateSQL()
-        {
-            string sql_update_receiver = ConfigurationManager.AppSettings["sql_update_receiver"];
-            string[] dirs = Directory.GetFiles(Env.Cfg.ReportTempDir, "*.sql");
-            if (dirs.Length == 0)
-            {
-                try
-                {
-                    File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
-                }
-                catch (Exception e)
-                {
-                    this.Sendmail(e.ToString(), sql_update_receiver);
-                }
-
-                return;
-            }
-
-            foreach (string dir in dirs)
-            {
-                string script = File.ReadAllText(dir);
-                string strConnection = string.Empty;
-                string strServer = string.Empty;
-
-                TransactionScope transactionscope = new TransactionScope();
-                using (transactionscope)
-                {
-                    try
-                    {
-                        SqlConnection connection;
-                        DBProxy.Current.OpenConnection("Production", out connection);
-                        strConnection = connection.ConnectionString.ToString();
-                        using (connection)
-                        {
-                            Server db = new Server(new ServerConnection(connection));
-                            strServer = db.Urn.ToString();
-                            db.ConnectionContext.ExecuteNonQuery(script);
-                        }
-
-                        transactionscope.Complete();
-                        transactionscope.Dispose();
-                    }
-                    catch (Exception ex)
-                    {
-                        transactionscope.Dispose();
-
-                        string subject = string.Format("Auto Update SQL ERROR");
-                        string desc = string.Format(
-                            @"
-Hi all,
-    Factory = {0}, Account = {1},
-    SQL UPDATE FAIL, Please check it.
--------------------------------------------------------------------
-{2}
--------------------------------------------------------------------
-Script
-{3}
-", Env.User.Factory,
-                            Env.User.UserName,
-                            ex.ToString(),
-                            script);
-                        Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, sql_update_receiver, string.Empty, subject, string.Empty, desc, true, true);
-                        mail.ShowDialog();
-                        return;
-                    }
-                }
-
-                transactionscope.Dispose();
-                transactionscope = null;
-            }
-
-            try
-            {
-                File.WriteAllText(this.flagPathFile, string.Empty);  // 新增sql_update.txt以註記SQL更新成功
-            }
-            catch (Exception e)
-            {
-                this.Sendmail(e.ToString(), sql_update_receiver);
-            }
-        }
-
-        private void Sendmail(string desc, string receiver)
-        {
-            string subject = "Auto Update SQL ERROR";
-            Sci.Win.Tools.MailTo mail = new Sci.Win.Tools.MailTo(Env.Cfg.MailFrom, receiver, string.Empty, subject, string.Empty, desc, true, true);
-            mail.ShowDialog();
-        }
-
         private void ComboBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (this.comboBox2.SelectedValue == null)
@@ -419,8 +351,18 @@ Script
 
         private void ChangeTaipeiServer()
         {
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            var hasConnectionNamedQuery = docx.Descendants("modules").Elements().Select(e => e.FirstAttribute.Value).ToList();
+            List<string> hasConnectionNamedQuery = new List<string>();
+
+            var cfgsection = (CfgSection)ConfigurationManager.GetSection("sci");
+
+            if (cfgsection != null)
+            {
+                foreach (CfgSection.Module it in cfgsection.Modules)
+                {
+                    hasConnectionNamedQuery.Add(it.Name);
+                }
+            }
+
             Dictionary<string, string> systemOption = new Dictionary<string, string>();
             string[] strSevers = ConfigurationManager.AppSettings["TaipeiServer"].Split(new char[] { ',' });
             if (strSevers.Length > 0 && hasConnectionNamedQuery.Count > 0)

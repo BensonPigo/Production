@@ -7,11 +7,17 @@
 -- =============================================
 CREATE PROCEDURE [dbo].[ChangeOver]
 
+--此為初始值。設定參數控制 0 = 排程執行、1 = 手動執行
+@UpdateRecentData bit = 0
+
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
+
+	--取得30分鐘前的時間
+	Declare @UpdateRecentDate Datetime = dateadd(minute, -30, getdate())
 
    --刪除不存在Sewing Schedule的資料
 	select distinct s.APSNo,s.FactoryID,s.SewingLineID,s.OrderID,s.ComboType
@@ -27,7 +33,7 @@ BEGIN
 
 	--更新現有資料
 	update ChgOver set Inline = s.Inline,AlloQty = s.AlloQty,StandardOutput = s.StandardOutput,TotalSewingTime = s.TotalSewingTime
-	from SewingSchedule s where s.APSNo = ChgOver.APSNo and s.OrderID = ChgOver.OrderID;
+	from SewingSchedule s where s.APSNo = ChgOver.APSNo and s.OrderID = ChgOver.OrderID and (@UpdateRecentData = 0 or (@UpdateRecentData = 1 and (s.AddDate >= @UpdateRecentDate or s.EditDate >= @UpdateRecentDate)));
 	update ChgOver set StyleID = o.StyleID,CDCodeID = o.CdCodeID, SeasonID = o.SeasonID
 	from Orders o where o.ID = ChgOver.OrderID;
 
@@ -42,6 +48,7 @@ BEGIN
 	where s.Inline is not null 
 	and s.Offline > DATEADD(MONTH,-1,GETDATE()) 
 	and f.IsSampleRoom = 0
+	and @UpdateRecentData = 0 or (@UpdateRecentData = 1 and (s.AddDate >= @UpdateRecentDate or s.EditDate >= @UpdateRecentDate))
 	order by s.FactoryID,s.SewingLineID,s.Inline,s.OrderID;
 
 
@@ -141,35 +148,143 @@ BEGIN
 									);
 
 	--填Category欄位值
-	update ChgOver set Category = c.Category
-	from (
-		select
+	;WITH CoData AS (
+		SELECT 
+			co.ID,
+			co.FactoryID,
+			co.SewingLineID,
+			co.StyleID,
+			co.ComboType,
+			co.Inline,
+			ProductionType = CASE 
+				WHEN s.StyleUnit = 'PCS'
+					THEN (SELECT r.Name 
+						  FROM Reason r 
+						  WHERE r.ReasonTypeID = 'Style_Apparel_Type' 
+							AND r.ID = s.ApparelType)
+				ELSE (SELECT r.Name 
+					  FROM Style_Location sl 
+					  INNER JOIN Reason r ON r.ID = sl.ApparelType 
+					  WHERE r.ReasonTypeID = 'Style_Apparel_Type' 
+						AND sl.StyleUkey = s.Ukey 
+						AND sl.Location = co.ComboType)
+			 END,
+			 FabricType = CASE 
+				WHEN s.StyleUnit = 'PCS'
+					THEN s.FabricType
+				ELSE (SELECT sl.FabricType 
+					  FROM Style_Location sl 
+					  WHERE sl.StyleUkey = s.Ukey 
+						AND sl.Location = co.ComboType)
+			 END
+		FROM ChgOver co
+		INNER JOIN orders o ON o.id = co.OrderID
+		INNER JOIN Style s ON s.Ukey = o.StyleUkey
+	),
+	LagData AS (
+		SELECT 
 			ID,
-			Category = iif(b.LastProdType <> '' and b.ProductionType <> '', 
-				(
-				case when b.ProductionType <> b.LastProdType and b.FabricType <> b.LastFabType then 'A'
-					when b.ProductionType <> b.LastProdType and b.FabricType = b.LastFabType then 'B'
-					when b.ProductionType = b.LastProdType and b.FabricType <> b.LastFabType then 'C'
-					when b.ProductionType = b.LastProdType and b.FabricType = b.LastFabType then 'D'
-					else ''
-					end),'') 
-		from (
-			select ID,ProductionType,FabricType,LAG(ProductionType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastProdType,
-			LAG(FabricType,1,'') OVER (Partition by a.FactoryID,a.SewingLineID order by a.FactoryID,a.SewingLineID,a.Inline,a.ID) as LastFabType
-			from (
-				select co.ID,co.FactoryID,co.SewingLineID,co.StyleID,co.ComboType,co.Inline,
-				ProductionType = case when s.StyleUnit = 'PCS'
-									  then (select r.Name from Reason r where ReasonTypeID = 'Style_Apparel_Type' and r.ID = s.ApparelType)
-									  else (select r.Name from Style_Location sl inner join Reason r on r.ID = sl.ApparelType where ReasonTypeID = 'Style_Apparel_Type' and sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
-									  end,
-				FabricType = case when s.StyleUnit = 'PCS' then s.FabricType
-									  else (select sl.FabricType from Style_Location sl where sl.StyleUkey = s.Ukey and sl.Location =co.ComboType)
-									  end
-			from ChgOver co
-			inner join orders o on o.id = co.OrderID
-			inner join Style s on s.Ukey = o.StyleUkey
-			) a
-		) b
-	) c
-	where c.ID = ChgOver.ID
+			FactoryID,
+			SewingLineID,
+			Inline,
+			ProductionType,
+			FabricType,
+			LAG(ProductionType, 1, '') OVER (PARTITION BY FactoryID, SewingLineID ORDER BY Inline, ID) AS LastProdType,
+			LAG(FabricType, 1, '') OVER (PARTITION BY FactoryID, SewingLineID ORDER BY Inline, ID) AS LastFabType
+		FROM CoData
+	),
+	CategoryCalc AS (
+		SELECT
+			ID,
+			Category = CASE 
+				-- 若沒有上一筆資料，則直接更新為 'A'
+				WHEN LastProdType = '' THEN 'A'
+				ELSE 
+					CASE 
+						WHEN ProductionType <> LastProdType AND FabricType <> LastFabType THEN 'A'
+						WHEN ProductionType <> LastProdType AND FabricType = LastFabType THEN 'B'
+						WHEN ProductionType = LastProdType AND FabricType <> LastFabType THEN 'C'
+						WHEN ProductionType = LastProdType AND FabricType = LastFabType THEN 'D'
+						ELSE ''
+					END
+			END
+		FROM LagData
+	)
+	UPDATE co
+	SET co.Category = cc.Category
+	FROM ChgOver co
+	INNER JOIN CategoryCalc cc ON co.ID = cc.ID;
+
+
+	----------------ChgOver_Check-------------------------------
+
+	SELECT *
+	INTO #tmp
+	FROM ChgOver co WITH (nolock)
+	WHERE co.Inline >= DATEADD(year, -1, GETDATE())
+	AND co.Inline >= '2025-01-01'
+
+	DELETE CC
+	FROM ChgOver_Check CC
+	INNER JOIN #tmp t WITH(NOLOCK) on t.ID = CC.ID
+    Where Not exists ( 
+                       Select 1
+				       From  ChgOverCheckList ckl 
+			           Inner join ChgOverCheckList_Detail ckd with (nolock) on ckl.ID = ckd.ID
+				       Where cc.ChgOverCheckListID = ckl.ID 
+					   and  ckl.Category = T.Category AND ckl.StyleType = t.Type and ckl.FactoryID = T.FactoryID
+                       and cc.No = ckd.ChgOverCheckListBaseID 
+                     )
+	
+	INSERT INTO ChgOver_Check
+	(
+		[ID]
+		,[DayBe4Inline]
+		,[BaseOn]
+		,[ChgOverCheckListID]
+		,[DeadLine]
+		,[CompletionDate]
+		,[Remark]
+		,[No]
+		,[Checked]
+		,[LeadTime]
+		,[EditName]
+		,[EditDate]
+		,[ResponseDep]
+	)
+	SELECT
+	[ID] = T.ID
+	,[DayBe4Inline] = 0
+	,[BaseOn] = 0
+	,[ChgOverCheckListID] = ISNULL(CC.ID,0) 
+	,[DeadLine] = dbo.CalculateWorkDate(T.Inline, -CCD.LeadTime, T.FactoryID)
+	,[CompletionDate] = NULL
+	,[Remaek] = ''
+	,[No] = cb.[NO]
+	,[Checked] = 0
+	,[Leadtime] = ISNULL(CCD.LeadTime,0)
+	,[EditName] = ''
+	,[EditDate] = NULL
+	,[ResponseDep] = ISNULL(CCD.ResponseDep,'')
+	From #tmp t
+    INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	INNER JOIN ChgOverCheckList_Detail CCD ON CCD.ID = CC.ID
+	INNER JOIN ChgOverCheckListBase cb with (nolock) on CCD.ChgOverCheckListBaseID = cb.ID
+	Where Not exists ( 
+						Select 1
+						From ChgOver_Check cc
+						Where cc.id = t.ID
+						and cc.ChgOverCheckListID = CCD.ID
+						AND cc.No = CCD.ChgOverCheckListBaseID
+					 )
+
+	Update cck Set Deadline = dbo.CalculateWorkDate(t.Inline, -CCD.LeadTime, t.FactoryID),
+	LeadTime = CCD.LeadTime, 
+	ResponseDep = CCD.ResponseDep
+	From ChgOver_Check cck
+	INNER JOIN #tmp t on t.ID = cck.ID
+    INNER JOIN ChgOverCheckList CC ON CC.Category = T.Category AND CC.StyleType = t.Type and CC.FactoryID = T.FactoryID
+	INNER JOIN ChgOverCheckList_Detail CCD with (nolock) on CC.ID = CCD.ID and cck.No = CCD.ChgOverCheckListBaseID
+
+	DROP TABLE #tmp
 END

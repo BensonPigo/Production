@@ -206,7 +206,7 @@
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
             this.txtFactory.BoolFtyGroupList = false;
-            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.FilteMDivision = true;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = true;
             this.txtFactory.IssupportJunk = true;
@@ -224,6 +224,7 @@
             this.txtMDivision.Name = "txtMDivision";
             this.txtMDivision.Size = new System.Drawing.Size(94, 23);
             this.txtMDivision.TabIndex = 5;
+            this.txtMDivision.DefaultValue = true;
             // 
             // labelFactory
             // 

@@ -1,4 +1,4 @@
-﻿Create PROCEDURE  [dbo].[GetSewingLineScheduleData]
+﻿CREATE PROCEDURE  [dbo].[GetSewingLineScheduleData]
 	@Inline DATE = null,
 	@Offline DATE = null,
 	@Line1 varchar(10) = '',
@@ -48,7 +48,7 @@ declare  @APSListWorkDay TABLE(
 	[AlloQty] [int] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
 	[LNCSERIALNumber] [int] NULL,
@@ -75,7 +75,7 @@ select
 	[AlloQty] = sum(s.AlloQty),
 	[HourOutput] = iif(isnull(s.TotalSewingTime,0)=0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime),
 	[OriWorkHour] = iif (isnull(s.Sewer,0) = 0 or isnull(ScheduleEff.val,0) = 0 or isnull(s.TotalSewingTime,0) = 0, 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)),
-	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float),
+	[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as [decimal](38,13)),
 	s.TotalSewingTime,
 	s.OrderID,
 	s.LNCSERIALNumber,
@@ -404,8 +404,10 @@ CREATE TABLE #APSColumnGroup (
 	[OrderID] [varchar](13) NULL,
 	[MatchFabric] varchar(8) NULL,
 	[StyleSeason] varchar(10) null,
+	[StyleUkey] bigint null,
     INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
+
 insert into #APSColumnGroup
 select
 APSNo,
@@ -428,7 +430,8 @@ oq.MinBuyerDelivery,
 [BrandID] = o.BrandID,
 s.OrderID,
 [MatchFabric] = iif(o.IsNotRepeatOrMapping = 0, 'Y','N'),
-[StyleSeason] = Style.SeasonID
+[StyleSeason] = Style.SeasonID,
+[StyleUkey] = style.Ukey
 from SewingSchedule s with (nolock)
 inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
 inner join Style with (nolock) on Style.Ukey = o.StyleUkey
@@ -623,6 +626,7 @@ declare @APSMain TABLE(
 	[EMBStitchCnt] int,
 	[PrintPcs] int,
 	[StyleSeason] NVARCHAR(MAX),
+	[StyleUkey] [nvarchar](500) NULL,
 	[AddDate] [date] NULL,
 	[EditDate] [date] NULL
 )
@@ -631,12 +635,12 @@ select
 	al.APSNo,
 	al.SewingLineID,
 	[CustPO] = CustPO.val,
-	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��CustPO�ƶq
+	[CustPoCnt] =  iif(LEN(CustPO.val) > 0,(LEN(CustPO.val) - LEN(REPLACE(CustPO.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算CustPO數量
 	[SP] = SP.val,
 	[SP_Combotype] = SP.SP_Combotype,
 	[SpCnt] = (select count(1) from SewingSchedule where APSNo = al.APSNo),
 	[Colorway] = Colorway.val,
-	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --��,�ƶq�p��Colorway�ƶq
+	[ColorwayCnt] = iif(LEN(Colorway.val) > 0,(LEN(Colorway.val) - LEN(REPLACE(Colorway.val, ',', ''))) / LEN(',') + 1,0),  --用,數量計算Colorway數量
 	[CDCode] = CDCode.val,
 	[ProductionFamilyID] = ProductionFamilyID.val,
 	[Style] = Style.val,
@@ -683,6 +687,7 @@ select
 	[EMBStitchCnt] = LEN(EMBStitch.val) - LEN(REPLACE(EMBStitch.val, ',', '')) + 1,
 	[PrintPcs] = (select sum(PRINTING) from (select [PRINTING] = Max(PRINTING) from #StyleArtwork where APSNo = al.APSNo and PRINTING <> -1 group by StyleID) a),
 	[StyleSeason] = ISNULL(SP.StyleSeason, ''),
+	[StyleUkey] = ISNULL(SP.StyleUkey, ''),
 	s.AddDate,
 	s.EditDate
 from #APSList al
@@ -695,7 +700,8 @@ outer apply (
 	SELECT val =  Stuff((select distinct concat( ',',SP)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') 
 		  ,[SP_Combotype] = Stuff((select distinct concat( ',',SP_ComboType)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,[MatchFabric] = Stuff((select distinct concat( ',',MatchFabric)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
-		  ,[StyleSeason] = Stuff((select concat( ',',StyleSeason)   from #APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason order by SP FOR XML PATH('')),1,1,'')
+		  ,[StyleSeason] = Stuff((select distinct concat( ',',StyleSeason)   from #APSColumnGroup where APSNo = al.APSNo group by SP, StyleSeason FOR XML PATH('')),1,1,'')
+		  ,[StyleUkey] = Stuff((select distinct concat( ',',StyleUkey)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
 				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
@@ -748,13 +754,13 @@ Declare @Workhour_step1 table(
 	[Offline] [datetime] NULL,
 	[inlineDate] [date] NULL,
 	[OfflineDate] [date] NULL,
-	[StartHour] [float] NULL,
-	[EndHour] [float] NULL,
+	[StartHour] [decimal](38,13) NULL,
+	[EndHour] [decimal](38,13) NULL,
 	[InlineHour] [numeric](17, 6) NULL,
 	[OfflineHour] [numeric](17, 6) NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
@@ -772,8 +778,8 @@ select  al.APSNo,
 		al.Offline,
 		al.inlineDate,
 		al.OfflineDate,
-        [StartHour] = cast(wkd.StartHour as float),
-        [EndHour] = cast(wkd.EndHour as float),		
+        [StartHour] = cast(wkd.StartHour as [decimal](38,13)),
+        [EndHour] = cast(wkd.EndHour as [decimal](38,13)),		
         al.InlineHour,
         al.OfflineHour,
 		al.HourOutput,
@@ -806,15 +812,15 @@ Declare @Workhour_step2 table(
 	[Offline] [datetime] NULL,
 	[inlineDate] [date] NULL,
 	[OfflineDate] [date] NULL,
-	[StartHour] [float] NULL,
-	[EndHour] [float] NULL,
+	[StartHour] [decimal](38,13) NULL,
+	[EndHour] [decimal](38,13) NULL,
 	[InlineHour] [numeric](17, 6) NULL,
 	[OfflineHour] [numeric](17, 6) NULL,
 	[StartHourSort] [bigint] NULL,
 	[EndHourSort] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[OrderID] [varchar](13) NOT NULL,
@@ -860,12 +866,12 @@ Declare @APSExtendWorkDate_step1 table(
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
 	[WorkDate] [datetime] NULL,
-	[Work_Minute] [float] NULL,
-	[WorkingTime] [float] NULL,
+	[Work_Minute] [decimal](38,13) NULL,
+	[WorkingTime] [decimal](38,13) NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[LNCSERIALNumber] [int] NULL
@@ -901,19 +907,19 @@ Work hour/Day 扣除Switch Time, 如過不夠扣除則將剩餘的分鐘數
 */
 -- 取得相同APSNO 加總的WorkTime by Minute
 Declare @APSExtendWorkDate_step2 table(
-	[Sum_Work_Minute] [float] NULL,
+	[Sum_Work_Minute] [decimal](38,13) NULL,
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
 	[WorkDate] [datetime] NULL,
-	[Work_Minute] [float] NULL,
-	[WorkingTime] [float] NULL,
+	[Work_Minute] [decimal](38,13) NULL,
+	[WorkingTime] [decimal](38,13) NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[LNCSERIALNumber] [int] NULL	
@@ -926,20 +932,20 @@ order by APSNo,SewingStart
 
 -- 取得遞減的SwitchTime
 Declare @APSExtendWorkDate_step3 table(
-	[New_SwitchTime] [float] NULL,
-	[Sum_Work_Minute] [float] NULL,
+	[New_SwitchTime] [decimal](38,13) NULL,
+	[Sum_Work_Minute] [decimal](38,13) NULL,
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
 	[WorkDate] [datetime] NULL,
-	[Work_Minute] [float] NULL,
-	[WorkingTime] [float] NULL,
+	[Work_Minute] [decimal](38,13) NULL,
+	[WorkingTime] [decimal](38,13) NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[LNCSERIALNumber] [int] NULL
@@ -954,21 +960,21 @@ from @APSExtendWorkDate_step2
 
 --取得遞減的Work Minute 
 Declare @APSExtendWorkDate_step4 table(
-	[New_Work_Minute] [float] NULL,
-	[New_SwitchTime]  [float] NULL,
-	[Sum_Work_Minute] [float] NULL,
+	[New_Work_Minute] [decimal](38,13) NULL,
+	[New_SwitchTime]  [decimal](38,13) NULL,
+	[Sum_Work_Minute] [decimal](38,13) NULL,
 	[APSNo] [int] NULL,
 	[LearnCurveID] [int] NULL,
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SwitchTime] [int] NULL,
 	[WorkDate] [datetime] NULL,
-	[Work_Minute] [float] NULL,
-	[WorkingTime] [float] NULL,
+	[Work_Minute] [decimal](38,13) NULL,
+	[WorkingTime] [decimal](38,13) NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[LNCSERIALNumber] [int] NULL
@@ -999,14 +1005,14 @@ Declare @APSExtendWorkDate table(
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[WorkDate] [datetime] NULL,
-	[New_WorkingTime] [float] NULL,
-	[New_SwitchTime] [float] NULL,
-	[WorkingTime] [float] NULL,
+	[New_WorkingTime] [decimal](38,13) NULL,
+	[New_SwitchTime] [decimal](38,13) NULL,
+	[WorkingTime] [decimal](38,13) NULL,
 	[OriWorkDateSer] [bigint] NULL,
 	[WorkDateSer] [bigint] NULL,
 	[HourOutput] [numeric](38, 15) NULL,
 	[OriWorkHour] [numeric](38, 13) NULL,
-	[CPU] [float] NULL,
+	[CPU] [decimal](38,13) NULL,
 	[TotalSewingTime] [int] NULL,
 	[Sewer] [int] NULL,
 	[LNCSERIALNumber] [int] NULL
@@ -1018,8 +1024,8 @@ LearnCurveID,
 SewingStart,
 SewingEnd,
 WorkDate,
-[New_WorkingTime] = IIF(SwitchTime = 0, WorkingTime,  CONVERT(float, New_Work_Minute)/60) ,
-[New_SwitchTime]  = IIF(SwitchTime = 0, 0 , CONVERT(float, New_SwitchTime)/60) ,
+[New_WorkingTime] = IIF(SwitchTime = 0, WorkingTime,  CONVERT([decimal](38,13), New_Work_Minute)/60) ,
+[New_SwitchTime]  = IIF(SwitchTime = 0, 0 , CONVERT([decimal](38,13), New_SwitchTime)/60) ,
 WorkingTime,
 OriWorkDateSer,
 [WorkDateSer] = case	when isnull(LNCSERIALNumber,0) = 0 then OriWorkDateSer
@@ -1060,14 +1066,14 @@ Declare @APSExtendWorkDateFin table(
 	[SewingStart] [datetime] NULL,
 	[SewingEnd] [datetime] NULL,
 	[SewingOutput] [int] NOT NULL,	
-	[WorkingTime] [float] NULL,
-	[New_WorkingTime] [float] NULL,
-	[New_SwitchTime] [float] NULL,
+	[WorkingTime] [decimal](38,13) NULL,
+	[New_WorkingTime] [decimal](38,13) NULL,
+	[New_SwitchTime] [decimal](38,13) NULL,
 	[LearnCurveEff] [int] NOT NULL,
-	[StdOutput] [float] NULL,
-	[Std Qty for printing] [float] NULL,
-	[CPU] [float] NULL,
-	[Efficienycy] [float] NULL,
+	[StdOutput] [decimal](38,13) NULL,
+	[Std Qty for printing] [decimal](38,13) NULL,
+	[CPU] [decimal](38,13) NULL,
+	[Efficienycy] [decimal](38,13) NULL,
 	[TTL_PRINTING (PCS)] numeric(38,6),
 	[TTL_PRINTING PPU (PPU)] numeric(38,6),
 	[StdQtyEMB] varchar(50),
@@ -1235,8 +1241,10 @@ declare  @APSResult TABLE(
 	TtlQtyEMB int null,
 	PrintPcs int null,
 	StyleSeason NVARCHAR(MAX),
+	StyleUkey NVARCHAR(500),
 	[AddDate] [date] NULL,
-	[EditDate] [date] NULL
+	[EditDate] [date] NULL,
+	[InlineCategoryCumulate] int
 )
 
 --計算這一天的標準產量
@@ -1316,6 +1324,7 @@ insert into @APSResult(
 	TtlQtyEMB,
 	PrintPcs,
 	StyleSeason,
+	StyleUkey,
 	AddDate,
 	EditDate
 )
@@ -1391,6 +1400,7 @@ select
 	apf.TtlQtyEMB,
 	apm.PrintPcs,
 	apm.StyleSeason,
+	apm.StyleUkey,
 	apm.AddDate,
 	apm.EditDate
 from @APSMain apm
@@ -1511,7 +1521,7 @@ select
 	,Category = isnull(o.Category,'')
 	,[CdCodeID] = st.CDCodeNew
 	,s.APSNo
-	,[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as float)
+	,[CPU] = cast(o.CPU * o.CPUFactor * isnull(dbo.GetOrderLocation_Rate(s.OrderID,s.ComboType),isnull(dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType),100)) / 100 as [decimal](38,13))
 	,[HourOutput] = iif(isnull(s.TotalSewingTime,0) = 0,0,(s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime)
 	,[OriWorkHour] = iif (isnull(s.Sewer,0) = 0 or isnull(s.TotalSewingTime,0)=0 or isnull(ScheduleEff.val,0)=0 , 0, sum(s.AlloQty) / ((s.Sewer * 3600.0 * ScheduleEff.val / 100) / s.TotalSewingTime))
 	,s.TotalSewingTime
@@ -1576,8 +1586,8 @@ declare  @Stmp  TABLE(
 	BuyerDelivery date null,
 	CdCodeID varchar(5) null,
 	APSNo int null,
-	StartHour float null,
-	EndHour float null,
+	StartHour [decimal](38,13) null,
+	EndHour [decimal](38,13) null,
 	CPU numeric(12,5) null,
 	OriWorkHour numeric(20, 7) null,
 	HourOutput numeric(20, 7) null,
@@ -1608,8 +1618,8 @@ select distinct
 	,s.BuyerDelivery
 	,s.CdCodeID
 	,s.APSNo
-	,StartHour = CAST(wkd.StartHour as float)
-	,EndHour = CAST(wkd.EndHour as float)
+	,StartHour = CAST(wkd.StartHour as [decimal](38,13))
+	,EndHour = CAST(wkd.EndHour as [decimal](38,13))
 	,s.CPU
 	,s.OriWorkHour
 	,s.HourOutput
@@ -1640,15 +1650,15 @@ declare  @tmpStmp_step1  TABLE(
 	BuyerDelivery date null,
 	CdCodeID varchar(5) null,
 	APSNo int null,
-	StartHour float null,
-	EndHour float null,
+	StartHour [decimal](38,13) null,
+	EndHour [decimal](38,13) null,
 	CPU numeric(12,5) null,
 	OriWorkHour numeric(20, 7) null,
 	HourOutput numeric(20, 7) null,
 	TotalSewingTime int null,
 	LearnCurveID int null,
 	LNCSERIALNumber int null,
-	WorkingTime float null,
+	WorkingTime [decimal](38,13) null,
 	OriWorkDateSer int null
 )
 
@@ -1775,7 +1785,7 @@ CREATE TABLE #tmpStmp_step2 (
 	BuyerDelivery date null,
 	CdCodeID varchar(5) null,
 	APSNo int null,
-	WorkingTime float null,
+	WorkingTime [decimal](38,13) null,
 	CPU numeric(12,5) null,
 	OriWorkHour numeric(20, 7) null,
 	HourOutput numeric(20, 7) null,
@@ -1869,7 +1879,7 @@ declare  @c  TABLE(
 	IsSMS int null,
 	BuyerDelivery date null,
 	APSNo int null,
-	WorkingTime float null,
+	WorkingTime [decimal](38,13) null,
 	CPU numeric(12,5) null,
 	TotalSewingTime int null,
 	LearnCurveID int null,
@@ -1922,7 +1932,7 @@ select  c.FactoryID
         ,[BuyerDelivery] = min(BuyerDelivery)
 	    ,StadOutPutQtyPerDay = sum(s.StdQ)
 	    ,PPH = sum(iif(isnull(c.TotalSewingTime,0)=0 or isnull(s.StdQ,0)=0,0,c.CPU / c.TotalSewingTime * s.StdQ))	
-        ,[IsSample] = max(IsSample)
+        ,[IsSample] = min(IsSample)
 	    ,c.IsRepeatStyle
 	    ,c.OriStyle
 from @c c 
@@ -2140,10 +2150,49 @@ outer apply (   select val = max(WorkDays)
             ) workDays
 where t.StyleID <> ''
 
+-- use Value Function [GetCheckContinusProduceDays]
+
+Create Table #tmpDistinct 
+(
+	[StyleUkey] [nvarchar](500) NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[SewingDay] date,
+	[Category] varchar(10)
+)
+insert into #tmpDistinct
+select distinct StyleUkey,SewingLineID,FactoryID,SewingDay, Category from @APSResult
+
+Create Table #tmpProduceDays
+(
+	[StyleUkey]  [nvarchar](500) NULL,
+	[SewingLineID] [varchar](5) NULL,
+	[FactoryID] [varchar](8) NULL,
+	[SewingDay] date,
+	[Category] varchar(8) null,
+	[SewingInlineCategory] varchar(50) null,
+)
+insert into #tmpProduceDays
+select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
+	, SewingInlineCategory = ''
+from #tmpDistinct t
+CROSS APPLY (
+SELECT 
+	ContinuousDays = Production.dbo.GetCheckContinusProduceDays(t.StyleUkey, t.SewingLineID, t.FactoryID,null, t.SewingDay)
+) ContinuousDaysCalc
+where t.StyleUkey not like '%,%'
+
+union all
+
+select StyleUkey, SewingLineID, FactoryID, SewingDay,t.Category
+	, SewingInlineCategory = ''
+from #tmpDistinct t
+where t.StyleUkey like '%,%'
+
 
 --R01 detail and BI
 -- print 'Final' + FORMAT(getdate(), 'hh:mm:ss') 
-select
+select distinct
 	apm.APSNo,
 	apm.SewingLineID,
 	apm.Sewer,
@@ -2223,9 +2272,35 @@ select
 							else 'New style' end,
 	apm.StyleSeason,
 	apm.AddDate,
-	apm.EditDate
+	apm.EditDate,
+    factory.LastDownloadAPSDate,
+	[SewingInlineCategory] = iif(InlineCategory.val = '00005',
+								 cast('' as varchar(50)),
+								 (select CONCAT(InlineCategory.val, '-' + SR.Description) from SewingReason sr where sr.ID = InlineCategory.val and sr.Type='IC'))
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
+left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category
+outer apply (select fac.LastDownloadAPSDate from factory fac where fac.id = (select f.KPICode from factory f where f.id = apm.FactoryID)) factory
+outer apply ( 
+			 select top 1 val = sod .InlineCategoryCumulate 
+			 from dbo.SewingOutput so 
+			 inner join dbo.SewingOutput_Detail sod on so.ID = sod.ID
+			 inner join dbo.Orders o on sod.OrderID = o.ID and o.StyleID in (Select Data From dbo.SplitString(apm.Style,','))
+			 where apm.SewingDay = so.OutputDate and apm.SewingLineID= so.SewingLineID and apm.FactoryID=so.FactoryID
+) as InlineCategoryCumulate
+outer apply ( 
+			 select case when apm.Category = 'S' then '00005'
+							when apm.StyleCount > 1 then '00001' 
+							else
+							case
+							when InlineCategoryCumulate.val > 29 THEN '00004'
+							when InlineCategoryCumulate.val > 14 THEN '00003'
+							when InlineCategoryCumulate.val > 3 THEN '00002'
+							else '00001'
+							END
+						end as val
+) as InlineCategory
+
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用
@@ -2263,4 +2338,6 @@ DROP TABLE
     ,#ConcatStyle
     ,#tmpTotalWT
     ,#tmpGantt
+	,#tmpProduceDays
+	,#tmpDistinct
 END

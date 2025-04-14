@@ -25,6 +25,7 @@ namespace Production.Daily
 {
     public partial class Main : Sci.Win.Tems.Input7
     {
+        private string Sftp_Path = @"/SFTP/FactoryFTP/PMS/NewPMS/";
         bool isAuto = false;
         DataRow mailTo;
         TransferPms transferPMS = new TransferPms();
@@ -36,9 +37,12 @@ namespace Production.Daily
         bool isSkipRarCheckDate = false;
         Int64 procedureID_Export = 250;
         Int64 procedureID_Import = 251;
-        private string ftpIP = string.Empty;
-        private string ftpID = string.Empty;
-        private string ftpPwd = string.Empty;
+
+        private string sftpIP = string.Empty;
+        private string sftpID = string.Empty;
+        private string sftpPwd = string.Empty;
+        private ushort sftpPort = 0;
+
         private string importDataPath = string.Empty;
         private string importDataFileName = string.Empty;
         private string exportDataPath = string.Empty;
@@ -73,9 +77,10 @@ namespace Production.Daily
             if (DBProxy.Current.DefaultModuleName.Contains("Dummy"))
             {
                 this.isDummy = true;
-                this.ftpIP = this.CurrentData["FtpIPDummy"].ToString();
-                this.ftpID = this.CurrentData["FtpIDDummy"].ToString();
-                this.ftpPwd = this.CurrentData["FtpPwdDummy"].ToString();
+                this.sftpIP = this.CurrentData["SFtpIPDummy"].ToString();
+                this.sftpPort = ushort.Parse(this.CurrentData["SFtpPortDummy"].ToString());
+                this.sftpID = this.CurrentData["SFtpIDDummy"].ToString();
+                this.sftpPwd = this.CurrentData["SFtpPwdDummy"].ToString();
                 this.importDataPath = this.CurrentData["ImportDataPathDummy"].ToString();
                 this.importDataFileName = this.CurrentData["ImportDataFileNameDummy"].ToString();
                 this.exportDataPath = this.CurrentData["ExportDataPathDummy"].ToString();
@@ -83,9 +88,10 @@ namespace Production.Daily
             else
             {
                 this.isDummy = false;
-                this.ftpIP = this.CurrentData["FtpIP"].ToString();
-                this.ftpID = this.CurrentData["FtpID"].ToString();
-                this.ftpPwd = this.CurrentData["FtpPwd"].ToString();
+                this.sftpIP = this.CurrentData["SFtpIP"].ToString();
+                this.sftpPort = ushort.Parse(this.CurrentData["SFtpPort"].ToString());
+                this.sftpID = this.CurrentData["SFtpID"].ToString();
+                this.sftpPwd = this.CurrentData["SFtpPwd"].ToString();
                 this.importDataPath = this.CurrentData["ImportDataPath"].ToString();
                 this.importDataFileName = this.CurrentData["ImportDataFileName"].ToString();
                 this.exportDataPath = this.CurrentData["ExportDataPath"].ToString();
@@ -201,8 +207,9 @@ namespace Production.Daily
 
         private void btnTestFTP_Click(object sender, EventArgs e)
         {
+            // MyUtility.FTP
             DualResult result;
-            result = transferPMS.Ftp_Ping(this.ftpIP, this.ftpID, this.ftpPwd);
+            result = transferPMS.SFtp_Ping(Sftp_Path, sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
 
             string rarFile = ConfigurationSettings.AppSettings["rarexefile"].ToString();
 
@@ -347,7 +354,7 @@ namespace Production.Daily
         {
             SqlConnection conn;
 
-            if (!Sci.SQL.GetConnection(out conn)) { return; }
+            if (!DBProxy.Current.OpenConnection("Production", out conn)) { return; }
             conn.InfoMessage += new SqlInfoMessageEventHandler(InfoMessage);
 
             DualResult result;
@@ -392,9 +399,6 @@ namespace Production.Daily
             String desc = "";
             String sqlCmd = "";
 
-            String ftpIP = this.ftpIP.Trim() + "/";
-            String ftpID = this.ftpID.Trim();
-            String ftpPwd = this.ftpPwd.Trim();
             string exangeDate = DateTime.Now.Hour >= 20 ? DateTime.Now.ToString("yyyy/MM/dd")
                                                         : DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd");
 
@@ -462,7 +466,8 @@ namespace Production.Daily
             result = new DualResult(true);
             for (int i = 0; i < 3; i++)
             {
-                result = transferPMS.Ftp_Ping(ftpIP, ftpID, ftpPwd);
+
+                result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
                 if (result)
                 {
                     break;
@@ -692,9 +697,10 @@ Region      Succeeded       Message
         {
             DualResult result;
             String sqlCmd = "";
-            String ftpIP = this.ftpIP.Trim();
-            String ftpID = this.ftpID.Trim();
-            String ftpPwd = this.ftpPwd.Trim();
+
+            //String ftpIP = this.ftpIP.Trim();
+            //String ftpID = this.ftpID.Trim();
+            //String ftpPwd = this.ftpPwd.Trim();
 
             if (this.chk_export.Checked == false)
             {
@@ -725,11 +731,15 @@ Region      Succeeded       Message
             }
             #endregion
 
+
+
             #region 檢查FTP檔案的日期是否正確
             bool fileExists = true; // 用來判斷檔案是否存在 importRegion.RarName
             if (isAuto)
             {
-                if (!transferPMS.CheckRar_CreateDate(importRegion, importRegion.RarName, isSkipRarCheckDate))
+                DualResult result1;
+                result1 = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+                if (!transferPMS.CheckRar_CreateDate(importRegion, Sftp_Path + importRegion.RarName, isSkipRarCheckDate))
                 {
                     fileExists = false;
                     String subject = "PMS transfer data (New) ERROR";
@@ -769,6 +779,7 @@ Region      Succeeded       Message
             {
                 if (isAuto)
                 {
+                    result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
                     string UnRARpath = Path.Combine(importRegion.DirName);
                     string targetRar = Path.Combine(UnRARpath, importRegion.RarName);
                     //自動的話, 去FTP下載
@@ -779,7 +790,15 @@ Region      Succeeded       Message
                     #region 2. 從FTP下載檔案
                     for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
                     {
-                        if (this.autoDownloadFtpFile(string.Format("ftp://{0}/{1}", Sci.Env.Cfg.FtpServerIP, importRegion.RarName), targetRar))
+
+                        //string ftp = "ftp://" + Sci.Env.Cfg.FtpServerIP;
+
+                        //if (0 != Sci.Env.Cfg.FtpServerPort)
+                        //{
+                        //    ftp = ftp + ":" + Sci.Env.Cfg.FtpServerPort;
+                        //}
+
+                        if (transferPMS.SFTP_Download(this.Sftp_Path + this.importDataFileName, targetRar))
                         {
                             break;
                         }
@@ -848,10 +867,23 @@ Region      Succeeded       Message
 
 
 
-            if (!transferPMS.Export_Pms_To_Trade(ftpIP, ftpID, ftpPwd, _fromPath, exportRegion.DBName))
+            #region Export_Pms_To_Trade(包含上傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
+            for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
             {
-                return new DualResult(false, "Export failed!");
+                if (!transferPMS.Export_Pms_To_Trade(Sftp_Path, sftpIP, sftpID, sftpPwd, _fromPath, exportRegion.DBName, sftpPort))
+                {
+                    if (i == Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]))
+                    {
+                        return new DualResult(false, "Export failed!");
+                    }
+                }
+                else
+                {
+                    break;
+                }
+                Thread.Sleep(2500);
             }
+            #endregion
             return Ict.Result.True;
         }
         #endregion
@@ -860,10 +892,6 @@ Region      Succeeded       Message
         private DualResult DailyImport(TransRegion region)
         {
             DualResult result;
-            String ftpIP = this.ftpIP.Trim();
-            String ftpID = this.ftpID.Trim();
-            String ftpPwd = this.ftpPwd.Trim();
-
             if (this.chk_import.Checked == false)
             {
                 return Ict.Result.True;
@@ -977,13 +1005,13 @@ Where TransRegion.Is_Export = 0";
             #region Region檢核
 
             string chkSqlcmd = @"
-select 1 from Production.dbo.System s
-where   exists(
-	            select 1 from Trade_To_PMS.dbo.TransRegion t
-	            where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
-            ) or
-        s.ImportDataFileName = 'wt_PMS.rar'
-;";
+            select 1 from Production.dbo.System s
+            where   exists(
+	                        select 1 from Trade_To_PMS.dbo.TransRegion t
+	                        where RTRIM(s.ImportDataFileName) = RTRIM(t.[FileName])
+                        ) or
+                    s.ImportDataFileName = 'wt_PMS.rar'
+            ;";
             if (!MyUtility.Check.Seek(chkSqlcmd))
             {
                 String subject = "PMS Trans Region Error";
@@ -1015,15 +1043,26 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
 
             #endregion
 
-            if (!transferPMS.Import_Trade_To_Pms(ftpIP, ftpID, ftpPwd))
+            #region Import_Trade_To_Pms(包含下傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
+            int retryTimes = Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]);
+            int attempts = 0;
+            bool success;
+
+            do
+            {
+                success = transferPMS.Import_Trade_To_Pms(Sftp_Path, sftpIP, sftpID, sftpPwd);
+                if (success) break;
+
+                attempts++;
+                Thread.Sleep(2500);
+            }
+            while (attempts < retryTimes);
+
+            if (!success)
             {
                 return new DualResult(false, "Update failed!");
-                // String subject = "PMS transfer data (New) ERROR";
-                // String desc = "Wrong the Update failed!!,Pls contact with Taipei.";
-                // SendMail(subject, desc);
-                // this.CallJobLogApi(subject, desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
-                // return Ict.Result.F("Wrong the Update failed!!,Pls contact with Taipei.");
             }
+            #endregion
             return Ict.Result.True;
         }
         #endregion
@@ -1036,9 +1075,9 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
         private bool IsFtpFileExist(String fileName)
         {
             bool isExists = false;
-            String ftpIP = @"ftp://" + this.ftpIP.Trim() + @"/";
-            String ftpID = this.ftpID.Trim();
-            String ftpPwd = this.ftpPwd.Trim();
+            String ftpIP = @"sftp://" + this.sftpIP.Trim() + @"/";
+            String ftpID = this.sftpID.Trim();
+            String ftpPwd = this.sftpPwd.Trim();
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpIP + fileName);
             request.Credentials = new NetworkCredential(ftpID, ftpPwd);
             request.Method = WebRequestMethods.Ftp.GetFileSize;
@@ -1421,5 +1460,49 @@ end
             DBProxy.Current.ExecuteByConn(conn, sqlCmd);
         }
         #endregion
+
+        private void btnFileCopy_Click(object sender, EventArgs e)
+        {
+            DualResult result;
+            result = transferPMS.SFtp_Ping(Sftp_Path, this.sftpIP, this.sftpPort, this.sftpID, this.sftpPwd);
+
+            TransRegion importRegion;
+            DualResult result1 = GetTransRegion("I", this.importDataFileName, this.importDataPath, this.importDataFileName, out importRegion);
+            string targetRar = Path.Combine(this.importDataPath, this.importDataFileName);
+            #region 1. 清空已存在的 targetDir 下的檔案
+            var cleanFiles = Directory.GetFiles(this.importDataPath);
+            cleanFiles.Select(fileName => transferPMS.Try_DeleteFile(fileName, importRegion)).ToList().All(deleted => deleted);
+            #endregion
+            #region 2. 從FTP下載檔案
+            for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
+            {
+                DualResult dual = MyUtility.SFTP.SFTP_Download(Sftp_Path + this.importDataFileName, targetRar);  // transferPMS.SFTP_Download();
+                if (!dual)
+                {
+                    MyUtility.Msg.WarningBox(dual.ToString());
+                    break;
+                }
+            }
+            #endregion
+            #region 3. 解壓縮
+            DualResult unRARResult = MyUtility.File.UnRARFile(targetRar, true, this.importDataPath);//waitRarFinished: true);
+            if (unRARResult)
+            {
+                MyUtility.Msg.WarningBox(unRARResult.ToString());
+                //  importRegion.Logs.Add(new KeyValuePair<DateTime?, DualResult>(DateTime.Now, result));
+            }
+            #endregion
+        }
+
+        private void btnRARCheck_Click(object sender, EventArgs e)
+        {
+            TransRegion importRegion;
+            DualResult result1 = GetTransRegion("I", this.importDataFileName, this.importDataPath, this.importDataFileName, out importRegion);
+            if (!transferPMS.CheckRar_CreateDate(importRegion, Sftp_Path + importRegion.RarName, false))
+            {
+                MyUtility.Msg.WarningBox(importRegion.Logs[0].ToString() + Environment.NewLine + "importRegion.RarName :" + importRegion.RarName + Environment.NewLine + "this.importDataFileName :" + this.importDataFileName + Environment.NewLine + "this.importDataPath:" + this.importDataPath);
+                return;
+            }
+        }
     }
 }

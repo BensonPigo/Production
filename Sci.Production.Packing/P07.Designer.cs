@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel1 = new Sci.Win.UI.Panel();
             this.panel2 = new Sci.Win.UI.Panel();
             this.panel3 = new Sci.Win.UI.Panel();
             this.radioGroup2 = new Sci.Win.UI.RadioGroup();
+            this.btnPrint = new Sci.Win.UI.Button();
             this.btnToExcelCombo = new Sci.Win.UI.Button();
-            this.btnToExcel = new Sci.Win.UI.Button();
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.radioBarcodePrintOther = new Sci.Win.UI.RadioButton();
             this.radioFormB = new Sci.Win.UI.RadioButton();
             this.radioFormA = new Sci.Win.UI.RadioButton();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
@@ -96,14 +96,24 @@
             // 
             // radioGroup2
             // 
+            this.radioGroup2.Controls.Add(this.btnPrint);
             this.radioGroup2.Controls.Add(this.btnToExcelCombo);
-            this.radioGroup2.Controls.Add(this.btnToExcel);
             this.radioGroup2.Controls.Add(this.radioPanel1);
             this.radioGroup2.Location = new System.Drawing.Point(526, 4);
             this.radioGroup2.Name = "radioGroup2";
             this.radioGroup2.Size = new System.Drawing.Size(357, 191);
             this.radioGroup2.TabIndex = 1;
             this.radioGroup2.TabStop = false;
+            // 
+            // btnPrint
+            // 
+            this.btnPrint.Location = new System.Drawing.Point(272, 15);
+            this.btnPrint.Name = "btnPrint";
+            this.btnPrint.Size = new System.Drawing.Size(80, 30);
+            this.btnPrint.TabIndex = 1;
+            this.btnPrint.Text = "Print";
+            this.btnPrint.UseVisualStyleBackColor = true;
+            this.btnPrint.Click += new System.EventHandler(this.BtnPrint_Click);
             // 
             // btnToExcelCombo
             // 
@@ -115,24 +125,28 @@
             this.btnToExcelCombo.UseVisualStyleBackColor = true;
             this.btnToExcelCombo.Click += new System.EventHandler(this.BtnToExcelCombo_Click);
             // 
-            // btnToExcel
-            // 
-            this.btnToExcel.Location = new System.Drawing.Point(272, 15);
-            this.btnToExcel.Name = "btnToExcel";
-            this.btnToExcel.Size = new System.Drawing.Size(80, 30);
-            this.btnToExcel.TabIndex = 1;
-            this.btnToExcel.Text = "To Excel";
-            this.btnToExcel.UseVisualStyleBackColor = true;
-            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
-            // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.radioBarcodePrintOther);
             this.radioPanel1.Controls.Add(this.radioFormB);
             this.radioPanel1.Controls.Add(this.radioFormA);
             this.radioPanel1.Location = new System.Drawing.Point(7, 15);
             this.radioPanel1.Name = "radioPanel1";
-            this.radioPanel1.Size = new System.Drawing.Size(255, 63);
+            this.radioPanel1.Size = new System.Drawing.Size(255, 95);
             this.radioPanel1.TabIndex = 0;
+            // 
+            // radioBarcodePrintOther
+            // 
+            this.radioBarcodePrintOther.AutoSize = true;
+            this.radioBarcodePrintOther.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioBarcodePrintOther.Location = new System.Drawing.Point(4, 63);
+            this.radioBarcodePrintOther.Name = "radioBarcodePrintOther";
+            this.radioBarcodePrintOther.Size = new System.Drawing.Size(251, 21);
+            this.radioBarcodePrintOther.TabIndex = 2;
+            this.radioBarcodePrintOther.TabStop = true;
+            this.radioBarcodePrintOther.Text = "Continuous Print Barcode(5×2.5cm)";
+            this.radioBarcodePrintOther.UseVisualStyleBackColor = true;
+            this.radioBarcodePrintOther.CheckedChanged += new System.EventHandler(this.RadioBarcodePrintOther_CheckedChanged);
             // 
             // radioFormB
             // 
@@ -233,6 +247,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(131, 162);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 7;
@@ -360,14 +375,6 @@
             this.gridDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.gridDetail.Location = new System.Drawing.Point(0, 0);
             this.gridDetail.Name = "gridDetail";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.gridDetail.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.gridDetail.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.gridDetail.RowTemplate.Height = 24;
@@ -387,6 +394,7 @@
             this.Controls.Add(this.panel1);
             this.EditMode = true;
             this.Name = "P07";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P07. Batch Print Packing List Report (Bulk)";
             this.Controls.SetChildIndex(this.panel1, 0);
             this.Controls.SetChildIndex(this.panel2, 0);
@@ -422,7 +430,6 @@
         private Win.UI.Grid gridDetail;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
         private Win.UI.RadioGroup radioGroup2;
-        private Win.UI.Button btnToExcel;
         private Win.UI.RadioPanel radioPanel1;
         private Win.UI.RadioButton radioFormB;
         private Win.UI.RadioButton radioFormA;
@@ -437,5 +444,7 @@
         private Win.UI.TextBox txtSP_s;
         private Win.UI.Label label2;
         private Win.UI.Button btnToExcelCombo;
+        private Win.UI.RadioButton radioBarcodePrintOther;
+        private Win.UI.Button btnPrint;
     }
 }

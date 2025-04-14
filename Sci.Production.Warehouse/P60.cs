@@ -61,6 +61,10 @@ namespace Sci.Production.Warehouse
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["IssueDate"] = DateTime.Now;
+            this.col_sel.ReadOnly = false;
+            this.col_qty.IsEditingReadOnly = false;
+            this.col_Loc.IsEditingReadOnly = false;
+            this.col_Remark.IsEditingReadOnly = false;
         }
 
         // delete前檢查
@@ -78,6 +82,23 @@ namespace Sci.Production.Warehouse
             return base.ClickDeleteBefore();
         }
 
+        /// <inheritdoc/>
+        protected override bool ClickEdit()
+        {
+            if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
+            {
+                MyUtility.Msg.InfoBox("Status is CONFIRMED, can't Edit !!");
+                return false;
+            }
+
+            this.col_sel.ReadOnly = false;
+            this.col_qty.IsEditingReadOnly = false;
+            this.col_Loc.IsEditingReadOnly = false;
+            this.col_Remark.IsEditingReadOnly = false;
+
+            return base.ClickEdit();
+        }
+
         // edit前檢查
 
         /// <inheritdoc/>
@@ -92,6 +113,7 @@ namespace Sci.Production.Warehouse
                 this.btnDelete.Enabled = false;
                 this.btnImport.Enabled = false;
                 this.gridicon.Enabled = false;
+                this.detailgrid.IsEditingReadOnly = false;
             }
         }
 
@@ -150,6 +172,12 @@ namespace Sci.Production.Warehouse
             return base.ClickSaveBefore();
         }
 
+        protected override void ClickSaveAfter()
+        {
+            this.detailgrid.IsEditingReadOnly = true;
+            base.ClickSaveAfter();
+        }
+
         // grid 加工填值
 
         /// <inheritdoc/>
@@ -167,10 +195,12 @@ namespace Sci.Production.Warehouse
             if (this.CurrentMaintain["Status"].Equals("Confirmed"))
             {
                 this.detailgrid.IsEditingReadOnly = true;
+                this.toolbar.cmdEdit.Enabled = false;
             }
             else
             {
                 this.detailgrid.IsEditingReadOnly = false;
+                this.toolbar.cmdEdit.Enabled = true;
             }
             #region Status Label
 
@@ -183,7 +213,10 @@ where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
             #endregion Status Label
         }
 
+        private Ict.Win.UI.DataGridViewCheckBoxColumn col_sel;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_qty;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Loc;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_Remark;
 
         // Detail Grid 設定
 
@@ -279,6 +312,7 @@ where	Junk != 1
             #endregion
             #region 欄位設定
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .CheckBox("sel", header: string.Empty, width: Widths.AnsiChars(3), trueValue: 1, falseValue: 0).Get(out this.col_sel)
             .Text("localpoid", header: "Local PO", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("ORDERid", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("refno", header: "Refno", width: Widths.AnsiChars(12), iseditingreadonly: true)
@@ -288,14 +322,18 @@ where	Junk != 1
             .Text("unitId", header: "Unit", iseditingreadonly: true, width: Widths.AnsiChars(5))
             .Numeric("onRoad", header: "On Road", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, iseditingreadonly: true)
             .Numeric("qty", header: "Qty", width: Widths.AnsiChars(6), decimal_places: 2, integer_places: 6, settings: ns).Get(out this.col_qty)
-            .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet)
-            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20))
+            .Text("location", header: "Location", width: Widths.AnsiChars(20), settings: locationSet, iseditingreadonly: false).Get(out this.col_Loc)
+            .Text("Remark", header: "Remark", width: Widths.AnsiChars(20), iseditingreadonly: false).Get(out this.col_Remark)
             ;
             #endregion 欄位設定
 
             this.detailgrid.Columns["qty"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.detailgrid.Columns["location"].DefaultCellStyle.BackColor = Color.Pink;
+            this.col_sel.ReadOnly = true;
+            this.col_qty.IsEditingReadOnly = true;
+            this.col_Loc.IsEditingReadOnly = true;
+            this.col_Remark.IsEditingReadOnly = true;
             this.ColumnColorChange();
         }
 
@@ -517,6 +555,15 @@ when not matched then
             transactionscope = null;
         }
 
+        protected override void ClickUndo()
+        {
+            this.col_sel.ReadOnly = true;
+            this.col_qty.IsEditingReadOnly = true;
+            this.col_Loc.IsEditingReadOnly = true;
+            this.col_Remark.IsEditingReadOnly = true;
+            base.ClickUndo();
+        }
+
         // Unconfirm
 
         /// <inheritdoc/>
@@ -701,7 +748,8 @@ where exists (
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             this.DetailSelectCommand = string.Format(
                 @"
-select  a.Id
+select CAST(0 AS bit) as sel
+       , a.Id
        ,a.OrderId
        ,Rtrim(a.Refno) Refno
        ,a.ThreadColorID
@@ -880,6 +928,41 @@ where l.id = @ID";
             frm.Show();
 
             return true;
+        }
+
+        private void BtnLocation_Click(object sender, EventArgs e)
+        {
+            bool allFalse = true;
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (allFalse == true && dr["sel"] != DBNull.Value && Convert.ToBoolean(dr["sel"]) == true)
+                {
+                    allFalse = false;
+                }
+            }
+
+            if (allFalse)
+            {
+                MyUtility.Msg.InfoBox("Please select the item first!!");
+                return;
+            }
+
+            Win.Tools.SelectItem2 item = Prgs.SelectLocation("B", this.CurrentDetailData["location"].ToString());
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["sel"] != DBNull.Value && Convert.ToBoolean(dr["sel"]) == true)
+                {
+                    dr["location"] = item.GetSelectedString();
+                }
+            }
         }
     }
 }

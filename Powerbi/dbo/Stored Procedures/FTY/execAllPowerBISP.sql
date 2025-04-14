@@ -41,44 +41,6 @@ DECLARE @ErrDesc NVARCHAR(4000) = '';
 
 DECLARE @Stime datetime, @Etime datetime
 
---02) P_Import_EfficiencyBI 
-BEGIN TRY
-	set @Stime = getdate()
-	set @StartDate = CAST(DATEADD(day,-60, GETDATE()) AS date)
-	set @EndDate   = CAST(GETDATE() AS date)
-	EXEC P_Import_EfficiencyBI @StartDate	,@EndDate
-	set @Etime = getdate()
-END TRY
-BEGIN CATCH
-SET @ErrorMessage = 
-'
-[2-Production Efficiency]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-	SET @ErrorStatus = 0
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) +'
-[2-Production Efficiency] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_Import_EfficiencyBI',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
 --05) P_Import_LoadingProductionOutput
 BEGIN TRY
 	declare @P_Import_LoadingProductionOutput_UseYear varchar(4) = (select YEAR(GETDATE()))
@@ -452,47 +414,6 @@ SET @ErrorMessage = ''
 -- Write in P_TransLog
 	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
 	values('P_Import_QA_R08_Detail',@ErrDesc,@Stime,@Etime,@TransCode)
-
-	SET @ErrDesc = ''
-
-/****************************************************************************************************************************/
-/***********************************P_ImportCuttingBCS****************************************************************/
-BEGIN TRY
-	set @Stime = getdate()  
-	execute [dbo].[P_ImportCuttingBCS]
-	set @Etime = getdate()
-END TRY
-
-BEGIN CATCH
-
-SET @ErrorMessage = 
-'
-[26-P_ImportCuttingBCS]' + CHAR(13) +
-',錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) + CHAR(13) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE()) + CHAR(13) +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrDesc = '錯誤代碼: ' + CONVERT(VARCHAR, ERROR_NUMBER()) +
-',錯誤行數: ' + CONVERT(VARCHAR, ERROR_LINE())  +
-',錯誤訊息: ' + ERROR_MESSAGE()
-
-SET @ErrorStatus = 0
-
-END CATCH;
-IF (@ErrorMessage IS NULL or @ErrorMessage='')
-BEGIN 
-	set @desc += CHAR(13) + '
-[26-P_ImportCuttingBCS] is completed' + ' Time:' + FORMAT(@Stime, 'yyyy/MM/dd HH:mm:ss') + ' - ' + FORMAT(@Etime, 'yyyy/MM/dd HH:mm:ss')
-END
-ELSE
-BEGIN
-	set @desc += CHAR(13) + @ErrorMessage
-END
-SET @ErrorMessage = ''
-
--- Write in P_TransLog
-	insert into P_TransLog(functionName,Description,StartTime,EndTime,TransCode) 
-	values('P_ImportCuttingBCS',@ErrDesc,@Stime,@Etime,@TransCode)
 
 	SET @ErrDesc = ''
 

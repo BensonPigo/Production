@@ -89,7 +89,7 @@ and g.ShipModeID like '%P%'
 
 
 select se.Description,a.Qty,se.UnitID,a.CurrencyID,a.Price
-, Amount = a.Qty * a.Price, a.Rate, a.PayCurrency, PayAmount= a.Amount
+, Amount = cast((a.Qty * a.Price) AS decimal(18, 2)), a.Rate, a.PayCurrency, PayAmount= a.Amount
 , a.CW
 into #table1
 from (
@@ -133,10 +133,10 @@ outer apply (
 	GROUP by t2.value
 )gw
 outer apply(
-	select total = round(sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate),2)
+	select total = sum(cast(iif(sap.APPExchageRate = 0, 0, (se.AmtFty + se.AmtOther) / sap.APPExchageRate) AS decimal(18, 2)))
 	from ShareExpense_APP se
 	left join ShippingAP sap on sap.ID = se.ShippingAPID
-	where se.AirPPID = ap.id
+	where se.AirPPID = ap.id and se.Junk = 0
 )af
 where exists(
 	select 1 from #tmp
@@ -244,7 +244,7 @@ declare @CurrencyID varchar(4)
 Select @CurrencyID = CurrencyID From System
 select se.Description,a.Qty,se.UnitID,'USD' as CurrencyID
 , Price = iif(a.CurrencyID != 'USD', a.Price / a.APPExchageRate, a.Price) 
-, Amount = Round(iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / a.APPExchageRate,a.Qty * a.Price),2)
+, Amount = Cast(iif(a.CurrencyID != 'USD', (a.Qty * a.Price) / a.APPExchageRate,a.Qty * a.Price) AS decimal(18, 2))
 , Rate = iif(a.CurrencyID != 'USD', a.APPExchageRate, a.Rate)
 , a.PayCurrency
 , PayAmount = iif(a.PayCurrency != @CurrencyID, a.Amount * a.APPExchageRate, a.Amount)
@@ -293,10 +293,10 @@ Drop Table #table1
             }
 
             string sqlShareExpenseAPP = $@"
-select se.AirPPID,total = sum((se.AmtFty+se.AmtOther)/sap.APPExchageRate)
+select se.AirPPID,total = sum(cast(iif(sap.APPExchageRate = 0, 0, (se.AmtFty + se.AmtOther) / sap.APPExchageRate) AS decimal(18, 2)))
 	from ShareExpense_APP se
 	left join ShippingAP sap on sap.ID = se.ShippingAPID
-	where se.AirPPID = '{this.masterData["ID"]}'
+	where se.AirPPID = '{this.masterData["ID"]}' and se.Junk = 0
     group by se.AirPPID
 ";
             System.Data.DataTable dtShareExpenseAPP;

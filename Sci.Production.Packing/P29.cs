@@ -7,6 +7,7 @@ using Ict;
 using System.Runtime.InteropServices;
 using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Data;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Packing
 {
@@ -52,6 +53,7 @@ namespace Sci.Production.Packing
                 .Text("AuditBy", header: "Audit By", iseditingreadonly: true)
                 .Text("AuditTime", header: "Audit Time", iseditingreadonly: true)
                 .Date("PassDate", header: "Pass Date", iseditingreadonly: true)
+                .Text("HoldRemark", header: "Hold Remark", iseditingreadonly: true)
                 .Text("ReturntoProduction", header: "Return to Production", iseditingreadonly: false)
                 .Text("Remark", header: "Return to Production Remarks", iseditingreadonly: false)
                 .Text("SewingLineID", header: "Line#", iseditingreadonly: false);
@@ -60,6 +62,7 @@ namespace Sci.Production.Packing
             #region GridDetail Setting
             this.Helper.Controls.Grid.Generator(this.gridDetail)
                 .Text("Description", header: "Error Description", iseditingreadonly: true)
+                .Text("LocalDescription", header: "Local Description", iseditingreadonly: true)
                 .Numeric("Qty", header: "Qty", iseditingreadonly: true)
                 ;
             #endregion
@@ -142,6 +145,7 @@ select [PackingAuditDate] = c.PackingAuditDate
 	,[Qty] = pd_QtyPerCTN.Qty
 	,[Discrepancy] = c.Qty
     ,[Desc] = isnull(pd.val,'')
+    ,[LocalDesc] = isnull(pd2.val,'')
 	,[SP] = c.OrderID
 	,[PO] = o.CustPONo
 	,[Style] = o.StyleID
@@ -157,6 +161,7 @@ select [PackingAuditDate] = c.PackingAuditDate
     ,c.Remark
     ,[SewingLineID] = sw_Line.val
     ,c.ID
+    ,c.HoldRemark
 into #tmp
 from CTNPackingAudit c WITH(NOLOCK)
 inner join Orders o WITH(NOLOCK) on c.OrderID = o.ID
@@ -190,6 +195,19 @@ outer apply (
 ) PD
 outer apply (
 	SELECT val = Stuff((
+		select distinct concat('/',pr.LocalDescription )
+		from PackingList_Detail pd
+		left join CTNPackingAudit_Detail cd on c.ID = cd.ID
+		left join PackingReason pr on cd.PackingReasonID = pr.ID
+		where pr.Type = 'PA'
+		and pd.id = c.PackingListID
+		and pd.CTNStartNo = c.CTNStartNo
+		and pd.Orderid = c.Orderid
+	FOR XML PATH(''))
+	,1,1,'')
+) PD2
+outer apply (
+	SELECT val = Stuff((
 		select distinct concat('/', SewingLineID) 
 		from SewingSchedule s WITH(NOLOCK)
 		where s.OrderID = c.OrderID
@@ -205,7 +223,8 @@ select  [PackingAuditDate]
 	,[CTN] 
 	,[Qty] 
 	,[Discrepancy]
-    ,[Desc] 
+    ,[Desc]
+    ,[LocalDesc]
 	,[SP] 
 	,[PO] 
 	,[Style] 
@@ -216,22 +235,17 @@ select  [PackingAuditDate]
 	,[Barcode]
 	,[AuditBy]
 	,[AuditTime] = Format(t.AddDate, 'yyyy/MM/dd HH:mm:ss')
-	,[PassDate] = PassDate.AddDate
+	,[PassDate] = iif(t.Status = 'Pass', t.AddDate, null)
+    ,[HoldRemark]
     ,Status
     ,[ReturntoProduction] 
     ,Remark
     ,[SewingLineID]
     ,t.ID
 from #tmp t
-outer apply(
-	select AddDate = min(s.AddDate)
-	from CTNPackingAudit s
-	where s.Status='Pass' 
-	and s.AddDate > t.AddDate
-)PassDate
 order by PackingListID, CTN,PackingAuditDate
 
-select cd.ID,cd.PackingReasonID,pr.Description,cd.Qty 
+select cd.ID,cd.PackingReasonID,pr.Description,pr.LocalDescription,cd.Qty 
 from CTNPackingAudit_Detail cd
 inner join #tmp t on t.ID = cd.ID
 left join PackingReason pr on cd.PackingReasonID = pr.ID and pr.Type = 'PA'
@@ -309,11 +323,10 @@ drop table #mesPass1
                 return;
             }
 
-            MyUtility.Excel.CopyToXls(this.dtMaster, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
-            Excel.Worksheet objSheets = objApp.ActiveWorkbook.Worksheets[1];
+            DataTable dtPrint = this.dtMaster.AsEnumerable().TryCopyToDataTable(this.dtMaster);
+            dtPrint.Columns.Remove("ID");
+            MyUtility.Excel.CopyToXls(dtPrint, string.Empty, "Packing_P29.xltx", 2, false, null, objApp); // 將datatable copy to excel
 
-            // 移除最後一欄ID
-            objSheets.Columns["W"].Delete();
             #region Save & Show Excel
             string strExcelName = Class.MicrosoftFile.GetName("Packing_P29");
             Microsoft.Office.Interop.Excel.Workbook workbook = objApp.ActiveWorkbook;

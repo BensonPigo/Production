@@ -1,5 +1,4 @@
 ﻿using Sci.Data;
-using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -130,7 +129,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 };
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
                 };
             }
 

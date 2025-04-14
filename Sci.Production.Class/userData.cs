@@ -43,6 +43,7 @@ namespace Sci.Production.Class
                     this.displayBox2.Text = (dr["name"] != null) ? dr["name"].ToString() : string.Empty;
                     this.displayBox3.Text = (dr["ext"] != null) ? dr["ext"].ToString() : string.Empty;
                     this.displayBox4.Text = (dr["mail"] != null) ? dr["mail"].ToString() : string.Empty;
+                    this.displayBox5.Text = (dr["Supervisor"] != null) ? dr["Supervisor"].ToString() : string.Empty;
                 }
                 else
                 {

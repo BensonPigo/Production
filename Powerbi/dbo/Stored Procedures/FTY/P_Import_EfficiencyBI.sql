@@ -2,6 +2,9 @@
 -- Create date: 2020/03/20
 -- Description:	Data Query Logic by PMS.Sewing R04, Import Data to P_SewingDailyOutput
 -- =============================================
+USE POWERBIReportData
+GO
+
 CREATE PROCEDURE [dbo].[P_Import_EfficiencyBI]
 	@StartDate date,
 	@EndDate date
@@ -62,11 +65,23 @@ select s.id
     ,s.SubconOutFty
     ,s.SubConOutContractNumber
     ,o.SubconInSisterFty
-    ,[SewingReasonDesc]=isnull(sr.SewingReasonDesc,'')
+    ,[SewingReasonDesc]=cast('' as nvarchar(1000))
     ,o.SciDelivery
 	,[LockStatus] = CASE WHEN s.Status = 'Locked' THEN 'Monthly Lock' 
 						 WHEN s.Status = 'Sent' THEN 'Daily Lock' 
 						 ELSE '' END
+	,[Cancel] = iif(o.Junk = 1, 'Y', '')
+	,[Remark] = cast('' as varchar(max))
+	,[SPFactory] = o.FactoryID
+	,[NonRevenue] = iif(o.NonRevenue = 1, 'Y', 'N')
+	,[InlineCategoryID] = InlineCategoryID.val
+	,[Inline_Category] = cast('' as nvarchar(65))
+	,[Low_output_Reason] = cast('' as nvarchar(65))
+	,[New_Style_Repeat_style] = cast('' as varchar(20))
+	,o.StyleUkey
+	,ArtworkType=cast('' as varchar(100))
+	,SewingReasonIDForTypeIC = InlineCategoryID.val
+	,s.SewingReasonIDForTypeLO
 into #tmpSewingDetail
 from Production.dbo.System WITH (NOLOCK),Production.dbo.SewingOutput s WITH (NOLOCK) 
 inner join Production.dbo.SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -75,6 +90,34 @@ left join Production.dbo.Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join Production.dbo.Factory f WITH (NOLOCK) on o.FactoryID = f.id
 left join Production.dbo.OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join Production.dbo.MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
+outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
+outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
+outer apply(
+	select val =
+	CASE  WHEN o.Category = 'S' THEN '00005'
+		  ELSE
+            CASE
+                WHEN sd.InlineCategoryCumulate > 29 THEN '00004'
+                WHEN sd.InlineCategoryCumulate > 14 THEN '00003'
+                WHEN sd.InlineCategoryCumulate > 3 THEN '00002'
+                ELSE '00001'
+            END
+	END
+)InlineCategoryID
+where 1=1 
+--排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
+and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
+and (s.OutputDate between @SDate and  @EDate
+	OR s.OutputDate in (Select OutputDate From Production.dbo.SewingOutput s2 with(nolock) where s2.EditDate >= @StartDate and s2.EditDate < (DateAdd(day, 1,@EndDate))))
+and f.Type != 'S'
+
+update s
+set [SewingReasonDesc]=isnull(sr.SewingReasonDesc,''),
+	[Remark] = isnull(ssd.SewingOutputRemark,''),
+	[Inline_Category] = iif(s.SewingReasonIDForTypeIC = '00005', (select CONCAT(s.InlineCategoryID, '-' + SR.Description) from Production.dbo.SewingReason sr where sr.ID = s.InlineCategoryID and sr.Type='IC') , isnull(srICReason.Inline_Category, '')),
+	[Low_output_Reason]=isnull(srLOReason.Low_output_Reason, ''),
+	[ArtworkType]=isnull(apd.ArtworkType, '')
+from #tmpSewingDetail s
 outer apply
 (
 	select [SewingReasonDesc]=stuff((
@@ -83,19 +126,66 @@ outer apply
 		inner join Production.dbo.SewingOutput_Detail sd2 WITH (NOLOCK) on sd2.SewingReasonID=sr.ID
 		where sr.Type='SO' 
 		and sd2.id = s.id
-		and sd2.OrderId = sd.OrderId
+		and sd2.OrderId = s.OrderId
 		for xml path('')
 	),1,1,'')
 )sr
-outer apply( select BrandID from Production.dbo.orders o1 where o.CustPONo = o1.id) Order2
-outer apply( select top 1 BrandID from Production.dbo.Style where id = o.StyleID and SeasonID = o.SeasonID and BrandID != 'SUBCON-I') StyleBrand
-where 1=1 
---排除non sister的資料o.LocalOrder = 1 and o.SubconInSisterFty = 0
-and((o.LocalOrder <> 1 and o.SubconInType not in (1, 2)) or (o.LocalOrder = 1 and o.SubconInType <> 0))
-and (s.OutputDate between @SDate and  @EDate
-	OR cast(s.EditDate as date) between @SDate and @EDate )
-and f.Type != 'S'
+outer apply
+(
+	select [SewingOutputRemark]=stuff((
+		select concat(',',ssd.Remark)
+		from Production.dbo.SewingOutput_Detail ssd WITH (NOLOCK) 
+		where ssd.ID = s.ID
+		and ssd.OrderId = s.OrderId
+		and isnull(ssd.Remark ,'') <> ''
+		for xml path('')
+	),1,1,'')
+)ssd
+outer apply
+(
+	select Inline_Category=CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description)
+	from Production.dbo.SewingReason sr
+	where sr.ID = s.SewingReasonIDForTypeIC
+	and sr.Type='IC'
+) srICReason
+outer apply
+(
+	select Low_output_Reason=CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description)
+	from Production.dbo.SewingReason sr
+	where sr.ID = s.SewingReasonIDForTypeLO and
+	sr.Type='LO'
+) srLOReason
+outer apply
+(
+	select ArtworkType=stuff((
+		select concat(',','',ap.ArtworkTypeID)
+		from (
+			select distinct ap.ArtworkTypeID
+			from Production.dbo.ArtworkAP_Detail apd WITH (NOLOCK)
+			inner join Production.dbo.ArtworkAP ap WITH (NOLOCK) on apd.ID=ap.Id
+			where s.OrderID = apd.OrderID
+		) ap
+		for xml path('')
+	),1,1,'')
+)apd
 
+SELECT	FactoryID,
+		OutputDate,
+		SewinglineID,
+		Team,
+		StyleUkey,
+		[NewStyleRepeatStyle] = Production.dbo.IsRepeatStyleBySewingOutput(FactoryID, OutputDate, SewinglineID, Team, StyleUkey)
+INTO	#tmpNewStyleRepeatStyle
+from (	select distinct FactoryID, OutputDate, SewinglineID, Team, StyleUkey
+		from #tmpSewingDetail ) a
+
+update t set t.[New_Style_Repeat_style] = tp.NewStyleRepeatStyle
+from #tmpSewingDetail t
+inner join #tmpNewStyleRepeatStyle tp on	tp.FactoryID = t.FactoryID and
+											tp.OutputDate = t.OutputDate and 
+											tp.SewinglineID = t.SewinglineID and 
+											tp.Team = t.Team and
+											tp.StyleUkey = t.StyleUkey
 
 select distinct ID
 	,OutputDate
@@ -133,6 +223,14 @@ select distinct ID
 	,[Gender] = sty.Gender
 	,[Construction] = sty.Construction
 	,t.LockStatus
+	,t.[Cancel]
+	,t.[Remark]
+	,t.[SPFactory]
+	,t.[NonRevenue]
+	,t.[Inline_Category]
+	,t.[Low_output_Reason]
+	,t.[New_Style_Repeat_style]
+	,t.ArtworkType
 into #tmpSewingGroup
 from #tmpSewingDetail t
 outer apply(
@@ -239,6 +337,7 @@ select * INTO #Final from(
                             WHEN t.LastShift='O' then 'Subcon-Out'
                             WHEN t.LastShift='I' and SubconInSisterFty = 1 then 'Subcon-In(Sister)'
                             else 'Subcon-In(Non Sister)' end
+		,[LastShift]
 		,t.SubconOutFty
         ,t.SubConOutContractNumber
         ,t.Team
@@ -283,37 +382,211 @@ select * INTO #Final from(
 		,t.Gender
 		,t.Construction
 		,t.LockStatus
+		,t.[Cancel]
+		,t.[Remark]
+		,t.[SPFactory]
+		,t.[NonRevenue]
+		,t.[Inline_Category]
+		,t.[Low_output_Reason]
+		,t.[New_Style_Repeat_style]
+		,[FCategory] = t.Category
+		,t.ArtworkType
     from #tmp1stFilter t )a
 order by MDivisionID,FactoryID,OutputDate,SewingLineID,Shift,Team,OrderId,Article,SizeCode
 
-drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup--,#tmp_s1
- 
+select ID,Seq,ArtworkUnit,ProductionUnit
+into #AT
+from Production.dbo.ArtworkType WITH (NOLOCK)
+where Classify in ('I','A','P') and IsTtlTMS = 0 and Junk = 0
+
+select ID,Seq
+	,ArtworkType_Unit = concat(ID,iif(Unit='QTY','(Price)',iif(Unit = '','','('+Unit+')'))),Unit
+	,ArtworkType_CPU = iif(Unit = 'TMS',concat(ID,'(CPU)'),'')
+into #atall
+from(
+	Select ID,Seq,Unit = ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit !='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,ArtworkUnit from #AT where ArtworkUnit !='' AND ProductionUnit =''
+	UNION
+	Select ID,Seq,ProductionUnit from #AT where ArtworkUnit ='' AND ProductionUnit !=''
+	UNION
+	Select ID,Seq,'' from #AT where ArtworkUnit ='' AND ProductionUnit =''
+)a
+
+select *
+into #atall2
+from(
+	select a.ID,a.Seq,c=1,a.ArtworkType_Unit,a.Unit from #atall a
+	UNION
+	select a.ID,a.Seq,2,a.ArtworkType_CPU,iif(a.ArtworkType_CPU='','','CPU')from #atall a
+	where a.ArtworkType_CPU !=''
+)b
+
+--準備台北資料(須排除這些)
+select ps.ID
+into #TPEtmp
+from Production.dbo.PO_Supp ps WITH (NOLOCK)
+inner join Production.dbo.PO_Supp_Detail psd WITH (NOLOCK) on ps.ID=psd.id and ps.SEQ1=psd.Seq1
+inner join Production.dbo.Fabric fb WITH (NOLOCK) on psd.SCIRefno = fb.SCIRefno 
+inner join Production.dbo.MtlType ml WITH (NOLOCK) on ml.id = fb.MtlTypeID
+where 1=1 and ml.Junk =0 and psd.Junk=0 and fb.Junk =0
+and ml.isThread=1 
+and ps.SuppID <> 'FTY' and ps.Seq1 not Like '5%'
+
+-----orderid & ArtworkTypeID & Seq
+select distinct ot.ID,ot.ArtworkTypeID,ot.Seq,ot.Qty,ot.Price,ot.TMS,t.QAQty,t.FactoryID,t.Team,t.OutputDate,t.SewingLineID,t.SubConOutContractNumber,
+                IIF(t.Shift <> 'O' and t.Category <> 'M' and t.LocalOrder = 1, 'I',t.Shift) as LastShift,t.Category,t.ComboType,t.SubconOutFty,t.Article,t.SizeCode
+into #idat
+from #tmpSewingGroup t
+inner join Production.dbo.Order_TmsCost ot WITH (NOLOCK) on ot.id = t.OrderId
+inner join Production.dbo.orders o with(nolock) on o.ID = t.OrderId
+inner join #AT A on A.ID = ot.ArtworkTypeID
+where  ((ot.ArtworkTypeID = 'SP_THREAD' and not exists(select 1 from #TPEtmp t where t.ID = o.POID))
+			  or ot.ArtworkTypeID <> 'SP_THREAD')
+
+			  drop table #tmpSewingDetail,#tmp1stFilter,#tmpSewingGroup--,#tmp_s1
+
+declare @columnsName nvarchar(max) = stuff((select concat(',[',ArtworkType_Unit,']') from #atall2 for xml path('')),1,1,'')
+declare @NameZ nvarchar(max) = (select concat(',[',ArtworkType_Unit,']=isnull([',ArtworkType_Unit,'],0)')from #atall2 for xml path(''))
+declare @NameFinal nvarchar(max) = replace((select concat('',col) 
+from 
+(select [col] = Replace(Replace(Replace(Replace(Replace(Replace(concat(iif(ArtworkType_Unit = '', '', ',['+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',['+ArtworkType_CPU+']'), iif(ArtworkType_Unit = '', '', ',[TTL_'+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',[TTL_'+ArtworkType_CPU+']')), ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+from #atall where id in ('AT (HAND)', 'AT (MACHINE)')
+union all
+select [col] = ',[TTL_AT_CPU] = iif([TTL_AT_HAND_CPU] > [TTL_AT_MACHINE_CPU], [TTL_AT_HAND_CPU], [TTL_AT_MACHINE_CPU])'
+union all
+select [col] = Replace(Replace(Replace(Replace(Replace(Replace(concat(iif(ArtworkType_Unit = '', '', ',['+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',['+ArtworkType_CPU+']'), iif(ArtworkType_Unit = '', '', ',[TTL_'+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',[TTL_'+ArtworkType_CPU+']')), ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+from #atall where id not in ('AT (HAND)', 'AT (MACHINE)')
+) a for xml path(N'')), '&gt;', '>')
+
+declare @FinalColumns nvarchar(max) = replace((select concat('',col) 
+from 
+(select [col] = Replace(Replace(Replace(Replace(Replace(Replace(concat(iif(ArtworkType_Unit = '', '', ',['+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',['+ArtworkType_CPU+']'), iif(ArtworkType_Unit = '', '', ',[TTL_'+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',[TTL_'+ArtworkType_CPU+']')), ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+from #atall where id in ('AT (HAND)', 'AT (MACHINE)')
+union all
+select [col] = ',[TTL_AT_CPU]'
+union all
+select [col] = Replace(Replace(Replace(Replace(Replace(Replace(concat(iif(ArtworkType_Unit = '', '', ',['+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',['+ArtworkType_CPU+']'), iif(ArtworkType_Unit = '', '', ',[TTL_'+ArtworkType_Unit+']'), iif(ArtworkType_CPU = '', '', ',[TTL_'+ArtworkType_CPU+']')), ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+from #atall where id not in ('AT (HAND)', 'AT (MACHINE)')
+) a for xml path(N'')), '&gt;', '>')
+
+declare @InsertColumns nvarchar(max) = replace((select concat('',col) 
+from 
+(
+Select col = ',s.'+Data From dbo.SplitString(@FinalColumns, ',') where isnull(Data,'') != ''
+) a for xml path(N'')), '&gt;', '>')
+
+declare @UpdateColumns nvarchar(max) = replace((select concat('',col) 
+from 
+(
+Select col = ',t.'+Data + ' = s.' + Data From dbo.SplitString(@FinalColumns, ',') where isnull(Data,'') != ''
+) a for xml path(N'')), '&gt;', '>')
+
+declare @TTLZ nvarchar(max) = 
+(select concat(',['
+,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_Unit, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+,']=Cast(Round(sum(isnull(Rate*[',ArtworkType_Unit,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),4) as Numeric(15,4))'
+,iif(ArtworkType_CPU = '', '', concat(',['
+,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_CPU, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+,']=Cast(Round(sum(isnull(Rate*[',ArtworkType_CPU,'],0)) over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),4) as Numeric(15,4))'))
+,',[TTL_'
+,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_Unit, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+,']=Cast(Round(sum(o.QAQty*Rate*[',ArtworkType_Unit,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),') as Numeric(15,4))'
+,iif(ArtworkType_CPU = '', '', concat(',[TTL_'
+,Replace(Replace(Replace(Replace(Replace(Replace(ArtworkType_CPU, ' (', '_'), ')(', '_'), ' ', '_'), '/', '_'), '(', '_'), ')', '')
+,']=Cast(Round(sum(o.QAQty*Rate*[',ArtworkType_CPU,'])over(partition by t.FactoryID,t.OrderId,t.Team,t.OutputDate,t.SewingLineID,t.LastShift,t.Category,t.ComboType,t.SubconOutFty,t.SubConOutContractNumber,t.Article,t.SizeCode),',iif(Unit='QTY','4','3'),') as Numeric(15,4))'))
+)from #atall for xml path(''))
+
+declare @lastSql nvarchar(max) = ''
+set @lastSql = @lastSql + 'select orderid,SubconOutFty,SubConOutContractNumber,FactoryID,Team,OutputDate,SewingLineID,LastShift,Category,ComboType,qaqty,Article,SizeCode '+@NameZ+N'
+into #oid_at
+from
+(
+	select orderid = i.ID,a.ArtworkType_Unit,i.qaqty,ptq=iif(a.Unit=''QTY'',i.Price,iif(a.Unit=''TMS'',i.TMS,iif(a.Unit=''CPU'',i.Price,i.Qty))),
+           i.FactoryID,i.Team,i.OutputDate,i.SewingLineID,i.LastShift,i.Category,i.ComboType,i.SubconOutFty,i.SubConOutContractNumber,i.Article,i.SizeCode
+	from #atall2 a left join #idat i on i.ArtworkTypeID = a.ID and i.Seq = a.Seq
+)a
+PIVOT(min(ptq) for ArtworkType_Unit in('+@columnsName+N'))as pt
+where orderid is not null
+'
+set @lastSql = @lastSql +'
+Select 
+	MDivisionID,FactoryID,ComboType,FtyType,FtyCountry,OutputDate,SewingLineID,Shift
+	,SubconOutFty,SubConOutContractNumber,Team,OrderID,Article,SizeCode,CustPONo,BuyerDelivery
+	,OrderQty,Brand,Category,Program,OrderType,IsDevSample,CPURate,Style,Season,CDNo,ActManPower
+	,WorkHour,ManHour,TargetCPU,TMS,CPUPrice,TargetQty,QAQTY,TotalCPU,CPUSewer,EFF,RFT,CumulateDate
+	,DateRange,InlineQty,Diff,Rate,SewingReasonDesc,SciDelivery,CDCodeNew,ProductType,FabricType
+	,Lining,Gender,Construction,LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
+	,Low_output_Reason, New_Style_Repeat_Style,ArtworkType'
+	set @lastSql = @lastSql + ' ' + @NameFinal + N' '
+
+		set @lastSql = @lastSql + '
+
+into #FinalDt 
+from (
+	Select t.MDivisionID,t.FactoryID,t.ComboType,t.FtyType,t.FtyCountry,t.OutputDate,t.SewingLineID,t.Shift
+	,t.SubconOutFty,t.SubConOutContractNumber,t.Team,t.OrderID,t.Article,t.SizeCode,t.CustPONo,t.BuyerDelivery
+	,t.OrderQty,t.Brand,t.Category,t.Program,t.OrderType,t.IsDevSample,t.CPURate,t.Style,t.Season,t.CDNo,t.ActManPower
+	,t.WorkHour,t.ManHour,t.TargetCPU,t.TMS,t.CPUPrice,t.TargetQty,t.QAQTY,t.TotalCPU,t.CPUSewer,t.EFF,t.RFT,t.CumulateDate
+	,t.DateRange,t.InlineQty,t.Diff,t.Rate,t.SewingReasonDesc,t.SciDelivery,t.CDCodeNew,t.ProductType,t.FabricType
+	,t.Lining,t.Gender,t.Construction,t.LockStatus, t.Cancel, t.Remark, t.SPFactory, t.NonRevenue, t.Inline_Category
+	,t.Low_output_Reason, t.New_Style_Repeat_Style, t.ArtworkType
+	'
+	set @lastSql = @lastSql + ' ' + @TTLZ + N' '
+
+		set @lastSql = @lastSql + '
+From #Final t
+
+'	
+			set @lastSql = @lastSql + '
+				left join #oid_at o on o.orderid = t.OrderId and 
+                           o.FactoryID = t.FactoryID and
+                           o.Team = t.Team and
+                           o.OutputDate = t.OutputDate and
+                           o.SewingLineID = t.SewingLineID and
+                           o.LastShift = t.LastShift and
+                           o.Category = t.[FCategory] and
+                           o.ComboType = t.ComboType and
+                           o.SubconOutFty = t.SubconOutFty and
+                           o.SubConOutContractNumber = t.SubConOutContractNumber and
+						   o.Article = t.Article and
+						   o.SizeCode = t.SizeCode
+				)a
 
 insert into P_SewingDailyOutput(MDivisionID, FactoryID, ComboType, Category, CountryID, OutputDate, SewingLineID, Shift
 	, SubconOutFty, SubConOutContractNumber, Team, OrderID, Article, SizeCode, CustPONo, BuyerDelivery
 	, OrderQty, BrandID, OrderCategory, ProgramID, OrderTypeID, DevSample, CPURate, StyleID, Season, CdCodeID, ActualManpower
 	, NoOfHours, TotalManhours, TargetCPU, TMS, CPUPrice, TargetQty, TotalOutputQty, TotalCPU, CPUSewerHR, EFF, RFT, CumulateOfDays
 	, DateRange, ProdOutput, Diff, Rate, SewingReasonDesc, SciDelivery, CDCodeNew, ProductType, FabricType
-	, Lining, Gender, Construction, LockStatus)
+	, Lining, Gender, Construction, LockStatus, Cancel, Remark, SPFactory, NonRevenue, Inline_Category
+	, Low_output_Reason, New_Style_Repeat_Style,ArtworkType'
+	set @lastSql = @lastSql + ' ' + @FinalColumns + N' '
+
+		set @lastSql = @lastSql + ')
 select s.MDivisionID,s.FactoryID,s.ComboType,s.FtyType,s.FtyCountry,s.OutputDate,s.SewingLineID,s.Shift
 	,s.SubconOutFty,s.SubConOutContractNumber,s.Team,s.OrderID,s.Article,s.SizeCode,s.CustPONo,s.BuyerDelivery
 	,s.OrderQty,s.Brand,s.Category,s.Program,s.OrderType,s.IsDevSample,s.CPURate,s.Style,s.Season,s.CDNo,s.ActManPower
 	,s.WorkHour,s.ManHour,s.TargetCPU,s.TMS,s.CPUPrice,s.TargetQty,s.QAQTY,s.TotalCPU,s.CPUSewer,s.EFF,s.RFT,s.CumulateDate
 	,s.DateRange,s.InlineQty,s.Diff,s.Rate,s.SewingReasonDesc,s.SciDelivery,s.CDCodeNew,s.ProductType,s.FabricType
-	,s.Lining,s.Gender,s.Construction,s.LockStatus
-from #Final s
-where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
-													   AND t.MDivisionID=s.MDivisionID 
-													   AND t.SewingLineID=s.SewingLineID 
-													   AND t.Team=s.Team 
-													   AND t.Shift=s.Shift 
-													   AND t.OrderId=s.OrderId 
-													   AND t.Article=s.Article 
-													   AND t.SizeCode=s.SizeCode 
-													   AND t.ComboType=s.ComboType  
-													   AND t.OutputDate = s.OutputDate
-													   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
+	,s.Lining,s.Gender,s.Construction,s.LockStatus, s.Cancel, s.Remark, s.SPFactory, s.NonRevenue, s.Inline_Category
+	,s.Low_output_Reason, s.New_Style_Repeat_Style, s.ArtworkType'
+	set @lastSql = @lastSql + ' ' + @InsertColumns + N' '
 
+		set @lastSql = @lastSql + '
+from #FinalDt s
+where not exists (select 1 from P_SewingDailyOutput t where t.FactoryID=s.FactoryID  
+                                                       AND t.MDivisionID=s.MDivisionID 
+                                                       AND t.SewingLineID=s.SewingLineID 
+                                                       AND t.Team=s.Team 
+                                                       AND t.Shift=s.Shift 
+                                                       AND t.OrderId=s.OrderId 
+                                                       AND t.Article=s.Article 
+                                                       AND t.SizeCode=s.SizeCode 
+                                                       AND t.ComboType=s.ComboType  
+                                                       AND t.OutputDate = s.OutputDate
+                                                       AND t.SubConOutContractNumber = s.SubConOutContractNumber)
 
 
 update t
@@ -369,8 +642,19 @@ update t
 		,t.Gender = s.Gender
 		,t.Construction = s.Construction
 		,t.LockStatus = s.LockStatus
+		,t.Cancel = s.Cancel
+		,t.Remark = s.Remark
+		,t.SPFactory = s.SPFactory
+		,t.NonRevenue = s.NonRevenue
+		,t.Inline_Category = s.Inline_Category
+		,t.Low_output_Reason = s.Low_output_Reason
+		,t.New_Style_Repeat_Style = s.New_Style_Repeat_Style
+		,t.ArtworkType = s.ArtworkType'
+		set @lastSql = @lastSql + ' ' + @UpdateColumns + N' '
+
+		set @lastSql = @lastSql + '
 from P_SewingDailyOutput t
-inner join #Final s on t.FactoryID=s.FactoryID  
+inner join #FinalDt s on t.FactoryID=s.FactoryID  
 				   AND t.MDivisionID=s.MDivisionID 
 				   AND t.SewingLineID=s.SewingLineID 
 				   AND t.Team=s.Team 
@@ -385,10 +669,10 @@ inner join #Final s on t.FactoryID=s.FactoryID
 
 delete t
 from P_SewingDailyOutput t 
-where t.OutputDate between @SDate and  @EDate
-and exists (select OrderID from #Final f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
+where t.OutputDate in (select outputDate from #FinalDt)
+and exists (select OrderID from #FinalDt f where t.FactoryID=f.FactoryID  AND t.MDivisionID=f.MDivisionID ) 
 and not exists (
-select OrderID from #Final s 
+select OrderID from #FinalDt s 
 	where t.FactoryID=s.FactoryID  
 	AND t.MDivisionID=s.MDivisionID 
 	AND t.SewingLineID=s.SewingLineID 
@@ -398,12 +682,16 @@ select OrderID from #Final s
 	AND t.Article=s.Article 
 	AND t.SizeCode=s.SizeCode 
 	AND t.ComboType=s.ComboType 
-	AND t.OutputDate = s.OutputDate);
-
+	AND t.OutputDate = s.OutputDate
+	AND t.SubConOutContractNumber = s.SubConOutContractNumber);
+			
 update b
     set b.TransferDate = getdate()
 		, b.IS_Trans = 1
 from BITableInfo b
-where b.id = 'P_SewingDailyOutput'
+where b.id = ''P_SewingDailyOutput''
 
+			'
+
+	EXEC sp_executesql @lastSql
 End

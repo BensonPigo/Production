@@ -14,10 +14,6 @@ using Sci.Utility.Excel;
 using System.IO;
 using System.Data.SqlClient;
 using System.Linq;
-using static Ict.Win.WinAPI;
-using Sci.Production.Class;
-using System.Threading;
-using static Sci.Production.PublicPrg.Prgs;
 
 namespace Sci.Production.Quality
 {
@@ -30,7 +26,11 @@ namespace Sci.Production.Quality
         private string excelFile = string.Empty;
         private DataTable Fir_physical_Defect;
         private string FirID;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_color;
+        private bool needCheckInspectionGroup = false;
+        private bool isColorFormat = false;
+        private bool isFormatInP01 = false;
+        private string weaveTypeid = string.Empty;
+        private double cutWidth = 0;
 
         /// <inheritdoc/>
         public P01_PhysicalInspection(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow mainDr)
@@ -55,10 +55,38 @@ namespace Sci.Production.Quality
         }
 
         /// <inheritdoc/>
+        protected override void OnMaintainEntered()
+        {
+            base.OnMaintainEntered();
+            if ((this.isColorFormat || this.isFormatInP01) && this.gridbs.DataSource != null)
+            {
+                DataTable dtFir_Physical = (DataTable)this.gridbs.DataSource;
+                foreach (DataRow rowFir_Physical in dtFir_Physical.Rows)
+                {
+                    this.RefreshGrade(rowFir_Physical);
+                }
+            }
+        }
+
+        /// <inheritdoc/>
         protected override DualResult OnRequery()
         {
             this.QueryHeader();
             return base.OnRequery();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnRequired()
+        {
+            base.OnRequired();
+            if (this.isColorFormat || this.isFormatInP01)
+            {
+                DataTable dtFir_Physical = (DataTable)this.gridbs.DataSource;
+                foreach (DataRow rowFir_Physical in dtFir_Physical.Rows)
+                {
+                    this.RefreshGrade(rowFir_Physical);
+                }
+            }
         }
 
         private void QueryHeader()
@@ -124,8 +152,6 @@ namespace Sci.Production.Quality
             this.displayArriveQty.Text = this.maindr["arriveQty"].ToString();
             this.dateArriveWHDate.Value = MyUtility.Convert.GetDate(this.maindr["whseArrival"]);
             this.dateLastInspectionDate.Value = MyUtility.Convert.GetDate(this.maindr["physicalDate"]);
-            this.displaySCIRefno1.Text = MyUtility.GetValue.Lookup("Description", this.maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
-            this.displaydescDetail.Text = MyUtility.GetValue.Lookup("descDetail", this.maindr["SciRefno"].ToString(), "Fabric", "SCIRefno");
             this.displaySEQ.Text = this.maindr["Seq1"].ToString() + "-" + this.maindr["Seq2"].ToString();
             this.displaySP.Text = this.maindr["POID"].ToString();
             this.displayWKNo.Text = this.maindr["Exportid"].ToString();
@@ -135,8 +161,48 @@ namespace Sci.Production.Quality
             this.txtPhysicalInspector.Text = this.maindr["PhysicalInspector"].ToString();
             this.txtCustInspNumber.Text = this.maindr["CustInspNumber"].ToString();
 
-            string sqlCmd = $"select InspectionGroup from Fabric where SCIRefno = '{this.maindr["SCIRefno"].ToString()}'";
-            this.txtGroup.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
+            string sqlCmd = $@"
+select  InspectionGroup,
+        WeaveTypeId,
+        Description,
+        descDetail,
+        Width
+from Fabric with (nolock) where SCIRefno = '{this.maindr["SCIRefno"].ToString()}'";
+            DataRow drFabricInfo;
+            if (MyUtility.Check.Seek(sqlCmd, out drFabricInfo))
+            {
+                this.txtGroup.Text = drFabricInfo["InspectionGroup"].ToString();
+                this.weaveTypeid = drFabricInfo["WeaveTypeId"].ToString();
+                this.displaySCIRefno1.Text = drFabricInfo["Description"].ToString();
+                this.displaydescDetail.Text = drFabricInfo["descDetail"].ToString();
+                this.cutWidth = MyUtility.Convert.GetDouble(drFabricInfo["Width"]);
+            }
+            else
+            {
+                this.txtGroup.Text = string.Empty;
+                this.weaveTypeid = string.Empty;
+                this.displaySCIRefno1.Text = string.Empty;
+                this.displaydescDetail.Text = string.Empty;
+                this.cutWidth = 0;
+            }
+
+            List<SqlParameter> listNeedCheckInspectionGroupPar = new List<SqlParameter>
+            {
+                new SqlParameter("@BrandID", this.displayBrand.Text),
+                new SqlParameter("@WeaveTypeID", this.weaveTypeid),
+            };
+
+            this.needCheckInspectionGroup = MyUtility.Check.Seek(
+                $"select 1 from FIR_Grade with (nolock) where BrandID = @BrandID and WeaveTypeID = @WeaveTypeID and InspectionGroup <> ''",
+                listNeedCheckInspectionGroupPar);
+
+            this.isColorFormat = MyUtility.Check.Seek(
+                $"select 1 from FIR_Grade with (nolock) where BrandID = @BrandID and WeaveTypeID = @WeaveTypeID and IsColorFormat = 1",
+                listNeedCheckInspectionGroupPar);
+
+            this.isFormatInP01 = MyUtility.Check.Seek(
+                $"select 1 from FIR_Grade with (nolock) where BrandID = @BrandID and WeaveTypeID = @WeaveTypeID and isFormatInP01 = 1",
+                listNeedCheckInspectionGroupPar);
 
             string sqlcmd_TotalRoll = $@"select count(TotalRollnumberTEST.Roll) as TotalRollnumber
                                         from(
@@ -163,7 +229,7 @@ namespace Sci.Production.Quality
                                             select rd.Roll
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
                                             where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -174,7 +240,7 @@ namespace Sci.Production.Quality
 	                                        select td.Roll
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
                                             where 
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -208,7 +274,7 @@ namespace Sci.Production.Quality
 	                                        select rd.Dyelot
 	                                        from Receiving_Detail rd
 	                                        inner join FIR f on f.ReceivingID = rd.Id and f.POID = rd.PoId and f.SEQ1 = rd.Seq1 and f.SEQ2 = rd.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = rd.Roll and fp.Dyelot = rd.Dyelot
 	                                        where 
                                             rd.poid = '{this.maindr["POID"].ToString()}' and
                                             rd.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -219,7 +285,7 @@ namespace Sci.Production.Quality
 	                                        select td.Dyelot
 	                                        from TransferIn_Detail td
 	                                        inner join FIR f on f.ReceivingID = td.Id and f.POID = td.PoId and f.SEQ1 = td.Seq1 and f.SEQ2 = td.Seq2
-	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = fp.Dyelot
+	                                        inner join FIR_Physical fp on f.id = fp.ID and fp.Roll = td.Roll and fp.Dyelot = td.Dyelot
 	                                        where  
                                             td.poid = '{this.maindr["POID"].ToString()}' and
                                             td.seq1 = '{this.maindr["Seq1"].ToString()}' and
@@ -241,13 +307,7 @@ namespace Sci.Production.Quality
                 datas.ColumnsDecimalAdd("CutWidth");
                 foreach (DataRow dr in datas.Rows)
                 {
-                    dr["CutWidth"] = MyUtility.GetValue.Lookup(
-                        string.Format(
-                        @"
-                                                                        select width
-                                                                        from Fabric 
-                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                        where Fir.ID = '{0}'", dr["id"]), null, null);
+                    dr["CutWidth"] = this.cutWidth;
                 }
             }
 
@@ -261,23 +321,11 @@ namespace Sci.Production.Quality
             datas.Columns.Add("Weight", typeof(decimal));
             datas.Columns.Add("ActualWeight", typeof(decimal));
             datas.Columns.Add("Differential", typeof(decimal));
-
-            datas.Columns.Add("ReGrade", typeof(string));
+            datas.Columns.Add("ShowGrade", typeof(string));
             int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
-                if (this.displayBrand.Text == "LLL" && !this.txtGroup.Text.Empty())
-                {
-                    var strGrade = dr["Grade"].ToString();
-                    dr["ReGrade"] = strGrade;
-                    dr["Grade"] = strGrade == "B" ? "A" : dr["Grade"];
-                }
-                else
-                {
-                    // LLL以外的品牌，預設值是原本的Grade，避免Edit -> Save 時用空的ReGrade去覆蓋原本的Grade
-                    dr["ReGrade"] = dr["Grade"].ToString();
-                }
-
+                dr["ShowGrade"] = dr["Grade"];
                 dr["Name"] = MyUtility.GetValue.Lookup("Name", dr["Inspector"].ToString(), "Pass1", "ID");
                 dr["NewKey"] = i;
                 dr["poid"] = this.maindr["poid"];
@@ -322,7 +370,6 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
 
             MyUtility.Tool.ProcessWithDatatable(datas, "ID,NewKey,DetailUkey", str_defect, out this.Fir_physical_Defect);
             #endregion
-
         }
 
         /// <summary>
@@ -341,24 +388,18 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
                 }
             }
 
-            this.Get_total_point();
+            this.Get_total_point(this.CurrentData);
         }
 
         /// <inheritdoc/>
-        protected void Get_total_point()
+        protected void Get_total_point(DataRow rowFir_Physical)
         {
-            double double_ActualYds = MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]);
-            double double_TicketYds = MyUtility.Convert.GetDouble(this.CurrentData["TicketYds"]);
-            double double_Totalpoint = MyUtility.Convert.GetDouble(this.CurrentData["Totalpoint"]);
-            double double_CutWidth = MyUtility.Convert.GetDouble(this.CurrentData["CutWidth"]);
-            double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(this.CurrentData["ActualYds"]));
-            double actualWidth = MyUtility.Convert.GetDouble(this.CurrentData["actualwidth"]);
+            double double_ActualYds = MyUtility.Convert.GetDouble(rowFir_Physical["ActualYds"]);
+            double double_TicketYds = MyUtility.Convert.GetDouble(rowFir_Physical["TicketYds"]);
+            double double_Totalpoint = MyUtility.Convert.GetDouble(rowFir_Physical["Totalpoint"]);
+            double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(rowFir_Physical["ActualYds"]));
+            double actualWidth = MyUtility.Convert.GetDouble(rowFir_Physical["actualwidth"]);
             double actualYdsF = actualYdsT - (actualYdsT % 5);
-            double cutWidth = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup($@"
-select width
-from Fabric 
-inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-where Fir.ID = '{this.FirID}'"));
             double def_locT = 0d;
             double def_locF = 0d;
 
@@ -368,13 +409,13 @@ where Fir.ID = '{this.FirID}'"));
             for (int i = 0; i <= this.Fir_physical_Defect.Rows.Count - 1; i++)
             {
                 if (this.Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted
-                    && this.Fir_physical_Defect.Rows[i]["NewKey"].EqualString(this.CurrentData["NewKey"]))
+                    && this.Fir_physical_Defect.Rows[i]["NewKey"].EqualString(rowFir_Physical["NewKey"]))
                 {
                     // if (dr.RowState != DataRowState.Deleted)
                     // {
                     def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                     def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_locF >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == this.CurrentData["NewKey"].ToString())
+                    if (def_locF >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == rowFir_Physical["NewKey"].ToString())
                     {
                         this.Fir_physical_Defect.Rows[i].Delete();
                     }
@@ -394,7 +435,7 @@ where Fir.ID = '{this.FirID}'"));
                          *  ex: 080-083 汙點D1, 080-084 汙點A1/D1 ,就必須要080-083給刪除
                          *  不然將080-083 改為080-084 Pkey就會重複
                         */
-                        DataRow[] ary = this.Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", this.CurrentData["NewKey"].ToString(), def_locF));
+                        DataRow[] ary = this.Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", rowFir_Physical["NewKey"].ToString(), def_locF));
                         if (ary.Length > 1)
                         {
                             this.Fir_physical_Defect.Rows[i].Delete();
@@ -407,11 +448,10 @@ where Fir.ID = '{this.FirID}'"));
                 }
             }
 
-            double sumPoint = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", this.CurrentData["NewKey"])));
+            double sumPoint = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", rowFir_Physical["NewKey"])));
 
             // PointRate 國際公式每五碼最高20點
-            this.CurrentData["TotalPoint"] = sumPoint;
-            string weaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
+            rowFir_Physical["TotalPoint"] = sumPoint;
             #region 依dbo.PointRate 來判斷新的PointRate計算公式
             DataRow drPoint;
             string pointRateID = MyUtility.Check.Seek($@"select * from QABrandSetting where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["PointRateOption"].ToString() : "1";
@@ -425,25 +465,45 @@ where Fir.ID = '{this.FirID}'"));
                     pointRate = (double_ActualYds == 0 || actualWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2));
                     break;
                 case "3":
-                    if (weaveTypeid == "KNIT")
+                    if (this.weaveTypeid == "KNIT")
                     {
-                        pointRate = (double_TicketYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_TicketYds * double_CutWidth), 2));
+                        pointRate = (double_TicketYds == 0 || this.cutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_TicketYds * this.cutWidth), 2));
                     }
                     else
                     {
-                        pointRate = (double_ActualYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * double_CutWidth), 2));
+                        pointRate = (double_ActualYds == 0 || this.cutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * this.cutWidth), 2));
                     }
 
                     break;
+                case "4":
+                    if (MyUtility.Check.Seek($@"
+select * from FIR_PointRateFormula
+where SuppID = '{this.txtsupplier.TextBox1.Text}'
+and WeaveTypeID = '{this.weaveTypeid}'
+and BrandID = '{this.displayBrand.Text}'
+"))
+                    {
+                        pointRate = (double_ActualYds == 0 || this.cutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * this.cutWidth), 2));
+                    }
+                    else
+                    {
+                        pointRate = (double_ActualYds == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint / double_ActualYds) * 100, 2));
+                    }
+
+                    break;
+
                 default:
                     pointRate = 0;
                     break;
             }
 
-            this.CurrentData["PointRate"] = pointRate;
-
+            rowFir_Physical["PointRate"] = pointRate;
+            this.RefreshGrade(rowFir_Physical);
             #endregion
+        }
 
+        private void RefreshGrade(DataRow rowFir_Physical)
+        {
             #region Grade,Result
             string grade_cmd = string.Empty;
 
@@ -451,146 +511,82 @@ where Fir.ID = '{this.FirID}'"));
 
             List<string> list = new List<string>();
 
-            if (this.displayBrand.Text == "LLL")
-            {
-                grade_cmd = $@"
-                DECLARE @Point as NUMERIC(10, 2) = {this.CurrentData["PointRate"]}
+            grade_cmd = $@"
+                DECLARE @Point as NUMERIC(10, 2) = {rowFir_Physical["PointRate"]}
                 DECLARE @BrandID as varchar(15) = '{this.displayBrand.Text}'
-                DECLARE @WeaveTypeID as varchar(15) = '{weaveTypeid}'
+                DECLARE @WeaveTypeID as varchar(15) = '{this.weaveTypeid}'
                 DECLARE @InspectionGroup varchar(15) = '{this.txtGroup.Text}'
-                DECLARE @IsEmptyResult as bit = 0 
+                Declare @Grade as varchar(10) = ''
+                Declare @Result as varchar(10) = ''
 
-                SELECT @IsEmptyResult = IIF(Result = '' ,1 ,0)
-                FROM FIR_Grade f WITH (NOLOCK) 
-                where BrandID=@BrandID
-                and InspectionGroup=@InspectionGroup
-                and WeaveTypeID=@WeaveTypeID
-                
-                -- 判斷 Result 是否為空值
-                IF @IsEmptyResult = 1
-                BEGIN
+                select Grade, Result, isFormatInP01, ShowGrade, IsColorFormat from dbo.GetFirPhysicalGrade(@Point, @BrandID, @WeaveTypeID, @InspectionGroup)";
 
-	                SELECT TOP 1 ShowGrade = Grade ,RealGrade = ShowGrade
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID = @WeaveTypeID
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
+            DataTable dtGradeResult;
+            DualResult result = DBProxy.Current.Select(null, grade_cmd, out dtGradeResult);
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
 
-	                SELECT TOP 1 Result
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID =@WeaveTypeID
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
+            // 沒有設定Grade標準，就不做任何事
+            if (dtGradeResult.Rows.Count == 0)
+            {
+                return;
+            }
 
-                END
-
-                ELSE 
-                BEGIN
-                ---- 2. 取得該品牌布種的等級
-	                SELECT TOP 1 ShowGrade = ( IIF(isFormatInP01 = 1 ,ShowGrade , Grade)) ,RealGrade = Grade
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID = @WeaveTypeID
-	                AND Percentage >= IIF(@Point > 100, 100, @Point)
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-	                ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-
-	                SELECT TOP 1 Result = iif(Result = 'P','Pass','Fail')
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID =@WeaveTypeID
-	                AND Percentage >= IIF(@Point > 100, 100, @Point)
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-	                ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-                END";
+            if (this.needCheckInspectionGroup && MyUtility.Check.Empty(this.txtGroup.Text))
+            {
+                rowFir_Physical["ShowGrade"] = string.Empty;
+                rowFir_Physical["Grade"] = string.Empty;
+                rowFir_Physical["Result"] = string.Empty;
             }
             else
             {
-                grade_cmd = $@"
-                ---- 1. 取得預設的布種的等級
-                SELECT [ShowGrade]=MIN(Grade)
-                ,[RealGrade] = MIN(Grade)
-                INTO #default
-                FROM FIR_Grade f WITH (NOLOCK) 
-                WHERE f.WeaveTypeID = '{weaveTypeid}' 
-                AND f.Percentage >= IIF({this.CurrentData["PointRate"]} > 100, 100, {this.CurrentData["PointRate"]})
-                AND BrandID=''
-
-                ---- 2. 取得該品牌布種的等級
-                SELECT [ShowGrade]=MIN(Grade)
-                ,[RealGrade] = MIN(Grade)
-                INTO #withBrandID
-                FROM FIR_Grade WITH (NOLOCK) 
-                WHERE WeaveTypeID = '{weaveTypeid}' 
-                AND Percentage >= IIF({this.CurrentData["PointRate"]} > 100, 100, {this.CurrentData["PointRate"]})
-                AND BrandID='{this.displayBrand.Text}'
-
-                ---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
-                SELECT [ShowGrade] = ISNULL(Brand.ShowGrade, ISNULL((SELECT ShowGrade FROM #default),'') ) 
-                ,[RealGrade] =  ISNULL(Brand.RealGrade, ISNULL((SELECT RealGrade FROM #default),'') ) 
-                FROM #withBrandID brand
-
-                SELECT [ShowGrade] = ISNULL(Brand.ShowGrade, ISNULL((SELECT ShowGrade FROM #default),'') ) 
-                ,[RealGrade] =  ISNULL(Brand.RealGrade, ISNULL((SELECT RealGrade FROM #default),'') ) 
-                ,[IsFromBrand] = IIF(Brand.ShowGrade IS NULL, 0,1 ) 
-                INTO #BrandInfo
-                FROM #withBrandID brand
-
-                ---- 結果也區分品牌
-                Select TOP 1 [Result] =	case Result	
-						                when 'P' then 'Pass'
-						                when 'F' then 'Fail'
-					                end
-                from Fir_Grade WITH (NOLOCK) 
-                WHERE WeaveTypeID = '{weaveTypeid}'  
-                AND Grade = (
-	                SELECT ISNULL(Brand.ShowGrade, (SELECT ShowGrade FROM #default)) 
-	                FROM #withBrandID brand
-                )
-                AND BrandID = IIF((SELECT IsFromBrand FROM #BrandInfo) = 1  , '{this.displayBrand.Text}' ,'') 
-
-                DROP TABLE #default,#withBrandID ,#BrandInfo";
-            }
-
-            DataTable[] dts;
-            DBProxy.Current.Select(null, grade_cmd, out dts);
-
-            if (dts != null)
-            {
-                if (this.displayBrand.Text == "LLL" && this.txtGroup.Text == string.Empty)
+                if (MyUtility.Convert.GetBool(rowFir_Physical["ColorToneCheck"]))
                 {
-                    this.CurrentData["Grade"] = string.Empty;
-                    this.CurrentData["Result"] = string.Empty;
-                    this.CurrentData["ReGrade"] = string.Empty;
+                    rowFir_Physical["Result"] = "Fail";
                 }
                 else
                 {
+                    rowFir_Physical["Result"] = dtGradeResult.Rows[0]["Result"].ToString();
+                }
 
-                    string sqlcmd = $@"select  ColorToneCheck
-                    from FIR f
-                    inner join FIR_Physical fp on f.id = fp.ID 
-                    where 
-                    f.POID = '{this.maindr["poid"]}' 
-                    and SEQ1 = '{this.maindr["seq1"]}' 
-                    and seq2 = '{this.maindr["seq2"]}' 
-                    and Roll = '{this.CurrentData["Roll"]}' 
-                    and Dyelot = '{this.CurrentData["Dyelot"]}'";
+                rowFir_Physical["Grade"] = dtGradeResult.Rows[0]["Grade"];
 
-                    if (MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlcmd)))
-                    {
-                        this.CurrentData["Result"] = "Fail";
-                    }
-                    else
-                    {
-                        this.CurrentData["Result"] = dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty;
-                    }
+                if (MyUtility.Convert.GetBool(dtGradeResult.Rows[0]["isFormatInP01"]))
+                {
+                    rowFir_Physical["ShowGrade"] = dtGradeResult.Rows[0]["ShowGrade"];
+                }
+                else
+                {
+                    rowFir_Physical["ShowGrade"] = dtGradeResult.Rows[0]["Grade"];
+                }
 
-                    this.CurrentData["Grade"] = dts[0].Rows[0]["ShowGrade"];
-                    // this.CurrentData["Result"] = dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty;
-                    this.CurrentData["ReGrade"] = dts[0].Rows[0]["RealGrade"];
-                 }
+                int gridRowIndex = this.GetRowIndex(rowFir_Physical);
+                if (MyUtility.Convert.GetBool(dtGradeResult.Rows[0]["IsColorFormat"]))
+                {
+                    this.grid.Rows[gridRowIndex].Cells["ShowGrade"].Style.BackColor = Color.Yellow;
+                }
+                else
+                {
+                    this.grid.Rows[gridRowIndex].Cells["ShowGrade"].Style.BackColor = Color.White;
+                }
             }
             #endregion
+        }
+
+        private int GetRowIndex(DataRow rowFir_Physical)
+        {
+            for (int i = 0; i < this.grid.Rows.Count; i++)
+            {
+                if (this.grid.GetDataRow(i) == rowFir_Physical)
+                {
+                    return i;
+                }
+            }
+
+            return -1; // 如果找不到，返回-1
         }
 
         /// <inheritdoc/>
@@ -612,116 +608,27 @@ where Fir.ID = '{this.FirID}'"));
 
                 DataRow dr = this.grid.GetDataRow(e.RowIndex);
                 bool colorToneCheck = (bool)e.FormattedValue;
-                string weaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
                 string grade_cmd = string.Empty;
-                if (this.displayBrand.Text == "LLL")
-                {
-                    grade_cmd = $@"
+                grade_cmd = $@"
                     DECLARE @Point as NUMERIC(10, 2) = {dr["PointRate"]}
                     DECLARE @BrandID as varchar(15) = '{this.displayBrand.Text}'
-                    DECLARE @WeaveTypeID as varchar(15) = '{weaveTypeid}'
+                    DECLARE @WeaveTypeID as varchar(15) = '{this.weaveTypeid}'
                     DECLARE @InspectionGroup varchar(15) = '{this.txtGroup.Text}'
-                    DECLARE @IsEmptyResult as bit = 0 
 
-                    SELECT @IsEmptyResult = IIF(Result = '' ,1 ,0)
-                    FROM FIR_Grade f WITH (NOLOCK) 
-                    where BrandID=@BrandID
-                    and InspectionGroup=@InspectionGroup
-                    and WeaveTypeID=@WeaveTypeID
+                    select Grade, Result from dbo.GetFirPhysicalGrade(@Point, @BrandID, @WeaveTypeID, @InspectionGroup)
 
-                    -- 判斷 Result 是否為空值
-                    IF @IsEmptyResult = 1
-                    BEGIN
+                    ";
 
-                     SELECT TOP 1 ShowGrade = Grade ,RealGrade = ShowGrade
-                     FROM FIR_Grade WITH (NOLOCK) 
-                     WHERE WeaveTypeID = @WeaveTypeID
-                     AND BrandID=@BrandID
-                     and InspectionGroup=@InspectionGroup
-
-                     SELECT TOP 1 Result
-                     FROM FIR_Grade WITH (NOLOCK) 
-                     WHERE WeaveTypeID =@WeaveTypeID
-                     AND BrandID=@BrandID
-                     and InspectionGroup=@InspectionGroup
-
-                    END
-
-                    ELSE 
-                    BEGIN
-                    ---- 2. 取得該品牌布種的等級
-                     SELECT TOP 1 ShowGrade = ( IIF(isFormatInP01 = 1 ,ShowGrade , Grade)) ,RealGrade = Grade
-                     FROM FIR_Grade WITH (NOLOCK) 
-                     WHERE WeaveTypeID = @WeaveTypeID
-                     AND Percentage >= IIF(@Point > 100, 100, @Point)
-                     AND BrandID=@BrandID
-                     and InspectionGroup=@InspectionGroup
-                     ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-
-                     SELECT TOP 1 Result = iif(Result = 'P','Pass','Fail')
-                     FROM FIR_Grade WITH (NOLOCK) 
-                     WHERE WeaveTypeID =@WeaveTypeID
-                     AND Percentage >= IIF(@Point > 100, 100, @Point)
-                     AND BrandID=@BrandID
-                     and InspectionGroup=@InspectionGroup
-                     ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-                    END";
-                }
-                else
+                DataTable dtGradeResult;
+                DualResult result = DBProxy.Current.Select(null, grade_cmd, out dtGradeResult);
+                if (!result)
                 {
-                    grade_cmd = $@"
-                    ---- 1. 取得預設的布種的等級
-                    SELECT [ShowGrade]=MIN(Grade)
-                    ,[RealGrade] = MIN(Grade)
-                    INTO #default
-                    FROM FIR_Grade f WITH (NOLOCK) 
-                    WHERE f.WeaveTypeID = '{weaveTypeid}' 
-                    AND f.Percentage >= IIF({this.CurrentData["PointRate"]} > 100, 100, {dr["PointRate"]})
-                    AND BrandID=''
-
-                    ---- 2. 取得該品牌布種的等級
-                    SELECT [ShowGrade]=MIN(Grade)
-                    ,[RealGrade] = MIN(Grade)
-                    INTO #withBrandID
-                    FROM FIR_Grade WITH (NOLOCK) 
-                    WHERE WeaveTypeID = '{weaveTypeid}' 
-                    AND Percentage >= IIF({dr["PointRate"]} > 100, 100, {dr["PointRate"]})
-                    AND BrandID='{this.displayBrand.Text}'
-
-                    ---- 若該品牌有另外設定等級，就用該設定，不然用預設（主索引鍵是WeaveTypeID + Percentage + BrandID，因此不會找到多筆預設的Grade）
-                    SELECT [ShowGrade] = ISNULL(Brand.ShowGrade, ISNULL((SELECT ShowGrade FROM #default),'') ) 
-                    ,[RealGrade] =  ISNULL(Brand.RealGrade, ISNULL((SELECT RealGrade FROM #default),'') ) 
-                    FROM #withBrandID brand
-
-                    SELECT [ShowGrade] = ISNULL(Brand.ShowGrade, ISNULL((SELECT ShowGrade FROM #default),'') ) 
-                    ,[RealGrade] =  ISNULL(Brand.RealGrade, ISNULL((SELECT RealGrade FROM #default),'') ) 
-                    ,[IsFromBrand] = IIF(Brand.ShowGrade IS NULL, 0,1 ) 
-                    INTO #BrandInfo
-                    FROM #withBrandID brand
-
-                    ---- 結果也區分品牌
-                    Select TOP 1 [Result] =	case Result	
-                          when 'P' then 'Pass'
-                          when 'F' then 'Fail'
-                         end
-                    from Fir_Grade WITH (NOLOCK) 
-                    WHERE WeaveTypeID = '{weaveTypeid}'  
-                    AND Grade = (
-                     SELECT ISNULL(Brand.ShowGrade, (SELECT ShowGrade FROM #default)) 
-                     FROM #withBrandID brand
-                    )
-                    AND BrandID = IIF((SELECT IsFromBrand FROM #BrandInfo) = 1  , '{this.displayBrand.Text}' ,'') 
-
-                    DROP TABLE #default,#withBrandID ,#BrandInfo";
+                    this.ShowErr(result);
+                    return;
                 }
-
-                DataTable[] dts;
-                DBProxy.Current.Select(null, grade_cmd, out dts);
-                dr["Result"] = dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty;
 
                 dr["ColorToneCheck"] = colorToneCheck;
-                dr["ReGrade"] = this.CurrentData["Grade"];
-                dr["Result"] = colorToneCheck ? "Fail" : dts[1].Rows.Count != 0 ? dts[1].Rows[0]["Result"].ToString() : string.Empty; 
+                dr["Result"] = colorToneCheck ? "Fail" : dtGradeResult.Rows[0]["Result"].ToString();
             };
 
             #region TotalPoint Double Click
@@ -733,7 +640,7 @@ where Fir.ID = '{this.FirID}'"));
                 frm.ShowDialog(this);
                 if (this.EditMode)
                 {
-                    this.Get_total_point();
+                    this.Get_total_point(this.CurrentData);
                 }
             };
             #endregion
@@ -780,28 +687,18 @@ where Fir.ID = '{this.FirID}'"));
                     dr["Roll"] = sele.GetSelecteds()[0]["Roll"].ToString().Trim();
                     dr["Dyelot"] = sele.GetSelecteds()[0]["Dyelot"].ToString().Trim();
                     dr["Ticketyds"] = sele.GetSelecteds()[0]["StockQty"].ToString().Trim();
-                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(
-                        string.Format(
-                        @"
-                                                                    select width
-                                                                    from Fabric 
-                                                                    inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                    where Fir.ID = '{0}'", dr["id"]), null, null);
+                    dr["CutWidth"] = this.cutWidth;
 
-                    if (this.displayBrand.Text == "LLL")
+                    if (this.needCheckInspectionGroup && MyUtility.Check.Empty(this.txtGroup.Text))
                     {
-                        if (MyUtility.Check.Empty(this.txtGroup.Text))
-                        {
-                            dr["Grade"] = string.Empty;
-                            dr["Result"] = string.Empty;
-                            dr["ReGrade"] = string.Empty;
-                        }
+                        dr["Grade"] = string.Empty;
+                        dr["Result"] = string.Empty;
                     }
                     else
                     {
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
-                        dr["ReGrade"] = "A";
+                        dr["ShowGrade"] = "A";
                     }
 
                     dr["totalpoint"] = 0.00;
@@ -869,17 +766,12 @@ where Fir.ID = '{this.FirID}'"));
                     dr["Roll"] = roll_dr["Roll"];
                     dr["Dyelot"] = roll_dr["Dyelot"];
                     dr["Ticketyds"] = roll_dr["StockQty"];
-                    string cmd = string.Format(
-                        @"
-                                                                        select width
-                                                                        from Fabric 
-                                                                        inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                                                                        where Fir.ID = '{0}'", dr["id"]);
-                    dr["CutWidth"] = dr["CutWidth"] = MyUtility.GetValue.Lookup(cmd, null, null);
-                    if (this.displayBrand.Text != "LLL" && this.txtGroup.Text != string.Empty)
+                    dr["CutWidth"] = this.cutWidth;
+                    if ((this.displayBrand.Text != "LLL") && this.txtGroup.Text != string.Empty)
                     {
                         dr["Result"] = "Pass";
                         dr["Grade"] = "A";
+                        dr["ShowGrade"] = "A";
                     }
 
                     dr["totalpoint"] = 0.00;
@@ -1025,7 +917,7 @@ where Fir.ID = '{this.FirID}'"));
 
                 dr["Actualyds"] = e.FormattedValue;
                 dr.EndEdit();
-                this.Get_total_point();
+                this.Get_total_point(this.CurrentData);
             };
             #endregion
 
@@ -1043,7 +935,7 @@ where Fir.ID = '{this.FirID}'"));
             .Numeric("pointRate", header: "Point Rate \nper 100yds", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6, decimal_places: 2)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .CheckBox("ColorToneCheck", header: "Shade in roll fail", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0, settings: tonecell)
-            .Text("Grade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true).Get(out this.col_color)
+            .Text("ShowGrade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true)
             .CheckBox("IsGrandCCanUse", header: "Fail But Can Use", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0)
             .Text("GrandCCanUseReason", header: "Fail But Can Use Reason", width: Widths.AnsiChars(20))
             .Numeric("Weight", header: "G.W(kg)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 7, decimal_places: 2)
@@ -1066,37 +958,9 @@ where Fir.ID = '{this.FirID}'"));
             this.grid.Columns["Remark"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["InspDate"].DefaultCellStyle.BackColor = Color.MistyRose;
             this.grid.Columns["Inspector"].DefaultCellStyle.BackColor = Color.MistyRose;
-            this.Change_record();
+
             return true;
         }
-
-        #region 是否可編輯與變色
-        private void Change_record()
-        {
-            this.col_color.CellFormatting += (s, e) =>
-            {
-                if (e.RowIndex == -1)
-                {
-                    return;
-                }
-
-                DataRow dr = this.grid.GetDataRow(e.RowIndex);
-                if (this.displayBrand.Text != "LLL" || this.txtGroup.Text.Empty())
-                {
-                    return;
-                }
-
-                if (dr["ReGrade"].ToString() == "B")
-                {
-                    e.CellStyle.BackColor = Color.Yellow;
-                }
-                else
-                {
-                    e.CellStyle.BackColor = Color.White;
-                }
-            };
-        }
-        #endregion
 
         /// <inheritdoc/>
         protected override void OnInsert()
@@ -1194,198 +1058,11 @@ where Fir.ID = '{this.FirID}'"));
         {
             foreach (DataRow dataRow in dt.Rows)
             {
-                double double_ActualYds = MyUtility.Convert.GetDouble(dataRow["ActualYds"]);
-                double double_TicketYds = MyUtility.Convert.GetDouble(dataRow["TicketYds"]);
-                double double_Totalpoint = MyUtility.Convert.GetDouble(dataRow["Totalpoint"]);
-                double double_CutWidth = MyUtility.Convert.GetDouble(dataRow["CutWidth"]);
-                double actualYdsT = Math.Floor(MyUtility.Convert.GetDouble(dataRow["ActualYds"]));
-                double actualWidth = MyUtility.Convert.GetDouble(dataRow["actualwidth"]);
-                double actualYdsF = actualYdsT - (actualYdsT % 5);
-                double cutWidth = MyUtility.Convert.GetDouble(MyUtility.GetValue.Lookup($@"
-                select width
-                from Fabric 
-                inner join Fir on Fabric.SCIRefno = fir.SCIRefno
-                where Fir.ID = '{this.FirID}'"));
-                double def_locT = 0d;
-                double def_locF = 0d;
-
-                // Act.Yds Inspected更動時剔除Fir_physical_Defect不在範圍的資料
-
-                // foreach (DataRow dr in Fir_physical_Defect)
-                for (int i = 0; i <= this.Fir_physical_Defect.Rows.Count - 1; i++)
-                {
-                    if (this.Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted
-                        && this.Fir_physical_Defect.Rows[i]["NewKey"].EqualString(dataRow["NewKey"]))
-                    {
-                        // if (dr.RowState != DataRowState.Deleted)
-                        // {
-                        def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
-                        def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                        if (def_locF >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == dataRow["NewKey"].ToString())
-                        {
-                            this.Fir_physical_Defect.Rows[i].Delete();
-                        }
-
-                        // }
-
-                        // DefectLocation的範圍如果與目前ActualYds界限值不符的話就update DefectLocation
-                        if (def_locF == actualYdsF && def_locT != actualYdsT)
-                        {
-                            this.Fir_physical_Defect.Rows[i]["DefectLocation"] = actualYdsF.ToString().PadLeft(3, '0') + "-" + actualYdsT.ToString().PadLeft(3, '0');
-                        }
-
-                        if (def_locT < actualYdsF && def_locT - def_locF != 4)
-                        {
-                            /*
-                             *  如果DefectLocation的相同範圍內有２筆資料,就必須把舊的給刪除
-                             *  ex: 080-083 汙點D1, 080-084 汙點A1/D1 ,就必須要080-083給刪除
-                             *  不然將080-083 改為080-084 Pkey就會重複
-                            */
-                            DataRow[] ary = this.Fir_physical_Defect.Select(string.Format(@"NewKey = {0} and DefectLocation like '%{1}%'", dataRow["NewKey"].ToString(), def_locF));
-                            if (ary.Length > 1)
-                            {
-                                this.Fir_physical_Defect.Rows[i].Delete();
-                            }
-                            else
-                            {
-                                this.Fir_physical_Defect.Rows[i]["DefectLocation"] = def_locF.ToString().PadLeft(3, '0') + "-" + (def_locF + 4).ToString().PadLeft(3, '0');
-                            }
-                        }
-                    }
-                }
-
-                double sumPoint = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Compute("Sum(Point)", string.Format("NewKey = {0}", dataRow["NewKey"])));
-
-                // PointRate 國際公式每五碼最高20點
-                dataRow["TotalPoint"] = sumPoint;
-                string weaveTypeid = MyUtility.GetValue.Lookup("WeaveTypeId", this.maindr["SCiRefno"].ToString(), "Fabric", "SciRefno");
-
-                #region 依dbo.PointRate 來判斷新的PointRate計算公式
-                DataRow drPoint;
-                string pointRateID = MyUtility.Check.Seek($@"select * from QABrandSetting where Brandid='{this.displayBrand.Text}'", out drPoint) ? drPoint["PointRateOption"].ToString() : "1";
-                decimal pointRate = 0;
-                switch (pointRateID)
-                {
-                    case "1":
-                        pointRate = (double_ActualYds == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint / double_ActualYds) * 100, 2));
-                        break;
-                    case "2":
-                        pointRate = (double_ActualYds == 0 || actualWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * actualWidth), 2));
-                        break;
-                    case "3":
-                        if (weaveTypeid == "KNIT")
-                        {
-                            pointRate = (double_TicketYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_TicketYds * double_CutWidth), 2));
-                        }
-                        else
-                        {
-                            pointRate = (double_ActualYds == 0 || double_CutWidth == 0) ? 0 : MyUtility.Convert.GetDecimal(Math.Round((sumPoint * 3600) / (double_ActualYds * double_CutWidth), 2));
-                        }
-
-                        break;
-                    default:
-                        pointRate = 0;
-                        break;
-                }
-
-                dataRow["PointRate"] = pointRate;
-
-                #endregion
-
-                #region Grade,Result
-                string grade_cmd = string.Empty;
-
-                string strTMP = string.Empty;
-
-                grade_cmd = $@"
-                DECLARE @Point as NUMERIC(10, 2) = {dataRow["PointRate"]}
-                DECLARE @BrandID as varchar(15) = '{this.displayBrand.Text}'
-                DECLARE @WeaveTypeID as varchar(15) = '{weaveTypeid}'
-                DECLARE @InspectionGroup varchar(15) = '{this.txtGroup.Text}'
-                DECLARE @IsEmptyResult as bit = 0 
-
-                SELECT @IsEmptyResult = IIF(Result = '' ,1 ,0)
-                FROM FIR_Grade f WITH (NOLOCK) 
-                where BrandID=@BrandID
-                and InspectionGroup=@InspectionGroup
-                and WeaveTypeID=@WeaveTypeID
-                
-                -- 判斷 Result 是否為空值
-                IF @IsEmptyResult = 1
-                BEGIN
-
-	                SELECT TOP 1 ShowGrade = Grade ,RealGrade = ShowGrade
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID = @WeaveTypeID
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-
-	                SELECT TOP 1 Result
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID =@WeaveTypeID
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-
-                END
-
-                ELSE 
-                BEGIN
-                ---- 2. 取得該品牌布種的等級
-	                SELECT TOP 1 ShowGrade = ( IIF(isFormatInP01 = 1 ,ShowGrade , Grade)) ,RealGrade = Grade
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID = @WeaveTypeID
-	                AND Percentage >= IIF(@Point > 100, 100, @Point)
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-	                ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-
-	                SELECT TOP 1 Result = iif(Result = 'P','Pass','Fail')
-	                FROM FIR_Grade WITH (NOLOCK) 
-	                WHERE WeaveTypeID =@WeaveTypeID
-	                AND Percentage >= IIF(@Point > 100, 100, @Point)
-	                AND BrandID=@BrandID
-	                and InspectionGroup=@InspectionGroup
-	                ORDER BY Percentage --IIF(isFormatInP01 = 1 ,ShowGrade , Grade)
-                END";
-
-                DataTable[] dts;
-                DBProxy.Current.Select(null, grade_cmd, out dts);
-
-                if (this.displayBrand.Text == "LLL" && this.txtGroup.Text == string.Empty)
-                {
-                    dataRow["Grade"] = string.Empty;
-                    dataRow["Result"] = string.Empty;
-                    dataRow["ReGrade"] = string.Empty;
-                }
-                else
-                {
-                    string sqlcmd = $@"select  ColorToneCheck
-                    from FIR f
-                    inner join FIR_Physical fp on f.id = fp.ID 
-                    where 
-                    f.POID = '{this.maindr["poid"]}' 
-                    and SEQ1 = '{this.maindr["seq1"]}' 
-                    and seq2 = '{this.maindr["seq2"]}' 
-                    and Roll = '{this.CurrentData["Roll"]}' 
-                    and Dyelot = '{this.CurrentData["Dyelot"]}'";
-
-                    if (MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup(sqlcmd)))
-                    {
-                        dataRow["Result"] = "Fail";
-                    }
-                    else
-                    {
-                        dataRow["Result"] = MyUtility.Convert.GetString(dts[1].Rows[0]["Result"]);
-                    }
-
-                    dataRow["Grade"] = MyUtility.Convert.GetString(dts[0].Rows[0]["ShowGrade"]);
-                    dataRow["ReGrade"] = MyUtility.Convert.GetString(dts[0].Rows[0]["RealGrade"]);
-                }
+                this.Get_total_point(dataRow);
             }
 
             this.gridbs.DataSource = dt;
             this.OnSave();
-            #endregion
         }
 
         /// <inheritdoc/>
@@ -1461,7 +1138,7 @@ and Dyelot = '{dr["Dyelot"]}'
                     @"Insert into Fir_Physical
 (ID,Roll,Dyelot,TicketYds,ActualYds,FullWidth,ActualWidth,TotalPoint,PointRate,Grade,Result,Remark,InspDate,Inspector,Moisture,AddName,AddDate,IsGrandCCanUse,GrandCCanUseReason,ColorToneCheck) 
 Values({0},'{1}','{2}',{3},{4},{5},{6},{7},{8},'{9}','{10}','{11}','{12}','{13}',{14},'{15}',GetDate(),{16},'{17}','{18}') ;",
-                    dr["ID"], dr["roll"].ToString().Replace("'", "''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["ReGrade"], dr["Result"], dr["Remark"].ToString().Replace("'", "''"), inspdate, dr["Inspector"], bolMoisture, this.loginID, isGrandCCanUse, dr["GrandCCanUseReason"], dr["ColorToneCheck"]);
+                    dr["ID"], dr["roll"].ToString().Replace("'", "''"), dr["Dyelot"], dr["TicketYds"], dr["ActualYds"], dr["FullWidth"], dr["ActualWidth"], dr["TotalPoint"], dr["PointRate"], dr["Grade"], dr["Result"], dr["Remark"].ToString().Replace("'", "''"), inspdate, dr["Inspector"], bolMoisture, this.loginID, isGrandCCanUse, dr["GrandCCanUseReason"], dr["ColorToneCheck"]);
                     add_cmd = add_cmd + "select @@IDENTITY as ii";
                     #region 先存入Table 撈取Idenitiy
                     upResult = DBProxy.Current.Select(null, add_cmd, out idenDt);
@@ -1494,7 +1171,7 @@ Update Fir_Physical
 set Roll = '{dr["roll"].ToString().Replace("'", "''")}' ,Dyelot='{dr["Dyelot"]}',TicketYds = {dr["TicketYds"]}
     ,ActualYds = {dr["ActualYds"]},FullWidth ={dr["FullWidth"]}
     ,ActualWidth={dr["ActualWidth"]} ,TotalPoint ={dr["TotalPoint"]} ,PointRate={dr["PointRate"]}
-    ,Grade='{dr["ReGrade"]}',Result='{dr["Result"]}' ,Remark='{dr["Remark"].ToString().Replace("'", "''")}' ,InspDate='{inspdate}' 
+    ,Grade='{dr["Grade"]}',Result='{dr["Result"]}' ,Remark='{dr["Remark"].ToString().Replace("'", "''")}' ,InspDate='{inspdate}' 
     ,Inspector='{dr["Inspector"]}'
     ,Moisture={bolMoisture} ,EditName = '{this.loginID}' ,EditDate = GetDate() ,IsGrandCCanUse = {isGrandCCanUse_val} 
     ,GrandCCanUseReason = '{dr["GrandCCanUseReason"]}' ,ColorToneCheck = '{dr["ColorToneCheck"]}'
@@ -1575,7 +1252,7 @@ Where DetailUkey = {dr["DetailUkey"]};
             string sqlCmd = $"select InspectionGroup from Fabric where SCIRefno = '{this.maindr["SCIRefno"].ToString()}'";
             this.txtGroup.Text = MyUtility.GetValue.Lookup(sqlCmd, "Production");
 
-            if (MyUtility.Check.Empty(this.txtGroup.Text) && this.btnEncode.Text == "Encode" && this.displayBrand.Text == "LLL")
+            if (MyUtility.Check.Empty(this.txtGroup.Text) && this.btnEncode.Text == "Encode" && this.needCheckInspectionGroup)
             {
                 MyUtility.Msg.WarningBox("<Group> can not be empty, please ask the maintenance of relevant personnel.");
                 return;
@@ -1584,7 +1261,7 @@ Where DetailUkey = {dr["DetailUkey"]};
             if (this.btnEncode.Text == "Encode")
             {
                 var dataTable = (DataTable)this.gridbs.DataSource;
-                if ((dataTable != null || dataTable.Rows.Count > 0) && this.displayBrand.Text == "LLL")
+                if (dataTable.Rows.Count > 0 && this.needCheckInspectionGroup)
                 {
                     this.Get_All_point((DataTable)this.gridbs.DataSource);
                 }
@@ -2056,33 +1733,33 @@ and id = '{this.maindr["Receivingid"]}'
 
             for (int i = 0; i < gridCounts; i++)
             {
-                excel.Cells[19 + (i * 8) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 2] = dtGrid.Rows[rowcount]["FullRoll"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 3] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 4] = dtGrid.Rows[rowcount]["FullDyelot"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 5] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 1] = dtGrid.Rows[rowcount]["Roll"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 2] = dtGrid.Rows[rowcount]["FullRoll"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 3] = dtGrid.Rows[rowcount]["Dyelot"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 4] = dtGrid.Rows[rowcount]["FullDyelot"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 5] = dtGrid.Rows[rowcount]["Ticketyds"].ToString();
 
                 // 指定欄位轉型
-                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 8) + addline, 5];
+                Microsoft.Office.Interop.Excel.Range cell = worksheet.Cells[19 + (i * 10) + addline, 5];
                 worksheet.get_Range(cell, cell).NumberFormat = "0.00";
 
-                excel.Cells[19 + (i * 8) + addline, 6] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 7] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 8] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 9] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 10] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 11] = dtGrid.Rows[rowcount]["pointRate"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 12] = dtGrid.Rows[rowcount]["Grade"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 13] = dtGrid.Rows[rowcount]["Result"].ToString();
-                excel.Cells[19 + (i * 8) + addline, 14] = dtGrid.Rows[rowcount]["Remark"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 6] = dtGrid.Rows[rowcount]["Actualyds"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 7] = dtGrid.Rows[rowcount]["Cutwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 8] = dtGrid.Rows[rowcount]["fullwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 9] = dtGrid.Rows[rowcount]["actualwidth"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 10] = dtGrid.Rows[rowcount]["totalpoint"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 11] = dtGrid.Rows[rowcount]["pointRate"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 12] = dtGrid.Rows[rowcount]["Grade"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 13] = dtGrid.Rows[rowcount]["Result"].ToString();
+                excel.Cells[19 + (i * 10) + addline, 14] = dtGrid.Rows[rowcount]["Remark"].ToString();
                 rowcount++;
 
                 #region FIR_Physical_Defect
 
                 // 變色 titile
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Interior.colorindex = 38;
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Borders.LineStyle = 1;
-                worksheet.Range[excel.Cells[20 + (i * 8) + addline, 1], excel.Cells[20 + (i * 8) + addline, 10]].Font.Bold = true;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Interior.colorindex = 38;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Borders.LineStyle = 1;
+                worksheet.Range[excel.Cells[20 + (i * 10) + addline, 1], excel.Cells[20 + (i * 10) + addline, 10]].Font.Bold = true;
 
                 DataTable dtRealTime;
 
@@ -2119,22 +1796,22 @@ order by Yards
 
                             if (cntnextline == 0)
                             {
-                                excel.Cells[20 + (i * 8) + addline, ii] = "Yards";
+                                excel.Cells[20 + (i * 10) + addline, ii] = "Yards";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
+                            excel.Cells[21 + (i * 10) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime]["Yards"];
                             cntRealTime++;
                         }
                         else
                         {
                             if (cntnextline == 0)
                             {
-                                excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
+                                excel.Cells[20 + (i * 10) + addline, ii] = "Defect";
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + dtRealTime.Rows[cntRealTime - 1]["T2"].ToString();
+                            excel.Cells[21 + (i * 10) + addline, ii - (cntnextline * 10)] = dtRealTime.Rows[cntRealTime - 1]["FabricdefectID"].ToString() + dtRealTime.Rows[cntRealTime - 1]["cnt"].ToString() + dtRealTime.Rows[cntRealTime - 1]["T2"].ToString();
 
-                            Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 8) + addline}");
+                            Microsoft.Office.Interop.Excel.Range formatRange = worksheet.get_Range($"{MyExcelPrg.GetExcelColumnName(cntX - (cntnextline * 10))}{21 + (i * 10) + addline}");
                             formatRange.NumberFormat = "0.00";
                             formatRange.HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
                             cntX += 2;
@@ -2160,11 +1837,11 @@ order by Yards
                     {
                         if (ii % 2 == 1)
                         {
-                            excel.Cells[20 + (i * 8) + addline, ii] = "Yards";
+                            excel.Cells[20 + (i * 10) + addline, ii] = "Yards";
                         }
                         else
                         {
-                            excel.Cells[20 + (i * 8) + addline, ii] = "Defect";
+                            excel.Cells[20 + (i * 10) + addline, ii] = "Defect";
                         }
                     }
 
@@ -2179,7 +1856,7 @@ order by Yards
                                 addline++;
                             }
 
-                            excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount]["DefectLocation"];
+                            excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount]["DefectLocation"];
                             pDrowcount++;
                         }
                         else
@@ -2196,17 +1873,60 @@ and t.T2 = 1";
                             string strT2 = MyUtility.Check.Seek(sqlcmd) ? "-T2" : string.Empty;
                             if (dtDefect.Rows[pDrowcount - 1]["DefectRecord"].ToString().IndexOf('/') != -1)
                             {
-                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
+                                excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = P01_PhysicalInspection_Defect.GetNewDefectRecord_T2(dtSelect);
                             }
                             else
                             {
-                                excel.Cells[21 + (i * 8) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
+                                excel.Cells[21 + (i * 10) + addline, ii - (nextline * 10)] = dtDefect.Rows[pDrowcount - 1]["DefectRecord"] + strT2;
                             }
                         }
                     }
                 }
 
-                worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 10]].Font.Bold = true;
+                string sql = $@"
+select FabricdefectID, FabricdefectCount = count(fdr.FabricdefectID) 
+from FIR f
+inner join FIR_Physical fp on fp.ID = f.ID
+inner join FIR_Physical_Defect_Realtime fdr on fdr.FIR_PhysicalDetailUkey = fp.DetailUkey
+where PoId = '{this.maindr["POID"]}' 
+and Seq1 = '{this.maindr["Seq1"]}' and Seq2= '{this.maindr["Seq2"]}'
+and fp.Roll ='{dtGrid.Rows[i]["Roll"].ToString()}' 
+and fp.Dyelot ='{dtGrid.Rows[i]["Dyelot"].ToString()}'
+group by FabricdefectID
+";
+                DataTable tmpFabricdefect;
+                DBProxy.Current.Select(null, sql, out tmpFabricdefect);
+
+                if (tmpFabricdefect.Rows.Count > 0)
+                {
+                    for (int tc = 0; tc < tmpFabricdefect.Rows.Count; tc++) // 修正: tc 從 0 開始
+                    {
+                        int col = (tc * 2) + 1; // 修正: 確保欄位對應正確 (Excel欄位從1開始)
+
+                        excel.Cells[22 + (i * 10) + addline, col] = "Defect";
+                        excel.Cells[23 + (i * 10) + addline, col] = tmpFabricdefect.Rows[tc]["FabricdefectID"].ToString();
+
+                        excel.Cells[22 + (i * 10) + addline, col + 1] = "Total";
+                        excel.Cells[23 + (i * 10) + addline, col + 1] = tmpFabricdefect.Rows[tc]["FabricdefectCount"].ToString();
+                    }
+
+                    int ttlc = tmpFabricdefect.Rows.Count * 2;
+
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, ttlc]].Font.Bold = true;
+                }
+
+                if (tmpFabricdefect.Rows.Count == 0)
+                {
+                    excel.Cells[22 + (i * 10) + addline, 1] = "Defect";
+                    excel.Cells[22 + (i * 10) + addline, 2] = "Total";
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[22 + (i * 10) + addline, 1], excel.Cells[22 + (i * 10) + addline, 2]].Font.Bold = true;
+                }
+
+                worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 10]].Font.Bold = true;
                 #endregion
                 DataTable dtcombo;
 
@@ -2252,52 +1972,52 @@ where a.ID='{0}' and a.Roll='{1}' ORDER BY A.Roll", this.FirID, dtGrid.Rows[rowc
                 {
                     if (dtcombo.Rows.Count < 1)
                     {
-                        excel.Cells[22 + (i * 8) + addline, 2] = "Result";
-                        excel.Cells[22 + (i * 8) + addline, 3] = "Comment";
-                        excel.Cells[22 + (i * 8) + addline, 4] = "Inspector";
-                        excel.Cells[23 + (i * 8) + addline, 1] = "Contiunity ";
-                        excel.Cells[24 + (i * 8) + addline, 1] = "Shad band";
-                        excel.Cells[25 + (i * 8) + addline, 1] = "Weight";
-                        excel.Cells[26 + (i * 8) + addline, 1] = "Moisture";
+                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
                     }
                     else
                     {
-                        excel.Cells[22 + (i * 8) + addline, 2] = "Result";
-                        excel.Cells[22 + (i * 8) + addline, 3] = "Comment";
-                        excel.Cells[22 + (i * 8) + addline, 4] = "Inspector";
-                        excel.Cells[23 + (i * 8) + addline, 1] = "Contiunity ";
-                        excel.Cells[24 + (i * 8) + addline, 1] = "Shad band";
-                        excel.Cells[25 + (i * 8) + addline, 1] = "Weight";
-                        excel.Cells[26 + (i * 8) + addline, 1] = "Moisture";
+                        excel.Cells[24 + (i * 10) + addline, 2] = "Result";
+                        excel.Cells[24 + (i * 10) + addline, 3] = "Comment";
+                        excel.Cells[24 + (i * 10) + addline, 4] = "Inspector";
+                        excel.Cells[25 + (i * 10) + addline, 1] = "Contiunity ";
+                        excel.Cells[26 + (i * 10) + addline, 1] = "Shad band";
+                        excel.Cells[27 + (i * 10) + addline, 1] = "Weight";
+                        excel.Cells[28 + (i * 10) + addline, 1] = "Moisture";
 
-                        excel.Cells[23 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
-                        excel.Cells[23 + (i * 8) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
-                        excel.Cells[23 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_c"].ToString();
+                        excel.Cells[25 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_c"].ToString();
 
-                        excel.Cells[24 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_s"].ToString();
 
                         // 開頭加單引號防止特殊字元使excel產生失敗
-                        excel.Cells[24 + (i * 8) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
-                        excel.Cells[24 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 3] = "'" + dtcombo.Rows[0]["Remark_s"].ToString();
+                        excel.Cells[26 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_s"].ToString();
 
-                        excel.Cells[25 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
-                        excel.Cells[25 + (i * 8) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
-                        excel.Cells[25 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_w"].ToString();
+                        excel.Cells[27 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_w"].ToString();
 
                         if ((bool)dtcombo.Rows[0]["Moisture"])
                         {
-                            excel.Cells[26 + (i * 8) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
+                            excel.Cells[28 + (i * 10) + addline, 2] = dtcombo.Rows[0]["Result_m"].ToString();
                         }
 
-                        excel.Cells[26 + (i * 8) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
-                        excel.Cells[26 + (i * 8) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
+                        excel.Cells[28 + (i * 10) + addline, 3] = dtcombo.Rows[0]["Remark_m"].ToString();
+                        excel.Cells[28 + (i * 10) + addline, 4] = dtcombo.Rows[0]["Name_m"].ToString();
                     }
 
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Interior.colorindex = 38;
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Borders.LineStyle = 1;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Interior.colorindex = 38;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Borders.LineStyle = 1;
 
-                    worksheet.Range[excel.Cells[22 + (i * 8) + addline, 1], excel.Cells[22 + (i * 8) + addline, 4]].Font.Bold = true;
-                    worksheet.Range[excel.Cells[23 + (i * 8) + addline, 1], excel.Cells[26 + (i * 8) + addline, 1]].Font.Bold = true;
+                    worksheet.Range[excel.Cells[24 + (i * 10) + addline, 1], excel.Cells[24 + (i * 10) + addline, 4]].Font.Bold = true;
+                    worksheet.Range[excel.Cells[25 + (i * 10) + addline, 1], excel.Cells[28 + (i * 10) + addline, 1]].Font.Bold = true;
                 }
             }
 

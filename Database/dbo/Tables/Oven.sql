@@ -15,6 +15,8 @@
     [Temperature] INT            DEFAULT ((0)) NOT NULL,
     [Time]        INT            DEFAULT ((0)) NOT NULL,
 	ReportNo varchar(14) not null CONSTRAINT [DF_Oven_ReportNo] default '',
+    [Approver] VARCHAR(10) NOT NULL  CONSTRAINT [DF_Oven_Approver] DEFAULT '', 
+    [ReportDate] DATE NULL, 
     CONSTRAINT [PK_Oven] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 

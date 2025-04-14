@@ -116,6 +116,7 @@
     <Folder Include="dbo\Stored Procedures\" />
     <Folder Include="dbo\User Defined Types\" />
     <Folder Include="dbo\CLR Store Procedures" />
+    <Folder Include="dbo\Index" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\MyGridStd1.sql">
@@ -1885,14 +1886,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Stored Procedures\usp_StockRecaculate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Stored Procedures\usp_SingleItemRecaculate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\KHGoodsHSCode.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -2916,6 +2909,25 @@
     <Build Include="dbo\Tables\MtlType_Brand.sql" />
     <Build Include="dbo\Functions\IsSustainableMaterial.sql" />
     <Build Include="dbo\Tables\Brand_QAMoistureStandardListByActMoisture.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckList_Detail.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
+    <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v2.sql" />
+    <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v3.sql" />
+    <Build Include="dbo\Tables\DailyAccuCPULoading.sql" />
+    <Build Include="dbo\Tables\DailyAccuCPULoading_Detail.sql" />
+    <Build Include="dbo\Tables\SewingDailyOutputStatusRecord.sql" />
+    <Build Include="dbo\Tables\FIR_PointRateFormula.sql" />
+    <Build Include="dbo\Tables\StatementReport.sql" />
+    <Build Include="dbo\Stored Procedures\GetEndlineTargeteff.sql" />
+    <Build Include="dbo\Functions\GetCheckContinusProduceDays.sql" />
+    <Build Include="dbo\Tables\FIR_Physical_QCTime.sql" />
+    <Build Include="dbo\Tables\EmployeeAllocationSetting.sql" />
+    <Build Include="dbo\Tables\CTNJokerTag.sql" />
+    <Build Include="dbo\Tables\CTNHeatSeal.sql" />
+    <Build Include="dbo\Tables\CTNHangerPack.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MutipleItemRecaculate.sql" />
+    <Build Include="dbo\Stored Procedures\RecalculateSewingInlineCategory.sql" />
+    <Build Include="dbo\Functions\GetFirPhysicalGrade.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

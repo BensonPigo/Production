@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -45,6 +46,18 @@ namespace Sci.Production.Warehouse
             // SubDetailKeyField1 = "Ukey";    // second PK
             // SubDetailKeyField2 = "Issue_SummaryUkey"; // third FK
             this.DoSubForm = new P10_Detail();
+
+            #region Batch MIND Releaser 按鈕
+            Point loc = this.queryfors.Location;
+            this.queryfors.Dispose();
+            Sci.Win.UI.Button btnMIND = new Win.UI.Button();
+            btnMIND.Text = "Batch MIND Releaser";
+            btnMIND.Location = loc;
+            btnMIND.Width = 160;
+            btnMIND.ForeColor = Color.Black;
+            btnMIND.Click += this.BtnMIND_Click;
+            this.browsetop.Controls.Add(btnMIND);
+            #endregion
         }
 
         /// <inheritdoc/>
@@ -195,6 +208,12 @@ namespace Sci.Production.Warehouse
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string cutplanID = (e.Master == null) ? string.Empty : e.Master["cutplanID"].ToString();
+            this.DetailSelectParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@issueID", masterID),
+                new SqlParameter("@cutPlanID", cutplanID),
+            };
+
             this.DetailSelectCommand = $@"
 ;with main as
 (
@@ -209,7 +228,7 @@ namespace Sci.Production.Warehouse
 		                             from dbo.Cutplan_Detail_Cons c WITH (NOLOCK) 
 		                             inner join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.ID=c.Poid and psd.SEQ1 = c.Seq1 and psd.SEQ2 = c.Seq2
                                      inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
-		                             where  c.id = '{cutplanID}' 
+		                             where  c.id = @cutplanID
                                             and c.poid = a.poid
                                             and a.SciRefno = psd.SciRefno
                                             and a.ColorID = isnull(psdsC.SpecValue, '')), 0.00)
@@ -219,9 +238,9 @@ namespace Sci.Production.Warehouse
                                     where   a.poid = b.poid 
                                             and a.SCIRefno = b.SCIRefno 
                                             and a.Colorid = b.Colorid 
-                                            and c.CutplanID = '{cutplanID}' 
+                                            and c.CutplanID = @cutplanID
                                             and c.status='Confirmed'
-                                            and c.id != '{masterID}')
+                                            and c.id != @issueID )
                                     , 0.00)
 	        , a.Ukey
             , unit = (select top 1 StockUnit 
@@ -266,7 +285,7 @@ namespace Sci.Production.Warehouse
     outer apply (
         select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
     ) NetQty
-	Where a.id = '{masterID}'
+	Where a.id = @issueID
 )
 select  a.*
         , tmpQty.arqty 
@@ -283,7 +302,7 @@ outer apply(
                                              ,s.seq2
                                              ,i.CutplanID 
                                     from Issue_Summary s WITH (NOLOCK) 
-                                    inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID!='{cutplanID}' and i.status='Confirmed' 
+                                    inner join Issue i WITH (NOLOCK) on s.Id=i.Id and i.CutplanID <> @cutplanID and i.status='Confirmed' 
                                     where a.Poid=s.Poid and a.SCIRefno =s.SCIRefno and a.ColorID=s.ColorID
                                ) s on c.Poid=s.poid and c.SEQ1=s.SEQ1 and c.SEQ2=s.SEQ2 and c.ID=s.CutplanID)
                             , 0.00)
@@ -302,6 +321,7 @@ outer apply(
                                 , 0.00)
 ) as tmpQty
 ";
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -529,7 +549,13 @@ WHERE t.Remark_old <> s.Remark
                 }
 
                 this.CurrentMaintain["cutplanid"] = this.txtRequest.Text;
-                if (!MyUtility.Check.Seek(string.Format("select id from dbo.cutplan WITH (NOLOCK) where id='{0}' and mdivisionid = '{1}'", this.txtRequest.Text, Env.User.Keyword), null))
+                List<SqlParameter> paras = new List<SqlParameter>()
+                {
+                    new SqlParameter("@CutPlanID", this.txtRequest.Text),
+                    new SqlParameter("@M", Env.User.Keyword),
+                    new SqlParameter("@IssueID", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])),
+                };
+                if (!MyUtility.Check.Seek("select id from dbo.cutplan WITH (NOLOCK) where id = @CutPlanID and mdivisionid = @M", paras, null))
                 {
                     e.Cancel = true;
                     MyUtility.Msg.WarningBox("Request not existe");
@@ -549,12 +575,12 @@ with main as(
                                    from Issue a WITH (NOLOCK) 
                                    inner join Issue_Summary b WITH (NOLOCK) on a.Id=b.Id 
                                    where c.poid = b.poid 
-                                         and a.CutplanID = '{this.txtRequest.Text}' 
+                                         and a.CutplanID = @CutPlanID
                                          and t.SCIRefno = b.SCIRefno 
                                          and isnull(tC.SpecValue, '') = b.Colorid 
                                          and a.status = 'Confirmed'
-                                         and a.id != '{this.CurrentMaintain["id"]}'), 0.00)
-           , id = '{this.CurrentMaintain["id"]}'
+                                         and a.id <> @IssueID ), 0.00)
+           , id = @IssueID 
            , NetQty = isnull(NetQty.value, 0)
            , [description] = (select DescDetail 
                               from fabric WITH (NOLOCK) 
@@ -595,7 +621,7 @@ with main as(
 	outer apply (
 		select value = iif (Normal.NetQty != 0, Normal.NetQty, NonNormal.NetQty)
 	) NetQty
-    where c.ID = '{this.txtRequest.Text}'
+    where c.ID = @CutPlanID
     group by poid, t.SCIRefno, tC.SpecValue, t.Refno, NetQty.value, f.WeaveTypeID  
 )
 select a.*
@@ -618,7 +644,7 @@ outer apply(
                                                   , i.CutplanID 
                                   from Issue_Summary s WITH (NOLOCK) 
                                   inner join Issue i WITH (NOLOCK) on s.Id = i.Id 
-                                                                      and i.CutplanID != '{this.txtRequest.Text}' 
+                                                                      and i.CutplanID != @CutPlanID
                                                                       and i.status = 'Confirmed' 
                                   where a.Poid = s.Poid 
                                         and a.SCIRefno = s.SCIRefno 
@@ -642,7 +668,7 @@ outer apply(
                                       and i.status = 'Confirmed'), 0.00)
 ) as tmpQty
 ";
-                    DBProxy.Current.Select(null, sqlcmd, out dt);
+                    DBProxy.Current.Select(null, sqlcmd, paras, out dt);
                     if (MyUtility.Check.Empty(dt) || MyUtility.Check.Empty(dt.Rows.Count))
                     {
                         MyUtility.Msg.WarningBox("Cutplan Cons Data not found!!");
@@ -1291,6 +1317,12 @@ where (isnull(f.InQty,0) - isnull(f.OutQty,0) + isnull(f.AdjustQty,0) - isnull(f
             P10_IssueSummary callNextFrom;
             callNextFrom = new P10_IssueSummary(this.CurrentMaintain["ID"].ToString());
             DialogResult result = callNextFrom.ShowDialog(this);
+        }
+
+        private void BtnMIND_Click(object sender, EventArgs e)
+        {
+            P10_Batch_MIND_Releaser win = new P10_Batch_MIND_Releaser();
+            win.ShowDialog(this);
         }
     }
 }

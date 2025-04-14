@@ -711,15 +711,15 @@ SELECT Selected = 0
 		, [ArtworkReqID] = ar.ID
         , o.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
-		,[Farmout] = ISNULL(FarmOut.Value,0)
-		,[FarmIn] = ISNULL(FarmIn.Value,0)
+		,[Farmout] = iif(awt.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmOutNotFromRFID.Value,0), ISNULL(FarmOut.Value,0))
+		,[FarmIn] = iif(awt.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmInNotFromRFID.Value,0), ISNULL(FarmIn.Value,0))
         , [QuotArticle] = isnull(vsa.Article, '')
         , [QuotSizeCode] = isnull(vsa.SizeCode, '')
         , oa.Remark
 into    #quoteDetailBase
 FROM Orders o WITH (NOLOCK) 
 inner join factory WITH (NOLOCK) on o.factoryid = factory.id
-inner join ArtworkType awt WITH (NOLOCK) on awt.ID = 'PRINTING'
+inner join ArtworkType awt WITH (NOLOCK) on awt.ID = '{1}'
 inner join ArtworkReq_Detail ard WITH (NOLOCK) on   ard.OrderId = o.ID and 
                                                     ard.ArtworkPOID = ''
 left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
@@ -773,6 +773,41 @@ OUTER APPLY(
 	AND bd.PatternDesc = ard.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
+OUTER APPLY(
+	select [Value]= SUM(appd.APQty)
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmInNotFromRFID
+OUTER APPLY(	
+	select [Value]= SUM(apod.PoQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmOutNotFromRFID
 WHERE 	 o.IsForecast = 0      
 		AND (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
 		AND factory.mdivisionid = '{0}'
@@ -896,8 +931,8 @@ SELECT 	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , Orders.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
-		, [Farmout] = ISNULL(FarmOut.Value,0)
-		, [FarmIn] = ISNULL(FarmIn.Value,0)
+		, [Farmout] = iif(awt.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmOutNotFromRFID.Value,0), ISNULL(FarmOut.Value,0))
+		, [FarmIn] = iif(awt.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmInNotFromRFID.Value,0), ISNULL(FarmIn.Value,0))
         , oa.Remark
 FROM ArtworkReq_Detail ard WITH (NOLOCK) 
 inner join ArtworkReq ar WITH (NOLOCK) on ar.ID = ard.ID and ar.ArtworkTypeID = '{2}'  and ar.Status = 'Approved'
@@ -907,6 +942,7 @@ inner join Order_TmsCost WITH (NOLOCK) on ard.OrderID = Order_TmsCost.ID and Ord
 inner join Orders WITH (NOLOCK) on orders.id = order_tmscost.id
 inner join factory WITH (NOLOCK) on orders.factoryid = factory.id
 left join Order_Artwork oa on ard.OrderArtworkUkey = oa.Ukey
+inner join ArtworkType awt WITH (NOLOCK) on awt.ID = ar.ArtworkTypeID
 OUTER APPLY(
 	SELECT  [Value]= SUM( bd.QTY)
 	FROM #Bundle bd
@@ -929,6 +965,41 @@ OUTER APPLY(
 	AND bd.PatternDesc =ard.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
+OUTER APPLY(
+	select [Value]= SUM(appd.APQty)
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmInNotFromRFID
+OUTER APPLY(	
+	select [Value]= SUM(apod.PoQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmOutNotFromRFID
 WHERE 	ard.ArtworkPOID = '' and
         factory.mdivisionid = '{1}' 
 		and factory.IsProduceFty = 1
@@ -1095,8 +1166,8 @@ select	Selected = 0
 		, [ArtworkReqID] = ar.ID
         , o.Category
         , [IrregularQtyReason] = sr.ID +'-'+sr.Reason
-		,[Farmout] = ISNULL(FarmOut.Value,0)
-		,[FarmIn] = ISNULL(FarmIn.Value,0)
+		, [Farmout] = iif(at.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmOutNotFromRFID.Value,0), ISNULL(FarmOut.Value,0))
+		, [FarmIn] = iif(at.SubconFarmInOutNotFromRFID = 1, ISNULL(FarmInNotFromRFID.Value,0), ISNULL(FarmIn.Value,0))
 from ArtworkReq ar  with (nolock)
 inner join ArtworkReq_Detail ard with (nolock) on ar.ID = ard.ID 
 left join ArtworkReq_IrregularQty ai with (nolock) on ai.OrderID = ard.OrderID and ai.ArtworkTypeID = ar.ArtworkTypeID and ard.ExceedQty > 0
@@ -1130,6 +1201,41 @@ OUTER APPLY(
 	AND bd.PatternDesc =ard.PatternDesc
 	AND bd.InComing IS NOT NULL
 )FarmIn
+OUTER APPLY(
+	select [Value]= SUM(appd.APQty)
+    from    ArtworkAP_Detail appd with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on appd.ArtworkPo_DetailUkey = apod.Ukey
+    inner join	ArtworkAP app with (nolock) on appd.id = app.id
+    where app.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmInNotFromRFID
+OUTER APPLY(	
+	select [Value]= SUM(apod.PoQty)
+    from    ArtworkPO apo with (nolock)
+    inner join  ArtworkPO_Detail apod with (nolock) on apod.ID = apo.ID
+    where apo.Status != 'New' and
+    exists (
+        SELECT 1
+        from ArtworkReq arr with (nolock)
+        inner join ArtworkReq_Detail arrd with (nolock) on arrd.ID = arr.ID
+        where	arrd.uKey = apod.ArtworkReq_DetailUkey and 
+        		arrd.Orderid = ard.Orderid and
+        		arrd.Article = ard.Article and
+        		arrd.SizeCode = ard.SizeCode and
+        		arr.ArtworkTypeID = ar.ArtworkTypeID and
+        		arrd.Patterncode = ard.PatternCode and
+        		arrd.PatternDesc = ard.PatternDesc)
+) FarmOutNotFromRFID
 where  ar.ArtworkTypeID = '{this.artworktype}' and ar.Status = 'Approved' and  ard.ArtworkPOID = '' and
     (
 	(o.Category = 'B' and at.IsSubprocess = 1 and at.isArtwork = 0 and at.Classify = 'O') 

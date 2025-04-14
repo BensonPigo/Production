@@ -91,8 +91,9 @@ select  selected = 0
 			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
         , [Color_SpecValue] = isnull(psdsC.SpecValue, '')
 		, [Size]= isnull(psdsS.SpecValue, '')
-        , [GMTWash] = isnull(GMTWash.val, '')
+        , [GMTWash] = c.GMTWashStatus
         , [Grade] = phy.Grade
+        , [FIRemark] = c.Remark
         ,[Refno] = psd.Refno
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.PO_Supp p with (nolock) on psd.ID = p.ID and psd.Seq1 = p.Seq1
@@ -102,22 +103,6 @@ inner join dbo.Factory on o.FactoryID = factory.ID
 left JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = c.PoId and
-			ttd.Seq1 = c.Seq1 and 
-            ttd.Seq2 = c.Seq2 and
-			ttd.Dyelot = c.Dyelot and 
-            ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType and
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 outer apply
 (
 	select [Grade] = isnull(Grade,'') from FIR
@@ -162,6 +147,16 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 if (!MyUtility.Check.Empty(this.txtRefno.Text))
                 {
                     strSQLCmd.Append($@" and psd.Refno ='{this.txtRefno.Text}'");
+                }
+
+                if (!MyUtility.Check.Empty(this.txtRoll.Text))
+                {
+                    strSQLCmd.Append($" and c.Roll ='{this.txtRoll.Text}'");
+                }
+
+                if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+                {
+                    strSQLCmd.Append($" and c.Dyelot ='{this.txtDyelot.Text}'");
                 }
 
                 this.ShowWaitMessage("Data Loading....");
@@ -277,6 +272,7 @@ Where psd.id = '{sp}' and c.inqty - c.outqty + c.adjustqty - c.ReturnQty > 0 AND
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("GMTWash", header: "GMT Wash", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(10), iseditingreadonly: true)
+                .EditText("FIRemark", header: "MTL. Lock/Unlock Remark", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Refno", header: "Refno", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Text("Color_SpecValue", header: "Color", width: Widths.AnsiChars(10), iseditingreadonly: true); // 8
 

@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Windows.Forms;
 using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
-using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
+using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.Prg.PowerBI.Logic;
 
 namespace Sci.Production.PPIC
 {
@@ -15,7 +14,7 @@ namespace Sci.Production.PPIC
     /// </summary>
     public partial class R08 : Win.Tems.PrintForm
     {
-        private DataTable[] _printData;
+        private System.Data.DataTable[] _printData;
         private DateTime? Cdate1;
         private DateTime? Cdate2;
         private DateTime? Apvdate1;
@@ -43,19 +42,19 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+
             MyUtility.Tool.SetupCombox(this.comboType, 2, 1, ",,F,Fabric,A,Accessory,");
             MyUtility.Tool.SetupCombox(this.cmbStatus, 1, 1, "ALL,Approved,Auto.Lock,Checked,Confirmed,Junked,New");
             MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Env.User.Keyword;
+
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+            this.comboFactory.Text = Env.User.Factory;
+
             this.comboType.SelectedIndex = 0;
             this.cmbStatus.SelectedIndex = 0;
             this.cmbReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -85,381 +84,37 @@ namespace Sci.Production.PPIC
         /// <inheritdoc/>
         protected override DualResult OnAsyncDataLoad(Win.ReportEventArgs e)
         {
-            #region SqlParameter
-            List<SqlParameter> sqlpar = new List<SqlParameter>();
-            #endregion
-
-            #region where
-            string where = string.Empty;
-            string whereSummary = string.Empty;
-            string whereDetail = string.Empty;
-            if (!MyUtility.Check.Empty(this.Cdate1))
+            PPIC_R08 biModel = new PPIC_R08();
+            PPIC_R08_ViewModel ppic_R08 = new PPIC_R08_ViewModel()
             {
-                where += $@"and rr.CDate >= @CDate1 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@CDate1", this.Cdate1));
+                 CDate1 = this.Cdate1,
+                 CDate2 = this.Cdate2,
+                 ApvDate1 = this.Apvdate1,
+                 ApvDate2 = this.Apvdate2,
+                 Lockdate1 = this.Lockdate1,
+                 Lockdate2 = this.Lockdate2,
+                 Cfmdate1 = this.Cfmdate1,
+                 Cfmdate2 = this.Cfmdate2,
+                 Voucher1 = this.Voucher1,
+                 Voucher2 = this.Voucher2,
+                 MDivisionID = this.MDivisionID,
+                 FactoryID = this.FtyGroup,
+                 T = this.ReportType,
+                 Status = this.Status,
+                 Sharedept = this.Sharedept,
+                 ReportType = this.rType,
+                 IncludeJunk = this.IncludeJunk,
+                 IsReplacementReport = this.ReplacementReport,
+                 IsPowerBI = false,
+            };
+
+            Base_ViewModel resultReport = biModel.GetPPIC_R08Data(ppic_R08);
+            if (!resultReport.Result)
+            {
+                return resultReport.Result;
             }
 
-            if (!MyUtility.Check.Empty(this.Cdate2))
-            {
-                where += $@"and rr.CDate <= @CDate2 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@CDate2", this.Cdate2));
-            }
-
-            if (!MyUtility.Check.Empty(this.Apvdate1))
-            {
-                where += $@"and rr.ApvDate >= @ApvDate1 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@ApvDate1", this.Apvdate1));
-            }
-
-            if (!MyUtility.Check.Empty(this.Apvdate2))
-            {
-                where += $@"and rr.ApvDate <= @ApvDate2 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@ApvDate2", this.Apvdate2));
-            }
-
-            if (!MyUtility.Check.Empty(this.Lockdate1))
-            {
-                where += $@"and rr.LockDate >= @Lockdate1 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Lockdate1", this.Lockdate1));
-            }
-
-            if (!MyUtility.Check.Empty(this.Lockdate2))
-            {
-                where += $@"and rr.LockDate <= @Lockdate2 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Lockdate2", this.Lockdate2));
-            }
-
-            if (!MyUtility.Check.Empty(this.Cfmdate1))
-            {
-                where += $@"and cast(rr.RespDeptConfirmDate as date) >= @Cfmdate1 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Cfmdate1", this.Cfmdate1));
-            }
-
-            if (!MyUtility.Check.Empty(this.Cfmdate2))
-            {
-                where += $@"and cast(rr.RespDeptConfirmDate as date) <= @Cfmdate2 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Cfmdate2", this.Cfmdate2));
-            }
-
-            if (!MyUtility.Check.Empty(this.Voucher1))
-            {
-                where += $@"and cast(rr.VoucherDate as date) >= @Voucher1 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Voucher1", this.Voucher1));
-            }
-
-            if (!MyUtility.Check.Empty(this.Voucher2))
-            {
-                where += $@"and cast(rr.VoucherDate as date) <= @Voucher2 " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Voucher2", this.Voucher2));
-            }
-
-            if (!MyUtility.Check.Empty(this.MDivisionID))
-            {
-                where += $@"and rr.MDivisionID = @MDivisionID " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@MDivisionID", this.MDivisionID));
-            }
-
-            if (!MyUtility.Check.Empty(this.FtyGroup))
-            {
-                where += $@"and rr.FactoryID = @FactoryID " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@FactoryID", this.FtyGroup));
-            }
-
-            if (!MyUtility.Check.Empty(this.T))
-            {
-                where += $@"and rr.Type = @Type " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Type", this.T));
-            }
-
-            if (this.Status != "ALL")
-            {
-                where += $@"and rr.Status = @Status " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@Status", this.Status));
-            }
-
-            if (!MyUtility.Check.Empty(this.Sharedept))
-            {
-                where += $@"and exists(select 1 from ICR_ResponsibilityDept icr with(nolock) where icr.ID = rr.id and icr.DepartmentID =  @DepartmentID) " + Environment.NewLine;
-                sqlpar.Add(new SqlParameter("@DepartmentID", this.Sharedept));
-            }
-
-            if (!this.chkJunk.Checked)
-            {
-                whereSummary += "and exists (select 1 from ReplacementReport_Detail where Junk = 0 and rr.ID = ID)" + Environment.NewLine;
-                whereDetail += "and rrd.Junk = 0" + Environment.NewLine;
-            }
-
-            if (this.chkReplacementReport.Checked)
-            {
-                whereSummary += "and rr.Status != 'Auto.Lock' and exists (select 1 from ReplacementReport_Detail where Junk = 0 and rr.ID = ID)" + Environment.NewLine;
-                whereDetail += "and rr.Status != 'Auto.Lock' and rrd.Junk = 0" + Environment.NewLine;
-            }
-
-            #endregion
-
-            #region sqlcmd 主table
-            string sqlcmd = string.Empty;
-            if (this.rType == "Detail List")
-            {
-                sqlcmd = $@"
-select
-	rr.id,
-	Type=IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
-	rr.MDivisionID,
-	rr.FactoryID,
-	rr.POID,
-	Style = (select ID from Style s where s.Ukey = o.StyleUkey),
-	o.BrandID,
-	o.SeasonID,
-	rr.Status,
-	rr.CDate,
-	rr.ApvDate,
-	rr.LockDate,
-	rr.Responsibility,
-	x.ttlestamt,
-	rr.RMtlAmt,
-	rr.ActFreight,
-	rr.EstFreight,
-	rr.SurchargeAmt,
-    TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
-    POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
-    PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
-	rr.TransferResponsible,
-	rr.TransferNo
-from ReplacementReport rr WITH (NOLOCK) 
-left join Orders o WITH (NOLOCK)  on o.ID = rr.POID
-left join PO with(nolock) on PO.ID = rr.POID
-outer apply(
-	select ttlestamt = SUM(EstReplacementAMT)
-	from (
-		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
-						end
-		from ReplacementReport_Detail rrd with(nolock)
-		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
-		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
-        outer apply (
-            select v = case 
-						    when psd.seq1 like '7%' then isnull((select v = stock.Price
-	                                                             from PO_Supp_Detail stock
-	                                                             where	psd.SEQ1 like '7%'
-			                                                            and psd.StockPOID = stock.ID
-			                                                            and psd.StockSeq1 = stock.SEQ1
-			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
-						    else psd.Price
-					    end
-        ) po_price
-        outer apply (
-            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                         * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
-                                    from Unit_Rate 
-                                    where UnitFrom = rrd.ReplacementUnit 
-                                          and UnitTo = psd.POUnit),1)
-        )x
-        outer apply (
-            select v = case 
-					        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
-	                                                            from PO_Supp_Detail stock WITH (NOLOCK)
-														        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
-														        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
-	                                                            where	psd.SEQ1 like '7%'
-			                                                        and psd.StockPOID = stock.ID
-			                                                        and psd.StockSeq1 = stock.SEQ1
-			                                                        and psd.StockSeq2 = stock.SEQ2), 0)
-					        else Supp.Currencyid
-				        end
-        ) po_stock
-		where  rrd.ID = rr.ID
-	)x
-)x
-where 1=1
-{where}
-{whereSummary}
-
-select
-	rr.ID,
-	Type = IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
-	M = (Select MDivisionID from Factory with(nolock) where ID = rr.FactoryID),
-    rr.FactoryID,
-	rr.POID,
-	o.StyleID,
-	o.SeasonID,
-	o.BrandID,
-	rr.Status,
-	rr.CDate,
-	rr.ApvDate,
-	rr.CompleteDate,
-	rr.LockDate,
-	Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
-	POSMR = [dbo].[getTPEPass1_ExtNo](PO.POSMR),
-	POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
-	PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
-	PCHandle = [dbo].[getTPEPass1_ExtNo](PO.PCHandle),
-	Prepared = [dbo].[getPass1_ExtNo](rr.ApplyName),
-	PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName),
-	rr.VoucherID,
-	rr.VoucherDate,
-	Junk=iif(rrd.Junk=1,'Y',''),
-	Seq = iif(isnull(rrd.Seq1,'') = '','',CONCAT(rrd.Seq1,'-',rrd.Seq2)),
-	f.MtlTypeID,
-	rrd.Refno,
-	f.DescDetail,
-	rrd.ColorID,
-	rrd.EstInQty,
-	rrd.ActInQty,
-	FinalNeedQty =IIF(rr.Type = 'F', rrd.FinalNeedQty,  rrd.TotalRequest),
-    [Unit] = rrd.ReplacementUnit,
-	rrd.TotalRequest,
-	rrd.AfterCuttingRequest,
-    EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
-                        end,
-    psd.POAmt,
-    psd.ShipAmt,
-	rrd.ResponsibilityReason,
-	rrd.Suggested,
-	rrd.PurchaseID,
-	NewSeq =iif(isnull(rrd.NewSeq1,'') = '','', CONCAT(rrd.NewSeq1,'-',rrd.NewSeq2))
-from ReplacementReport rr with(nolock)
-inner join Orders o with(nolock) on o.ID = rr.POID
-left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
-left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
-outer apply (
-    select v = case 
-					when psd.seq1 like '7%' then isnull((select v = stock.Price
-	                                                    from PO_Supp_Detail stock
-	                                                    where	psd.SEQ1 like '7%'
-			                                                and psd.StockPOID = stock.ID
-			                                                and psd.StockSeq1 = stock.SEQ1
-			                                                and psd.StockSeq2 = stock.SEQ2), 0)
-					else psd.Price
-				end
-) po_price
-left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
-left join PO with(nolock) on PO.ID = rr.POID
-left join Fabric f with(nolock) on f.SCIRefno = rrd.SCIRefno
-outer apply (
-    select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                    * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
-                            from Unit_Rate 
-                            where UnitFrom = rrd.ReplacementUnit 
-                                    and UnitTo = psd.POUnit),1)
-)x
-outer apply (
-    select v = case 
-			        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
-                                                        from PO_Supp_Detail stock WITH (NOLOCK)
-												        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
-												        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
-                                                        where	psd.SEQ1 like '7%'
-	                                                        and psd.StockPOID = stock.ID
-	                                                        and psd.StockSeq1 = stock.SEQ1
-	                                                        and psd.StockSeq2 = stock.SEQ2), 0)
-			        else Supp.Currencyid
-		        end
-) po_stock
-where 1=1
-{where}
-{whereDetail}
-";
-            }
-            else
-            {
-                sqlcmd = $@"
-select
-    rr.ID,
-    Type = IIF(rr.Type = 'F', 'Fabric', 'Accessory'),
-    M = (Select MDivisionID from Factory with(nolock) where ID = rr.FactoryID),
-    rr.FactoryID,
-    rr.POID,
-    o.StyleID,
-    o.SeasonID,
-    o.BrandID,
-    rr.Status,
-    rr.CDate,
-    rr.ApvDate,
-    rr.CompleteDate,
-    rr.LockDate,
-    Responsibility = (select Name from DropDownList dd with(nolock) where dd.ID = rr.Responsibility and dd.Type = 'Replacement.R'),
-	x.ttlestamt,
-    rr.RMtlAmt,
-    rr.ActFreight,
-    rr.EstFreight,
-    rr.SurchargeAmt,
-    TTLUS = isnull(rr.RMtlAmt,0) + isnull(rr.ActFreight,0) +isnull(rr.EstFreight,0) + isnull(rr.SurchargeAmt,0),
-    ResponsibilityFty = icr.FactoryID,
-    icr.DepartmentID,
-    icr.Percentage,
-    icr.Amount,
-    rr.VoucherID,
-    rr.VoucherDate,
-    POSMR = [dbo].[getTPEPass1_ExtNo](PO.POSMR),
-    POHandle = [dbo].[getTPEPass1_ExtNo](PO.POHandle),
-    PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
-    PCHandle = [dbo].[getTPEPass1_ExtNo](PO.PCHandle),
-    Prepared = [dbo].[getPass1_ExtNo](rr.ApplyName),
-    PPICFactorymgr = [dbo].[getPass1_ExtNo](rr.ApvName)
-from ReplacementReport rr with(nolock)
-inner join Orders o with(nolock) on o.ID = rr.POID
-left join PO with(nolock) on PO.ID = rr.POID
-left join  ICR_ResponsibilityDept icr with(nolock) on icr.ID = rr.ID
-outer apply(
-	select ttlestamt = SUM(EstReplacementAMT)
-	from (
-		select EstReplacementAMT = case when rrd.Junk =1 then 0
-						else (select top 1 amount from dbo.GetAmountByUnit(po_price.v, x.Qty, psd.POUnit, 4)) * isnull(dbo.getRate('KP', po_stock.v, 'USD', rr.CDate),1)
-						end
-		from ReplacementReport_Detail rrd with(nolock)
-		left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = rr.POID and psd.SEQ1 = rrd.Seq1 and psd.SEQ2 = rrd.Seq2
-        outer apply (
-            select v = case 
-						    when psd.seq1 like '7%' then isnull((select v = stock.Price
-	                                                             from PO_Supp_Detail stock
-	                                                             where	psd.SEQ1 like '7%'
-			                                                            and psd.StockPOID = stock.ID
-			                                                            and psd.StockSeq1 = stock.SEQ1
-			                                                            and psd.StockSeq2 = stock.SEQ2), 0)
-						    else psd.Price
-					    end
-        ) po_price
-		left join PO_Supp ps WITH (NOLOCK) on ps.ID = psd.ID and ps.SEQ1 = psd.SEQ1
-		left join Supp WITH (NOLOCK) on Supp.ID = ps.SuppID
-        outer apply (
-            select Qty = iif (rr.Type = 'A', rrd.TotalRequest, rrd.FinalNeedQty)
-                         * isnull ((select RateValue = IIF(Denominator = 0,0, Numerator / Denominator) 
-                                    from Unit_Rate 
-                                    where UnitFrom = rrd.ReplacementUnit 
-                                          and UnitTo = psd.POUnit),1)
-        )x
-        outer apply (
-            select v = case 
-					        when psd.seq1 like '7%' then isnull((select v = sstock.Currencyid
-	                                                            from PO_Supp_Detail stock WITH (NOLOCK)
-														        left join PO_Supp pstock WITH (NOLOCK) on pstock.ID = stock.ID and pstock.SEQ1 = stock.SEQ1
-														        left join Supp sstock WITH (NOLOCK) on sstock.ID = pstock.SuppID
-	                                                            where	psd.SEQ1 like '7%'
-			                                                        and psd.StockPOID = stock.ID
-			                                                        and psd.StockSeq1 = stock.SEQ1
-			                                                        and psd.StockSeq2 = stock.SEQ2), 0)
-					        else Supp.Currencyid
-				        end
-        ) po_stock
-		where  rrd.ID = rr.ID
-	)x
-)x
-where 1=1
-{where}
-";
-            }
-            #endregion
-
-            DualResult result = DBProxy.Current.Select(null, sqlcmd, sqlpar, out this._printData);
-            if (!result)
-            {
-                return result;
-            }
+            this._printData = resultReport.DtArr;
 
             return Ict.Result.True;
         }
@@ -499,7 +154,7 @@ where 1=1
             if (this._printData.Length == 2)
             {
                 worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
-                worksheet.Columns[27].ColumnWidth = 66;
+                worksheet.Columns[28].ColumnWidth = 66;
             }
 
             worksheet.Rows.AutoFit();

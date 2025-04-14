@@ -130,6 +130,12 @@
     <Compile Include="B10_MoistureStandardList.Designer.cs">
       <DependentUpon>B10_MoistureStandardList.cs</DependentUpon>
     </Compile>
+    <Compile Include="B10_Supp_Standard.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="B10_Supp_Standard.Designer.cs">
+      <DependentUpon>B10_Supp_Standard.cs</DependentUpon>
+    </Compile>
     <Compile Include="B16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -849,6 +855,12 @@
     <Compile Include="R08.Designer.cs">
       <DependentUpon>R08.cs</DependentUpon>
     </Compile>
+    <Compile Include="R52.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R52.Designer.cs">
+      <DependentUpon>R52.cs</DependentUpon>
+    </Compile>
     <Compile Include="Resource.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -858,6 +870,9 @@
   <ItemGroup>
     <EmbeddedResource Include="B10_MoistureStandardList.resx">
       <DependentUpon>B10_MoistureStandardList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="B10_Supp_Standard.resx">
+      <DependentUpon>B10_Supp_Standard.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B16.resx">
       <DependentUpon>B16.cs</DependentUpon>
@@ -1232,6 +1247,9 @@
     <EmbeddedResource Include="R08.resx">
       <DependentUpon>R08.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="R52.resx">
+      <DependentUpon>R52.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
@@ -1279,6 +1297,7 @@
     <None Include="packages.config" />
     <None Include="Resources\image_icon.png" />
     <None Include="app.config" />
+    <None Include="stylecop.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\trffc15.bmp" />

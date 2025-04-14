@@ -7,6 +7,8 @@ using Ict;
 using Sci.Data;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using Sci.Production.Class;
+using System.Data.SqlClient;
 
 namespace Sci.Production.IE
 {
@@ -31,7 +33,7 @@ namespace Sci.Production.IE
         {
             this.InitializeComponent();
             this.type = type;
-            this.Text = this.type == "1" ? "P02. Style Changeover Monitor" : "P021. Style Changeover Monitor (History)";
+            this.Text = this.type == "1" ? "P02. Changeover Monitor / Management" : "P02. Changeover Monitor / Management (History)";
             this.DefaultFilter = this.type == "1" ? string.Format("MDivisionID = '{0}' AND Status <> 'Closed'", Env.User.Keyword) : string.Format("MDivisionID = '{0}' AND Status = 'Closed'", Env.User.Keyword);
             if (this.type == "2")
            {
@@ -49,6 +51,28 @@ namespace Sci.Production.IE
 
             this.txtInLineDate.DataBindings.Add(new Binding("Text", this.mtbs, "Inline", true, DataSourceUpdateMode.OnValidation, this.emptyDTMask, Env.Cfg.DateTimeStringFormat));
             this.txtInLineDate.Mask = this.DateTimeMask;
+
+            Point loc = this.queryfors.Location;
+            Sci.Win.UI.CheckBox chkDeadline = new Win.UI.CheckBox();
+            chkDeadline.Text = "Deadline on the day";
+            chkDeadline.Location = loc;
+            chkDeadline.Width = 160;
+            chkDeadline.IsSupportEditMode = false;
+            chkDeadline.ForeColor = Color.Blue;
+            chkDeadline.CheckedChanged += (s, e) =>
+            {
+                if (((CheckBox)s).Checked)
+                {
+                    this.DefaultWhere = $" ID IN (SELECT ID FROM ChgOver_Check WHERE ChgOver_Check.ID = ChgOver.ID  and ChgOver_Check.Deadline = '{DateTime.Now.Date.ToShortDateString()}' and ChgOver_Check.Checked = 0 )";
+                }
+                else
+                {
+                    this.DefaultWhere = string.Empty;
+                }
+
+                this.ReloadDatas();
+            };
+            this.browsetop.Controls.Add(chkDeadline);
         }
 
         private string StdTMS = string.Empty; private DataTable dt1; private DataTable dt2;
@@ -76,7 +100,7 @@ namespace Sci.Production.IE
         {
             base.OnDetailEntered();
 
-            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString()));
+            bool existsChgOver_Check = MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}' AND No <> 0", this.CurrentMaintain["ID"].ToString()));
             this.btnCheckList.ForeColor = existsChgOver_Check ? Color.Blue : Color.Black;
 
             string brand = string.Format(
@@ -155,7 +179,7 @@ from tmpDetailData
 group by OutputDate,StdTMS
 )
 select top (3) OutputDate,iif(QAQty*WorkHour = 0,0,Round(ttlOutP/(round(ActManP/QAQty*WorkHour,2)*3600)*100,1)) as Eff,
-isnull((select top (1) iif(InspectQty = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}'),0) as Rft,StdTMS
+isnull(Cast((select top (1) iif(isnull(InspectQty,0) = 0,0,Round((InspectQty-RejectQty)/InspectQty*100,2)) from RFT WITH (NOLOCK) where OrderID = '{0}' and CDate = SummaryData.OutputDate and SewinglineID = '{2}') as decimal(6,2)),0) as Rft,StdTMS
 from SummaryData
 order by OutputDate
 ",
@@ -346,89 +370,7 @@ order by OutputDate
         // Check List
         private void BtnCheckList_Click(object sender, EventArgs e)
         {
-            string sqlWhere = "(UseFor = 'R' or UseFor = 'A')";
-            if (this.CurrentMaintain["Type"].ToString() == "N")
-            {
-                sqlWhere = "(UseFor = 'N' or UseFor = 'A') ";
-            }
-
-            if (this.type == "1" &&
-                   !MyUtility.Check.Seek(string.Format("select ID from ChgOver_Check WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
-            {
-                // sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter();
-                System.Data.SqlClient.SqlParameter sp2 = new System.Data.SqlClient.SqlParameter();
-                System.Data.SqlClient.SqlParameter sp3 = new System.Data.SqlClient.SqlParameter();
-                sp1.ParameterName = "@id";
-                sp1.Value = this.CurrentMaintain["ID"].ToString();
-                sp2.ParameterName = "@orderid";
-                sp2.Value = this.CurrentMaintain["OrderID"].ToString();
-                sp3.ParameterName = "@ChangeOverDate";
-                sp3.Value = this.txtInLineDate.Text;
-                sp3.DbType = DbType.Date;
-
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
-                cmds.Add(sp2);
-                cmds.Add(sp3);
-
-                string insertCmd = $@"
-                    declare @SCIDeliver as date, @BrandID as varchar(20), @FactoryID as varchar(20)  
-                    select @BrandID = BrandID,@SCIDeliver = SCIDelivery,@FactoryID = FactoryID from Orders where ID = @orderid
-
-                    insert into ChgOver_Check (ID,DayBe4Inline,BaseOn,ChgOverCheckListID,ScheduleDate)
-                    select @id,DaysBefore,BaseOn,ID 
-                        ,	case BaseOn 
-		                        when '1' then dbo.CalculateSchdeuleDate(@ChangeOverDate,DaysBefore,@FactoryID,1)
-	                        else dbo.CalculateSchdeuleDate(@SCIDeliver,DaysBefore,@FactoryID,1)
-	                        end [SchdeuleDate]
-                    from ChgOverCheckList 
-                    where  {sqlWhere}
-                            and (
-                                BrandID = @BrandID
-                                or 
-                                BrandID is null
-                                or
-                                BrandID = ''
-                            )
-                            and Junk = 0";
-                DualResult result = DBProxy.Current.Execute(null, insertCmd, cmds);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Insert ChgOver_CheckList fail!!\r\n" + result.ToString());
-                    return;
-                }
-            }
-
             P02_NewCheckList callNextForm = new P02_NewCheckList(string.Compare(this.CurrentMaintain["Status"].ToString(), "New", true) == 0, this.CurrentMaintain["ID"].ToString(), null, null, this.CurrentMaintain["Type"].ToString());
-            callNextForm.ShowDialog(this);
-        }
-
-        // Problem
-        private void BtnProblem_Click(object sender, EventArgs e)
-        {
-            if (this.type == "1")
-            {
-                if (!MyUtility.Check.Seek(string.Format("select ID from ChgOver_Problem WITH (NOLOCK) where ID = '{0}'", this.CurrentMaintain["ID"].ToString())))
-                {
-                    string insertCmd = string.Format(
-                        @"insert into ChgOver_Problem (ID,IEReasonID,AddName,AddDate)
-select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
-                        this.CurrentMaintain["ID"].ToString(),
-                        Env.User.UserID);
-                    DualResult result = DBProxy.Current.Execute(null, insertCmd);
-                    if (!result)
-                    {
-                        MyUtility.Msg.ErrorBox("Insert ChgOver_Problem fail!!\r\n" + result.ToString());
-                        return;
-                    }
-                }
-            }
-
-            bool canEdit = this.CurrentMaintain["Status"].ToString() != "Closed" &&
-                           this.CurrentMaintain["Status"].ToString() != "Approved";
-
-            P02_Problem callNextForm = new P02_Problem(canEdit, this.CurrentMaintain["ID"].ToString(), null, null);
             callNextForm.ShowDialog(this);
         }
 
@@ -765,43 +707,43 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
                 objSheet.Cells[32, 13] = pPH_B;  // PPH (Shift B)
                 #endregion
 
-                #region Problem Encountered
-                DataTable dtProblem;
-                string sql = string.Format(
-                    @"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
-                                        from ChgOver_Problem a WITH (NOLOCK) , IEReason b WITH (NOLOCK) 
-                                        where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ",
-                    this.CurrentMaintain["ID"].ToString().Trim());
-                DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
+                //#region Problem Encountered
+                //DataTable dtProblem;
+                //string sql = string.Format(
+                //    @"Select a.IEReasonID , b.Description, a.ShiftA, a.ShiftB 
+                //                        from ChgOver_Problem a WITH (NOLOCK) , IEReason b WITH (NOLOCK) 
+                //                        where a.IEReasonID = b.ID and a.ID = '{0}' and b.Type = 'CP' ",
+                //    this.CurrentMaintain["ID"].ToString().Trim());
+                //DualResult result = DBProxy.Current.Select(null, sql, out dtProblem);
 
-                // 若超過4筆資料，Excel就要在新增列數
-                if (dtProblem.Rows.Count > 4)
-                {
-                    string rowNum, rowStr;
-                    int repeat = dtProblem.Rows.Count - 4;
+                //// 若超過4筆資料，Excel就要在新增列數
+                //if (dtProblem.Rows.Count > 4)
+                //{
+                //    string rowNum, rowStr;
+                //    int repeat = dtProblem.Rows.Count - 4;
 
-                    Microsoft.Office.Interop.Excel.Range rngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
-                    Microsoft.Office.Interop.Excel.Range rngToInsert;
+                //    Microsoft.Office.Interop.Excel.Range rngToCopy = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range("A36:J36").EntireRow;
+                //    Microsoft.Office.Interop.Excel.Range rngToInsert;
 
-                    for (int i = 0; i < repeat; i++)
-                    {
-                        rowNum = Convert.ToString(40 + i);
-                        rowStr = string.Format("A{0}:M{0}", rowNum);
-                        rngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(rowStr).EntireRow;
-                        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
-                    }
-                }
+                //    for (int i = 0; i < repeat; i++)
+                //    {
+                //        rowNum = Convert.ToString(40 + i);
+                //        rowStr = string.Format("A{0}:M{0}", rowNum);
+                //        rngToInsert = (Microsoft.Office.Interop.Excel.Range)objSheet.get_Range(rowStr).EntireRow;
+                //        rngToInsert.Insert(Microsoft.Office.Interop.Excel.XlInsertShiftDirection.xlShiftDown, rngToCopy.Copy(Type.Missing));
+                //    }
+                //}
 
-                // Clipboard.Clear();  //清空剪貼簿
-                int count = 0;
-                foreach (DataRow dr in dtProblem.Rows)
-                {
-                    objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  // Problem Encountered
-                    objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  // Shift A
-                    objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  // Shift B
-                    count++;
-                }
-                #endregion
+                //// Clipboard.Clear();  //清空剪貼簿
+                //int count = 0;
+                //foreach (DataRow dr in dtProblem.Rows)
+                //{
+                //    objSheet.Cells[36 + count, 1] = dr["IEReasonID"].ToString().Trim() + ":" + dr["Description"].ToString().Trim();  // Problem Encountered
+                //    objSheet.Cells[36 + count, 6] = dr["ShiftA"].ToString().Trim();  // Shift A
+                //    objSheet.Cells[36 + count, 10] = dr["ShiftB"].ToString().Trim();  // Shift B
+                //    count++;
+                //}
+                //#endregion
 
                 #region Save & Show Excel
                 string strExcelName = Class.MicrosoftFile.GetName("IE_P02_ChangeoverReport");
@@ -849,6 +791,59 @@ select {0},ID,'{1}',GETDATE() from IEReason WI where Type = 'CP' and Junk = 0",
             }
 
             return returnValue;
+        }
+
+        private void BtnRefresh_Click(object sender, EventArgs e)
+        {
+            if (MyUtility.Msg.QuestionBox("This will update LeadTime, DaysLeft, Deadline, and OverDays in the P02 CheckList if all [Check] boxes are unchecked.\r\nAre you sure you want to proceed ? ") == DialogResult.No)
+            {
+                return;
+            }
+
+            // 更新ChgOver_Check
+            string sqlUpdate = $@"
+declare @ChgOver table (ID bigint, FactoryID varchar(8), Inline datetime, Category varchar(1), Type varchar(1))
+
+-- 找出符合以下條件的ChgOver
+-- 1. Inline >= 今天
+-- 2. (ChgOver_Check有資料但皆尚未Check) or (ChgOver_Check沒有資料) 
+-- 3. 與B01.ClickSaveAfter() 邏輯相同，差異在本語法為多筆更新
+insert into @ChgOver (ID, FactoryID, Inline, Category, Type)
+select co.ID, co.FactoryID, co.Inline, co.Category, co.Type
+from ChgOver co with (nolock)
+where co.Inline >= Convert(date, GETDATE())
+and ((exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)
+        and not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID and cod.[Checked] = 1))
+    or not exists (select 1 from ChgOver_Check cod with (nolock) where co.ID = cod.ID)) 
+    and co.FactoryID = @FactoryID
+
+-- 刪除並重新寫入ChgOver_Check資料
+if @@RowCount > 0
+begin
+	delete ChgOver_Check where ID in (select ID from @ChgOver)
+
+	insert into ChgOver_Check (ID, ChgOverCheckListID, Deadline, No, LeadTime, ResponseDep)
+	select co.ID, ck.ID, dbo.CalculateWorkDate(co.Inline, -ckd.LeadTime, co.FactoryID), cb.ID, ckd.LeadTime, ckd.ResponseDep
+	from @ChgOver co
+	inner join ChgOverCheckList ck with (nolock) on ck.Category = co.Category and ck.StyleType = co.Type and ck.FactoryID = co.FactoryID
+	inner join ChgOverCheckList_Detail ckd with (nolock) on ck.ID = ckd.ID
+	inner join ChgOverCheckListBase cb with (nolock) on ckd.ChgOverCheckListBaseID = cb.ID
+end
+";
+            List<SqlParameter> listPar = new List<SqlParameter>()
+            {
+                new SqlParameter("@FactoryID", Env.User.Factory),
+            };
+
+            DualResult result = DBProxy.Current.Execute(null, sqlUpdate, listPar);
+            if (!result)
+            {
+                this.ShowErr(result);
+            }
+            else
+            {
+                MyUtility.Msg.InfoBox("Update Success!");
+            }
         }
     }
 }

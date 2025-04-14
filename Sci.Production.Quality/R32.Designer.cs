@@ -200,6 +200,7 @@
             "Inline",
             "Stagger",
             "Final",
+            "Final Internal",
             "3rd party"});
             this.comboStage.Location = new System.Drawing.Point(128, 250);
             this.comboStage.Name = "comboStage";

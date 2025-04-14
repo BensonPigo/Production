@@ -122,6 +122,7 @@ namespace Sci.Production.Warehouse
                 fur.RelaxationStartTime, 
                 fur.RelaxationEndTime, 
                 UnrollScanner = dbo.getPass1 (fur.UnrollScanner), 
+                [UnrollMachine] = MIOT.MachineID,
                 fur.UnrollActualQty, 
                 Location = dbo.Getlocation(fi.ukey),
                 fi.Tone,
@@ -133,6 +134,7 @@ namespace Sci.Production.Warehouse
                                         and fur.Seq2 = psd.SEQ2
             left join [ExtendServer].ManufacturingExecution.dbo.RefnoRelaxtime rr on psd.Refno = rr.Refno
             left join [ExtendServer].ManufacturingExecution.dbo.FabricRelaxation fr on rr.FabricRelaxationID = fr.ID
+            left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fur.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
             inner join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = fur.poid 
                                                             and fi.seq1 = fur.seq1 
                                                             and fi.seq2 = fur.SEQ2 
@@ -183,6 +185,5 @@ namespace Sci.Production.Warehouse
             this.HideWaitMessage();
             return true;
         }
-
     }
 }

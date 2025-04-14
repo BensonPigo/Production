@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Transactions;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
+using static Ict.Win.WinAPI;
 
 namespace Sci.Production.Sewing
 {
@@ -1978,7 +1980,7 @@ select
     t.SizeCode,
     t.Combotype,
     t.QAQty,
-    [OrderQty] = oq.Qty,
+    [OrderQty] = IIF(Upperlimit.OrderQtyUpperlimit > oq.Qty,Upperlimit.OrderQtyUpperlimit, oq.Qty)	,
     [OtherSewingOutputQty] = 
 	    isnull((
 		    select sum(sodd.QAQty)
@@ -1998,7 +2000,22 @@ select
 		    sotd.FromComboType = t.Combotype), 0)
 into #checkResultA
 from #tmp t
+inner join Orders o WITH (NOLOCK) on t.OrderId = o.ID
 inner join Order_Qty oq with (nolock) on oq.ID = t.OrderID and oq.Article = t.Article and oq.SizeCode = t.SizeCode
+outer apply(
+	select value=1
+	from Order_TmsCost ot with(nolock)
+	left join Order_SizeCode os WITH (NOLOCK) on os.Id = o.POID and os.SizeCode = t.SizeCode
+	where  ot.id = oq.ID and ot.ArtworkTypeID = 'Garment Dye' and ot.Price > 0
+	and oq.SizeCode=os.SizeCode and oq.Article=t.Article and ot.id=o.id
+	and o.LocalOrder<>1
+)b
+outer apply(
+	select OrderQtyUpperlimit=iif(b.value is not null
+		,round(cast(oq.Qty as decimal)* (1+ isnull(o.DyeingLoss,0)/100),0)
+		,oq.Qty
+	)
+)Upperlimit ---- 若該訂單有設定DyeingLoss，則上限需要加上DyeingLoss
 where exists( select 1 from Orders o with (nolock) where o.ID = t.OrderID and o.junk = 1 and o.NeedProduction = 1 AND o.Category='B')
 
 select
@@ -2116,6 +2133,7 @@ Type B= Cancel order selected as Buyback, formula: this output qty = [Cancel Ord
                 KeyValuePair<string, DualResult> resultInlineCategory = SewingPrg.GetInlineCategory(this.CurrentMaintain, this.DetailDatas.CopyToDataTable());
                 if (!resultInlineCategory.Value)
                 {
+                    this.ShowErr(resultInlineCategory.Value);
                     return resultInlineCategory.Value;
                 }
 
@@ -2160,35 +2178,99 @@ where not exists (select 1
             }
             #endregion
 
-            #region
+            #region 更新寫入RFT & Rft_Detail
+
+            // 先取得MES的RFT計算後資料
+            this.GetRFTData();
+
+            // 先更新RFT 主Table資料
             if (this.rftDT != null && this.rftDT.Rows.Count > 0)
             {
                 string insertRFT = $@"
+
 select *,MDivisionid=(select MDivisionID from Factory where id=t.FactoryID)
 into #tmp1
 from #tmp t
 
-create  table #td(id varchar(13))
-merge RFT t
-using #tmp1 s
-on  t.orderid = s.orderid and t.Cdate = s.CDate and t.SewinglineID = s.SewinglineID and 
-    t.FactoryID = s.FactoryID and t.MDivisionid = s.MDivisionid and t.Shift = s.Shift and t.Team = s.Team 
-when not matched by target then 
-insert([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty]
-        ,[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
-values(s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
-        ,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid])
-output inserted.id into #td 
-;
-select * from RFT with(nolock) where id in(select id from #td)
+update t
+set  t.InspectQty = s.InspectQty
+	,t.RejectQty = s.RejectQty
+	,t.DefectQty = s.DefectQty
+from Rft t
+inner join #tmp1 s on t.orderid = s.orderid 
+    and t.Cdate = s.CDate 
+    and t.SewinglineID = s.SewinglineID 
+    and t.FactoryID = s.FactoryID 
+    and t.MDivisionid = s.MDivisionid 
+    and t.Shift = s.Shift 
+    and t.Team = s.Team 
+where t.Status = 'New' and t.EditDate is null
+
+
+-- 紀錄SewingP01 相同Pkey所Update的RFT 資料
+select t.* 
+into #tmpUpdateMaster 
+from Rft t
+inner join #tmp1 s on t.orderid = s.orderid 
+and t.Cdate = s.CDate 
+and t.SewinglineID = s.SewinglineID 
+and t.FactoryID = s.FactoryID 
+and t.MDivisionid = s.MDivisionid 
+and t.Shift = s.Shift 
+and t.Team = s.Team 
+where t.Status = 'New' and t.EditDate is null
+
+-- 紀錄SewingP01 需要新增的資料
+select s.*
+into #tmpAdd1
+from #tmp1 s
+where not exists(
+	select 1 from Rft t
+	where  t.orderid = s.orderid 
+	and t.Cdate = s.CDate 
+	and t.SewinglineID = s.SewinglineID 
+	and t.FactoryID = s.FactoryID 
+	and t.MDivisionid = s.MDivisionid 
+	and t.Shift = s.Shift 
+	and t.Team = s.Team 
+)
+
+-- 先新增完產生RFT.ID
+insert into Rft([OrderID],[CDate],[SewinglineID],[FactoryID],[InspectQty],[RejectQty],[DefectQty],[Shift],[Team],[Status],[Remark],[AddName],[AddDate],[MDivisionid])
+select s.[OrderID],s.[CDate],s.[SewinglineID],s.[FactoryID],s.[InspectQty],s.[RejectQty],s.[DefectQty]
+,s.[Shift],s.[Team],s.[Status],s.[Remark],'{Env.User.UserID}',getdate(),s.[MDivisionid]
+from #tmpAdd1 s
+
+-- 紀錄RFT_Detail 需要新增/更新的資料
+select * 
+from (
+    select * from #tmpUpdateMaster
+    union all
+    select t.*
+    from Rft t
+    where exists(
+		select 1 from #tmpAdd1 s
+		where  t.orderid = s.orderid 
+		and t.Cdate = s.CDate 
+		and t.SewinglineID = s.SewinglineID 
+		and t.FactoryID = s.FactoryID 
+		and t.MDivisionid = s.MDivisionid 
+		and t.Shift = s.Shift 
+		and t.Team = s.Team 
+	)
+)a
 ";
-                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, insertRFT, out this.rftDT);
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, insertRFT, out DataTable dtRFT);
                 if (!dualResult)
                 {
                     return dualResult;
                 }
 
-                string rdfdetail = $@"
+                if (dtRFT != null && dtRFT.Rows.Count > 0)
+                {
+                    string tmpRFT_Detail = @"
+
+-- 更新RFT_Detail
 select t.id
 	, GarmentDefectTypeID
 	, GarmentDefectCodeID
@@ -2200,26 +2282,40 @@ inner join Inspection_Detail id with(nolock) on i.id= id.id
 where (i.Status <> 'Fixed'  or (i.Status = 'Fixed' and cast(i.AddDate as date) = i.InspectionDate))
 group by t.id,GarmentDefectTypeID, GarmentDefectCodeID
 ";
-                DataTable rftDT_Detail;
-                SqlConnection sqlConn = null;
-                DBProxy.Current.OpenConnection("ManufacturingExecution", out sqlConn);
-                dualResult = MyUtility.Tool.ProcessWithDatatable(this.rftDT, string.Empty, rdfdetail, out rftDT_Detail, conn: sqlConn);
-                if (!dualResult)
-                {
-                    return dualResult;
-                }
+                    DBProxy.Current.OpenConnection("ManufacturingExecution", out SqlConnection sqlConn);
+                    dualResult = MyUtility.Tool.ProcessWithDatatable(dtRFT, string.Empty, tmpRFT_Detail, out DataTable dtRFT_detail, conn: sqlConn);
+                    if (!dualResult)
+                    {
+                        return dualResult;
+                    }
 
-                string insetRFTDetail = $@"
+                    if (dtRFT_detail != null && dtRFT_detail.Rows.Count > 0)
+                    {
+                        string upd_RftDetil = @"
+update t
+set  t.GarmentDefectTypeid = s.GarmentDefectTypeID
+	,t.Qty=s.Qty
+from Rft_Detail t
+inner join #tmp s on t.ID = s.ID
+and t.GarmentDefectCodeID = s.GarmentDefectCodeID
+
 INSERT INTO [dbo].[Rft_Detail]([ID],[GarmentDefectCodeID],[GarmentDefectTypeid],[Qty])
-select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
-
-                dualResult = MyUtility.Tool.ProcessWithDatatable(rftDT_Detail, string.Empty, insetRFTDetail, out rftDT_Detail);
-                if (!dualResult)
-                {
-                    return dualResult;
+select id,GarmentDefectCodeID,GarmentDefectTypeID,qty 
+from #tmp s
+where not exists(
+	select 1 
+	from Rft_Detail t 
+	where s.ID= t.ID 
+	and s.GarmentDefectCodeID = t.GarmentDefectCodeID
+)
+";
+                        dualResult = MyUtility.Tool.ProcessWithDatatable(dtRFT_detail, string.Empty, upd_RftDetil, out DataTable dtRFT_Finish);
+                        if (!dualResult)
+                        {
+                            return dualResult;
+                        }
+                    }
                 }
-
-                this.rftDT = null;
             }
             #endregion
 
@@ -2259,22 +2355,6 @@ select id,GarmentDefectCodeID,GarmentDefectTypeID,qty from #tmp";
                 }
             }
             #endregion
-
-            DataTable deleteDataTable = (DataTable)this.detailgridbs.DataSource;
-
-
-            string sqlcmd = string.Empty;
-
-            for (int i = 0; i < deleteDataTable.Rows.Count; i++)
-            {
-                if (deleteDataTable.Rows[i].RowState == DataRowState.Deleted)
-                {
-                    var ukey = deleteDataTable.Rows[i]["Ukey", DataRowVersion.Original];
-
-                    sqlcmd += $@"DELETE SewingOutput_Detail where ukey = {ukey}";
-                }
-            }
-            var dual = DBProxy.Current.Execute(null, sqlcmd);
 
             return base.ClickSavePost();
         }
@@ -2518,6 +2598,19 @@ drop table #Child, #updateChild
             };
 
             if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateCumulateDay", listSqlParmeter)))
+            {
+                MyUtility.Msg.WarningBox(result.Description);
+            }
+
+            #endregion
+
+            #region 重新計算 InlineCategory
+            listSqlParmeter = new List<SqlParameter>
+            {
+                new SqlParameter("@ID", this.CurrentMaintain["ID"]),
+            };
+
+            if (!(result = DBProxy.Current.ExecuteSP(string.Empty, "dbo.RecalculateSewingInlineCategory", listSqlParmeter)))
             {
                 MyUtility.Msg.WarningBox(result.Description);
             }
@@ -3913,8 +4006,17 @@ order by a.OrderId,os.Seq
             this.CurrentMaintain["QAQty"] = ((DataTable)this.detailgridbs.DataSource).AsEnumerable().Where(row => row.RowState != DataRowState.Deleted
                                                                                                                  && row["AutoCreate"].EqualString("False")).CopyToDataTable().Compute("SUM(QAQty)", string.Empty);
             this.CurrentMaintain["InlineQty"] = MyUtility.Convert.GetInt(this.CurrentMaintain["QAQty"]) + MyUtility.Convert.GetInt(this.CurrentMaintain["DefectQty"]);
+            this.GetRFTData();
+        }
 
+        private void GetRFTData()
+        {
+            string shift = this.CurrentMaintain["Shift"].EqualString("D") ? "Day" : this.CurrentMaintain["Shift"].EqualString("N") ? "Night" : string.Empty;
             string rftfrommes = $@"
+ALTER TABLE #tmp ALTER COLUMN OrderId VARCHAR(13)
+ALTER TABLE #tmp ALTER COLUMN Article VARCHAR(8)
+ALTER TABLE #tmp ALTER COLUMN ComboType VARCHAR(1)
+
 select t.OrderId
 	, CDate='{((DateTime)this.CurrentMaintain["OutputDate"]).ToString("yyyy/MM/dd")}'
 	, SewinglineID='{this.CurrentMaintain["SewingLineID"]}'
@@ -4011,10 +4113,11 @@ drop table #tmp,#tmp2
 
             using (SqlConnection mesConn = new SqlConnection(Env.Cfg.GetConnection("ManufacturingExecution", DBProxy.Current.DefaultModuleName).ConnectionString))
             {
+                string columns = "OrderId,Article,ComboType";
                 mesConn.Open();
-                result = MyUtility.Tool.ProcessWithDatatable(
+                DualResult result = MyUtility.Tool.ProcessWithDatatable(
                     (DataTable)this.detailgridbs.DataSource,
-                    string.Empty,
+                    columns,
                     rftfrommes,
                     out this.rftDT,
                     conn: mesConn);

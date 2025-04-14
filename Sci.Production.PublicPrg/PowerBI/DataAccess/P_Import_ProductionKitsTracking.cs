@@ -49,8 +49,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -99,6 +97,8 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.ProductionKitsGroup = ISNULL(t.ProductionKitsGroup, '')
    ,p.AddDate = t.AddDate
    ,p.EditDate = t.EditDate
+   ,p.AWBNO = ISNULL(t.AWBNO, '')
+   ,p.Reject = ISNULL(t.Reject, '')
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON t.Article = p.Article
@@ -134,6 +134,8 @@ INSERT INTO P_ProductionKitsTracking (
 	,ProductionKitsGroup
 	,AddDate
 	,EditDate
+    ,AWBNO
+    ,Reject
 )
 SELECT
     ISNULL(t.BrandID, '')
@@ -162,6 +164,8 @@ SELECT
    ,ISNULL(t.ProductionKitsGroup, '')
    ,t.AddDate
    ,t.EditDate
+   ,ISNULL(t.AWBNO, '')
+   ,ISNULL(t.Reject, '')
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
@@ -186,22 +190,11 @@ WHERE NOT EXISTS (
 )
 AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
   OR (EditDate >= @StartDate AND EditDate <= @EndDate))
-
-IF EXISTS (SELECT 1 FROM BITableInfo b WHERE b.id = 'P_ProductionKitsTracking')
-BEGIN
-    UPDATE BITableInfo
-    SET TransferDate = GETDATE()
-    WHERE id = 'P_ProductionKitsTracking'
-END
-ELSE
-BEGIN
-    INSERT INTO BITableInfo (Id, TransferDate)
-    VALUES ('P_ProductionKitsTracking', GETDATE())
-END
 ";
+                sql += new Base().SqlBITableInfo("P_ProductionKitsTracking", true);
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

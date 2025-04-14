@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -59,7 +60,6 @@ namespace Sci.Production.Centralized
                 return;
             }
 
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
             List<string> strSevers = new List<string>();
             if (DBProxy.Current.DefaultModuleName.Contains("PMSDB"))
             {
@@ -80,8 +80,7 @@ namespace Sci.Production.Centralized
             {
                 foreach (string ss in strSevers)
                 {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-
+                    var connections = CentralizedClass.GetConfigConnectionString(ss, "Production");
                     string whereM = string.Empty;
                     List<string> mList = this.txtCentralizedmulitM1.Text.Split(',').ToList();
                     whereM = " where MDivisionID in ('" + string.Join("','", mList) + "')";
@@ -109,8 +108,7 @@ namespace Sci.Production.Centralized
             {
                 foreach (string ss in strSevers)
                 {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-
+                    var connections = CentralizedClass.GetConfigConnectionString(ss, "Production");
                     string whereF = string.Empty;
                     List<string> fList = this.txtCentralizedmulitFactory1.Text.Split(',').ToList();
                     whereF = " where FtyGroup in ('" + string.Join("','", fList) + "')";
@@ -181,10 +179,7 @@ namespace Sci.Production.Centralized
                 string apiParemeter = string.Empty;
                 apiParemeter = $"?Factory={factory}&LockDate={lockDate.ToString("yyyy/MM/dd")}&UserID={userID}";
 
-                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                string connections = docx.Descendants("modules").Elements()
-                    .Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements()
-                    .Where(x => x.FirstAttribute.Value.Contains("PMSSewingAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                string connections = CentralizedClass.GetConfigConnectionString(nowConnection, "PMSSewingAPIuri");
 
                 HttpClient client = new HttpClient();
                 HttpResponseMessage response = client.PostAsync(connections + api + apiParemeter, null).Result;

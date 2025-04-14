@@ -12,6 +12,7 @@ using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Sewing
 {
@@ -42,6 +43,10 @@ namespace Sci.Production.Sewing
         private DataTable vphData;
         private List<APIData> pams = new List<APIData>();
         private int workDay;
+        private string totalCPUIncludeSubConIn;
+        private decimal SPH_totalCPU;
+        private DataTable[] SewingR04;
+        private DataSet dsPams;
 
         /// <summary>
         /// R02
@@ -52,22 +57,16 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.label10.Text = "** The value in this report are all excluded subcon-out,\r\n unless the column with \"included subcon-out\".";
-            DataTable factory, mDivision;
-            DBProxy.Current.Select(
-                null,
-                string.Format(@"select '' as FtyGroup 
-union all
-select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
-                out factory);
 
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "By Date,By Sewing Line,By Sewing Line By Team");
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 1, 1, "Sewing Line,CPU/Sewer/HR");
             this.comboReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
             this.comboOrderBy.SelectedIndex = 0;
+            this.comboFactory.Text = Env.User.Factory;
             this.comboM.Text = Env.User.Keyword;
         }
 
@@ -208,6 +207,9 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 ExcludeNonRevenue = this.chkExcludeNonRevenue.Checked,
                 ExcludeSampleFactory = this.checkSampleFty.Checked,
                 ExcludeOfMockUp = this.checkExcludeOfMockUp.Checked,
+                IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
+                StartDate = (DateTime)this.dateDateStart.Value,
+                EndDate = (DateTime)this.dateDateEnd.Value,
             };
 
             Base_ViewModel resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
@@ -378,15 +380,6 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             #endregion
 
             #region 整理工作天數
-            sewing_R02_Model = new Sewing_R02_ViewModel()
-            {
-                IsCN = Env.User.Keyword.EqualString("CM1") || Env.User.Keyword.EqualString("CM2"),
-                M = this.mDivision,
-                Factory = this.factory,
-                StartDate = this.date1.Value,
-                EndDate = this.date2.Value,
-            };
-
             resultReport = biModel.GetWorkDay(this.SewOutPutData, sewing_R02_Model);
             if (!resultReport.Result)
             {
@@ -398,15 +391,18 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             #endregion
 
             #region Direct Manpower(From PAMS)
-            sewing_R02_Model = new Sewing_R02_ViewModel()
-            {
-                M = this.mDivision,
-                Factory = this.factory,
-                StartDate = this.date1.Value,
-                EndDate = this.date2.Value,
-            };
-
             this.pams = biModel.GetPAMS(sewing_R02_Model);
+            #endregion
+
+            #region SewingR04 外發加工段計算 + SPH TotalCPU 計算
+            resultReport = biModel.GetSubprocessAndSPHTotalCPU(this.SewOutPutData, sewing_R02_Model);
+            if (!resultReport.Result)
+            {
+                failResult = new DualResult(false, "Query data fail\r\n" + resultReport.Result.ToString());
+                return failResult;
+            }
+
+            this.SewingR04 = resultReport.DtArr;
             #endregion
 
             if (MyUtility.Check.Empty(this.factory) && !MyUtility.Check.Empty(this.mDivision))
@@ -504,8 +500,75 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
 
             this.DeleteExcelRow(2, insertRow, excel);
 
+            string region = MyUtility.GetValue.Lookup("select Region from System");
+
+            #region 呼叫Pams API for [GPH] [SPH] [VPH]
+            AttendanceSummary_APICondition attendanceSummary_API = new AttendanceSummary_APICondition()
+            {
+                FactoryID = this.factory == "SPR" ? "SXR" : this.factory,
+                StartDate = ((DateTime)this.dateDateStart.Value).ToString("yyyy/MM/dd"),
+                EndDate = ((DateTime)this.dateDateEnd.Value).ToString("yyyy/MM/dd"),
+                IsContainShare = region == "PH",
+                IsLocal = false,
+            };
+
+            Sewing_R02 biModel = new Sewing_R02();
+            DualResult result = biModel.GetPamsAttendanceSummaryAsync(attendanceSummary_API, out this.dsPams);
+
+            // 有錯誤也不回傳訊息, 因為這三個欄位是team3要看的, 工廠不一定需要
+            //if (!result)
+            //{
+            //    MyUtility.Msg.WarningBox(@"Query System fail, pls contact Taipei MIS!!, API error msg: " + Environment.NewLine + result.ToString());
+            //}
+
+            #endregion
+
+            // [GPH] [SPH] [VPH]
+            DataTable dtOther = new DataTable();
+            insertRow += 2;
+            for (int i = 1; i <= 3; i++)
+            {
+                decimal totalCPU = 0;
+                decimal totalMemory = 0;
+
+                if (this.dsPams != null && this.dsPams.Tables.Count != 0)
+                {
+                    dtOther = this.dsPams.Tables["other"];
+                }
+
+                insertRow++;
+
+                // P_Import_CMPByDate 也要一起異動
+                switch (i)
+                {
+                    // [GPH]
+                    case 1:
+                        totalCPU = MyUtility.Convert.GetDecimal(this.totalCPUIncludeSubConIn);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["GPH_Manhours"]);
+                        break;
+
+                    // [SPH]
+                    case 2:
+                        totalCPU = MyUtility.Convert.GetDecimal(this.SewingR04[1].Rows[0]["SPH_ttlCPU"]);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["SPH_Manhours"]);
+                        break;
+
+                    // [VPH]
+                    case 3:
+                        totalCPU = MyUtility.Convert.GetDecimal(this.totalCPUIncludeSubConIn) + MyUtility.Convert.GetDecimal(this.SewingR04[1].Rows[0]["SPH_ttlCPU"]);
+                        totalMemory = dtOther.Rows.Count == 0 ? 0 : MyUtility.Convert.GetDecimal(dtOther.Rows[0]["FtyManhours"]);
+                        break;
+                    default:
+                        break;
+                }
+
+                worksheet.Cells[insertRow, 2] = totalCPU; // Total CPU
+                worksheet.Cells[insertRow, 3] = totalMemory; // Total Manhours
+                worksheet.Cells[insertRow, 4] = MyUtility.Check.Empty(totalMemory) ? 0 : Math.Round(MyUtility.Convert.GetDouble(totalCPU / totalMemory), 2); // Total CPU/Manhours
+            }
+
             // Subprocess
-            insertRow = insertRow + 2;
+            insertRow = insertRow + 3;
             int insertRec = 0;
             foreach (DataRow dr in this.subprocessData.Rows)
             {
@@ -532,9 +595,34 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             worksheet.Cells[insertRow, 1] = "Total work day:";
             worksheet.Cells[insertRow, 3] = this.workDay;
 
+            #region Only Subcon Out 含外發整件成衣& 外發加工段
+            insertRow += 3;
+            DataTable dtSubcOut = this.SewingR04[0];
+            if (dtSubcOut.Rows.Count > 0)
+            {
+                foreach (DataRow dr in dtSubcOut.Rows)
+                {
+                    // 插入一筆record
+                    rngToInsert = worksheet.get_Range(string.Format("A{0}:A{0}", MyUtility.Convert.GetString(insertRow)), Type.Missing).EntireRow;
+                    rngToInsert.Insert(Excel.XlInsertShiftDirection.xlShiftDown);
+                    Marshal.ReleaseComObject(rngToInsert);
+
+                    worksheet.Cells[insertRow, 2] = string.Format("{0}{1}", MyUtility.Convert.GetString(dr["ArtworkTypeID"]).PadRight(20, ' '), MyUtility.Convert.GetString(dr["ProductionUnit"]));
+                    worksheet.Cells[insertRow, 4] = MyUtility.Convert.GetString(dr["TTL_Price"]);
+                    insertRow++;
+                }
+            }
+            else
+            {
+                // 刪除沒資料的欄位
+                this.DeleteExcelRow(3, insertRow, excel);
+            }
+
+            #endregion
+
             // Subcon
             int revenueStartRow = 0;
-            insertRow = insertRow + 2;
+            insertRow = insertRow + 3;
             int insertSubconIn = 0, insertSubconOut = 0;
             objArray = new object[1, 3];
             if (this.subconData.Rows.Count > 0)
@@ -689,7 +777,8 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             }
             else
             {
-                this.DeleteExcelRow(9, insertRow, excel);
+                // 要保留外發加工的欄位所以加上5行
+                this.DeleteExcelRow(9, insertRow , excel);
             }
 
             this.HideWaitMessage();
@@ -810,6 +899,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
 
             // 將多出來的Record刪除
             this.DeleteExcelRow(2, insertRow, excel);
+            Excel.Range rg = worksheet.UsedRange;
 
             // Total
             if (this.reportType == 2)
@@ -821,6 +911,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
                 iManHour = 10;
                 iEff = 11;
                 worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
+                this.totalCPUIncludeSubConIn = rg.Cells[insertRow, 3].Value.ToString();
                 worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
                 worksheet.Cells[insertRow, 5] = string.Format("=SUM(E5:E{0})", MyUtility.Convert.GetString(insertRow - 1));
                 worksheet.Cells[insertRow, 6] = string.Format("=SUM(F5:F{0})", MyUtility.Convert.GetString(insertRow - 1));
@@ -834,6 +925,7 @@ select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
             {
                 worksheet.Cells[insertRow, 2] = string.Format("=SUM(B5:B{0})", MyUtility.Convert.GetString(insertRow - 1));
                 worksheet.Cells[insertRow, 3] = string.Format("=SUM(C5:C{0})", MyUtility.Convert.GetString(insertRow - 1));
+                this.totalCPUIncludeSubConIn = rg.Cells[insertRow, 3].Value.ToString();
                 worksheet.Cells[insertRow, 4] = string.Format("=SUM(D5:D{0})", MyUtility.Convert.GetString(insertRow - 1));
                 worksheet.Cells[insertRow, 5] = string.Format("=SUM(E5:E{0})", MyUtility.Convert.GetString(insertRow - 1));
                 worksheet.Cells[insertRow, 6] = string.Format("=ROUND(C{0}/I{0},2)", MyUtility.Convert.GetString(insertRow));

@@ -72,6 +72,9 @@
             this.txtDest = new Sci.Production.Class.Txtcountry();
             this.gridScanDetail = new Sci.Win.UI.Grid();
             this.scanDetailBS = new Sci.Win.UI.BindingSource(this.components);
+            this.chk_AutoCheckWeight = new Sci.Win.UI.CheckBox();
+            this.numWeight = new Sci.Win.UI.NumericBox();
+            this.lbWeight = new Sci.Win.UI.Label();
             this.tabControlScanArea.SuspendLayout();
             this.tabPageCarton.SuspendLayout();
             this.tabPageScan.SuspendLayout();
@@ -187,7 +190,7 @@
             // 
             this.tabControlScanArea.Controls.Add(this.tabPageCarton);
             this.tabControlScanArea.Controls.Add(this.tabPageScan);
-            this.tabControlScanArea.Location = new System.Drawing.Point(9, 206);
+            this.tabControlScanArea.Location = new System.Drawing.Point(9, 261);
             this.tabControlScanArea.Name = "tabControlScanArea";
             this.tabControlScanArea.SelectedIndex = 0;
             this.tabControlScanArea.Size = new System.Drawing.Size(546, 148);
@@ -547,6 +550,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chk_AutoCheckWeight);
+            this.panel1.Controls.Add(this.numWeight);
+            this.panel1.Controls.Add(this.lbWeight);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.txtDest);
             this.panel1.Controls.Add(this.displaySPNo);
@@ -563,12 +569,12 @@
             this.panel1.Controls.Add(this.displayPoNo);
             this.panel1.Location = new System.Drawing.Point(9, 12);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(345, 188);
+            this.panel1.Size = new System.Drawing.Size(345, 243);
             this.panel1.TabIndex = 102;
             // 
             // label2
             // 
-            this.label2.Location = new System.Drawing.Point(6, 147);
+            this.label2.Location = new System.Drawing.Point(6, 146);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(75, 23);
             this.label2.TabIndex = 109;
@@ -577,7 +583,7 @@
             // txtDest
             // 
             this.txtDest.DisplayBox1Binding = "";
-            this.txtDest.Location = new System.Drawing.Point(85, 147);
+            this.txtDest.Location = new System.Drawing.Point(85, 146);
             this.txtDest.Name = "txtDest";
             this.txtDest.Size = new System.Drawing.Size(236, 24);
             this.txtDest.TabIndex = 108;
@@ -595,7 +601,7 @@
             this.gridScanDetail.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gridScanDetail.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.gridScanDetail.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-            this.gridScanDetail.Location = new System.Drawing.Point(12, 360);
+            this.gridScanDetail.Location = new System.Drawing.Point(12, 415);
             this.gridScanDetail.Name = "gridScanDetail";
             this.gridScanDetail.ReadOnly = true;
             this.gridScanDetail.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
@@ -607,11 +613,53 @@
             this.gridScanDetail.TabIndex = 103;
             this.gridScanDetail.TabStop = false;
             // 
+            // chk_AutoCheckWeight
+            // 
+            this.chk_AutoCheckWeight.AutoSize = true;
+            this.chk_AutoCheckWeight.Checked = true;
+            this.chk_AutoCheckWeight.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chk_AutoCheckWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chk_AutoCheckWeight.Location = new System.Drawing.Point(6, 203);
+            this.chk_AutoCheckWeight.Name = "chk_AutoCheckWeight";
+            this.chk_AutoCheckWeight.Size = new System.Drawing.Size(201, 21);
+            this.chk_AutoCheckWeight.TabIndex = 115;
+            this.chk_AutoCheckWeight.Text = "Auto check weight is empty.";
+            this.chk_AutoCheckWeight.UseVisualStyleBackColor = true;
+            // 
+            // numWeight
+            // 
+            this.numWeight.BackColor = System.Drawing.Color.White;
+            this.numWeight.DecimalPlaces = 3;
+            this.numWeight.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numWeight.Location = new System.Drawing.Point(141, 174);
+            this.numWeight.Name = "numWeight";
+            this.numWeight.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWeight.Size = new System.Drawing.Size(173, 23);
+            this.numWeight.TabIndex = 114;
+            this.numWeight.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numWeight.Validating += new System.ComponentModel.CancelEventHandler(this.NumWeight_Validating);
+            // 
+            // lbWeight
+            // 
+            this.lbWeight.Location = new System.Drawing.Point(6, 174);
+            this.lbWeight.Name = "lbWeight";
+            this.lbWeight.Size = new System.Drawing.Size(131, 23);
+            this.lbWeight.TabIndex = 113;
+            this.lbWeight.Text = "Actual CTN# Weight";
+            // 
             // P17
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(563, 538);
+            this.ClientSize = new System.Drawing.Size(563, 594);
             this.Controls.Add(this.gridScanDetail);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
@@ -683,5 +731,8 @@
         private Win.UI.Label label2;
         private Class.Txtcountry txtDest;
         private Win.UI.BindingSource scanDetailBS;
+        private Win.UI.CheckBox chk_AutoCheckWeight;
+        private Win.UI.NumericBox numWeight;
+        private Win.UI.Label lbWeight;
     }
 }

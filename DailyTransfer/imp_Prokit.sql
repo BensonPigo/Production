@@ -67,6 +67,8 @@ a.StyleUkey	= isnull( b.StyleUkey                     ,0)
 ,a.[AddDate]=b.[AddDate]
 ,a.[EditName]=isnull(b.[EditName], '')
 ,a.[EditDate]=b.[EditDate]
+,a.AWBNO = ISNULL(b.AWBNO, 0)
+
 from Production.dbo.Style_ProductionKits as a 
 inner join Trade_To_Pms.dbo.Style_ProductionKits as b ON a.ukey=b.ukey --AND a.FactoryID=b.FactoryID
 left join Trade_To_Pms.dbo.Factory as c ON c.ID=b.FactoryID
@@ -108,7 +110,9 @@ Ukey
 ,[AddName]
 ,[AddDate]
 ,[EditName]
-,[EditDate])
+,[EditDate]
+,AWBNO
+)
 
 select 
 b.Ukey
@@ -145,6 +149,7 @@ b.Ukey
 ,b.[AddDate]
 ,isnull(b.[EditName]         , '')
 ,b.[EditDate]
+,ISNULL(b.AWBNO, 0)
 from Trade_To_Pms.dbo.Style_ProductionKits as b WITH (NOLOCK)
 left join Trade_To_Pms.dbo.Factory as c WITH (NOLOCK) ON c.ID=b.FactoryID
 where not exists(select 1 from Production.dbo.Style_ProductionKits as a WITH (NOLOCK) where a.ukey=b.ukey-- AND a.FactoryID=b.FactoryID

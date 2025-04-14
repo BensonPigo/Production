@@ -38,6 +38,7 @@ namespace Sci.Production.Shipping
         private DateTime? FBDate_Ori;
         public DateTime? newSOCFMDate;
         public string newSOCFMDateCmd;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// ListGMTBooking_Detail
@@ -201,6 +202,7 @@ select  p.GMTBookingLock
                             for xml path('')
                           ), 1, 1, '')         , Pullout.sendtotpe
     ,pl2.APPBookingVW,pl2.APPEstAmtVW,[PLFromRgCode] = '{0}'
+    ,p.Expressid
 from PackingList p WITH (NOLOCK) 
 left join Pullout WITH (NOLOCK) on Pullout.id=p.Pulloutid
 outer apply(
@@ -291,6 +293,15 @@ $" where p.INVNo = '{this.masterID}'");
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
 
             if (MyUtility.Check.Seek($@"
 select WhseCode,WhseName,* 
@@ -433,6 +444,7 @@ where p.INVNo = '{0}' and p.ID = pd.ID and a.OrderID = pd.OrderID and a.OrderShi
                 .Text("PONo", header: "PO No.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("AirPPID", header: "APP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Delivery", iseditingreadonly: true)
+                .Text("Expressid", header: "H/C NO.", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("IDD", header: "Intended Delivery", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("OrderQty", header: "Order Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SewingOutputQty", header: "Prod. Output Ttl Qty", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -518,6 +530,9 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.CurrentMaintain["InvDate"] = DateTime.Today;
@@ -547,6 +562,7 @@ and p.Status = 'Confirmed'", MyUtility.Convert.GetString(dr["ID"]));
             this.txtbrand.ReadOnly = true;
             this.txtCountryDestination.TextBox1.ReadOnly = true;
             this.txtShipmodeShippingMode.ReadOnly = true;
+            this.comboCompany1.ReadOnly = true;
 
             if (!MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
@@ -942,6 +958,21 @@ order by fw.WhseCode";
                 this.txtfactoryShipper.Focus();
                 MyUtility.Msg.WarningBox("Shipper can't empty!!");
                 return false;
+            }
+
+            if (!this.txtfactoryShipper.Text.IsNullOrWhiteSpace())
+            {
+                sqlCmd = $@"select CountryID 
+from SCIFty 
+where id = '{this.CurrentMaintain["Shipper"]}'";
+
+                string chkCountry = MyUtility.GetValue.Lookup(sqlCmd);
+
+                if (chkCountry != this.CurrentMaintain["Dest"].ToString() && this.CurrentMaintain["ShipModeID"].ToString() == "TRUCK")
+                {
+                    MyUtility.Msg.WarningBox("The Destination Country is different from the Export Origin which is cross-border transportation, please contact MR Team to revise the Ship Mode as CB-Truck!!");
+                    return false;
+                }
             }
             #endregion
             #region 若 No Export Charge 有勾選，同時 Expense Data 也有資料，
@@ -1855,6 +1886,12 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         // Import from packing list
         private void BtnImportfrompackinglist_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             // Brand, CustCD, Destination, Ship Mode不可以為空
             if (MyUtility.Check.Empty(this.CurrentMaintain["BrandID"]))
             {
@@ -1902,6 +1939,8 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
         {
             base.ClickConfirm();
 
+            DataTable dtdetailgridbs = (DataTable)this.detailgridbs.DataSource;
+
             #region 檢查LocalSupp_Bank
             DualResult resultCheckLocalSupp_BankStatus = Prgs.CheckLocalSupp_BankStatus(this.CurrentMaintain["Forwarder"].ToString(), Prgs.CallFormAction.Confirm);
             if (!resultCheckLocalSupp_BankStatus)
@@ -1920,6 +1959,31 @@ where p.id='{dr["ID"]}' and p.ShipModeID  <> oq.ShipmodeID and o.Category <> 'S'
             if (MyUtility.Check.Empty(this.CurrentMaintain["SOCFMDate"]))
             {
                 MyUtility.Msg.WarningBox("S/O not yet confirmed, can't confirm!");
+                return;
+            }
+
+            // ship mode為E/C、E/P、E/P-C, 在Garment Booking Confirm 時, 任一 Packing 沒有 HC No. 則不可 Confirm
+            bool isHCNo = true;
+            if (dtdetailgridbs.Rows.Count > 0)
+            {
+                foreach (DataRow drdetailgridbs in dtdetailgridbs.Rows)
+                {
+                    if (MyUtility.Check.Empty(drdetailgridbs["Expressid"]))
+                    {
+                        isHCNo = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                isHCNo = false;
+            }
+
+            string strShipModeID = this.CurrentMaintain["ShipModeID"].ToString();
+            if (((strShipModeID == "E/C") || (strShipModeID == "E/P") || (strShipModeID == "E/P-C")) && !isHCNo)
+            {
+                MyUtility.Msg.WarningBox("Ship Mode is E/C, E/P, or E/P-C,  need create HC frist than can confirm GB");
                 return;
             }
 
@@ -2858,6 +2922,26 @@ where ID = '{this.CurrentMaintain["ID"]}'
         private void BtnMercuryShipment_Click(object sender, EventArgs e)
         {
             new P05_MercuryPostScanShipment(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

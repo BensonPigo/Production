@@ -6,7 +6,7 @@
     [FactoryID]                   VARCHAR (8)    CONSTRAINT [DF_Issue_FactoryID] DEFAULT ('') NOT NULL,
     [Status]                      VARCHAR (15)   CONSTRAINT [DF_Issue_Status] DEFAULT ('') NULL,
     [CutplanID]                   VARCHAR (13)   CONSTRAINT [DF_Issue_CutplanID] DEFAULT ('') NULL,
-    [Remark]                      NVARCHAR (100) CONSTRAINT [DF_Issue_Remark] DEFAULT ('') NULL,
+    [Remark]                      NVARCHAR (500) CONSTRAINT [DF_Issue_Remark] DEFAULT ('') NULL,
     [ApvName]                     VARCHAR (10)   CONSTRAINT [DF_Issue_ApvName] DEFAULT ('') NULL,
     [ApvDate]                     DATE           NULL,
     [WhseReasonID]                VARCHAR (7)    CONSTRAINT [DF_Issue_WhseReasonID] DEFAULT ('') NULL,

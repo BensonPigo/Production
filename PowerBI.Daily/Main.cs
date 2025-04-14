@@ -19,6 +19,7 @@ using System.Diagnostics;
 using PostJobLog;
 using System.Threading;
 using System.Configuration;
+using PowerBI.Daily.PowerBI.DataAccess;
 
 namespace PowerBI.Daily
 {
@@ -231,6 +232,47 @@ namespace PowerBI.Daily
 
         private DualResult DailyUpdate(int type = 0)
         {
+            if (type == 0)
+            {
+                #region WebAPI
+                List<string> functionNameList = new List<string>()
+                {
+                    "P_Import_MachineMaserList",
+                };
+
+                this.InsertTransLog("Start Update_PoweBI_InThread", string.Empty, string.Empty, 0); // 測試時，記得註解不然會寫進正式資料庫
+                #region 查詢全部伺服器名稱
+                DualResult dualResult = DBProxy.Current.Select("PBIReportData", "select [SystemName] = iif(Region = 'PH1', 'PHI', Region) from P_TransRegion", out DataTable dtRegion);
+                if (!dualResult)
+                {
+                    return dualResult;
+                }
+                #endregion
+                P_Import_MachineMasterList p_Import_MachineMasterList = new P_Import_MachineMasterList();
+
+                foreach (string strfunctionName in functionNameList)
+                {
+                    int iGroup = 1;
+                    foreach (DataRow dataRow in dtRegion.Rows)
+                    {
+                        string description = string.Empty;
+                        switch (strfunctionName)
+                        {
+                            case "P_Import_MachineMaserList":
+                                p_Import_MachineMasterList.P_MachineMasterList(MyUtility.Convert.GetString(dataRow["SystemName"]));
+                                description = p_Import_MachineMasterList.Msg.Empty() ? string.Empty : p_Import_MachineMasterList.Msg;
+                                break;
+
+                        }
+                        this.InsertTransLog(strfunctionName, description, MyUtility.Convert.GetString(dataRow["SystemName"]), iGroup);　// 測試時，記得註解不然會寫進正式資料庫
+                        iGroup++;
+                    }
+                }
+                this.InsertTransLog("End Update_PowerBI_InThread", string.Empty, string.Empty, 0);　// 測試時，記得註解不然會寫進正式資料庫
+                #endregion
+            }
+
+
             DualResult result;
             string whereP;
             if (type == 0)
@@ -246,45 +288,44 @@ namespace PowerBI.Daily
             #region Setup Data  
             string sqlCmd = string.Empty;
             sqlCmd = $@"
-Use [PBIReportData];
-SELECT Region
-	,[DirName] = ''
-	,[RarName] = ''
-	,[Is_Export] = 0
-	,[ConnectionName] = r.ConnectionName
-	,[DBName] = ''
-	,[DBFileName] = ''
-	,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
-	,[Seq] = i.Seq
-	,[Name] = i.Name
-    ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
-FROM P_TransRegion r
-left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity'
-";
+            Use [PBIReportData];
+            SELECT Region
+	            ,[DirName] = ''
+	            ,[RarName] = ''
+	            ,[Is_Export] = 0
+	            ,[ConnectionName] = r.ConnectionName
+	            ,[DBName] = ''
+	            ,[DBFileName] = ''
+	            ,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
+	            ,[Seq] = i.Seq
+	            ,[Name] = i.Name
+                ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
+            FROM P_TransRegion r
+            left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
+            where i.Name {whereP} 'P_ImportEstShippingReport' and i.Name <> 'P_Import_Capacity' and i.Name <> 'P_Import_MachineMaserList'
+            ";
 
             if (type == 0)
             {
-//只跑一次的job
+                //只跑一次的job
                 sqlCmd += $@"
-union all
-SELECT [Region] = 'TPE'
-	,[DirName] = ''
-	,[RarName] = ''
-	,[Is_Export] = 0
-	,[ConnectionName] = 'PBIReportData'
-	,[DBName] = ''
-	,[DBFileName] = ''
-	,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
-	,[Seq] = i.Seq
-	,[Name] = i.Name
-    ,i.TSQL
-FROM P_TransImport i
-where i.Name in ('P_Import_Capacity', 'P_Import_StyleInfo')
-";
+                union all
+                SELECT [Region] = 'TPE'
+	                ,[DirName] = ''
+	                ,[RarName] = ''
+	                ,[Is_Export] = 0
+	                ,[ConnectionName] = 'PBIReportData'
+	                ,[DBName] = ''
+	                ,[DBFileName] = ''
+	                ,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
+	                ,[Seq] = i.Seq
+	                ,[Name] = i.Name
+                    ,i.TSQL
+                FROM P_TransImport i
+                where i.Name in ('P_Import_Capacity', 'P_Import_StyleInfo')
+                ";
 
             }
-
             result = DBProxy.Current.Select("PBIReportData", sqlCmd, out DataTable dtAll);
             if (!result) 
             { 
@@ -336,74 +377,73 @@ where i.Name in ('P_Import_Capacity', 'P_Import_StyleInfo')
 
             DataTable dtReExec;
             string sqlReExec = $@"
-Use [PBIReportData];
-SELECT Region
-	,[DirName] = ''
-	,[RarName] = ''
-	,[Is_Export] = 0
-	,[ConnectionName] = r.ConnectionName
-	,[DBName] = ''
-	,[DBFileName] = ''
-	,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
-	,[Seq] = i.Seq
-	,[Name] = i.Name
-,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
-FROM P_TransRegion r
-left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
-where(
-    not exists(
-	    select * from P_TransLog t
-	    where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
-	    and i.Name = t.FunctionName
-	    and r.Region = t.RegionID
-    )
-    or exists(
-	    select * from P_TransLog t
-	    where t.TransCode = '{intHashCode}'
-	    and t.Description like '%deadlock%'
-	    and i.Name = t.FunctionName
-	    and r.Region = t.RegionID
-    )
-)
-and i.Name {whereP} 'P_ImportEstShippingReport'  and i.Name <> 'P_Import_Capacity'
-";
+            Use [PBIReportData];
+            SELECT Region
+	            ,[DirName] = ''
+	            ,[RarName] = ''
+	            ,[Is_Export] = 0
+	            ,[ConnectionName] = r.ConnectionName
+	            ,[DBName] = ''
+	            ,[DBFileName] = ''
+	            ,[GroupID] = ROW_NUMBER() over(partition by seq order by region)--i.GroupID
+	            ,[Seq] = i.Seq
+	            ,[Name] = i.Name
+            ,[TSQL] = [TSQL] + ' '+''''+LinkServerName+''''
+            FROM P_TransRegion r
+            left join P_TransImport i on r.ConnectionName = i.ImportConnectionName
+            where(
+                not exists(
+	                select * from P_TransLog t
+	                where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
+	                and i.Name = t.FunctionName
+	                and r.Region = t.RegionID
+                )
+                or exists(
+	                select * from P_TransLog t
+	                where t.TransCode = '{intHashCode}'
+	                and t.Description like '%deadlock%'
+	                and i.Name = t.FunctionName
+	                and r.Region = t.RegionID
+                )
+            )
+            and i.Name {whereP} 'P_ImportEstShippingReport'  and i.Name <> 'P_Import_Capacity' and i.Name <> 'P_Import_MachineMaserList'
+            ";
 
             if (type == 0)
             {
                 //只跑一次的job
                 sqlReExec += $@"
-union all
-SELECT [Region] = 'TPE'
-	,[DirName] = ''
-	,[RarName] = ''
-	,[Is_Export] = 0
-	,[ConnectionName] = 'PBIReportData'
-	,[DBName] = ''
-	,[DBFileName] = ''
-	,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
-	,[Seq] = i.Seq
-	,[Name] = i.Name
-    ,i.TSQL
-FROM P_TransImport i
-where   i.Name in ('P_Import_Capacity') and 
-    (
-    not exists(
-	    select * from P_TransLog t
-	    where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
-	    and i.Name = t.FunctionName
-	    and t.RegionID = 'TPE'
-    )
-    or exists(
-	    select * from P_TransLog t
-	    where t.TransCode = '{intHashCode}'
-	    and t.Description like '%deadlock%'
-	    and i.Name = t.FunctionName
-	    and t.RegionID = 'TPE'
-    ))
-";
+                union all
+                SELECT [Region] = 'TPE'
+	                ,[DirName] = ''
+	                ,[RarName] = ''
+	                ,[Is_Export] = 0
+	                ,[ConnectionName] = 'PBIReportData'
+	                ,[DBName] = ''
+	                ,[DBFileName] = ''
+	                ,[GroupID] = ROW_NUMBER() over(partition by i.seq order by i.seq)--i.GroupID
+	                ,[Seq] = i.Seq
+	                ,[Name] = i.Name
+                    ,i.TSQL
+                FROM P_TransImport i
+                where   i.Name in ('P_Import_Capacity') and 
+                    (
+                    not exists(
+	                    select * from P_TransLog t
+	                    where t.TransCode='{intHashCode}' and t.FunctionName not in ('Start Update_PoweBI_InThread','End Update_PowerBI_InThread')
+	                    and i.Name = t.FunctionName
+	                    and t.RegionID = 'TPE'
+                    )
+                    or exists(
+	                    select * from P_TransLog t
+	                    where t.TransCode = '{intHashCode}'
+	                    and t.Description like '%deadlock%'
+	                    and i.Name = t.FunctionName
+	                    and t.RegionID = 'TPE'
+                    ))
+                ";
 
             }
-
             result = DBProxy.Current.Select("PBIReportData", sqlReExec, out dtReExec);
             if (!result) { return result; }
 

@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using Sci.Win;
 using Excel = Microsoft.Office.Interop.Excel;
 
@@ -25,6 +26,8 @@ namespace Sci.Production.Warehouse
             this.InitializeComponent();
             this.PrintButtonStatusChange();
             this.mainCurrentMaintain = drMain;
+            MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
+            this.comboPrint.Text = "Sticker";
         }
 
         private void RadioTransferOutReport_CheckedChanged(object sender, EventArgs e)
@@ -39,16 +42,11 @@ namespace Sci.Production.Warehouse
 
         private void PrintButtonStatusChange()
         {
-            if (this.radioTransferOutReport.Checked)
-            {
-                this.print.Enabled = true;
-                this.toexcel.Enabled = false;
-            }
-            else
-            {
-                this.print.Enabled = false;
-                this.toexcel.Enabled = true;
-            }
+            bool isTransferOutOrQRCodeChecked = this.radioTransferOutReport.Checked || this.radioQRCodeSticker.Checked;
+            this.print.Enabled = isTransferOutOrQRCodeChecked;
+            this.toexcel.Enabled = !isTransferOutOrQRCodeChecked;
+            this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
+            this.comboType.Enabled = this.radioQRCodeSticker.Checked;
         }
 
         /// <inheritdoc/>
@@ -161,6 +159,10 @@ order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll
 
                 #endregion
             }
+            else if (this.radioQRCodeSticker.Checked)
+            {
+                return new DualResult(true);
+            }
             else
             {
                 string sql = $@"
@@ -234,6 +236,31 @@ order by td.Dyelot, Len(td.Roll), td.Roll
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1117:ParametersMustBeOnSameLineOrSeparateLines", Justification = "Reviewed.")]
         protected override bool OnToPrint(ReportDefinition report)
         {
+            if (this.radioQRCodeSticker.Checked)
+            {
+                WH_Print p = new WH_Print(this.mainCurrentMaintain, "P19")
+                {
+                    CurrentDataRow = this.mainCurrentMaintain,
+                };
+
+                DataTable dt = p.GetP19Data();
+                var barcodeDatas = dt.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["MINDQRCode"]));
+
+                if (barcodeDatas.Count() == 0)
+                {
+                    MyUtility.Msg.InfoBox("No Data can print");
+                    return true;
+                }
+
+                var qrCodeSticker = new WH_Receive_QRCodeSticker(barcodeDatas.CopyToDataTable(), this.comboPrint.Text, this.comboType.Text, callFrom: "P19");
+                System.Windows.Forms.DialogResult dialogResult = qrCodeSticker.ShowDialog();
+
+                // 在這裡進行任何額外的操作
+                qrCodeSticker.Dispose(); // 手動釋放 qrCodeSticker 物件
+
+                return true;
+            }
+
             this.SetCount(this.dtResult.Rows.Count);
 
             DataRow row = this.mainCurrentMaintain;
@@ -293,8 +320,53 @@ order by td.Dyelot, Len(td.Roll), td.Roll
             var frm = new Win.Subs.ReportView(report);
             frm.MdiParent = this.MdiParent;
             frm.Show();
-
             return true;
+        }
+
+        private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.comboPrint.SelectedIndex != -1)
+            {
+                switch (this.comboPrint.SelectedValue.ToString())
+                {
+                    case "Paper":
+                        this.BindComboTypePaper();
+                        break;
+                    case "Sticker":
+                    default:
+                        this.BindComboTypeSticker();
+                        break;
+                }
+            }
+            else
+            {
+                this.BindComboTypeSticker();
+            }
+        }
+
+        private void BindComboTypeSticker()
+        {
+            this.comboType.DataSource = null;
+            DataTable dtPMS_FabricQRCode_LabelSize;
+            DualResult result = DBProxy.Current.Select(null, "select ID, Name from dropdownlist where Type = 'PMS_Fab_LabSize' order by Seq", out dtPMS_FabricQRCode_LabelSize);
+
+            if (!result)
+            {
+                this.ShowErr(result);
+                return;
+            }
+
+            this.comboType.DisplayMember = "Name";
+            this.comboType.ValueMember = "ID";
+            this.comboType.DataSource = dtPMS_FabricQRCode_LabelSize;
+            this.comboType.SelectedValue = MyUtility.GetValue.Lookup("select PMS_FabricQRCode_LabelSize from system");
+        }
+
+        private void BindComboTypePaper()
+        {
+            this.comboType.DataSource = null;
+            MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
+            this.comboType.Text = "Straight";
         }
     }
 }

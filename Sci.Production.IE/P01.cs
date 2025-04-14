@@ -1,24 +1,21 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
+using Sci.Production.Prg;
+using Sci.Production.PublicForm;
+using Sci.Win.Tools;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using System.Transactions;
-using Sci.Win.Tools;
-using Sci.Production.PublicForm;
 using System.Data.SqlClient;
+using System.Drawing;
 using System.Linq;
-using Sci.Production.Class;
-using Sci.Win.Tems;
-using System.Net.Mail;
-using Sci.Production.Prg;
-using Sci.Production.Class.Command;
+using System.Text;
+using System.Transactions;
+using System.Windows.Forms;
 using static Ict.Win.DataGridViewGenerator;
-using System.Security.AccessControl;
-using System.Diagnostics;
 
 namespace Sci.Production.IE
 {
@@ -27,11 +24,13 @@ namespace Sci.Production.IE
     /// </summary>
     public partial class P01 : Win.Tems.Input6
     {
+        private readonly int seqIncreaseNumber = 10; // 新增一筆時 SEQ 從最大往上增加
         private DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings machine = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorTextColumnSettings mold = new DataGridViewGeneratorTextColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings frequency = new DataGridViewGeneratorNumericColumnSettings();
         private DataGridViewGeneratorNumericColumnSettings smvsec = new DataGridViewGeneratorNumericColumnSettings();
+
         private string styleID;
         private string seasonID;
         private string brandID;
@@ -79,7 +78,7 @@ namespace Sci.Production.IE
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
             this.detailgrid.Font = new System.Drawing.Font("Calibri", 12F, System.Drawing.FontStyle.Bold);
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false, mutiSelect: true);
         }
 
         /// <summary>
@@ -137,7 +136,7 @@ namespace Sci.Production.IE
             this.DefaultFilter = df.ToString();
             this.detailgrid.AllowUserToOrderColumns = true;
             this.InsertDetailGridOnDoubleClick = false;
-            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, this.DetailGridBeforeRowDragDo, false);
+            new GridRowDrag(this.detailgrid, this.DetailGridAfterRowDragDo, enableDragCell: false, mutiSelect: true);
         }
 
         private void Detailgrid_CellMouseLeave(object sender, DataGridViewCellEventArgs e)
@@ -159,6 +158,8 @@ namespace Sci.Production.IE
             {
                 DataRow curRow = this.detailgrid.GetDataRow(e.RowIndex);
                 this.detailgrid.Rows[e.RowIndex].Cells[e.ColumnIndex].ReadOnly = !MyUtility.Convert.GetBool(curRow["IsNonSewingLineEditable"]);
+
+                this.detailgrid.Rows[e.RowIndex].Cells["SewingSeq"].ReadOnly = MyUtility.Convert.GetBool(curRow["IsNonSewingLine"]);
             }
         }
 
@@ -172,57 +173,118 @@ namespace Sci.Production.IE
             this.strTimeStudtID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
 
             this.DetailSelectCommand =
-                $@"
-select 0 as Selected, isnull(o.SeamLength,0) SeamLength
-      ,ID.CodeFrom
-      ,ID.IETMSUkey
-      ,td.[ID]
-      ,td.[SEQ]
-	  ,td.[OperationID]
-      ,td.[Annotation]
-      ,td.[PcsPerHour]
-      ,td.[Sewer]
-      ,td.[MachineTypeID]
-      ,td.[Frequency]
-      ,td.[IETMSSMV]
-      ,td.[Mold]
-      ,td.[SMV]
-      ,td.[OldKey]
-      ,td.[Ukey] 
-      ,o.DescEN as OperationDescEN
-      ,td.MtlFactorID
-      ,td.Template
-      ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
-	  ,td.MasterPlusGroup
-      ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
-      ,[IsSubprocess] = isnull(td.IsSubprocess, 0)
-      ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess, 0)
-      ,td.PPA
-      ,PPAText = ISNULL(d.Name,'')
-      ,td.IsNonSewingLine
-      ,td.SewingMachineAttachmentID
-      ,td.Thread_ComboID
-      ,td.StdSMV
-      ,[IsNonSewingLineEditable] = cast(case    when isnull(md.IsSubprocess, 0) = 1 then 1
-                                                when isnull(md.IsNonSewingLine, 0) = 1 then 1
-                                                else 0 end as bit)
-from TimeStudy_Detail td WITH (NOLOCK) 
-INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
-LEFT JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
-LEFT JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
-left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
-left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
-left join Mold m WITH (NOLOCK) on m.ID=td.Mold
-left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
-outer apply (
-	 select [val] = IIF(isnull(mt.IsNotShownInP01, 1) = 0, 1, 0)
-    from Operation o2
-	Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{Env.User.Factory}'
-	where o.ID = o2.ID
-)show
-where td.ID = '{this.strTimeStudtID}'
-order by td.Seq";
+            $@"
+            DECLARE @EndSeq varchar(4)
+            SET @EndSeq = (SELECT TOP 1 Seq FROM TimeStudy_Detail WHERE id = '{this.strTimeStudtID}' ORDER BY Seq DESC);
+
+            With tmp1 as
+            (
+                SELECT 
+                td.Seq
+                ,[NextSeq] = CASE 
+                        WHEN LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq) = 0 
+                        THEN @EndSeq
+                        ELSE LEAD(td.Seq, 1, 0) OVER (ORDER BY td.Seq)
+                    END
+                ,td.OperationID
+                from TimeStudy_Detail td WITH(NOLOCK)
+                where td.id = '{this.strTimeStudtID}' and td.OperationID LIKE '-%' and td.smv = 0 
+            )
+            select distinct 0 as Selected, isnull(o.SeamLength,0) SeamLength
+            ,ID.CodeFrom
+            ,ID.IETMSUkey
+            ,td.[ID]
+            ,td.DesignateSeq
+            ,td.[SEQ] -- Ori. Seq ( IsAdd = 0 ) 是從 Trade 轉進來的不可改變
+			,[OriSewingSeq] = isnull(td.SewingSeq,'')
+            ,td.[SewingSeq]
+            ,[Location] = iif(td.IsAdd = 0,iif(td.[Location] = '' , isnull(t1.OperationID,''),isnull(td.[Location],'')),isnull(td.[Location],''))
+	        ,td.[OperationID]
+            ,td.[Annotation]
+            ,td.[PcsPerHour]
+            ,td.[Sewer]
+            ,td.[MachineTypeID]
+            ,td.[Frequency]
+            ,td.[IETMSSMV]
+            ,td.[Mold]
+            ,td.[SMV]
+            ,td.[OldKey]
+            ,td.[Ukey] 
+            ,o.DescEN as OperationDescEN
+            ,td.MtlFactorID
+            ,td.Template
+            ,(isnull(td.Frequency,0) * isnull(o.SeamLength,0)) as ttlSeamLength
+	        ,td.MasterPlusGroup
+            ,[IsShow] = cast(iif( td.OperationID like '--%' , 1, isnull(show.val, 1)) as bit)
+            ,[IsSubprocess] = isnull(td.IsSubprocess, 0)
+            ,[MachineType_IsSubprocess] = isnull(md.IsSubprocess, 0)
+            ,td.PPA
+            ,PPAText = ISNULL(d.Name,'')
+            ,td.IsNonSewingLine
+            ,td.SewingMachineAttachmentID
+            ,td.Thread_ComboID
+            ,td.StdSMV
+            ,[IsNonSewingLineEditable] = cast(case    when isnull(md.IsSubprocess, 0) = 1 then 1
+                                                    when isnull(md.IsNonSewingLine, 0) = 1 then 1
+                                                    else 0 end as bit)
+            ,[Sort] = iif(td.Sort = 0 , ROW_NUMBER() OVER (ORDER BY td.seq ASC), td.Sort) -- Ori. Seq ( IsAdd = 0 ) 是從 Trade 轉進來的不可改變
+            ,[IsAdd] = td.IsAdd
+            from TimeStudy_Detail td WITH (NOLOCK) 
+            INNER JOIN TimeStudy t WITH(NOLOCK) ON td.id = t.id
+            LEFT JOIN IETMS i ON t.IETMSID = i.ID AND t.IETMSVersion = i.[Version]
+            LEFT JOIN IETMS_Detail ID ON I.Ukey = ID.IETMSUkey AND ID.SEQ = TD.Seq
+            left join Operation o WITH (NOLOCK) on td.OperationID = o.ID
+            left join MachineType_Detail md WITH (NOLOCK) on md.ID = td.MachineTypeID and md.FactoryID = '{Env.User.Factory}'
+            left join Mold m WITH (NOLOCK) on m.ID=td.Mold
+            left join DropDownList d (NOLOCK) on d.ID=td.PPA AND d.Type = 'PMS_IEPPA'
+            outer apply (
+	                select [val] = IIF(isnull(mt.IsNotShownInP01, 1) = 0, 1, 0)
+                from Operation o2
+	            Inner Join MachineType_Detail mt on o2.MachineTypeID = mt.ID and mt.FactoryID = '{Env.User.Factory}'
+	            where o.ID = o2.ID
+            )show
+            OUTER APPLY
+            (
+	            SELECT TOP 1
+	            OperationID FROM tmp1 t1 
+	            WHERE t1.NextSeq = @EndSeq  OR t1.NextSeq > td.Seq  
+	            ORDER BY t1.Seq asc
+            )t1
+            where td.ID = '{this.strTimeStudtID}'
+            order by SewingSeq,sort
+            ";
             return base.OnDetailSelectCommandPrepare(e);
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult OnRenewDataDetailPost(RenewDataPostEventArgs e)
+        {
+            // 新增一筆時 SEQ 從最大往上增加
+            if (e.Details != null)
+            {
+                DataColumn idColumn = new DataColumn("IdetityKey", typeof(int));
+                idColumn.AutoIncrement = true;       // 啟用自動編號
+                idColumn.AutoIncrementSeed = 1;      // 起始值
+                idColumn.AutoIncrementStep = 1;      // 增量
+                idColumn.AllowDBNull = false;
+                e.Details.Columns.Add(idColumn);
+
+                e.Details.Columns.Add("DesignateSeqIdetityKey", typeof(int));
+
+                foreach (DataRow row in e.Details.Rows)
+                {
+                    row["IdetityKey"] = row.Table.Rows.IndexOf(row) + 1;
+                }
+
+                e.Details.Columns["IdetityKey"].Unique = true;
+
+                foreach (DataRow row in e.Details.AsEnumerable().Where(s => !MyUtility.Check.Empty(s["DesignateSeq"])))
+                {
+                    this.MappingDesignateSeqSewingSeq(row);
+                }
+            }
+
+            return base.OnRenewDataDetailPost(e);
         }
 
         /// <summary>
@@ -365,6 +427,32 @@ where   ID = '{this.CurrentMaintain["StyleID"]}' and
             {
                 ((TextColumn)this.detailgrid.Columns["Thread_ComboID"]).IsEditingReadOnly = true;
             }
+
+            this.ChangeRowColor();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnEditModeChanged()
+        {
+            base.OnEditModeChanged();
+
+            // 檢查 detailgrid 是否為 null，或者程式是否仍在初始化
+            if (this.detailgrid == null || !this.IsHandleCreated || this.Disposing || this.IsDisposed)
+            {
+                return; // 如果程式還在載入或 detailgrid 無法使用，直接返回
+            }
+
+            if (this.EditMode)
+            {
+                this.detailgrid.Columns.DisableSortable();
+            }
+            else
+            {
+                for (int i = 0; i < this.detailgrid.ColumnCount; i++)
+                {
+                    this.detailgrid.Columns[i].SortMode = DataGridViewColumnSortMode.Automatic;
+                }
+            }
         }
 
         private void HideRows()
@@ -414,28 +502,12 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
         protected override void OnDetailGridSetup()
         {
             base.OnDetailGridSetup();
-            DataGridViewGeneratorTextColumnSettings seq = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings template = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings pardID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings ppa = new DataGridViewGeneratorTextColumnSettings();
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
             #region Seq & Operation Code & Frequency & SMV & ST/MC Type & Attachment按右鍵與Validating
-            #region Seq的Valid
-            seq.CellValidating += (s, e) =>
-            {
-                if (this.EditMode)
-                {
-                    DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (MyUtility.Check.Empty(e.FormattedValue) || (e.FormattedValue.ToString() != dr["Seq"].ToString()))
-                    {
-                        string oldValue = MyUtility.Check.Empty(dr["Seq"]) ? string.Empty : dr["Seq"].ToString();
-                        dr["Seq"] = MyUtility.Check.Empty(e.FormattedValue) ? string.Empty : e.FormattedValue.ToString().Trim().PadLeft(4, '0');
-                        dr.EndEdit();
-                    }
-                }
-            };
-            #endregion
             #region Operation Code
             this.operation.EditingMouseDown += (s, e) =>
             {
@@ -479,6 +551,8 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                         dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                         dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                         dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                        dr["IsShow"] = 1;
+                                        dr["IsAdd"] = 1;
                                         this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                         dr.EndEdit();
                                     }
@@ -503,14 +577,14 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                                     dr["MachineType_IsSubprocess"] = callNextForm.P01SelectOperationCode["MachineType_IsSubprocess"];
                                     dr["IsSubprocess"] = callNextForm.P01SelectOperationCode["IsSubprocess"];
                                     dr["IsNonSewingLine"] = callNextForm.P01SelectOperationCode["IsNonSewingLine"];
+                                    dr["IsShow"] = 1;
+                                    dr["IsAdd"] = 1;
                                     this.GetMachineType_Detail(dr["MachineTypeID"].ToString());
                                     dr.EndEdit();
                                 }
-                                else
-                                {
-                                    return;
-                                }
                             }
+
+                            this.AfterColumnEdit(dr); // OperationID 右鍵選擇 判斷是否自動帶入並重編 SewingSeq
                         }
                     }
                 }
@@ -521,11 +595,13 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                 if (this.EditMode)
                 {
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
-                    if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OperationID"].ToString())
+                    string oldValue = MyUtility.Convert.GetString(dr["OperationID"]);
+                    string newValue = MyUtility.Convert.GetString(e.FormattedValue);
+                    if (!MyUtility.Check.Empty(e.FormattedValue) && oldValue != newValue)
                     {
                         if (e.FormattedValue.ToString().Length > 1 && e.FormattedValue.ToString().Substring(0, 2) == "--")
                         {
-                            dr["OperationID"] = e.FormattedValue.ToString();
+                            dr["OperationID"] = newValue;
                             dr["OperationDescEN"] = string.Empty;
                             dr["MachineTypeID"] = string.Empty;
                             dr["Mold"] = string.Empty;
@@ -538,6 +614,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                             dr["IETMSSMV"] = 0;
                             dr["Annotation"] = string.Empty;
                             dr["MasterPlusGroup"] = string.Empty;
+                            dr["IsShow"] = 1;
                         }
                         else
                         {
@@ -545,7 +622,7 @@ from MachineType_Detail where FactoryID = '{Env.User.Factory}' and ID = '{machin
                             SqlParameter sp1 = new SqlParameter
                             {
                                 ParameterName = "@id",
-                                Value = e.FormattedValue.ToString(),
+                                Value = newValue,
                             };
 
                             IList<SqlParameter> cmds = new List<SqlParameter>
@@ -599,6 +676,7 @@ and o.ID = @id";
                                     dr["IsSubprocess"] = opData.Rows[0]["IsSubprocess"];
                                     dr["IsNonSewingLine"] = opData.Rows[0]["IsNonSewingLine"];
                                     dr["MasterPlusGroup"] = opData.Rows[0]["MasterPlusGroup"].ToString();
+                                    dr["IsShow"] = 1;
                                     this.GetMachineType_Detail(opData.Rows[0]["MachineTypeID"].ToString());
                                 }
                             }
@@ -610,6 +688,8 @@ and o.ID = @id";
                         }
 
                         dr.EndEdit();
+
+                        this.AfterColumnEdit(dr); // OperationID 手輸入, 判斷是否自動帶入並重編 SewingSeq
                     }
 
                     // 若為空則清空相關資料
@@ -1165,39 +1245,144 @@ and Name = @PPA
             #endregion
 
             template.MaxLength = 100;
-            CheckBoxColumn colIsNonSewingLine;
 
             this.Helper.Controls.Grid.Generator(this.detailgrid)
-                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0)
-                .Text("Seq", header: "Seq", width: Widths.AnsiChars(4), settings: seq)
+                .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(1), iseditable: true, trueValue: 1, falseValue: 0)
+                .Text("Seq", header: "Ori.\r\nSeq", width: Widths.AnsiChars(3), iseditingreadonly: true)
+                .Text("DesignateSeq", header: "Dsg.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
+                .Text("SewingSeq", header: "Sew.\r\nseq", width: Widths.AnsiChars(3), settings: this.Col_Seq())
+                .Text("Location", header: "Location", width: Widths.AnsiChars(7), iseditingreadonly: true)
                 .Text("OperationID", header: "Operation code", width: Widths.AnsiChars(13), settings: this.operation)
-                .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(30), iseditingreadonly: true)
+                .EditText("OperationDescEN", header: "Operation Description", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(30))
-                .Numeric("Frequency", header: "Frequency", integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
-                .Text("MtlFactorID", header: "Factor", width: Widths.AnsiChars(3), iseditingreadonly: true)
-                .Numeric("StdSMV", header: "Std. SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
-                .Numeric("SMV", header: "SMV (sec)", integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
-                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
-                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0).Get(out colIsNonSewingLine)
-                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
-                .Text("MachineTypeID", header: "ST/MC Type", width: Widths.AnsiChars(8), settings: this.machine)
-                .Text("MasterPlusGroup", header: "Machine Group", width: Widths.AnsiChars(8), settings: txtSubReason)
+                .Numeric("Frequency", header: "Frequency", width: Widths.AnsiChars(3), integer_places: 2, decimal_places: 2, maximum: 99.99M, minimum: 0, settings: this.frequency)
+                .Numeric("StdSMV", header: "Std. SMV\r\n(sec)", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, iseditingreadonly: true)
+                .Numeric("SMV", header: "Fty. SMV\r\n(sec)", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 4, maximum: 9999.9999M, minimum: 0, settings: this.smvsec)
+                .Text("MachineTypeID", header: "ST/MC\r\nType", width: Widths.AnsiChars(3), settings: this.machine)
+                .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(5), settings: txtSubReason)
                 .Text("Mold", header: "Attachment", width: Widths.AnsiChars(8), settings: this.mold)
-                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(50), settings: pardID)
+                .Text("SewingMachineAttachmentID", header: "Part ID", width: Widths.AnsiChars(7), settings: pardID)
                 .Text("Template", header: "Template", width: Widths.AnsiChars(8), settings: template)
+                .CheckBox("IsSubprocess", header: "Subprocess", width: Widths.AnsiChars(7), iseditable: false, trueValue: 1, falseValue: 0)
+                .CheckBox("IsNonSewingLine", header: "Non-Sewing line", width: Widths.AnsiChars(7), iseditable: true, trueValue: 1, falseValue: 0, settings: this.Col_IsNonSewingLine())
+                .Text("PPAText", header: "PPA", width: Widths.AnsiChars(10), settings: ppa)
                 .CellThreadComboID("Thread_ComboID", "Thread Combination", this, width: Widths.AnsiChars(10))
                 .Numeric("Sewer", header: "Sewer", integer_places: 2, decimal_places: 1, iseditingreadonly: true)
                 .Numeric("PcsPerHour", header: "Pcs/hr", integer_places: 5, decimal_places: 1, iseditingreadonly: true)
-                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true);
+                .Numeric("IETMSSMV", header: "Std. SMV", integer_places: 3, decimal_places: 4, iseditingreadonly: true)
+                ;
 
             // 設定detailGrid Rows 是否可以編輯
             this.detailgrid.RowEnter += this.Detailgrid_RowEnter;
             this.detailgrid.ColumnHeaderMouseClick += this.Detailgrid_ColumnHeaderMouseClick;
-            colIsNonSewingLine.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             this.detailgrid.Sorted += (s, e) =>
             {
                 this.HideRows();
             };
+        }
+
+        /// <summary>
+        /// 欄位:DesignateSeq 與 SewingSeq
+        /// </summary>
+        private DataGridViewGeneratorTextColumnSettings Col_Seq()
+        {
+            DataGridViewGeneratorTextColumnSettings setting = new DataGridViewGeneratorTextColumnSettings();
+            setting.MaxLength = 4;
+            setting.EditingKeyPress += (s, e) =>
+            {
+                // 限制只能輸入數字
+                string input = e.EditingControl.Text;
+                if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+                {
+                    e.Handled = true; // 阻止非數字字符的輸入
+                }
+            };
+
+            setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                string columnName = this.detailgrid.Columns[e.ColumnIndex].DataPropertyName;
+                string oldValue = MyUtility.Convert.GetString(dr[columnName]);
+                string newValue = MyUtility.Convert.GetString(e.FormattedValue);
+                if (oldValue == newValue)
+                {
+                    return;
+                }
+
+                if (MyUtility.Check.Empty(e.FormattedValue))
+                {
+                    if (columnName == "SewingSeq")
+                    {
+                        if (oldValue == string.Empty) // 原本就是空的, 點了不要重排
+                        {
+                            return;
+                        }
+
+                        dr[columnName] = string.Empty;
+                        dr.EndEdit();
+                        this.UpdateRowIndexBasedOnSewingSeqAndSeq(oldValue); // 從有值 → 清空 SewingSeq
+                    }
+                    else
+                    {
+                        this.ChangeRowColor();
+                    }
+
+                    return;
+                }
+
+                if (columnName == "SewingSeq")
+                {
+                    int sewingSeq = MyUtility.Convert.GetInt(e.FormattedValue);
+                    this.InsertSewingSeqAndAdjust(sewingSeq); // 手動輸入 Sew Seq 有值
+
+                    // 左邊補 0 至 4 碼
+                    dr[columnName] = sewingSeq.ToString().PadLeft(4, '0');
+                    this.UpdateRowIndexBasedOnSewingSeqAndSeq(oldValue); // 手動輸入Sew Seq 處理完重複後
+                }
+                else
+                {
+                    // 左邊補 0 至 4 碼
+                    dr[columnName] = e.FormattedValue.ToString().PadLeft(4, '0');
+                    this.MappingDesignateSeqSewingSeq(dr);
+                    this.ChangeRowColor();
+                }
+
+                dr.EndEdit();
+            };
+
+            return setting;
+        }
+
+        private void MappingDesignateSeqSewingSeq(DataRow drDesignateSeq)
+        {
+            var matchingRow = this.DetailDatas.FirstOrDefault(r => r["SewingSeq"].EqualString(drDesignateSeq["DesignateSeq"]));
+            drDesignateSeq["DesignateSeqIdetityKey"] = matchingRow != null ? matchingRow["IdetityKey"] : DBNull.Value;
+        }
+
+        private DataGridViewGeneratorCheckBoxColumnSettings Col_IsNonSewingLine()
+        {
+            DataGridViewGeneratorCheckBoxColumnSettings setting = new DataGridViewGeneratorCheckBoxColumnSettings();
+            setting.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            setting.CellValidating += (s, e) =>
+            {
+                if (!this.EditMode)
+                {
+                    return;
+                }
+
+                DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                dr["Isnonsewingline"] = e.FormattedValue;
+                dr.EndEdit();
+
+                this.AfterColumnEdit(dr); // IsNonSewingLine 勾選/取消勾選, 判斷是否自動帶入並重編 SewingSeq
+            };
+
+            return setting;
         }
 
         private void Detailgrid_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -1278,7 +1463,7 @@ and Name = @PPA
         {
             if (!this.CurrentMaintain["Status"].ToString().ToLower().EqualString("confirmed"))
             {
-                MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
+                MyUtility.Msg.WarningBox("This flowchart has not been confirmed and cannot be copied.");
                 return false;
             }
 
@@ -1310,6 +1495,12 @@ and Name = @PPA
             this.CurrentMaintain["ComboType"] = this.comboType;
             this.CurrentMaintain["Version"] = "01";
             this.CurrentMaintain["ID"] = 0;
+
+            // 如果SewingSeq都空白就自動補
+            if (!this.DetailDatas.Any(s => !MyUtility.Check.Empty(s["SewingSeq"])))
+            {
+                this.FillSewingSeqAfterCopy();
+            }
         }
 
         /// <inheritdoc/>
@@ -1320,10 +1511,23 @@ and Name = @PPA
             {
                 MyUtility.Msg.WarningBox("This record already confirmed, so can't modify this record!!");
                 this.HideRows();
+                this.ChangeRowColor();
                 return false;
             }
 
             return true;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+
+            // 如果SewingSeq有值,Sew Sew按鈕就read only
+            if (this.DetailDatas.Any(r => !MyUtility.Check.Empty(r["SewingSeq"])))
+            {
+                this.btnSewSeq.Enabled = false;
+            }
         }
 
         /// <summary>
@@ -1367,12 +1571,22 @@ and Name = @PPA
         /// <returns>bool</returns>
         protected override bool ClickSaveBefore()
         {
+            #region 應該上產線卻沒有 SewingSeq. SewingSeq 空白, OperationID 是--開頭, IsNonSewingLine = False 不能存檔
+            var checkSewing = this.DetailDatas.AsEnumerable().Where(r => MyUtility.Check.Empty(r["SewingSeq"]) && this.NeedSewingSeq(r)).ToList();
+            if (checkSewing.Any())
+            {
+                string oriSeq = checkSewing.Select(r => MyUtility.Convert.GetString(r["Seq"])).JoinToString(",");
+                MyUtility.Msg.WarningBox($"Ori. Seq<{oriSeq}> must fill in Sew. Seq!");
+                return false;
+            }
+            #endregion
+
             #region Seq 重複資料檢查
             if (this.DetailDatas.Count != 0)
             {
                 var dataTable = this.DetailDatas.CopyToDataTable();
                 var duplicateSeqs = dataTable.AsEnumerable()
-                 .GroupBy(row => row.Field<string>("SEQ"))
+                 .GroupBy(row => row.Field<string>("Seq"))
                  .Where(grp => grp.Count() > 1)
                  .Select(grp => grp.Key).ToList();
 
@@ -1389,9 +1603,18 @@ and Name = @PPA
                     return false;
                 }
             }
-
-
             #endregion Seq 重複資料檢查
+
+            #region SewingSeq 重複資料檢查
+            var sewingSeqs = this.DetailDatas.Where(row => !MyUtility.Check.Empty(row["SewingSeq"])).Select(row => row["SewingSeq"].ToString()).ToList();
+            var duplicateSewSeqs = sewingSeqs.GroupBy(seq => seq).Where(group => group.Count() > 1).Select(group => group.Key).ToList();
+            if (duplicateSewSeqs.Any())
+            {
+                MyUtility.Msg.WarningBox("Sew. Seq cannot be duplicated! Duplicates: " + string.Join(", ", duplicateSewSeqs));
+                return false;
+            }
+            #endregion SewingSeq 重複資料檢查
+
             #region ST/MC Type檢查
             var listSTMCTypeCheckResult = this.DetailDatas
                 .Where(s => !MyUtility.Check.Empty(s["OperationDescEN"]) &&
@@ -1513,31 +1736,21 @@ and s.StyleUnit='PCS'
             #endregion
 
             #region 寫表頭的Total Sewing Time與表身的Sewer，只把ArtworkTypeID = 'SEWING'的秒數抓進來加總
-            bool isLocalStyle = MyUtility.Convert.GetBool(MyUtility.GetValue.Lookup($"SELECT LocalStyle FROM Style WHERE ID='{this.CurrentMaintain["StyleID"]}' AND SeasonID='{this.CurrentMaintain["SeasonID"]}' AND BrandID='{this.CurrentMaintain["BrandID"]}'"));
 
+            // 不分LocalStyle,且都只帶出ArtworkTypeID = sewing. by ISP20240873
             var machineSMV_List = ((DataTable)this.detailgridbs.DataSource).AsEnumerable()
                 .Where(o => o.RowState != DataRowState.Deleted &&
                             !MyUtility.Convert.GetBool(o["IsSubprocess"]) &&
                             MyUtility.Convert.GetString(o["PPA"]) != "C")
                 .Select(o => new { MachineTypeID = o["MachineTypeID"].ToString(), SMV = MyUtility.Convert.GetDecimal(o["SMV"]) })
                 .ToList();
-            decimal ttlSewingTime = 0;
-            if (!isLocalStyle)
-            {
-                DataTable tmp;
-                DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
-                List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
+            DataTable tmp;
+            DBProxy.Current.Select(null, " SELECT ID FROM Machinetype WHERE ArtworkTypeID = 'SEWING' ", out tmp);
+            List<string> sewingMachine_List = tmp.AsEnumerable().Select(o => o["ID"].ToString()).ToList();
 
-                ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
+            decimal ttlSewingTime = machineSMV_List.Where(o => sewingMachine_List.Contains(o.MachineTypeID)).Sum(o => o.SMV);
 
-                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
-            }
-            else
-            {
-                ttlSewingTime = machineSMV_List.Sum(o => o.SMV);
-
-                this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
-            }
+            this.CurrentMaintain["TotalSewingTime"] = MyUtility.Convert.GetInt(ttlSewingTime);
 
             string totalSewing = this.CurrentMaintain["TotalSewingTime"].ToString();
             this.numTotalSewingTimePc.Text = totalSewing;
@@ -1596,25 +1809,6 @@ group by id.Location,M.ArtworkTypeID";
                         MyUtility.Msg.ErrorBox("Check <Total Sewing Time/pc> fail!\r\n" + result.ToString());
                     }
                 }
-
-                // Local Style，才進行以下判斷
-                if (!isLocalStyle)
-                {
-                    // Total Sewing Time重新計算過再來比
-                    decimal totalSewingTime = MyUtility.Convert.GetDecimal(((DataTable)this.detailgridbs.DataSource).Compute("SUM(SMV)", string.Empty));
-                    decimal totalGSD = 0;
-
-                    if (dtGSD_Summary.Rows.Count > 0)
-                    {
-                        totalGSD = Convert.ToDecimal(dtGSD_Summary.Compute("sum(tms)", string.Empty));
-
-                        if (totalSewingTime > totalGSD)
-                        {
-                            MyUtility.Msg.WarningBox($"Total sewing time cannot more than total GSD ({totalGSD}) of Std.GSD.");
-                            return false;
-                        }
-                    }
-                }
             }
             else
             {
@@ -1642,6 +1836,9 @@ group by id.Location,M.ArtworkTypeID";
                 }
             }
 
+            DataTable dt = (DataTable)this.detailgridbs.DataSource;
+            dt.AsEnumerable().Where(row => row.RowState != DataRowState.Deleted && MyUtility.Convert.GetString(row.Field<string>("OperationID")) == string.Empty).ToList().ForEach(row => row.Delete());
+
             return base.ClickSaveBefore();
         }
 
@@ -1649,28 +1846,6 @@ group by id.Location,M.ArtworkTypeID";
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
-
-            if (this.detailgridbs.DataSource != null)
-            {
-                DataTable detail = (DataTable)this.detailgridbs.DataSource;
-
-                string updCmd = string.Empty;
-                foreach (DataRow item in detail.Rows)
-                {
-                    updCmd += $@"
-UPDATE TimeStudy_Detail
-SET MasterPlusGroup = '{item["MasterPlusGroup"]}'
-WHERE Ukey={item["Ukey"]}
-
-";
-                }
-
-                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
-                if (!reusult)
-                {
-                    this.ShowErr(reusult);
-                }
-            }
 
             // 若ThreadColorComb已有資料要自動發信通知Style.ThreadEditname(去串pass1.EMail若為空或null則不需要發信)，通知使用者資料有變更。
             string sqlcmd = $@"
@@ -1692,6 +1867,7 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             this.p01_OperationList.Clear();
             this.HideRows();
+            this.ChangeRowColor();
         }
 
         /// <inheritdoc/>
@@ -1733,6 +1909,9 @@ where p.EMail is not null and p.EMail <>'' and ts.id = '{this.CurrentMaintain["I
 
             DBProxy.Current.Execute(null, sqlcmd);
             this.p01_OperationList.Clear();
+
+            this.RenewData();
+            this.HideRows();
         }
 
         /// <summary>
@@ -1967,6 +2146,7 @@ begin
 				where t.ID = {0}
 			)ver
 		)
+　　where id  = {0}
 end
 
 insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -2014,6 +2194,8 @@ where ID = {0}",
 
                 this.RenewData();
                 this.ClickEdit();
+
+                this.btnSewSeq.PerformClick();
             }
         }
 
@@ -2060,6 +2242,7 @@ begin
 				where t.ID = {0}
 			)ver
 		)
+　　where id  = {0}
 end
 
 insert into TimeStudyHistory (StyleID,SeasonID,ComboType,BrandID,Version,Phase,TotalSewingTime,NumberSewer,AddName,AddDate,EditName,EditDate,IETMSID,IETMSVersion)
@@ -2109,6 +2292,8 @@ where ID = {0}",
 
                 this.RenewData();
                 this.ClickEdit();
+
+                this.btnSewSeq.PerformClick();
             }
         }
 
@@ -2183,6 +2368,7 @@ where ID = {0}",
                 @"
 select id.SEQ,
 	id.OperationID,
+	Location = IIF(id.OperationID LIKE '-%', id.OperationID, ''),
 	o.DescEN as OperationDescEN,
 	id.Annotation,
 	iif(round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3) = 0,0,round(3600/round(id.SMV*(isnull(id.MtlFactorRate,0)/100+1)*id.Frequency*60,3),1)) as PcsPerHour,
@@ -2271,9 +2457,14 @@ and s.BrandID = @brandid ", Env.User.Factory,
             {
                 this.CurrentMaintain["IETMSID"] = ietmsData.Rows[0]["IETMSID"].ToString();
                 this.CurrentMaintain["IETMSVersion"] = ietmsData.Rows[0]["IETMSVersion"].ToString();
-                this.detailgrid.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
                 this.HideRows();
             }
+
+            // 補上空的Location
+            this.FillAllLocation();
+
+            // 編碼 SewingSeq
+            this.FillSewingSeqAfterCopy();
         }
 
         // History
@@ -2340,85 +2531,140 @@ and s.BrandID = @brandid ", Env.User.Factory,
             return dt;
         }
 
+        private DataRow GetCurrentDataRow(DataGridView dataGridView)
+        {
+            dataGridView.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            if (dataGridView.SelectedRows.Count > 0)
+            {
+                // 如果設置為 FullRowSelect，從 SelectedRows 獲取
+                DataGridViewRow selectedRow = dataGridView.SelectedRows[0];
+                DataRowView rowView = selectedRow.DataBoundItem as DataRowView;
+                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted)
+                {
+                    return rowView.Row;
+                }
+            }
+            else if (dataGridView.CurrentRow != null)
+            {
+                int iIndex = dataGridView.CurrentRow.Index;
+                DataGridViewRow selectedRow = dataGridView.Rows[iIndex - 1];
+
+                // 如果設置為 CellSelect，從 CurrentRow 獲取
+                DataRowView rowView = selectedRow.DataBoundItem as DataRowView;
+                if (rowView != null && rowView.Row.RowState != DataRowState.Deleted)
+                {
+                    return rowView.Row;
+                }
+            }
+
+            return null; // 沒有找到有效的 DataRow
+        }
+
+        private int GetDataRowIndex(DataTable dataTable, DataRow targetRow)
+        {
+            if (dataTable == null || targetRow == null)
+            {
+                return -1; // 無效輸入
+            }
+
+            for (int i = 0; i < dataTable.Rows.Count; i++)
+            {
+                DataRow row = dataTable.Rows[i];
+
+                // 排除已刪除的行
+                if (row.RowState != DataRowState.Deleted)
+                {
+                    // 比較行的內容
+                    bool isMatch = true;
+                    foreach (DataColumn column in dataTable.Columns)
+                    {
+                        if (row[column.ColumnName].ToString() != targetRow[column.ColumnName].ToString())
+                        {
+                            isMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (isMatch)
+                    {
+                        return i; // 返回匹配行的索引
+                    }
+                }
+            }
+
+            return -1; // 如果未找到匹配的行，返回 -1
+        }
+
         /// <summary>
-        /// DetailGrid Insert、Append
+        /// DetailGrid Insert、Append (index = -1)
         /// </summary>
         /// <param name="index">index</param>
         protected override void OnDetailGridInsert(int index = 0)
         {
-            base.OnDetailGridInsert(index);
-            DataTable oriDt = (DataTable)this.detailgridbs.DataSource;
-            if (index >= 0)
-            {
-                this.detailgrid.AllowUserToAddRows = false;
-                DataRow drSelect = oriDt.Rows[index + 1];
-                DataRow newDrSelect = oriDt.Rows[index];
-                newDrSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(drSelect["Seq"])).PadLeft(4, '0');  // 插入位置
-                drSelect["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(newDrSelect["Seq"]) + 10).PadLeft(4, '0'); // 現有資料 +10
-                for (int i = index + 1; i < oriDt.Rows.Count; i++)
-                {
-                    if (i + 1 != oriDt.Rows.Count)
-                    {
-                        DataRow preDataRow = oriDt.Rows[i];
-                        DataRow nextDataRow = oriDt.Rows[i + 1];
-                        nextDataRow["Seq"] = MyUtility.Convert.GetString(MyUtility.Convert.GetInt(nextDataRow["Seq"]) + 10).PadLeft(4, '0');
-                     }
-                }
+            int maxSeq = this.DetailDatas.AsEnumerable()
+                .Select(r => MyUtility.Convert.GetInt(r["Seq"]))
+                .DefaultIfEmpty(0)
+                .Max();
 
-                this.detailgridbs.DataSource = oriDt;
-            }
-            else if (index == -1)
-            {
-                var count = oriDt.AsEnumerable().Where(x => x.RowState != DataRowState.Deleted).Count();
-                if (count == 1)
-                {
-                    this.CurrentDetailData["Seq"] = MyUtility.Convert.GetString(10).PadLeft(4, '0');
-                    this.CurrentDetailData["IsShow"] = 1;
-                }
-            }
-        }
-
-        /// <summary>
-        /// gridIcon 新增按鈕.....
-        /// </summary>
-        protected override void OnDetailGridAppendClick()
-        {
-            base.OnDetailGridAppendClick();
-
-            int seq = 0;
             DataTable dt = (DataTable)this.detailgridbs.DataSource;
 
-            DataRow drSelect = this.detailgrid.GetDataRow(this.detailgrid.SelectedRows[0].Index);
+            string location = string.Empty;
 
-            if (dt.Rows.Count >= 0)
+            if (index == -1)
             {
-                seq = 10;
-                foreach (DataRow dr in dt.Rows)
+                EnumerableRowCollection<DataRow> lastLocation = dt.AsEnumerable()
+               .Where(row => (dt.Rows.IndexOf(row) <= index || index == -1) &&
+                              row.RowState != DataRowState.Deleted);
+
+                if (lastLocation.Any())
                 {
-                    if (dr.RowState == DataRowState.Deleted)
-                    {
-                        continue;
-                    }
-
-                    if (MyUtility.Convert.GetInt(seq) != 0 && MyUtility.Convert.GetInt(dr["Seq"]) != 0)
-                    {
-                        if (MyUtility.Convert.GetInt(dr["Seq"]) != 0)
-                        {
-                            if (seq != MyUtility.Convert.GetInt(dr["Seq"]))
-                            {
-                                seq = MyUtility.Convert.GetInt(dr["Seq"]);
-                            }
-                        }
-                    }
-
-                    dr["seq"] = MyUtility.Convert.GetString(seq).PadLeft(4, '0');
-                    dr["IsShow"] = 1;
-                    seq += 10;
+                    location = MyUtility.Convert.GetString(lastLocation.Last()["Location"]); // 最後一筆 Row
+                }
+                else
+                {
+                    location = string.Empty; // 或其他預設值
                 }
             }
+            else
+            {
+                var lastLocationDT = dt.AsEnumerable()
+               .Where(row => row.RowState != DataRowState.Deleted);
+                if (lastLocationDT.Any())
+                {
+                    DataTable dataTable = lastLocationDT.CopyToDataTable();
+                    DataRow dataRow = this.GetCurrentDataRow(this.detailgrid);
+                    index = this.GetDataRowIndex(dataTable, dataRow);
+                    DataRow dr = dataTable.Rows[index];
+                    location = MyUtility.Convert.GetString(dr["Location"]); // 最後一筆 Row
+                }
+                else
+                {
+                    location = string.Empty; // 或其他預設值
+                }
+            }
+
+            base.OnDetailGridInsert(index);
+
+            DataRow nowRow;
+            if (index == -1)
+            {
+                nowRow = this.CurrentDetailData;
+            }
+            else
+            {
+                nowRow = dt.Rows[index];
+            }
+
+            nowRow["Seq"] = (maxSeq + this.seqIncreaseNumber).ToString().PadLeft(4, '0'); // 固定最大值往上增加
+            nowRow["IsAdd"] = 1; // PMS 新增資訊
+            nowRow["CodeFrom"] = "Operation";
+            nowRow["IsShow"] = 1;
+            nowRow["IETMSUkey"] = this.DetailDatas.Count == 0 ? 0 : MyUtility.Convert.GetLong(this.DetailDatas[0]["IETMSUkey"]); // 原規則都是取第一筆, 保持不變
+            nowRow["Location"] = location;
+            nowRow.EndEdit();
         }
 
-            // Copy
+        // Copy
         private void BtnCopy_Click(object sender, EventArgs e)
         {
             // 將要Copy的資料記錄起來
@@ -2716,7 +2962,7 @@ and s.BrandID = @brandid";
                         {
                             // 前一個Seq
                             int preSeq = Convert.ToInt32(dt.Rows[dt.Rows.IndexOf(dr) - 1]["Seq"]);
-                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + 10).PadLeft(4, '0');
+                            dr["Seq"] = MyUtility.Convert.GetString(preSeq + this.seqIncreaseNumber).PadLeft(4, '0');
                         }
                     }
                 }
@@ -2734,6 +2980,9 @@ and s.BrandID = @brandid";
             }
         }
 
+        /// <summary>
+        /// gridIcon 刪除按鈕
+        /// </summary>
         protected override void OnDetailGridRemoveClick()
         {
             if (this.CurrentMaintain == null || this.DetailDatas.Count == 0)
@@ -2751,37 +3000,403 @@ and s.BrandID = @brandid";
             }
 
             base.OnDetailGridRemoveClick();
-        }
-
-        private DataTable dtDetailBeforeDrag;
-
-        private void DetailGridBeforeRowDragDo(DataRow dr)
-        {
-            this.dtDetailBeforeDrag = dr.Table.Copy();
+            this.ReFillSeq(); // 移除一筆表身後重編 Ori.Seq
+            this.ReFillSewingSeq(); // 移除一筆表身後重編 Sewing Seq
         }
 
         private void DetailGridAfterRowDragDo(DataRow dr)
         {
-            List<DataRow> listBeforeDrag = this.dtDetailBeforeDrag.AsEnumerable().Where(s => s.RowState != DataRowState.Deleted).ToList();
+            int sortIndex = 1;
 
-            int rowIndex = 0;
-
-            // 拖移後Seq不變，所以使用拖移前keep的detail還原
-            foreach (DataRow curRow in this.DetailDatas)
+            foreach (DataRow row in this.DetailDatas)
             {
-                curRow["Seq"] = listBeforeDrag[rowIndex]["Seq"];
-                curRow.EndEdit();
-                rowIndex++;
+                row["Sort"] = sortIndex;
+                sortIndex++;
             }
+
+            // 把空白的拖移到 0001 之下 要給值
+            bool flag = false;
+            foreach (DataRow row in this.DetailDatas)
+            {
+                // 第一筆有值 0001
+                if (!MyUtility.Check.Empty(row["SewingSeq"]) && !flag)
+                {
+                    flag = true;
+                }
+
+                // 先給 1 之後再使用 ReFillSewingSeq 重編碼
+                if (flag && MyUtility.Check.Empty(row["SewingSeq"]) && this.NeedSewingSeq(row))
+                {
+                    row["SewingSeq"] = 1;
+                }
+            }
+
+            this.ReFillSewingSeq(); // 拖拉後重排 SewSeq 是主功能, 畫面由上往下重排有填值的 SewSeq
+        }
+
+        /// <summary>
+        /// 若新輸入的 SewingSeq 與現有資料有重複, 將原有的全部往後+1
+        /// </summary>
+        /// <param name="newSewingSeq">newSewingSeq</param>
+        private void InsertSewingSeqAndAdjust(int newSewingSeq)
+        {
+            // 尋找是否已經有相同 SewingSeq
+            if (this.DetailDatas.Any(row => MyUtility.Convert.GetInt(row["SewingSeq"]) == newSewingSeq))
+            {
+                // 若存在相同 SewingSeq，將所有後續的 SewingSeq 往後加 1
+                foreach (var row in this.DetailDatas.AsEnumerable()
+                                     .Where(r => MyUtility.Convert.GetInt(r["SewingSeq"]) >= newSewingSeq)
+                                     .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"])))
+                {
+                    int currentSeq = MyUtility.Convert.GetInt(row["SewingSeq"]);
+                    row["SewingSeq"] = (currentSeq + 1).ToString("D4"); // 確保格式為四碼數字
+                }
+            }
+
+            this.ChangeRowColor();
+        }
+
+        /// <summary>
+        /// 依據 SewingSeq, Seq 改變資料列的Index
+        /// </summary>
+        /// <param name="oldSewingSeq">oldSewingSeq</param>
+        protected void UpdateRowIndexBasedOnSewingSeqAndSeq(string oldSewingSeq)
+        {
+            int targetIndex = -1;
+            try
+            {
+                int targetSewingSeq = MyUtility.Convert.GetInt(this.CurrentDetailData["SewingSeq"]); // 指定的 SewingSeq
+                int targetSeq = MyUtility.Convert.GetInt(this.CurrentDetailData["Seq"]); // 指定的 Seq
+
+                // 取得資料來源
+                DataTable dt = (DataTable)this.detailgridbs.DataSource;
+
+                // 確保資料表存在並且有資料
+                if (dt.Rows.Count <= 1)
+                {
+                    return;
+                }
+
+                int sourceIndex = dt.Rows.IndexOf(this.CurrentDetailData); // 目標位置為當前綁定位置
+
+                var sortedRows = dt.AsEnumerable()
+                    .Where(r => r.RowState != DataRowState.Deleted)
+                    .OrderBy(r => MyUtility.Convert.GetInt(r["SewingSeq"]))
+                    .ThenBy(r => MyUtility.Convert.GetInt(r["Seq"]));
+
+                // 確保原始位置在排序後的目標位置 (targetIndex)
+                DataRow beforeRow = null;
+
+                // 若是最後一筆, 直接放最後
+                if (sortedRows.Last() == this.CurrentDetailData)
+                {
+                    targetIndex = dt.Rows.Count - 1;
+                }
+                else
+                {
+                    foreach (DataRow row in sortedRows)
+                    {
+                        if (beforeRow == null)
+                        {
+                            beforeRow = row;
+                        }
+
+                        if (MyUtility.Convert.GetInt(beforeRow["Seq"]) == targetSeq)
+                        {
+                            targetIndex = dt.Rows.IndexOf(row);
+                            if (beforeRow == row)
+                            {
+                                targetIndex = 0;
+                            }
+
+                            break;
+                        }
+
+                        beforeRow = row;
+                    }
+
+                    if (targetIndex > sourceIndex && MyUtility.Check.Empty(oldSewingSeq))
+                    {
+                        targetIndex--;
+                    }
+                }
+
+                // 確保索引有效
+                if (sourceIndex == -1 || targetIndex < 0 || targetIndex >= dt.Rows.Count)
+                {
+                    return;
+                }
+
+                // 移動 DataRow
+                this.MoveDataRow(dt, sourceIndex, targetIndex);
+                this.ReFillSewingSeq(); // 調整 index 順序後, 再調整 SewSeq 連續性
+            }
+            catch (Exception ex)
+            {
+                this.ShowErr(ex);
+            }
+
+            // 清除所有行的選擇狀態
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                row.Selected = false;
+            }
+        }
+
+        /// <summary>
+        /// 當刪除Row 或 清空SewingSeq,有無點擊欄位排序, 重新排序 SewingSeq
+        /// </summary>
+        private void ReFillSewingSeq()
+        {
+            int sewingSeq = 1;
+            foreach (DataRow row in this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["SewingSeq"])))
+            {
+                row["SewingSeq"] = sewingSeq.ToString().PadLeft(4, '0');
+                sewingSeq++;
+            }
+
+            // 對應DesignateSeq 要根據DesignateSeqIdetityKey透過IdetityKey重新抓取新的DesignateSeq
+            foreach (DataRow row in this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["DesignateSeq"])))
+            {
+                row["DesignateSeq"] = this.GetDesignateSeq(row["DesignateSeqIdetityKey"].ToString());
+            }
+
+            this.ChangeRowColor();
+        }
+
+        /// <summary>
+        /// 欄位:OperationID, IsNonSewingLine 驗證後
+        /// 當 OperationID 不包含 --, 沒勾選 IsNonSewingLine
+        /// 因為 SewingSeq 可以手動刪除. 不影響其它筆空的 SewingSeq
+        /// 先填或清空(這筆) SewingSeq 讓它有值, 最後再把有值的 SewingSeq 重編
+        /// </summary>
+        private void AfterColumnEdit(DataRow dr)
+        {
+            int maxSewing = this.DetailDatas
+                .Select(r => MyUtility.Convert.GetInt(r["SewingSeq"]))
+                .DefaultIfEmpty(0)
+                .Max();
+
+            if (!MyUtility.Check.Empty(dr["OperationID"]) && !MyUtility.Convert.GetString(dr["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]))
+            {
+                dr["SewingSeq"] = maxSewing + 1;  // 點了其它欄位排序, 新增/插入 Sewing Seq 都是最大往上, 刪除中間時在 ReFillSewingSeq 以現有排序重排
+            }
+            else
+            {
+                dr["SewingSeq"] = string.Empty;
+            }
+
+            this.UpdateRowIndexBasedOnSewingSeqAndSeq(dr["SewingSeq"].ToString()); // 欄位編輯後自動帶入 SewSeq 並重新排序. 欄位: OperationID , IsNonSewingLine
+        }
+
+        /// <summary>
+        /// copy 後重新編碼 SewingSeq
+        /// </summary>
+        private void FillSewingSeqAfterCopy()
+        {
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (this.NeedSewingSeq(dr))
+                {
+                    dr["SewingSeq"] = "1"; // 先給任一值
+                }
+            }
+
+            this.ReFillSewingSeq(); // Copy From Style Std GSD, 符合規則自動填入, 並將有值 SewingSeq 全部重編
+        }
+
+        private bool NeedSewingSeq(DataRow dr)
+        {
+            return !MyUtility.Check.Empty(dr["OperationID"]) && !MyUtility.Convert.GetString(dr["OperationID"]).Contains("--") && !MyUtility.Convert.GetBool(dr["IsNonSewingLine"]);
+        }
+
+        /// <summary>
+        /// 刪除中間的資料要重編 Seq, 要連續 +10 不要有跳號. 不是 trade 轉來的資訊才編碼
+        /// </summary>
+        private void ReFillSeq()
+        {
+            // trade 轉來的資訊最大 Seq
+            int maxSeqFormTrade = this.DetailDatas.AsEnumerable()
+                .Where(r => !MyUtility.Convert.GetBool(r["IsAdd"]))
+                .Select(r => MyUtility.Convert.GetInt(r["Seq"]))
+                .DefaultIfEmpty(0) // 當沒有符合條件的筆數時，預設值為 0
+                .Max();
+
+            // PMS 新增的資訊
+            var isAddDatas = this.DetailDatas.AsEnumerable().Where(r => MyUtility.Convert.GetBool(r["IsAdd"]));
+
+            // 依據原本 Seq 順序進行重編, 才不會有跳號狀況
+            int seq = maxSeqFormTrade;
+            foreach (DataRow dr in isAddDatas.OrderBy(r => MyUtility.Convert.GetInt(r["Seq"])))
+            {
+                seq += this.seqIncreaseNumber;
+                dr["Seq"] = seq.ToString().PadLeft(4, '0');
+            }
+        }
+
+        /// <summary>
+        /// 填入所有空的 Location 欄位。如果第一筆資料沒有 Location，會往下尋找第一筆有值的 Location 並向上填充。
+        /// </summary>
+        private void FillAllLocation()
+        {
+            if (this.DetailDatas.Count == 0)
+            {
+                MyUtility.Msg.WarningBox($"This Style#<{this.CurrentMaintain["StyleID"]}> does not exist in Trade IE P03.");
+                return;
+            }
+
+            // 填入與前一筆相同的 Location
+            string preLocation = string.Empty;
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                if (MyUtility.Check.Empty(dr["Location"]))
+                {
+                    dr["Location"] = preLocation; // 與前一筆相同
+                }
+
+                preLocation = MyUtility.Convert.GetString(dr["Location"]); // 記錄前一筆
+            }
+
+            // 如果第一筆沒有 Location，往下尋找第一筆有值的 Location
+            if (MyUtility.Check.Empty(this.DetailDatas.First()["Location"]))
+            {
+                string firstNonEmptyLocation = this.FindFirstNonEmptyLocation();
+                if (!string.IsNullOrEmpty(firstNonEmptyLocation))
+                {
+                    // 將第一筆開始無值的部分往上填充
+                    foreach (DataRow dr in this.DetailDatas)
+                    {
+                        if (!MyUtility.Check.Empty(dr["Location"]))
+                        {
+                            break; // 已填充到有值為止
+                        }
+
+                        dr["Location"] = firstNonEmptyLocation;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 尋找 DetailDatas 中第一筆非空的 Location 值。
+        /// </summary>
+        /// <returns>第一筆非空的 Location 值，若無則返回空字串。</returns>
+        private string FindFirstNonEmptyLocation()
+        {
+            foreach (DataRow dr in this.DetailDatas)
+            {
+                string location = MyUtility.Convert.GetString(dr["Location"]);
+                if (!MyUtility.Check.Empty(location))
+                {
+                    return location;
+                }
+            }
+
+            return string.Empty;
         }
 
         private void BtnATSummary_Click(object sender, EventArgs e)
         {
             string ietmsUKEY = MyUtility.GetValue.Lookup($"select ukey from IETMS where id = '{this.CurrentMaintain["Ietmsid"]}' and Version = '{this.CurrentMaintain["ietmsversion"]}'");
             DataTable dataSource = (DataTable)this.detailgridbs.DataSource;
-            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource,ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
+            var windows = new P01_AT_Summary(ietmsUKEY, ref dataSource, ref this.p01_OperationList, this.EditMode, this.strTimeStudtID);
             windows.ShowDialog();
             this.detailgridbs.DataSource = dataSource;
+        }
+
+        private DataRow MoveDataRow(DataTable dataTable, int sourceIndex, int targetIndex)
+        {
+            if (dataTable.Rows.Count < 2)
+            {
+                return null;
+            }
+
+            DataRow dataRow = dataTable.Rows[sourceIndex];
+            DataRow newRow = dataTable.NewRow();
+            DataRowState oriRowState = dataRow.RowState;
+
+            newRow.ItemArray = oriRowState == DataRowState.Modified ? this.GetRowItemArrayByVersion(dataRow, DataRowVersion.Original) : dataRow.ItemArray;
+            object[] currentRowData = dataRow.ItemArray;
+
+            // 從 DataTable 中移除資料列
+            dataTable.Rows.Remove(dataRow);
+
+            // 插入資料列至目標位置
+            dataTable.Rows.InsertAt(newRow, targetIndex);
+            if (oriRowState == DataRowState.Unchanged)
+            {
+                newRow.AcceptChanges();
+            }
+            else if (oriRowState == DataRowState.Modified)
+            {
+                newRow.AcceptChanges();
+                newRow.ItemArray = currentRowData;
+            }
+
+            return newRow;
+        }
+
+        private object[] GetRowItemArrayByVersion(DataRow srcRow, DataRowVersion dataRowVersion)
+        {
+            object[] resultItemArray = new object[srcRow.Table.Columns.Count];
+            int colIndex = 0;
+            foreach (DataColumn col in srcRow.Table.Columns)
+            {
+                resultItemArray[colIndex] = srcRow[col.ColumnName, dataRowVersion];
+                colIndex++;
+            }
+
+            return resultItemArray;
+        }
+
+        private void BtnSewSeq_Click(object sender, EventArgs e)
+        {
+            // Detail geid Sew Seq有值就不做
+            if (this.DetailDatas.Any(r => !MyUtility.Check.Empty(r["SewingSeq"])))
+            {
+                return;
+            }
+
+            this.FillSewingSeqAfterCopy();
+        }
+
+        private string GetDesignateSeq(string designateSeqIdetityKey)
+        {
+            var matchingRow = this.DetailDatas.FirstOrDefault(r => r["IdetityKey"].ToString() == designateSeqIdetityKey);
+            return matchingRow != null ? matchingRow["SewingSeq"].ToString() : string.Empty;
+        }
+
+        private void ChangeRowColor()
+        {
+            // 重設所有行的背景色為白色
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                row.DefaultCellStyle.BackColor = Color.White;
+            }
+
+            // 遍歷所有行檢查條件
+            foreach (DataGridViewRow row in this.detailgrid.Rows)
+            {
+                // 取得欄位 DesignateSeq 和 SewingSeq 的值
+                var designateSeqValue = row.Cells["DesignateSeq"].Value;
+                var sewingSeqValue = row.Cells["SewingSeq"].Value;
+
+                // 1. 若 DesignateSeq 欄位有值，該行設為黃色
+                if (!MyUtility.Check.Empty(designateSeqValue))
+                {
+                    row.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+
+                    // 2. 找出所有 DesignateSeq == SewingSeq 的行，並設為黃色
+                    foreach (DataGridViewRow otherRow in this.detailgrid.Rows)
+                    {
+                        var otherSewingSeqValue = otherRow.Cells["SewingSeq"].Value; // SewingSeq
+                        if (designateSeqValue.ToString() == MyUtility.Convert.GetString(otherSewingSeqValue))
+                        {
+                            otherRow.DefaultCellStyle.BackColor = Color.FromArgb(255, 255, 128);
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -15,6 +15,7 @@
 	[RepairStartDate] [date] NULL,
 	[EstFinishRepairDate] [date] NULL,
 	[MachineArrivalDate] [date] NULL,
+	[Obtained Date] [date] NULL,
 	[TransferDate] [date] NULL,
 	[LendTo] [varchar](25) NULL,
 	[LendDate] [date] NULL,

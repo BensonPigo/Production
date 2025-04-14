@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Win.Tools;
@@ -365,6 +366,9 @@ and ExchangeCurrency = 'PHP' order by BeginDate desc
             DualResult result;
             string whereInvNo = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["InvNo"])).Select(s => $"'{s["InvNo"].ToString()}'").JoinToString(",");
 
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.CurrentMaintain["AddDate"].ToDateTime() >= new DateTime(2024, 11, 05) ? "1" : "0";
+
             #region get A2B data
             List<string> listA2B = PackingA2BWebAPI.GetPLFromRgCodeByMutiInvNo(this.DetailDatas.Select(s => s["InvNo"].ToString()).ToList());
 
@@ -380,16 +384,19 @@ inner join Orders o with (nolock) on o.id = pd.OrderID
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where   p.INVNo in ({whereInvNo})
 ";
 
@@ -433,16 +440,19 @@ from Orders o with (nolock)
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
 			  inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -607,7 +617,7 @@ order by r.BeginDate
 
         private void BtnImportGMTBooking_Click(object sender, EventArgs e)
         {
-            DialogResult dialogResult = new P11_Import(this.CurrentMaintain["ID"].ToString(), (DataTable)this.detailgridbs.DataSource).ShowDialog();
+            DialogResult dialogResult = new P11_Import(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["AddDate"].ToDateTime(), (DataTable)this.detailgridbs.DataSource).ShowDialog();
 
             if (dialogResult == DialogResult.OK)
             {

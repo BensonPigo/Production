@@ -82,7 +82,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -91,6 +91,9 @@
     </Reference>
     <Reference Include="PmsWebApiUtility20">
       <HintPath>..\_Dll\PmsWebApiUtility20.dll</HintPath>
+    </Reference>
+    <Reference Include="PmsWebApiUtility45">
+      <HintPath>..\_Dll\PmsWebApiUtility45.dll</HintPath>
     </Reference>
     <Reference Include="PostJobLog">
       <HintPath>..\_Dll\PostJobLog.dll</HintPath>
@@ -109,6 +112,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -123,6 +127,12 @@
     <Compile Include="Main.Designer.cs">
       <DependentUpon>Main.cs</DependentUpon>
     </Compile>
+    <Compile Include="PowerBI\DataAccess\P_Import_MachineMasterList.cs" />
+    <Compile Include="PowerBI\Model\JsonModel_ViiewModel.cs" />
+    <Compile Include="PowerBI\Model\Machine_R01_ViewModel.cs" />
+    <Compile Include="PowerBI\Model\ResultInfo.cs" />
+    <Compile Include="PowerBI\WebApi\CallWebAPI.cs" />
+    <Compile Include="PowerBI\WebApi\GetTable.cs" />
     <Compile Include="Program.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -142,6 +152,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

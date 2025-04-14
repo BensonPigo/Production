@@ -231,7 +231,7 @@
             this.radioDetail_DefectType.Name = "radioDetail_DefectType";
             this.radioDetail_DefectType.Size = new System.Drawing.Size(167, 21);
             this.radioDetail_DefectType.TabIndex = 137;
-            this.radioDetail_DefectType.Text = "By detail(Defect Type)";
+            this.radioDetail_DefectType.Text = "By Detail(Defect Type)";
             this.radioDetail_DefectType.UseVisualStyleBackColor = true;
             // 
             // radioSummary

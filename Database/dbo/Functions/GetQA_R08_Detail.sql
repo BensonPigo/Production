@@ -40,6 +40,7 @@ RETURNS @returntable TABLE
     ActualWidth numeric(5, 2),
     Speed numeric(10, 2),
     TotalDefectPoints numeric(6, 0),
+	PointRatePerRoll numeric(8,2),
     Grade varchar(10),
     ActInspTimeStart datetime,
     CalculatedInspTimeStartFirstTime datetime,
@@ -100,6 +101,7 @@ BEGIN
                              ,ActualWidth
                              ,Speed
                              ,TotalDefectPoints
+							 ,PointRatePerRoll
                              ,Grade
                              ,ActInspTimeStart
                              ,CalculatedInspTimeStartFirstTime
@@ -142,6 +144,7 @@ BEGIN
             ,[Speed] = convert(numeric(10,2), IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
 	                     Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)))
 	        ,FP.TotalPoint
+			,[PointRatePerRoll] = IIF(ISNULL(FP.ActualYds,0)=0,0,cast(FP.TotalPoint/FP.ActualYds * 100 as numeric(8,2)))
             ,isnull(FP.Grade, '')
             ,[ActualInspectionTimeStart] = FP.StartTime
 	        ,[CalculatedInspTimeStartFirstTime] = DATEADD(second, FP.QCTime*-1, FP.AddDate)

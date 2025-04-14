@@ -14,6 +14,7 @@
     [AddDate]    DATETIME      NULL,
     [EditName]   VARCHAR (10)  NULL,
     [EditDate]   DATETIME      NULL,
+    [OrderCompanyID]     NUMERIC(2)      CONSTRAINT [DF_KHExportDeclaration_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_KHExportDeclaration] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -81,11 +82,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'審核狀�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出口報關編號', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'DeclareNo';
 
-
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出口報關日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'Cdate';
-
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'ID';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'KHExportDeclaration', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+GO

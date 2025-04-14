@@ -1,20 +1,17 @@
-﻿using System;
+﻿using Ict;
+using Ict.Win;
+using Sci.Data;
+using Sci.Production.Automation;
+using Sci.Production.PublicPrg;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using Ict.Win;
-using Ict;
-using Sci.Data;
-using Sci.Production.PublicPrg;
-using System.Transactions;
 using System.Linq;
-using System.Data.SqlClient;
-using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
-using Sci.Production.Automation;
-using System.Data.Common;
+using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sci.Production.Packing
 {
@@ -52,6 +49,7 @@ namespace Sci.Production.Packing
         private int detailgridSort = 0;
         private string formParameter = string.Empty;
         private bool isSingleShipment = true;
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// ComboBox1_RowSource
@@ -266,6 +264,15 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
 
             this.labelCofirmed.Visible = MyUtility.Check.Empty(this.CurrentMaintain["ID"]) ? false : true;
 
@@ -470,10 +477,24 @@ where RequestID='{this.CurrentMaintain["ID"]}' and l.status = 'Approved'
 
                     if (!MyUtility.Check.Empty(e.FormattedValue) && e.FormattedValue.ToString() != dr["OrderID"].ToString())
                     {
-                        DataRow orderData;
-                        if (!MyUtility.Check.Seek(
-                            string.Format(
-                                @"
+                        // 1.檢查表頭
+                        if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                        {
+                            MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                            dr["OrderID"] = string.Empty;
+                            dr["OrderShipmodeSeq"] = string.Empty;
+                            dr["Article"] = string.Empty;
+                            dr["Color"] = string.Empty;
+                            dr["SizeCode"] = string.Empty;
+                            dr["StyleID"] = string.Empty;
+                            dr["CustPONo"] = string.Empty;
+                            dr["SeasonID"] = string.Empty;
+                            dr["Factory"] = string.Empty;
+                            dr.EndEdit();
+                            return;
+                        }
+
+                        string sqlcmd = $@"
 Select  o.ID
         , o.SeasonID
         , o.StyleID
@@ -481,18 +502,16 @@ Select  o.ID
         , o.FtyGroup
 from Orders o WITH (NOLOCK) 
 inner join Factory f on o.FactoryID = f.ID
-where   o.ID = '{0}' 
+where   o.ID = '{e.FormattedValue}' 
         and ((o.Category = 'B' and o.LocalOrder = 0) or o.Category = 'S' or o.Category = 'G')
-        and o.BrandID = '{1}' 
-        and o.Dest = '{2}' 
-        and o.CustCDID = '{3}'
-        and o.MDivisionID = '{4}'
-        and f.IsProduceFty = 1",
-                                e.FormattedValue.ToString(),
-                                this.CurrentMaintain["BrandID"].ToString(),
-                                this.CurrentMaintain["Dest"].ToString(),
-                                this.CurrentMaintain["CustCDID"].ToString(),
-                                Env.User.Keyword), out orderData))
+        and o.BrandID = '{this.CurrentMaintain["BrandID"]}' 
+        and o.Dest = '{this.CurrentMaintain["Dest"]}' 
+        and o.CustCDID = '{this.CurrentMaintain["CustCDID"]}'
+        and o.MDivisionID = '{Env.User.Keyword}'
+        and o.OrderCompanyID = {this.CurrentMaintain["OrderCompanyID"]}
+        and f.IsProduceFty = 1";
+
+                        if (!MyUtility.Check.Seek(sqlcmd, out DataRow orderData))
                         {
                             MessageBox.Show(string.Format("< SP No.: {0} > not found!!!", e.FormattedValue.ToString()));
                             dr["OrderID"] = string.Empty;
@@ -1036,6 +1055,9 @@ order by os.Seq",
         /// </summary>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["MDivisionID"] = Env.User.Keyword;
             this.CurrentMaintain["Type"] = "B";
@@ -1082,6 +1104,7 @@ Carton has been output from the hanger system or transferred to clog.";
             }
 
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             this.comboSortby.Text = string.Empty;
             if (this.CurrentMaintain["ID"].ToString().Substring(3, 2).ToUpper() == "PG")
             {
@@ -1200,7 +1223,7 @@ Carton has been output from the hanger system or transferred to clog.";
 
             foreach (var orderID in orderIdList)
             {
-                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"].ToString()}'");
+                bool exists = MyUtility.Check.Seek($"SELECT TOP 1 ShipmodeID FROM Order_QtyShip WHERE ID='{orderID}' AND ShipmodeID='{this.CurrentMaintain["ShipModeID"]}'");
 
                 if (!exists)
                 {
@@ -1794,7 +1817,22 @@ left join Order_QtyShip oq WITH (NOLOCK) on oq.Id = a.OrderID and oq.Seq = a.Ord
         /// </summary>
         protected override void ClickConfirm()
         {
+            this.RenewData();
             base.ClickConfirm();
+
+            // 檢查表身欄位 CTNStartNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["CTNStartNo"])))
+            {
+                MyUtility.Msg.WarningBox("<CTN#> cannot be empty!");
+                return;
+            }
+
+            // 檢查表身欄位 RefNo 不可為空值
+            if (this.DetailDatas.Any(dr => MyUtility.Check.Empty(dr["RefNo"])))
+            {
+                MyUtility.Msg.WarningBox("<Ref No.> cannot be empty!");
+                return;
+            }
 
             // 檢查Packing數量是否超過總訂單數量
             var listOrder = this.DetailDatas.Select(s => s["OrderID"].ToString()).Distinct();
@@ -2318,7 +2356,7 @@ order by PD.seq
                 LEFT JOIN PackingList_Detail c ON a.[Cust CTN#] = c.CustCTN AND c.CTNQty = 1
                 WHERE c.CustCTN IS NULL;             
 
-                update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"].ToString()}'
+                update PackingList set  EditName = '{Env.User.UserID}', EditDate = GETDATE() where ID = '{this.CurrentMaintain["ID"]}'
                 ";
                 DataTable udt;
                 DualResult result = MyUtility.Tool.ProcessWithDatatable(dtexcel, string.Empty, updateSqlCmd, out udt);
@@ -2495,6 +2533,26 @@ The rest of the data has been updated successfully!'
         private void BtnCustSystem_Click(object sender, EventArgs e)
         {
             new P03_Mercury(this.CurrentMaintain["ID"].ToString()).ShowDialog();
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

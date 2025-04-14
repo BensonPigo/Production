@@ -78,15 +78,18 @@ namespace Sci.Production.Shipping
             #region PackingListID 存在Pullout 則不能匯入
             List<SqlParameter> listParameter = new List<SqlParameter>();
             listParameter.Add(new SqlParameter("@PackingID", this.txtSamplePL.Text));
+            listParameter.Add(new SqlParameter("@OrderCompanyID", P02.orderCompanyID));
             DataRow dr;
             string sqlcmdChk = @"
 select distinct p.ID as PulloutID
 from PackingList_Detail pd WITH (NOLOCK) 
+left join PackingList pl with(nolock) on pl.id = pd.id
 left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
 left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
 inner join Pullout_Detail p on p.PackingListID = pd.ID
 where pd.ID = @PackingID
 and Factory.IsProduceFty=1
+and pl.OrderCompanyID = @OrderCompanyID
 ";
             if (MyUtility.Check.Seek(sqlcmdChk, listParameter, out dr))
             {
@@ -95,8 +98,7 @@ and Factory.IsProduceFty=1
             }
             #endregion
 
-            string sqlCmd = string.Format(
-                @"
+            string sqlCmd = $@"
 select *
 		, [NW] = ROUND( GW * ((ShipQty * 1.0) / (TtlShipQty *1.0)), 3, 1)  ----無條件捨去到小數點後第三位
         , Description = [dbo].[getBOFMtlDesc](StyleUkey)
@@ -125,12 +127,13 @@ from (
     left join Orders o WITH (NOLOCK) on pd.OrderID = o.ID
     left join TPEPass1 t WITH (NOLOCK) on o.SMR = t.ID
     left join factory WITH (NOLOCK)  on o.FactoryID=Factory.ID
-    where pd.ID = '{0}'
+    where pd.ID = '{this.txtSamplePL.Text}'
           and Factory.IsProduceFty=1
           and p.Type = 'S'
+          and p.OrderCompanyID = '{P02.orderCompanyID}'
     group by pd.ID, pd.OrderID, o.SeasonID, o.StyleID, p.ShipQty, p.GW, o.StyleUnit, o.SMR, t.Name, o.BrandID, o.StyleUkey,o.PoPrice,pd.CTNStartNo, pd.Refno
 ) getSamplePL
-", this.txtSamplePL.Text);
+";
             DataTable selectData;
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out selectData);
             if (!result)
@@ -154,12 +157,20 @@ from (
         {
             // sql參數
             SqlParameter sp1 = new SqlParameter("@id", pLNo);
+            SqlParameter sp2 = new SqlParameter("@OrderCompanyID", P02.orderCompanyID);
 
-            IList<SqlParameter> cmds = new List<SqlParameter>();
+            IList <SqlParameter> cmds = new List<SqlParameter>();
             cmds.Add(sp1);
+            cmds.Add(sp2);
 
             DataTable packListData;
-            string sqlCmd = "select ExpressID from PackingList WITH (NOLOCK) where ID = @id and Type = 'S'";
+            string sqlCmd = @"
+select ExpressID 
+from PackingList WITH (NOLOCK) 
+where ID = @id 
+and Type = 'S'
+and OrderCompanyID = @OrderCompanyID
+";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out packListData);
             if (result && packListData.Rows.Count > 0)
             {
@@ -353,14 +364,20 @@ WHERE REFNO	= '{itemExpress_CTNData.First()["Refno"]}'
 
 ---- 1. 訂單 + PL 是否已經存在 HC表身
 SELECT [ExistsData]=1
-FROm  Express_Detail
-WHERE PackingListID='{packingListID}'
-      AND OrderID='{orderID}' 
+FROm  Express_Detail ED
+INNER JOIN Express E ON E.ID= ED.ID
+WHERE ED.PackingListID='{packingListID}'
+      AND ED.OrderID='{orderID}' 
+      AND E.OrderCompanyID = '{P02.orderCompanyID}'
 UNION 
 ---- 2. PL 是否有建立在其他 HC
 SELECT [ExistsData]=2
 FROm PackingList
-WHERE ID='{packingListID}' AND ExpressID<>'{this.masterData["ID"].ToString()}' AND ExpressID <> ''  AND ExpressID IS NOT NULL
+WHERE ID='{packingListID}' 
+AND ExpressID<>'{this.masterData["ID"].ToString()}' 
+AND ExpressID <> ''  
+AND ExpressID IS NOT NULL
+AND OrderCompanyID = '{P02.orderCompanyID}'
 ";
             DualResult result = DBProxy.Current.Select(null, sqlCmd, out dt);
             if (!result)

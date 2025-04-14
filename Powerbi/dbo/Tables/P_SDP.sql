@@ -44,6 +44,7 @@
 	[ReasonRemark] [nvarchar](max) NOT NULL,
  CONSTRAINT [PK_P_SDP] PRIMARY KEY CLUSTERED 
 (
+	[FactoryID] asc,
 	[SPNo] ASC,
 	[Style] ASC,
 	[Seq] ASC,

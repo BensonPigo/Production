@@ -9,8 +9,6 @@ namespace Sci.Production.Cutting
     /// <inheritdoc/>
     public partial class P01_MarkerList : Win.Subs.Input4Plus
     {
-        private DataRow MasterData;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="P01_MarkerList"/> class.
         /// </summary>
@@ -27,43 +25,41 @@ namespace Sci.Production.Cutting
 
             this.DetailGridAlias = "Order_MarkerList_SizeQty";
             this.DetailKeyField = "Order_MarkerListUkey";
-            this.MasterData = masterData;
         }
 
         /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
-            datas = null;
-            string sqlCmd;
-
-            sqlCmd = string.Format(
-                @"
-Select mark.*
-,OE.Article ForArticle
-,b.Description,b.Width as FabricWidth
-,OFC.PatternPanel PatternPanel
-,concat(rtrim(mark.MarkerUpdateName),' ', format(mark.MarkerUpdate,'yyyy/MM/dd HH:mm:ss')) MarkerUpdate2
-,concat(mark.AddName,' ', format(mark.AddDate,'yyyy/MM/dd HH:mm:ss')) createby2
-,concat(mark.EditName,' ', format(mark.EditDate,'yyyy/MM/dd HH:mm:ss')) editby2
-from dbo.Order_MarkerList mark WITH (NOLOCK) 
-left join dbo.Order_BOF a WITH (NOLOCK) on mark.Id = a.Id and mark.FabricCode = a.FabricCode  
-left join dbo.Fabric b WITH (NOLOCK) on b.SCIRefno = a.SCIRefno  
-left join Order_EachCons OE WITH (NOLOCK) 
-    on mark.Id=OE.Id and mark.MarkerNo=OE.MarkerNo and mark.MarkerName=OE.MarkerName 
-    and mark.FabricCode=OE.FabricCode and mark.FabricCombo=OE.FabricCombo 
-    and mark.FabricPanelCode=OE.FabricPanelCode 
-left join Order_FabricCode OFC WITH (NOLOCK) 
-    on OFC.Id=mark.Id and OFC.FabricPanelCode=mark.FabricPanelCode and OFC.FabricCode=mark.FabricCode
-Where mark.id ='{0}' order by mark.Seq",
-                this.KeyValue1);
-
-            DualResult result;
-            if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas)))
-            {
-                return result;
-            }
-
-            return Ict.Result.True;
+            string sqlCmd = $@"
+SELECT
+    mark.*
+   ,ForArticle = oec.Article
+   ,b.Description
+   ,FabricWidth = b.Width
+   ,PatternPanel = ofc.PatternPanel
+   ,MarkerUpdate2 = CONCAT(RTRIM(mark.MarkerUpdateName), ' ', FORMAT(mark.MarkerUpdate, 'yyyy/MM/dd HH:mm:ss'))
+   ,createby2 = CONCAT(mark.AddName, ' ', FORMAT(mark.AddDate, 'yyyy/MM/dd HH:mm:ss'))
+   ,editby2 = CONCAT(mark.EditName, ' ', FORMAT(mark.EditDate, 'yyyy/MM/dd HH:mm:ss'))
+   ,MarkerTypeName = DropDownList.Name
+FROM Order_MarkerList mark WITH (NOLOCK)
+LEFT JOIN Order_BOF obof WITH (NOLOCK) ON mark.ID = obof.ID AND mark.FabricCode = obof.FabricCode
+LEFT JOIN dbo.Fabric b WITH (NOLOCK) ON b.SCIRefno = obof.SCIRefno
+LEFT JOIN Order_EachCons oec WITH (NOLOCK)
+    ON mark.ID = oec.ID
+        AND mark.MarkerNo = oec.MarkerNo
+        AND mark.MarkerName = oec.MarkerName
+        AND mark.FabricCode = oec.FabricCode
+        AND mark.FabricCombo = oec.FabricCombo
+        AND mark.FabricPanelCode = oec.FabricPanelCode
+LEFT JOIN Order_FabricCode ofc WITH (NOLOCK)
+    ON ofc.ID = mark.ID
+        AND ofc.FabricPanelCode = mark.FabricPanelCode
+        AND ofc.FabricCode = mark.FabricCode
+LEFT JOIN DropDownList WITH (NOLOCK) ON DropDownList.ID = mark.MarkerType AND DropDownList.Type = 'MarkerType'         
+WHERE mark.ID = '{this.KeyValue1}'
+ORDER BY mark.Seq
+";
+            return DBProxy.Current.Select(null, sqlCmd, out datas);
         }
 
         /// <inheritdoc/>

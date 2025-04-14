@@ -50,19 +50,17 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out DataTable factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Env.User.Keyword;
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
 
             // comboBox2.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
 
             this.comboSummaryBy.Add("SP#", "SP#");
             this.comboSummaryBy.Add("Article / Size", "Article / Size");
             this.comboSummaryBy.Add("Style, per each sewing date", "StylePerEachSewingDate");
             this.comboSummaryBy.SelectedIndex = 0;
+            this.comboFactory.Text = Env.User.Factory;
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
@@ -181,6 +179,7 @@ namespace Sci.Production.PPIC
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             List<DataRow> filteredRows;
+
             // 顯示筆數於PrintForm上Count欄位
             this.SetCount(this.printData.Rows.Count);
             bool result;
@@ -209,6 +208,7 @@ namespace Sci.Production.PPIC
                 this.printData.Columns.Remove("StyleName");
                 this.printData.Columns.Remove("AddDate");
                 this.printData.Columns.Remove("EditDate");
+                this.printData.Columns.Remove("SewingInlineCategory");
 
                 DataTable printDataFilter = this.printData.Copy();
                 if (!this.chkIncludeCompleteSchedule.Checked)
@@ -872,6 +872,7 @@ where id = '{0}'", Env.User.Factory), null);
                 SciDeliveryTo = this.sciDelivery2,
                 BrandID = this.brand,
                 SubProcess = this.subProcess,
+                IsPowerBI = false,
             };
 
             PPIC_R01 biModel = new PPIC_R01();

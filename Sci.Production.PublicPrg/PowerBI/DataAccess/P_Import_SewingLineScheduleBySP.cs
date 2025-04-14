@@ -42,6 +42,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 SciDeliveryTo = null,
                 BrandID = string.Empty,
                 SubProcess = string.Empty,
+                IsPowerBI = true,
             };
 
             try
@@ -58,8 +59,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -247,20 +246,11 @@ from #tmp t
 where not exists(	select 1 
 					from P_SewingLineScheduleBySP p
 					where	p.ID = t.ID)
-
-if exists(select 1 from BITableInfo where Id = 'P_SewingLineScheduleBySP')
-begin
-	update BITableInfo set TransferDate = getdate()
-	where Id = 'P_SewingLineScheduleBySP'
-end
-else
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_SewingLineScheduleBySP', GETDATE(), 0)
-end
 ";
+                sql += new Base().SqlBITableInfo("P_SewingLineScheduleBySP", true);
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

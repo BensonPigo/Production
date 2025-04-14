@@ -4,9 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -85,117 +83,124 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                     new SqlParameter("@EndDate", eDate),
                 };
-                string sql = @"	
-update t
-SET 
-	t.CustPONo =  s.CustPONo,
-	t.StyleID =  s.StyleID,
-	t.BrandID = s.BrandID,
-	t.BuyerDelivery = s.BuyerDelivery,
-	t.ShipModeID =  s.ShipModeID,
-	t.Category =  s.Category,
-	t.PartialShipment =  s.PartialShipment,
-	t.BookingSP = s.BookingSP,
-	t.Junk =  s.Cancelled,
-	t.OrderQty =  s.OrderQty,
-	t.PackingCtn =  s.PackingCarton,
-	t.PackingQty =  s.PackingQty,
-	t.ClogRcvCtn =  s.ClogReceivedCarton,
-	t.ClogRcvQty =  s.ClogReceivedQty,
-	t.LastCMPOutputDate =  s.LastCMPOutputDate,
-	t.CMPQty =  s.CMPQty,
-	t.LastDQSOutputDate =  s.LastDQSOutputDate,
-	t.DQSQty =  s.DQSQty,
-	t.OSTPackingQty =  s.OSTPackingQty,
-	t.OSTCMPQty =  s.OSTCMPQty,
-	t.OSTDQSQty =  s.OSTDQSQty,
-	t.OSTClogQty =  s.OSTClogQty,
-	t.OSTClogCtn =  s.OSTClogCtn,
-	t.PulloutComplete = s.PulloutComplete,
-	t.dest = s.dest,
-	t.KPIGroup = s.KPICode,
-	t.CancelledButStillNeedProduction = s.CancelledButStillNeedProduction,
-	t.CFAInspectionResult = s.CFAInspectionResult,
-	t.[3rdPartyInspection] = s.[3rdPartyInspection],
-	t.[3rdPartyInspectionResult] = s.[3rdPartyInspectionResult],
-	t.LastCartonReceivedDate = s.LastCartonReceivedDate
-from P_OustandingPO t
-inner join #tmp s  
-		ON t.FactoryID=s.FactoryID  
-		AND t.orderid=s.id 
-		AND t.seq = s.seq 
 
-insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
-, [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
-, [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
-, [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate])
-select  s.FactoryID,
-		s.id,
-		s.CustPONo,
-		s.StyleID,
-		s.BrandID,
-		s.BuyerDelivery,
-		s.Seq,
-		s.ShipModeID,
-		s.Category,
-		s.PartialShipment,
-		s.Cancelled,
-		s.OrderQty,
-		s.PackingCarton,
-		s.PackingQty,
-		s.ClogReceivedCarton,
-		s.ClogReceivedQty,
-		s.LastCMPOutputDate,
-		s.CMPQty,
-		s.LastDQSOutputDate,
-		s.DQSQty,
-		s.OSTPackingQty,
-		s.OSTCMPQty,
-		s.OSTDQSQty,
-		s.OSTClogQty,
-		s.OSTClogCtn,
-		s.PulloutComplete,
-		s.dest,
-		s.KPICode,
-		s.CancelledButStillNeedProduction,
-		s.CFAInspectionResult,
-		s.[3rdPartyInspection],
-		s.[3rdPartyInspectionResult],
-		s.BookingSP,
-		s.LastCartonReceivedDate
-from #tmp s
-where not exists(
-	select 1 from P_OustandingPO t 
-	where t.FactoryID = s.FactoryID  
-	AND t.orderid = s.id 
-	AND t.seq = s.seq 
-)
+                string sql = @"
+alter table #tmp alter column FactoryID varchar(8)
+alter table #tmp alter column ID varchar(13)
+alter table #tmp alter column Seq varchar(2)
 
-delete t
-from P_OustandingPO t
-left join #tmp s on t.FactoryID = s.FactoryID  
-	AND t.orderid = s.id 
-	AND t.seq = s.seq 
-where t.BuyerDelivery between @StartDate and @EndDate
-	and s.ID IS NULL
+                update t
+                SET 
+	            t.CustPONo							= ISNULL(s.CustPONo,''),
+	            t.StyleID							= ISNULL(s.StyleID,	''),
+	            t.BrandID							= ISNULL(s.BrandID,	''),
+	            t.BuyerDelivery						= s.BuyerDelivery,
+	            t.ShipModeID						= ISNULL(s.ShipModeID,''),
+	            t.Category							= ISNULL(s.Category,''),
+	            t.PartialShipment					= ISNULL(s.PartialShipment,''),
+	            t.BookingSP							= ISNULL(s.BookingSP,''),
+	            t.Junk								= ISNULL(s.Cancelled,''),
+	            t.OrderQty							= ISNULL(s.OrderQty,0),
+	            t.PackingCtn						= ISNULL(s.PackingCarton,0),
+	            t.PackingQty						= ISNULL(s.PackingQty,0),
+	            t.ClogRcvCtn                        = ISNULL(s.ClogReceivedCarton,0),
+	            t.ClogRcvQty                        = ISNULL(s.ClogReceivedQty,0),
+	            t.LastCMPOutputDate					= s.LastCMPOutputDate,
+	            t.CMPQty							= ISNULL(s.CMPQty,0),
+	            t.LastDQSOutputDate					= s.LastDQSOutputDate,
+	            t.DQSQty							= ISNULL(s.DQSQty,''),
+	            t.OSTPackingQty						= ISNULL(s.OSTPackingQty,''),
+	            t.OSTCMPQty							= ISNULL(s.OSTCMPQty,''),
+	            t.OSTDQSQty							= ISNULL(s.OSTDQSQty,''),
+	            t.OSTClogQty						= ISNULL(s.OSTClogQty,''),
+	            t.OSTClogCtn						= ISNULL(s.OSTClogCtn,0),
+	            t.PulloutComplete					= ISNULL(s.PulloutComplete,''),
+	            t.dest								= ISNULL(s.dest,''),
+	            t.KPIGroup							= ISNULL(s.KPICode,''),
+	            t.CancelledButStillNeedProduction	= ISNULL(s.CancelledButStillNeedProduction,''),
+	            t.CFAInspectionResult				= ISNULL(s.CFAInspectionResult,''),
+	            t.[3rdPartyInspection]				= ISNULL(s.[3rdPartyInspection],''),
+	            t.[3rdPartyInspectionResult]		= ISNULL(s.[3rdPartyInspectionResult],''),
+	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate
+                from P_OustandingPO t
+                inner join #tmp s  
+		                ON t.FactoryID = s.FactoryID
+		                AND t.OrderID = s.ID
+		                AND t.Seq = s.Seq
 
-delete t
-from P_OustandingPO t
-where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
-and t.Seq = ''
+                insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
+                , [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
+                , [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
+                , [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate])
+                select  
+                [FactoryID]								= ISNULL(s.FactoryID,''),
+		        [OrderID]								= ISNULL(s.id,''),
+		        [CustPONo]								= ISNULL(s.CustPONo,''),
+		        [StyleID]								= ISNULL(s.StyleID,''),
+		        [BrandID]								= ISNULL(s.BrandID,''),
+		        [BuyerDelivery]							= s.BuyerDelivery,
+		        [Seq]									= ISNULL(s.Seq,''),
+		        [ShipModeID]							= ISNULL(s.ShipModeID,''),
+		        [Category]								= ISNULL(s.Category,''),
+		        [PartialShipment]						= ISNULL(s.PartialShipment,''),
+		        [Junk]									= ISNULL(s.Cancelled,''),
+		        [OrderQty]								= ISNULL(s.OrderQty,0),
+		        [PackingCtn]							= ISNULL(s.PackingCarton,0),
+		        [PackingQty]							= ISNULL(s.PackingQty,0),
+		        [ClogRcvCtn]							= ISNULL(s.ClogReceivedCarton,0),
+		        [ClogRcvQty]							= ISNULL(s.ClogReceivedQty,0),
+		        [LastCMPOutputDate]						= s.LastCMPOutputDate,
+		        [CMPQty]								= ISNULL(s.CMPQty,0),
+		        [LastDQSOutputDate]						= s.LastDQSOutputDate,
+		        [DQSQty]								= ISNULL(s.DQSQty,''),
+		        [OSTPackingQty]							= ISNULL(s.OSTPackingQty,''),
+		        [OSTCMPQty]								= ISNULL(s.OSTCMPQty,''),
+		        [OSTDQSQty]								= ISNULL(s.OSTDQSQty,''),
+		        [OSTClogQty]							= ISNULL(s.OSTClogQty,''),
+		        [OSTClogCtn]							= ISNULL(s.OSTClogCtn,0),
+		        [PulloutComplete]						= ISNULL(s.PulloutComplete,''),
+		        [Dest]									= ISNULL(s.dest,''),
+		        [KPIGroup]								= ISNULL(s.KPICode,''),
+		        [CancelledButStillNeedProduction]		= ISNULL(s.CancelledButStillNeedProduction,''),
+		        [CFAInspectionResult]					= ISNULL(s.CFAInspectionResult,''),
+		        [3rdPartyInspection]					= ISNULL(s.[3rdPartyInspection],''),
+		        [3rdPartyInspectionResult]				= ISNULL(s.[3rdPartyInspectionResult],''),
+		        [BookingSP]								= ISNULL(s.BookingSP,''),
+		        [LastCartonReceivedDate]				= s.LastCartonReceivedDate
+                from #tmp s
+                where not exists(
+	                select 1 from P_OustandingPO t 
+	                where t.FactoryID = s.FactoryID
+	                AND t.OrderID = s.ID
+	                AND t.Seq = s.Seq
+                )
 
-delete P_OustandingPO
-where BuyerDelivery > @EndDate
+                delete t
+                from P_OustandingPO t
+                left join #tmp s on t.FactoryID = s.FactoryID
+	                AND t.OrderID = s.ID
+	                AND t.Seq = s.Seq
+                where t.BuyerDelivery between @StartDate and @EndDate
+	                and s.ID IS NULL
 
-update b
-    set b.TransferDate = getdate()
-		, b.IS_Trans = 1
-from BITableInfo b
-where b.id = 'P_OustandingPO'
-";
+                delete t
+                from P_OustandingPO t
+                where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
+                and t.Seq = ''
+
+                delete P_OustandingPO
+                where BuyerDelivery > @EndDate
+
+                update b
+                    set b.TransferDate = getdate()
+		                , b.IS_Trans = 1
+                from BITableInfo b
+                where b.id = 'P_OustandingPO'
+                ";
+
                 finalResult = new Base_ViewModel()
                 {
-                    Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

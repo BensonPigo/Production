@@ -5,7 +5,7 @@
     [PoID] VARCHAR(13) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_PoID] DEFAULT (''),  
     [Seq1] VARCHAR(3) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_Seq1] DEFAULT (''),  
     [Seq2] VARCHAR(2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_Seq2] DEFAULT (''),  
-    [Carton] NVARCHAR(50) NOT NULL DEFAULT (''), 
+    [Carton] NVARCHAR(100) NOT NULL DEFAULT (''), 
     [LotNo] VARCHAR(30) NOT NULL, 
     [Qty] NUMERIC(8, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_Qty] DEFAULT (0),  
     [Foc] NUMERIC(8, 2) NOT NULL CONSTRAINT [DF_TransferExport_Detail_Carton_Foc] DEFAULT (0),  

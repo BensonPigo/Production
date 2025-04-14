@@ -8,6 +8,7 @@ using System.Configuration;
 using System.Xml.Linq;
 using Ict;
 using System.Data.SqlClient;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Class
 {
@@ -46,16 +47,7 @@ namespace Sci.Production.Class
             DataTable zoneData = new DataTable();
             zoneData.Columns.Add("zone", typeof(string));
             DataTable dt;
-
-            XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-            List<string> strSevers = ConfigurationManager.AppSettings["PMSDBServer"].Split(',').ToList();
-            strSevers.Remove("PMSDB_TSR");
-            List<string> connectionString = new List<string>();
-            foreach (string ss in strSevers)
-            {
-                var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                connectionString.Add(connections);
-            }
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString(excludeModules: "PMSDB_TSR");
 
             if (connectionString == null || connectionString.Count == 0)
             {

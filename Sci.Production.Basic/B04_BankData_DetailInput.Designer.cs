@@ -29,7 +29,16 @@
         private void InitializeComponent()
         {
             this.panel1 = new Sci.Win.UI.Panel();
-            this.panel2 = new Sci.Win.UI.Panel();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.label5 = new Sci.Win.UI.Label();
+            this.txtTPBBankName = new Sci.Win.UI.TextBox();
+            this.txtTPBBankCode = new Sci.Win.UI.TextBox();
+            this.txtMSBBranchName = new Sci.Win.UI.TextBox();
+            this.txtBranchName = new Sci.Win.UI.TextBox();
+            this.txtBranchCode = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label1 = new Sci.Win.UI.Label();
             this.txtRemark = new Sci.Win.UI.EditBox();
             this.txtCountry = new Sci.Production.Class.Txtcountry();
             this.txtMidBankName = new Sci.Win.UI.TextBox();
@@ -49,18 +58,21 @@
             this.labelAccountName = new Sci.Win.UI.Label();
             this.labelSWIFTCode = new Sci.Win.UI.Label();
             this.labelAccountNo = new Sci.Win.UI.Label();
-            this.btnInsert = new System.Windows.Forms.Button();
+            this.panel2 = new Sci.Win.UI.Panel();
             this.btnClose = new System.Windows.Forms.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.label2 = new Sci.Win.UI.Label();
-            this.txtBranchCode = new Sci.Win.UI.TextBox();
-            this.txtBranchName = new Sci.Win.UI.TextBox();
+            this.btnInsert = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.txtTPBBankName);
+            this.panel1.Controls.Add(this.txtTPBBankCode);
+            this.panel1.Controls.Add(this.txtMSBBranchName);
             this.panel1.Controls.Add(this.txtBranchName);
             this.panel1.Controls.Add(this.txtBranchCode);
             this.panel1.Controls.Add(this.label2);
@@ -87,18 +99,101 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(620, 420);
+            this.panel1.Size = new System.Drawing.Size(620, 519);
             this.panel1.TabIndex = 0;
             // 
-            // panel2
+            // label3
             // 
-            this.panel2.Controls.Add(this.btnClose);
-            this.panel2.Controls.Add(this.btnInsert);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 375);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(620, 45);
-            this.panel2.TabIndex = 1;
+            this.label3.Location = new System.Drawing.Point(21, 360);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(120, 23);
+            this.label3.TabIndex = 136;
+            this.label3.Text = "Branch Name (MSB)";
+            // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(21, 415);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(120, 23);
+            this.label4.TabIndex = 135;
+            this.label4.Text = "Bank Code (TPB)";
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(21, 388);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(120, 23);
+            this.label5.TabIndex = 134;
+            this.label5.Text = "Bank Name(TPB)";
+            // 
+            // txtTPBBankName
+            // 
+            this.txtTPBBankName.BackColor = System.Drawing.Color.White;
+            this.txtTPBBankName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtTPBBankName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTPBBankName.Location = new System.Drawing.Point(144, 387);
+            this.txtTPBBankName.MaxLength = 100;
+            this.txtTPBBankName.Name = "txtTPBBankName";
+            this.txtTPBBankName.Size = new System.Drawing.Size(198, 26);
+            this.txtTPBBankName.TabIndex = 133;
+            // 
+            // txtTPBBankCode
+            // 
+            this.txtTPBBankCode.BackColor = System.Drawing.Color.White;
+            this.txtTPBBankCode.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtTPBBankCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtTPBBankCode.Location = new System.Drawing.Point(144, 415);
+            this.txtTPBBankCode.MaxLength = 20;
+            this.txtTPBBankCode.Name = "txtTPBBankCode";
+            this.txtTPBBankCode.Size = new System.Drawing.Size(198, 26);
+            this.txtTPBBankCode.TabIndex = 132;
+            // 
+            // txtMSBBranchName
+            // 
+            this.txtMSBBranchName.BackColor = System.Drawing.Color.White;
+            this.txtMSBBranchName.CharacterCasing = System.Windows.Forms.CharacterCasing.Normal;
+            this.txtMSBBranchName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMSBBranchName.Location = new System.Drawing.Point(144, 359);
+            this.txtMSBBranchName.MaxLength = 20;
+            this.txtMSBBranchName.Name = "txtMSBBranchName";
+            this.txtMSBBranchName.Size = new System.Drawing.Size(198, 26);
+            this.txtMSBBranchName.TabIndex = 131;
+            // 
+            // txtBranchName
+            // 
+            this.txtBranchName.BackColor = System.Drawing.Color.White;
+            this.txtBranchName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBranchName.Location = new System.Drawing.Point(144, 161);
+            this.txtBranchName.MaxLength = 60;
+            this.txtBranchName.Name = "txtBranchName";
+            this.txtBranchName.Size = new System.Drawing.Size(378, 26);
+            this.txtBranchName.TabIndex = 7;
+            // 
+            // txtBranchCode
+            // 
+            this.txtBranchCode.BackColor = System.Drawing.Color.White;
+            this.txtBranchCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBranchCode.Location = new System.Drawing.Point(144, 132);
+            this.txtBranchCode.MaxLength = 30;
+            this.txtBranchCode.Name = "txtBranchCode";
+            this.txtBranchCode.Size = new System.Drawing.Size(198, 26);
+            this.txtBranchCode.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(21, 161);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(120, 23);
+            this.label2.TabIndex = 130;
+            this.label2.Text = "Branch Name";
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(21, 132);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 23);
+            this.label1.TabIndex = 129;
+            this.label1.Text = "Branch Code";
             // 
             // txtRemark
             // 
@@ -126,7 +221,7 @@
             this.txtMidBankName.Location = new System.Drawing.Point(225, 270);
             this.txtMidBankName.MaxLength = 70;
             this.txtMidBankName.Name = "txtMidBankName";
-            this.txtMidBankName.Size = new System.Drawing.Size(357, 23);
+            this.txtMidBankName.Size = new System.Drawing.Size(357, 26);
             this.txtMidBankName.TabIndex = 11;
             // 
             // txtMidSWIFTCode
@@ -136,7 +231,7 @@
             this.txtMidSWIFTCode.Location = new System.Drawing.Point(144, 243);
             this.txtMidSWIFTCode.MaxLength = 11;
             this.txtMidSWIFTCode.Name = "txtMidSWIFTCode";
-            this.txtMidSWIFTCode.Size = new System.Drawing.Size(165, 23);
+            this.txtMidSWIFTCode.Size = new System.Drawing.Size(165, 26);
             this.txtMidSWIFTCode.TabIndex = 10;
             // 
             // txtCity
@@ -147,7 +242,7 @@
             this.txtCity.Location = new System.Drawing.Point(144, 216);
             this.txtCity.MaxLength = 20;
             this.txtCity.Name = "txtCity";
-            this.txtCity.Size = new System.Drawing.Size(198, 23);
+            this.txtCity.Size = new System.Drawing.Size(198, 26);
             this.txtCity.TabIndex = 9;
             // 
             // txtBankName
@@ -158,7 +253,7 @@
             this.txtBankName.Location = new System.Drawing.Point(144, 104);
             this.txtBankName.MaxLength = 70;
             this.txtBankName.Name = "txtBankName";
-            this.txtBankName.Size = new System.Drawing.Size(438, 23);
+            this.txtBankName.Size = new System.Drawing.Size(438, 26);
             this.txtBankName.TabIndex = 5;
             // 
             // txtAccountName
@@ -169,7 +264,7 @@
             this.txtAccountName.Location = new System.Drawing.Point(144, 77);
             this.txtAccountName.MaxLength = 100;
             this.txtAccountName.Name = "txtAccountName";
-            this.txtAccountName.Size = new System.Drawing.Size(378, 23);
+            this.txtAccountName.Size = new System.Drawing.Size(378, 26);
             this.txtAccountName.TabIndex = 4;
             // 
             // txtSWIFTCode
@@ -179,7 +274,7 @@
             this.txtSWIFTCode.Location = new System.Drawing.Point(144, 50);
             this.txtSWIFTCode.MaxLength = 11;
             this.txtSWIFTCode.Name = "txtSWIFTCode";
-            this.txtSWIFTCode.Size = new System.Drawing.Size(85, 23);
+            this.txtSWIFTCode.Size = new System.Drawing.Size(85, 26);
             this.txtSWIFTCode.TabIndex = 3;
             // 
             // checkDefault
@@ -188,7 +283,7 @@
             this.checkDefault.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.checkDefault.Location = new System.Drawing.Point(385, 22);
             this.checkDefault.Name = "checkDefault";
-            this.checkDefault.Size = new System.Drawing.Size(72, 21);
+            this.checkDefault.Size = new System.Drawing.Size(85, 24);
             this.checkDefault.TabIndex = 2;
             this.checkDefault.Text = "Default";
             this.checkDefault.UseVisualStyleBackColor = true;
@@ -200,7 +295,7 @@
             this.txtAccountNo.Location = new System.Drawing.Point(144, 23);
             this.txtAccountNo.MaxLength = 30;
             this.txtAccountNo.Name = "txtAccountNo";
-            this.txtAccountNo.Size = new System.Drawing.Size(198, 23);
+            this.txtAccountNo.Size = new System.Drawing.Size(198, 26);
             this.txtAccountNo.TabIndex = 1;
             // 
             // labelRemark
@@ -275,15 +370,15 @@
             this.labelAccountNo.TabIndex = 118;
             this.labelAccountNo.Text = "Account No.";
             // 
-            // btnInsert
+            // panel2
             // 
-            this.btnInsert.Location = new System.Drawing.Point(451, 9);
-            this.btnInsert.Name = "btnInsert";
-            this.btnInsert.Size = new System.Drawing.Size(71, 32);
-            this.btnInsert.TabIndex = 0;
-            this.btnInsert.Text = "Save";
-            this.btnInsert.UseVisualStyleBackColor = true;
-            this.btnInsert.Click += new System.EventHandler(this.BtnInsert_Click);
+            this.panel2.Controls.Add(this.btnClose);
+            this.panel2.Controls.Add(this.btnInsert);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 474);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(620, 45);
+            this.panel2.TabIndex = 1;
             // 
             // btnClose
             // 
@@ -295,47 +390,21 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // label1
+            // btnInsert
             // 
-            this.label1.Location = new System.Drawing.Point(21, 132);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(120, 23);
-            this.label1.TabIndex = 129;
-            this.label1.Text = "Branch Code";
-            // 
-            // label2
-            // 
-            this.label2.Location = new System.Drawing.Point(21, 161);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(120, 23);
-            this.label2.TabIndex = 130;
-            this.label2.Text = "Branch Name";
-            // 
-            // txtBranchCode
-            // 
-            this.txtBranchCode.BackColor = System.Drawing.Color.White;
-            this.txtBranchCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBranchCode.Location = new System.Drawing.Point(144, 132);
-            this.txtBranchCode.MaxLength = 30;
-            this.txtBranchCode.Name = "txtBranchCode";
-            this.txtBranchCode.Size = new System.Drawing.Size(198, 23);
-            this.txtBranchCode.TabIndex = 6;
-            // 
-            // txtBranchName
-            // 
-            this.txtBranchName.BackColor = System.Drawing.Color.White;
-            this.txtBranchName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtBranchName.Location = new System.Drawing.Point(144, 161);
-            this.txtBranchName.MaxLength = 60;
-            this.txtBranchName.Name = "txtBranchName";
-            this.txtBranchName.Size = new System.Drawing.Size(378, 23);
-            this.txtBranchName.TabIndex = 7;
+            this.btnInsert.Location = new System.Drawing.Point(451, 9);
+            this.btnInsert.Name = "btnInsert";
+            this.btnInsert.Size = new System.Drawing.Size(71, 32);
+            this.btnInsert.TabIndex = 0;
+            this.btnInsert.Text = "Save";
+            this.btnInsert.UseVisualStyleBackColor = true;
+            this.btnInsert.Click += new System.EventHandler(this.BtnInsert_Click);
             // 
             // B04_BankData_DetailInput
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(620, 420);
+            this.ClientSize = new System.Drawing.Size(620, 519);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "B04_BankData_DetailInput";
@@ -378,5 +447,11 @@
         private Win.UI.TextBox txtBranchCode;
         private Win.UI.Label label2;
         private Win.UI.Label label1;
+        private Win.UI.Label label3;
+        private Win.UI.Label label4;
+        private Win.UI.Label label5;
+        private Win.UI.TextBox txtTPBBankName;
+        private Win.UI.TextBox txtTPBBankCode;
+        private Win.UI.TextBox txtMSBBranchName;
     }
 }

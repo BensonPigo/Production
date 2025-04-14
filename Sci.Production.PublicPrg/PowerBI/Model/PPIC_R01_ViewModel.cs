@@ -86,5 +86,7 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public string SubProcess { get; set; }
+        /// <inheritdoc/>
+        public bool IsPowerBI { get; set; }
     }
 }

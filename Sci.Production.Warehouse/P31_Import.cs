@@ -119,6 +119,7 @@ select  selected = 0
         ,c.Lock
         ,ToLocation = ''
         ,Fromlocation = Fromlocation.listValue
+        ,c.Tone
 from dbo.PO_Supp_Detail psd WITH (NOLOCK) 
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2  = psd.seq2 
 inner join Orders on c.poid = Orders.id
@@ -292,6 +293,7 @@ AND Orders.Category <> 'A'
                 .Numeric("balance", header: "Stock Qty", iseditingreadonly: true, decimal_places: 2, integer_places: 10) // 7
                 .Text("location", header: "From Location", iseditingreadonly: true) // 8
                 .Text("toseq", header: "To" + Environment.NewLine + "Seq#", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
+                .Text("Tone", header: "Shade Band" + Environment.NewLine + "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(6)) // 9
                 .Text("toroll", header: "To" + Environment.NewLine + "Roll", width: Widths.AnsiChars(6)).Get(out this.col_roll) // 10
                 .Numeric("qty", header: "Issue" + Environment.NewLine + "Qty", decimal_places: 2, integer_places: 10, settings: ns).Get(out this.col_qty) // 11
                 .Text("ToLocation", header: "To Location", width: Widths.AnsiChars(10), settings: toLocation)

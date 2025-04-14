@@ -3,9 +3,11 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Win.Tools;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -15,12 +17,40 @@ namespace Sci.Production.Warehouse
     public partial class P10_AssignReleaser : Win.Tems.QueryForm
     {
         private string id;
+        private bool _isBatchAssign;
+        private List<string> listID;
+        private DataRow[] drArray;
 
-        /// <inheritdoc/>
-        public P10_AssignReleaser(string id)
+        /// <summary>
+        /// P10_AssignReleaser
+        /// </summary>
+        /// <param name="id">issue id</param>
+        /// <param name="isBatchAssign">是否為批次設定</param>
+        /// <param name="dataTable">P10_Batch_MIND_Releaser的dtail</param>
+        public P10_AssignReleaser(string id, bool isBatchAssign = false, DataTable dataTable = null)
         {
             this.InitializeComponent();
-            this.id = id;
+            this._isBatchAssign = isBatchAssign;
+
+            if (!isBatchAssign)
+            {
+                this.id = id;
+                this.listID = id.Split(new string[] { "','" }, StringSplitOptions.None).ToList();
+                if (dataTable != null)
+                {
+                    this.drArray = dataTable.AsEnumerable().Where(x => x["ID"].ToString() == id).ToArray();
+                }
+            }
+            else
+            {
+                this.Text = "P10. Batch Assign Releaser";
+                this.id = id;
+                this.listID = id.Split(new string[] { "','" }, StringSplitOptions.None).ToList();
+                this.drArray = dataTable.AsEnumerable()
+                    .Where(row => this.listID.Contains(row["ID"].ToString()))
+                    .ToArray();
+            }
+
         }
 
         /// <inheritdoc/>
@@ -30,6 +60,27 @@ namespace Sci.Production.Warehouse
             this.GridSetup();
             this.Query();
             this.ControlButton();
+
+            if (!this._isBatchAssign)
+            {
+                if (this.drArray == null)
+                {
+                    this.drArray = new DataRow[0];
+                }
+
+                DataTable dd = (DataTable)this.listControlBindingSource1.DataSource;
+                // 將 drArray 轉換為 List<DataRow>，以方便新增操作
+                List<DataRow> drList = drArray.ToList();
+
+                // 假設你有一個新的 DataRow
+                DataRow newRow = dd.NewRow(); // 創建新的 DataRow（你可以從現有 DataTable 中生成）
+
+                newRow["ID"] = this.id;
+                drList.Add(newRow);
+
+                // 將 List 轉換回陣列
+                this.drArray = drList.ToArray();
+            }
         }
 
         private void GridSetup()
@@ -111,10 +162,22 @@ namespace Sci.Production.Warehouse
         private void Query()
         {
             string sqlcmd = $@"
-select im.*,
-    ReleaserName = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = im.Releaser),
-    AddNameDisplay = Concat(AddName, '-' + (select Name from pass1 where id = im.AddName))
-from Issue_MIND im where id = '{this.id}'";
+            select 
+             im.Ukey
+            ,im.ID
+            ,im.Releaser
+            ,im.AddName
+            ,im.AddDate
+            ,ReleaserName = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = im.Releaser)
+            ,AddNameDisplay = Concat(AddName, '-' + (select Name from pass1 where id = im.AddName))
+            from Issue_MIND im where ID IN ('{this.id}')";
+
+            // 批次assign不需要帶出資料，保留DataTable結構就好了
+            if (this._isBatchAssign)
+            {
+                sqlcmd += " and 1=0";
+            }
+
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {
@@ -165,7 +228,13 @@ from Issue_MIND im where id = '{this.id}'";
 
         private bool CheckReleaser(DataRow dr)
         {
-            string sqlcmd = $@"select 1 from Issue_Detail where ID = '{this.id}' and MINDReleaser = '{dr["Releaser"]}'";
+            string sqlcmd = string.Empty;
+
+            if (dr["Releaser"].ToString() != string.Empty)
+            {
+                sqlcmd = $@"select 1 from Issue_Detail where ID in('{this.id}') and MINDReleaser = '{dr["Releaser"]}'";
+            }
+
             return MyUtility.Check.Seek(sqlcmd);
         }
 
@@ -222,16 +291,83 @@ from Issue_MIND im where id = '{this.id}'";
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
+            DataTable copyDT = ((DataTable)this.listControlBindingSource1.DataSource).Copy();
             if (this.EditMode)
             {
-                foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
+                // 警告
+                if (this._isBatchAssign)
                 {
-                    if (MyUtility.Check.Empty(dr["Releaser"]))
+                    var deleteResult1 = MyUtility.Msg.QuestionBox("<Batch assign> will overwrite all MIND Releasers. Are you sure you want to proceed with this action?", buttons: MessageBoxButtons.YesNo);
+                    if (deleteResult1 == DialogResult.No)
                     {
-                        dr.AcceptChanges();
-                        dr.Delete();
+                        return;
                     }
                 }
+
+                var duplicateCombinations = ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable()
+                    .Where(row => row.RowState != DataRowState.Deleted)
+                          .GroupBy(row => new { ID = row["ID"], Releaser = row["Releaser"] })
+                          .Where(group => group.Count() > 1)
+                          .Select(group => new { ID = group.Key.ID, Releaser = group.Key.Releaser })
+                          .ToList();
+
+                if (duplicateCombinations.Count > 0)
+                {
+                    MyUtility.Msg.InfoBox("duplicate Releaser!!");
+                    return;
+                }
+
+                DataTable tmp = new DataTable();
+                tmp.Columns.Add("ID", typeof(string));
+                tmp.Columns.Add("Releaser", typeof(string));
+                tmp.Columns.Add("ReleaserName", typeof(string));
+                tmp.Columns.Add("AddName", typeof(string));
+                tmp.Columns.Add("AddNameDisplay", typeof(string));
+                tmp.Columns.Add("AddDate", typeof(DateTime));
+
+                foreach (DataRow dataRow in this.drArray)
+                {
+                    string strReleaser = string.Empty;
+                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).OrderBy(w => w.Field<string>("Releaser")))
+                    {
+                        if (MyUtility.Check.Empty(dr["Releaser"]))
+                        {
+                            dr.AcceptChanges();
+                            dr.Delete();
+                        }
+                        else
+                        {
+                            strReleaser += MyUtility.Convert.GetString(dr["Releaser"]) + ",";
+
+                            if (MyUtility.Convert.GetString(dataRow["ID"]) == MyUtility.Convert.GetString(this.drArray[0]["ID"]))
+                            {
+                                dr["ID"] = dataRow["ID"].ToString();
+                            }
+                            else
+                            {
+                                DataRow newRow = tmp.NewRow();
+                                newRow["ID"] = dataRow["ID"].ToString();
+                                newRow["Releaser"] = dr == null ? string.Empty : dr["Releaser"];
+                                newRow["ReleaserName"] = dr == null ? string.Empty : dr["ReleaserName"];
+                                newRow["AddName"] = Sci.Env.User.UserID;
+                                newRow["AddNameDisplay"] = Sci.Env.User.UserID + "-" + Sci.Env.User.UserName;
+                                newRow["AddDate"] = DBNull.Value;
+                                tmp.Rows.Add(newRow);
+                            }
+                        }
+                    }
+
+                    if (!MyUtility.Check.Empty(strReleaser))
+                    {
+                        dataRow["Releaser"] = strReleaser.Substring(0, strReleaser.Length - 1);
+                    }
+                    else
+                    {
+                        dataRow["Releaser"] = string.Empty;
+                    }
+                }
+
+                ((DataTable)this.listControlBindingSource1.DataSource).Merge(tmp);
 
                 DualResult result = DBProxy.Current.GetTableSchema(null, "Issue_MIND", out ITableSchema tableSchema);
                 if (!result)
@@ -243,37 +379,54 @@ from Issue_MIND im where id = '{this.id}'";
                 using (TransactionScope scope = new TransactionScope())
                 {
                     DateTime datenow = DateTime.Now;
-                    foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
-                    {
-                        switch (dr.RowState)
-                        {
-                            case DataRowState.Added:
-                                dr["AddDate"] = datenow;
-                                result = DBProxy.Current.Insert(null, tableSchema, dr);
-                                break;
-                            case DataRowState.Deleted:
-                                result = DBProxy.Current.Delete(null, tableSchema, dr);
-                                break;
-                            case DataRowState.Modified:
-                                result = DBProxy.Current.UpdateByChanged(null, tableSchema, dr, out bool ischanged);
-                                break;
-                        }
 
-                        if (!result)
+                    if (this._isBatchAssign)
+                    {
+                        // batch ：舊資料全部刪除
+                        DBProxy.Current.Execute(null, $@"delete from Issue_MIND where id IN ('{this.listID.JoinToString("','")}')");
+
+                        foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).AsEnumerable().Where(w => w.RowState != DataRowState.Deleted))
                         {
-                            scope.Dispose();
-                            this.ShowErr(result);
-                            return;
+                            dr["AddDate"] = datenow;
+                            result = DBProxy.Current.Insert(null, tableSchema, dr);
+                        }
+                    }
+                    else
+                    {
+                        // 單筆：逐一判斷
+                        foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+                        {
+                            switch (dr.RowState)
+                            {
+                                case DataRowState.Added:
+                                    dr["AddDate"] = datenow;
+                                    result = DBProxy.Current.Insert(null, tableSchema, dr);
+                                    break;
+                                case DataRowState.Deleted:
+                                    result = DBProxy.Current.Delete(null, tableSchema, dr);
+                                    break;
+                                case DataRowState.Modified:
+                                    result = DBProxy.Current.UpdateByChanged(null, tableSchema, dr, out bool ischanged);
+                                    break;
+                            }
+
+                            if (!result)
+                            {
+                                scope.Dispose();
+                                this.ShowErr(result);
+                                return;
+                            }
                         }
                     }
 
                     scope.Complete();
                 }
+
+                this.Query();
             }
 
             this.EditMode = !this.EditMode;
             this.ControlButton();
-            this.Query();
         }
 
         private void ControlButton()

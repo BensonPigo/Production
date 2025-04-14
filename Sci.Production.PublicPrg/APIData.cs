@@ -6,6 +6,9 @@ using System.Net;
 using System.Xml.Linq;
 using System.Windows.Forms;
 using Sci.Data;
+using System.Configuration;
+using static Sci.CfgSection;
+using System.Text;
 
 namespace Sci.Production.Prg
 {
@@ -31,11 +34,31 @@ namespace Sci.Production.Prg
                         apiParemeter = $"?M={i_M}&factory=0&startDate={i_start_date.ToString("yyyy/MM/dd")}&endDate={i_end_date.ToString("yyyy/MM/dd")}";
                     }
 
-                    XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                    string nowConnection = DBProxy.Current.DefaultModuleName;
-                    string connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PamsAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
+                    var cfgsection = (CfgSection)ConfigurationManager.GetSection("sci");
+                    string apiUrl = string.Empty;
+                    foreach (CfgSection.Module it in cfgsection.Modules)
+                    {
+                        if (it.Name != DBProxy.Current.DefaultModuleName)
+                        {
+                            continue;
+                        }
 
-                    Uri uri = new Uri(connections + apiParemeter);
+                        foreach (ConnectionStringElement connectionStringItem in it.ConnectionStrings)
+                        {
+                            if (connectionStringItem.Name == "PamsAPIuri")
+                            {
+                                apiUrl = connectionStringItem.ConnectionString;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (MyUtility.Check.Empty(apiUrl))
+                    {
+                        throw new Exception("PamsAPIuri not exists");
+                    }
+
+                    Uri uri = new Uri(apiUrl + apiParemeter);
                     MyWebClient mwc = new MyWebClient();
                     var json = mwc.DownloadString(uri);
 

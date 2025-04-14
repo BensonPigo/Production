@@ -93,7 +93,7 @@ select COUNT(DISTINCT a.ID)
 from CFAInspectionRecord a
 INNER JOIN CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
 where a.Status='Confirmed'
-AND a.Stage='Final'
+AND a.Stage in ('Final' ,'Final Internal')
 AND b.OrderID='{this.CurrentMaintain["ID"].ToString()}'
 AND b.Seq='{this.CurrentMaintain["Seq"].ToString()}'
 ";

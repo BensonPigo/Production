@@ -181,6 +181,7 @@ namespace Sci.Production.Warehouse
                 .EditText("Remark", header: "Remark", width: Widths.AnsiChars(12), iseditingreadonly: false, settings: remark)
                 .Text("FIR", header: "FIR", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Grade", header: "Grade", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .Numeric("PointRatePerRoll", header: "Point Rate Per Roll", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                 .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
@@ -706,10 +707,13 @@ inner join #tmp_FtyInventory fi on a.POID= fi.POID	and a.SEQ1 =fi.Seq1 and a.SEQ
 --#tmp_PointRate
 SELECT POID,seq1,seq2,roll,Dyelot ,[PointRate]=ISNULL(Cast(FIR.PointRate as varchar),'Blank')
 ,FIR.Grade
+,FIR.PointRatePerRoll
 INTO #tmp_PointRate
 FROM #tmp_FtyInventory t
 OUTER APPLY(
-	select fp.PointRate,fp.Grade
+	select fp.PointRate,
+    fp.Grade,
+    [PointRatePerRoll] =  IIF(ISNULL(fp.ActualYds,0)=0,0,cast(fp.TotalPoint/fp.ActualYds * 100 as numeric(8,2)))
 	from FIR f
 	left join FIR_Physical fp on fp.ID = f.ID
 	WHERE 	f.POID = t.POID
@@ -729,6 +733,7 @@ select distinct fi.*
 	,[FIR] = case when fi.sFabricType='A' then iif(Air.Result ='','Blank',Air.Result)
 				   else FIR_Result1.Result end
     ,[Grade] = isnull(PointRate.Grade,'')
+    ,[PointRatePerRoll]
 	,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
 	,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
 							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'

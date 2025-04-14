@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win;
+using Sci.Andy.ExtensionMethods;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Win.Tools;
@@ -57,6 +58,16 @@ namespace Sci.Production.Shipping
             }
 
             this.btnImportGMTBooking.Enabled = this.EditMode;
+
+            if (!this.EditMode)
+            {
+                this.comboCompany.IsOrderCompany = null;
+                this.comboCompany.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
 
             this.GetGridPOListData();
         }
@@ -217,6 +228,13 @@ ORDER BY GB.ETD
         }
 
         /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.comboCompany.ReadOnly = true;
+        }
+
+        /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
@@ -225,6 +243,12 @@ ORDER BY GB.ETD
             this.gridCurrency.DataSource = null;
             this.CurrentMaintain["Handle"] = Env.User.UserID;
             this.RefreshExchangeRate();
+
+            // 只有新增時才能編輯修改
+            this.comboCompany.ReadOnly = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.SelectedIndex = -1;
         }
 
         /// <inheritdoc/>
@@ -233,6 +257,13 @@ ORDER BY GB.ETD
             if (this.DetailDatas.Count == 0)
             {
                 MyUtility.Msg.WarningBox("Detail no data");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.comboCompany.Select();
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
                 return false;
             }
 
@@ -308,6 +339,7 @@ select ID from KHCMTInvoice where ID like @IDkeyWord + '%'
             return base.ClickSaveBefore();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -405,6 +437,7 @@ where ID='{item["InvNo"]}'
 
             worksheet.Cells[10, 9] = $"លេខវិក្កយបត្រ៖{this.CurrentMaintain["ID"]}";
             worksheet.Cells[11, 9] = $"Invoice No:{this.CurrentMaintain["ID"]}";
+            worksheet.Cells[11, 2] = $"Customer : " + MyUtility.GetValue.Lookup($@"SELECT NameEN FROM Company WHERE ID = '{this.CurrentMaintain["OrderCompanyID"]}'");
 
             string invDate = ((DateTime)this.CurrentMaintain["InvDate"]).ToString("dd-MMM-yyyy", CultureInfo.CreateSpecificCulture("en-US"));
             worksheet.Cells[12, 9] = $"កាលបរិច្ឆេត៖{invDate}";
@@ -556,6 +589,10 @@ WHERE   RateTypeID='KP'           and
             }
 
             string whereInvNo = this.DetailDatas.Where(s => !MyUtility.Check.Empty(s["InvNo"])).Select(s => $"'{s["InvNo"].ToString()}'").JoinToString(",");
+
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.CurrentMaintain["AddDate"].ToDateTime() >= new DateTime(2024, 11, 05) ? "1" : "0";
+
             string sqlGetGridPOListData = $@"
 Declare @ExchangeRate decimal(18, 8) = {this.CurrentMaintain["ExchangeRate"]}
 
@@ -566,16 +603,19 @@ from Orders o with (nolock)
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
 			  inner join PackingList_Detail pd with (nolock) on p.ID = pd.ID
@@ -731,6 +771,39 @@ order by r.BeginDate
             this.CurrentMaintain["ExchangeRate"] = this.numExchangeRate.Value;
 
             this.GetGridPOListData();
+        }
+
+        private void ComboCompany_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.comboCompany.SelectedIndex < 0 || this.EditMode == false)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain != null && this.DetailDatas.Count != 0)
+            {
+                bool hasGBNo = this.DetailDatas.Where(r => !MyUtility.Check.Empty(r["InvNo"])).Any();
+
+                // 如果表身有SP# 並且表頭的OrderCompanyID改變就要判斷
+                if (MyUtility.Convert.GetInt(this.CurrentMaintain["OrderCompanyID"]) != MyUtility.Convert.GetInt(this.comboCompany.SelectedValue) && hasGBNo)
+                {
+                    DialogResult dioResult = MyUtility.Msg.QuestionBox(@" [Order Company] has been changed and all GB# data will be clear.", buttons: MessageBoxButtons.YesNo);
+
+                    // Yes 就刪除所有表身資料
+                    if (dioResult == DialogResult.Yes)
+                    {
+                        foreach (DataRow item in this.DetailDatas)
+                        {
+                            item.Delete();
+                        }
+
+                        foreach (DataRow dr in ((DataTable)this.gridPOListbs.DataSource).Rows)
+                        {
+                            dr.Delete();
+                        }
+                    }
+                }
+            }
         }
     }
 }

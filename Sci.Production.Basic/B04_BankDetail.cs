@@ -85,6 +85,21 @@ namespace Sci.Production.Basic
             /// Is Default
             /// </summary>
             public bool IsDefault { get; set; }
+
+            /// <summary>
+            /// TPB Bank Name
+            /// </summary>
+            public string TPBBankName { get; set; }
+
+            /// <summary>
+            /// TPB Branch Code
+            /// </summary>
+            public string TPBBankCode { get; set; }
+
+            /// <summary>
+            /// MSB Branch Name
+            /// </summary>
+            public string MSBBranchName { get; set; }
         }
 
         /// <summary>
@@ -173,6 +188,9 @@ namespace Sci.Production.Basic
                 nRow["MidSWIFTCode"] = detail.MidSWIFTCode;
                 nRow["MidBankName"] = detail.MidBankName;
                 nRow["Remark"] = detail.Remark;
+                nRow["TPBBankName"] = detail.TPBBankName;
+                nRow["TPBBankCode"] = detail.TPBBankCode;
+                nRow["MSBBranchName"] = detail.MSBBranchName;
                 dt.Rows.Add(nRow);
             }
         }
@@ -203,6 +221,9 @@ namespace Sci.Production.Basic
                 MidSWIFTCode = currenRow["MidSWIFTCode"].ToString(),
                 MidBankName = currenRow["MidBankName"].ToString(),
                 Remark = currenRow["Remark"].ToString(),
+                TPBBankName = currenRow["BankNameTPB"].ToString(),
+                TPBBankCode = currenRow["BankCodeTPB"].ToString(),
+                MSBBranchName = currenRow["VNBankBranch"].ToString(),
             };
 
             B04_BankData_DetailInput form = new B04_BankData_DetailInput(detail);
@@ -223,6 +244,9 @@ namespace Sci.Production.Basic
                 currenRow["MidSWIFTCode"] = detail.MidSWIFTCode;
                 currenRow["MidBankName"] = detail.MidBankName;
                 currenRow["Remark"] = detail.Remark;
+                currenRow["BankNameTPB"] = detail.TPBBankName;
+                currenRow["BankCodeTPB"] = detail.TPBBankCode;
+                currenRow["VNBankBranch"] = detail.MSBBranchName;
             }
         }
 
@@ -320,6 +344,8 @@ SELECT  lbd.IsDefault
 	,lb.PKey
 	,lbd.Ukey
 	,lbd.VNBankBranch
+    ,lbd.BankNameTPB
+    ,lbd.BankCodeTPB
 FROM LocalSupp_Bank lb WITH (NOLOCK)  
 INNER JOIN LocalSupp_Bank_Detail lbd ON lb.ID=lbd.ID AND  lb.PKey=lbd.PKey 
 LEFT JOIN Country c WITH (NOLOCK)  ON c.ID=lbd.CountryID
@@ -472,7 +498,9 @@ order by ID
                 .Text("MidSWIFTCode", header: "Intermediary Bank", width: Widths.AnsiChars(13), settings: midSWIFTCode)
                 .Text("MidBankName", header: "Intermediary Bank-SWIFT Code", width: Widths.AnsiChars(13), settings: midBankName)
                 .Text("Remark", header: "Remark", width: Widths.AnsiChars(13))
-                .Text("VNBankBranch", header: "VN Bank/Branch", width: Widths.AnsiChars(20))
+                .Text("VNBankBranch", header: "Branch Name (MSB)", width: Widths.AnsiChars(20))
+                .Text("BankNameTPB", header: "Bank Name (TPB)", width: Widths.AnsiChars(13))
+                .Text("BankCodeTPB", header: "Bank Code (TPB)", width: Widths.AnsiChars(13))
                 ;
         }
 

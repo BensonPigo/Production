@@ -30,29 +30,6 @@ namespace Sci.Production.Class.Command
 
         public static string QueryConnectionName = string.Empty;
 
-        /// <summary>
-        /// 檢查Query連線是否存在
-        /// </summary>
-        static SQL()
-        {
-            bool hasConnectionNamedQuery = false;
-            try
-            {
-                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                hasConnectionNamedQuery = docx.Descendants("modules").Elements() // modules.Debug , modules.Formal
-                    .Descendants("connectionStrings")
-                    .Elements() //// modules.Debug.connectionStrings.local , modules.Formal.connectionStrings.Query
-                    .Attributes()
-                    .Any(a => a.Value.Equals("Query", StringComparison.OrdinalIgnoreCase));
-            }
-            catch ////(Exception e)
-            {
-                // do nothing
-            }
-
-            QueryConnectionName = hasConnectionNamedQuery ? "Query" : string.Empty;
-        }
-
         private static SqlConnection _queryConn = null;
 
         /// <summary>

@@ -34,21 +34,21 @@
             this.labelFactory = new Sci.Win.UI.Label();
             this.dateUpdate = new Sci.Win.UI.DateRange();
             this.textSP = new Sci.Win.UI.TextBox();
-            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(971, 12);
+            this.print.Location = new System.Drawing.Point(1076, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(413, 9);
+            this.toexcel.Location = new System.Drawing.Point(422, 9);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(413, 44);
+            this.close.Location = new System.Drawing.Point(422, 44);
             // 
             // labelUpdatedDate
             // 
@@ -84,6 +84,20 @@
             // 
             // dateUpdate
             // 
+            // 
+            // 
+            // 
+            this.dateUpdate.DateBox1.Location = new System.Drawing.Point(0, 0);
+            this.dateUpdate.DateBox1.Name = "";
+            this.dateUpdate.DateBox1.Size = new System.Drawing.Size(129, 23);
+            this.dateUpdate.DateBox1.TabIndex = 0;
+            // 
+            // 
+            // 
+            this.dateUpdate.DateBox2.Location = new System.Drawing.Point(151, 0);
+            this.dateUpdate.DateBox2.Name = "";
+            this.dateUpdate.DateBox2.Size = new System.Drawing.Size(129, 23);
+            this.dateUpdate.DateBox2.TabIndex = 1;
             this.dateUpdate.IsRequired = false;
             this.dateUpdate.Location = new System.Drawing.Point(120, 9);
             this.dateUpdate.Name = "dateUpdate";
@@ -99,32 +113,39 @@
             this.textSP.Size = new System.Drawing.Size(100, 23);
             this.textSP.TabIndex = 2;
             // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(120, 73);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 3;
-            // 
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = false;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(120, 105);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 4;
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(120, 73);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 3;
             // 
             // R09
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(505, 174);
+            this.ClientSize = new System.Drawing.Size(505, 225);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.textSP);
@@ -134,7 +155,11 @@
             this.Controls.Add(this.labelSP);
             this.Controls.Add(this.labelUpdatedDate);
             this.Name = "R09";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R09. Comparison List Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelUpdatedDate, 0);
             this.Controls.SetChildIndex(this.labelSP, 0);
             this.Controls.SetChildIndex(this.labelM, 0);

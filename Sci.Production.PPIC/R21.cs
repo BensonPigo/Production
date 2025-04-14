@@ -34,6 +34,7 @@ namespace Sci.Production.PPIC
                 "Transfer To Packing Error",
                 "Confirm Packing Error Revise",
                 "Scan & Pack",
+                "Packing Audit",
                 "MD Scan",
                 "Fty Transfer To Clog",
                 "Clog Receive",
@@ -54,6 +55,9 @@ namespace Sci.Production.PPIC
             this.InitializeComponent();
 
             MyUtility.Tool.SetupCombox(this.comboProcess, 1, 1, this.listProcess.JoinToString(","));
+            this.dateTimeProcessFrom.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
+            this.dateTimeProcessTo.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -76,6 +80,8 @@ namespace Sci.Production.PPIC
                 MDivisionID = this.txtMdivision.Text,
                 FactoryID = this.txtfactory.Text,
                 ExcludeSisterTransferOut = this.chkExcludeSisterTransferOut.Checked,
+                IncludeCancelOrder = this.cbIncludeCencelOrder.Checked,
+                IsBI = false,
             };
 
             return true;

@@ -382,6 +382,12 @@
     <Compile Include="P11_TransferInOutInformation.Designer.cs">
       <DependentUpon>P11_TransferInOutInformation.cs</DependentUpon>
     </Compile>
+    <Compile Include="R13.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R13.Designer.cs">
+      <DependentUpon>R13.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="B04.resx">
@@ -506,6 +512,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R12.resx">
       <DependentUpon>R12.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R13.resx">
+      <DependentUpon>R13.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

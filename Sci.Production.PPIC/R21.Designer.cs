@@ -41,20 +41,21 @@
             this.label6 = new Sci.Win.UI.Label();
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.cbIncludeCencelOrder = new Sci.Win.UI.CheckBox();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(598, 2);
+            this.print.Location = new System.Drawing.Point(556, 9);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(598, 38);
+            this.toexcel.Location = new System.Drawing.Point(556, 45);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(598, 74);
+            this.close.Location = new System.Drawing.Point(556, 81);
             // 
             // buttonCustomized
             // 
@@ -178,7 +179,7 @@
             // 
             this.label6.BackColor = System.Drawing.Color.Transparent;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(9, 206);
+            this.label6.Location = new System.Drawing.Point(9, 227);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(326, 23);
             this.label6.TabIndex = 109;
@@ -188,9 +189,11 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(111, 110);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 110;
             // 
@@ -198,21 +201,38 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(111, 147);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 111;
+            // 
+            // cbIncludeCencelOrder
+            // 
+            this.cbIncludeCencelOrder.AutoSize = true;
+            this.cbIncludeCencelOrder.Checked = true;
+            this.cbIncludeCencelOrder.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeCencelOrder.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.cbIncludeCencelOrder.Location = new System.Drawing.Point(9, 203);
+            this.cbIncludeCencelOrder.Name = "cbIncludeCencelOrder";
+            this.cbIncludeCencelOrder.Size = new System.Drawing.Size(160, 21);
+            this.cbIncludeCencelOrder.TabIndex = 112;
+            this.cbIncludeCencelOrder.Text = "Include Cancel Order";
+            this.cbIncludeCencelOrder.UseVisualStyleBackColor = true;
             // 
             // R21
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(690, 263);
+            this.ClientSize = new System.Drawing.Size(648, 278);
+            this.Controls.Add(this.cbIncludeCencelOrder);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.label6);
@@ -248,6 +268,7 @@
             this.Controls.SetChildIndex(this.label6, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
+            this.Controls.SetChildIndex(this.cbIncludeCencelOrder, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -268,5 +289,6 @@
         private Win.UI.Label label6;
         private Class.TxtMdivision txtMdivision;
         private Class.Txtfactory txtfactory;
+        private Win.UI.CheckBox cbIncludeCencelOrder;
     }
 }

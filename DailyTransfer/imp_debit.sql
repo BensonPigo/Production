@@ -60,7 +60,8 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.MDivisionID=isnull((SELECT iif(MDivisionID is null,'',MDivisionID) FROM Production.dbo.scifty WITH (NOLOCK) where id=s.ResponFTY),''),
 			t.ResponFTY = isnull(s.ResponFTY,''),
 			t.SubName = isnull(s.SubName,''),
-			t.SubconID = isnull(s.SubconID,'')
+			t.SubconID = isnull(s.SubconID,''),
+			t.OrderCompanyID = isnull(s.OrderCompany, 0)
 	when not matched by target then 	
     INSERT
            (
@@ -112,7 +113,8 @@ insert @Sayfty select id from Production.dbo.Factory
                   mdivisionid,
                   responfty,
                   subname,
-                  SubconID
+                  SubconID,
+                  OrderCompanyID
            )
            VALUES
            (
@@ -167,7 +169,8 @@ insert @Sayfty select id from Production.dbo.Factory
                          WHERE  id=s.responfty),''),
                   isnull(s.responfty,''),
                   isnull(subname,''),
-                  isnull(SubconID,'')
+                  isnull(SubconID,''),
+                  isnull(OrderCompany, 0)                  
            )
 		
 		output inserted.id,$action into @Tdebit ;
@@ -237,7 +240,8 @@ insert @Sayfty select id from Production.dbo.Factory
               [status],
               mdivisionid,
               issuedate,
-              responfty
+              responfty,
+              OrderCompanyID
        )
        VALUES
        (
@@ -256,7 +260,8 @@ insert @Sayfty select id from Production.dbo.Factory
                      FROM   production.dbo.factory WITH (nolock)
                      WHERE  id=s.responfty),'') ,
               s.adddate,
-              isnull(responfty,'')
+              isnull(responfty,''),
+              isnull(OrderCompany,'')
        )
 	;
 
@@ -275,7 +280,8 @@ insert @Sayfty select id from Production.dbo.Factory
 			t.EditDate = s.EditDate,
 			t.MDivisionID = isnull((SELECT  MDivisionID FROM Production.dbo.Factory WITH (NOLOCK) WHERE ID=S.ResponFTY),''),
 			t.issuedate = s.adddate,
-			t.ResponFTY = isnull( s.ResponFTY,'') 
+			t.ResponFTY = isnull( s.ResponFTY,''),
+			t.OrderCompanyID = isnull(s.OrderCompany,             0)
 	;
 	
 	--LocalDebit_Detail INSERT

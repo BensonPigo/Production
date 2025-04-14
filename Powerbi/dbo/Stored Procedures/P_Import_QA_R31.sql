@@ -13,6 +13,8 @@ BEGIN
 	DECLARE @SqlCmd5 nvarchar(max) ='';
 	DECLARE @SqlCmd6 nvarchar(max) ='';
 	DECLARE @SqlCmd7 nvarchar(max) ='';
+	DECLARE @SqlCmd8 nvarchar(max) ='';
+	DECLARE @SqlCmd9 nvarchar(max) ='';
 
 
 	DECLARE @SDate_varchar varchar(10) = cast( (select CONVERT(date, DATEADD(DAY,-60, GETDATE())))  as varchar)
@@ -126,6 +128,7 @@ OUTER APPLY(
 )ClogCtn
 
 	'
+
 	SET @SqlCmd2 = '
 OUTER APPLY(
 	SELECT [Val] = MAX(pd.ReceiveDate) 
@@ -151,6 +154,9 @@ INTO #NeedCkeck
 FROM  #tmp t 
 UNION 
 SELECT DISTINCT [Stage]=''Final'',t.*
+FROM  #tmp t 
+UNION 
+SELECT DISTINCT [Stage]=''Final Internal'',t.*
 FROM  #tmp t 
 UNION 
 SELECT DISTINCT [Stage]=''3rd party'',t.*
@@ -268,7 +274,8 @@ SELECT [InspResult]=CASE WHEN EXISTS(
 									)
 								) 
 							) '
-SET @SqlCmd4 = '
+
+	SET @SqlCmd4 = '
 	,[FailCtn#]=(SELECT STUFF((
 								SELECT DISTINCT '',''+CTNStartNo
 								FROM #PackingList_Detail pd
@@ -353,6 +360,7 @@ WHERE OrderID = need.ID AND OrderShipmodeSeq = need.Seq )
 
 union	
 	'
+
 	SET @SqlCmd5 = '
 /*-----Final-----*/
 SELECT [InspResult]=CASE WHEN NOT EXISTS(
@@ -408,8 +416,64 @@ AND NOT EXISTS (
 
 DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ
 	'
+	
+	SET @SqlCmd6 = '
+/*-----Final Internal-----*/
+SELECT [InspResult]=CASE WHEN NOT EXISTS(
+						SELECT 1 
+						FROM #CFAInspectionRecord cr 
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cfoq.OrderID = need.ID AND cfoq.Seq = need.Seq AND cr.Stage = ''Final Internal'' AND cr.Status = ''Confirmed'' ) 
+					THEN ''''
+					WHEN EXISTS(						
+						SELECT 1
+						FROM #NeedCkeck a
+						INNER JOIN ['+@LinkServerName+'].Production.dbo.Order_QtyShip oq ON oq.ID = a.Id ANd oq.Seq =a.Seq
+						WHERE a.Stage = ''Final Internal'' 
+						AND oq.CFAFinalInspectResult  != ''Pass''
+						AND a.Id = need.Id AND a.Seq = need.Seq
+					)THEN ''Fail''
+					ELSE ''''
+					END
+	,[NotyetinspCtn#] = NULL
+	,[Notyetinspctn]  = NULL
+	,[Notyetinspqty]  = 0
+	,[FailCtn#]=(
+		SELECt TOP 1  cfoq.Carton
+		FROM #CFAInspectionRecord  cr
+		INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+		WHERE cr.Stage = ''Final Internal'' AND cr.Status=''Confirmed'' AND cr.Result = ''Fail''
+		AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
+		ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+	)
+	,[FailCtn]=(	
+		SELECT COUNT(DISTINCT data)
+		FROM dbo.SplitString((
+						SELECt TOP 1  cfoq.Carton
+						FROM #CFAInspectionRecord  cr
+						INNER JOIN #CFAInspectionRecord_OrderSEQ cfoq ON cr.ID = cfoq.ID
+						WHERE cr.Stage = ''Final Internal'' AND cr.Status=''Confirmed'' AND cr.Result = ''Fail''
+						AND cfoq.OrderID=need.ID AND cfoq.SEQ=need.Seq
+						ORDER BY cr.AuditDate DESC, cr.EditDate DESC
+		),'','')
+	)
+	,[FailQty] = 0
+	,need.*
+FROM #NeedCkeck need
+WHERE need.Stage = ''Final Internal''
+AND NOT EXISTS (	
+	SELECT *
+	FROM #CFAInspectionRecord a
+	INNER JOIN #CFAInspectionRecord_OrderSEQ b ON a.ID = b.ID
+	WHERE b.OrderID =need.ID AND b.SEQ = b.SEQ AND a.Stage = ''Final Internal'' AND a.Status=''Confirmed'' AND (a.Result = ''Pass'' OR a.Result=''Fail but release'')
+) 
+) a
 
-	set @SqlCmd6 = '
+
+DROP TABLE #tmp,#NeedCkeck,#PackingList_Detail,#CFAInspectionRecord,#CFAInspectionRecord_OrderSEQ
+	'
+
+	set @SqlCmd7 = '
 	-----開始Merge 
 	MERGE INTO PBIReportData.dbo.P_QA_R31_Original t
 	USING #tmpFinal s 
@@ -482,7 +546,7 @@ DROP TABLE #tmpFinal
 '
 
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlCmd7
 EXEC sp_executesql @SqlCmd_Combin
 
 --print @SqlCmd1
@@ -491,5 +555,6 @@ EXEC sp_executesql @SqlCmd_Combin
 --print @SqlCmd4
 --print @SqlCmd5
 --print @SqlCmd6
+--print @SqlCmd7
 
 END

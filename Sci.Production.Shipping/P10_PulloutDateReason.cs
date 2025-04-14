@@ -22,6 +22,7 @@ namespace Sci.Production.Shipping
     public partial class P10_PulloutDateReason : Win.Subs.Base
     {
         private DataTable masterDataTable;
+        private DataTable masterDataTable_init;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P10_PulloutDateReason"/> class.
@@ -30,7 +31,8 @@ namespace Sci.Production.Shipping
         public P10_PulloutDateReason(DataTable masterData)
         {
             this.InitializeComponent();
-            this.masterDataTable = masterData;
+            this.masterDataTable = masterData.Select("CutOffdate < PulloutDate").CopyToDataTable();
+            this.masterDataTable_init = masterData;
             this.EditMode = true;
         }
 
@@ -53,16 +55,15 @@ namespace Sci.Production.Shipping
             };
 
             this.listControlBindingSource1.DataSource = this.masterDataTable;
-            this.listControlBindingSource1.Filter = "CutOffdate > PulloutDate";
             this.grid.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid)
-                .Text("INVNO", header: "GB#", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(20), iseditingreadonly: true)
-                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
-                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("INVNO", header: "GB#", width: Widths.AnsiChars(15), iseditingreadonly: true)
+                .Text("ID", header: "Packing No.", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("OrderID", header: "SP#", width: Widths.AnsiChars(14), iseditingreadonly: true)
+                .Text("OrderShipmodeSeq", header: "Seq", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .DateTime("CutOffdate", header: "Cut-off Date/Time", iseditingreadonly: true)
                 .Date("PulloutDate", header: "Pullout Date", iseditingreadonly: true)
-                .Text("ShippingReasonIDForTypeCO", header: "Reason ID", width: Widths.AnsiChars(20), settings: ressonID, iseditable: true)
+                .Text("ShippingReasonIDForTypeCO", header: "Reason ID", width: Widths.AnsiChars(8), settings: ressonID, iseditable: true)
                 .Text("Description", header: "Reason Desc.", width: Widths.AnsiChars(90), iseditingreadonly: true);
 
             this.grid.Sorted += (s, e) =>
@@ -71,6 +72,11 @@ namespace Sci.Production.Shipping
             };
 
             this.GridChangeColor();
+
+            if (this.masterDataTable != null && this.masterDataTable.Rows.Count > 0)
+            {
+                this.grid.Rows[0].Selected = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -106,6 +112,15 @@ namespace Sci.Production.Shipping
                     if (dataRow["ShippingReasonIDForTypeCO"].Empty())
                     {
                         msg += string.Format("{0} Reason cannot be empty!", dataRow["INVNO"]) + Environment.NewLine;
+                        DataRow dr = this.masterDataTable_init.Select($"ID = '{dataRow["ID"]}'").FirstOrDefault();
+                        dr["ShippingReasonIDForTypeCO"] = string.Empty;
+                        dr["Description"] = string.Empty;
+                    }
+                    else
+                    {
+                        DataRow dr = this.masterDataTable_init.Select($"ID = '{dataRow["ID"]}'").FirstOrDefault();
+                        dr["ShippingReasonIDForTypeCO"] = dataRow["ShippingReasonIDForTypeCO"];
+                        dr["Description"] = dataRow["Description"];
                     }
                 }
 

@@ -1,12 +1,15 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.CallPmsAPI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using static PmsWebApiUtility20.WebApiTool;
 using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
@@ -17,6 +20,7 @@ namespace Sci.Production.CallPmsAPI
     /// </summary>
     public static class PackingA2BWebAPI
     {
+        private static WebApiBaseResult webApiBaseResult;
         public class PackingA2BResult : DualResult
         {
             public bool isDataExists { get; set; } = false;
@@ -41,22 +45,71 @@ namespace Sci.Production.CallPmsAPI
             }
         }
 
+        public static ResultInfo GetWebAPI<T>(string strServerName, string strAPI, int timeout, object dictionart = null)
+        {
+            webApiBaseResult = null;
+            string errorMsg = string.Empty;
+            string apiUrl = string.Empty;
+            int iCycle = 3;
+
+            try
+            {
+                apiUrl = GetWebAPIUrl(strServerName);
+                Dictionary<string, string> dicHeaders = new Dictionary<string, string>();
+                dicHeaders.Add("connectRegion", GetConnRegion(strServerName));
+
+                for (int i = 1; i <= iCycle; i++)
+                {
+                    webApiBaseResult = PmsWebApiUtility45.WebApiTool.WebApiPost(apiUrl, strAPI, dictionart, timeout, dicHeaders);
+                    if (webApiBaseResult.isSuccess)
+                    {
+                        break;
+                    }
+
+                    if (webApiBaseResult.webApiResponseStatus == WebApiResponseStatus.WebApiReturnFail)
+                    {
+                        errorMsg = webApiBaseResult.responseContent;
+                    }
+                    else
+                    {
+                        errorMsg = webApiBaseResult.exception.ToString();
+                    }
+
+                    if (i == 6)
+                    {
+                        return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = string.Empty };
+                    }
+
+                    if (i == 3)
+                    {
+                        iCycle = 6;
+                        apiUrl = GetWebAPIUrl(strServerName, true);
+                    }
+
+                    Thread.Sleep(1500);
+                }
+
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = errorMsg, ResultDT = webApiBaseResult.responseContent };
+            }
+            catch (Exception e)
+            {
+                return new ResultInfo() { Result = webApiBaseResult, ErrCode = e.ToString(), ResultDT = string.Empty };
+            }
+        }
+
+
         /// <summary>
         /// GetWebAPIUrl
         /// </summary>
         /// <param name="systemName">systemName</param>
         /// <returns>string</returns>
-        public static string GetWebAPIUrl(string systemName)
+        public static string GetWebAPIUrl(string systemName, bool isLAN = false)
         {
             string environment = string.Empty;
 
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
             {
-#if DEBUG
                 return "http://172.17.3.97:16888/";
-#endif
-
-                return "http://172.17.3.96:16888/";
             }
 
             if (DBProxy.Current.DefaultModuleName.Contains("Training"))
@@ -74,13 +127,18 @@ namespace Sci.Production.CallPmsAPI
                 environment = "Formal";
             }
 
+            if (isLAN)
+            {
+                environment = "BI";
+            }
+
             return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
         }
 
         public static string GetConnRegion(string systemName)
         {
             string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING"))
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
             {
                 return "TESTING_" + finalDBName;
             }

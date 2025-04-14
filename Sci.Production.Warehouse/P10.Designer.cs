@@ -83,7 +83,7 @@
             this.masterpanel.Controls.Add(this.displayID);
             this.masterpanel.Controls.Add(this.labelID);
             this.masterpanel.Controls.Add(this.dateIssueDate);
-            this.masterpanel.Size = new System.Drawing.Size(1009, 143);
+            this.masterpanel.Size = new System.Drawing.Size(1140, 143);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
@@ -108,12 +108,12 @@
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 143);
-            this.detailpanel.Size = new System.Drawing.Size(1009, 300);
+            this.detailpanel.Size = new System.Drawing.Size(1140, 300);
             // 
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(5348, 108);
+            this.gridicon.Location = new System.Drawing.Point(5596, 108);
             // 
             // refresh
             // 
@@ -121,21 +121,21 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1009, 300);
+            this.detailgridcont.Size = new System.Drawing.Size(1140, 300);
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1009, 481);
+            this.detail.Size = new System.Drawing.Size(1140, 481);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1009, 443);
+            this.detailcont.Size = new System.Drawing.Size(1140, 443);
             // 
             // detailbtm
             // 
             this.detailbtm.Controls.Add(this.btnCallP99);
             this.detailbtm.Location = new System.Drawing.Point(0, 443);
-            this.detailbtm.Size = new System.Drawing.Size(1009, 38);
+            this.detailbtm.Size = new System.Drawing.Size(1140, 38);
             this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
             this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
             this.detailbtm.Controls.SetChildIndex(this.editby, 0);
@@ -145,11 +145,11 @@
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1009, 481);
+            this.browse.Size = new System.Drawing.Size(1140, 481);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1017, 510);
+            this.tabs.Size = new System.Drawing.Size(1148, 510);
             // 
             // createby
             // 
@@ -293,7 +293,7 @@
             // 
             this.btnAutoPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAutoPick.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnAutoPick.Location = new System.Drawing.Point(839, 34);
+            this.btnAutoPick.Location = new System.Drawing.Point(970, 34);
             this.btnAutoPick.Name = "btnAutoPick";
             this.btnAutoPick.Size = new System.Drawing.Size(80, 30);
             this.btnAutoPick.TabIndex = 15;
@@ -306,7 +306,7 @@
             this.labelNotApprove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelNotApprove.BackColor = System.Drawing.Color.Transparent;
             this.labelNotApprove.Font = new System.Drawing.Font("Microsoft Sans Serif", 14F);
-            this.labelNotApprove.Location = new System.Drawing.Point(863, 8);
+            this.labelNotApprove.Location = new System.Drawing.Point(994, 8);
             this.labelNotApprove.Name = "labelNotApprove";
             this.labelNotApprove.Size = new System.Drawing.Size(115, 23);
             this.labelNotApprove.TabIndex = 44;
@@ -317,7 +317,7 @@
             // 
             this.btnCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCutRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnCutRef.Location = new System.Drawing.Point(921, 34);
+            this.btnCutRef.Location = new System.Drawing.Point(1052, 34);
             this.btnCutRef.Name = "btnCutRef";
             this.btnCutRef.Size = new System.Drawing.Size(80, 30);
             this.btnCutRef.TabIndex = 45;
@@ -340,7 +340,7 @@
             // 
             this.btnMINDReleaser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnMINDReleaser.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnMINDReleaser.Location = new System.Drawing.Point(839, 70);
+            this.btnMINDReleaser.Location = new System.Drawing.Point(970, 70);
             this.btnMINDReleaser.Name = "btnMINDReleaser";
             this.btnMINDReleaser.Size = new System.Drawing.Size(162, 30);
             this.btnMINDReleaser.TabIndex = 46;
@@ -352,7 +352,7 @@
             // 
             this.btnIssueSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnIssueSummary.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-            this.btnIssueSummary.Location = new System.Drawing.Point(839, 106);
+            this.btnIssueSummary.Location = new System.Drawing.Point(970, 106);
             this.btnIssueSummary.Name = "btnIssueSummary";
             this.btnIssueSummary.Size = new System.Drawing.Size(162, 30);
             this.btnIssueSummary.TabIndex = 47;
@@ -363,7 +363,7 @@
             // P10
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1017, 543);
+            this.ClientSize = new System.Drawing.Size(1148, 543);
             this.DefaultControl = "txtRequest";
             this.DefaultControlForEdit = "txtRequest";
             this.DefaultDetailOrder = "poid,scirefno,colorid,sizespec";

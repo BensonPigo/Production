@@ -1,4 +1,5 @@
 ﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -28,8 +29,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -64,29 +63,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                , p.TTLRFIDSewInlineQty = t.TTLRFIDSewInlineQty
 	                , p.TTLSewQty = t.TTLSewQty
             FROM P_WBScanRate p
-            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.Factory
+            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID
 
-            INSERT INTO P_WBScanRate([Date], Factory, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
+            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
             SELECT [Date], FTYGroup, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty]
             FROM #tmp_P_WBScanRate t 
-            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.Factory)
-
-            if exists (select 1 from BITableInfo b where b.id = 'P_WBScanRate')
-            begin
-	            update b
-		            set b.TransferDate = getdate()
-	            from BITableInfo b
-	            where b.id = 'P_WBScanRate'
-            end
-            else 
-            begin
-	            insert into BITableInfo(Id, TransferDate)
-	            values('P_WBScanRate', getdate())
-            end
+            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID)
 
             Drop Table #tmp_P_WBScanRate
             ";
-
+            sqlcmd += new Base().SqlBITableInfo("P_WBScanRate", true);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
@@ -96,7 +82,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 finalResult = new Base_ViewModel()
                 {
-                    Result = Data.DBProxy.Current.ExecuteByConn(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
+                    Result = TransactionClass.ExecuteByConnTransactionScope(conn: sqlConn, cmdtext: sqlcmd, parameters: sqlParameters),
                 };
             }
 

@@ -144,6 +144,7 @@ namespace Sci.Production.Shipping
             string sqlcmd = $@"
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
+Declare @OrderCompanyID NUMERIC(2,0) = {this.dr_master["OrderCompanyID"]}
 
 select ShipQty = sum(pd2.ShipQty),pd2.OrderID,oup.SizeCode,oup.Article ,oup.POPrice
 into #tmp_PackingList_Detail
@@ -153,6 +154,7 @@ inner join Order_UnitPrice oup with (nolock) on oup.Id= pd2.OrderID
 											and oup.Article = pd2.Article 
 											and oup.SizeCode = pd2.SizeCode
 where exists (select 1 from {"{0}"} g with (nolock) where g.id = p2.INVNo)
+AND p2.OrderCompanyID = @OrderCompanyID
 group by pd2.OrderID,oup.SizeCode,oup.Article,oup.POPrice
 
 select
@@ -228,6 +230,7 @@ and g.ShipModeID = @ShipMode
 and g.NonDeclare =0
 and (kd_status.status = 'New' or kd_status.Status is null)
 and not exists (select * from KHExportDeclaration_Detail kdd2 where (kdd2.Invno=g.id or kdd2.LocalInvno=g.id) and  kdd2.OrderID=o.ID) 
+AND p.OrderCompanyID = @OrderCompanyID
 {where}
 group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.BrandID,g.ShipModeID,o.POPrice,g.Forwarder,g.InvDate,g.Shipper,g.Dest,g.SONo,g.Remark,PoPrice.AvgPrice,g.ETD,o.CustPONo,g.CustCDID, o.StyleUnit,r.FOB, isnull(OL.rate, 1),OL.Location
 
@@ -247,6 +250,7 @@ group by pd.OrderID,o.StyleID,s.Description,o.PoPrice,o.SeasonID,g.ID,s.Ukey,g.B
             string sqlGetA2BGMT = $@"
 Declare @ID varchar(15) = '{this.dr_master["ID"]}'
 Declare @ShipMode varchar(60) = '{this.dr_master["ShipModeID"]}'
+Declare @OrderCompanyID NUMERIC(2,0) = {this.dr_master["OrderCompanyID"]}
 
 select distinct g.id,
         g.ETD,
@@ -271,6 +275,7 @@ outer apply (
 where   g.ShipModeID = @ShipMode and
         g.NonDeclare = 0 and
         (kd_status.status = 'New' or kd_status.Status is null)
+        AND g.OrderCompanyID = @OrderCompanyID
         {whereGMT}
 ";
 

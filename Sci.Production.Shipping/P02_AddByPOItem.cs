@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Windows.Forms;
 
 namespace Sci.Production.Shipping
@@ -76,12 +77,27 @@ namespace Sci.Production.Shipping
             if (this.EditMode && !MyUtility.Check.Empty(this.txtSPNo.Text) && this.txtSPNo.OldValue != this.txtSPNo.Text)
             {
                 // sql參數
-                System.Data.SqlClient.SqlParameter sp1 = new System.Data.SqlClient.SqlParameter("@id", this.txtSPNo.Text);
+                IList<SqlParameter> cmds = new List<SqlParameter>
+                {
+                    new SqlParameter("@id", this.txtSPNo.Text),
+                    new SqlParameter("@OrderCompanyID", P02.orderCompanyID),
+                };
 
-                IList<System.Data.SqlClient.SqlParameter> cmds = new List<System.Data.SqlClient.SqlParameter>();
-                cmds.Add(sp1);
+                if (MyUtility.Check.Empty(P02.orderCompanyID))
+                {
+                    MyUtility.Check.Empty("[Order Company] cannot be empty.");
+                    return;
+                }
 
-                string sqlCmd = "select Orders.ID from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) where Orders.ID = @id and Orders.FactoryID = Factory.ID and Factory.IsProduceFty = 1";
+                // 選取SP#的OrderCompanyID 要和表頭的相同
+                string sqlCmd = @"
+select Orders.ID 
+from Orders WITH (NOLOCK) ,factory WITH (NOLOCK) 
+where Orders.ID = @id 
+and Orders.FactoryID = Factory.ID 
+and Factory.IsProduceFty = 1
+and OrderCompanyID = @OrderCompanyID
+";
                 DataTable orderData;
                 DualResult result = DBProxy.Current.Select(null, sqlCmd, cmds, out orderData);
                 if (result && orderData.Rows.Count > 0)
@@ -269,6 +285,13 @@ and pld.OrderID = '{this.txtSPNo.Text}'
             {
                 this.txtSPNo.Focus();
                 MyUtility.Msg.WarningBox("SP# can't empty!");
+                return false;
+            }
+
+            // 如果表頭OrderCompany 沒輸入資料,就不能存檔
+            if (MyUtility.Check.Empty(P02.orderCompanyID))
+            {
+                MyUtility.Check.Empty("[Order Company] cannot be empty.");
                 return false;
             }
 

@@ -83,6 +83,13 @@ namespace Sci.Production.IE
             where a.CodeType = '00008' and a.id = '{this.displayOperationCode.Text}' for xml path('') ),1,1,'')";
             this.txtShape.Text = MyUtility.GetValue.Lookup(sqlcmdShape, null);
 
+            string sqlcmdPart = $@"      
+            SELECT r.Name
+            from Operation o
+            left join Reason r on ReasonTypeID = 'IE_Component' and r.ID = substring(o.id, 6, 2)
+            where o.id = '{this.CurrentMaintain["ID"]}'";
+            this.txtPart.Text = MyUtility.GetValue.Lookup(sqlcmdPart, null);
+
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["Picture1"]))
             {

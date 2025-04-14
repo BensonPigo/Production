@@ -14,13 +14,13 @@
     [ShipModeID]          VARCHAR (10)    CONSTRAINT [DF_Export_ShipModeID] DEFAULT ('') NOT NULL,
     [ShipmentTerm]        VARCHAR (5)     CONSTRAINT [DF_Export_ShipmentTerm] DEFAULT ('') NOT NULL,
     [FactoryID]           VARCHAR (8)     CONSTRAINT [DF_Export_FactoryID] DEFAULT ('') NOT NULL,
-    [ShipMark]            VARCHAR (10)    CONSTRAINT [DF_Export_ShipMark] DEFAULT ('') NOT NULL,
+    [ShipMark]            VARCHAR (20)    CONSTRAINT [DF_Export_ShipMark] DEFAULT ('') NOT NULL,
     [ShipMarkDesc]        NVARCHAR (MAX)  CONSTRAINT [DF_Export_ShipMarkDesc] DEFAULT ('') NOT NULL,
     [Consignee]           VARCHAR (8)     CONSTRAINT [DF_Export_Consignee] DEFAULT ('') NOT NULL,
     [Handle]              VARCHAR (10)    CONSTRAINT [DF_Export_Handle] DEFAULT ('') NOT NULL,
     [Posting]             BIT             CONSTRAINT [DF_Export_Posting] DEFAULT ((0)) NOT NULL,
     [Payer]               VARCHAR (1)     CONSTRAINT [DF_Export_Payer] DEFAULT ('') NOT NULL,
-    [CompanyID]           DECIMAL (2)     CONSTRAINT [DF_Export_CompanyID] DEFAULT ((0)) NOT NULL,
+    [CompanyID]           NUMERIC(2)     CONSTRAINT [DF_Export_CompanyID] DEFAULT ((0)) NOT NULL,
     [Confirm]             BIT             CONSTRAINT [DF_Export_Confirm] DEFAULT ((0)) NOT NULL,
     [LastEdit]            DATETIME        NULL,
     [Remark]              NVARCHAR (MAX)  CONSTRAINT [DF_Export_Remark] DEFAULT ('') NOT NULL,
@@ -78,6 +78,7 @@
     [FtyDisburseSD]       VARCHAR (13)    CONSTRAINT [DF_Export_FtyDisburseSD] DEFAULT ('') NOT NULL,
     [MainWKID]            VARCHAR (13)    CONSTRAINT [DF_Export_MainWK] DEFAULT ('') NOT NULL,
     [MainWKID08]          VARCHAR (13)    DEFAULT ('') NOT NULL,
+    [OrderCompanyID] NUMERIC(2)      CONSTRAINT [DF_Export_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Export] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -361,6 +362,10 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'Export',
     @level2type = N'COLUMN',
     @level2name = N'MainWKID08'
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Export', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+
 GO
 CREATE NONCLUSTERED INDEX [WHR21]
     ON [dbo].[Export]([Blno] ASC)

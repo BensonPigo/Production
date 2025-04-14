@@ -30,6 +30,7 @@
     [EditName]         VARCHAR (10)    CONSTRAINT [DF_LocalDebit_EditName] DEFAULT ('') NOT NULL,
     [EditDate]         DATETIME        NULL,
     [ResponFTY]        VARCHAR (8)     DEFAULT ('') NOT NULL,
+    [OrderCompanyID]   NUMERIC(2, 0)      CONSTRAINT [DF_LocalDebit_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_LocalDebit] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -168,6 +169,9 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'組織代�
 
 GO
 
-GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'會計科目', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'AccountID';
 
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單公司別', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'LocalDebit', @level2type = N'COLUMN', @level2name = N'OrderCompanyID';
+
+GO

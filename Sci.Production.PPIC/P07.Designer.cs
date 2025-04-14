@@ -31,13 +31,13 @@
             this.label1 = new Sci.Win.UI.Label();
             this.btnDownload = new Sci.Win.UI.Button();
             this.btnClose = new Sci.Win.UI.Button();
+            this.labShowDateRange = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Bold);
-            this.label1.Lines = 0;
             this.label1.Location = new System.Drawing.Point(16, 27);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(215, 38);
@@ -68,19 +68,33 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
+            // labShowDateRange
+            // 
+            this.labShowDateRange.BackColor = System.Drawing.Color.Transparent;
+            this.labShowDateRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.labShowDateRange.Location = new System.Drawing.Point(16, 65);
+            this.labShowDateRange.Name = "labShowDateRange";
+            this.labShowDateRange.Size = new System.Drawing.Size(302, 23);
+            this.labShowDateRange.TabIndex = 44;
+            this.labShowDateRange.Text = "download...";
+            this.labShowDateRange.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // P07
             // 
-            this.ClientSize = new System.Drawing.Size(284, 137);
+            this.ClientSize = new System.Drawing.Size(327, 137);
+            this.Controls.Add(this.labShowDateRange);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.btnDownload);
             this.Controls.Add(this.label1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "P07";
+            this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
             this.Text = "P07. Download APS Data";
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.btnDownload, 0);
             this.Controls.SetChildIndex(this.btnClose, 0);
+            this.Controls.SetChildIndex(this.labShowDateRange, 0);
             this.ResumeLayout(false);
 
         }
@@ -90,5 +104,6 @@
         private Win.UI.Label label1;
         private Win.UI.Button btnDownload;
         private Win.UI.Button btnClose;
+        private Win.UI.Label labShowDateRange;
     }
 }

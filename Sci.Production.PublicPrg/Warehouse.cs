@@ -3357,89 +3357,6 @@ WHERE POID='{pOID}' AND Seq1='{seq11}' AND Seq2='{seq21}'
         }
 
         /// <inheritdoc/>
-        public static DualResult ReTransferMtlToScrapByPO(string newID, string poID, List<DataRow> listMtlItem)
-        {
-            string sqlRetransferToScrap = $@"
-        -- 新增 報廢單主檔 & 明細檔
-		IF EXISTS(SELECT * FROM [dbo].[SubTransfer] S WITH (NOLOCK) WHERE S.ID = '{newID}' AND S.Status='Confirmed')
-			update [dbo].[SubTransfer] set [EditName]= '{Env.User.UserID}' , [EditDate] = GETDATE() WHERE ID = '{newID}' 
-		ELSE 
-		BEGIN
-			INSERT INTO [dbo].[SubTransfer]
-				   ([Id]				   ,[MDivisionID]				   ,[FactoryID]
-				   ,[Type]
-				   ,[IssueDate]				   ,[Status]				   ,[Remark]
-				   ,[AddName]				   ,[AddDate]				   ,[EditName]
-				   ,[EditDate], [POID])
-			VALUES
-					('{newID}' 
-					,'{Env.User.Keyword}' 
-					,'{Env.User.Factory}'
-					,'D' -- A2C
-					,GETDATE()
-					,'Confirmed'
-					,'Add by Warehouse Close'
-					,'{Env.User.UserID}' 
-					,GETDATE()
-					,'{Env.User.UserID}' 
-					,GETDATE()
-                    ,'{poID}'
-					);
-		END
-";
-            foreach (var retransferToScrapItem in listMtlItem)
-            {
-                string mDivisionPoDetailUkey = MyUtility.Check.Empty(retransferToScrapItem["MDivisionPoDetailUkey"]) ? "NULL" : retransferToScrapItem["MDivisionPoDetailUkey"].ToString();
-                sqlRetransferToScrap += $@"
- INSERT INTO [dbo].[SubTransfer_Detail]
-            ([ID]				,[FromFtyInventoryUkey]           ,[FromMDivisionID]           ,[FromFactoryID]
-		    ,[FromPOID]
-            ,[FromSeq1]           ,[FromSeq2]						,[FromRoll]					,[FromStockType]
-            ,[FromDyelot]           
-		    ,[ToMDivisionID]    ,[ToFactoryID]						,[ToPOID]					,[ToSeq1]
-            ,[ToSeq2]           ,[ToRoll]							,[ToStockType]				,[ToDyelot]
-            ,[Qty]			   ,[ToLocation])
-	SELECT '{newID}' 
-		    ,Ukey
-            ,'' [FromMDivisionID] 
-            ,Factory = (select FactoryID from Orders with (nolock) where ID=fi.POID)
-            ,[POID]
-            ,[Seq1]
-            ,[Seq2]
-            ,[Roll]
-            ,'B' [FromStock]
-            ,[Dyelot]
-            ,'' [ToMDivisionID]
-            ,Factory =  (select FactoryID from Orders with (nolock) where ID=fi.POID)
-            ,[POID]
-            ,[Seq1]
-            ,[Seq2]
-            ,[Roll]
-            ,'O'	[ToStock]
-            ,[Dyelot]
-            ,Qty =  fi.InQty - fi.OutQty + fi.AdjustQty - fi.ReturnQty
-			,[ToLocation] = isnull(stuff((
-                select concat(',', d.MtlLocationID)
-                from FtyInventory_Detail d WITH (NOLOCK)
-                inner join MtlLocation m WITH (NOLOCK) on m.ID = d.MtlLocationID	
-                where d.ukey = fi.Ukey 
-                and d.MtlLocationID <> ''
-                and m.StockType='O'
-                AND m.Junk=0
-			    for xml path(''))
-			, 1, 1, ''), '')
-		    from dbo.FtyInventory fi WITH (NOLOCK)
-	        where fi.Ukey = '{retransferToScrapItem["Ukey"]}'
-";
-                sqlRetransferToScrap += $@" 
-    exec dbo.usp_SingleItemRecaculate {mDivisionPoDetailUkey}, '{poID}', '{retransferToScrapItem["Seq1"]}', '{retransferToScrapItem["Seq2"]}'
-    ";
-            }
-
-            return DBProxy.Current.Execute(null, sqlRetransferToScrap);
-        }
-
-        /// <inheritdoc/>
         public static bool ChkFtyInventory(string sp, string seq1, string seq2, string roll, string dyelot, string stockType)
         {
             string cmd = $"select COUNT(Ukey) from FtyInventory where POID='{sp}' AND SEQ1='{seq1}' AND SEQ2='{seq2}' AND Roll='{roll}' AND Dyelot='{dyelot}' AND StockType = '{stockType}' AND InQty > 0";
@@ -3611,9 +3528,10 @@ where td.ID = '{transcationID}'
         }
 
         /// <inheritdoc/>
-        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null)
+        public static List<string> GetBarcodeNo_WH(string keyWord, int batchNumber = 1, int dateType = 3, string connectionName = null, int sequenceMode = 1, int sequenceLength = 0, DataTable dtBarcodeSource = null, AbstractDBProxyPMS proxyPMS = null)
         {
-            string localRgcode = MyUtility.GetValue.Lookup("select RgCode from system");
+            string sqlGetRgCode = "select RgCode from system";
+            string localRgcode = proxyPMS == null ? MyUtility.GetValue.Lookup(sqlGetRgCode) : proxyPMS.Lookup(sqlGetRgCode, "Production");
             List<string> iDList = new List<string>();
             DateTime today = DateTime.Today;
             string taiwanYear;
@@ -3712,7 +3630,8 @@ order by Barcode desc
             }
 
             DualResult result = null;
-            if (result = DBProxy.Current.Select(connectionName, sqlCmd, out DataTable dtID))
+            DataTable dtID = null;
+            if (result = proxyPMS == null ? DBProxy.Current.Select(connectionName, sqlCmd, out dtID) : proxyPMS.Select("Production", sqlCmd, out dtID))
             {
                 if (dtID.Rows.Count > 0 && !MyUtility.Check.Empty(dtID.Rows[0]["Barcode"]))
                 {
@@ -3848,7 +3767,7 @@ inner join #tmp t on t.ukey = f.Ukey
 
                     if (showmsg)
                     {
-                        Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                        Class.MsgGridPrg form = new Class.MsgGridPrg(dtS, showMsg);
                         form.ShowDialog();
                     }
 
@@ -3885,7 +3804,7 @@ inner join #tmp t on t.ukey = f.Ukey
                         MyUtility.Msg.ErrorBox(result.ToString());
                     }
 
-                    Class.MsgGrid form = new Class.MsgGrid(dtS, showMsg);
+                    Class.MsgGridPrg form = new Class.MsgGridPrg(dtS, showMsg);
                     form.ShowDialog();
 
                     //Class.WH_BarcodeEmpty wH_Barcode = new Class.WH_BarcodeEmpty(dtDetail.Select(checkFilter).CopyToDataTable(), showMsg, isLocalOrderInventory: isLocalOrderInventory);
@@ -4451,7 +4370,7 @@ order by sd.Ukey
                     int count = oriFtyInventory.Select(filter).Length;
                     if (count > 0)
                     {
-                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count, dtBarcodeSource: dt);
+                        newBarcodeList = Prgs.GetBarcodeNo_WH("F", count, dtBarcodeSource: dt, proxyPMS: proxyPMS);
                     }
                 }
             }
@@ -5851,7 +5770,7 @@ and exists(
             {
                 if (dt.Rows.Count > 0)
                 {
-                    Class.MsgGrid form = new Class.MsgGrid(dt, "WMS system have finished it already, you cannot unconfirm it.");
+                    Class.MsgGridPrg form = new Class.MsgGridPrg(dt, "WMS system have finished it already, you cannot unconfirm it.");
                     form.Width = 650;
                     form.ShowDialog();
 
@@ -7035,7 +6954,7 @@ where x.BalanceQty {(isConfirm ? "+" : "-")} x.Adjustqty < 0
             if (datacheck.Rows.Count > 0)
             {
                 //MyUtility.Msg.ShowMsgGrid_LockScreen(datacheck, "Balacne Qty is not enough!!");
-                Class.MsgGrid form = new Class.MsgGrid(datacheck, "Balacne Qty is not enough!!");
+                Class.MsgGridPrg form = new Class.MsgGridPrg(datacheck, "Balacne Qty is not enough!!");
                 form.ShowDialog();
                 return false;
             }
@@ -7103,6 +7022,7 @@ DEALLOCATE _cursor
             string sqlcmd = @"
 update fto
 set Tone = f.Tone
+    ,GMTWashStatus = f.GMTWashStatus
 from #tmp sd
 inner join FtyInventory f with(nolock) on f.POID = sd.FromPOID
     and f.Seq1 = sd.FromSeq1

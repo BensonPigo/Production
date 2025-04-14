@@ -1,8 +1,6 @@
 ﻿using Ict;
 using PostJobLog;
 using Sci.Data;
-using Sci.Production.Class;
-using Sci.Production.Class.Command;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -76,6 +74,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
             Base_ViewModel finalResult;
+            DBProxy.Current.DefaultTimeout = 1800;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
@@ -119,6 +118,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,SubProResponseTeamID				
             ,CustomColumn1	
             ,MDivisionID
+            ,OpreatorID
             )
             select	isnull(FactoryID, '')					
 		            ,isnull(SubProLocationID, '')		
@@ -126,7 +126,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,SewInLine					   
 		            ,isnull(SewinglineID, '')			
 		            ,isnull(Shift, '')					
-		            ,isnull(RFT, 0)						
+		            ,isnull(CONVERT(NUMERIC(6,2), RFT), 0)						
 		            ,isnull(SubProcessID, '')			
 		            ,isnull(BundleNo, '')				
 		            ,isnull(Artwork, '')				
@@ -157,6 +157,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,isnull(SubProResponseTeamID, '')	
 		            ,isnull(CustomColumn1, '')	
 		            ,isnull(MDivisionID, '')
+                    ,isnull(OpreatorID, '')
             from #tmp
             update b
 		    set b.TransferDate = getdate()
@@ -173,7 +174,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 };
                 finalResult = new Base_ViewModel()
                 {
-                     Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
+                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

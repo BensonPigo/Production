@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
@@ -40,6 +41,15 @@ namespace Sci.Production.PPIC
 
             this.DefaultFilter = "FactoryID = '" + Env.User.Factory + "'";
             this.txtCellNo.MDivisionID = Env.User.Keyword;
+
+            Dictionary<string, string> map = new Dictionary<string, string>()
+            {
+                { "DQS", "DQS"},
+                { "Sunrise", "Sunrise" },
+            };
+            this.cbDashboardSource.DataSource = new BindingSource(map, null);
+            this.cbDashboardSource.ValueMember = "Key";
+            this.cbDashboardSource.DisplayMember = "Value";
         }
 
         /// <inheritdoc/>

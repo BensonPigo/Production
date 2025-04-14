@@ -126,6 +126,7 @@ namespace Sci.Production.PPIC
             this.txttpeuserHandle.DisplayBox1Binding = MyUtility.Convert.GetString(this.CurrentMaintain["Phase"]) == "1" ? MyUtility.Convert.GetString(this.CurrentMaintain["SampleMRHandle"]) : MyUtility.Convert.GetString(this.CurrentMaintain["BulkMRHandle"]);
             this.displayStyleApprove.Value = MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"]) + " " + MyUtility.GetValue.Lookup(string.Format("select (Name + ' #' + ExtNo) as NameExtNo from TPEPass1 WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ApvName"])));
             this.numCPUAdjusted.Value = MyUtility.Check.Empty(this.CurrentMaintain["CPUAdjusted"]) ? 0 : MyUtility.Convert.GetDecimal(this.CurrentMaintain["CPUAdjusted"]) * 100m;
+            this.displayTechConcept.Value = MyUtility.GetValue.Lookup(string.Format("Select DropdownList.Description From Style left join DropdownList on Style.TechConceptID = DropdownList.ID and DropdownList.Type = 'TechConcept' where Style.ID = '{0}' and Style.SeasonID = '{1}' and Style.BrandID = '{2}'", this.CurrentMaintain["ID"], this.CurrentMaintain["SeasonID"], this.CurrentMaintain["BrandID"]));
 
             /*判斷路徑下圖片檔找不到,就將ImageLocation帶空值*/
             if (MyUtility.Check.Empty(this.CurrentMaintain["Picture1"]))
@@ -448,6 +449,24 @@ where s.ukey = {this.CurrentMaintain["ukey"]}");
                     DualResult failResult = new DualResult(false, "Update order cpu fail!!\r\n" + result.ToString());
                     return failResult;
                 }
+            }
+
+            string upLocalMR = $@"
+update o
+set LocalMR = iif(o.LocalMR = '','{this.CurrentMaintain["LocalMR"]}',o.LocalMR)
+from orders o
+where o.StyleUkey = {this.CurrentMaintain["UKey"]} 
+and not exists (
+    select 1 
+    from SewingOutput_Detail 
+    where OrderId = o.ID
+)
+";
+            DualResult result2 = DBProxy.Current.Execute(null, upLocalMR);
+            if (!result2)
+            {
+                this.ShowErr("Update order LocalMR fail!!\r\n" + result2.ToString());
+                return result2;
             }
 
             return Ict.Result.True;

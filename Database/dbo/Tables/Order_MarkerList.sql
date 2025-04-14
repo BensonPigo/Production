@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Order_MarkerList] (
+CREATE TABLE [dbo].[Order_MarkerList] (
     [Id]                  VARCHAR (13)   CONSTRAINT [DF_Order_MarkerList_Id] DEFAULT ('') NOT NULL,
     [Ukey]                BIGINT         CONSTRAINT [DF_Order_MarkerList_Ukey] DEFAULT ((0)) NOT NULL,
     [Seq]                 NUMERIC (4)    CONSTRAINT [DF_Order_MarkerList_Seq] DEFAULT ((0)) NOT NULL,
@@ -31,8 +31,11 @@
     [AddDate]             DATETIME       NULL,
     [EditName]            VARCHAR (10)   CONSTRAINT [DF_Order_MarkerList_EditName] DEFAULT ('') NOT NULL,
     [EditDate]            DATETIME       NULL,
+    [MarkerType]          INT            CONSTRAINT [DF_Order_MarkerList_MarkerType] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Order_MarkerList] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
 
 
 
@@ -181,4 +184,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'最後修�
 
 GO
 
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Marker版本(0=採購用，1=生產用)', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Order_MarkerList', @level2type = N'COLUMN', @level2name = N'MarkerType';
 

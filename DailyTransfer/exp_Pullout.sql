@@ -139,6 +139,7 @@ select ID = a.PackingListID
 	   , p1.AddDate
 	   , p1.EditDate
 	   , [IsShippingAPApprove] = 0
+	   , p1.OrderCompanyID
 into #tmpFtyBooking2
 from (	
 	select distinct PackingListID 
@@ -199,6 +200,7 @@ from (
 		   , [IsShippingAPApprove] 
 		   , DocumentRefNo
 		   , DischargePortID
+		   , OrderCompanyID
 	from #tmpFtyBooking1
 
 	union all
@@ -244,6 +246,7 @@ from (
 		   , [IsShippingAPApprove]
 		   , [DocumentRefNo] = ''
 		   , DischargePortID = ''
+		   , OrderCompanyID
 	from #tmpFtyBooking2
 ) a 
 

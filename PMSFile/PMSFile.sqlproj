@@ -64,5 +64,7 @@
     <Build Include="dbo\Tables\Basic_FabricDefectImage.sql" />
     <Build Include="dbo\Tables\Basic_AccessoryDefectImage.sql" />
     <Build Include="dbo\Tables\FIR_Physical_Defect_RealtimeImage.sql" />
+    <Build Include="dbo\Tables\MechanicRepair_PartApply_Picture.sql" />
+    <Build Include="dbo\Tables\PartApply_Detail_Picture.sql" />
   </ItemGroup>
 </Project>

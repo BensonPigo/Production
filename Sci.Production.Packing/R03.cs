@@ -161,7 +161,7 @@ select pl.MDivisionID
 	, PackingListDetail_Sum.BuyerDelivery
 	, PackingListDetail_Sum.CustPONo
     , PackingListDetail_Sum.POID
-	, PackingListDetail_Sum.ID
+	, PackingListDetail_Sum.ID oID
 	, Junk=iif(PackingListDetail_Sum.Junk = 1, 'Y', 'N')
 	, Dest=(select Alias from Country ct where ct.id=pl.Dest)
 	, PackingListDetail_Sum.StyleID
@@ -186,6 +186,7 @@ select pl.MDivisionID
 	, pl.EstCTNBooking
 	, pl.EstCTNArrive
 	, pl.Remark
+into #Main
 from PackingList pl 
 outer apply(
 	select [TtlCTNS]=sum(pd.CTNQty) 
@@ -216,6 +217,37 @@ where PackingListDetail_Sum.DisposeFromClog= 0
 {where}
 
 order by pl.MDivisionID,pl.FactoryID,pl.ID,PackingListDetail_Sum.ID
+
+
+SELECT p.ID,pd.RefNo,liq.LocalSuppID1,ls.Abb
+  into #Detail
+  FROM #Main p
+  join PackingList_Detail pd on p.ID = pd.ID
+ outer apply(select * from localitem_quot lq where lq.RefNo = pd.RefNo and lq.IssueDate = (select max(IssueDate) from localitem_quot lqd where lqd.RefNo = pd.RefNo)) liq
+  LEFT JOIN LocalSupp ls ON ls.ID = liq.LocalSuppID1
+  WHERE pd.DisposeFromClog= 0
+
+
+  SELECT  #Main.*
+         ,Data.RefNo
+         ,Data.LocalSuppID1
+         ,Data.Abb
+    FROM #Main
+   outer apply(SELECT STUFF((SELECT distinct ';' + RefNo
+                               FROM #Detail
+                               WHERE #Detail.ID = #Main.ID
+                                   and Isnull(RefNo,'') != ''
+                               FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS RefNo,
+                        STUFF((SELECT distinct ';' + LocalSuppID1
+                                 FROM #Detail
+                                 WHERE #Detail.ID = #Main.ID
+                                   and Isnull(LocalSuppID1,'') != ''
+                                 FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS LocalSuppID1,
+                        STUFF((SELECT distinct ';' + Abb
+                                  FROM #Detail
+                                  WHERE #Detail.ID = #Main.ID
+                                   and Isnull(Abb,'') != ''
+                                  FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '') AS Abb) Data
 ";
             }
             else
@@ -254,6 +286,9 @@ select pl.MDivisionID
 	, pl.EstCTNArrive
 	, pl.Remark
 	, PackingListDetail_Sum.Description
+    , PackingListDetail_Sum.RefNo
+    , PackingListDetail_Sum.LocalSuppID
+    , PackingListDetail_Sum.Abb
 from PackingList pl 
 outer apply(
 	select [TtlCTNS]=sum(pd.CTNQty) 
@@ -271,9 +306,13 @@ outer apply(
         ,o.FOC,o.LocalOrder
 		,d.Description
         ,o.poid
+        ,pd.RefNo
+        ,li.LocalSuppid
+        ,ls.Abb
 	from PackingList_Detail pd with(nolock) 
 	inner join Orders o on o.ID = pd.OrderID
     LEFT JOIN LocalItem li ON pd.RefNo = li.RefNo
+    LEFT JOIN LocalSupp ls ON ls.ID = li.LocalSuppid
 	outer apply(
 		select Description =
 		REPLACE(
@@ -297,6 +336,7 @@ outer apply(
 		,o.Junk, o.StyleID, o.BrandID, o.SewLine
 		,o.SewInLine, o.SewOffLine, o.Qty, pd.DisposeFromClog
 		,o.FOC, o.LocalOrder, d.Description, o.poid
+        ,pd.RefNo,li.LocalSuppid,ls.Abb
 )PackingListDetail_Sum
 where PackingListDetail_Sum.DisposeFromClog= 0
 {where}

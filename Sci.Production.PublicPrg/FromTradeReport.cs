@@ -101,7 +101,7 @@ namespace Sci.Production.PublicPrg
             sxr.VarToSheetName = sxr.VPrefix + "SizeGroup";
 
             sxr.BoOpenFile = true;
-            sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_EachConsumptionCuttingCombo"));
+            sxr.Save(Prgs.GetName("Cutting_P01_EachConsumptionCuttingCombo", ".xlsx"));
             #endregion
 
             return true;

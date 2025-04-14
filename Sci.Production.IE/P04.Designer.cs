@@ -36,7 +36,6 @@
             this.label1 = new Sci.Win.UI.Label();
             this.dateInlineDate = new Sci.Win.UI.DateRange();
             this.labelInlineDate = new Sci.Win.UI.Label();
-            this.chkAllStyle = new Sci.Win.UI.CheckBox();
             this.chkLaster = new Sci.Win.UI.CheckBox();
             this.txtCategory = new Sci.Win.UI.TextBox();
             this.labelCAtegory = new Sci.Win.UI.Label();
@@ -69,7 +68,7 @@
             this.gridLineMappingStatus.RowTemplate.Height = 24;
             this.gridLineMappingStatus.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridLineMappingStatus.ShowCellToolTips = false;
-            this.gridLineMappingStatus.Size = new System.Drawing.Size(908, 414);
+            this.gridLineMappingStatus.Size = new System.Drawing.Size(1008, 414);
             this.gridLineMappingStatus.TabIndex = 1;
             this.gridLineMappingStatus.TabStop = false;
             // 
@@ -79,7 +78,6 @@
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.dateInlineDate);
             this.panel1.Controls.Add(this.labelInlineDate);
-            this.panel1.Controls.Add(this.chkAllStyle);
             this.panel1.Controls.Add(this.chkLaster);
             this.panel1.Controls.Add(this.txtCategory);
             this.panel1.Controls.Add(this.labelCAtegory);
@@ -87,7 +85,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(908, 88);
+            this.panel1.Size = new System.Drawing.Size(1008, 88);
             this.panel1.TabIndex = 3;
             // 
             // txtfty
@@ -96,6 +94,8 @@
             this.txtfty.BoolFtyGroupList = true;
             this.txtfty.FilteMDivision = false;
             this.txtfty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfty.IsIE = false;
+            this.txtfty.IsMultiselect = false;
             this.txtfty.IsProduceFty = false;
             this.txtfty.IssupportJunk = false;
             this.txtfty.Location = new System.Drawing.Point(679, 12);
@@ -144,27 +144,15 @@
             this.labelInlineDate.Text = "Sewing Inline";
             this.labelInlineDate.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // chkAllStyle
-            // 
-            this.chkAllStyle.AutoSize = true;
-            this.chkAllStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkAllStyle.Location = new System.Drawing.Point(26, 50);
-            this.chkAllStyle.Name = "chkAllStyle";
-            this.chkAllStyle.Size = new System.Drawing.Size(84, 21);
-            this.chkAllStyle.TabIndex = 3;
-            this.chkAllStyle.Text = "All Styles";
-            this.chkAllStyle.UseVisualStyleBackColor = true;
-            this.chkAllStyle.CheckedChanged += new System.EventHandler(this.ChkAllStyle_CheckedChanged);
-            // 
             // chkLaster
             // 
             this.chkLaster.AutoSize = true;
             this.chkLaster.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkLaster.Location = new System.Drawing.Point(116, 50);
+            this.chkLaster.Location = new System.Drawing.Point(12, 50);
             this.chkLaster.Name = "chkLaster";
-            this.chkLaster.Size = new System.Drawing.Size(119, 21);
+            this.chkLaster.Size = new System.Drawing.Size(118, 21);
             this.chkLaster.TabIndex = 4;
-            this.chkLaster.Text = "Laster Version";
+            this.chkLaster.Text = "Latest Version";
             this.chkLaster.UseVisualStyleBackColor = true;
             this.chkLaster.CheckedChanged += new System.EventHandler(this.ChkLaster_CheckedChanged);
             // 
@@ -200,7 +188,7 @@
             // 
             // P04
             // 
-            this.ClientSize = new System.Drawing.Size(908, 512);
+            this.ClientSize = new System.Drawing.Size(1008, 512);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.gridLineMappingStatus);
             this.DefaultControl = "dateInlineDate";
@@ -221,7 +209,6 @@
 
         private Win.UI.Grid gridLineMappingStatus;
         private Win.UI.Panel panel1;
-        private Win.UI.CheckBox chkAllStyle;
         private Win.UI.CheckBox chkLaster;
         private Win.UI.TextBox txtCategory;
         private Win.UI.Label labelCAtegory;

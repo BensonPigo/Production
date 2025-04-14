@@ -28,6 +28,7 @@ namespace Sci.Production.Shipping
         private string CustCD;
         private string Dest;
         private string category;
+        private string orderCompany;
         private DataTable printData;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace Sci.Production.Shipping
             this.CustCD = this.txtcustcd.Text;
             this.Dest = this.txtcountryDestination.TextBox1.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
+            this.orderCompany = this.comboOrderCompany.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -75,6 +77,7 @@ o.FactoryID
 ,g.InvSerial
 ,g.InvDate
 ,pd.OrderID
+,OrderCompany.NameEN
 ,o.CustPONo
 ,o.StyleID
 ,o.SeasonID
@@ -103,6 +106,7 @@ Left join PackingList_Detail pd on p.ID = pd.ID
 Inner join Orders o on pd.OrderID = o.ID
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join Brand b on b.ID = o.BrandID
+Left join Company OrderCompany on OrderCompany.ID = g.OrderCompanyID
 outer apply
 (	
     select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
@@ -113,6 +117,7 @@ outer apply
     and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
     and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
     and fd.seasonID=o.seasonID
+    and fcd.OrderCompanyID = o.OrderCompanyID
 ) cpucost1
 outer apply
 (	
@@ -124,6 +129,7 @@ outer apply
     and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
     and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
     and fd.seasonID=''
+    and fcd.OrderCompanyID = o.OrderCompanyID
 ) cpucost2
 outer apply (select CpuCost = isnull(cpucost1.CpuCost, cpucost2.CpuCost)) CpuCost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(pd.OrderID,'AMT')   ) sub_Process_AMT
@@ -193,6 +199,10 @@ Where 1=1
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
+            if (this.orderCompany != "0")
+            {
+                sqlCmd.Append(string.Format(" and g.OrderCompanyID = '{0}'", this.orderCompany));
+            }
             #endregion
 
             sqlCmd.Append(@" ) 
@@ -226,15 +236,18 @@ inner join Orders o with (nolock) on o.id = pd.OrderID
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
 outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where   p.INVNo in ({whereInvNo})
 ";
@@ -283,6 +296,7 @@ o.FactoryID
 ,g.InvSerial
 ,g.InvDate
 ,t.OrderID
+,OrderCompany.NameEN
 ,o.CustPONo
 ,o.StyleID
 ,o.SeasonID
@@ -309,6 +323,7 @@ Left join PackingList_Detail pd on p.ID = pd.ID and pd.OrderID = t.OrderID
 Inner join Orders o on t.OrderID = o.ID
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
 Left join Brand b on b.ID = o.BrandID
+Left join Company OrderCompany on OrderCompany.ID = g.OrderCompanyID
 outer apply
 (	
     select top 1 CpuCost = ROUND(fcd.CpuCost, 3)
@@ -319,6 +334,7 @@ outer apply
     and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
     and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
     and fd.seasonID=o.seasonID
+    and fcd.OrderCompanyID = o.OrderCompanyID
 ) cpucost1
 outer apply
 (	
@@ -330,6 +346,7 @@ outer apply
     and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
     and o.OrigBuyerDelivery between fcd.BeginDate and fcd.EndDate
     and fd.seasonID=''
+    and fcd.OrderCompanyID = o.OrderCompanyID
 ) cpucost2
 outer apply (select CpuCost = isnull(cpucost1.CpuCost, cpucost2.CpuCost)) CpuCost
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(t.OrderID,'AMT')   ) sub_Process_AMT

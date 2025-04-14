@@ -13,13 +13,15 @@ namespace Sci.Production.Shipping
     public partial class P11_Import : Sci.Win.Subs.Base
     {
         private string masterID;
+        private DateTime addDate;
         private DataTable dt_detail;
 
         /// <inheritdoc/>
-        public P11_Import(string masterID, DataTable detail)
+        public P11_Import(string masterID, DateTime addDate, DataTable detail)
         {
             this.InitializeComponent();
             this.masterID = masterID;
+            this.addDate = addDate;
             this.dt_detail = detail;
             this.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.txtBrand.MultiSelect = true;
@@ -57,6 +59,9 @@ namespace Sci.Production.Shipping
                 MyUtility.Msg.WarningBox("Please input <On Board Date>");
                 return;
             }
+
+            // [ISP20241007] 已報帳資料不更新
+            string isNewData = this.addDate >= new DateTime(2024, 11, 05) ? "1" : "0";
 
             string where = string.Empty;
 
@@ -104,16 +109,19 @@ from Orders o with (nolock)
 left join Factory f with (nolock) on f.ID = o.FactoryID
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')) SubProcessCPU
 outer apply (select [val] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'AMT')) SubProcessAMT
-outer apply (select top 1 [val] = fd.CpuCost
-             from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
-             where fsd.BrandID = o.BrandID
-             and fsd.FactoryID = o.FactoryID
-             and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
-             and fsd.ShipperID = fd.ShipperID
-             and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
-			 and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
-			 order by SeasonID desc) CpuCost
-outer apply (select [val] = iif(f.LocalCMT = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
+outer apply (
+    select top 1 [val] = fd.CpuCost
+    from FtyShipper_Detail fsd WITH (NOLOCK) , FSRCpuCost_Detail fd WITH (NOLOCK) 
+    where fsd.BrandID = o.BrandID
+    and fsd.FactoryID = o.FactoryID
+    and o.OrigBuyerDelivery between fsd.BeginDate and fsd.EndDate
+    and fsd.ShipperID = fd.ShipperID
+    and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate
+	and (fsd.SeasonID = o.SeasonID or fsd.SeasonID = '')
+    and fd.OrderCompanyID = o.OrderCompanyID
+	order by SeasonID desc
+) CpuCost
+outer apply (select [val] = iif(f.LocalCMT = 1 and {isNewData} = 1, dbo.GetLocalPurchaseStdCost(o.ID), 0)) LocalPurchase
 where exists (select 1 
 			  from PackingList p with (nolock)
 			  inner join GMTBooking GB with (nolock) on GB.ID = p.INVNo

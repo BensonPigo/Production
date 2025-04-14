@@ -104,6 +104,7 @@ select  0 as selected
         , TransferExport_DetailUkey = cast(0 as bigint)
 		, MDivisionID = '{this.M}'
         , [Grade] = phy.Grade
+        , [FIRemark] = FI.Remark
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -158,6 +159,28 @@ AND exists (select 1
             if (this.comboFabric.SelectedValue.ToString().ToUpper() != "ALL")
             {
                 sbSQLCmd.Append($" AND PSD.FabricType= '{this.comboFabric.SelectedValue.ToString()}' ");
+            }
+
+            if (!MyUtility.Check.Empty(this.txtRoll.Text))
+            {
+                sbSQLCmd.Append(@"
+        and FI.Roll = @Roll");
+
+                System.Data.SqlClient.SqlParameter sp_roll = new System.Data.SqlClient.SqlParameter();
+                sp_roll.ParameterName = "@Roll";
+                sp_roll.Value = this.txtRoll.Text;
+                cmds.Add(sp_roll);
+            }
+
+            if (!MyUtility.Check.Empty(this.txtDyelot.Text))
+            {
+                sbSQLCmd.Append(@"
+        and FI.Dyelot = @Dyelot");
+
+                System.Data.SqlClient.SqlParameter sp_dyelot = new System.Data.SqlClient.SqlParameter();
+                sp_dyelot.ParameterName = "@Dyelot";
+                sp_dyelot.Value = this.txtDyelot.Text;
+                cmds.Add(sp_dyelot);
             }
 
             DualResult result;
@@ -252,6 +275,7 @@ AND exists (select 1
                 .EditText("Description", header: "Description", iseditingreadonly: true) // 4
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(8))
                 .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(8))
+                .EditText("FIRemark", header: "MTL. Lock/Unlock Remark", iseditingreadonly: true)
                 .Text("Refno", header: "Ref#", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("Color", header: "Color", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("SizeSpec", header: "Size", width: Widths.AnsiChars(8), iseditingreadonly: true)

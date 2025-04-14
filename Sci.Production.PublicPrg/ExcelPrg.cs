@@ -4,9 +4,13 @@ using Sci.Utility.Report;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Drawing;
 using System.Runtime.InteropServices;
+using static System.Net.Mime.MediaTypeNames;
 using MsExcel = Microsoft.Office.Interop.Excel;
+using Image = System.Drawing.Image;
 
 namespace Sci.Production.Prg
 {
@@ -333,6 +337,22 @@ namespace Sci.Production.Prg
                 MsExcel.Range deleteRange = (MsExcel.Range)worksheet.Columns[columnIndex];
                 deleteRange.Delete(MsExcel.XlDeleteShiftDirection.xlShiftToLeft);
             }
+        }
+
+        /// <summary>
+        /// 將Byte array 轉成實體圖片檔
+        /// </summary>
+        /// <param name="imageBytes">圖片Byte array</param>
+        /// <returns>圖片實體路徑</returns>
+        public static string ConvertImgPath(byte[] imageBytes)
+        {
+            Image img = Image.FromStream(new MemoryStream(imageBytes));
+            string imageName = $"{Guid.NewGuid()}.jpg";
+            string imgPath;
+            imgPath = Path.Combine(Env.Cfg.ReportTempDir, imageName);
+            img.Save(imgPath);
+            img.Dispose();
+            return imgPath;
         }
     }
 }

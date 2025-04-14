@@ -218,8 +218,10 @@ select A.POID
 	,PS.stockunit
 	,(P.SuppID+'-'+s.AbbEN)Supplier
 	,[OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
+    ,m.ALocation
 	,A.Result
-	,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
+	,[% of Inspection] = iif(isnull(A.InspQty,0) = 0 ,0 ,round((A.InspQty / A.ArriveQty)*100 ,2))
+    ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
 	,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
 	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
 	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
@@ -263,7 +265,8 @@ left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = PS.id and psdsS.
 left join dbo.Color C WITH (NOLOCK) on C.ID = isnull(psdsC.SpecValue ,'') and C.BrandId = x.BrandId
 left join fabric WITH (NOLOCK) on fabric.SCIRefno = PS.scirefno
 left join MtlType WITH (NOLOCK) on MtlType.ID = fabric.MtlTypeID
-left join dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID     
+left join dbo.AIR_Laboratory AIRL WITH (NOLOCK) on AIRL.ID = A.ID
+left join dbo.MDivisionPoDetail m WITH (NOLOCK) on m.POID = A.POID and m.seq1 = A.SEQ1 and m.Seq2 = A.Seq2
 OUTER APPLY (
 	SELECT  [Val]=  STUFF((
 	SELECT ', '+ IIF(a.Defect = '' , '' ,ori.Data +'-'+ ISNULL(ad.Description,''))

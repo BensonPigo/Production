@@ -30,6 +30,7 @@ namespace Sci.Production.Shipping
         private DataTable plData;
         private DataTable dtDeleteGBHistory;
         private DataSet allData = new DataSet();
+        private int previousCompanySelectIndex = -1;
 
         /// <summary>
         /// P10
@@ -269,6 +270,16 @@ group by    p.INVNo
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (!this.EditMode)
+            {
+                this.comboCompany1.IsOrderCompany = null;
+                this.comboCompany1.Junk = null;
+                if (this.CurrentMaintain != null && !MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+                {
+                    this.comboCompany1.SelectedValue = (object)this.CurrentMaintain["OrderCompanyID"];
+                }
+            }
+
             this.btnUpdatePulloutDate.Enabled = !this.EditMode && MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "Confirmed" && Prgs.GetAuthority(Env.User.UserID, "P10. Ship Plan", "CanEdit");
             this.SumData();
             string sqlctnr = $@"
@@ -519,6 +530,9 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         /// <inheritdoc/>
         protected override void ClickNewAfter()
         {
+            this.comboCompany1.IsOrderCompany = true;
+            this.comboCompany1.Junk = false;
+            this.comboCompany1.SelectedIndex = -1;
             base.ClickNewAfter();
             this.CurrentMaintain["CDate"] = DateTime.Today;
             this.CurrentMaintain["Status"] = "New";
@@ -569,6 +583,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
         protected override void ClickEditAfter()
         {
             base.ClickEditAfter();
+            this.comboCompany1.ReadOnly = true;
             if (MyUtility.Convert.GetString(this.CurrentMaintain["Status"]) != "New")
             {
                 this.btnImportData.Enabled = false;
@@ -668,7 +683,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 return false;
             }
 
-            bool needReason = dt.Select("CutOffDate > PulloutDate").Any();
+            bool needReason = dt.Select("CutOffDate < PulloutDate").Any();
 
             if (needReason)
             {
@@ -677,7 +692,6 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
                 if (returnResult == DialogResult.Cancel)
                 {
                     this.DetailFilter();
-
                     return false;
                 }
             }
@@ -691,7 +705,7 @@ where sdh.ID = '{0}'", this.CurrentMaintain["id"]);
             DataRow dr = this.detailgrid.GetDataRow<DataRow>(this.detailgrid.GetSelectedRowIndex());
             if (dr != null && this.plData != null)
             {
-                string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"]));
+                string filter = string.Format("InvNo = '{0}'", MyUtility.Convert.GetString(dr["ID"])); 
                 this.plData.DefaultView.RowFilter = filter;
             }
         }
@@ -1207,6 +1221,12 @@ left join LocalSupp ls WITH (NOLOCK) on g.Forwarder = ls.ID
         // Import Data
         private void BtnImportData_Click(object sender, EventArgs e)
         {
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                MyUtility.Msg.WarningBox("[Order Company] cannot be empty.");
+                return;
+            }
+
             P10_ImportData callNextForm = new P10_ImportData(this.CurrentMaintain, (DataTable)this.detailgridbs.DataSource, (DataTable)this.listControlBindingSource1.DataSource);
             callNextForm.ShowDialog(this);
         }
@@ -2039,6 +2059,27 @@ inner join #tmp t on t.ID = pd.ID
                 return true;
             }
             #endregion
+        }
+
+        private void ComboCompany1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!this.IsDetailInserting || this.DetailDatas.Count == 0 || this.previousCompanySelectIndex == -1 || this.previousCompanySelectIndex == this.comboCompany1.SelectedIndex)
+            {
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+                return;
+            }
+
+            DialogResult result = MyUtility.Msg.QuestionBox("[Order Company] has been changed and all PL data will be clear.");
+            if (result == DialogResult.Yes)
+            {
+                this.DetailDatas.Delete();
+                this.plData.Clear();
+                this.previousCompanySelectIndex = this.comboCompany1.SelectedIndex;
+            }
+            else
+            {
+                this.comboCompany1.SelectedIndex = this.previousCompanySelectIndex;
+            }
         }
     }
 }

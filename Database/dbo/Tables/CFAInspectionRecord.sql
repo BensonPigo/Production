@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[CFAInspectionRecord](
 	[SewingLineID] [varchar](100) NOT NULL,
 	[Team] [varchar](5) NOT NULL,
 	[Shift] [varchar](1) NOT NULL,
-	[Stage] [varchar](10) NOT NULL,
+	[Stage] [varchar](15) NOT NULL,
 	[InspectQty] [numeric](7, 0) NOT NULL,
 	[DefectQty] [numeric](7, 0) NOT NULL,
 	[ClogReceivedPercentage] [numeric](3, 0) NOT NULL,

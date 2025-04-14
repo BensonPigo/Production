@@ -25,5 +25,14 @@ BEGIN
 	from PackingList_Detail with (nolock)
 	where ID = @PackID and CTNStartNo = @CTNStartNo and CTNQty > 0
 
-	return @SCICtnNo
+	if isnull(@SCICtnNo, '') <> ''
+	begin
+		return @SCICtnNo
+	end
+
+	select @SCICtnNo = SCICtnNo
+	from PackingList_Detail with (nolock)
+	where CustCTN = @scanResult and CTNQty > 0
+
+	return isnull(@SCICtnNo, '')
 END

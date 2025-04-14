@@ -24,7 +24,8 @@
 	[ESignature] [nvarchar](60) NULL,
 	[Remark] [nvarchar](100) NOT NULL,
 	[ADAccount] [varchar](40) NOT NULL,
- CONSTRAINT [PK_Pass1_1] PRIMARY KEY CLUSTERED 
+ [IsNeedOTP] BIT NOT NULL DEFAULT ((0)), 
+    CONSTRAINT [PK_Pass1_1] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -90,3 +91,12 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'AD帳號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Pass1', @level2type=N'COLUMN',@level2name=N'ADAccount'
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該人員是否需要OTP驗證',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Pass1',
+    @level2type = N'COLUMN',
+    @level2name = N'IsNeedOTP'

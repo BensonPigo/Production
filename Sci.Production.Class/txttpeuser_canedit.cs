@@ -150,12 +150,14 @@ namespace Sci.Production.Class
             string sql;
             List<SqlParameter> sqlpar = new List<SqlParameter>();
 
-            sql = @"select 	ID, 
-		                    Name, 
-		                    Ext= ExtNo, 
-		                    Mail = email
-                    from Production.dbo.TPEPass1 WITH (NOLOCK) 
-                    where id = @id";
+            sql = @"select 	t1.ID, 
+		                    t1.Name, 
+		                    Ext= t1.ExtNo, 
+		                    Mail = t1.email,
+                            Supervisor = dbo.getPass1 (p1.Supervisor)
+                    from Production.dbo.TPEPass1 t1 WITH (NOLOCK) 
+                    left join Pass1 p1 on t1.ID = p1.ID
+                    where t1.id = @id";
             sqlpar.Add(new SqlParameter("@id", this.TextBox1.Text.ToString()));
 
             UserData ud = new UserData(sql, sqlpar);

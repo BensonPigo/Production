@@ -12,5 +12,16 @@
     [AddDate] DATETIME NULL, 
     [EditName] VARCHAR(10) CONSTRAINT [DF_KHCMTInvoice_EditName] DEFAULT ('') NOT NULL, 
     [EditDate] DATETIME NULL, 
+    [OrderCompanyID] NUMERIC(2) NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_KHCMTInvoice] primary key ([ID])
 )
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否為訂單公司別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'KHCMTInvoice',
+    @level2type = N'COLUMN',
+    @level2name = N'OrderCompanyID'

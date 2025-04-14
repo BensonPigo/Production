@@ -826,11 +826,23 @@
     <Compile Include="P43.Designer.cs">
       <DependentUpon>P43.cs</DependentUpon>
     </Compile>
+    <Compile Include="P44.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P44.Designer.cs">
+      <DependentUpon>P44.cs</DependentUpon>
+    </Compile>
     <Compile Include="P61.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P61.Designer.cs">
       <DependentUpon>P61.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P61_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P61_Import.Designer.cs">
+      <DependentUpon>P61_Import.cs</DependentUpon>
     </Compile>
     <Compile Include="P61_ShareByCDCItem.cs">
       <SubType>Form</SubType>
@@ -1489,8 +1501,14 @@
     <EmbeddedResource Include="P43.resx">
       <DependentUpon>P43.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P44.resx">
+      <DependentUpon>P44.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P61.resx">
       <DependentUpon>P61.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P61_Import.resx">
+      <DependentUpon>P61_Import.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P61_ShareByCDCItem.resx">
       <DependentUpon>P61_ShareByCDCItem.cs</DependentUpon>

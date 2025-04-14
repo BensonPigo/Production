@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Newtonsoft.Json;
 using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using Sci.Production.PublicPrg;
 using System;
@@ -57,24 +58,25 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <returns>Base_ViewModel</returns>
         public Base_ViewModel P_RTLStatusByDay(DateTime? inputkDate)
         {
-            Base_ViewModel finalResult = new Base_ViewModel();
-            this.BiDt = null;
+            Base_ViewModel finalResult = new Base_ViewModel()
+            {
+                Dt = this.CreateDataTable(),
+            };
 
             try
             {
-                this.CreateTaskAPI(inputkDate).GetAwaiter().GetResult();
-
-                if (this.BiDt != null && this.BiDt.Rows.Count > 0)
+                finalResult = this.CreateTaskAPI(inputkDate);
+                if (!finalResult.Result)
                 {
-                    // DB 異動
-                    finalResult = this.UpdateData(this.BiDt);
-                    if (!finalResult.Result)
-                    {
-                        return finalResult;
-                    }
+                    throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                if (finalResult.Dt == null || finalResult.Dt.Rows.Count == 0)
+                {
+                    throw new Exception("No Data Found");
+                }
+
+                finalResult = this.UpdateData(finalResult.Dt);
             }
             catch (Exception ex)
             {
@@ -89,40 +91,73 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// </summary>
         /// <param name="inputkDate">inputkDate</param>
         /// <returns>None</returns>
-        public async Task CreateTaskAPI(DateTime? inputkDate)
+        public Base_ViewModel CreateTaskAPI(DateTime? inputkDate)
         {
+            Base_ViewModel result = new Base_ViewModel()
+            {
+                Dt = this.CreateDataTable(),
+            };
+
             if (!inputkDate.HasValue)
             {
                 inputkDate = DateTime.Now.AddDays(-10);
             }
 
-            DataTable ftyTb;
-            DBProxy.Current.Select("Production", "SELECT ID FROM Factory WITH(NOLOCK) WHERE Junk=0 AND IsProduceFty=1", out ftyTb);
-
-            List<Task<Base_ViewModel>> apiTasks = new List<Task<Base_ViewModel>>();
-
-            // 10 days, each Fty
-            for (int i = 0; i < 10; i++)
+            try
             {
-                DateTime transferDate = inputkDate.Value.AddDays(i);
-                foreach (DataRow row in ftyTb.Rows)
-                {
-                    string factoryID = MyUtility.Convert.GetString(row["ID"]);
+                DBProxy.Current.Select("Production", "SELECT ID FROM Factory WITH(NOLOCK) WHERE Junk=0 AND IsProduceFty=1", out DataTable ftyTb);
 
-                    apiTasks.Add(this.GetDataByAPIAsync(factoryID, transferDate, 3));
+                string url = MyUtility.GetValue.Lookup(
+    $@"
+select b.URL 
+from System a 
+inner join SystemWebAPIURL b on a.RgCode = b.SystemName
+where Junk = 0 and Environment = 'Formal'", "Production");
+
+                if (MyUtility.Check.Empty(url))
+                {
+                    throw new Exception("URL is empty");
                 }
+
+                DualResult finalResult = new DualResult(true);
+
+                // 10 days, each Fty
+                for (int i = 0; i < 10; i++)
+                {
+                    DateTime transferDate = inputkDate.Value.AddDays(i);
+                    var models = ftyTb.AsEnumerable()
+                        .AsParallel()
+                        .WithDegreeOfParallelism(3) // 3 thread
+                        .Select(row =>
+                        {
+                            string factoryID = MyUtility.Convert.GetString(row["ID"]);
+                            Base_ViewModel model = this.GetDataByAPIAsync(url, factoryID, transferDate, 3);
+                            return model;
+                        });
+
+                    foreach (var model in models)
+                    {
+                        if (model.Dt != null && model.Dt.Rows.Count > 0)
+                        {
+                            result.Dt.Merge(model.Dt);
+                        }
+                    }
+
+                    if (models.Where(x => !x.Result).Count() > 0)
+                    {
+                        finalResult = models.Where(x => !x.Result).Select(x => x.Result).FirstOrDefault();
+                        break;
+                    }
+                }
+
+                result.Result = finalResult;
+            }
+            catch (Exception ex)
+            {
+                result.Result = new DualResult(false, ex);
             }
 
-            var apiResults = await Task.WhenAll(apiTasks);
-
-            // 將結果保存
-            foreach (var apiResult in apiResults)
-            {
-                if (apiResult != null && apiResult.Dt != null)
-                {
-                    this.BiDt.Merge(apiResult.Dt);
-                }
-            }
+            return result;
         }
 
         /// <summary>
@@ -132,20 +167,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <param name="workDate">workDate</param>
         /// <param name="wipDay">wipDay</param>
         /// <returns>Base_ViewModel</returns>
-        private async Task<Base_ViewModel> GetDataByAPIAsync(string factory, DateTime workDate, int wipDay)
+        private Base_ViewModel GetDataByAPIAsync(string url, string factory, DateTime workDate, int wipDay)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
 
             try
             {
-                XDocument docx = XDocument.Load(Application.ExecutablePath + ".config");
-                string nowConnection = DBProxy.Current.DefaultModuleName;
-                string url = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.EqualString(nowConnection)).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("PMSSewingAPIuri")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-
                 string apiURL = $@"{url}api/WIP/GetWIPDay";
-                string para = "FactoryID=" + factory + "&Date=" + workDate.ToString("yyyy/MM/dd") + "&WipDay=" + wipDay.ToString();
-                HttpClient client = new HttpClient();
-                using (HttpResponseMessage response = await client.GetAsync(apiURL + "?" + para))
+                string para = $"FactoryID={factory}&Date={workDate:yyyy/MM/dd}&WipDay={wipDay}";
+                using (HttpResponseMessage response = HttpHelpers.GetJsonDataHttpClient(apiURL, para))
                 {
                     // api 呼叫失敗
                     if (!response.IsSuccessStatusCode)
@@ -155,8 +185,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         return finalResult;
                     }
 
-                    string res = await response.Content.ReadAsStringAsync();
-
+                    string res = response.Content.ReadAsStringAsync().Result;
                     var jsonObject = JsonConvert.DeserializeObject<dynamic>(res);
                     string resultDtJson = JsonConvert.SerializeObject(jsonObject.resultDt);
                     DataTable resultDtJsonDt = JsonConvert.DeserializeObject<DataTable>(resultDtJson);
@@ -307,10 +336,23 @@ select TransferDate
 	, ISNULL(t.FactoryID, '')
 	, ISNULL(t.CurrentWIPDays, 0)
 from #tmp t 
+
+if exists (select 1 from BITableInfo b where b.id = 'P_RTLStatusByDay')
+begin
+    update b
+        set b.TransferDate = getdate()
+    from BITableInfo b
+    where b.id = 'P_RTLStatusByDay'
+end
+else 
+begin
+    insert into BITableInfo(Id, TransferDate)
+    values('P_RTLStatusByDay', getdate())
+end
 ";
             finalResult = new Base_ViewModel()
             {
-                Result = MyUtility.Tool.ProcessWithDatatable(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
             };
 
             return finalResult;

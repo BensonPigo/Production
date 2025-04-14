@@ -98,6 +98,7 @@
     <Build Include="dbo\Views\View_DropdownList.sql" />
     <Build Include="dbo\Tables\ShareRule.sql" />
     <Build Include="dbo\Tables\SewingMachineAttachment.sql" />
+    <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="ProductionTPE.refactorlog" />

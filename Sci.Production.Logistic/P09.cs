@@ -49,6 +49,8 @@ namespace Sci.Production.Logistic
             .Text("Dest", header: "Destination", width: Widths.Auto(), iseditable: false)
             .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.Auto(), iseditable: false)
             .Date("SciDelivery", header: "SCI Delivery", width: Widths.Auto(), iseditable: false)
+            .Text("Article", header: "ColorWay", width: Widths.Auto(), iseditable: false)
+            .Numeric("ShipQty", header: "Qty", width: Widths.Auto(), iseditable: false)
             .Text("AddName", header: "Received By", width: Widths.Auto(), iseditable: false)
             .Text("RepackPackID", header: "Repack To Pack ID", width: Widths.AnsiChars(15), iseditable: false)
             .Text("RepackOrderID", header: "Repack To SP #", width: Widths.AnsiChars(15), iseditable: false)
@@ -106,6 +108,8 @@ select  1 as selected
         , Dest
         , BuyerDelivery
         , SCIDelivery
+        , Article
+        , ShipQty
         , AddName
         , rn = ROW_NUMBER() over(order by TRY_CONVERT(int, CTNStartNo) ,(RIGHT(REPLICATE('0', 6) + rtrim(ltrim(CTNStartNo)), 6)))
         , RepackPackID
@@ -122,6 +126,8 @@ from (
             , isnull(c.Alias,'') as Dest
             , o.BuyerDelivery
             , o.SciDelivery
+            , isnull(pd.Article,'') as Article
+            , pd.ShipQty
             , AddName = dbo.getPass1(cr.AddName)
             , [RepackPackID] = iif(pd.OrigID != '',pd.ID, pd.OrigID)
             , [RepackOrderID] = iif(pd.OrigOrderID != '',pd.OrderID, pd.OrigOrderID)

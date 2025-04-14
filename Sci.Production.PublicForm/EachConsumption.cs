@@ -81,52 +81,53 @@ namespace Sci.Production.PublicForm
         /// <inheritdoc/>
         protected override DualResult OnRequery(out DataTable datas)
         {
-            // return base.OnRequery();
-            datas = null;
-            string sqlCmd = string.Format(
-@"Select a.*, 
-case
-	when b.EachConsSource='O' then 'Original'
-	when b.EachConsSource='P' then 'Prophet'
-	when b.EachConsSource='' then ''
-END
-AS EachConsSource,
-
-d.PatternPanel, 
-
-a.Article as ForArticle,
-
-EC_Size.TotalQty , 
-concat(RTrim(Fabric.Refno),'-',Fabric.Description) as FabricDesc,
-Fabric.Width as FabricWidth 
-,type2 = (case when  a.TYPE = '0' then ''
-	when a.TYPE = 'C' then 'Cutting Piece'
-    when a.TYPE = '1' then 'Cutting Piece'
-	when a.TYPE = 'T' then 'TAPE'
-    when a.TYPE = '2' then 'TAPE'
-	end) 
-,createby2 = concat(a.AddName,' ' ,FORMAT(a.AddDate,'yyyy/MM/dd HH:mm:ss'))
-,editby2 = concat(a.EditName,' ' , FORMAT(a.EditDate,'yyyy/MM/dd HH:mm:ss'))
-,FabricKind = concat(bof.kind , ':', DD.Name)
-
-From dbo.Order_EachCons a WITH (NOLOCK) 
-Left Join dbo.Orders b WITH (NOLOCK) On a.ID = b.ID  
-
-outer apply(
-	select (
-		select distinct PatternPanel+',' 
-		From dbo.Order_EachCons_PatternPanel as tmp WITH (NOLOCK) 
-		Where tmp.Order_EachConsUkey = a.Ukey
-		for XML path('')
-		)
-	as PatternPanel
-) d
-
-outer apply(select sum(Qty) as TotalQty from  dbo.Order_EachCons_SizeQty WITH (NOLOCK) where  a.Ukey = Order_EachConsUkey  ) as EC_Size 
-left join dbo.Order_BOF bof WITH (NOLOCK) on bof.Id = a.Id and bof.FabricCode = a.FabricCode
-left join dbo.Fabric WITH (NOLOCK) on Fabric.SCIRefno = bof.SCIRefno
-left join DropDownList DD on DD.ID=bof.Kind and DD.Type='FabricKind' 
-Where a.ID = '{0}' Order by a.Seq", this.KeyValue1);
+            string sqlCmd = $@"
+SELECT
+    oec.*
+   ,EachConsSource =
+        CASE
+            WHEN o.EachConsSource = 'O' THEN 'Original'
+            WHEN o.EachConsSource = 'P' THEN 'Prophet'
+            WHEN o.EachConsSource = '' THEN ''
+        END
+   ,oecp.PatternPanel
+   ,ForArticle = oec.Article
+   ,EC_Size.TotalQty
+   ,FabricDesc = CONCAT(RTRIM(Fabric.Refno), '-', Fabric.Description)
+   ,FabricWidth = Fabric.Width
+   ,type2 =
+        CASE
+            WHEN oec.TYPE = '0' THEN ''
+            WHEN oec.TYPE = 'C' THEN 'Cutting Piece'
+            WHEN oec.TYPE = '1' THEN 'Cutting Piece'
+            WHEN oec.TYPE = 'T' THEN 'TAPE'
+            WHEN oec.TYPE = '2' THEN 'TAPE'
+        END
+   ,createby2 = CONCAT(oec.AddName, ' ', FORMAT(oec.AddDate, 'yyyy/MM/dd HH:mm:ss'))
+   ,editby2 = CONCAT(oec.EditName, ' ', FORMAT(oec.EditDate, 'yyyy/MM/dd HH:mm:ss'))
+   ,FabricKind = CONCAT(bof.kind, ':', DD.Name)
+   ,MarkerTypeName = DropDownList.Name
+FROM dbo.Order_EachCons oec WITH (NOLOCK)
+INNER JOIN dbo.Orders o WITH (NOLOCK) ON oec.ID = o.ID
+OUTER APPLY (
+    SELECT PatternPanel = STUFF((
+        SELECT DISTINCT ',' + PatternPanel
+        FROM dbo.Order_EachCons_PatternPanel oecp WITH (NOLOCK)
+        WHERE oecp.Order_EachConsUkey = oec.Ukey
+        FOR XML PATH ('')),1,1,'')
+) AS oecp
+OUTER APPLY (
+    SELECT TotalQty = SUM(Qty)
+    FROM dbo.Order_EachCons_SizeQty WITH (NOLOCK)
+    WHERE oec.Ukey = Order_EachConsUkey
+) AS EC_Size
+LEFT JOIN dbo.Order_BOF bof WITH (NOLOCK) ON bof.ID = oec.ID AND bof.FabricCode = oec.FabricCode
+LEFT JOIN dbo.Fabric WITH (NOLOCK) ON Fabric.SCIRefno = bof.SCIRefno
+LEFT JOIN DropDownList DD ON DD.ID = bof.Kind AND DD.Type = 'FabricKind'
+LEFT JOIN DropDownList WITH (NOLOCK) ON DropDownList.ID = oec.MarkerType AND DropDownList.Type = 'MarkerType' 
+WHERE oec.ID = '{this.KeyValue1}'
+ORDER BY oec.Seq
+";
             DualResult result;
             if (!(result = DBProxy.Current.Select(null, sqlCmd, out datas)))
             {
