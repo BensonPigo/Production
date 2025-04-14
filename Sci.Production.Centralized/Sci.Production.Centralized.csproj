@@ -295,6 +295,12 @@
     <Compile Include="QA_B01.Designer.cs">
       <DependentUpon>QA_B01.cs</DependentUpon>
     </Compile>
+    <Compile Include="R08.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R08.Designer.cs">
+      <DependentUpon>R08.cs</DependentUpon>
+    </Compile>
     <Compile Include="R31.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -648,6 +654,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="QA_B01.resx">
       <DependentUpon>QA_B01.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R08.resx">
+      <DependentUpon>R08.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R31.resx">
       <DependentUpon>R31.cs</DependentUpon>
