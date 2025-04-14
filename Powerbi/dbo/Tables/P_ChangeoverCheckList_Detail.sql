@@ -15,6 +15,8 @@
 	[CheckListNo] [int] NOT NULL,
 	[CheckListItem] [varchar](200) NOT NULL,
 	[LateReason] [nvarchar](60) NOT NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_ChangeoverCheckList_Detail] PRIMARY KEY CLUSTERED 
 (
 	[FactoryID] ASC,
@@ -72,6 +74,9 @@ GO
 ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_LateReason]  DEFAULT ('') FOR [LateReason]
 GO
 
+ALTER TABLE [dbo].[P_ChangeoverCheckList_Detail] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Detail_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
@@ -118,4 +123,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Check List 項
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'逾期原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'LateReason'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList_Detail', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO
