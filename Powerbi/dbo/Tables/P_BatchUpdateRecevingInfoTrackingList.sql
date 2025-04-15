@@ -10,6 +10,7 @@
 		[refno] [varchar] (36) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_refno]  DEFAULT '',
 		[WeaveTypeID] [varchar] (20) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_WeaveTypeID]  DEFAULT '',
 		[Color] [varchar] (50) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Color]  DEFAULT '',
+		[ColorName] [varchar] (150) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_ColorName]  DEFAULT '',
 		[Roll] [varchar] (8) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Roll]  DEFAULT '',
 		[Dyelot] [varchar] (8) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_Dyelot]  DEFAULT '',
 		[StockQty] [numeric] (11, 2) NOT NULL CONSTRAINT [DF_P_BatchUpdateRecevingInfoTrackingList_StockQty]  DEFAULT 0,
@@ -70,6 +71,8 @@
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'織法' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'WeaveTypeID'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顏色' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'Color'
+	GO
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'顏色描述' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'ColorName'
 	GO
 	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'卷' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_BatchUpdateRecevingInfoTrackingList', @level2type=N'COLUMN',@level2name=N'Roll'
 	GO

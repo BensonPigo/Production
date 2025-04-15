@@ -49,9 +49,11 @@ begin
 			,[FabricComboAndCutNo] = isnull(x2.cutref, '')
 			,[IssueRemark] = i.Remark
 			,[OrderID] = id.POID
+			,[Style] = o.StyleID
 			,[Seq] = CONCAT(LTRIM(RTRIM(id.Seq1)),' ',LTRIM(RTRIM(id.Seq2)))
 			,[Refno] = isnull(psd.Refno, '')
 			,[ColorID] = isnull(psdsC.SpecValue, '')
+			,[ColorName] = Color.Name
 			,[Description] = LTRIM(RTRIM(isnull(f.DescDetail, '')))
 			,[WeaveTypeID] = isnull(f.WeaveTypeID, '')
 			,[RelaxTime] = isnull(r.Relaxtime, 0)
@@ -94,6 +96,7 @@ begin
 	inner join Cutplan c WITH (NOLOCK) on c.ID = i.CutplanID
 	left join po_supp_detail psd WITH (NOLOCK) on psd.id = id.poid and psd.seq1 = id.seq1 and psd.seq2 =id.seq2
 	left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+	left join Color WITH (NOLOCK) on psdsC.SpecValue = Color.ID and Color.BrandId = o.BrandID
 	left join Fabric f WITH (NOLOCK) on f.SCIRefno  = psd.SCIRefno
 	left join FtyInventory fi WITH (NOLOCK) on fi.POID = id.POID and fi.Seq1 = id.Seq1 and fi.Seq2 = id.Seq2 and fi.Roll = id.Roll and fi.Dyelot = id.Dyelot and id.StockType = fi.StockType
 	left join (
