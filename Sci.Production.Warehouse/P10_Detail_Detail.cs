@@ -101,7 +101,7 @@ select 0 as selected
        , c.ReturnQty
        , c.Remark
        , [Tone] = c.Tone
-       , [GMTWash] = isnull(GMTWash.val, '')
+       , [GMTWash] = c.GMTWashStatus
        , [Grade] = isnull(phy.Grade, '')
 	   , [ActualWidth] = phy.ActualWidth
        , [Relaxtime] = CONCAT(convert(int, relax.Relaxtime) ,' HRS')
@@ -111,22 +111,6 @@ inner join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psds
 inner join dbo.ftyinventory c WITH (NOLOCK) on c.poid = psd.id and c.seq1 = psd.seq1 and c.seq2 = psd.seq2 and c.stocktype = 'B'
 inner join cte d on d.Dyelot=c.Dyelot
 left join Fabric_UnrollandRelax fur on fur.Barcode = IIF(c.barcodeseq <> '',Concat (c.barcode, '-', c.barcodeseq),c.barcode )
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = c.POID and
-			ttd.Seq1 = c.Seq1 and 
-            ttd.Seq2 = c.Seq2 and
-			ttd.Dyelot = c.Dyelot and 
-            ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType and            
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 outer apply
 (
 	select 

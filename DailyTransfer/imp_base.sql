@@ -3821,17 +3821,18 @@ from Trade_To_Pms.dbo.SeasonSCI
 ------FirstSaleCostSetting---------------
 Merge Production.dbo.FirstSaleCostSetting as sr
 Using Trade_To_Pms.dbo.FirstSaleCostSetting as tsr 
-on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate
+on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate AND sr.OrderCompanyID = tsr.OrderCompany
 when matched then
       update set 
        sr.EndDate = tsr.EndDate, 
 	   sr.IsJunk = isnull(tsr.IsJunk,  0),
+       sr.OrderCompanyID = isnull(tsr.OrderCompany,0),
 	   sr.AddDate = tsr.AddDate, 
 	   sr.AddName = isnull(tsr.AddName,  ''),
 	   sr.EditDate = tsr.EditDate, 
 	   sr.EditName = isnull(tsr.EditName, '')
 when not matched by target then
-      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, AddDate, AddName, EditDate, EditName) 
+      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, OrderCompanyID, AddDate, AddName, EditDate, EditName) 
 	  values (
 		  isnull(tsr.CountryID	, '')
 		, isnull(tsr.ArtWorkID	, '')
@@ -3839,6 +3840,7 @@ when not matched by target then
 		, tsr.BeginDate	
 		, tsr.EndDate	
 		, isnull(tsr.IsJunk		, 0)
+        , isnull(tsr.OrderCompany,0)
 		, tsr.AddDate	
 		, isnull(tsr.AddName	, '')
 		, tsr.EditDate	

@@ -12,6 +12,8 @@
 	[StyleType] [varchar](6) NOT NULL,
 	[Category] [varchar](1) NOT NULL,
 	[FirstSewingOutputDate] [datetime] NULL,
+	[BIFactoryID] [varchar](8) NOT NULL,
+	[BIInsertDate] [datetime] NULL,
  CONSTRAINT [PK_P_ChangeoverCheckList] PRIMARY KEY CLUSTERED 
 (
 	[FactoryID] ASC,
@@ -60,6 +62,9 @@ GO
 ALTER TABLE [dbo].[P_ChangeoverCheckList] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_Category]  DEFAULT ('') FOR [Category]
 GO
 
+ALTER TABLE [dbo].[P_ChangeoverCheckList] ADD  CONSTRAINT [DF_P_ChangeoverCheckList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠別' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
@@ -97,4 +102,10 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單分類' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'換款後第一次產出日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList', @level2type=N'COLUMN',@level2name=N'FirstSewingOutputDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'記錄哪間工廠的資料，ex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'時間戳記，紀錄寫入table時間' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ChangeoverCheckList', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 GO

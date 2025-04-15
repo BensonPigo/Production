@@ -2928,6 +2928,8 @@
     <Build Include="dbo\Stored Procedures\usp_MutipleItemRecaculate.sql" />
     <Build Include="dbo\Stored Procedures\RecalculateSewingInlineCategory.sql" />
     <Build Include="dbo\Functions\GetFirPhysicalGrade.sql" />
+    <Build Include="dbo\Views\View_Order_Location_Top1Location.sql" />
+    <Build Include="dbo\Views\View_SewingOutput_FarmInOutDate.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

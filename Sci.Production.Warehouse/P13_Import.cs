@@ -91,7 +91,7 @@ select  selected = 0
 			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
         , [Color_SpecValue] = isnull(psdsC.SpecValue, '')
 		, [Size]= isnull(psdsS.SpecValue, '')
-        , [GMTWash] = isnull(GMTWash.val, '')
+        , [GMTWash] = c.GMTWashStatus
         , [Grade] = phy.Grade
         , [FIRemark] = c.Remark
         ,[Refno] = psd.Refno
@@ -103,22 +103,6 @@ inner join dbo.Factory on o.FactoryID = factory.ID
 left JOIN Fabric f on psd.SCIRefNo=f.SCIRefNo
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = c.PoId and
-			ttd.Seq1 = c.Seq1 and 
-            ttd.Seq2 = c.Seq2 and
-			ttd.Dyelot = c.Dyelot and 
-            ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType and
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 outer apply
 (
 	select [Grade] = isnull(Grade,'') from FIR
