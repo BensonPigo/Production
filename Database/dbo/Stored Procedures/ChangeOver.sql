@@ -137,16 +137,6 @@ BEGIN
 	delete from ChgOver_Check where not exists (select 1 from ChgOver where ChgOver.ID = ChgOver_Check.ID);
 	delete from ChgOver_Problem where not exists (select 1 from ChgOver where ChgOver.ID = ChgOver_Problem.ID);
 
-	--當Update Type = R時, 若[ChgOver_Check].[ActualDate]全為空 (條件[ChgOver_Check].ID=[ChgOver].ID)則將此筆 [ChgOver_Check] 資料刪除
-	--對應ChgOver_Check下所有資料的ActualDate都是空的才刪，若有一筆ActualDate有值則不刪
-	delete from ChgOver_Check where ID in (select c.ID
-									from ChgOver c
-									inner join ChgOver_Check cc on c.ID = cc.ID
-									where c.Type = 'R'
-									group by c.ID
-									having sum(iif(cc.ActualDate is null,0,1)) = 0
-									);
-
 	--填Category欄位值
 	;WITH CoData AS (
 		SELECT 
