@@ -8,12 +8,12 @@ begin
 	/************* 撈取 Production 資料 *************/
 	Create table #tmp(
 		[MDivisionID] [varchar](8) NOT NULL,
-		[FactoryID] [varchar](8) NOT NULL,
+		[KpiCode] [varchar](8) NOT NULL,
 		[Key] [varchar](6) NOT NULL,
 		[Halfkey] [varchar](8) NOT NULL,
 		[ArtworkTypeID] [varchar](20) NOT NULL,
-		[Capacity(CPU)] [numeric](38, 6) NOT NULL,
-		[Loading(CPU)] [numeric](38, 6) NOT NULL,
+		[CapacityCPU] [numeric](38, 6) NOT NULL,
+		[LoadingCPU] [numeric](38, 6) NOT NULL,
 		[TransferBIDate] [datetime] NULL,
 	)
 	insert into #tmp
@@ -23,22 +23,23 @@ begin
 	delete P_LoadingvsCapacity
 
 	/************* update 至 P_LoadingvsCapacity *************/
-	update p
-	set 
-	p.[MDivisionID]		= t.[MDivisionID],
-	p.[FactoryID]		= t.[KpiCode],
-	p.[Key]				= t.[Key],
-	p.[Halfkey]			= t.[Halfkey],
-	p.[ArtworkTypeID]	= t.[ArtworkTypeID],
-	p.[Capacity(CPU)]	= t.[CapacityCPU],
-	p.[Loading(CPU)]	= t.[LoadingCPU],
-	p.[TransferBIDate]	= t.[TransferBIDate]
-	from P_LoadingvsCapacity p with(nolock)
-	inner join #tmp t with(nolock) on p.[MDivisionID]	= t.[MDivisionID]	and 
-									p.[FactoryID]		= t.[KpiCode]		and
-									p.[Key]				= t.[Key]			and
-									p.[Halfkey]			= t.[Halfkey]		and
-									p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
+	--目前全山全轉邏輯，不用做update
+	--update p
+	--set 
+	--p.[MDivisionID]		= t.[MDivisionID],
+	--p.[FactoryID]		= t.[KpiCode],
+	--p.[Key]				= t.[Key],
+	--p.[Halfkey]			= t.[Halfkey],
+	--p.[ArtworkTypeID]	= t.[ArtworkTypeID],
+	--p.[Capacity(CPU)]	= t.[CapacityCPU],
+	--p.[Loading(CPU)]	= t.[LoadingCPU],
+	--p.[TransferBIDate]	= t.[TransferBIDate]
+	--from P_LoadingvsCapacity p with(nolock)
+	--inner join #tmp t with(nolock) on p.[MDivisionID]	= t.[MDivisionID]	and 
+	--								p.[FactoryID]		= t.[KpiCode]		and
+	--								p.[Key]				= t.[Key]			and
+	--								p.[Halfkey]			= t.[Halfkey]		and
+	--								p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
 	
 
 	/************* insert 至 P_LoadingvsCapacity *************/

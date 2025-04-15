@@ -48,17 +48,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(436, 12);
+            this.print.Location = new System.Drawing.Point(437, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(436, 48);
+            this.toexcel.Location = new System.Drawing.Point(437, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(436, 84);
+            this.close.Location = new System.Drawing.Point(437, 84);
             this.close.TabIndex = 8;
             // 
             // labelBuyerDelivery
@@ -127,13 +127,16 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 84);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 100;
             // 
@@ -142,6 +145,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(115, 156);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 101;

@@ -2633,12 +2633,9 @@ and s.BrandID = @brandid ", Env.User.Factory,
                 {
                     DataTable dataTable = lastLocationDT.CopyToDataTable();
                     DataRow dataRow = this.GetCurrentDataRow(this.detailgrid);
-                    int dataTable_index = this.GetDataRowIndex(dataTable, dataRow);
-                    int insert_index = dataTable_index < 0 ? 0 : dataTable_index;
-                    int i = insert_index == 0 ? insert_index + 1 : insert_index - 1;
-                    DataRow dr = dataTable.Rows[i];
+                    index = this.GetDataRowIndex(dataTable, dataRow);
+                    DataRow dr = dataTable.Rows[index];
                     location = MyUtility.Convert.GetString(dr["Location"]); // 最後一筆 Row
-                    index = insert_index;
                 }
                 else
                 {

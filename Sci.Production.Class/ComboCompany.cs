@@ -32,6 +32,7 @@ namespace Sci.Production.Class
 
         private bool? isOrderCompany = null;
         private bool? junk = null;
+        private bool isAddEmpty = false;
 
         /// <summary>
         /// 是否為訂單公司別
@@ -49,6 +50,23 @@ namespace Sci.Production.Class
             {
                 this.isOrderCompany = value;
                 this.SetSource();
+            }
+        }
+
+        /// <summary>
+        /// isAddEmpty
+        /// </summary>
+        [Category("Custom Properties")]
+        public bool IsAddEmpty
+        {
+            get
+            {
+                return this.isAddEmpty;
+            }
+
+            set
+            {
+                this.isAddEmpty = value;
             }
         }
 
@@ -106,9 +124,19 @@ ORDER BY ID ASC
                 MyUtility.Msg.ErrorBox(result.ToString());
             }
 
+            if (this.IsAddEmpty)
+            {
+                var row = dt.NewRow();
+                row["ID"] = 0;
+                row["NameEN"] = string.Empty;
+                dt.Rows.Add(row);
+                dt = dt.AsEnumerable().OrderBy(o => o["ID"]).CopyToDataTable();
+            }
+
             this.DataSource = dt;
             this.DisplayMember = "NameEN";
             this.ValueMember = "ID";
+
         }
     }
 }

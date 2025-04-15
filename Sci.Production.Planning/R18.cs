@@ -33,6 +33,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtMdivision.Enabled = false;
             this.txtMdivision.Text = Env.User.Keyword;
             this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboArtworkType, 1, 1, "HT(UA),HT(Non-UA)");

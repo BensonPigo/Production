@@ -407,6 +407,7 @@ CREATE TABLE #APSColumnGroup (
 	[StyleUkey] bigint null,
     INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
+
 insert into #APSColumnGroup
 select
 APSNo,
@@ -1242,7 +1243,8 @@ declare  @APSResult TABLE(
 	StyleSeason NVARCHAR(MAX),
 	StyleUkey NVARCHAR(500),
 	[AddDate] [date] NULL,
-	[EditDate] [date] NULL
+	[EditDate] [date] NULL,
+	[InlineCategoryCumulate] int
 )
 
 --計算這一天的標準產量
@@ -2272,11 +2274,33 @@ select distinct
 	apm.AddDate,
 	apm.EditDate,
     factory.LastDownloadAPSDate,
-	[SewingInlineCategory] = ''
+	[SewingInlineCategory] = iif(InlineCategory.val = '00005',
+								 cast('' as varchar(50)),
+								 (select CONCAT(InlineCategory.val, '-' + SR.Description) from SewingReason sr where sr.ID = InlineCategory.val and sr.Type='IC'))
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category
 outer apply (select fac.LastDownloadAPSDate from factory fac where fac.id = (select f.KPICode from factory f where f.id = apm.FactoryID)) factory
+outer apply ( 
+			 select top 1 val = sod .InlineCategoryCumulate 
+			 from dbo.SewingOutput so 
+			 inner join dbo.SewingOutput_Detail sod on so.ID = sod.ID
+			 inner join dbo.Orders o on sod.OrderID = o.ID and o.StyleID in (Select Data From dbo.SplitString(apm.Style,','))
+			 where apm.SewingDay = so.OutputDate and apm.SewingLineID= so.SewingLineID and apm.FactoryID=so.FactoryID
+) as InlineCategoryCumulate
+outer apply ( 
+			 select case when apm.Category = 'S' then '00005'
+							when apm.StyleCount > 1 then '00001' 
+							else
+							case
+							when InlineCategoryCumulate.val > 29 THEN '00004'
+							when InlineCategoryCumulate.val > 14 THEN '00003'
+							when InlineCategoryCumulate.val > 3 THEN '00002'
+							else '00001'
+							END
+						end as val
+) as InlineCategory
+
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用

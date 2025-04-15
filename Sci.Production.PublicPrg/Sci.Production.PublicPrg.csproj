@@ -258,6 +258,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_RTLStatusByDay.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ScanPackList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_DailyOutputStatusRecord.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_SewingDailyOutput.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_SimilarStyle.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_BatchUpdateRecevingInfoTrackingList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_QAR31.cs" />

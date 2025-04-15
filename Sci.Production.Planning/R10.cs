@@ -64,7 +64,7 @@ namespace Sci.Production.Planning
             this.InitializeComponent();
             this.EditMode = true;
             this.print.Visible = false;
-            this.txtMDivision.Text = Env.User.Keyword;
+            this.txtMDivision.Enabled = false;
         }
 
         /// <inheritdoc/>

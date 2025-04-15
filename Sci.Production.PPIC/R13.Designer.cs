@@ -161,13 +161,16 @@
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
             this.txtFactory.BoolFtyGroupList = true;
-            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.FilteMDivision = true;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtFactory.IsIE = false;
+            this.txtFactory.IsMultiselect = false;
             this.txtFactory.IsProduceFty = true;
             this.txtFactory.IssupportJunk = false;
             this.txtFactory.Location = new System.Drawing.Point(125, 125);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
+            this.txtFactory.NeedInitialFactory = false;
             this.txtFactory.Size = new System.Drawing.Size(66, 23);
             this.txtFactory.TabIndex = 3;
             // 
@@ -176,6 +179,7 @@
             this.txtBrand.BackColor = System.Drawing.Color.White;
             this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBrand.Location = new System.Drawing.Point(125, 164);
+            this.txtBrand.MyDocumentdName = null;
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(66, 23);
             this.txtBrand.TabIndex = 4;
@@ -183,9 +187,11 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(125, 88);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 2;
             // 

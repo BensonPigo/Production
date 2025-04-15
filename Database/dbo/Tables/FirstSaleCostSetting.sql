@@ -5,11 +5,12 @@
     [BeginDate]  DATE         NOT NULL,
     [EndDate]    DATE         NOT NULL,
     [IsJunk]     BIT          CONSTRAINT [DF_FirstSaleCostSetting_IsJunk] DEFAULT ((0)) NOT NULL,
+    [OrderCompanyID] NUMERIC(2,0) CONSTRAINT [DF_FirstSaleCostSetting_OrderCompanyID] DEFAULT ((0)) NOT NULL,
     [AddDate]    DATETIME     NULL,
     [AddName]    VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_AddName] DEFAULT ('') NOT NULL,
     [EditDate]   DATETIME     NULL,
     [EditName]   VARCHAR (10) CONSTRAINT [DF_FirstSaleCostSetting_EditName] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED ([CountryID] ASC, [ArtWorkID] ASC, [CostTypeID] ASC, [BeginDate] ASC)
+    CONSTRAINT [PK_FirstSaleCostSetting] PRIMARY KEY CLUSTERED ([CountryID] ASC, [ArtWorkID] ASC, [CostTypeID] ASC, [BeginDate] ASC,[OrderCompanyID] ASC)
 );
 
 
@@ -32,6 +33,9 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'迄止日' , @
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'取消' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'FirstSaleCostSetting', @level2type=N'COLUMN',@level2name=N'IsJunk'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'OrderCompanyID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'FirstSaleCostSetting', @level2type=N'COLUMN',@level2name=N'OrderCompanyID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'新增日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'FirstSaleCostSetting', @level2type=N'COLUMN',@level2name=N'AddDate'

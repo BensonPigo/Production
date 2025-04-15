@@ -46,16 +46,16 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(663, 4);
+            this.print.Location = new System.Drawing.Point(556, 9);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(663, 40);
+            this.toexcel.Location = new System.Drawing.Point(556, 45);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(663, 76);
+            this.close.Location = new System.Drawing.Point(556, 81);
             // 
             // buttonCustomized
             // 
@@ -189,9 +189,11 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(111, 110);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 110;
             // 
@@ -199,14 +201,16 @@
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
             this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
             this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = false;
             this.txtfactory.Location = new System.Drawing.Point(111, 147);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 111;
             // 
@@ -227,7 +231,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(748, 278);
+            this.ClientSize = new System.Drawing.Size(648, 278);
             this.Controls.Add(this.cbIncludeCencelOrder);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtMdivision);

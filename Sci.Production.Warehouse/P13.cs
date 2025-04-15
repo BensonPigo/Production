@@ -995,7 +995,7 @@ select  o.FtyGroup
 			,IIF( psd.SuppColor = '' or psd.SuppColor is null,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')),psd.SuppColor)
 			,dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue, '')))
 		, [Size]= isnull(psdsS.SpecValue, '')
-        , [GMTWash] = isnull(GMTWash.val, '')
+        , [GMTWash] = c.GMTWashStatus
         , [FtyInventoryUkey] = c.Ukey
         , [MCHandle] = (select IdAndName from dbo.GetPassName(o.MCHandle))
 from dbo.issue_detail as a WITH (NOLOCK) 
@@ -1007,22 +1007,6 @@ left join PO_Supp p WITH (NOLOCK) on p.ID = psd.ID and psd.seq1 = p.SEQ1
 left join dbo.ftyinventory c WITH (NOLOCK) on c.poid = a.poid and c.seq1 = a.seq1 and c.seq2  = a.seq2 
     and c.stocktype = 'B' and c.roll=a.roll and a.Dyelot = c.Dyelot
 left join fabric f with(nolock) on f.SCIRefno = psd.SCIRefno
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on sr.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = c.PoId and
-			ttd.Seq1 = c.Seq1 and 
-            ttd.Seq2 = c.Seq2 and
-			ttd.Dyelot = c.Dyelot and 
-            ttd.Roll = c.Roll and
-			ttd.StockType = c.StockType and
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 Where a.id = '{masterID}'
 ";
 

@@ -31,6 +31,18 @@ namespace Sci.Production.PublicPrg
         #endregion
 
         /// <summary>
+        /// Is SubconFarmInOutfromSewOutput
+        /// </summary>
+        /// <param name="artworktypeID">artworktypeID</param>
+        /// <returns>bool</returns>
+        public static bool IsSubconFarmInOutfromSewOutput(string artworktypeID)
+        {
+            string sqlCmd = $"select 1 from ArtworkType with (nolock) where ID = '{artworktypeID}' and SubconFarmInOutfromSewOutput = 1";
+
+            return MyUtility.Check.Seek(sqlCmd);
+        }
+
+        /// <summary>
         /// CheckNeedPlanningP03Quote
         /// </summary>
         /// <param name="artworktypeID">artworktypeID</param>

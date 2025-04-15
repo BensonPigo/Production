@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelSeason = new Sci.Win.UI.Label();
@@ -37,8 +38,6 @@
             this.labelCategory = new Sci.Win.UI.Label();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.checkBulk = new Sci.Win.UI.CheckBox();
             this.checkSample = new Sci.Win.UI.CheckBox();
             this.checkMaterial = new Sci.Win.UI.CheckBox();
@@ -48,6 +47,8 @@
             this.checkGarment = new Sci.Win.UI.CheckBox();
             this.checkSMTL = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -165,30 +166,6 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(227, 23);
             this.dateSCIDelivery.TabIndex = 2;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(119, 126);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 13;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(119, 154);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(66, 24);
-            this.comboFactory.TabIndex = 14;
-            // 
             // checkBulk
             // 
             this.checkBulk.AutoSize = true;
@@ -256,6 +233,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(119, 97);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(98, 23);
             this.txtbrand.TabIndex = 10;
@@ -297,9 +275,37 @@
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(118, 155);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(67, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(118, 126);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 564;
+            // 
             // R12
             // 
             this.ClientSize = new System.Drawing.Size(587, 266);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.checkSMTL);
             this.Controls.Add(this.checkGarment);
@@ -309,8 +315,6 @@
             this.Controls.Add(this.checkMaterial);
             this.Controls.Add(this.checkSample);
             this.Controls.Add(this.checkBulk);
-            this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateSCIDelivery);
             this.Controls.Add(this.dateBuyerDelivery);
             this.Controls.Add(this.labelCategory);
@@ -341,8 +345,6 @@
             this.Controls.SetChildIndex(this.labelCategory, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.checkBulk, 0);
             this.Controls.SetChildIndex(this.checkSample, 0);
             this.Controls.SetChildIndex(this.checkMaterial, 0);
@@ -352,6 +354,8 @@
             this.Controls.SetChildIndex(this.checkGarment, 0);
             this.Controls.SetChildIndex(this.checkSMTL, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -368,8 +372,6 @@
         private Win.UI.Label labelCategory;
         private Win.UI.DateRange dateBuyerDelivery;
         private Win.UI.DateRange dateSCIDelivery;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.CheckBox checkBulk;
         private Win.UI.CheckBox checkSample;
         private Win.UI.CheckBox checkMaterial;
@@ -379,5 +381,7 @@
         private Win.UI.CheckBox checkGarment;
         private Win.UI.CheckBox checkSMTL;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }
