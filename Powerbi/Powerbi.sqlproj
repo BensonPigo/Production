@@ -266,6 +266,8 @@
     <Build Include="dbo\Tables\P_ESG_Injury.sql" />
     <Build Include="dbo\Tables\P_CMPByDate.sql" />
     <Build Include="dbo\Stored Procedures\FTY\P_Import_ProdEffAnalysis.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList_Detail_Histroy.sql" />
+    <Build Include="dbo\Tables\P_ChangeoverCheckList_Histroy.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

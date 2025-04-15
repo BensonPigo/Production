@@ -81,6 +81,8 @@ namespace Sci.Production.IE
             }
 
             this.printData[0] = result.Dt;
+            this.printData[0].Columns.Remove("BIFactoryID");
+            this.printData[0].Columns.Remove("BIInsertDate");
 
             result = biModel.GetIE_R22_Detail(this.model);
             if (!result.Result)
@@ -89,6 +91,8 @@ namespace Sci.Production.IE
             }
 
             this.printData[1] = result.Dt;
+            this.printData[1].Columns.Remove("BIFactoryID");
+            this.printData[1].Columns.Remove("BIInsertDate");
             return result.Result;
         }
 
