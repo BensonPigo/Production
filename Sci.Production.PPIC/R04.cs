@@ -237,7 +237,7 @@ order by MDivisionID,FactoryID",
             // 填各工廠的明細資料
             string xlsFactory = string.Empty;
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 19];
+            object[,] objArray = new object[1, 20];
             foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
@@ -280,8 +280,9 @@ order by MDivisionID,FactoryID",
                 objArray[0, 16] = dr["Description"];
                 objArray[0, 17] = dr["OnTime"];
                 objArray[0, 18] = dr["Remark"];
+                objArray[0, 19] = dr["DetailRemark"];
 
-                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

@@ -88,6 +88,7 @@ SET
     ,t.[Description] = s.[Description]
     ,t.[OnTime] = s.[OnTime]
     ,t.[Remark] = s.[Remark]
+    ,t.[DetailRemark] = s.[DetailRemark]
 from P_FabricStatus_And_IssueFabricTracking t 
 inner join #tmp s on t.ReplacementID = s.ID 
 AND t.SP = s.OrderID 
@@ -102,6 +103,7 @@ insert into P_FabricStatus_And_IssueFabricTracking (
     ,[NoOfPcsRejected]      ,[RequestQtyYrds]      ,[IssueQtyYrds]
     ,[ReplacementFinishedDate]      ,[Type]
     ,[Process]      ,[Description]      ,[OnTime]      ,[Remark]
+    ,[DetailRemark]
 )
 select 	s.[SewingCell]      ,s.[SewingLineID]    ,s.[ID] ,s.[Department]
 		  ,s.[StyleID]    ,s.[OrderID]     ,s.[Seq]      ,s.[FabricType]
@@ -109,6 +111,7 @@ select 	s.[SewingCell]      ,s.[SewingLineID]    ,s.[ID] ,s.[Department]
 		  ,s.[RejectQty]      ,s.[RequestQty]      ,s.[IssueQty]
 		  ,s.[FinishedDate]      ,s.[Type]
 		  ,s.[Process]      ,s.[Description]  ,s.[OnTime]      ,s.[Remark]
+        ,s.[DetailRemark]
 from #tmp s
 where not exists (
     select 1 from P_FabricStatus_And_IssueFabricTracking t 
