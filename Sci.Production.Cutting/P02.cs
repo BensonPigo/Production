@@ -215,7 +215,7 @@ ORDER BY {this.detailSort}
             string cmdsql = $@"
 Select a.MarkerName,a.ColorID,a.Order_EachconsUkey
 	,layer = isnull(sum(a.layer),0)
-    ,TotalLayerUkey =             
+    ,TotalLayer_byOrder_EachCons =             
     (
         Select isnull(sum(c.layer),0) as TL
 	    from Order_EachCons b WITH (NOLOCK) 
@@ -422,7 +422,7 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
                 Total Layer計算方式
                 根據CurrentDetailData的Order_EachconsUkey 判斷
                 1. Order_EachconsUkey 為空 => 使用 TotalLayerMarker
-                2. Order_EachconsUkey 不為空 => 使用 TotalLayerUkey
+                2. Order_EachconsUkey 不為空 => 使用 TotalLayer_byOrder_EachCons
 
                 Balance Layer計算方式
                 群組加總"當前"WorkOrderForPlanning表身的 Layer 欄位，根據CurrentDetailData的Order_EachconsUkey 判斷群組條件
@@ -460,7 +460,7 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
                 }
                 else
                 {
-                    decimal totalLayer = (decimal)laydr[0]["TotalLayerMarker"];
+                    decimal totalLayer = (decimal)laydr[0]["TotalLayer_byOrder_EachCons"];
 
                     this.numTotalLayer.Value = totalLayer;
                     this.numBalanceLayer.Value = sumlayer - totalLayer;
