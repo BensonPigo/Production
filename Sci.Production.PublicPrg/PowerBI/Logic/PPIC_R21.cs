@@ -33,7 +33,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             string sqlWhere = string.Empty;
             string sqlMdWhere = string.Empty;
-			string sqlPKAuditWhere = string.Empty;
+            string sqlPKAuditWhere = string.Empty;
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -413,7 +413,11 @@ select distinct [KPIGroup] = f.KPICode
 					and CTNJokerTagTime.val is null
 					and CTNHeatSealTime.val is null
 					and pld.ScanEditDate  is null 
-					and pld.TransferDate is null 
+					and pld.TransferDate is null
+					and DryRoomReceiveTime.val is null
+					and DryRoomTransferTime.val is null
+					and TransferToPackingErrorTime.val is null
+					and ConfirmPackingErrorReviseTime.val is null
 					then 'Fty'
 			when pld.TransferDate is null and 
 				((ClogReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
@@ -422,7 +426,11 @@ select distinct [KPIGroup] = f.KPICode
 				and ClogReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
 				and ClogReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
 				and ClogReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
-				and ClogReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')) 
+				and ClogReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(ConfirmPackingErrorReviseTime.val, '19710101'))
 				or 
 				(CFAReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 				and CFAReturnTime.val >= isnull(M360MDScanTime.val, '19710101')
@@ -430,39 +438,59 @@ select distinct [KPIGroup] = f.KPICode
 				and CFAReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
 				and CFAReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
 				and CFAReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
-				and CFAReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')))
+				and CFAReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(ConfirmPackingErrorReviseTime.val, '19710101')))
 					then 'Fty'
 			when pld.TransferDate is null 
 					and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and HaulingScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and HaulingScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and HaulingScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and HaulingScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')					
+					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Hauling'
 			when pld.TransferDate is null 
 					and PackingAuditScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Packing Audit'
 			when pld.TransferDate is null 
 					and M360MDScanTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and M360MDScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and M360MDScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and M360MDScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and M360MDScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and M360MDScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and M360MDScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and M360MDScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')					
+					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'M360 MD'
 			when pld.TransferDate is null 
 					and CTNHangerPackTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and CTNHangerPackTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and CTNHangerPackTime.val >= isnull(M360MDScanTime.val, '19710101') 
 					and CTNHangerPackTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Hanger Pack'
 			when pld.TransferDate is null 
 					and CTNJokerTagTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
@@ -470,23 +498,83 @@ select distinct [KPIGroup] = f.KPICode
 					and CTNJokerTagTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and CTNJokerTagTime.val >= isnull(M360MDScanTime.val, '19710101') 
 					and CTNJokerTagTime.val > isnull(CTNHeatSealTime.val, '19710101')
-					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNJokerTagTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Joker Tag'
 			when pld.TransferDate is null 
 					and CTNHeatSealTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(HaulingScanTime.val, '19710101') 
-					and CTNHeatSealTime.val >= isnull(M360MDScanTime.val, '19710101') 
-					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNHeatSealTime.val >= isnull(M360MDScanTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Heat Seal'
+			when pld.TransferDate is null 
+					and DryRoomReceiveTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Dry Room Receive'
+			when pld.TransferDate is null 
+					and DryRoomTransferTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and DryRoomTransferTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Dry Room Transfer'
+			when pld.TransferDate is null 
+					and TransferToPackingErrorTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and TransferToPackingErrorTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and TransferToPackingErrorTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+					and TransferToPackingErrorTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and TransferToPackingErrorTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Transfer To Packing Error'
+			when pld.TransferDate is null 
+					and ConfirmPackingErrorReviseTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Confirm Packing Error Revise'
 			when pld.TransferDate is null 
 					and pld.ScanEditDate >= isnull(PackingAuditScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(HaulingScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(M360MDScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(CTNHangerPackTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(CTNJokerTagTime.val, '19710101') 
-					and pld.ScanEditDate >= isnull(CTNHeatSealTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(CTNHeatSealTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(DryRoomReceiveTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(DryRoomTransferTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(TransferToPackingErrorTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(ConfirmPackingErrorReviseTime.val, '19710101')
 					then 'Scan & Pack'
 			when pld.TransferDate is not null and
 				((ClogReceiveTime.val >= isnull(FtyTransferToClogTime.val, '19710101')
