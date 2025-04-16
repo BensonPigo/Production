@@ -249,7 +249,7 @@ Where 1 = 1
 		, BomTypeColorID, BomTypeSize, BomTypeSizeUnit, BomTypeZipperInsert, BomTypeArticle, BomTypeCOO, BomTypeGender, BomTypeCustomerSize
 		, BomTypeDecLabelSize, BomTypeBrandFactoryCode, BomTypeStyle, BomTypeStyleLocation, BomTypeSeason, BomTypeCareCode, BomTypeCustomerPO
         , BomTypeBuyMonth, BomTypeBuyerDlvMonth)
-    exec dbo.sp_GetBOAExpend_NEW @POID, 0, 1, 0, @Tmp_Order_Qty, 0, 0, 1
+    exec dbo.sp_GetBOAExpend_NEW @POID, 0, 1, 1, @Tmp_Order_Qty, 0, 0, 1
 
     Select * 
     from #Tmp_BoaExpend
