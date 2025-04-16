@@ -268,18 +268,23 @@ outer apply(
 	select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
 	,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
 outer apply(
-	select CPU = sum(ot.TMS) 
+	select CPU = sum(ot.TMS/1400) 
 	from Order_TmsCost ot with (nolock)
 	left join ArtworkType on ot.ArtworkTypeID = ArtworkType.ID
 	where ot.ID = sd.OrderID and ArtworkType.IsTtlTMS  = 1
 	group by ot.ID
 ) as totalTMS
 outer apply(
-	select [Sewing CPU (Contract CFM date)] = iif(s.Status = 'Confirmed',totalTMS.CPU*(ol.Rate/100),0)
+    select sum(sdt.TMS/1400) as totalCPU
+    from SubconOutContract_Detail_TMSCost sdt
+    where sd.SubConOutFty = sdt.SubConOutFty and sd.ContractNumber = sdt.ContractNumber and sd.OrderId = sdt.OrderId and sdt.ArtworkTypeID = 'Sewing'
+    group by sdt.SubConOutFty,sdt.ContractNumber,sdt.OrderId
+)totalSewingCPU
+outer apply(
+	select [Sewing CPU (Contract CFM date)] = iif(s.Status = 'Confirmed',totalSewingCPU.totalCPU*(ol.Rate/100),0)
 	from SubconOutContract_Detail_TMSCost sdt
 	left join Order_Location ol on ol.OrderId = sd.OrderId and ol.Location = sd.ComboType
-	where sd.SubConOutFty = sdt.SubConOutFty and sd.ContractNumber = sdt.ContractNumber and sd.OrderId = sdt.OrderId 
-			and sdt.ArtworkTypeID = 'Sewing'
+	where sd.SubConOutFty = sdt.SubConOutFty and sd.ContractNumber = sdt.ContractNumber and sd.OrderId = sdt.OrderId and sdt.ArtworkTypeID = 'Sewing'
 ) as sCPU
 outer apply(
 	SELECT 
