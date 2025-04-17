@@ -58,6 +58,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+                else
+                {
+                    new Base().UpdateBIData("P_InlineDefectSummary", true);
+                    new Base().UpdateBIData("P_InlineDefectDetail", true);
+                }
 
                 finalResult.Result = new Ict.DualResult(true);
             }
@@ -199,7 +204,7 @@ select
 from #tmpSummy t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
-                        sql += new Base().SqlBITableInfo("P_InlineDefectSummary", true);
+
                         if (!result.Result)
                         {
                             throw result.GetException();
@@ -260,7 +265,7 @@ select
 From #tmpDetail t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
-                        sql += new Base().SqlBITableInfo("P_InlineDefectDetail", true);
+
                         if (!result.Result)
                         {
                             throw result.GetException();
