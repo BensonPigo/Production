@@ -181,8 +181,8 @@ WHERE o.ID= @ID
                     new List<SqlParameter> { new SqlParameter("@ID", this.poID) },
                     out dr,
                     null);
-                var picturePath = DBProxy.Current.LookupEx<string>("SELECT PicturePath FROM Trade.dbo.TradeSystem").ExtendedData;
-                var fabricPath = DBProxy.Current.LookupEx<string>("SELECT FarbicPath FROM Trade.dbo.TradeSystem").ExtendedData;
+                var picturePath = DBProxy.Current.LookupEx<string>("SELECT iif (isnull(TrimCardPath,'') = '' , '', TrimCardPath + '\\STYLEPICTURES') FROM dbo.System").ExtendedData;
+                var fabricPath = DBProxy.Current.LookupEx<string>("SELECT iif (isnull(TrimCardPath,'') = '' , '', TrimCardPath + '\\FABRIC') FROM dbo.System").ExtendedData;
                 if (!res)
                 {
                     this.ShowErr("Get data fail.");
@@ -223,7 +223,7 @@ WHERE o.ID= @ID
                     sheetCover.Range["B12"].Value = dr["FactoryID"].ToString();
                     sheetCover.Range["B13"].Value = dr["ID"].ToString();
 
-                    if (string.IsNullOrWhiteSpace(dr["Picture1"].ToString()) == false && picturePath != null)
+                    if (string.IsNullOrWhiteSpace(dr["Picture1"].ToString()) == false && !picturePath.IsNullOrWhiteSpace())
                     {
                         var imgpath = System.IO.Path.Combine(picturePath, dr["Picture1"].ToString());
                         if (System.IO.File.Exists(imgpath))
@@ -240,8 +240,9 @@ WHERE o.ID= @ID
                         }
                     }
 
-                    if (string.IsNullOrWhiteSpace(dr["Picture2"].ToString()) == false && picturePath != null)
+                    if (string.IsNullOrWhiteSpace(dr["Picture2"].ToString()) == false && !picturePath.IsNullOrWhiteSpace())
                     {
+                        picturePath = picturePath + "\\STYLEPICTURES";
                         var imgpath = System.IO.Path.Combine(picturePath, dr["Picture2"].ToString());
                         if (System.IO.File.Exists(imgpath))
                         {
