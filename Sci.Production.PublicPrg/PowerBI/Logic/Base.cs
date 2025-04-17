@@ -519,7 +519,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 case ListName.P_ESG_Injury:
                     return new P_Import_ESG_Injury().P_ESG_Injury(item.SDate, item.EDate);
                 case ListName.P_CMPByDate:
-                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate, ListName.P_CMPByDate.ToString());
+                    return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
                 case ListName.P_LoadingProductionOutput:
                     return new P_Import_LoadingProductionOutput().P_LoadingProductionOutput(item.SDate);
                 case ListName.P_DQSDefect_Summary:
