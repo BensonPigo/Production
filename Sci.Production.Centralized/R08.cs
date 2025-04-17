@@ -12,6 +12,7 @@ using System.Linq;
 using System.Data.SqlClient;
 using Excel = Microsoft.Office.Interop.Excel;
 using System.Reflection;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Centralized
 {
@@ -104,17 +105,8 @@ namespace Sci.Production.Centralized
 
             #region --由Factory.PmsPath抓各個連線路徑
             this.SetLoadingText("Load connections... ");
-            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>();
-            foreach (string ss in strSevers)
-            {
-                if (!MyUtility.Check.Empty(ss))
-                {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                    connectionString.Add(connections);
-                }
-            }
+
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
 
             if (connectionString == null || connectionString.Count == 0)
             {
@@ -250,20 +242,7 @@ namespace Sci.Production.Centralized
             StringBuilder cmd = this.GetSqlCmd();
 
             #region --由Factory.PmsPath抓各個連線路徑
-            //this.ShowWaitMessage("Load connections... ");
-            XDocument docx = XDocument.Load(System.Windows.Forms.Application.ExecutablePath + ".config");
-            string[] strSevers = ConfigurationManager.AppSettings["ServerMatchFactory"].Split(new char[] { ';' });
-            List<string> connectionString = new List<string>();
-            foreach (string ss in strSevers)
-            {
-                if (!MyUtility.Check.Empty(ss))
-                {
-                    var connections = docx.Descendants("modules").Elements().Where(y => y.FirstAttribute.Value.Contains(ss.Split(new char[] { ':' })[0].ToString())).Descendants("connectionStrings").Elements().Where(x => x.FirstAttribute.Value.Contains("Production")).Select(z => z.LastAttribute.Value).ToList()[0].ToString();
-                    connectionString.Add(connections);
-                }
-            }
-
-            //this.HideWaitMessage();
+            List<string> connectionString = CentralizedClass.AllFactoryConnectionString();
             if (connectionString == null || connectionString.Count == 0)
             {
                 return new DualResult(false, "no connection loaded.");
