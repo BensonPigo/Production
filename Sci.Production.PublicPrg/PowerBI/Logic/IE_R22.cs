@@ -173,7 +173,9 @@ SELECT Distinct
     [CheckListItem] = colb.CheckList,
     [LateReason] = cc.Remark,
     [Deadline] = CC.Deadline,
-    [Completed in Time] = iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), '')
+    [Completed in Time] = iif(isnull(CC.CompletionDate,'') != '', iif(CC.CompletionDate > CC.Deadline, 'Fail', 'Pass'), ''),
+    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+    [BIInsertDate] = GETDATE()
 FROM ChgOver_Check CC WITH (NOLOCK)
 INNER JOIN ChgOver co WITH (NOLOCK) ON CC.ID = co.ID
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
