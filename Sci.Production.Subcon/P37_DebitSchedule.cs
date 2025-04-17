@@ -3,6 +3,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using Ict.Win;
+using Sci.Production.Class.Command;
 
 namespace Sci.Production.Subcon
 {
@@ -14,6 +15,8 @@ namespace Sci.Production.Subcon
         private bool _isTaipeiDBC;
         private string _CurrencyID;
         private string _TaipeiCurrencyID;
+
+        private bool _isHandlingValidation = false;
 
         public P37_DebitSchedule(bool canedit, string keyvalue1, string keyvalue2, string keyvalue3, DataRow master, string fromFuncton, bool isTaipeiDBC = true)
             : base(canedit, keyvalue1, keyvalue2, keyvalue3)
@@ -35,46 +38,83 @@ namespace Sci.Production.Subcon
         protected override bool OnGridSetup()
         {
             DataGridViewGeneratorNumericColumnSettings amountSetting = new DataGridViewGeneratorNumericColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings badDebtSetting = new DataGridViewGeneratorCheckBoxColumnSettings();
 
-            amountSetting.CellValidating += (s, e) =>
-             {
-                 if (this.EditMode)
-                 {
-                     DataTable dt = (DataTable)this.gridbs.DataSource;
-                     DataRow currDr = dt.Rows[e.RowIndex];
-                     currDr["amount"] = e.FormattedValue;
-
-                     decimal ttl = 0;
-                     foreach (DataRow dr in dt.Rows)
-                     {
-                         ttl += MyUtility.Check.Empty(dr["amount"]) ? 0 : Convert.ToDecimal(dr["amount"]);
-                     }
-
-                     this.numericBoxTotal.Text = ttl.ToString();
-                 }
-             };
-
-            this.grid.CellBeginEdit += (s, e) =>
+            amountSetting.CellValidating += (sender, args) =>
             {
-                int colVoucherid = this.grid.Columns["voucherid"].Index;
-                int colBadDebit = this.grid.Columns["BadDebit"].Index;
+                if (this.EditMode)
+                {
+                    DataTable dt = (DataTable)this.gridbs.DataSource;
+                    DataRow currDr = dt.Rows[args.RowIndex];
+                    currDr["amount"] = args.FormattedValue;
 
-                DataGridViewRow row = this.grid.Rows[e.RowIndex];
+                    decimal ttl = 0;
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        ttl += MyUtility.Check.Empty(dr["amount"]) ? 0 : Convert.ToDecimal(dr["amount"]);
+                    }
+
+                    this.numericBoxTotal.Text = ttl.ToString();
+                }
+            };
+
+            badDebtSetting.CellValidating += (sender, args) =>
+            {
+                if (_isHandlingValidation) return;
+                _isHandlingValidation = true;
+
+                try
+                {
+                    if (this.EditMode)
+                    {
+                        DataGridViewRow row = this.grid.Rows[args.RowIndex];
+                        int colVoucherid = this.grid.Columns["voucherid"].Index;
+                        int colBadDebt = this.grid.Columns["BadDebt"].Index;
+                        bool check = row.Cells[0].Value != null && row.Cells[0].Value != DBNull.Value && row.Cells[0].Value.ToString().ToLower() == "true";
+
+                        if (row.Cells[colVoucherid].Value != null && !string.IsNullOrWhiteSpace(row.Cells[colVoucherid].Value.ToString()))
+                        {
+                            row.Cells[colBadDebt].ReadOnly = true;
+                            row.Cells[colBadDebt].Style.BackColor = Color.LightGray;
+                        }
+                        else
+                        {
+                            row.Cells[colBadDebt].ReadOnly = false;
+                            row.Cells[colBadDebt].Style.BackColor = Color.White;
+                        }
+
+                        row.Cells[0].Value = check;
+                    }
+                }
+                finally
+                {
+                    _isHandlingValidation = false;
+                }
+            };
+
+            this.grid.CellClick += (sender, args) =>
+            {
+                if (args.RowIndex < 0 || args.RowIndex >= this.grid.Rows.Count) return;
+
+                int colVoucherid = this.grid.Columns["voucherid"].Index;
+                int colBadDebt = this.grid.Columns["BadDebt"].Index;
+
+                DataGridViewRow row = this.grid.Rows[args.RowIndex];
 
                 if (row.Cells[colVoucherid].Value != null && !string.IsNullOrWhiteSpace(row.Cells[colVoucherid].Value.ToString()))
                 {
-                    row.Cells[colBadDebit].ReadOnly = true;
-                    row.Cells[colBadDebit].Style.BackColor = Color.LightGray;
+                    row.Cells[colBadDebt].ReadOnly = true;
+                    row.Cells[colBadDebt].Style.BackColor = Color.LightGray;
                 }
                 else
                 {
-                    row.Cells[colBadDebit].ReadOnly = false;
-                    row.Cells[colBadDebit].Style.BackColor = Color.White;
+                    row.Cells[colBadDebt].ReadOnly = false;
+                    row.Cells[colBadDebt].Style.BackColor = Color.White;
                 }
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("BadDebit", header: "Bad Debit", width: Widths.AnsiChars(10))
+                .CheckBox("BadDebt", header: "Bad Debit", width: Widths.AnsiChars(10), settings: badDebtSetting)
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
                 .Text("CurrencyID", header: "Debit Currency", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2, settings: amountSetting)
@@ -84,14 +124,15 @@ namespace Sci.Production.Subcon
                 .DateTime("addDate", header: "Create Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
                 .Text("addName", header: "Create Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .DateTime("editDate", header: "Edit Date", width: Widths.AnsiChars(20), iseditingreadonly: true, format: DataGridViewDateTimeFormat.yyyyMMddHHmmss)
-                .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true)
-                ;
+                .Text("editName", header: "Edit Name", width: Widths.AnsiChars(10), iseditingreadonly: true);
 
             if (this._FromFuncton == "P36")
             {
                 this.grid.Columns["issuedate"].DefaultCellStyle.BackColor = Color.Pink;
                 this.grid.Columns["amount"].DefaultCellStyle.BackColor = Color.Pink;
             }
+
+            this.grid.Columns.DisableSortable();
 
             return true;
         }
