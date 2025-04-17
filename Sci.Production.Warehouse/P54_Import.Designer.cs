@@ -44,6 +44,8 @@
             this.txtSP = new Sci.Win.UI.TextBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label1 = new Sci.Win.UI.Label();
+            this.comboBoxStockType = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -84,7 +86,7 @@
             this.grid1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.grid1.ShowCellToolTips = false;
             this.grid1.Size = new System.Drawing.Size(838, 428);
-            this.grid1.TabIndex = 24;
+            this.grid1.TabIndex = 5;
             this.grid1.TabStop = false;
             // 
             // groupBox2
@@ -124,7 +126,7 @@
             this.btnCancel.Location = new System.Drawing.Point(742, 15);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(90, 30);
-            this.btnCancel.TabIndex = 1;
+            this.btnCancel.TabIndex = 7;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
@@ -136,13 +138,15 @@
             this.btnImport.Location = new System.Drawing.Point(646, 16);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(90, 30);
-            this.btnImport.TabIndex = 0;
+            this.btnImport.TabIndex = 6;
             this.btnImport.Text = "Import";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.BtnImport_Click);
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBoxStockType);
+            this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.txtRefno);
             this.groupBox1.Controls.Add(this.labFabricType);
             this.groupBox1.Controls.Add(this.txtSeq1);
@@ -160,14 +164,14 @@
             // 
             this.txtRefno.BackColor = System.Drawing.Color.White;
             this.txtRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefno.Location = new System.Drawing.Point(375, 19);
+            this.txtRefno.Location = new System.Drawing.Point(563, 19);
             this.txtRefno.Name = "txtRefno";
             this.txtRefno.Size = new System.Drawing.Size(122, 23);
-            this.txtRefno.TabIndex = 6;
+            this.txtRefno.TabIndex = 3;
             // 
             // labFabricType
             // 
-            this.labFabricType.Location = new System.Drawing.Point(323, 19);
+            this.labFabricType.Location = new System.Drawing.Point(511, 19);
             this.labFabricType.Name = "labFabricType";
             this.labFabricType.Size = new System.Drawing.Size(49, 23);
             this.labFabricType.TabIndex = 5;
@@ -190,7 +194,7 @@
             this.btnFindNow.Location = new System.Drawing.Point(699, 15);
             this.btnFindNow.Name = "btnFindNow";
             this.btnFindNow.Size = new System.Drawing.Size(101, 30);
-            this.btnFindNow.TabIndex = 3;
+            this.btnFindNow.TabIndex = 4;
             this.btnFindNow.Text = "Find Now";
             this.btnFindNow.UseVisualStyleBackColor = true;
             this.btnFindNow.Click += new System.EventHandler(this.BtnFindNow_Click);
@@ -213,6 +217,26 @@
             this.labelSPNo.TabIndex = 4;
             this.labelSPNo.Text = "SP#";
             this.labelSPNo.TextStyle.Color = System.Drawing.Color.Black;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(310, 19);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(74, 23);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Stock Type";
+            // 
+            // comboBoxStockType
+            // 
+            this.comboBoxStockType.FormattingEnabled = true;
+            this.comboBoxStockType.Items.AddRange(new object[] {
+            "",
+            "Bulk",
+            "Inventory"});
+            this.comboBoxStockType.Location = new System.Drawing.Point(387, 18);
+            this.comboBoxStockType.Name = "comboBoxStockType";
+            this.comboBoxStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxStockType.TabIndex = 2;
             // 
             // P54_Import
             // 
@@ -250,5 +274,7 @@
         private Win.UI.Button btnCancel;
         private Win.UI.Button btnImport;
         private Win.UI.Grid grid1;
+        private System.Windows.Forms.ComboBox comboBoxStockType;
+        private Win.UI.Label label1;
     }
 }

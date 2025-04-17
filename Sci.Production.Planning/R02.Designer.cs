@@ -56,17 +56,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(430, 12);
+            this.print.Location = new System.Drawing.Point(434, 12);
             this.print.TabIndex = 11;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(430, 48);
+            this.toexcel.Location = new System.Drawing.Point(434, 48);
             this.toexcel.TabIndex = 12;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(430, 84);
+            this.close.Location = new System.Drawing.Point(434, 84);
             this.close.TabIndex = 13;
             // 
             // labelSCIDelivery
@@ -313,11 +313,17 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 264);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 7;
             // 
@@ -335,14 +341,18 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = false;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(115, 227);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 6;
+            this.txtMdivision.DefaultValue = true;
             // 
             // comboCategory
             // 
+            this.comboCategory.AddAllItem = false;
             this.comboCategory.BackColor = System.Drawing.Color.White;
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
@@ -383,7 +393,11 @@
             this.DefaultControl = "dateSCIDelivery";
             this.IsSupportToPrint = false;
             this.Name = "R02";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R02. Subprocess Schedule Report";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelSubProcess, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);

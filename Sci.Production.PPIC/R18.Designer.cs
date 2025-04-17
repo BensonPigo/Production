@@ -40,11 +40,11 @@
             this.comboMDivision = new Sci.Production.Class.ComboMDivision(this.components);
             this.txtShareDept = new Sci.Win.UI.TextBox();
             this.comboReportType = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.lbstatus = new Sci.Win.UI.Label();
             this.comboStatus = new Sci.Win.UI.ComboBox();
             this.dateVoucher = new Sci.Win.UI.DateRange();
             this.labVoucherDate = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -195,18 +195,6 @@
             this.comboReportType.Size = new System.Drawing.Size(141, 24);
             this.comboReportType.TabIndex = 7;
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(115, 139);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 4;
-            // 
             // lbstatus
             // 
             this.lbstatus.Location = new System.Drawing.Point(9, 202);
@@ -265,16 +253,30 @@
             this.labVoucherDate.TabIndex = 112;
             this.labVoucherDate.Text = "Voucher Date";
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(115, 139);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
             // R18
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 299);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.dateVoucher);
             this.Controls.Add(this.labVoucherDate);
             this.Controls.Add(this.comboStatus);
             this.Controls.Add(this.lbstatus);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboReportType);
             this.Controls.Add(this.txtShareDept);
             this.Controls.Add(this.comboMDivision);
@@ -289,12 +291,6 @@
             this.Name = "R18";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R18. Irregular Cost Report List";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.label3, 0);
@@ -306,11 +302,17 @@
             this.Controls.SetChildIndex(this.comboMDivision, 0);
             this.Controls.SetChildIndex(this.txtShareDept, 0);
             this.Controls.SetChildIndex(this.comboReportType, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.lbstatus, 0);
             this.Controls.SetChildIndex(this.comboStatus, 0);
             this.Controls.SetChildIndex(this.labVoucherDate, 0);
             this.Controls.SetChildIndex(this.dateVoucher, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,10 +331,10 @@
         private Class.ComboMDivision comboMDivision;
         private Win.UI.TextBox txtShareDept;
         private Win.UI.ComboBox comboReportType;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.Label lbstatus;
         private Win.UI.ComboBox comboStatus;
         private Win.UI.DateRange dateVoucher;
         private Win.UI.Label labVoucherDate;
+        private Class.ComboFactory comboFactory;
     }
 }

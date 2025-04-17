@@ -583,8 +583,9 @@ namespace Sci.Production.IE
             }
             else
             {
+                // 討論IE P06使用OperationId來區別。
                 checkDivSewerBalance = needKeepRows
-                .GroupBy(s => new { TimeStudyDetailUkey = s["TimeStudyDetailUkey"], GroupNo = s["GroupNo"] })
+                .GroupBy(s => new { OperationId = s["OperationId"], GroupNo = s["GroupNo"] })
                 .Select(groupItem => new
                 {
                     TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
@@ -679,7 +680,9 @@ namespace Sci.Production.IE
                 {
                     foreach (var groupItem in checkDivSewerBalance)
                     {
-                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.GroupNo == needUpdRow["GroupNo"].ToString() && groupItem.SumSewerDiff == 100)
+                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() &&
+                            groupItem.GroupNo == needUpdRow["GroupNo"].ToString() &&
+                            groupItem.SumSewerDiff == 100)
                         {
                             needUpdRow["SewerDiffPercentageDesc"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                             needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);

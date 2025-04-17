@@ -621,6 +621,7 @@
             0});
             this.numericLBRByGSDTime.ReadOnly = true;
             this.numericLBRByGSDTime.Size = new System.Drawing.Size(85, 23);
+            this.numericLBRByGSDTime.DecimalPlaces = 2;
             this.numericLBRByGSDTime.TabIndex = 37;
             this.numericLBRByGSDTime.Value = new decimal(new int[] {
             0,
@@ -1231,6 +1232,7 @@
             this.numericLBRByCycleTime.ReadOnly = true;
             this.numericLBRByCycleTime.Size = new System.Drawing.Size(68, 23);
             this.numericLBRByCycleTime.TabIndex = 66;
+            this.numericLBRByCycleTime.DecimalPlaces = 2;
             this.numericLBRByCycleTime.Value = new decimal(new int[] {
             0,
             0,

@@ -69,7 +69,7 @@ namespace Sci.Production.Class
             #region SQL CMD
             string sqlcmd = string.Format(
                 @"
-select *
+select distinct *
 from (
     Select Factory = ''
 

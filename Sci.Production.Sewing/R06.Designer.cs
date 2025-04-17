@@ -44,17 +44,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(433, 12);
+            this.print.Location = new System.Drawing.Point(435, 12);
             this.print.TabIndex = 6;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(433, 48);
+            this.toexcel.Location = new System.Drawing.Point(435, 48);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(433, 84);
+            this.close.Location = new System.Drawing.Point(435, 84);
             this.close.TabIndex = 8;
             // 
             // labelBuyerDelivery
@@ -92,11 +92,17 @@
             // txtfactory
             // 
             this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.FilteMDivision = false;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = true;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
             this.txtfactory.Location = new System.Drawing.Point(115, 84);
+            this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 2;
             // 
@@ -105,6 +111,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(114, 120);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 3;
@@ -151,9 +158,11 @@
             // txtMdivision1
             // 
             this.txtMdivision1.BackColor = System.Drawing.Color.White;
+            this.txtMdivision1.DefaultValue = true;
             this.txtMdivision1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision1.Location = new System.Drawing.Point(115, 48);
             this.txtMdivision1.Name = "txtMdivision1";
+            this.txtMdivision1.NeedInitialMdivision = false;
             this.txtMdivision1.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision1.TabIndex = 1;
             // 
@@ -181,7 +190,7 @@
             // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(525, 219);
+            this.ClientSize = new System.Drawing.Size(525, 236);
             this.Controls.Add(this.dateOutput);
             this.Controls.Add(this.txtMdivision1);
             this.Controls.Add(this.labelM);
@@ -198,7 +207,11 @@
             this.DefaultControlForEdit = "dateOoutputDate";
             this.IsSupportToPrint = false;
             this.Name = "R06";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R06. Sewing daily output list by Article/Size";
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelSp, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);

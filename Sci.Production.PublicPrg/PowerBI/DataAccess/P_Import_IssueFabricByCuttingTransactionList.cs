@@ -91,7 +91,8 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.FabricComboAndCutNo				   = t.FabricComboAndCutNo			
 			,p.IssueRemark						   = t.IssueRemark					
 			,p.Refno							   = t.Refno						
-			,p.ColorID							   = t.ColorID						
+			,p.ColorID							   = t.ColorID		
+			,p.ColorName						   = t.ColorName		
 			,p.Description						   = t.Description					
 			,p.WeaveTypeID						   = t.WeaveTypeID					
 			,p.RelaxTime						   = t.RelaxTime					
@@ -126,6 +127,7 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.Roll							       = t.Roll	
 			,p.Dyelot							   = t.Dyelot	
 			,p.StockType						   = t.StockType	
+	 	    ,p.Style                               = t.Style
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmp t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -141,9 +143,11 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,FabricComboAndCutNo
 		,IssueRemark
 		,OrderID
+		,Style
 		,Seq
 		,Refno
 		,ColorID
+		,ColorName
 		,Description
 		,WeaveTypeID
 		,RelaxTime
@@ -187,9 +191,11 @@ select	 t.IssueID
 		,t.FabricComboAndCutNo
 		,t.IssueRemark
 		,t.OrderID
+		,t.Style
 		,t.Seq
 		,t.Refno
 		,t.ColorID
+		,t.ColorName
 		,t.Description
 		,t.WeaveTypeID
 		,t.RelaxTime

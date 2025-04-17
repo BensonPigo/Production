@@ -94,6 +94,7 @@
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 2;
             this.txtfactory.IssupportJunk = true;
+            this.txtfactory.FilteMDivision = true;
             // 
             // labelM
             // 
@@ -112,6 +113,7 @@
             this.txtMdivision.Name = "txtMdivision";
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 1;
+            this.txtMdivision.DefaultValue = true;
             // 
             // comboArtworkType
             // 

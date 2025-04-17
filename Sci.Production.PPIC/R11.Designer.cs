@@ -38,10 +38,10 @@
             this.chkHoliday = new Sci.Win.UI.CheckBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
             this.txtbrand = new Sci.Production.Class.Txtbrand();
-            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
-            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.chkIDD = new Sci.Win.UI.CheckBox();
             this.chkLastScanTOReadDate = new Sci.Win.UI.CheckBox();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.SuspendLayout();
             // 
             // print
@@ -176,30 +176,6 @@
             this.txtbrand.Size = new System.Drawing.Size(66, 23);
             this.txtbrand.TabIndex = 103;
             // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(58, 59);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(71, 23);
-            this.txtMdivision.TabIndex = 101;
-            // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsMultiselect = false;
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(202, 59);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 100;
-            // 
             // chkIDD
             // 
             this.chkIDD.AutoSize = true;
@@ -222,16 +198,44 @@
             this.chkLastScanTOReadDate.Text = "Use Last Scan and Pack Date as Ready Date";
             this.chkLastScanTOReadDate.UseVisualStyleBackColor = true;
             // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(58, 59);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
+            this.txtMdivision.Size = new System.Drawing.Size(71, 23);
+            this.txtMdivision.TabIndex = 164;
+            // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(202, 59);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 100;
+            // 
             // R11
             // 
             this.ClientSize = new System.Drawing.Size(542, 196);
+            this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.chkLastScanTOReadDate);
             this.Controls.Add(this.chkIDD);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.chkHoliday);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.labBrand);
-            this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.numDateGap);
             this.Controls.Add(this.labDateGap);
@@ -242,9 +246,6 @@
             this.Name = "R11";
             this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R11. Sewing Ready Report";
-            this.Controls.SetChildIndex(this.buttonCustomized, 0);
-            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
-            this.Controls.SetChildIndex(this.txtVersion, 0);
             this.Controls.SetChildIndex(this.dateRangeReadyDate, 0);
             this.Controls.SetChildIndex(this.labReadyDate, 0);
             this.Controls.SetChildIndex(this.labM, 0);
@@ -252,16 +253,19 @@
             this.Controls.SetChildIndex(this.labDateGap, 0);
             this.Controls.SetChildIndex(this.numDateGap, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
-            this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.labBrand, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
             this.Controls.SetChildIndex(this.chkHoliday, 0);
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
             this.Controls.SetChildIndex(this.chkIDD, 0);
             this.Controls.SetChildIndex(this.chkLastScanTOReadDate, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -275,13 +279,13 @@
         private Win.UI.Label labFactory;
         private Win.UI.Label labDateGap;
         private Win.UI.NumericBox numDateGap;
-        private Class.Txtfactory txtfactory;
-        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label labBrand;
         private Class.Txtbrand txtbrand;
         private Win.UI.CheckBox chkHoliday;
         private Win.UI.CheckBox chkIncludeCancelOrder;
         private Win.UI.CheckBox chkIDD;
         private Win.UI.CheckBox chkLastScanTOReadDate;
+        private Class.TxtMdivision txtMdivision;
+        private Class.Txtfactory txtfactory;
     }
 }

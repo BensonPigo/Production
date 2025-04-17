@@ -19,6 +19,7 @@ namespace Sci.Production.Sewing
         {
             this.InitializeComponent();
             this.dateConfirm.Focus1();
+            this.txtMdivision1.Enabled = false;
         }
 
         private string Sqlcmd;

@@ -30,17 +30,10 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable factory, mDivision;
-            DBProxy.Current.Select(
-                null,
-                string.Format(@"select '' as FtyGroup 
-union all
-select distinct FTYGroup from Factory WITH (NOLOCK) order by FTYGroup"),
-                out factory);
 
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
             this.comboFactory.Text = Env.User.Factory;
             this.comboM.Text = Env.User.Keyword;
         }

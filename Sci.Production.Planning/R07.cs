@@ -48,6 +48,7 @@ namespace Sci.Production.Planning
             this.comboLining1.SetDataSource();
             this.comboGender1.SetDataSource();
             this.comboConstruction1.SetDataSource();
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>

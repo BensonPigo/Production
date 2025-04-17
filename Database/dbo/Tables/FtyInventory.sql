@@ -14,15 +14,20 @@
     [LockDate]              DATETIME        NULL,
     [Lock]                  BIT             CONSTRAINT [DF_FtyInventory_Lock] DEFAULT ((0)) NULL,
     [Remark]                NVARCHAR (500)  CONSTRAINT [DF_FtyInventory_Remark] DEFAULT ('') NULL,
-    [Barcode] VARCHAR(255) NULL DEFAULT (''), 
-    [ReturnQty] NUMERIC(11, 2) CONSTRAINT [DF_FtyInventory_ReturnQty] NOT NULL DEFAULT ((0)), 
-    [WMSLock] BIT NOT NULL DEFAULT ((0)), 
-    [ContainerCode] NVARCHAR(100) NULL DEFAULT (''), 
-    [BarcodeSeq] VARCHAR(10) NULL DEFAULT (''), 
-    [SubConStatus] VARCHAR(20) CONSTRAINT [DF_AFtyInventory_SubConStatus] DEFAULT(('')) NOT NULL, 
-    [Tone] VARCHAR(8) NOT NULL DEFAULT (('')), 
+    [Barcode]               VARCHAR (255)   DEFAULT ('') NULL,
+    [ReturnQty]             NUMERIC (11, 2) DEFAULT ((0)) NOT NULL,
+    [WMSLock]               BIT             DEFAULT ((0)) NOT NULL,
+    [ContainerCode]         NVARCHAR (100)  DEFAULT ('') NULL,
+    [BarcodeSeq]            VARCHAR (10)    NULL,
+    [SubConStatus]          VARCHAR (20)    CONSTRAINT [DF_AFtyInventory_SubConStatus] DEFAULT ('') NOT NULL,
+    [Tone]                  VARCHAR (8)     CONSTRAINT [DF_FtyInventory_Tone] DEFAULT ('') NOT NULL,
+    [GMTWashStatus]         VARCHAR (7)     CONSTRAINT [DF_FtyInventory_GMTWashStatus] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_FtyInventory] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
+
+
+
+
 
 
 
@@ -114,8 +119,10 @@ CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
 
 GO
 CREATE NONCLUSTERED INDEX [MdID_POSeq]
-    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [StockType] ASC)
+    ON [dbo].[FtyInventory]([POID] ASC, [Seq1] ASC, [Seq2] ASC, [Roll] ASC, [Dyelot] ASC, [StockType] ASC)
     INCLUDE([Ukey]);
+
+
 
 
 
@@ -170,11 +177,10 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level2type = N'COLUMN',
     @level2name = N'BarcodeSeq'
 GO
-EXEC sp_addextendedproperty @name = N'MS_Description',
-    @value = N'色調',
-    @level0type = N'SCHEMA',
-    @level0name = N'dbo',
-    @level1type = N'TABLE',
-    @level1name = N'FtyInventory',
-    @level2type = N'COLUMN',
-    @level2name = N'Tone'
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'���', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'Tone';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'水洗狀態
+空白, Ongoing, Done', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'FtyInventory', @level2type = N'COLUMN', @level2name = N'GMTWashStatus';
+
