@@ -42,8 +42,6 @@ namespace Sci.Production.Warehouse
             this.numArrivedQtyBySeq.Value = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
             this.numReleasedQtyBySeq.Value = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
 
-            // this.numericBox3.Value = (MyUtility.Check.Empty(dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["inqty"].ToString())) -
-            //  ( MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["outqty"].ToString())) +(MyUtility.Check.Empty(dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(dr["adjustqty"].ToString()));
             decimal iN = MyUtility.Check.Empty(this.dr["inqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["inqty"].ToString());
             decimal oUT = MyUtility.Check.Empty(this.dr["outqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["outqty"].ToString());
             decimal aDJ = MyUtility.Check.Empty(this.dr["adjustqty"]) ? decimal.Parse("0.00") : decimal.Parse(this.dr["adjustqty"].ToString());
@@ -104,7 +102,7 @@ Select a.Roll,a.Dyelot
 ,dbo.Getlocation(a.ukey)  MtlLocationID 
 ,a.ContainerCode
 ,a.Tone
-,[GMTWash] = isnull(GMTWash.val, '')
+,[GMTWash] = a.GMTWashStatus
 from FtyInventory a WITH (NOLOCK)
 outer apply(
 	select List = Stuff((
@@ -136,22 +134,6 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 )FullDyelot 
-outer apply(
-    select top 1 [val] =  case  when sr.Status = 'Confirmed' then 'Done'
-			                    when tt.Status = 'Confirmed' then 'Ongoing'
-			                    else '' end
-    from TransferToSubcon_Detail ttd with (nolock)
-    inner join TransferToSubcon tt with (nolock) on tt.ID = ttd.ID
-    left join  SubconReturn_Detail srd with (nolock) on srd.TransferToSubcon_DetailUkey = ttd.Ukey
-    left join  SubconReturn sr with (nolock) on srD.ID = srd.ID and sr.Status = 'Confirmed'
-    where   ttd.POID = a.PoId and
-			ttd.Seq1 = a.Seq1 and 
-            ttd.Seq2 = a.Seq2 and
-			ttd.Dyelot = a.Dyelot and 
-            ttd.Roll = a.Roll and
-			ttd.StockType = a.StockType and
-            tt.Subcon = 'GMT Wash'
-) GMTWash
 where a.Poid = '{0}'
     and a.Seq1 = '{1}'
     and a.Seq2 = '{2}'

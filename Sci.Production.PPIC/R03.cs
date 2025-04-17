@@ -30,6 +30,10 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
 
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+
             this.Text = type == "1" ? "R03. PPIC master list report" : "R031. PPIC master list report (Artwork)";
             this.checkIncludeArtworkdata.Enabled = type != "1";
             this.checkIncludeArtworkdataKindIsPAP.Enabled = type != "1";
@@ -43,18 +47,14 @@ where Zone <> ''";
 
             DBProxy.Current.Select(null, strSelectSql, out DataTable zone);
             MyUtility.Tool.SetupCombox(this.comboZone, 2, zone);
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
 
             this.comboZone.SelectedIndex = 0;
-            this.comboM.Text = Env.User.Keyword;
-            this.comboFactory.Text = Env.User.Factory;
             this.comboSubProcess.SelectedIndex = 0;
             this.checkBulk.Checked = true;
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
 
             if (type != "1")
             {

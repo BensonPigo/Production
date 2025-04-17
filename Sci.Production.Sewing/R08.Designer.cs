@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelDate = new Sci.Win.UI.Label();
             this.labelSewingLine = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
@@ -38,27 +39,27 @@
             this.txtSewingLineStart = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.comboOrderBy = new Sci.Win.UI.ComboBox();
             this.label10 = new Sci.Win.UI.Label();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.labelM = new Sci.Win.UI.Label();
             this.checkSampleFty = new Sci.Win.UI.CheckBox();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(355, 12);
+            this.print.Location = new System.Drawing.Point(444, 12);
             this.print.TabIndex = 10;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(355, 48);
+            this.toexcel.Location = new System.Drawing.Point(444, 48);
             this.toexcel.TabIndex = 11;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(355, 84);
+            this.close.Location = new System.Drawing.Point(444, 84);
             this.close.TabIndex = 12;
             // 
             // labelDate
@@ -154,18 +155,6 @@
             this.txtSewingLineEnd.TabIndex = 3;
             this.txtSewingLineEnd.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSewingLineEnd_PopUp);
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(97, 120);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(65, 24);
-            this.comboFactory.TabIndex = 7;
-            // 
             // comboOrderBy
             // 
             this.comboOrderBy.BackColor = System.Drawing.Color.White;
@@ -192,18 +181,6 @@
             this.label10.TextStyle.ExtBorderColor = System.Drawing.Color.Red;
             this.label10.TextStyle.GradientColor = System.Drawing.Color.Red;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(96, 84);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 106;
-            // 
             // labelM
             // 
             this.labelM.Location = new System.Drawing.Point(13, 84);
@@ -223,15 +200,41 @@
             this.checkSampleFty.Text = "Exclude Sample Factory";
             this.checkSampleFty.UseVisualStyleBackColor = true;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(97, 119);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(65, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(97, 84);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(65, 24);
+            this.comboM.TabIndex = 564;
+            // 
             // R08
             // 
-            this.ClientSize = new System.Drawing.Size(475, 270);
-            this.Controls.Add(this.checkSampleFty);
+            this.ClientSize = new System.Drawing.Size(531, 270);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.comboM);
+            this.Controls.Add(this.checkSampleFty);
             this.Controls.Add(this.labelM);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.comboOrderBy);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtSewingLineEnd);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSewingLineStart);
@@ -261,15 +264,15 @@
             this.Controls.SetChildIndex(this.txtSewingLineStart, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.txtSewingLineEnd, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboOrderBy, 0);
             this.Controls.SetChildIndex(this.label10, 0);
             this.Controls.SetChildIndex(this.labelM, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.checkSampleFty, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -287,11 +290,11 @@
         private Win.UI.TextBox txtSewingLineStart;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtSewingLineEnd;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.ComboBox comboOrderBy;
         private Win.UI.Label label10;
-        private Win.UI.ComboBox comboM;
         private Win.UI.Label labelM;
         private Win.UI.CheckBox checkSampleFty;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

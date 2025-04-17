@@ -28,16 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelCreateDate = new Sci.Win.UI.Label();
             this.labelApvDate = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.labelType = new Sci.Win.UI.Label();
             this.dateCreateDate = new Sci.Win.UI.DateRange();
             this.dateApvDate = new Sci.Win.UI.DateRange();
-            this.comboM = new Sci.Win.UI.ComboBox();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.labelFactory = new Sci.Win.UI.Label();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.dateLock = new Sci.Win.UI.DateRange();
             this.dateCfm = new Sci.Win.UI.DateRange();
             this.label1 = new Sci.Win.UI.Label();
@@ -52,6 +51,8 @@
             this.chkReplacementReport = new Sci.Win.UI.CheckBox();
             this.labVoucherdate = new Sci.Win.UI.Label();
             this.dateVoucher = new Sci.Win.UI.DateRange();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -145,18 +146,6 @@
             this.dateApvDate.Size = new System.Drawing.Size(280, 23);
             this.dateApvDate.TabIndex = 1;
             // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(116, 159);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(66, 24);
-            this.comboM.TabIndex = 5;
-            // 
             // comboType
             // 
             this.comboType.BackColor = System.Drawing.Color.White;
@@ -176,18 +165,6 @@
             this.labelFactory.Size = new System.Drawing.Size(99, 23);
             this.labelFactory.TabIndex = 102;
             this.labelFactory.Text = "Factory";
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(116, 189);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(66, 24);
-            this.comboFactory.TabIndex = 6;
             // 
             // dateLock
             // 
@@ -359,9 +336,37 @@
             this.dateVoucher.Size = new System.Drawing.Size(280, 23);
             this.dateVoucher.TabIndex = 4;
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(115, 189);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(67, 24);
+            this.comboFactory.TabIndex = 565;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(116, 160);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(66, 24);
+            this.comboM.TabIndex = 564;
+            // 
             // R08
             // 
             this.ClientSize = new System.Drawing.Size(561, 434);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.labVoucherdate);
             this.Controls.Add(this.dateVoucher);
             this.Controls.Add(this.chkReplacementReport);
@@ -376,10 +381,8 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateCfm);
             this.Controls.Add(this.dateLock);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.labelFactory);
             this.Controls.Add(this.comboType);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.dateApvDate);
             this.Controls.Add(this.dateCreateDate);
             this.Controls.Add(this.labelType);
@@ -404,10 +407,8 @@
             this.Controls.SetChildIndex(this.labelType, 0);
             this.Controls.SetChildIndex(this.dateCreateDate, 0);
             this.Controls.SetChildIndex(this.dateApvDate, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
             this.Controls.SetChildIndex(this.comboType, 0);
             this.Controls.SetChildIndex(this.labelFactory, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.dateLock, 0);
             this.Controls.SetChildIndex(this.dateCfm, 0);
             this.Controls.SetChildIndex(this.label1, 0);
@@ -422,6 +423,8 @@
             this.Controls.SetChildIndex(this.chkReplacementReport, 0);
             this.Controls.SetChildIndex(this.dateVoucher, 0);
             this.Controls.SetChildIndex(this.labVoucherdate, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -435,10 +438,8 @@
         private Win.UI.Label labelType;
         private Win.UI.DateRange dateCreateDate;
         private Win.UI.DateRange dateApvDate;
-        private Win.UI.ComboBox comboM;
         private Win.UI.ComboBox comboType;
         private Win.UI.Label labelFactory;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.DateRange dateLock;
         private Win.UI.DateRange dateCfm;
         private Win.UI.Label label1;
@@ -453,5 +454,7 @@
         private Win.UI.CheckBox chkReplacementReport;
         private Win.UI.Label labVoucherdate;
         private Win.UI.DateRange dateVoucher;
+        private Class.ComboFactory comboFactory;
+        private Class.ComboMDivision comboM;
     }
 }

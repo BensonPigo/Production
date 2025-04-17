@@ -28,20 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelM = new Sci.Win.UI.Label();
             this.labelFactory = new Sci.Win.UI.Label();
             this.labelSewingLine = new Sci.Win.UI.Label();
             this.labelBuyerDelivery = new Sci.Win.UI.Label();
             this.labelSCIDelivery = new Sci.Win.UI.Label();
             this.labelBrand = new Sci.Win.UI.Label();
-            this.comboM = new Sci.Win.UI.ComboBox();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.txtSewingLineStart = new Sci.Win.UI.TextBox();
             this.label9 = new Sci.Win.UI.Label();
             this.txtSewingLineEnd = new Sci.Win.UI.TextBox();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.checkForPrintOut = new Sci.Win.UI.CheckBox();
             this.labSummeryBy = new Sci.Win.UI.Label();
             this.comboSummaryBy = new Sci.Win.UI.ComboBox();
@@ -52,6 +50,9 @@
             this.comboSubProcess = new Sci.Win.UI.ComboBox();
             this.labelSubProcess = new Sci.Win.UI.Label();
             this.chkIncludeCompleteSchedule = new Sci.Win.UI.CheckBox();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
+            this.comboM = new Sci.Production.Class.ComboMDivision(this.components);
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             this.SuspendLayout();
             // 
             // print
@@ -74,7 +75,7 @@
             // 
             // txtVersion
             // 
-            this.txtVersion.Location = new System.Drawing.Point(248, 37);
+            this.txtVersion.Location = new System.Drawing.Point(316, 13);
             // 
             // labelM
             // 
@@ -123,31 +124,6 @@
             this.labelBrand.Size = new System.Drawing.Size(97, 23);
             this.labelBrand.TabIndex = 101;
             this.labelBrand.Text = "Brand";
-            // 
-            // comboM
-            // 
-            this.comboM.BackColor = System.Drawing.Color.White;
-            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboM.FormattingEnabled = true;
-            this.comboM.IsSupportUnselect = true;
-            this.comboM.Location = new System.Drawing.Point(114, 12);
-            this.comboM.Name = "comboM";
-            this.comboM.OldText = "";
-            this.comboM.Size = new System.Drawing.Size(72, 24);
-            this.comboM.TabIndex = 0;
-            // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(114, 48);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(72, 24);
-            this.comboFactory.TabIndex = 1;
-            this.comboFactory.SelectedIndexChanged += new System.EventHandler(this.ComboFactory_SelectedIndexChanged);
             // 
             // txtSewingLineStart
             // 
@@ -227,15 +203,6 @@
             this.dateSCIDelivery.Name = "dateSCIDelivery";
             this.dateSCIDelivery.Size = new System.Drawing.Size(234, 23);
             this.dateSCIDelivery.TabIndex = 6;
-            // 
-            // txtbrand
-            // 
-            this.txtbrand.BackColor = System.Drawing.Color.White;
-            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtbrand.Location = new System.Drawing.Point(114, 227);
-            this.txtbrand.Name = "txtbrand";
-            this.txtbrand.Size = new System.Drawing.Size(85, 23);
-            this.txtbrand.TabIndex = 7;
             // 
             // checkForPrintOut
             // 
@@ -357,9 +324,48 @@
             this.chkIncludeCompleteSchedule.Text = "Include complete Schedule";
             this.chkIncludeCompleteSchedule.UseVisualStyleBackColor = true;
             // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(114, 227);
+            this.txtbrand.MyDocumentdName = null;
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(85, 23);
+            this.txtbrand.TabIndex = 7;
+            // 
+            // comboM
+            // 
+            this.comboM.BackColor = System.Drawing.Color.White;
+            this.comboM.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboM.FormattingEnabled = true;
+            this.comboM.IsSupportUnselect = true;
+            this.comboM.Location = new System.Drawing.Point(113, 11);
+            this.comboM.Name = "comboM";
+            this.comboM.OldText = "";
+            this.comboM.Size = new System.Drawing.Size(73, 24);
+            this.comboM.TabIndex = 560;
+            // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = false;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(113, 47);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.Size = new System.Drawing.Size(80, 24);
+            this.comboFactory.TabIndex = 561;
+            // 
             // R01
             // 
             this.ClientSize = new System.Drawing.Size(549, 345);
+            this.Controls.Add(this.comboFactory);
+            this.Controls.Add(this.comboM);
             this.Controls.Add(this.chkIncludeCompleteSchedule);
             this.Controls.Add(this.comboSubProcess);
             this.Controls.Add(this.labelSubProcess);
@@ -376,8 +382,6 @@
             this.Controls.Add(this.txtSewingLineEnd);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.txtSewingLineStart);
-            this.Controls.Add(this.comboFactory);
-            this.Controls.Add(this.comboM);
             this.Controls.Add(this.labelBrand);
             this.Controls.Add(this.labelSCIDelivery);
             this.Controls.Add(this.labelBuyerDelivery);
@@ -402,8 +406,6 @@
             this.Controls.SetChildIndex(this.labelBuyerDelivery, 0);
             this.Controls.SetChildIndex(this.labelSCIDelivery, 0);
             this.Controls.SetChildIndex(this.labelBrand, 0);
-            this.Controls.SetChildIndex(this.comboM, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.txtSewingLineStart, 0);
             this.Controls.SetChildIndex(this.label9, 0);
             this.Controls.SetChildIndex(this.txtSewingLineEnd, 0);
@@ -420,6 +422,8 @@
             this.Controls.SetChildIndex(this.labelSubProcess, 0);
             this.Controls.SetChildIndex(this.comboSubProcess, 0);
             this.Controls.SetChildIndex(this.chkIncludeCompleteSchedule, 0);
+            this.Controls.SetChildIndex(this.comboM, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -433,8 +437,6 @@
         private Win.UI.Label labelBuyerDelivery;
         private Win.UI.Label labelSCIDelivery;
         private Win.UI.Label labelBrand;
-        private Win.UI.ComboBox comboM;
-        private Win.UI.ComboBox comboFactory;
         private Win.UI.TextBox txtSewingLineStart;
         private Win.UI.Label label9;
         private Win.UI.TextBox txtSewingLineEnd;
@@ -451,5 +453,7 @@
         private Win.UI.ComboBox comboSubProcess;
         private Win.UI.Label labelSubProcess;
         private Win.UI.CheckBox chkIncludeCompleteSchedule;
+        private Class.ComboMDivision comboM;
+        private Class.ComboFactory comboFactory;
     }
 }

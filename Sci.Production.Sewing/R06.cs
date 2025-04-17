@@ -29,6 +29,7 @@ namespace Sci.Production.Sewing
             : base(menuitem)
         {
             this.InitializeComponent();
+            this.txtMdivision1.Enabled = false;
         }
 
         /// <inheritdoc/>

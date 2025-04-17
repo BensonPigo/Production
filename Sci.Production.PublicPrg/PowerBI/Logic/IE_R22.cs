@@ -48,15 +48,17 @@ SELECT  distinct
      [InlineDate] = co.Inline,
      [Ready] = iif ((SELECT COUNT(1) FROM ChgOver_Check WITH(NOLOCK) WHERE [Checked] = 0 AND ID = CO.ID) > 0 ,'','V'),
      [Line] = co.SewingLineID,
-     [OldSP] = oldco.OrderID,
-     [OldStyle] = oldco.StyleID,
-     [OldComboType] = oldco.ComboType,
+     [OldSP] = ISNULL(oldco.OrderID, ''),
+     [OldStyle] = ISNULL(oldco.StyleID, ''),
+     [OldComboType] = ISNULL(oldco.ComboType, ''),
      [NewSP] = co.OrderID,
      [NewStyle] = co.StyleID,
      [NewComboType] = co.ComboType,
      [StyleType] = iif(co.Type = 'N', 'New', 'Repeat'),
      [Category] = co.Category,
-     [FirstSewingOutputDate] = GetOutputDate.OutputDate
+     [FirstSewingOutputDate] = GetOutputDate.OutputDate,
+     [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+     [BIInsertDate] = GETDATE()
 FROM ChgOver co WITH (NOLOCK)
 INNER JOIN ChgOver_Check CC WITH (NOLOCK) ON cc.ID = co.ID And cc.No <> 0
 LEFT JOIN Style s WITH (NOLOCK) ON s.ID = co.StyleID and co.SeasonID = s.SeasonID
@@ -248,9 +250,9 @@ Order by  [InlineDate], [SP], [Style], [Category], [ProductType], [Cell], [Check
             if (model.IsPowerBI)
             {
                 sqlWhere += @"
-AND (co.AddDate >= @DeadlineStart AND co.AddDate < DateAdd(day, 1, @DeadlineEnd))
+AND ((co.AddDate >= @DeadlineStart AND co.AddDate < DateAdd(day, 1, @DeadlineEnd))
 OR (co.EditDate  >= @DeadlineStart AND co.EditDate  < DateAdd(day, 1, @DeadlineEnd)) 
-OR co.Inline >= @DeadlineEnd";
+OR co.Inline >= @DeadlineEnd)";
             }
             else if (!MyUtility.Check.Empty(model.DeadlineStart))
             {

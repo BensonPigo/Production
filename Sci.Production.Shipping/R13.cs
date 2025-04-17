@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         private string Shipper;
         private string factory;
         private string category;
+        private string orderCompany;
         private DataTable printData;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace Sci.Production.Shipping
             this.Shipper = this.txtmultiShipper.Text;
             this.factory = this.txtmultifactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
+            this.orderCompany = this.comboOrderCompany.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -67,7 +69,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with cte as (
 Select 
-o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
+o.BuyerDelivery,o.OrigBuyerDelivery,o.ID,OrderCompany.NameEN
 ,Category=IIF(o.Category = 'B', 'Bulk',IIF(o.Category = 'S','Sample','Forecast'))
 ,o.OrderTypeID
 ,o.CustPONo
@@ -101,6 +103,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
+Left join Company OrderCompany on OrderCompany.ID = o.OrderCompanyID
 outer apply(
 	select * 
 	from FtyShipper_Detail fd 
@@ -187,6 +190,11 @@ Where o.LocalOrder = 0
             if (!this.chkGMTComplete.Checked)
             {
                 sqlCmd.Append(" and isnull(o.GMTComplete, '') NOT IN ( 'C','S') ");
+            }
+
+            if (this.orderCompany != "0")
+            {
+                sqlCmd.Append(string.Format(" and o.OrderCompanyID = '{0}'", this.orderCompany));
             }
 
             sqlCmd.Append($" and o.Category in ({this.category})");
