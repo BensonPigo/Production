@@ -58,6 +58,11 @@ namespace Sci.Production.Subcon
                 }
             };
 
+            this.grid.DataError += (s, e) =>
+            {
+                e.ThrowException = false;
+            };
+
             badDebtSetting.CellValidating += (sender, args) =>
             {
                 if (_isHandlingValidation) return;
@@ -83,7 +88,7 @@ namespace Sci.Production.Subcon
                             row.Cells[colBadDebt].Style.BackColor = Color.White;
                         }
 
-                        row.Cells[0].Value = check;
+                        row.Cells[0].Value = (object)check;
                     }
                 }
                 finally
