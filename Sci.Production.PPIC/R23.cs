@@ -119,7 +119,7 @@ From SewingSchedule s
 inner join dbo.Orders WITH (NOLOCK) on s.OrderID = Orders.ID
 Left Join dbo.Order_SizeCode WITH (NOLOCK) On  Order_SizeCode.ID = Orders.POID
 Left Join dbo.Order_Article WITH (NOLOCK) On  Order_Article.ID = Orders.ID
-inner join dbo.Order_ColorCombo oc on oc.ID = Orders.POID and oc.Article = Order_Article.Article and oc.PatternPanel = 'AA'
+inner join dbo.Order_ColorCombo oc on oc.ID = Orders.POID and oc.Article = Order_Article.Article and oc.PatternPanel = 'FA'
 inner join dbo.Color c on c.ID = oc.ColorID and c.BrandId = Orders.BrandID
 Left Join dbo.Order_Qty WITH (NOLOCK) On  Order_Qty.ID = Orders.ID And Order_Qty.SizeCode = Order_SizeCode.SizeCode And Order_Qty.Article = Order_Article.Article
 Left Join dbo.CustCD WITH (NOLOCK) On CustCD.BrandID = Orders.BrandID And CustCD.ID = Orders.CustCDID
