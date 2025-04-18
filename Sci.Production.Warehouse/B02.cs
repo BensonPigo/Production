@@ -17,19 +17,26 @@ namespace Sci.Production.Warehouse
             : base(menuitem)
         {
             this.InitializeComponent();
-            DataTable combos = new DataTable();
-            combos.ColumnsStringAdd("Key");
-            combos.ColumnsStringAdd("Value");
-            combos.Rows.Add(new object[] { "I", "Inventory" });
-            combos.Rows.Add(new object[] { "B", "Bulk" });
-            combos.Rows.Add(new object[] { "O", "Scrap" });
+            DataTable dtStockType = new DataTable();
+            dtStockType.ColumnsStringAdd("Key");
+            dtStockType.ColumnsStringAdd("Value");
+            dtStockType.Rows.Add(new object[] { "I", "Inventory" });
+            dtStockType.Rows.Add(new object[] { "B", "Bulk" });
+            dtStockType.Rows.Add(new object[] { "O", "Scrap" });
 
-            // Dictionary<String, String> comboBox1_RowSource = new Dictionary<string, string>();
-            // comboBox1_RowSource.Add("I", "Inventory");
-            // comboBox1_RowSource.Add("B", "Bulk");
-            this.comboStockType.DataSource = combos; // new BindingSource(comboBox1_RowSource, null);
+            this.comboStockType.DataSource = dtStockType;
             this.comboStockType.ValueMember = "Key";
             this.comboStockType.DisplayMember = "Value";
+
+            DataTable dtLocationType = new DataTable();
+            dtLocationType.ColumnsStringAdd("Key");
+            dtLocationType.ColumnsStringAdd("Value");
+            dtLocationType.Rows.Add(new object[] { "Fabric", "Fabric" });
+            dtLocationType.Rows.Add(new object[] { "Accessory", "Accessory" });
+
+            this.comboLocationType.DataSource = dtLocationType;
+            this.comboLocationType.ValueMember = "Key";
+            this.comboLocationType.DisplayMember = "Value";
 
             // 有新增權限的人才可以按這顆按鈕
             bool canNew = Prgs.GetAuthority(Env.User.UserID, "B02. Material Location Index", "CanNew");
@@ -138,6 +145,18 @@ namespace Sci.Production.Warehouse
                 MyUtility.Msg.WarningBox("< Description > can not be empty!");
                 this.txtDescription.Focus();
                 return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["LocationType"].ToString()))
+            {
+                if (this.CurrentMaintain["Description"].ToString().ToUpper().Contains("FAC") || this.CurrentMaintain["Description"].ToString().ToUpper().Contains("FABRIC"))
+                {
+                    this.CurrentMaintain["LocationType"] = "Fabric";
+                }
+                else
+                {
+                    this.CurrentMaintain["LocationType"] = "Accessory";
+                }
             }
 
             this.CurrentMaintain["ID"] = this.CurrentMaintain["ID"].ToString().Trim();
