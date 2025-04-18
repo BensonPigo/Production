@@ -585,17 +585,17 @@ namespace Sci.Production.IE
             {
                 // 討論IE P06使用OperationId來區別。
                 checkDivSewerBalance = needKeepRows
-                .GroupBy(s => new { OperationId = s["OperationId"], GroupNo = s["GroupNo"] })
+                .GroupBy(s => new { OperationId = s["OperationId"], TimeStudyDetailUkey = s["TimeStudyDetailUkey"], GroupNo = s["GroupNo"] })
                 .Select(groupItem => new
                 {
-                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
-                    OperationId = groupItem.First()["OperationId"].ToString(),
+                    TimeStudyDetailUkey = groupItem.Key.TimeStudyDetailUkey.ToString(),
+                    OperationId = groupItem.Key.OperationId.ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
                     SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
-                    GroupNo = groupItem.First()["GroupNo"].ToString(),
+                    GroupNo = groupItem.Key.GroupNo.ToString(),
                 });
             }
 
@@ -681,6 +681,7 @@ namespace Sci.Production.IE
                     foreach (var groupItem in checkDivSewerBalance)
                     {
                         if (groupItem.OperationId == needUpdRow["OperationId"].ToString() &&
+                            groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() &&
                             groupItem.GroupNo == needUpdRow["GroupNo"].ToString() &&
                             groupItem.SumSewerDiff == 100)
                         {
