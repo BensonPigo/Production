@@ -3,6 +3,7 @@
 	[StockType] [varchar](10) NOT NULL,
 	[Junk] [bit] NOT NULL,
 	[Description] [nvarchar](40) NOT NULL,
+	LocationType varchar(10) NOT NULL CONSTRAINT [DF_MtlLocation_LocationType] DEFAULT 'Fabric',
 	[IsWMS] [bit] NOT NULL,
 	[Capacity] [int] NOT NULL,
 	[AddName] [varchar](10) NOT NULL,
@@ -69,4 +70,8 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯人員' 
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'編輯日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'EditDate'
+GO
+
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'判別該 Location 放置的Material是屬於Fabric 還是 Accessory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_MaterialLocationIndex', @level2type=N'COLUMN',@level2name=N'LocationType'
 GO

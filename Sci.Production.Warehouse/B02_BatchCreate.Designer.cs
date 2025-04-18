@@ -38,13 +38,15 @@
             this.chkBulk = new Sci.Win.UI.CheckBox();
             this.chkInventory = new Sci.Win.UI.CheckBox();
             this.chkScrap = new Sci.Win.UI.CheckBox();
+            this.comboLocationType = new Sci.Win.UI.ComboBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // txtDescription
             // 
             this.txtDescription.BackColor = System.Drawing.Color.White;
             this.txtDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtDescription.Location = new System.Drawing.Point(100, 63);
+            this.txtDescription.Location = new System.Drawing.Point(124, 63);
             this.txtDescription.MaxLength = 40;
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(478, 23);
@@ -54,7 +56,7 @@
             // 
             this.txtID.BackColor = System.Drawing.Color.White;
             this.txtID.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtID.Location = new System.Drawing.Point(100, 21);
+            this.txtID.Location = new System.Drawing.Point(124, 21);
             this.txtID.MaxLength = 20;
             this.txtID.Name = "txtID";
             this.txtID.Size = new System.Drawing.Size(180, 23);
@@ -64,7 +66,7 @@
             // 
             this.labelCode.Location = new System.Drawing.Point(22, 21);
             this.labelCode.Name = "labelCode";
-            this.labelCode.Size = new System.Drawing.Size(75, 23);
+            this.labelCode.Size = new System.Drawing.Size(93, 23);
             this.labelCode.TabIndex = 10;
             this.labelCode.Text = "Code";
             // 
@@ -72,7 +74,7 @@
             // 
             this.labelStockType.Location = new System.Drawing.Point(22, 106);
             this.labelStockType.Name = "labelStockType";
-            this.labelStockType.Size = new System.Drawing.Size(75, 23);
+            this.labelStockType.Size = new System.Drawing.Size(93, 23);
             this.labelStockType.TabIndex = 11;
             this.labelStockType.Text = "Stock Type";
             // 
@@ -80,13 +82,13 @@
             // 
             this.labelDescription.Location = new System.Drawing.Point(22, 63);
             this.labelDescription.Name = "labelDescription";
-            this.labelDescription.Size = new System.Drawing.Size(75, 23);
+            this.labelDescription.Size = new System.Drawing.Size(93, 23);
             this.labelDescription.TabIndex = 12;
             this.labelDescription.Text = "Description";
             // 
             // btnCreate
             // 
-            this.btnCreate.Location = new System.Drawing.Point(397, 146);
+            this.btnCreate.Location = new System.Drawing.Point(396, 177);
             this.btnCreate.Name = "btnCreate";
             this.btnCreate.Size = new System.Drawing.Size(80, 30);
             this.btnCreate.TabIndex = 6;
@@ -96,7 +98,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(498, 146);
+            this.btnCancel.Location = new System.Drawing.Point(497, 177);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 7;
@@ -110,7 +112,7 @@
             this.chkBulk.Checked = true;
             this.chkBulk.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkBulk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkBulk.Location = new System.Drawing.Point(100, 106);
+            this.chkBulk.Location = new System.Drawing.Point(124, 106);
             this.chkBulk.Name = "chkBulk";
             this.chkBulk.Size = new System.Drawing.Size(54, 21);
             this.chkBulk.TabIndex = 3;
@@ -123,7 +125,7 @@
             this.chkInventory.Checked = true;
             this.chkInventory.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkInventory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkInventory.Location = new System.Drawing.Point(160, 106);
+            this.chkInventory.Location = new System.Drawing.Point(184, 106);
             this.chkInventory.Name = "chkInventory";
             this.chkInventory.Size = new System.Drawing.Size(85, 21);
             this.chkInventory.TabIndex = 4;
@@ -136,18 +138,40 @@
             this.chkScrap.Checked = true;
             this.chkScrap.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkScrap.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkScrap.Location = new System.Drawing.Point(251, 108);
+            this.chkScrap.Location = new System.Drawing.Point(275, 108);
             this.chkScrap.Name = "chkScrap";
             this.chkScrap.Size = new System.Drawing.Size(64, 21);
             this.chkScrap.TabIndex = 5;
             this.chkScrap.Text = "Scrap";
             this.chkScrap.UseVisualStyleBackColor = true;
             // 
+            // comboLocationType
+            // 
+            this.comboLocationType.BackColor = System.Drawing.Color.White;
+            this.comboLocationType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboLocationType.FormattingEnabled = true;
+            this.comboLocationType.IsSupportUnselect = true;
+            this.comboLocationType.Location = new System.Drawing.Point(124, 146);
+            this.comboLocationType.Name = "comboLocationType";
+            this.comboLocationType.OldText = "";
+            this.comboLocationType.Size = new System.Drawing.Size(121, 24);
+            this.comboLocationType.TabIndex = 18;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(22, 146);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 23);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Location Type";
+            // 
             // B02_BatchCreate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(602, 197);
+            this.ClientSize = new System.Drawing.Size(620, 219);
+            this.Controls.Add(this.comboLocationType);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.chkScrap);
             this.Controls.Add(this.chkInventory);
             this.Controls.Add(this.chkBulk);
@@ -180,6 +204,8 @@
             this.Controls.SetChildIndex(this.chkBulk, 0);
             this.Controls.SetChildIndex(this.chkInventory, 0);
             this.Controls.SetChildIndex(this.chkScrap, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.comboLocationType, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -197,5 +223,7 @@
         private Win.UI.CheckBox chkBulk;
         private Win.UI.CheckBox chkInventory;
         private Win.UI.CheckBox chkScrap;
+        private Win.UI.ComboBox comboLocationType;
+        private Win.UI.Label label2;
     }
 }
