@@ -100,30 +100,36 @@ namespace Sci.Production.PPIC
             }
 
             this.sqlGetData = $@"
-Select distinct
-s.SewingLineID
-, Orders.OrderComboID
+Select s.SewingLineID
 , Orders.POID
 , Orders.ID
-, Orders.Styleid
-, oc.ColorID
-, ColorName = c.[Name]
+, Orders.FactoryID
+, Orders.CustCDID
+, CustCD.ZipperInsert
+, Orders.CustPONo
+, Orders.BuyMonth
+, Factory.CountryID
+, Orders.StyleID
 , Order_Article.Article
+, Order_SizeCode.Seq
 , Order_SizeCode.SizeCode
 , IsNull(Order_Qty.Qty, 0) Qty
-, Orders.BrandID
-, Orders.CustCDID
-, Orders.CustPONo
-, Order_SizeCode.Seq
-From SewingSchedule s
-inner join dbo.Orders WITH (NOLOCK) on s.OrderID = Orders.ID
+, color.*
+from SewingSchedule s
+inner join dbo.Orders WITH (NOLOCK)  on Orders.id = orderid
 Left Join dbo.Order_SizeCode WITH (NOLOCK) On  Order_SizeCode.ID = Orders.POID
 Left Join dbo.Order_Article WITH (NOLOCK) On  Order_Article.ID = Orders.ID
-inner join dbo.Order_ColorCombo oc on oc.ID = Orders.POID and oc.Article = Order_Article.Article and oc.PatternPanel = 'FA'
-inner join dbo.Color c on c.ID = oc.ColorID and c.BrandId = Orders.BrandID
-Left Join dbo.Order_Qty WITH (NOLOCK) On  Order_Qty.ID = Orders.ID And Order_Qty.SizeCode = Order_SizeCode.SizeCode And Order_Qty.Article = Order_Article.Article
-Left Join dbo.CustCD WITH (NOLOCK) On CustCD.BrandID = Orders.BrandID And CustCD.ID = Orders.CustCDID
+Left Join dbo.Order_Qty WITH (NOLOCK) On  Order_Qty.ID = Orders.ID
+And Order_Qty.SizeCode = Order_SizeCode.SizeCode
+And Order_Qty.Article = Order_Article.Article
+Left Join dbo.CustCD WITH (NOLOCK) On CustCD.BrandID = Orders.BrandID 
+And CustCD.ID = Orders.CustCDID
 Left Join dbo.Factory WITH (NOLOCK) On Factory.ID = Orders.FactoryID
+Outer Apply ( Select ColorID = oc.ColorID, ColorName=  c.Name  
+			  From Order_ColorCombo oc  
+              Inner join Color c on c.ID = oc.ColorID
+              Where oc.id =Orders.Poid and Article = Order_Article.Article and PatternPanel='FA'
+) as color
 Where 1 = 1
 {sqlWhere}
 ";
@@ -190,7 +196,6 @@ Where 1 = 1
         ID = s["ID"].ToString(),
         StyleID = s["StyleID"].ToString(),
         Article = s["Article"].ToString(),
-        ColorID = s["ColorID"].ToString(),
     })
     .Distinct()
     .ToList();
@@ -201,8 +206,7 @@ Where 1 = 1
                                      .Where(s => s["POID"].ToString() == id.POID
                                               && s["ID"].ToString() == id.ID
                                               && s["StyleID"].ToString() == id.StyleID
-                                              && s["Article"].ToString() == id.Article
-                                              && s["ColorID"].ToString() == id.ColorID)
+                                              && s["Article"].ToString() == id.Article)
                                      .OrderBy(o => o["Seq"])
                                      .ToList();
 
@@ -253,7 +257,7 @@ Where 1 = 1
 
     Select * 
     from #Tmp_BoaExpend
-    where Article = @Art and ColorID = @Color
+    where Article = @Art
     and @ID in (Select Data From dbo.SplitString(OrderList,','))
 
     Drop Table #Tmp_BoaExpend;
@@ -263,7 +267,6 @@ Where 1 = 1
                 paras.Add(new SqlParameter("@POID", dtDetail[0]["POID"].ToString()));
                 paras.Add(new SqlParameter("@ID", dtDetail[0]["ID"].ToString()));
                 paras.Add(new SqlParameter("@Art", dtDetail[0]["Article"].ToString()));
-                paras.Add(new SqlParameter("@Color", dtDetail[0]["ColorID"].ToString()));
                 var result = DBProxy.Current.Select(null, sql, paras, out tmp);
 
                 columnsCnt = 4 + dtDetail.Count + 1;
