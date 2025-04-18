@@ -672,6 +672,82 @@ END
 ";
         }
 
+        /// <summary>
+        /// Generates a SQL query to insert data into a BI table history.
+        /// </summary>
+        /// <param name="tableName">The name of the source table.</param>
+        /// <param name="tableName_History">The name of the history table.</param>
+        /// <param name="tmpTableName">The name of the temporary table used for comparison.</param>
+        /// <param name="strWhere">The WHERE clause to filter the data.</param>
+        /// <returns>A SQL query string.</returns>
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "")
+        {
+            DataTable dt = new DataTable();
+            string tableColumns = string.Empty;
+            string tableColumns_History = string.Empty;
+            string tmpColumns = string.Empty;
+
+            #region 抓取欄位
+            string sqlcmd = $@"  
+              SELECT  
+              b.COLUMN_NAME  
+              FROM  
+              INFORMATION_SCHEMA.TABLES a  
+              LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME = b.TABLE_NAME)  
+              WHERE  
+              a.TABLE_NAME = '{tableName_History}'  
+              AND b.COLUMN_NAME NOT IN (  
+                  SELECT c.COLUMN_NAME  
+                  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc  
+                  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME  
+                  JOIN INFORMATION_SCHEMA.COLUMNS c ON c.TABLE_NAME = tc.TABLE_NAME AND c.COLUMN_NAME = ccu.COLUMN_NAME  
+                  WHERE tc.TABLE_NAME = '{tableName_History}'  
+                  AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
+              )  
+              AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+              AND TABLE_TYPE = 'BASE TABLE'";
+            DBProxy.Current.Select(null, sqlcmd, out dt);
+            #endregion 抓取欄位
+
+            #region 關聯建置
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DataRow row = dt.Rows[i];
+                string columnName = row["COLUMN_NAME"].ToString();
+
+                tableColumns_History += columnName;
+                tableColumns += "p." + columnName;
+                tmpColumns += "AND t." + columnName + " = p." + columnName + " ";
+
+                if (i != dt.Rows.Count - 1)
+                {
+                    tableColumns_History += ",";
+                    tableColumns += ",";
+                }
+                else
+                {
+                    tableColumns_History += " ";
+                    tableColumns += " ";
+                }
+            }
+            #endregion 關聯建置
+
+            return $@"  
+              INSERT INTO {tableName_History}  
+              (  
+                  {tableColumns_History},   
+                  BIFactoryID,   
+                  BIInsertDate  
+              )   
+              SELECT   
+              {tableColumns},   
+              BIFactoryID,   
+              GETDATE()  
+              FROM {tableName} p  
+              INNER JOIN {tmpTableName} t ON {tmpColumns}  
+              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " WHERE " + strWhere)}";
+        }
+
         private void WriteTranslog(string tableName, string description)
         {
             string functionName = "PowerBI-" + tableName;
