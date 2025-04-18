@@ -61,6 +61,7 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[Remark] = isnull(l.Remark,'')
     ,[Process] = isnull(ld.Process,'')
     ,[FabricType] = isnull(l.FabricType,'')
+	,[DetailRemark] = isnull(ld.Remark,'')
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
