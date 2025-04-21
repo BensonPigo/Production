@@ -449,6 +449,8 @@ from
         ,fu.RelaxationEndTime
         ,[MCHandle] = dbo.GetPass1(o.MCHandle)
         ,[Packages] = isnull(e.Packages,0)
+        ,[SentToWMS] = rd.SentToWMS
+        ,[CompleteTime] = rd.CompleteTime
     from  Receiving r with (nolock)
     inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
     inner join View_WH_Orders o with (nolock) on o.ID = rd.POID 
@@ -592,6 +594,8 @@ from
         ,fu.RelaxationEndTime
         ,[MCHandle] = dbo.GetPass1(o.MCHandle)
         ,[Packages] = isnull(t.Packages,0)
+        ,[SentToWMS] = td.SentToWMS
+        ,[CompleteTime] = td.CompleteTime
     FROM TransferIn t with (nolock)
     INNER JOIN TransferIn_Detail td with (nolock) ON t.ID = td.ID
     INNER JOIN View_WH_Orders o with (nolock) ON o.ID = td.POID
@@ -1039,11 +1043,13 @@ where m.IsWMS = 0";
                             throw result.GetException();
                         }
 
+                        DataTable dtToRevise = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1 && MyUtility.Convert.GetBool(s["SentToWMS"]) == true && MyUtility.Check.Empty(s["CompleteTime"])).CopyToDataTable();
+
                         // 要先Unlock
-                        Prgs_WMS.UnLockorDeleteNotWMS(dtReceiving, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                        Prgs_WMS.UnLockorDeleteNotWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
 
                         // 再Revise
-                        Prgs_WMS.ReviseWMS(dtReceiving, autoRecordListP07, autoRecordListP18, 1);
+                        Prgs_WMS.ReviseWMS(dtToRevise, autoRecordListP07, autoRecordListP18, 1);
                     }
 
                     if (!MyUtility.Check.Empty(sqlUpdateFIR_Shadebone))
