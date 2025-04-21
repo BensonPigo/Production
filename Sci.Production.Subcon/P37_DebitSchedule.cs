@@ -119,7 +119,7 @@ namespace Sci.Production.Subcon
             };
 
             this.Helper.Controls.Grid.Generator(this.grid)
-                .CheckBox("BadDebt", header: "Bad Debit", width: Widths.AnsiChars(10), settings: badDebtSetting)
+                .CheckBox("BadDebt", header: "Bad Debt", width: Widths.AnsiChars(10), settings: badDebtSetting)
                 .Date("issuedate", header: "Debit Date", width: Widths.AnsiChars(10))
                 .Text("CurrencyID", header: "Debit Currency", width: Widths.AnsiChars(18), iseditingreadonly: true)
                 .Numeric("amount", header: "Deibt Amount", integer_places: 12, decimal_places: 2, settings: amountSetting)
