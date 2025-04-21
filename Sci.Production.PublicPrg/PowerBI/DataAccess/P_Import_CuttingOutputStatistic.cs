@@ -72,6 +72,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@eDate", edate.ToString("yyyy-MM-dd")),
             };
 
+            string tmp = new Base().SqlBITableHistory("P_CuttingOutputStatistic", "P_CuttingOutputStatistic_History", "#tmp", " p.TransferDate Between @sDate and @eDate");
+
             using (sqlConn)
             {
                 string sql = $@" 
@@ -79,7 +81,9 @@ Update p Set CutRateByDate = t.CutRateByDate,
              CutRateByMonth = t.CutRateByMonth,
              CutOutputByDate = t.CutOutputByDate,
              CutOutputIn7Days = t.CutOutputIn7Days,
-             CutDelayIn7Days = t.CutDelayIn7Days
+             CutDelayIn7Days = t.CutDelayIn7Days,
+             p.[BIFactoryID] = t.[BIFactoryID],
+             p.[BIInsertDate] = t.[BIInsertDate]
 From P_CuttingOutputStatistic p
 inner join #tmp t on p.TransferDate = t.TransferDate 
                  and p.FactoryID = t.FactoryID
@@ -96,7 +100,9 @@ Insert into P_CuttingOutputStatistic ( TransferDate,
                                        CutRateByMonth, 
                                        CutOutputByDate, 
                                        CutOutputIn7Days, 
-                                       CutDelayIn7Days
+                                       CutDelayIn7Days, 
+                                       BIFactoryID,
+                                       BIInsertDate
                                      )
 Select TransferDate,
        FactoryID, 
@@ -104,7 +110,9 @@ Select TransferDate,
        CutRateByMonth, 
        CutOutputByDate, 
        CutOutputIn7Days,
-       CutDelayIn7Days
+       CutDelayIn7Days,
+       BIFactoryID,
+       BIInsertDate
 From #tmp t
 Where not exists ( select 1 
 				   from P_CuttingOutputStatistic p
@@ -112,6 +120,7 @@ Where not exists ( select 1
 				   and p.FactoryID = t.FactoryID
                 )
 
+{tmp}
 
 Delete P_CuttingOutputStatistic 
 Where Not exists ( select 1 
@@ -148,7 +157,9 @@ SELECT
                          ISNULL(psConsumptionByMonthMol.value / psConsumptionByMonth.value, 0)),
     CutOutputByDate = ISNULL(psCutOutputByDate.value, 0),
     CutOutputIn7Days = ISNULL(psByWeek.ActConsOutput, 0),
-    CutDelayIn7Days = ISNULL(psByWeek.BalanceCons, 0)
+    CutDelayIn7Days = ISNULL(psByWeek.BalanceCons, 0),
+    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    [BIInsertDate] = GETDATE()
 FROM (
     SELECT distinct  psol.EstCuttingDate,
         psol.FactoryID

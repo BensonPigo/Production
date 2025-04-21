@@ -541,6 +541,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,[LocalMR] = ISNULL([LocalMR], '')
             ,[OrderType] = ISNULL([OrderType], '')
             {(model.IsBI ? ",[ReceivingID] = ISNULL([ReceivingID], '')  ,[AddDate] ,[EditDate] ,[StockType] = ISNULL([StockType], '')" : string.Empty)}
+            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GETDATE()
+
             from #tmpFinal tf
             ORDER BY POID,SEQ
            

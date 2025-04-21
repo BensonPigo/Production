@@ -54,13 +54,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@BuyerDeliveryS", sDate),
                     new SqlParameter("@BuyerDeliveryE", eDate),
                 };
-                string sql = @"
+
+                string tmp = new Base().SqlBITableHistory("P_CFAMasterListRelatedrate", "P_CFAMasterListRelatedrate_History", "#tmp_P_CFAMasterListRelatedrate", "p.[Buyerdelivery] <= cast(dateadd(day, -1, getdate()) as date)");
+
+                string sql = $@"
 --declare @BuyerDeliveryS as date = getdate()
 --declare @BuyerDeliveryE as date = dateadd(day, 7, getdate())
 
 select *
 	, [FinalRate] = cast(iif(p.[TotalSP] = 0, 0, p.[FinalInspectionSP] * 1.0 / p.[TotalSP]) * 100 as decimal(5, 2))
 	, [PassRate] = cast(iif(p.[FinalInspectionSP] = 0, 0, p.[PassSP] * 1.0 / p.[FinalInspectionSP]) * 100 as decimal(5, 2))
+    , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 into #tmp_P_CFAMasterListRelatedrate
 from (
 	select p.BuyerDelivery
@@ -102,14 +107,17 @@ update p
 		, p.[TotalSP] = t.[TotalSP]
 		, p.[PassRate] = t.[PassRate]
 		, p.[PassSP] = t.[PassSP]
+        , p.[BIFactoryID] = t.[BIFactoryID]
+        , p.[BIInsertDate] = t.[BIInsertDate]
 from P_CFAMasterListRelatedrate p
 inner join #tmp_P_CFAMasterListRelatedrate t on p.[BuyerDelivery]= t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID]
 
-insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP])
-select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP]
+insert into P_CFAMasterListRelatedrate([Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate])
+select [Buyerdelivery], [FactoryID], [FinalRate], [FinalInspectionSP], [TotalSP], [PassRate], [PassSP], [BIFactoryID], [BIInsertDate]
 from #tmp_P_CFAMasterListRelatedrate t
 where not exists (select 1 from P_CFAMasterListRelatedrate p where p.[Buyerdelivery] = t.[Buyerdelivery] and p.[FactoryID] = t.[FactoryID])
 
+{tmp}
 
 delete p
 from P_CFAMasterListRelatedrate p

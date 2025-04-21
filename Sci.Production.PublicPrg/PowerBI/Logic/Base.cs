@@ -706,7 +706,7 @@ END
               )  
               AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
               AND TABLE_TYPE = 'BASE TABLE'";
-            DBProxy.Current.Select(null, sqlcmd, out dt);
+            DBProxy.Current.Select("PowerBI", sqlcmd, out dt);
             #endregion 抓取欄位
 
             #region 關聯建置
@@ -717,7 +717,15 @@ END
 
                 tableColumns_History += columnName;
                 tableColumns += "p." + columnName;
-                tmpColumns += "AND t." + columnName + " = p." + columnName + " ";
+
+                if (i == 0)
+                {
+                    tmpColumns += "t." + columnName + " = p." + columnName;
+                }
+                else
+                {
+                    tmpColumns += " AND t." + columnName + " = p." + columnName + " ";
+                }
 
                 if (i != dt.Rows.Count - 1)
                 {
@@ -741,7 +749,7 @@ END
               )   
               SELECT   
               {tableColumns},   
-              BIFactoryID,   
+              t.BIFactoryID,   
               GETDATE()  
               FROM {tableName} p  
               INNER JOIN {tmpTableName} t ON {tmpColumns}  

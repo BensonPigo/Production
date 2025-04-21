@@ -50,22 +50,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
+            string where = @" NOT EXISTS (SELECT 1 FROM #TMP T WHERE T.TransferDate = P.TransferDate AND P.FactoryID = T.FactoryID)
+            AND TransferDate NOT BETWEEN  @StartDate AND @EndDate ";
+            string tmp = new Base().SqlBITableHistory("P_FabricInspAvgInspLTInPast7Days", "P_FabricInspAvgInspLTInPast7Days_History", "#tmp", where);
+
             string sqlcmd = $@"          
             DECLARE @Number INT = -7;
             Create table #tmp
             (
 	            TransferDate VARCHAR(10),
                 FactoryID VARCHAR(10),
-                AvgInspLTInPast7Days FLOAT
+                AvgInspLTInPast7Days FLOAT,
+                BFactoryID VARCHAR(8),
+                BIInsertDate date             
             )
 
             WHILE @Number <= 0
             BEGIN
-            INSERT INTO #tmp (TransferDate, FactoryID, AvgInspLTInPast7Days)
+            INSERT INTO #tmp (TransferDate, FactoryID, AvgInspLTInPast7Days, BFactoryID, BIInsertDate)
               SELECT
 	            [TransferDate] = A.TransferDate
 	            ,[FactoryID] = A.FactoryID
 	            ,[AvgInspLTInPast7Days] = IIF(SUM(A.SumofDuration) = 0, 0, ROUND(CAST(SUM(A.SumofDuration) as FLOAT) / A.DataCount, 2))
+                ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                ,[BIInsertDate] = GETDATE()
               FROM (
                 SELECT 
                   [TransferDate] = FORMAT(DATEADD(day, @Number, @EndDate), 'yyyy/MM/dd')
@@ -101,7 +109,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             ----更新
             UPDATE P SET
-             P.[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
+             P.[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0),
+             P.[BIFactoryID] = T.[BIFactoryID],
+             P.[BIInsertDate] = T.[BIInsertDate]
             FROM P_FabricInspAvgInspLTInPast7Days P
             INNER JOIN #TMP T ON P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID]
             
@@ -111,11 +121,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            [TransferDate]
 	            ,[FactoryID]
 	            ,[AvgInspLTInPast7Days]
+                ,[BIFactoryID]
+                ,[BIInsertDate] 
             )
             SELECT
              [TransferDate]
             ,[FactoryID] = ISNULL(T.[FactoryID],'')
             ,[AvgInspLTInPast7Days] = ISNULL(T.[AvgInspLTInPast7Days],0)
+            ,T.[BIFactoryID]
+            ,T.[BIInsertDate]
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_FabricInspAvgInspLTInPast7Days P WHERE P.[TransferDate] = T.[TransferDate] AND P.[FactoryID] = T.[FactoryID])   
 

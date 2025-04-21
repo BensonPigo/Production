@@ -104,6 +104,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[LineManpower] = ISNULL(DAD.[LineManpower], 0)
             ,[GPH] = ISNULL(DAD.[GPH], 0)
             ,[SPH] = ISNULL(DAD.[SPH], 0)
+            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GETDATE()   
             FROM MainServer.Production.dbo.DailyAccuCPULoading DA WITH(NOLOCK)
             INNER JOIN MainServer.Production.dbo.DailyAccuCPULoading_Detail DAD WITH(NOLOCK) ON DAD.DailyAccuCPULoadingUkey = DA.UKEY
             WHERE
@@ -127,6 +129,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string where = @" not exists (
+                    select 1 from #tmp T 
+                    where p.FactoryID = T.FactoryID
+	                and p.[Month] = T.[Month]
+	                and p.[Year] = T.[Year]
+                    AND p.[Date] = t.[Date]
+                )
+                and 
+                (
+	                (p.AddDate between @sDate and @eDate)
+	                or
+	                (p.EditDate between @sDate and @eDate)
+                )";
+
+            string tmp = new Base().SqlBITableHistory("P_DailyAccuCPULoading", "P_DailyAccuCPULoading_History", "#TMP", where);
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@sDate", sDate),
@@ -134,7 +152,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
             using (sqlConn)
             {
-                string sql = @"
+                string sql = $@"
                 UPDATE PDA
                 SET
                  PDA.[TTLCPULoaded]						= T.[TTLCPULoaded]				
@@ -166,7 +184,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,PDA.[LineNo]							= T.[LineNo]						
                 ,PDA.[LineManpower]						= T.[LineManpower]				
                 ,PDA.[GPH]								= T.[GPH]						
-                ,PDA.[SPH]								= T.[SPH]						
+                ,PDA.[SPH]								= T.[SPH]	
+                ,PDA.[BIFactoryID]                      = T.[BIFactoryID]
+                ,PDA.[BIInsertDate]                      = T.[BIInsertDate]
                 FROM P_DailyAccuCPULoading PDA
                 INNER JOIN #TMP T ON PDA.[Year] = T.[Year] AND PDA.[Month] = T.[Month] AND PDA.[FactoryID] = T.[FactoryID] AND PDA.[Date] = t.[Date]
 
@@ -257,6 +277,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     AND PDA.[Date] = t.[Date]
                 )
 
+{tmp}
                 delete PDA 
                 from dbo.P_DailyAccuCPULoading PDA
                 where not exists (
