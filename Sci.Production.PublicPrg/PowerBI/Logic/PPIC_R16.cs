@@ -367,6 +367,8 @@ select main.KPICode
 	,main.[3rdPartyInspection]
 	,main.[3rdPartyInspectionResult]
 	,[LastCartonReceivedDate]  = c.AddDate
+    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    ,[BIInsertDate] = GETDATE()
 from #tmpOrderMain main
 left join #tmpPackingList_Detail pd on pd.OrderID = main.id and pd.OrderShipmodeSeq = main.Seq
 left join #tmpInspection ins on ins.OrderId = main.ID

@@ -49,9 +49,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 new SqlParameter("@sDate", sDate),
             };
+
+            string where = @" p.Buyerdelivery < @sDate";
+            string tmp = new Base().SqlBITableHistory("P_OutstandingPOStatus", "P_OutstandingPOStatus_History", "#tmp", where, false, false);
+
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 --declare @sDate as date = CONVERT(date, GETDATE()) 
 
 select p.Buyerdelivery
@@ -59,19 +63,22 @@ select p.Buyerdelivery
 	, [TotalCMPQty] = SUM(cast(p.OSTCMPQty as int))
 	, [TotalClogCtn] = SUM(p.OSTClogCtn)
 	, [NotYet3rdSPCount] = SUM(IIF(p.[3rdPartyInspection] = 'Y' and p.[3rdPartyInspectionResult] = '', 1, 0))
+    , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 into #tmp
 from P_OustandingPO p
 inner join Production.dbo.Factory f on p.FactoryID = f.ID
 where p.BuyerDelivery >= @sDate
 group by p.Buyerdelivery, f.FTYGroup
 
+{tmp}
 
 delete p 
 from P_OutstandingPOStatus p
 where p.Buyerdelivery < @sDate
 
-insert into P_OutstandingPOStatus([Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount])
-select [Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount]
+insert into P_OutstandingPOStatus([Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate])
+select [Buyerdelivery], [FTYGroup], [TotalCMPQty], [TotalClogCtn], [NotYet3rdSPCount], [BIFactoryID], [BIInsertDate]
 from #tmp t
 where not exists (select 1 from P_OutstandingPOStatus p where t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup) 
 
@@ -79,6 +86,8 @@ update p
 	set p.TotalCMPQty = t.TotalCMPQty
 	 , p.TotalClogCtn = t.TotalClogCtn
 	 , p.NotYet3rdSPCount = t.NotYet3rdSPCount
+     , p.[BIFactoryID] = t.[BIFactoryID]
+     , p.[BIInsertDate] =  t.[BIInsertDate]
 from P_OutstandingPOStatus p
 inner join #tmp t on t.BuyerDelivery = p.Buyerdelivery and t.FTYGroup = p.FTYGroup
 

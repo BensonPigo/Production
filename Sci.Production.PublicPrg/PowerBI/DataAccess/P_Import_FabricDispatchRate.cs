@@ -75,6 +75,8 @@ select [FactoryID] = t.FTYGroup
 	, [FabricDispatchRate] = cast((case when isnull(t2.RequestedDispatchYards, 0) = 0 then 0
 								when t3.DispatchYards >= t2.RequestedDispatchYards then 1
 								else isnull(t3.DispatchYards, 0) * 1.0 / t2.RequestedDispatchYards end) * 100 as decimal(5, 2))
+    , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 from (select distinct FTYGroup, EstCutDate from #tmp) t
 left join (
 	select t.FTYGroup
@@ -108,13 +110,16 @@ drop table #tmp
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string tmp = new Base().SqlBITableHistory("P_FabricDispatchRate", "P_FabricDispatchRate_History", "#tmp", string.Empty, false, true);
+
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
                     new SqlParameter("@SDate", sDate),
                 };
-                string sql = @"	
+                string sql = $@"	
 --delete p
 --from P_FabricDispatchRate p
 --where EstCutDate >= @SDate
@@ -122,17 +127,23 @@ drop table #tmp
 
 update p 
 	set p.FabricDispatchRate = t.FabricDispatchRate
+       ,p.BIFactoryID = t.BIFactoryID
+       ,p.BIInsertDate = t.BIInsertDate
 from P_FabricDispatchRate p
 inner join #tmp t on p.EstCutDate = t.EstCutDate and p.FactoryID = t.FactoryID
 
-insert into P_FabricDispatchRate(EstCutDate,FactoryID,FabricDispatchRate)
+insert into P_FabricDispatchRate(EstCutDate,FactoryID,FabricDispatchRate, BIFactoryID, BIInsertDate)
 select	 t.EstCutDate
 		,t.FactoryID
 		,t.FabricDispatchRate
+        ,t.BIFactoryID
+        ,t.BIInsertDate
 from #tmp t
 where not exists(	select 1 
 					from P_FabricDispatchRate p
 					where p.EstCutDate = t.EstCutDate and p.FactoryID = t.FactoryID)
+
+{tmp}
 
 if exists(select 1 from BITableInfo where Id = 'P_FabricDispatchRate')
 begin

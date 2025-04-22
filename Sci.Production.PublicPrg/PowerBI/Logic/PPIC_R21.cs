@@ -662,6 +662,7 @@ select distinct [KPIGroup] = f.KPICode
 	, pld.DisposeDate
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
+{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE()" : string.Empty)}
 from #Orders o
 inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
 inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID

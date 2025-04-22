@@ -947,6 +947,8 @@ GROUP BY s.OrderID
     ,HeatSealFailQty     = ISNULL( pld.HeatSealFailQty ,0)
     ,o.JokerTag
     ,o.HeatSeal
+    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    ,[BIInsertDate] = GETDATE()
 ";
             }
             else

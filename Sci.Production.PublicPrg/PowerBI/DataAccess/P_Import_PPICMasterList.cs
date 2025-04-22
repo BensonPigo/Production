@@ -270,6 +270,8 @@ update p
 		, p.[Line Aggregator] = ISNULL(t.[Line Aggregator],'')
 		, p.[JokerTag] = ISNULL(t.[JokerTag], 0)
 		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
+		, p.[BIFactoryID] = ISNULL(t.BIFactoryID,'')
+		, p.[BIInsertDate] = t.BIInsertDate
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -295,7 +297,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
-	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal])
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [BIFactoryID], [BIInsertDate])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[Factory], '')
 	, [Delivery]
@@ -478,14 +480,32 @@ select ISNULL(t.[M], '')
 	, ISNULL([Line Aggregator],'')
 	, ISNULL([JokerTag], 0)
 	, ISNULL([HeatSeal], 0)
+	, ISNULL([BIFactoryID],'')
+	, BIInsertDate
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
+
+
+Insert into P_PPICMASTERLIST_History
+Select SPNO,BIFactoryID, [BIInsertDate]=GetDate()
+From P_PPICMASTERLIST p
+Where (p.SCIDlv >= @sDate
+	or p.Delivery >= @sDate)
+And not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+
 
 delete p
 from P_PPICMASTERLIST p 
 where (p.SCIDlv >= @sDate
 	or p.Delivery >= @sDate)
 and not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
+
+
+Insert into P_PPICMASTERLIST_History
+Select p.[SP#], p.BIFactoryID, [BIInsertDate]=GetDate()
+From P_PPICMasterList_ArtworkType p
+Where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
+
 
 delete p
 from P_PPICMasterList_ArtworkType p
@@ -503,6 +523,9 @@ where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
         private Base_ViewModel UpdateBIData_P_PPICMasterList_Extend(DataTable dt)
         {
             Base_ViewModel finalResult;
+            string where = @" p.[BuyerDelivery] < @sDate ";
+            string tmp = new Base().SqlBITableHistory("P_OutStandingHPMS", "P_OutStandingHPMS_History", "#tmp", where, false, false);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -515,6 +538,11 @@ insert into P_PPICMasterList_Extend(OrderID, ColumnName, ColumnValue)
 select OrderID, ColumnName, isnull(ColumnValue, 0)
 from #tmp t
 where not exists (select 1 from P_PPICMasterList_Extend p where t.OrderID = p.OrderID and t.ColumnName = p.ColumnName)
+
+insert into P_PPICMasterList_Extend_History
+Select p.[ColumnName], p.[OrderID], p.[BIFactoryID], [BIInsertDate] = GetDate()
+from P_PPICMasterList_Extend p
+where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.OrderID)
 
 delete p
 from P_PPICMasterList_Extend p

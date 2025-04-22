@@ -64,6 +64,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
             Base_ViewModel finalResult;
+
+            string where = @"((p.AddDate >= @StartDate and p.AddDate <= @EndDate)  or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))";
+
+            string tmp = new Base().SqlBITableHistory("P_FabricInspLabSummaryReport", "P_FabricInspLabSummaryReport_History", "#tmp", where, false, true);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
@@ -146,6 +151,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.OrderType						= t.OrderType
             ,p.AddDate							= t.AddDate
             ,p.EditDate							= t.EditDate
+            ,p.[BIFactoryID] = t.[BIFactoryID]
+            ,p.[BIInsertDate] = t.[BIInsertDate]
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -170,7 +177,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType])
+	        , [EditDate], [StockType], [BIFactoryID], [BIInsertDate])
             SELECT
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -188,14 +195,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType]
+	        , [EditDate], [StockType], [BIFactoryID], [BIInsertDate]
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
 																	         and p.SEQ = t.SEQ
 																	         and p.ReceivingID = t.ReceivingID
 																	         and p.StockType = t.StockType)
-            
+             {tmp}
+
             /************* 刪除P_FabricInspLabSummaryReport的資料*************/
 	        delete p
 	        from P_FabricInspLabSummaryReport p

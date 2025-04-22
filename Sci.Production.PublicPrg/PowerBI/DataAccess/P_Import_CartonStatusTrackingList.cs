@@ -62,18 +62,24 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string where = @"  not exists (select 1 from #tmp t where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
+                               and p.Buyerdelivery  >= @StartDate";
+
+            string tmp = new Base().SqlBITableHistory("P_CartonStatusTrackingList", "P_CartonStatusTrackingList_History", "#tmp", where, false, false);
+
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
                     new SqlParameter("@StartDate", sDate),
                 };
-                string sql = @"	
+                string sql = $@"	
 insert into P_CartonStatusTrackingList([KPIGroup], [FactoryID], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],[RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],
-  [M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
+  [M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName], [BIFactoryID], [BIInsertDate]
 )
 select [KPIGroup], [FactoryID], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],
- [RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],[M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
+ [RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],[M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName], [BIFactoryID], [BIInsertDate]
 from #tmp t
 where not exists (select 1 from P_CartonStatusTrackingList p where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
 
@@ -137,9 +143,12 @@ update p
         , p.[HeatSealStatus]				= t.[HeatSealStatus]
         , p.[HeatSealName]					= t.[HeatSealName]
         , p.[MDMachineNo]                   = t.[MDMachineNo]
+        , p.[BIFactoryID]                   = t.[BIFactoryID]
+        , p.[BIInsertDate]                  = t.[BIInsertDate]
 from P_CartonStatusTrackingList p
 inner join #tmp t on p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo]
 
+{tmp}
 
  delete p
  from P_CartonStatusTrackingList p

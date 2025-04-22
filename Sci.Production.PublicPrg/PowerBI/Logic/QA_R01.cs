@@ -171,7 +171,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {(model.IsBI ? $@"
             ,F.AddDate
             ,F.EditDate
-            ,t.StockType" :
+            ,t.StockType
+            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) 
+            ,[BIInsertDate] = GETDATE()
+" :
             $@"
             ,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')
             ,[A_Grade_TOP3Defects] = isnull(AGradT3.Value,'')
@@ -540,10 +543,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,[ColorFastnessInspector] = ISNULL([ColorFastnessInspector], '')
             ,[LocalMR] = ISNULL([LocalMR], '')
             ,[OrderType] = ISNULL([OrderType], '')
-            {(model.IsBI ? ",[ReceivingID] = ISNULL([ReceivingID], '')  ,[AddDate] ,[EditDate] ,[StockType] = ISNULL([StockType], '')" : string.Empty)}
-            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-            ,[BIInsertDate] = GETDATE()
-
+            {(model.IsBI ? @",[ReceivingID] = ISNULL([ReceivingID], '')  ,[AddDate] ,[EditDate] ,[StockType] = ISNULL([StockType], '')" : string.Empty)}
             from #tmpFinal tf
             ORDER BY POID,SEQ
            

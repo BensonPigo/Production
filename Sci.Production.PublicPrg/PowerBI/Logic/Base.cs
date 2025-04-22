@@ -3,6 +3,7 @@ using PostJobLog;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.DataAccess;
 using Sci.Production.Prg.PowerBI.Model;
+using Sci.Production.PublicPrg;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -680,7 +681,7 @@ END
         /// <param name="tmpTableName">The name of the temporary table used for comparison.</param>
         /// <param name="strWhere">The WHERE clause to filter the data.</param>
         /// <returns>A SQL query string.</returns>
-        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "")
+        public string SqlBITableHistory(string tableName, string tableName_History, string tmpTableName, string strWhere = "", bool needJoin = true, bool needExists = true)
         {
             DataTable dt = new DataTable();
             string tableColumns = string.Empty;
@@ -749,11 +750,12 @@ END
               )   
               SELECT   
               {tableColumns},   
-              t.BIFactoryID,   
+              {(needJoin ? "t.BIFactoryID," : "p.BIFactoryID,")}
               GETDATE()  
               FROM {tableName} p  
-              INNER JOIN {tmpTableName} t ON {tmpColumns}  
-              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " WHERE " + strWhere)}";
+              {(needJoin ? "INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
+              WHERE {(needExists ? $"not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and" + strWhere)}";
         }
 
         private void WriteTranslog(string tableName, string description)

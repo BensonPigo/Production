@@ -121,7 +121,9 @@ alter table #tmp alter column Seq varchar(2)
 	            t.CFAInspectionResult				= ISNULL(s.CFAInspectionResult,''),
 	            t.[3rdPartyInspection]				= ISNULL(s.[3rdPartyInspection],''),
 	            t.[3rdPartyInspectionResult]		= ISNULL(s.[3rdPartyInspectionResult],''),
-	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate
+	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate,
+                t.BIFactoryID                       = s.BIFactoryID,
+                t.BIInsertDate                      = s.BIInsertDate
                 from P_OustandingPO t
                 inner join #tmp s  
 		                ON t.FactoryID = s.FactoryID
@@ -131,7 +133,7 @@ alter table #tmp alter column Seq varchar(2)
                 insert into P_OustandingPO ([FactoryID], [OrderID], [CustPONo], [StyleID], [BrandID], [BuyerDelivery], [Seq], [ShipModeID], [Category]
                 , [PartialShipment], [Junk], [OrderQty], [PackingCtn], [PackingQty], [ClogRcvCtn], [ClogRcvQty], [LastCMPOutputDate], [CMPQty]
                 , [LastDQSOutputDate], [DQSQty], [OSTPackingQty], [OSTCMPQty], [OSTDQSQty], [OSTClogQty], [OSTClogCtn], [PulloutComplete], [Dest]
-                , [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate])
+                , [KPIGroup], [CancelledButStillNeedProduction], [CFAInspectionResult], [3rdPartyInspection], [3rdPartyInspectionResult], [BookingSP],[LastCartonReceivedDate], [BIFactoryID], [BIInsertDate])
                 select  
                 [FactoryID]								= ISNULL(s.FactoryID,''),
 		        [OrderID]								= ISNULL(s.id,''),
@@ -166,7 +168,9 @@ alter table #tmp alter column Seq varchar(2)
 		        [3rdPartyInspection]					= ISNULL(s.[3rdPartyInspection],''),
 		        [3rdPartyInspectionResult]				= ISNULL(s.[3rdPartyInspectionResult],''),
 		        [BookingSP]								= ISNULL(s.BookingSP,''),
-		        [LastCartonReceivedDate]				= s.LastCartonReceivedDate
+		        [LastCartonReceivedDate]				= s.LastCartonReceivedDate,
+                [BIFactoryID]                           = s.BIFactoryID,
+                [BIInsertDate]                          = s.BIInsertDate
                 from #tmp s
                 where not exists(
 	                select 1 from P_OustandingPO t 
@@ -174,6 +178,13 @@ alter table #tmp alter column Seq varchar(2)
 	                AND t.OrderID = s.ID
 	                AND t.Seq = s.Seq
                 )
+
+                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                from dbo.P_OustandingPO t
+                left join #tmp s on t.FactoryID = s.FactoryID AND t.OrderID = s.ID AND t.Seq = s.Seq
+                where t.BuyerDelivery between @StartDate and @EndDate
+	                and s.ID IS NULL
 
                 delete t
                 from P_OustandingPO t
@@ -183,10 +194,21 @@ alter table #tmp alter column Seq varchar(2)
                 where t.BuyerDelivery between @StartDate and @EndDate
 	                and s.ID IS NULL
 
+                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                from dbo.P_OustandingPO t
+                where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
+                and t.Seq = ''
+
                 delete t
                 from P_OustandingPO t
                 where exists (select 1 from MainServer.Production.dbo.Order_QtyShip oq where t.OrderID = oq.Id)
                 and t.Seq = ''
+
+                insert into P_OustandingPO_History ([FactoryID],[OrderID],[Seq],BIFactoryID,BIInsertDate)
+                Select t.FactoryID, t.OrderID, t.Seq, t.BIFactoryID, GetDate()
+                from dbo.P_OustandingPO t
+                where BuyerDelivery > @EndDate
 
                 delete P_OustandingPO
                 where BuyerDelivery > @EndDate

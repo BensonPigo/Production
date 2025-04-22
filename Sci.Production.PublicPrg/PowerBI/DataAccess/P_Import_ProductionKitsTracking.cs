@@ -61,6 +61,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
             Base_ViewModel finalResult;
+
+            string where = @" 
+NOT EXISTS (
+SELECT 1
+FROM #tmp t
+WHERE t.Article = p.Article
+AND t.FactoryID = p.FactoryID
+AND t.Doc = p.Doc
+AND t.SPNo = p.SPNo
+AND t.ProductionKitsGroup = p.ProductionKitsGroup
+)
+AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
+OR (EditDate >= @StartDate AND EditDate <= @EndDate))
+";
+            string tmp = new Base().SqlBITableHistory("P_ProductionKitsTracking", "P_ProductionKitsTracking_History", "#tmp", where, false, false);
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -69,7 +84,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                     new SqlParameter("@EndDate", eDate),
                 };
-                string sql = @"
+                string sql = $@"
 UPDATE p
 SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.StyleID = ISNULL(t.StyleID, '')
@@ -99,6 +114,8 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.EditDate = t.EditDate
    ,p.AWBNO = ISNULL(t.AWBNO, '')
    ,p.Reject = ISNULL(t.Reject, '')
+   ,p.BIFactoryID = isnull(t.BIFactoryID, '')
+   ,p.BIInsertDate = isnull(t.BIInsertDate, GetDate())
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON t.Article = p.Article
@@ -136,6 +153,8 @@ INSERT INTO P_ProductionKitsTracking (
 	,EditDate
     ,AWBNO
     ,Reject
+    ,BIFactoryID 
+    ,BIInsertDate
 )
 SELECT
     ISNULL(t.BrandID, '')
@@ -166,6 +185,8 @@ SELECT
    ,t.EditDate
    ,ISNULL(t.AWBNO, '')
    ,ISNULL(t.Reject, '')
+   ,isnull(t.BIFactoryID, '')
+   ,isnull(t.BIInsertDate, GetDate())
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
@@ -176,6 +197,8 @@ WHERE NOT EXISTS (
     AND t.SPNo = p.SPNo
     AND t.ProductionKitsGroup = p.ProductionKitsGroup
 )
+
+{tmp}
 
 DELETE P_ProductionKitsTracking
 FROM P_ProductionKitsTracking p WITH(NOLOCK)

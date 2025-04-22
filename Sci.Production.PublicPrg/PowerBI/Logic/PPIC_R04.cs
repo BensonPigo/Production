@@ -25,6 +25,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// <inheritdoc/>
         public Base_ViewModel GetPPIC_R04Data(PPIC_R04_ViewModel model)
         {
+            string tmpsql = string.Empty;
             List<SqlParameter> listPar = new List<SqlParameter>
             {
                 new SqlParameter("@ReportType", SqlDbType.VarChar, 20) { Value = model.ReportType },
@@ -37,8 +38,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@IsPowerBI", SqlDbType.Bit) { Value = model.IsPowerBI },
             };
 
+            if (model.IsPowerBI)
+            {
+                tmpsql = @",[SP] = isnull(l.OrderID,'')
+                           ,[ReplacementID] = isnull(l.ID,'')";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
-            sqlCmd.Append(@"
+            sqlCmd.Append($@"
 select distinct MDivisionID = isnull(l.MDivisionID,'')
     ,[FactoryID] = isnull(l.FactoryID,'')
     ,[ID] = isnull(l.ID,'')
@@ -61,6 +68,9 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[Remark] = isnull(l.Remark,'')
     ,[Process] = isnull(ld.Process,'')
     ,[FabricType] = isnull(l.FabricType,'')
+    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    ,[BIInsertDate] = GETDATE()
+    {(model.IsPowerBI ? tmpsql : string.Empty)}
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID

@@ -52,6 +52,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             string where = @" NOT EXISTS (SELECT 1 FROM #TMP T WHERE T.TransferDate = P.TransferDate AND P.FactoryID = T.FactoryID)
             AND TransferDate NOT BETWEEN  @StartDate AND @EndDate ";
+
             string tmp = new Base().SqlBITableHistory("P_FabricInspAvgInspLTInPast7Days", "P_FabricInspAvgInspLTInPast7Days_History", "#tmp", where);
 
             string sqlcmd = $@"          

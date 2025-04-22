@@ -44,6 +44,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DateTime? sDate)
         {
+            string where = @" p.[BuyerDelivery] < @sDate ";
+
+            string tmp = new Base().SqlBITableHistory("P_OutStandingHPMS", "P_OutStandingHPMS_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
@@ -52,7 +56,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 --declare @sDate as date = CONVERT(date, GETDATE()) 
 
 select p.BuyerDelivery
@@ -60,6 +64,8 @@ select p.BuyerDelivery
 	, [OSTInHauling] = ISNULL(SUM(p2.OSTInHauling), 0)
 	, [OSTInScanAndPack] = ISNULL(SUM(p3.OSTInScanAndPack), 0)
 	, [OSTInCFA] = ISNULL(SUM(p4.OSTInCFA), 0)
+    , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 into #tmp_P_OutStandingHPMS
 from (
 	select distinct p.BuyerDelivery, p.FactoryID 
@@ -94,13 +100,17 @@ update p
 	set p.[OSTInHauling] = t.[OSTInHauling]
 		, p.[OSTInScanAndPack] = t.[OSTInScanAndPack]
 		, p.[OSTInCFA] = t.[OSTInCFA]
+        , p.[BIFactoryID] = t.[BIFactoryID]
+        , p.[BIInsertDate] = t.[BIInsertDate]
 from P_OutStandingHPMS p
 inner join #tmp_P_OutStandingHPMS t on p.[BuyerDelivery] = t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID]
 
-insert into P_OutStandingHPMS([BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA])
-select [BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA]
+insert into P_OutStandingHPMS([BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate] )
+select [BuyerDelivery], [FactoryID], [OSTInHauling], [OSTInScanAndPack], [OSTInCFA] , [BIFactoryID], [BIInsertDate] 
 from #tmp_P_OutStandingHPMS t
 where not exists (select 1 from P_OutStandingHPMS p where p.[BuyerDelivery] = t.[BuyerDelivery] and p.[FactoryID] = t.[FactoryID])
+
+{tmp}
 
 delete p
 from P_OutStandingHPMS p

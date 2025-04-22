@@ -322,9 +322,16 @@ And exists (select 1 from Production.dbo.Factory f with(nolock) where o.FactoryI
 Order by e.ID, ed.POID
 
 
-Select * From #tmpGarment
+Select *, 
+[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+[BIInsertDate] = GETDATE()
+From #tmpGarment
 UNION
-Select * From #tmpMMS
+Select *,
+[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+[BIInsertDate] = GETDATE()
+From #tmpMMS
+
 
 
 drop table #tmpGarment, #tmpMMS
@@ -346,11 +353,24 @@ drop table #tmpGarment, #tmpMMS
             using (sqlConn)
             {
                 string sql = @"	
+insert into P_MtlStatusAnalisis_History ([SPNo],[FactoryID],[IsProduceFty],BIFactoryID,BIInsertDate)
+Select p.SPNo, f.ID, f.IsProduceFty, p.BIFactoryID, GetDate()
+from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
+inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
+where f.IsProduceFty = 0
+
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
 inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
 where f.IsProduceFty = 0
+
+
+insert into P_MtlStatusAnalisis_History ([SPNo], [Close_Date], BIFactoryID, BIInsertDate)
+Select p.SPNo, p.[Close_Date], p.BIFactoryID, GetDate()
+from POWERBIReportData.dbo.P_MtlStatusAnalisis p
+where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
 
 Delete p
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
@@ -389,7 +409,10 @@ Insert Into POWERBIReportData.dbo.P_MtlStatusAnalisis ([WK]
 		, [MTL_Confirm]
 		, [Duty]
 		, [PF_Remark]
-		, [Type])
+		, [Type]
+		, [BIFactoryID]
+		, [BIInsertDate]
+)	
 select ISNULL(t.ID, '')
 	, ISNULL(t.ExportCountry, '')
 	, ISNULL(t.ExportPort, '')
@@ -424,6 +447,8 @@ select ISNULL(t.ID, '')
 	, ISNULL(t.Duty, '')
 	, ISNULL(t.PFRemark, '')
 	, ISNULL(t.POType, '')
+	, t.[BIFactoryID]
+	, t.[BIInsertDate]
 from #tmp t 
 where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
 

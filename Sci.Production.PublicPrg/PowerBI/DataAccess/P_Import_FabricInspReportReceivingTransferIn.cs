@@ -73,6 +73,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
+            string where = @" 
+not exists (
+    select 1 from #tmp s 
+    where p.ReceivingID = s.ReceivingID 
+)
+and 
+(
+	(p.AddDate between @SDate and @EDate)
+	or
+	(p.EditDate between @SDate and @EDate)
+)
+";
+
+            string tmp = new Base().SqlBITableHistory("P_FabricInspReport_ReceivingTransferIn", "P_FabricInspReport_ReceivingTransferIn_History", "#tmp", where, false, true);
+
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
@@ -80,7 +96,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", sDate),
                     new SqlParameter("@EDate", eDate),
                 };
-                string sql = @"	
+                string sql = $@"	
 UPDATE t
 SET 
 	   t.[Wkno]                     = ISNULL(s.[Wkno], '')
@@ -105,7 +121,9 @@ SET
       ,t.[Points]                   = ISNULL(s.[Points], 0)
       ,t.[DefectRate]               = ISNULL(s.[DefectRate], 0)
       ,t.[Inspector]                = ISNULL(s.[Inspector], '')
-       ,t.[EditDate]                = s.[EditDate]
+      ,t.[EditDate]                = s.[EditDate]
+     , t.[BIFactoryID] = s.[BIFactoryID]
+     , t.[BIInsertDate] = s.[BIInsertDate]
 from P_FabricInspReport_ReceivingTransferIn t 
 inner join #tmp s on t.POID = s.POID
 	and t.SEQ = s.SEQ
@@ -118,7 +136,7 @@ inner join #tmp s on t.POID = s.POID
 insert into P_FabricInspReport_ReceivingTransferIn (
      [POID],[SEQ],[Wkno],[ReceivingID],[StyleID],[BrandID],[Supplier],[Refno],[Color],[ArriveWHDate],[ArriveQty],[WeaveTypeID]
 ,[Dyelot],[CutWidth],[Weight],[Composition],[Desc],[FabricConstructionID],[Roll],[InspDate],[Result],[Grade]
-,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate]
+,[DefectCode],[DefectType],[DefectDesc],[Points],[DefectRate],[Inspector],[AddDate],[EditDate],[BIFactoryID], [BIInsertDate]
 )
 select s.[POID]
     , s.[SEQ]
@@ -150,6 +168,8 @@ select s.[POID]
     , [Inspector]               = ISNULL(s.[Inspector], '')
     , s.[AddDate]
     , s.[EditDate]
+    , s.[BIFactoryID]
+    , s.[BIInsertDate]
 from #tmp s
 where not exists (
     select 1 from P_FabricInspReport_ReceivingTransferIn t 
@@ -160,6 +180,8 @@ where not exists (
 	and t.Roll = s.Roll
 	and t.DefectCode = s.DefectCode
 )
+
+{tmp}
 
 delete t 
 from dbo.P_FabricInspReport_ReceivingTransferIn t

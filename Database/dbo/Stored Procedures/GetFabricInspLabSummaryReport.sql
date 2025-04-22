@@ -112,6 +112,8 @@ BEGIN
 		,F.AddDate
 		,F.EditDate
 		,t.StockType
+		,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) 
+		,[BIInsertDate] = GETDATE()
 		from dbo.FIR F WITH (NOLOCK) 
 		cross apply(
 			select rd.WhseArrival,rd.InvNo,rd.ExportId,rd.Id,rd.PoId,RD.seq1,RD.seq2

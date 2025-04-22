@@ -144,7 +144,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                (p.EditDate between @sDate and @eDate)
                 )";
 
-            string tmp = new Base().SqlBITableHistory("P_DailyAccuCPULoading", "P_DailyAccuCPULoading_History", "#TMP", where);
+            string tmp = new Base().SqlBITableHistory("P_DailyAccuCPULoading", "P_DailyAccuCPULoading_History", "#tmp", where, false, false);
+
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@sDate", sDate),

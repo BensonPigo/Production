@@ -61,6 +61,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate)
         {
+            string where = @" p.ReplacementFinishedDate >= @SDate";
+
+            string tmp = new Base().SqlBITableHistory("P_FabricStatus_And_IssueFabricTracking", "P_FabricStatus_And_IssueFabricTracking_History", "#tmp", where, false, true);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -69,7 +73,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", sDate),
                 };
-                string sql = @"	
+                string sql = $@"	
 UPDATE t
 SET 
      t.[SewingCell] = s.[SewingCell]
@@ -88,6 +92,8 @@ SET
     ,t.[Description] = s.[Description]
     ,t.[OnTime] = s.[OnTime]
     ,t.[Remark] = s.[Remark]
+    ,t.[BIFactoryID] = s.[BIFactoryID]
+    ,t.[BIInsertDate] = s.[BIInsertDate]
 from P_FabricStatus_And_IssueFabricTracking t 
 inner join #tmp s on t.ReplacementID = s.ID 
 AND t.SP = s.OrderID 
@@ -101,14 +107,14 @@ insert into P_FabricStatus_And_IssueFabricTracking (
     ,[Color]      ,[RefNo]      ,[ApvDate]
     ,[NoOfPcsRejected]      ,[RequestQtyYrds]      ,[IssueQtyYrds]
     ,[ReplacementFinishedDate]      ,[Type]
-    ,[Process]      ,[Description]      ,[OnTime]      ,[Remark]
+    ,[Process]      ,[Description]      ,[OnTime]      ,[Remark] ,BIFactoryID , BIInsertDate
 )
 select 	s.[SewingCell]      ,s.[SewingLineID]    ,s.[ID] ,s.[Department]
 		  ,s.[StyleID]    ,s.[OrderID]     ,s.[Seq]      ,s.[FabricType]
 		  ,s.[ColorName]      ,s.[RefNo]      ,s.[ApvDate]
 		  ,s.[RejectQty]      ,s.[RequestQty]      ,s.[IssueQty]
 		  ,s.[FinishedDate]      ,s.[Type]
-		  ,s.[Process]      ,s.[Description]  ,s.[OnTime]      ,s.[Remark]
+		  ,s.[Process]      ,s.[Description]  ,s.[OnTime]      ,s.[Remark] ,s.BIFactoryID , s.BIInsertDate
 from #tmp s
 where not exists (
     select 1 from P_FabricStatus_And_IssueFabricTracking t 
@@ -117,6 +123,8 @@ where not exists (
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
 )
+
+{tmp}
 
 delete t 
 from dbo.P_FabricStatus_And_IssueFabricTracking t
