@@ -1045,8 +1045,11 @@ where m.IsWMS = 0";
 
                         DataTable dtToRevise = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1 && MyUtility.Convert.GetBool(s["SentToWMS"]) == true && MyUtility.Check.Empty(s["CompleteTime"])).CopyToDataTable();
 
+                        // 要先Lock
+                        Prgs_WMS.LockNotWMS(dtToRevise);
+
                         // 要先Unlock
-                        Prgs_WMS.UnLockorDeleteNotWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                        Prgs_WMS.UnLockWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
 
                         // 再Revise
                         Prgs_WMS.ReviseWMS(dtToRevise, autoRecordListP07, autoRecordListP18, 1);
@@ -1066,6 +1069,7 @@ where m.IsWMS = 0";
                 catch (Exception ex)
                 {
                     errMsg = ex;
+                    transactionscope.Dispose();
                 }
             }
 
@@ -1096,7 +1100,7 @@ where m.IsWMS = 0";
             MyUtility.Msg.InfoBox("Complete");
         }
 
-        /// <summary>
+        /// <summary> 
         /// 檢查表身Location,ActualWeight是否有被修改過(跟DB資料比較)
         /// 有被修改過,就自動勾選資料
         /// </summary>

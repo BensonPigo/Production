@@ -79,6 +79,22 @@ namespace Sci.Production.Warehouse
         }
 
         /// <summary>
+        /// P21 調整是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
+        /// </summary>
+        /// <inheritdoc/>
+        public static void UnLockWMS(DataTable dtnotWMS, EnumStatus statusAPI, List<AutoRecord> autoRecordListP07, List<AutoRecord> autoRecordListP18, int typeCreateRecord)
+        {
+            // 找出要撤回的 P07 Ukey
+            DataTable dt07 = Prgs.GetWHDetailUkey(dtnotWMS, "P07");
+
+            // 找出要撤回的 P18 Ukey
+            DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
+
+            Gensong_AutoWHFabric.Sent(false, dt07, "P07", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP07);
+            Gensong_AutoWHFabric.Sent(false, dt18, "P18", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP18);
+        }
+
+        /// <summary>
         /// P21 調整後 Tolocation 是自動倉, 要發給 WMS 要求修正(Revise)
         /// </summary>
         /// <inheritdoc/>
