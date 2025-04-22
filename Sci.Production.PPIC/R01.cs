@@ -945,6 +945,7 @@ select  s.SewingLineID
 	        ,[Construction] = sty.Construction
             ,o.Category
 			,SizeCodeSeq = oz.Seq
+            ,CriticalStyle = iif(st.CriticalStyle='1','Y','N')
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
@@ -1215,6 +1216,7 @@ select  SewingLineID
 	    , Gender
 	    , Construction
         , StyleID
+        , CriticalStyle
         , Qty
         , AlloQty
         , CutQty
