@@ -60,6 +60,8 @@ IssueID
 ,AddDate
 ,EditDate
 ,Issue_DetailUkey
+,Style
+,ColorName
 )
 select IssueID
 ,MDivisionID
@@ -107,6 +109,8 @@ select IssueID
 ,AddDate
 ,EditDate
 ,Issue_DetailUkey
+,Style
+,ColorName
 from OPENQUERY([MainServer], '' SET NOCOUNT ON; exec Production.dbo.Warehouse_Report_R16 @EditDateFrom = '''''+ @IssueDateFromString +''''', @EditDateTo = '''''+ @IssueDateToString +''''''')
 
 '
@@ -166,6 +170,8 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.Roll							       = t.Roll	
 			,p.Dyelot							   = t.Dyelot	
 			,p.StockType						   = t.StockType	
+			,p.Style							   = t.Style
+			,p.ColorName						   = t.ColorName
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmpIssueFabricByCuttingTransactionList t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -215,6 +221,8 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,FactoryReceivedTime
 		,AddDate
 		,EditDate
+		,Style
+		,ColorName
 		,Issue_DetailUkey)
 select	 t.IssueID
 		,t.MDivisionID
@@ -261,6 +269,8 @@ select	 t.IssueID
 		,t.FactoryReceivedTime
 		,t.AddDate
 		,t.EditDate
+		,Style
+		,ColorName
 		,t.Issue_DetailUkey
 from #tmpIssueFabricByCuttingTransactionList t
 where not exists(	select 1 
