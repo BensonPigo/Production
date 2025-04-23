@@ -1,4 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_ProductionKitsTracking] (
+    Ukey				  BIGINT     CONSTRAINT [DF_P_ProductionKitsTracking_Ukey] DEFAULT (0) NOT NULL,
     [BrandID]             VARCHAR (8)     CONSTRAINT [DF_P_ProductionKitsTracking_BrandID] DEFAULT ('') NOT NULL,
     [StyleID]             VARCHAR (15)    CONSTRAINT [DF_P_ProductionKitsTracking_StyleID] DEFAULT ('') NOT NULL,
     [SeasonID]            VARCHAR (10)    CONSTRAINT [DF_P_ProductionKitsTracking_SeasonID] DEFAULT ('') NOT NULL,
@@ -27,61 +28,11 @@
     [EditDate]            DATETIME        NULL,
     [Reject]              VARCHAR (1)     CONSTRAINT [DF_P_ProductionKitsTracking_Reject] DEFAULT ((0)) NOT NULL,
     [AWBNO]               VARCHAR (30)    CONSTRAINT [DF_P_ProductionKitsTracking_AWBNO] DEFAULT ('') NOT NULL,
-    CONSTRAINT [PK_P_ProductionKitsTracking] PRIMARY KEY CLUSTERED ([Article] ASC, [FactoryID] ASC, [Doc] ASC, [SPNo] ASC, [ProductionKitsGroup] ASC)
+    CONSTRAINT [PK_P_ProductionKitsTracking] PRIMARY KEY CLUSTERED ( [FactoryID] ASC, Ukey ASC,)
 );
-
-
 GO
 
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
-GO
-
-
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Style_ProductionKits.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProductionKitsTracking', @level2type=N'COLUMN',@level2name=N'Ukey'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Style_ProductionKits.ProductionKitsGroup' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProductionKitsTracking', @level2type=N'COLUMN',@level2name=N'ProductionKitsGroup'
