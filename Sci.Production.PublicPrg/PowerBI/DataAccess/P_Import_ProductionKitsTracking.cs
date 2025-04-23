@@ -102,7 +102,7 @@ SET p.BrandID = ISNULL(t.BrandID, '')
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON  t.FactoryID = p.FactoryID
-    AND t.Ukey = p.Ukey
+    AND t.Ukey = p.Style_ProductionKitsUkey
 
 INSERT INTO P_ProductionKitsTracking (
 	BrandID
@@ -111,7 +111,7 @@ INSERT INTO P_ProductionKitsTracking (
 	,Article
 	,Mdivision
 	,FactoryID
-	,Ukey
+	,Style_ProductionKitsUkey
 	,Doc
 	,TWSendDate
 	,FtyMRRcvDate
@@ -142,7 +142,7 @@ SELECT
    ,ISNULL(t.Article, '')
    ,ISNULL(t.Mdivision, '')
    ,ISNULL(t.FactoryID, '')
-   ,ISNULL(t.UKey, 0)
+   ,Style_ProductionKitsUkey = ISNULL(t.UKey, 0)
    ,ISNULL(t.Doc, '')
    ,t.TWSendDate
    ,t.FtyMRRcvDate
@@ -170,7 +170,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM P_ProductionKitsTracking p
     WHERE t.FactoryID = p.FactoryID
-    AND t.UKey = p.UKey
+    AND t.UKey = p.Style_ProductionKitsUkey
 )
 
 DELETE P_ProductionKitsTracking
@@ -179,7 +179,7 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM #tmp t
     WHERE t.FactoryID = p.FactoryID
-    AND t.UKey = p.UKey
+    AND t.UKey = p.Style_ProductionKitsUkey
 )
 AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
   OR (EditDate >= @StartDate AND EditDate <= @EndDate))
