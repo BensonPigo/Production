@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[P_ProductionKitsTracking] (
-    Ukey				  BIGINT     CONSTRAINT [DF_P_ProductionKitsTracking_Ukey] DEFAULT (0) NOT NULL,
+    Style_ProductionKitsUkey				  BIGINT     CONSTRAINT [DF_P_ProductionKitsTracking_Style_ProductionKitsUkey] DEFAULT (0) NOT NULL,
     [BrandID]             VARCHAR (8)     CONSTRAINT [DF_P_ProductionKitsTracking_BrandID] DEFAULT ('') NOT NULL,
     [StyleID]             VARCHAR (15)    CONSTRAINT [DF_P_ProductionKitsTracking_StyleID] DEFAULT ('') NOT NULL,
     [SeasonID]            VARCHAR (10)    CONSTRAINT [DF_P_ProductionKitsTracking_SeasonID] DEFAULT ('') NOT NULL,
@@ -32,7 +32,7 @@
 );
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Style_ProductionKits.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProductionKitsTracking', @level2type=N'COLUMN',@level2name=N'Ukey'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Style_ProductionKits.Ukey' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProductionKitsTracking', @level2type=N'COLUMN',@level2name=N'Style_ProductionKitsUkey'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Style_ProductionKits.ProductionKitsGroup' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_ProductionKitsTracking', @level2type=N'COLUMN',@level2name=N'ProductionKitsGroup'
