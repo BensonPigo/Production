@@ -351,13 +351,13 @@ WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule WHERE OrderID = bdo.OrderID)
 
 --每日的累計標準數
 SELECT *
-    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum
 FROM #tmpSumDailyStdQty
 
 --準備前一個工作天的累計標準數, 第一天的前一天標準數 = 0
 SELECT *
-    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum_BeforeWorkDate
 FROM #tmpSumDailyStdQty_AccSum
 
