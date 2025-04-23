@@ -49,11 +49,11 @@ begin
 			,[FabricComboAndCutNo] = isnull(x2.cutref, '')
 			,[IssueRemark] = i.Remark
 			,[OrderID] = id.POID
-			,[Style] = o.StyleID
+			,[Style] = isnull(o.StyleID, '')
 			,[Seq] = CONCAT(LTRIM(RTRIM(id.Seq1)),' ',LTRIM(RTRIM(id.Seq2)))
 			,[Refno] = isnull(psd.Refno, '')
 			,[ColorID] = isnull(psdsC.SpecValue, '')
-			,[ColorName] = Color.Name
+			,[ColorName] = isnull(Color.Name, '')
 			,[Description] = LTRIM(RTRIM(isnull(f.DescDetail, '')))
 			,[WeaveTypeID] = isnull(f.WeaveTypeID, '')
 			,[RelaxTime] = isnull(r.Relaxtime, 0)
