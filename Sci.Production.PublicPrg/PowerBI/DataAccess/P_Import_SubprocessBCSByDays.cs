@@ -11,11 +11,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <inheritdoc/>
         public Base_ViewModel UpdateBIData()
         {
+            string where = @"  not exists(
+	select 1 from #tmpByDays t
+	where p.Factory = t.FactoryID
+	and p.SewingInline = t.SewingInline
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_SubprocessBCSByDays", "P_SubprocessBCSByDays_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 -- P_SubprocessBCSByDays
 with TTLBD as(
 	select SewingInline,FactoryID
@@ -38,6 +46,8 @@ select a.SewingInline, a.FactoryID
 	end
 ,[TTLLoadedBundle]
 ,[TTLBundle]
+,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+,[BIInsertDate] = GetDate()
 into #tmpByDays
 from TTLBD a
 inner join TTLLBD b on a.FactoryID = b.FactoryID and a.SewingInline = b.SewingInline
@@ -47,11 +57,13 @@ update  t
 set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLBundle = s.TTLBundle
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
+,t.BIFactoryID = s.BIFactoryID
+,t.BIInsertDate = s.BIInsertDate
 from P_SubprocessBCSByDays t
 inner join #tmpByDays s on t.Factory = s.FactoryID and t.SewingInline = s.SewingInline
 
-insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle)
-select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle
+insert P_SubprocessBCSByDays(SewingInline,Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate)
+select SewingInline,FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate
 from #tmpByDays t
 where not exists(
 	select * from P_SubprocessBCSByDays s
@@ -59,6 +71,7 @@ where not exists(
 	and t.SewingInline = s.SewingInline
 )
 
+{tmp}
 
 delete t
 from P_SubprocessBCSByDays t

@@ -22,7 +22,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             #region 先準備主要資料table
             string sqlcmd = string.Format(
-                @"
+                $@"
 select 
 	[Packing#] = pld.ID
 	,[Factory] = pl.FactoryID
@@ -79,6 +79,7 @@ SELECT [Packing#],[Factory],[Shipmode],[SP#],[Style],[Brand],[Season],[Sewinglin
 					   else 'Not Complete' end
 	,[Lacking] = iif(lacking=1,'Y','N')
 	,[Lacking Qty] = isnull( LackingQty.Qty,0)    
+{(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 FROM #TMP T
 outer apply(
 	select colorway = stuff((

@@ -1,4 +1,4 @@
-ï»¿	CREATE TABLE [dbo].[P_CFAMasterListRelatedrate_History](
+	CREATE TABLE [dbo].[P_CFAMasterListRelatedrate_History](
 		[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 		[Buyerdelivery] date,
 		[FactoryID] [varchar](8) NOT NULL,
@@ -12,13 +12,13 @@
 
 	ALTER TABLE [dbo].[P_CFAMasterListRelatedrate_History] ADD  CONSTRAINT [DF_P_CFAMasterListRelatedrate_History_FactoryID]  DEFAULT ('') FOR [FactoryID]
 
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'æŽ¡è³¼äº¤æœŸ' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'Buyerdelivery'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'±ÄÁÊ¥æ´Á' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'Buyerdelivery'
 	GO
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'å·¥å» åˆ¥' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'FactoryID'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'¤u¼t§O' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'FactoryID'
 	GO
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'è¨˜éŒ„å“ªé–“å·¥å» çš„è³‡æ–™ï¼Œex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'°O¿ý­þ¶¡¤u¼tªº¸ê®Æ¡Aex PH1, PH2' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'BIFactoryID'
 	GO
-	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'æ™‚é–“æˆ³è¨˜ï¼Œç´€éŒ„å¯«å…¥tableæ™‚é–“' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
+	EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'®É¶¡ÂW°O¡A¬ö¿ý¼g¤Jtable®É¶¡' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CFAMasterListRelatedrate_History', @level2type=N'COLUMN',@level2name=N'BIInsertDate'
 	Go
 
 	

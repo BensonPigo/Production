@@ -745,16 +745,16 @@ M: {region}
                 DataRow row = dt.Rows[i];
                 string columnName = row["COLUMN_NAME"].ToString();
 
-                tableColumns_History += columnName;
-                tableColumns += "p." + columnName;
+                tableColumns_History += "[" + columnName + "]";
+                tableColumns += "p." + "[" + columnName + "]";
 
                 if (i == 0)
                 {
-                    tmpColumns += "t." + columnName + " = p." + columnName;
+                    tmpColumns += " t." + "[" + columnName + "]" + " = p." + "[" + columnName + "]" ;
                 }
                 else
                 {
-                    tmpColumns += " AND t." + columnName + " = p." + columnName + " ";
+                    tmpColumns += " and t." + "[" + columnName + "]" + " = p." + "[" + columnName + "]";
                 }
 
                 if (i != dt.Rows.Count - 1)

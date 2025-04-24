@@ -77,6 +77,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -98,8 +99,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,p.[ProcessTime]       = t.[ProcessTime]
                 ,p.[ProcessUpdate]     = ISNULL( t.[ProcessUpdate]    ,'')
                 ,p.[Status]            = ISNULL( t.[Status]           ,'')
+                ,p.[BIFactoryID]       = isnull((select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),'')
+                ,p.[BIInsertDate]      = GetDate()
                 From P_ESG_Injury p
                 inner join #tmp t on p.ID = t.ID and p.FactoryID = t.FactoryID 
+
+  INSERT INTO P_ESG_Injury_History  
+              (  
+                  FactoryID ,
+                  ID,
+                  BIFactoryID,   
+                  BIInsertDate  
+              )   
+              SELECT   
+              t.FactoryID , 
+              t.ID,
+              BIFactoryID =  isnull((select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),''),
+              BIInsertDate = GETDATE()  
+              FROM #TMP T 
+              WHERE NOT EXISTS(SELECT 1 FROM P_ESG_Injury P WITH(NOLOCK) WHERE P.ID = T.ID AND P.FactoryID = T.FactoryID)
+
                    
                 INSERT INTO P_ESG_Injury
                 (
@@ -121,6 +140,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[ProcessTime]
                 ,[ProcessUpdate]
                 ,[Status]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
                 )
                 SELECT 
                  ISNULL([ID]                 ,'')
@@ -141,6 +162,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[ProcessTime]
                 ,ISNULL([ProcessUpdate]      ,'')
                 ,ISNULL([Status]             ,'')
+                ,isnull((select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),'')
+                ,GetDate()
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_ESG_Injury P WITH(NOLOCK) WHERE P.ID = T.ID AND P.FactoryID = T.FactoryID)
                 ";

@@ -69,6 +69,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate)
         {
+            string where = @"  not exists (select 1 from #tmp t where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
+                               and p.Buyerdelivery  >= @StartDate";
+
+            string tmp = new Base().SqlBITableHistory("P_SubprocessWIP", "P_SubprocessWIP_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -128,6 +133,8 @@ SET
       ,t.[SpreadingNo] = s.SpreadingNo
       ,t.[LastSewDate] = s.LastSewDate
       ,t.[SewQty] = s.SewQty
+      ,t.[BIFactoryID] = s.BIFactoryID
+      ,t.[BIInsertDate] = s.BIInsertDate
 from P_SubprocessWIP t 
 inner join #tmp s on t.Bundleno = s.Bundleno
 AND t.RFIDProcessLocationID = s.RFIDProcessLocationID 
@@ -143,7 +150,7 @@ insert into P_SubprocessWIP (
       ,[Qty],[SubprocessID],[PostSewingSubProcess],[NoBundleCardAfterSubprocess],[Location],[BundleCreateDate]
       ,[BuyerDeliveryDate],[SewingInline],[SubprocessQAInspectionDate],[InTime],[OutTime],[POSupplier]
       ,[AllocatedSubcon],[AvgTime],[TimeRange],[EstimatedCutDate],[CuttingOutputDate]
-      ,[Item],[PanelNo],[CutCellID],[SpreadingNo],[LastSewDate],[SewQty]
+      ,[Item],[PanelNo],[CutCellID],[SpreadingNo],[LastSewDate],[SewQty],[BIFactoryID], [BIInsertDate]
 )
 select 	 s.[Bundleno] ,s.[RFIDProcessLocationID] ,s.[EXCESS] ,s.[FabricKind] ,s.[CutRef] ,
     s.[Sp] ,s.[MasterSP] ,s.[M] ,s.[Factory] ,s.[Category],s.[Program],s.[Style] ,s.[Season],
@@ -152,7 +159,7 @@ select 	 s.[Bundleno] ,s.[RFIDProcessLocationID] ,s.[EXCESS] ,s.[FabricKind] ,s.
     s.[PostSewingSubProcess] ,s.[NoBundleCardAfterSubprocess] ,s.[Location] ,s.[BundleCreateDate],
     s.[BuyerDeliveryDate],s.[SewingInline],s.[SubprocessQAInspectionDate],s.[InTime],s.[OutTime],s.[POSupplier] ,
     s.[AllocatedSubcon] ,s.AvgTime ,s.[TimeRange],s.[EstimatedCutDate],s.CuttingOutputDate,	s.Item 
-	,s.PanelNo	,s.CutCellID     ,s.SpreadingNo     ,s.[LastSewDate]     ,s.[SewQty] 
+	,s.PanelNo	,s.CutCellID     ,s.SpreadingNo     ,s.[LastSewDate]     ,s.[SewQty] ,s.[BIFactoryID], s.[BIInsertDate]
 from #tmp s
 where not exists (
     select 1 from P_SubprocessWIP t 
@@ -166,6 +173,15 @@ where not exists (
 -- delete P_SubprocessWIP 一次30萬筆分批刪除
 WHILE 1 = 1
 BEGIN
+
+    INSERT INTO P_SubprocessWIP_History 
+    SELECT TOP (300000) Bundleno, Pattern, RFIDProcessLocationID, Sp, SubprocessID, BIFactoryID, BIInsertDate = GetDate()
+    FROM P_SubprocessWIP ps WITH (NOLOCK)
+    WHERE NOT EXISTS (
+        SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
+        WHERE ps.Bundleno = bd.BundleNo
+    )
+
     DELETE TOP (300000) ps
     FROM P_SubprocessWIP ps WITH (NOLOCK)
     WHERE NOT EXISTS (

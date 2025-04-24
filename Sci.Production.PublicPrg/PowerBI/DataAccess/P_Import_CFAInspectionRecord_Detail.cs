@@ -230,6 +230,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,t.[InspectedSP]
 			,t.[InspectedSeq] 
 			,t.[ReInspection]
+            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GETDATE()
 			FROM  #tmp t
 			OUTER APPLY(
 				SELECT [Val] = COUNT(1)
@@ -276,6 +278,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
+				Insert Into P_CFAInspectionRecord_Detail_History
+				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+
 				DELETE T FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 				INSERT INTO [dbo].[P_CFAInspectionRecord_Detail]
@@ -316,6 +322,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[InspectedSP]
 					,[InspectedSeq] 
 					,[ReInspection]
+					,[BIFactoryID]
+					,[BIInsertDate]
 				)
 				select 
 					isnull(Action ,'')
@@ -354,6 +362,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,isnull([InspectedSP], '')
 					,isnull([InspectedSeq],'') 
 					,[ReInspection]
+					,isnull(BIFactoryID, '')
+					,isnull(BIInsertDate, GetDate())
 					from #Final_P_CFAInspectionRecord_Detail
 
 					update b set b.TransferDate = getdate(), b.IS_Trans = 1

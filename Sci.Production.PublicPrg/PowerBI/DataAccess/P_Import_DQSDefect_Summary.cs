@@ -146,6 +146,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, t.Gender
 				, t.Construction
 				, detail.DefectQty
+				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIInsertDate] = GETDATE()
 			from #tmp_summy_first t
 			outer apply
 			(
@@ -204,6 +206,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
+
+				Insert Into P_DQSDefect_Summary_History
+				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+
 				DELETE T FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 
@@ -237,6 +244,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[Gender]
 					,[Construction]
 					,[DefectQty]
+					,[BIFactoryID]
+					,[BIInsertDate]
 				)
 				select　
 				  InspectionDate 
@@ -267,6 +276,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, isnull(Gender,'')
 				, isnull(Construction,'')
 				, isnull(DefectQty, 0)
+				, ISNULL(BIFactoryID, '')
+                , ISNULL(BIInsertDate, GetDate())
 				from #Final_DQSDefect_Summary
 
 				update b set b.TransferDate = getdate(), b.IS_Trans = 1

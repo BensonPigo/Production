@@ -307,7 +307,9 @@ SET
     t.NewCdCode = s.CDCodeNew,
     t.ProductType = ISNULL(r2.Name, ''),
     t.FabricType = ISNULL(r1.Name, ''),
-    t.AlloQty = a.AlloQty
+    t.AlloQty = a.AlloQty,
+    t.BIFactoryID = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    t.BIInsertDate = GetDate()
 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle t
 INNER JOIN #tmp a ON t.TransferDate = a.TransferDate AND t.FactoryID = a.FactoryID AND t.APSNo = a.APSNo
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
@@ -318,10 +320,11 @@ LEFT JOIN MainServer.Production.dbo.Reason r2 ON r2.ReasonTypeID = 'Style_Appare
 
 ---- INSERT
 INSERT INTO POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle
-    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty)
+    (TransferDate, MDivisionID, FactoryID, APSNo, SewingLineID, BrandID, SeasonID, StyleID, CurrentWIP, StdQty, WIP, nWIP, InLine, OffLine, NewCdCode, ProductType, FabricType, AlloQty,BIFactoryID ,BIInsertDate)
 SELECT
     a.TransferDate, f.MDivisionID, a.FactoryID, a.APSNo, a.SewingLineID, s.BrandID, s.SeasonID, o.StyleID,
     a.CurrentWIP, a.StdQty, a.WIP, a.nWIP, a.InLine, a.OffLine, s.CDCodeNew, ISNULL(r2.Name, ''), ISNULL(r1.Name, ''), a.AlloQty
+    ,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), GetDate()
 FROM #tmp a 
 INNER JOIN MainServer.Production.dbo.Factory f ON f.ID = a.FactoryID
 INNER JOIN MainServer.Production.dbo.Orders o ON o.ID = a.OrderID
@@ -332,6 +335,16 @@ WHERE NOT EXISTS (
     SELECT 1 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle ori 
     WHERE ori.TransferDate = a.TransferDate AND ori.FactoryID = a.FactoryID AND ori.APSNo = a.APSNo
 );
+
+insert into [P_DailyRTLStatusByLineByStyle_History]
+Select a.FactoryID, a.APSNo, a.TransferDate, 
+[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+[BIInsertDate] = getDate()
+from #tmp a 
+WHERE NOT EXISTS (
+    SELECT 1 FROM POWERBIReportData.dbo.P_DailyRTLStatusByLineByStyle ori 
+    WHERE ori.TransferDate = a.TransferDate AND ori.FactoryID = a.FactoryID AND ori.APSNo = a.APSNo
+)
 
 IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_DailyRTLStatusByLineByStyle')
 BEGIN

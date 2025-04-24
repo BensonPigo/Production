@@ -61,6 +61,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
+            string where = @" 
+p.SewingOutputDate Between @sDate and @eDate 
+AND NOT EXISTS (
+    SELECT 1 FROM #tmp t
+    WHERE t.SewingLineID = p.SewingLineID
+	  AND t.SewingDate   = p.SewingOutputDate
+	  AND t.FactoryID    = p.FactoryID
+	  AND t.OrderID      = p.SPNo
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_SewingDailyOutputStatusRecord", "P_SewingDailyOutputStatusRecord_History", "#tmp", where, false, false);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -119,6 +131,8 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,PRTOutput            = ISNULL(t.PRTOutput, -1)
    ,PRTRemark            = ISNULL(t.PRTRemark, '')
    ,PRTExclusion         = ISNULL(t.PRTExclusion, 0)
+   ,[BIFactoryID]        = ISNULL(t.BIFactoryID, '')
+   ,[BIInsertDate]       = ISNULL(t.BIInsertDate, '')
 FROM P_SewingDailyOutputStatusRecord p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
                  AND t.SewingDate   = p.SewingOutputDate
@@ -128,6 +142,8 @@ INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
 
                 // DELETE
                 sql += $@"
+{tmp}
+
 Delete p 
 FROM P_SewingDailyOutputStatusRecord p
 Where p.SewingOutputDate Between @sDate and @eDate
@@ -191,7 +207,10 @@ INSERT INTO [dbo].[P_SewingDailyOutputStatusRecord]
             ,[FMExclusion]
             ,[PRTOutput]
             ,[PRTRemark]
-            ,[PRTExclusion])
+            ,[PRTExclusion]
+            ,[BIFactoryID]
+            ,[BIInsertDate]
+)
 SELECT
 	 [SewingLineID]
     ,[SewingDate]
@@ -242,6 +261,8 @@ SELECT
     ,ISNULL([PRTOutput], -1)
     ,ISNULL([PRTRemark], '')
     ,ISNULL([PRTExclusion], 0)
+    ,ISNULL([BIFactoryID], '')
+    ,ISNULL([BIInsertDate], '')
 FROM #tmp t
 WHERE NOT EXISTS(
 	SELECT 1

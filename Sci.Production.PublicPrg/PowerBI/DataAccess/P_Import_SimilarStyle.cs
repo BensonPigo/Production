@@ -61,6 +61,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
+            string where = @"  Not exists ( select 1 
+				   from #tmp t
+			       where p.OutputDate = t.OutputDate 
+				   and p.FactoryID = t.FactoryID
+				   and p.StyleID = t.StyleID 
+				   and p.BrandID = t.BrandID 
+                )
+And p.OutputDate >= @Date";
+
+            string tmp = new Base().SqlBITableHistory("P_SimilarStyle", "P_SimilarStyle_History", "#tmp", where, false, false);
+
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
             lisSqlParameter.Add(new SqlParameter("@Date", sdate));
 
@@ -69,7 +80,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = $@" 
 Update p Set Remark = isnull(t.Remark, ''), 
              RemarkSimilarStyle = isnull(t.RemarkSimilarStyle, ''),
-             Type = t.Type
+             Type = t.Type,
+             BIFactoryID = t.BIFactoryID,
+             BIInsertDate = t.BIInsertDate
 From P_SimilarStyle p
 inner join #tmp t on p.OutputDate = t.OutputDate 
                  and p.FactoryID = t.FactoryID 
@@ -86,7 +99,9 @@ Insert into P_SimilarStyle ( OutputDate,
                              BrandID, 
                              Remark, 
                              RemarkSimilarStyle, 
-                             Type
+                             Type,
+                             BIFactoryID,
+                             BIInsertDate
                             )
 Select  OutputDate,
         FactoryID, 
@@ -94,7 +109,9 @@ Select  OutputDate,
         BrandID, 
         isnull(Remark, ''), 
         isnull(RemarkSimilarStyle, ''), 
-        Type
+        Type,
+        BIFactoryID,
+        BIInsertDate
 From #tmp t
 Where not exists ( select 1 
 				   from P_SimilarStyle p
@@ -103,6 +120,8 @@ Where not exists ( select 1
 				   and p.StyleID = t.StyleID 
 				   and p.BrandID = t.BrandID
                 )
+
+{tmp}
 
 Delete P_SimilarStyle 
 Where Not exists ( select 1 
@@ -241,6 +260,8 @@ SELECT  s.Outputdate,
         [Type] = Case When isnull(RemarkSimilarStyle.Rr,'') != '' or isnull(MaxDates.MaxOutputDate,'') != '' then  'Repeat'
         Else 'New'
         End
+        ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+        ,[BIInsertDate] = GETDATE()
 FROM #tmp_SewingDate s
 LEFT JOIN #tmp_MaxDates MaxDates ON s.StyleID = MaxDates.StyleID 
                                  AND s.FactoryID = MaxDates.FactoryID

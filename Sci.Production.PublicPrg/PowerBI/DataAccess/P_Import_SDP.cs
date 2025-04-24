@@ -256,6 +256,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	where NOT exists (select 1 from #tmp_CReceive c where c.OrderID = t.OrderID and c.Seq = t.Seq)
 
 	select *
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+	, [BIInsertDate] = GETDATE()
 	from 
 	(
 		select
@@ -466,7 +468,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", sDate),
                     new SqlParameter("@EDate", eDate),
                 };
-                string sql = @"
+                string sql = $@"
 	/************* 更新P_SDP的資料*************/
 	update t set
 	t.[Country]						=	isnull(s.[Country],'')
@@ -509,6 +511,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	,t.[OutstandingReason]			=	isnull(s.[OutstandingReason],'')
 	,t.[ReasonRemark]				=	isnull(s.[ReasonRemark],'')
 	,t.[FactoryID]					=	isnull(s.[FactoryID],'')
+    ,t.[BIFactoryID]                =   isnull(s.[BIFactoryID],'')
+    ,t.[BIInsertDate]               =   s.[BIInsertDate]
 	from P_SDP t
 	inner join #tmp s on t.[FactoryID] = s.[FactoryID] and
 					     t.[SPNO]  = s.[SPNO]	and
@@ -561,6 +565,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		,PONO
 		,OutstandingReason
 		,ReasonRemark
+		,[BIFactoryID]
+		,[BIInsertDate]
 	)
 	select 
 		t.Country
@@ -606,6 +612,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		,t.PONO
 		,isnull(t.OutstandingReason,'')
 		,t.ReasonRemark
+		,isnull(t.[BIFactoryID],'')
+		,t.[BIInsertDate]
 	from #tmp t
 	where not exists 
 	(
@@ -616,6 +624,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			   t.[Seq]   = s.[Seq] and
 			   t.[Pullouttimes] = s.[Pullouttimes]
 	)
+
+insert into [P_SDP_History]
+	Select a.[FactoryID],
+	a.[Pullouttimes], 
+	a.[Seq],
+	a.[SPNo],
+	a.[Style],
+	a.[BIFactoryID],
+	[BIInsertDate] = getDate()
+	from P_SDP a
+	where not exists
+	(
+		select 1 from #tmp b 
+		where  a.[FactoryID] = b.[FactoryID] and
+			   a.[SPNO]  = b.[SPNO]	and
+			   a.[Style] = b.[Style] and
+			   a.[Seq]   = b.[Seq] and
+			   a.[Pullouttimes] = b.[Pullouttimes]
+	)
+	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 
 	-- 刪除掉#tmp不同Key且SPNo相同的資料
 	Delete P_SDP
@@ -631,11 +659,39 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	)
 	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 
+	insert into [P_SDP_History]
+	Select p.[FactoryID],
+	p.[Pullouttimes], 
+	p.[Seq],
+	p.[SPNo],
+	p.[Style],
+	p.[BIFactoryID],
+	[BIInsertDate] = getDate()
+	from P_SDP p
+	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
+	where ot.IsGMTMaster = 1
+
+
 	Delete p
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 	where ot.IsGMTMaster = 1
+
+	insert into [P_SDP_History]
+	Select p.[FactoryID],
+	p.[Pullouttimes], 
+	p.[Seq],
+	p.[SPNo],
+	p.[Style],
+	p.[BIFactoryID],
+	[BIInsertDate] = getDate()
+	from P_SDP p
+	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
+	where f.IsProduceFty = 0
+
 
 	Delete p
 	from P_SDP p
@@ -643,10 +699,35 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
 	where f.IsProduceFty = 0
 
+	insert into [P_SDP_History]
+	Select p.[FactoryID],
+	p.[Pullouttimes], 
+	p.[Seq],
+	p.[SPNo],
+	p.[Style],
+	p.[BIFactoryID],
+	[BIInsertDate] = getDate()
+	from P_SDP p
+	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	where o.Junk = 1
+
+
 	Delete p
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.Junk = 1
+
+	insert into [P_SDP_History]
+	Select p.[FactoryID],
+	p.[Pullouttimes], 
+	p.[Seq],
+	p.[SPNo],
+	p.[Style],
+	p.[BIFactoryID],
+	[BIInsertDate] = getDate()
+	from P_SDP p
+	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
+	where o.id is null
 
 	Delete p
 	from P_SDP p

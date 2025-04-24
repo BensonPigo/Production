@@ -229,7 +229,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[LineNo]
                 ,[LineManpower]
                 ,[GPH]
-                ,[SPH])
+                ,[SPH]
+                ,[BIFactoryID]
+                ,[BIInsertDate])
                 SELECT
                 [Year]
                 ,[Month]
@@ -269,6 +271,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[LineManpower]
                 ,[GPH]
                 ,[SPH]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
                 FROM #TMP T
                 where not exists (
                     select 1 from P_DailyAccuCPULoading PDA 

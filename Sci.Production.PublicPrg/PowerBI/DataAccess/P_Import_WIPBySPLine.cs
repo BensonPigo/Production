@@ -181,6 +181,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[GlobalFoundationRange]
 	            ,[SampleReason]
 	            ,[TMS]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
             )
             SELECT
              ISNULL(T.[MDivisionID],'')
@@ -285,6 +287,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[GFR],0)
             ,ISNULL(T.[SampleReason],'')
             ,ISNULL(T.[TMS],0)
+            ,ISNULL(T.[BIFactoryID],'')
+            ,ISNULL(T.[BIInsertDate], GetDate())
             FROM #tmp T
 
             IF EXISTS (select 1 from BITableInfo b where b.id = 'P_WIPBySPLine')

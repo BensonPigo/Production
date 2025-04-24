@@ -122,8 +122,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[Junk]							 = ISNULL(t.[Junk],'')
                 ,[POID]							 = ISNULL(t.[PO],'')
                 ,[RefNo]						 = ISNULL(t.[Ref],'')
+                ,[BIFactoryID]                   = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                ,[BIInsertDate] = GETDATE()
                 From P_MachineMasterListByDays p
                 inner join #tmp t on p.MachineID = t.Machine 
+
+insert into P_MachineMasterListByDays_History
+Select Ukey,
+       [BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+       [BIInsertDate] = getDate()
+From P_MachineMasterListByDays p
+inner join #tmp t on p.MachineID = t.Machine 
                    
                 INSERT INTO P_MachineMasterListByDays
                 (
@@ -150,6 +159,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	                ,[Junk]
 	                ,[POID]
 	                ,[RefNo]
+                    ,[BIFactoryID]
+                    ,[BIInsertDate]
                 )
                 SELECT 
                  ISNULL([Machine],'')
@@ -175,6 +186,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,ISNULL([Junk],'')
                 ,ISNULL([PO],'')
                 ,ISNULL([Ref],'')
+                ,[BIFactoryID]  = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                ,[BIInsertDate] = GETDATE()
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MachineMasterListByDays P WITH(NOLOCK) WHERE P.MachineID = T.MACHINE)
 

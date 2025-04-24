@@ -97,6 +97,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [DefectCodeID] = ind.GarmentDefectCodeID
 			, [DefectCodeLocalDesc] = iif(isnull(gdc.LocalDescription,'') = '',gdc.Description,gdc.LocalDescription)
 			, [IsCriticalDefect] = iif(isnull(IsCriticalDefect,0) = 0, '', 'Y')
+            , [BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIInsertDate] = GetDate()
 			from [ExtendServer].ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 			inner join Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
 			inner join Production.dbo.Factory fac WITH(NOLOCK) on ins.FactoryID=fac.ID
@@ -132,6 +134,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
+
+				Insert Into P_DQSDefect_Detail_History
+				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				FROM P_DQSDefect_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+
 				DELETE T FROM P_DQSDefect_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 				INSERT INTO [dbo].[P_DQSDefect_Detail]
@@ -164,6 +171,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[GarmentDefectCodeID]
 		            ,[DefectCodeLocalDesc]
 		            ,[IsCriticalDefect]
+                    ,[BIFactoryID]
+                    ,[BIInsertDate]   
                 )
                 select 
                   [Zone] = isnull([Zone],'')
@@ -190,7 +199,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            , [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'')
 	            , [Area] = isnull(Area,'')
 	            , [ReworkCardNo] = isnull(ReworkCardNo,''), [DefectTypeID] = isnull(DefectTypeID,''), [DefectCodeID] = isnull(DefectCodeID,''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''), [IsCriticalDefect] = isnull(IsCriticalDefect,'')
-                 from #Final_DQSDefect_Detail  
+                ,[BIFactoryID]
+                ,[BIInsertDate]   
+                from #Final_DQSDefect_Detail  
 
                 update b set b.TransferDate = getdate(), b.IS_Trans = 1
                 from BITableInfo b

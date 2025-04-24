@@ -63,7 +63,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private DualResult UpdateData(DataTable dtUpdateSource)
         {
-            string sqlUpdate = @"
+            string sqlUpdate = $@"
 alter table #tmp alter column ID varchar(13)
 alter table #tmp alter column Seq varchar(2)
 CREATE CLUSTERED INDEX IDX_ClusteredIndex ON #tmp(ID, Seq)
@@ -101,6 +101,8 @@ update  p set   p.FinalInsp            = t.CFAFinalInspectResult
                 ,p.FinalInspDate       = t.CFAFinalInspectDate
                 ,p.Last3rdInspDate     = t.CFA3rdInspectDate
                 ,p.Remark              = t.CFARemark
+                ,p.BIFactoryID         = t.BIFactoryID
+                ,p.BIInsertDate        = t.BIInsertDate
 from P_QA_CFAMasterList p
 inner join  #tmp t on t.ID = p.OrderID and t.Seq = p.ShipSeq
 
@@ -138,7 +140,9 @@ insert into P_QA_CFAMasterList( OrderID
                                 ,LastCtnRcvDate 
                                 ,FinalInspDate  
                                 ,Last3rdInspDate
-                                ,Remark)
+                                ,Remark
+                                ,BIFactoryID
+                                ,BIInsertDate)
 select  t.ID
         ,t.Seq
         ,t.CFAFinalInspectResult
@@ -174,6 +178,8 @@ select  t.ID
         ,t.CFAFinalInspectDate
         ,t.CFA3rdInspectDate
         ,t.CFARemark
+        ,t.BIFactoryID
+        ,t.BIInsertDate
 from    #tmp t
 where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID = p.OrderID and t.Seq = p.ShipSeq)
 ";
@@ -191,10 +197,25 @@ where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID =
 
         private DualResult DeleteData(DataTable dtDeleteSource)
         {
-            string sqlDelete = @"
+            string sqlDelete = $@"
 alter table #tmp alter column OrderID varchar(13)
 alter table #tmp alter column Seq varchar(2)
 CREATE CLUSTERED INDEX IDX_ClusteredIndex ON #tmp(OrderID, Seq)
+
+INSERT INTO P_QA_CFAMasterList_History  
+(  
+    OrderID,ShipSeq ,   
+    BIFactoryID,   
+    BIInsertDate  
+)   
+SELECT   
+p.OrderID,p.ShipSeq ,   
+p.BIFactoryID,
+GETDATE()  
+FROM P_QA_CFAMasterList p             
+left join #tmp t with (nolock) on t.OrderID = p.OrderID and t.Seq = p.ShipSeq
+where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
+		t.Seq is null
 
 delete  p
 from P_QA_CFAMasterList p

@@ -64,6 +64,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
         {
+            string where = @" 	 ((p.AddDate >=  @SDate and p.AddDate <= @EDate) or (p.EditDate >=  @SDate and p.EditDate <=  @EDate))";
+            string tmp = new Base().SqlBITableHistory("P_AccessoryInspLabStatus", "P_AccessoryInspLabStatus_History", "#tmp", where, false, true);
+
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -137,7 +140,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					[ReceivingID], 
 					[AddDate], 
 					[EditDate], 
-					[CategoryType]
+					[CategoryType],
+					[BIFactoryID],	
+					[BIInsertDate]
 				)
 				select	
 				t.POID, 
@@ -185,7 +190,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.ReceivingID, 
 				t.AddDate, 
 				t.EditDate,
-				t.CategoryType
+				t.CategoryType,
+				t.BIFactoryID,
+				t.BIInsertDate
 				from #tmp t
 				where   not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
 				and ( 
@@ -253,8 +260,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					, p.[AddDate]  				 = t.AddDate
 					, p.[EditDate]  				 = t.EditDate 
 					, p.[CategoryType]  				 = t.CategoryType 
+					, p.[BIFactoryID]  				 = t.BIFactoryID
+					, p.[BIInsertDate]  			 = t.BIInsertDate	
 				 from P_AccessoryInspLabStatus p
 				 inner join  #tmp t on p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID
+
+{tmp}
 
 				 delete p
 				 from P_AccessoryInspLabStatus p
@@ -336,6 +347,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		    , a.AddDate
 		    , a.EditDate
 		    , [CategoryType] = isnull(MtlType.CategoryType, '')
+			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIInsertDate] = GETDATE()   
 	        from Production.dbo.AIR a WITH (NOLOCK) 
 	        inner join Production.dbo.View_AllReceivingDetail t WITH (NOLOCK) on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND t.ID = a.ReceivingID
 	        cross apply(

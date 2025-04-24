@@ -44,13 +44,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
+            string where = string.Empty;
+            string tmp = new Base().SqlBITableHistory("P_WBScanRate", "P_WBScanRate_History", "#tmp_P_WBScanRate", where, true, false);
+
             string sqlcmd = $@"
             
            SELECT [Date] = CAST(GETDATE() AS DATE)
-	            , f.FTYGroup
+	            , [FactoryID] = f.FTYGroup
 	            , [WBScanRate] = CAST(IIF(ISNULL(SUM(p.SewQty), 0) = 0, 0, (SUM(p.RFIDSewingLineInQty) * 1.0 / SUM(p.SewQty)) * 100) AS DECIMAL(5, 2))
 	            , [TTLRFIDSewInlineQty] = SUM(p.RFIDSewingLineInQty)
 	            , [TTLSewQty] = SUM(p.SewQty)
+                , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                , [BIInsertDate] = GetDate()
             INTO #tmp_P_WBScanRate
             FROM P_WIP p
             INNER JOIN [MainServer].[Production].[dbo].[Factory] f ON P.FactoryID = f.ID
@@ -58,17 +63,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             AND p.SewOffLine >= @StartDate
             GROUP BY f.FTYGroup
 
+            {tmp}
+
             UPDATE p
 	            SET p.WBScanRate = t.WBScanRate
 	                , p.TTLRFIDSewInlineQty = t.TTLRFIDSewInlineQty
 	                , p.TTLSewQty = t.TTLSewQty
+                    , p.[BIFactoryID] = t.BIFactoryID
+                    , p.[BIInsertDate] = t.BIInsertDate
             FROM P_WBScanRate p
-            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID
+            INNER JOIN #tmp_P_WBScanRate t ON t.[Date] = p.[Date] AND t.FactoryID = p.FactoryID
 
-            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty)
-            SELECT [Date], FTYGroup, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty]
+            INSERT INTO P_WBScanRate([Date], FactoryID, WBScanRate, TTLRFIDSewInlineQty, TTLSewQty ,[BIFactoryID], [BIInsertDate])
+            SELECT [Date], FactoryID, [WBScanRate], [TTLRFIDSewInlineQty], [TTLSewQty], [BIFactoryID], [BIInsertDate]
             FROM #tmp_P_WBScanRate t 
-            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID)
+            WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FactoryID = p.FactoryID)
 
             Drop Table #tmp_P_WBScanRate
             ";

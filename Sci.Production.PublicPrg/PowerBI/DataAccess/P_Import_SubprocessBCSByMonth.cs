@@ -11,11 +11,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <inheritdoc/>
         public Base_ViewModel UpdateBIData()
         {
+            string where = @"  not exists(
+	select 1 from #tmpByMonth t
+	where p.Factory = t.FactoryID
+	and p.[Month] = t.[Month]
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_SubprocessBCSByMonth", "P_SubprocessBCSByMonth_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
 -- P_SubprocessBCSByMonth
 ;with TTLBD as(
 	select [Month] = format(SewingInline,'yyyyMM'),FactoryID
@@ -38,6 +46,8 @@ select a.[Month], a.FactoryID
 	end
 ,[TTLLoadedBundle]
 ,[TTLBundle]
+,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+,[BIInsertDate] = GetDate()
 into #tmpByMonth
 from TTLBD a
 inner join TTLLBD b on a.FactoryID = b.FactoryID and a.[Month] = b.[Month]
@@ -46,17 +56,21 @@ update  t
 set t.SubprocessBCS = s.SubprocessBCS
 ,t.TTLBundle = s.TTLBundle
 ,t.TTLLoadedBundle = s.TTLLoadedBundle
+,t.[BIFactoryID] = s.BIFactoryID
+,t.[BIInsertDate] = s.BIInsertDate
 from P_SubprocessBCSByMonth t
 inner join #tmpByMonth s on t.Factory = s.FactoryID and t.[Month] = s.[Month]
 
-insert P_SubprocessBCSByMonth([Month],Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle)
-select [MONTH],FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle
+insert P_SubprocessBCSByMonth([Month],Factory,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate)
+select [MONTH],FactoryID,SubprocessBCS,TTLBundle,TTLLoadedBundle, BIFactoryID, BIInsertDate
 from #tmpByMonth t
 where not exists(
 	select * from P_SubprocessBCSByMonth s
 	where t.FactoryID = s.Factory
 	and t.[Month] = s.[Month]
 )
+ 
+{tmp}
 
 delete t
 from P_SubprocessBCSByMonth t

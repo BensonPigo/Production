@@ -231,7 +231,10 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                             and SUBCONEMB_i.v = 1 and SUBCONEMB_o.v = 1
 		                             and HT_i.v = 1 and HT_o.v = 1
                                      {subProcessStatusOtherWithBI}
-		                             then 'Y' end";
+		                             then 'Y' end
+{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
+
+";
 
             string subprocessQtyColumnsSource = string.Empty;
             foreach (DataRow dr in dtTMP_SubProcess.Rows)
@@ -598,7 +601,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                 and sp.Junk = 0) 
                 , t.GFR
                 , t.SampleReason
-                , [TMS] = (select s.StdTms * t.CPU from System s WITH (NOLOCK)) ";
+                , [TMS] = (select s.StdTms * t.CPU from System s WITH (NOLOCK)) 
+";
             }
             else
             {
@@ -825,7 +829,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                 and sp.Junk = 0) 
                 , t.GFR
                 , t.SampleReason
-                , [TMS] = (select s.StdTms * t.CPU  from System s WITH (NOLOCK)) ";
+                , [TMS] = (select s.StdTms * t.CPU  from System s WITH (NOLOCK)) 
+{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
+";
             }
 
             if (model.IncludeAtworkData)
@@ -1286,7 +1292,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 , SampleReason
                 , [TMS]
                 {ars}
-                from #lasttmp t
+                {(model.IsBI ? " ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
+               from #lasttmp t
                 outer apply(
 	                select article_list = stuff((
 		                select concat(',' , article)

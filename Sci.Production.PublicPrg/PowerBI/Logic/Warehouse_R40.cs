@@ -112,6 +112,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 				selPowerBI = @", o.FtyGroup
 	, r.AddDate
 	, r.EditDate
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+	, [BIInsertDate] = GETDATE()
 ";
 				colPowerBI = @",FtyGroup = isnull(FtyGroup, '')
 	,CutShadebandTime --Cut Shadeband
@@ -122,6 +124,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,rd.AddDate
 	,rd.EditDate
 	,rdStockType = isnull(rdStockType, '')
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+	, [BIInsertDate] = GETDATE()
 ";
 				if (model.AddEditDateStart.HasValue)
 				{

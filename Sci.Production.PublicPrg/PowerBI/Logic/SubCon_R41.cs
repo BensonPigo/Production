@@ -470,6 +470,7 @@ select
     ,[SpreadingNo] = isnull(r.SpreadingNo,'')
     ,[LastSewDate] = tsi.LastSewDate
     ,[SewQty] = isnull(tsi.SewQty,0)
+{(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE()" : string.Empty)}
 from #result r
 left join #tmpGetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 

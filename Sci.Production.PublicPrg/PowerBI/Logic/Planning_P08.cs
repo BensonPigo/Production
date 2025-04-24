@@ -222,6 +222,8 @@ OUTER APPLY (
     ,cons.Consumption -- by SP 計算
     ,ActCons.ActConsOutput -- by SP 計算
     ,ta.Artwork -- by SP 組合
+    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    ,[BIInsertDate] = GETDATE()
 ";
                 sqlBILeftJoin = @"
 LEFT JOIN Style WITH (NOLOCK) ON Style.Ukey = o.StyleUkey

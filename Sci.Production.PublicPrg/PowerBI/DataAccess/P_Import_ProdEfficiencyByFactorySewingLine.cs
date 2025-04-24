@@ -60,6 +60,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate)
         {
+            string where = @"  p.[Year-Month] >= @StartDate";
+            string tmp = new Base().SqlBITableHistory("P_ProdEfficiencyByFactorySewingLine", "P_ProdEfficiencyByFactorySewingLine_History", "#tmp", where, false, true);
+
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -70,8 +73,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             using (sqlConn)
             {
                 string sql = $@" 
-				insert into P_ProdEfficiencyByFactorySewingLine([Year-Month], FtyZone, Factory, Line, TotalQty, TotalCPU, TotalManhours, PPH, [EFF])
-	            select t.[Year-Month], t.FtyZone, t.Factory, t.Line, t.TotalQty, t.TotalCPU, t.TotalManhours, t.PPH, t.[EFF]
+				insert into P_ProdEfficiencyByFactorySewingLine([Year-Month], FtyZone, Factory, Line, TotalQty, TotalCPU, TotalManhours, PPH, [EFF], BIFactoryID, BIInsertDate)
+	            select t.[Year-Month], t.FtyZone, t.Factory, t.Line, t.TotalQty, t.TotalCPU, t.TotalManhours, t.PPH, t.[EFF], BIFactoryID, BIInsertDate
 	            from #tmp t
 	            where not exists (select 1 from P_ProdEfficiencyByFactorySewingLine p where p.[Year-Month] = t.[Year-Month] and p.FtyZone = t.FtyZone and p.Factory = t.Factory and p.Line = t.Line)
 
@@ -81,9 +84,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			        , p.[TotalManhours] = t.[TotalManhours]
 			        , p.[PPH] = t.[PPH]
 			        , p.[EFF] = t.[EFF]
+                    , p.[BIFactoryID] = t.BIFactoryID
+                    , p.[BIInsertDate] = t.BIInsertDate
 	            from P_ProdEfficiencyByFactorySewingLine p
 	            inner join #tmp t on p.[Year-Month] = t.[Year-Month] and p.FtyZone = t.FtyZone and p.Factory = t.Factory and p.Line = t.Line
 
+                {tmp}
 
 	             delete p
 	             from P_ProdEfficiencyByFactorySewingLine p
@@ -113,6 +119,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [TotalManhours] = TtlManhour
 			, [PPH] = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
 			, [EFF] = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from  Production.dbo.System WITH (NOLOCK) ))*100, 2)) 
+            , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIInsertDate] = GETDATE()   
 	        from 
             (
 		        select 

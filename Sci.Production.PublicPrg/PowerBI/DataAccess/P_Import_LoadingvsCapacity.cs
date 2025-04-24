@@ -249,6 +249,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,[CapacityCPU]
 			,[LoadingCPU]
 			,[TransferBIDate] 
+            ,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GetDate()
 			From
 			(
 				select Factory.mDivisionID
@@ -310,7 +312,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[ArtworkTypeID],
 				t.[CapacityCPU],
 				t.[LoadingCPU],
-				t.[TransferBIDate]
+				t.[TransferBIDate],
+				t.[BIFactoryID],
+				t.[BIInsertDate]    
 				from #tmp t
 				where not exists
 				(

@@ -331,10 +331,12 @@ Delete p
 from POWERBIReportData.dbo.P_RTLStatusByDay p
 
 
-Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays )
+Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate )
 select TransferDate
 	, ISNULL(t.FactoryID, '')
 	, ISNULL(t.CurrentWIPDays, 0)
+    , (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , GetDate()
 from #tmp t 
 
 if exists (select 1 from BITableInfo b where b.id = 'P_RTLStatusByDay')

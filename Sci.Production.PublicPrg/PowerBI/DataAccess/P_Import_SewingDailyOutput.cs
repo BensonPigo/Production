@@ -714,6 +714,24 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
+            string where = @" p.OutputDate in (select outputDate from #FinalDt)
+				and exists (select OrderID from #FinalDt f where p.FactoryID=f.FactoryID  AND p.MDivisionID=f.MDivisionID ) 
+				and not exists (
+				select OrderID from #FinalDt s 
+					where p.FactoryID=s.FactoryID  
+					AND p.MDivisionID=s.MDivisionID 
+					AND p.SewingLineID=s.SewingLineID 
+					AND p.Team=s.Team 
+					AND p.Shift=s.Shift 
+					AND p.OrderID=s.OrderID 
+					AND p.Article=s.Article 
+					AND p.SizeCode=s.SizeCode 
+					AND p.ComboType=s.ComboType 
+					AND p.OutputDate = s.OutputDate
+					AND p.SubConOutContractNumber = s.SubConOutContractNumber)";
+
+            string tmp = new Base().SqlBITableHistory("P_SewingDailyOutput", "P_SewingDailyOutput_History", "#tmp", where, false, false);
+
             using (sqlConn)
             {
                 string sql = $@"	
@@ -749,9 +767,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 																	   AND t.ComboType=s.ComboType  
 																	   AND t.OutputDate = s.OutputDate
 																	   AND t.SubConOutContractNumber = s.SubConOutContractNumber)
-
-
-
 				update t
 				set 
 				t.MDivisionID =s.MDivisionID
@@ -827,6 +842,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 								   AND t.ComboType=s.ComboType  
 								   AND t.OutputDate = s.OutputDate
 								   AND t.SubConOutContractNumber = s.SubConOutContractNumber
+				
+				{tmp}
 
 				delete t
 				from P_SewingDailyOutput t 

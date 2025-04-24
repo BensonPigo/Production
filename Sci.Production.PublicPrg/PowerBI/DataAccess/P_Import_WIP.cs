@@ -69,9 +69,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <inheritdoc/>
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
+            string where = @" p.SciDelivery between @StartDate and @EndDate and NOT EXISTS(SELECT 1 FROM #tmp t WHERE P.SPNO = T.OrderID)";
+            string tmp = new Base().SqlBITableHistory("P_WIP", "P_WIP_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             string sqlCmd = $@"
-             -- 更新
+              -- 更新
             UPDATE P SET						
              P.[MDivisionID]					=	ISNULL(T.[MDivisionID],'')
             ,P.[FactoryID]						=	ISNULL(T.[FactoryID],'')
@@ -174,6 +177,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,P.[GlobalFoundationRange]			=	ISNULL(T.[GFR],0)
             ,P.[SampleReason]					=	ISNULL(T.[SampleReason],'')
             ,P.[TMS]							=	ISNULL(T.[TMS],0)
+            ,P.BIFactoryID                      =   ISNULL(T.BIFactoryID, '')
+            ,P.BIInsertDate                     =   ISNULL(T.BIInsertDate, GetDate())
             FROM P_WIP P						
             INNER JOIN #tmp T ON P.SPNO = T.OrderID 
 
@@ -282,6 +287,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[GlobalFoundationRange]
 	            ,[SampleReason]
 	            ,[TMS]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
             )
             SELECT
              ISNULL(T.[MDivisionID],'')
@@ -385,9 +392,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[SpecMark],'')
             ,ISNULL(T.[GFR],0)
             ,ISNULL(T.[SampleReason],'')
-            ,ISNULL(T.[TMS],0)
+            ,ISNULL(T.[TMS],0) 
+            ,ISNULL(BIFactoryID, '')
+            ,ISNULL(BIInsertDate, GetDate())
             FROM #tmp T
             WHERE NOT EXISTS(SELECT 1 FROM P_WIP P WHERE P.SPNO = T.OrderID)
+
+            {tmp}
 
             -- 刪除
             DELETE P_WIP 

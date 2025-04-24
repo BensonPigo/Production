@@ -166,7 +166,20 @@ where f.ID in (
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = @"	
+                string sql = $@"	
+INSERT INTO P_CMPByDate_History  
+              (  
+                  [OutputDate],[FactoryID] ,   
+                  BIFactoryID,   
+                  BIInsertDate  
+              )   
+              SELECT   
+              p.[OutputDate],p.[FactoryID] ,   
+              (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+              GETDATE()  
+              FROM P_CMPByDate p  
+              INNER JOIN #tmp t ON  t.[OutputDate] = p.[OutputDate] and t.[FactoryID] = p.[FactoryID] 
+
 update p set p.GPHCPU				    = t.GPHCPU
 			,p.SPHCPU				    = t.SPHCPU
 			,p.VPHCPU				    = t.VPHCPU
@@ -180,11 +193,14 @@ update p set p.GPHCPU				    = t.GPHCPU
             ,p.TotalActiveHeadcount		= IIF(t.TotalActiveHeadcount = 0, p.TotalActiveHeadcount, t.TotalActiveHeadcount)
             ,p.RevenumDeptHeadcount		= IIF(t.RevenumDeptHeadcount = 0, p.RevenumDeptHeadcount, t.RevenumDeptHeadcount)
             ,p.ManpowerRatio		    = IIF(t.ManpowerRatio = 0, p.ManpowerRatio, t.ManpowerRatio)
+            ,BIFactoryID                = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,BIInsertDate               = getDate()
 from P_CMPByDate p
 inner join #tmp t on p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate
 
-insert into P_CMPByDate([FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio])
-select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio]
+insert into P_CMPByDate([FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], BIFactoryID, BIInsertDate)
+select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio],
+(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), getDate()
 from #tmp t
 where not exists(select 1 from P_CMPByDate p where p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate)
 

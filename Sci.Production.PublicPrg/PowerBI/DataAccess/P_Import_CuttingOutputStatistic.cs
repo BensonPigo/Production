@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
+using static System.Windows.Forms.AxHost;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -72,7 +73,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@eDate", edate.ToString("yyyy-MM-dd")),
             };
 
-            string tmp = new Base().SqlBITableHistory("P_CuttingOutputStatistic", "P_CuttingOutputStatistic_History", "#tmp", " p.TransferDate Between @sDate and @eDate");
+            string where = @"  p.TransferDate Between @sDate and @eDate";
+            string tmp = new Base().SqlBITableHistory("P_CuttingOutputStatistic", "P_CuttingOutputStatistic_History", "#tmp", where, false, true);
 
             using (sqlConn)
             {

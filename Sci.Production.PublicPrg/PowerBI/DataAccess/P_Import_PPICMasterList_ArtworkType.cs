@@ -107,6 +107,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 			-- Order_TmsCost
 			Select *
+			,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GetDate()
 			INTO #tmp
 			FROM 
 			(
@@ -239,12 +241,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, p.[ArtworkTypeUnit] = t.Unit
 			, p.[OrderDataKey] = t.OrderDataKey
 			, p.[FactoryID] = t.[FactoryID]
+			, p.[BIFactoryID] = t.[BIFactoryID]
+		    , p.[BIInsertDate] = t.[BIInsertDate]
 			from P_PPICMasterList_ArtworkType p
 			inner join #tmp t on t.ID = p.[SP#] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey]
 
 			-- 新增P_PPICMasterList_ArtworkType
-			insert into [P_PPICMasterList_ArtworkType] ([SP#], [FactoryID], [ArtworkTypeNo], [ArtworkType], [Value], [TotalValue], [ArtworkTypeUnit], [SubconInTypeID], [ArtworkTypeKey], [OrderDataKey])
-			select t.ID, t.FactoryID, t.Seq, t.ArtworkType, ISNULL(t.[Value], 0), ISNULL(t.TTL_Value, 0), t.Unit, t.SubconInType, t.ArtworkTypeKey, t.OrderDataKey
+			insert into [P_PPICMasterList_ArtworkType] ([SP#], [FactoryID], [ArtworkTypeNo], [ArtworkType], [Value], [TotalValue], [ArtworkTypeUnit], [SubconInTypeID], [ArtworkTypeKey], [OrderDataKey],[BIFactoryID], [BiInsertDate])
+			select t.ID, t.FactoryID, t.Seq, t.ArtworkType, ISNULL(t.[Value], 0), ISNULL(t.TTL_Value, 0), t.Unit, t.SubconInType, t.ArtworkTypeKey, t.OrderDataKey, BIFactoryID, BIInsertDate
 			from #tmp t
 			where not exists (select 1 from P_PPICMasterList_ArtworkType p where t.ID = p.[SP#] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey])
 			order by ID, ArtworkType, SEQ

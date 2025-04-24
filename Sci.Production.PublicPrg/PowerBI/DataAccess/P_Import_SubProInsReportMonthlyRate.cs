@@ -50,6 +50,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DateTime sDate, DateTime eDate)
         {
+            string where = @"  [Month] != Month(@StartDate)";
+            string tmp = new Base().SqlBITableHistory("P_SubProInsReportMonthlyRate", "P_SubProInsReportMonthlyRate_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
@@ -61,6 +64,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[SubprocessRate] = CAST(A.TotalPassQty / TotalQty * 100 AS DECIMAL(10, 2))
             ,[TotalPassQty]
             ,[TotalQty]
+            ,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIInsertDate] = GetDate()
             INTO #tmp
             FROM
             (
@@ -76,6 +81,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            Group BY FactoryID
             )A
 
+            {tmp}
             ----- 刪除
             DELETE P_SubProInsReportMonthlyRate WHERE [Month] != Month(@StartDate)
 
@@ -84,6 +90,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
              P.[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
             ,P.[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
             ,P.[TotalQty] = ISNULL(T.[TotalQty],0)
+            ,P.BIFactoryID = ISNULL(T.BIFactoryID, '')
+            ,P.BIInsertDate = ISNULL(T.BIInsertDate, GetDate())
             FROM P_SubProInsReportMonthlyRate P
             INNER JOIN #TMP T ON P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID]
             
@@ -96,6 +104,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[SubprocessRate]
 	            ,[TotalPassQty]
 	            ,[TotalQty]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
             )
             SELECT
              [Month] = Month(@StartDate)
@@ -103,6 +113,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,[SubprocessRate] = ISNULL(T.[SubprocessRate],0)
             ,[TotalPassQty] = ISNULL(T.[TotalPassQty],0)
             ,[TotalQty] = ISNULL(T.[TotalQty],0)
+            ,[BIFactoryID] = isnull(T.BIFactoryID, '')
+            ,[BIInsertDate] = isnull(T.BIInsertDate, GetDate())
             from #tmp T
             Where NOT EXISTS(SELECT 1 FROM P_SubProInsReportMonthlyRate P WHERE P.[Month] = T.[Month] AND P.[FactoryID] = T.[FactoryID])   
 

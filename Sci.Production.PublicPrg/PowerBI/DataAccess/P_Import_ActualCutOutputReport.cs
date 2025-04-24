@@ -332,7 +332,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				[WindowTime_min],
 				[TotalSpreadingTime_min] =isnull([PreparationTime_min],0)+isnull([ChangeoverTime_min],0)+isnull([SpreadingSetupTime_min],0)+
 										  isnull([MachineSpreadingTime_min],0)+isnull([Separatortime_min],0)+isnull([ForwardTime_min],0)						 ,
-				[TotalCuttingTime_min] = isnull([CuttingSetupTime_min],0)+isnull([MachCuttingTime_min],0)+isnull([WindowTime_min],0)					   
+				[TotalCuttingTime_min] = isnull([CuttingSetupTime_min],0)+isnull([MachCuttingTime_min],0)+isnull([WindowTime_min],0)	,
+				[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) ,
+				[BIInsertDate] = GETDATE()   
 			--into #detail
 			from #tmp3
 			outer apply(select PerimeterM_num=iif(isnumeric(PerimeterM)=1,cast(PerimeterM as numeric(20,4)),0))p
@@ -369,6 +371,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = $@" 
 				DELETE P_ActualCutOutputReport WHERE SP IN (SELECT ID FROM #detail)
+
+
 
 				INSERT INTO [dbo].[P_ActualCutOutputReport]
 				(
@@ -408,6 +412,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[WindowTime]
 					,[TotalSpreadingTime]
 					,[TotalCuttingTime]
+					,[BIFactoryID]	
+					,[BIInsertDate]
 				)
 				select 
 				ISNULL([FactoryID], '')
@@ -445,7 +451,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,ISNULL([MachCuttingTime_min], 0)
 				,ISNULL([WindowTime_min], 0)
 				,ISNULL([TotalSpreadingTime_min], 0)
-				,ISNULL([TotalCuttingTime_min], 0)
+				,ISNULL([TotalCuttingTime_min], 0)'
+				,ISNULL([BIFactoryID], '')
+				,ISNULL([BIInsertDate], GETDATE())
 				from #detail d
 				where not exists(select 1 from P_ActualCutOutputReport where cutref = d.cutref)
 				order by FactoryID,EstCutDate,CutCellid

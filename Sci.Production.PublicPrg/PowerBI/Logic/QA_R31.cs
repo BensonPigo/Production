@@ -598,6 +598,8 @@ select
 		,CustPoNo,StyleID,StyleName,SeasonID,[Dest],Customize1,CustCDID,Seq,ShipModeID
 		,[ColorWay],SewLine,[TtlCtn],[StaggeredCtn],[ClogCtn] ,[ClogCtn%],[LastCartonReceivedDate]
 		,CFAFinalInspectDate,CFA3rdInspectDate,CFARemark 
+		,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+		,[BIInsertDate] = GETDATE()   
 		from #tmpFinal
 where nb=1
 ";
@@ -1048,6 +1050,7 @@ oq.CFAFinalInspectResult
 ,oq.CFAFinalInspectDate
 ,oq.CFA3rdInspectDate
 ,oq.CFARemark
+{(par.IsPowerBI ? ",[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 FROM Order_QtyShip oq with (nolock)
 INNER JOIN Orders o with (nolock) ON o.ID = oq.Id and exists (select 1 from Factory f where o.FactoryId = id and f.IsProduceFty = 1)
 INNER JOIN Factory f with (nolock) ON o.FactoryID = f.ID

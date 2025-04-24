@@ -70,6 +70,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
+            string where = @" not exists (
+    select 1 from #tmp t 
+    where p.FactoryID = t.Factory
+	and p.CDate = t.CDate
+	and p.OrderID = t.OrderID
+	and p.Team = t.Team
+	and p.Shift = t.Shift
+	and p.Line = t.Line
+) 
+and p.CDate between @SDate and @EDate";
+
+            string tmp = new Base().SqlBITableHistory("P_RightFirstTimeDailyReport", "P_RightFirstTimeDailyReport_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -80,7 +93,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EDate", eDate),
                 };
 
-                string sql = @"	
+                string sql = $@"	
 update t
 set t.[Destination] = s.[Destination]
 , t.[BrandID] = s.[Brand]
@@ -100,6 +113,8 @@ set t.[Destination] = s.[Destination]
 , t.[Over] = s.[Over]
 , t.[QC] = s.[QC]
 , t.[Remark] = s.[Remark]
+, t.[BIFactoryID] = s.[BIFactoryID]
+, t.[BIInsertDate] = s.[BIInsertDate]
 from P_RightFirstTimeDailyReport t 
 inner join #tmp s
 	on t.FactoryID = s.Factory
@@ -112,11 +127,11 @@ inner join #tmp s
 insert into P_RightFirstTimeDailyReport (
  [FactoryID],[CDate],[OrderID],[Destination],[BrandID],[StyleID],[BuyerDelivery],[CDCodeID]
 ,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[Team],[Shift]
-,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark]
+,[Line],[Cell],[InspectQty],[RejectQty],[RFTPercentage],[Over],[QC],[Remark],[BIFactoryID], [BIInsertDate]
 )
 select s.[Factory],s.[CDate],s.[OrderID],s.[Destination],s.[Brand],s.[Style],s.[BuyerDelivery],s.[CDCode]
 ,s.[CDCodeNew],s.[ProductType],s.[FabricType],s.[Lining],s.[Gender],s.[Construction],s.[Team],s.[Shift]
-,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark]
+,s.[Line],s.[Cell],s.[InspectQty],s.[RejectQty],s.[RFT (%)],s.[Over],s.[QC],s.[Remark],[BIFactoryID], [BIInsertDate]
 from #tmp s
 where not exists (
     select 1 from P_RightFirstTimeDailyReport t 
@@ -127,6 +142,8 @@ where not exists (
 	and t.Shift = s.Shift
 	and t.Line = s.Line
 )
+
+{tmp}
 
 delete t 
 from dbo.P_RightFirstTimeDailyReport t

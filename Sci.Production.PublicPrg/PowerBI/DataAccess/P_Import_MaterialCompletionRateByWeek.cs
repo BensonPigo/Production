@@ -71,27 +71,31 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 string sql = $@" 
 Update p Set MaterialCompletionRate = t.MaterialCompletionRate, 
              MTLCMP_SPNo = t.MTLCMP_SPNo,
-             TTLSPNo = t.TTLSPNo
+             TTLSPNo = t.TTLSPNo,
+             BIFactoryID = t.BIFactoryID,
+             BIInsertDate = t.BIInsertDate
 From P_MaterialCompletionRateByWeek p
 inner join #tmp t on p.Year = t.Year 
                  and p.WeekNo = t.WeekNo 
                  and p.FactoryID = t.FactoryID
-
-
 
 Insert into P_MaterialCompletionRateByWeek ( Year,
                                              WeekNo, 
                                              FactoryID, 
                                              MaterialCompletionRate, 
                                              MTLCMP_SPNo, 
-                                             TTLSPNo
+                                             TTLSPNo,
+                                             [BIFactoryID],
+                                             [BIInsertDate]
                                             )
 Select  Year,
         WeekNo, 
         FactoryID, 
         MaterialCompletionRate, 
         MTLCMP_SPNo, 
-        TTLSPNo
+        TTLSPNo,
+        [BIFactoryID],
+        [BIInsertDate]
 From #tmp t
 Where not exists ( select 1 
 				   from P_MaterialCompletionRateByWeek p with (nolock)
@@ -99,6 +103,19 @@ Where not exists ( select 1
                    and p.WeekNo = t.WeekNo 
 				   and p.FactoryID = t.FactoryID
                 )
+
+Insert into P_MaterialCompletionRateByWeek_History
+Select [FactoryID],[WeekNo],[Year],[BIFactoryID],[BIInsertDate] = GetDate()
+From P_MaterialCompletionRateByWeek
+Where Not exists ( select 1 
+				   from #tmp t
+				   where P_MaterialCompletionRateByWeek.Year = t.Year 
+                   and P_MaterialCompletionRateByWeek.WeekNo = t.WeekNo 
+				   and P_MaterialCompletionRateByWeek.FactoryID = t.FactoryID
+                )
+And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
+And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
+
 
 Delete P_MaterialCompletionRateByWeek 
 Where Not exists ( select 1 
@@ -109,6 +126,12 @@ Where Not exists ( select 1
                 )
 And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
+
+Insert into P_MaterialCompletionRateByWeek_History
+Select [FactoryID],[WeekNo],[Year],[BIFactoryID],[BIInsertDate] = GetDate()
+From P_MaterialCompletionRateByWeek
+Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
+And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
 
 Delete P_MaterialCompletionRateByWeek 
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
@@ -146,7 +169,9 @@ Select 	Year = YEAR(inline),
         FactoryID,
         MaterialCompletionRate = CONVERT(numeric(5, 2), iif(isnull(TTL.TTLSPNo,0) = 0, 0, round((CONVERT(numeric(5, 2),isnull(MTLCMP.MTLCMP_SPNo, 0))/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2))) ,
         MTLCMP_SPNo = isnull(MTLCMP.MTLCMP_SPNo, ''),
-        TTLSPNo = isnull(TTL.TTLSPNo, '')
+        TTLSPNo = isnull(TTL.TTLSPNo, ''),
+        [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+        [BIInsertDate] = GETDATE()
 From [P_SewingLineScheduleBySP] psb with (nolock)
 Outer Apply(
 	         Select Count(1) As MTLCMP_SPNo

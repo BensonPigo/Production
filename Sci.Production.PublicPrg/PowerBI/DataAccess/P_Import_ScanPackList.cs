@@ -48,6 +48,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     IsSummary = false,
                     IsDetail = false,
                     Barcode = string.Empty,
+                    IsPowerBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetPacking_R01Data(model);
@@ -75,13 +76,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
         {
+            string where = @"  not exists (
+	select 1 from [MainServer].[Production].[dbo].PackingList_Detail pld with (nolock)
+	inner join [MainServer].[Production].[dbo].PackingList pl with (nolock) on pl.ID = pld.ID
+	where pl.FactoryID = p.FactoryID and pld.ID = p.PackingID and pld.OrderID = p.OrderID and pld.CTNStartNo = p.CTNStartNo
+)";
+
+            string tmp = new Base().SqlBITableHistory("P_ScanPackList", "P_ScanPackList_History", "#tmp", where, false, false);
+
             Base_ViewModel finalResult;
             List<SqlParameter> sqlParameters = new List<SqlParameter>()
             {
                 new SqlParameter("@sDate", sDate.Value.ToString("yyyy/MM/dd 00:00:00")),
                 new SqlParameter("@eDate", eDate.Value.ToString("yyyy/MM/dd 23:59:59")),
             };
-            string sql = @"	
+            string sql = $@"	
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p
 where p.[ScanDate] >= @sDate
@@ -123,6 +132,8 @@ select t.Factory
 from #tmp t
 where t.[Scan Date] >= @sDate
 and t.[Scan Date] <= @eDate
+
+{tmp}
 
 delete from p
 from POWERBIReportData.dbo.P_ScanPackList p

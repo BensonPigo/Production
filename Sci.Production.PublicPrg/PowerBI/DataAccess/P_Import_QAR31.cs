@@ -143,6 +143,24 @@ where not exists (
     AND t.Seq = s.Seq
 )
 
+Insert into P_QA_R31_History
+Select t.FactoryID, t.BIFactoryID, [BIInsertDate]=GetDate()
+From P_QA_R31 t
+where not exists (
+    select 1 from #tmp s 
+    where t.OrderID = s.ID 
+    AND t.Stage = s.Stage 
+    AND t.StyleName = s.StyleName 
+    AND t.Seq = s.Seq
+)
+and t.BuyerDelivery between @SDate and @EDate
+and exists(
+	select * from Production.dbo.Factory  as f
+	where f.ProduceM = f.MDivisionID
+	and f.id = t.FactoryID
+)
+
+
 delete t 
 from dbo.P_QA_R31 t
 where not exists (

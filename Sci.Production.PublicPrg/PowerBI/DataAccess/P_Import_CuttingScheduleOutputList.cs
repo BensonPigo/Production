@@ -39,6 +39,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     Est_CutDate2 = eDate,
                     ActCuttingDate1 = null,
                     ActCuttingDate2 = null,
+                    IsPowerBI = true,
                 };
 
                 Base_ViewModel resultReport = biModel.GetCuttingScheduleOutputData(model);
@@ -64,6 +65,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
         private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
+            string tmp = new Base().SqlBITableHistory("P_CuttingScheduleOutputList", "P_CuttingScheduleOutputList_History", "#tmp", string.Empty, true, false);
+
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -77,6 +80,8 @@ from P_CuttingScheduleOutputList as a
 inner join #tmp as b on a.FactoryID = b.Factory and a.POID = b.[Master SP#] and a.EstCuttingDate = b.[Est.Cutting Date]
 
 /************* 新增P_CuttingScheduleOutputList的資料(ActCuttingDate,LackingLayers新增時欄位都要為空)*************/
+
+            
 insert into P_CuttingScheduleOutputList
 (
 	[MDivisionID]				
@@ -110,6 +115,8 @@ insert into P_CuttingScheduleOutputList
 	,[CurvedLength]
 	,[DelayReason]
 	,[Remark]
+	,[BIFactoryID]
+	,[BIInsertDate]
 )
 select 
 	  [MDivisionID] = isnull([M],'')				
@@ -143,6 +150,8 @@ select
 	, [CurvedLength] = isnull([Curved Length],'')
 	, [DelayReason] = isnull([Delay Reason],'')
 	, [Remark] = isnull([Remark],'')
+	, [BIFactoryID]
+	, [BIInsertDate]
 from #tmp
 
 /************* 更新ActCuttingDate、LackingLayers欄位前的整合資料*************/
@@ -208,6 +217,8 @@ FROM
 		,[LackingLayers]
 		,[cDate]
 		,[FactoryID]
+		,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+		,[BIInsertDate] = GETDATE()
 	from #sum 
 	union
 	select 
@@ -216,12 +227,30 @@ FROM
 		,[LackingLayers] = t.[LackingLayers]
 		,[cDate] = t.[Act.Cutting Date]
 		,[FactoryID] = t.[Factory]
+		,[BIFactoryID] = t.[BIFactoryID]
+		,[BIInsertDate] = t.[BIInsertDate]
 	from #tmp t
 )aa
 
+INSERT INTO P_CuttingScheduleOutputList_History  
+(  
+    [Ukey] ,   
+    BIFactoryID,   
+    BIInsertDate  
+)   
+SELECT   
+p.[Ukey] ,   
+p.BIFactoryID,
+GETDATE()  
+FROM P_CuttingScheduleOutputList p  
+inner join #Integrate t with(nolock) on t.[FactoryID] = p.[FactoryID] and t.[ID] = p.[POID] and p.[CutRef] = t.[CutRef]
+WHERE 1 = 1 
+
 update p set
 	p.[ActCuttingDate] = t.[cDate],
-	p.[LackingLayers] = t.[LackingLayers]
+	p.[LackingLayers] = t.[LackingLayers],
+	[BIFactoryID] = t.[BIFactoryID],
+	[BIInsertDate] = t.[BIInsertDate]
 from P_CuttingScheduleOutputList p with(nolock)
 inner join #Integrate t with(nolock) on t.[FactoryID] = p.[FactoryID] and t.[ID] = p.[POID] and p.[CutRef] = t.[CutRef]
 ";

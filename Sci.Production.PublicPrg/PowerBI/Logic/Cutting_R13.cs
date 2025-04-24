@@ -163,6 +163,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 [Curved Length] = wk.CurvedLength,
                 [Delay Reason] = dw.[Name],
                 [Remark] = wk.Remark
+{((bool)model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE()" : string.Empty)}
             from #tmp t
             outer apply (select TOP 1 ActCuttingPerimeter,StraightLength,CurvedLength,Remark,UnfinishedCuttingReason from WorkOrder wo with (nolock) where wo.CutRef = t.[Ref#]) wk
             left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = wk.UnfinishedCuttingReason
@@ -172,7 +173,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             [Cut#],[SpreadingNoID],[Cut Cell],[Combination],[LackingLayers],[Ratio],[Marker Name],
             [Marker No.], [Marker Length],wk.ActCuttingPerimeter,
             wk.StraightLength,wk.CurvedLength,
-            dw.[Name],wk.Remark
+            dw.[Name],wk.Remark 
 
             drop table #tmp";
 

@@ -191,7 +191,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[VID]
                 ,[Grade]
                 ,[AddDate]
-                ,[EditDate])
+                ,[EditDate]
+                ,[BIFactoryID]
+                ,[BIInsertDate])
                 select 
                 [MDivisionID]
                 ,[FactoryID]
@@ -246,6 +248,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[Grade]
                 ,[AddDate]
                 ,[EditDate]
+                ,BIFactoryID
+                ,BIInsertDate
                 from #tmp s
                 ";
                 sql += new Base().SqlBITableInfo("P_InventoryStockListReport", true);

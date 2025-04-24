@@ -78,6 +78,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+            Insert into P_SubProInsReport_History
+            Select Ukey, [BIFactoryID], [BIInsertDate]
+            From P_SubProInsReport
+            WHERE InspectionDate between @StartDate and @EndDate
+
             delete P_SubProInsReport where InspectionDate between @StartDate and @EndDate
 
             insert into P_SubProInsReport(

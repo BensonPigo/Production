@@ -54,6 +54,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+            string tmp = new Base().SqlBITableHistory("P_RecevingInfoTrackingSummary", "P_RecevingInfoTrackingSummary_History", "#tmp", string.Empty, true, false);
 
             string sqlcmd = $@"        
             --建立日期區間
@@ -77,7 +78,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             [FactoryID] = DateRange.FtyGroup,
             [UnloaderTtlKG] = isnull(sum(Weight),0),
             [UnloaderTtlRoll] = sum(iif(main.FtyGroup is null, 0, 1)),
-            [WHReceivingLT] = isnull([WHReceivingLT],0)
+            [WHReceivingLT] = isnull([WHReceivingLT],0),
+            [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+	        [BIInsertDate] = GETDATE()
             into #tmp
             from #tmpDate DateRange
             left join [dbo].[P_BatchUpdateRecevingInfoTrackingList] main on DateRange.date = main.ArriveDate and DateRange.FtyGroup = main.FtyGroup
@@ -92,11 +95,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             group by DateRange.FtyGroup,DateRange.date,getWHReceivingLT.WHReceivingLT
             ORDER BY DateRange.date,DateRange.FtyGroup
 
+{tmp}
+
             ----更新
             UPDATE T SET
             T.[UnloaderTtlKG] = tmp.[UnloaderTtlKG],
             T.[UnloaderTtlRoll] = tmp.[UnloaderTtlRoll],
-            T.[WHReceivingLT] = tmp.[WHReceivingLT]
+            T.[WHReceivingLT] = tmp.[WHReceivingLT],
+            T.BIFactoryID = tmp.BIFactoryID,
+            T.BIInsertDate = tmp.BIInsertDate
             FROM P_RecevingInfoTrackingSummary T
             INNER JOIN #TMP tmp ON T.[TransferDate] = tmp.[TransferDate] AND  T.[FactoryID] = tmp.[FactoryID]
             
@@ -108,6 +115,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,[UnloaderTtlKG]
 	            ,[UnloaderTtlRoll]
 	            ,[WHReceivingLT]
+                ,[BIFactoryID]
+                ,[BIInsertDate]
             )
             SELECT
              [TransferDate]
@@ -115,6 +124,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        ,[UnloaderTtlKG]
 	        ,[UnloaderTtlRoll]
 	        ,[WHReceivingLT]
+            ,[BIFactoryID]
+            ,[BIInsertDate]            
             from #tmp tmp
             Where NOT EXISTS(SELECT 1 FROM P_RecevingInfoTrackingSummary T WHERE tmp.[TransferDate] = T.[TransferDate] AND tmp.[FactoryID] = T.[FactoryID])   
            

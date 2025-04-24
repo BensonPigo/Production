@@ -83,7 +83,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			[ETA] = Export.ETA,
 			[Season] = o.SeasonID,
 			[SP#] = ed.PoID,
-			[Seq#] = ed.seq1+''-''+ed.seq2,	
+			[Seq#] = ed.seq1+'-'+ed.seq2,	
 			[Brand] = o.BrandID,
 			[Supp] = ps.SuppID,
 			[Supp Name] = Supp.AbbEN,
@@ -219,7 +219,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        a.seq2,   
 	        a.[bitRefnoColor], 
 	        a.[FactoryID], 
-	        a.Consignee  
+	        a.Consignee,  
+			[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+            [BIInsertDate] = GetDate()
 	        from #tmpBasic a
 	        inner join 
 	        (    
@@ -319,7 +321,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[T1 Defect Points] =  s.[T1 Defect Points],
 				t.[Fabric with clima] =  s.[Fabric with clima],
 				t.FactoryID = s.FactoryID,
-				t.Consignee = s.Consignee
+				t.Consignee = s.Consignee,
+				t.BIFactoryID = ISNULL(s.BIFactoryID, ''),
+				t.BIInsertDate = ISNULL(s.BIInsertDate, GetDate())
 				WHEN NOT MATCHED BY TARGET THEN
 					INSERT (WK#,Invoice#,ATA,ETA,Season,[SP#],[Seq#],Brand,Supp,[Supp Name],[Ref#],Color,Qty,[Inspection Report_Fty Received Date]
 							,[Inspection Report_Supp Sent Date],[Test Report_Fty Received Date],[Test Report_ Check Clima],[Test Report_Supp Sent Date]
@@ -334,6 +338,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,s.FactoryID, s.Consignee
 							);
 
+				Insert Into P_QA_P09_History
+				Select t.Ukey, t.FactoryID, t.BIFactoryID, t.BIInsertDate
+				FROM P_QA_P09 T 
+				left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
+				where s.WK# is null
+				and T.ETA between @sDate and @eDate
 
 				delete t 
 				from dbo.P_QA_P09 t

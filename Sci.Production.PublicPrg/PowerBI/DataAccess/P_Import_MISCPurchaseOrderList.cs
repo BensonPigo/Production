@@ -96,6 +96,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
+
+            string where = @"  NOT EXISTS (SELECT 1 FROM Machine.dbo.MiscPO M WHERE M.ID = P.PONo)";
+
+            string tmp = new Base().SqlBITableHistory("P_MISCPurchaseOrderList", "P_MISCPurchaseOrderList_History", "#tmp", where, false, false);
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -144,6 +149,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,P.[Budget]                 = ISNULL(T.[Budget],'')
                 ,P.[InternalRemarks]        = ISNULL(T.[InternalRemarks],'')
                 ,P.[APID]                   = ISNULL(T.[APID],'')
+                ,P.[BIFactoryID]            = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                ,P.[BIInsertDate]           = GetDate()
                 From P_MISCPurchaseOrderList P
                 inner join #tmp T on T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo
                    
@@ -192,6 +199,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                   ,[Budget]
                   ,[InternalRemarks]
                   ,[APID]
+                  ,[BIFactoryID]
+                  ,[BIInsertDate]
                 )
                 SELECT 
                   ISNULL(T.[PurchaseFrom],'')
@@ -237,9 +246,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 , ISNULL(T.[Budget],'')
                 , ISNULL(T.[InternalRemarks],'')
                 , ISNULL(T.[APID],'')
+                , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                , [BIInsertDate] = GetDate()
                 FROM #TMP T 
                 WHERE NOT EXISTS(SELECT 1 FROM P_MISCPurchaseOrderList P WHERE T.PONo = P.PONo AND T.Code = P.Code AND T.ReqNo = P.ReqNo)
-
+{tmp}
                 DELETE P 
                 FROM P_MISCPurchaseOrderList P
                 WHERE NOT EXISTS (SELECT 1 FROM Machine.dbo.MiscPO M WHERE M.ID = P.PONo)
