@@ -269,6 +269,12 @@
     <Build Include="dbo\Tables\P_ChangeoverCheckList_Detail_Histroy.sql" />
     <Build Include="dbo\Tables\P_ChangeoverCheckList_Histroy.sql" />
     <Build Include="dbo\Tables\P_CuttingOutputStatistic_History.sql" />
+    <Build Include="dbo\Tables\P_Changeover_History.sql" />
+    <Build Include="dbo\Tables\P_LineBalancingRate_History_1.sql" />
+    <Build Include="dbo\Tables\P_LineMapping_History.sql" />
+    <Build Include="dbo\Tables\P_LineMapping_Detail_History.sql" />
+    <Build Include="dbo\Tables\P_InlineDefectSummary_History.sql" />
+    <Build Include="dbo\Tables\P_InlineDefectDetail_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />

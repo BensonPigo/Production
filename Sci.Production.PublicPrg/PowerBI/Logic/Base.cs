@@ -86,6 +86,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ImportScheduleList,
             P_AccessoryInspLabStatus,
             P_ProdEfficiencyByFactorySewingLine,
+            P_AdiCompReport,
+            P_Changeover,
+            P_LineMapping,
         }
 
         /// <summary>
@@ -395,11 +398,6 @@ ORDER BY [Group], [SEQ], [NAME]";
             {
                 result = this.ExecuteByClassName(className, item);
             }
-            else
-            {
-                // Execute all Stored Procedures
-                result = this.ExecuteSP(item);
-            }
 
             DateTime? executeEDate = DateTime.Now;
             ExecutedList model = new ExecutedList
@@ -553,6 +551,12 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_AccessoryInspLabStatus().P_AccessoryInspLabStatus(item.SDate, item.EDate);
                 case ListName.P_ProdEfficiencyByFactorySewingLine:
                     return new P_Import_ProdEfficiencyByFactorySewingLine().P_ProdEfficiencyByFactorySewingLine(item.SDate);
+                case ListName.P_AdiCompReport:
+                    return new P_Import_AdiCompReport().P_AdiCompReport();
+                case ListName.P_Changeover:
+                    return new P_Import_Changeover().P_Changeover(item.SDate, item.EDate);
+                case ListName.P_LineMapping:
+                    return new P_Import_LineMapping().P_LineMapping(item.SDate, item.EDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
@@ -652,25 +656,24 @@ M: {region}
         /// <param name="bITableInfoID">BITableInfo.ID</param>
         /// <param name="is_Trans">是否會回台北. 0:不會 1:會</param>
         /// <returns>String</returns>
-        public string SqlBITableInfo(string bITableInfoID, bool is_Trans)
+        public string SqlBITableInfo(string bITableInfoID, bool is_Trans, bool is_Continuous = false)
         {
+            string strDeclare = is_Continuous ? $@"SET @BITableInfoID = '{bITableInfoID}'; SET  @IS_Trans = '{is_Trans}';" : $@"DECLARE @BITableInfoID VARCHAR(50) = '{bITableInfoID}'; DECLARE @IS_Trans BIT = '{is_Trans}'";
             return $@"
-DECLARE @BITableInfoID VARCHAR(50) = '{bITableInfoID}'
-DECLARE @IS_Trans BIT = '{is_Trans}'
-
-IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
-BEGIN
-    UPDATE BITableInfo
-    SET TransferDate = GETDATE()
-       ,IS_Trans = @IS_Trans
-    WHERE ID = @BITableInfoID
-END
-ELSE
-BEGIN
-    INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
-        VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
-END
-";
+            {strDeclare}
+            IF EXISTS (SELECT 1 FROM BITableInfo WHERE Id = @BITableInfoID)
+            BEGIN
+                UPDATE BITableInfo
+                SET TransferDate = GETDATE()
+                    ,IS_Trans = @IS_Trans
+                WHERE ID = @BITableInfoID
+            END
+            ELSE
+            BEGIN
+                INSERT INTO BITableInfo (Id, TransferDate, IS_Trans)
+                    VALUES (@BITableInfoID, GETDATE(), @IS_Trans)
+            END
+            ";
         }
 
         /// <summary>
@@ -750,12 +753,12 @@ END
               )   
               SELECT   
               {tableColumns},   
-              {(needJoin ? "t.BIFactoryID," : "p.BIFactoryID,")}
+              {(needJoin ? " t.BIFactoryID," : "p.BIFactoryID,")}
               GETDATE()  
               FROM {tableName} p  
-              {(needJoin ? "INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
-              WHERE {(needExists ? $"not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
-              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and" + strWhere)}";
+              {(needJoin ? $"INNER JOIN {tmpTableName} t ON {tmpColumns} " : string.Empty)}
+              WHERE {(needExists ? $" not exists( Select 1 from {tmpTableName} t where {tmpColumns})" : "1 = 1")} 
+              {(string.IsNullOrEmpty(strWhere) ? string.Empty : " and " + strWhere)}";
         }
 
         private void WriteTranslog(string tableName, string description)

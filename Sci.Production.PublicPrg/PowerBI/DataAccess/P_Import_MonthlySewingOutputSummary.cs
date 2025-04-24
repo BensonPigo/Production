@@ -62,6 +62,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable subprocessData = resultReport.Dt;
+
+                string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
+                DateTime dateTime = DateTime.Now; 
                 List<P_MonthlySewingOutputSummary_ViewModel> dataList = new List<P_MonthlySewingOutputSummary_ViewModel>();
                 foreach (DataRow dr in totalTable.Rows)
                 {
@@ -115,6 +118,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                                             && s.Field<DateTime>("OutputDate") == DateTime.Parse(dr["LastDatePerMonth"].ToString()))
                                     .Select(s => s.Field<decimal>("Price")).FirstOrDefault(), 3),
                         TtlWorkDay = workDay,
+                        BIFactoryID = factoryID,
+                        BIInsertDate = dateTime,
                     };
 
                     dataList.Add(model);
@@ -270,8 +275,8 @@ drop table #tmp_dayTotal
             using (sqlConn)
             {
                 string sql = @"
-insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay])
-select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay]
+insert into P_MonthlySewingOutputSummary([Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate])
+select [Fty], [Period], [LastDatePerMonth], [TtlQtyExclSubconOut], [TtlCPUInclSubconIn], [SubconInTtlCPU], [SubconOutTtlCPU], [PPH], [AvgWorkHr], [TtlManpower], [TtlManhours], [Eff], [AvgWorkHrPAMS], [TtlManpowerPAMS], [TtlManhoursPAMS], [EffPAMS], [TransferManpowerPAMS], [TransferManhoursPAMS], [TtlRevenue], [TtlWorkDay], [BIFactoryID], [BIInsertDate]
 from #tmp t
 where not exists (select 1 from P_MonthlySewingOutputSummary p where t.[Fty] = p.[Fty] and t.[Period] = p.[Period])
 
@@ -294,6 +299,8 @@ update p
         , p.[TransferManhoursPAMS]		= t.[TransferManhoursPAMS]
         , p.[TtlRevenue]				= t.[TtlRevenue]
         , p.[TtlWorkDay]				= t.[TtlWorkDay]
+        , p. [BIFactoryID]              = t.[BIFactoryID]
+        , p.[BIInsertDate]              = t.[BIInsertDate]
 from P_MonthlySewingOutputSummary p
 inner join #tmp t on t.[Fty] = p.[Fty] and t.[Period] = p.[Period]
 

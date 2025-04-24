@@ -45,6 +45,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
+                DataTable dataTables = resultReport.Dt;
+                dataTables.Columns.Add("BIFactoryID", typeof(string));
+                dataTables.Columns.Add("BIInsertDate", typeof(DateTime));
+                string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
+                foreach (DataRow row in dataTables.Rows)
+                {
+                    row["BIFactoryID"] = factoryID;
+                    row["BIInsertDate"] = DateTime.Now;
+                }
+
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
                 if (!finalResult.Result)
@@ -73,7 +83,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@SDate", sDate),
                     new SqlParameter("@EDate", eDate),
                 };
-                string sql = @"	
+                string sql = new Base().SqlBITableHistory("P_IssueFabricByCuttingTransactionList", "P_IssueFabricByCuttingTransactionList_History", "#tmp", "((AddDate >= @SDate and AddDate <= @EDate) or (EditDate >= @SDate and EditDate <= @EDate))", needJoin: false) + Environment.NewLine;
+                sql += @"	
 -- 更新 P_IssueFabricByCuttingTransactionList
 delete p
 from P_IssueFabricByCuttingTransactionList p
@@ -128,6 +139,8 @@ update p set p.MDivisionID						   = t.MDivisionID
 			,p.Dyelot							   = t.Dyelot	
 			,p.StockType						   = t.StockType	
 	 	    ,p.Style                               = t.Style
+			,p.[BIFactoryID]   = t.[BIFactoryID]
+			,p.[BIInsertDate]  = t.[BIInsertDate]
 from P_IssueFabricByCuttingTransactionList p
 inner join #tmp t on p.Issue_DetailUkey = t.Issue_DetailUkey
 
@@ -179,7 +192,10 @@ insert into P_IssueFabricByCuttingTransactionList(
 		,FactoryReceivedTime
 		,AddDate
 		,EditDate
-		,Issue_DetailUkey)
+		,Issue_DetailUkey
+		,[BIFactoryID] 
+		,[BIInsertDate]
+)
 select	 t.IssueID
 		,t.MDivisionID
 		,t.FactoryID
@@ -228,6 +244,8 @@ select	 t.IssueID
 		,t.AddDate
 		,t.EditDate
 		,t.Issue_DetailUkey
+		,[BIFactoryID] 
+		,[BIInsertDate]
 from #tmp t
 where not exists(	select 1 
 					from P_IssueFabricByCuttingTransactionList p

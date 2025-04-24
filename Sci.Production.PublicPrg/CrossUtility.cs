@@ -1,9 +1,11 @@
 ﻿using Ict;
 using Sci.Data;
+using Sci.Win;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Text;
 
 namespace Sci.Production.PublicPrg
@@ -64,6 +66,8 @@ namespace Sci.Production.PublicPrg
 
             string[] cols = tmp_columns.Split(',');
 
+            var tt = cols.Select(r=>r).ToList();
+            var qq = tt.Any(r => r.Contains(","));
             if (string.IsNullOrEmpty(initTmpCommand))
             {
                 StringBuilder sb = new StringBuilder();
@@ -91,6 +95,9 @@ namespace Sci.Production.PublicPrg
 
                     switch (Type.GetTypeCode(source.Columns[thisColName].DataType))
                     {
+                        case TypeCode.Byte:
+                            sb.Append(string.Format("{0} tinyint", cols[i]));
+                            break;
                         case TypeCode.Boolean:
                             sb.Append(string.Format("{0} bit", cols[i]));
                             break;

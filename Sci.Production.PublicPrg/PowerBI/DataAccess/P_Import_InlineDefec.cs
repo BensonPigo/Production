@@ -90,7 +90,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
 
             string sql = @"
-exec dbo.Inline_R08  @SDate,
+            exec dbo.Inline_R08  @SDate,
                      @EDate,
                      @OrderID1,
                      @OrderID2,
@@ -99,11 +99,21 @@ exec dbo.Inline_R08  @SDate,
                      @FactoryID,
                      @Team,
                      @Line
-";
+            ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
                 Result = DBProxy.Current.Select("ManufacturingExecution", sql, listPar, out DataTable[] dataTables),
             };
+
+            string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
+
+            for (int i = 0; i < dataTables.Length; i++)
+            {
+                dataTables[i].Columns.Add("BIFactoryID", typeof(string));
+                dataTables[i].Columns.Add("BIInsertDate", typeof(DateTime));
+                dataTables[i].AsEnumerable().ToList().ForEach(r => r["BIFactoryID"] = factoryID);
+                dataTables[i].AsEnumerable().ToList().ForEach(r => r["BIInsertDate"] = DateTime.Now);
+            }
 
             if (!resultReport.Result)
             {
@@ -143,66 +153,70 @@ exec dbo.Inline_R08  @SDate,
                     DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                     using (sqlConn)
                     {
-                        string sql = @"	
-DELETE FROM P_InlineDefectSummary
-WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
+                        string sql = new Base().SqlBITableHistory("P_InlineDefectSummary", "P_InlineDefectSummary_History", "#tmpSummy", "FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate", needJoin: false, needExists: false) + Environment.NewLine;
+                        sql += @"	
+                        DELETE FROM P_InlineDefectSummary
+                        WHERE FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate
 
-insert into P_InlineDefectSummary
-(
-    [FirstInspectedDate]
-   ,[FactoryID]
-   ,[BrandID]
-   ,[StyleID]
-   ,[CustPoNo]
-   ,[OrderID]
-   ,[Article]
-   ,[Alias]
-   ,[CDCodeID]
-   ,[CDCodeNew]
-   ,[ProductType]
-   ,[FabricType]
-   ,[Lining]
-   ,[Gender]
-   ,[Construction]
-   ,[ProductionFamilyID]
-   ,[Team]
-   ,[QCName]
-   ,[Shift]
-   ,[Line]
-   ,[SewingCell]
-   ,[InspectedQty]
-   ,[RejectWIP]
-   ,[InlineWFT]
-   ,[InlineRFT]
-)
-select
-    t.[First Inspection Date]
-    ,isnull(t.Factory,'')
-    ,isnull(t.Brand	,'')
-    ,isnull(t.Style	,'')
-    ,isnull(t.[PO#]	,'')
-    ,isnull(t.[SP#]	,'')
-    ,isnull(t.Article,'')
-    ,isnull(t.[Destination],'')
-    ,isnull(t.CdCodeID,'')
-    ,isnull(t.CDCodeNew,'')
-    ,isnull(t.ProductType,'')
-    ,isnull(t.FabricType,'')
-    ,isnull(t.Lining,'')
-    ,isnull(t.Gender,'')
-    ,isnull(t.Construction,'')
-    ,isnull(t.ProductionFamilyID,'')
-    ,isnull(t.Team,'')
-    ,isnull(t.[QC Name],'')
-    ,isnull(t.[Shift],'')
-    ,isnull(t.Line,'')
-    ,isnull(t.[Cell],'')
-    ,isnull(t.[Inspected Qty],0)
-    ,isnull(t.[Reject Qty] ,0)
-    ,isnull(t.[Inline WFT(%)] ,0)
-    ,isnull(t.[Inline RFT(%)] ,0)
-from #tmpSummy t
-";
+                        insert into P_InlineDefectSummary
+                        (
+                            [FirstInspectedDate]
+                           ,[FactoryID]
+                           ,[BrandID]
+                           ,[StyleID]
+                           ,[CustPoNo]
+                           ,[OrderID]
+                           ,[Article]
+                           ,[Alias]
+                           ,[CDCodeID]
+                           ,[CDCodeNew]
+                           ,[ProductType]
+                           ,[FabricType]
+                           ,[Lining]
+                           ,[Gender]
+                           ,[Construction]
+                           ,[ProductionFamilyID]
+                           ,[Team]
+                           ,[QCName]
+                           ,[Shift]
+                           ,[Line]
+                           ,[SewingCell]
+                           ,[InspectedQty]
+                           ,[RejectWIP]
+                           ,[InlineWFT]
+                           ,[InlineRFT]
+                           ,[BIFactoryID]
+                           ,[BIInsertDate]
+                        )
+                        select
+                            t.[First Inspection Date]
+                            ,isnull(t.Factory,'')
+                            ,isnull(t.Brand	,'')
+                            ,isnull(t.Style	,'')
+                            ,isnull(t.[PO#]	,'')
+                            ,isnull(t.[SP#]	,'')
+                            ,isnull(t.Article,'')
+                            ,isnull(t.[Destination],'')
+                            ,isnull(t.CdCodeID,'')
+                            ,isnull(t.CDCodeNew,'')
+                            ,isnull(t.ProductType,'')
+                            ,isnull(t.FabricType,'')
+                            ,isnull(t.Lining,'')
+                            ,isnull(t.Gender,'')
+                            ,isnull(t.Construction,'')
+                            ,isnull(t.ProductionFamilyID,'')
+                            ,isnull(t.Team,'')
+                            ,isnull(t.[QC Name],'')
+                            ,isnull(t.[Shift],'')
+                            ,isnull(t.Line,'')
+                            ,isnull(t.[Cell],'')
+                            ,isnull(t.[Inspected Qty],0)
+                            ,isnull(t.[Reject Qty] ,0)
+                            ,isnull(t.[Inline WFT(%)] ,0)
+                            ,isnull(t.[Inline RFT(%)] ,0)
+                            ,isnull(t.BIFactoryID,'')
+                            ,t.BIInsertDate
+                        from #tmpSummy t";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
 
                         if (!result.Result)
@@ -210,7 +224,8 @@ from #tmpSummy t
                             throw result.GetException();
                         }
 
-                        sql = @"
+                        sql = new Base().SqlBITableHistory("P_InlineDefectDetail", "P_InlineDefectDetail_History", "#tmpDetail", "FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate", needJoin: false, needExists: false) + Environment.NewLine;
+                        sql += @"
 DELETE FROM P_InlineDefectDetail
 WHERE FirstInspectionDate >= @SDate AND FirstInspectionDate < @EDate
 
@@ -238,6 +253,8 @@ insert into P_InlineDefectDetail
   ,[GarmentDefectCodeID]
   ,[GarmentDefectCodeDesc]
   ,[IsCriticalDefect]
+  ,[BIFactoryID]
+  ,[BIInsertDate]
 )
 select
     isnull(t.Zone,'')
@@ -262,6 +279,8 @@ select
     , isnull(t.[DefectCodeID],'')
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
+    , isnull(t.BIFactoryID,'')
+    , t.BIInsertDate
 From #tmpDetail t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);

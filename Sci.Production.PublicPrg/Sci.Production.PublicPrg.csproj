@@ -225,6 +225,8 @@
     <Compile Include="PmsWebAPI.cs" />
     <Compile Include="Entity\Prgs_POSuppDetailData.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_AccessoryInspLabStatus.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_AdiCompReport.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_Changeover.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_FabricInspDailyReport_Detail.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ActualCutOutputReport.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_CFAInline_Detail.cs" />
@@ -244,6 +246,7 @@
     <Compile Include="PowerBI\DataAccess\P_Import_ICRAnalysis.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_ImportScheduleList.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_LineBalancingRate.cs" />
+    <Compile Include="PowerBI\DataAccess\P_Import_LineMapping.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_LoadingProductionOutput.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_LoadingvsCapacity.cs" />
     <Compile Include="PowerBI\DataAccess\P_Import_MISCPurchaseOrderList.cs" />

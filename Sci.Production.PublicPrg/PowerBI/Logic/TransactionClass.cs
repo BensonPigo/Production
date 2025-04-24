@@ -33,6 +33,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!dualResult)
                 {
+                    transactionScope.Dispose();
                     return dualResult;
                 }
 
