@@ -128,7 +128,7 @@ Left Join dbo.Factory WITH (NOLOCK) On Factory.ID = Orders.FactoryID
 Outer Apply ( Select ColorID = oc.ColorID, ColorName=  c.Name  
 			  From Order_ColorCombo oc  
               Inner join Color c on c.ID = oc.ColorID
-              Where oc.id =Orders.Poid and Article = Order_Article.Article and PatternPanel='FA'
+              Where oc.id =Orders.Poid and Article = Order_Article.Article and PatternPanel='FA' and c.BrandId = Orders.BrandID
 ) as color
 Where 1 = 1
 {sqlWhere}
