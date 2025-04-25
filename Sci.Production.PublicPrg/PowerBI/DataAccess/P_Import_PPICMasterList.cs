@@ -270,6 +270,7 @@ update p
 		, p.[Line Aggregator] = ISNULL(t.[Line Aggregator],'')
 		, p.[JokerTag] = ISNULL(t.[JokerTag], 0)
 		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
+		, p.[CriticalStyle] = ISNULL(t.[CriticalStyle],'')
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -295,7 +296,7 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
-	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal])
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [CriticalStyle])
 select ISNULL(t.[M], '')
 	, ISNULL(t.[Factory], '')
 	, [Delivery]
@@ -478,6 +479,7 @@ select ISNULL(t.[M], '')
 	, ISNULL([Line Aggregator],'')
 	, ISNULL([JokerTag], 0)
 	, ISNULL([HeatSeal], 0)
+    , ISNULL([CriticalStyle],'')
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 

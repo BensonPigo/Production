@@ -1020,6 +1020,7 @@ SELECT
         END
     {dest}
    ,[Style] = o.StyleID
+   ,[CriticalStyle] = iif(s.CriticalStyle='1','Y','N')
    ,[Style Name] = s.StyleName
    ,[Modular Parent] = s.ModularParent
    ,[CPU Adjusted %] = ISNULL(s.CPUAdjusted * 100, 0)
