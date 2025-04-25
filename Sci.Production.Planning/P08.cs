@@ -27,6 +27,10 @@ namespace Sci.Production.Planning
             "Lacking yardage / lacking lays",
             "Lacking combination",
             "Wrong arrival",
+            "Material delay",
+            "Sewing inline date update",
+            "RFID tunnel issue",
+            "Wait M/Notice and Each Cons approved",
         };
 
         private readonly string[] LoadingRemarkSource = new[]
@@ -102,6 +106,15 @@ namespace Sci.Production.Planning
                 .Numeric("PRTOutput", header: "PRT Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .ComboBox("PRTRemark", header: "PRT Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxSubprocessRemark())
                 .CheckBox("PRTExclusion", header: "PRT Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
+                .Numeric("PADPRTOutput", header: "Pad Print Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .ComboBox("PADPRTRemark", header: "Pad Print Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxSubprocessRemark())
+                .CheckBox("PADPRTExclusion", header: "Pad Print Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
+                .Numeric("EMBOutput", header: "EMB Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .ComboBox("EMBRemark", header: "EMB Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxSubprocessRemark())
+                .CheckBox("EMBExclusion", header: "EMB Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
+                .Numeric("FIOutput", header: "FI Output", width: Widths.AnsiChars(5), iseditingreadonly: true)
+                .ComboBox("FIRemark", header: "FI Remark", width: Widths.AnsiChars(17), settings: this.ComboBoxSubprocessRemark())
+                .CheckBox("FIExclusion", header: "FI Exclusion", width: Widths.AnsiChars(1), trueValue: true, falseValue: false, settings: this.CheckBoxExclusion())
                 ;
         }
 
@@ -277,12 +290,12 @@ namespace Sci.Production.Planning
 
             // 設置資料驗證和背景顏色
             int[] regularColumns = new[] { 10 }; // Cutting
-            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$10");
+            this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$A$2:$A$14");
             regularColumns = new[] { 12 }; // Loading
             this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$B$2:$B$6");
-            regularColumns = new[] { 15, 18, 21, 24, 27, 30 }; // AT, AUT, HT, BO, FM, PRT
+            regularColumns = new[] { 15, 18, 21, 24, 27, 30, 33, 36, 39 }; // AT, AUT, HT, BO, FM, PRT
             this.SetValidationAndColor(worksheet, 2, dataCount, regularColumns, "=DataSource!$C$2:$C$7");
-            int[] exclusionColumns = new[] { 13, 16, 19, 22, 25, 28, 31 }; // Exclusion columns
+            int[] exclusionColumns = new[] { 13, 16, 19, 22, 25, 28, 31, 34, 37, 40 }; // Exclusion columns
             this.SetValidationAndColor(worksheet, 2, dataCount, exclusionColumns, "=DataSource!$D$2:$D$3");
 
             excelApp.Visible = true;
@@ -452,6 +465,12 @@ SET [SewingInLine]         = t.Inline
    ,[FMExclusion]          = ISNULL(t.[FMExclusion], 0)
    ,[PRTRemark]            = ISNULL(t.[PRTRemark], '')
    ,[PRTExclusion]         = ISNULL(t.[PRTExclusion], 0)
+   ,[PADPRTRemark]         = ISNULL(t.[PADPRTRemark], '')
+   ,[PADPRTExclusion]      = ISNULL(t.[PADPRTExclusion], 0)
+   ,[EMBRemark]            = ISNULL(t.[EMBRemark], '')
+   ,[EMBExclusion]         = ISNULL(t.[EMBExclusion], 0)
+   ,[FIRemark]             = ISNULL(t.[FIRemark], '')
+   ,[FIExclusion]          = ISNULL(t.[FIExclusion], 0)
    ,EditName               = '{Sci.Env.User.UserID}'
    ,EditDate               = GETDATE()
 FROM #tmp t
@@ -487,6 +506,12 @@ INSERT INTO [dbo].[SewingDailyOutputStatusRecord]
            ,[FMExclusion]
            ,[PRTRemark]
            ,[PRTExclusion]
+           ,[PADPRTRemark]
+           ,[PADPRTExclusion]
+           ,[EMBRemark]
+           ,[EMBExclusion]
+           ,[FIRemark]
+           ,[FIExclusion]
            ,[AddName]
            ,[AddDate])
 SELECT
@@ -512,6 +537,12 @@ SELECT
     ,ISNULL(FMExclusion, 0)
     ,ISNULL(PRTRemark, '')
     ,ISNULL(PRTExclusion, 0)
+    ,ISNULL(PADPRTRemark, '')
+    ,ISNULL(PADPRTExclusion, 0)
+    ,ISNULL(EMBRemark, '')
+    ,ISNULL(EMBExclusion, 0)
+    ,ISNULL(FIRemark, '')
+    ,ISNULL(FIExclusion, 0)
 	,'{Sci.Env.User.UserID}'
 	,GETDATE()
 FROM #tmp t
@@ -577,6 +608,21 @@ WHERE NOT EXISTS (
                 {
                     dr["PRTRemark"] = string.Empty;
                 }
+
+                if (MyUtility.Convert.GetInt(dr["PADPRTOutput"]) == MyUtility.Convert.GetInt(dr["StdQty"]))
+                {
+                    dr["PADPRTRemark"] = string.Empty;
+                }
+
+                if (MyUtility.Convert.GetInt(dr["EMBOutput"]) == MyUtility.Convert.GetInt(dr["StdQty"]))
+                {
+                    dr["EMBRemark"] = string.Empty;
+                }
+
+                if (MyUtility.Convert.GetInt(dr["FIOutput"]) == MyUtility.Convert.GetInt(dr["StdQty"]))
+                {
+                    dr["FIRemark"] = string.Empty;
+                }
             }
         }
 
@@ -599,6 +645,12 @@ WHERE NOT EXISTS (
             this.grid1.Columns["FMExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["PRTRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
             this.grid1.Columns["PRTExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["PADPRTRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["PADPRTExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["EMBRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["EMBExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["FIRemark"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
+            this.grid1.Columns["FIExclusion"].DefaultCellStyle.BackColor = isReadonly ? Color.White : Color.Pink;
         }
     }
 }
