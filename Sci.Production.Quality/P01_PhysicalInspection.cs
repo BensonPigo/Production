@@ -415,7 +415,7 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
                     // {
                     def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                     def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_locF >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == rowFir_Physical["NewKey"].ToString())
+                    if (def_locF >= double_ActualYds && def_locT != def_locF && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == rowFir_Physical["NewKey"].ToString())
                     {
                         this.Fir_physical_Defect.Rows[i].Delete();
                     }
