@@ -6,7 +6,7 @@
 	[SewInLine] [date] NULL,
 	[SewinglineID] [varchar](5) NOT NULL,
 	[Shift] [varchar](5) NOT NULL,
-	[RFT] [numeric](6, 2) NULL,
+	[RFT] [numeric](5, 2) NOT NULL,
 	[SubProcessID] [varchar](15) NOT NULL,
 	[BundleNo] [varchar](10) NOT NULL,
 	[Artwork] [varchar](30) NULL,
@@ -37,12 +37,17 @@
 	[SubProResponseTeamID] [varchar](1000) NOT NULL,
 	[CustomColumn1] [varchar](300) NOT NULL,
 	[MDivisionID] [varchar](8) NOT NULL,
-	[OpreatorID] [nvarchar](500) NOT NULL,
+	[OperatorID] [nvarchar](500) NOT NULL,
+	[OperatorName] [nvarchar](1000) NOT NULL,
  CONSTRAINT [PK_P_SubProInsReport] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
+GO
+
+SET ANSI_PADDING OFF
 GO
 
 ALTER TABLE [dbo].[P_SubProInsReport] ADD  CONSTRAINT [PK_P_SubProInsReport_FactoryID]  DEFAULT ('') FOR [FactoryID]
@@ -141,7 +146,10 @@ GO
 ALTER TABLE [dbo].[P_SubProInsReport] ADD  CONSTRAINT [DF_P_SubProInsReport_MDivisionID]  DEFAULT ('') FOR [MDivisionID]
 GO
 
-ALTER TABLE [dbo].[P_SubProInsReport] ADD  CONSTRAINT [DF_P_SubProInsReport_OpreatorID]  DEFAULT ('') FOR [OpreatorID]
+ALTER TABLE [dbo].[P_SubProInsReport] ADD  CONSTRAINT [DF_P_SubProInsReport_OperatorID]  DEFAULT ('') FOR [OperatorID]
+GO
+
+ALTER TABLE [dbo].[P_SubProInsReport] ADD  CONSTRAINT [DF_P_SubProInsReport_OperatorName]  DEFAULT ('') FOR [OperatorName]
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段廠房位置' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubProInsReport', @level2type=N'COLUMN',@level2name=N'SubProLocationID'
@@ -202,4 +210,7 @@ EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段負�
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'自訂欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubProInsReport', @level2type=N'COLUMN',@level2name=N'CustomColumn1'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Operator Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_SubProInsReport', @level2type=N'COLUMN',@level2name=N'OperatorName'
 GO
