@@ -55,7 +55,6 @@ namespace Sci.Production.Cutting
 
             this.dtAllSEQ_FabricCode = GetAllSEQ_FabricCode(id); // 先準備用來驗證 Seq 全部資訊, 避免逐筆去DB撈資料驗證會很卡
             this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID"); // 用在 Filter 開窗選項
-            this.BtnFilter_Click(null, null);
         }
 
         /// <inheritdoc/>
@@ -68,6 +67,16 @@ namespace Sci.Production.Cutting
             this.txtSeq1.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSeq2.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSpreadingNo.Enabled = this.editByUseCutRefToRequestFabric;
+            if (this.form == CuttingForm.P02)
+            {
+                this.chkShowEmptyCutRef.Checked = true;
+            }
+            else
+            {
+                this.chkShowEmptyCutRef.Checked = this.editByUseCutRefToRequestFabric;
+            }
+
+            this.BtnFilter_Click(null, null);
         }
 
         private void GridSetup()
@@ -139,7 +148,7 @@ namespace Sci.Production.Cutting
 
         private void Filter()
         {
-            string filter = "(cutref is null or cutref = '') ";
+            string filter = " 1=1 ";
             if (!MyUtility.Check.Empty(this.txtSPNo.Text))
             {
                 filter += $" AND OrderID ='{this.txtSPNo.Text}'";
@@ -173,6 +182,11 @@ namespace Sci.Production.Cutting
             if (this.checkOnlyShowEmptyEstCutDate.Checked)
             {
                 filter += " AND EstCutDate is null ";
+            }
+
+            if (this.chkShowEmptyCutRef.Checked)
+            {
+                filter += " AND ISNULL(CutRef, '') = ''";
             }
 
             this.detailgridbs.Filter = filter;
