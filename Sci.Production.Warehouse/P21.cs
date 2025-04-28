@@ -2,6 +2,7 @@
 using Ict.Win;
 using Sci.Data;
 using Sci.Production.Automation.LogicLayer;
+using Sci.Production.Class.ExtendedMethods;
 using Sci.Production.Prg.Entity;
 using Sci.Production.PublicForm;
 using Sci.Production.PublicPrg;
@@ -1043,16 +1044,27 @@ where m.IsWMS = 0";
                             throw result.GetException();
                         }
 
-                        DataTable dtToRevise = this.dtReceiving.AsEnumerable().Where(s => (int)s["select"] == 1 && MyUtility.Convert.GetBool(s["SentToWMS"]) == true && MyUtility.Check.Empty(s["CompleteTime"])).CopyToDataTable();
+                        var dtToRevise = this.dtReceiving.AsEnumerable()
+    .Where(s => (int)s["select"] == 1 &&
+                MyUtility.Convert.GetBool(s["SentToWMS"]) == true &&
+                MyUtility.Check.Empty(s["CompleteTime"]))
+    .CopyToDataTableSafe(this.dtReceiving);
 
-                        // 要先Lock
-                        Prgs_WMS.LockNotWMS(dtToRevise);
+                        if (dtToRevise.Rows.Count > 0)
+                        {
+                            // 要先Lock
+                            Prgs_WMS.LockNotWMS(dtToRevise);
 
-                        // 要先Unlock
-                        Prgs_WMS.UnLockWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                            // 要先Unlock
+                            Prgs_WMS.UnLockWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
 
-                        // 再Revise
-                        Prgs_WMS.ReviseWMS(dtToRevise, autoRecordListP07, autoRecordListP18, 1);
+                            // 再Revise
+                            Prgs_WMS.ReviseWMS(dtToRevise, autoRecordListP07, autoRecordListP18, 1);
+                        }
+                        else
+                        {
+                            MyUtility.Msg.WarningBox("WMS is completed and will not update weights to WMS!!");
+                        }
                     }
 
                     if (!MyUtility.Check.Empty(sqlUpdateFIR_Shadebone))
