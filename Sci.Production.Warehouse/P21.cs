@@ -1056,7 +1056,7 @@ where m.IsWMS = 0";
                             Prgs_WMS.LockNotWMS(dtToRevise);
 
                             // 要先Unlock
-                            Prgs_WMS.UnLockWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18, 1);
+                            Prgs_WMS.UnLockWMS(dtToRevise, EnumStatus.UnLock, autoRecordListP07, autoRecordListP18);
 
                             // 再Revise
                             Prgs_WMS.ReviseWMS(dtToRevise, autoRecordListP07, autoRecordListP18, 1);

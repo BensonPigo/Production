@@ -82,7 +82,7 @@ namespace Sci.Production.Warehouse
         /// P21 調整是自動倉, 過程有任何錯誤, 要發給 WMS 要求(UnLock)
         /// </summary>
         /// <inheritdoc/>
-        public static void UnLockWMS(DataTable dtnotWMS, EnumStatus statusAPI, List<AutoRecord> autoRecordListP07, List<AutoRecord> autoRecordListP18, int typeCreateRecord)
+        public static void UnLockWMS(DataTable dtnotWMS, EnumStatus statusAPI, List<AutoRecord> autoRecordListP07, List<AutoRecord> autoRecordListP18)
         {
             // 找出要撤回的 P07 Ukey
             DataTable dt07 = Prgs.GetWHDetailUkey(dtnotWMS, "P07");
@@ -90,8 +90,17 @@ namespace Sci.Production.Warehouse
             // 找出要撤回的 P18 Ukey
             DataTable dt18 = Prgs.GetWHDetailUkey(dtnotWMS, "P18");
 
-            Gensong_AutoWHFabric.Sent(false, dt07, "P07", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP07);
-            Gensong_AutoWHFabric.Sent(false, dt18, "P18", statusAPI, EnumStatus.Unconfirm, typeCreateRecord: typeCreateRecord, autoRecord: autoRecordListP18);
+            if (dt07.Rows.Count > 0)
+            {
+                Prgs.GetFtyInventoryData(dt07, "P07", out DataTable dtOriFtyInventoryP07);
+                Prgs_WMS.WMSUnLock(false, dt07, "P07", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventoryP07);
+            }
+
+            if (dt18.Rows.Count > 0)
+            {
+                Prgs.GetFtyInventoryData(dt18, "P18", out DataTable dtOriFtyInventoryP18);
+                Prgs_WMS.WMSUnLock(false, dt18, "P18", EnumStatus.UnLock, EnumStatus.Unconfirm, dtOriFtyInventoryP18);
+            }
         }
 
         /// <summary>
