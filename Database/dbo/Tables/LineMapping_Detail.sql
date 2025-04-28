@@ -27,6 +27,11 @@
     [EstOutputHr]           NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstOutputHr]    DEFAULT ((0))  NOT NULL, 
     [EstLBR]                NUMERIC(7, 2)   CONSTRAINT [DF_LineMapping_Detail_EstLBR]    DEFAULT ((0))  NOT NULL, 
     [Append] BIT NULL DEFAULT ((0)), 
+    [MachineID] VARCHAR(16) NULL DEFAULT (''), 
+    [SewerDiffPercentage] NUMERIC(3, 2) NOT NULL DEFAULT ((0)), 
+    [JukiProdPlanDataSubmitDate] DATETIME NULL, 
+    [JukiLayoutDataSubmitDate] DATETIME NULL, 
+    [JukiBaseProcessDataSubmitDate] DATETIME NULL, 
     CONSTRAINT [PK_LineMapping_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -181,3 +186,48 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping_Detail',
     @level2type = N'COLUMN',
     @level2name = N'Append'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'機器號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'MachineID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'作工分配比例',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'SewerDiffPercentage'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiProdPlanDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiLayoutDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiBaseProcessDataSubmitDate'

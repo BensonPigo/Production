@@ -34,6 +34,7 @@
     [OriNoNumber] INT    CONSTRAINT [DF_LineMappingBalancing_OriNoNumber] DEFAULT (0) NOT NULL , 
     [Reason] VARCHAR(5) CONSTRAINT [DF_LineMappingBalancing_Reason] DEFAULT ('') NOT NULL, 
     [OriTotalGSDTime] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_OriTotalGSDTime] DEFAULT (0) NOT NULL,
+    [JukiStyleDataSubmitDate] DATETIME NULL, 
     CONSTRAINT [PK_LineMappingBalancing] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
 
@@ -192,3 +193,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing',
     @level2type = N'COLUMN',
     @level2name = N'OriTotalGSDTime'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiStyleDataSubmitDate'

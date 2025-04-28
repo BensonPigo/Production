@@ -42,6 +42,7 @@
     [Serial]                    TINYINT        CONSTRAINT [DF_Brand_Serial] DEFAULT ((0)) NOT NULL,
     [ShipTermID]				VARCHAR(5)     CONSTRAINT [DF_Brand_ShipTermID] DEFAULT ('') NOT NULL,
     [VendorForLLLInEndlineR12]	VARCHAR(6)	   CONSTRAINT [DF_Brand_VendorForLLLInEndlineR12] DEFAULT ('') NOT NULL,
+    [SampleGroup] VARCHAR(2) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_Brand] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
 
@@ -196,3 +197,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'出貨條�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'MES Endline R12上顯示的Vendor code', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Brand', @level2type = N'COLUMN', @level2name = N'VendorForLLLInEndlineR12';
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'品牌簡碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'Brand',
+    @level2type = N'COLUMN',
+    @level2name = N'SampleGroup'

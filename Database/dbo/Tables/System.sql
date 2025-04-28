@@ -106,6 +106,11 @@ CREATE TABLE [dbo].[System] (
     [SFtpIDDummy] VARCHAR(20) NOT NULL DEFAULT (''), 
     [SFtpPwdDummy] VARCHAR(36) NOT NULL DEFAULT (''), 
     [UseCutRefToRequestFabric] TINYINT NOT NULL DEFAULT ((0)), 
+    [JukiExchangeDBActive] BIT NOT NULL DEFAULT ((0)), 
+    [JukiExchangeDBServerName] VARCHAR(20) NOT NULL DEFAULT (''), 
+    [JukiExchangeDBDataBaseName] VARCHAR(20) NOT NULL DEFAULT (''), 
+    [JukiExchangeDBLoginID] VARCHAR(20) NOT NULL DEFAULT (''), 
+    [JukiExchangeDBLoginPWD] VARCHAR(20) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go
@@ -410,3 +415,49 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN',
     @level2name = N'UseCutRefToRequestFabric'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否啟用JaNtes的資料交換',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiExchangeDBActive'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Juki資料交換伺服器',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiExchangeDBServerName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Juki資料交換資料庫名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiExchangeDBDataBaseName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Juki資料交換資料庫帳號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiExchangeDBLoginID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Juki資料交換資料庫密碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiExchangeDBLoginPWD'
+GO
