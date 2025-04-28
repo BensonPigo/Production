@@ -34,6 +34,9 @@
     [OriNoNumber] INT    CONSTRAINT [DF_LineMappingBalancing_OriNoNumber] DEFAULT (0) NOT NULL , 
     [Reason] VARCHAR(5) CONSTRAINT [DF_LineMappingBalancing_Reason] DEFAULT ('') NOT NULL, 
     [OriTotalGSDTime] NUMERIC(12, 2) CONSTRAINT [DF_LineMappingBalancing_OriTotalGSDTime] DEFAULT (0) NOT NULL,
+    [JukiIoTDataExchange] BIT NOT NULL DEFAULT (0), 
+    [LMMachineConfirmName] VARCHAR(10) NOT NULL DEFAULT (''), 
+    [LMMachineConfirmDate] DATETIME NULL, 
     [JukiStyleDataSubmitDate] DATETIME NULL, 
     CONSTRAINT [PK_LineMappingBalancing] PRIMARY KEY CLUSTERED ([ID] ASC)
 )
@@ -202,3 +205,30 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing',
     @level2type = N'COLUMN',
     @level2name = N'JukiStyleDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否交換給Juki-JaNets系統',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiIoTDataExchange'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'LM機器確認人員',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'LMMachineConfirmName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'LM機器確認日期',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing',
+    @level2type = N'COLUMN',
+    @level2name = N'LMMachineConfirmDate'
