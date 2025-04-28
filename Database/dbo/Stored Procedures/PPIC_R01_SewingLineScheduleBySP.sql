@@ -66,6 +66,7 @@ Declare @tmp_main table(
 	SizeCode varchar(8),
 	CdCodeID varchar(6),
 	StyleID varchar(15),
+    CriticalStyle varchar(1),
 	Qty int,
 	AlloQty int,
 	CutQty numeric(11,2),
@@ -114,6 +115,7 @@ insert into @tmp_main(
     SizeCode,
     CdCodeID,
     StyleID,
+    CriticalStyle,
     Qty,
     AlloQty,
     CutQty,
@@ -165,6 +167,7 @@ select  s.SewingLineID
             , [SizeCode] = ''
             , o.CdCodeID
             , o.StyleID
+            , CriticalStyle=iif(st.CriticalStyle='1','Y','N')
             , o.Qty
             , s.AlloQty
             , isnull((select sum(Qty) 
@@ -422,6 +425,7 @@ select  SewingLineID
 	    , Gender
 	    , Construction
         , StyleID
+        , a.CriticalStyle
         , [OrderQty] = Qty
         , AlloQty
         , CutQty
