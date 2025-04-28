@@ -68,9 +68,9 @@ where f.ID in (
                             StartSewingLine = string.Empty,
                             EndSewingLine = string.Empty,
                             OrderBy = 1,
-                            ExcludeNonRevenue = false,
-                            ExcludeSampleFactory = false,
-                            ExcludeOfMockUp = false,
+                            ExcludeNonRevenue = true,
+                            ExcludeSampleFactory = true,
+                            ExcludeOfMockUp = true,
                         };
 
                         Base_ViewModel resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
