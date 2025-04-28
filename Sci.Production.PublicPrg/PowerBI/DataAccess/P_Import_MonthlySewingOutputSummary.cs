@@ -131,6 +131,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                if (finalResult.Result)
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_MonthlySewingOutputSummary", false);
+                }
             }
             catch (Exception ex)
             {
@@ -305,7 +311,6 @@ from P_MonthlySewingOutputSummary p
 inner join #tmp t on t.[Fty] = p.[Fty] and t.[Period] = p.[Period]
 
 ";
-                sql += new Base().SqlBITableInfo("P_MonthlySewingOutputSummary", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataList.ToDataTable(), null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),

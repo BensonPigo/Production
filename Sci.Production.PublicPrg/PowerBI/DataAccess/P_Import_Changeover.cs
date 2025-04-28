@@ -51,6 +51,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
+                if (resultReport.Result)
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_Changeover", false);
+                }
+
                 finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
@@ -128,7 +134,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						where t.FactoryID = s.FactoryID 
 						and t.TransferDate = s.TransferDate
 				  )";
-                sql += new Base().SqlBITableInfo("P_Changeover", false);
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
             }
 

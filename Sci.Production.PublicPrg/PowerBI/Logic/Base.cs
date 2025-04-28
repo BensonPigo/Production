@@ -9,8 +9,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
+using System.Transactions;
+using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace Sci.Production.Prg.PowerBI.Logic
@@ -89,6 +92,11 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_AdiCompReport,
             P_Changeover,
             P_LineMapping,
+            P_MaterialLocationIndex,
+            P_MtltoFTYAnalysis,
+            P_ProdEffAnalysis,
+            P_StationHourlyOutput,
+            P_StyleChangeover,
         }
 
         /// <summary>
@@ -557,6 +565,16 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_Changeover().P_Changeover(item.SDate, item.EDate);
                 case ListName.P_LineMapping:
                     return new P_Import_LineMapping().P_LineMapping(item.SDate, item.EDate);
+                case ListName.P_MaterialLocationIndex:
+                    return new P_Import_MaterialLocationIndex().P_MaterialLocationIndex(item.SDate, item.EDate);
+                case ListName.P_MtltoFTYAnalysis:
+                    return new P_Import_MtltoFTYAnalysis().P_IMtltoFTYAnalysis(item.SDate);
+                case ListName.P_ProdEffAnalysis:
+                    return new P_Import_ProdEffAnalysis().P_ProdEffAnalysis(item.SDate, item.EDate);
+                case ListName.P_StationHourlyOutput:
+                    return new P_Import_StationHourlyOutput().P_StationHourlyOutput(item.SDate, item.EDate);
+                case ListName.P_StyleChangeover:
+                    return new P_Import_StyleChangeover().P_StyleChangeover(item.SDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
@@ -691,26 +709,34 @@ M: {region}
             string tableColumns_History = string.Empty;
             string tmpColumns = string.Empty;
 
+            DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+
             #region 抓取欄位
-            string sqlcmd = $@"  
-              SELECT  
-              b.COLUMN_NAME  
-              FROM  
-              INFORMATION_SCHEMA.TABLES a  
-              LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME = b.TABLE_NAME)  
-              WHERE  
-              a.TABLE_NAME = '{tableName_History}'  
-              AND b.COLUMN_NAME NOT IN (  
-                  SELECT c.COLUMN_NAME  
-                  FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc  
-                  JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME  
-                  JOIN INFORMATION_SCHEMA.COLUMNS c ON c.TABLE_NAME = tc.TABLE_NAME AND c.COLUMN_NAME = ccu.COLUMN_NAME  
-                  WHERE tc.TABLE_NAME = '{tableName_History}'  
-                  AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
-              )  
-              AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
-              AND TABLE_TYPE = 'BASE TABLE'";
-            DBProxy.Current.Select("PowerBI", sqlcmd, out dt);
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, 3600)))
+            {
+                string sqlcmd = $@"  
+                SELECT  
+                b.COLUMN_NAME  
+                FROM  
+                INFORMATION_SCHEMA.TABLES a  
+                LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME = b.TABLE_NAME)  
+                WHERE  
+                a.TABLE_NAME = '{tableName_History}'  
+                AND b.COLUMN_NAME NOT IN (  
+                    SELECT c.COLUMN_NAME  
+                    FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc  
+                    JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu ON tc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME  
+                    JOIN INFORMATION_SCHEMA.COLUMNS c ON c.TABLE_NAME = tc.TABLE_NAME AND c.COLUMN_NAME = ccu.COLUMN_NAME  
+                    WHERE tc.TABLE_NAME = '{tableName_History}'  
+                    AND tc.CONSTRAINT_TYPE = 'PRIMARY KEY'  
+                )  
+                AND b.COLUMN_NAME NOT IN ('BIFactoryID', 'BIInsertDate')  
+                AND TABLE_TYPE = 'BASE TABLE'";
+                DBProxy.Current.SelectByConn(sqlConn, sqlcmd, out dt);
+
+                transactionScope.Complete();
+                transactionScope.Dispose();
+            }
             #endregion 抓取欄位
 
             #region 關聯建置

@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -29,7 +26,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Now.AddMonths(-90);
+                sDate = DateTime.Now.AddDays(-90);
             }
 
             if (!eDate.HasValue)
@@ -52,6 +49,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
+                }
+                else
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_ImportScheduleList", false);
                 }
 
                 finalResult.Result = new Ict.DualResult(true);
@@ -76,7 +78,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             using (sqlConn)
             {
-                string sql = $@" 
+                string sql = new Base().SqlBITableHistory("P_ImportScheduleList", "P_ImportScheduleList_History", "#tmpP_ImportScheduleList", "((AddDate >= @StartDate AND AddDate <= @EndDate) OR (EditDate >= @StartDate AND EditDate <= @EndDate))", needJoin: false) + Environment.NewLine;
+                sql += $@" 
                 DELETE p
 				FROM P_ImportScheduleList p
 				WHERE ((AddDate >= @StartDate AND AddDate <= @EndDate)
@@ -143,23 +146,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,[AddDate]              = t.[AddDate]
 				,[EditDate]             = t.[EditDate]
 				,[FabricCombo]			= t.[FabricCombo]
+				,[BIFactoryID]			= t.[BIFactoryID]
+				,[BIInsertDate]			= t.[BIInsertDate]
 				FROM P_ImportScheduleList P
 				INNER JOIN #tmpP_ImportScheduleList t ON t.ExportDetailUkey = P.ExportDetailUkey
 
-				INSERT P_ImportScheduleList([WK], [ExportDetailUkey], [ETA], [MDivisionID], [FactoryID], [Consignee], [ShipModeID], [CYCFS], [Blno], [Packages], [Vessel], [ProdFactory], [OrderTypeID], [ProjectID], [Category], [BrandID], [SeasonID], [StyleID], [StyleName], [PoID], [Seq], [Refno], [Color], [ColorName], [Description], [MtlType], [SubMtlType], [WeaveType], [SuppID], [SuppName], [UnitID], [SizeSpec], [ShipQty], [FOC], [NetKg], [WeightKg], [ArriveQty], [ArriveQtyStockUnit], [FirstBulkSewInLine], [FirstCutDate], [ReceiveQty], [TotalRollsCalculated], [StockUnit], [MCHandle], [ContainerType], [ContainerNo], [PortArrival], [WhseArrival], [KPILETA], [PFETA], [EarliestSCIDelivery], [EarlyDays], [EarliestPFETA], [MRMail], [SMRMail], [EditName], [AddDate], [EditDate], [FabricCombo])
-				SELECT [WK], [ExportDetailUkey], [ETA], [MDivisionID], [FactoryID], [Consignee], [ShipModeID], [CYCFS], [Blno], [Packages], [Vessel], [ProdFactory], [OrderTypeID], [ProjectID], [Category], [BrandID], [SeasonID], [StyleID], [StyleName], [PoID], [Seq], [Refno], [Color], [ColorName], [Description], [MtlType], [SubMtlType], [WeaveType], [SuppID], [SuppName], [UnitID], [SizeSpec], [ShipQty], [FOC], [NetKg], [WeightKg], [ArriveQty], [ArriveQtyStockUnit], [FirstBulkSewInLine], [FirstCutDate], [ReceiveQty], [TotalRollsCalculated], [StockUnit], [MCHandle], [ContainerType], [ContainerNo], [PortArrival], [WhseArrival], [KPILETA], [PFETA], [EarliestSCIDelivery], [EarlyDays], [EarliestPFETA], [MRMail], [SMRMail], [EditName], [AddDate], [EditDate], [FabricCombo]
+				INSERT P_ImportScheduleList([WK], [ExportDetailUkey], [ETA], [MDivisionID], [FactoryID], [Consignee], [ShipModeID], [CYCFS], [Blno], [Packages], [Vessel], [ProdFactory], [OrderTypeID], [ProjectID], [Category], [BrandID], [SeasonID], [StyleID], [StyleName], [PoID], [Seq], [Refno], [Color], [ColorName], [Description], [MtlType], [SubMtlType], [WeaveType], [SuppID], [SuppName], [UnitID], [SizeSpec], [ShipQty], [FOC], [NetKg], [WeightKg], [ArriveQty], [ArriveQtyStockUnit], [FirstBulkSewInLine], [FirstCutDate], [ReceiveQty], [TotalRollsCalculated], [StockUnit], [MCHandle], [ContainerType], [ContainerNo], [PortArrival], [WhseArrival], [KPILETA], [PFETA], [EarliestSCIDelivery], [EarlyDays], [EarliestPFETA], [MRMail], [SMRMail], [EditName], [AddDate], [EditDate], [FabricCombo],[BIFactoryID],[BIInsertDate])
+				SELECT [WK], [ExportDetailUkey], [ETA], [MDivisionID], [FactoryID], [Consignee], [ShipModeID], [CYCFS], [Blno], [Packages], [Vessel], [ProdFactory], [OrderTypeID], [ProjectID], [Category], [BrandID], [SeasonID], [StyleID], [StyleName], [PoID], [Seq], [Refno], [Color], [ColorName], [Description], [MtlType], [SubMtlType], [WeaveType], [SuppID], [SuppName], [UnitID], [SizeSpec], [ShipQty], [FOC], [NetKg], [WeightKg], [ArriveQty], [ArriveQtyStockUnit], [FirstBulkSewInLine], [FirstCutDate], [ReceiveQty], [TotalRollsCalculated], [StockUnit], [MCHandle], [ContainerType], [ContainerNo], [PortArrival], [WhseArrival], [KPILETA], [PFETA], [EarliestSCIDelivery], [EarlyDays], [EarliestPFETA], [MRMail], [SMRMail], [EditName], [AddDate], [EditDate], [FabricCombo],[BIFactoryID],[BIInsertDate]					   
 				FROM #tmpP_ImportScheduleList t
 				WHERE NOT EXISTS(SELECT 1 FROM P_ImportScheduleList WHERE ExportDetailUkey = t.ExportDetailUkey)
 
-				if exists(select 1 from BITableInfo where Id = 'P_ImportScheduleList')
-				begin
-					update BITableInfo set TransferDate = getdate()
-					where Id = 'P_ImportScheduleList'
-				end
-				else
-				begin
-					insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_ImportScheduleList', GETDATE(), 0)
-				end
                 ";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_ImportScheduleList");
@@ -178,6 +174,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 			select 
 			* 
+			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIInsertDate] = GetDate()
 			from Production.dbo.Warehouse_Report_R25
 			(1
 			,@Date_S

@@ -38,6 +38,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+                else
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_AdiCompReport", false);
+                }
 
                 finalResult.Result = new Ict.DualResult(true);
             }
@@ -54,7 +59,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
             using (sqlConn)
             {
                 string sql = string.Empty; // new Base().SqlBITableHistory("P_AdiCompReport", "P_AdiCompReport_History", "#tmp", string.Empty);
@@ -130,7 +134,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                    [BIFactoryID],
                    [BIInsertDate]
                from #tmp t";
-                sql += new Base().SqlBITableInfo("P_AdiCompReport", false);
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
             }
 

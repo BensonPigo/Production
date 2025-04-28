@@ -55,7 +55,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
                 else
                 {
-                    new Base().UpdateBIData(biTableInfoID, true);
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, biTableInfoID, true);
                 }
 
                 finalResult.Result = new Ict.DualResult(true);

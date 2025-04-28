@@ -1,4 +1,5 @@
-﻿using Sci.Production.Prg.PowerBI.Logic;
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -97,7 +98,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 #region Update BI Table Info
                 if (resultReport.Result)
                 {
-                    finalResult = new Base().UpdateBIData(biTableInfoID, true);
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, biTableInfoID, true);
                 }
                 #endregion
             }

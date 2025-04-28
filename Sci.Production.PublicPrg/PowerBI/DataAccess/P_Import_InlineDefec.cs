@@ -60,8 +60,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
                 else
                 {
-                    new Base().UpdateBIData("P_InlineDefectSummary", true);
-                    new Base().UpdateBIData("P_InlineDefectDetail", true);
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_InlineDefectSummary", true);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_InlineDefectDetail", true);
                 }
 
                 finalResult.Result = new Ict.DualResult(true);
@@ -297,6 +298,7 @@ From #tmpDetail t
                 catch (Exception ex)
                 {
                     finalResult.Result = new DualResult(false, ex);
+                    transactionscope.Dispose();
                 }
                 finally
                 {

@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -45,6 +44,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
+                }
+                else
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_CuttingBCS", true);
                 }
             }
             catch (Exception ex)
@@ -660,6 +664,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [BalanceCutQtyByLine] = ISNULL(BalanceCutQtyByLine, 0)
 				, [SupplyCutQtyVSStdQty] = ISNULL(SupplyCutQtyVSStdQty, 0)
 				, [SupplyCutQtyVSStdQtyByLine] = ISNULL(SupplyCutQtyVSStdQtyByLine, 0)
+				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIInsertDate] = GetDate()
 			FROM #tmp_EstCutQty_END;
 
 			drop table #tmp_EstCutALLGroup,#tmp_EstCutCount,#tmp_EstCutGroup,#tmp_EstCutQty_END,#tmp_EstCutQty_Step1,#tmp_EstCutQty_Step2
@@ -698,10 +704,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				update b 
 				set b.BIPImportCuttingBCSCmdTime = GETDATE()
 				from [MainServer].[Production].[dbo].[SewingSchedule] b 
-				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)
+				where exists (select 1 from #tmp t where t.OrderID = b.OrderID)";
 
-				/************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
-				Delete a
+                sql += new Base().SqlBITableHistory("P_CuttingBCS", "P_CuttingBCS_History", "#tmp", string.Empty, needJoin: false) + Environment.NewLine;
+                sql += $@"
+                /************* 刪除P_CuttingBCS的資料，規則刪除相同的OrderID*************/
+                Delete a
 				from P_CuttingBCS a 
 				where exists (select 1 from #tmp b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
 
@@ -739,6 +747,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[BalanceCutQtyByLine]
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
+					,[BIFactoryID]		
+					,[BIInsertDate]		
 				)
 				select [MDivisionID]
 					,[FactoryID]
@@ -771,11 +781,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[BalanceCutQtyByLine]
 					,[SupplyCutQtyVSStdQty]
 					,[SupplyCutQtyVSStdQtyByLine]
+					,[BIFactoryID]		
+					,[BIInsertDate]		
 				from #tmp a
 				where not exists (select 1 from P_CuttingBCS b where a.OrderID = b.OrderID and a.SewingLineID = b.SewingLineID and a.RequestDate = b.RequestDate)
-				"
-                ;
-                sql += new Base().SqlBITableInfo("P_CuttingBCS", true);
+				";
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

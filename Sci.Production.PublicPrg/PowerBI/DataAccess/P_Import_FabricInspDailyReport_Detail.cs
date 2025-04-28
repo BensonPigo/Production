@@ -54,6 +54,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+                else
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_FabricInspDailyReport_Detail", false);
+                }
 
                 finalResult.Result = new Ict.DualResult(true);
             }
@@ -77,7 +82,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             using (sqlConn)
             {
-                string sql = $@" 
+                string sql = new Base().SqlBITableHistory("P_FabricInspDailyReport_Detail", "P_FabricInspDailyReport_Detail_History", "#tmpP_FabricInspDailyReport_Detail", "((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))", needJoin: false) + Environment.NewLine;
+                sql += $@" 
                 delete p
 				from P_FabricInspDailyReport_Detail p
 				where	((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate)) and
@@ -122,7 +128,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,p.WeaveType							= t.WeaveType	
 							,p.ReceivingID							= t.ReceivingID
 							,p.AddDate								= t.AddDate							
-							,p.EditDate								= t.EditDate							
+							,p.EditDate								= t.EditDate	
+							,p.[BIFactoryID]			= t.[BIFactoryID]
+							,p.[BIInsertDate]			= t.[BIInsertDate]
 				from P_FabricInspDailyReport_Detail p
 				inner join #tmpP_FabricInspDailyReport_Detail t on	p.InspDate = t.InspDate and
 																p.Inspector = t.Inspector and
@@ -172,7 +180,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,WeaveType
 						,ReceivingID
 						,AddDate
-						,EditDate)
+						,EditDate
+						,[BIFactoryID]	
+						,[BIInsertDate]	
+				)
 				select	 t.InspDate
 						,t.Inspector
 						,t.InspectorName
@@ -213,6 +224,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,t.ReceivingID
 						,t.AddDate
 						,t.EditDate
+						,t.[BIFactoryID]	
+						,t.[BIInsertDate]	
 				from #tmpP_FabricInspDailyReport_Detail t
 				where not exists(	select 1 
 									from P_FabricInspDailyReport_Detail p
@@ -222,18 +235,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 											p.SEQ = t.SEQ and
 											p.ATA = t.ATA and
 											p.Roll = t.Roll and
-											p.Dyelot = t.Dyelot)
-
-				if exists(select 1 from BITableInfo where Id = 'P_FabricInspDailyReport_Detail')
-				begin
-					update BITableInfo set TransferDate = getdate()
-					where Id = 'P_FabricInspDailyReport_Detail'
-				end
-				else
-				begin
-					insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_FabricInspDailyReport_Detail', GETDATE(), 0)
-				end
-                ";
+											p.Dyelot = t.Dyelot)";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
             }
@@ -291,6 +293,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,AddDate
 			,EditDate
 			from Production.dbo.GetQA_R08_Detail(null,null,'','','','','','',@Date_S, @Date_E)
+			where	ATA is not null and InspDate is not null
 			";
 
             Base_ViewModel resultReport = new Base_ViewModel
@@ -302,6 +305,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 return resultReport;
             }
+
             resultReport.Dt = dataTables;
 
             return resultReport;

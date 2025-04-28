@@ -48,6 +48,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
+                else
+                {
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_LoadingProductionOutput", false);
+                }
 
                 finalResult.Result = new Ict.DualResult(true);
             }
@@ -126,7 +131,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[Order Reason] = s.OrderReason,
 				t.[BuyBackReason] = s.[BuyBackReason],
 				t.[LastProductionDate] = s.[LastProductionDate],
-				t.[CRDDate] = s.[CRDDate]
+				t.[CRDDate] = s.[CRDDate],
+				t.[BIFactoryID] = s.[BIFactoryID],
+				t.[BIInsertDate] = s.[BIInsertDate]
 				from P_LoadingProductionOutput as t
 				inner join #Final s 
 				on t.FactoryID=s.FactoryID  
@@ -189,6 +196,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[BuyBackReason]
 					,[LastProductionDate]
 					,[CRDDate]
+					,[BIFactoryID]
+					,[BIInsertDate]
 				)
 				select  
 				s.MDivisionID,
@@ -245,6 +254,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				s.[BuyBackReason],
 				s.[LastProductionDate],
 				s.[CRDDate]
+				,s.[BIFactoryID]
+				,s.[BIInsertDate]
 				from #Final s
 				where not exists
 				(
@@ -252,6 +263,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					where t.FactoryID=s.FactoryID  
 					AND t.SPNO = s.ID
 				)
+
+				-- 先寫入 Histroy
+				insert into P_LoadingProductionOutput_History(FactoryID, Ukey, BIFactoryID, BIInsertDate)
+				select t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
+				from P_LoadingProductionOutput t
+				where 
+				(
+					YEAR(BuyerDelivery) = @Year
+					or
+					Year(cast(dateadd(day,-7,SciDelivery) as date)) = @Year	
+				)
+				and exists (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
+				and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
 
 				delete t
 				from P_LoadingProductionOutput t WITH (NOLOCK)
@@ -264,16 +288,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				and exists	   (select 1 from #Final f where t.FactoryID=f.FactoryID AND t.MDivisionID=f.MDivisionID  ) 
 				and not exists (select 1 from #Final s where t.FactoryID=s.FactoryID AND t.SPNO=s.ID );
 
+				-- 先寫入 Histroy
+				insert into P_LoadingProductionOutput_History(FactoryID, Ukey, BIFactoryID, BIInsertDate)
+				select t.FactoryID, t.Ukey, t.BIFactoryID, GETDATE()
+				from P_LoadingProductionOutput t
+				left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID and t.FactoryID = o.FactoryID
+				where o.ID is null
+	
 				delete t
 				from P_LoadingProductionOutput t
 				left join [MainServer].Production.dbo.Orders o on t.SPNO = o.ID and t.FactoryID = o.FactoryID
 				where o.ID is null
-
-				update b
-				set b.TransferDate = getdate()
-						, b.IS_Trans = 1
-				from BITableInfo b
-				where b.id = 'P_LoadingProductionOutput'
                 ";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#Final");
@@ -324,6 +349,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				declare @strID nvarchar(15) = N'SubCON-Out_'
 		
 				select * 
+				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIInsertDate] = GetDate()
 				from 
 				(
 					-- 非外代工

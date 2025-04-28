@@ -38,6 +38,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 }
 
                 transactionScope.Complete();
+                transactionScope.Dispose();
                 return dualResult;
             }
         }
@@ -140,10 +141,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!dualResult)
                 {
+                    transactionScope.Dispose();
                     return dualResult;
                 }
 
                 transactionScope.Complete();
+                transactionScope.Dispose();
                 return dualResult;
             }
         }
@@ -170,6 +173,35 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 }
 
                 transactionScope.Complete();
+                return dualResult;
+            }
+        }
+
+        /// <summary>
+        /// update BI Table Info data with transaction scope
+        /// </summary>
+        /// <param name="conn">conn</param>
+        /// <param name="biTableInfoID">biTableInfoID</param>
+        /// <param name="is_Trans">is_Trans</param>
+        /// <param name="defaultTimeoutInSeconds">defaultTimeoutInSeconds</param>
+        /// <returns>dualResult</returns>
+        public static DualResult UpatteBIDataTransactionScope(SqlConnection conn, string biTableInfoID, bool is_Trans, int defaultTimeoutInSeconds = 60 * 60)
+        {
+            DualResult dualResult;
+            using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
+            {
+                Data.DBProxy.Current.DefaultTimeout = defaultTimeoutInSeconds;
+                string sql = new Base().SqlBITableInfo(biTableInfoID, is_Trans);
+                dualResult = Data.DBProxy.Current.ExecuteByConn(conn, sql);
+
+                if (!dualResult)
+                {
+                    transactionScope.Dispose();
+                    return dualResult;
+                }
+
+                transactionScope.Complete();
+                transactionScope.Dispose();
                 return dualResult;
             }
         }

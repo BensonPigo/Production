@@ -14,12 +14,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_LineMapping
     {
         private DBProxy DBProxy;
-        private SqlConnection sqlConn;
 
         /// <inheritdoc/>
         public Base_ViewModel P_LineMapping(DateTime? sDate, DateTime? eDate)
         {
-            DBProxy.Current.OpenConnection("PowerBI", out this.sqlConn);
             this.DBProxy = new DBProxy()
             {
                 DefaultTimeout = 1800,
@@ -51,8 +49,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 if (resultReport.Result)
                 {
-                    finalResult = new Base().UpdateBIData("P_LineMapping", true);
-                    finalResult = new Base().UpdateBIData("P_LineMapping_Detail", true);
+                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_LineMapping", true);
+                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_LineMapping_Detail", true);
                 }
 
                 finalResult.Result = new Ict.DualResult(true);
@@ -268,12 +267,59 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 new SqlParameter("@EDate", eDate),
             };
 
+            string strTmpName_Summary = "#tmpMain";
+            string strTmpName_Detail = "#tmpDetail";
             try
             {
                 DualResult result;
-                using (this.sqlConn)
+                DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
+                using (sqlConn)
                 {
-                    string sql = new Base().SqlBITableHistory("P_LineMapping", "P_LineMapping_History", "#tmpMain", "((p.[Add Date] between @SDate and @EDate) OR (p.[Edit Date] between @SDate and @EDate))", needJoin: false) + Environment.NewLine;
+                    string sql = $@"
+					alter table {strTmpName_Summary} alter column [FactoryID] varchar (8)
+					alter table {strTmpName_Summary} alter column [StyleUKey] bigint
+					alter table {strTmpName_Summary} alter column [ComboType] varchar (1)
+					alter table {strTmpName_Summary} alter column [Version] tinyint
+					alter table {strTmpName_Summary} alter column [Phase] varchar (7)
+					alter table {strTmpName_Summary} alter column [SewingLine] varchar (8)
+					alter table {strTmpName_Summary} alter column [IsFrom] varchar (6)
+					alter table {strTmpName_Summary} alter column [Team] varchar (8)
+					alter table {strTmpName_Summary} alter column [ID] bigint
+					alter table {strTmpName_Summary} alter column [Style] varchar (15)
+					alter table {strTmpName_Summary} alter column [Season] varchar (10)
+					alter table {strTmpName_Summary} alter column [Brand] varchar (8)
+					alter table {strTmpName_Summary} alter column [Desc.] varchar (100)
+					alter table {strTmpName_Summary} alter column [CPU/PC] decimal
+					alter table {strTmpName_Summary} alter column [No. of Sewer] tinyint
+					alter table {strTmpName_Summary} alter column [LBR By GSD Time(%)] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Total GSD Time] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Avg. GSD Time] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Highest GSD Time] numeric (12, 2)
+					alter table {strTmpName_Summary} alter column [LBR By Cycle Time(%)] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Total Cycle Time] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Avg. Cycle Time] numeric (7, 2)
+					alter table {strTmpName_Summary} alter column [Highest Cycle Time] numeric (6, 2)
+					alter table {strTmpName_Summary} alter column [Total % Time Diff(%)] int
+					alter table {strTmpName_Summary} alter column [No. of Hours] numeric (3, 1)
+					alter table {strTmpName_Summary} alter column [Oprts of Presser] tinyint
+					alter table {strTmpName_Summary} alter column [Oprts of Packer] tinyint
+					alter table {strTmpName_Summary} alter column [Ttl Sew Line Oprts] tinyint
+					alter table {strTmpName_Summary} alter column [Target / Hr.(100%)] int
+					alter table {strTmpName_Summary} alter column [Daily Demand / Shift] numeric (7, 1)
+					alter table {strTmpName_Summary} alter column [Takt Time] numeric (6, 2)
+					alter table {strTmpName_Summary} alter column [EOLR] numeric (6, 2)
+					alter table {strTmpName_Summary} alter column [PPH] numeric (6, 2)
+					alter table {strTmpName_Summary} alter column [GSD Status] varchar (15)
+					alter table {strTmpName_Summary} alter column [GSD Version] varchar (2)
+					alter table {strTmpName_Summary} alter column [Status] varchar (9)
+					alter table {strTmpName_Summary} alter column [Add Name] varchar (10)
+					alter table {strTmpName_Summary} alter column [Add Date] datetime
+					alter table {strTmpName_Summary} alter column [Edit Name] varchar (10)
+					alter table {strTmpName_Summary} alter column [Edit Date] datetime
+					alter table {strTmpName_Summary} alter column [BIFactoryID] varchar (8)
+					alter table {strTmpName_Summary} alter column [BIInsertDate] datetime
+					";
+                    sql += new Base().SqlBITableHistory("P_LineMapping", "P_LineMapping_History", "#tmpMain", "((p.[Add Date] between @SDate and @EDate) OR (p.[Edit Date] between @SDate and @EDate))", needJoin: false) + Environment.NewLine;
                     sql += $@"
 					delete t
 					from P_LineMapping t
@@ -437,8 +483,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						and t.IsFrom = s.isFrom
 						and t.Team = s.Team
 					)";
-                    sql += new Base().SqlBITableInfo("P_LineMapping", false);
-
                     sql += $@"
 					select *
 					,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
@@ -471,6 +515,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,[OperatorName] = isnull(e.Name,'')
 						,[Skill] = isnull(e.Skill,'')
 						,[Ukey] = ld.Ukey
+						,[FactoryID] = l.FactoryID
 						from [MainServer].Production.dbo.LineMapping_Detail ld with(nolock)
 						inner join [MainServer].Production.dbo.LineMapping l with(nolock) on l.ID = ld.ID
 						left join [MainServer].Production.dbo.Operation o with(nolock) on o.ID = ld.OperationID
@@ -506,6 +551,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,[OperatorName] = isnull(e.Name,'')
 						,[Skill] = isnull(e.Skill,'')
 						,[Ukey] = ld.Ukey
+						,[FactoryID] = l.FactoryID
 						from [MainServer].Production.dbo.LineMappingBalancing_Detail ld with(nolock)
 						inner join [MainServer].Production.dbo.LineMappingBalancing l with(nolock) on l.ID = ld.ID
 						left join [MainServer].Production.dbo.Operation o with(nolock) on o.ID = ld.OperationID
@@ -516,6 +562,35 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							and s.isFrom = 'IE P06'
 						)
 					) a
+					";
+                    sql += $@"
+					alter table {strTmpName_Detail} alter column [ID] bigint
+					alter table {strTmpName_Detail} alter column [Ukey] bigint
+					alter table {strTmpName_Detail} alter column [IsFrom] varchar (6)
+					alter table {strTmpName_Detail} alter column [No] varchar (4)
+					alter table {strTmpName_Detail} alter column [Seq] smallint
+					alter table {strTmpName_Detail} alter column [Location] varchar (20)
+					alter table {strTmpName_Detail} alter column [ST/MC Type] varchar (10)
+					alter table {strTmpName_Detail} alter column [MC Group] varchar (4)
+					alter table {strTmpName_Detail} alter column [OperationID] varchar (20)
+					alter table {strTmpName_Detail} alter column [Operation] nvarchar (500)
+					alter table {strTmpName_Detail} alter column [Annotation] nvarchar (200)
+					alter table {strTmpName_Detail} alter column [Attachment] varchar (100)
+					alter table {strTmpName_Detail} alter column [PartID] varchar (200)
+					alter table {strTmpName_Detail} alter column [Template] varchar (100)
+					alter table {strTmpName_Detail} alter column [GSD Time] numeric (6, 2)
+					alter table {strTmpName_Detail} alter column [Cycle Time] numeric (6, 2)
+					alter table {strTmpName_Detail} alter column [%] numeric (3, 2)
+					alter table {strTmpName_Detail} alter column [Div. Sewer] numeric (5, 4)
+					alter table {strTmpName_Detail} alter column [Ori. Sewer] numeric (5, 4)
+					alter table {strTmpName_Detail} alter column [Thread Combination] varchar (10)
+					alter table {strTmpName_Detail} alter column [Notice] nvarchar (200)
+					alter table {strTmpName_Detail} alter column [OperatorID] varchar (10)
+					alter table {strTmpName_Detail} alter column [OperatorName] nvarchar (50)
+					alter table {strTmpName_Detail} alter column [Skill] nvarchar (200)
+					alter table {strTmpName_Detail} alter column [FactoryID] varchar (8)
+					alter table {strTmpName_Detail} alter column [BIFactoryID] varchar (8)
+					alter table {strTmpName_Detail} alter column [BIInsertDate] datetime
 					";
                     sql += new Base().SqlBITableHistory("P_LineMapping_Detail", "P_LineMapping_Detail_History", "#tmpDetail", "exists (select 1 from #tmpMain s where p.ID = s.ID)", needJoin: false) + Environment.NewLine;
                     sql += $@"
@@ -614,9 +689,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						where t.Ukey = s.Ukey
 						and t.IsFrom = s.isFrom
 					)
+					drop table #tmpMain;
+					drop table #tmpDetail;
 					";
-                    sql += new Base().SqlBITableInfo("P_LineMapping_Detail", false, true);
-                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable1, temptablename: "#tmpMain", conn: this.sqlConn, paramters: paramters);
+                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable1, temptablename: "#tmpMain", conn: sqlConn, paramters: paramters);
 
                     if (!result.Result)
                     {
