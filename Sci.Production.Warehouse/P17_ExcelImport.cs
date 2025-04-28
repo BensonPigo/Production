@@ -182,7 +182,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location" };
                 int[] itemPosition = new int[itemCheck.Length];
                 string[] excelItem = new string[intColumnsCount + 1];
 
