@@ -100,7 +100,8 @@ namespace Sci.Production.PPIC
             }
 
             this.sqlGetData = $@"
-Select s.SewingLineID
+Select distinct
+  s.SewingLineID
 , Orders.POID
 , Orders.ID
 , Orders.FactoryID
