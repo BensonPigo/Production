@@ -193,6 +193,7 @@ Where 1 = 1
             var distinctRows = dt.AsEnumerable().OrderBy(o => o["ID"])
     .Select(s => new
     {
+        SewingLineID = s["SewingLineID"].ToString(),
         POID = s["POID"].ToString(),
         ID = s["ID"].ToString(),
         StyleID = s["StyleID"].ToString(),
@@ -204,7 +205,8 @@ Where 1 = 1
             foreach (var id in distinctRows)
             {
                 var dtDetail = dt.AsEnumerable()
-                                     .Where(s => s["POID"].ToString() == id.POID
+                                     .Where(s => s["SewingLineID"].ToString() == id.SewingLineID
+                                              && s["POID"].ToString() == id.POID
                                               && s["ID"].ToString() == id.ID
                                               && s["StyleID"].ToString() == id.StyleID
                                               && s["Article"].ToString() == id.Article)
