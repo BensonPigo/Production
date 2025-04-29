@@ -296,8 +296,8 @@ DROP TABLE #Bundle, #quoteDetailBase, #tmp_SewingOutput_FarmInOutDate
                     {
                         if ((int)this.gridImportFromPO.Rows[i].Cells["LocalSuppCtn"].Value >= 2)
                         {
-                            this.gridImportFromPO.Rows[i].Cells["FarmOut"].Style.BackColor = Color.Yellow;
-                            this.gridImportFromPO.Rows[i].Cells["farmin"].Style.BackColor = Color.Yellow;
+                            this.gridImportFromPO.Rows[i].Cells["AccuFarmOut"].Style.BackColor = Color.Yellow;
+                            this.gridImportFromPO.Rows[i].Cells["AccuFarmIn"].Style.BackColor = Color.Yellow;
                         }
                     }
                 }
