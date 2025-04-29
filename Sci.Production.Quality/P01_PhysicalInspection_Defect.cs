@@ -125,13 +125,13 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
-                        {
-                            ndr["def1"] = GetNewDefectRecord_T2(dtary);
-                        }
-                        else if (i + 5 == actyds)
+                        if (i + 5 == actyds)
                         {
                             ndr["def3"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            ndr["def3"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
@@ -153,13 +153,13 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
-                        {
-                            dr["def2"] = GetNewDefectRecord_T2(dtary);
-                        }
-                        else if (i + 5 == actyds)
+                        if (i + 5 == actyds)
                         {
                             dr["def3"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def3"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
@@ -177,13 +177,13 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
-                        {
-                            dr["def3"] = GetNewDefectRecord_T2(dtary);
-                        }
-                        else if (i + 5 == actyds)
+                        if (i + 5 == actyds)
                         {
                             dr["def3"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        {
+                            dr["def3"] = GetNewDefectRecord_T2(dtary);
                         }
                         else
                         {
