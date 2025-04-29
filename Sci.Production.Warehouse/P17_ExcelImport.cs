@@ -182,7 +182,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty" };
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location" };
                 int[] itemPosition = new int[itemCheck.Length];
                 string[] excelItem = new string[intColumnsCount + 1];
 
@@ -256,6 +256,7 @@ namespace Sci.Production.Warehouse
                     newRow["Roll"] = (objCellArray[1, itemPosition[3]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[3]].ToString().Trim(), "C");
                     newRow["Dyelot"] = (objCellArray[1, itemPosition[4]] == null) ? string.Empty : MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[4]].ToString().Trim(), "C").ToString();
                     newRow["qty"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[5]], "N");
+                    newRow["Location"] = locations;
                     newRow["CanWriteIn"] = true;
                     #region check Columns length
                     List<string> listColumnLengthErrMsg = new List<string>();
@@ -348,7 +349,6 @@ and f.MDivisionID = @MDivisionID ";
                     {
                         newRow["Description"] = dr2["Description"];
                         newRow["StockUnit"] = dr2["StockUnit"];
-                        newRow["Location"] = dr2["Location"];
                         newRow["ftyinventoryukey"] = dr2["Ukey"];
                         newRow["Location"] = dr2["Location"];
                     }
