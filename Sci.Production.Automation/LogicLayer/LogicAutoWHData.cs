@@ -368,7 +368,7 @@ and exists(
     ,sd.StockUnit
     ,sd.PoUnit
     ,sd.ShipQty
-    ,sd.Weight
+    ,[Weight] = iif(sd.ActualWeight = 0, sd.Weight , sd.ActualWeight)
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
     ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
@@ -385,7 +385,7 @@ and exists(
     ,StockUnit = dbo.GetStockUnitBySPSeq(sd.POID, sd.Seq1, sd.Seq2)
     ,psd.PoUnit
     ,ShipQty = sd.Qty
-    ,sd.Weight
+    ,[Weight] = iif(sd.ActualWeight = 0, sd.Weight , sd.ActualWeight)
     ,[Barcode] = dbo.GetWHBarcodeToGensong('{formName}', sd.ID, sd.Ukey, '{action}', 'F', f.Ukey, 0, {fromNewBarcodeBit},0)
     ,[IsInspection] = convert(bit, 0)
     ,[Color] = dbo.GetColorMultipleID_MtlType(psd.BrandID, isnull(psdsC.SpecValue ,''), Fabric.MtlTypeID, psd.SuppColor)
