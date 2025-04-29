@@ -12,6 +12,8 @@ using Ict.Win;
 using Sci.Production.Class.Commons;
 using Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
 
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
@@ -1960,7 +1962,24 @@ and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDiv
 
         private void BtnAccessory_Click(object sender, EventArgs e)
         {
-            if (this.CurrentMaintain["PFETA"].ToString() != string.Empty && Convert.ToDateTime(this.CurrentMaintain["PFETA"]).AddDays(-7) < DateTime.Today)
+            string sql = $@"
+SELECT CONVERT(varchar, MIN(checkDate), 120) AS checkDate
+FROM (
+    SELECT checkDate = MIN(LETA) 
+    FROM Order_PFHis 
+    WHERE ID = '{this.CurrentMaintain["ID"]}'
+    
+    UNION ALL
+    
+    SELECT checkDate = MIN(PFETA) 
+    FROM Orders 
+    WHERE ID = '{this.CurrentMaintain["ID"]}' OR POID = '{this.CurrentMaintain["ID"]}'
+) AS Value
+";
+
+            string checkDate = DBProxy.Current.LookupEx<string>(sql).ExtendedData;
+
+            if (!checkDate.IsNullOrWhiteSpace() && Convert.ToDateTime(checkDate).AddDays(-14) < DateTime.Today)
             {
                 P01_AccessoryCard frm = new P01_AccessoryCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
                 frm.ShowDialog();
