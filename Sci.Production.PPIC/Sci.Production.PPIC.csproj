@@ -835,6 +835,12 @@
     <Compile Include="R16.Designer.cs">
       <DependentUpon>R16.cs</DependentUpon>
     </Compile>
+    <Compile Include="R23.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R23.Designer.cs">
+      <DependentUpon>R23.cs</DependentUpon>
+    </Compile>
     <Compile Include="R18.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1233,6 +1239,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R16.resx">
       <DependentUpon>R16.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="R23.resx">
+      <DependentUpon>R23.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R18.resx">
       <DependentUpon>R18.cs</DependentUpon>
