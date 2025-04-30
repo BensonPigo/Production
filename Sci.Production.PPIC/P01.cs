@@ -1964,13 +1964,19 @@ and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDiv
         {
             string sql = $@"
 SELECT CONVERT(varchar, MIN(checkDate), 120) AS checkDate
-FROM (
+FROM (    
+
     SELECT checkDate = MIN(LETA) 
     FROM Order_PFHis 
     WHERE ID = '{this.CurrentMaintain["ID"]}'
-    
+
     UNION ALL
-    
+    SELECT checkDate = MIN(Order_PFHis.LETA) 
+    FROM Order_PFHis 
+    Inner Join Orders o on o.POID = Order_PFHis.ID
+    WHERE o.ID = '{this.CurrentMaintain["ID"]}'
+  
+    UNION ALL   
     SELECT checkDate = MIN(PFETA) 
     FROM Orders 
     WHERE ID = '{this.CurrentMaintain["ID"]}' OR POID = '{this.CurrentMaintain["ID"]}'
