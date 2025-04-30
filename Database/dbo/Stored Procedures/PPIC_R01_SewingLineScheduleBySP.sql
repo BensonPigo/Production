@@ -193,9 +193,9 @@ select  s.SewingLineID
 			, [FirstCuttingOutputDate]=FirstCuttingOutputDate.Date
             , InspDate = InspctDate.Val
             , s.StandardOutput
-            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(sa.TTlAlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
-                      END
+            , [Eff] = CASE WHEN (s.sewer * s.workhour) = 0 THEN 0
+								ELSE ROUND((CONVERT(FLOAT, sa.TTlAlloQty)  * CONVERT(FLOAT, s.TotalSewingTime)/ (CONVERT(FLOAT, s.sewer) * CONVERT(FLOAT, s.workhour) * 3600)) * 100 , 2)
+								END
             , o.KPILETA
 			, o.SewETA
             , o.MTLETA

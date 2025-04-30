@@ -830,16 +830,41 @@ where isnull(f.OutQty,0) < d.Qty and d.Id = '{0}'", this.CurrentMaintain["id"]);
 
             #region 更新庫存位置  ftyinventory_detail.MtlLocationID
 
-            // 增加判斷條件WMSLock=0,才能更新MtlLocation
+            DataTable locationTable;
             sqlcmd = $@"
 Select d.poid ,d.seq1 ,d.seq2 ,d.Roll ,d.Dyelot ,d.StockType ,[ToLocation]=d.Location
 from dbo.IssueReturn_Detail d WITH (NOLOCK) 
 inner join FtyInventory f WITH (NOLOCK) 
 on d.poid = f.POID and d.Seq1 = f.Seq1 and d.seq2 = f.seq2 and d.StockType = f.StockType and d.Roll = f.Roll and d.Dyelot = f.Dyelot
 where f.lock=0 and f.WMSLock=0 AND d.Id = '{this.CurrentMaintain["id"]}'";
-            DBProxy.Current.Select(null, sqlcmd, out DataTable locationTable);
+            DBProxy.Current.Select(null, sqlcmd, out locationTable);
 
-            var data_Fty_26F = (from b in locationTable.AsEnumerable()
+            DataTable newDt = locationTable.Clone();
+
+            foreach (DataRow item in locationTable.Rows)
+            {
+                string[] dtrLocation = item["ToLocation"].ToString().Split(',');
+                dtrLocation = dtrLocation.Distinct().ToArray();
+
+                if (dtrLocation.Length == 1)
+                {
+                    DataRow newDr = newDt.NewRow();
+                    newDr.ItemArray = item.ItemArray;
+                    newDt.Rows.Add(newDr);
+                }
+                else
+                {
+                    foreach (string location in dtrLocation)
+                    {
+                        DataRow newDr = newDt.NewRow();
+                        newDr.ItemArray = item.ItemArray;
+                        newDr["ToLocation"] = location;
+                        newDt.Rows.Add(newDr);
+                    }
+                }
+            }
+
+            var data_Fty_26F = (from b in newDt.AsEnumerable()
                                 select new
                                 {
                                     poid = b.Field<string>("poid"),

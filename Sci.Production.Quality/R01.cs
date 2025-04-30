@@ -355,8 +355,10 @@ select
 	,LW.WashDate
 	,RESULT3 = V.Result
 	,[OvenInspector] = v2.Name
+    ,[OvenDate] = V3.InspDate
 	,RESULT4 = CFD.Result
 	,[CFInspector] = cfd2.Name
+    ,[CFDate] = CFD3.InspDate
 	,ps1.LocalMR
     ,[Category] = ddl.Name
 	,[Cutting Date] = o.CutInLine
@@ -463,6 +465,21 @@ select [name ]= Stuff((
 	) , 1, 1, '')
 )V2
 OUTER APPLY(
+    SELECT InspDate = Stuff((
+		    SELECT CONCAT(',', InspDate)
+		    FROM (
+			    SELECT DISTINCT InspDate = FORMAT(ov.InspDate, 'yyyy/MM/dd')
+			    FROM dbo.Oven ov WITH (NOLOCK)
+			    INNER JOIN Oven_Detail od WITH (NOLOCK) on od.ID = ov.ID
+			    WHERE ov.POID = F.POID
+                AND od.Seq1 = F.Seq1
+                AND od.Seq2 = F.Seq2
+			    AND ov.Status = 'Confirmed'
+		    ) s
+		    FOR XML PATH ('')
+	    ), 1, 1, '')
+)V3
+OUTER APPLY(
 select Result = Stuff((
 		select concat(',',Result)
 		from (
@@ -490,6 +507,21 @@ select Name = Stuff((
 		for xml path ('')
 	) , 1, 1, '')
 )CFD2
+OUTER APPLY(
+    SELECT InspDate = Stuff((
+		    SELECT CONCAT(',',InspDate)
+		    FROM (
+			    SELECT DISTINCT InspDate = FORMAT(cf.InspDate, 'yyyy/MM/dd')
+			    FROM ColorFastness cf WITH (NOLOCK) 
+			    INNER JOIN ColorFastness_Detail cd WITH (NOLOCK) on cd.ID = cf.ID
+			    WHERE cf.POID = F.POID
+                AND cd.SEQ1 = F.Seq1
+                AND cd.seq2 = F.Seq2
+                AND cf.Status = 'Confirmed'
+		    ) s
+		    FOR XML PATH ('')
+	    ), 1, 1, '')
+)CFD3
 Outer apply(
 	select (A.id+' - '+ A.name + ' #'+A.extno) LocalMR 
     from orders od 
@@ -722,8 +754,10 @@ select
 	,tf.WashDate
 	,tf.RESULT3
 	,tf.OvenInspector
+    ,tf.OvenDate
 	,tf.RESULT4
 	,tf.CFInspector
+    ,tf.CFDate
     ,tf.LocalMR
     ,[MCHandle] = tf.MCHandle_id + '-' + tf.MCHandle_name + '#' + tf.MCHandle_extno
     ,tf.[OrderType]
