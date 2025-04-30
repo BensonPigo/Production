@@ -411,16 +411,34 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
                 if (this.Fir_physical_Defect.Rows[i].RowState != DataRowState.Deleted
                     && this.Fir_physical_Defect.Rows[i]["NewKey"].EqualString(rowFir_Physical["NewKey"]))
                 {
-                    // if (dr.RowState != DataRowState.Deleted)
-                    // {
+                    string targetRange = $"0{actualYdsT - 5:00}-0{actualYdsT:00}";
+                    string defectLocation = this.Fir_physical_Defect.Rows[i]["DefectLocation"]?.ToString();
+                    if (!string.IsNullOrEmpty(defectLocation) && defectLocation == targetRange)
+                    {
+                        this.Fir_physical_Defect.Rows[i].Delete();
+                        continue;
+                    }
+
                     def_locF = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[0]);
                     def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
-                    if (def_locF >= double_ActualYds && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == rowFir_Physical["NewKey"].ToString())
+
+                    var filteredRows = this.Fir_physical_Defect.AsEnumerable()
+                     .Where(row =>
+                     {
+                         var locStr = row.Field<string>("DefectLocation");
+                         if (int.TryParse(locStr, out int loc))
+                         {
+                             return loc >= 70 && loc <= 75;
+                         }
+
+                         return false;
+                     })
+                     .ToList();
+
+                    if (def_locF >= double_ActualYds && def_locT != def_locF && this.Fir_physical_Defect.Rows[i]["NewKey"].ToString() == rowFir_Physical["NewKey"].ToString())
                     {
                         this.Fir_physical_Defect.Rows[i].Delete();
                     }
-
-                    // }
 
                     // DefectLocation的範圍如果與目前ActualYds界限值不符的話就update DefectLocation
                     if (def_locF == actualYdsF && def_locT != actualYdsT)
