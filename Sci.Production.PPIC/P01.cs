@@ -1971,10 +1971,10 @@ FROM (
     WHERE ID = '{this.CurrentMaintain["ID"]}'
 
     UNION ALL
-    SELECT checkDate = MIN(Order_PFHis.LETA) 
+    Select checkDate = Min(Order_PFHis.LETA)
     FROM Order_PFHis 
-    Inner Join Orders o on o.POID = Order_PFHis.ID
-    WHERE o.ID = '{this.CurrentMaintain["ID"]}'
+    Inner Join Orders o on o.ID = Order_PFHis.ID
+    WHERE o.POID = (Select Distinct POID From Orders Where ID = '{this.CurrentMaintain["ID"]}')
   
     UNION ALL   
     SELECT checkDate = MIN(PFETA) 
