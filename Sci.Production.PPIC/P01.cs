@@ -1973,7 +1973,7 @@ FROM (
     UNION ALL   
     SELECT checkDate = MIN(PFETA) 
     FROM Orders 
-    WHERE ID = '{this.CurrentMaintain["ID"]}' OR POID = '{this.CurrentMaintain["ID"]}'
+    WHERE POID in (Select Distinct POID From Orders Where ID = '{this.CurrentMaintain["ID"]}' )
 ) AS Value
 ";
 
