@@ -69,8 +69,34 @@ namespace Sci.Production.Quality
                     cStr = MyUtility.Convert.NTOC(i, 3) + "-" + MyUtility.Convert.NTOC(i + 4, 3);
                 }
 
-                DataRow[] ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
-                DataTable dtary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1]))).TryCopyToDataTable(this.DefectFilterTb);
+                DataRow[] ary;
+                DataTable dtary = new DataTable();
+
+                if (i + 5 == actyds)
+                {
+                    ary = this.DefectFilterTb.Select(string.Format(
+                    "(DefectLocationF >= {0} AND DefectLocationT <= {1}) OR (DefectLocationF = {2} AND DefectLocationT = {2})",
+                    Convert.ToInt32(cStr.Split('-')[0]),
+                    Convert.ToInt32(cStr.Split('-')[1]),
+                    actyds));
+                }
+                else
+                {
+                    ary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1])));
+                }
+
+                if (i + 5 == actyds)
+                {
+                    dtary = this.DefectFilterTb.Select(string.Format(
+                    "(DefectLocationF >= {0} AND DefectLocationT <= {1}) OR (DefectLocationF = {2} AND DefectLocationT = {2})",
+                    Convert.ToInt32(cStr.Split('-')[0]),
+                    Convert.ToInt32(cStr.Split('-')[1]),
+                    actyds)).TryCopyToDataTable(this.DefectFilterTb);
+                }
+                else
+                {
+                    dtary = this.DefectFilterTb.Select(string.Format("DefectLocationF >= {0} and DefectLocationT <= {1}", Convert.ToInt32(cStr.Split('-')[0]), Convert.ToInt32(cStr.Split('-')[1]))).TryCopyToDataTable(this.DefectFilterTb);
+                }
 
                 // 將存在DefectFilterTb的資料填入Grid
                 #region 填入對的位置 % 去找位置
@@ -99,7 +125,11 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        if (i + 5 == actyds)
+                        {
+                            ndr["def1"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
                             ndr["def1"] = GetNewDefectRecord_T2(dtary);
                         }
@@ -123,7 +153,11 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        if (i + 5 == actyds)
+                        {
+                            dr["def2"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
                             dr["def2"] = GetNewDefectRecord_T2(dtary);
                         }
@@ -143,7 +177,11 @@ and t.T2 = 1";
                     if (ary.Length > 0)
                     {
                         // 如果有多筆,那要拆開檢查並塞入T2
-                        if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
+                        if (i + 5 == actyds)
+                        {
+                            dr["def3"] = GetLastNewDefectRecord_T2(dtary);
+                        }
+                        else if (ary[0]["DefectRecord"].ToString().IndexOf('/') != -1)
                         {
                             dr["def3"] = GetNewDefectRecord_T2(dtary);
                         }
@@ -195,6 +233,36 @@ and '{item}' like '%'+t.FabricdefectID+'%'
 
             return newDefectRecord.Substring(0, newDefectRecord.Length - 1);
         }
+
+        public static string GetLastNewDefectRecord_T2(DataTable dtAry)
+        {
+            string newDefectRecord = string.Empty;
+            var split = dtAry.AsEnumerable().Distinct().ToList();
+
+            foreach (var item in split)
+            {
+                string sqlchk = $@"
+select 1
+from FIR_Physical_Defect_Realtime t
+where FIR_PhysicalDetailUkey = {item["FIR_PhysicalDetailUKey"]}
+and CONVERT(int, t.Yards) between (select Data from SplitString('{item["DefectLocation"]}','-') where no = '1')　
+and (select Data from SplitString('{item["DefectLocation"]}','-') where no = '2')　
+and t.T2 = 1
+and '{item}' like '%'+t.FabricdefectID+'%'
+";
+                if (MyUtility.Check.Seek(sqlchk))
+                {
+                    newDefectRecord += item["DefectRecord"] + "-T2/";
+                }
+                else
+                {
+                    newDefectRecord += item["DefectRecord"] + "/";
+                }
+            }
+
+            return newDefectRecord.Substring(0, newDefectRecord.Length - 1);
+        }
+
 
         /// <inheritdoc/>
         protected override void OnFormLoaded()
