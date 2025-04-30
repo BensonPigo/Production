@@ -31,7 +31,7 @@ BEGIN TRANSACTION; -- 開始交易
 
 		-- Flag = 1.新增 2.修改 3.删除
 		 -- 計算 Flag 並插入異動記錄
-            WITH MachineWithFlag AS (
+            ;WITH MachineWithFlag AS (
                 SELECT 
                     t.FactoryID, t.SewingCell, t.MachineGroup, t.MachineID,
                     t.MachineBrandID, t.ConnType, t.ConnImg, t.DetectionType,
