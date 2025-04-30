@@ -69,6 +69,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@StartDate", sDate),
                 };
                 string sql = @"	
+-- 先寫入 Histroy
+insert into P_CartonStatusTrackingList_History(FactoryID,SP,SeqNo,PackingListID,CtnNo,BIFactoryID,BIInsertDate)
+select p.[FactoryID],p.[SP], p.[SeqNo], p.[PackingListID], p.[CtnNo], p.[BIFactoryID], getdate()
+from P_CartonStatusTrackingList p
+where not exists (select 1 from #tmp t where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
+
 insert into P_CartonStatusTrackingList([KPIGroup], [FactoryID], [Line], [SP], [SeqNo], [Category], [Brand], [Style], [PONO], [Season], [Destination], [SCIDelivery], [BuyerDelivery], [PackingListID], [CtnNo], [Size], [CartonQty], [Status], [HaulingScanTime], [HauledQty], [DryRoomReceiveTime], [DryRoomTransferTime], [MDScanTime], [MDFailQty], [PackingAuditScanTime], [PackingAuditFailQty], [M360MDScanTime], [M360MDFailQty], [TransferToPackingErrorTime], [ConfirmPackingErrorReviseTime], [ScanAndPackTime], [ScanQty], [FtyTransferToClogTime], [ClogReceiveTime], [ClogLocation], [ClogReturnTime], [ClogTransferToCFATime], [CFAReceiveTime], [CFAReturnTime], [CFAReturnDestination], [ClogReceiveFromCFATime], [DisposeDate], [PulloutComplete], [PulloutDate],[RefNo],[Description],[HaulingStatus],[HaulerName],[PackingAuditStatus],[PackingAuditName],
   [M360MDStatus],[M360MDName],[HangerPackScanTime],[HangerPackStatus],[HangerPackName],[JokerTagScanTime],[JokerTagStatus],[JokerTagName],[HeatSealScanTime],[HeatSealStatus],[HeatSealName]
 )
@@ -137,9 +143,17 @@ update p
         , p.[HeatSealStatus]				= t.[HeatSealStatus]
         , p.[HeatSealName]					= t.[HeatSealName]
         , p.[MDMachineNo]                   = t.[MDMachineNo]
+        , p.[BIFactoryID]                   = t.[BIFactoryID]
+        , p.[BIInsertDate]                  = t.[BIInsertDate]
 from P_CartonStatusTrackingList p
 inner join #tmp t on p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo]
 
+-- 先寫入 Histroy
+insert into P_CartonStatusTrackingList_History(FactoryID,SP,SeqNo,PackingListID,CtnNo,BIFactoryID,BIInsertDate)
+select p.[FactoryID],p.[SP], p.[SeqNo], p.[PackingListID], p.[CtnNo], p.[BIFactoryID], getdate()
+from P_CartonStatusTrackingList p
+where not exists (select 1 from #tmp t where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
+and p.Buyerdelivery  >= @StartDate
 
  delete p
  from P_CartonStatusTrackingList p
