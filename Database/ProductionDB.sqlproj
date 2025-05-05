@@ -2930,7 +2930,7 @@
     <Build Include="dbo\Functions\GetFirPhysicalGrade.sql" />
     <Build Include="dbo\Views\View_Order_Location_Top1Location.sql" />
     <Build Include="dbo\Views\View_SewingOutput_FarmInOutDate.sql" />
-    <Build Include="dbo\Stored Procedures\Juki_T_SewMachine.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_SewMachine.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />

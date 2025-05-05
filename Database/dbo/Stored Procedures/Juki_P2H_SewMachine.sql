@@ -5,7 +5,7 @@
 再來更新Machine 如果更新失敗,則刪除剛剛新增的PMSHistory資料
 */
 -- =============================================
-CREATE PROCEDURE  [dbo].[Juki_T_SewMachine]
+CREATE PROCEDURE  [dbo].[Juki_P2H_SewMachine]
 	 
 AS
 BEGIN
@@ -56,7 +56,7 @@ BEGIN TRY
 			where t1.MachineID = t.MachineID
 		)
 
-		-- Flag = 1.新增 2.修改 3.删除
+		-- Flag = 1.新增 2.修改 3.?除
 		-- 計算 Flag 並插入異動記錄
 		   SELECT 
                 t.FactoryID, t.SewingCell, t.MachineGroup, t.MachineID,
