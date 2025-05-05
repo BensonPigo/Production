@@ -222,6 +222,7 @@ from (
 		, [TotalGSDNO] = sum(ld.GSD) OVER (PARTITION BY ld.No)
 		, [Motion] = Motion.val
         , [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0)
+        , ld.MachineID
     from LineMapping_Detail ld WITH (NOLOCK) 
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
@@ -617,6 +618,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
 
@@ -1353,6 +1355,31 @@ and Name = @PPA
                     }
                 }
             };
+
+            setMachineID.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlGetMachine = $@"
+select MachineID =  m.id
+from Machine.dbo.Machine m with (nolock)
+inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLocationID and ml.MDivisionID = m.LocationM
+where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
+";
+
+                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "10", null, null, null, null);
+
+                    DialogResult dialogResult = popupMachineID.ShowDialog(this);
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["MachineID"] = popupMachineID.GetSelecteds()[0]["MachineID"].ToString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
             notice.MaxLength = 600;
@@ -1366,7 +1393,7 @@ and Name = @PPA
             .CheckBox("MachineCount", header: "Machine\r\nCount", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
             .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
-            .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true,settings: operationID)
+            .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operationID)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Numeric("Cycle", header: "Cycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 4, decimal_places: 2, minimum: 0, settings: cycle)
@@ -1377,6 +1404,7 @@ and Name = @PPA
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(14), settings: notice)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
+            .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: setMachineID)
             ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -1386,29 +1414,29 @@ and Name = @PPA
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
              {
-                if (e.RowIndex < 0)
-                {
-                    return;
-                }
+                 if (e.RowIndex < 0)
+                 {
+                     return;
+                 }
 
-                DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
-                #region 變色規則，若該 Row 已經變色則跳過
-                if (dr["New"].ToString().ToUpper() == "TRUE")
-                {
-                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
-                    {
-                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
-                    }
-                }
-                else
-                {
-                    if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
-                    {
-                        this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
-                    }
-                }
-                #endregion
-            };
+                 DataRow dr = ((DataRowView)this.detailgrid.Rows[e.RowIndex].DataBoundItem).Row;
+                 #region 變色規則，若該 Row 已經變色則跳過
+                 if (dr["New"].ToString().ToUpper() == "TRUE")
+                 {
+                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != Color.FromArgb(255, 186, 117))
+                     {
+                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.FromArgb(255, 186, 117);
+                     }
+                 }
+                 else
+                 {
+                     if (this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor != backDefaultColor)
+                     {
+                         this.detailgrid.Rows[e.RowIndex].DefaultCellStyle.BackColor = backDefaultColor;
+                     }
+                 }
+                 #endregion
+             };
 
             // [No.] 特殊排序規則 [Hide]有打勾-> [No.][PPA][Hide]皆空白-> [No.]為P開頭-> [No.]為一般數字
             int rowIndex = 0;
@@ -1477,7 +1505,7 @@ and Name = @PPA
             .Numeric("TotalCycle", header: "Act.\r\nCycle\r\nTime", width: Widths.AnsiChars(3), integer_places: 5, decimal_places: 2, iseditingreadonly: true/*, settings: ac*/).Get(out act)
             .Numeric("TotalGSD", header: "Ttl\r\nGSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
             .Text("ReasonName", header: "LBR not\r\nhit target\r\nreason.", width: Widths.AnsiChars(10), iseditable: true, iseditingreadonly: true, settings: reasonName)
-            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true,decimal_places: 0)
+            .Numeric("EstOutputHr", header: "Est. Output/Hr", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 0)
             .Text("EmployeeID", header: "Operator ID No.", width: Widths.AnsiChars(10), settings: colOperator_ID)
             .Text("EmployeeName", header: "Operator Name", width: Widths.AnsiChars(20), settings: operatorName)
             .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -1668,6 +1696,13 @@ and e.Junk = 0 and eas.P03 = 1 "
             base.ClickNewAfter();
             this.CurrentMaintain["Status"] = "New";
             this.txtStyleComboType.BackColor = Color.White;
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            this.checkJukiIoTDataExchange.ReadOnly = !MyUtility.Check.Empty(this.CurrentMaintain["JukiStyleDataSubmitDate"]);
         }
 
         /// <summary>
