@@ -1942,6 +1942,7 @@ WHERE Ukey={item["Ukey"]}
             this.CurrentDetailData["No"] = string.Empty;
             this.AssignNoGSDCycleTime(this.CurrentDetailData["GroupKey"].ToString());
             this.ComputeTaktTime();
+            this.CalculateSewerDiffPercentage();
         }
 
         /// <summary>
