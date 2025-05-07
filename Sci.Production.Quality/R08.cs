@@ -150,6 +150,7 @@ select
 	   ,[Total Defect Points]
        ,[Point Rate Per Roll]
        ,[Grade]
+       ,[Sort Out] = IIf ([Point Rate Per Roll] >= (select QASortOutStandard from System) , 'Y', 'N')
        ,[ActualInspectionTimeStart]
 	   ,[inspectionTimeStart] 
        ,[ActualInspectionTimeFinish]
