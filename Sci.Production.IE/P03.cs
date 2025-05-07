@@ -2511,6 +2511,7 @@ order by case when ld.No = '' then 1
                 this.CurrentMaintain["TimeStudyVersion"] = callNextForm.P03CopyLineMapping["TimeStudyVersion"].ToString();
                 this.CalculateValue(0);
                 this.ComputeTaktTime();
+                this.CalculateSewerDiffPercentage();
             }
 
             this.Distable();
@@ -2838,6 +2839,7 @@ where i.location = '' and i.[IETMSUkey] = '{0}' and i.ArtworkTypeID = 'Packing' 
             this.CurrentMaintain["TimeStudyVersion"] = timeStudy["version"];
             this.CalculateValue(0);
             this.ComputeTaktTime();
+            this.CalculateSewerDiffPercentage();
             this.Distable();
         }
 

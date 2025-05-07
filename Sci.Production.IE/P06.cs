@@ -1,9 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Ict.Win.Tools;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Smo.Agent;
-using Microsoft.SqlServer.Management.Smo.Mail;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
@@ -12,20 +8,13 @@ using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mail;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Web;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using static Ict.Win.UI.DataGridView;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
@@ -256,6 +245,8 @@ AND ALMCS.Junk = 0
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
+
+            // 備住 欄位: DivSewer, OriSewer 是實體欄位 不可 Null,會由底層控制更新, 取值時理應不該這樣寫, 給 null 後續肯定有地方處理才能存檔, 沒空去挖只是看到打一下註解, 若有 issue 改了把這行註解刪掉
             this.DetailSelectCommand = $@" 
              
             SELECT * 
@@ -315,6 +306,7 @@ AND ALMCS.Junk = 0
                     [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
                     [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
                     ad.MachineID
+                    ,ad.TimeStudySeq
                     --INTO #TMP
                     FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                     LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
@@ -701,7 +693,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
                 {
                     if (noCount + MyUtility.Convert.GetInt(lml_Cnt) < this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
-                     {
+                    {
                         MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
                         return false;
                     }
@@ -1307,7 +1299,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -1489,7 +1481,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -1637,7 +1629,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Numeric("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID).Get(out this.col_color)
-               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name).Get(out this.col_color1)
+               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10), settings: colOperator_Name).Get(out this.col_color1)
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("SumEffi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
@@ -2725,7 +2717,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
         }
 
         /// <inheritdoc/>
-        public decimal GetEffi_3Year(string factoryID = "", string employeeID = "", string machineType = "", string motion = "", string location = "" , string part = "", string attachment = "")
+        public decimal GetEffi_3Year(string factoryID = "", string employeeID = "", string machineType = "", string motion = "", string location = "", string part = "", string attachment = "")
         {
             string sqlcmd = $@"			                                
 			SELECT

@@ -835,7 +835,9 @@ insert into AutomatedLineMapping_DetailAuto(ID
                                             ,OriSewer
                                             ,TimeStudyDetailUkey
                                             ,ThreadComboID
-                                            ,IsNonSewingLine)
+                                            ,IsNonSewingLine
+                                            ,TimeStudySeq
+                                            )
 select  [ID] = '{this.CurrentMaintain["ID"]}'
         ,No
         ,SewerManpower
@@ -856,6 +858,7 @@ select  [ID] = '{this.CurrentMaintain["ID"]}'
         ,TimeStudyDetailUkey
         ,isnull(ThreadComboID, '')
         ,IsNonSewingLine
+        ,TimeStudySeq
 from #tmp
 ";
                 result = MyUtility.Tool.ProcessWithDatatable(this.dtAutomatedLineMapping_DetailAuto, string.Empty, insertAutomatedLineMapping_DetailAuto, out dtEmpty);
@@ -890,6 +893,7 @@ insert into AutomatedLineMapping_DetailTemp(ID
                                             ,ThreadComboID
                                             ,Notice
                                             ,IsNonSewingLine
+                                            ,TimeStudySeq
                                             )
 select  '{this.CurrentMaintain["ID"]}'
         ,No
@@ -913,6 +917,7 @@ select  '{this.CurrentMaintain["ID"]}'
         ,isnull(ThreadComboID, '')
         ,isnull(Notice, '')
         ,IsNonSewingLine
+        ,TimeStudySeq
 from #tmp
 ";
 
@@ -1348,6 +1353,7 @@ from #tmp
                 ,Notice
                 ,IsNonSewingLine
                 ,GroupNo
+                ,TimestudySeq
             )
             SELECT
             @ID
@@ -1372,6 +1378,7 @@ from #tmp
             ,''
             ,almd.IsNonSewingLine
             ,[GroupNo] = 1
+            ,TimestudySeq
             FROM AutomatedLineMapping_Detail almd
             WHERE almd.ID = '{this.CurrentMaintain["ID"]}'
 
