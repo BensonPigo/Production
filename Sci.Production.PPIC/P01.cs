@@ -1988,7 +1988,7 @@ FROM (
             {
                 if (this.CurrentMaintain["PFETA"].ToString() != string.Empty)
                 {
-                    MyUtility.Msg.InfoBox("Trim Card can only downloaded after " + Convert.ToDateTime(this.CurrentMaintain["PFETA"]).AddDays(-7).ToString());
+                    MyUtility.Msg.InfoBox("Trim Card can only downloaded after " + Convert.ToDateTime(this.CurrentMaintain["PFETA"]).AddDays(-14).ToString("yyyy-MM-dd"));
                 }
                 else
                 {
