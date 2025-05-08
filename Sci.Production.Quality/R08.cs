@@ -81,147 +81,154 @@ namespace Sci.Production.Quality
             #region 主Sql
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"
-SELECT [Inspected Date] = InspDate
-       ,[Inspector] = Inspector
-       ,BrandID
-       ,[FtyGroup] = Factory
-       ,StyleID
-       ,[SP#] = POID
-       ,[SEQ#] = SEQ
-       ,StockType
-       ,[WK#] = Wkno
-	   ,[Supplier] = SuppID
-	   ,[Supplier Name] = SuppName
-	   ,ATA
-       ,[Roll#] = Roll
-       ,[Dyelot#] = Dyelot
-	   ,[Ref#] = RefNo
-	   ,Color
-       ,[Arrived YDS] = ArrivedYDS
-       ,[Actual YDS] = ActualYDS
-       ,LthOfDiff
-	   ,TransactionID
-	   ,[Shortage YDS] = QCIssueQty
-	   ,[QCIssueTransactionID] = QCIssueTransactionID
-       ,[Full Width] = CutWidth
-       ,[Actual Width] = ActualWidth
-       ,Speed
-	   ,[Total Defect Points] = TotalDefectPoints
-	   ,[Point Rate Per Roll] = PointRatePerRoll
-       ,Grade
-       ,[ActualInspectionTimeStart] = ActInspTimeStart
-	   ,[inspectionTimeStart] = CalculatedInspTimeStartFirstTime
-	   ,[inspectionTimeFinish] = InspTimeFinishFirstTime
-       ,Remark
-       ,MCHandle
-       ,[WeaveTypeID] = WeaveType
-	   ,InspectorName
-       ,QCMachineStopTime
-	   ,QCMachineRunTime
-       ,[ActualInspectionTimeFinish] = ActInspTimeFinish
+Declare @InspMachine_FabPrepareTime_Woven int
+Declare @InspMachine_FabPrepareTime_Other int
+Declare @InspMachine_DefectPointTime int
+
+select  @InspMachine_FabPrepareTime_Woven = InspMachine_FabPrepareTime_Woven,
+        @InspMachine_FabPrepareTime_Other = InspMachine_FabPrepareTime_Other,
+        @InspMachine_DefectPointTime = InspMachine_DefectPointTime
+from    [ExtendServer].ManufacturingExecution.dbo.system
+
+SELECT  InspectionStatus
+        ,InspDate
+        ,Inspector
+        ,InspectorName
+        ,BrandID
+        ,Factory
+        ,StyleID
+        ,POID
+        ,SEQ
+        ,StockType
+        ,Wkno
+        ,SuppID
+        ,SuppName
+        ,ATA
+        ,Roll
+        ,Dyelot
+        ,RefNo
+        ,Color
+        ,ArrivedYDS
+        ,ActualYDS
+        ,LthOfDiff
+        ,TransactionID
+        ,QCIssueQty
+        ,QCIssueTransactionID
+        ,CutWidth
+        ,ActualWidth
+        ,Speed
+        ,TotalDefectPoints
+		,PointRatePerRoll
+        ,Grade
+        ,InspectionStartTime
+        ,InspectionFinishTime 
+        ,MachineDownTime
+        ,MachineRunTime
+        ,Remark
+        ,MCHandle
+        ,WeaveType
+	    ,ReceivingID 
+        ,MachineIoTUkey
 into #tmp
-FROM dbo.GetQA_R08_Detail(@InspectionDateFrom, @InspectionDateTo, @Inspectors, @POIDFrom, @POIDTo, @RefNoFrom, @RefNoTo, @BrandIDs, null, null)
+FROM dbo.GetQA_R08_Detail(@InspectionDateFrom, @InspectionDateTo, @Inspectors, @POIDFrom, @POIDTo, @RefNoFrom, @RefNoTo, @BrandIDs, null, null, @InspMachine_FabPrepareTime_Woven, @InspMachine_FabPrepareTime_Other, @InspMachine_DefectPointTime)
 ");
             if (this.radioDetail.Checked)
             {
                 sqlCmd.Append($@"
-select 
-        [Inspected Date] ,[Inspector] ,[InspectorName] ,brandID
-       ,FtyGroup ,StyleID ,[SP#] 
-       ,[SEQ#] 
-       ,[StockType]
-       ,[WK#] 
-	   ,[Supplier]
-	   ,[Supplier Name]
-	   ,[ATA]
-       ,[Roll#]
-       ,[Dyelot#] 
-	   ,[Ref#]
-	   ,[Color]
-       ,[Arrived YDS] 
-       ,[Actual YDS] 
-       ,[LthOfDiff] 
-	   ,[TransactionID] 
-	   ,[Shortage YDS] 
-	   ,[QCIssueTransactionID] 
-       ,[Full Width] 
-       ,[Actual Width] 
-       ,[Speed] 
-	   ,[Total Defect Points]
-       ,[Point Rate Per Roll]
-       ,[Grade]
-       ,[ActualInspectionTimeStart]
-	   ,[inspectionTimeStart] 
-       ,[ActualInspectionTimeFinish]
-	   ,[inspectionTimeFinish]
-       ,[QCMachineStopTime]
-	   ,[QCMachineRunTime]
-       ,[Remark]
-       ,[MCHandle]
-       ,WeaveTypeID
-from #tmp ORDER BY [Inspected Date],[Inspector],[SP#],[SEQ#],[Roll#],[Dyelot#]");
+select  t.InspectionStatus
+        ,t.InspDate
+        ,t.Inspector
+        ,t.InspectorName
+        ,t.BrandID
+        ,t.Factory
+        ,t.StyleID
+        ,t.POID
+        ,t.SEQ
+        ,t.StockType
+        ,t.Wkno
+        ,t.SuppID
+        ,t.SuppName
+        ,t.ATA
+        ,t.Roll
+        ,t.Dyelot
+        ,t.RefNo
+        ,t.Color
+        ,t.ArrivedYDS
+        ,t.ActualYDS
+        ,t.LthOfDiff
+        ,t.TransactionID
+        ,t.QCIssueQty
+        ,t.QCIssueTransactionID
+        ,t.CutWidth
+        ,t.ActualWidth
+        ,t.Speed
+        ,t.TotalDefectPoints
+		,t.PointRatePerRoll
+        ,t.Grade
+        ,t.InspectionStartTime
+        ,t.InspectionFinishTime 
+        ,t.MachineDownTime
+        ,t.MachineRunTime
+        ,t.Remark
+        ,t.MCHandle
+        ,t.WeaveType
+        ,m.MachineID
+from #tmp t
+left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT m on t.MachineIoTUkey = m.Ukey
+ORDER BY t.InspDate, t.Inspector, t.POID, t.SEQ, t.Roll, t.Dyelot");
             }
             else
             {
                 sqlCmd.Append($@"
-select * from (
+select * into #tmpGroupActualYDS from (
 	select inspector
-	,[QCName] = (select name from pass1 where id=inspector)
-	,[inspected date]
-	,[Roll] = count([Roll#])
-	,[Actual YDS] = ROUND(sum([Actual YDS]),1)
+	,[QCName] = InspectorName
+	,[inspected date] = InspDate
+	,[Roll] = count([Roll])
+	,[Actual YDS] = ROUND(sum(ActualYDS), 1)
 	from #tmp
 	where InspectorName is not null
-	group by inspector,[inspected date]
+	group by inspector, InspectorName, InspDate
 
 	union all
 
 	select inspector
-	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = inspector)
-	,[inspected date]
-	,[Roll] = count([Roll#])
-	,[Actual YDS] = ROUND(sum([Actual YDS]),1)
+	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = Inspector)
+	,[inspected date] = InspDate
+	,[Roll] = count([Roll])
+	,[Actual YDS] = ROUND(sum(ActualYDS), 1)
 	from #tmp
 	where InspectorName is null
-	group by inspector,[inspected date]
+	group by inspector, InspDate
 ) a
+
+select * from #tmpGroupActualYDS
 order by inspector,[inspected date]
 
 -- 取得所有QC人員
-select * from (
-	select distinct Inspector
-	,[QCName] = (select name from pass1 where id=inspector) 
-	from #tmp 
-	where InspectorName is not null
-
-	union all
-
-	select distinct Inspector
-	,[QCName] = (select Name from [ExtendServer].ManufacturingExecution.dbo.Pass1 where id = inspector) 
-	from #tmp 
-	where InspectorName is null
-) a
+select  distinct Inspector, QCName 
+from #tmpGroupActualYDS
 order by Inspector
 
 -- 依日期 加總Roll and Yard
-select [inspected date],count([Roll#])Roll,sum([Actual YDS])[Actual YDS]  
+select [inspected date] = InspDate, [Roll] = count(Roll), [Actual YDS] = sum(ActualYDS) 
 from #tmp
-group by [inspected date]
-order by [inspected date]
+group by InspDate
+order by InspDate
 
 -- 取得Woven Yard
-select [inspected date],sum([Actual YDS])[Actual YDS] , WeaveTypeID='Woven'
+select [inspected date] = InspDate, [Actual YDS] = sum(ActualYDS) , WeaveTypeID = 'Woven'
 from #tmp
-where WeaveTypeID='Woven'
-group by [inspected date]
-order by [inspected date]
+where WeaveType = 'Woven'
+group by InspDate
+order by InspDate
 
 -- 取得Knit Yard
-select [inspected date],sum([Actual YDS])[Actual YDS]  , WeaveTypeID='Knit'
+select [inspected date] = InspDate, [Actual YDS] = sum(ActualYDS) , WeaveTypeID = 'Knit'
 from #tmp
-where WeaveTypeID='knit'
-group by [inspected date]
-order by [inspected date]
+where WeaveType = 'knit'
+group by InspDate
+order by InspDate
  
 ");
             }

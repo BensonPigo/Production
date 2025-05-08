@@ -96,6 +96,37 @@ namespace Sci.Production.Warehouse
         }
 
         /// <inheritdoc/>
+        protected override DualResult ClickDeletePre()
+        {
+            string sqlGetFIR_Physical = $@"
+                            SELECT  fp.DetailUkey
+                            FROM TransferIn_Detail r with (nolock)
+                            INNER JOIN PO_Supp_Detail p with (nolock) ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2
+                            INNER JOIN FIR f with (nolock) on f.ReceivingID = r.ID AND f.POID = r.PoId AND f.SEQ1 = r.Seq1 AND f.SEQ2 = r.Seq2
+                            inner join FIR_Physical fp with (nolock) on fp.ID = f.ID and fp.Roll = r.Roll AND fp.Dyelot = r.Dyelot
+                            WHERE r.ID = '{this.CurrentMaintain["ID"]}' AND p.FabricType='F'";
+
+            DataTable dtFIR_Physical;
+            DualResult result = DBProxy.Current.Select("Production", sqlGetFIR_Physical, out dtFIR_Physical);
+
+            if (!result)
+            {
+                return result;
+            }
+
+            foreach (DataRow drFIR_Physical in dtFIR_Physical.Rows)
+            {
+                result = DBProxy.Current.Execute("Production", $"exec dbo.MovePhysicalInspectionToHistory '{drFIR_Physical["DetailUkey"]}', 0, null");
+                if (!result)
+                {
+                    return result;
+                }
+            }
+
+            return base.ClickDeletePre();
+        }
+
+        /// <inheritdoc/>
         protected override bool ClickEditBefore()
         {
             if (this.CurrentMaintain["Status"].EqualString("CONFIRMED"))
@@ -141,6 +172,83 @@ namespace Sci.Production.Warehouse
         private void MySubreportEventHandler(object sender, SubreportProcessingEventArgs e)
         {
             e.DataSources.Add(new ReportDataSource("DataSet1", (DataTable)this.detailgridbs.DataSource));
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePre()
+        {
+            DualResult result = null;
+
+            try
+            {
+                foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
+                {
+                    if (dr.RowState == DataRowState.Deleted)
+                    {
+                        string roll = dr["Roll", DataRowVersion.Original].ToString();
+                        string dyelot = dr["Dyelot", DataRowVersion.Original].ToString();
+                        long transferIn_DetailUkey = MyUtility.Convert.GetLong(dr["Ukey", DataRowVersion.Original]);
+
+                        // Ukey = 0 表示沒有存進資料庫過，直接做下一筆
+                        if (MyUtility.Check.Empty(transferIn_DetailUkey))
+                        {
+                            continue;
+                        }
+
+                        // 判斷FabricType = F，才能刪除FIR_Shadebone
+                        string sqlCmd = $@"
+                                            SELECT  f.ID
+                                            FROM TransferIn_Detail r with (nolock)
+                                            INNER JOIN PO_Supp_Detail p with (nolock) ON r.PoId=p.ID AND r.Seq1=p.SEQ1 AND r.Seq2=p.SEQ2
+                                            INNER JOIN FIR f with (nolock) on f.ReceivingID = r.ID AND f.POID = r.PoId AND f.SEQ1 = r.Seq1 AND f.SEQ2 = r.Seq2 
+                                            WHERE r.Ukey = '{transferIn_DetailUkey}' and  p.FabricType='F'
+                                            ";
+
+                        string fIR_ID = MyUtility.GetValue.Lookup(sqlCmd, "Production");
+
+                        if (MyUtility.Check.Empty(fIR_ID))
+                        {
+                            continue;
+                        }
+
+                        result = DBProxy.Current.Execute(null, $"DELETE FROM FIR_Shadebone WHERE ID ={fIR_ID} AND Roll='{roll}' AND Dyelot='{dyelot}'");
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        // 刪除FIR_Physical並記錄FIR_Physical_His
+                        string sqlGetFIR_Physical = $@"
+                                            SELECT  DetailUkey
+                                            FROM FIR_Physical with (nolock)
+                                            WHERE ID = '{fIR_ID}' AND Roll='{roll}' AND Dyelot='{dyelot}'
+                                            ";
+                        DataTable dtFIR_Physical;
+                        result = DBProxy.Current.Select("Production", sqlGetFIR_Physical, out dtFIR_Physical);
+
+                        if (!result)
+                        {
+                            return result;
+                        }
+
+                        foreach (DataRow drFIR_Physical in dtFIR_Physical.Rows)
+                        {
+                            result = DBProxy.Current.Execute("Production", $"exec dbo.MovePhysicalInspectionToHistory '{drFIR_Physical["DetailUkey"]}', 0, null");
+                            if (!result)
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new DualResult(false, ex);
+            }
+
+            return base.ClickSavePre();
         }
 
         /// <inheritdoc/>
