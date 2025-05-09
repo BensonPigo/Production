@@ -242,7 +242,6 @@ WHERE o.ID= @ID
 
                     if (string.IsNullOrWhiteSpace(dr["Picture2"].ToString()) == false && !picturePath.IsNullOrWhiteSpace())
                     {
-                        picturePath = picturePath + "\\STYLEPICTURES";
                         var imgpath = System.IO.Path.Combine(picturePath, dr["Picture2"].ToString());
                         if (System.IO.File.Exists(imgpath))
                         {
