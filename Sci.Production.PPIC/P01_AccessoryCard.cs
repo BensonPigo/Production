@@ -181,8 +181,8 @@ WHERE o.ID= @ID
                     new List<SqlParameter> { new SqlParameter("@ID", this.poID) },
                     out dr,
                     null);
-                var picturePath = DBProxy.Current.LookupEx<string>("SELECT iif (isnull(TrimCardPath,'') = '' , '', TrimCardPath + '\\STYLEPICTURES') FROM dbo.System").ExtendedData;
-                var fabricPath = DBProxy.Current.LookupEx<string>("SELECT iif (isnull(TrimCardPath,'') = '' , '', TrimCardPath + '\\FABRIC') FROM dbo.System").ExtendedData;
+                var picturePath = DBProxy.Current.LookupEx<string>("SELECT StyleSketch FROM dbo.System").ExtendedData;
+                var fabricPath = DBProxy.Current.LookupEx<string>("SELECT FabricPath  FROM dbo.System").ExtendedData;
                 if (!res)
                 {
                     this.ShowErr("Get data fail.");
