@@ -19,7 +19,11 @@
 	[Description] [nvarchar](60) NOT NULL,
 	[OnTime] [varchar](1) NOT NULL,
 	[Remark] [nvarchar](60) NOT NULL,
- [DetailRemark] NVARCHAR(60) NOT NULL DEFAULT (''), 
+    [DetailRemark] NVARCHAR(60) NOT NULL DEFAULT (''), 
+    [StyleName] NVARCHAR(50)      CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_StyleName]  NOT NULL DEFAULT (''), 
+    [MaterialType] NVARCHAR(30)   CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_MaterialType]  NOT NULL DEFAULT (''), 
+    [SewingQty] INT               CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_SewingQty]  NOT NULL DEFAULT ((0)), 
+    [FactotyID] VARCHAR(10) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking] PRIMARY KEY CLUSTERED 
 (
 	[ReplacementID] ASC,
@@ -89,3 +93,39 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'P_FabricStatus_And_IssueFabricTracking',
     @level2type = N'COLUMN',
     @level2name = N'DetailRemark'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'款式名稱',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
+    @level2type = N'COLUMN',
+    @level2name = N'StyleName'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'物料類別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
+    @level2type = N'COLUMN',
+    @level2name = N'MaterialType'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Sewing Output Qty',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
+    @level2type = N'COLUMN',
+    @level2name = N'SewingQty'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'工廠別',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
+    @level2type = N'COLUMN',
+    @level2name = N'FactotyID'
