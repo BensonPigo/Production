@@ -375,6 +375,7 @@ select
     ,[KPI LETA] = O.KPILETA
     ,[ACT ETA] = Export.Eta
     ,[Packages(B/L No.)] = isnull(e.Packages,0)
+    ,fl.ReceiveSampleDate
 into #tmpFinal
 from dbo.FIR F WITH (NOLOCK) 
 cross apply(
@@ -548,6 +549,7 @@ outer apply(select count(1) Cnt from FIR_Physical fp where fp.id = f.id) ActTota
 outer apply(select  CrockingInspector = (select name from Pass1 where id = CrockingInspector)
 	,HeatInspector = (select name from Pass1 where id = HeatInspector)
 	,WashInspector = (select name from Pass1 where id = WashInspector)
+    ,ReceiveSampleDate
 	from FIR_Laboratory where Id=f.ID
 )FL
 outer apply
@@ -682,6 +684,7 @@ select
     ,tf.[ACT ETA]
     ,tf.[Packages(B/L No.)]
 	,tf.WhseArrival
+    ,tf.ReceiveSampleDate
 	,tf.StockQty1
     ,tf.InvStock
     ,tf.BulkStock
@@ -760,7 +763,7 @@ select
     ,tf.CFDate
     ,tf.LocalMR
     ,[MCHandle] = tf.MCHandle_id + '-' + tf.MCHandle_name + '#' + tf.MCHandle_extno
-    ,tf.[OrderType]
+    ,tf.[OrderType]    
 from #tmpFinal tf
 ORDER BY POID,SEQ
 
