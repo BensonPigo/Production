@@ -70,11 +70,8 @@ namespace Sci.Production.Cutting
             this.txtSeq2.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtRefNo.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtColor.ReadOnly = !this.editByUseCutRefToRequestFabric;
-            this.txtTone.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.numConsPC.ReadOnly = !this.editByUseCutRefToRequestFabric;
-            this.txtMarkerName.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtMarkerNo.ReadOnly = !this.editByUseCutRefToRequestFabric;
-            this.txtMarkerLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtActCuttingPerimeter.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtStraightLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtCurvedLength.ReadOnly = !this.editByUseCutRefToRequestFabric;

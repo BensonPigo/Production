@@ -221,37 +221,46 @@ INNER JOIN WorkOrderForPlanning_SizeRatio wsr WITH(NOLOCK) ON t.WorkOrderForPlan
             }
 
             // 4. WorkOrderForOutput_Distribute
-            if (this.editByUseCutRefToRequestFabric)
-            {
-                sqlcmd = @"
+            //if (this.editByUseCutRefToRequestFabric)  
+            //{ ISP20250495 Import From P02 一律照抄P02，不論Cutting.UseCutRefToRequestFabric的值是多少，所以去掉 editByUseCutRefToRequestFabric 判斷
+            sqlcmd = @"
 SELECT
-    WorkOrderForOutputUkey = 0,
-    wdp.ID,
-    wdp.OrderID,
-    wdp.Article,
-    wdp.SizeCode,
-    wdp.Qty,
-    t.tmpKey
+WorkOrderForOutputUkey = 0,
+wdp.ID,
+wdp.OrderID,
+wdp.Article,
+wdp.SizeCode,
+wdp.Qty,
+t.tmpKey
+,Sewinline = (
+    SELECT MIN(ss.Inline)
+    FROM SewingSchedule_Detail ssd WITH (NOLOCK)
+    LEFT JOIN SewingSchedule ss WITH (NOLOCK) ON ssd.ID = ss.ID
+    WHERE ssd.OrderID = wdp.OrderID
+    AND ssd.Article = wdp.Article
+    AND ssd.SizeCode = wdp.SizeCode
+)
 FROM #tmp t
-INNER JOIN WorkOrderForPlanning_Distribute wdp WITH(NOLOCK) ON t.WorkOrderForPlanningUkey = wdp.WorkOrderForPlanningUkey";
-                DataTable dtDistribute = new DataTable();
-                result = MyUtility.Tool.ProcessWithDatatable(import_WorkOrderForOutput, "tmpKey,ID,WorkOrderForPlanningUkey", sqlcmd, out dtDistribute);
-                if (!result)
-                {
-                    MyUtility.Msg.ErrorBox("Get data failure!!!\n" + result.ToString());
-                    return;
-                }
-
-                if (dtDistribute != null && dtDistribute.Rows.Count > 0)
-                {
-                    dtDistribute.AsEnumerable().ToList().ForEach(data =>
-                    {
-                        var row = this.workOrderForOutput_Distribute.NewRow();
-                        row.ItemArray = data.ItemArray;
-                        this.workOrderForOutput_Distribute.Rows.Add(row);
-                    });
-                }
+INNER JOIN WorkOrderForPlanning_Distribute wdp WITH(NOLOCK)
+ON t.WorkOrderForPlanningUkey = wdp.WorkOrderForPlanningUkey";
+            DataTable dtDistribute = new DataTable();
+            result = MyUtility.Tool.ProcessWithDatatable(import_WorkOrderForOutput, "tmpKey,ID,WorkOrderForPlanningUkey", sqlcmd, out dtDistribute);
+            if (!result)
+            {
+                MyUtility.Msg.ErrorBox("Get data failure!!!\n" + result.ToString());
+                return;
             }
+
+            if (dtDistribute != null && dtDistribute.Rows.Count > 0)
+            {
+                dtDistribute.AsEnumerable().ToList().ForEach(data =>
+                {
+                    var row = this.workOrderForOutput_Distribute.NewRow();
+                    row.ItemArray = data.ItemArray;
+                    this.workOrderForOutput_Distribute.Rows.Add(row);
+                });
+            }
+            //}
             #endregion
 
             this.DialogResult = DialogResult.OK;

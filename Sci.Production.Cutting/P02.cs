@@ -1622,8 +1622,8 @@ order by p.EditDate desc
         {
             this.CurrentDetailData["MarkerLength"] = this.txtMarkerLength.FullText;
             decimal totlaLayer = MyUtility.Convert.GetInt(this.numTotalLayer.Value) + MyUtility.Convert.GetDecimal(this.numBalanceLayer.Value);
-            this.numUnitCons.Value = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
-            this.numCons.Value = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numUnitCons.Value), totlaLayer, this.dt_SizeRatio, this.formType);
+            this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.numUnitCons.Value), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
 
         private void BtnExcludeSetting_Click(object sender, EventArgs e)

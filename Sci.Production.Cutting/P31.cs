@@ -122,7 +122,8 @@ namespace Sci.Production.Cutting
             string estCutDate = (e.Master == null) ? string.Empty : ((DateTime)e.Master["EstCutDate"]).ToString("yyyy/MM/dd");
             string cutCellID = (e.Master == null) ? string.Empty : e.Master["CutCellID"].ToString();
             this.DetailSelectCommand = $@"
-select distinct *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')";
+select distinct *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')
+ORDER BY Cutno ,SpreadingSchdlSeq";
             return base.OnDetailSelectCommandPrepare(e);
         }
 

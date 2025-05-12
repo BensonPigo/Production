@@ -132,7 +132,7 @@ WHERE MDivisionID = '{Sci.Env.User.Keyword}'
                 .Text("CutRef", header: "CutRef#", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true).Get(out this.col_CutRef)
                 .NumericNull("CutNo", "CutNo", Ict.Win.Widths.AnsiChars(5), this.CanEditData)
                 .Text("MarkerName", header: "Marker\r\nName", width: Ict.Win.Widths.AnsiChars(5))
-                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditData).Get(out this.col_MarkerLength)
+                .MarkerLength("MarkerLength_Mask", "Marker Length", "MarkerLength", Ict.Win.Widths.AnsiChars(10), this.CanEditNotWithUseCutRefToRequestFabric).Get(out this.col_MarkerLength)
                 .Text("PatternPanel_CONCAT", header: "Pattern\r\nPanel", width: Ict.Win.Widths.AnsiChars(3), iseditingreadonly: true)
                 .Text("FabricPanelCode_CONCAT", header: "Fabric\r\nPanel Code", width: Ict.Win.Widths.AnsiChars(6), iseditingreadonly: true)
                 .Text("Article_CONCAT", header: "Article", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
@@ -509,7 +509,7 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
             this.cmsSizeRatio.Enabled = canEdit;
             this.cmsDistribute.Enabled = canEdit;
             this.txtPatternNo.ReadOnly = !canEdit;
-            this.txtMarkerLength.ReadOnly = !canEdit;
+            this.txtMarkerLength.ReadOnly = !canEditNotWithUseCutRefToRequestFabric;
             this.gridSizeRatio.IsEditingReadOnly = !canEdit;
             this.gridDistributeToSP.IsEditingReadOnly = !canEdit;
 
@@ -626,12 +626,12 @@ SELECT CutRef, Layer, GroupID FROM WorkOrderForOutputDelete WITH (NOLOCK) WHERE 
                     foreach (DataRow drWorkOrder in canEditDetailDatas)
                     {
                         var p09_AutoDistToSP = new P09_AutoDistToSP(drWorkOrder, this.dt_SizeRatio, this.dt_Distribute, this.dt_PatternPanel, this.formType);
-                        DualResult result = p09_AutoDistToSP.DoAutoDistribute();
-                        if (!result)
-                        {
-                            this.ShowErr(result);
-                            return;
-                        }
+                        //DualResult result = p09_AutoDistToSP.DoAutoDistribute(); ISP20250495 不需要重新計算，直接帶入P02的 Distribute 即可
+                        //if (!result)
+                        //{
+                        //    this.ShowErr(result);
+                        //    return;
+                        //}
                     }
 
                     this.btnAutoCut.PerformClick();
@@ -1345,10 +1345,10 @@ DEALLOCATE CURSOR_
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.CurrentDetailData["MarkerLength"] = this.txtMarkerLength.FullText;
-            this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 將更新後的 MarkerLength ，按照格式回填表身 4 個_Mask 欄位 用來顯示用
 
-            decimal totlaLayer = MyUtility.Convert.GetInt(this.numTotalLayer.Value) + MyUtility.Convert.GetDecimal(this.numBalanceLayer.Value);
-            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), totlaLayer, this.dt_SizeRatio, this.formType);
+            this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+            this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
 
         private void GridEventSet()
@@ -1425,7 +1425,7 @@ DEALLOCATE CURSOR_
                 {
                     string oldValue = MyUtility.Convert.GetString(dr["MarkerLength", DataRowVersion.Original]);
 
-                    if (!this.CanEditData(dr))
+                    if (!this.CanEditNotWithUseCutRefToRequestFabric(dr))
                     {
                         dr["MarkerLength"] = oldValue;
                         return;
@@ -1490,7 +1490,7 @@ DEALLOCATE CURSOR_
                         return true;
                     }
 
-                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID"))
+                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("Tone") || columNname.EqualString("MarkerName") || columNname.EqualString("MarkerLength"))
                     {
                         return this.CanEditNotWithUseCutRefToRequestFabric(dr);
                     }
