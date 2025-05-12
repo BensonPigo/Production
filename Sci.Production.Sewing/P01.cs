@@ -1348,6 +1348,7 @@ order by a.OrderId,os.Seq",
         protected override void ClickNewAfter()
         {
             base.ClickNewAfter();
+            this.txtsewinglineLine.Enabled = true;
             this.CurrentMaintain["Category"] = "O";
             this.CurrentMaintain["FactoryID"] = Env.User.Factory;
             this.CurrentMaintain["OutputDate"] = DateTime.Today.AddDays(-1);
@@ -1390,6 +1391,11 @@ order by a.OrderId,os.Seq",
                 this.numWHours.ReadOnly = true;
                 this.txtSubconOutFty.TextBox1.ReadOnly = true;
                 this.txtSubConOutContractNumber.ReadOnly = true;
+            }
+
+            if (this.detailgrid.Rows.Count > 0)
+            {
+                this.txtsewinglineLine.Enabled = false;
             }
 
             if (this.CheckSPEditable() == false)
@@ -4379,6 +4385,16 @@ select Production.dbo.GetSewingLineScheduleData_Efficiency(@outputDate,'{this.Cu
             }
 
             return true;
+        }
+
+        private void TxtsewinglineLine_ValueChange(object sender, EventArgs e)
+        {
+            if (this.EditMode && this.txtsewinglineLine.Text != this.txtsewinglineLine.OldValue)
+            {
+                this.CurrentMaintain["SewingLineID"] = this.txtsewinglineLine.Text;
+                this.CurrentMaintain.EndEdit();
+                this.FromDQS();
+            }
         }
     }
 }
