@@ -12,6 +12,8 @@ using Ict.Win;
 using Sci.Production.Class.Commons;
 using Microsoft.Office.Interop.Excel;
 using sxrc = Sci.Utility.Excel.SaveXltReportCls;
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
 
 using System.Runtime.InteropServices;
 using Sci.Production.PublicForm;
@@ -1952,10 +1954,47 @@ and exists (select 1 from Factory where id = @FactoryID and s.MDivisionID = MDiv
             }
         }
 
-        private void btn_ArtworkTestDox_Click(object sender, EventArgs e)
+        private void Btn_ArtworkTestDox_Click(object sender, EventArgs e)
         {
             P01_ArtworkTestDox frm = new P01_ArtworkTestDox(MyUtility.Convert.GetInt(this.CurrentMaintain["StyleUkey"]));
             frm.ShowDialog();
+        }
+
+        private void BtnAccessory_Click(object sender, EventArgs e)
+        {
+            string sql = $@"
+SELECT CONVERT(varchar, MIN(checkDate), 120) AS checkDate
+FROM (    
+    Select checkDate = Min(Order_PFHis.LETA)
+    FROM Order_PFHis 
+    Inner Join Orders o on o.ID = Order_PFHis.ID
+    WHERE o.POID in (Select Distinct POID From Orders Where ID = '{this.CurrentMaintain["ID"]}')
+  
+    UNION ALL   
+    SELECT checkDate = MIN(PFETA) 
+    FROM Orders 
+    WHERE POID in (Select Distinct POID From Orders Where ID = '{this.CurrentMaintain["ID"]}' )
+) AS Value
+";
+
+            string checkDate = DBProxy.Current.LookupEx<string>(sql).ExtendedData;
+
+            if (!checkDate.IsNullOrWhiteSpace() && Convert.ToDateTime(checkDate).AddDays(-14) < DateTime.Today)
+            {
+                P01_AccessoryCard frm = new P01_AccessoryCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["BrandID"].ToString(), this.CurrentMaintain["StyleID"].ToString(), this.CurrentMaintain["SeasonID"].ToString(), this.CurrentMaintain["FactoryID"].ToString());
+                frm.ShowDialog();
+            }
+            else
+            {
+                if (this.CurrentMaintain["PFETA"].ToString() != string.Empty || !checkDate.IsNullOrWhiteSpace())
+                {
+                    MyUtility.Msg.InfoBox("Trim Card can only downloaded after " + Convert.ToDateTime(!checkDate.IsNullOrWhiteSpace() ? checkDate : this.CurrentMaintain["PFETA"]).AddDays(-14).ToString("yyyy-MM-dd"));
+                }
+                else
+                {
+                    MyUtility.Msg.InfoBox("Trim Card can not downloaded without PF ETA.");
+                }
+            }
         }
     }
 }
