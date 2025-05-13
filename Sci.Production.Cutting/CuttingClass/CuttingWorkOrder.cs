@@ -2454,7 +2454,17 @@ ORDER BY SizeCode
 
             dr["TotalCutQty_CONCAT"] = ConcatTTLCutQty(dr);
             UpdateConcatString(currentDetailData, dtSizeRatio, form);
-            currentDetailData["ConsPC"] = CalculateConsPC(currentDetailData, MyUtility.Convert.GetDecimal(currentDetailData["Cons"]), MyUtility.Convert.GetDecimal(currentDetailData["Layer"]), dtSizeRatio, form);
+            if (!MyUtility.Check.Empty(currentDetailData["MarkerLength"]))
+            {
+                currentDetailData["ConsPC"] = CalculateConsPC(MyUtility.Convert.GetString(currentDetailData["MarkerLength"]), currentDetailData, dtSizeRatio, form);
+            }
+            else
+            {
+                currentDetailData["ConsPC"] = CalculateConsPC(currentDetailData, MyUtility.Convert.GetDecimal(currentDetailData["Cons"]), MyUtility.Convert.GetDecimal(currentDetailData["Layer"]), dtSizeRatio, form);
+            }
+
+            currentDetailData["Cons"] = CalculateCons(currentDetailData, MyUtility.Convert.GetDecimal(currentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(currentDetailData["Layer"]), dtSizeRatio, form);
+
             if (MyUtility.Convert.GetInt(currentMaintain["UseCutRefToRequestFabric"]) == 2)
             {
                 var p09_AutoDistToSP = new P09_AutoDistToSP(currentDetailData, dtSizeRatio, dtDistribute, dtPatternPanel, form);

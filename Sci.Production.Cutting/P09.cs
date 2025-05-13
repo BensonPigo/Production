@@ -1585,7 +1585,16 @@ DEALLOCATE CURSOR_
                     UpdateTotalDistributeQty(this.CurrentDetailData, this.dt_Distribute, this.formType);
                     if (grid.Name == "gridSizeRatio")
                     {
-                        this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
+                        if (!MyUtility.Check.Empty(this.CurrentDetailData["MarkerLength"]))
+                        {
+                            this.CurrentDetailData["ConsPC"] = CalculateConsPC(MyUtility.Convert.GetString(this.CurrentDetailData["MarkerLength"]), this.CurrentDetailData, this.dt_SizeRatio, this.formType);
+                        }
+                        else
+                        {
+                            this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["Cons"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
+                        }
+
+                        this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
                     }
                 }
             };

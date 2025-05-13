@@ -28,14 +28,15 @@ namespace Sci.Production.Cutting
 
             var x = detailDatas
                 .Where(w => MyUtility.Convert.GetString(w["Completed"]) == "N")
-                .OrderBy(o => MyUtility.Convert.GetDate(o["EstCutDate"]))
-                .ThenBy(o => MyUtility.Convert.GetString(o["OrderID"]))
-                .ThenBy(o => MyUtility.Convert.GetDate(o["BuyerDelivery"]))
-                .ThenBy(o => MyUtility.Convert.GetString(o["FabricCombo"]))
-                .ThenBy(o => MyUtility.Convert.GetDecimal(o["Cutno"]));
+                .OrderBy(o => MyUtility.Convert.GetString(o["OrderID"]))
+                .ThenBy(o => MyUtility.Convert.GetString(o["Cutno"]))
+                .ThenBy(o => MyUtility.Convert.GetString(o["SpreadingSchdlSeq"]));
 
             int i = detailDatas
                 .Where(w => MyUtility.Convert.GetString(w["Completed"]) == "Y")
+                .OrderBy(o => MyUtility.Convert.GetString(o["OrderID"]))
+                .ThenBy(o => MyUtility.Convert.GetString(o["Cutno"]))
+                .ThenBy(o => MyUtility.Convert.GetString(o["SpreadingSchdlSeq"]))
                 .Select(s => MyUtility.Convert.GetInt(s["SpreadingSchdlSeq"]))
                 .OrderByDescending(o => o)
                 .FirstOrDefault() + 1;

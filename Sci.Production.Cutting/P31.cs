@@ -121,9 +121,11 @@ namespace Sci.Production.Cutting
             string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
             string estCutDate = (e.Master == null) ? string.Empty : ((DateTime)e.Master["EstCutDate"]).ToString("yyyy/MM/dd");
             string cutCellID = (e.Master == null) ? string.Empty : e.Master["CutCellID"].ToString();
+
             this.DetailSelectCommand = $@"
 select distinct *, [MtlStatusValue] = '' from dbo.GetSpreadingSchedule('{factoryID}','{estCutDate}','{cutCellID}',{ukey},'')
-ORDER BY Cutno ,SpreadingSchdlSeq";
+ORDER BY SpreadingSchdlSeq";
+
             return base.OnDetailSelectCommandPrepare(e);
         }
 
@@ -233,7 +235,8 @@ ORDER BY Cutno ,SpreadingSchdlSeq";
                 }
 
                 string sqlcmd = $@"
-select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.FormattedValue}')";
+select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','','',0,'{e.FormattedValue}')
+ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
                 DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
                 if (!result)
                 {
@@ -527,7 +530,8 @@ FactoryID:{this.displayFactory.Text} CutCellid:{this.txtCell1.Text} EstCutDate:{
             }
 
             sqlcmd = $@"
-select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateEstCut.Text}','{this.txtCell1.Text}',0,'')";
+select * from dbo.GetSpreadingSchedule('{this.displayFactory.Text}','{this.dateEstCut.Text}','{this.txtCell1.Text}',0,'')
+ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
             DualResult result = DBProxy.Current.Select(null, sqlcmd, out DataTable dt);
             if (!result)
             {

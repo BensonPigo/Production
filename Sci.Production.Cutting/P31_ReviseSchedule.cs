@@ -169,7 +169,7 @@ FROM #tmp
 {sqlUpdateSpreadingSchedule}
 
 SELECT * FROM dbo.GetSpreadingSchedule('{factroyNew}','{estCutDateNew}','{cellNew}',{ukeyNew},'')
-ORDER BY Cutno ,SpreadingSchdlSeq
+ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq
 ";
                     if (!(result = MyUtility.Tool.ProcessWithDatatable(dt, "CutRef,IsAGVArrived,IsSuspend", sqlcmd, out DataTable dtNew)))
                     {
