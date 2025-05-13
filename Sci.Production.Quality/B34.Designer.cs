@@ -52,6 +52,10 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
+            // detail
+            // 
+            this.detail.Size = new System.Drawing.Size(894, 407);
+            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtEndTime);
@@ -70,6 +74,12 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
+            this.detailcont.Size = new System.Drawing.Size(894, 369);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Location = new System.Drawing.Point(0, 369);
+            this.detailbtm.Size = new System.Drawing.Size(894, 38);
             // 
             // browse
             // 
@@ -193,7 +203,7 @@
             this.txtStandard.ReadOnly = true;
             this.txtStandard.Size = new System.Drawing.Size(465, 23);
             this.txtStandard.TabIndex = 23;
-            this.txtStandard.Text = "1 day before the buyer delivery date; 3 day before the buyer delivery date";
+            this.txtStandard.Text = "1 day before the Inspected Date";
             // 
             // Description
             // 
