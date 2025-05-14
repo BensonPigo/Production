@@ -67,7 +67,7 @@ BEGIN
 	select	[CutRef#] = w.CutRef
 			, [Fabric Kind] = D.FabricKind
 			, [Marker Name] = w.Markername
-			, [Fabric Combo] = w.FabricCombo
+			, [Pattern Panel] = wp1.PatternPanel_CONCAT
 			, w.Cutno
 			, '+@cols+N'
 			, [SP#] = w.OrderID
@@ -135,14 +135,23 @@ BEGIN
 		AND DD.[type] = ''FabricKind'' 
 		AND DD.id = LIST.kind 
 	)D
+	OUTER APPLY (
+		SELECT PatternPanel_CONCAT = STUFF((
+			SELECT DISTINCT CONCAT(''+'', PatternPanel)
+			FROM WorkOrderForOutPut_PatternPanel  WITH (NOLOCK) 
+			WHERE WorkOrderForOutPutUkey  = w.Ukey
+			FOR XML PATH ('''')), 1, 1, '''')
+	) wp1
+
 
 	where w.id = '''+@OrderID+N'''
-	order by w.FabricCombo,isnull(w.CutNo,9999),iif(t.ct>1,2,1), '+@cols2+N' ,w.Markername
+	order by wp1.PatternPanel_CONCAT,isnull(w.CutNo,9999),iif(t.ct>1,2,1), '+@cols2+N' ,w.Markername
 
 	select	distinct Info = concat(''<'', wOrder.FabricPanelCode, ''>#'', wOrder.Refno, '' '', F.Description)
 	from WorkOrderForOutput wOrder
 	left join Fabric F on wOrder.SCIRefno = F.SCIRefno
 	where wOrder.ID = '''+@OrderID+N'''
 	'
+
 	EXEC sp_executesql @sql
 END
