@@ -339,7 +339,7 @@ from Fabric with (nolock) where SCIRefno = '{this.maindr["SCIRefno"].ToString()}
                 dr["SEQ1"] = this.maindr["SEQ1"];
                 dr["SEQ2"] = this.maindr["SEQ2"];
                 dr["LthOfDiff"] = MyUtility.Convert.GetDecimal(dr["ActualYds"]) - MyUtility.Convert.GetDecimal(dr["TicketYds"]);
-                dr["SortOut"] = (decimal)dr["pointRate"] > qaSortOutStandard ? true : false;
+                dr["SortOut"] = (decimal)dr["pointRate"] >= qaSortOutStandard ? true : false;
 
                 // 新增Receiving_Detail & TransferIn_Detail來源
                 string sqlcmd = $@"
