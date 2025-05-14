@@ -16,6 +16,7 @@
     [SubmitDate]         DATE         NULL,
     [ResultChange]       VARCHAR (5)  NULL,
     [ResultStain]        VARCHAR (5)  NULL,
+    [Approver]           VARCHAR(10)  CONSTRAINT [DF_ColorFastness_Detail_Approver]  NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_ColorFastness_Detail] PRIMARY KEY CLUSTERED ([ID] ASC, [ColorFastnessGroup] ASC, [SEQ1] ASC, [SEQ2] ASC)
 );
 
@@ -83,3 +84,13 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'大小項', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'ColorFastness_Detail', @level2type = N'COLUMN', @level2name = N'SEQ1';
 
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'Approver',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'ColorFastness_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'Approver'
