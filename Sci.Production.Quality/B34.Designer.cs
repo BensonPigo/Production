@@ -203,7 +203,7 @@
             this.txtStandard.ReadOnly = true;
             this.txtStandard.Size = new System.Drawing.Size(465, 23);
             this.txtStandard.TabIndex = 23;
-            this.txtStandard.Text = "1 day before the Inspected Date";
+            this.txtStandard.Text = "The defect rate of physical Inspection>=15";
             // 
             // Description
             // 
