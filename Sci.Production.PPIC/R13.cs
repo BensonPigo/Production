@@ -316,7 +316,7 @@ Select distinct sp = o.ID,wd.SizeCode,wd.article,occ.PatternPanel,o.MDivisionID
 into #pOffline 
 from  #orders_tmp a--------從orderid出發
 inner join Orders o WITH (NOLOCK) on o.id = a.ID
-inner join WorkOrder_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on o.id = wd.OrderID
 inner join Order_ColorCombo occ WITH (NOLOCK) on o.poid = occ.id and occ.Article = wd.Article
 inner join order_Eachcons cons WITH (NOLOCK) on occ.id = cons.id and cons.FabricCombo = occ.PatternPanel and cons.CuttingPiece='0'
 where occ.FabricCode !='' and occ.FabricCode is not null 
@@ -325,9 +325,9 @@ where occ.FabricCode !='' and occ.FabricCode is not null
 select wd.Qty,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,sp = a.id,co.EditDate,a.WorkTime
 into #tmpc0
 from #orders_tmp a
-inner join WorkOrder_Distribute wd WITH (NOLOCK) on wd.orderid = a.ID 
-inner join workorder w WITH (NOLOCK) on w.Ukey = wd.WorkOrderUkey
-left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.orderid = a.ID 
+inner join workorderForOutput w WITH (NOLOCK) on w.Ukey = wd.WorkOrderForOutputUkey
+left join WorkOrderForOutput_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
 inner join CuttingOutput_Detail cod WITH (NOLOCK) on cod.CutRef = w.CutRef
 inner join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.MDivisionid = w.MDivisionId and co.Status <> 'New'
 

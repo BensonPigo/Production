@@ -45,7 +45,7 @@ namespace Sci.Production.Cutting
             {
                 foreach (DataRow dr in seldr)
                 {
-                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderUkey={0}", dr["WorkorderUkey"]));
+                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkOrderForOutputUkey={0}", dr["WorkOrderForOutputUkey"]));
                     if (exist.Length == 0)
                     {
                         DataRow ndr = this.currentdetailTable.NewRow();
@@ -65,7 +65,7 @@ namespace Sci.Production.Cutting
                         ndr["Colorid"] = dr["Colorid"];
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
-                        ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["WorkOrderForOutputUkey"] = dr["WorkOrderForOutputUkey"];
                         ndr["ConsPC"] = dr["ConsPC"];
                         ndr["SizeRatioQty"] = dr["SizeRatioQty"];
                         this.currentdetailTable.Rows.Add(ndr);
@@ -88,7 +88,7 @@ namespace Sci.Production.Cutting
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
-                        exist[0]["WorkorderUkey"] = dr["WorkorderUkey"];
+                        exist[0]["WorkOrderForOutputUkey"] = dr["WorkOrderForOutputUkey"];
                         exist[0]["ConsPC"] = dr["ConsPC"];
                         exist[0]["SizeRatioQty"] = dr["SizeRatioQty"];
                     }
@@ -177,7 +177,7 @@ namespace Sci.Production.Cutting
             string spno = this.txtSP.Text;
             string factory = this.txtfactory1.Text;
             StringBuilder woUkeyCondition = new StringBuilder();
-            string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : string.Empty) + "'"));
+            string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["WorkOrderForOutputukey"].ToString() : string.Empty) + "'"));
             if (MyUtility.Check.Empty(condition))
             {
                 condition = @"''";
@@ -210,30 +210,30 @@ SELECT distinct WO.ukey
     FROM BundleInOut BIO WITH (NOLOCK) 
     inner join Bundle_Detail BD WITH (NOLOCK)  on BD.BundleNo = BIO.BundleNo
     inner join Bundle B WITH (NOLOCK)  on BD.Id = B.ID and B.cutref <> ''
-    inner join workorder WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID
+    inner join WorkOrderForOutput WO WITH (NOLOCK)  on WO.cutref=B.cutref and WO.ID=B.POID
     where BIO.subprocessid='SORTING' 
     and isnull(bio.RFIDProcessLocationID,'') = '' {woUkeyCondition.ToString()}
 
-select b.WorkOrderUkey,AccuCuttingLayer = sum(b.Layer) 
+select b.WorkOrderForOutputUkey,AccuCuttingLayer = sum(b.Layer) 
 	into #AccuCuttingLayer
 	from cuttingoutput_Detail b WITH (NOLOCK) 
-	inner join  #QueryTarUkey a on a.ukey = b.WorkOrderUkey 
-	group by b.WorkOrderUkey
+	inner join  #QueryTarUkey a on a.ukey = b.WorkOrderForOutputUkey 
+	group by b.WorkOrderForOutputUkey
 
 select 0 as sel,
 	WO.*,
 	Cuttingid = WO.id,
-	workorderukey = WO.ukey,
+	WorkOrderForOutputukey = WO.ukey,
 	OrderID = (
 		Select orderid+'/' 
-		From WorkOrder_Distribute c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =WO.Ukey and orderid!='EXCESS'
+		From WorkOrderForOutput_Distribute c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =WO.Ukey and orderid!='EXCESS'
 		For XML path('')
 	),
 	SizeRatio = (
 		Select SizeCode+'/'+convert(varchar,Qty ) 
-		From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =WO.Ukey 
+		From WorkOrderForOutput_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =WO.Ukey 
 		For XML path('')
 	),
 	WorkOderLayer = wo.Layer,
@@ -245,10 +245,10 @@ select 0 as sel,
 	LackingLayers =  wo.Layer - isnull(acc.AccuCuttingLayer,0) - final.CuttingLayer,
     SRQ.SizeRatioQty,
     o.StyleID
-from WorkOrder WO WITH (NOLOCK) 
+from WorkOrderForOutput WO WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK) on o.ID = WO.ID 
-left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderUkey
-outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b WITH (NOLOCK)  where b.WorkOrderUkey = wo.Ukey)SRQ
+left join #AccuCuttingLayer acc on wo.Ukey = acc.WorkOrderForOutputUkey
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrderForOutput_SizeRatio b WITH (NOLOCK)  where b.WorkOrderForOutputUkey = wo.Ukey)SRQ
 outer apply(
 	select Qty = min(x2.Qty) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
 	from(
@@ -260,7 +260,7 @@ outer apply(
 			where b.CutRef = WO.CutRef
 			group by bd.SizeCode, bd.Patterncode, bd.PatternDesc
 		)x
-		left join WorkOrder_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderUkey = WO.Ukey
+		left join WorkOrderForOutput_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderForOutputUkey = WO.Ukey
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3

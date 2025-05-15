@@ -114,11 +114,11 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
         /// <param name="isMorethenOrderQty">回傳Qty值是否超過訂單數, (生產有可能超過) </param>
         /// <param name="rfidProcessLocationID">rfidProcessLocationID </param>
         /// <returns>回傳字串, 提供接下去的Sql指令使用#temp Table</returns>
-        // 非常重要 更新此處一定要把此dll檔案更新到MES
-        // 非常重要 更新此處一定要把此dll檔案更新到MES
-        // 非常重要 更新此處一定要把此dll檔案更新到MES
-        // 非常重要 更新此處一定要把此dll檔案更新到MES
-        // 非常重要 更新此處一定要把此dll檔案更新到MES
+        // 非常重要 更新此處一定要把此dll檔案更新到MES,API
+        // 非常重要 更新此處一定要把此dll檔案更新到MES,API
+        // 非常重要 更新此處一定要把此dll檔案更新到MES,API
+        // 非常重要 更新此處一定要把此dll檔案更新到MES,API
+        // 非常重要 更新此處一定要把此dll檔案更新到MES,API
         public static string QtyBySetPerSubprocess(
             string[] subprocessIDs,
             string tempTable = "#cte",
@@ -131,33 +131,49 @@ WITH cte (DD,num, INLINE,OrderID,sewinglineid,FactoryID,WorkDay,StandardOutput,C
             string sqlcmd = $@"
 -- 成套標準：
 -- 找出組成一件成衣，需要哪些裁片
--- ISP20201886 改成以 WorkOrder 為基本資料
-select distinct
-	wd.OrderID,
-	POID = w.ID,
-	wd.Article,
-	wd.SizeCode,
-	wp.PatternPanel,
-	w.FabricCombo,
-	w.FabricCode,
-	wp.FabricPanelCode,
-	w.Colorid
-into #beforeAllO1
-from WorkOrder w with(nolock)
-inner join WorkOrder_Distribute wd with(nolock) on wd.WorkOrderUkey = w.Ukey
-inner join WorkOrder_PatternPanel wp with(nolock) on wp.WorkOrderUkey = w.Ukey
-where exists (select 1 from Orders o with(nolock) where wd.OrderID  = o.ID and exists(select 1 from {tempTable} t where t.orderid = o.id and o.LocalOrder = 0)) --非local單 
-and not exists(select 1 from Cutting_WIPExcludePatternPanel cw where cw.ID = w.ID and cw.PatternPanel = wp.PatternPanel) -- ISP20201886 排除指定 PatternPanel
-and(((select WIP_ByShell from system) = 1
-        and exists(select 1 from Order_BOF bof WITH (NOLOCK) where bof.Id = w.Id and bof.FabricCode = w.FabricCode and bof.Kind = 1))
-    or (select WIP_ByShell from system) = 0
-)
+/*
+ISP20241140
+   準備基準資料,回 P02 WorkOrderForPlanning 找到所有部位 PatternPanel, FabricPanelCode
+   EX: WorkOrderForPlanning, 有FA, FB, FC, FD,FE , 但 WorkOrderForOutput 只有 FA
 
---當相同 OrderID,Article,Size,Fabric,Color 只取第一個 PatternPanel,FabricCombo 為基準(以 FabricPanelCode 排序)
-select x.*,x2.PatternPanel,x2.FabricCombo,FabricPanelCode
-into #beforeAllO
-from (select distinct Orderid,POID,Article,SizeCode,FabricCode,ColorID from #beforeAllO1) x
-outer apply(select top 1 * from #beforeAllO1 where Orderid = x.Orderid and POID = x.POID and Article = x.Article and SizeCode = x.SizeCode and FabricCode = x.FabricCode and ColorID = x.ColorID order by FabricPanelCode)x2
+ISP20241140
+   原本有一段相同 OrderID, Article, Size, FabricCode, Color 只取第一個 PatternPanel 為基準(以 FabricPanelCode 排序)
+   Cutting P02/P09 操作規則, WorkOrder_PatternPanel 以 FabricPanelCode 排序取第一筆
+   WorkOrder.FabricCombo = WorkOrder_PatternPanel.PatternPanel
+   WorkOrder.FabricPanelCode = WorkOrder_PatternPanel.FabricPanelCode
+   WorkOrder.FabricCode = WorkOrder_PatternPanel.FabricCode
+   故可直接使用 WorkOrder 這3個欄位, 不用去 WorkOrder_PatternPanel 展開又剃除浪費效能
+
+Other
+   過去曾經以 Bundle 資訊為基準
+   是因為 P10 可以再增加 Bundle 資訊,就出現基準比WorkOrder多狀況
+   但是 P10 Bundle 建立後也可以回 P02 WorkOrder 增加資訊, 又會出現基準變動
+   總之 ISP20241140 調整以 Cutting P02 WorkOrderForPlanning 為基準
+*/
+SELECT DISTINCT
+    wd.OrderID
+   ,wd.Article
+   ,wd.SizeCode
+   ,POID = wop.ID
+   ,PatternPanel = wop.FabricCombo
+   ,wop.FabricPanelCode
+INTO #beforeAllO
+FROM WorkOrderForOutput_Distribute wd WITH (NOLOCK) -- OrderID 只能找 WorkOrderForOutput_Distribute, ForPlanning 沒有 Distribute
+INNER JOIN WorkOrderForOutput woo WITH (NOLOCK) ON woo.Ukey = wd.WorkOrderForOutputUkey
+/*
+   問題
+   1. WorkOrderForOutput.WorkOrderForPlanningUkey = WorkOrderForPlanning.Ukey 但用 P09 Excel匯入/手動新增 就沒有WorkOrderForPlanningUkey
+   2. 用 P09.ID = P02.ID <<可能>> [OrderID, Article, SizeCode] 有不同的 FabricCombo, FabricPanelCode
+   但 2024/11/07 討論後同一個 POID 底下的 OrderID 部位都會一樣, 故以 ID 串到 P02 直接展開, 往後若有數字疑慮可先找這點
+*/
+INNER JOIN WorkOrderForPlanning wop WITH (NOLOCK) ON wop.ID = woo.ID
+WHERE EXISTS (SELECT 1 FROM Orders o WITH (NOLOCK) WHERE wd.OrderID = o.ID AND EXISTS (SELECT 1 FROM {tempTable} t WHERE t.orderid = o.id AND o.LocalOrder = 0)) --非local單 
+AND NOT EXISTS (SELECT 1 FROM Cutting_WIPExcludePatternPanel cw WITH (NOLOCK) WHERE cw.ID = wop.ID AND cw.PatternPanel = wop.FabricCombo) -- ISP20201886 排除指定 PatternPanel
+AND (
+    ((SELECT WIP_ByShell FROM system) = 1 AND EXISTS (SELECT 1 FROM Order_BOF bof WITH (NOLOCK) WHERE bof.Id = wop.Id AND bof.FabricCode = wop.FabricCode AND bof.Kind = 1))
+    OR
+     (SELECT WIP_ByShell FROM system) = 0
+)
 
 -- Bundle Local 單
 select	distinct
@@ -180,11 +196,13 @@ from #beforeAllO t
 union all
 select * from #BundleLocal
 
---回找 Bundle 資料, 展開到 Patterncode
-select Orderid, BundleNo, ID, Qty
-into #tmp_Bundle_Detail_Order
-from Bundle_Detail_Order bdo
-where exists (select 1 from #AllOrders x0 where bdo.Orderid = x0.Orderid)
+--回找 Bundle 資料, 拆成3個#tmp再組合是因為效能需求
+--先加總, 同 Orderid, BundleNo 會有多筆紀錄
+SELECT Orderid, BundleNo, ID, Qty = SUM(Qty)
+INTO #tmp_Bundle_Detail_Order
+FROM Bundle_Detail_Order bdo
+WHERE EXISTS (SELECT 1 FROM #AllOrders x0 WHERE bdo.Orderid = x0.Orderid)
+GROUP BY Orderid, BundleNo, ID
 
 select ID, BundleGroup, BundleNo, Sizecode, Patterncode, IsPair
 into #tmp_Bundle_Detail 
@@ -198,35 +216,34 @@ from Bundle bun WITH (NOLOCK)
 where exists (select 1 from #tmp_Bundle_Detail bund where bun.id = bund.id)
 and exists (select 1 from #AllOrders x0 where bun.Article = x0.Article and bun.PatternPanel = x0.PatternPanel and bun.FabricPanelCode = x0.FabricPanelCode)
 
-select
-    bunD.ID
-    , bunD.BundleGroup
-    , bunD.BundleNo
-    , bun.AddDate
-    , bdo.Orderid
-    , bun.PatternPanel
-    , bun.FabricPanelCode
-    , bun.Article
-    , bunD.Sizecode
-    , bunD.Patterncode
-    , Qty = sum(bdo.Qty)
-    , bunD.IsPair
-into #tmp_Bundle_QtyBySubprocess
-from #tmp_Bundle_Detail_Order bdo WITH (NOLOCK)
-inner join #tmp_Bundle_Detail bund WITH (NOLOCK) on bund.BundleNo = bdo.BundleNo and bdo.ID = bund.Id
-inner join #tmp_Bundle bun WITH (NOLOCK) on bun.id = bund.id
-where exists (
-	select 1
-	from #AllOrders x0
-	where bdo.Orderid = x0.Orderid
-	and bunD.Sizecode = x0.Sizecode
-	and bun.Article = x0.Article
-	and bun.PatternPanel = x0.PatternPanel
-	and bun.FabricPanelCode = x0.FabricPanelCode
+--上方 Bundle_Detail_Order 已先總和 Qty
+--此處展開到 Bundle_Detail_Order.Orderid, Qty
+SELECT DISTINCT
+    bun.AddDate
+   ,bun.PatternPanel
+   ,bun.FabricPanelCode
+   ,bun.Article
+   ,bunD.ID
+   ,bunD.BundleGroup
+   ,bunD.BundleNo
+   ,bunD.Sizecode
+   ,bunD.Patterncode
+   ,bunD.IsPair
+   ,bdo.Orderid
+   ,bdo.Qty
+INTO #tmp_Bundle_QtyBySubprocess
+FROM #tmp_Bundle_Detail_Order bdo WITH (NOLOCK)
+INNER JOIN #tmp_Bundle_Detail bund WITH (NOLOCK) ON bund.BundleNo = bdo.BundleNo AND bdo.ID = bund.Id
+INNER JOIN #tmp_Bundle bun WITH (NOLOCK) ON bun.id = bund.id
+WHERE EXISTS (
+    SELECT 1
+    FROM #AllOrders x0
+    WHERE bdo.Orderid = x0.Orderid
+    AND bunD.Sizecode = x0.Sizecode
+    AND bun.Article = x0.Article
+    AND bun.PatternPanel = x0.PatternPanel
+    AND bun.FabricPanelCode = x0.FabricPanelCode
 )
-group by bdo.Orderid,
-bunD.ID, bunD.BundleGroup, bunD.BundleNo, bunD.Sizecode, bunD.Patterncode, bunD.IsPair,
-bun.AddDate, bun.PatternPanel, bun.FabricPanelCode, bun.Article
 
 drop table #tmp_Bundle, #tmp_Bundle_Detail, #tmp_Bundle_Detail_Order
 

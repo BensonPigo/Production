@@ -165,6 +165,8 @@
   <ItemGroup>
     <Compile Include="APIData.cs" />
     <Compile Include="APITransfer.cs" />
+    <Compile Include="DataGridViewGeneratorExtensions.cs" />
+    <Compile Include="DataTableExts.cs" />
     <Compile Include="CallWebAPI.cs" />
     <Compile Include="CentralizedClass.cs" />
     <Compile Include="CrossUtility.cs" />

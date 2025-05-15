@@ -1,6 +1,6 @@
 ﻿using Ict.Win.UI;
 using Ict.Win;
-using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -141,7 +141,7 @@ namespace Sci.Production.Cutting
                     ,StyleID
                     ,Colorid
                     ,Cons
-                    ,WorkorderUkey
+                    ,WorkOrderForPlanningUkey
                     ,Remark
                     ,POID
                     ,Adddate          
@@ -155,14 +155,14 @@ namespace Sci.Production.Cutting
                     ,'{MyUtility.Convert.GetString(dataRow["StyleID"])}'
                     ,'{MyUtility.Convert.GetString(dataRow["Colorid"])}'
                     ,'{MyUtility.Convert.GetString(dataRow["Cons"])}'
-                    ,'{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'
+                    ,'{MyUtility.Convert.GetString(dataRow["WorkOrderForPlanningUkey"])}'
                     ,'{MyUtility.Convert.GetString(dataRow["Remark"])}'
                     ,'{MyUtility.Convert.GetString(dataRow["POID"])}'
                     ,GETDATE()
                 )
-                UPDATE WorkOrder SET CutplanID = '' WHERE Ukey = '{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'    
+                UPDATE WorkOrderForPlanning SET CutplanID = '' WHERE Ukey = '{MyUtility.Convert.GetString(dataRow["WorkOrderForPlanningUkey"])}'    
                 Delete Cutplan_Detail_Cons WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND Seq1 = '{MyUtility.Convert.GetString(dataRow["Seq1"])}' AND Seq2 = '{MyUtility.Convert.GetString(dataRow["Seq2"])}'
-                Delete Cutplan_Detail WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND WorkorderUkey = '{MyUtility.Convert.GetString(dataRow["WorkorderUkey"])}'
+                Delete Cutplan_Detail WHERE ID = '{MyUtility.Convert.GetString(dataRow["ID"])}' AND WorkOrderForPlanningUkey = '{MyUtility.Convert.GetString(dataRow["WorkOrderForPlanningUkey"])}'
                 ";
             }
 

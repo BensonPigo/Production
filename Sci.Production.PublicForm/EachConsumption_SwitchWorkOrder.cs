@@ -43,7 +43,6 @@ namespace Sci.Production.PublicForm
             where o.id = '{this.cuttingid}'";
 
             DBProxy.Current.Execute(null, upSqlCmdDate);
-
         }
 
         /// <inheritdoc/>
@@ -52,6 +51,23 @@ namespace Sci.Production.PublicForm
             base.OnFormLoaded();
             this.GridSetup();
             this.Query();
+
+            // 預設UseCutRefToRequestFabric
+            string strUseCutRefToRequestFabric = MyUtility.Convert.GetString(MyUtility.GetValue.Lookup("select UseCutRefToRequestFabric from System "));
+            if (strUseCutRefToRequestFabric == "1")
+            {
+                this.radioButtonYes.Checked = true;
+            }
+            else if (strUseCutRefToRequestFabric == "2")
+            {
+                this.radioButtonNo.Checked = true;
+            }
+            else
+            {
+                this.radioButtonYes.Checked = false;
+                this.radioButtonNo.Checked = false;
+            }
+
         }
 
         private void GridSetup()
@@ -107,6 +123,13 @@ and oe.CuttingPiece <> 1
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
+            string sqlCheckWorkOrderForOutputExists = $"select 1 from WorkOrderForOutput with (nolock) where ID = '{this.cuttingid}'";
+            if (MyUtility.Check.Seek(sqlCheckWorkOrderForOutputExists, "Production"))
+            {
+                MyUtility.Msg.WarningBox("Cutting_P09. WorkOrder For Output] still contains data and cannot be switch to workorder. Please delete the Cutting_P09 data first before executing switch to work order.");
+                return;
+            }
+
             string cmd = string.Empty;
             string worktype;
             if (this.radioCombination.Checked)
@@ -155,14 +178,14 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
             }
             #endregion
 
-            #region 產生P20單不可做 CuttingOutput_Detail
-            string sqlcmd = $@"select 1 from CuttingOutput_Detail where CuttingID  = '{this.cuttingid}'";
-            if (MyUtility.Check.Seek(sqlcmd))
-            {
-                MyUtility.Msg.WarningBox("Already created output, cannnot delete");
-                return;
-            }
-            #endregion
+            //#region 產生P20單不可做 CuttingOutput_Detail
+            //string sqlcmd = $@"select 1 from CuttingOutput_Detail where CuttingID  = '{this.cuttingid}'";
+            //if (MyUtility.Check.Seek(sqlcmd))
+            //{
+            //    MyUtility.Msg.WarningBox("Already created output, cannnot delete");
+            //    return;
+            //}
+            //#endregion
 
             #region 若只要有一筆不存在BOF就不可轉
             cmd = string.Format(@"Select * from Order_EachCons a WITH (NOLOCK) Left join Order_Bof b WITH (NOLOCK) on a.id = b.id and a.FabricCode = b.FabricCode Where a.id = '{0}' and b.id is null", this.cuttingid);
@@ -187,7 +210,7 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
             #endregion
 
             #region 若Cutplanid有值就不可刪除重轉
-            worRes = DBProxy.Current.Select(null, string.Format("Select id from workorder WITH (NOLOCK) where id = '{0}' and cutplanid  != '' ", this.cuttingid), out DataTable workorder);
+            worRes = DBProxy.Current.Select(null, string.Format("Select id from WorkOrderForPlanning WITH (NOLOCK) where id = '{0}' and cutplanid  != '' ", this.cuttingid), out DataTable workorder);
             if (!worRes)
             {
                 this.ShowErr(worRes);
@@ -199,7 +222,15 @@ and (o.Junk=0 or o.Junk=1 and o.NeedProduction=1)
                 MyUtility.Msg.WarningBox("The Work Order already created cutplan, you cann't re-switch to Work Order !!", "Warning");
                 return;
             }
-            else
+
+            worRes = DBProxy.Current.Select(null, string.Format("Select id from WorkOrderForPlanning WITH (NOLOCK) where id = '{0}'", this.cuttingid), out DataTable workorder1);
+            if (!worRes)
+            {
+                this.ShowErr(worRes);
+                return;
+            }
+
+            if (workorder1.Rows.Count != 0)
             {
                 DialogResult buttonResult = MyUtility.Msg.WarningBox("Data exists, do you want to over-write work order data?", "Warning", MessageBoxButtons.YesNo);
                 if (buttonResult == DialogResult.No)
@@ -277,16 +308,9 @@ drop table #tmp1,#tmp2
                 {
                     cmd = string.Format(
                         @"
-select Ukey from Workorder with (nolock) where id= '{0}' and CutRef <> '' and CutRef is not null;
-select WorkOrderUkey, OrderID, Article, SizeCode 
-from WorkOrder_Distribute  with (nolock)
-where WorkOrderUkey in (select Ukey from Workorder with (nolock) where id='{0}' and CutRef <> '' and CutRef is not null);
-
-Delete Workorder where id='{0}';
-Delete WorkOrder_Distribute where id='{0}';
-Delete WorkOrder_SizeRatio where id='{0}';
-Delete WorkOrder_Estcutdate where id='{0}';
-Delete WorkOrder_PatternPanel where id='{0}'
+Delete WorkOrderForPlanning where id='{0}';
+Delete WorkOrderForPlanning_SizeRatio where id='{0}';
+Delete WorkOrderForPlanning_PatternPanel where id='{0}'
 
 Delete Cutting_WIPExcludePatternPanel where id = '{0}'
 ", this.cuttingid);
@@ -309,12 +333,12 @@ select distinct '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #
                     string exswitch;
                     if (worktype == "1")
                     {
-                        exswitch = string.Format("exec dbo.usp_switchWorkorder '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
+                        exswitch = $"exec dbo.usp_switchWorkorder '{worktype}','{this.cuttingid}','{this.keyWord}','{this.loginID}','{this.radioUseCutRefToRequestFabric.Value}'";
                     }
                     else
                     {
                         // By SP worktype = 2
-                        exswitch = string.Format("exec dbo.usp_switchWorkorder_BySP '{0}','{1}','{2}','{3}'", worktype, this.cuttingid, this.keyWord, this.loginID);
+                        exswitch = $"exec dbo.usp_switchWorkorder_BySP '{worktype}','{this.cuttingid}','{this.keyWord}','{this.loginID}','{this.radioUseCutRefToRequestFabric.Value}'";
                     }
 
                     DBProxy sp_excute = new DBProxy
@@ -331,31 +355,6 @@ select distinct '{this.cuttingid}',FabricCombo,'{this.loginID}',getdate() from #
 
                     transactionscope.Complete();
                     transactionscope.Dispose();
-
-                    if (tablesWorkorder[0].Rows.Count > 0)
-                    {
-                        List<Guozi_AGV.WorkOrder_Distribute> deleteWorkOrder_Distribute = new List<Guozi_AGV.WorkOrder_Distribute>();
-                        List<long> deleteWorkOrder = new List<long>();
-
-                        foreach (DataRow dr in tablesWorkorder[0].AsEnumerable())
-                        {
-                            deleteWorkOrder.Add((long)dr["Ukey"]);
-                        }
-
-                        foreach (DataRow dr in tablesWorkorder[1].AsEnumerable())
-                        {
-                            deleteWorkOrder_Distribute.Add(new Guozi_AGV.WorkOrder_Distribute()
-                            {
-                                WorkOrderUkey = (long)dr["WorkOrderUkey"],
-                                SizeCode = (string)dr["SizeCode"],
-                                Article = (string)dr["Article"],
-                                OrderID = (string)dr["OrderID"],
-                            });
-                        }
-
-                        Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder(deleteWorkOrder));
-                        Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
-                    }
                 }
                 catch (Exception ex)
                 {

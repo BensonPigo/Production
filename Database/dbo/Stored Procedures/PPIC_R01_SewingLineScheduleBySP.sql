@@ -235,8 +235,8 @@ select  s.SewingLineID
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
 	OUTER APPLY(	
 		SELECT [Date]=MIN(co2.cDate)
-		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+		FROM  WorkOrderForOutput_Distribute wd2 WITH (NOLOCK)
+		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderForOutputUkey = wd2.WorkOrderForOutputUkey
 		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 		where wd2.OrderID =o.ID
 	)FirstCuttingOutputDate
@@ -325,8 +325,8 @@ insert into @tmp_CutInLine
 select 
 wd.OrderID,
 MIN(a.EstCutDate)
-from WorkOrder_Distribute wd with (nolock)
-inner join  WorkOrder a with (nolock) on a.Ukey = wd.WorkOrderUkey
+from WorkOrderForOutput_Distribute wd with (nolock)
+inner join  WorkOrderForOutput a with (nolock) on a.Ukey = wd.WorkOrderForOutputUkey
 where exists(select 1 from @tmp_main b where wd.OrderID = b.OrderID)
 group by wd.OrderID
 

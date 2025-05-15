@@ -177,7 +177,7 @@ namespace Sci.Production.Cutting
 
             if (!this.dateBox1.Value.Empty())
             {
-                sqlWheres.Add("WorkOrder.EstCutDate=@Est_CutDate");
+                sqlWheres.Add("WorkOrderForOutput.EstCutDate=@Est_CutDate");
                 declare += $@" declare @Est_CutDate date = '{((DateTime)this.Est_CutDate).ToString("yyyy/MM/dd")}' ";
             }
 
@@ -218,7 +218,7 @@ namespace Sci.Production.Cutting
 
             if (!MyUtility.Check.Empty(this.SpreadingNoID))
             {
-                sqlWheres.Add(" WorkOrder.SpreadingNoID=@SpreadingNoID");
+                sqlWheres.Add(" WorkOrderForOutput.SpreadingNoID=@SpreadingNoID");
             }
 
             string sqlWhere = string.Join(" and ", sqlWheres);
@@ -272,9 +272,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
@@ -293,9 +293,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and x.id=b.id
@@ -331,19 +331,19 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=WorkOrder.MarkerNo
+    , [MarkerNo]=WorkOrderForOutput.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     ,brand.ShipCode
     , b.IsEXCESS
-    , WorkOrder.SpreadingNoID
+    , WorkOrderForOutput.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
-    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , CutCell = (select top 1 CutCellID from WorkOrderForOutput w where w.cutref = b.cutref)
     , a.Dyelot
     , a.ID
 into #tmp
@@ -390,8 +390,8 @@ OUTER APPLY(
 		MarkerNo  
         ,EstCutDate
         ,SpreadingNoID
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
-)WorkOrder
+	FROM  dbo.WorkOrderForOutput WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrderForOutput
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
 
 union all
@@ -425,19 +425,19 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=WorkOrder.MarkerNo
+    , [MarkerNo]=WorkOrderForOutput.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , brand.ShipCode
     , b.IsEXCESS
-    , WorkOrder.SpreadingNoID
+    , WorkOrderForOutput.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
-    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , CutCell = (select top 1 CutCellID from WorkOrderForOutput w where w.cutref = b.cutref)
     , a.Dyelot
     , a.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
@@ -484,8 +484,8 @@ OUTER APPLY(
 		MarkerNo  
         ,EstCutDate
         ,SpreadingNoID
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
-)WorkOrder
+	FROM  dbo.WorkOrderForOutput WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrderForOutput
 " + sqlWhere + @" and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)
 
@@ -544,9 +544,9 @@ where  EXISTS(
     OUTER APPLY (
         SELECT TOP 1 
             MarkerNo, EstCutDate, SpreadingNoID
-        FROM dbo.WorkOrder WITH (NOLOCK) 
+        FROM dbo.WorkOrderForOutput WITH (NOLOCK) 
         WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>'' and b.CutRef is not null
-    ) WorkOrder -- 引入 WorkOrder 資料至 EXISTS 子查詢
+    ) WorkOrderForOutput -- 引入 WorkOrderForOutput 資料至 EXISTS 子查詢
     {sqlWhere} 
         and a.Patterncode != 'ALLPARTS' 
         and e1.id=b.id and e1.Bundleno=a.BundleNo and e1.PatternCode= a.PatternCode
@@ -582,19 +582,19 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=WorkOrder.MarkerNo
+    , [MarkerNo]=WorkOrderForOutput.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , brand.ShipCode
     , b.IsEXCESS
-    , WorkOrder.SpreadingNoID
+    , WorkOrderForOutput.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
-    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , CutCell = (select top 1 CutCellID from WorkOrderForOutput w where w.cutref = b.cutref)
     , a.Dyelot
     , a.ID
 into #tmp
@@ -641,8 +641,8 @@ OUTER APPLY(
 		MarkerNo  
         ,EstCutDate
         ,SpreadingNoID
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
-)WorkOrder
+	FROM  dbo.WorkOrderForOutput WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrderForOutput
 " + sqlWhere + $@" and a.Patterncode != 'ALLPARTS' 
                                         
 union all
@@ -676,19 +676,19 @@ select
     , a.Qty [Qty]
     , [Body_Cut]=concat(isnull(b.PatternPanel,''),'-',b.FabricPanelCode ,'-',convert(varchar,b.Cutno))
     , c.FactoryID  [left]
-    , [MarkerNo]=WorkOrder.MarkerNo
+    , [MarkerNo]=WorkOrderForOutput.MarkerNo
     , SeasonID = concat(c.SeasonID,' ', c.dest)
     , brand=c.brandid
     , brand.ShipCode
     , b.IsEXCESS
-    , WorkOrder.SpreadingNoID
+    , WorkOrderForOutput.SpreadingNoID
     , ps.NoBundleCardAfterSubprocess_String
     , nbs.PostSewingSubProcess_String
     ,b.FabricPanelCode
 	, [BundleID] = b.ID
     , a.RFPrintDate
     , a.RFIDScan
-    , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+    , CutCell = (select top 1 CutCellID from WorkOrderForOutput w where w.cutref = b.cutref)
     , a.Dyelot
     , a.ID
 from dbo.Bundle_Detail a WITH (NOLOCK)
@@ -734,8 +734,8 @@ OUTER APPLY(
 		MarkerNo  
         ,EstCutDate
         ,SpreadingNoID
-	FROM  dbo.WorkOrder WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
-)WorkOrder
+	FROM  dbo.WorkOrderForOutput WITH (NOLOCK) WHERE CutRef=b.CutRef and ID=b.POID and b.CutRef<>''  and b.CutRef is not null
+)WorkOrderForOutput
 " + sqlWhere + @" 
 and a.Patterncode = 'ALLPARTS' 
 OPTION (RECOMPILE)

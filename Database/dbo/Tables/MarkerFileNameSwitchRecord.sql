@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[MarkerFileNameSwitchRecord] (
-    [CutRef]           VARCHAR (6)  NOT NULL,
+    [CutRef]           VARCHAR (10) NOT NULL,
     [EstCutDate]       DATE         NULL,
     [CuttingID]        VARCHAR (13) NULL,
     [OriFileName]      VARCHAR (25) NULL,

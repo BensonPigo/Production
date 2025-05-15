@@ -7,7 +7,7 @@ using Microsoft.SqlServer.Management.Smo.Mail;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
-using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using Sci.Win.UI;

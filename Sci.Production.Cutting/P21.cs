@@ -85,8 +85,8 @@ namespace Sci.Production.Cutting
                     // 搜尋時若有多筆資料，直接選第一筆
                     string sqlCmd = $@"
                                     select TOP 1 w.ID ,CutCellid ,w.FactoryID ,[EstCutDate]=MAX(EstCutDate) ,[ActCutDate]=Max(c.cDate)
-                                    from WorkOrder W 
-                                    Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
+                                    from WorkOrderForOutput W 
+                                    Left JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderForOutputUkey
                                     Left JOIN CuttingOutput C on CD.ID=C.ID
                                     where w.CutRef = '{newValue}'
                                     GROUP BY w.ID,CutCellid,w.FactoryID";
@@ -296,35 +296,36 @@ namespace Sci.Production.Cutting
 
             #region 透過SQL取得DB的結構，就不用寫死
             string cmd = @"
- SELECT  
-        [CutRef]= cofr.CutRef,
-        [Seq1]= cofr.Seq1,
-        [Seq2]= cofr.Seq2,
-        [Roll]= cofr.Roll,
-        [Dyelot]= cofr.Dyelot,
-        [Yardage]= cofr.Yardage,
-        [Factory]= w.FactoryID ,
-        [EstCutCell]= w.CutCellid,
-        [CuttingSpNO]= w.ID,
-        [EstCutDate]= w.EstCutDate,
-        [ActCutDate]= c.cDate,
-        [AddName]= addInfo.IdAndName,
-        [AddDate]= cofr.AddDate,
-        [EditName]=  editInfo.IdAndName,
-        [EditDate]= cofr.EditDate,
-        [Ukey]=cofr.Ukey,
-        [MDivisionId]=''
-FROM CuttingOutputFabricRecord cofr
-INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef
-LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
-LEFT JOIN CuttingOutput C on CD.ID=C.ID
-OUTER APPLY(
-    SELECT IdAndName FROM GetName WHERE ID=cofr.AddName
-)addInfo
-OUTER APPLY(
-    SELECT IdAndName FROM GetName WHERE ID=cofr.EditName
-)editInfo
-WHERE 1=0
+             SELECT  
+                    [CutRef]= cofr.CutRef,
+                    [Seq1]= cofr.Seq1,
+                    [Seq2]= cofr.Seq2,
+                    [Roll]= cofr.Roll,
+                    [Dyelot]= cofr.Dyelot,
+                    [Yardage]= cofr.Yardage,
+                    [Factory]= w.FactoryID ,
+                    [EstCutCell]= w.CutCellid,
+                    [CuttingSpNO]= w.ID,
+                    [EstCutDate]= w.EstCutDate,
+                    [ActCutDate]= c.cDate,
+                    [AddName]= addInfo.IdAndName,
+                    [AddDate]= cofr.AddDate,
+                    [EditName]=  editInfo.IdAndName,
+                    [EditDate]= cofr.EditDate,
+                    [Ukey]=cofr.Ukey,
+                    [MDivisionId]=''
+            FROM CuttingOutputFabricRecord cofr
+            INNER JOIN WorkOrderForOutput W on cofr.CutRef=W.CutRef
+            LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderForOutputUkey
+            LEFT JOIN CuttingOutput C on CD.ID=C.ID
+            OUTER APPLY(
+                SELECT IdAndName FROM GetName WHERE ID=cofr.AddName
+            )addInfo
+            OUTER APPLY(
+                SELECT IdAndName FROM GetName WHERE ID=cofr.EditName
+            )editInfo
+            WHERE 1=0
+
 ";
             DataTable dt;
             DualResult result = DBProxy.Current.Select(null, cmd, out dt);

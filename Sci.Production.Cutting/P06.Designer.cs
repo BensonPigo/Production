@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.labelID = new Sci.Win.UI.Label();
-            this.labelCutplan = new Sci.Win.UI.Label();
             this.labelCuttingDate = new Sci.Win.UI.Label();
             this.labelCutCell = new Sci.Win.UI.Label();
             this.labelRequestedby = new Sci.Win.UI.Label();
@@ -39,7 +38,6 @@
             this.dateCuttingDate = new Sci.Win.UI.DateBox();
             this.displayCutCell = new Sci.Win.UI.DisplayBox();
             this.displayM = new Sci.Win.UI.DisplayBox();
-            this.displayCutplan = new Sci.Win.UI.DisplayBox();
             this.label7 = new Sci.Win.UI.Label();
             this.labelReleaseDate = new Sci.Win.UI.Label();
             this.dateReleaseDate = new Sci.Win.UI.DateBox();
@@ -63,7 +61,6 @@
             this.masterpanel.Controls.Add(this.btnBatchUpdate);
             this.masterpanel.Controls.Add(this.labelReleaseDate);
             this.masterpanel.Controls.Add(this.label7);
-            this.masterpanel.Controls.Add(this.displayCutplan);
             this.masterpanel.Controls.Add(this.displayM);
             this.masterpanel.Controls.Add(this.displayCutCell);
             this.masterpanel.Controls.Add(this.dateReleaseDate);
@@ -74,11 +71,9 @@
             this.masterpanel.Controls.Add(this.labelRequestedby);
             this.masterpanel.Controls.Add(this.labelCutCell);
             this.masterpanel.Controls.Add(this.labelCuttingDate);
-            this.masterpanel.Controls.Add(this.labelCutplan);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(914, 111);
+            this.masterpanel.Size = new System.Drawing.Size(914, 82);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelCutplan, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCutCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRequestedby, 0);
@@ -90,19 +85,18 @@
             this.masterpanel.Controls.SetChildIndex(this.dateReleaseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCutCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayCutplan, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelReleaseDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnBatchUpdate, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(914, 307);
+            this.detailpanel.Location = new System.Drawing.Point(0, 82);
+            this.detailpanel.Size = new System.Drawing.Size(914, 336);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(771, 76);
+            this.gridicon.Location = new System.Drawing.Point(771, 47);
             // 
             // refresh
             // 
@@ -110,7 +104,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(914, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(914, 336);
             // 
             // detail2
             // 
@@ -161,26 +155,15 @@
             // 
             // labelID
             // 
-            this.labelID.Lines = 0;
             this.labelID.Location = new System.Drawing.Point(18, 15);
             this.labelID.Name = "labelID";
             this.labelID.Size = new System.Drawing.Size(82, 23);
             this.labelID.TabIndex = 1;
             this.labelID.Text = "ID";
             // 
-            // labelCutplan
-            // 
-            this.labelCutplan.Lines = 0;
-            this.labelCutplan.Location = new System.Drawing.Point(18, 45);
-            this.labelCutplan.Name = "labelCutplan";
-            this.labelCutplan.Size = new System.Drawing.Size(82, 23);
-            this.labelCutplan.TabIndex = 2;
-            this.labelCutplan.Text = "Cutplan#";
-            // 
             // labelCuttingDate
             // 
-            this.labelCuttingDate.Lines = 0;
-            this.labelCuttingDate.Location = new System.Drawing.Point(18, 75);
+            this.labelCuttingDate.Location = new System.Drawing.Point(18, 45);
             this.labelCuttingDate.Name = "labelCuttingDate";
             this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
             this.labelCuttingDate.TabIndex = 3;
@@ -188,7 +171,6 @@
             // 
             // labelCutCell
             // 
-            this.labelCutCell.Lines = 0;
             this.labelCutCell.Location = new System.Drawing.Point(252, 45);
             this.labelCutCell.Name = "labelCutCell";
             this.labelCutCell.Size = new System.Drawing.Size(87, 23);
@@ -197,7 +179,6 @@
             // 
             // labelRequestedby
             // 
-            this.labelRequestedby.Lines = 0;
             this.labelRequestedby.Location = new System.Drawing.Point(455, 15);
             this.labelRequestedby.Name = "labelRequestedby";
             this.labelRequestedby.Size = new System.Drawing.Size(95, 23);
@@ -206,7 +187,6 @@
             // 
             // labelM
             // 
-            this.labelM.Lines = 0;
             this.labelM.Location = new System.Drawing.Point(252, 15);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(87, 23);
@@ -236,7 +216,7 @@
             // 
             this.dateCuttingDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
             this.dateCuttingDate.IsSupportEditMode = false;
-            this.dateCuttingDate.Location = new System.Drawing.Point(103, 75);
+            this.dateCuttingDate.Location = new System.Drawing.Point(103, 45);
             this.dateCuttingDate.Name = "dateCuttingDate";
             this.dateCuttingDate.ReadOnly = true;
             this.dateCuttingDate.Size = new System.Drawing.Size(130, 23);
@@ -262,21 +242,10 @@
             this.displayM.Size = new System.Drawing.Size(67, 23);
             this.displayM.TabIndex = 1;
             // 
-            // displayCutplan
-            // 
-            this.displayCutplan.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCutplan.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutplanid", true));
-            this.displayCutplan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutplan.Location = new System.Drawing.Point(103, 45);
-            this.displayCutplan.Name = "displayCutplan";
-            this.displayCutplan.Size = new System.Drawing.Size(108, 23);
-            this.displayCutplan.TabIndex = 3;
-            // 
             // label7
             // 
             this.label7.BackColor = System.Drawing.Color.Transparent;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.label7.Lines = 0;
             this.label7.Location = new System.Drawing.Point(749, 15);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(106, 23);
@@ -285,8 +254,7 @@
             // 
             // labelReleaseDate
             // 
-            this.labelReleaseDate.Lines = 0;
-            this.labelReleaseDate.Location = new System.Drawing.Point(252, 75);
+            this.labelReleaseDate.Location = new System.Drawing.Point(455, 45);
             this.labelReleaseDate.Name = "labelReleaseDate";
             this.labelReleaseDate.Size = new System.Drawing.Size(95, 23);
             this.labelReleaseDate.TabIndex = 41;
@@ -294,7 +262,7 @@
             // 
             // dateReleaseDate
             // 
-            this.dateReleaseDate.Location = new System.Drawing.Point(352, 75);
+            this.dateReleaseDate.Location = new System.Drawing.Point(555, 45);
             this.dateReleaseDate.Name = "dateReleaseDate";
             this.dateReleaseDate.Size = new System.Drawing.Size(130, 23);
             this.dateReleaseDate.TabIndex = 6;
@@ -302,7 +270,7 @@
             // btnBatchUpdate
             // 
             this.btnBatchUpdate.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-            this.btnBatchUpdate.Location = new System.Drawing.Point(488, 72);
+            this.btnBatchUpdate.Location = new System.Drawing.Point(691, 42);
             this.btnBatchUpdate.Name = "btnBatchUpdate";
             this.btnBatchUpdate.Size = new System.Drawing.Size(116, 30);
             this.btnBatchUpdate.TabIndex = 7;
@@ -316,6 +284,7 @@
             this.ClientSize = new System.Drawing.Size(922, 518);
             this.DefaultControlForEdit = "dateReleaseDate";
             this.DefaultOrder = "id";
+            this.ExpressQuery = true;
             this.GridAlias = "MarkerReq_Detail";
             this.GridNew = 0;
             this.IsGridIconVisible = false;
@@ -326,6 +295,7 @@
             this.IsSupportPrint = false;
             this.KeyField1 = "id";
             this.Name = "P06";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P06.Bulk Marker Release";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "MarkerReq";
@@ -346,7 +316,7 @@
             this.tabs.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
-            this.ExpressQuery = true;
+
         }
 
         #endregion
@@ -354,7 +324,6 @@
         private Win.UI.Label labelRequestedby;
         private Win.UI.Label labelCutCell;
         private Win.UI.Label labelCuttingDate;
-        private Win.UI.Label labelCutplan;
         private Win.UI.Label labelID;
         private Win.UI.DisplayBox displayM;
         private Win.UI.DisplayBox displayCutCell;
@@ -362,7 +331,6 @@
         private Win.UI.DisplayBox displayRequestedby;
         private Win.UI.DisplayBox displayID;
         private Win.UI.Label labelM;
-        private Win.UI.DisplayBox displayCutplan;
         private Win.UI.Label label7;
         private Win.UI.Button btnBatchUpdate;
         private Win.UI.DateBox dateReleaseDate;

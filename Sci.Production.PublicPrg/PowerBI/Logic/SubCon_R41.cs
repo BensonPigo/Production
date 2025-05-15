@@ -77,13 +77,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.CutRefNo1))
                 {
-                    joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.CutRef >= @CutRefNo1 ");
                 }
 
                 if (!MyUtility.Check.Empty(model.CutRefNo2))
                 {
-                    joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.CutRef <= @CutRefNo2 ");
                 }
 
@@ -160,13 +160,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate1))
                 {
-                    joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.EstCutDate >= convert(date,'{Convert.ToDateTime(model.EstCuttingDate1).ToString("yyyy/MM/dd")}')");
                 }
 
                 if (!MyUtility.Check.Empty(model.EstCuttingDate2))
                 {
-                    joinWorkOrder = "inner join Workorder w WITH (NOLOCK, index(CutRefNo)) on b.CutRef = w.CutRef ";
+                    joinWorkOrder = "inner join WorkorderForOutput w WITH (NOLOCK, index(IDX_WorkOrderForOutput_CutRef)) on b.CutRef = w.CutRef ";
                     sqlWhereFirstQuery.Append($@" and w.EstCutDate <= convert(date,'{Convert.ToDateTime(model.EstCuttingDate2).ToString("yyyy/MM/dd")}')");
                 }
 
@@ -357,7 +357,7 @@ select [Value] =  case when isnull(bio.RFIDProcessLocationID,'') = '' and isnull
 outer apply(
 	 select SpreadingNo = stuff((
 		    Select distinct concat(',', wo.SpreadingNoID)
-		    from WorkOrder wo WITH (NOLOCK, Index(CutRefNo)) 
+		    from WorkOrderForOutput wo WITH (NOLOCK, Index(IDX_WorkOrderForOutput_CutRef)) 
 		    where   wo.CutRef = b.CutRef 
                     and wo.ID = b.POID
             and wo.SpreadingNoID is not null
@@ -400,8 +400,8 @@ select	r.[Cut Ref#],
 		[CuttingOutputDate] = MAX(co.cDate)
 into #tmpGetCutDateTmp
 from #result r
-inner join WorkOrder w with (nolock) on w.CutRef = r.[Cut Ref#] and w.id = r.[Master SP#]
-left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderUkey = w.Ukey
+inner join WorkOrderForOutput w with (nolock) on w.CutRef = r.[Cut Ref#] and w.id = r.[Master SP#]
+left join CuttingOutput_Detail cod with (nolock) on cod.WorkOrderForOutputUkey = w.Ukey
 left join CuttingOutput co  with (nolock) on co.ID = cod.ID
 where r.[Cut Ref#] <> ''
 group by r.[Cut Ref#],r.M

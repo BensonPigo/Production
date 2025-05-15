@@ -1043,10 +1043,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\TimeStudyHistory.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1283,10 +1279,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder_Distribute.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\Stocktaking.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1379,10 +1371,6 @@
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
-    <Build Include="dbo\Tables\WorkOrder_Estcutdate.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\Style_BOA_KeyWord.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
@@ -1420,10 +1408,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\ArtworkPO.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Tables\WorkOrder_PatternPanel.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -1480,10 +1464,6 @@
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
     <Build Include="dbo\Tables\Fabric_HsCode.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
-    <Build Include="dbo\Tables\WorkOrder_SizeRatio.sql">
       <AnsiNulls>On</AnsiNulls>
       <QuotedIdentifier>On</QuotedIdentifier>
     </Build>
@@ -2271,10 +2251,6 @@
     <Build Include="dbo\Functions\GetLocalPurchaseStdCost.sql" />
     <Build Include="dbo\Tables\PackErrTransfer.sql" />
     <Build Include="dbo\Tables\PackErrCFM.sql" />
-    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_SizeRatioRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_PatternPanelRevisedMarkerOriginalData.sql" />
-    <Build Include="dbo\Tables\WorkOrder_DistributeRevisedMarkerOriginalData.sql" />
     <Build Include="dbo\Tables\SpreadingTime.sql" />
     <Build Include="dbo\Tables\CuttingTime.sql" />
     <Build Include="dbo\Tables\CuttingMachine_detail.sql" />
@@ -2294,7 +2270,6 @@
     <Build Include="dbo\Tables\PackingErrorTypeReason.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose.sql" />
     <Build Include="dbo\Tables\ClogGarmentDispose_Detail.sql" />
-    <Build Include="dbo\Tables\WorkOrderRevisedMarkerOriginalData_Detail.sql" />
     <Build Include="dbo\Stored Procedures\SNPAutoTransferToSewingOutput.sql" />
     <Build Include="dbo\Tables\RFIDReader_SubProcess.sql" />
     <Build Include="dbo\Tables\RFIDReader_Panel.sql" />
@@ -2323,7 +2298,6 @@
     <Build Include="dbo\Functions\GetGarmentSizeByOrderIDSeq.sql" />
     <Build Include="dbo\Stored Procedures\exp_finishingprocess.sql" />
     <Build Include="dbo\Functions\getPassEmail.sql" />
-    <Build Include="dbo\Functions\QtyBySetPerSubprocess.sql" />
     <Build Include="dbo\Stored Procedures\imp_Trade_PulseCheck.sql" />
     <Build Include="dbo\Functions\GetOrderLocation_Rate_ByLinked.sql" />
     <Build Include="dbo\Tables\GarmentTest_Detail_Apperance.sql" />
@@ -2352,7 +2326,6 @@
     <Build Include="dbo\Functions\getFOCInvAdjQty.sql" />
     <Build Include="dbo\Tables\FreightCollectByCustomer.sql" />
     <Build Include="dbo\Tables\Carrier_Detail_Freight.sql" />
-    <Build Include="dbo\Functions\QtyBySetPerSubprocess_PatternPanel.sql" />
     <Build Include="dbo\Tables\FinishingProcess.sql" />
     <Build Include="dbo\Functions\RemoveNumericCharacters.sql">
       <AnsiNulls>On</AnsiNulls>
@@ -2840,10 +2813,6 @@
     <Build Include="dbo\Tables\AutomatedLineMapping_NotHitTargetReason.sql" />
     <Build Include="dbo\Tables\SewerGroupRange.sql" />
     <Build Include="dbo\Stored Procedures\GetAutomatedLineMapping.sql" />
-    <Build Include="dbo\Tables\複製Clip.sql">
-      <AnsiNulls>On</AnsiNulls>
-      <QuotedIdentifier>On</QuotedIdentifier>
-    </Build>
     <Build Include="dbo\Tables\GASAClip.sql" />
     <Build Include="dbo\Tables\Fabric_UnrollandRelax.sql" />
     <Build Include="dbo\Functions\GetUnrollRelaxationCompletion.sql" />
@@ -2882,7 +2851,6 @@
     <Build Include="dbo\Stored Procedures\GetFabricInspLabSummaryReport.sql" />
     <Build Include="dbo\Tables\DownloadStickerQueue.sql" />
     <Build Include="dbo\Stored Procedures\PPIC_R01_SewingLineScheduleBySP.sql" />
-    <Build Include="dbo\Stored Procedures\GetCuttingBCS.sql" />
     <Build Include="dbo\Functions\GetQA_R11_ReceivingTransferIn_Detail.sql" />
     <Build Include="dbo\Functions\Get_SubCon_R41_Report.sql" />
     <Build Include="dbo\Functions\Warehouse_Report_R25.sql" />
@@ -2906,18 +2874,45 @@
     <Build Include="dbo\Tables\ClogScanPack.sql" />
     <Build Include="dbo\Tables\ClogScanPack_Detail.sql" />
     <Build Include="dbo\Tables\SpreadingInspection_InsCutRef_Inspection_Roll.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning_PatternPanel.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning_SizeRatio.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_Distribute.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_PatternPanel.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_SizeRatio.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_SpreadingFabric.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutputHistory.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutputDelete.sql" />
+    <Build Include="dbo\Tables\ColumnValue.sql" />
     <Build Include="dbo\Tables\MtlType_Brand.sql" />
     <Build Include="dbo\Functions\IsSustainableMaterial.sql" />
     <Build Include="dbo\Tables\Brand_QAMoistureStandardListByActMoisture.sql" />
+    <Build Include="dbo\Tables\ColumnValue.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning_SizeRatio.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning_PatternPanel.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutputHistory.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutputDelete.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_SpreadingFabric.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_SizeRatio.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_PatternPanel.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput_Distribute.sql" />
+    <Build Include="dbo\Tables\WorkOrderForOutput.sql" />
+    <Build Include="dbo\Stored Procedures\GetNextSequenceCutRef.sql" />
+    <Build Include="dbo\Functions\GetCuttingP09CanEdit.sql" />
     <Build Include="dbo\Tables\ChgOverCheckList_Detail.sql" />
     <Build Include="dbo\Tables\ChgOverCheckListBase.sql" />
     <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v2.sql" />
     <Build Include="dbo\Index\Index_VNConsumption_Detail_Detail_v3.sql" />
     <Build Include="dbo\Tables\DailyAccuCPULoading.sql" />
     <Build Include="dbo\Tables\DailyAccuCPULoading_Detail.sql" />
+    <Build Include="dbo\Functions\GetCuttingP02CanEdit.sql" />
     <Build Include="dbo\Tables\SewingDailyOutputStatusRecord.sql" />
     <Build Include="dbo\Tables\FIR_PointRateFormula.sql" />
     <Build Include="dbo\Tables\StatementReport.sql" />
+    <Build Include="dbo\Tables\WorkOrderForPlanning_Distribute.sql" />
+    <Build Include="dbo\Stored Procedures\Cutting_P01_print_CuttingWorkOrderForPlanning.sql" />
     <Build Include="dbo\Stored Procedures\GetEndlineTargeteff.sql" />
     <Build Include="dbo\Functions\GetCheckContinusProduceDays.sql" />
     <Build Include="dbo\Tables\FIR_Physical_QCTime.sql" />

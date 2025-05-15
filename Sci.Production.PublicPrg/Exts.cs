@@ -558,5 +558,47 @@ namespace Sci.Production.Prg
             // 找不到符合條件的分數
             return "0/0";
         }
+
+        /// <summary>
+        /// 將小數轉換成,分母只有一位的字串
+        /// </summary>
+        /// <param name="decimalValue">0.xxx</param>
+        /// <returns>string</returns>
+        public static string ConvertToFractionString(decimal decimalValue)
+        {
+            if (decimalValue == 0)
+            {
+                return "0/0";
+            }
+
+            var fractions = new List<Tuple<int, int>>
+            {
+                Tuple.Create(1, 2),
+                Tuple.Create(1, 3), Tuple.Create(2, 3),
+                Tuple.Create(1, 4), Tuple.Create(3, 4),
+                Tuple.Create(1, 5), Tuple.Create(2, 5), Tuple.Create(3, 5), Tuple.Create(4, 5),
+                Tuple.Create(1, 6), Tuple.Create(5, 6),
+                Tuple.Create(1, 7), Tuple.Create(2, 7), Tuple.Create(3, 7), Tuple.Create(4, 7), Tuple.Create(5, 7), Tuple.Create(6, 7),
+                Tuple.Create(1, 8), Tuple.Create(3, 8), Tuple.Create(5, 8), Tuple.Create(7, 8),
+                Tuple.Create(1, 9), Tuple.Create(2, 9), Tuple.Create(4, 9), Tuple.Create(5, 9), Tuple.Create(7, 9), Tuple.Create(8, 9),
+            };
+
+            // 將分數轉換成小數並排序
+            var sortedFractions = fractions
+                .OrderBy(f => (double)f.Item1 / f.Item2)
+                .ToList();
+
+            foreach (var fraction in sortedFractions)
+            {
+                decimal fractionValue = (decimal)fraction.Item1 / fraction.Item2;
+                if (decimalValue <= fractionValue)
+                {
+                    return $"{fraction.Item1}/{fraction.Item2}";
+                }
+            }
+
+            // 若超過8/9，仍返回8/9
+            return "8/9";
+        }
     }
 }

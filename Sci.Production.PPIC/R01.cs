@@ -956,8 +956,8 @@ select  s.SewingLineID
     left join cutting on cutting.ID =o.CuttingSP 
 	OUTER APPLY(	
 		SELECT [Date]=MIN(co2.cDate)
-		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+		FROM  WorkOrderForOutput_Distribute wd2 WITH (NOLOCK)
+		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderForOutputUkey = wd2.WorkOrderForOutputUkey
 		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 		where wd2.OrderID =o.ID
 	)FirststCuttingOutputDate
@@ -1084,8 +1084,8 @@ wd.Article,
 wd.SizeCode,
 [CutInLine] = MIN(w.EstCutDate)
 into #tmp_CutInLine
-from WorkOrder_Distribute wd with (nolock)
-inner join WorkOrder w with (nolock) on wd.WorkOrderUkey = w.Ukey
+from WorkOrderForOutput_Distribute wd with (nolock)
+inner join WorkOrderForOutput w with (nolock) on wd.WorkOrderForOutputUkey = w.Ukey
 where exists (select 1 from #tmp_main tw where  wd.OrderID = tw.OrderID and 
                                                     wd.Article = tw.Article and 
                                                     wd.SizeCode = tw.SizeCode)

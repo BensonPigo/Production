@@ -387,9 +387,9 @@ namespace Sci.Production.Cutting
             sqlCmd.Append($@"
                             SELECT  
                                     [Selected]=0,
-                                    [Factory]= WorkOrder.FactoryID ,
-                                    [EstCutCell]= WorkOrder.CutCellid,
-                                    [CuttingSpNO]= WorkOrder.ID,
+                                    [Factory]= WorkOrderForOutput.FactoryID ,
+                                    [EstCutCell]= WorkOrderForOutput.CutCellid,
+                                    [CuttingSpNO]= WorkOrderForOutput.ID,
                                     [CutRef]= cofr.CutRef,
                                     [SEQ1]= cofr.SEQ1 ,
                                     [SEQ2]= cofr.SEQ2 ,
@@ -404,8 +404,8 @@ namespace Sci.Production.Cutting
                                     [EditDate]= cofr.EditDate,
                                     [Ukey]=cofr.Ukey
                             FROM CuttingOutputFabricRecord cofr
-                            INNER JOIN WorkOrder W on cofr.CutRef=W.CutRef
-                            LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderUkey
+                            INNER JOIN WorkOrderForOutput W on cofr.CutRef=W.CutRef
+                            LEFT JOIN CuttingOutput_Detail CD on W.Ukey=CD.WorkOrderForOutputUkey
                             LEFT JOIN CuttingOutput C on CD.ID=C.ID
                             OUTER APPLY(
                                 SELECT IdAndName FROM GetName WHERE ID=cofr.AddName
@@ -414,9 +414,9 @@ namespace Sci.Production.Cutting
                                 SELECT IdAndName FROM GetName WHERE ID=cofr.EditName
                             )editInfo
 							OUTER APPLY(
-								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrder WHERE CutRef=cofr.CutRef
+								SELECT TOP 1 ID,FactoryID,CutCellid FROM WorkOrderForOutput WHERE CutRef=cofr.CutRef
                                                                                          {outerApplyWhere}
-							)WorkOrder
+							)WorkOrderForOutput
                             WHERE cofr.MDivisionId='{Env.User.Keyword}'
                             ");
             #endregion
@@ -464,7 +464,7 @@ namespace Sci.Production.Cutting
             }
             #endregion
 
-            sqlCmd.Append(Environment.NewLine + @" GROUP BY WorkOrder.FactoryID ,WorkOrder.CutCellid,WorkOrder.ID,cofr.CutRef,cofr.SEQ1, cofr.SEQ2 
+            sqlCmd.Append(Environment.NewLine + @" GROUP BY WorkOrderForOutput.FactoryID ,WorkOrderForOutput.CutCellid,WorkOrderForOutput.ID,cofr.CutRef,cofr.SEQ1, cofr.SEQ2 
                                                    , cofr.Roll,cofr.Dyelot,cofr.Yardage,addInfo.IdAndName, cofr.AddDate
                                                    , editInfo.IdAndName, cofr.EditDate ,cofr.Ukey");
             this.ShowWaitMessage("Data Loading....");

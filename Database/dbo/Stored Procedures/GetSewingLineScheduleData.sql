@@ -711,8 +711,8 @@ outer apply (
 		  ,[StyleUkey] = Stuff((select distinct concat( ',',StyleUkey)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'')
 		  ,FirststCuttingOutputDate=(
 				SELECT [Date]=MIN(co2.cDate)
-				FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-				INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+				FROM  WorkOrderForOutput_Distribute wd2 WITH (NOLOCK)
+				INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderForOutputUkey = wd2.WorkOrderForOutputUkey
 				INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 				where wd2.OrderID IN (SELECT OrderID from #APSColumnGroup where APSNo = al.APSNo )
 			)

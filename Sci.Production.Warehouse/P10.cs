@@ -704,7 +704,7 @@ from dbo.Issue_Summary a WITH (NOLOCK) inner join dbo.orders o WITH (NOLOCK) on 
 
                 string sqlcmd = string.Format(
                     @";with cte as
-(Select WorkOrder.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.workorder WITH (NOLOCK) on WorkOrder.Ukey = Cutplan_Detail.WorkorderUkey 
+(Select WorkOrderForPlanning.FabricCombo,Cutplan_Detail.CutNo from Cutplan_Detail WITH (NOLOCK) inner join dbo.WorkOrderForPlanning WITH (NOLOCK) on WorkOrderForPlanning.Ukey = Cutplan_Detail.WorkorderForPlanningUkey 
 where Cutplan_Detail.ID='{0}' )
 select distinct FabricCombo ,(select convert(varchar,CutNo)+',' 
 from (select CutNo from cte where cte.FabricCombo = a.FabricCombo )t order by CutNo for xml path('')) cutnos from cte a
@@ -1040,8 +1040,8 @@ declare @today date = getdate()
 
 select distinct ss.FactoryID, ss.EstCutDate, ss.CutCellID
 from Issue i with (nolock)
-inner join WorkOrder w with (nolock) on i.CutplanID = w.CutplanID
-inner join SpreadingSchedule_Detail ssd with (nolock) on w.CutRef = ssd.CutRef
+inner join WorkOrderForPlanning wp with (nolock) on i.CutplanID = wp.CutplanID
+inner join SpreadingSchedule_Detail ssd with (nolock) on wp.CutRef = ssd.CutRef
 inner join SpreadingSchedule ss with (nolock) on ssd.SpreadingScheduleUkey = ss.Ukey
 where	i.Id = '{this.CurrentMaintain["ID"]}' and
 		ss.EstCutDate > @today
@@ -1072,17 +1072,6 @@ where	i.Id = '{this.CurrentMaintain["ID"]}' and
         {
             this.RenewData(); // 先重載資料, 避免雙開程式狀況
             base.ClickUnconfirm();
-
-            string strSeek = $@"select * 
-                                from SciProduction_Issue_Detail pms_id with(nolock)
-                                inner join SpreadingInspection_InsCutRef_Fabric sif with(nolock) on sif.IssueDetailUkey = pms_id.Ukey
-                                where pms_id.id = '{this.CurrentMaintain["ID"]}'";
-
-            if (MyUtility.Check.Seek(strSeek, "ManufacturingExecution"))
-            {
-                MyUtility.Msg.WarningBox("QA_R14. Spreading Inspection data already exists, cannot unconfirm.");
-                return;
-            }
 
             if (this.CurrentMaintain == null ||
                 MyUtility.Msg.QuestionBox("Do you want to unconfirme it?") == DialogResult.No)

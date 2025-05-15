@@ -153,8 +153,8 @@ SELECT [UpperSum] =  SUM(Layer)
 	,[cDate]
 	,[FactoryID] = co.FactoryID
 into #cuttingSum
-FROM SciProduction_CuttingOutput co
-INNER JOIN SciProduction_CuttingOutput_Detail cod ON co.id = cod.ID
+FROM [MainServer].[Production].[dbo].[CuttingOutput] co
+INNER JOIN [MainServer].[Production].[dbo].[CuttingOutput_Detail] cod ON co.id = cod.ID
 WHERE 
 (co.EditDate BETWEEN '{sDateS}' AND '{eDateS}') OR
 (co.AddDate BETWEEN '{sDateS}' AND '{eDateS}')
@@ -166,7 +166,7 @@ SELECT [LowerSum] = SUM(Layer)
 	,wo.CutRef
 	,wo.FactoryID
 into #workOrderSUM
-FROM SciProduction_WorkOrder wo
+FROM [MainServer].[Production].[dbo].[WorkOrderForOutput] wo
 inner join #cuttingSum cs with(NOLOCK) on wo.ID = cs.[CuttingID] and wo.CutRef = cs.CutRef
 GROUP BY ID,wo.CutRef,wo.FactoryID
 
@@ -183,15 +183,15 @@ inner join #workOrderSUM b on a.CuttingID = b.id and a.CutRef = b.CutRef
 OUTER APPLY
 (
 	SELECT MincoDate = MIN(co.cdate)
-	FROM SciProduction_CuttingOutput co WITH (NOLOCK) 
-	INNER JOIN SciProduction_CuttingOutput_Detail cod WITH (NOLOCK) on co.id = cod.id
+	FROM [MainServer].[Production].[dbo].[CuttingOutput] co WITH (NOLOCK) 
+	INNER JOIN [MainServer].[Production].[dbo].[CuttingOutput_Detail] cod WITH (NOLOCK) on co.id = cod.id
 	Where cod.CutRef = b.[CutRef] and co.Status != 'New' and co.FactoryID = b.FactoryID and b.CutRef <> ''
 )MincDate
 OUTER APPLY
 (
 	SELECT val = sum(cd.Layer) 
-	FROM SciProduction_CuttingOutput_Detail cd WITH (NOLOCK)
-	INNER JOIN SciProduction_CuttingOutput c WITH (NOLOCK) ON cd.ID = c.ID
+	FROM [MainServer].[Production].[dbo].[CuttingOutput_Detail] cd WITH (NOLOCK)
+	INNER JOIN [MainServer].[Production].[dbo].[CuttingOutput] c WITH (NOLOCK) ON cd.ID = c.ID
 	WHERE cd.CutRef = b.[CutRef] and b.[CutRef] <> ''
 )acc
 where UpperSum = LowerSum

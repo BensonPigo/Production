@@ -346,8 +346,8 @@ select oq.ID,oq.Article,oq.SizeCode,w.Colorid,w.FabricCombo,oq.Qty,OutQty=isnull
 from Order_Qty oq with(nolock)
 outer apply(
 	select distinct w.Colorid,w.FabricCombo
-	from WorkOrder_Distribute wd with(nolock) 
-	left join WorkOrder w with(nolock) on w.Ukey = wd.WorkOrderUkey
+	from WorkOrderForOutput_Distribute wd with(nolock) 
+	left join WorkOrderForOutput w with(nolock) on w.Ukey = wd.WorkOrderForOutputUkey
 	where wd.OrderID = oq.ID and wd.Article = oq.Article and wd.SizeCode = oq.SizeCode
 )w
 left join #QtyBySetPerSubprocess_PatternPanelSorting a on oq.id = a.OrderID and oq.Article = a.Article and oq.SizeCode = a.SizeCode and w.FabricCombo = a.PatternPanel

@@ -84,10 +84,10 @@ as (
 select c.cDate,isnull(wd.Article,'') as Article,isnull(wd.SizeCode,'') as SizeCode,
 isnull(wp.PatternPanel,'') as PatternPanel,isnull(SUM(wd.Qty),0) as CutQty
 from Orders o WITH (NOLOCK) 
-left join WorkOrder_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID
-left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderUkey = wd.WorkOrderUkey
+left join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on wd.OrderID = o.ID
+left join CuttingOutput_Detail cd WITH (NOLOCK) on cd.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
 left join CuttingOutput c WITH (NOLOCK) on c.ID = cd.ID
-left join WorkOrder_PatternPanel wp WITH (NOLOCK) on wd.WorkOrderUkey = wp.WorkOrderUkey
+left join WorkOrderForOutput_PatternPanel wp WITH (NOLOCK) on wd.WorkOrderForOutputUkey = wp.WorkOrderForOutputUkey
 where {0}
 and c.Status <> 'New'
 group by c.cDate,wd.Article,wd.SizeCode,wp.PatternPanel
@@ -108,27 +108,27 @@ group by cDate", string.Format("o.ID = '{0}'", this.id));
             else
             {
                 sqlCmd = $@"
-	select wd.OrderID,[cDate] = max(co.cDate),wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderUkey,
+	select wd.OrderID,[cDate] = max(co.cDate),wd.SizeCode,wd.Article,wp.PatternPanel,wd.WorkOrderForOutputUkey,
 		cutqty= iif(isnull(sum(cod.Layer*ws.Qty), 0)>wd.Qty,wd.Qty,isnull(sum(cod.Layer*ws.Qty), 0)),
 		co.MDivisionid,
 		TotalCutQty=isnull(sum(cod.Layer*ws.Qty),0),cod.CutRef,wo.FabricPanelCode,wo.Cutno
 	into #CutQtytmp1
-	from WorkOrder_Distribute wd WITH (NOLOCK)
-	inner join WorkOrder_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderUkey = wd.WorkOrderUkey
-	inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = wd.WorkOrderUkey and ws.SizeCode = wd.SizeCode
-	inner join WorkOrder wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderUkey
-	left join CuttingOutput_Detail cod on cod.WorkOrderUkey = wd.WorkOrderUkey
+	from WorkOrderForOutput_Distribute wd WITH (NOLOCK)
+	inner join WorkOrderForOutput_PatternPanel wp WITH (NOLOCK) on wp.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
+	inner join WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey and ws.SizeCode = wd.SizeCode
+	inner join WorkOrderForOutput wo WITH (NOLOCK) on wo.Ukey = wd.WorkOrderForOutputUkey
+	left join CuttingOutput_Detail cod on cod.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
 	left join CuttingOutput co WITH (NOLOCK) on co.id = cod.id and co.Status <> 'New'
 	inner join orders o WITH (NOLOCK) on o.id = wd.OrderID
 	where o.poid=(select poid from orders o with(nolock) where id = '{this.id}')
-	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderUkey,cod.CutRef,wo.FabricPanelCode,wo.Cutno
+	group by wd.OrderID,wd.SizeCode,wd.Article,wp.PatternPanel,co.MDivisionid,wd.Qty,wd.WorkOrderForOutputUkey,cod.CutRef,wo.FabricPanelCode,wo.Cutno
 	------------------
-	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
-		,Rowid=ROW_NUMBER() over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
+	select * ,AccuCutQty=sum(cutqty) over(partition by WorkOrderForOutputUkey,patternpanel,sizecode order by WorkOrderForOutputUkey,orderid)
+		,Rowid=ROW_NUMBER() over(partition by WorkOrderForOutputUkey,patternpanel,sizecode order by WorkOrderForOutputUkey,orderid)
 	into #CutQtytmp2
 	from #CutQtytmp1
 	------------------
-	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by WorkOrderUkey,patternpanel,sizecode order by WorkOrderUkey,orderid)
+	select *,Lagaccu= LAG(AccuCutQty,1,AccuCutQty) over(partition by WorkOrderForOutputUkey,patternpanel,sizecode order by WorkOrderForOutputUkey,orderid)
 	into #Lagtmp
 	from #CutQtytmp2 
 	------------------

@@ -146,7 +146,7 @@ from orders ord WITH (NOLOCK) inner join
 	) e 
 	Where e.cuttingsp is not null and e.cuttingsp !='' and e.cuttingsp not in (Select id from cutting WITH (NOLOCK) )
 ) cut on ord.cuttingsp = cut.CuttingSP 
-outer apply(select top 1 Type from WorkOrder where ID = ord.cuttingsp)a
+outer apply(select top 1 Type from WorkOrderForPlanning where ID = ord.cuttingsp)a
 where ord.FtyGroup = '{1}'
 group by ord.CuttingSp ,a.Type",
                 sewdate,

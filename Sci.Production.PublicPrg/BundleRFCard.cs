@@ -117,7 +117,7 @@ from
 		, b.Item
 		, [Sea] = concat(o.SeasonID,'-', o.dest)
 		, br.BuyerID
-		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrder.MarkerNo from WorkOrder WITH (NOLOCK) where WorkOrder.CutRef= b.CutRef and WorkOrder.id = b.poid),'')
+		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrderForOutput.MarkerNo from WorkOrderForOutput WITH (NOLOCK) where WorkOrderForOutput.CutRef= b.CutRef and WorkOrderForOutput.id = b.poid),'')
 		, [BodyCut] = concat(isnull(b.PatternPanel,''),'-', b.FabricPanelCode ,'-',convert(varchar, b.Cutno))
 		, [Artwork]= iif(len(Artwork.Artwork) > 43, substring(Artwork.Artwork ,0,43), Artwork.Artwork)
 		, bd.PatternDesc
@@ -166,7 +166,7 @@ from
 		, b.Item
 		, [Sea] = concat(o.SeasonID,'-', o.dest)
 		, br.BuyerID
-		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrder.MarkerNo from WorkOrder WITH (NOLOCK) where WorkOrder.CutRef= b.CutRef and WorkOrder.id = b.poid),'')
+		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrderForOutput.MarkerNo from WorkOrderForOutput WITH (NOLOCK) where WorkOrderForOutput.CutRef= b.CutRef and WorkOrderForOutput.id = b.poid),'')
 		, [BodyCut] = concat(isnull(b.PatternPanel,''),'-', b.FabricPanelCode ,'-',convert(varchar, b.Cutno))
 		, [Artwork]= ''
 		, bda.PatternDesc
@@ -220,7 +220,7 @@ from
 		, b.Item
 		, [Sea] = concat(o.SeasonID,'-', o.dest)
 		, br.BuyerID
-		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrder.MarkerNo from WorkOrder WITH (NOLOCK) where WorkOrder.CutRef= b.CutRef and WorkOrder.id = b.poid),'')
+		, [MK] = iif(isnull(b.CutRef,'') <> '',(select top 1 WorkOrderForOutput.MarkerNo from WorkOrderForOutput WITH (NOLOCK) where WorkOrderForOutput.CutRef= b.CutRef and WorkOrderForOutput.id = b.poid),'')
 		, [BodyCut] = concat(isnull(b.PatternPanel,''),'-', b.FabricPanelCode ,'-',convert(varchar, b.Cutno))
 		, [Artwork]= iif(len(Artwork.Artwork) > 43, substring(Artwork.Artwork ,0,43), Artwork.Artwork)
 		, bd.PatternDesc

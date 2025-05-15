@@ -245,7 +245,7 @@ where 1=1
                     this.sqlCmd.Append($@" 
 and exists(
 	select 1
-	from WorkOrder w	
+	from WorkOrderForOutput w	
 	where w.CutRef = b.CutRef 
 	{whereEstCut}
 )");
@@ -401,7 +401,7 @@ where 1=1
                     this.sqlCmd.Append($@" 
 and exists(
 	select 1
-	from WorkOrder w	
+	from WorkOrderForOutput w	
 	where w.CutRef = b.CutRef
 	{whereEstCut}
 )");
