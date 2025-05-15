@@ -79,7 +79,7 @@ BEGIN TRY
                             WHERE s.MachineID = t.MachineID AND s.Flag != 3
                             AND (
                                 s.SewingCell != t.SewingCell OR
-                                s.MachineGroup != t.MachineGroup OR
+                                s.ConnType != t.ConnType OR
                                 s.MachineBrandID != t.MachineBrandID OR
                                 s.DetectionType != t.DetectionType
                             )
