@@ -52,10 +52,6 @@
             this.tabs.SuspendLayout();
             this.SuspendLayout();
             // 
-            // detail
-            // 
-            this.detail.Size = new System.Drawing.Size(894, 407);
-            // 
             // detailcont
             // 
             this.detailcont.Controls.Add(this.txtEndTime);
@@ -74,12 +70,6 @@
             this.detailcont.Controls.Add(this.label3);
             this.detailcont.Controls.Add(this.label2);
             this.detailcont.Controls.Add(this.label1);
-            this.detailcont.Size = new System.Drawing.Size(894, 369);
-            // 
-            // detailbtm
-            // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 369);
-            this.detailbtm.Size = new System.Drawing.Size(894, 38);
             // 
             // browse
             // 
@@ -264,7 +254,7 @@
             this.IsSupportPrint = false;
             this.Name = "B34";
             this.OnLineHelpID = "Sci.Win.Tems.Input1";
-            this.Text = "B31. Notification for Sort Out";
+            this.Text = "B34. Physical Inspection Sort Out Notification";
             this.UniqueExpress = "FactoryID";
             this.WorkAlias = "NotificationForSortOut";
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
