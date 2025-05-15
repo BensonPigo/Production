@@ -418,17 +418,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,w.EstCutDate
 				,[CutQty] = CutQty.val
 			into #tmp_EstCutQty_Step1
-			from WorkOrder w with(nolock)
-			inner join WorkOrder_Distribute wd WITH(NOLOCK) on wd.WorkOrderUkey = w.Ukey
-			inner join WorkOrder_PatternPanel wp WITH(NOLOCK) on wp.WorkOrderUkey = w.Ukey
-			/* WorkOrder_Distribute.SizeCode與SewingSchedule_Detail.Size WorkOrder_Distribute.Article與SewingSchedule_Detail.Article對照*/
+			from WorkOrderForOutput w with(nolock)
+			inner join WorkOrderForOutput_Distribute wd WITH(NOLOCK) on wd.WorkOrderForOutputUkey = w.Ukey
+			inner join WorkOrderForOutput_PatternPanel wp WITH(NOLOCK) on wp.WorkOrderForOutputUkey = w.Ukey
+			/* WorkOrderForOutput_Distribute.SizeCode與SewingSchedule_Detail.Size WorkOrderForOutput_Distribute.Article與SewingSchedule_Detail.Article對照*/
 			inner join SewingSchedule_Detail ssd WITH(NOLOCK) on ssd.OrderID = wd.OrderID and ssd.Article = wd.Article and ssd.SizeCode = wd.SizeCode
 			/****************************************************************************************************************************/
 			outer apply
 			(
 				Select  val = c.qty * w.layer
-				From WorkOrder_SizeRatio c
-				Where  c.WorkOrderUkey =w.Ukey 
+				From WorkOrderForOutput_SizeRatio c
+				Where  c.WorkOrderForOutputUkey =w.Ukey 
 			) as CutQty
 			where exists (select 1 from #tmp_StdQ_MainDates main WITH(NOLOCK) where main.OrderID = wd.OrderID)
 			and exists (select 1 from Orders o WITH(NOLOCK)  where wd.OrderID  = o.ID and o.LocalOrder = 0) --非local單 
@@ -560,7 +560,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						ml.ID,
 						ml.Version
 				from Marker_ML ml with (nolock)
-				inner join WorkOrder wo with (nolock) on wo.MarkerVersion = ml.Version and ml.MarkerName = wo.Markername
+				inner join WorkOrderForOutput wo with (nolock) on wo.MarkerVersion = ml.Version and ml.MarkerName = wo.Markername
 				where exists (select 1 from DropDownList d with (nolock) where ml.MatchFabric = d.ID and d.type = 'MatchFabric')
 				and exists (select 1 from Marker m with (nolock) where ml.ID = m.ID and m.Version = ml.Version and wo.MarkerNo = m.MarkerNo
 					and m.EditDate = (select MAX(m2.EditDate) from Marker m2 with (nolock) where m.ID = m2.ID and m.Version = m2.Version)

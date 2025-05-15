@@ -753,8 +753,8 @@ order by bundlegroup";
             string selectCommand = string.Format(
                 @"
 select distinct b.orderid 
-from workorder a WITH (NOLOCK) , workorder_distribute b WITH (NOLOCK) 
-where a.id = '{0}' and a.ukey = b.workorderukey",
+from WorkOrderForOutput a WITH (NOLOCK) , WorkOrderForOutput_distribute b WITH (NOLOCK) 
+where a.id = '{0}' and a.ukey = b.WorkOrderForOutputukey",
                 cuttingid);
             item = new SelectItem(selectCommand, "20", this.Text);
             DialogResult returnResult = item.ShowDialog();
@@ -984,8 +984,8 @@ where id = '{newvalue}' and mDivisionid='{this.keyword}' ";
                 string scount = string.Format(
                     @"
 select distinct count(Article)
-from workorder w WITH (NOLOCK) 
-inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkOrderForOutputUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}",
                     this.CurrentMaintain["Orderid"].ToString(),
                     this.keyword,
@@ -996,8 +996,8 @@ where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}",
                     selectCommand = string.Format(
                         @"
 select distinct Article ,w.Colorid
-from workorder w WITH (NOLOCK) 
-inner join Workorder_Distribute wd WITH (NOLOCK) on w.Ukey = wd.WorkorderUkey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.Ukey = wd. ForOutputUkey
 where Article!='' and w.OrderID = '{0}' and w.mDivisionid = '{1}' {2}",
                         this.CurrentMaintain["Orderid"].ToString(),
                         this.keyword,

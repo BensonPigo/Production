@@ -137,14 +137,14 @@ Select sel = 0,
 	workorderukey = a.ukey,    
     OrderID = (
 		Select orderid+'/' 
-		From WorkOrder_Distribute c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =a.Ukey and orderid!='EXCESS'
+		From WorkOrderForOutput_Distribute c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =a.Ukey and orderid!='EXCESS'
 		For XML path('')
     ),
     SizeRatio = (
 		Select SizeCode+'/'+convert(varchar,Qty ) 
-		From WorkOrder_SizeRatio c WITH (NOLOCK) 
-		Where c.WorkOrderUkey =a.Ukey 
+		From WorkOrderForOutput_SizeRatio c WITH (NOLOCK) 
+		Where c.WorkOrderForOutputUkey =a.Ukey 
 		For XML path('')
     ),
 	WorkOderLayer = a.Layer,
@@ -153,10 +153,10 @@ Select sel = 0,
 	LackingLayers =  a.Layer - isnull(acc.AccuCuttingLayer,0) - final.CuttingLayer,
     SRQ.SizeRatioQty,
     o.StyleID
-from WorkOrder a WITH (NOLOCK)
+from WorkOrderForOutput a WITH (NOLOCK)
 left join Orders o WITH (NOLOCK) on o.ID = a.ID 
-outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderUkey = a.Ukey)acc
-outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrder_SizeRatio b where b.WorkOrderUkey = a.Ukey)SRQ
+outer apply(select AccuCuttingLayer = sum(b.Layer) from cuttingoutput_Detail b where b.WorkOrderForOutputUkey = a.Ukey)acc
+outer apply(select SizeRatioQty = sum(b.Qty) from WorkOrderForOutput_SizeRatio b where b.WorkOrderForOutputUkey = a.Ukey)SRQ
 outer apply(
 	select Qty = min(x2.Qty) -- 正常狀況,在同裁次內 每個size計算出來要一樣, 取min只是個保險
 	from(
@@ -168,7 +168,7 @@ outer apply(
 			where b.CutRef = a.CutRef
 			group by bd.SizeCode, bd.Patterncode, bd.PatternDesc
 		)x
-		left join WorkOrder_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderUkey = a.Ukey
+		left join WorkOrderForOutput_SizeRatio ws with(nolock) on x.SizeCode = ws.SizeCode and ws.WorkOrderForOutputUkey = a.Ukey
 		group by x.SizeCode,ws.Qty
 	)x2
 )x3
@@ -236,7 +236,7 @@ and a.ukey not in ( {condition} ) ");
             {
                 foreach (DataRow dr in selDr)
                 {
-                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderUkey={0}", dr["WorkorderUkey"]));
+                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderForOutPutUkey={0}", dr["WorkorderUkey"]));
                     if (exist.Length == 0)
                     {
                         DataRow ndr = this.currentdetailTable.NewRow();
@@ -256,7 +256,7 @@ and a.ukey not in ( {condition} ) ");
                         ndr["Colorid"] = dr["Colorid"];
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
-                        ndr["WorkorderUkey"] = dr["WorkorderUkey"];
+                        ndr["WorkorderForOutPutUkey"] = dr["WorkorderUkey"];
                         ndr["consPC"] = dr["consPC"];
                         ndr["sizeRatioQty"] = dr["sizeRatioQty"];
                         this.currentdetailTable.Rows.Add(ndr);
@@ -279,7 +279,7 @@ and a.ukey not in ( {condition} ) ");
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
-                        exist[0]["WorkorderUkey"] = dr["WorkorderUkey"];
+                        exist[0]["WorkorderForOutPutUkey"] = dr["WorkorderUkey"];
                         exist[0]["ConsPC"] = dr["ConsPC"];
                         exist[0]["sizeRatioQty"] = dr["sizeRatioQty"];
                     }

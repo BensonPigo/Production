@@ -390,7 +390,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 into #tmp_first_cut_date
                 from dbo.CuttingOutput a WITH (NOLOCK) 
                 inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id 
-                inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
+                inner join dbo.WorkOrderForOutput_Distribute c WITH (NOLOCK) on c.WorkOrderForOutputUkey = b.WorkOrderForOutputUkey
                 inner join (select distinct OrderID from #cte) t on c.OrderID = t.OrderID
                 group by c.OrderID
 
@@ -628,7 +628,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 into #tmp_first_cut_date
                 from dbo.CuttingOutput a WITH (NOLOCK) 
                 inner join dbo.CuttingOutput_Detail b WITH (NOLOCK) on b.id = a.id 
-                inner join dbo.WorkOrder_Distribute c WITH (NOLOCK) on c.WorkOrderUkey = b.WorkOrderUkey
+                inner join dbo.WorkOrderForOutput_Distribute c WITH (NOLOCK) on c.WorkOrderForOutputUkey = b.WorkOrderForOutputUkey
                 inner join (select distinct OrderID,Article,SizeCode from #cte) t on c.OrderID = t.OrderID and c.Article = t.Article and c.SizeCode = t.SizeCode
                 group by c.OrderID,c.Article,c.SizeCode  
 
@@ -977,7 +977,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                for xml path('')
 	                ),1,1,'')))
                 )spdX
-                outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
+                outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrderForOutput wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
                 outer apply(
                     select ScanQty = sum(pd.ScanQty)
                     from #tmp_PackingList_Detail pd
@@ -1120,7 +1120,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                for xml path('')
 	                ),1,1,'')))
                 )spdX
-                outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrder wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
+                outer apply(select EstimatedCutDate = min(EstCutDate) from WorkOrderForOutput wo WITH (NOLOCK) where t.POID = wo.id)EstCutDate
                 outer apply(
                     select ScanQty = sum(pd.ScanQty)
                     from #tmp_PackingList_Detail pd

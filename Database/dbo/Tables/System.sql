@@ -105,6 +105,7 @@ CREATE TABLE [dbo].[System] (
     [SFtpPortDummy] VARCHAR(5) NOT NULL DEFAULT (''), 
     [SFtpIDDummy] VARCHAR(20) NOT NULL DEFAULT (''), 
     [SFtpPwdDummy] VARCHAR(36) NOT NULL DEFAULT (''), 
+    [UseCutRefToRequestFabric] TINYINT NOT NULL DEFAULT ((0)), 
     CONSTRAINT [PK_RgCode] PRIMARY KEY CLUSTERED ([RgCode] ASC)
 );
 go
@@ -399,3 +400,13 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'System',
     @level2type = N'COLUMN', 
     @level2name = N'MercuryErrorEmailLastDate'
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'該區是否使用裁剪裁次要料',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'System',
+    @level2type = N'COLUMN',
+    @level2name = N'UseCutRefToRequestFabric'

@@ -616,13 +616,13 @@ select distinct
     ,[Article] = Article.value
     ,[Color] = LTRIM(RTRIM(Color.value))
     ,[SizeCode] = SizeCode.value
-    ,cp2.WorkorderUkey
+    ,[WorkorderUkey] = cp2.WorkOrderForPlanningUkey
     ,[Status] = case '{isConfirmed}' when 'True' then 'New' 
     when 'False' then 'Delete' end
     ,[CmdTime] = GETDATE()
     from  Production.dbo.Cutplan_Detail cp2
     inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
-    inner join Production.dbo.WorkOrder wo on cp2.WorkorderUkey = wo.Ukey
+    inner join Production.dbo.WorkOrderForPlanning wo on cp2.WorkOrderForPlanningUkey = wo.Ukey
     LEFT join Production.dbo.PO_Supp_Detail po3 on po3.ID= cp2.PoId 
 	    and po3.SEQ1=wo.Seq1 and po3.SEQ2=wo.Seq2
     LEFT JOIN Production.dbo.PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = po3.id and psdsC.seq1 = po3.seq1 and psdsC.seq2 = po3.seq2 and psdsC.SpecColumnID = 'Color'
@@ -639,8 +639,8 @@ select distinct
             select CONCAT(',',SizeCode)
             from(
                 select distinct SizeCode
-                from Production.dbo.WorkOrder_Distribute
-                where WorkOrderUkey = wo.Ukey
+                from Production.dbo.WorkOrderForPlanning_Distribute
+                where WorkOrderForPlanningUkey = wo.Ukey
                 )s
                 for xml path('')
             ),1,1,'')
@@ -650,8 +650,8 @@ select distinct
             select CONCAT(',',Article)
             from(
                 select distinct Article
-                from Production.dbo.WorkOrder_Distribute
-                where WorkOrderUkey = wo.Ukey
+                from Production.dbo.WorkOrderForPlanning_Distribute
+                where WorkOrderForPlanningUkey = wo.Ukey
                 and Article !=''
                 )s
             for xml path('')
@@ -661,7 +661,7 @@ select distinct
         select 1 from Issue_Detail where cp2.ID = CutplanID
     )
     and exists(
-        select 1 from #tmp s where s.ID = cp2.ID and s.WorkorderUkey = cp2.WorkorderUkey
+        select 1 from #tmp s where s.ID = cp2.ID and s.WorkOrderForPlanningUkey = cp2.WorkOrderForPlanningUkey
     )
 ";
             DataTable dt = new DataTable();

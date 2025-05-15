@@ -65,7 +65,7 @@ Begin
 		begin
 			set @Ukey =(
 				select top 1 p.UKey
-				from WorkOrder w with(nolock)
+				from WorkOrderForOutput w with(nolock)
 				inner join Order_EachCons oe with(nolock)on oe.MarkerNo = w.MarkerNo and w.id = oe.id
 				inner join SMNotice s with(nolock)on s.ID=oe.SMNoticeID
 				inner join SMNotice_Detail sd with(nolock)on sd.id = s.id
@@ -82,7 +82,7 @@ Begin
 		Begin
 			set @Ukey =(
 				select top 1 p.UKey
-				from WorkOrder w with(nolock)
+				from WorkOrderForOutput w with(nolock)
 				inner join Order_EachCons oe with(nolock)on oe.MarkerNo = w.MarkerNo and w.id = oe.id
 				inner join SMNotice s with(nolock)on s.ID=oe.SMNoticeID
 				inner join SMNotice_Detail sd with(nolock)on sd.id = s.id

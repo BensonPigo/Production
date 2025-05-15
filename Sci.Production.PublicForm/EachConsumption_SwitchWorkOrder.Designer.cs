@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.radioGroup1 = new Sci.Win.UI.RadioGroup();
             this.radioBySP = new Sci.Win.UI.RadioButton();
             this.radioCombination = new Sci.Win.UI.RadioButton();
@@ -37,9 +36,14 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.grid1 = new Sci.Win.UI.Grid();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.radioUseCutRefToRequestFabric = new Sci.Win.UI.RadioGroup();
+            this.radioButtonNo = new Sci.Win.UI.RadioButton();
+            this.radioButtonYes = new Sci.Win.UI.RadioButton();
+            this.label3 = new Sci.Win.UI.Label();
             this.radioGroup1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
+            this.radioUseCutRefToRequestFabric.SuspendLayout();
             this.SuspendLayout();
             // 
             // radioGroup1
@@ -78,7 +82,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(220, 17);
+            this.btnOK.Location = new System.Drawing.Point(669, 15);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(80, 30);
             this.btnOK.TabIndex = 1;
@@ -88,7 +92,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(220, 53);
+            this.btnCancel.Location = new System.Drawing.Point(669, 51);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(80, 30);
             this.btnCancel.TabIndex = 2;
@@ -114,14 +118,6 @@
             this.grid1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
             this.grid1.Location = new System.Drawing.Point(12, 99);
             this.grid1.Name = "grid1";
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.grid1.RowHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.grid1.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
             this.grid1.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
             this.grid1.RowTemplate.Height = 24;
@@ -130,9 +126,58 @@
             this.grid1.Size = new System.Drawing.Size(737, 185);
             this.grid1.TabIndex = 3;
             // 
+            // radioUseCutRefToRequestFabric
+            // 
+            this.radioUseCutRefToRequestFabric.Controls.Add(this.label3);
+            this.radioUseCutRefToRequestFabric.Controls.Add(this.radioButtonNo);
+            this.radioUseCutRefToRequestFabric.Controls.Add(this.radioButtonYes);
+            this.radioUseCutRefToRequestFabric.Location = new System.Drawing.Point(200, 8);
+            this.radioUseCutRefToRequestFabric.Name = "radioUseCutRefToRequestFabric";
+            this.radioUseCutRefToRequestFabric.Size = new System.Drawing.Size(278, 85);
+            this.radioUseCutRefToRequestFabric.TabIndex = 4;
+            this.radioUseCutRefToRequestFabric.TabStop = false;
+            // 
+            // radioButtonNo
+            // 
+            this.radioButtonNo.AutoSize = true;
+            this.radioButtonNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButtonNo.Location = new System.Drawing.Point(19, 55);
+            this.radioButtonNo.Name = "radioButtonNo";
+            this.radioButtonNo.Size = new System.Drawing.Size(44, 21);
+            this.radioButtonNo.TabIndex = 1;
+            this.radioButtonNo.TabStop = true;
+            this.radioButtonNo.Text = "No";
+            this.radioButtonNo.UseVisualStyleBackColor = true;
+            this.radioButtonNo.Value = "2";
+            // 
+            // radioButtonYes
+            // 
+            this.radioButtonYes.AutoSize = true;
+            this.radioButtonYes.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.radioButtonYes.Location = new System.Drawing.Point(19, 32);
+            this.radioButtonYes.Name = "radioButtonYes";
+            this.radioButtonYes.Size = new System.Drawing.Size(50, 21);
+            this.radioButtonYes.TabIndex = 0;
+            this.radioButtonYes.TabStop = true;
+            this.radioButtonYes.Text = "Yes";
+            this.radioButtonYes.UseVisualStyleBackColor = true;
+            this.radioButtonYes.Value = "1";
+            // 
+            // label3
+            // 
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(16, 11);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(238, 23);
+            this.label3.TabIndex = 2;
+            this.label3.Text = "Use Cutting Cutref# to Request Fabric";
+            this.label3.TextStyle.Color = System.Drawing.Color.Red;
+            // 
             // EachConsumption_SwitchWorkOrder
             // 
             this.ClientSize = new System.Drawing.Size(761, 296);
+            this.Controls.Add(this.radioUseCutRefToRequestFabric);
             this.Controls.Add(this.grid1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOK);
@@ -144,6 +189,8 @@
             this.radioGroup1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.grid1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).EndInit();
+            this.radioUseCutRefToRequestFabric.ResumeLayout(false);
+            this.radioUseCutRefToRequestFabric.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -157,5 +204,9 @@
         private Win.UI.Button btnCancel;
         private Win.UI.Grid grid1;
         private Win.UI.ListControlBindingSource listControlBindingSource1;
+        private Win.UI.RadioGroup radioUseCutRefToRequestFabric;
+        private Win.UI.RadioButton radioButtonNo;
+        private Win.UI.RadioButton radioButtonYes;
+        private Win.UI.Label label3;
     }
 }

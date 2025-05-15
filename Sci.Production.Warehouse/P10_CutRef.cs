@@ -35,13 +35,19 @@ namespace Sci.Production.Warehouse
 ,b.CutRef
 ,c.FabricCombo
 ,b.CutNo
-,(select x.article+',' from  (select distinct t.Article from dbo.WorkOrder_Distribute t WITH (NOLOCK) where t.WorkOrderUkey = c.Ukey) x for xml path('')) article
+,[Article] = Article.val
 ,C.Markername
 from dbo.Cutplan a WITH (NOLOCK) 
 inner join dbo.Cutplan_Detail b WITH (NOLOCK) on b.id= a.ID
-inner join dbo.WorkOrder c WITH (NOLOCK) on c.Ukey = b.WorkorderUkey
+inner join dbo.WorkOrderForPlanning c WITH (NOLOCK) on c.Ukey = b.WorkorderForPlanningUkey
+outer apply(  
+    select val  = stuff((Select distinct CONCAT(',', wpd.Article)
+    From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+    Where wpd.WorkOrderForPlanningUkey = c.Ukey and wpd.Article!=''
+    For XML path('')),1,1,'')
+) Article
 where a.ID = '{0}'
-order by b.POID,c.seq1,c.seq2,c.Cutno
+order by b.POID,c.seq1,c.seq2,b.Cutno
 
 ", this.dr["cutplanid"].ToString()));
 
@@ -66,7 +72,7 @@ order by b.POID,c.seq1,c.seq2,c.Cutno
                  .Text("seq1", header: "Seq1", width: Widths.AnsiChars(4))
                  .Text("seq2", header: "Seq2", width: Widths.AnsiChars(3))
                  .Text("cutref", header: "Cut Ref#", width: Widths.AnsiChars(10))
-                 .Text("CutNo", header: "Cut#", width: Widths.AnsiChars(4))
+                 .Text("CutNo", header: "Seq", width: Widths.AnsiChars(4))
                  .Text("FabricCombo", header: "Comb", width: Widths.AnsiChars(4))
                  .Text("Article", header: "Article", width: Widths.AnsiChars(50))
                  .Text("Markername", header: "Marker name", width: Widths.AnsiChars(13))

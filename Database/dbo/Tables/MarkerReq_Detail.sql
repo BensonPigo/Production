@@ -10,9 +10,10 @@
     [ReleaseQty]    NUMERIC (2)  CONSTRAINT [DF_MarkerReq_Detail_ReleaseQty] DEFAULT ((0)) NULL,
     [ReleaseDate]   DATE         NULL,
     [MarkerNo]      VARCHAR (10) CONSTRAINT [DF_MarkerReq_Detail_MarkerNo] DEFAULT ('') NULL,
-    [WorkOrderUkey] BIGINT       CONSTRAINT [DF_MarkerReq_Detail_FabricCode] DEFAULT ((0)) NULL,
+    [WorkOrderForOutputUkey] BIGINT       CONSTRAINT [DF_MarkerReq_Detail_WorkOrderForOutputUkey] DEFAULT ((0)) NULL,
     [CuttingWidth] VARCHAR(8) NULL DEFAULT (''), 
     [PatternPanel] VARCHAR(120) NULL DEFAULT (''), 
+    [CutRef]       Varchar(10) CONSTRAINT [DF_MarkerReq_Detail_CutRef] DEFAULT ('') NOT NULL,
     CONSTRAINT [PK_MarkerReq_Detail] PRIMARY KEY CLUSTERED ([ukey] ASC)
 );
 
@@ -69,4 +70,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'馬克序�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'主Key', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq_Detail', @level2type = N'COLUMN', @level2name = N'ukey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrderForOutput', @level0type = N'SCHEMA',@level0name = N'dbo', @level1type = N'TABLE', @level1name = N'MarkerReq_Detail', @level2type = N'COLUMN', @level2name = N'WorkOrderForOutputUkey';
+
+
+GO
+EXECUTE sp_addextendedproperty @name=N'MS_Description', @value=N'WorkOrderForOutput 裁次' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MarkerReq_Detail', @level2type=N'COLUMN',@level2name=N'CutRef';
 

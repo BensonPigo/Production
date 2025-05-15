@@ -1,4 +1,6 @@
-﻿namespace Sci.Production.Cutting
+﻿using System.Windows.Forms;
+
+namespace Sci.Production.Cutting
 {
     partial class P02
     {
@@ -28,1382 +30,987 @@
         /// </summary>
         private void InitializeComponent()
         {
-			this.components = new System.ComponentModel.Container();
-			this.labelCuttingSP = new Sci.Win.UI.Label();
-			this.label2 = new Sci.Win.UI.Label();
-			this.labelStyle = new Sci.Win.UI.Label();
-			this.labelLine = new Sci.Win.UI.Label();
-			this.displayCuttingSP = new Sci.Win.UI.DisplayBox();
-			this.textbox_LastCutRef = new Sci.Win.UI.DisplayBox();
-			this.txtStyle = new Sci.Win.UI.DisplayBox();
-			this.txtLine = new Sci.Win.UI.DisplayBox();
-			this.AutoRef = new Sci.Win.UI.Button();
-			this.labelMarkerName = new Sci.Win.UI.Label();
-			this.labelColor = new Sci.Win.UI.Label();
-			this.labelTotalLayer = new Sci.Win.UI.Label();
-			this.labelBalanceLayer = new Sci.Win.UI.Label();
-			this.displayMarkerName = new Sci.Win.UI.DisplayBox();
-			this.displayColor = new Sci.Win.UI.DisplayBox();
-			this.numTotalLayer = new Sci.Win.UI.NumericBox();
-			this.numBalanceLayer = new Sci.Win.UI.NumericBox();
-			this.btnBatchAssign = new Sci.Win.UI.Button();
-			this.btnQuantityBreakdown = new Sci.Win.UI.Button();
-			this.btnPackingMethod = new Sci.Win.UI.Button();
-			this.labelMarkerLengthY = new Sci.Win.UI.Label();
-			this.labelUnitCons = new Sci.Win.UI.Label();
-			this.labelCons = new Sci.Win.UI.Label();
-			this.labelCutCell = new Sci.Win.UI.Label();
-			this.labelFabricCombo = new Sci.Win.UI.Label();
-			this.labelFabricPanelCode = new Sci.Win.UI.Label();
-			this.labelFabricType_Refno = new Sci.Win.UI.Label();
-			this.label17 = new Sci.Win.UI.Label();
-			this.txtMarkerLengthE = new Sci.Win.UI.TextBox();
-			this.numUnitCons = new Sci.Win.UI.NumericBox();
-			this.numCons = new Sci.Win.UI.NumericBox();
-			this.txtFabricPanelCode = new Sci.Win.UI.TextBox();
-			this.txtFabricCombo = new Sci.Win.UI.TextBox();
-			this.labelDescription = new Sci.Win.UI.Label();
-			this.displayFabricType_Refno = new Sci.Win.UI.DisplayBox();
-			this.editDescription = new Sci.Win.UI.EditBox();
-			this.labelSizeRatio = new Sci.Win.UI.Label();
-			this.gridSizeRatio = new Sci.Win.UI.Grid();
-			this.sizeratioMenuStrip = new Sci.Win.UI.ContextMenuStrip();
-			this.insertSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.labelCutplanNo = new Sci.Win.UI.Label();
-			this.labelTotalCutQty = new Sci.Win.UI.Label();
-			this.displayCutplanNo = new Sci.Win.UI.DisplayBox();
-			this.gridDistributetoSPNo = new Sci.Win.UI.Grid();
-			this.distributeMenuStrip = new Sci.Win.UI.ContextMenuStrip();
-			this.insertNewRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.deleteRecordToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.gridQtyBreakdown = new Sci.Win.UI.Grid();
-			this.labelDistributetoSPNo = new Sci.Win.UI.Label();
-			this.labelTotalDistributionQty = new Sci.Win.UI.Label();
-			this.numTotalDistributionQty = new Sci.Win.UI.NumericBox();
-			this.labelQtyBreakdown = new Sci.Win.UI.Label();
-			this.downloadid_Text = new Sci.Win.UI.Label();
-			this.label26 = new Sci.Win.UI.Label();
-			this.comboBox1 = new Sci.Win.UI.ComboBox();
-			this.sizeratiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
-			this.AutoCut = new Sci.Win.UI.Button();
-			this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
-			this.qtybreakds = new Sci.Win.UI.ListControlBindingSource(this.components);
-			this.displayTotalCutQty = new Sci.Win.UI.DisplayBox();
-			this.btnPatternPanel = new Sci.Win.UI.Button();
-			this.labelPatternPanel = new Sci.Win.UI.Label();
-			this.txtPatternPanel = new Sci.Win.UI.DisplayBox();
-			this.numMarkerLengthY = new Sci.Win.UI.TextBox();
-			this.txtCutCell = new Sci.Production.Class.TxtCell();
-			this.txtMarkerLength = new Sci.Win.UI.TextBox();
-			this.btn_Refresh = new Sci.Win.UI.Button();
-			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this.txtTone = new Sci.Win.UI.TextBox();
-			this.lblTone = new Sci.Win.UI.Label();
-			this.btnAdditionalrevisedmarker = new Sci.Win.UI.Button();
-			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-			this.displayTime = new Sci.Win.UI.DisplayBox();
-			this.txtBoxMarkerNo = new Sci.Win.UI.TextBox();
-			this.label1 = new Sci.Win.UI.Label();
-			this.lbshc = new System.Windows.Forms.Label();
-			this.btnCutplanChangeHistory = new Sci.Win.UI.Button();
-			this.btnDist = new Sci.Win.UI.Button();
-			this.label3 = new Sci.Win.UI.Label();
-			this.label4 = new Sci.Win.UI.Label();
-			this.BtnImportMarker = new Sci.Win.UI.Button();
-			this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-			this.btnExWip = new Sci.Win.UI.Button();
-			this.btnKHImportMarker = new Sci.Win.UI.Button();
-			this.btnAutoDistributeSP = new Sci.Win.UI.Button();
-			this.Btn_Excel = new Sci.Win.UI.Button();
-			((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
-			this.masterpanel.SuspendLayout();
-			this.detailpanel.SuspendLayout();
-			this.detail2.SuspendLayout();
-			this.detailpanel2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
-			this.detail.SuspendLayout();
-			this.detailcont.SuspendLayout();
-			this.detailbtm.SuspendLayout();
-			this.tabs.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
-			this.sizeratioMenuStrip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.gridDistributetoSPNo)).BeginInit();
-			this.distributeMenuStrip.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakdown)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.sizeratiobs)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.distributebs)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-			this.splitContainer1.Panel1.SuspendLayout();
-			this.splitContainer1.Panel2.SuspendLayout();
-			this.splitContainer1.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-			this.splitContainer2.Panel1.SuspendLayout();
-			this.splitContainer2.Panel2.SuspendLayout();
-			this.splitContainer2.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// masterpanel
-			// 
-			this.masterpanel.Controls.Add(this.btnAutoDistributeSP);
-			this.masterpanel.Controls.Add(this.btnKHImportMarker);
-			this.masterpanel.Controls.Add(this.btnExWip);
-			this.masterpanel.Controls.Add(this.BtnImportMarker);
-			this.masterpanel.Controls.Add(this.numBalanceLayer);
-			this.masterpanel.Controls.Add(this.numTotalLayer);
-			this.masterpanel.Controls.Add(this.labelBalanceLayer);
-			this.masterpanel.Controls.Add(this.labelTotalLayer);
-			this.masterpanel.Controls.Add(this.btnBatchAssign);
-			this.masterpanel.Controls.Add(this.downloadid_Text);
-			this.masterpanel.Controls.Add(this.displayColor);
-			this.masterpanel.Controls.Add(this.displayMarkerName);
-			this.masterpanel.Controls.Add(this.labelColor);
-			this.masterpanel.Controls.Add(this.labelMarkerName);
-			this.masterpanel.Controls.Add(this.txtLine);
-			this.masterpanel.Controls.Add(this.txtStyle);
-			this.masterpanel.Controls.Add(this.displayCuttingSP);
-			this.masterpanel.Controls.Add(this.labelLine);
-			this.masterpanel.Controls.Add(this.labelStyle);
-			this.masterpanel.Controls.Add(this.labelCuttingSP);
-			this.masterpanel.Controls.Add(this.label4);
-			this.masterpanel.Controls.Add(this.label3);
-			this.masterpanel.Dock = System.Windows.Forms.DockStyle.None;
-			this.masterpanel.Size = new System.Drawing.Size(830, 93);
-			this.masterpanel.Controls.SetChildIndex(this.label3, 0);
-			this.masterpanel.Controls.SetChildIndex(this.label4, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelCuttingSP, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelLine, 0);
-			this.masterpanel.Controls.SetChildIndex(this.displayCuttingSP, 0);
-			this.masterpanel.Controls.SetChildIndex(this.txtStyle, 0);
-			this.masterpanel.Controls.SetChildIndex(this.txtLine, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelMarkerName, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelColor, 0);
-			this.masterpanel.Controls.SetChildIndex(this.displayMarkerName, 0);
-			this.masterpanel.Controls.SetChildIndex(this.displayColor, 0);
-			this.masterpanel.Controls.SetChildIndex(this.downloadid_Text, 0);
-			this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelTotalLayer, 0);
-			this.masterpanel.Controls.SetChildIndex(this.labelBalanceLayer, 0);
-			this.masterpanel.Controls.SetChildIndex(this.numTotalLayer, 0);
-			this.masterpanel.Controls.SetChildIndex(this.numBalanceLayer, 0);
-			this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-			this.masterpanel.Controls.SetChildIndex(this.BtnImportMarker, 0);
-			this.masterpanel.Controls.SetChildIndex(this.btnExWip, 0);
-			this.masterpanel.Controls.SetChildIndex(this.btnKHImportMarker, 0);
-			this.masterpanel.Controls.SetChildIndex(this.btnAutoDistributeSP, 0);
-			// 
-			// detailpanel
-			// 
-			this.detailpanel.Controls.Add(this.splitContainer1);
-			this.detailpanel.Controls.Add(this.masterpanel);
-			this.detailpanel.Controls.Add(this.detailbtm);
-			this.detailpanel.Location = new System.Drawing.Point(0, 0);
-			this.detailpanel.Size = new System.Drawing.Size(1203, 713);
-			this.detailpanel.Controls.SetChildIndex(this.detailbtm, 0);
-			this.detailpanel.Controls.SetChildIndex(this.masterpanel, 0);
-			this.detailpanel.Controls.SetChildIndex(this.splitContainer1, 0);
-			this.detailpanel.Controls.SetChildIndex(this.detailgridcont, 0);
-			// 
-			// gridicon
-			// 
-			this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
-			this.gridicon.Location = new System.Drawing.Point(727, 61);
-			// 
-			// refresh
-			// 
-			this.refresh.Anchor = System.Windows.Forms.AnchorStyles.None;
-			this.refresh.Location = new System.Drawing.Point(8452, 561);
-			// 
-			// detailgridcont
-			// 
-			this.detailgridcont.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.components = new System.ComponentModel.Container();
+            this.panel1 = new Sci.Win.UI.Panel();
+            this.txtPatternNo = new Sci.Win.UI.TextBox();
+            this.label10 = new Sci.Win.UI.Label();
+            this.label9 = new Sci.Win.UI.Label();
+            this.numCons = new Sci.Win.UI.NumericBox();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.label6 = new System.Windows.Forms.Label();
+            this.gridSizeRatio = new Sci.Win.UI.Grid();
+            this.cmsSizeRatio = new Sci.Win.UI.ContextMenuStrip();
+            this.insertSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteSizeRatioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sizeRatiobs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.label11 = new System.Windows.Forms.Label();
+            this.gridDistributeToSP = new Sci.Win.UI.Grid();
+            this.cmsDistribute = new Sci.Win.UI.ContextMenuStrip();
+            this.MenuItemInsertDistribute = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItemDeleteDistribute = new System.Windows.Forms.ToolStripMenuItem();
+            this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.label12 = new System.Windows.Forms.Label();
+            this.gridQtyBreakDown = new Sci.Win.UI.Grid();
+            this.qtybreakds = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.numUnitCons = new Sci.Win.UI.NumericBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label4 = new Sci.Win.UI.Label();
+            this.displayBoxDescription = new Sci.Win.UI.DisplayBox();
+            this.displayBoxFabricTypeRefno = new Sci.Win.UI.DisplayBox();
+            this.label3 = new Sci.Win.UI.Label();
+            this.label2 = new Sci.Win.UI.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.numBalanceLayer = new Sci.Win.UI.NumericBox();
+            this.numTotalLayer = new Sci.Win.UI.NumericBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new Sci.Win.UI.Label();
+            this.displayBoxStyle = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
+            this.displayBoxSP = new Sci.Win.UI.DisplayBox();
+            this.labelCutplanID = new Sci.Win.UI.Label();
+            this.btnBatchAssign = new Sci.Win.UI.Button();
+            this.btnImportMarker = new Sci.Win.UI.Button();
+            this.btnDownload = new Sci.Win.UI.Button();
+            this.btnImportMarkerLectra = new Sci.Win.UI.Button();
+            this.btnEdit = new Sci.Win.UI.Button();
+            this.btnAutoRef = new Sci.Win.UI.Button();
+            this.btnCutPartsCheck = new Sci.Win.UI.Button();
+            this.btnCutPartsCheckSummary = new Sci.Win.UI.Button();
+            this.btnQtyBreakdown = new Sci.Win.UI.Button();
+            this.btnToExcel = new Sci.Win.UI.Button();
+            this.qtybreakBindingSource = new Sci.Win.UI.ListControlBindingSource(this.components);
+            this.btnAutoSeq = new Sci.Win.UI.Button();
+            this.btnPackingMethod = new Sci.Win.UI.Button();
+            this.btnExcludeSetting = new Sci.Win.UI.Button();
+            this.btnAllSPDistribute = new Sci.Win.UI.Button();
+            this.btnDistributeThisCutRef = new Sci.Win.UI.Button();
+            this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
+            this.masterpanel.SuspendLayout();
+            this.detailpanel.SuspendLayout();
+            this.detail2.SuspendLayout();
+            this.detailpanel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
+            this.detail.SuspendLayout();
+            this.detailcont.SuspendLayout();
+            this.detailbtm.SuspendLayout();
+            this.tabs.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).BeginInit();
+            this.cmsSizeRatio.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).BeginInit();
+            this.cmsDistribute.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).BeginInit();
+            this.panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakBindingSource)).BeginInit();
+            this.SuspendLayout();
+            // 
+            // masterpanel
+            // 
+            this.masterpanel.Controls.Add(this.btnExcludeSetting);
+            this.masterpanel.Controls.Add(this.btnEdit);
+            this.masterpanel.Controls.Add(this.btnImportMarkerLectra);
+            this.masterpanel.Controls.Add(this.btnDownload);
+            this.masterpanel.Controls.Add(this.btnImportMarker);
+            this.masterpanel.Controls.Add(this.btnBatchAssign);
+            this.masterpanel.Controls.Add(this.panel2);
+            this.masterpanel.Size = new System.Drawing.Size(858, 65);
+            this.masterpanel.Controls.SetChildIndex(this.panel2, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnBatchAssign, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportMarker, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnDownload, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnImportMarkerLectra, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnEdit, 0);
+            this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.btnExcludeSetting, 0);
+            // 
+            // detailpanel
+            // 
+            this.detailpanel.Location = new System.Drawing.Point(0, 65);
+            this.detailpanel.Size = new System.Drawing.Size(858, 552);
+            // 
+            // gridicon
+            // 
+            this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
+            this.gridicon.Dock = System.Windows.Forms.DockStyle.Right;
+            this.gridicon.Location = new System.Drawing.Point(758, 35);
+            // 
+            // refresh
+            // 
+            this.refresh.Dock = System.Windows.Forms.DockStyle.Right;
+            this.refresh.Location = new System.Drawing.Point(1200, 0);
+            this.refresh.Size = new System.Drawing.Size(80, 38);
+            // 
+            // detailgridcont
+            // 
+            this.detailgridcont.Size = new System.Drawing.Size(858, 552);
+            // 
+            // detail2
+            // 
+            this.detail2.Size = new System.Drawing.Size(892, 387);
+            // 
+            // detailgridcont2
+            // 
+            this.detailgridcont2.Size = new System.Drawing.Size(886, 341);
+            // 
+            // detailpanel2
+            // 
+            this.detailpanel2.Size = new System.Drawing.Size(886, 40);
+            // 
+            // detail
+            // 
+            this.detail.Controls.Add(this.panel1);
+            this.detail.Size = new System.Drawing.Size(1280, 655);
+            this.detail.Controls.SetChildIndex(this.detailbtm, 0);
+            this.detail.Controls.SetChildIndex(this.panel1, 0);
+            this.detail.Controls.SetChildIndex(this.detailcont, 0);
+            // 
+            // detailcont
+            // 
+            this.detailcont.Size = new System.Drawing.Size(858, 617);
+            // 
+            // detailbtm
+            // 
+            this.detailbtm.Controls.Add(this.btnDistributeThisCutRef);
+            this.detailbtm.Controls.Add(this.btnAllSPDistribute);
+            this.detailbtm.Controls.Add(this.btnPackingMethod);
+            this.detailbtm.Controls.Add(this.btnAutoSeq);
+            this.detailbtm.Controls.Add(this.btnToExcel);
+            this.detailbtm.Controls.Add(this.btnQtyBreakdown);
+            this.detailbtm.Controls.Add(this.btnCutPartsCheckSummary);
+            this.detailbtm.Controls.Add(this.btnCutPartsCheck);
+            this.detailbtm.Controls.Add(this.btnAutoRef);
+            this.detailbtm.Location = new System.Drawing.Point(0, 617);
+            this.detailbtm.Size = new System.Drawing.Size(1280, 38);
+            this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.editby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.createby, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnAutoRef, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheck, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnCutPartsCheckSummary, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnQtyBreakdown, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnToExcel, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnAutoSeq, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnPackingMethod, 0);
+            this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnAllSPDistribute, 0);
+            this.detailbtm.Controls.SetChildIndex(this.btnDistributeThisCutRef, 0);
+            // 
+            // browse
+            // 
+            this.browse.Size = new System.Drawing.Size(1280, 655);
+            // 
+            // tabs
+            // 
+            this.tabs.Size = new System.Drawing.Size(1288, 684);
+            // 
+            // createby
+            // 
+            this.createby.Location = new System.Drawing.Point(70, 10);
+            this.createby.Size = new System.Drawing.Size(350, 23);
+            this.createby.Visible = false;
+            // 
+            // editby
+            // 
+            this.editby.Location = new System.Drawing.Point(471, 10);
+            this.editby.Size = new System.Drawing.Size(350, 23);
+            this.editby.Visible = false;
+            // 
+            // lblcreateby
+            // 
+            this.lblcreateby.Location = new System.Drawing.Point(5, 16);
+            this.lblcreateby.Visible = false;
+            // 
+            // lbleditby
+            // 
+            this.lbleditby.Location = new System.Drawing.Point(423, 16);
+            this.lbleditby.Visible = false;
+            // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.Controls.Add(this.txtMarkerLength);
+            this.panel1.Controls.Add(this.txtPatternNo);
+            this.panel1.Controls.Add(this.label10);
+            this.panel1.Controls.Add(this.label9);
+            this.panel1.Controls.Add(this.numCons);
+            this.panel1.Controls.Add(this.splitContainer2);
+            this.panel1.Controls.Add(this.numUnitCons);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.label4);
+            this.panel1.Controls.Add(this.displayBoxDescription);
+            this.panel1.Controls.Add(this.displayBoxFabricTypeRefno);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panel1.Location = new System.Drawing.Point(858, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(422, 617);
+            this.panel1.TabIndex = 4;
+            // 
+            // txtPatternNo
+            // 
+            this.txtPatternNo.BackColor = System.Drawing.Color.White;
+            this.txtPatternNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtPatternNo.Location = new System.Drawing.Point(129, 82);
+            this.txtPatternNo.Name = "txtPatternNo";
+            this.txtPatternNo.Size = new System.Drawing.Size(88, 23);
+            this.txtPatternNo.TabIndex = 38;
+            this.txtPatternNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtPatternNo_PopUp);
+            this.txtPatternNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtPatternNo_Validating);
+            // 
+            // label10
+            // 
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label10.Location = new System.Drawing.Point(220, 82);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(103, 23);
+            this.label10.TabIndex = 37;
+            this.label10.Text = "Marker Length";
+            // 
+            // label9
+            // 
+            this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label9.Location = new System.Drawing.Point(3, 82);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(123, 23);
+            this.label9.TabIndex = 36;
+            this.label9.Text = "Pattern No.";
+            // 
+            // numCons
+            // 
+            this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numCons.DecimalPlaces = 4;
+            this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numCons.IsSupportEditMode = false;
+            this.numCons.Location = new System.Drawing.Point(240, 109);
+            this.numCons.Name = "numCons";
+            this.numCons.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numCons.ReadOnly = true;
+            this.numCons.Size = new System.Drawing.Size(98, 23);
+            this.numCons.TabIndex = 35;
+            this.numCons.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // splitContainer2
+            // 
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.detailgridcont.Dock = System.Windows.Forms.DockStyle.None;
-			this.detailgridcont.Location = new System.Drawing.Point(8, 97);
-			this.detailgridcont.Size = new System.Drawing.Size(818, 575);
-			// 
-			// detail
-			// 
-			this.detail.Size = new System.Drawing.Size(1203, 713);
-			// 
-			// detailcont
-			// 
-			this.detailcont.Size = new System.Drawing.Size(1203, 713);
-			// 
-			// detailbtm
-			// 
-			this.detailbtm.Controls.Add(this.Btn_Excel);
-			this.detailbtm.Controls.Add(this.btnDist);
-			this.detailbtm.Controls.Add(this.btn_Refresh);
-			this.detailbtm.Controls.Add(this.AutoCut);
-			this.detailbtm.Controls.Add(this.comboBox1);
-			this.detailbtm.Controls.Add(this.btnPackingMethod);
-			this.detailbtm.Controls.Add(this.label26);
-			this.detailbtm.Controls.Add(this.AutoRef);
-			this.detailbtm.Controls.Add(this.textbox_LastCutRef);
-			this.detailbtm.Controls.Add(this.btnQuantityBreakdown);
-			this.detailbtm.Controls.Add(this.label2);
-			this.detailbtm.Location = new System.Drawing.Point(0, 678);
-			this.detailbtm.Size = new System.Drawing.Size(1203, 35);
-			this.detailbtm.Controls.SetChildIndex(this.label2, 0);
-			this.detailbtm.Controls.SetChildIndex(this.btnQuantityBreakdown, 0);
-			this.detailbtm.Controls.SetChildIndex(this.textbox_LastCutRef, 0);
-			this.detailbtm.Controls.SetChildIndex(this.AutoRef, 0);
-			this.detailbtm.Controls.SetChildIndex(this.label26, 0);
-			this.detailbtm.Controls.SetChildIndex(this.btnPackingMethod, 0);
-			this.detailbtm.Controls.SetChildIndex(this.comboBox1, 0);
-			this.detailbtm.Controls.SetChildIndex(this.AutoCut, 0);
-			this.detailbtm.Controls.SetChildIndex(this.lbleditby, 0);
-			this.detailbtm.Controls.SetChildIndex(this.lblcreateby, 0);
-			this.detailbtm.Controls.SetChildIndex(this.editby, 0);
-			this.detailbtm.Controls.SetChildIndex(this.createby, 0);
-			this.detailbtm.Controls.SetChildIndex(this.refresh, 0);
-			this.detailbtm.Controls.SetChildIndex(this.btn_Refresh, 0);
-			this.detailbtm.Controls.SetChildIndex(this.btnDist, 0);
-			this.detailbtm.Controls.SetChildIndex(this.Btn_Excel, 0);
-			// 
-			// browse
-			// 
-			this.browse.Size = new System.Drawing.Size(1203, 713);
-			// 
-			// tabs
-			// 
-			this.tabs.Size = new System.Drawing.Size(1211, 742);
-			this.tabs.SelectedIndexChanged += new System.EventHandler(this.Tabs_SelectedIndexChanged);
-			// 
-			// createby
-			// 
-			this.createby.Enabled = false;
-			this.createby.Location = new System.Drawing.Point(151, -31);
-			// 
-			// editby
-			// 
-			this.editby.Enabled = false;
-			this.editby.Location = new System.Drawing.Point(481, -31);
-			// 
-			// lblcreateby
-			// 
-			this.lblcreateby.Enabled = false;
-			this.lblcreateby.Location = new System.Drawing.Point(86, -25);
-			// 
-			// lbleditby
-			// 
-			this.lbleditby.Enabled = false;
-			this.lbleditby.Location = new System.Drawing.Point(433, -25);
-			// 
-			// labelCuttingSP
-			// 
-			this.labelCuttingSP.Location = new System.Drawing.Point(5, 6);
-			this.labelCuttingSP.Name = "labelCuttingSP";
-			this.labelCuttingSP.Size = new System.Drawing.Size(75, 23);
-			this.labelCuttingSP.TabIndex = 6;
-			this.labelCuttingSP.Text = "Cutting SP";
-			// 
-			// label2
-			// 
-			this.label2.Location = new System.Drawing.Point(179, 8);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(92, 23);
-			this.label2.TabIndex = 7;
-			this.label2.Text = "Last Cut Ref";
-			// 
-			// labelStyle
-			// 
-			this.labelStyle.Location = new System.Drawing.Point(5, 33);
-			this.labelStyle.Name = "labelStyle";
-			this.labelStyle.Size = new System.Drawing.Size(75, 23);
-			this.labelStyle.TabIndex = 8;
-			this.labelStyle.Text = "Style";
-			// 
-			// labelLine
-			// 
-			this.labelLine.Location = new System.Drawing.Point(205, 7);
-			this.labelLine.Name = "labelLine";
-			this.labelLine.Size = new System.Drawing.Size(40, 23);
-			this.labelLine.TabIndex = 9;
-			this.labelLine.Text = "Line#";
-			// 
-			// displayCuttingSP
-			// 
-			this.displayCuttingSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayCuttingSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "id", true));
-			this.displayCuttingSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayCuttingSP.Location = new System.Drawing.Point(82, 6);
-			this.displayCuttingSP.Name = "displayCuttingSP";
-			this.displayCuttingSP.Size = new System.Drawing.Size(120, 23);
-			this.displayCuttingSP.TabIndex = 1;
-			// 
-			// textbox_LastCutRef
-			// 
-			this.textbox_LastCutRef.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.textbox_LastCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.textbox_LastCutRef.Location = new System.Drawing.Point(277, 8);
-			this.textbox_LastCutRef.Name = "textbox_LastCutRef";
-			this.textbox_LastCutRef.Size = new System.Drawing.Size(72, 23);
-			this.textbox_LastCutRef.TabIndex = 11;
-			// 
-			// txtStyle
-			// 
-			this.txtStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.txtStyle.Location = new System.Drawing.Point(82, 33);
-			this.txtStyle.Name = "txtStyle";
-			this.txtStyle.Size = new System.Drawing.Size(120, 23);
-			this.txtStyle.TabIndex = 2;
-			// 
-			// txtLine
-			// 
-			this.txtLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.txtLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.txtLine.Location = new System.Drawing.Point(248, 7);
-			this.txtLine.Name = "txtLine";
-			this.txtLine.Size = new System.Drawing.Size(55, 23);
-			this.txtLine.TabIndex = 3;
-			// 
-			// AutoRef
-			// 
-			this.AutoRef.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-			this.AutoRef.Location = new System.Drawing.Point(3, 1);
-			this.AutoRef.Name = "AutoRef";
-			this.AutoRef.Size = new System.Drawing.Size(84, 35);
-			this.AutoRef.TabIndex = 14;
-			this.AutoRef.Text = "Auto Ref#";
-			this.AutoRef.UseVisualStyleBackColor = true;
-			this.AutoRef.Click += new System.EventHandler(this.AutoRef_Click);
-			// 
-			// labelMarkerName
-			// 
-			this.labelMarkerName.Location = new System.Drawing.Point(304, 5);
-			this.labelMarkerName.Name = "labelMarkerName";
-			this.labelMarkerName.Size = new System.Drawing.Size(90, 23);
-			this.labelMarkerName.TabIndex = 14;
-			this.labelMarkerName.Text = "Marker Name";
-			// 
-			// labelColor
-			// 
-			this.labelColor.Location = new System.Drawing.Point(304, 32);
-			this.labelColor.Name = "labelColor";
-			this.labelColor.Size = new System.Drawing.Size(90, 23);
-			this.labelColor.TabIndex = 15;
-			this.labelColor.Text = "Color";
-			// 
-			// labelTotalLayer
-			// 
-			this.labelTotalLayer.Location = new System.Drawing.Point(536, 6);
-			this.labelTotalLayer.Name = "labelTotalLayer";
-			this.labelTotalLayer.Size = new System.Drawing.Size(95, 23);
-			this.labelTotalLayer.TabIndex = 16;
-			this.labelTotalLayer.Text = "Total Layer";
-			// 
-			// labelBalanceLayer
-			// 
-			this.labelBalanceLayer.Location = new System.Drawing.Point(536, 33);
-			this.labelBalanceLayer.Name = "labelBalanceLayer";
-			this.labelBalanceLayer.Size = new System.Drawing.Size(95, 23);
-			this.labelBalanceLayer.TabIndex = 17;
-			this.labelBalanceLayer.Text = "Balance Layer";
-			// 
-			// displayMarkerName
-			// 
-			this.displayMarkerName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayMarkerName.Location = new System.Drawing.Point(396, 5);
-			this.displayMarkerName.Name = "displayMarkerName";
-			this.displayMarkerName.Size = new System.Drawing.Size(137, 23);
-			this.displayMarkerName.TabIndex = 4;
-			// 
-			// displayColor
-			// 
-			this.displayColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayColor.Location = new System.Drawing.Point(396, 32);
-			this.displayColor.Name = "displayColor";
-			this.displayColor.Size = new System.Drawing.Size(137, 23);
-			this.displayColor.TabIndex = 5;
-			// 
-			// numTotalLayer
-			// 
-			this.numTotalLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.numTotalLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.numTotalLayer.IsSupportEditMode = false;
-			this.numTotalLayer.Location = new System.Drawing.Point(634, 6);
-			this.numTotalLayer.Name = "numTotalLayer";
-			this.numTotalLayer.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numTotalLayer.ReadOnly = true;
-			this.numTotalLayer.Size = new System.Drawing.Size(95, 23);
-			this.numTotalLayer.TabIndex = 6;
-			this.numTotalLayer.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			// 
-			// numBalanceLayer
-			// 
-			this.numBalanceLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.numBalanceLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.numBalanceLayer.IsSupportEditMode = false;
-			this.numBalanceLayer.Location = new System.Drawing.Point(634, 33);
-			this.numBalanceLayer.Name = "numBalanceLayer";
-			this.numBalanceLayer.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numBalanceLayer.ReadOnly = true;
-			this.numBalanceLayer.Size = new System.Drawing.Size(95, 23);
-			this.numBalanceLayer.TabIndex = 7;
-			this.numBalanceLayer.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			// 
-			// btnBatchAssign
-			// 
-			this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-			this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.btnBatchAssign.Location = new System.Drawing.Point(455, 61);
-			this.btnBatchAssign.Name = "btnBatchAssign";
-			this.btnBatchAssign.Size = new System.Drawing.Size(78, 30);
-			this.btnBatchAssign.TabIndex = 17;
-			this.btnBatchAssign.Text = "Batch assign";
-			this.btnBatchAssign.UseVisualStyleBackColor = true;
-			this.btnBatchAssign.Click += new System.EventHandler(this.BtnBatchAssign_Click);
-			// 
-			// btnQuantityBreakdown
-			// 
-			this.btnQuantityBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnQuantityBreakdown.Location = new System.Drawing.Point(1011, 4);
-			this.btnQuantityBreakdown.Name = "btnQuantityBreakdown";
-			this.btnQuantityBreakdown.Size = new System.Drawing.Size(109, 30);
-			this.btnQuantityBreakdown.TabIndex = 23;
-			this.btnQuantityBreakdown.Text = "Qty B\'down";
-			this.btnQuantityBreakdown.UseVisualStyleBackColor = true;
-			this.btnQuantityBreakdown.Click += new System.EventHandler(this.Qtybreak_Click);
-			// 
-			// btnPackingMethod
-			// 
-			this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnPackingMethod.Location = new System.Drawing.Point(860, 4);
-			this.btnPackingMethod.Name = "btnPackingMethod";
-			this.btnPackingMethod.Size = new System.Drawing.Size(145, 30);
-			this.btnPackingMethod.TabIndex = 24;
-			this.btnPackingMethod.Text = "Packing Method";
-			this.btnPackingMethod.UseVisualStyleBackColor = true;
-			this.btnPackingMethod.Click += new System.EventHandler(this.Packing_Click);
-			// 
-			// labelMarkerLengthY
-			// 
-			this.labelMarkerLengthY.Location = new System.Drawing.Point(3, 2);
-			this.labelMarkerLengthY.Name = "labelMarkerLengthY";
-			this.labelMarkerLengthY.Size = new System.Drawing.Size(97, 23);
-			this.labelMarkerLengthY.TabIndex = 25;
-			this.labelMarkerLengthY.Text = "Marker Length";
-			// 
-			// labelUnitCons
-			// 
-			this.labelUnitCons.Location = new System.Drawing.Point(3, 29);
-			this.labelUnitCons.Name = "labelUnitCons";
-			this.labelUnitCons.Size = new System.Drawing.Size(97, 23);
-			this.labelUnitCons.TabIndex = 26;
-			this.labelUnitCons.Text = "Unit Cons";
-			// 
-			// labelCons
-			// 
-			this.labelCons.Location = new System.Drawing.Point(3, 56);
-			this.labelCons.Name = "labelCons";
-			this.labelCons.Size = new System.Drawing.Size(97, 23);
-			this.labelCons.TabIndex = 27;
-			this.labelCons.Text = "Cons";
-			// 
-			// labelCutCell
-			// 
-			this.labelCutCell.Location = new System.Drawing.Point(281, 2);
-			this.labelCutCell.Name = "labelCutCell";
-			this.labelCutCell.Size = new System.Drawing.Size(54, 23);
-			this.labelCutCell.TabIndex = 28;
-			this.labelCutCell.Text = "Cut Cell";
-			// 
-			// labelFabricCombo
-			// 
-			this.labelFabricCombo.Location = new System.Drawing.Point(204, 29);
-			this.labelFabricCombo.Name = "labelFabricCombo";
-			this.labelFabricCombo.Size = new System.Drawing.Size(109, 23);
-			this.labelFabricCombo.TabIndex = 29;
-			this.labelFabricCombo.Text = "Fabric Combo";
-			// 
-			// labelFabricPanelCode
-			// 
-			this.labelFabricPanelCode.Location = new System.Drawing.Point(204, 56);
-			this.labelFabricPanelCode.Name = "labelFabricPanelCode";
-			this.labelFabricPanelCode.Size = new System.Drawing.Size(110, 23);
-			this.labelFabricPanelCode.TabIndex = 30;
-			this.labelFabricPanelCode.Text = "Fab_Panel Code";
-			// 
-			// labelFabricType_Refno
-			// 
-			this.labelFabricType_Refno.Location = new System.Drawing.Point(3, 137);
-			this.labelFabricType_Refno.Name = "labelFabricType_Refno";
-			this.labelFabricType_Refno.Size = new System.Drawing.Size(117, 23);
-			this.labelFabricType_Refno.TabIndex = 32;
-			this.labelFabricType_Refno.Text = "Fabric Type/Refno";
-			// 
-			// label17
-			// 
-			this.label17.BackColor = System.Drawing.Color.Transparent;
-			this.label17.Location = new System.Drawing.Point(140, 2);
-			this.label17.Name = "label17";
-			this.label17.Size = new System.Drawing.Size(16, 23);
-			this.label17.TabIndex = 34;
-			this.label17.Text = "Y";
-			this.label17.TextStyle.Color = System.Drawing.Color.Black;
-			// 
-			// txtMarkerLengthE
-			// 
-			this.txtMarkerLengthE.BackColor = System.Drawing.Color.White;
-			this.txtMarkerLengthE.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtMarkerLengthE.Location = new System.Drawing.Point(157, 2);
-			this.txtMarkerLengthE.Mask = "00-0/0+0\"";
-			this.txtMarkerLengthE.Name = "txtMarkerLengthE";
-			this.txtMarkerLengthE.Size = new System.Drawing.Size(121, 23);
-			this.txtMarkerLengthE.TabIndex = 9;
-			this.txtMarkerLengthE.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLengthE_MarkerLengthE_Validating);
-			// 
-			// numUnitCons
-			// 
-			this.numUnitCons.BackColor = System.Drawing.Color.White;
-			this.numUnitCons.DecimalPlaces = 4;
-			this.numUnitCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.numUnitCons.Location = new System.Drawing.Point(103, 29);
-			this.numUnitCons.Minimum = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numUnitCons.Name = "numUnitCons";
-			this.numUnitCons.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numUnitCons.Size = new System.Drawing.Size(98, 23);
-			this.numUnitCons.TabIndex = 11;
-			this.numUnitCons.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numUnitCons.Validated += new System.EventHandler(this.NumUnitCons_UnitCons_Validated);
-			// 
-			// numCons
-			// 
-			this.numCons.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.numCons.DecimalPlaces = 4;
-			this.numCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.numCons.IsSupportEditMode = false;
-			this.numCons.Location = new System.Drawing.Point(103, 56);
-			this.numCons.Name = "numCons";
-			this.numCons.NullValue = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			this.numCons.ReadOnly = true;
-			this.numCons.Size = new System.Drawing.Size(98, 23);
-			this.numCons.TabIndex = 13;
-			this.numCons.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-			// 
-			// txtFabricPanelCode
-			// 
-			this.txtFabricPanelCode.BackColor = System.Drawing.Color.White;
-			this.txtFabricPanelCode.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtFabricPanelCode.Location = new System.Drawing.Point(316, 56);
-			this.txtFabricPanelCode.Name = "txtFabricPanelCode";
-			this.txtFabricPanelCode.Size = new System.Drawing.Size(51, 23);
-			this.txtFabricPanelCode.TabIndex = 15;
-			this.txtFabricPanelCode.Validating += new System.ComponentModel.CancelEventHandler(this.TxtFabricPanelCode_Validating);
-			// 
-			// txtFabricCombo
-			// 
-			this.txtFabricCombo.BackColor = System.Drawing.Color.White;
-			this.txtFabricCombo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtFabricCombo.Location = new System.Drawing.Point(316, 29);
-			this.txtFabricCombo.Name = "txtFabricCombo";
-			this.txtFabricCombo.Size = new System.Drawing.Size(51, 23);
-			this.txtFabricCombo.TabIndex = 12;
-			// 
-			// labelDescription
-			// 
-			this.labelDescription.Location = new System.Drawing.Point(3, 163);
-			this.labelDescription.Name = "labelDescription";
-			this.labelDescription.Size = new System.Drawing.Size(97, 23);
-			this.labelDescription.TabIndex = 40;
-			this.labelDescription.Text = "Description";
-			// 
-			// displayFabricType_Refno
-			// 
-			this.displayFabricType_Refno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayFabricType_Refno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayFabricType_Refno.Location = new System.Drawing.Point(122, 137);
-			this.displayFabricType_Refno.Name = "displayFabricType_Refno";
-			this.displayFabricType_Refno.Size = new System.Drawing.Size(245, 23);
-			this.displayFabricType_Refno.TabIndex = 16;
-			// 
-			// editDescription
-			// 
-			this.editDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.editDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.editDescription.IsSupportEditMode = false;
-			this.editDescription.Location = new System.Drawing.Point(103, 163);
-			this.editDescription.Multiline = true;
-			this.editDescription.Name = "editDescription";
-			this.editDescription.ReadOnly = true;
-			this.editDescription.Size = new System.Drawing.Size(264, 47);
-			this.editDescription.TabIndex = 19;
-			// 
-			// labelSizeRatio
-			// 
-			this.labelSizeRatio.BackColor = System.Drawing.Color.Transparent;
-			this.labelSizeRatio.Location = new System.Drawing.Point(1, 1);
-			this.labelSizeRatio.Name = "labelSizeRatio";
-			this.labelSizeRatio.Size = new System.Drawing.Size(71, 12);
-			this.labelSizeRatio.TabIndex = 43;
-			this.labelSizeRatio.Text = "Size Ratio";
-			this.labelSizeRatio.TextStyle.Color = System.Drawing.Color.Black;
-			// 
-			// gridSizeRatio
-			// 
-			this.gridSizeRatio.AllowUserToAddRows = false;
-			this.gridSizeRatio.AllowUserToDeleteRows = false;
-			this.gridSizeRatio.AllowUserToResizeRows = false;
-			this.gridSizeRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.splitContainer2.Location = new System.Drawing.Point(6, 138);
+            this.splitContainer2.Name = "splitContainer2";
+            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.label6);
+            this.splitContainer2.Panel1.Controls.Add(this.gridSizeRatio);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.splitContainer1);
+            this.splitContainer2.Size = new System.Drawing.Size(413, 470);
+            this.splitContainer2.SplitterDistance = 135;
+            this.splitContainer2.SplitterWidth = 5;
+            this.splitContainer2.TabIndex = 34;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 3);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(72, 17);
+            this.label6.TabIndex = 33;
+            this.label6.Text = "Size Ratio";
+            // 
+            // gridSizeRatio
+            // 
+            this.gridSizeRatio.AllowUserToAddRows = false;
+            this.gridSizeRatio.AllowUserToDeleteRows = false;
+            this.gridSizeRatio.AllowUserToResizeRows = false;
+            this.gridSizeRatio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-			this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gridSizeRatio.ContextMenuStrip = this.sizeratioMenuStrip;
-			this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-			this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-			this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-			this.gridSizeRatio.Location = new System.Drawing.Point(0, 16);
-			this.gridSizeRatio.Name = "gridSizeRatio";
-			this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-			this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-			this.gridSizeRatio.RowTemplate.Height = 24;
-			this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gridSizeRatio.ShowCellToolTips = false;
-			this.gridSizeRatio.Size = new System.Drawing.Size(137, 139);
-			this.gridSizeRatio.TabIndex = 44;
-			this.gridSizeRatio.TabStop = false;
-			this.gridSizeRatio.EditingKeyProcessing += new System.EventHandler<Ict.Win.UI.DataGridViewEditingKeyProcessingEventArgs>(this.GridSizeRatio_EditingKeyProcessing);
-			// 
-			// sizeratioMenuStrip
-			// 
-			this.sizeratioMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.gridSizeRatio.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridSizeRatio.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridSizeRatio.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridSizeRatio.ContextMenuStrip = this.cmsSizeRatio;
+            this.gridSizeRatio.DataSource = this.sizeRatiobs;
+            this.gridSizeRatio.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridSizeRatio.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridSizeRatio.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridSizeRatio.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridSizeRatio.Location = new System.Drawing.Point(1, 26);
+            this.gridSizeRatio.Name = "gridSizeRatio";
+            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridSizeRatio.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridSizeRatio.RowTemplate.Height = 24;
+            this.gridSizeRatio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridSizeRatio.ShowCellToolTips = false;
+            this.gridSizeRatio.Size = new System.Drawing.Size(412, 108);
+            this.gridSizeRatio.TabIndex = 34;
+            // 
+            // cmsSizeRatio
+            // 
+            this.cmsSizeRatio.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.insertSizeRatioToolStripMenuItem,
-            this.deleteToolStripMenuItem});
-			this.sizeratioMenuStrip.Name = "sizeratioMenuStrip";
-			this.sizeratioMenuStrip.Size = new System.Drawing.Size(164, 48);
-			// 
-			// insertSizeRatioToolStripMenuItem
-			// 
-			this.insertSizeRatioToolStripMenuItem.Name = "insertSizeRatioToolStripMenuItem";
-			this.insertSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-			this.insertSizeRatioToolStripMenuItem.Text = "Insert Size Ratio";
-			this.insertSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.InsertSizeRatioToolStripMenuItem_Click);
-			// 
-			// deleteToolStripMenuItem
-			// 
-			this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-			this.deleteToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-			this.deleteToolStripMenuItem.Text = "Delete Record";
-			this.deleteToolStripMenuItem.Click += new System.EventHandler(this.DeleteToolStripMenuItem_Click);
-			// 
-			// labelCutplanNo
-			// 
-			this.labelCutplanNo.Location = new System.Drawing.Point(140, 43);
-			this.labelCutplanNo.Name = "labelCutplanNo";
-			this.labelCutplanNo.Size = new System.Drawing.Size(86, 23);
-			this.labelCutplanNo.TabIndex = 45;
-			this.labelCutplanNo.Text = "Cutplan#";
-			// 
-			// labelTotalCutQty
-			// 
-			this.labelTotalCutQty.Location = new System.Drawing.Point(140, 70);
-			this.labelTotalCutQty.Name = "labelTotalCutQty";
-			this.labelTotalCutQty.Size = new System.Drawing.Size(86, 23);
-			this.labelTotalCutQty.TabIndex = 46;
-			this.labelTotalCutQty.Text = "Total Cut Qty";
-			// 
-			// displayCutplanNo
-			// 
-			this.displayCutplanNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayCutplanNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayCutplanNo.Location = new System.Drawing.Point(230, 43);
-			this.displayCutplanNo.Name = "displayCutplanNo";
-			this.displayCutplanNo.Size = new System.Drawing.Size(135, 23);
-			this.displayCutplanNo.TabIndex = 22;
-			// 
-			// gridDistributetoSPNo
-			// 
-			this.gridDistributetoSPNo.AllowUserToAddRows = false;
-			this.gridDistributetoSPNo.AllowUserToDeleteRows = false;
-			this.gridDistributetoSPNo.AllowUserToResizeRows = false;
-			this.gridDistributetoSPNo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.deleteSizeRatioToolStripMenuItem});
+            this.cmsSizeRatio.Name = "sizeratioMenuStrip";
+            this.cmsSizeRatio.Size = new System.Drawing.Size(164, 48);
+            // 
+            // insertSizeRatioToolStripMenuItem
+            // 
+            this.insertSizeRatioToolStripMenuItem.Name = "insertSizeRatioToolStripMenuItem";
+            this.insertSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.insertSizeRatioToolStripMenuItem.Text = "Insert Size Ratio";
+            this.insertSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.MenuItemInsertSizeRatio_Click);
+            // 
+            // deleteSizeRatioToolStripMenuItem
+            // 
+            this.deleteSizeRatioToolStripMenuItem.Name = "deleteSizeRatioToolStripMenuItem";
+            this.deleteSizeRatioToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.deleteSizeRatioToolStripMenuItem.Text = "Delete Record";
+            this.deleteSizeRatioToolStripMenuItem.Click += new System.EventHandler(this.MenuItemDeleteSizeRatio_Click);
+            // 
+            // splitContainer1
+            // 
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer1.Panel1
+            // 
+            this.splitContainer1.Panel1.Controls.Add(this.label11);
+            this.splitContainer1.Panel1.Controls.Add(this.gridDistributeToSP);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.label12);
+            this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakDown);
+            this.splitContainer1.Size = new System.Drawing.Size(413, 330);
+            this.splitContainer1.SplitterDistance = 149;
+            this.splitContainer1.SplitterWidth = 5;
+            this.splitContainer1.TabIndex = 32;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(3, 2);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(119, 17);
+            this.label11.TabIndex = 27;
+            this.label11.Text = "Distribute To SP#";
+            // 
+            // gridDistributeToSP
+            // 
+            this.gridDistributeToSP.AllowUserToAddRows = false;
+            this.gridDistributeToSP.AllowUserToDeleteRows = false;
+            this.gridDistributeToSP.AllowUserToResizeRows = false;
+            this.gridDistributeToSP.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridDistributetoSPNo.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.gridDistributetoSPNo.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-			this.gridDistributetoSPNo.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gridDistributetoSPNo.ContextMenuStrip = this.distributeMenuStrip;
-			this.gridDistributetoSPNo.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-			this.gridDistributetoSPNo.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-			this.gridDistributetoSPNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.gridDistributetoSPNo.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-			this.gridDistributetoSPNo.Location = new System.Drawing.Point(0, 18);
-			this.gridDistributetoSPNo.Name = "gridDistributetoSPNo";
-			this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-			this.gridDistributetoSPNo.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-			this.gridDistributetoSPNo.RowTemplate.Height = 24;
-			this.gridDistributetoSPNo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gridDistributetoSPNo.ShowCellToolTips = false;
-			this.gridDistributetoSPNo.Size = new System.Drawing.Size(373, 146);
-			this.gridDistributetoSPNo.TabIndex = 48;
-			this.gridDistributetoSPNo.TabStop = false;
-			this.gridDistributetoSPNo.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.Distribute_grid_DataError);
-			this.gridDistributetoSPNo.SelectionChanged += new System.EventHandler(this.GridDistributetoSPNo_SelectionChanged);
-			// 
-			// distributeMenuStrip
-			// 
-			this.distributeMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.insertNewRecordToolStripMenuItem,
-            this.deleteRecordToolStripMenuItem});
-			this.distributeMenuStrip.Name = "contextMenuStrip1";
-			this.distributeMenuStrip.Size = new System.Drawing.Size(178, 48);
-			// 
-			// insertNewRecordToolStripMenuItem
-			// 
-			this.insertNewRecordToolStripMenuItem.Name = "insertNewRecordToolStripMenuItem";
-			this.insertNewRecordToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-			this.insertNewRecordToolStripMenuItem.Text = "Insert New Record";
-			this.insertNewRecordToolStripMenuItem.Click += new System.EventHandler(this.InsertNewRecordToolStripMenuItem_Click);
-			// 
-			// deleteRecordToolStripMenuItem
-			// 
-			this.deleteRecordToolStripMenuItem.Name = "deleteRecordToolStripMenuItem";
-			this.deleteRecordToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
-			this.deleteRecordToolStripMenuItem.Text = "Delete Record";
-			this.deleteRecordToolStripMenuItem.Click += new System.EventHandler(this.DeleteRecordToolStripMenuItem_Click);
-			// 
-			// gridQtyBreakdown
-			// 
-			this.gridQtyBreakdown.AllowUserToAddRows = false;
-			this.gridQtyBreakdown.AllowUserToDeleteRows = false;
-			this.gridQtyBreakdown.AllowUserToResizeRows = false;
-			this.gridQtyBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.gridDistributeToSP.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridDistributeToSP.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridDistributeToSP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDistributeToSP.ContextMenuStrip = this.cmsDistribute;
+            this.gridDistributeToSP.DataSource = this.distributebs;
+            this.gridDistributeToSP.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridDistributeToSP.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridDistributeToSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridDistributeToSP.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridDistributeToSP.Location = new System.Drawing.Point(1, 22);
+            this.gridDistributeToSP.Name = "gridDistributeToSP";
+            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridDistributeToSP.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridDistributeToSP.RowTemplate.Height = 24;
+            this.gridDistributeToSP.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDistributeToSP.ShowCellToolTips = false;
+            this.gridDistributeToSP.Size = new System.Drawing.Size(411, 127);
+            this.gridDistributeToSP.TabIndex = 28;
+            this.gridDistributeToSP.SelectionChanged += new System.EventHandler(this.GridDistributeToSP_SelectionChanged);
+            // 
+            // cmsDistribute
+            // 
+            this.cmsDistribute.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.cmsDistribute.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItemInsertDistribute,
+            this.MenuItemDeleteDistribute});
+            this.cmsDistribute.Name = "contextMenuStrip1";
+            this.cmsDistribute.Size = new System.Drawing.Size(162, 48);
+            // 
+            // MenuItemInsertDistribute
+            // 
+            this.MenuItemInsertDistribute.Name = "MenuItemInsertDistribute";
+            this.MenuItemInsertDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemInsertDistribute.Text = "Insert Distribute";
+            this.MenuItemInsertDistribute.Click += new System.EventHandler(this.MenuItemInsertDistribute_Click);
+            // 
+            // MenuItemDeleteDistribute
+            // 
+            this.MenuItemDeleteDistribute.Name = "MenuItemDeleteDistribute";
+            this.MenuItemDeleteDistribute.Size = new System.Drawing.Size(161, 22);
+            this.MenuItemDeleteDistribute.Text = "Delete Record";
+            this.MenuItemDeleteDistribute.Click += new System.EventHandler(this.MenuItemDeleteDistribute_Click);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(3, 1);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(110, 17);
+            this.label12.TabIndex = 29;
+            this.label12.Text = "Qty Break Down";
+            // 
+            // gridQtyBreakDown
+            // 
+            this.gridQtyBreakDown.AllowUserToAddRows = false;
+            this.gridQtyBreakDown.AllowUserToDeleteRows = false;
+            this.gridQtyBreakDown.AllowUserToResizeRows = false;
+            this.gridQtyBreakDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.gridQtyBreakdown.BackgroundColor = System.Drawing.SystemColors.Control;
-			this.gridQtyBreakdown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
-			this.gridQtyBreakdown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.gridQtyBreakdown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
-			this.gridQtyBreakdown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-			this.gridQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-			this.gridQtyBreakdown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
-			this.gridQtyBreakdown.Location = new System.Drawing.Point(0, 14);
-			this.gridQtyBreakdown.Name = "gridQtyBreakdown";
-			this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
-			this.gridQtyBreakdown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
-			this.gridQtyBreakdown.RowTemplate.Height = 24;
-			this.gridQtyBreakdown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.gridQtyBreakdown.ShowCellToolTips = false;
-			this.gridQtyBreakdown.Size = new System.Drawing.Size(373, 93);
-			this.gridQtyBreakdown.TabIndex = 49;
-			this.gridQtyBreakdown.TabStop = false;
-			// 
-			// labelDistributetoSPNo
-			// 
-			this.labelDistributetoSPNo.BackColor = System.Drawing.Color.Transparent;
-			this.labelDistributetoSPNo.Location = new System.Drawing.Point(1, 3);
-			this.labelDistributetoSPNo.Name = "labelDistributetoSPNo";
-			this.labelDistributetoSPNo.Size = new System.Drawing.Size(112, 15);
-			this.labelDistributetoSPNo.TabIndex = 50;
-			this.labelDistributetoSPNo.Text = "Distribute to SP#";
-			this.labelDistributetoSPNo.TextStyle.Color = System.Drawing.Color.Black;
-			// 
-			// labelTotalDistributionQty
-			// 
-			this.labelTotalDistributionQty.Location = new System.Drawing.Point(140, 97);
-			this.labelTotalDistributionQty.Name = "labelTotalDistributionQty";
-			this.labelTotalDistributionQty.Size = new System.Drawing.Size(133, 23);
-			this.labelTotalDistributionQty.TabIndex = 51;
-			this.labelTotalDistributionQty.Text = "Total Distribution Qty";
-			// 
-			// numTotalDistributionQty
-			// 
-			this.numTotalDistributionQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.numTotalDistributionQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.numTotalDistributionQty.IsSupportEditMode = false;
-			this.numTotalDistributionQty.Location = new System.Drawing.Point(274, 97);
-			this.numTotalDistributionQty.Name = "numTotalDistributionQty";
-			this.numTotalDistributionQty.NullValue = new decimal(new int[] {
+            this.gridQtyBreakDown.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.gridQtyBreakDown.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
+            this.gridQtyBreakDown.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridQtyBreakDown.DataSource = this.qtybreakds;
+            this.gridQtyBreakDown.EditingEnter = Ict.Win.UI.DataGridViewEditingEnter.NextCellOrNextRow;
+            this.gridQtyBreakDown.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gridQtyBreakDown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.gridQtyBreakDown.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(161)))), ((int)(((byte)(162)))), ((int)(((byte)(163)))));
+            this.gridQtyBreakDown.Location = new System.Drawing.Point(1, 21);
+            this.gridQtyBreakDown.Name = "gridQtyBreakDown";
+            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(228)))), ((int)(((byte)(255)))));
+            this.gridQtyBreakDown.RowTemplate.DefaultCellStyle.SelectionForeColor = System.Drawing.Color.Black;
+            this.gridQtyBreakDown.RowTemplate.Height = 24;
+            this.gridQtyBreakDown.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridQtyBreakDown.ShowCellToolTips = false;
+            this.gridQtyBreakDown.Size = new System.Drawing.Size(411, 139);
+            this.gridQtyBreakDown.TabIndex = 30;
+            // 
+            // numUnitCons
+            // 
+            this.numUnitCons.BackColor = System.Drawing.Color.White;
+            this.numUnitCons.DecimalPlaces = 4;
+            this.numUnitCons.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.numUnitCons.Location = new System.Drawing.Point(129, 108);
+            this.numUnitCons.Name = "numUnitCons";
+            this.numUnitCons.NullValue = new decimal(new int[] {
             0,
             0,
             0,
             0});
-			this.numTotalDistributionQty.ReadOnly = true;
-			this.numTotalDistributionQty.Size = new System.Drawing.Size(91, 23);
-			this.numTotalDistributionQty.TabIndex = 24;
-			this.numTotalDistributionQty.Value = new decimal(new int[] {
+            this.numUnitCons.Size = new System.Drawing.Size(94, 23);
+            this.numUnitCons.TabIndex = 33;
+            this.numUnitCons.Value = new decimal(new int[] {
             0,
             0,
             0,
             0});
-			// 
-			// labelQtyBreakdown
-			// 
-			this.labelQtyBreakdown.BackColor = System.Drawing.Color.Transparent;
-			this.labelQtyBreakdown.Location = new System.Drawing.Point(0, 2);
-			this.labelQtyBreakdown.Name = "labelQtyBreakdown";
-			this.labelQtyBreakdown.Size = new System.Drawing.Size(112, 11);
-			this.labelQtyBreakdown.TabIndex = 52;
-			this.labelQtyBreakdown.Text = "Q\'ty Break down";
-			this.labelQtyBreakdown.TextStyle.Color = System.Drawing.Color.Black;
-			// 
-			// downloadid_Text
-			// 
-			this.downloadid_Text.BackColor = System.Drawing.Color.Transparent;
-			this.downloadid_Text.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.downloadid_Text.Location = new System.Drawing.Point(5, 61);
-			this.downloadid_Text.Name = "downloadid_Text";
-			this.downloadid_Text.Size = new System.Drawing.Size(260, 23);
-			this.downloadid_Text.TabIndex = 53;
-			this.downloadid_Text.Text = "DownLoad ID/ Apply # Different";
-			this.downloadid_Text.TextStyle.Color = System.Drawing.Color.Red;
-			this.downloadid_Text.Visible = false;
-			// 
-			// label26
-			// 
-			this.label26.Location = new System.Drawing.Point(364, 8);
-			this.label26.Name = "label26";
-			this.label26.Size = new System.Drawing.Size(68, 23);
-			this.label26.TabIndex = 46;
-			this.label26.Text = "Sorting";
-			// 
-			// comboBox1
-			// 
-			this.comboBox1.BackColor = System.Drawing.Color.White;
-			this.comboBox1.EditMode = Sci.Win.UI.AdvEditModes.None;
-			this.comboBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.comboBox1.FormattingEnabled = true;
-			this.comboBox1.IsSupportUnselect = true;
-			this.comboBox1.Location = new System.Drawing.Point(434, 8);
-			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.OldText = "";
-			this.comboBox1.Size = new System.Drawing.Size(137, 24);
-			this.comboBox1.TabIndex = 47;
-			this.comboBox1.SelectedValueChanged += new System.EventHandler(this.ComboBox1_SelectedValueChanged);
-			// 
-			// AutoCut
-			// 
-			this.AutoCut.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-			this.AutoCut.Location = new System.Drawing.Point(88, 1);
-			this.AutoCut.Name = "AutoCut";
-			this.AutoCut.Size = new System.Drawing.Size(87, 35);
-			this.AutoCut.TabIndex = 48;
-			this.AutoCut.Text = "Auto Cut#";
-			this.AutoCut.UseVisualStyleBackColor = true;
-			this.AutoCut.Click += new System.EventHandler(this.AutoCut_Click);
-			// 
-			// displayTotalCutQty
-			// 
-			this.displayTotalCutQty.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayTotalCutQty.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayTotalCutQty.Location = new System.Drawing.Point(230, 70);
-			this.displayTotalCutQty.Name = "displayTotalCutQty";
-			this.displayTotalCutQty.Size = new System.Drawing.Size(135, 23);
-			this.displayTotalCutQty.TabIndex = 23;
-			// 
-			// btnPatternPanel
-			// 
-			this.btnPatternPanel.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-			this.btnPatternPanel.Location = new System.Drawing.Point(204, 79);
-			this.btnPatternPanel.Name = "btnPatternPanel";
-			this.btnPatternPanel.Size = new System.Drawing.Size(110, 30);
-			this.btnPatternPanel.TabIndex = 18;
-			this.btnPatternPanel.Text = "PatternPanel";
-			this.btnPatternPanel.UseVisualStyleBackColor = true;
-			this.btnPatternPanel.Click += new System.EventHandler(this.BtnPatternPanel_Click);
-			// 
-			// labelPatternPanel
-			// 
-			this.labelPatternPanel.Location = new System.Drawing.Point(3, 83);
-			this.labelPatternPanel.Name = "labelPatternPanel";
-			this.labelPatternPanel.Size = new System.Drawing.Size(97, 23);
-			this.labelPatternPanel.TabIndex = 58;
-			this.labelPatternPanel.Text = "PatternPanel";
-			// 
-			// txtPatternPanel
-			// 
-			this.txtPatternPanel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.txtPatternPanel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.txtPatternPanel.Location = new System.Drawing.Point(103, 83);
-			this.txtPatternPanel.Name = "txtPatternPanel";
-			this.txtPatternPanel.Size = new System.Drawing.Size(98, 23);
-			this.txtPatternPanel.TabIndex = 14;
-			// 
-			// numMarkerLengthY
-			// 
-			this.numMarkerLengthY.BackColor = System.Drawing.Color.White;
-			this.numMarkerLengthY.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.numMarkerLengthY.Location = new System.Drawing.Point(103, 2);
-			this.numMarkerLengthY.Mask = "00";
-			this.numMarkerLengthY.Name = "numMarkerLengthY";
-			this.numMarkerLengthY.Size = new System.Drawing.Size(34, 23);
-			this.numMarkerLengthY.TabIndex = 8;
-			this.numMarkerLengthY.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-			this.numMarkerLengthY.Validated += new System.EventHandler(this.NumMarkerLengthY_MarkerLengthY_Validated);
-			// 
-			// txtCutCell
-			// 
-			this.txtCutCell.BackColor = System.Drawing.Color.White;
-			this.txtCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtCutCell.Location = new System.Drawing.Point(336, 2);
-			this.txtCutCell.MDivisionID = "";
-			this.txtCutCell.Name = "txtCutCell";
-			this.txtCutCell.Size = new System.Drawing.Size(30, 23);
-			this.txtCutCell.TabIndex = 10;
-			// 
-			// txtMarkerLength
-			// 
-			this.txtMarkerLength.BackColor = System.Drawing.Color.White;
-			this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtMarkerLength.Location = new System.Drawing.Point(281, 2);
-			this.txtMarkerLength.Name = "txtMarkerLength";
-			this.txtMarkerLength.Size = new System.Drawing.Size(74, 23);
-			this.txtMarkerLength.TabIndex = 59;
-			this.txtMarkerLength.Visible = false;
-			// 
-			// btn_Refresh
-			// 
-			this.btn_Refresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btn_Refresh.Location = new System.Drawing.Point(774, 4);
-			this.btn_Refresh.Name = "btn_Refresh";
-			this.btn_Refresh.Size = new System.Drawing.Size(80, 30);
-			this.btn_Refresh.TabIndex = 49;
-			this.btn_Refresh.Text = "Refresh";
-			this.btn_Refresh.UseVisualStyleBackColor = true;
-			this.btn_Refresh.Click += new System.EventHandler(this.Btn_Refresh_Click);
-			// 
-			// splitContainer1
-			// 
-			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-			this.splitContainer1.Location = new System.Drawing.Point(830, 0);
-			this.splitContainer1.Name = "splitContainer1";
-			this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer1.Panel1
-			// 
-			this.splitContainer1.Panel1.Controls.Add(this.txtTone);
-			this.splitContainer1.Panel1.Controls.Add(this.lblTone);
-			this.splitContainer1.Panel1.Controls.Add(this.btnAdditionalrevisedmarker);
-			this.splitContainer1.Panel1.Controls.Add(this.splitContainer2);
-			this.splitContainer1.Panel1.Controls.Add(this.lbshc);
-			this.splitContainer1.Panel1.Controls.Add(this.labelCutCell);
-			this.splitContainer1.Panel1.Controls.Add(this.numMarkerLengthY);
-			this.splitContainer1.Panel1.Controls.Add(this.labelMarkerLengthY);
-			this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLength);
-			this.splitContainer1.Panel1.Controls.Add(this.txtPatternPanel);
-			this.splitContainer1.Panel1.Controls.Add(this.displayFabricType_Refno);
-			this.splitContainer1.Panel1.Controls.Add(this.labelPatternPanel);
-			this.splitContainer1.Panel1.Controls.Add(this.editDescription);
-			this.splitContainer1.Panel1.Controls.Add(this.labelDescription);
-			this.splitContainer1.Panel1.Controls.Add(this.btnPatternPanel);
-			this.splitContainer1.Panel1.Controls.Add(this.labelUnitCons);
-			this.splitContainer1.Panel1.Controls.Add(this.txtFabricCombo);
-			this.splitContainer1.Panel1.Controls.Add(this.labelCons);
-			this.splitContainer1.Panel1.Controls.Add(this.txtFabricPanelCode);
-			this.splitContainer1.Panel1.Controls.Add(this.numCons);
-			this.splitContainer1.Panel1.Controls.Add(this.labelFabricCombo);
-			this.splitContainer1.Panel1.Controls.Add(this.txtCutCell);
-			this.splitContainer1.Panel1.Controls.Add(this.labelFabricPanelCode);
-			this.splitContainer1.Panel1.Controls.Add(this.numUnitCons);
-			this.splitContainer1.Panel1.Controls.Add(this.txtMarkerLengthE);
-			this.splitContainer1.Panel1.Controls.Add(this.labelFabricType_Refno);
-			this.splitContainer1.Panel1.Controls.Add(this.label17);
-			this.splitContainer1.Panel1MinSize = 1;
-			// 
-			// splitContainer1.Panel2
-			// 
-			this.splitContainer1.Panel2.Controls.Add(this.labelQtyBreakdown);
-			this.splitContainer1.Panel2.Controls.Add(this.gridQtyBreakdown);
-			this.splitContainer1.Panel2MinSize = 1;
-			this.splitContainer1.Size = new System.Drawing.Size(373, 678);
-			this.splitContainer1.SplitterDistance = 567;
-			this.splitContainer1.TabIndex = 61;
-			// 
-			// txtTone
-			// 
-			this.txtTone.BackColor = System.Drawing.Color.White;
-			this.txtTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtTone.Location = new System.Drawing.Point(103, 111);
-			this.txtTone.Name = "txtTone";
-			this.txtTone.Size = new System.Drawing.Size(100, 23);
-			this.txtTone.TabIndex = 63;
-			// 
-			// lblTone
-			// 
-			this.lblTone.Location = new System.Drawing.Point(3, 110);
-			this.lblTone.Name = "lblTone";
-			this.lblTone.Size = new System.Drawing.Size(97, 23);
-			this.lblTone.TabIndex = 62;
-			this.lblTone.Text = "Tone";
-			// 
-			// btnAdditionalrevisedmarker
-			// 
-			this.btnAdditionalrevisedmarker.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
-			this.btnAdditionalrevisedmarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnAdditionalrevisedmarker.Location = new System.Drawing.Point(3, 183);
-			this.btnAdditionalrevisedmarker.Name = "btnAdditionalrevisedmarker";
-			this.btnAdditionalrevisedmarker.Size = new System.Drawing.Size(97, 40);
-			this.btnAdditionalrevisedmarker.TabIndex = 61;
-			this.btnAdditionalrevisedmarker.Text = "Additional revised marker";
-			this.btnAdditionalrevisedmarker.UseVisualStyleBackColor = true;
-			this.btnAdditionalrevisedmarker.Click += new System.EventHandler(this.BtnAdditionalrevisedmarker_Click);
-			// 
-			// splitContainer2
-			// 
-			this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.splitContainer2.Location = new System.Drawing.Point(0, 243);
-			this.splitContainer2.Name = "splitContainer2";
-			this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
-			// 
-			// splitContainer2.Panel1
-			// 
-			this.splitContainer2.Panel1.Controls.Add(this.displayTime);
-			this.splitContainer2.Panel1.Controls.Add(this.txtBoxMarkerNo);
-			this.splitContainer2.Panel1.Controls.Add(this.gridSizeRatio);
-			this.splitContainer2.Panel1.Controls.Add(this.labelSizeRatio);
-			this.splitContainer2.Panel1.Controls.Add(this.displayTotalCutQty);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTotalDistributionQty);
-			this.splitContainer2.Panel1.Controls.Add(this.numTotalDistributionQty);
-			this.splitContainer2.Panel1.Controls.Add(this.displayCutplanNo);
-			this.splitContainer2.Panel1.Controls.Add(this.labelCutplanNo);
-			this.splitContainer2.Panel1.Controls.Add(this.label1);
-			this.splitContainer2.Panel1.Controls.Add(this.labelTotalCutQty);
-			// 
-			// splitContainer2.Panel2
-			// 
-			this.splitContainer2.Panel2.Controls.Add(this.gridDistributetoSPNo);
-			this.splitContainer2.Panel2.Controls.Add(this.labelDistributetoSPNo);
-			this.splitContainer2.Size = new System.Drawing.Size(377, 324);
-			this.splitContainer2.SplitterDistance = 155;
-			this.splitContainer2.TabIndex = 0;
-			// 
-			// displayTime
-			// 
-			this.displayTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-			this.displayTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-			this.displayTime.Location = new System.Drawing.Point(139, 122);
-			this.displayTime.Name = "displayTime";
-			this.displayTime.Size = new System.Drawing.Size(225, 23);
-			this.displayTime.TabIndex = 64;
-			this.displayTime.DoubleClick += new System.EventHandler(this.DisplayTime_DoubleClick);
-			// 
-			// txtBoxMarkerNo
-			// 
-			this.txtBoxMarkerNo.BackColor = System.Drawing.Color.White;
-			this.txtBoxMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-			this.txtBoxMarkerNo.Location = new System.Drawing.Point(230, 14);
-			this.txtBoxMarkerNo.Name = "txtBoxMarkerNo";
-			this.txtBoxMarkerNo.Size = new System.Drawing.Size(136, 23);
-			this.txtBoxMarkerNo.TabIndex = 63;
-			this.txtBoxMarkerNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtBoxMarkerNo_PopUp);
-			this.txtBoxMarkerNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtBoxMarkerNo_Validating);
-			// 
-			// label1
-			// 
-			this.label1.Location = new System.Drawing.Point(140, 14);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(86, 23);
-			this.label1.TabIndex = 61;
-			this.label1.Text = "Marker No.";
-			// 
-			// lbshc
-			// 
-			this.lbshc.AutoSize = true;
-			this.lbshc.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold);
-			this.lbshc.ForeColor = System.Drawing.Color.Red;
-			this.lbshc.Location = new System.Drawing.Point(2, 226);
-			this.lbshc.Name = "lbshc";
-			this.lbshc.Size = new System.Drawing.Size(199, 13);
-			this.lbshc.TabIndex = 60;
-			this.lbshc.Text = "WWWWWWWWWWWWWWWW";
-			// 
-			// btnCutplanChangeHistory
-			// 
-			this.btnCutplanChangeHistory.Enabled = false;
-			this.btnCutplanChangeHistory.Location = new System.Drawing.Point(813, 3);
-			this.btnCutplanChangeHistory.Name = "btnCutplanChangeHistory";
-			this.btnCutplanChangeHistory.Size = new System.Drawing.Size(195, 30);
-			this.btnCutplanChangeHistory.TabIndex = 1;
-			this.btnCutplanChangeHistory.Text = "Cutplan Change History";
-			this.btnCutplanChangeHistory.UseVisualStyleBackColor = true;
-			this.btnCutplanChangeHistory.Click += new System.EventHandler(this.BtnCutplanChangeHistory_Click);
-			// 
-			// btnDist
-			// 
-			this.btnDist.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnDist.Location = new System.Drawing.Point(1126, 4);
-			this.btnDist.Name = "btnDist";
-			this.btnDist.Size = new System.Drawing.Size(74, 30);
-			this.btnDist.TabIndex = 50;
-			this.btnDist.Text = "Dist.";
-			this.btnDist.UseVisualStyleBackColor = true;
-			this.btnDist.Click += new System.EventHandler(this.BtnDist_Click);
-			// 
-			// label3
-			// 
-			this.label3.Location = new System.Drawing.Point(0, 0);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(0, 0);
-			this.label3.TabIndex = 63;
-			// 
-			// label4
-			// 
-			this.label4.Location = new System.Drawing.Point(0, 0);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(0, 0);
-			this.label4.TabIndex = 62;
-			// 
-			// BtnImportMarker
-			// 
-			this.BtnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.BtnImportMarker.Location = new System.Drawing.Point(532, 61);
-			this.BtnImportMarker.Name = "BtnImportMarker";
-			this.BtnImportMarker.Size = new System.Drawing.Size(82, 30);
-			this.BtnImportMarker.TabIndex = 59;
-			this.BtnImportMarker.Text = "Import Marker";
-			this.BtnImportMarker.UseVisualStyleBackColor = true;
-			this.BtnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
-			// 
-			// BackgroundWorker1
-			// 
-			this.BackgroundWorker1.WorkerReportsProgress = true;
-			this.BackgroundWorker1.WorkerSupportsCancellation = true;
-			this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-			// 
-			// btnExWip
-			// 
-			this.btnExWip.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
-			this.btnExWip.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.btnExWip.Location = new System.Drawing.Point(270, 56);
-			this.btnExWip.Name = "btnExWip";
-			this.btnExWip.Size = new System.Drawing.Size(179, 35);
-			this.btnExWip.TabIndex = 68;
-			this.btnExWip.Text = "Exclude fabric combo in WIP && Notch Setting";
-			this.btnExWip.UseVisualStyleBackColor = true;
-			this.btnExWip.Click += new System.EventHandler(this.BtnExWip_Click);
-			// 
-			// btnKHImportMarker
-			// 
-			this.btnKHImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.btnKHImportMarker.Location = new System.Drawing.Point(614, 61);
-			this.btnKHImportMarker.Name = "btnKHImportMarker";
-			this.btnKHImportMarker.Size = new System.Drawing.Size(107, 30);
-			this.btnKHImportMarker.TabIndex = 69;
-			this.btnKHImportMarker.Text = "KH Import Marker";
-			this.btnKHImportMarker.UseVisualStyleBackColor = true;
-			this.btnKHImportMarker.Click += new System.EventHandler(this.BtnKHImportMarker_Click);
-			// 
-			// btnAutoDistributeSP
-			// 
-			this.btnAutoDistributeSP.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F);
-			this.btnAutoDistributeSP.Location = new System.Drawing.Point(729, 5);
-			this.btnAutoDistributeSP.Name = "btnAutoDistributeSP";
-			this.btnAutoDistributeSP.Size = new System.Drawing.Size(98, 51);
-			this.btnAutoDistributeSP.TabIndex = 70;
-			this.btnAutoDistributeSP.Text = "WorkOrder SP# distribute.";
-			this.btnAutoDistributeSP.UseVisualStyleBackColor = true;
-			// 
-			// Btn_Excel
-			// 
-			this.Btn_Excel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.Btn_Excel.Location = new System.Drawing.Point(686, 4);
-			this.Btn_Excel.Name = "Btn_Excel";
-			this.Btn_Excel.Size = new System.Drawing.Size(80, 30);
-			this.Btn_Excel.TabIndex = 51;
-			this.Btn_Excel.Text = "To Excel";
-			this.Btn_Excel.UseVisualStyleBackColor = true;
-			this.Btn_Excel.Click += new System.EventHandler(this.Btn_Excel_Click);
-			// 
-			// P02
-			// 
-			this.ClientSize = new System.Drawing.Size(1211, 775);
-			this.Controls.Add(this.btnCutplanChangeHistory);
-			this.DefaultControlForEdit = "numMarkerLengthY";
-			this.DefaultDetailOrder = "Markname";
-			this.DefaultOrder = "ID";
-			this.ExpressQuery = true;
-			this.GridAlias = "WorkOrder";
-			this.IsSupportClip = false;
-			this.IsSupportCopy = false;
-			this.IsSupportDelete = false;
-			this.IsSupportNew = false;
-			this.KeyField1 = "id";
-			this.Name = "P02";
-			this.OnLineHelpID = "Sci.Win.Tems.Input8";
-			this.SubDetailKeyField1 = "id,ukey";
-			this.SubDetailKeyField2 = "id,WorkOrderUkey";
-			this.SubGridAlias = "WorkOrder_PatternPanel";
-			this.Text = "() () () ";
-			this.WorkAlias = "Cutting";
-			this.Controls.SetChildIndex(this.tabs, 0);
-			this.Controls.SetChildIndex(this.btnCutplanChangeHistory, 0);
-			((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
-			this.masterpanel.ResumeLayout(false);
-			this.masterpanel.PerformLayout();
-			this.detailpanel.ResumeLayout(false);
-			this.detail2.ResumeLayout(false);
-			this.detailpanel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
-			this.detail.ResumeLayout(false);
-			this.detailcont.ResumeLayout(false);
-			this.detailbtm.ResumeLayout(false);
-			this.detailbtm.PerformLayout();
-			this.tabs.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
-			this.sizeratioMenuStrip.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.gridDistributetoSPNo)).EndInit();
-			this.distributeMenuStrip.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakdown)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.sizeratiobs)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.distributebs)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).EndInit();
-			this.splitContainer1.Panel1.ResumeLayout(false);
-			this.splitContainer1.Panel1.PerformLayout();
-			this.splitContainer1.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-			this.splitContainer1.ResumeLayout(false);
-			this.splitContainer2.Panel1.ResumeLayout(false);
-			this.splitContainer2.Panel1.PerformLayout();
-			this.splitContainer2.Panel2.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-			this.splitContainer2.ResumeLayout(false);
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this.numUnitCons.Validated += new System.EventHandler(this.NumUnitCons_Validated);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(227, 111);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(12, 17);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "/";
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label4.Location = new System.Drawing.Point(3, 108);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(123, 23);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Unit Cons/Cons";
+            // 
+            // displayBoxDescription
+            // 
+            this.displayBoxDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxDescription.Location = new System.Drawing.Point(129, 29);
+            this.displayBoxDescription.Multiline = true;
+            this.displayBoxDescription.Name = "displayBoxDescription";
+            this.displayBoxDescription.Size = new System.Drawing.Size(285, 50);
+            this.displayBoxDescription.TabIndex = 14;
+            // 
+            // displayBoxFabricTypeRefno
+            // 
+            this.displayBoxFabricTypeRefno.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxFabricTypeRefno.Location = new System.Drawing.Point(129, 3);
+            this.displayBoxFabricTypeRefno.Name = "displayBoxFabricTypeRefno";
+            this.displayBoxFabricTypeRefno.Size = new System.Drawing.Size(285, 23);
+            this.displayBoxFabricTypeRefno.TabIndex = 13;
+            // 
+            // label3
+            // 
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label3.Location = new System.Drawing.Point(3, 29);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(123, 23);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "Description";
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label2.Location = new System.Drawing.Point(3, 3);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(123, 23);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Fabric Type/Refno";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.numBalanceLayer);
+            this.panel2.Controls.Add(this.numTotalLayer);
+            this.panel2.Controls.Add(this.label7);
+            this.panel2.Controls.Add(this.label8);
+            this.panel2.Controls.Add(this.displayBoxStyle);
+            this.panel2.Controls.Add(this.label1);
+            this.panel2.Controls.Add(this.displayBoxSP);
+            this.panel2.Controls.Add(this.labelCutplanID);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(858, 35);
+            this.panel2.TabIndex = 12;
+            // 
+            // numBalanceLayer
+            // 
+            this.numBalanceLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numBalanceLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numBalanceLayer.IsSupportEditMode = false;
+            this.numBalanceLayer.Location = new System.Drawing.Point(595, 5);
+            this.numBalanceLayer.Name = "numBalanceLayer";
+            this.numBalanceLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numBalanceLayer.ReadOnly = true;
+            this.numBalanceLayer.Size = new System.Drawing.Size(95, 23);
+            this.numBalanceLayer.TabIndex = 38;
+            this.numBalanceLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // numTotalLayer
+            // 
+            this.numTotalLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.numTotalLayer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.numTotalLayer.IsSupportEditMode = false;
+            this.numTotalLayer.Location = new System.Drawing.Point(480, 5);
+            this.numTotalLayer.Name = "numTotalLayer";
+            this.numTotalLayer.NullValue = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.numTotalLayer.ReadOnly = true;
+            this.numTotalLayer.Size = new System.Drawing.Size(95, 23);
+            this.numTotalLayer.TabIndex = 37;
+            this.numTotalLayer.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(580, 8);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(12, 17);
+            this.label7.TabIndex = 35;
+            this.label7.Text = "/";
+            // 
+            // label8
+            // 
+            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label8.Location = new System.Drawing.Point(376, 6);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(101, 23);
+            this.label8.TabIndex = 34;
+            this.label8.Text = "Ttl./Bal. Layer";
+            // 
+            // displayBoxStyle
+            // 
+            this.displayBoxStyle.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxStyle.Location = new System.Drawing.Point(261, 5);
+            this.displayBoxStyle.Name = "displayBoxStyle";
+            this.displayBoxStyle.Size = new System.Drawing.Size(111, 23);
+            this.displayBoxStyle.TabIndex = 14;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(190, 5);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(68, 23);
+            this.label1.TabIndex = 13;
+            this.label1.Text = "Style";
+            // 
+            // displayBoxSP
+            // 
+            this.displayBoxSP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxSP.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "ID", true));
+            this.displayBoxSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxSP.Location = new System.Drawing.Point(76, 5);
+            this.displayBoxSP.Name = "displayBoxSP";
+            this.displayBoxSP.Size = new System.Drawing.Size(111, 23);
+            this.displayBoxSP.TabIndex = 12;
+            // 
+            // labelCutplanID
+            // 
+            this.labelCutplanID.Location = new System.Drawing.Point(5, 5);
+            this.labelCutplanID.Name = "labelCutplanID";
+            this.labelCutplanID.Size = new System.Drawing.Size(68, 23);
+            this.labelCutplanID.TabIndex = 2;
+            this.labelCutplanID.Text = "SP";
+            // 
+            // btnBatchAssign
+            // 
+            this.btnBatchAssign.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnBatchAssign.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnBatchAssign.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnBatchAssign.Location = new System.Drawing.Point(249, 34);
+            this.btnBatchAssign.Name = "btnBatchAssign";
+            this.btnBatchAssign.Size = new System.Drawing.Size(113, 32);
+            this.btnBatchAssign.TabIndex = 2;
+            this.btnBatchAssign.Text = "Batch Assign";
+            this.btnBatchAssign.UseVisualStyleBackColor = true;
+            this.btnBatchAssign.Click += new System.EventHandler(this.BtnBatchAssign_Click);
+            // 
+            // btnImportMarker
+            // 
+            this.btnImportMarker.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportMarker.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
+            this.btnImportMarker.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportMarker.Location = new System.Drawing.Point(363, 34);
+            this.btnImportMarker.Name = "btnImportMarker";
+            this.btnImportMarker.Size = new System.Drawing.Size(124, 32);
+            this.btnImportMarker.TabIndex = 3;
+            this.btnImportMarker.Text = "Import Marker";
+            this.btnImportMarker.UseVisualStyleBackColor = true;
+            this.btnImportMarker.Click += new System.EventHandler(this.BtnImportMarker_Click);
+            // 
+            // btnDownload
+            // 
+            this.btnDownload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDownload.Image = global::Sci.Production.Cutting.Properties.Resources.download;
+            this.btnDownload.Location = new System.Drawing.Point(487, 37);
+            this.btnDownload.Name = "btnDownload";
+            this.btnDownload.Size = new System.Drawing.Size(25, 25);
+            this.btnDownload.TabIndex = 4;
+            this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
+            // 
+            // btnImportMarkerLectra
+            // 
+            this.btnImportMarkerLectra.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportMarkerLectra.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnImportMarkerLectra.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnImportMarkerLectra.Location = new System.Drawing.Point(517, 34);
+            this.btnImportMarkerLectra.Name = "btnImportMarkerLectra";
+            this.btnImportMarkerLectra.Size = new System.Drawing.Size(175, 32);
+            this.btnImportMarkerLectra.TabIndex = 14;
+            this.btnImportMarkerLectra.Text = "Import Marker(Lectra)";
+            this.btnImportMarkerLectra.UseVisualStyleBackColor = true;
+            this.btnImportMarkerLectra.Click += new System.EventHandler(this.BtnImportMarkerLectra_Click);
+            // 
+            // btnEdit
+            // 
+            this.btnEdit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnEdit.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnEdit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnEdit.Location = new System.Drawing.Point(694, 34);
+            this.btnEdit.Name = "btnEdit";
+            this.btnEdit.Size = new System.Drawing.Size(61, 32);
+            this.btnEdit.TabIndex = 15;
+            this.btnEdit.Text = "Edit";
+            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.Click += new System.EventHandler(this.BtnEdit_Click);
+            // 
+            // btnAutoRef
+            // 
+            this.btnAutoRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnAutoRef.Location = new System.Drawing.Point(3, 3);
+            this.btnAutoRef.Name = "btnAutoRef";
+            this.btnAutoRef.Size = new System.Drawing.Size(92, 32);
+            this.btnAutoRef.TabIndex = 16;
+            this.btnAutoRef.Text = "Auto Ref#";
+            this.btnAutoRef.UseVisualStyleBackColor = true;
+            this.btnAutoRef.Click += new System.EventHandler(this.BtnAutoRef_Click);
+            // 
+            // btnCutPartsCheck
+            // 
+            this.btnCutPartsCheck.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCutPartsCheck.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCutPartsCheck.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheck.Location = new System.Drawing.Point(493, 3);
+            this.btnCutPartsCheck.Name = "btnCutPartsCheck";
+            this.btnCutPartsCheck.Size = new System.Drawing.Size(133, 32);
+            this.btnCutPartsCheck.TabIndex = 20;
+            this.btnCutPartsCheck.Text = "Cut Parts Check";
+            this.btnCutPartsCheck.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheck.Click += new System.EventHandler(this.BtnCutPartsCheck_Click);
+            // 
+            // btnCutPartsCheckSummary
+            // 
+            this.btnCutPartsCheckSummary.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCutPartsCheckSummary.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnCutPartsCheckSummary.ForeColor = System.Drawing.Color.Blue;
+            this.btnCutPartsCheckSummary.Location = new System.Drawing.Point(627, 3);
+            this.btnCutPartsCheckSummary.Name = "btnCutPartsCheckSummary";
+            this.btnCutPartsCheckSummary.Size = new System.Drawing.Size(204, 32);
+            this.btnCutPartsCheckSummary.TabIndex = 21;
+            this.btnCutPartsCheckSummary.Text = "Cut Parts Check Summary";
+            this.btnCutPartsCheckSummary.UseVisualStyleBackColor = true;
+            this.btnCutPartsCheckSummary.Click += new System.EventHandler(this.BtnCutPartsCheckSummary_Click);
+            // 
+            // btnQtyBreakdown
+            // 
+            this.btnQtyBreakdown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnQtyBreakdown.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnQtyBreakdown.Location = new System.Drawing.Point(978, 3);
+            this.btnQtyBreakdown.Name = "btnQtyBreakdown";
+            this.btnQtyBreakdown.Size = new System.Drawing.Size(125, 32);
+            this.btnQtyBreakdown.TabIndex = 23;
+            this.btnQtyBreakdown.Text = "Qty Breakdown";
+            this.btnQtyBreakdown.UseVisualStyleBackColor = true;
+            this.btnQtyBreakdown.Click += new System.EventHandler(this.BtnQtyBreakdown_Click);
+            // 
+            // btnToExcel
+            // 
+            this.btnToExcel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnToExcel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnToExcel.Location = new System.Drawing.Point(1104, 3);
+            this.btnToExcel.Name = "btnToExcel";
+            this.btnToExcel.Size = new System.Drawing.Size(92, 32);
+            this.btnToExcel.TabIndex = 24;
+            this.btnToExcel.Text = "To Excel";
+            this.btnToExcel.UseVisualStyleBackColor = true;
+            this.btnToExcel.Click += new System.EventHandler(this.BtnToExcel_Click);
+            // 
+            // btnAutoSeq
+            // 
+            this.btnAutoSeq.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnAutoSeq.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnAutoSeq.Location = new System.Drawing.Point(101, 3);
+            this.btnAutoSeq.Name = "btnAutoSeq";
+            this.btnAutoSeq.Size = new System.Drawing.Size(92, 32);
+            this.btnAutoSeq.TabIndex = 25;
+            this.btnAutoSeq.Text = "Auto Seq";
+            this.btnAutoSeq.UseVisualStyleBackColor = true;
+            this.btnAutoSeq.Click += new System.EventHandler(this.BtnAutoSeq_Click);
+            // 
+            // btnPackingMethod
+            // 
+            this.btnPackingMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPackingMethod.Location = new System.Drawing.Point(832, 3);
+            this.btnPackingMethod.Name = "btnPackingMethod";
+            this.btnPackingMethod.Size = new System.Drawing.Size(145, 32);
+            this.btnPackingMethod.TabIndex = 94;
+            this.btnPackingMethod.Text = "Packing Method";
+            this.btnPackingMethod.UseVisualStyleBackColor = true;
+            this.btnPackingMethod.Click += new System.EventHandler(this.BtnPackingMethod_Click);
+            // 
+            // btnExcludeSetting
+            // 
+            this.btnExcludeSetting.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExcludeSetting.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnExcludeSetting.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnExcludeSetting.Location = new System.Drawing.Point(136, 34);
+            this.btnExcludeSetting.Name = "btnExcludeSetting";
+            this.btnExcludeSetting.Size = new System.Drawing.Size(113, 32);
+            this.btnExcludeSetting.TabIndex = 16;
+            this.btnExcludeSetting.Text = "Exclude Setting";
+            this.btnExcludeSetting.UseVisualStyleBackColor = true;
+            this.btnExcludeSetting.Click += new System.EventHandler(this.BtnExcludeSetting_Click);
+            // 
+            // btnAllSPDistribute
+            // 
+            this.btnAllSPDistribute.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnAllSPDistribute.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnAllSPDistribute.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnAllSPDistribute.Location = new System.Drawing.Point(201, 3);
+            this.btnAllSPDistribute.Name = "btnAllSPDistribute";
+            this.btnAllSPDistribute.Size = new System.Drawing.Size(145, 32);
+            this.btnAllSPDistribute.TabIndex = 95;
+            this.btnAllSPDistribute.Text = "All SP# Distribute";
+            this.btnAllSPDistribute.UseVisualStyleBackColor = true;
+            this.btnAllSPDistribute.Click += new System.EventHandler(this.BtnAllSPDistribute_Click);
+            // 
+            // btnDistributeThisCutRef
+            // 
+            this.btnDistributeThisCutRef.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDistributeThisCutRef.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
+            this.btnDistributeThisCutRef.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F);
+            this.btnDistributeThisCutRef.Location = new System.Drawing.Point(348, 3);
+            this.btnDistributeThisCutRef.Name = "btnDistributeThisCutRef";
+            this.btnDistributeThisCutRef.Size = new System.Drawing.Size(145, 32);
+            this.btnDistributeThisCutRef.TabIndex = 96;
+            this.btnDistributeThisCutRef.Text = "Distribute This CutRef";
+            this.btnDistributeThisCutRef.UseVisualStyleBackColor = true;
+            this.btnDistributeThisCutRef.Click += new System.EventHandler(this.BtnDistributeThisCutRef_Click);
+            // 
+            // txtMarkerLength
+            // 
+            this.txtMarkerLength.BackColor = System.Drawing.Color.White;
+            this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMarkerLength.Location = new System.Drawing.Point(326, 82);
+            this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
+            this.txtMarkerLength.Name = "txtMarkerLength";
+            this.txtMarkerLength.Size = new System.Drawing.Size(88, 23);
+            this.txtMarkerLength.TabIndex = 39;
+            this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
+            // 
+            // P02
+            // 
+            this.ApvChkValue = "New";
+            this.ClientSize = new System.Drawing.Size(1288, 717);
+            this.DefaultOrder = "ID";
+            this.ExpressQuery = true;
+            this.GridAlias = "WorkOrderForPlanning";
+            this.GridNew = 0;
+            this.IsSupportClip = false;
+            this.IsSupportCopy = false;
+            this.IsSupportDelete = false;
+            this.IsSupportNew = false;
+            this.KeyField1 = "ID";
+            this.Name = "P02";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
+            this.Text = "P02. WorkOrder For Planning";
+            this.WorkAlias = "Cutting";
+            this.SizeChanged += new System.EventHandler(this.P02_SizeChanged);
+            this.Controls.SetChildIndex(this.tabs, 0);
+            ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).EndInit();
+            this.masterpanel.ResumeLayout(false);
+            this.detailpanel.ResumeLayout(false);
+            this.detail2.ResumeLayout(false);
+            this.detailpanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.mtbs)).EndInit();
+            this.detail.ResumeLayout(false);
+            this.detailcont.ResumeLayout(false);
+            this.detailbtm.ResumeLayout(false);
+            this.detailbtm.PerformLayout();
+            this.tabs.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridSizeRatio)).EndInit();
+            this.cmsSizeRatio.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.sizeRatiobs)).EndInit();
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel1.PerformLayout();
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            this.splitContainer1.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridDistributeToSP)).EndInit();
+            this.cmsDistribute.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.distributebs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridQtyBreakDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakds)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.qtybreakBindingSource)).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
-
-        private Win.UI.DisplayBox textbox_LastCutRef;
-        private Win.UI.DisplayBox displayCuttingSP;
-        private Win.UI.Label labelLine;
-        private Win.UI.Label labelStyle;
-        private Win.UI.Label label2;
-        private Win.UI.Label labelCuttingSP;
-        private Win.UI.Label labelMarkerName;
-        private Win.UI.DisplayBox txtLine;
-        private Win.UI.DisplayBox txtStyle;
-        private Win.UI.Button AutoRef;
-        private Win.UI.Label labelBalanceLayer;
-        private Win.UI.Label labelTotalLayer;
-        private Win.UI.Label labelColor;
-        private Win.UI.DisplayBox displayMarkerName;
-        private Win.UI.Label downloadid_Text;
-        private Win.UI.Button btnPackingMethod;
+        private Win.UI.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private Win.UI.Label labelCutplanID;
+        private Win.UI.DisplayBox displayBoxStyle;
+        private Win.UI.Label label1;
+        private Win.UI.DisplayBox displayBoxSP;
         private Win.UI.Button btnBatchAssign;
-        private Win.UI.NumericBox numBalanceLayer;
-        private Win.UI.NumericBox numTotalLayer;
-        private Win.UI.DisplayBox displayColor;
-        private Win.UI.NumericBox numTotalDistributionQty;
-        private Win.UI.Label labelTotalDistributionQty;
-        private Win.UI.Grid gridQtyBreakdown;
-        private Win.UI.Grid gridDistributetoSPNo;
-        private Win.UI.DisplayBox displayCutplanNo;
-        private Win.UI.Label labelTotalCutQty;
-        private Win.UI.Label labelCutplanNo;
+        private Win.UI.Button btnImportMarker;
+        private Win.UI.Button btnDownload;
+        private Win.UI.Button btnImportMarkerLectra;
+        private Win.UI.Button btnEdit;
+        private Win.UI.DisplayBox displayBoxDescription;
+        private Win.UI.DisplayBox displayBoxFabricTypeRefno;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
+        private System.Windows.Forms.Label label5;
+        private Win.UI.Label label4;
+        private Win.UI.Button btnAutoRef;
+        private Win.UI.Button btnToExcel;
+        private Win.UI.Button btnQtyBreakdown;
+        private Win.UI.Button btnCutPartsCheckSummary;
+        private Win.UI.Button btnCutPartsCheck;
+        private Win.UI.ListControlBindingSource sizeRatiobs;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.Label label6;
         private Win.UI.Grid gridSizeRatio;
-        private Win.UI.Label labelSizeRatio;
-        private Win.UI.EditBox editDescription;
-        private Win.UI.DisplayBox displayFabricType_Refno;
-        private Win.UI.Label labelDescription;
-        private Win.UI.TextBox txtFabricCombo;
-        private Win.UI.TextBox txtFabricPanelCode;
-        private Win.UI.NumericBox numCons;
-        private Class.TxtCell txtCutCell;
+        private System.Windows.Forms.Label label7;
+        private Win.UI.Label label8;
+        private Win.UI.NumericBox numTotalLayer;
+        private Win.UI.NumericBox numBalanceLayer;
         private Win.UI.NumericBox numUnitCons;
-        private Win.UI.TextBox txtMarkerLengthE;
-        private Win.UI.Label label17;
-        private Win.UI.Label labelFabricType_Refno;
-        private Win.UI.Label labelFabricPanelCode;
-        private Win.UI.Label labelFabricCombo;
-        private Win.UI.Label labelCutCell;
-        private Win.UI.Label labelCons;
-        private Win.UI.Label labelUnitCons;
-        private Win.UI.Label labelMarkerLengthY;
-        private Win.UI.Label labelDistributetoSPNo;
-        private Win.UI.Label labelQtyBreakdown;
-        private Win.UI.ComboBox comboBox1;
-        private Win.UI.Label label26;
-        private Win.UI.Button btnQuantityBreakdown;
-        private Win.UI.ListControlBindingSource sizeratiobs;
-        private Win.UI.Button AutoCut;
+        private Win.UI.NumericBox numCons;
+        private System.Windows.Forms.ToolStripMenuItem insertSizeRatioToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteSizeRatioToolStripMenuItem;
+        private Win.UI.ContextMenuStrip cmsSizeRatio;
+        private Win.UI.ListControlBindingSource qtybreakBindingSource;
+        private Win.UI.Button btnAutoSeq;
+        private Win.UI.Button btnPackingMethod;
+        private Win.UI.Label label9;
+        private Win.UI.Label label10;
+        private Win.UI.TextBox txtPatternNo;
+        private Win.UI.Button btnExcludeSetting;
+        private SplitContainer splitContainer1;
+        private Label label11;
+        private Win.UI.Grid gridDistributeToSP;
+        private Label label12;
+        private Win.UI.Grid gridQtyBreakDown;
         private Win.UI.ListControlBindingSource distributebs;
         private Win.UI.ListControlBindingSource qtybreakds;
-        private Win.UI.ContextMenuStrip sizeratioMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem insertSizeRatioToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private Win.UI.ContextMenuStrip distributeMenuStrip;
-        private Win.UI.DisplayBox displayTotalCutQty;
-        private System.Windows.Forms.ToolStripMenuItem insertNewRecordToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem deleteRecordToolStripMenuItem;
-        private Win.UI.Button btnPatternPanel;
-        private Win.UI.DisplayBox txtPatternPanel;
-        private Win.UI.Label labelPatternPanel;
-        private Win.UI.TextBox txtMarkerLength;
-        private Win.UI.TextBox numMarkerLengthY;
-        private Win.UI.Button btn_Refresh;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.Label lbshc;
-        private Win.UI.Label label1;
-        private Win.UI.TextBox txtBoxMarkerNo;
-        private System.Windows.Forms.SplitContainer splitContainer2;
-        private Win.UI.DisplayBox displayTime;
-        private Win.UI.Button btnAdditionalrevisedmarker;
-        private Win.UI.Button btnCutplanChangeHistory;
-        private Win.UI.Button btnDist;
-        private System.ComponentModel.BackgroundWorker BackgroundWorker1;
-        private Win.UI.Label label4;
-        private Win.UI.Label label3;
-        private Win.UI.Button BtnImportMarker;
-        private Win.UI.Button btnExWip;
-        private Win.UI.Button btnKHImportMarker;
-        private Win.UI.TextBox txtTone;
-        private Win.UI.Label lblTone;
-        private Win.UI.Button btnAutoDistributeSP;
-		private Win.UI.Button Btn_Excel;
-	}
+        private Win.UI.ContextMenuStrip cmsDistribute;
+        private ToolStripMenuItem MenuItemInsertDistribute;
+        private ToolStripMenuItem MenuItemDeleteDistribute;
+        private Win.UI.Button btnDistributeThisCutRef;
+        private Win.UI.Button btnAllSPDistribute;
+        private Class.TxtMarkerLength txtMarkerLength;
+    }
 }

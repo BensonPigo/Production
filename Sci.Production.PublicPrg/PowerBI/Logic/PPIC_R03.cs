@@ -765,8 +765,8 @@ SELECT
     wd.OrderID
    ,InLine = MIN(w.EstCutDate)
    ,OffLine = MAX(w.EstCutDate) INTO #tmpEstCutDate
-FROM WorkOrder_Distribute wd WITH (NOLOCK)
-INNER JOIN WorkOrder w WITH (NOLOCK) ON wd.WorkOrderUkey = w.Ukey
+FROM WorkOrderForOutput_Distribute wd WITH (NOLOCK)
+INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON wd.WorkOrderForOutputUkey = w.Ukey
 WHERE w.EstCutDate IS NOT NULL
 AND EXISTS (SELECT 1 FROM #tmpOrders WHERE ID = wd.OrderID)
 GROUP BY wd.OrderID

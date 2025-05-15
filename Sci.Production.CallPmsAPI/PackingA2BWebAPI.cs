@@ -99,6 +99,14 @@ namespace Sci.Production.CallPmsAPI
 
 
         /// <summary>
+        /// GetCurrentWebAPIUrl
+        /// </summary>
+        public static string GetCurrentWebAPIUrl()
+        {
+            return GetWebAPIUrl(MyUtility.GetValue.Lookup($"Select RgCode from System").ToString());
+        }
+
+        /// <summary>
         /// GetWebAPIUrl
         /// </summary>
         /// <param name="systemName">systemName</param>

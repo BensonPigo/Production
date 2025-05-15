@@ -2297,6 +2297,8 @@ SET
        --a.Id		     =b.Id	
       a.Name		      = isnull(b.Name	               ,'')
       ,a.CuttingLayer		      = isnull(b.CuttingLayer	,0)
+	  ,a.ManualCutLayer   = iif(a.ManualCutLayer = 0, isnull(b.CuttingLayer, 0), a.ManualCutLayer)
+	  ,a.AutoCutLayer     = iif(a.AutoCutLayer = 0, isnull(b.CuttingLayer, 0), a.AutoCutLayer)
       ,a.Junk		      = isnull(b.Junk				   ,0)
       ,a.AddName		      = isnull(b.AddName		   ,'')
       ,a.AddDate		      = b.AddDate		  
@@ -2309,6 +2311,8 @@ INSERT INTO Production.dbo.Construction(
        Id
       ,Name
       ,CuttingLayer
+	  ,ManualCutLayer
+	  ,AutoCutLayer
       ,Junk
       ,AddName
       ,AddDate
@@ -2320,6 +2324,8 @@ select
        isnull(Id           ,'')
       ,isnull(Name		   ,'')
       ,isnull(CuttingLayer ,0)
+	  ,isnull(CuttingLayer, 0)
+	  ,isnull(CuttingLayer, 0)
       ,isnull(Junk		   ,0)
       ,isnull(AddName	   ,'')
       ,AddDate	 

@@ -31,25 +31,21 @@
             this.labelCutplanID = new Sci.Win.UI.Label();
             this.labelPONo = new Sci.Win.UI.Label();
             this.labelCuttingDate = new Sci.Win.UI.Label();
-            this.labelCutCell = new Sci.Win.UI.Label();
-            this.labelBulkMarkerReqNo = new Sci.Win.UI.Label();
             this.labelCuttingSPNo = new Sci.Win.UI.Label();
             this.labelM = new Sci.Win.UI.Label();
             this.displayCutplanID = new Sci.Win.UI.DisplayBox();
             this.displayPONo = new Sci.Win.UI.DisplayBox();
             this.displayCuttingSPNo = new Sci.Win.UI.DisplayBox();
-            this.displayBulkMarkerReqNo = new Sci.Win.UI.DisplayBox();
             this.dateCuttingDate = new Sci.Win.UI.DateBox();
             this.btnimport = new Sci.Win.UI.Button();
-            this.displayCutCell = new Sci.Win.UI.DisplayBox();
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.btnSendMail = new Sci.Win.UI.Button();
             this.btnFabricIssueList = new Sci.Win.UI.Button();
-            this.label1 = new Sci.Win.UI.Label();
-            this.displaySpreadingNo = new Sci.Win.UI.DisplayBox();
             this.btnEditFabricCutDate = new Sci.Win.UI.Button();
             this.btnFabDelete = new Sci.Win.UI.Button();
             this.btnFabDeleteHistory = new Sci.Win.UI.Button();
+            this.displayBox1 = new Sci.Win.UI.DisplayBox();
+            this.label1 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -66,57 +62,49 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.displayBox1);
+            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFabDeleteHistory);
             this.masterpanel.Controls.Add(this.btnFabDelete);
             this.masterpanel.Controls.Add(this.btnEditFabricCutDate);
-            this.masterpanel.Controls.Add(this.displaySpreadingNo);
-            this.masterpanel.Controls.Add(this.label1);
             this.masterpanel.Controls.Add(this.btnFabricIssueList);
             this.masterpanel.Controls.Add(this.btnSendMail);
             this.masterpanel.Controls.Add(this.displayM);
-            this.masterpanel.Controls.Add(this.displayCutCell);
             this.masterpanel.Controls.Add(this.btnimport);
             this.masterpanel.Controls.Add(this.dateCuttingDate);
-            this.masterpanel.Controls.Add(this.displayBulkMarkerReqNo);
             this.masterpanel.Controls.Add(this.displayCuttingSPNo);
             this.masterpanel.Controls.Add(this.displayPONo);
             this.masterpanel.Controls.Add(this.displayCutplanID);
             this.masterpanel.Controls.Add(this.labelM);
             this.masterpanel.Controls.Add(this.labelCuttingSPNo);
-            this.masterpanel.Controls.Add(this.labelBulkMarkerReqNo);
-            this.masterpanel.Controls.Add(this.labelCutCell);
             this.masterpanel.Controls.Add(this.labelCuttingDate);
             this.masterpanel.Controls.Add(this.labelPONo);
             this.masterpanel.Controls.Add(this.labelCutplanID);
-            this.masterpanel.Size = new System.Drawing.Size(1078, 111);
+            this.masterpanel.Size = new System.Drawing.Size(913, 111);
             this.masterpanel.Controls.SetChildIndex(this.labelCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelCutCell, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelBulkMarkerReqNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelM, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCutplanID, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayPONo, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayCuttingSPNo, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayBulkMarkerReqNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.dateCuttingDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnimport, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displayCutCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSendMail, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabricIssueList, 0);
-            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
-            this.masterpanel.Controls.SetChildIndex(this.displaySpreadingNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnEditFabricCutDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDelete, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnFabDeleteHistory, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label1, 0);
+            this.masterpanel.Controls.SetChildIndex(this.displayBox1, 0);
             // 
             // detailpanel
             // 
             this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(1078, 307);
+            this.detailpanel.Size = new System.Drawing.Size(913, 307);
             // 
             // gridicon
             // 
@@ -128,7 +116,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(1078, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(913, 307);
             // 
             // detail2
             // 
@@ -144,24 +132,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(1078, 456);
+            this.detail.Size = new System.Drawing.Size(913, 456);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(1078, 418);
+            this.detailcont.Size = new System.Drawing.Size(913, 418);
             // 
             // detailbtm
             // 
             this.detailbtm.Location = new System.Drawing.Point(0, 418);
-            this.detailbtm.Size = new System.Drawing.Size(1078, 38);
+            this.detailbtm.Size = new System.Drawing.Size(913, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(1078, 456);
+            this.browse.Size = new System.Drawing.Size(913, 456);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(1086, 485);
+            this.tabs.Size = new System.Drawing.Size(921, 485);
             // 
             // createby
             // 
@@ -199,22 +187,6 @@
             this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
             this.labelCuttingDate.TabIndex = 3;
             this.labelCuttingDate.Text = "Cutting Date";
-            // 
-            // labelCutCell
-            // 
-            this.labelCutCell.Location = new System.Drawing.Point(465, 75);
-            this.labelCutCell.Name = "labelCutCell";
-            this.labelCutCell.Size = new System.Drawing.Size(87, 23);
-            this.labelCutCell.TabIndex = 4;
-            this.labelCutCell.Text = "Cut Cell";
-            // 
-            // labelBulkMarkerReqNo
-            // 
-            this.labelBulkMarkerReqNo.Location = new System.Drawing.Point(465, 13);
-            this.labelBulkMarkerReqNo.Name = "labelBulkMarkerReqNo";
-            this.labelBulkMarkerReqNo.Size = new System.Drawing.Size(148, 23);
-            this.labelBulkMarkerReqNo.TabIndex = 5;
-            this.labelBulkMarkerReqNo.Text = "Bulk Marker Req#";
             // 
             // labelCuttingSPNo
             // 
@@ -262,16 +234,6 @@
             this.displayCuttingSPNo.Size = new System.Drawing.Size(108, 23);
             this.displayCuttingSPNo.TabIndex = 13;
             // 
-            // displayBulkMarkerReqNo
-            // 
-            this.displayBulkMarkerReqNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBulkMarkerReqNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "markerreqid", true));
-            this.displayBulkMarkerReqNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBulkMarkerReqNo.Location = new System.Drawing.Point(618, 13);
-            this.displayBulkMarkerReqNo.Name = "displayBulkMarkerReqNo";
-            this.displayBulkMarkerReqNo.Size = new System.Drawing.Size(108, 23);
-            this.displayBulkMarkerReqNo.TabIndex = 14;
-            // 
             // dateCuttingDate
             // 
             this.dateCuttingDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
@@ -286,7 +248,7 @@
             // 
             this.btnimport.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnimport.Enabled = false;
-            this.btnimport.Location = new System.Drawing.Point(741, 77);
+            this.btnimport.Location = new System.Drawing.Point(578, 75);
             this.btnimport.Name = "btnimport";
             this.btnimport.Size = new System.Drawing.Size(144, 30);
             this.btnimport.TabIndex = 17;
@@ -294,16 +256,6 @@
             this.btnimport.UseVisualStyleBackColor = true;
             this.btnimport.Visible = false;
             this.btnimport.Click += new System.EventHandler(this.Btnimport_Click);
-            // 
-            // displayCutCell
-            // 
-            this.displayCutCell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayCutCell.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "cutcellid", true));
-            this.displayCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayCutCell.Location = new System.Drawing.Point(555, 75);
-            this.displayCutCell.Name = "displayCutCell";
-            this.displayCutCell.Size = new System.Drawing.Size(48, 23);
-            this.displayCutCell.TabIndex = 18;
             // 
             // displayM
             // 
@@ -317,7 +269,7 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(743, 9);
+            this.btnSendMail.Location = new System.Drawing.Point(580, 7);
             this.btnSendMail.Name = "btnSendMail";
             this.btnSendMail.Size = new System.Drawing.Size(142, 30);
             this.btnSendMail.TabIndex = 20;
@@ -327,7 +279,7 @@
             // 
             // btnFabricIssueList
             // 
-            this.btnFabricIssueList.Location = new System.Drawing.Point(903, 77);
+            this.btnFabricIssueList.Location = new System.Drawing.Point(740, 75);
             this.btnFabricIssueList.Name = "btnFabricIssueList";
             this.btnFabricIssueList.Size = new System.Drawing.Size(167, 30);
             this.btnFabricIssueList.TabIndex = 21;
@@ -335,27 +287,9 @@
             this.btnFabricIssueList.UseVisualStyleBackColor = true;
             this.btnFabricIssueList.Click += new System.EventHandler(this.BtnFabricIssueList_Click);
             // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(247, 75);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 23);
-            this.label1.TabIndex = 23;
-            this.label1.Text = "Spreading No";
-            // 
-            // displaySpreadingNo
-            // 
-            this.displaySpreadingNo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displaySpreadingNo.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SpreadingNoID", true));
-            this.displaySpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySpreadingNo.Location = new System.Drawing.Point(341, 75);
-            this.displaySpreadingNo.Name = "displaySpreadingNo";
-            this.displaySpreadingNo.Size = new System.Drawing.Size(46, 23);
-            this.displaySpreadingNo.TabIndex = 24;
-            // 
             // btnEditFabricCutDate
             // 
-            this.btnEditFabricCutDate.Location = new System.Drawing.Point(743, 43);
+            this.btnEditFabricCutDate.Location = new System.Drawing.Point(580, 41);
             this.btnEditFabricCutDate.Name = "btnEditFabricCutDate";
             this.btnEditFabricCutDate.Size = new System.Drawing.Size(142, 30);
             this.btnEditFabricCutDate.TabIndex = 26;
@@ -365,7 +299,7 @@
             // 
             // btnFabDelete
             // 
-            this.btnFabDelete.Location = new System.Drawing.Point(903, 11);
+            this.btnFabDelete.Location = new System.Drawing.Point(740, 9);
             this.btnFabDelete.Name = "btnFabDelete";
             this.btnFabDelete.Size = new System.Drawing.Size(167, 30);
             this.btnFabDelete.TabIndex = 27;
@@ -375,7 +309,7 @@
             // 
             // btnFabDeleteHistory
             // 
-            this.btnFabDeleteHistory.Location = new System.Drawing.Point(903, 44);
+            this.btnFabDeleteHistory.Location = new System.Drawing.Point(740, 42);
             this.btnFabDeleteHistory.Name = "btnFabDeleteHistory";
             this.btnFabDeleteHistory.Size = new System.Drawing.Size(167, 30);
             this.btnFabDeleteHistory.TabIndex = 28;
@@ -383,15 +317,33 @@
             this.btnFabDeleteHistory.UseVisualStyleBackColor = true;
             this.btnFabDeleteHistory.Click += new System.EventHandler(this.BtnFabDeleteHistory_Click);
             // 
+            // displayBox1
+            // 
+            this.displayBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBox1.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CutCellID", true));
+            this.displayBox1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBox1.Location = new System.Drawing.Point(341, 75);
+            this.displayBox1.Name = "displayBox1";
+            this.displayBox1.Size = new System.Drawing.Size(108, 23);
+            this.displayBox1.TabIndex = 30;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(247, 75);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(91, 23);
+            this.label1.TabIndex = 29;
+            this.label1.Text = "Cut Cell";
+            // 
             // P04
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(1086, 518);
+            this.ClientSize = new System.Drawing.Size(921, 518);
             this.DefaultOrder = "id";
             this.ExpressQuery = true;
             this.GridAlias = "Cutplan_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "id,workorderukey";
+            this.GridUniqueKey = "id,WorkOrderForPlanningUkey";
             this.IsGridIconVisible = false;
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
@@ -423,28 +375,23 @@
         }
 
         #endregion
-
-        private Win.UI.Label labelBulkMarkerReqNo;
-        private Win.UI.Label labelCutCell;
         private Win.UI.Label labelCuttingDate;
         private Win.UI.Label labelPONo;
         private Win.UI.Label labelCutplanID;
         private Win.UI.Button btnSendMail;
         private Win.UI.DisplayBox displayM;
-        private Win.UI.DisplayBox displayCutCell;
         private Win.UI.Button btnimport;
         private Win.UI.DateBox dateCuttingDate;
-        private Win.UI.DisplayBox displayBulkMarkerReqNo;
         private Win.UI.DisplayBox displayCuttingSPNo;
         private Win.UI.DisplayBox displayPONo;
         private Win.UI.DisplayBox displayCutplanID;
         private Win.UI.Label labelM;
         private Win.UI.Label labelCuttingSPNo;
         private Win.UI.Button btnFabricIssueList;
-        private Win.UI.Label label1;
-        private Win.UI.DisplayBox displaySpreadingNo;
         private Win.UI.Button btnEditFabricCutDate;
         private Win.UI.Button btnFabDelete;
         private Win.UI.Button btnFabDeleteHistory;
+        private Win.UI.DisplayBox displayBox1;
+        private Win.UI.Label label1;
     }
 }

@@ -1,22 +1,27 @@
-﻿CREATE TABLE [dbo].[Cutting] (
-    [ID]           VARCHAR (13) CONSTRAINT [DF_Cutting_ID] DEFAULT ('') NOT NULL,
-    [WorkType]     VARCHAR (1)  CONSTRAINT [DF_Cutting_WorkType] DEFAULT ('') NULL,
-    [FactoryID]    VARCHAR (8)  CONSTRAINT [DF_Cutting_FactoryID] DEFAULT ('') NULL,
-    [SewInLine]    DATE         NULL,
-    [SewOffLine]   DATE         NULL,
-    [CutInLine]    DATE         NULL,
-    [CutOffLine]   DATE         NULL,
-    [Remark]       NCHAR (60)   CONSTRAINT [DF_Cutting_Remark] DEFAULT ('') NULL,
-    [FirstCutDate] DATE         NULL,
-    [LastCutDate]  DATE         NULL,
-    [Finished]     BIT          CONSTRAINT [DF_Cutting_Finished] DEFAULT ((0)) NULL,
-    [AddName]      VARCHAR (10) CONSTRAINT [DF_Cutting_AddName] DEFAULT ('') NULL,
-    [AddDate]      DATETIME     NULL,
-    [EditName]     VARCHAR (10) CONSTRAINT [DF_Cutting_EditName] DEFAULT ('') NULL,
-    [EditDate]     DATETIME     NULL,
-    [MDivisionid]  VARCHAR (8)  CONSTRAINT [DF_Cutting_MDivisionid] DEFAULT ('') NOT NULL,
+CREATE TABLE [dbo].[Cutting] (
+    [ID]                       VARCHAR (13) CONSTRAINT [DF_Cutting_ID] DEFAULT ('') NOT NULL,
+    [WorkType]                 VARCHAR (1)  CONSTRAINT [DF_Cutting_WorkType] DEFAULT ('') NULL,
+    [FactoryID]                VARCHAR (8)  CONSTRAINT [DF_Cutting_FactoryID] DEFAULT ('') NULL,
+    [SewInLine]                DATE         NULL,
+    [SewOffLine]               DATE         NULL,
+    [Remark]                   NCHAR (60)   CONSTRAINT [DF_Cutting_Remark] DEFAULT ('') NULL,
+    [FirstCutDate]             DATE         NULL,
+    [LastCutDate]              DATE         NULL,
+    [Finished]                 BIT          CONSTRAINT [DF_Cutting_Finished] DEFAULT ((0)) NULL,
+    [AddName]                  VARCHAR (10) CONSTRAINT [DF_Cutting_AddName] DEFAULT ('') NULL,
+    [AddDate]                  DATETIME     NULL,
+    [EditName]                 VARCHAR (10) CONSTRAINT [DF_Cutting_EditName] DEFAULT ('') NULL,
+    [EditDate]                 DATETIME     NULL,
+    [MDivisionid]              VARCHAR (8)  CONSTRAINT [DF_Cutting_MDivisionid] DEFAULT ('') NOT NULL,
+    [CutForPlanningInLine]     DATE         DEFAULT (NULL) NULL,
+    [CutForPlanningOffLine]    DATE         DEFAULT (NULL) NULL,
+    [CutForOutputInline]       DATE         DEFAULT (NULL) NULL,
+    [CutForOutputOffLine]      DATE         DEFAULT (NULL) NULL,
+    [UseCutRefToRequestFabric] TINYINT      CONSTRAINT [DF_Cutting_UseCutRefToRequestFabric] DEFAULT ((0)) NOT NULL,
     CONSTRAINT [PK_Cutting] PRIMARY KEY CLUSTERED ([ID] ASC)
 );
+
+
 
 
 
@@ -45,14 +50,6 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁縫上�
 
 GO
 EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁縫下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'SewOffLine';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪上線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'CutInLine';
-
-
-GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'裁剪下線日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'CutOffLine';
 
 
 GO
@@ -88,7 +85,21 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'編輯時�
 
 
 GO
-CREATE NONCLUSTERED INDEX [<Name of Missing Index, sysname,>]
-    ON [dbo].[Cutting]([Finished] ASC)
-    INCLUDE([ID]);
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪工單計畫的最早預計生產日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Cutting', @level2type=N'COLUMN',@level2name=N'CutForPlanningInline'
+
+
+GO
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪工單計畫的最晚預計生產日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Cutting', @level2type=N'COLUMN',@level2name=N'CutForPlanningOffLine'
+
+
+GO
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪工單產出的最早預計生產日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Cutting', @level2type=N'COLUMN',@level2name=N'CutForOutputInline'
+
+
+GO
+EXECUTE sys.sp_addextendedproperty @name=N'MS_Description', @value=N'裁剪工單產出的最晚預計生產日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Cutting', @level2type=N'COLUMN',@level2name=N'CutForOutputOffLine'
+
+
+GO
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'是否使用裁剪裁次要料', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'Cutting', @level2type = N'COLUMN', @level2name = N'UseCutRefToRequestFabric';
 

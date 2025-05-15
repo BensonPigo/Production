@@ -1,4 +1,4 @@
-﻿CREATE FUNCTION [dbo].[GetSpreadingSchedule]
+﻿Create FUNCTION [dbo].[GetSpreadingSchedule]
 (	
 	@FactoryID varchar(8),
 	@EstCutDate Date,
@@ -16,14 +16,19 @@ RETURN
 		sd.IsAGVArrived,
 		sd.IsSuspend,
 		sd.SpreadingSchdlSeq,
-		Completed = IIF(sd.IsAGVArrived = 1 or act.actcutdate is not null, 'Y', 'N'),
+		Completed = IIF(sd.IsAGVArrived = 1, 'Y', 'N'),
 		Suspend = IIF(sd.IsSuspend = 1, 'Y', 'N'),
-		MaterialStatus='',--暫時不開發，預計之後得到廠商API綠色代表還夠量		
-		w.Cutno,
+		MaterialStatus='',--暫時不開發，預計之後得到廠商API綠色代表還夠量
+		Cutno = w.Seq,--時間緊迫不改APP, 為了不讓APP掛掉欄位名稱照舊 Cutno, 日後維護為了避免誤會希望能改成 SEQ 傳出
 		w.Markername,
 		w.FabricCombo,
 		w.FabricPanelCode,
-		art.article,
+		Article = stuff((
+				Select distinct concat('/' ,b.Article)
+				From dbo.WorkOrderForPlanning_Distribute b WITH (NOLOCK) 
+				Where b.WorkOrderForPlanningUkey = w.Ukey and b.Article!=''
+				For XML path('')
+			),1,1,''),
 		w.Colorid,
 		size.multisize,
 		w.Layer,
@@ -32,7 +37,7 @@ RETURN
 		w.SEQ1,
 		w.SEQ2,
 		EstCutDate = iif(@Ukey = 0 , w.EstCutDate, s.EstCutDate),
-		act.actcutdate,
+		actcutdate = CAST(NULL AS DATETIME),--時間緊迫不改APP,  為了不讓APP掛掉仍傳出這欄位為 null, 雖然那APP似乎沒人用, 有空再移除此欄位
 		w.CutplanID,
 		IssueID = Issues.IssueID,
 		IsOutStanding = IIF(o.Finished = 0 and w.EstCutDate < CAST(getdate() as date), 'Y', 'N'),
@@ -42,62 +47,44 @@ RETURN
 		w.Cons,
 		w.Refno,
 		f.WeaveTypeID
-	from WorkOrder w with(nolock)
+		,[diffEstCutDate] = IIF(w.EstCutDate <> s.EstCutDate, 1,0)
+	from WorkOrderForPlanning w with(nolock)
 	inner join orders o with(nolock) on o.id = w.ID
-	left join SpreadingSchedule s with(nolock) on	s.FactoryID = w.FactoryID
-													and s.EstCutDate = @EstCutDate
-													and s.CutCellid = w.CutCellid
-	left join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef and s.Ukey = sd.SpreadingScheduleUkey
-	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkorderUkey = w.Ukey
+	LEFT join SpreadingSchedule_Detail sd with(nolock) on w.CutRef = sd.CutRef
+	LEFT join SpreadingSchedule s with(nolock) on s.Ukey = sd.SpreadingScheduleUkey
+	left join Cutplan_Detail cp with (nolock) on cp.ID = w.CutplanID and cp.WorkOrderForPlanningUkey = w.Ukey
 	left join Fabric f with (nolock) on f.SCIRefno = w.SCIRefno
 	outer apply
 	(
-		select article = stuff(
-		(
-			Select distinct concat('/' ,Article)
-			From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-			Where b.workorderukey = w.Ukey and b.article!=''
-			For XML path('')
-		),1,1,'')
-	) art
-	outer apply
-	(
-		Select multisize = iif(count(size.sizecode)>1,2,1) 
-		From WorkOrder_SizeRatio size WITH (NOLOCK) 
-		Where w.ukey = size.WorkOrderUkey
+		Select multisize = iif(count(ws.sizecode)>1,2,1) 
+		From WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+		Where w.ukey = ws.WorkOrderForPlanningUkey
 	) size
 	outer apply
 	(
 		select CutQty = stuff(
 		(
 			Select concat(', ', ws.sizecode, '/ ', ws.qty * w.layer)
-			From WorkOrder_SizeRatio ws WITH (NOLOCK) 
-			Where ws.WorkOrderUkey = w.Ukey 
+		    From WorkOrderForPlanning_SizeRatio ws WITH (NOLOCK)
+		    Where w.ukey = ws.WorkOrderForPlanningUkey
 			For XML path('')
 		),1,2,'')
 	) CutQty
-	outer apply
-	(
-		Select actcutdate = iif(sum(cut_b.Layer) = w.Layer, Max(cut.cdate),null)
-			From cuttingoutput cut WITH (NOLOCK) 
-			inner join cuttingoutput_detail cut_b WITH (NOLOCK) on cut.id = cut_b.id
-			Where cut_b.workorderukey = w.Ukey and cut.Status != 'New'
-	) act
 	outer apply
 	(
 		select IssueID = stuff(
 		(
 			Select concat(', ', i.ID)
 			From Issue i WITH (NOLOCK) 
-			Where i.CutplanID = w.CutplanID
+			Where i.CutplanID = w.CutplanID AND i.CutplanID <> ''
 			For XML path('')
 		),1,1,'')
 	) Issues
 
 	where 1=1
 	and o.Finished = 0
+	and w.CutPlanID!=''
 	and w.FactoryID = @FactoryID
-	and ((act.actcutdate is null and w.CutRef is not null) or sd.CutRef is not null)
 	and (
 		(
 			@Ukey = 0 and 

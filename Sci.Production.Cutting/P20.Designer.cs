@@ -370,9 +370,9 @@
             this.btnImportfromWorkOrder.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
             this.btnImportfromWorkOrder.Location = new System.Drawing.Point(679, 39);
             this.btnImportfromWorkOrder.Name = "btnImportfromWorkOrder";
-            this.btnImportfromWorkOrder.Size = new System.Drawing.Size(189, 26);
+            this.btnImportfromWorkOrder.Size = new System.Drawing.Size(244, 26);
             this.btnImportfromWorkOrder.TabIndex = 7;
-            this.btnImportfromWorkOrder.Text = "Import from WorkOrder";
+            this.btnImportfromWorkOrder.Text = "Import From WorkOrder For Output";
             this.btnImportfromWorkOrder.UseVisualStyleBackColor = true;
             this.btnImportfromWorkOrder.Click += new System.EventHandler(this.BtnImportfromWorkOrder_Click);
             // 
@@ -381,7 +381,7 @@
             this.btnImportfromRealtimeBundleTracking.EditMode = Sci.Win.UI.AdvEditModes.EnableOnEdit;
             this.btnImportfromRealtimeBundleTracking.Location = new System.Drawing.Point(679, 72);
             this.btnImportfromRealtimeBundleTracking.Name = "btnImportfromRealtimeBundleTracking";
-            this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(189, 26);
+            this.btnImportfromRealtimeBundleTracking.Size = new System.Drawing.Size(244, 26);
             this.btnImportfromRealtimeBundleTracking.TabIndex = 8;
             this.btnImportfromRealtimeBundleTracking.Text = "Import from RFID";
             this.btnImportfromRealtimeBundleTracking.UseVisualStyleBackColor = true;
@@ -514,6 +514,7 @@
             this.txtfactoryByM1.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "FactoryID", true));
             this.txtfactoryByM1.FilteMDivision = true;
             this.txtfactoryByM1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactoryByM1.IsMultiselect = false;
             this.txtfactoryByM1.IsProduceFty = false;
             this.txtfactoryByM1.IssupportJunk = false;
             this.txtfactoryByM1.Location = new System.Drawing.Point(99, 74);
@@ -533,7 +534,7 @@
             this.ExpressQuery = true;
             this.GridAlias = "CuttingOutput_Detail";
             this.GridNew = 0;
-            this.GridUniqueKey = "cutref,workorderUkey";
+            this.GridUniqueKey = "cutref,workorderForOutPutUkey";
             this.IsSupportConfirm = true;
             this.IsSupportCopy = false;
             this.IsSupportPrint = false;

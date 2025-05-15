@@ -31,7 +31,7 @@ namespace Sci.Production.Cutting
             : base(menuitem)
         {
             this.InitializeComponent();
-            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrder WITH (NOLOCK) ", out DataTable workOrder);
+            DBProxy.Current.Select(null, "select distinct MDivisionID from WorkOrderForOutput WITH (NOLOCK) ", out DataTable workOrder);
             MyUtility.Tool.SetupCombox(this.comboMDivision, 1, workOrder);
             DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out DataTable factory); // 要預設空白
             MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);

@@ -4,8 +4,10 @@ using Sci.Production.Prg;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Transactions;
 
 namespace Sci.Production.PublicPrg
 {
@@ -14,6 +16,7 @@ namespace Sci.Production.PublicPrg
     /// </summary>
     public static partial class Prgs
     {
+#pragma warning disable SA1611 // Element parameters should be documented
         /// <summary>
         /// 取得哪些 annotation 是次要
         /// </summary>
@@ -674,247 +677,6 @@ order by o.SewInLine
         #endregion
 
         #region Cal WIP
-
-        /// <inheritdoc/>
-        /// <summary>
-        /// 取得Cutting成套的數量
-        /// </summary>
-        /// <param name="orderIDs">orderIDs</param>
-        /// <returns>List<GarmentQty></returns>
-        public static List<GarmentQty> GetCutPlanQty(List<string> orderIDs)
-        {
-            // 取得該訂單的組成
-            #region 取得by SP, Size 應該完成的 FabricPanelCode
-            string tmpCmd = $@"
-SELECT DISTINCT 
-    [OrderID]=o.ID
-    ,oq.Article
-    ,oq.SizeCode
-    ,FabricCombo = occ.PatternPanel
-    ,occ.FabricPanelCode
-from Orders o WITH (NOLOCK)
-inner join Order_Qty oq WITH (NOLOCK) on oq.id = o.id
-inner join Order_ColorCombo occ WITH (NOLOCK) on occ.id = o.POID and occ.Article = oq.Article and occ.FabricCode is not null and occ.FabricCode !=''
-inner join Order_EachCons oe WITH (NOLOCK) on oe.id = occ.id and oe.FabricCombo = occ.PatternPanel and oe.CuttingPiece = 0
-inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = oe.Ukey and oec.ColorID = occ.ColorID
-inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
-AND o.id IN ('{orderIDs.JoinToString("','")}')
-AND (exists(select 1 from Order_EachCons_Article oea where  oea.Id = o.POID and oea.Article = oq.Article )
-	or not exists (select 1 from Order_EachCons_Article oea where  oea.Id = o.POID)
-)
---AND o.id='20032468LL004'
-";
-
-            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable headDt);
-            var headList = headDt.AsEnumerable()
-                .Select(s => new
-                {
-                    OrderID = MyUtility.Convert.GetString(s["OrderID"]),
-                    Article = MyUtility.Convert.GetString(s["Article"]),
-                    SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
-                    FabricCombo = MyUtility.Convert.GetString(s["FabricCombo"]),
-                    FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
-                }).ToList();
-            #endregion
-
-            #region 取得所有部位(有) EstCutDate 的 Cutting 數量
-            tmpCmd = $@"
-SELECT
-     WOD.OrderID
-    ,WOD.Article 
-    ,WOD.SizeCode
-    ,wo.FabricCombo
-    ,wo.FabricPanelCode
-    ,[Qty]=SUM(WOD.Qty)
-    ,[EstCutDate]=Cast(EstCutDate.EstCutDate as Date)
-FROM WorkOrder_Distribute WOD WITH(NOLOCK)
-INNER JOIN WorkOrder WO WITH(NOLOCK) ON WO.Ukey = WOD.WorkOrderUkey
-INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
-OUTER APPLY (
-	SELECT TOP 1 EstCutDate FROM Cutplan WHERE ID = CD.ID
-)EstCutDate
-WHERE WOD.OrderID IN ('{orderIDs.JoinToString("','")}')
-AND (SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed') IS NOT NULL
---AND WOD.OrderID='20032468LL004'
-
-GROUP BY WOD.OrderID
-		,WOD.Article 
-		,WOD.SizeCode
-		,wo.FabricCombo
-		,wo.FabricPanelCode 
-		,EstCutDate.EstCutDate
-ORDER BY WOD.OrderID
-";
-            result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
-
-            var cutList = tmpDt.AsEnumerable()
-                .Select(s => new
-                {
-                    OrderID = MyUtility.Convert.GetString(s["OrderID"]),
-                    Article = MyUtility.Convert.GetString(s["Article"]),
-                    SizeCode = MyUtility.Convert.GetString(s["SizeCode"]),
-                    FabricCombo = MyUtility.Convert.GetString(s["FabricCombo"]),
-                    FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
-                    Qty = MyUtility.Convert.GetInt(s["Qty"]),
-                    EstCutDate = Convert.ToDateTime(s["EstCutDate"]),
-                }).ToList();
-            #endregion
-
-            // 取出Cutting資料的Key：OrderID + EstCutDate | 回傳的資料 OrderID, EstCutDate, Qty(累計成衣件數)
-            var keys = cutList.Select(o => new { o.OrderID, o.EstCutDate }).Distinct().OrderBy(o => o.OrderID).ThenBy(o => o.EstCutDate).ToList();
-
-            List<GarmentQty> garmentQtys = new List<GarmentQty>();
-
-            // 組成 by OrderID, EstCutDate
-            foreach (var key in keys)
-            {
-                if (key.OrderID == "20050116GG001")
-                {
-                }
-
-                // 取得此日期以前資料
-                var ppreEstCutDate = cutList.Where(w => w.OrderID == key.OrderID && w.EstCutDate < key.EstCutDate).ToList();
-                var preEstCutDate = cutList.Where(w => w.OrderID == key.OrderID && w.EstCutDate <= key.EstCutDate).ToList();
-
-                // 處理已有Size
-                var sizeList = preEstCutDate.Select(s => s.SizeCode).Distinct().ToList();
-                int qty = 0;
-
-                foreach (var sizeCode in sizeList)
-                {
-                    var ppreEstCutDatebySize = ppreEstCutDate.Where(w => w.SizeCode == sizeCode).ToList();
-                    var preEstCutDatebySize = preEstCutDate.Where(w => w.SizeCode == sizeCode).ToList();
-
-                    // 應有全部位
-                    var dueFabricPanelCode = headList.Where(w => w.OrderID == key.OrderID && w.SizeCode == sizeCode)
-                        .Select(s => s.FabricPanelCode).ToList();
-
-                    // 已有部位
-                    var p_nowFabricPanelCode = ppreEstCutDatebySize.Select(s => s.FabricPanelCode).Distinct().ToList();
-                    var nowFabricPanelCode = preEstCutDatebySize.Select(s => s.FabricPanelCode).Distinct().ToList();
-                    int p_minSizeQty = 0;
-
-                    // 部位完全相同, 部位到齊
-                    if (p_nowFabricPanelCode.Count() == dueFabricPanelCode.Count() && p_nowFabricPanelCode.All(dueFabricPanelCode.Contains))
-                    {
-                        // 先前完成的成衣件數
-                        p_minSizeQty = preEstCutDatebySize.GroupBy(g => new { g.FabricPanelCode })
-                            .Select(s => new { s.Key.FabricPanelCode, sumQty = s.Sum(sum => sum.Qty) }).Min(m => m.sumQty);
-                    }
-
-                    if (nowFabricPanelCode.Count() == dueFabricPanelCode.Count() && nowFabricPanelCode.All(dueFabricPanelCode.Contains))
-                    {
-                        // 先依據部位加總, 再取最小值, 即此 EstCutDate以前 & 此 Size 可組成的成衣件數
-                        int minSizeQty = preEstCutDatebySize.GroupBy(g => new { g.FabricPanelCode })
-                            .Select(s => new { s.Key.FabricPanelCode, sumQty = s.Sum(sum => sum.Qty) }).Min(m => m.sumQty);
-
-                        // 到此日期的成衣數 - 先前數, 所有 Size 加總
-                        qty += minSizeQty - p_minSizeQty;
-                    }
-                }
-
-                if (qty > 0)
-                {
-                    GarmentQty gar = new GarmentQty
-                    {
-                        OrderID = key.OrderID,
-                        EstCutDate = key.EstCutDate,
-                        Qty = qty,
-                    };
-                    garmentQtys.Add(gar);
-                }
-            }
-
-            return garmentQtys;
-        }
-
-        /// <summary>
-        ///  取得 by FabricPanelCode 每日的 Cut Plan Qty
-        /// </summary>
-        /// <param name="orderIDs">orderIDs</param>
-        /// <returns>FabricPanelCodeCutPlanQty</returns>
-        public static List<FabricPanelCodeCutPlanQty> GetSPFabricPanelCodeList(List<string> orderIDs)
-        {
-            // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            #region SQL
-            string tmpCmd = $@"
-SELECT DISTINCT 
-    [OrderID]=o.ID
-    ,cons.FabricPanelCode
-FROM Orders o WITH (NOLOCK)
-INNER JOIN Order_qty oq ON o.ID=oq.ID
-INNER JOIN Order_ColorCombo occ ON o.poid = occ.id AND occ.Article = oq.Article
-INNER JOIN order_Eachcons cons ON occ.id = cons.id AND cons.FabricCombo = occ.PatternPanel AND cons.CuttingPiece='0'
-inner join Order_EachCons_Color oec WITH (NOLOCK) on oec.Order_EachConsUkey = cons.Ukey and oec.ColorID = occ.ColorID
-inner join Order_EachCons_Color_Article oeca WITH (NOLOCK) on oeca.Order_EachCons_ColorUkey = oec.Ukey and oeca.Article = oq.Article
-WHERE occ.FabricCode !='' AND occ.FabricCode IS NOT NULL
-AND o.id IN ('{orderIDs.JoinToString("','")}')
-order by o.ID,cons.FabricPanelCode
-";
-            #endregion
-
-            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.ToString());
-            }
-
-            List<FabricPanelCodeCutPlanQty> fabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
-            {
-                OrderID = MyUtility.Convert.GetString(s["OrderID"]),
-                FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
-            }).ToList();
-
-            return fabricPanelCodeCutPlanQty;
-        }
-
-        /// <summary>
-        /// 取得 by FabricPanelCode 每日的 Cut Plan Qty
-        /// </summary>
-        /// <param name="orderIDs">orderIDs</param>
-        /// <returns>FabricPanelCodeCutPlanQty</returns>
-        public static List<FabricPanelCodeCutPlanQty> GetCutPlanQty_byFabricPanelCode(List<string> orderIDs)
-        {
-            // by FabricPanelCode 沒有成套問題, 直接每天相同的 FabricPanelCode 加總即可
-            #region SQL
-            string tmpCmd = $@"
-SELECT  WOD.OrderID
-    ,wo.FabricPanelCode
-    ,[Qty]=SUM(WOD.Qty)
-    ,[EstCutDate]=Cast(EstCutDate.EstCutDate as Date)
-FROM WorkOrder_Distribute WOD WITH(NOLOCK)
-INNER JOIN WorkOrder WO WITH(NOLOCK) ON WO.Ukey = WOD.WorkOrderUkey
-INNER JOIN Cutplan_Detail CD WITH(NOLOCK) ON CD.WorkorderUkey = WO.Ukey
-OUTER APPLY (
-	SELECT TOP 1 EstCutDate FROM Cutplan WHERE ID = CD.ID
-)EstCutDate
-WHERE WOD.OrderID IN ('{orderIDs.JoinToString("','")}')
-AND (SELECT EstCutDate FROM Cutplan WHERE ID = CD.ID AND Status='Confirmed') IS NOT NULL
---AND WOD.OrderID='20032468LL004'
-GROUP BY WOD.OrderID
-		,wo.FabricPanelCode 
-		,EstCutDate.EstCutDate
-order by WOD.OrderID,EstCutDate.EstCutDate
-";
-            #endregion
-
-            DualResult result = DBProxy.Current.Select(null, tmpCmd, out DataTable tmpDt);
-            if (!result)
-            {
-                MyUtility.Msg.WarningBox(result.ToString());
-            }
-
-            List<FabricPanelCodeCutPlanQty> fabricPanelCodeCutPlanQty = tmpDt.AsEnumerable().Select(s => new FabricPanelCodeCutPlanQty
-            {
-                OrderID = MyUtility.Convert.GetString(s["OrderID"]),
-                EstCutDate = (DateTime)s["EstCutDate"],
-                FabricPanelCode = MyUtility.Convert.GetString(s["FabricPanelCode"]),
-                Qty = MyUtility.Convert.GetInt(s["Qty"]),
-            }).ToList();
-
-            return fabricPanelCodeCutPlanQty;
-        }
-
         #region 類別
 
         /// <summary>
@@ -1418,5 +1180,129 @@ drop table #tmpx1,#tmp,#tmp2,#tmp3,#tmp4,#tmp5,#tmp6
 
             return dt;
         }
+
+        /// <summary>
+        /// MarkerLength 欄位格式化
+        /// </summary>
+        /// <inheritdoc/>
+        public static string SetMarkerLengthMaskString(string eventString)
+        {
+            if (eventString == string.Empty || eventString == "Y  - / + \"" || (int.TryParse(eventString, out int result) && result == 0))
+            {
+                return string.Empty;
+            }
+
+            eventString = eventString.Replace(" ", "0");
+            if (eventString.Contains("Y"))
+            {
+                string[] strings = eventString.Split('Y');
+                string[] strings2 = strings[1].Split('-');
+                string[] strings3 = strings2[1].Split('/');
+                string[] strings4 = strings3[1].Split('+');
+                string[] strings5 = strings4[1].Split('\"');
+                eventString = $"{strings[0].PadLeft(2, '0')}Y{strings2[0].PadLeft(2, '0')}-{strings3[0].PadLeft(1, '0')}/{strings4[0].PadLeft(1, '0')}+{strings5[0].PadLeft(1, '0')}\"";
+            }
+            else
+            {
+                eventString = eventString.PadRight(8, '0');
+                eventString = $"{eventString.Substring(0, 2)}Y{eventString.Substring(2, 2)}-{eventString.Substring(4, 1)}/{eventString.Substring(5, 1)}+{eventString.Substring(6, 1)}\"";
+            }
+
+            return eventString == "00Y00-0/0+0\"" ? string.Empty : eventString;
+        }
+
+        /// <summary>
+        /// 取得 Order_Qty by cuttingID
+        /// </summary>
+        /// <param name="poID">poID</param>
+        /// <param name="dt">DataTable</param>
+        /// <returns>DualResult</returns>
+        public static DualResult GetAllOrderID(string poID, out DataTable dt)
+        {
+            string sqlcmd = $@"SELECT ID FROM Orders WITH(NOLOCK) WHERE POID = '{poID}' AND Junk=0 ORDER BY ID";
+            return DBProxy.Current.Select(string.Empty, sqlcmd, out dt);
+        }
+
+        /// <summary>
+        /// Get CutRef Value
+        /// </summary>
+        /// <param name="tableName">TableName</param>
+        /// <param name="columnName">ColumnName</param>
+        /// <returns>NextValue</returns>
+        public static string GetColumnValueNo(string tableName, string columnName)
+        {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@TableName", tableName),
+                new SqlParameter("@ColumnName", columnName),
+            };
+
+            string newValue = string.Empty;
+            if (MyUtility.Check.Empty(tableName) || MyUtility.Check.Empty(columnName))
+            {
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName cannot be empty, Please contact TPE IT for processing.");
+                return newValue;
+            }
+
+            // Table and Column檢核
+            string chksql = @"
+select 1 from ColumnValue with(nolock) where TableName = @TableName and [Column] = @ColumnName;
+";
+            if (!MyUtility.Check.Seek(chksql, sqlParameters))
+            {
+                MyUtility.Msg.WarningBox("Error: TableName or ColumnName not found, Please contact TPE IT for processing.");
+                return newValue;
+            }
+
+            using (TransactionScope transaction = new TransactionScope(TransactionScopeOption.Required))
+            {
+                try
+                {
+                    string tabName = tableName;
+                    string colName = columnName;
+
+                    // TableName = WorkOrderForPlanning or WorkOrderForOutput and ColumnName=CutRef
+                    if ((string.Compare(tabName, "WorkOrderForPlanning", ignoreCase: true) == 0 ||
+                        string.Compare(tabName, "WorkOrderForOutput", ignoreCase: true) == 0) &&
+                        string.Compare(colName, "CutRef", ignoreCase: true) == 0)
+                    {
+                        string sqlcmd = @"
+select [Value] 
+from ColumnValue where TableName = @TableName and [Column] = @ColumnName;
+";
+                        string currentValue = MyUtility.GetValue.Lookup(sqlcmd, sqlParameters);
+                        if (MyUtility.Check.Empty(currentValue))
+                        {
+                            transaction.Dispose();
+                            return newValue;
+                        }
+
+                        newValue = MyUtility.GetValue.GetNextValue(currentValue, 0);
+                        sqlParameters.Add(new SqlParameter("@NewValue", newValue));
+                        sqlcmd = $@"
+Update ColumnValue
+set [Value] = @NewValue
+where TableName = @TableName and [Column] = @ColumnName
+";
+                        DualResult result = DBProxy.Current.Execute(string.Empty, sqlcmd, sqlParameters);
+                        if (!result)
+                        {
+                            MyUtility.Msg.WarningBox(result.ToString());
+                            transaction.Dispose();
+                        }
+                    }
+
+                    transaction.Complete();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Dispose();
+                    MyUtility.Msg.WarningBox(ex.ToString());
+                }
+            }
+
+            return newValue;
+        }
+#pragma warning restore SA1611 // Element parameters should be documented
     }
 }
