@@ -613,14 +613,19 @@
             // 
             // txtsewinglineLine
             // 
-            this.txtsewinglineLine.BackColor = System.Drawing.Color.White;
+            this.txtsewinglineLine.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtsewinglineLine.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SewingLineID", true));
             this.txtsewinglineLine.FactoryobjectName = this.displayFactory;
-            this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtsewinglineLine.FilterFtyGrop = false;
+            this.txtsewinglineLine.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtsewinglineLine.IsSupportEditMode = false;
             this.txtsewinglineLine.Location = new System.Drawing.Point(112, 30);
             this.txtsewinglineLine.Name = "txtsewinglineLine";
+            this.txtsewinglineLine.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
+            this.txtsewinglineLine.ReadOnly = true;
             this.txtsewinglineLine.Size = new System.Drawing.Size(60, 23);
             this.txtsewinglineLine.TabIndex = 1;
+            this.txtsewinglineLine.TextChanged += new System.EventHandler(this.TxtsewinglineLine_ValueChange);
             this.txtsewinglineLine.Validating += new System.ComponentModel.CancelEventHandler(this.TxtsewinglineLine_Validating);
             // 
             // txtSewingReasonIDForTypeIC

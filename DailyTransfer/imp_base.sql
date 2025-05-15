@@ -3827,17 +3827,18 @@ from Trade_To_Pms.dbo.SeasonSCI
 ------FirstSaleCostSetting---------------
 Merge Production.dbo.FirstSaleCostSetting as sr
 Using Trade_To_Pms.dbo.FirstSaleCostSetting as tsr 
-on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate
+on sr.CountryID = tsr.CountryID AND sr.ArtWorkID=tsr.ArtWorkID AND sr.CostTypeID=tsr.CostTypeID AND sr.BeginDate=tsr.BeginDate AND sr.OrderCompanyID = tsr.OrderCompany
 when matched then
       update set 
        sr.EndDate = tsr.EndDate, 
 	   sr.IsJunk = isnull(tsr.IsJunk,  0),
+       sr.OrderCompanyID = isnull(tsr.OrderCompany,0),
 	   sr.AddDate = tsr.AddDate, 
 	   sr.AddName = isnull(tsr.AddName,  ''),
 	   sr.EditDate = tsr.EditDate, 
 	   sr.EditName = isnull(tsr.EditName, '')
 when not matched by target then
-      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, AddDate, AddName, EditDate, EditName) 
+      insert (CountryID, ArtWorkID, CostTypeID, BeginDate, EndDate, IsJunk, OrderCompanyID, AddDate, AddName, EditDate, EditName) 
 	  values (
 		  isnull(tsr.CountryID	, '')
 		, isnull(tsr.ArtWorkID	, '')
@@ -3845,6 +3846,7 @@ when not matched by target then
 		, tsr.BeginDate	
 		, tsr.EndDate	
 		, isnull(tsr.IsJunk		, 0)
+        , isnull(tsr.OrderCompany,0)
 		, tsr.AddDate	
 		, isnull(tsr.AddName	, '')
 		, tsr.EditDate	
@@ -4222,6 +4224,7 @@ SET  a.WeaveTypeID	= isnull( b.WeaveTypeID,	'')
     ,a.isResultNotInP01 = isnull(b.isResultNotInP01, 0)
     ,a.Description = isnull(b.Description, '')
     ,a.ShowGrade = isnull(b.ShowGrade, '')
+    ,a.IsColorFormat = isnull(b.IsColorFormat, 0)
 FROM Production.dbo.FIR_Grade a 
 INNER JOIN Trade_To_Pms.dbo.FIR_Grade as b  
 ON a.WeaveTypeID=b.WeaveTypeID AND a.Percentage=b.Percentage AND a.BrandID=b.BrandID and a.InspectionGroup = b.InspectionGroup
@@ -4237,7 +4240,8 @@ INSERT INTO Production.dbo.FIR_Grade
            ,isFormatInP01
            ,isResultNotInP01
            ,Description
-           ,ShowGrade)
+           ,ShowGrade
+           ,IsColorFormat)
 SELECT   isnull( WeaveTypeID, '')
 		,isnull( Percentage	, 0)
 		,isnull( Grade		, '')
@@ -4248,6 +4252,7 @@ SELECT   isnull( WeaveTypeID, '')
         ,isnull(isResultNotInP01, 0)
         ,isnull(Description, '')
         ,isnull(ShowGrade, '')
+        ,isnull(IsColorFormat,0)
 FROM Trade_To_Pms.dbo.FIR_Grade b
 WHERE NOT EXISTS(
 	SELECT  1

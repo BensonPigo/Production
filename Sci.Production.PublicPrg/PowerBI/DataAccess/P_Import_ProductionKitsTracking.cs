@@ -49,8 +49,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -99,13 +97,12 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.ProductionKitsGroup = ISNULL(t.ProductionKitsGroup, '')
    ,p.AddDate = t.AddDate
    ,p.EditDate = t.EditDate
+   ,p.AWBNO = ISNULL(t.AWBNO, '')
+   ,p.Reject = ISNULL(t.Reject, '')
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
-    ON t.Article = p.Article
-    AND t.FactoryID = p.FactoryID
-    AND t.Doc = p.Doc
-    AND t.SPNo = p.SPNo
-    AND t.ProductionKitsGroup = p.ProductionKitsGroup
+    ON  t.FactoryID = p.FactoryID
+    AND t.Ukey = p.Style_ProductionKitsUkey
 
 INSERT INTO P_ProductionKitsTracking (
 	BrandID
@@ -114,6 +111,7 @@ INSERT INTO P_ProductionKitsTracking (
 	,Article
 	,Mdivision
 	,FactoryID
+	,Style_ProductionKitsUkey
 	,Doc
 	,TWSendDate
 	,FtyMRRcvDate
@@ -134,6 +132,8 @@ INSERT INTO P_ProductionKitsTracking (
 	,ProductionKitsGroup
 	,AddDate
 	,EditDate
+    ,AWBNO
+    ,Reject
 )
 SELECT
     ISNULL(t.BrandID, '')
@@ -142,6 +142,7 @@ SELECT
    ,ISNULL(t.Article, '')
    ,ISNULL(t.Mdivision, '')
    ,ISNULL(t.FactoryID, '')
+   ,Style_ProductionKitsUkey = ISNULL(t.UKey, 0)
    ,ISNULL(t.Doc, '')
    ,t.TWSendDate
    ,t.FtyMRRcvDate
@@ -162,15 +163,14 @@ SELECT
    ,ISNULL(t.ProductionKitsGroup, '')
    ,t.AddDate
    ,t.EditDate
+   ,ISNULL(t.AWBNO, '')
+   ,ISNULL(t.Reject, '')
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
     FROM P_ProductionKitsTracking p
-    WHERE t.Article = p.Article
-    AND t.FactoryID = p.FactoryID
-    AND t.Doc = p.Doc
-    AND t.SPNo = p.SPNo
-    AND t.ProductionKitsGroup = p.ProductionKitsGroup
+    WHERE t.FactoryID = p.FactoryID
+    AND t.UKey = p.Style_ProductionKitsUkey
 )
 
 DELETE P_ProductionKitsTracking
@@ -178,27 +178,13 @@ FROM P_ProductionKitsTracking p WITH(NOLOCK)
 WHERE NOT EXISTS (
     SELECT 1
     FROM #tmp t
-    WHERE t.Article = p.Article
-    AND t.FactoryID = p.FactoryID
-    AND t.Doc = p.Doc
-    AND t.SPNo = p.SPNo
-    AND t.ProductionKitsGroup = p.ProductionKitsGroup
+    WHERE t.FactoryID = p.FactoryID
+    AND t.UKey = p.Style_ProductionKitsUkey
 )
 AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
   OR (EditDate >= @StartDate AND EditDate <= @EndDate))
-
-IF EXISTS (SELECT 1 FROM BITableInfo b WHERE b.id = 'P_ProductionKitsTracking')
-BEGIN
-    UPDATE BITableInfo
-    SET TransferDate = GETDATE()
-    WHERE id = 'P_ProductionKitsTracking'
-END
-ELSE
-BEGIN
-    INSERT INTO BITableInfo (Id, TransferDate)
-    VALUES ('P_ProductionKitsTracking', GETDATE())
-END
 ";
+                sql += new Base().SqlBITableInfo("P_ProductionKitsTracking", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[MDScan](
+﻿Create TABLE [dbo].[MDScan](
 	[Ukey] [bigint] IDENTITY(1,1) NOT NULL,
 	[ScanDate] [date] NULL,
 	[MDivisionID] [varchar](8) NOT NULL,
@@ -14,6 +14,7 @@
 	[Status] VARCHAR(6) NOT NULL  CONSTRAINT [DF_MDScan_Status] DEFAULT (''),
     [Remark] NVARCHAR(MAX) NOT NULL  CONSTRAINT [DF_MDScan_Remark] DEFAULT (''),
     [IsFromM360] INT NOT NULL  CONSTRAINT [DF_MDScan_IsFromM360] DEFAULT ((0)),
+    [HoldRemark] nvarchar(max) NOT NULL CONSTRAINT [DF_MDScan_HoldRemark] DEFAULT (''),
     CONSTRAINT [PK_MDScan] PRIMARY KEY CLUSTERED 
 (
 	[Ukey] ASC
@@ -59,6 +60,10 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SCI內部箱號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MDScan', @level2type=N'COLUMN',@level2name=N'SCICtnNo'
 GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'按下Hold寫入的Remark' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'MDScan', @level2type=N'COLUMN',@level2name=N'HoldRemark'
+GO
+
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'MD狀態
 通過 : Pass

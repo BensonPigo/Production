@@ -14,6 +14,16 @@ namespace Sci.Production.Warehouse
         public B02_BatchCreate()
         {
             this.InitializeComponent();
+
+            DataTable dtLocationType = new DataTable();
+            dtLocationType.ColumnsStringAdd("Key");
+            dtLocationType.ColumnsStringAdd("Value");
+            dtLocationType.Rows.Add(new object[] { "Fabric", "Fabric" });
+            dtLocationType.Rows.Add(new object[] { "Accessory", "Accessory" });
+
+            this.comboLocationType.DataSource = dtLocationType;
+            this.comboLocationType.ValueMember = "Key";
+            this.comboLocationType.DisplayMember = "Value";
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -53,6 +63,7 @@ namespace Sci.Production.Warehouse
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
+                        LocationType = this.comboLocationType.SelectedValue.ToString(),
                         StockType = "B",
                         AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
@@ -65,6 +76,7 @@ namespace Sci.Production.Warehouse
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
+                        LocationType = this.comboLocationType.SelectedValue.ToString(),
                         StockType = "I",
                         AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
@@ -77,6 +89,7 @@ namespace Sci.Production.Warehouse
                     {
                         ID = this.txtID.Text,
                         Description = this.txtDescription.Text,
+                        LocationType = this.comboLocationType.SelectedValue.ToString(),
                         StockType = "O",
                         AddName = Env.User.UserID,
                         AddDate = DateTime.Now,
@@ -101,6 +114,7 @@ INSERT INTO [dbo].[MtlLocation]
            ,[StockType]
            ,[Junk]
            ,[Description]
+           ,[LocationType]
            ,[AddName]
            ,[AddDate]
            ,[EditName]
@@ -110,6 +124,7 @@ INSERT INTO [dbo].[MtlLocation]
            ,'{item.StockType}'
            ,0
            ,'{item.Description}'
+           ,'{item.LocationType}'
            ,'{item.AddName}'
            ,GETDATE()
            ,''
@@ -139,6 +154,8 @@ INSERT INTO [dbo].[MtlLocation]
             public string ID { get; set; }
 
             public string Description { get; set; }
+
+            public string LocationType { get; set; }
 
             public string StockType { get; set; }
 

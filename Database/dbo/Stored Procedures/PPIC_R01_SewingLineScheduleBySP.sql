@@ -66,6 +66,7 @@ Declare @tmp_main table(
 	SizeCode varchar(8),
 	CdCodeID varchar(6),
 	StyleID varchar(15),
+    CriticalStyle varchar(1),
 	Qty int,
 	AlloQty int,
 	CutQty numeric(11,2),
@@ -114,6 +115,7 @@ insert into @tmp_main(
     SizeCode,
     CdCodeID,
     StyleID,
+    CriticalStyle,
     Qty,
     AlloQty,
     CutQty,
@@ -165,6 +167,7 @@ select  s.SewingLineID
             , [SizeCode] = ''
             , o.CdCodeID
             , o.StyleID
+            , CriticalStyle=iif(st.CriticalStyle='1','Y','N')
             , o.Qty
             , s.AlloQty
             , isnull((select sum(Qty) 
@@ -190,9 +193,9 @@ select  s.SewingLineID
 			, [FirstCuttingOutputDate]=FirstCuttingOutputDate.Date
             , InspDate = InspctDate.Val
             , s.StandardOutput
-            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(sa.TTlAlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
-                      END
+            , [Eff] = CASE WHEN (s.sewer * s.workhour) = 0 THEN 0
+								ELSE ROUND((CONVERT(FLOAT, sa.TTlAlloQty)  * CONVERT(FLOAT, s.TotalSewingTime)/ (CONVERT(FLOAT, s.sewer) * CONVERT(FLOAT, s.workhour) * 3600)) * 100 , 2)
+								END
             , o.KPILETA
 			, o.SewETA
             , o.MTLETA
@@ -422,6 +425,7 @@ select  SewingLineID
 	    , Gender
 	    , Construction
         , StyleID
+        , a.CriticalStyle
         , [OrderQty] = Qty
         , AlloQty
         , CutQty

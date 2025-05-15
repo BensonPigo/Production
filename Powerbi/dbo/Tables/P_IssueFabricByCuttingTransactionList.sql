@@ -14,6 +14,7 @@
     [Seq] VARCHAR(6) NOT NULL, 
     [Refno] VARCHAR(36) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Refno]     NOT NULL DEFAULT (('')), 
     [ColorID] VARCHAR(50) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_ColorID]     NOT NULL DEFAULT (('')), 
+    [ColorName] VARCHAR(150) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_ColorName]     NOT NULL DEFAULT (('')), 
     [Description] NVARCHAR(MAX) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_Description]     NOT NULL DEFAULT (('')), 
     [WeaveTypeID] VARCHAR(20) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_WeaveTypeID]     NOT NULL DEFAULT (('')), 
     [RelaxTime] NUMERIC(5, 2) CONSTRAINT [DF_P_IssueFabricByCuttingTransactionList_RelaxTime]     NOT NULL DEFAULT ((0)), 
@@ -157,6 +158,15 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'P_IssueFabricByCuttingTransactionList',
     @level2type = N'COLUMN',
     @level2name = N'ColorID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'顏色描述',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_IssueFabricByCuttingTransactionList',
+    @level2type = N'COLUMN',
+    @level2name = N'ColorName'
 GO
 EXEC sp_addextendedproperty @name = N'MS_Description',
     @value = N'料的詳細說明',

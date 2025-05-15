@@ -151,6 +151,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             if (model.IsPowerBI)
             {
                 biColumn = @"
+    ,sp.Ukey
     ,sp.Article
     ,sp.AddDate
     ,sp.EditDate
@@ -167,7 +168,9 @@ SELECT
     ,sp.FactoryID
     ,Doc = CONCAT(sp.DOC, '-', r.Name)
     ,[TWSendDate] = sp.SendDate
+    ,sp.AWBNO
     ,[FtyMRRcvDate] = sp.ReceiveDate
+    ,Reject = IIF(sp.Reject = 1, 'Y', 'N')
     ,[FtySendtoQADate] = sp.SendToQA
     ,[QARcvDate] = sp.QAReceived
     ,[UnnecessaryToSend] = IIF(LEN(ISNULL(sp.ReasonID, '')) = 0, 'N', 'Y')

@@ -200,6 +200,7 @@
     </Compile>
     <Compile Include="DualResultGeneric.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
+    <Compile Include="ExtendedMethods\DataTableExtensions.cs" />
     <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />
     <Compile Include="ExtendedMethods\DataGridViewGenerator.cs" />
     <Compile Include="ExtendedMethods\MiscExtensions.cs" />

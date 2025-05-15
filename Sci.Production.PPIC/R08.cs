@@ -42,19 +42,19 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            System.Data.DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
+
             MyUtility.Tool.SetupCombox(this.comboType, 2, 1, ",,F,Fabric,A,Accessory,");
             MyUtility.Tool.SetupCombox(this.cmbStatus, 1, 1, "ALL,Approved,Auto.Lock,Checked,Confirmed,Junked,New");
             MyUtility.Tool.SetupCombox(this.cmbReportType, 2, 1, "0,Detail List,1,Resp. Dept. List");
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Env.User.Keyword;
+
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+            this.comboFactory.Text = Env.User.Factory;
+
             this.comboType.SelectedIndex = 0;
             this.cmbStatus.SelectedIndex = 0;
             this.cmbReportType.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -154,7 +154,7 @@ namespace Sci.Production.PPIC
             if (this._printData.Length == 2)
             {
                 worksheet = excelApp.ActiveWorkbook.Worksheets[2]; // 取得工作表
-                worksheet.Columns[27].ColumnWidth = 66;
+                worksheet.Columns[28].ColumnWidth = 66;
             }
 
             worksheet.Rows.AutoFit();

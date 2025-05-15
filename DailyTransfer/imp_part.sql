@@ -1219,7 +1219,7 @@ where b.ID is null
 	UPDATE a
 	SET TranstoTPE = CONVERT(date, GETDATE())
 	FROM dbo.PartPO a
-	LEFT JOIN SciPms_To_Trade_PartPO b ON a.ID = b.ID
+	INNER JOIN SciPms_To_Trade_PartPO b ON a.ID = b.ID
 	WHERE a.TranstoTPE  IS NULL
 	
 	UPDATE a
@@ -1231,7 +1231,7 @@ where b.ID is null
 	UPDATE a
 	SET TranstoTPE = CONVERT(date, GETDATE())
 	FROM dbo.MiscPO a
-	LEFT JOIN SciPms_To_Trade_MiscPO b ON a.ID = b.ID
+	INNER JOIN SciPms_To_Trade_MiscPO b ON a.ID = b.ID
 	WHERE a.TranstoTPE  IS NULL
 
 	Update dbo.MachineReturn

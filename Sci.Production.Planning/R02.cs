@@ -44,8 +44,7 @@ namespace Sci.Production.Planning
             : base(menuitem)
         {
             this.InitializeComponent();
-            this.txtMdivision.Text = Env.User.Keyword;
-            this.txtfactory.Text = Env.User.Factory;
+            this.txtMdivision.Enabled = false;
         }
 
         /// <summary>

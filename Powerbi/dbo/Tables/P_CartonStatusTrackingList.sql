@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[P_CartonStatusTrackingList](
 	[KPIGroup] [varchar](8) NOT NULL,
-	[Fty] [varchar](8) NOT NULL,
+	[FactoryID] [varchar](8) NOT NULL,
 	[Line] [varchar](180) NOT NULL,
 	[SP] [varchar](13) NOT NULL,
 	[SeqNo] [varchar](2) NOT NULL,
@@ -43,6 +43,7 @@
 	[DisposeDate] [date] NULL,
 	[PulloutComplete] [varchar](1) NOT NULL,
 	[PulloutDate] [date] NULL,
+    [MDMachineNo] VARCHAR(30) NOT NULL DEFAULT (''), 
 	[RefNo] [varchar](21) NOT NULL,
 	[Description] [nvarchar](max) NOT NULL,
 	[HaulingStatus] [varchar](10) NOT NULL,
@@ -60,8 +61,11 @@
 	[HeatSealScanTime] [datetime] NULL,
 	[HeatSealStatus] [varchar](10) NOT NULL,
 	[HeatSealName] [varchar](50) NOT NULL,
- CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
+	[BIFactoryID] [varchar](8) NOT NULL, 
+    [BIInsertDate] [datetime] NULL, 
+CONSTRAINT [PK_P_CartonStatusTrackingList] PRIMARY KEY CLUSTERED 
 (
+	[FactoryID] ASC,
 	[SP] ASC,
 	[SeqNo] ASC,
 	[PackingListID] ASC,
@@ -77,7 +81,7 @@ GO
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_KPIGroup]  DEFAULT ('') FOR [KPIGroup]
 GO
 
-ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Fty]  DEFAULT ('') FOR [Fty]
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_FactoryID]  DEFAULT ('') FOR [FactoryID]
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_Line]  DEFAULT ('') FOR [Line]
@@ -117,6 +121,9 @@ ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatu
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_CartonQty]  DEFAULT ((0)) FOR [CartonQty]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_MDMachineNo]  DEFAULT ((0)) FOR [MDMachineNo]
 GO
 
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_HauledQty]  DEFAULT ((0)) FOR [HauledQty]
@@ -185,16 +192,25 @@ GO
 ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  DEFAULT ('') FOR [HeatSealName]
 GO
 
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_BIFactoryID]  DEFAULT ('') FOR [BIFactoryID]
+GO
+
+ALTER TABLE [dbo].[P_CartonStatusTrackingList] ADD  CONSTRAINT [DF_P_CartonStatusTrackingList_BIInsertDate] FOR [BIInsertDate]
+GO
+
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'SDP KPI Code' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'KPIGroup'
 GO
 
-EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'Fty'
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order Factory' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'FactoryID'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Sewing Line' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'Line'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Order No' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SP'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'MD機器代號' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'MDMachineNo'
 GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Shipment Seq' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'SeqNo'
@@ -368,4 +384,8 @@ GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Heat Seal Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'P_CartonStatusTrackingList', @level2type=N'COLUMN',@level2name=N'HeatSealName'
 GO
 
+EXEC sys.sp_addextendedproperty @name = N'MS_Description', @value = N'記錄哪間工廠的資料，ex PH1, PH2', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList', @level2type = N'COLUMN', @level2name = N'BIFactoryID'
+GO
 
+EXEC sys.sp_addextendedproperty @name = N'MS_Description', @value = N'時間戳記，紀錄寫入table時間', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'P_CartonStatusTrackingList', @level2type = N'COLUMN', @level2name = N'BIInsertDate'
+GO

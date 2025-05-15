@@ -268,21 +268,33 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
                     outer apply 
                     (
-                        select OpreatorID = STUFF((
+                        select OperatorID = STUFF((
 		                    select CONCAT(',', SubProOperatorEmployeeID)
 		                    from SubProInsRecord_Operator with (nolock)
 		                    where SubProInsRecordUkey = SR.Ukey
 		                    order by SubProOperatorEmployeeID
 		                    for xml path('')
 	                    ),1,1,'')
-                    ) SOE" + sqlDefValue;
+                    ) SOE
+					outer apply 
+                    (
+                        select OperatorName = STUFF((
+		                    select CONCAT(',', spo.FirstName, '-', spo.LastName)
+							from SubProInsRecord_Operator spiro with (nolock)
+							inner join SubProOperator spo with (nolock) on spiro.SubProOperatorEmployeeID = spo.EmployeeID
+		                    where spiro.SubProInsRecordUkey = SR.Ukey
+		                    order by spiro.SubProOperatorEmployeeID
+		                    for xml path('')
+	                    ),1,1,'')
+                    ) spo" + sqlDefValue;
                     formatCol1 = $@"
                     m.Serial,
                     {strJunk}
                     m.Description,
                     SRD.DefectCode,
                     SRD.DefectQty,
-                    SOE.OpreatorID,";
+                    SOE.OperatorID,
+                    spo.OperatorName,";
                     formatCol2 = string.Empty;
                     return Tuple.Create(formatCol1, formatCol2, formatJoin);
                 case "ResponseTeam":

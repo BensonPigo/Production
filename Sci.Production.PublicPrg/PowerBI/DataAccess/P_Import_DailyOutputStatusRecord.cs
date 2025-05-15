@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_DailyOutputStatusRecord
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_DailyOutputStatusRecord(DateTime? sDate, DateTime? eDate, string biTableInfoID)
+        public Base_ViewModel P_DailyOutputStatusRecord(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             if (!sDate.HasValue)
@@ -43,7 +43,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value, biTableInfoID);
+                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -59,7 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate, string biTableInfoID)
+        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
         {
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
@@ -119,6 +119,15 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,PRTOutput            = ISNULL(t.PRTOutput, -1)
    ,PRTRemark            = ISNULL(t.PRTRemark, '')
    ,PRTExclusion         = ISNULL(t.PRTExclusion, 0)
+   ,PADPRTOutput         = ISNULL(t.PADPRTOutput, -1)
+   ,PADPRTRemark         = ISNULL(t.PADPRTRemark, '')
+   ,PADPRTExclusion      = ISNULL(t.PADPRTExclusion, 0)
+   ,EMBOutput            = ISNULL(t.EMBOutput, -1)
+   ,EMBRemark            = ISNULL(t.EMBRemark, '')
+   ,EMBExclusion         = ISNULL(t.EMBExclusion, 0)
+   ,FIOutput             = ISNULL(t.FIOutput, -1)
+   ,FIRemark             = ISNULL(t.FIRemark, '')
+   ,FIExclusion          = ISNULL(t.FIExclusion, 0)
 FROM P_SewingDailyOutputStatusRecord p
 INNER JOIN #tmp t ON t.SewingLineID = p.SewingLineID
                  AND t.SewingDate   = p.SewingOutputDate
@@ -191,7 +200,16 @@ INSERT INTO [dbo].[P_SewingDailyOutputStatusRecord]
             ,[FMExclusion]
             ,[PRTOutput]
             ,[PRTRemark]
-            ,[PRTExclusion])
+            ,[PRTExclusion]
+            ,[PADPRTOutput]
+            ,[PADPRTRemark]
+            ,[PADPRTExclusion]
+            ,[EMBOutput]
+            ,[EMBRemark]
+            ,[EMBExclusion]
+            ,[FIOutput]
+            ,[FIRemark]
+            ,[FIExclusion])
 SELECT
 	 [SewingLineID]
     ,[SewingDate]
@@ -242,6 +260,15 @@ SELECT
     ,ISNULL([PRTOutput], -1)
     ,ISNULL([PRTRemark], '')
     ,ISNULL([PRTExclusion], 0)
+    ,ISNULL([PADPRTOutput], -1)
+    ,ISNULL([PADPRTRemark], '')
+    ,ISNULL([PADPRTExclusion], 0)
+    ,ISNULL([EMBOutput], -1)
+    ,ISNULL([EMBRemark], '')
+    ,ISNULL([EMBExclusion], 0)
+    ,ISNULL([FIOutput], -1)
+    ,ISNULL([FIRemark], '')
+    ,ISNULL([FIExclusion], 0)
 FROM #tmp t
 WHERE NOT EXISTS(
 	SELECT 1
@@ -254,7 +281,7 @@ WHERE NOT EXISTS(
 ";
 
                 // 加上 BITableInfo 更新字串
-                sql += new Base().SqlBITableInfo(biTableInfoID, false);
+                sql += new Base().SqlBITableInfo("P_SewingDailyOutputStatusRecord", false);
 
                 // 執行 SQL 並回傳 Base_ViewModel
                 return new Base_ViewModel()

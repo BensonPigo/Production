@@ -99,7 +99,7 @@
             this.btnSimilarStyle = new Sci.Win.UI.Button();
             this.btnHSCode = new Sci.Win.UI.Button();
             this.displaySpecialMark = new Sci.Win.UI.DisplayBox();
-            this.checkJnuk = new Sci.Win.UI.CheckBox();
+            this.checkJunk = new Sci.Win.UI.CheckBox();
             this.displayPhase = new Sci.Win.UI.DisplayBox();
             this.btnFtyLT = new Sci.Win.UI.Button();
             this.labelUnit = new Sci.Win.UI.Label();
@@ -137,6 +137,7 @@
             this.checkTeamWear = new Sci.Win.UI.CheckBox();
             this.labelTechConcept = new Sci.Win.UI.Label();
             this.displayTechConcept = new Sci.Win.UI.DisplayBox();
+            this.checkCriticalStyle = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -154,6 +155,7 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.checkCriticalStyle);
             this.detailcont.Controls.Add(this.displayTechConcept);
             this.detailcont.Controls.Add(this.labelTechConcept);
             this.detailcont.Controls.Add(this.checkTeamWear);
@@ -179,7 +181,7 @@
             this.detailcont.Controls.Add(this.labelUnit);
             this.detailcont.Controls.Add(this.btnFtyLT);
             this.detailcont.Controls.Add(this.displayPhase);
-            this.detailcont.Controls.Add(this.checkJnuk);
+            this.detailcont.Controls.Add(this.checkJunk);
             this.detailcont.Controls.Add(this.displaySpecialMark);
             this.detailcont.Controls.Add(this.btnHSCode);
             this.detailcont.Controls.Add(this.btnSimilarStyle);
@@ -730,7 +732,7 @@
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(318, 7);
+            this.labelSeason.Location = new System.Drawing.Point(300, 7);
             this.labelSeason.Name = "labelSeason";
             this.labelSeason.Size = new System.Drawing.Size(50, 23);
             this.labelSeason.TabIndex = 33;
@@ -741,7 +743,7 @@
             this.txtSeason.BackColor = System.Drawing.Color.White;
             this.txtSeason.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "SeasonID", true));
             this.txtSeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeason.Location = new System.Drawing.Point(372, 7);
+            this.txtSeason.Location = new System.Drawing.Point(354, 7);
             this.txtSeason.Name = "txtSeason";
             this.txtSeason.Size = new System.Drawing.Size(90, 23);
             this.txtSeason.TabIndex = 1;
@@ -754,7 +756,7 @@
             this.checkLocalstyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LocalStyle", true));
             this.checkLocalstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.checkLocalstyle.IsSupportEditMode = false;
-            this.checkLocalstyle.Location = new System.Drawing.Point(474, 7);
+            this.checkLocalstyle.Location = new System.Drawing.Point(459, 9);
             this.checkLocalstyle.Name = "checkLocalstyle";
             this.checkLocalstyle.ReadOnly = true;
             this.checkLocalstyle.Size = new System.Drawing.Size(94, 21);
@@ -764,7 +766,7 @@
             // 
             // labelModel
             // 
-            this.labelModel.Location = new System.Drawing.Point(318, 61);
+            this.labelModel.Location = new System.Drawing.Point(300, 61);
             this.labelModel.Name = "labelModel";
             this.labelModel.Size = new System.Drawing.Size(50, 23);
             this.labelModel.TabIndex = 36;
@@ -775,7 +777,7 @@
             this.txtModel.BackColor = System.Drawing.Color.White;
             this.txtModel.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "Model", true));
             this.txtModel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtModel.Location = new System.Drawing.Point(372, 61);
+            this.txtModel.Location = new System.Drawing.Point(354, 61);
             this.txtModel.Name = "txtModel";
             this.txtModel.Size = new System.Drawing.Size(46, 23);
             this.txtModel.TabIndex = 6;
@@ -1030,17 +1032,17 @@
             this.displaySpecialMark.Size = new System.Drawing.Size(111, 23);
             this.displaySpecialMark.TabIndex = 16;
             // 
-            // checkJnuk
+            // checkJunk
             // 
-            this.checkJnuk.AutoSize = true;
-            this.checkJnuk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
-            this.checkJnuk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.checkJnuk.Location = new System.Drawing.Point(474, 34);
-            this.checkJnuk.Name = "checkJnuk";
-            this.checkJnuk.Size = new System.Drawing.Size(57, 21);
-            this.checkJnuk.TabIndex = 4;
-            this.checkJnuk.Text = "Jnuk";
-            this.checkJnuk.UseVisualStyleBackColor = true;
+            this.checkJunk.AutoSize = true;
+            this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Junk", true));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.Location = new System.Drawing.Point(459, 54);
+            this.checkJunk.Name = "checkJunk";
+            this.checkJunk.Size = new System.Drawing.Size(57, 21);
+            this.checkJunk.TabIndex = 4;
+            this.checkJunk.Text = "Junk";
+            this.checkJunk.UseVisualStyleBackColor = true;
             // 
             // displayPhase
             // 
@@ -1438,6 +1440,20 @@
             this.displayTechConcept.Size = new System.Drawing.Size(111, 23);
             this.displayTechConcept.TabIndex = 98;
             // 
+            // checkCriticalStyle
+            // 
+            this.checkCriticalStyle.AutoSize = true;
+            this.checkCriticalStyle.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "CriticalStyle", true));
+            this.checkCriticalStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkCriticalStyle.IsSupportEditMode = false;
+            this.checkCriticalStyle.Location = new System.Drawing.Point(459, 33);
+            this.checkCriticalStyle.Name = "checkCriticalStyle";
+            this.checkCriticalStyle.ReadOnly = true;
+            this.checkCriticalStyle.Size = new System.Drawing.Size(104, 21);
+            this.checkCriticalStyle.TabIndex = 99;
+            this.checkCriticalStyle.Text = "Critical Style";
+            this.checkCriticalStyle.UseVisualStyleBackColor = true;
+            // 
             // P04
             // 
             this.ClientSize = new System.Drawing.Size(1008, 632);
@@ -1471,7 +1487,7 @@
         #endregion
 
         private System.Windows.Forms.TabPage tabPage1;
-        private Win.UI.CheckBox checkJnuk;
+        private Win.UI.CheckBox checkJunk;
         private Win.UI.DisplayBox displaySpecialMark;
         private Win.UI.Button btnHSCode;
         private Win.UI.Button btnSimilarStyle;
@@ -1578,5 +1594,6 @@
         private Win.UI.CheckBox checkTeamWear;
         private Win.UI.DisplayBox displayTechConcept;
         private Win.UI.Label labelTechConcept;
+        private Win.UI.CheckBox checkCriticalStyle;
     }
 }

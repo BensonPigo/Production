@@ -48,7 +48,6 @@ namespace Sci.Production.Planning
         private DataTable dtArtworkType;
         private StringBuilder artworktypes = new StringBuilder();
         private bool isArtwork;
-        private List<string> notExistsBundle_Detail_Art = new List<string>() { "SORTING", "LOADING", "SEWINGLINE" };
 
         /// <summary>
         /// R15
@@ -60,8 +59,6 @@ namespace Sci.Production.Planning
         {
             this.formParameter = formParameter;
             this.InitializeComponent();
-            this.txtMdivision.Text = Env.User.Keyword;
-            this.txtfactory.Text = Env.User.Factory;
             MyUtility.Tool.SetupCombox(this.comboOrderBy, 2, 1, "orderid,SPNO,brandid,Brand");
             this.comboOrderBy.SelectedIndex = 0;
             this.dateBuyerDelivery.Select();
@@ -77,6 +74,9 @@ namespace Sci.Production.Planning
             this.chkSubProcessOrder.Visible = formParameter == "2";
             this.comboRFIDProcessLocation1.SetDataSource(false);
             this.comboRFIDProcessLocation1.SelectedIndex = 0;
+            this.txtMdivision.Enabled = false;
+            this.txtMdivision.Text = Env.User.Keyword;
+            this.txtfactory.Text = Env.User.Factory;
         }
 
         /// <summary>

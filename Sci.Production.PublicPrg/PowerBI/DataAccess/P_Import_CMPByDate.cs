@@ -15,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CMPByDate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CMPByDate(DateTime? sDate, DateTime? eDate, string biTableInfoID)
+        public Base_ViewModel P_CMPByDate(DateTime? sDate, DateTime? eDate)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Base biBase = new Base();
@@ -68,9 +68,9 @@ where f.ID in (
                             StartSewingLine = string.Empty,
                             EndSewingLine = string.Empty,
                             OrderBy = 1,
-                            ExcludeNonRevenue = false,
-                            ExcludeSampleFactory = false,
-                            ExcludeOfMockUp = false,
+                            ExcludeNonRevenue = true,
+                            ExcludeSampleFactory = true,
+                            ExcludeOfMockUp = true,
                         };
 
                         Base_ViewModel resultReport = biModel.GetMonthlyProductionOutputReport(sewing_R02_Model);
@@ -144,7 +144,7 @@ where f.ID in (
                 });
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(p_CMPByDates.ToDataTable(), biTableInfoID);
+                finalResult = this.UpdateBIData(p_CMPByDates.ToDataTable());
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -160,7 +160,7 @@ where f.ID in (
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, string biTableInfoID)
+        private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -190,7 +190,7 @@ where not exists(select 1 from P_CMPByDate p where p.FactoryID = t.FactoryID and
 
 ";
 
-                sql += new Base().SqlBITableInfo(biTableInfoID, true);
+                sql += new Base().SqlBITableInfo("P_CMPByDate", true);
 
                 finalResult = new Base_ViewModel()
                 {

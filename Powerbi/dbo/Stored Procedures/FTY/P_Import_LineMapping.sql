@@ -197,7 +197,7 @@ delete t
 from P_LineMapping t
 where not exists(
 	select 1 from #tmpMain s
-	where t.Factory = s.Factory
+	where t.FactoryID = s.Factory
 	and t.StyleUKey = s.StyleUKey
 	and t.ComboType = s.ComboType
 	and t.Version = s.Version
@@ -246,7 +246,7 @@ set t.Style	= s.Style
 ,t.[Edit Date] = s.[Edit Date]
 ,t.[Edit Name] = s.[Edit Name]
 from P_LineMapping t
-inner join #tmpMain s on t.Factory = s.Factory
+inner join #tmpMain s on t.FactoryID = s.Factory
 	and t.StyleUKey = s.StyleUKey
 	and t.ComboType = s.ComboType
 	and t.Version = s.Version
@@ -256,7 +256,7 @@ inner join #tmpMain s on t.Factory = s.Factory
 	and t.Team = s.Team
 
 insert into P_LineMapping(
-[Factory]
+[FactoryID]
       ,[StyleUKey]
       ,[ComboType]
       ,[Version]
@@ -340,7 +340,7 @@ select [Factory]
 from #tmpMain t
 where not exists(
 	select 1 from P_LineMapping s
-	where t.Factory = s.Factory
+	where t.Factory = s.FactoryID
 	and t.StyleUKey = s.StyleUKey
 	and t.ComboType = s.ComboType
 	and t.Version = s.Version
@@ -352,7 +352,7 @@ where not exists(
 
 if exists(select 1 from BITableInfo where Id = 'P_LineMapping')
 begin
-	update BITableInfo set TransferDate = getdate()
+	update BITableInfo set TransferDate = getdate(), IS_Trans = 1
 	where Id = 'P_LineMapping'
 end
 else
@@ -538,7 +538,7 @@ where not exists(
 
 if exists(select 1 from BITableInfo where Id = 'P_LineMapping_Detail')
 begin
-	update BITableInfo set TransferDate = getdate()
+	update BITableInfo set TransferDate = getdate(), IS_Trans = 1
 	where Id = 'P_LineMapping_Detail'
 end
 else
@@ -549,4 +549,3 @@ end
 drop table #tmpMain,#tmpDetail
 
 end
-GO

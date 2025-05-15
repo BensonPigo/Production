@@ -29,8 +29,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -72,22 +70,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             FROM #tmp_P_WBScanRate t 
             WHERE NOT EXISTS (SELECT 1 FROM P_WBScanRate p　WHERE t.[Date] = p.[Date] AND t.FTYGroup = p.FactoryID)
 
-            if exists (select 1 from BITableInfo b where b.id = 'P_WBScanRate')
-            begin
-	            update b
-		            set b.TransferDate = getdate()
-	            from BITableInfo b
-	            where b.id = 'P_WBScanRate'
-            end
-            else 
-            begin
-	            insert into BITableInfo(Id, TransferDate)
-	            values('P_WBScanRate', getdate())
-            end
-
             Drop Table #tmp_P_WBScanRate
             ";
-
+            sqlcmd += new Base().SqlBITableInfo("P_WBScanRate", true);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()

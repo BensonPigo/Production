@@ -54,10 +54,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.Dt;
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
@@ -65,8 +61,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -103,6 +97,7 @@ SET
 , t.refno = s.refno
 , t.WeaveTypeID = s.WeaveTypeID
 , t.Color = s.Color
+, t.ColorName = s.ColorName
 , t.Roll = s.Roll
 , t.Dyelot = s.Dyelot
 , t.StockQty = s.StockQty
@@ -142,12 +137,12 @@ insert into P_BatchUpdateRecevingInfoTrackingList (
     ReceivingID,ExportID,FtyGroup,Packages,ArriveDate,Poid,Seq,BrandID,StyleID,refno,WeaveTypeID,Color,Roll,Dyelot,StockQty,StockType
 ,Location,Weight,ActualWeight,CutShadebandTime,CutBy,Fabric2LabTime,Fabric2LabBy,Checker,IsQRCodeCreatedByPMS,LastP26RemarkData
 ,MINDChecker,QRCode_PrintDate,MINDCheckAddDate,MINDCheckEditDate,SuppAbbEN,ForInspection,ForInspectionTime,OneYardForWashing
-,Hold,Remark,AddDate,EditDate
+,Hold,Remark,AddDate,EditDate, colorName
 )
 select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.StyleID,s.refno,s.WeaveTypeID,s.Color,s.Roll
 ,s.Dyelot,s.StockQty,StockType = s.rdStockType,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
 ,s.Checker,s.IsQRCodeCreatedByPMS,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
-,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate
+,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate, s.colorName
 from #tmp s
 where not exists (
     select 1 from P_BatchUpdateRecevingInfoTrackingList t 
@@ -170,22 +165,12 @@ where not exists (
 	AND t.Roll = s.Roll
 	AND t.Dyelot = s.Dyelot
 )
-and ((t.AddDate >= @SDate or t.EditDate >= @SDate) and (t.AddDate <= @EDate or t.EditDate <= @EDate))
-
-if exists(select 1 from BITableInfo where Id = 'P_BatchUpdateRecevingInfoTrackingList')
-begin
-    update b
-	    set b.TransferDate = getdate()
-		    , b.IS_Trans = 0
-    from BITableInfo b
-    where b.id = 'P_BatchUpdateRecevingInfoTrackingList'
-end
-else
-begin
-    insert into BITableInfo (Id, TransferDate, IS_Trans)
-    values ('P_BatchUpdateRecevingInfoTrackingList', getDate(), 0)
-end
+and (
+    (t.AddDate >= @SDate and t.AddDate <= @EDate) or
+    (t.EditDate >= @SDate and t.EditDate <= @EDate)
+)
 ";
+                sql += new Base().SqlBITableInfo("P_BatchUpdateRecevingInfoTrackingList", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

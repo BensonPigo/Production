@@ -32,6 +32,7 @@ BEGIN
       ,[StockType]
       ,[Junk]
       ,[Description]
+      ,[LocationType]
       ,[AddName]
       ,[AddDate]
       ,[EditName]
@@ -64,6 +65,7 @@ BEGIN
 	update t
 	set t.Junk = s.Junk
 	,t.Description = s.Description
+	,t.LocationType = s.LocationType
 	,t.IsWMS = s.IsWMS
 	,t.Capacity = s.Capacity
 	,t.AddDate = s.AddDate
@@ -78,6 +80,7 @@ BEGIN
       ,[StockType]
       ,[Junk]
       ,[Description]
+	  ,LocationType
       ,[IsWMS]
       ,[Capacity]
       ,[AddName]
@@ -89,6 +92,7 @@ BEGIN
       ,[StockType]
       ,[Junk]
       ,[Description]
+	  ,LocationType
       ,[IsWMS]
       ,[Capacity]
       ,[AddName]

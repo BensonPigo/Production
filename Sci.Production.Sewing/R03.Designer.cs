@@ -41,7 +41,6 @@
             this.dateSewingOutputDate = new Sci.Win.UI.DateRange();
             this.dateBuyerDelivery = new Sci.Win.UI.DateRange();
             this.dateSCIDelivery = new Sci.Win.UI.DateRange();
-            this.comboFactory = new Sci.Win.UI.ComboBox();
             this.labelStyle = new Sci.Win.UI.Label();
             this.chkType = new Sci.Win.UI.CheckBox();
             this.txtstyle = new Sci.Production.Class.Txtstyle();
@@ -52,6 +51,7 @@
             this.numNewStyleBaseOn = new Sci.Win.UI.NumericUpDown();
             this.labelmonth = new Sci.Win.UI.Label();
             this.labelNewStyleBaseOn = new Sci.Win.UI.Label();
+            this.comboFactory = new Sci.Production.Class.ComboFactory(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).BeginInit();
             this.SuspendLayout();
             // 
@@ -214,18 +214,6 @@
             this.dateSCIDelivery.Size = new System.Drawing.Size(226, 23);
             this.dateSCIDelivery.TabIndex = 2;
             // 
-            // comboFactory
-            // 
-            this.comboFactory.BackColor = System.Drawing.Color.White;
-            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboFactory.FormattingEnabled = true;
-            this.comboFactory.IsSupportUnselect = true;
-            this.comboFactory.Location = new System.Drawing.Point(145, 227);
-            this.comboFactory.Name = "comboFactory";
-            this.comboFactory.OldText = "";
-            this.comboFactory.Size = new System.Drawing.Size(80, 24);
-            this.comboFactory.TabIndex = 6;
-            // 
             // labelStyle
             // 
             this.labelStyle.Location = new System.Drawing.Point(13, 166);
@@ -252,6 +240,7 @@
             this.txtstyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtstyle.Location = new System.Drawing.Point(145, 166);
             this.txtstyle.Name = "txtstyle";
+            this.txtstyle.SeasonObjectName = null;
             this.txtstyle.Size = new System.Drawing.Size(130, 23);
             this.txtstyle.TabIndex = 104;
             this.txtstyle.TarBrand = null;
@@ -276,6 +265,7 @@
             this.txtbrand.BackColor = System.Drawing.Color.White;
             this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtbrand.Location = new System.Drawing.Point(145, 136);
+            this.txtbrand.MyDocumentdName = null;
             this.txtbrand.Name = "txtbrand";
             this.txtbrand.Size = new System.Drawing.Size(80, 23);
             this.txtbrand.TabIndex = 4;
@@ -337,9 +327,24 @@
             this.labelNewStyleBaseOn.TabIndex = 227;
             this.labelNewStyleBaseOn.Text = "New Style Base on";
             // 
+            // comboFactory
+            // 
+            this.comboFactory.BackColor = System.Drawing.Color.White;
+            this.comboFactory.FilteMDivision = true;
+            this.comboFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboFactory.FormattingEnabled = true;
+            this.comboFactory.IssupportJunk = false;
+            this.comboFactory.IsSupportUnselect = true;
+            this.comboFactory.Location = new System.Drawing.Point(144, 227);
+            this.comboFactory.Name = "comboFactory";
+            this.comboFactory.OldText = "";
+            this.comboFactory.Size = new System.Drawing.Size(81, 24);
+            this.comboFactory.TabIndex = 567;
+            // 
             // R03
             // 
             this.ClientSize = new System.Drawing.Size(551, 399);
+            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.numNewStyleBaseOn);
             this.Controls.Add(this.labelmonth);
             this.Controls.Add(this.labelNewStyleBaseOn);
@@ -347,7 +352,6 @@
             this.Controls.Add(this.chkType);
             this.Controls.Add(this.txtstyle);
             this.Controls.Add(this.comboDropDownListCategory);
-            this.Controls.Add(this.comboFactory);
             this.Controls.Add(this.txtbrand);
             this.Controls.Add(this.txtseason);
             this.Controls.Add(this.dateSCIDelivery);
@@ -390,7 +394,6 @@
             this.Controls.SetChildIndex(this.dateSCIDelivery, 0);
             this.Controls.SetChildIndex(this.txtseason, 0);
             this.Controls.SetChildIndex(this.txtbrand, 0);
-            this.Controls.SetChildIndex(this.comboFactory, 0);
             this.Controls.SetChildIndex(this.comboDropDownListCategory, 0);
             this.Controls.SetChildIndex(this.txtstyle, 0);
             this.Controls.SetChildIndex(this.chkType, 0);
@@ -398,6 +401,7 @@
             this.Controls.SetChildIndex(this.labelNewStyleBaseOn, 0);
             this.Controls.SetChildIndex(this.labelmonth, 0);
             this.Controls.SetChildIndex(this.numNewStyleBaseOn, 0);
+            this.Controls.SetChildIndex(this.comboFactory, 0);
             ((System.ComponentModel.ISupportInitialize)(this.numNewStyleBaseOn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -420,7 +424,6 @@
         private Win.UI.DateRange dateSCIDelivery;
         private Class.Txtseason txtseason;
         private Class.Txtbrand txtbrand;
-        private Win.UI.ComboBox comboFactory;
         private Class.ComboDropDownList comboDropDownListCategory;
         private Win.UI.Label labelStyle;
         private Class.Txtstyle txtstyle;
@@ -429,5 +432,6 @@
         private Win.UI.NumericUpDown numNewStyleBaseOn;
         private Win.UI.Label labelmonth;
         private Win.UI.Label labelNewStyleBaseOn;
+        private Class.ComboFactory comboFactory;
     }
 }

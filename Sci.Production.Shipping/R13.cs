@@ -21,6 +21,7 @@ namespace Sci.Production.Shipping
         private string Shipper;
         private string factory;
         private string category;
+        private string orderCompany;
         private DataTable printData;
 
         /// <summary>
@@ -58,6 +59,7 @@ namespace Sci.Production.Shipping
             this.Shipper = this.txtmultiShipper.Text;
             this.factory = this.txtmultifactory.Text;
             this.category = this.comboCategory.SelectedValue.ToString();
+            this.orderCompany = this.comboOrderCompany.SelectedValue.ToString();
             return base.ValidateInput();
         }
 
@@ -67,7 +69,7 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with cte as (
 Select 
-o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
+o.BuyerDelivery,o.OrigBuyerDelivery,o.ID,OrderCompany.NameEN
 ,Category=IIF(o.Category = 'B', 'Bulk',IIF(o.Category = 'S','Sample','Forecast'))
 ,o.OrderTypeID
 ,o.CustPONo
@@ -101,6 +103,7 @@ o.BuyerDelivery,o.OrigBuyerDelivery,o.ID
 ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
 From Orders o
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
+Left join Company OrderCompany on OrderCompany.ID = o.OrderCompanyID
 outer apply(
 	select * 
 	from FtyShipper_Detail fd 
@@ -189,6 +192,11 @@ Where o.LocalOrder = 0
                 sqlCmd.Append(" and isnull(o.GMTComplete, '') NOT IN ( 'C','S') ");
             }
 
+            if (this.orderCompany != "0")
+            {
+                sqlCmd.Append(string.Format(" and o.OrderCompanyID = '{0}'", this.orderCompany));
+            }
+
             sqlCmd.Append($" and o.Category in ({this.category})");
 
             sqlCmd.Append(@" ) 
@@ -240,11 +248,12 @@ Where o.LocalOrder = 0
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(this.factory);
             objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.comboCategory.Text.Replace(this.category + "-", string.Empty));
 
+            // 注意!! Excel新增欄位時, 要將原有的公式往右移動一格
             for (int i = 0; i < this.printData.Rows.Count; i++)
             {
                 // 欄位[I] Balance Qty
-                objSheets.Cells[4 + i, 9] = $"=G{4 + i}-H{4 + i}";
-                objSheets.Cells[4 + i, 30] = $"=I{4 + i}*AC{4 + i}";
+                objSheets.Cells[4 + i, 10] = $"=H{4 + i}-I{4 + i}";
+                objSheets.Cells[4 + i, 31] = $"=J{4 + i}*AD{4 + i}";
             }
 
             #region Save & Show Excel

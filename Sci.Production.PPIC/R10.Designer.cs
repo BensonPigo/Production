@@ -37,11 +37,11 @@
             this.textSPStart = new Sci.Win.UI.TextBox();
             this.textSPEnd = new Sci.Win.UI.TextBox();
             this.labelSign = new Sci.Win.UI.Label();
-            this.txtfactory = new Sci.Production.Class.Txtfactory();
-            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.label1 = new Sci.Win.UI.Label();
             this.dateBoxSewingOutput = new Sci.Win.UI.DateBox();
             this.chkIncludeCancelOrder = new Sci.Win.UI.CheckBox();
+            this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.SuspendLayout();
             // 
             // print
@@ -150,29 +150,6 @@
             this.labelSign.TextStyle.BorderColor = System.Drawing.Color.Black;
             this.labelSign.TextStyle.Color = System.Drawing.Color.Black;
             // 
-            // txtfactory
-            // 
-            this.txtfactory.BackColor = System.Drawing.Color.White;
-            this.txtfactory.BoolFtyGroupList = true;
-            this.txtfactory.FilteMDivision = false;
-            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtfactory.IsProduceFty = false;
-            this.txtfactory.IssupportJunk = false;
-            this.txtfactory.Location = new System.Drawing.Point(144, 99);
-            this.txtfactory.MDivision = null;
-            this.txtfactory.Name = "txtfactory";
-            this.txtfactory.Size = new System.Drawing.Size(66, 23);
-            this.txtfactory.TabIndex = 100;
-            // 
-            // txtMdivision
-            // 
-            this.txtMdivision.BackColor = System.Drawing.Color.White;
-            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(144, 69);
-            this.txtMdivision.Name = "txtMdivision";
-            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
-            this.txtMdivision.TabIndex = 101;
-            // 
             // label1
             // 
             this.label1.BackColor = System.Drawing.Color.Transparent;
@@ -205,16 +182,44 @@
             this.chkIncludeCancelOrder.Text = "Include Cancel order";
             this.chkIncludeCancelOrder.UseVisualStyleBackColor = true;
             // 
+            // txtfactory
+            // 
+            this.txtfactory.BackColor = System.Drawing.Color.White;
+            this.txtfactory.BoolFtyGroupList = true;
+            this.txtfactory.FilteMDivision = true;
+            this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
+            this.txtfactory.IsProduceFty = false;
+            this.txtfactory.IssupportJunk = false;
+            this.txtfactory.Location = new System.Drawing.Point(144, 99);
+            this.txtfactory.MDivision = null;
+            this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
+            this.txtfactory.Size = new System.Drawing.Size(66, 23);
+            this.txtfactory.TabIndex = 162;
+            // 
+            // txtMdivision
+            // 
+            this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
+            this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtMdivision.Location = new System.Drawing.Point(144, 69);
+            this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
+            this.txtMdivision.Size = new System.Drawing.Size(66, 23);
+            this.txtMdivision.TabIndex = 161;
+            // 
             // R10
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(529, 223);
+            this.Controls.Add(this.txtfactory);
+            this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.chkIncludeCancelOrder);
             this.Controls.Add(this.dateBoxSewingOutput);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtMdivision);
-            this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.labelSign);
             this.Controls.Add(this.textSPEnd);
             this.Controls.Add(this.textSPStart);
@@ -239,14 +244,14 @@
             this.Controls.SetChildIndex(this.textSPStart, 0);
             this.Controls.SetChildIndex(this.textSPEnd, 0);
             this.Controls.SetChildIndex(this.labelSign, 0);
-            this.Controls.SetChildIndex(this.txtfactory, 0);
-            this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.print, 0);
             this.Controls.SetChildIndex(this.toexcel, 0);
             this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.dateBoxSewingOutput, 0);
             this.Controls.SetChildIndex(this.chkIncludeCancelOrder, 0);
+            this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.txtfactory, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -263,10 +268,10 @@
         private Win.UI.TextBox textSPStart;
         private Win.UI.TextBox textSPEnd;
         private Win.UI.Label labelSign;
-        private Class.Txtfactory txtfactory;
-        private Class.TxtMdivision txtMdivision;
         private Win.UI.Label label1;
         private Win.UI.DateBox dateBoxSewingOutput;
         private Win.UI.CheckBox chkIncludeCancelOrder;
+        private Class.Txtfactory txtfactory;
+        private Class.TxtMdivision txtMdivision;
     }
 }

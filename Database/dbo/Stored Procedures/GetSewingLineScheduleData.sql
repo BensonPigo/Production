@@ -138,6 +138,7 @@ CREATE TABLE #StyleData (
     [Gender] [varchar](Max) NULL,
     [Construction] [nvarchar](Max) NULL,
     [StyleName] [nvarchar](Max) NULL,
+    [CriticalStyle] [nvarchar](Max) NULL,
 	Index IX_APSNo NonClustered (APSNo)
 );
 insert into #StyleData
@@ -148,7 +149,8 @@ select distinct a.APSNo,
 	sty.[Lining],
 	sty.[Gender],
 	sty.[Construction],
-	sty.[StyleName]
+	sty.[StyleName],
+    sty.[CriticalStyle]
 from @APSListWorkDay a
 Outer apply (
 	SELECT
@@ -159,6 +161,7 @@ Outer apply (
 		, Construction = d1.Name
 		, s.CDCodeNew
 		, s.StyleName
+        , CriticalStyle = iif(s.CriticalStyle = '1','Y','N')
 	FROM Style s WITH(NOLOCK)
 	left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
 	left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
@@ -175,10 +178,11 @@ CREATE TABLE #StyleDatabyAPSNo (
 	[Gender] [varchar](Max) NULL,
 	[Construction] [nvarchar](Max) NULL,
 	[StyleName] [nvarchar](Max) NULL,
+    [CriticalStyle] [nvarchar](Max) NULL,
 	Index IX_APSNo NonClustered (APSNo)
 )
 insert into #StyleDatabyAPSNo
-select a.APSNo,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[StyleName]
+select a.APSNo,[CDCodeNew],[ProductType],[FabricType],[Lining],[Gender],[Construction],[StyleName],[CriticalStyle]
 from(select distinct APSNo from #StyleData)a
 outer apply (SELECT [CDCodeNew] =  Stuff((select distinct concat( '/',[CDCodeNew]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s1
 outer apply (SELECT [ProductType] =  Stuff((select distinct concat( '/',[ProductType]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s2
@@ -187,6 +191,7 @@ outer apply (SELECT [Lining] =  Stuff((select distinct concat( '/',[Lining]) fro
 outer apply (SELECT [Gender] =  Stuff((select distinct concat( '/',[Gender]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s5
 outer apply (SELECT [Construction] =  Stuff((select distinct concat( '/',[Construction]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s6
 outer apply (SELECT [StyleName] =  Stuff((select distinct concat( '/',[StyleName]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s7
+outer apply (SELECT [CriticalStyle] =  Stuff((select distinct concat( '/',[CriticalStyle]) from #StyleData s where APSNo = a.APSNo FOR XML PATH('')),1,1,'') ) s8
 
 CREATE TABLE #APSList(
 	[APSNo] [int] NULL,
@@ -407,6 +412,7 @@ CREATE TABLE #APSColumnGroup (
 	[StyleUkey] bigint null,
     INDEX IX_APSNo NONCLUSTERED (APSNo)
 )
+
 insert into #APSColumnGroup
 select
 APSNo,
@@ -582,6 +588,7 @@ declare @APSMain TABLE(
 	[CDCode] [varchar](max) NULL,
 	[ProductionFamilyID] [nvarchar](max) NULL,
 	[Style] [nvarchar](max) NULL,
+    [CriticalStyle] [nvarchar](max) NULL,
 	[StyleCnt] [bigint] NULL,
 	[OrderQty] [int] NULL,
 	[AlloQty] [int] NULL,
@@ -643,6 +650,7 @@ select
 	[CDCode] = CDCode.val,
 	[ProductionFamilyID] = ProductionFamilyID.val,
 	[Style] = Style.val,
+    [CriticalStyle] = CriticalStyle.val,
 	[StyleCnt] = iif(LEN(Style.val) > 0,(LEN(Style.val) - LEN(REPLACE(Style.val, ',', ''))) / LEN(',') + 1,0),
 	aoo.OrderQty,
 	al.AlloQty,
@@ -714,6 +722,7 @@ outer apply (SELECT val =  Stuff((select distinct concat( ',',Colorway)   from #
 outer apply (SELECT val =  Stuff((select distinct concat( ',',CdCodeID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CDCode
 outer apply (SELECT val =  Stuff((select distinct concat( ',',ProductionFamilyID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ProductionFamilyID
 outer apply (SELECT val =  Stuff((select distinct concat( ',',StyleID)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Style
+outer apply (SELECT val =  Stuff((select distinct concat( ',',CriticalStyle)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as CriticalStyle
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Artwork)   from #APSColumnGroup where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as ArtworkType
 outer apply (select [KPILETA] = MAX(KPILETA),[MTLETA] = MAX(MTLETA),[InspDate] = MAX(InspDate) from #APSColumnGroup where APSNo = al.APSNo) as OrderMax
 outer apply (SELECT val =  Stuff((select distinct concat( ',',Remarks)   from #APSRemarks where APSNo = al.APSNo FOR XML PATH('')),1,1,'') ) as Remarks
@@ -1199,6 +1208,7 @@ declare  @APSResult TABLE(
 	Construction nvarchar(max) null,
 	ProductionFamilyID nvarchar(max) null,
 	Style nvarchar(max) null,
+    CriticalStyle nvarchar(max) null,
 	StyleCount bigint null,
 	OrderQty int null,
 	AlloQty int null,
@@ -1242,7 +1252,8 @@ declare  @APSResult TABLE(
 	StyleSeason NVARCHAR(MAX),
 	StyleUkey NVARCHAR(500),
 	[AddDate] [date] NULL,
-	[EditDate] [date] NULL
+	[EditDate] [date] NULL,
+	[InlineCategoryCumulate] int
 )
 
 --計算這一天的標準產量
@@ -1281,6 +1292,7 @@ insert into @APSResult(
 	Construction,
 	ProductionFamilyID,
 	Style,
+    CriticalStyle,
 	StyleCount,
 	OrderQty,
 	AlloQty,
@@ -1357,6 +1369,7 @@ select
 	[Construction] = apm.Construction,
 	[ProductionFamilyID]=apm.ProductionFamilyID,
 	[Style]=apm.Style,
+    [CriticalStyle]=apm.CriticalStyle,
 	[StyleCount]=apm.StyleCnt,
 	[OrderQty]=apm.OrderQty,
 	[AlloQty]=apm.AlloQty,
@@ -2221,6 +2234,7 @@ select distinct
 	apm.Construction,
 	apm.ProductionFamilyID,
 	apm.Style,
+    apm.CriticalStyle,
 	apm.StyleCount,
 	apm.OrderQty,
 	apm.AlloQty,
@@ -2272,11 +2286,33 @@ select distinct
 	apm.AddDate,
 	apm.EditDate,
     factory.LastDownloadAPSDate,
-	[SewingInlineCategory] = ''
+	[SewingInlineCategory] = iif(InlineCategory.val = '00005',
+								 cast('' as varchar(50)),
+								 (select CONCAT(InlineCategory.val, '-' + SR.Description) from SewingReason sr where sr.ID = InlineCategory.val and sr.Type='IC'))
 from @APSResult apm
 left join #tmpGantt tg on tg.FactoryID = apm.FactoryID and tg.SewingLineID = apm.SewingLineID and cast(apm.SewingDay as date) between tg.InLine and tg.OffLine
 left join #tmpProduceDays pd on pd.StyleUkey = apm.StyleUkey and pd.FactoryID = apm.FactoryID and pd.SewingDay = apm.SewingDay and pd.SewingLineID = apm.SewingLineID and pd.Category = apm.Category
 outer apply (select fac.LastDownloadAPSDate from factory fac where fac.id = (select f.KPICode from factory f where f.id = apm.FactoryID)) factory
+outer apply ( 
+			 select top 1 val = sod .InlineCategoryCumulate 
+			 from dbo.SewingOutput so 
+			 inner join dbo.SewingOutput_Detail sod on so.ID = sod.ID
+			 inner join dbo.Orders o on sod.OrderID = o.ID and o.StyleID in (Select Data From dbo.SplitString(apm.Style,','))
+			 where apm.SewingDay = so.OutputDate and apm.SewingLineID= so.SewingLineID and apm.FactoryID=so.FactoryID
+) as InlineCategoryCumulate
+outer apply ( 
+			 select case when apm.Category = 'S' then '00005'
+							when apm.StyleCount > 1 then '00001' 
+							else
+							case
+							when InlineCategoryCumulate.val > 29 THEN '00004'
+							when InlineCategoryCumulate.val > 14 THEN '00003'
+							when InlineCategoryCumulate.val > 3 THEN '00002'
+							else '00001'
+							END
+						end as val
+) as InlineCategory
+
 order by apm.APSNo,apm.SewingStartTime
 
 --PPIC.R01用

@@ -36,20 +36,19 @@ namespace Sci.Production.PPIC
         {
             this.InitializeComponent();
 
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
+
             MyUtility.Tool.SetupCombox(this.comboReportType, 1, 1, "Fabric,Accessory");
-            DataTable mDivision, factory;
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FtyGroup from Factory WITH (NOLOCK) ", out factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
             MyUtility.Tool.SetupCombox(this.comboLeadtime, 2, 1, "7200,2hrs,10800,3hrs,14400,4hrs");
             this.comboReportType.SelectedIndex = 0;
             this.comboLeadtime.SelectedIndex = 1;
-            this.comboM.Text = Env.User.Keyword;
-            this.comboFactory.Text = Env.User.Factory;
 
             this.dateApvDate.Value1 = DateTime.Today.AddDays(-1);
             this.dateApvDate.Value2 = DateTime.Today.AddDays(-1);
+            this.comboM.Text = Env.User.Keyword;
+            this.comboFactory.Text = Env.User.Factory;
         }
 
         /// <inheritdoc/>
@@ -238,7 +237,7 @@ order by MDivisionID,FactoryID",
             // 填各工廠的明細資料
             string xlsFactory = string.Empty;
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 19];
+            object[,] objArray = new object[1, 20];
             foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
@@ -281,8 +280,9 @@ order by MDivisionID,FactoryID",
                 objArray[0, 16] = dr["Description"];
                 objArray[0, 17] = dr["OnTime"];
                 objArray[0, 18] = dr["Remark"];
+                objArray[0, 19] = dr["DetailRemark"];
 
-                worksheet.Range[string.Format("A{0}:S{0}", intRowsStart)].Value2 = objArray;
+                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 

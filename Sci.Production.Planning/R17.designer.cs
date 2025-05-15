@@ -161,7 +161,7 @@
             // 
             this.txtFactory.BackColor = System.Drawing.Color.White;
             this.txtFactory.BoolFtyGroupList = true;
-            this.txtFactory.FilteMDivision = false;
+            this.txtFactory.FilteMDivision = true;
             this.txtFactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtFactory.IsProduceFty = false;
             this.txtFactory.IssupportJunk = true;

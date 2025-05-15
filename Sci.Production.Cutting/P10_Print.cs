@@ -682,25 +682,26 @@ order by x.[Bundle]");
                 for (int i = 0; i < page; i++)
                 {
                     string no = allNoDatas == null ? string.Empty : GetNo(data[i].Barcode, allNoDatas);
-                    string contian = $@"Grp: {data[i].Group_right}  Tone: {data[i].Tone}  Line#: {data[i].Line}  {data[i].Group_left}
-SP#:{data[i].SP}
+                    string contian = $@"Grp: {data[i].Group_right}  Tone: {data[i].Tone}  Line#: {data[i].Line}
+{data[i].Group_left}    SP#:{data[i].SP}
 Style#: {data[i].Style} Cell: {data[i].CutCell}
 Cut#: {data[i].Body_Cut}
 Color: {data[i].Color}
-Size: {data[i].Size}     Part: {data[i].Parts}     Dyelot: {data[i].Dyelot}
-Sea: {data[i].Season}     Brand: {data[i].ShipCode}
-MK#: {data[i].MarkerNo}    Cut/L:
+Size: {data[i].Size}     Part: {data[i].Parts}
+Dyelot: {data[i].Dyelot}
 Sub Process: {data[i].Artwork}
-Desc: {data[i].Desc}
+MK#: {data[i].MarkerNo}    Cut/L:
+Sea: {data[i].Season}     Brand: {data[i].ShipCode}";
+
+                    string containBottom = $@"Desc: {data[i].Desc}
 Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
 
                     Word.Table tables = table[i + 1];
                     tables.Cell(1, 1).Range.Text = contian;
+                    tables.Cell(4, 1).Range.Text = containBottom;
 
                     // 部分粗體
                     Word.Range cellRange = tables.Cell(1, 1).Range;
-                    cellRange.Text = contian;
-
                     Word.Range boldRange = cellRange.Duplicate;
                     boldRange.SetRange(cellRange.Start, cellRange.Start + 8);
                     boldRange.Font.Bold = 1;
@@ -714,7 +715,7 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                     }
 
                     tables.Cell(1, 2).Range.Text = data[i].NoBundleCardAfterSubprocess1;
-                    tables.Cell(3, 2).Range.Text = "*" + data[i].Barcode + "*";
+                    tables.Cell(2, 2).Range.Text = data[i].BundleNo;
 
                     // 生成 QR Code 並插入圖片
                     BarcodeWriter writer = new BarcodeWriter
@@ -734,7 +735,7 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
                     Bitmap newQRCode = writer.Write(data[i].BundleNo.ToString().Trim());
                     string tempPath = Path.GetTempFileName();
                     newQRCode.Save(tempPath, System.Drawing.Imaging.ImageFormat.Png);
-                    Word.InlineShape qrCodeImg = tables.Cell(2, 2).Range.InlineShapes.AddPicture(tempPath);
+                    Word.InlineShape qrCodeImg = tables.Cell(3, 2).Range.InlineShapes.AddPicture(tempPath);
                     qrCodeImg.Width = 90;
                     qrCodeImg.Height = 90;
                 }

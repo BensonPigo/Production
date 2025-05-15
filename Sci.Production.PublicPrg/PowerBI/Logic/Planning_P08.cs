@@ -351,13 +351,13 @@ WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule WHERE OrderID = bdo.OrderID)
 
 --每日的累計標準數
 SELECT *
-    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum
 FROM #tmpSumDailyStdQty
 
 --準備前一個工作天的累計標準數, 第一天的前一天標準數 = 0
 SELECT *
-    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum_BeforeWorkDate
 FROM #tmpSumDailyStdQty_AccSum
 
@@ -400,6 +400,18 @@ SELECT
         CASE WHEN prt.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
              WHEN prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
              ELSE prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[PADPRTQty] =
+        CASE WHEN padprt.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN padprt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE padprt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[EMBQty] =
+        CASE WHEN emb.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN emb.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE emb.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[FIQty] =
+        CASE WHEN fi.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN fi.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE fi.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
 into #tmpSetQtyBySubprocess_Final
 FROM #tmpSumDailyStdQty_AccSum_BeforeWorkDate t
 LEFT JOIN #tmp_SetQtyBySubprocess sorting ON t.OrderID = sorting.OrderID AND sorting.SubprocessID = 'Sorting'
@@ -410,6 +422,9 @@ LEFT JOIN #tmp_SetQtyBySubprocess ht ON t.OrderID = ht.OrderID AND ht.Subprocess
 LEFT JOIN #tmp_SetQtyBySubprocess bo ON t.OrderID = bo.OrderID AND bo.SubprocessID = 'BO'
 LEFT JOIN #tmp_SetQtyBySubprocess fm ON t.OrderID = fm.OrderID AND fm.SubprocessID = 'FM'
 LEFT JOIN #tmp_SetQtyBySubprocess prt ON t.OrderID = prt.OrderID AND prt.SubprocessID = 'PRT'
+LEFT JOIN #tmp_SetQtyBySubprocess padprt ON t.OrderID = padprt.OrderID AND padprt.SubprocessID = 'PAD-PRT'
+LEFT JOIN #tmp_SetQtyBySubprocess emb ON t.OrderID = emb.OrderID AND emb.SubprocessID = 'EMB'
+LEFT JOIN #tmp_SetQtyBySubprocess fi ON t.OrderID = fi.OrderID AND fi.SubprocessID = 'FI'
 
 
 
@@ -447,6 +462,15 @@ SELECT ss.SewingLineID
 	,[PRTOutput] = ISNULL(sub.PRTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'PRT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.PRTRemark
 	,sdo.PRTExclusion
+	,[PADPRTOutput] = ISNULL(sub.PADPRTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'PAD-PRT' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.PADPRTRemark
+	,sdo.PADPRTExclusion
+	,[EMBOutput] = ISNULL(sub.EMBQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'EMB' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.EMBRemark
+	,sdo.EMBExclusion
+	,[FIOutput] = ISNULL(sub.FIQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'FI' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.FIRemark
+	,sdo.FIExclusion
     {sqlBIFinalColumn}
 FROM #tmpPkeyColumns ss
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = ss.OrderID

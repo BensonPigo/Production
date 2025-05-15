@@ -119,8 +119,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 	,Fabric2LabTime --Fabric to Lab
 	,Fabric2LabBy = isnull(Fabric2LabBy, '') --Fabric to Lab
 	,Checker = isnull(Checker, '') --Checker
-	,AddDate
-	,EditDate
+	,rd.AddDate
+	,rd.EditDate
 	,rdStockType = isnull(rdStockType, '')
 ";
 				if (model.AddEditDateStart.HasValue)
@@ -233,11 +233,12 @@ select  ReceivingID
 		,ArriveDate
 		,PoId
 		,Seq
-		,BrandID
+		,#tmpResult.BrandID
 		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
+		,ColorName = c.Name
 		,Roll
 		,Dyelot
 		,StockQty
@@ -246,6 +247,7 @@ select  ReceivingID
 		,Weight
 		,ActualWeight
 from #tmpResult
+left join Color c on c.ID = #tmpResult.Color and c.BrandID = #tmpResult.BrandID
 where 1 = 1 {whereReceivingAct}
 
 select  ReceivingID
@@ -253,11 +255,12 @@ select  ReceivingID
 		,ArriveDate
 		,PoId
 		,Seq
-		,BrandID
+		,#tmpResult.BrandID
 		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
+		,ColorName = c.Name
 		,Roll
 		,Dyelot
 		,StockQty
@@ -267,6 +270,7 @@ select  ReceivingID
 		,CutShadebandTime
 		,CutBy
 from #tmpResult
+left join Color c on c.ID = #tmpResult.Color and c.BrandID = #tmpResult.BrandID
 where 1 = 1 {whereCutShadeband}
 
 select  ReceivingID
@@ -274,11 +278,12 @@ select  ReceivingID
 		,ArriveDate
 		,PoId
 		,Seq
-		,BrandID
+		,#tmpResult.BrandID
 		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
+		,ColorName = c.Name
 		,Roll
 		,Dyelot
 		,StockQty
@@ -288,6 +293,7 @@ select  ReceivingID
 		,Fabric2LabTime
 		,Fabric2LabBy
 from #tmpResult
+left join Color c on c.ID = #tmpResult.Color and c.BrandID = #tmpResult.BrandID
 where 1 = 1 {whereFabricLab}
 
 select  ReceivingID
@@ -295,11 +301,12 @@ select  ReceivingID
 		,ArriveDate
 		,PoId
 		,Seq
-		,BrandID
+		,#tmpResult.BrandID
 		,StyleID
 		,refno
 		,WeaveTypeID
 		,Color
+		,ColorName = c.Name
 		,Roll
 		,Dyelot
 		,StockQty
@@ -308,6 +315,7 @@ select  ReceivingID
 		,Weight
 		,Checker
 from #tmpResult
+left join Color c on c.ID = #tmpResult.Color and c.BrandID = #tmpResult.BrandID
 where 1 = 1 {whereChecker}
 
 drop table #tmpResult
@@ -464,11 +472,12 @@ select  ReceivingID = isnull(ReceivingID, '')
 		,ArriveDate
 		,PoId = isnull(PoId, '')
 		,Seq = isnull(Seq, '')
-		,BrandID = isnull(BrandID, '')
+		,BrandID = isnull(rd.BrandID, '')
 		,StyleID = isnull(StyleID, '')
 		,refno = isnull(refno, '')
 		,WeaveTypeID = isnull(WeaveTypeID, '')
 		,Color = isnull(Color, '')
+		,ColorName = isnull(c.Name, '')
 		,Roll = isnull(Roll, '')
 		,Dyelot = isnull(Dyelot, '')
 		,StockQty = isnull(StockQty, 0)
@@ -490,6 +499,7 @@ select  ReceivingID = isnull(ReceivingID, '')
         ,Remark = isnull(Remark, '')
 		{colPowerBI}
 from #tmpMind rd
+left join Color c with (nolock) on rd.Color = c.ID and c.BrandID = rd.BrandID
 OUTER APPLY(
     select top 1 LastP26RemarkData =  isnull(lt.Remark,'')
 	FROM LocationTrans lt with (nolock)

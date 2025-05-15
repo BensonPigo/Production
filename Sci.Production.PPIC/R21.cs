@@ -57,6 +57,7 @@ namespace Sci.Production.PPIC
             MyUtility.Tool.SetupCombox(this.comboProcess, 1, 1, this.listProcess.JoinToString(","));
             this.dateTimeProcessFrom.Text = DateTime.Now.ToString("yyyy/MM/dd 08:00");
             this.dateTimeProcessTo.Text = DateTime.Now.ToString("yyyy/MM/dd 12:00");
+            this.txtMdivision.Enabled = false;
         }
 
         /// <inheritdoc/>
@@ -97,6 +98,8 @@ namespace Sci.Production.PPIC
             }
 
             this.dtPrintData = resultReport.Dt;
+            this.dtPrintData.Columns.Remove("BIFactoryID");
+            this.dtPrintData.Columns.Remove("BIInsertDate");
             return resultReport.Result;
         }
 

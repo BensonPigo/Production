@@ -47,17 +47,17 @@
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(432, 137);
+            this.print.Location = new System.Drawing.Point(448, 137);
             this.print.Visible = false;
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(432, 17);
+            this.toexcel.Location = new System.Drawing.Point(448, 17);
             this.toexcel.TabIndex = 7;
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(432, 53);
+            this.close.Location = new System.Drawing.Point(448, 53);
             this.close.TabIndex = 8;
             // 
             // labIssueDate
@@ -165,12 +165,14 @@
             this.txtBrand.BackColor = System.Drawing.Color.White;
             this.txtBrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtBrand.Location = new System.Drawing.Point(131, 78);
+            this.txtBrand.MyDocumentdName = null;
             this.txtBrand.Name = "txtBrand";
             this.txtBrand.Size = new System.Drawing.Size(130, 23);
             this.txtBrand.TabIndex = 3;
             // 
             // comboDropDownList
             // 
+            this.comboDropDownList.AddAllItem = false;
             this.comboDropDownList.BackColor = System.Drawing.Color.White;
             this.comboDropDownList.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboDropDownList.FormattingEnabled = true;
@@ -202,15 +204,17 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = true;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtMdivision.Location = new System.Drawing.Point(131, 134);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(130, 23);
             this.txtMdivision.TabIndex = 5;
             // 
             // R14
             // 
-            this.ClientSize = new System.Drawing.Size(524, 222);
+            this.ClientSize = new System.Drawing.Size(538, 222);
             this.Controls.Add(this.txtMdivision);
             this.Controls.Add(this.labM);
             this.Controls.Add(this.label1);
@@ -226,10 +230,8 @@
             this.Controls.Add(this.dateIssueDate);
             this.Controls.Add(this.labIssueDate);
             this.Name = "R14";
+            this.OnLineHelpID = "Sci.Win.Tems.PrintForm";
             this.Text = "R14. Avoid Verbal Orders Report";
-            this.Controls.SetChildIndex(this.print, 0);
-            this.Controls.SetChildIndex(this.toexcel, 0);
-            this.Controls.SetChildIndex(this.close, 0);
             this.Controls.SetChildIndex(this.labIssueDate, 0);
             this.Controls.SetChildIndex(this.dateIssueDate, 0);
             this.Controls.SetChildIndex(this.dateBuyerDelivery, 0);
@@ -244,6 +246,12 @@
             this.Controls.SetChildIndex(this.label1, 0);
             this.Controls.SetChildIndex(this.labM, 0);
             this.Controls.SetChildIndex(this.txtMdivision, 0);
+            this.Controls.SetChildIndex(this.buttonCustomized, 0);
+            this.Controls.SetChildIndex(this.checkUseCustomized, 0);
+            this.Controls.SetChildIndex(this.txtVersion, 0);
+            this.Controls.SetChildIndex(this.print, 0);
+            this.Controls.SetChildIndex(this.toexcel, 0);
+            this.Controls.SetChildIndex(this.close, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 

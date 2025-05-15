@@ -397,6 +397,7 @@ namespace Sci.Production.IE
         {
             if (!this.IsP05)
             {
+                // 非P05不處理這功能
                 return;
             }
 
@@ -409,43 +410,22 @@ namespace Sci.Production.IE
                 caculateRow["UpdSewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["UpdDivSewer"]) / MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * 100, 0);
             }
 
-            // 如果有同TimeStudyDetailUkey剩餘一筆未維護，自動計算填入
+            // 如果有同TimeStudyDetailUkey(同工段)的資料剛好兩筆，會進行UpdDivSewer跟UpdSewerDiffPercentage的互補維護
             var sameTimeStudyDetailUkeyData = this.dtAutomatedLineMapping_DetailCopy.AsEnumerable()
                           .Where(s => MyUtility.Convert.GetLong(s["TimeStudyDetailUkey"]) == MyUtility.Convert.GetLong(caculateRow["TimeStudyDetailUkey"]));
-
-            var stillNotUpdDivSewer = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Check.Empty(s["UpdDivSewer"]));
-
-            DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
-            var noUpdSewerDiffPercentage = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Convert.GetString(s["UpdSewerDiffPercentage"]) != MyUtility.Convert.GetString(selectedRow["UpdSewerDiffPercentage"]));
-
-            if (sameTimeStudyDetailUkeyData.Count() == 2)
+            if (sameTimeStudyDetailUkeyData.Count() == 2) // 判斷是否兩筆
             {
-                if (stillNotUpdDivSewer.Count() == 1)
-                {
-                    DataRow targetFixRow = stillNotUpdDivSewer.First();
-                    decimal accuUpdDivSewer = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdDivSewer"]));
-                    decimal accuUpdDivSewerPercentage = sameTimeStudyDetailUkeyData.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"]));
-                    decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
-                    if (this.IsP05)
-                    {
-                        targetFixRow["UpdDivSewer"] = oriSewer < accuUpdDivSewer ? 0 : oriSewer - accuUpdDivSewer;
-                    }
-                    else
-                    {
-                        targetFixRow["UpdDivSewer"] = 0;
-                    }
+                // 取得當前選擇的列
+                DataRow selectedRow = this.gridEditOperation.GetDataRow(this.gridEditOperation.SelectedRows[0].Index);
 
-                    targetFixRow["UpdSewerDiffPercentage"] = accuUpdDivSewerPercentage >= 100 ? 0 : 100 - accuUpdDivSewerPercentage;
-                }
-                else
-                {
-                    DataRow targetFixRow = noUpdSewerDiffPercentage.First();
-                    decimal accuUpdDivSewer = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * MyUtility.Convert.GetDecimal(caculateRow["UpdSewerDiffPercentage"]) / 100, 4);
-                    decimal accuUpdDivSewerPercentage = MyUtility.Convert.GetInt(selectedRow["UpdSewerDiffPercentage"]);
-                    decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
-                    targetFixRow["UpdDivSewer"] = this.IsP05 ? oriSewer - accuUpdDivSewer : 0;
-                    targetFixRow["UpdSewerDiffPercentage"] = 100 - accuUpdDivSewerPercentage;
-                }
+                // 取得跟當前選擇列不同No(不同號碼、不同站台)的列
+                var anotherRow = sameTimeStudyDetailUkeyData.Where(s => MyUtility.Convert.GetString(s["No"]) != MyUtility.Convert.GetString(selectedRow["No"]));
+                DataRow targetFixRow = anotherRow.First();
+                decimal accuUpdDivSewer = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(caculateRow["OriSewer"]) * MyUtility.Convert.GetDecimal(caculateRow["UpdSewerDiffPercentage"]) / 100, 4);
+                decimal accuUpdDivSewerPercentage = MyUtility.Convert.GetInt(selectedRow["UpdSewerDiffPercentage"]);
+                decimal oriSewer = MyUtility.Convert.GetDecimal(targetFixRow["OriSewer"]);
+                targetFixRow["UpdDivSewer"] = oriSewer - accuUpdDivSewer;
+                targetFixRow["UpdSewerDiffPercentage"] = 100 - accuUpdDivSewerPercentage;
             }
         }
 
@@ -603,18 +583,19 @@ namespace Sci.Production.IE
             }
             else
             {
+                // 討論IE P06使用OperationId來區別。
                 checkDivSewerBalance = needKeepRows
-                .GroupBy(s => new { TimeStudyDetailUkey = s["TimeStudyDetailUkey"], GroupNo = s["GroupNo"] })
+                .GroupBy(s => new { OperationId = s["OperationId"], TimeStudyDetailUkey = s["TimeStudyDetailUkey"], GroupNo = s["GroupNo"] })
                 .Select(groupItem => new
                 {
-                    TimeStudyDetailUkey = groupItem.First()["TimeStudyDetailUkey"].ToString(),
-                    OperationId = groupItem.First()["OperationId"].ToString(),
+                    TimeStudyDetailUkey = groupItem.Key.TimeStudyDetailUkey.ToString(),
+                    OperationId = groupItem.Key.OperationId.ToString(),
                     OperationDesc = groupItem.First()["OperationDesc"].ToString(),
                     SumSewerDiffPercentage = groupItem.Sum(s => this.GetDecimalValue(s["UpdSewerDiffPercentage"], s["SewerDiffPercentageDesc"])),
                     SumSewerDiff = groupItem.Sum(s => MyUtility.Convert.GetDecimal(s["UpdSewerDiffPercentage"])),
                     TimeStudyDetailUkeyCnt = groupItem.Count(),
                     DetailRows = groupItem,
-                    GroupNo = groupItem.First()["GroupNo"].ToString(),
+                    GroupNo = groupItem.Key.GroupNo.ToString(),
                 });
             }
 
@@ -699,7 +680,10 @@ namespace Sci.Production.IE
                 {
                     foreach (var groupItem in checkDivSewerBalance)
                     {
-                        if (groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() && groupItem.GroupNo == needUpdRow["GroupNo"].ToString() && groupItem.SumSewerDiff == 100)
+                        if (groupItem.OperationId == needUpdRow["OperationId"].ToString() &&
+                            groupItem.TimeStudyDetailUkey == needUpdRow["TimeStudyDetailUkey"].ToString() &&
+                            groupItem.GroupNo == needUpdRow["GroupNo"].ToString() &&
+                            groupItem.SumSewerDiff == 100)
                         {
                             needUpdRow["SewerDiffPercentageDesc"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);
                             needUpdRow["SewerDiffPercentage"] = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(needUpdRow["UpdSewerDiffPercentage"]) / 100, 2);

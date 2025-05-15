@@ -107,7 +107,6 @@
             this.brnOperatorSummary = new Sci.Win.UI.Button();
             this.numEstLBR = new Sci.Win.UI.NumericBox();
             this.label29 = new Sci.Win.UI.Label();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.btnPrintDetail = new Sci.Win.UI.Button();
             this.label30 = new Sci.Win.UI.Label();
             this.txtReason = new Sci.Win.UI.TextBox();
@@ -116,6 +115,7 @@
             this.txtSewingTeam = new Sci.Production.Class.TxtSewingTeam();
             this.txtSewingline = new Sci.Production.Class.Txtsewingline();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
+            this.checkJukiIoTDataExchange = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -151,6 +151,7 @@
             // masterpanel
             // 
             this.masterpanel.AutoScroll = true;
+            this.masterpanel.Controls.Add(this.checkJukiIoTDataExchange);
             this.masterpanel.Controls.Add(this.btnPrintDetail);
             this.masterpanel.Controls.Add(this.numericBox1);
             this.masterpanel.Controls.Add(this.brnOperatorSummary);
@@ -299,6 +300,7 @@
             this.masterpanel.Controls.SetChildIndex(this.brnOperatorSummary, 0);
             this.masterpanel.Controls.SetChildIndex(this.numericBox1, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkJukiIoTDataExchange, 0);
             // 
             // detailpanel
             // 
@@ -308,7 +310,7 @@
             // gridicon
             // 
             this.gridicon.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.gridicon.Location = new System.Drawing.Point(1418, 234);
+            this.gridicon.Location = new System.Drawing.Point(1457, 251);
             this.gridicon.Text = "1";
             // 
             // detailgridcont
@@ -610,6 +612,7 @@
             // 
             this.numericLBRByGSDTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericLBRByGSDTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LBRByGSDTime", true));
+            this.numericLBRByGSDTime.DecimalPlaces = 2;
             this.numericLBRByGSDTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericLBRByGSDTime.IsSupportEditMode = false;
             this.numericLBRByGSDTime.Location = new System.Drawing.Point(383, 96);
@@ -1219,6 +1222,7 @@
             // 
             this.numericLBRByCycleTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.numericLBRByCycleTime.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "LBRByCycleTime", true));
+            this.numericLBRByCycleTime.DecimalPlaces = 2;
             this.numericLBRByCycleTime.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.numericLBRByCycleTime.IsSupportEditMode = false;
             this.numericLBRByCycleTime.Location = new System.Drawing.Point(621, 96);
@@ -1368,15 +1372,6 @@
             this.label29.TabIndex = 249;
             this.label29.Text = "Est. LBR";
             // 
-            // shapeContainer1
-            // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(1153, 206);
-            this.shapeContainer1.TabIndex = 27;
-            this.shapeContainer1.TabStop = false;
-            // 
             // btnPrintDetail
             // 
             this.btnPrintDetail.EditMode = Sci.Win.UI.AdvEditModes.DisableOnEdit;
@@ -1477,8 +1472,21 @@
             this.txtfactory.Location = new System.Drawing.Point(95, 38);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(49, 23);
             this.txtfactory.TabIndex = 32;
+            // 
+            // checkJukiIoTDataExchange
+            // 
+            this.checkJukiIoTDataExchange.AutoSize = true;
+            this.checkJukiIoTDataExchange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "JukiIoTDataExchange", true));
+            this.checkJukiIoTDataExchange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJukiIoTDataExchange.Location = new System.Drawing.Point(474, 185);
+            this.checkJukiIoTDataExchange.Name = "checkJukiIoTDataExchange";
+            this.checkJukiIoTDataExchange.Size = new System.Drawing.Size(47, 21);
+            this.checkJukiIoTDataExchange.TabIndex = 255;
+            this.checkJukiIoTDataExchange.Text = "IoT";
+            this.checkJukiIoTDataExchange.UseVisualStyleBackColor = true;
             // 
             // P06
             // 
@@ -1624,5 +1632,6 @@
         private Win.UI.ListControlBindingSource listControlBindingSource;
         private Win.UI.NumericBox numericBox1;
         private Win.UI.Label label31;
+        private Win.UI.CheckBox checkJukiIoTDataExchange;
     }
 }

@@ -383,14 +383,14 @@ drop table #tmp1,#tmp2a,#tmp2,#tmp3,#detail,#tmpCutRefNull,#tmpWorkOrderID
 	if exists (select 1 from BITableInfo b where b.id = 'P_ActualCutOutputReport')
 	begin
 		update b
-			set b.TransferDate = getdate()
+			set b.TransferDate = getdate(), IS_Trans = 1
 		from BITableInfo b
 		where b.id = 'P_ActualCutOutputReport'
 	end
 	else 
 	begin
-		insert into BITableInfo(Id, TransferDate)
-		values('P_ActualCutOutputReport', getdate())
+		insert into BITableInfo(Id, TransferDate, IS_Trans)
+		values('P_ActualCutOutputReport', getdate(), 1)
 	end
 
 END

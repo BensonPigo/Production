@@ -36,10 +36,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.Dt;
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(detailTable, sDate.Value);

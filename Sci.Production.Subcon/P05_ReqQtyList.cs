@@ -78,7 +78,8 @@ and ad.ArtworkReqID=''
                  sql = @"select 	ID, 
 		                    Name, 
 		                    Ext= ExtNo, 
-		                    Mail = email
+		                    Mail = email,
+                            Supervisor = dbo.getPass1 (Supervisor)
                     from Pass1 WITH (NOLOCK) 
                     where id = @id";
                  sqlpar.Add(new SqlParameter("@id", dr["Handle"]));

@@ -60,8 +60,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-
-                finalResult.Result = new Ict.DualResult(true);
             }
             catch (Exception ex)
             {
@@ -112,7 +110,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 alter table #tmp alter column Refno              varchar (36)
                 alter table #tmp alter column SCIRefno           varchar (30)
                 alter table #tmp alter column Description        nvarchar (150)
-                alter table #tmp alter column ColorID            varchar (50)
+                alter table #tmp alter column ColorID            varchar (100)
                 alter table #tmp alter column ColorName          nvarchar (150)
                 alter table #tmp alter column Size               varchar (50)
                 alter table #tmp alter column StockUnit          varchar (8)
@@ -249,20 +247,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ,[AddDate]
                 ,[EditDate]
                 from #tmp s
-
-                IF EXISTS (SELECT 1 FROM BITableInfo B WHERE B.ID = 'P_InventoryStockListReport')
-                BEGIN
-                    UPDATE B
-                    SET b.TransferDate = getdate()
-                    FROM BITableInfo B
-                    WHERE B.ID = 'P_InventoryStockListReport'
-                END
-                ELSE 
-                BEGIN
-                    INSERT INTO BITableInfo(Id, TransferDate)
-                    VALUES('P_InventoryStockListReport', GETDATE())
-                END
                 ";
+                sql += new Base().SqlBITableInfo("P_InventoryStockListReport", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

@@ -30,6 +30,9 @@ namespace Sci.Production.Subcon
         {
             string subConOutFty = (e.Master == null) ? string.Empty : e.Master["SubConOutFty"].ToString();
             string contractNumber = (e.Master == null) ? string.Empty : e.Master["ContractNumber"].ToString();
+            string order_TmsCost = e.Master != null && e.Master["Status"].Equals("Confirmed") ? "SubconOutContract_Detail_TmsCost" : "Order_TmsCost";
+            string order_TmsCost_where = e.Master != null && e.Master["Status"].Equals("Confirmed") ? "OrderID = sd.OrderID and SubConOutFty = sd.SubConOutFty and ContractNumber = sd.ContractNumber" : "ID = sd.OrderID";
+
             string cmd = $@"
 select 
     sd.SubConOutFty,
@@ -84,8 +87,8 @@ OUTER apply (
     [OtherPrice]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)),
     [EMBPrice] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)),
     [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0))
-    from Order_TmsCost with (nolock)
-    where ID = sd.OrderID
+    from {order_TmsCost} with (nolock)
+    where {order_TmsCost_where}
 ) as tms
 outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,sd.ComboType)
 ,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = sd.ComboType))/100)r
@@ -349,6 +352,40 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             {
                 this.ShowErr(result);
             }
+
+            #region SubconOutContract_Detail_TmsCost
+
+            if (this.DetailDatas.Count > 0)
+            {
+                string orderIDs = this.DetailDatas.Select(r => "'" + r["OrderID"].ToString() + "'").Distinct().JoinToString(",");
+                string sqlOrder_TmsCost = $"select ID,ArtworkTypeID,TMS,Price from Order_TmsCost with (nolock) where ID in ({orderIDs})";
+
+                DataTable dtOrder_TmsCost;
+                var resultOrder_TmsCost = DBProxy.Current.Select(null, sqlOrder_TmsCost, out dtOrder_TmsCost);
+                if (!resultOrder_TmsCost)
+                {
+                    this.ShowErr(resultOrder_TmsCost);
+                }
+
+                string sqlInsert = string.Empty;
+                foreach (var orderId in this.DetailDatas.Select(r => r["OrderId"].ToString()).Distinct())
+                {
+                    foreach (var rowOrder in dtOrder_TmsCost.AsEnumerable().Where(r => r["ID"].ToString() == orderId))
+                    {
+                        sqlInsert += $@"
+INSERT INTO [dbo].[SubconOutContract_Detail_TmsCost]([SubConOutFty],[ContractNumber],[OrderId],[ArtworkTypeID],[TMS],[Price])
+VALUES('{this.CurrentMaintain["SubConOutFty"]}','{this.CurrentMaintain["ContractNumber"]}','{orderId}','{rowOrder["ArtworkTypeID"]}',{rowOrder["TMS"]},{rowOrder["Price"]})" + Environment.NewLine;
+                    }
+                }
+
+                var resuiltInert = DBProxy.Current.Execute(null, sqlInsert);
+                if (!resuiltInert)
+                {
+                    this.ShowErr(resuiltInert);
+                }
+            }
+
+            #endregion SubconOutContract_Detail_TmsCost
         }
 
         /// <inheritdoc/>
@@ -375,6 +412,26 @@ where   Order_Qty.Qty < TotalOutputQty.OutputQty + sd.OutputQty
             {
                 this.ShowErr(result);
             }
+
+            #region SubconOutContract_Detail_TmsCost
+
+            DataTable dtgrid = (DataTable)this.detailgridbs.DataSource;
+            if (dtgrid.Rows.Count > 0)
+            {
+                string sqlDelete = string.Empty;
+                foreach (var row in this.DetailDatas)
+                {
+                    sqlDelete += $@"Delete from [dbo].[SubconOutContract_Detail_TmsCost] where SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = '{this.CurrentMaintain["ContractNumber"]}'";
+                }
+
+                var resuiltDelete = DBProxy.Current.Execute(null, sqlDelete);
+                if (!resuiltDelete)
+                {
+                    this.ShowErr(resuiltDelete);
+                }
+            }
+
+            #endregion SubconOutContract_Detail_TmsCost
         }
 
         /// <inheritdoc/>
@@ -849,6 +906,9 @@ where   o.MDivisionID = '{this.CurrentMaintain["MDivisionID"]}'
 
         private DualResult GetTmsData(string orderID, string comboType)
         {
+            string order_TmsCost = this.CurrentMaintain["Status"].Equals("Confirmed") ? "SubconOutContract_Detail_TmsCost" : "Order_TmsCost";
+            string order_TmsCost_where = this.CurrentMaintain["Status"].Equals("Confirmed") ? $"OrderID = o.ID and SubConOutFty = '{this.CurrentMaintain["SubConOutFty"]}' and ContractNumber = {this.CurrentMaintain["sd.ContractNumber"]}" : "ID = o.ID";
+
             DualResult result = new DualResult(true);
             DataRow resultDr;
             string chkQrderSql = $@"
@@ -873,8 +933,8 @@ outer apply (
     [OtherPrice]= sum(iif(ArtworkTypeID in ('PRINTING','EMBROIDERY'),0,Price)),
     [EMBPrice] = sum(iif(ArtworkTypeID = 'EMBROIDERY',Price,0)),
     [PrintingPrice] = sum(iif(ArtworkTypeID = 'PRINTING',Price,0))
-    from Order_TmsCost with (nolock)
-    where ID = o.ID
+    from {order_TmsCost} with (nolock)
+    where {order_TmsCost_where}
 ) as tms
 outer apply(select rate = isnull(dbo.GetOrderLocation_Rate(o.ID,'{comboType}')
 ,(select rate = rate from Style_Location sl with (nolock) where sl.StyleUkey = o.StyleUkey and sl.Location = '{comboType}'))/100)r

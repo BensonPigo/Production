@@ -25,15 +25,15 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {
                 new SqlParameter("@BuyerDeliveryFrom", SqlDbType.Date) { Value = (object)model.BuyerDeliveryFrom ?? DBNull.Value },
                 new SqlParameter("@BuyerDeliveryTo", SqlDbType.Date) { Value = (object)model.BuyerDeliveryTo ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
-                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessFrom", SqlDbType.DateTime2) { Value = (object)model.DateTimeProcessFrom ?? DBNull.Value },
+                new SqlParameter("@DateTimeProcessTo", SqlDbType.DateTime2) { Value = (object)model.DateTimeProcessTo ?? DBNull.Value },
                 new SqlParameter("@MDivisionID", SqlDbType.VarChar) { Value = model.MDivisionID },
                 new SqlParameter("@FactoryID", SqlDbType.VarChar) { Value = model.FactoryID },
             };
 
             string sqlWhere = string.Empty;
             string sqlMdWhere = string.Empty;
-			string sqlPKAuditWhere = string.Empty;
+            string sqlPKAuditWhere = string.Empty;
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -51,24 +51,29 @@ namespace Sci.Production.Prg.PowerBI.Logic
                     sqlMdWhere += @" 
 INNER JOIN DRYReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and DryRoomReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Dry Room Transfer":
                     sqlMdWhere += @" 
 INNER JOIN DRYTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and DryRoomTransferTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Transfer To Packing Error":
                     sqlMdWhere += @" 
 INNER JOIN PackErrTransfer a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and TransferToPackingErrorTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Confirm Packing Error Revise":
                     sqlMdWhere += @" 
 INNER JOIN PackErrCFM a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ConfirmPackingErrorReviseTime.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Scan & Pack":
                     sqlMdWhere += @" where	pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and pld.ScanEditDate between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Packing Audit":
                     sqlMdWhere += @"
@@ -81,41 +86,49 @@ where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                     sqlMdWhere += @" 
 INNER JOIN MDScan a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and MDScan.val between @DateTimeProcessFrom and @DateTimeProcessTo ";
                     break;
                 case "Fty Transfer To Clog":
                     sqlMdWhere += @" 
 INNER JOIN TransferToClog a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and FtyTransferToClogTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive":
                     sqlMdWhere += @" 
 INNER JOIN ClogReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Return":
                     sqlMdWhere += @" 
 INNER JOIN ClogReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Transfer To CFA":
                     sqlMdWhere += @" 
 INNER JOIN TransferToCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogTransferToCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "Clog Receive From CFA":
                     sqlMdWhere += @" 
 INNER JOIN ClogReceiveCFA a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and ClogReceiveFromCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Receive":
                     sqlMdWhere += @" 
 INNER JOIN CFAReceive a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and CFAReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 case "CFA Return":
                     sqlMdWhere += @" 
 INNER JOIN CFAReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and CFAReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
                 default:
                     break;
@@ -372,7 +385,7 @@ WHERE EXISTS (
 ---------開始整理報表-------
 
 select distinct [KPIGroup] = f.KPICode
-	, [Fty] = o.FactoryID
+	, [FactoryID] = o.FactoryID
 	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
 	, [SP] = o.ID
 	, [SeqNo] = oqs.Seq
@@ -400,7 +413,11 @@ select distinct [KPIGroup] = f.KPICode
 					and CTNJokerTagTime.val is null
 					and CTNHeatSealTime.val is null
 					and pld.ScanEditDate  is null 
-					and pld.TransferDate is null 
+					and pld.TransferDate is null
+					and DryRoomReceiveTime.val is null
+					and DryRoomTransferTime.val is null
+					and TransferToPackingErrorTime.val is null
+					and ConfirmPackingErrorReviseTime.val is null
 					then 'Fty'
 			when pld.TransferDate is null and 
 				((ClogReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
@@ -409,7 +426,11 @@ select distinct [KPIGroup] = f.KPICode
 				and ClogReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
 				and ClogReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
 				and ClogReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
-				and ClogReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')) 
+				and ClogReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+				and ClogReturnTime.val >= isnull(ConfirmPackingErrorReviseTime.val, '19710101'))
 				or 
 				(CFAReturnTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 				and CFAReturnTime.val >= isnull(M360MDScanTime.val, '19710101')
@@ -417,39 +438,59 @@ select distinct [KPIGroup] = f.KPICode
 				and CFAReturnTime.val >= isnull(HaulingScanTime.val, '19710101')
 				and CFAReturnTime.val >= isnull(CTNHangerPackTime.val, '19710101')
 				and CFAReturnTime.val >= isnull(CTNJokerTagTime.val, '19710101')
-				and CFAReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')))
+				and CFAReturnTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+				and CFAReturnTime.val >= isnull(ConfirmPackingErrorReviseTime.val, '19710101')))
 					then 'Fty'
 			when pld.TransferDate is null 
 					and HaulingScanTime.val > isnull(PackingAuditScanTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(M360MDScanTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and HaulingScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and HaulingScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and HaulingScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and HaulingScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and HaulingScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and HaulingScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')					
+					and HaulingScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Hauling'
 			when pld.TransferDate is null 
 					and PackingAuditScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(M360MDScanTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and PackingAuditScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and PackingAuditScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and PackingAuditScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Packing Audit'
 			when pld.TransferDate is null 
 					and M360MDScanTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and M360MDScanTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and M360MDScanTime.val > isnull(CTNHangerPackTime.val, '19710101') 
 					and M360MDScanTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and M360MDScanTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and M360MDScanTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and M360MDScanTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and M360MDScanTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and M360MDScanTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')					
+					and M360MDScanTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'M360 MD'
 			when pld.TransferDate is null 
 					and CTNHangerPackTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and CTNHangerPackTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and CTNHangerPackTime.val >= isnull(M360MDScanTime.val, '19710101') 
 					and CTNHangerPackTime.val > isnull(CTNJokerTagTime.val, '19710101') 
-					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101') 
-					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNHangerPackTime.val > isnull(CTNHeatSealTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNHangerPackTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Hanger Pack'
 			when pld.TransferDate is null 
 					and CTNJokerTagTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
@@ -457,23 +498,83 @@ select distinct [KPIGroup] = f.KPICode
 					and CTNJokerTagTime.val >= isnull(HaulingScanTime.val, '19710101') 
 					and CTNJokerTagTime.val >= isnull(M360MDScanTime.val, '19710101') 
 					and CTNJokerTagTime.val > isnull(CTNHeatSealTime.val, '19710101')
-					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNJokerTagTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNJokerTagTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Joker Tag'
 			when pld.TransferDate is null 
 					and CTNHeatSealTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
 					and CTNHeatSealTime.val >= isnull(HaulingScanTime.val, '19710101') 
-					and CTNHeatSealTime.val >= isnull(M360MDScanTime.val, '19710101') 
-					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101') 
+					and CTNHeatSealTime.val >= isnull(M360MDScanTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(DryRoomReceiveTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and CTNHeatSealTime.val > isnull(pld.ScanEditDate, '19710101')
 					then 'Heat Seal'
+			when pld.TransferDate is null 
+					and DryRoomReceiveTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and DryRoomReceiveTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(DryRoomTransferTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and DryRoomReceiveTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Dry Room Receive'
+			when pld.TransferDate is null 
+					and DryRoomTransferTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and DryRoomTransferTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and DryRoomTransferTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(TransferToPackingErrorTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and DryRoomTransferTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Dry Room Transfer'
+			when pld.TransferDate is null 
+					and TransferToPackingErrorTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and TransferToPackingErrorTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and TransferToPackingErrorTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and TransferToPackingErrorTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+					and TransferToPackingErrorTime.val > isnull(ConfirmPackingErrorReviseTime.val, '19710101')
+					and TransferToPackingErrorTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Transfer To Packing Error'
+			when pld.TransferDate is null 
+					and ConfirmPackingErrorReviseTime.val >= isnull(PackingAuditScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(HaulingScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(M360MDScanTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNHangerPackTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNJokerTagTime.val, '19710101') 
+					and ConfirmPackingErrorReviseTime.val >= isnull(CTNHeatSealTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(DryRoomReceiveTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(DryRoomTransferTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val >= isnull(TransferToPackingErrorTime.val, '19710101')
+					and ConfirmPackingErrorReviseTime.val > isnull(pld.ScanEditDate, '19710101')
+					then 'Confirm Packing Error Revise'
 			when pld.TransferDate is null 
 					and pld.ScanEditDate >= isnull(PackingAuditScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(HaulingScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(M360MDScanTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(CTNHangerPackTime.val, '19710101') 
 					and pld.ScanEditDate >= isnull(CTNJokerTagTime.val, '19710101') 
-					and pld.ScanEditDate >= isnull(CTNHeatSealTime.val, '19710101') 
+					and pld.ScanEditDate >= isnull(CTNHeatSealTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(DryRoomReceiveTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(DryRoomTransferTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(TransferToPackingErrorTime.val, '19710101')
+					and pld.ScanEditDate >= isnull(ConfirmPackingErrorReviseTime.val, '19710101')
 					then 'Scan & Pack'
 			when pld.TransferDate is not null and
 				((ClogReceiveTime.val >= isnull(FtyTransferToClogTime.val, '19710101')
@@ -546,6 +647,7 @@ select distinct [KPIGroup] = f.KPICode
     , [HeatSealName] = isnull(HeatSealName.val,'')
 	, [TransferToPackingErrorTime] = TransferToPackingErrorTime.val
 	, [ConfirmPackingErrorReviseTime] = ConfirmPackingErrorReviseTime.val
+    , [MDMachineNo] = pld.MDMachineNo
 	, [ScanAndPackTime] = pld.ScanEditDate
 	, [ScanQty] = ISNULL(ScanQty.val, 0)
 	, [FtyTransferToClogTime] = FtyTransferToClogTime.val
@@ -560,6 +662,8 @@ select distinct [KPIGroup] = f.KPICode
 	, pld.DisposeDate
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 from #Orders o
 inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
 inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
@@ -615,9 +719,10 @@ outer apply(
 ) HauledReturn
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name, isnull(p.Name , ''))
 		from #CTNHauling ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -674,9 +779,10 @@ outer apply(
 ) PackingAuditReturn	
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNPackingAudit ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -706,9 +812,10 @@ outer apply(
 ) M360MDReturn
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #MDScan ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -794,9 +901,10 @@ outer apply(
 ) CTNHangerPackTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNHangerPack ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -811,9 +919,10 @@ outer apply(
 ) CTNJokerTagTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNJokerTag ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -828,9 +937,10 @@ outer apply(
 ) CTNHeatSealTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNHeatSeal ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID

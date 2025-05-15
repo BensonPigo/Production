@@ -1,118 +1,201 @@
-﻿CREATE TABLE [dbo].[SewingDailyOutputStatusRecord] (
-    [SewingLineID]         VARCHAR (5)  NOT NULL,
-    [SewingOutputDate]     DATE         NOT NULL,
-    [FactoryID]            VARCHAR (8)  NOT NULL,
-    [OrderID]              VARCHAR (13) CONSTRAINT [DF_SewingDailyOutputStatusRecord_OrderID] DEFAULT ('') NOT NULL,
-    [SewingInLine]         DATETIME     NULL,
-    [SewingOffLine]        DATETIME     NULL,
-    [StandardOutputPerDay] INT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_StandardOutputPerDay] DEFAULT ((0)) NOT NULL,
-    [CuttingRemark]        VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_CuttingRemark] DEFAULT ('') NOT NULL,
-    [LoadingRemark]        VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_LoadingRemark] DEFAULT ('') NOT NULL,
-    [LoadingExclusion]     BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_LoadingExclusion] DEFAULT ((0)) NOT NULL,
-    [ATRemark]             VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_ATRemark] DEFAULT ('') NOT NULL,
-    [ATExclusion]          BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_ATExclusion] DEFAULT ((0)) NOT NULL,
-    [AUTRemark]            VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_AUTRemark] DEFAULT ('') NOT NULL,
-    [AUTExclusion]         BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_AUTExclusion] DEFAULT ((0)) NOT NULL,
-    [HTRemark]             VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_HTRemark] DEFAULT ('') NOT NULL,
-    [HTExclusion]          BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_HTExclusion] DEFAULT ((0)) NOT NULL,
-    [BORemark]             VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_BORemark] DEFAULT ('') NOT NULL,
-    [BOExclusion]          BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_BOExclusion] DEFAULT ((0)) NOT NULL,
-    [FMRemark]             VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMRemark] DEFAULT ('') NOT NULL,
-    [FMExclusion]          BIT          CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMExclusion] DEFAULT ((0)) NOT NULL,
-    [PRTRemark]            VARCHAR (30) CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTRemark] DEFAULT ('') NOT NULL,
-    [PRTExclusion]         BIT  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTExclusion] DEFAULT ((0)) NOT NULL,
-    [AddName]              VARCHAR (10) CONSTRAINT [DF_SewingDailyOutputStatusRecord_AddName] DEFAULT ('') NOT NULL,
-    [AddDate]              DATETIME     NULL,
-    [EditName]             VARCHAR (10) CONSTRAINT [DF_SewingDailyOutputStatusRecord_EditName] DEFAULT ('') NOT NULL,
-    [EditDate]             DATETIME     NULL,
-    CONSTRAINT [PK_SewingDailyOutputStatusRecord] PRIMARY KEY CLUSTERED ([SewingLineID] ASC, [SewingOutputDate] ASC, [OrderID] ASC, [FactoryID] ASC)
-);
-
-
+﻿CREATE TABLE [dbo].[SewingDailyOutputStatusRecord](
+	[SewingLineID] [varchar](5) NOT NULL,
+	[SewingOutputDate] [date] NOT NULL,
+	[FactoryID] [varchar](8) NOT NULL,
+	[OrderID] [varchar](13) NOT NULL,
+	[SewingInLine] [datetime] NULL,
+	[SewingOffLine] [datetime] NULL,
+	[StandardOutputPerDay] [int] NOT NULL,
+	[CuttingRemark] [varchar](50) NOT NULL,
+	[LoadingRemark] [varchar](50) NOT NULL,
+	[LoadingExclusion] [bit] NOT NULL,
+	[ATRemark] [varchar](50) NOT NULL,
+	[ATExclusion] [bit] NOT NULL,
+	[AUTRemark] [varchar](50) NOT NULL,
+	[AUTExclusion] [bit] NOT NULL,
+	[HTRemark] [varchar](50) NOT NULL,
+	[HTExclusion] [bit] NOT NULL,
+	[BORemark] [varchar](50) NOT NULL,
+	[BOExclusion] [bit] NOT NULL,
+	[FMRemark] [varchar](50) NOT NULL,
+	[FMExclusion] [bit] NOT NULL,
+	[PRTRemark] [varchar](50) NOT NULL,
+	[PRTExclusion] [bit] NOT NULL,
+	[AddName] [varchar](10) NOT NULL,
+	[AddDate] [datetime] NULL,
+	[EditName] [varchar](10) NOT NULL,
+	[EditDate] [datetime] NULL,
+	[PADPRTRemark] [varchar](50) NOT NULL,
+	[PADPRTExclusion] [bit] NOT NULL,
+	[EMBRemark] [varchar](50) NOT NULL,
+	[EMBExclusion] [bit] NOT NULL,
+	[FIRemark] [varchar](50) NOT NULL,
+	[FIExclusion] [bit] NOT NULL,
+ CONSTRAINT [PK_SewingDailyOutputStatusRecord] PRIMARY KEY CLUSTERED 
+(
+	[SewingLineID] ASC,
+	[SewingOutputDate] ASC,
+	[OrderID] ASC,
+	[FactoryID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段PRT完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'PRTExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_OrderID]  DEFAULT ('') FOR [OrderID]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段PRT供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'PRTRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_StandardOutputPerDay]  DEFAULT ((0)) FOR [StandardOutputPerDay]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段FM完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'FMExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_CuttingRemark]  DEFAULT ('') FOR [CuttingRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段FM供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'FMRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_LoadingRemark]  DEFAULT ('') FOR [LoadingRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段BO完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'BOExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_LoadingExclusion]  DEFAULT ((0)) FOR [LoadingExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段BO供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'BORemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_ATRemark]  DEFAULT ('') FOR [ATRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段HT完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'HTExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_ATExclusion]  DEFAULT ((0)) FOR [ATExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段HT供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'HTRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_AUTRemark]  DEFAULT ('') FOR [AUTRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段AUT完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'AUTExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_AUTExclusion]  DEFAULT ((0)) FOR [AUTExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段AUT供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'AUTRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_HTRemark]  DEFAULT ('') FOR [HTRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段AT完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'ATExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_HTExclusion]  DEFAULT ((0)) FOR [HTExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段AT供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'ATRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_BORemark]  DEFAULT ('') FOR [BORemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段Loading完成率計算排除欄位', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'LoadingExclusion';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_BOExclusion]  DEFAULT ((0)) FOR [BOExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段Loading供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'LoadingRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMRemark]  DEFAULT ('') FOR [FMRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'加工段Cutting供應量不足原因', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'CuttingRemark';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_FMExclusion]  DEFAULT ((0)) FOR [FMExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'每日標準產出', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'StandardOutputPerDay';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTRemark]  DEFAULT ('') FOR [PRTRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排程結束日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'SewingOffLine';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PRTExclusion]  DEFAULT ((0)) FOR [PRTExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'排程開始日', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'SewingInLine';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_AddName]  DEFAULT ('') FOR [AddName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'訂單代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'OrderID';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_EditName]  DEFAULT ('') FOR [EditName]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'工廠代碼', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'FactoryID';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PADPRTRemark]  DEFAULT ('') FOR [PADPRTRemark]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產出日期', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'SewingOutputDate';
 
-
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_PADPRTExclusion]  DEFAULT ((0)) FOR [PADPRTExclusion]
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'產線ID', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'SewingDailyOutputStatusRecord', @level2type = N'COLUMN', @level2name = N'SewingLineID';
 
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_EMBRemark]  DEFAULT ('') FOR [EMBRemark]
+GO
+
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_EMBExclusion]  DEFAULT ((0)) FOR [EMBExclusion]
+GO
+
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_FIRemark]  DEFAULT ('') FOR [FIRemark]
+GO
+
+ALTER TABLE [dbo].[SewingDailyOutputStatusRecord] ADD  CONSTRAINT [DF_SewingDailyOutputStatusRecord_FIExclusion]  DEFAULT ((0)) FOR [FIExclusion]
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產線ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingLineID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'產出日期' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingOutputDate'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'工廠代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FactoryID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'訂單代碼' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'OrderID'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'排程開始日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingInLine'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'排程結束日' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'SewingOffLine'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'每日標準產出' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'StandardOutputPerDay'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段Cutting供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'CuttingRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段Loading供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'LoadingRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段Loading完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'LoadingExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段AT供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'ATRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段AT完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'ATExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段AUT供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'AUTRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段AUT完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'AUTExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段HT供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'HTRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段HT完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'HTExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段BO供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BORemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段BO完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'BOExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FM供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FMRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FM完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FMExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PRT供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PRTRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PRT完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PRTExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PAD-PRT供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PADPRTRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段PAD-PRT完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'PADPRTExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段EMB供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'EMBRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段EMB完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'EMBExclusion'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FI供應量不足原因' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FIRemark'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'加工段FI完成率計算排除欄位' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'SewingDailyOutputStatusRecord', @level2type=N'COLUMN',@level2name=N'FIExclusion'
+GO

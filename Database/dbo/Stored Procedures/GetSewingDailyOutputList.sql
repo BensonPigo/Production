@@ -99,13 +99,13 @@ select s.id
     ,o.SciDelivery 
     ,[NonRevenue]=IIF(o.NonRevenue=1,'Y','N')
     ,Cancel=iif(o.Junk=1,'Y','' )
-    ,[InlineCategoryID] = s.SewingReasonIDForTypeIC
-	,[Inline Category] = iif(s.SewingReasonIDForTypeLO = '00005',cast('' as varchar(50)),(select CONCAT(s.SewingReasonIDForTypeIC, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'))
+    ,[InlineCategoryID] = InlineCategoryID.val
+	,[Inline Category] = iif(s.SewingReasonIDForTypeLO = '00005',cast('' as varchar(50)),(select CONCAT(InlineCategoryID.val, '-' + SR.Description) from SewingReason sr where sr.ID = InlineCategoryID.val and sr.Type='IC'))
     ,[Low output Reason] = (select CONCAT(s.SewingReasonIDForTypeLO, '-' + SR.Description) from SewingReason sr where sr.ID = s.SewingReasonIDForTypeLO and sr.Type='LO')
     ,[New Style/Repeat style] = cast('' as varchar(20))
 	,[CumulateDateSimilar] = sd.CumulateSimilar
 	,o.StyleUkey
-	,s.SewingReasonIDForTypeIC
+	,SewingReasonIDForTypeIC = InlineCategoryID.val
 into #tmpSewingDetail
 from System WITH (NOLOCK),SewingOutput s WITH (NOLOCK) 
 inner join SewingOutput_Detail sd WITH (NOLOCK) on sd.ID = s.ID
@@ -113,26 +113,20 @@ left join Orders o WITH (NOLOCK) on o.ID = sd.OrderId
 left join OrderType ot WITH (NOLOCK) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID
 left join MockupOrder mo WITH (NOLOCK) on mo.ID = sd.OrderId
 left join Factory f WITH (NOLOCK) on s.FactoryID = f.ID
---OUTER APPLY
---(
---	select val = 
---	CASE  WHEN o.Category = 'S' THEN '00005'
---		  ELSE 
---            CASE 
---                WHEN ContinuousDaysCalc.ContinuousDays > 29 THEN '00004'
---                WHEN ContinuousDaysCalc.ContinuousDays > 14 THEN '00003'
---                WHEN ContinuousDaysCalc.ContinuousDays > 3 THEN '00002'
---                ELSE '00001'
---            END
---	END
---	from SewingReason sr
---	CROSS APPLY (
---    SELECT 
---        ContinuousDays = dbo.GetCheckContinusProduceDays(o.StyleUkey, s.SewingLineID, o.FactoryID, s.Team, OutputDate)
---	) ContinuousDaysCalc
---	where sr.ID = s.SewingReasonIDForTypeIC and sr.Type='IC'
-	
---)InlineCategoryID
+OUTER APPLY
+(
+	select val =
+	CASE  WHEN o.Category = 'S' THEN '00005'
+		  ELSE
+            CASE
+                WHEN sd.InlineCategoryCumulate > 29 THEN '00004'
+                WHEN sd.InlineCategoryCumulate > 14 THEN '00003'
+                WHEN sd.InlineCategoryCumulate > 3 THEN '00002'
+                ELSE '00001'
+            END
+	END
+
+)InlineCategoryID
 outer apply
 (
 	select [SewingReasonDesc]=stuff((
@@ -383,6 +377,7 @@ select	MDivisionID
         ,IsDevSample
 		,CPURate
 		,Style
+        ,CriticalStyle
 		,Season
 		,ComboType
         ,CDCodeNew
@@ -453,6 +448,7 @@ from(
         ,IsDevSample
 		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
+        ,sty.CriticalStyle
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
 		,t.ComboType
         ,sty.CDCodeNew
@@ -504,6 +500,7 @@ from(
 		    , s.Lining
 		    , s.Gender
 		    , Construction = d1.Name
+            , CriticalStyle= iif(s.CriticalStyle=''1'',''Y'',''N'')
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType

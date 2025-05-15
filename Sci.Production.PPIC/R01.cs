@@ -50,19 +50,17 @@ namespace Sci.Production.PPIC
             : base(menuitem)
         {
             this.InitializeComponent();
-            DBProxy.Current.Select(null, "select '' as ID union all select ID from MDivision WITH (NOLOCK) ", out DataTable mDivision);
-            MyUtility.Tool.SetupCombox(this.comboM, 1, mDivision);
-            DBProxy.Current.Select(null, "select '' as ID union all select distinct FTYGroup from Factory WITH (NOLOCK) ", out DataTable factory);
-            MyUtility.Tool.SetupCombox(this.comboFactory, 1, factory);
-            this.comboM.Text = Env.User.Keyword;
+            this.comboM.SetDefalutIndex(true);
+            this.comboFactory.SetDataSource(this.comboM.Text);
+            this.comboM.Enabled = false;
 
             // comboBox2.SelectedIndex = 0;
-            this.comboFactory.Text = Env.User.Factory;
 
             this.comboSummaryBy.Add("SP#", "SP#");
             this.comboSummaryBy.Add("Article / Size", "Article / Size");
             this.comboSummaryBy.Add("Style, per each sewing date", "StylePerEachSewingDate");
             this.comboSummaryBy.SelectedIndex = 0;
+            this.comboFactory.Text = Env.User.Factory;
 
             DBProxy.Current.Select(null, "select '' as ID union all select ID from ArtworkType WITH (NOLOCK) where ReportDropdown = 1", out DataTable subprocess);
             MyUtility.Tool.SetupCombox(this.comboSubProcess, 1, subprocess);
@@ -947,6 +945,7 @@ select  s.SewingLineID
 	        ,[Construction] = sty.Construction
             ,o.Category
 			,SizeCodeSeq = oz.Seq
+            ,CriticalStyle = iif(st.CriticalStyle='1','Y','N')
 	into #tmp_main
     from SewingSchedule s WITH (NOLOCK) 
 	inner join Orders o WITH (NOLOCK) on o.ID = s.OrderID
@@ -1217,6 +1216,7 @@ select  SewingLineID
 	    , Gender
 	    , Construction
         , StyleID
+        , CriticalStyle
         , Qty
         , AlloQty
         , CutQty

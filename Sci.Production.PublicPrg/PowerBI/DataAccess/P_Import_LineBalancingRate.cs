@@ -35,7 +35,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 finalResult.Result = this.ImportLineBalancingRate(sDate.Value, eDate.Value);
                 if (finalResult.Result)
                 {
-                    this.UpdateBIData(biTableInfoID);
+                    new Base().UpdateBIData(biTableInfoID, true);
                 }
             }
             catch (Exception ex)
@@ -73,15 +73,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             }
 
             return finalResult;
-        }
-
-        private Base_ViewModel UpdateBIData(string biTableInfoID)
-        {
-            string sql = new Base().SqlBITableInfo(biTableInfoID, false);
-            return new Base_ViewModel()
-            {
-                Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
-            };
         }
     }
 }

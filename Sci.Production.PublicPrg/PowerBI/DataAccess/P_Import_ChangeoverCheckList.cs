@@ -97,7 +97,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 #region Update BI Table Info
                 if (resultReport.Result)
                 {
-                    finalResult = this.UpdateBIData(biTableInfoID);
+                    finalResult = new Base().UpdateBIData(biTableInfoID, true);
                 }
                 #endregion
             }
@@ -128,6 +128,19 @@ where not exists (
 	and p.NewComboType = co.ComboType
 )
 
+-- 先寫入 Histroy
+insert into P_ChangeoverCheckList_Detail_Histroy(FactoryID, SP, Style, ComboType, Category, ProductType, Line, InlineDate, CheckListNo, BIFactoryID, BIInsertDate)
+select pd.FactoryID, pd.SP, pd.Style, pd.ComboType, pd.Category, pd.ProductType, pd.Line, pd.InlineDate, pd.CheckListNo, pd.BIFactoryID, GETDATE()
+from P_ChangeoverCheckList_Detail pd
+where exists (select 1 from #tmpP_ChangeoverCheckList p where pd.FactoryID = p.FactoryID and pd.InlineDate = p.InlineDate and pd.Line = p.Line and pd.SP = p.NewSP and pd.Style = p.NewStyle and pd.ComboType = p.NewComboType)
+
+insert into P_ChangeoverCheckList_Histroy(FactoryID, InlineDate, Line, OldSP, OldStyle, OldComboType, NewSP, NewStyle, NewComboType, BIFactoryID, BIInsertDate)
+select p.FactoryID, p.InlineDate, p.Line, p.OldSP, p.OldStyle, p.OldComboType, p.NewSP, p.NewStyle, p.NewComboType, p.BIFactoryID, GETDATE()
+from P_ChangeoverCheckList p
+inner join #tmpP_ChangeoverCheckList t on p.FactoryID = t.FactoryID and p.InlineDate = t.InlineDate and p.Line = t.Line 
+									and p.OldSP = t.OldSP and p.OldStyle = t.OldStyle and p.OldComboType = t.OldComboType
+									and p.NewSP = t.NewSP and p.NewStyle = t.NewStyle and p.NewComboType = t.NewComboType
+
 delete pd
 from P_ChangeoverCheckList_Detail pd
 where exists (select 1 from #tmpP_ChangeoverCheckList p where pd.FactoryID = p.FactoryID and pd.InlineDate = p.InlineDate and pd.Line = p.Line and pd.SP = p.NewSP and pd.Style = p.NewStyle and pd.ComboType = p.NewComboType)
@@ -157,27 +170,11 @@ inner join #tmpP_ChangeoverCheckList t on p.FactoryID = t.FactoryID and p.Inline
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
-update p
-	set p.[StyleType] =  t.[StyleType]
-	 , p.[Category] = t.[Category]
-	 , p.[FirstSewingOutputDate] = t.[FirstSewingOutputDate]
+-- 先寫入 Histroy
+insert into P_ChangeoverCheckList_Histroy(FactoryID, InlineDate, Line, OldSP, OldStyle, OldComboType, NewSP, NewStyle, NewComboType, BIFactoryID, BIInsertDate)
+select p.FactoryID, p.InlineDate, p.Line, p.OldSP, p.OldStyle, p.OldComboType, p.NewSP, p.NewStyle, p.NewComboType, p.BIFactoryID, GETDATE()
 from P_ChangeoverCheckList p
-inner join #tmp t on p.[FactoryID] = t.[FactoryID] 
-				 AND p.[InlineDate] = t.[InlineDate] 
-				 AND p.[Line] = t.[Line]
-				 AND p.[OldSP] = t.[OldSP]
-				 AND p.[OldStyle] = t.[OldStyle]
-				 AND p.[OldComboType] = t.[OldComboType]
-				 AND p.[NewSP] = t.[NewSP]
-				 AND p.[NewStyle] = t.[NewStyle]
-				 AND p.[NewComboType] = t.[NewComboType]
-
-
-
-insert into P_ChangeoverCheckList([FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate])
-select [FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate]
-from #tmp t
-where not exists (select 1 from P_ChangeoverCheckList p where  p.[FactoryID] = t.[FactoryID] 
+where not exists (select 1 from #tmp t where p.[FactoryID] = t.[FactoryID] 
 													 AND p.[InlineDate] = t.[InlineDate] 
 													 AND p.[Line] = t.[Line]
 													 AND p.[OldSP] = t.[OldSP]
@@ -186,10 +183,9 @@ where not exists (select 1 from P_ChangeoverCheckList p where  p.[FactoryID] = t
 													 AND p.[NewSP] = t.[NewSP]
 													 AND p.[NewStyle] = t.[NewStyle]
 													 AND p.[NewComboType] = t.[NewComboType])
+and p.[InlineDate] >= @EndDate
 
-
-
-
+-- ChgOver.Inline > GetDate() 全刪全轉
 delete p
 from P_ChangeoverCheckList p
 where not exists (select 1 from #tmp t where p.[FactoryID] = t.[FactoryID] 
@@ -202,6 +198,37 @@ where not exists (select 1 from #tmp t where p.[FactoryID] = t.[FactoryID]
 													 AND p.[NewStyle] = t.[NewStyle]
 													 AND p.[NewComboType] = t.[NewComboType])
 and p.[InlineDate] >= @EndDate
+
+update p
+	set p.[StyleType] =  t.[StyleType]
+	 , p.[Category] = t.[Category]
+	 , p.[FirstSewingOutputDate] = t.[FirstSewingOutputDate]
+     , p.[BIFactoryID] = t.[BIFactoryID]
+     , p.[BIInsertDate] = t.[BIInsertDate]
+from P_ChangeoverCheckList p
+inner join #tmp t on p.[FactoryID] = t.[FactoryID] 
+				 AND p.[InlineDate] = t.[InlineDate] 
+				 AND p.[Line] = t.[Line]
+				 AND p.[OldSP] = t.[OldSP]
+				 AND p.[OldStyle] = t.[OldStyle]
+				 AND p.[OldComboType] = t.[OldComboType]
+				 AND p.[NewSP] = t.[NewSP]
+				 AND p.[NewStyle] = t.[NewStyle]
+				 AND p.[NewComboType] = t.[NewComboType]
+
+
+insert into P_ChangeoverCheckList([FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], [BIFactoryID], [BIInsertDate])
+select [FactoryID], [InlineDate], [Ready], [Line], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [StyleType], [Category], [FirstSewingOutputDate], [BIFactoryID], [BIInsertDate]
+from #tmp t
+where not exists (select 1 from P_ChangeoverCheckList p where  p.[FactoryID] = t.[FactoryID] 
+													 AND p.[InlineDate] = t.[InlineDate] 
+													 AND p.[Line] = t.[Line]
+													 AND p.[OldSP] = t.[OldSP]
+													 AND p.[OldStyle] = t.[OldStyle]
+													 AND p.[OldComboType] = t.[OldComboType]
+													 AND p.[NewSP] = t.[NewSP]
+													 AND p.[NewStyle] = t.[NewStyle]
+													 AND p.[NewComboType] = t.[NewComboType])
             ";
 
             using (sqlConn)
@@ -248,6 +275,35 @@ inner join (
 	 AND t.[InlineDate]    < t2.[InlineDate]
 	 AND t.[CheckListNo]   = t2.[CheckListNo]
 
+-- 先寫入 Histroy
+insert into P_ChangeoverCheckList_Detail_Histroy(FactoryID, SP, Style, ComboType, Category, ProductType, Line, InlineDate, CheckListNo, BIFactoryID, BIInsertDate)
+select p.FactoryID, p.SP, p.Style, p.ComboType, p.Category, p.ProductType, p.Line, p.InlineDate, p.CheckListNo, p.BIFactoryID, GETDATE()
+from P_ChangeoverCheckList_Detail p
+where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID] 
+										 AND p.[SP] = t.[SP] 
+										 AND p.[Style] = t.[Style]
+										 AND p.[ComboType] = t.[ComboType]
+										 AND p.[Category] = t.[Category]
+										 AND p.[ProductType] = t.[ProductType]
+										 AND p.[Line] = t.[Line]
+										 AND p.[InlineDate] = t.[InlineDate]
+										 AND p.[CheckListNo] = t.[CheckListNo])
+and p.[InlineDate] >= @EndDate
+
+-- ChgOver.Inline > GetDate() 全刪全轉
+delete p
+from P_ChangeoverCheckList_Detail p
+where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID] 
+										 AND p.[SP] = t.[SP] 
+										 AND p.[Style] = t.[Style]
+										 AND p.[ComboType] = t.[ComboType]
+										 AND p.[Category] = t.[Category]
+										 AND p.[ProductType] = t.[ProductType]
+										 AND p.[Line] = t.[Line]
+										 AND p.[InlineDate] = t.[InlineDate]
+										 AND p.[CheckListNo] = t.[CheckListNo])
+and p.[InlineDate] >= @EndDate
+
 update p
 	set p.[DaysLeft] =  t.[DaysLeft]
 	 , p.[OverDays] = t.[OverDays]
@@ -256,6 +312,10 @@ update p
 	 , p.[ResponseDep] = t.[ResponseDep]
 	 , p.[CheckListItem] = t.[CheckListItem]
 	 , p.[LateReason] = t.[LateReason]
+     , p.[BIFactoryID] = t.[BIFactoryID]
+     , p.[BIInsertDate] = t.[BIInsertDate]
+     , p.[DeadLine] = t.[DeadLine]
+     , p.[CompletedInTime] = t.[CompletedInTime]
 from P_ChangeoverCheckList_Detail p
 inner join #tmp t on  p.[FactoryID] = t.[FactoryID] 
 				 AND p.[SP] = t.[SP] 
@@ -269,8 +329,8 @@ inner join #tmp t on  p.[FactoryID] = t.[FactoryID]
 
 
 
-insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason])
-select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason]
+insert into P_ChangeoverCheckList_Detail([FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], [BIFactoryID], [BIInsertDate], [DeadLine], [CompletedInTime])
+select [FactoryID], [SP], [Style], [ComboType], [Category], [ProductType], [Line], [DaysLeft], [InlineDate], [OverDays], [ChgOverCheck], [CompletionDate], [ResponseDep], [CheckListNo], [CheckListItem], [LateReason], [BIFactoryID], [BIInsertDate], [DeadLine], [CompletedInTime]
 from #tmp t
 where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[FactoryID] = t.[FactoryID] 
 														 AND p.[SP] = t.[SP] 
@@ -281,22 +341,6 @@ where not exists (select 1 from P_ChangeoverCheckList_Detail p where  p.[Factory
                                                          AND p.[Line] = t.[Line]
 														 AND p.[InlineDate] = t.[InlineDate]
 														 AND p.[CheckListNo] = t.[CheckListNo])
-
-
-
-
-delete p
-from P_ChangeoverCheckList_Detail p
-where not exists (select 1 from #tmp t  where  p.[FactoryID] = t.[FactoryID] 
-										 AND p.[SP] = t.[SP] 
-										 AND p.[Style] = t.[Style]
-										 AND p.[ComboType] = t.[ComboType]
-										 AND p.[Category] = t.[Category]
-										 AND p.[ProductType] = t.[ProductType]
-										 AND p.[Line] = t.[Line]
-										 AND p.[InlineDate] = t.[InlineDate]
-										 AND p.[CheckListNo] = t.[CheckListNo])
-and p.[InlineDate] >= @EndDate
             ";
 
             using (sqlConn)
@@ -312,15 +356,6 @@ and p.[InlineDate] >= @EndDate
             }
 
             return finalResult;
-        }
-
-        private Base_ViewModel UpdateBIData(string biTableInfoID)
-        {
-            string sql = new Base().SqlBITableInfo(biTableInfoID, true);
-            return new Base_ViewModel()
-            {
-                Result = TransactionClass.ExecuteTransactionScope("PowerBI", sql),
-            };
         }
     }
 }
