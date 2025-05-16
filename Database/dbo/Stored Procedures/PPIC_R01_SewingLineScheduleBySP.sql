@@ -66,6 +66,7 @@ Declare @tmp_main table(
 	SizeCode varchar(8),
 	CdCodeID varchar(6),
 	StyleID varchar(15),
+    CriticalStyle varchar(1),
 	Qty int,
 	AlloQty int,
 	CutQty numeric(11,2),
@@ -114,6 +115,7 @@ insert into @tmp_main(
     SizeCode,
     CdCodeID,
     StyleID,
+    CriticalStyle,
     Qty,
     AlloQty,
     CutQty,
@@ -165,6 +167,7 @@ select  s.SewingLineID
             , [SizeCode] = ''
             , o.CdCodeID
             , o.StyleID
+            , CriticalStyle=iif(st.CriticalStyle='1','Y','N')
             , o.Qty
             , s.AlloQty
             , isnull((select sum(Qty) 
@@ -190,9 +193,9 @@ select  s.SewingLineID
 			, [FirstCuttingOutputDate]=FirstCuttingOutputDate.Date
             , InspDate = InspctDate.Val
             , s.StandardOutput
-            , [Eff] = case when (s.sewer * s.workhour) = 0 then 0
-                      ELSE ROUND(CONVERT(float ,(sa.TTlAlloQty * s.TotalSewingTime) / (s.sewer * s.workhour * 3600)) * 100,2)
-                      END
+            , [Eff] = CASE WHEN (s.sewer * s.workhour) = 0 THEN 0
+								ELSE ROUND((CONVERT(FLOAT, sa.TTlAlloQty)  * CONVERT(FLOAT, s.TotalSewingTime)/ (CONVERT(FLOAT, s.sewer) * CONVERT(FLOAT, s.workhour) * 3600)) * 100 , 2)
+								END
             , o.KPILETA
 			, o.SewETA
             , o.MTLETA
@@ -232,8 +235,8 @@ select  s.SewingLineID
     outer apply(select value = dbo.GetStyleLocation_Rate(o.StyleUkey,s.ComboType) ) sl_rate
 	OUTER APPLY(	
 		SELECT [Date]=MIN(co2.cDate)
-		FROM  WorkOrder_Distribute wd2 WITH (NOLOCK)
-		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderUkey = wd2.WorkOrderUkey
+		FROM  WorkOrderForOutput_Distribute wd2 WITH (NOLOCK)
+		INNER JOIN CuttingOutput_Detail cod2 WITH (NOLOCK) on cod2.WorkOrderForOutputUkey = wd2.WorkOrderForOutputUkey
 		INNER JOIN CuttingOutput co2 WITH (NOLOCK) on co2.id = cod2.id and co2.Status <> 'New'
 		where wd2.OrderID =o.ID
 	)FirstCuttingOutputDate
@@ -322,8 +325,8 @@ insert into @tmp_CutInLine
 select 
 wd.OrderID,
 MIN(a.EstCutDate)
-from WorkOrder_Distribute wd with (nolock)
-inner join  WorkOrder a with (nolock) on a.Ukey = wd.WorkOrderUkey
+from WorkOrderForOutput_Distribute wd with (nolock)
+inner join  WorkOrderForOutput a with (nolock) on a.Ukey = wd.WorkOrderForOutputUkey
 where exists(select 1 from @tmp_main b where wd.OrderID = b.OrderID)
 group by wd.OrderID
 
@@ -422,6 +425,7 @@ select  SewingLineID
 	    , Gender
 	    , Construction
         , StyleID
+        , a.CriticalStyle
         , [OrderQty] = Qty
         , AlloQty
         , CutQty

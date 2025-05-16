@@ -377,6 +377,7 @@ select	MDivisionID
         ,IsDevSample
 		,CPURate
 		,Style
+        ,CriticalStyle
 		,Season
 		,ComboType
         ,CDCodeNew
@@ -447,6 +448,7 @@ from(
         ,IsDevSample
 		,CPURate = IIF(t.Category=''M'',MockupCPUFactor,OrderCPUFactor)
 		,Style = IIF(t.Category=''M'',MockupStyle,OrderStyle)
+        ,sty.CriticalStyle
 		,Season = IIF(t.Category=''M'',MockupSeason,OrderSeason)
 		,t.ComboType
         ,sty.CDCodeNew
@@ -498,6 +500,7 @@ from(
 		    , s.Lining
 		    , s.Gender
 		    , Construction = d1.Name
+            , CriticalStyle= iif(s.CriticalStyle=''1'',''Y'',''N'')
 	    FROM Style s WITH(NOLOCK)
 	    left join DropDownList d1 WITH(NOLOCK) on d1.type= ''StyleConstruction'' and d1.ID = s.Construction
 	    left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= ''Fabric_Kind'' and r1.ID = s.FabricType

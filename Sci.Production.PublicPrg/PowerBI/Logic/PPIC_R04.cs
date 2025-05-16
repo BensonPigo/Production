@@ -68,6 +68,7 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[Remark] = isnull(l.Remark,'')
     ,[Process] = isnull(ld.Process,'')
     ,[FabricType] = isnull(l.FabricType,'')
+	,[DetailRemark] = isnull(ld.Remark,'')
     ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
     ,[BIInsertDate] = GETDATE()
     {(model.IsPowerBI ? tmpsql : string.Empty)}

@@ -7,7 +7,7 @@ using Microsoft.SqlServer.Management.Smo.Mail;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
-using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using Sci.Win.UI;
@@ -313,7 +313,8 @@ AND ALMCS.Junk = 0
                     [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
                     [Junk] = e.junk,
                     [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
-                    [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0)
+                    [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
+                    ad.MachineID
                     --INTO #TMP
                     FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                     LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
@@ -324,7 +325,7 @@ AND ALMCS.Junk = 0
                     OUTER APPLY
                     (
                         select val = stuff((select distinct concat(',',Name)
-                        from OperationRef a
+                        from OperationRef a WITH(NOLOCK)
                         inner JOIN IESELECTCODE b WITH(NOLOCK) on a.CodeID = b.ID and a.CodeType = b.Type
                         where a.CodeType = '00007' and a.id = ad.OperationID  for xml path('') ),1,1,'')
                     )Motion
@@ -487,6 +488,7 @@ AND ALMCS.Junk = 0
             base.ClickEditAfter();
             this.txtfactory.ReadOnly = this.CurrentMaintain["Version"].ToString() != "0";
             this.comboPhase.ReadOnly = true;
+            this.checkJukiIoTDataExchange.ReadOnly = !MyUtility.Check.Empty(this.CurrentMaintain["JukiStyleDataSubmitDate"]);
         }
 
         /// <inheritdoc/>
@@ -860,6 +862,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
+            DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorNumericColumnSettings percentage = new DataGridViewGeneratorNumericColumnSettings();
 
@@ -1570,6 +1573,30 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
             #endregion
 
+            setMachineID.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    string sqlGetMachine = $@"
+select MachineID =  m.id
+from Machine.dbo.Machine m with (nolock)
+inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLocationID and ml.MDivisionID = m.LocationM
+where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
+";
+
+                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "10", null, null, null, null);
+
+                    DialogResult dialogResult = popupMachineID.ShowDialog(this);
+                    if (dialogResult == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.CurrentDetailData["MachineID"] = popupMachineID.GetSelecteds()[0]["MachineID"].ToString();
+                    this.CurrentDetailData.EndEdit();
+                }
+            };
+
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
@@ -1587,7 +1614,8 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                .Numeric("Cycle", header: "Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, settings: colCycleTime)
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
-               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40));
+               .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40))
+               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: setMachineID);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)

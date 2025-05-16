@@ -11,6 +11,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Quality
 {

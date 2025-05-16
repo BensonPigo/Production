@@ -109,6 +109,54 @@ from Operation with (nolock)
 where exists (select 1 from #tMOSeqD where SeqCode = Operation.ID)
 
 --同步資料至SUNRISE db
+--tMOM(制單主表)
+--update
+update T set	ProNoticeNo = S.ProNoticeNo,
+				Styleno = S.Styleno,
+				Qty = S.Qty,
+				CustName = S.CustName,
+				SAMTotal = S.SAMTotal,
+				Insertor = S.Insertor,
+				DeliveryDate = S.DeliveryDate,
+				CmdType = iif(InterfaceTime is not null,'update',CmdType),
+				CmdTime = GetDate(),
+				InterfaceTime = null,
+				CustPoNo = S.CustPONo
+from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
+inner join #tMOM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS
+
+--insert 
+insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM
+(
+	MONo
+	,ProNoticeNo
+	,Styleno
+	,Qty 
+	,CustName
+	,SAMTotal
+	,Insertor
+	,DeliveryDate
+	,CmdType
+	,CmdTime
+	,InterfaceTime
+	,CustPONo
+)
+select 
+	S.MONo
+	,S.ProNoticeNo
+	,S.Styleno
+	,S.Qty 
+	,S.CustName
+	,S.SAMTotal
+	,S.Insertor
+	,S.DeliveryDate
+	,'insert'
+	,GetDate()
+	,null 
+	,S.CustPONo
+from #tMOM S 
+where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
+
 --tMODCS(制單顏色尺碼錶)
 --update
 update T set	ColorName = S.ColorName,
@@ -194,54 +242,6 @@ from [SUNRISE].SUNRISEEXCH.dbo.tMOSeqM T
 where exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS ) and  
 not exists (select 1 from #tMOSeqM S where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS and 
 T.Version = S.Version collate SQL_Latin1_General_CP1_CI_AS)
-
---tMOM(制單主表)
---update
-update T set	ProNoticeNo = S.ProNoticeNo,
-				Styleno = S.Styleno,
-				Qty = S.Qty,
-				CustName = S.CustName,
-				SAMTotal = S.SAMTotal,
-				Insertor = S.Insertor,
-				DeliveryDate = S.DeliveryDate,
-				CmdType = iif(InterfaceTime is not null,'update',CmdType),
-				CmdTime = GetDate(),
-				InterfaceTime = null,
-				CustPoNo = S.CustPONo
-from [SUNRISE].SUNRISEEXCH.dbo.tMOM T
-inner join #tMOM S on T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS
-
---insert 
-insert into [SUNRISE].SUNRISEEXCH.dbo.tMOM
-(
-	MONo
-	,ProNoticeNo
-	,Styleno
-	,Qty 
-	,CustName
-	,SAMTotal
-	,Insertor
-	,DeliveryDate
-	,CmdType
-	,CmdTime
-	,InterfaceTime
-	,CustPONo
-)
-select 
-	S.MONo
-	,S.ProNoticeNo
-	,S.Styleno
-	,S.Qty 
-	,S.CustName
-	,S.SAMTotal
-	,S.Insertor
-	,S.DeliveryDate
-	,'insert'
-	,GetDate()
-	,null 
-	,S.CustPONo
-from #tMOM S 
-where not exists(select 1 from [SUNRISE].SUNRISEEXCH.dbo.tMOM T where T.MONo = S.MONo collate SQL_Latin1_General_CP1_CI_AS)
 
 --tSeqBase(基本工序表)
 --update

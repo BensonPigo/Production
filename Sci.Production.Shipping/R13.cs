@@ -248,11 +248,12 @@ Where o.LocalOrder = 0
             objSheets.Cells[2, 9] = MyUtility.Convert.GetString(this.factory);
             objSheets.Cells[2, 11] = MyUtility.Convert.GetString(this.comboCategory.Text.Replace(this.category + "-", string.Empty));
 
+            // 注意!! Excel新增欄位時, 要將原有的公式往右移動一格
             for (int i = 0; i < this.printData.Rows.Count; i++)
             {
                 // 欄位[I] Balance Qty
-                objSheets.Cells[4 + i, 9] = $"=G{4 + i}-H{4 + i}";
-                objSheets.Cells[4 + i, 30] = $"=I{4 + i}*AC{4 + i}";
+                objSheets.Cells[4 + i, 10] = $"=H{4 + i}-I{4 + i}";
+                objSheets.Cells[4 + i, 31] = $"=J{4 + i}*AD{4 + i}";
             }
 
             #region Save & Show Excel

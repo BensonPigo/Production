@@ -55,7 +55,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("(select CT.FactoryID from Cutplan CP left join Cutting CT on CP.CuttingID=CT.ID where CP.ID = MarkerReq.Cutplanid) = '{0}'", this.queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("MarkerReq.FactoryID = '{0}'", this.queryfors.SelectedValue);
                         break;
                 }
 
@@ -83,6 +83,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Styleid", header: "Style", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("orderid", header: "SP#", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(6), iseditingreadonly: true)
@@ -112,21 +113,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             #endregion
 
             return base.ClickDeleteBefore();
-        }
-
-        /// <inheritdoc/>
-        protected override DualResult ClickDeletePost()
-        {
-            #region 清空Cutplan 的request
-            string clearCutplanidSql = string.Format("Update Cutplan set MarkerReqid ='' where MarkerReqid ='{0}'", this.CurrentMaintain["ID"]);
-            #endregion
-            DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, clearCutplanidSql)))
-            {
-                return upResult;
-            }
-
-            return base.ClickDeletePost();
         }
 
         /// <inheritdoc/>
@@ -205,11 +191,21 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <inheritdoc/>
-        protected override void ClickNewAfter()
+        protected override bool ClickNew()
         {
-            base.ClickNewAfter();
-            this.CurrentMaintain["Status"] = "New";
-            this.CurrentMaintain["mDivisionid"] = this.keyWord;
+            this.detailgrid.ValidateControl();
+            var frm = new P05_Import();
+            DialogResult dr = frm.ShowDialog(this);
+
+            this.ReloadDatas();
+            if (dr == DialogResult.OK)
+            {
+                var topID = frm.ImportedIDs[0];
+                int newDataIdx = this.gridbs.Find("ID", topID);
+                this.gridbs.Position = newDataIdx;
+            }
+
+            return true;
         }
 
         /// <inheritdoc/>
@@ -228,12 +224,6 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         /// <inheritdoc/>
         protected override bool ClickSaveBefore()
         {
-            if (MyUtility.Check.Empty(this.CurrentMaintain["cutplanid"]))
-            {
-                MyUtility.Msg.WarningBox("<Cutplan ID> can not be empty!");
-                return false;
-            }
-
             string keyword = this.keyWord + "MK";
             string reqid = MyUtility.GetValue.GetID(keyword, "MarkerReq");
             if (string.IsNullOrWhiteSpace(reqid))
@@ -250,193 +240,31 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         }
 
         /// <inheritdoc/>
-        protected override DualResult ClickSavePost()
-        {
-            string updateCutplan = string.Format("Update Cutplan set MarkerReqid = '{0}' where id ='{1}'", this.CurrentMaintain["ID"], this.CurrentMaintain["Cutplanid"]);
-            DualResult upResult;
-            if (!(upResult = DBProxy.Current.Execute(null, updateCutplan)))
-            {
-                return upResult;
-            }
-
-            return base.ClickSavePost();
-        }
-
-        /// <inheritdoc/>
         protected override void OnDetailUIConvertToUpdate()
         {
             this.OnDetailUIConvertToMaintain();
-            this.txtCutplan.ReadOnly = true;
-        }
-
-        private void TxtCutplan_Validating(object sender, CancelEventArgs e)
-        {
-            if (!this.EditMode)
-            {
-                return;
-            }
-
-            if (this.txtCutplan.OldValue.ToString() == this.txtCutplan.Text)
-            {
-                return;
-            }
-
-            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", this.txtCutplan.Text, this.keyWord);
-            if (!MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
-            {
-                this.txtCutplan.Text = string.Empty;
-                MyUtility.Msg.WarningBox("<Cutplan ID> data not found!");
-                return;
-            }
-
-            if (cutdr["markerreqid"].ToString() != string.Empty)
-            {
-                this.txtCutplan.Text = string.Empty;
-                MyUtility.Msg.WarningBox(string.Format("<Cutplan ID> already created Bulk Marker Request<{0}>", cutdr["markerreqid"]));
-                return;
-            }
-
-            if (cutdr["Status"].ToString() != "Confirmed")
-            {
-                this.txtCutplan.Text = string.Empty;
-                MyUtility.Msg.WarningBox("The Cutplan not yet confirm.");
-                return;
-            }
-
-            foreach (DataRow dr in this.DetailDatas)
-            {
-                dr.Delete();
-            }
-        }
-
-        private void TxtCutplan_Validated(object sender, EventArgs e)
-        {
-            this.OnValidated(e);
-            string cmd = string.Format("Select * from Cutplan WITH (NOLOCK) Where id='{0}' and mDivisionid = '{1}'", this.txtCutplan.Text, this.keyWord);
-            if (MyUtility.Check.Seek(cmd, out DataRow cutdr, null))
-            {
-                this.displayCutCell.Text = cutdr["Cutcellid"].ToString();
-
-                if (MyUtility.Check.Empty(cutdr["estcutdate"]))
-                {
-                    this.dateCuttingDate.Text = string.Empty;
-                }
-                else
-                {
-                    this.dateCuttingDate.Text = Convert.ToDateTime(cutdr["estcutdate"]).ToShortDateString();
-                }
-
-                string marker2sql = string.Format(
-                    @"
-;with t as (
-Select o.POID
-       , b.MarkerName
-       , layer = sum(b.Layer)
-       , b.MarkerNo
-       , b.fabricCombo
-       , PatternPanel = (Select PatternPanel+'+ ' 
-                         From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                         Where c.WorkOrderUkey =a.WorkOrderUkey 
-                         For XML path(''))
-       , cuttingwidth = (Select cuttingwidth 
-                         from Order_EachCons b WITH (NOLOCK)
-                              , WorkOrder e WITH (NOLOCK) 
-                         where e.Order_EachconsUkey = b.Ukey 
-                               and a.WorkOrderUkey = e.Ukey)
-       , o.styleid
-       , o.seasonid
-From Cutplan_Detail a WITH (NOLOCK) 
-     , WorkOrder b WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on b.orderid = o.ID
-Where a.workorderukey = b.ukey 
-      and a.id = '{0}' 
-Group by o.POID,b.MarkerName,b.MarkerNo
-         , b.fabricCombo,a.WorkOrderUkey
-		 ,o.styleid,o.seasonid
-)
-select StyleID,Seasonid,POID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth,sum(layer)as layer 
-into #temp1
-from t
-group by StyleID,Seasonid,POID,MarkerNo,Markername,FabricCombo,PatternPanel,cuttingwidth
-order by Markername
-
-
-
-Select distinct o.POID
-       , b.MarkerName
-       , b.MarkerNo
-       , b.fabricCombo
-       , SizeRatio = (Select c.sizecode + '*' + convert (varchar(8), c.qty) + '/' 
-                      From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                      Where a.WorkOrderUkey = c.WorkOrderUkey            
-                      For XML path(''))        
-       , o.styleid
-       , o.seasonid
-	   into #temp2
-From Cutplan_Detail a WITH (NOLOCK) 
-     , WorkOrder b WITH (NOLOCK) 
-inner join Orders o WITH (NOLOCK) on b.orderid = o.id	
-Where a.workorderukey = b.ukey 
-      and a.id = '{0}'
-order by Markername
-
-
-select a.* 
-,sizeRatio= (select  b.SizeRatio +''
-	from #temp2 b
-	where b.POID=a.POID
-	and a.styleid=b.styleid
-	and a.seasonid=b.seasonid
-	and a.MarkerName=b.MarkerName
-	and a.MarkerNo=b.MarkerNo
-	and a.fabricCombo=b.fabricCombo
-	For XML path(''))
-from #temp1 a
-order by Markername
-
-DROP TABLE #temp1,#temp2
-
-", this.txtCutplan.Text);
-
-                DataTable gridTb = (DataTable)this.detailgridbs.DataSource;
-                DualResult dResult = DBProxy.Current.Select(null, marker2sql, out DataTable markerTb);
-                foreach (DataRow dr in markerTb.Rows)
-                {
-                    DataRow ndr = gridTb.NewRow();
-                    ndr["styleid"] = dr["styleid"];
-                    ndr["seasonid"] = dr["seasonid"];
-                    ndr["orderid"] = dr["poid"];
-                    ndr["SizeRatio"] = dr["SizeRatio"];
-                    ndr["MarkerName"] = dr["MarkerName"];
-                    ndr["Layer"] = dr["Layer"];
-                    ndr["FabricCombo"] = dr["FabricCombo"];
-                    ndr["MarkerNo"] = dr["MarkerNo"];
-                    ndr["PatternPanel"] = dr["PatternPanel"];
-                    ndr["cuttingwidth"] = dr["cuttingwidth"];
-                    gridTb.Rows.Add(ndr);
-                }
-            }
         }
 
         private bool ToExcel(bool autoSave)
         {
-            string cmdsql = string.Format(
-            @"
-            Select  o.styleid,a.orderid,o.seasonid,a.sizeRatio,a.markerno,a.markername,
-                    a.layer,a.fabriccombo,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
-            (
-                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-                where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
-            ) as cuttingwidth,ReqQty,ReleaseQty,ReleaseDate
-            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
-            where a.id = '{0}'
-            ", this.CurrentDetailData["ID"]);
+            string cmdsql = $@"
+Select o.styleid
+, mrd.orderid
+, o.seasonid
+, mrd.sizeRatio
+, mrd.markerno
+, mrd.markername
+, mrd.layer
+, mrd.fabriccombo
+, mrd.PatternPanel
+, mrd.CuttingWidth
+, mrd.ReqQty
+, mrd.ReleaseQty
+, mrd.ReleaseDate
+From MarkerReq_Detail mrd WITH (NOLOCK)
+left join Orders o WITH (NOLOCK) on mrd.orderid = o.id
+where mrd.id = '{this.CurrentDetailData["ID"]}'";
+
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);
             if (dResult)
             {
@@ -447,7 +275,8 @@ DROP TABLE #temp1,#temp2
 
                 // if (MyUtility.Excel.CopyToXls(ExcelTb,"", "Cutting_P05.xltx", 5, !autoSave, null, objApp, false))
                 if (MyUtility.Excel.CopyToXls(excelTb, string.Empty, "Cutting_P05.xltx", 5, showExcel: false, excelApp: objApp))
-                {// 將datatable copy to excel
+                {
+                    // 將datatable copy to excel
                     Microsoft.Office.Interop.Excel._Worksheet objSheet = objApp.ActiveWorkbook.Worksheets[1];   // 取得工作表
                     Microsoft.Office.Interop.Excel._Workbook objBook = objApp.ActiveWorkbook;
 
@@ -498,9 +327,10 @@ DROP TABLE #temp1,#temp2
                         Marshal.ReleaseComObject(objSheet);
                         Marshal.ReleaseComObject(objBook);
 
+                        // 釋放sheet
                         if (objSheet != null)
                         {
-                            Marshal.FinalReleaseComObject(objSheet);    // 釋放sheet
+                            Marshal.FinalReleaseComObject(objSheet);
                         }
 
                         if (objBook != null)
@@ -508,9 +338,10 @@ DROP TABLE #temp1,#temp2
                             Marshal.FinalReleaseComObject(objBook);
                         }
 
+                        // 釋放objApp
                         if (objApp != null)
                         {
-                            Marshal.FinalReleaseComObject(objApp);          // 釋放objApp
+                            Marshal.FinalReleaseComObject(objApp);
                         }
 
                         this.pathName.OpenFile();

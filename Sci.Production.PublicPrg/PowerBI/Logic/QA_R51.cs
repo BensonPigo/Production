@@ -87,7 +87,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             Left join Bundle B WITH (NOLOCK) on BD.ID=B.ID
             Left join Orders O WITH (NOLOCK) on B.OrderID=O.ID
             left join Country on Country.ID = o.Dest
-            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID
+            Left JOIN WorkOrderForOutput WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
             Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
             Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
             Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
@@ -162,7 +162,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             left join Country on Country.ID = o.Dest
             Left join Bundle_Detail BD WITH (NOLOCK) on SR.BundleNo=BD.BundleNo
             Left JOIN Bundle B WITH (NOLOCK) ON BD.ID=B.ID
-            Left JOIN WorkOrder WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID
+            Left JOIN WorkOrderForOutput WO ON WO.CutRef=B.CutRef and b.CutRef <> '' and wo.ID = b.POID and wo.OrderID =b.Orderid
             Left JOIN PO_Supp_Detail PSD WITH (NOLOCK) ON PSD.ID=WO.ID AND PSD.SEQ1 = WO.SEQ1 AND PSD.SEQ2=WO.SEQ2
             Left JOIN PO_SUPP PS WITH (NOLOCK) ON PS.ID= PSD.ID AND PS.SEQ1=PSD.SEQ1
             Left JOIN Supp S WITH (NOLOCK) ON S.ID=PS.SuppID
@@ -270,21 +270,33 @@ from #tmp3
                     left join SubProInsRecord_Defect SRD on SR.Ukey = SRD.SubProInsRecordUkey
                     outer apply 
                     (
-                        select OpreatorID = STUFF((
+                        select OperatorID = STUFF((
 		                    select CONCAT(',', SubProOperatorEmployeeID)
 		                    from SubProInsRecord_Operator with (nolock)
 		                    where SubProInsRecordUkey = SR.Ukey
 		                    order by SubProOperatorEmployeeID
 		                    for xml path('')
 	                    ),1,1,'')
-                    ) SOE" + sqlDefValue;
+                    ) SOE
+					outer apply 
+                    (
+                        select OperatorName = STUFF((
+		                    select CONCAT(',', spo.FirstName, '-', spo.LastName)
+							from SubProInsRecord_Operator spiro with (nolock)
+							inner join SubProOperator spo with (nolock) on spiro.SubProOperatorEmployeeID = spo.EmployeeID
+		                    where spiro.SubProInsRecordUkey = SR.Ukey
+		                    order by spiro.SubProOperatorEmployeeID
+		                    for xml path('')
+	                    ),1,1,'')
+                    ) spo" + sqlDefValue;
                     formatCol1 = $@"
                     m.Serial,
                     {strJunk}
                     m.Description,
                     SRD.DefectCode,
                     SRD.DefectQty,
-                    SOE.OpreatorID,";
+                    SOE.OperatorID,
+                    spo.OperatorName,";
                     formatCol2 = string.Empty;
                     return Tuple.Create(formatCol1, formatCol2, formatJoin);
                 case "ResponseTeam":

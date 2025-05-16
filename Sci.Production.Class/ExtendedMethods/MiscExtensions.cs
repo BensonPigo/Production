@@ -189,22 +189,6 @@ namespace Sci.Production.Class.Command
         }
 
         /// <summary>
-        /// 如果資料列大於0，則會呼叫原本的CopyToDataTable，不然會用SrcTable做Clone
-        /// </summary>
-        /// <inheritdoc/>
-        public static DataTable TryCopyToDataTable(this IEnumerable<DataRow> rows, DataTable srcTableForSchema)
-        {
-            if (rows.Any())
-            {
-                return rows.CopyToDataTable();
-            }
-            else
-            {
-                return srcTableForSchema.Clone();
-            }
-        }
-
-        /// <summary>
         /// 當發生String or binary data would be truncated錯誤時候，可用此方法觀察每個欄位的最長值是多少
         /// </summary>
         /// <inheritdoc/>

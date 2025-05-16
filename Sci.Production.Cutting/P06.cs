@@ -48,7 +48,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
                         this.DefaultWhere = string.Empty;
                         break;
                     default:
-                        this.DefaultWhere = string.Format("(select CT.FactoryID from Cutplan CP left join Cutting CT on CP.CuttingID=CT.ID where CP.ID = MarkerReq.Cutplanid) = '{0}'", this.queryfors.SelectedValue);
+                        this.DefaultWhere = string.Format("MarkerReq.FactoryID = '{0}'", this.queryfors.SelectedValue);
                         break;
                 }
 
@@ -62,19 +62,11 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string masterID = (e.Master == null) ? string.Empty : e.Master["id"].ToString();
             string cmdsql = string.Format(
             @"
-            Select a.*,
-            (
-                Select PatternPanel+'+ ' 
-                From WorkOrder_PatternPanel c WITH (NOLOCK) 
-                Where c.WorkOrderUkey =a.WorkOrderUkey 
-                For XML path('')
-            ) as PatternPanel,
-            (
-                Select cuttingwidth from Order_EachCons b WITH (NOLOCK) , WorkOrder e WITH (NOLOCK) 
-                where e.Order_EachconsUkey = b.Ukey and a.WorkOrderUkey = e.Ukey  
-            ) as cuttingwidth,
-            o.styleid,o.seasonid
-            From MarkerReq_Detail a WITH (NOLOCK) left join Orders o WITH (NOLOCK) on a.orderid=o.id
+            Select a.*
+            , o.styleid
+            , o.seasonid
+            From MarkerReq_Detail a WITH (NOLOCK)
+            left join Orders o WITH (NOLOCK) on a.orderid=o.id
             where a.id = '{0}'
             ", masterID);
             this.DetailSelectCommand = cmdsql;
@@ -86,6 +78,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.OnDetailGridSetup();
             this.Helper.Controls.Grid.Generator(this.detailgrid)
+            .Text("CutRef", header: "CutRef#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Styleid", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("OrderID", header: "SP#", width: Widths.AnsiChars(13), iseditingreadonly: true)
             .Text("Seasonid", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)

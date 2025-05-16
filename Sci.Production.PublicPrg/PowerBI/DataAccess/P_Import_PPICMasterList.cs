@@ -272,6 +272,7 @@ update p
 		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
 		, p.[BIFactoryID] = ISNULL(t.BIFactoryID,'')
 		, p.[BIInsertDate] = t.BIInsertDate
+		, p.[CriticalStyle] = ISNULL(t.[CriticalStyle],'')
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -297,7 +298,8 @@ insert into P_PPICMASTERLIST([M], [FactoryID], [Delivery], [Delivery(YYYYMM)], [
 	, [Last Scan And Pack Date], [Last ctn recvd date], [OrganicCotton], [Direct Ship], [StyleCarryover], [SCHDL/ETA(SP)], [SewingMtlETA(SPexclRepl)]
 	, [ActualMtlETA(exclRepl)], [HalfKey], [DevSample], [POID], [KeepPanels], [BuyBackReason], [SewQtybyRate], [Unit], [SubconInType]
 	, [Article], [ProduceRgPMS], [Buyerhalfkey], [Country],[Third_Party_Insepction],[ColorID],[FtyToClogTransit],[ClogToCFATansit],[CFAToClogTransit],[Shortage]
-	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [BIFactoryID], [BIInsertDate])
+	, [Original CustPO], [Line Aggregator], [JokerTag], [HeatSeal], [BIFactoryID], [BIInsertDate], [CriticalStyle])
+
 select ISNULL(t.[M], '')
 	, ISNULL(t.[Factory], '')
 	, [Delivery]
@@ -482,6 +484,7 @@ select ISNULL(t.[M], '')
 	, ISNULL([HeatSeal], 0)
 	, ISNULL([BIFactoryID],'')
 	, BIInsertDate
+    , ISNULL([CriticalStyle],'')
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 

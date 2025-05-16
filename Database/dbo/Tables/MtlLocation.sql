@@ -9,6 +9,7 @@
     [EditDate]    DATETIME      NULL,
     [IsWMS]       BIT           DEFAULT ((0)) NOT NULL,
 	[Capacity]    INT			CONSTRAINT [DF_MtlLocation_Capacity] DEFAULT ((0)) NOT NULL,
+    LocationType varchar(10) NOT NULL CONSTRAINT [DF_MtlLocation_LocationType] DEFAULT 'Fabric',
     CONSTRAINT [PK_MtlLocation] PRIMARY KEY CLUSTERED ([ID] ASC, [StockType] ASC)
 );
 

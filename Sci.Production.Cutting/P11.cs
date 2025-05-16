@@ -240,10 +240,10 @@ namespace Sci.Production.Cutting
 
                 string scalecmd = $@"
 select wd.Orderid,Article,w.Colorid,SizeCode,SewLine = case when o.SewLine like '%/%' then substring(o.Sewline,1,charindex('/',o.Sewline,1) - 1) else o.SewLine end,w.CutCellid
-from workorder_Distribute wd WITH (NOLOCK) 
-inner join WorkOrder w WITH (NOLOCK) on wd.WorkOrderUkey = w.Ukey
+from WorkOrderForOutput_Distribute wd WITH (NOLOCK) 
+inner join WorkOrderForOutput w WITH (NOLOCK) on wd.WorkOrderForOutputUkey = w.Ukey
 inner join orders o WITH (NOLOCK) on w.id = o.cuttingsp and wd.OrderID = o.id
-where workorderukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
+where WorkOrderForOutputukey = '{dr["Ukey"]}'and wd.orderid <>'EXCESS'
 ";
                 SelectItem item1 = new SelectItem(scalecmd, string.Empty, dr["Orderid"].ToString());
                 DialogResult result = item1.ShowDialog();
@@ -423,7 +423,7 @@ FROM ftyinventory  f
 inner join PO_Supp_Detail psd on f.POID=psd.ID  and f.Seq1 =psd.SEQ1 and f.Seq2 =psd.SEQ2 and f.StockType ='B'
 where 1=1
 and POID = '{this.gridCutRef.CurrentDataRow["POID"]}'
-and psd.Refno = (select top 1 wo.Refno from WorkOrder wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}')
+and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRef='{this.gridCutRef.CurrentDataRow["Cutref"]}')
 ";
                 SelectItem sele = new SelectItem(sqlcmd, "50", dr["Dyelot"].ToString()) { Width = 333 };
                 DialogResult result = sele.ShowDialog();
@@ -940,7 +940,7 @@ Select
     , o.StyleUkey
 	, w.MDivisionId
     , [IsShowRFIDScan] = dbo.IsShowRFIDScan(o.poid, w.Fabriccombo)
-from  workorder w WITH (NOLOCK) 
+from  WorkOrderForOutput w WITH (NOLOCK) 
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	Select item = Reason.Name 
@@ -949,7 +949,7 @@ outer apply(
 	where Reason.Reasontypeid = 'Style_Apparel_Type' 
 	and Style.ukey = o.styleukey 
 )item
-outer apply (SELECT TOP 1 wd.patternpanel FROM workorder_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.workorderukey)wd
+outer apply (SELECT TOP 1 wd.patternpanel FROM WorkOrderForOutput_PatternPanel wd WITH (NOLOCK) WHERE w.ukey = wd.WorkOrderForOutputukey)wd
 outer apply(
     SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME, FabricKindID = DD.id
     FROM order_colorcombo OCC WITH (NOLOCK)
@@ -1007,19 +1007,19 @@ Select
     , IsCombineSubProcess = cast({(this.isCombineSubProcess ? "1" : "0")} as bit)
     , isNoneShellNoCreateAllParts = cast(iif(FabricKind.FabricKindID <> '1' and {(this.isNoneShellNoCreateAllParts ? "1" : "0")} = 1, 1, 0) as bit)
     , FabricKind.FabricKindID
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
-	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = wd.SizeCode 
+	from WorkOrderForOutput_Distribute wd WITH(NOLOCK)
+	where wd.WorkOrderForOutputUkey = w.Ukey and wd.orderid <>'EXCESS' and wd.SizeCode = wd.SizeCode 
 	order by wd.OrderID desc
 )l
 outer apply(
 	select top 1 wd.OrderID,wd.Article,wd.SizeCode
-	from workorder_Distribute wd WITH(NOLOCK)
-	where wd.WorkOrderUkey = w.Ukey and wd.orderid <>'EXCESS'
+	from WorkOrderForOutput_Distribute wd WITH(NOLOCK)
+	where wd.WorkOrderForOutputUkey = w.Ukey and wd.orderid <>'EXCESS'
 	order by wd.OrderID desc
 )l2
 outer apply(
@@ -1029,7 +1029,7 @@ outer apply(
 	where Reason.Reasontypeid = 'Style_Apparel_Type' 
 	and Style.ukey = o.styleukey 
 )item
-outer apply (SELECT TOP 1 wp.patternpanel FROM workorder_PatternPanel wp WITH (NOLOCK) WHERE w.ukey = wp.workorderukey)wp
+outer apply (SELECT TOP 1 wp.patternpanel FROM WorkOrderForOutput_PatternPanel wp WITH (NOLOCK) WHERE w.ukey = wp.WorkOrderForOutputukey)wp
 outer apply(
     SELECT TOP 1 FabricKind = DD.id + '-' + DD.NAME, FabricKindID = DD.id
     FROM order_colorcombo OCC WITH (NOLOCK)
@@ -1056,10 +1056,10 @@ order by article.article,wd.sizecode,wd.orderid,w.FabricPanelCode
 
             string sizeRatio = $@"
 Select distinct w.ukey, ws.SizeCode, ws.Qty
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on  o.ID = w.id and o.cuttingsp = w.id
-inner join WorkOrder_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderUkey = w.Ukey and ws.SizeCode = wd.SizeCode
+inner join WorkOrderForOutput_SizeRatio ws WITH (NOLOCK) on ws.WorkOrderForOutputUkey = w.Ukey and ws.SizeCode = wd.SizeCode
 Where isnull(w.CutRef,'') <> '' 
 and o.mDivisionid = '{this.keyWord}'
 {where}
@@ -1353,8 +1353,8 @@ and o.mDivisionid = '{this.keyWord}'
         {
             string excess_cmd = $@"
 Select distinct w.cutref, w.orderid
-from workorder w WITH (NOLOCK) 
-inner join workorder_Distribute wd WITH (NOLOCK) on w.ukey = wd.workorderukey
+from WorkOrderForOutput w WITH (NOLOCK) 
+inner join WorkOrderForOutput_Distribute wd WITH (NOLOCK) on w.ukey = wd.WorkOrderForOutputukey
 inner join orders o WITH (NOLOCK) on o.ID = w.id and o.cuttingsp = w.id
 Where o.mDivisionid = '{this.keyWord}'   
 and isnull(w.CutRef,'') <> '' 

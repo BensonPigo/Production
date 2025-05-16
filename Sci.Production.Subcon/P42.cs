@@ -345,8 +345,8 @@ outer apply(
 		select concat(',',w1.CutCellid)
 		from(
 			select distinct wo.CutCellid
-	        from WorkOrder_Distribute wd with(nolock) 
-	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+	        from WorkOrderForOutput_Distribute wd with(nolock) 
+	        inner join WorkOrderForOutput wo with(nolock) on wo.Ukey = wd.WorkOrderForOutputUkey
 			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
 		)w1
 		for xml path(''))
@@ -586,8 +586,8 @@ outer apply(
 		select concat(',',w1.CutCellid)
 		from(
 			select distinct wo.CutCellid
-	        from WorkOrder_Distribute wd with(nolock) 
-	        inner join WorkOrder wo with(nolock) on wo.Ukey = wd.WorkOrderUkey
+	        from WorkOrderForOutput_Distribute wd with(nolock) 
+	        inner join WorkOrderForOutput wo with(nolock) on wo.Ukey = wd.WorkOrderForOutputUkey
 			where wd.OrderID = o.ID and isnull(wo.CutCellid,'')<>''
 		)w1
 		for xml path(''))

@@ -220,6 +220,21 @@ And OrderID = @OrderID
 And ComboType = @ComboType
 And Article = @Article
 
+--SubconOutContract_Detail 沒資料才能刪除 SubconOutContract_Detail_TmsCost 資料
+Delete SubconOutContract_Detail_TmsCost
+  from SubconOutContract_Detail_TmsCost
+where SubConOutFty = @SubConOutFty 
+And ContractNumber = @ContractNumber 
+And OrderID = @OrderID
+and not exists 
+(
+select * from  SubconOutContract_Detail
+where SubConOutFty = SubconOutContract_Detail_TmsCost.SubConOutFty
+and ContractNumber = SubconOutContract_Detail_TmsCost.ContractNumber
+and OrderId = SubconOutContract_Detail_TmsCost.OrderId
+)
+
+
 ";
 
                 var result = DBProxy.Current.Execute(string.Empty, sqlCmd, listPar);

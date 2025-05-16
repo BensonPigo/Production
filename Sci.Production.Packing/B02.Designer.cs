@@ -133,11 +133,13 @@
             // 
             // txtLocalDescription
             // 
-            this.txtLocalDescription.BackColor = System.Drawing.Color.White;
+            this.txtLocalDescription.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtLocalDescription.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "LocalDescription", true));
-            this.txtLocalDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtLocalDescription.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtLocalDescription.IsSupportEditMode = false;
             this.txtLocalDescription.Location = new System.Drawing.Point(186, 126);
             this.txtLocalDescription.Name = "txtLocalDescription";
+            this.txtLocalDescription.ReadOnly = true;
             this.txtLocalDescription.Size = new System.Drawing.Size(372, 23);
             this.txtLocalDescription.TabIndex = 9;
             // 

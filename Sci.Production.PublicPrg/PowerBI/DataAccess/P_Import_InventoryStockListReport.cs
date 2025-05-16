@@ -110,7 +110,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 alter table #tmp alter column Refno              varchar (36)
                 alter table #tmp alter column SCIRefno           varchar (30)
                 alter table #tmp alter column Description        nvarchar (150)
-                alter table #tmp alter column ColorID            varchar (50)
+                alter table #tmp alter column ColorID            varchar (100)
                 alter table #tmp alter column ColorName          nvarchar (150)
                 alter table #tmp alter column Size               varchar (50)
                 alter table #tmp alter column StockUnit          varchar (8)

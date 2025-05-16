@@ -121,6 +121,92 @@ namespace Sci.Production.Cutting
                 #endregion
             }
 
+            if (this.radioForPlanning.Checked)
+            {
+                #region rdCheck_CuttingWorkOrder
+                DualResult res = DBProxy.Current.SelectSP(string.Empty, "[dbo].Cutting_P01_print_CuttingWorkOrderForPlanning", new List<SqlParameter> { new SqlParameter("@OrderID", this._id) }, out DataTable[] dts);
+
+                if (!res)
+                {
+                    MyUtility.Msg.ErrorBox(res.ToString(), "error");
+                    return false;
+                }
+
+                if (dts.Length < 3)
+                {
+                    MyUtility.Msg.ErrorBox("no data.", string.Empty);
+                    return false;
+                }
+
+                DataRow dr = dts[0].Rows[0];
+                DataRow dr2 = dts[1].Rows[0];
+                string xltPath = System.IO.Path.Combine(Env.Cfg.XltPathDir, "Cutting_P01_CuttingWorkOrderForPlanning.xltx");
+                sxrc sxr = new sxrc(xltPath);
+                string cuttingfactory = MyUtility.GetValue.Lookup("FactoryID", this._id, "Cutting", "ID");
+
+                sxr.DicDatas.Add(sxr.VPrefix + "Title", MyUtility.GetValue.Lookup("NameEN", cuttingfactory, "Factory", "ID"));
+                sxr.DicDatas.Add(sxr.VPrefix + "PoList", dr["PoList"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "StyleID", dr["StyleID"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "CutLine", dr["CutLine"]);
+                sxr.DicDatas.Add(sxr.VPrefix + "OrderQty", MyUtility.Convert.GetString(dr2["OrderQty"]));
+
+                sxrc.XltRptTable dt = new sxrc.XltRptTable(dts[2]);
+
+                dt.Borders.AllCellsBorders = true;
+
+                // 合併儲存格
+                dt.LisTitleMerge.Add(new Dictionary<string, string> { { "SIZE RATIO OF MARKER", string.Format("{0},{1}", 5, dt.Columns.Count - 11) } });
+
+                // 自動欄位寬度
+                dt.BoAutoFitColumn = true;
+
+                for (int i = 5; i <= dt.Columns.Count - 11; i++)
+                {
+                    dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(i) { ColumnWidth = (decimal)5.38 });
+                }
+
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(2) { ColumnWidth = (decimal)7.38 });  // Marker Name調窄
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(3) { ColumnWidth = (decimal)7.38 });  // Fabric Combo調窄
+
+                // 凍結窗格
+                dt.BoFreezePanes = true;
+
+                dt.BoAddFilter = true;
+                sxr.DicDatas.Add(sxr.VPrefix + "tbl1", dt);
+
+                Microsoft.Office.Interop.Excel.Worksheet wks = sxr.ExcelApp.ActiveSheet;
+                string sc = MyExcelPrg.GetExcelColumnName(dt.Columns.Count);
+                wks.get_Range(string.Format("A1:{0}1", sc)).Merge();
+                wks.get_Range(string.Format("A2:{0}2", sc)).Merge();
+                wks.get_Range(string.Format("B3:{0}3", sc)).Merge();
+
+                if (dts.Length == 4)
+                {
+                    wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).Merge();
+                    wks.get_Range(string.Format("B{0}:{1}{2}", 6, sc, 6 + dts[3].Rows.Count)).HorizontalAlignment = Microsoft.Office.Interop.Excel.XlHAlign.xlHAlignLeft;
+
+                    // Fabric Desc
+                    string txtFabricDesc = string.Empty;
+                    for (int i = 0; i < dts[3].Rows.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            txtFabricDesc += "\n\r";
+                        }
+
+                        txtFabricDesc += dts[3].Rows[i][0].ToString();
+                    }
+
+                    wks.Cells[6, 2] = txtFabricDesc;
+                }
+
+                wks.get_Range("A5").RowHeight = 16.5;
+                wks.get_Range("A6").RowHeight = 16.5;
+                sxr.BoOpenFile = true;
+                sxr.Save(Class.MicrosoftFile.GetName("Cutting_P01_CuttingWorkOrder"));
+                #endregion
+            }
+
             if (this.radioCuttingTape.Checked)
             {
                 #region Header
@@ -265,10 +351,13 @@ select [SP] =
                 // 自動欄位寬度
                 dt.BoAutoFitColumn = true;
                 dt.HeaderColor = Color.LawnGreen;
-                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(10) { ColumnWidth = (decimal)10 });
+                dt.LisColumnInfo.Add(new sxrc.XlsColumnInfo(20) { ColumnWidth = (decimal)20 });
+
+                // 不包含表頭欄位名稱
+                dt.ShowHeader = false;
 
                 // 凍結窗格
-                dt.BoFreezePanes = true;
+                //dt.BoFreezePanes = true;
 
                 // 篩選
                 dt.BoAddFilter = true;

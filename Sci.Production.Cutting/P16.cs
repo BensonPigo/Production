@@ -116,12 +116,13 @@ namespace Sci.Production.Cutting
                 .Numeric("BalanceCons", header: "Balance Cons.", width: Widths.AnsiChars(6), decimal_places: 4, integer_places: 5, iseditingreadonly: true)
                 .Date("BuyerDelivery", header: "Buyer Delivery", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .Text("UnfinishedCuttingReasonDesc", width: Widths.AnsiChars(30), header: "Reason", settings: unfinishedCuttingReasonSetting)
-                .EditText("Remark", header: "Remark", width: Widths.AnsiChars(30))
+                .EditText("UnfinishedCuttingRemark", header: "Remark", width: Widths.AnsiChars(30))
                 ;
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCuttingReasonInput.ColumnFrozen(this.gridCuttingReasonInput.Columns["Selected"].Index);
+            this.gridCuttingReasonInput.Columns["UnfinishedCuttingRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
 
         private void Query()
@@ -192,29 +193,29 @@ select
     [BalanceCons] = SUM(w.Cons - [ActConsOutput]),
     o.BuyerDelivery,
     [UnfinishedCuttingReasonDesc] = dw.Name,
-    w.Remark
-from WorkOrder w WITH (NOLOCK) 
+    w.UnfinishedCuttingRemark
+from WorkOrderForOutput w WITH (NOLOCK) 
 inner join Orders o WITH (NOLOCK) on o.id = w.ID
 inner join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
 left join DropDownList dw with (nolock) on dw.Type = 'PMS_UnFinCutReason' and dw.ID = w.UnfinishedCuttingReason
 left join fabric f WITH (NOLOCK) on f.SCIRefno = w.SCIRefno
 left join PO_Supp_Detail psd with(nolock) on psd.id = w.id and psd.seq1 = w.seq1 and psd.seq2 = w.seq2
-outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.WorkOrderUkey = w.Ukey)acc
+outer apply(select AccuCuttingLayer = sum(aa.Layer) from cuttingoutput_Detail aa WITH (NOLOCK) where aa.WorkOrderForOutputUkey = w.Ukey)acc
 outer apply(select YDSMarkerLength = dbo.MarkerLengthToYDS(w.MarkerLength)) ML
 outer apply(select ActConsOutput = cast(isnull(iif(w.Layer - isnull(acc.AccuCuttingLayer,0) = 0, w.Cons, acc.AccuCuttingLayer * ML.YDSMarkerLength),0) as numeric(9,4)))ActConsOutput
 outer apply(
 select Size = stuff((
 	Select concat(', ' , c.sizecode, '/ ', c.qty)
-	From WorkOrder_SizeRatio c WITH (NOLOCK)
-	Where c.WorkOrderUkey =w.Ukey
+	From WorkOrderForOutput_SizeRatio c WITH (NOLOCK)
+	Where c.WorkOrderForOutputUkey =w.Ukey
 	For XML path('')
 	),1,1,'')
 )Size
 outer apply(
 	select Article = (
 		select distinct concat('/',Article)
-		from WorkOrder_Distribute WITH (NOLOCK) 
-		where WorkOrderUKey = w.UKey
+		from WorkOrderForOutput_Distribute WITH (NOLOCK) 
+		where WorkOrderForOutputUKey = w.UKey
 		and Article != ''
 		for xml path('')
 	)
@@ -225,8 +226,8 @@ outer apply(
 	WHERE ID = o.POID and SizeCode IN 
 	(
 		select distinct wd.SizeCode
-		from WorkOrder_Distribute wd WITH (NOLOCK)
-		where wd.WorkOrderUkey = w.Ukey
+		from WorkOrderForOutput_Distribute wd WITH (NOLOCK)
+		where wd.WorkOrderForOutputUkey = w.Ukey
 	)
 ) as ss
 outer apply(select p.PatternUkey from dbo.GetPatternUkey(o.POID,'',w.MarkerNo,o.StyleUkey,ss.SizeGroup) p ) p
@@ -253,7 +254,7 @@ and (w.Layer - isnull(acc.AccuCuttingLayer,0)) > 0
 
 group by w.MDivisionID,o.FtyGroup, f.WeaveTypeID,psd.FinalETA,w.EstCutDate,w.ID,o.BrandID,o.StyleID,
     w.Refno,w.CutRef,w.Cutno,w.FabricCombo,Article.Article,w.ColorID,Artwork.Artwork,Size.Size,
-	w.UnfinishedCuttingReason,o.BuyerDelivery, dw.Name, w.Remark
+	w.UnfinishedCuttingReason,o.BuyerDelivery, dw.Name, w.UnfinishedCuttingRemark
 order by w.EstCutDate asc,w.ID asc,w.FabricCombo asc";
 
             DataTable dtResult;
@@ -298,7 +299,7 @@ order by w.EstCutDate asc,w.ID asc,w.FabricCombo asc";
             foreach (var needSaveItem in needSaveData)
             {
                 sqlUpdate += $@"
-update WorkOrder set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', Remark = '{needSaveItem["Remark"]}' where CutRef = '{needSaveItem["CutRef"]}' and ID = '{needSaveItem["ID"]}'
+update WorkOrderForOutput set UnfinishedCuttingReason = '{needSaveItem["UnfinishedCuttingReason"]}', UnfinishedCuttingRemark = '{needSaveItem["UnfinishedCuttingRemark"]}' where CutRef = '{needSaveItem["CutRef"]}' and ID = '{needSaveItem["ID"]}'
 ";
             }
 

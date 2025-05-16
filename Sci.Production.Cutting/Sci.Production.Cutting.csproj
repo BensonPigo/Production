@@ -185,26 +185,60 @@
     <Compile Include="B13_Set.Designer.cs">
       <DependentUpon>B13_Set.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_ExcludefabriccomboinWIP.cs">
+    <Compile Include="CuttingClass\Cutpartcheck.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02_ExcludefabriccomboinWIP.Designer.cs">
-      <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
+    <Compile Include="CuttingClass\Cutpartcheck.designer.cs">
+      <DependentUpon>Cutpartcheck.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_KHImportMarker.cs">
+    <Compile Include="CuttingClass\Cutpartchecksummary.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02_PatternPanel_n.cs">
+    <Compile Include="CuttingClass\Cutpartchecksummary.designer.cs">
+      <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CuttingClass\Cutting.cs" />
+    <Compile Include="CuttingClass\CuttingWorkOrderExtensions.cs" />
+    <Compile Include="CuttingClass\CuttingWorkOrder.cs" />
+    <Compile Include="CuttingClass\Cutting_Print_P09.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02_PatternPanel_n.Designer.cs">
-      <DependentUpon>P02_PatternPanel_n.cs</DependentUpon>
+    <Compile Include="CuttingClass\Cutting_Print_P09.Designer.cs">
+      <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_ImportML.cs">
+    <Compile Include="CuttingClass\PackingMethod.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02_ImportML.Designer.cs">
-      <DependentUpon>P02_ImportML.cs</DependentUpon>
+    <Compile Include="CuttingClass\PackingMethod.Designer.cs">
+      <DependentUpon>PackingMethod.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P05_Import.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P05_Import.Designer.cs">
+      <DependentUpon>P05_Import.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09_History.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_History.Designer.cs">
+      <DependentUpon>P09_History.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_ExcludeSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ExcludeSetting.Designer.cs">
+      <DependentUpon>P02_ExcludeSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CuttingClass\ImportML.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CuttingClass\ImportML.Designer.cs">
+      <DependentUpon>ImportML.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_WKETA.cs" />
+    <Compile Include="P02_WKETA.Designer.cs">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </Compile>
     <Compile Include="P04_EditFabricCutDate.cs">
       <SubType>Form</SubType>
@@ -223,6 +257,18 @@
     </Compile>
     <Compile Include="P04_FabricDeleteHistory.Designer.cs">
       <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02.Designer.cs">
+      <DependentUpon>P02.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09.Designer.cs">
+      <DependentUpon>P09.cs</DependentUpon>
     </Compile>
     <Compile Include="P08_MailTo_Detail.cs">
       <SubType>Form</SubType>
@@ -302,46 +348,23 @@
     <Compile Include="P01_Print_OrderList.Designer.cs">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02.cs">
+    <Compile Include="CuttingClass\Cutting_BatchAssign.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02.Designer.cs">
-      <DependentUpon>P02.cs</DependentUpon>
+    <Compile Include="CuttingClass\Cutting_BatchAssign.Designer.cs">
+      <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_AutoDistToSP.cs">
+    <Compile Include="CuttingClass\Cutting_Print_P02.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="P02_AutoDistToSP.Designer.cs">
-      <DependentUpon>P02_AutoDistToSP.cs</DependentUpon>
+    <Compile Include="CuttingClass\Cutting_Print_P02.Designer.cs">
+      <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </Compile>
-    <Compile Include="P02_BatchAssign.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_BatchAssign.Designer.cs">
-      <DependentUpon>P02_BatchAssign.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_Print.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_Print.Designer.cs">
-      <DependentUpon>P02_Print.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_PublicFunction.cs" />
     <Compile Include="B08.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="B08.Designer.cs">
       <DependentUpon>B08.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_OriginalData.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_OriginalData.Designer.cs">
-      <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_WKETA.cs" />
-    <Compile Include="P02_WKETA.Designer.cs">
-      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </Compile>
     <Compile Include="P04.cs">
       <SubType>Form</SubType>
@@ -361,17 +384,29 @@
     <Compile Include="P05.Designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
     </Compile>
-    <Compile Include="P07.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P07.Designer.cs">
-      <DependentUpon>P07.cs</DependentUpon>
-    </Compile>
     <Compile Include="P08.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="P08.Designer.cs">
       <DependentUpon>P08.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P02_ActionCutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P02_ActionCutRef.Designer.cs">
+      <DependentUpon>P02_ActionCutRef.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09_AutoDistToSP.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_AutoDistToSP.designer.cs">
+      <DependentUpon>P09_AutoDistToSP.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09_ImportFromWorkOrderForPlanning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_ImportFromWorkOrderForPlanning.Designer.cs">
+      <DependentUpon>P09_ImportFromWorkOrderForPlanning.cs</DependentUpon>
     </Compile>
     <Compile Include="P10_1.cs">
       <SubType>Form</SubType>
@@ -414,6 +449,12 @@
     </Compile>
     <Compile Include="P10_1_Print.Designer.cs">
       <DependentUpon>P10_1_Print.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P09_ActionCutRef.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P09_ActionCutRef.Designer.cs">
+      <DependentUpon>P09_ActionCutRef.cs</DependentUpon>
     </Compile>
     <Compile Include="P12_Print.cs">
       <SubType>Form</SubType>
@@ -459,6 +500,12 @@
       <DependentUpon>P15.cs</DependentUpon>
     </Compile>
     <Compile Include="P15_Datas.cs" />
+    <Compile Include="P31_ReviseSchedule.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P31_ReviseSchedule.Designer.cs">
+      <DependentUpon>P31_ReviseSchedule.cs</DependentUpon>
+    </Compile>
     <Compile Include="P15_SelectDistribute.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -482,18 +529,6 @@
     </Compile>
     <Compile Include="P20_Detail.Designer.cs">
       <DependentUpon>P20_Detail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P02_PackingMethod.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P02_PackingMethod.Designer.cs">
-      <DependentUpon>P02_PackingMethod.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P03.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P03.Designer.cs">
-      <DependentUpon>P03.cs</DependentUpon>
     </Compile>
     <Compile Include="P04_FabricIssueList.cs">
       <SubType>Form</SubType>
@@ -562,18 +597,6 @@
     <Compile Include="P01.Designer.cs">
       <DependentUpon>P01.cs</DependentUpon>
     </Compile>
-    <Compile Include="P01_Cutpartcheck.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P01_Cutpartcheck.Designer.cs">
-      <DependentUpon>P01_Cutpartcheck.cs</DependentUpon>
-    </Compile>
-    <Compile Include="P01_Cutpartchecksummary.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="P01_Cutpartchecksummary.Designer.cs">
-      <DependentUpon>P01_Cutpartchecksummary.cs</DependentUpon>
-    </Compile>
     <Compile Include="P06.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -590,6 +613,12 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="R01.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="R01.Designer.cs">
+      <DependentUpon>R01.cs</DependentUpon>
     </Compile>
     <Compile Include="R02.cs">
       <SubType>Form</SubType>
@@ -614,12 +643,6 @@
     </Compile>
     <Compile Include="R08.Designer.cs">
       <DependentUpon>R08.cs</DependentUpon>
-    </Compile>
-    <Compile Include="R09.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="R09.designer.cs">
-      <DependentUpon>R09.cs</DependentUpon>
     </Compile>
     <Compile Include="R11.cs">
       <SubType>Form</SubType>
@@ -668,6 +691,9 @@
     <EmbeddedResource Include="B09.resx">
       <DependentUpon>B09.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CuttingClass\Cutpartcheck.resx">
+      <DependentUpon>Cutpartcheck.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="B12.resx">
       <DependentUpon>B12.cs</DependentUpon>
     </EmbeddedResource>
@@ -686,14 +712,29 @@
     <EmbeddedResource Include="B13_Set.resx">
       <DependentUpon>B13_Set.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02_ExcludefabriccomboinWIP.resx">
-      <DependentUpon>P02_ExcludefabriccomboinWIP.cs</DependentUpon>
+    <EmbeddedResource Include="CuttingClass\Cutpartchecksummary.resx">
+      <DependentUpon>Cutpartchecksummary.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02_PatternPanel_n.resx">
-      <DependentUpon>P02_PatternPanel_n.cs</DependentUpon>
+    <EmbeddedResource Include="CuttingClass\Cutting_Print_P09.resx">
+      <DependentUpon>Cutting_Print_P09.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02_ImportML.resx">
-      <DependentUpon>P02_ImportML.cs</DependentUpon>
+    <EmbeddedResource Include="CuttingClass\PackingMethod.resx">
+      <DependentUpon>PackingMethod.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P05_Import.resx">
+      <DependentUpon>P05_Import.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_History.resx">
+      <DependentUpon>P09_History.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ExcludeSetting.resx">
+      <DependentUpon>P02_ExcludeSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CuttingClass\ImportML.resx">
+      <DependentUpon>ImportML.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_WKETA.resx">
+      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04_EditFabricCutDate.resx">
       <DependentUpon>P04_EditFabricCutDate.cs</DependentUpon>
@@ -703,6 +744,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P04_FabricDeleteHistory.resx">
       <DependentUpon>P04_FabricDeleteHistory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02.resx">
+      <DependentUpon>P02.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09.resx">
+      <DependentUpon>P09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P08_MailTo_Detail.resx">
       <DependentUpon>P08_MailTo_Detail.cs</DependentUpon>
@@ -746,35 +793,17 @@
     <EmbeddedResource Include="P01_MarkerList.resx">
       <DependentUpon>P01_MarkerList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P01_Cutpartcheck.resx">
-      <DependentUpon>P01_Cutpartcheck.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P01_Cutpartchecksummary.resx">
-      <DependentUpon>P01_Cutpartchecksummary.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P01_Print_OrderList.resx">
       <DependentUpon>P01_Print_OrderList.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02.resx">
-      <DependentUpon>P02.cs</DependentUpon>
+    <EmbeddedResource Include="CuttingClass\Cutting_BatchAssign.resx">
+      <DependentUpon>Cutting_BatchAssign.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P02_AutoDistToSP.resx">
-      <DependentUpon>P02_AutoDistToSP.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_BatchAssign.resx">
-      <DependentUpon>P02_BatchAssign.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_Print.resx">
-      <DependentUpon>P02_Print.cs</DependentUpon>
+    <EmbeddedResource Include="CuttingClass\Cutting_Print_P02.resx">
+      <DependentUpon>Cutting_Print_P02.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="B08.resx">
       <DependentUpon>B08.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_OriginalData.resx">
-      <DependentUpon>P02_OriginalData.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_WKETA.resx">
-      <DependentUpon>P02_WKETA.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04.resx">
       <DependentUpon>P04.cs</DependentUpon>
@@ -785,11 +814,17 @@
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="P07.resx">
-      <DependentUpon>P07.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="P08.resx">
       <DependentUpon>P08.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P02_ActionCutRef.resx">
+      <DependentUpon>P02_ActionCutRef.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_AutoDistToSP.resx">
+      <DependentUpon>P09_AutoDistToSP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_ImportFromWorkOrderForPlanning.resx">
+      <DependentUpon>P09_ImportFromWorkOrderForPlanning.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P10_1.resx">
       <DependentUpon>P10_1.cs</DependentUpon>
@@ -811,6 +846,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P10_1_Print.resx">
       <DependentUpon>P10_1_Print.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P09_ActionCutRef.resx">
+      <DependentUpon>P09_ActionCutRef.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P12_Print.resx">
       <DependentUpon>P12_Print.cs</DependentUpon>
@@ -835,6 +873,9 @@
     <EmbeddedResource Include="P15.resx">
       <DependentUpon>P15.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P31_ReviseSchedule.resx">
+      <DependentUpon>P31_ReviseSchedule.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P15_SelectDistribute.resx">
       <DependentUpon>P15_SelectDistribute.cs</DependentUpon>
     </EmbeddedResource>
@@ -846,12 +887,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P20_Detail.resx">
       <DependentUpon>P20_Detail.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P02_PackingMethod.resx">
-      <DependentUpon>P02_PackingMethod.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="P03.resx">
-      <DependentUpon>P03.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P04_FabricIssueList.resx">
       <DependentUpon>P04_FabricIssueList.cs</DependentUpon>
@@ -887,6 +922,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="R01.resx">
+      <DependentUpon>R01.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="R02.resx">
       <DependentUpon>R02.cs</DependentUpon>
     </EmbeddedResource>
@@ -898,9 +936,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="R08.resx">
       <DependentUpon>R08.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="R09.resx">
-      <DependentUpon>R09.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="R11.resx">
       <DependentUpon>R11.cs</DependentUpon>
@@ -929,6 +964,10 @@
     <ProjectReference Include="..\Sci.Production.Class\Sci.Production.Class.csproj">
       <Project>{0E35FD31-4A86-4D4E-A393-B6C5E3D7C956}</Project>
       <Name>Sci.Production.Class</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sci.Production.Planning\Sci.Production.Planning.csproj">
+      <Project>{0EADE09E-B243-4FA9-A351-02828EB3535B}</Project>
+      <Name>Sci.Production.Planning</Name>
     </ProjectReference>
     <ProjectReference Include="..\Sci.Production.PPIC\Sci.Production.PPIC.csproj">
       <Project>{b35ffbd5-b004-4929-bf1d-75e2ee403793}</Project>
@@ -992,6 +1031,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\download.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

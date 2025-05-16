@@ -120,43 +120,43 @@ SELECT
     ,Consumption = SUM(w.ConsPC  * wd.Qty)
 INTO #tmpByOrderIDConsumption
 FROM #tmpOrderID o
-INNER JOIN WorkOrder_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
-INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
+INNER JOIN WorkOrderForOutput_Distribute wd WITH (NOLOCK) ON wd.OrderID = o.OrderID
+INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
 GROUP BY o.OrderID
 
--- 找出 OrderID 有的 WorkOrderUkey 底下所有數量
+-- 找出 OrderID 有的 WorkOrderForOutputUkey 底下所有數量
 SELECT
-     wd.WorkOrderUkey
+     wd.WorkOrderForOutputUkey
     ,wd.OrderID
     ,wd.Qty
     ,w.Cons
-INTO #tmpAllWorkOrder
-FROM WorkOrder_Distribute wd WITH (NOLOCK)
-INNER JOIN WorkOrder w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderUkey
-WHERE EXISTS ( -- 找到有哪些 WorkOrderUkey
+INTO #tmpAllWorkOrderForOutput
+FROM WorkOrderForOutput_Distribute wd WITH (NOLOCK)
+INNER JOIN WorkOrderForOutput w WITH (NOLOCK) ON w.Ukey = wd.WorkOrderForOutputUkey
+WHERE EXISTS ( -- 找到有哪些 WorkOrderForOutputUkey
     SELECT 1
     FROM #tmpOrderID o 
-    INNER JOIN WorkOrder_Distribute wdo WITH (NOLOCK) ON wdo.OrderID = o.OrderID
-    INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderUkey = wdo.WorkOrderUkey -- 只計算已經建立 P20, 同 Cutting P03 規則
-    WHERE wdo.WorkOrderUkey = wd.WorkOrderUkey
+    INNER JOIN WorkOrderForOutput_Distribute wdo WITH (NOLOCK) ON wdo.OrderID = o.OrderID
+    INNER JOIN CuttingOutput_Detail cod WITH (NOLOCK) ON cod.WorkOrderForOutputUkey = wdo.WorkOrderForOutputUkey -- 只計算已經建立 P20, 同 Cutting P03 規則
+    WHERE wdo.WorkOrderForOutputUkey = wd.WorkOrderForOutputUkey
 )
 
 SELECT
-     WorkOrderUkey
-    ,Qty = SUM(Qty) -- by WorkOrderUkey 分母
+     WorkOrderForOutputUkey
+    ,Qty = SUM(Qty) -- by WorkOrderForOutputUkey 分母
     ,A.Cons
 INTO #tmpDenominator
-FROM #tmpAllWorkOrder A
-GROUP BY A.WorkOrderUkey, A.Cons
+FROM #tmpAllWorkOrderForOutput A
+GROUP BY A.WorkOrderForOutputUkey, A.Cons
 
 SELECT
-     WorkOrderUkey
+     WorkOrderForOutputUkey
     ,A.OrderID
-    ,Qty = SUM(Qty) -- by WorkOrderUkey, OrderID 分子
+    ,Qty = SUM(Qty) -- by WorkOrderForOutputUkey, OrderID 分子
 INTO #tmpNumerator
-FROM #tmpAllWorkOrder A
+FROM #tmpAllWorkOrderForOutput A
 INNER JOIN #tmpOrderID o ON o.OrderID = A.OrderID
-GROUP BY A.WorkOrderUkey, A.OrderID
+GROUP BY A.WorkOrderForOutputUkey, A.OrderID
 
 -- by OrderID 計算 Cons 比例
 SELECT
@@ -164,7 +164,7 @@ SELECT
     ,ActConsOutput = SUM(d.Cons * IIF(d.Qty = 0, 0, (n.Qty / d.Qty)))
 INTO #tmpByOrderIDActConsumption
 FROM #tmpNumerator n
-INNER JOIN #tmpDenominator d ON d.WorkOrderUkey = n.WorkOrderUkey
+INNER JOIN #tmpDenominator d ON d.WorkOrderForOutputUkey = n.WorkOrderForOutputUkey
 GROUP BY n.OrderID
 
 SELECT
@@ -353,13 +353,13 @@ WHERE EXISTS (SELECT 1 FROM #tmpSewingSchedule WHERE OrderID = bdo.OrderID)
 
 --每日的累計標準數
 SELECT *
-    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum = SUM(StdQty) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum
 FROM #tmpSumDailyStdQty
 
 --準備前一個工作天的累計標準數, 第一天的前一天標準數 = 0
 SELECT *
-    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY SewingLineID, OrderID, FactoryID ORDER BY Date)
+    ,StdQty_AccSum_BeforeWorkDate = LAG(StdQty_AccSum, 1, 0) OVER (PARTITION BY OrderID, FactoryID ORDER BY Date, SewingLineID)
 INTO #tmpSumDailyStdQty_AccSum_BeforeWorkDate
 FROM #tmpSumDailyStdQty_AccSum
 
@@ -402,6 +402,18 @@ SELECT
         CASE WHEN prt.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
              WHEN prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
              ELSE prt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[PADPRTQty] =
+        CASE WHEN padprt.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN padprt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE padprt.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[EMBQty] =
+        CASE WHEN emb.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN emb.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE emb.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
+    ,[FIQty] =
+        CASE WHEN fi.FinishedQtyBySet >= t.StdQty_AccSum THEN t.StdQty
+             WHEN fi.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate < 0 THEN 0
+             ELSE fi.FinishedQtyBySet - t.StdQty_AccSum_BeforeWorkDate END
 into #tmpSetQtyBySubprocess_Final
 FROM #tmpSumDailyStdQty_AccSum_BeforeWorkDate t
 LEFT JOIN #tmp_SetQtyBySubprocess sorting ON t.OrderID = sorting.OrderID AND sorting.SubprocessID = 'Sorting'
@@ -412,6 +424,9 @@ LEFT JOIN #tmp_SetQtyBySubprocess ht ON t.OrderID = ht.OrderID AND ht.Subprocess
 LEFT JOIN #tmp_SetQtyBySubprocess bo ON t.OrderID = bo.OrderID AND bo.SubprocessID = 'BO'
 LEFT JOIN #tmp_SetQtyBySubprocess fm ON t.OrderID = fm.OrderID AND fm.SubprocessID = 'FM'
 LEFT JOIN #tmp_SetQtyBySubprocess prt ON t.OrderID = prt.OrderID AND prt.SubprocessID = 'PRT'
+LEFT JOIN #tmp_SetQtyBySubprocess padprt ON t.OrderID = padprt.OrderID AND padprt.SubprocessID = 'PAD-PRT'
+LEFT JOIN #tmp_SetQtyBySubprocess emb ON t.OrderID = emb.OrderID AND emb.SubprocessID = 'EMB'
+LEFT JOIN #tmp_SetQtyBySubprocess fi ON t.OrderID = fi.OrderID AND fi.SubprocessID = 'FI'
 
 
 
@@ -449,6 +464,15 @@ SELECT ss.SewingLineID
 	,[PRTOutput] = ISNULL(sub.PRTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'PRT' AND OrderID = ss.OrderID), 0, NULL))
 	,sdo.PRTRemark
 	,sdo.PRTExclusion
+	,[PADPRTOutput] = ISNULL(sub.PADPRTQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'PAD-PRT' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.PADPRTRemark
+	,sdo.PADPRTExclusion
+	,[EMBOutput] = ISNULL(sub.EMBQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'EMB' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.EMBRemark
+	,sdo.EMBExclusion
+	,[FIOutput] = ISNULL(sub.FIQty, IIF(EXISTS(SELECT 1 FROM #tmpBundleSubprocessId WHERE SubprocessId = 'FI' AND OrderID = ss.OrderID), 0, NULL))
+	,sdo.FIRemark
+	,sdo.FIExclusion
     {sqlBIFinalColumn}
 FROM #tmpPkeyColumns ss
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = ss.OrderID

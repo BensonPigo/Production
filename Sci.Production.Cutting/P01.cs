@@ -13,6 +13,7 @@ namespace Sci.Production.Cutting
         private string StyleUkey;
         private string keyWord = Env.User.Keyword;
         private string histype;
+        private string defaultUseCutRefToRequestFabric;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="P01"/> class.
@@ -55,12 +56,21 @@ namespace Sci.Production.Cutting
 
                 this.ReloadDatas();
             };
+
+            this.defaultUseCutRefToRequestFabric = MyUtility.Convert.GetString(MyUtility.GetValue.Lookup("select UseCutRefToRequestFabric from System "));
         }
 
         /// <inheritdoc/>
         protected override void OnDetailEntered()
         {
             base.OnDetailEntered();
+            if (this.CurrentMaintain != null)
+            {
+                if (MyUtility.Check.Empty(this.CurrentMaintain["UseCutRefToRequestFabric"]))
+                {
+                    this.comboUseCutRefToRequestFabric.Text = string.Empty;
+                }
+            }
             #region from Orders Base
             if (MyUtility.Check.Seek(string.Format("Select * from Orders WITH (NOLOCK) where id='{0}'", this.CurrentMaintain["ID"]), out DataRow orderdr))
             {
@@ -254,17 +264,6 @@ where CuttingSp = '{0}'",
                 this.btnGarmentList.ForeColor = Color.Black;
             }
 
-            if (MyUtility.Check.Seek(this.CurrentMaintain["ID"].ToString(), "WorkOrder", "ID"))
-            {
-                this.btnCutPartsCheckSummary.ForeColor = Color.Blue;
-                this.btnCutPartsCheck.ForeColor = Color.Blue;
-            }
-            else
-            {
-                this.btnCutPartsCheckSummary.ForeColor = Color.Black;
-                this.btnCutPartsCheck.ForeColor = Color.Black;
-            }
-
             if (MyUtility.Check.Empty(this.StyleUkey))
             {
                 this.btnProductionkit.ForeColor = Color.Black;
@@ -274,6 +273,16 @@ where CuttingSp = '{0}'",
                 this.btnProductionkit.ForeColor = MyUtility.Check.Seek(string.Format("select StyleUkey from Style_ProductionKits WITH (NOLOCK) where StyleUkey = {0}", this.StyleUkey)) ? Color.Blue : Color.Black;
             }
             #endregion
+        }
+
+        /// <inheritdoc/>
+        protected override void ClickEditAfter()
+        {
+            base.ClickEditAfter();
+            if (this.CurrentMaintain != null)
+            {
+                this.comboUseCutRefToRequestFabric.ReadOnly = MyUtility.Check.Empty(MyUtility.Convert.GetInt(this.CurrentMaintain["UseCutRefToRequestFabric"])) ? false : true;
+            }
         }
 
         // Marker List
@@ -311,30 +320,6 @@ where CuttingSp = '{0}'",
             }
 
             var frm = new P01_BundleCard(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["MDivisionID"].ToString());
-            frm.ShowDialog(this);
-        }
-
-        // Cutpart Check
-        private void BtnCutPartsCheck_Click(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain == null)
-            {
-                return;
-            }
-
-            var frm = new P01_Cutpartcheck(this.CurrentMaintain["ID"].ToString(), this.CurrentMaintain["WorkType"].ToString());
-            frm.ShowDialog(this);
-        }
-
-        // Cutpart Check Summary
-        private void BtnCutPartsCheckSummary_Click(object sender, EventArgs e)
-        {
-            if (this.CurrentMaintain == null)
-            {
-                return;
-            }
-
-            var frm = new P01_Cutpartchecksummary(this.CurrentMaintain["ID"].ToString());
             frm.ShowDialog(this);
         }
 
@@ -416,6 +401,25 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             DBProxy.Current.Select(null, querySql, out DataTable queryDT);
             MyUtility.Tool.SetupCombox(this.queryfors, 1, queryDT);
             this.queryfors.SelectedIndex = 0;
+        }
+
+        private void ComboUseCutRefToRequestFabric_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (this.CurrentMaintain != null)
+            {
+                string currentDBValue = MyUtility.GetValue.Lookup($"select UseCutRefToRequestFabric from cutting where ID='{this.CurrentMaintain["ID"]}'");
+                if (currentDBValue == "0")
+                {
+                    if (this.comboUseCutRefToRequestFabric.SelectedValue.ToString() == this.defaultUseCutRefToRequestFabric)
+                    {
+                        MyUtility.Msg.InfoBox("Once saved, no changes are allowed, need to use \"Switch to Workorder\" for changes.");
+                    }
+                    else
+                    {
+                        MyUtility.Msg.InfoBox(@"Once saved, no changes are allowed. Current selection differs from the system default.");
+                    }
+                }
+            }
         }
     }
 }

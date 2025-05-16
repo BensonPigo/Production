@@ -131,6 +131,15 @@ SET MDivisionID          = ISNULL(t.MDivisionID, '')
    ,PRTOutput            = ISNULL(t.PRTOutput, -1)
    ,PRTRemark            = ISNULL(t.PRTRemark, '')
    ,PRTExclusion         = ISNULL(t.PRTExclusion, 0)
+   ,PADPRTOutput         = ISNULL(t.PADPRTOutput, -1)
+   ,PADPRTRemark         = ISNULL(t.PADPRTRemark, '')
+   ,PADPRTExclusion      = ISNULL(t.PADPRTExclusion, 0)
+   ,EMBOutput            = ISNULL(t.EMBOutput, -1)
+   ,EMBRemark            = ISNULL(t.EMBRemark, '')
+   ,EMBExclusion         = ISNULL(t.EMBExclusion, 0)
+   ,FIOutput             = ISNULL(t.FIOutput, -1)
+   ,FIRemark             = ISNULL(t.FIRemark, '')
+   ,FIExclusion          = ISNULL(t.FIExclusion, 0)
    ,[BIFactoryID]        = ISNULL(t.BIFactoryID, '')
    ,[BIInsertDate]       = ISNULL(t.BIInsertDate, '')
 FROM P_SewingDailyOutputStatusRecord p
@@ -208,6 +217,16 @@ INSERT INTO [dbo].[P_SewingDailyOutputStatusRecord]
             ,[PRTOutput]
             ,[PRTRemark]
             ,[PRTExclusion]
+            ,[PADPRTOutput]
+            ,[PADPRTRemark]
+            ,[PADPRTExclusion]
+            ,[EMBOutput]
+            ,[EMBRemark]
+            ,[EMBExclusion]
+            ,[FIOutput]
+            ,[FIRemark]
+            ,[FIExclusion])
+            ,[PRTExclusion]
             ,[BIFactoryID]
             ,[BIInsertDate]
 )
@@ -261,6 +280,15 @@ SELECT
     ,ISNULL([PRTOutput], -1)
     ,ISNULL([PRTRemark], '')
     ,ISNULL([PRTExclusion], 0)
+    ,ISNULL([PADPRTOutput], -1)
+    ,ISNULL([PADPRTRemark], '')
+    ,ISNULL([PADPRTExclusion], 0)
+    ,ISNULL([EMBOutput], -1)
+    ,ISNULL([EMBRemark], '')
+    ,ISNULL([EMBExclusion], 0)
+    ,ISNULL([FIOutput], -1)
+    ,ISNULL([FIRemark], '')
+    ,ISNULL([FIExclusion], 0)
     ,ISNULL([BIFactoryID], '')
     ,ISNULL([BIInsertDate], '')
 FROM #tmp t

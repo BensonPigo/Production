@@ -662,7 +662,8 @@ select distinct [KPIGroup] = f.KPICode
 	, pld.DisposeDate
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
-{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE()" : string.Empty)}
+	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , [BIInsertDate] = GETDATE()
 from #Orders o
 inner join Production.dbo.Order_QtyShip oqs with (nolock) on o.ID = oqs.Id
 inner join Production.dbo.Factory f with (nolock) on f.ID = o.FactoryID
@@ -718,9 +719,10 @@ outer apply(
 ) HauledReturn
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name, isnull(p.Name , ''))
 		from #CTNHauling ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -777,9 +779,10 @@ outer apply(
 ) PackingAuditReturn	
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNPackingAudit ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -809,9 +812,10 @@ outer apply(
 ) M360MDReturn
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #MDScan ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -897,9 +901,10 @@ outer apply(
 ) CTNHangerPackTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNHangerPack ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -914,9 +919,10 @@ outer apply(
 ) CTNJokerTagTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNJokerTag ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID
@@ -931,9 +937,10 @@ outer apply(
 ) CTNHeatSealTime
 outer apply(
 	select [val] = (
-		select top 1 ch.AddName + '-' + isnull(pass1.Name,'')
+		select top 1 ch.AddName + '-' + isnull(pass1.Name,isnull(p.Name , ''))
 		from #CTNHeatSeal ch with(nolock)
 		left join pass1 with(nolock) on pass1.ID  = ch.AddName
+		left join [ExtendServer].ManufacturingExecution.dbo.Pass1 p WITH (NOLOCK) on p.ID = ch.AddName
 		where ch.PackingListID = pld.ID 
 		and ch.CTNStartNo = pld.CTNStartNo
 		and ch.OrderID = pld.OrderID

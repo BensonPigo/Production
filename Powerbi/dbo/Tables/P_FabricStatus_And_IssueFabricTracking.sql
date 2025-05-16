@@ -19,7 +19,8 @@
 	[Description] [nvarchar](60) NOT NULL,
 	[OnTime] [varchar](1) NOT NULL,
 	[Remark] [nvarchar](60) NOT NULL,
- CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking] PRIMARY KEY CLUSTERED 
+ [DetailRemark] NVARCHAR(60) NOT NULL DEFAULT (''), 
+    CONSTRAINT [PK_P_FabricStatus_And_IssueFabricTracking] PRIMARY KEY CLUSTERED 
 (
 	[ReplacementID] ASC,
 	[SP] ASC,
@@ -79,3 +80,12 @@ GO
 
 ALTER TABLE [dbo].[P_FabricStatus_And_IssueFabricTracking] ADD  CONSTRAINT [DF_P_FabricStatus_And_IssueFabricTracking_Remark]  DEFAULT ('') FOR [Remark]
 GO
+
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'補料報告表身備註',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'P_FabricStatus_And_IssueFabricTracking',
+    @level2type = N'COLUMN',
+    @level2name = N'DetailRemark'

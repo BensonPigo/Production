@@ -69,23 +69,21 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             string cmdsql = string.Format(
             @"
             Select a.*,e.FabricCombo,e.seq1,e.seq2,e.FabricCode,e.SCIRefno,e.Refno,
-            (
-                Select distinct Article+'/ ' 
-			    From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-			    Where b.workorderukey = a.WorkOrderUkey and b.article!=''
-                For XML path('')
-            ) as article,
+            [Article] = stuff((Select distinct CONCAT('/ ', wpd.Article)
+                            From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+                            Where wpd.WorkOrderForPlanningUkey = a.WorkOrderForPlanningUkey and wpd.Article!=''
+                            For XML path('')),1,1,''),
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =a.WorkOrderUkey 
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =a.WorkOrderForPlanningUkey 
                 
                 For XML path('')
             ) as SizeCode,
             (
                 Select c.sizecode+'/ '+convert(varchar(8),c.qty*e.layer)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =a.WorkOrderUkey and c.WorkOrderUkey = e.Ukey
+                From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                Where  c.WorkOrderForPlanningUkey =a.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = e.Ukey
                
                 For XML path('')
             ) as CutQty,
@@ -113,7 +111,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
             From Cutplan_Detail a 
             inner join Cutplan b WITH(NOLOCK) on a.id = b.ID
-			INNER JOIN WorkOrder e WITH (NOLOCK) ON a.WorkOrderUkey = e.Ukey
+			INNER JOIN WorkOrderForPlanning e WITH (NOLOCK) ON a.WorkOrderForPlanningUkey = e.Ukey
 			LEFT JOIN Fabric f WITH (NOLOCK) ON f.SCIRefno=e.SCIRefno
             LEFT JOIN CutPlan_IssueCutDate ci WITH (NOLOCK) on ci.id = b.id and ci.Refno = e.Refno and ci.Colorid = a.colorid
             LEFT JOIN CutReason Reason with (nolock) ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
@@ -130,7 +128,7 @@ where MDivisionID = '{0}'", Env.User.Keyword);
             this.Helper.Controls.Grid.Generator(this.detailgrid)
             .Text("Sewinglineid", header: "Line#", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Cutref", header: "CutRef#", width: Widths.Auto(), iseditingreadonly: true)
-            .Numeric("Cutno", header: "Cut#", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
+            .Numeric("Cutno", header: "Seq", width: Widths.Auto(), integer_places: 3, iseditingreadonly: true)
             .Text("Fabriccombo", header: "Fabric Combo", width: Widths.Auto(), iseditingreadonly: true)
             .Text("Fabriccode", header: "Fabric Code", width: Widths.Auto(), iseditingreadonly: true)
             .Text("FabricPanelCode", header: "Fab_Panel Code", width: Widths.Auto(), iseditingreadonly: true)
@@ -172,8 +170,8 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         /// <inheritdoc/>
         protected override DualResult ClickDeletePost()
         {
-            #region 清空WorkOrder 的Cutplanid
-            string clearCutplanidSql = string.Format("Update WorkOrder set cutplanid ='' where cutplanid ='{0}'", this.CurrentMaintain["ID"]);
+            #region 清空WorkOrderForPlanning 的Cutplanid
+            string clearCutplanidSql = string.Format("Update WorkOrderForPlanning set cutplanid ='' where cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             #endregion
             DualResult upResult;
             if (!(upResult = DBProxy.Current.Execute(null, clearCutplanidSql)))
@@ -189,87 +187,20 @@ where MDivisionID = '{0}'", Env.User.Keyword);
         {
             base.ClickConfirm();
             #region 建立Cutplan_Detail_Cons 資料
-            DataTable detailTb = (DataTable)this.detailgridbs.DataSource;
             string insert_cons = string.Format(
                         @"insert into Cutplan_Detail_Cons(id,poid,seq1,seq2,cons) 
                         select a.id,a.poid,b.seq1,b.seq2,sum(a.cons) as tt 
-                        from Cutplan_Detail a WITH (NOLOCK) ,workorder b WITH (NOLOCK) 
-                        where a.id='{0}' and a.workorderukey = b.Ukey 
+                        from Cutplan_Detail a WITH (NOLOCK) ,WorkOrderForPlanning b WITH (NOLOCK) 
+                        where a.id='{0}' and a.WorkOrderForPlanningUkey = b.Ukey 
                         group by a.id,a.poid,b.seq1,b.seq2", this.CurrentMaintain["ID"]);
             #endregion
             string insertmk = string.Empty;
             string insert_mark2 = string.Empty;
-            #region 建立Bulk request
-
-            #region ID
-            string keyword = this.keyWord + "MK";
-            string reqid = MyUtility.GetValue.GetID(keyword, "MarkerReq");
-            if (string.IsNullOrWhiteSpace(reqid))
-            {
-                return;
-            }
-            #endregion
-            insertmk = string.Format(
-            @"Insert into MarkerReq
-            (id,estcutdate,mDivisionid,CutCellid,Status,Cutplanid,AddName,AddDate) 
-            values('{0}','{1}','{2}','{3}','New','{4}','{5}',getdate());",
-            reqid,
-            this.dateCuttingDate.Text,
-            this.CurrentMaintain["mDivisionid"],
-            this.CurrentMaintain["cutcellid"],
-            this.CurrentMaintain["ID"],
-            this.loginID);
-
-            #region 表身
-            string marker2sql = string.Format(
-                @"
-Select distinct o.POID as OrderID
-,b.MarkerName
-,layer = sum(b.Layer) over (partition by o.poid,b.MarkerName,b.MarkerNo,b.fabricCombo,c.Width) 
-,b.MarkerNo
-,b.fabricCombo
-,(
-    Select c.sizecode+'*'+convert(varchar(8),c.qty)+'/' 
-    From WorkOrder_SizeRatio c WITH (NOLOCK) 
-    Where a.WorkOrderUkey =c.WorkOrderUkey            
-    For XML path('')
-) as SizeRatio
-,c.Width
-From WorkOrder b WITH (NOLOCK) ,Order_EachCons c WITH (NOLOCK),Cutplan_Detail a WITH (NOLOCK), orders o with(nolock) 
-Where a.workorderukey = b.ukey and a.id = '{0}' and b.Order_EachconsUkey = c.Ukey
-and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
-            #endregion
-
-            DualResult dResult = DBProxy.Current.Select(null, marker2sql, out DataTable markerTb);
-            if (dResult)
-            {
-                foreach (DataRow dr in markerTb.Rows)
-                {
-                    insert_mark2 = insert_mark2 + string.Format(
-                    @"Insert into MarkerReq_Detail      
-                    (ID,OrderID,SizeRatio,MarkerName,Layer,FabricCombo,MarkerNo,CuttingWidth) 
-                    Values('{0}','{1}','{2}','{3}',{4},'{5}','{6}','{7}');",
-                    reqid,
-                    dr["OrderID"],
-                    dr["SizeRatio"],
-                    dr["MarkerName"],
-                    dr["Layer"],
-                    dr["FabricCombo"],
-                    dr["MarkerNo"],
-                    dr["Width"]);
-                }
-            }
-            else
-            {
-                this.ShowErr(marker2sql, dResult);
-                return;
-            }
-            #endregion
 
             #region update Master
 
             // 1386: CUTTING_P04_Cutting Daily Plan。CONFIRM時，須回寫更新MarkerReqid。
-            string updSql = string.Format("update Cutplan set  MarkerReqid = '{2}' , Status = 'Confirmed', editdate = getdate(), editname = '{0}' Where id='{1}'", this.loginID, this.CurrentMaintain["ID"], reqid);
+            string updSql = $"update Cutplan set Status = 'Confirmed', editdate = getdate(), editname = '{this.loginID}' Where id='{this.CurrentMaintain["ID"]}'";
             #endregion
             #region transaction
             DualResult upResult;
@@ -334,13 +265,6 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
         protected override void ClickUnconfirm()
         {
             base.ClickUnconfirm();
-            #region 有Marker Req 不可Unconfirm
-            if (!MyUtility.Check.Empty(this.CurrentMaintain["markerreqid"]))
-            {
-                MyUtility.Msg.WarningBox("The record already create Marker request, you can not Unconfirm.");
-                return;
-            }
-            #endregion
             #region 有IssueFabric 不可Uncomfirm
             string query = string.Format("Select * from Issue WITH (NOLOCK) Where Cutplanid ='{0}'", this.CurrentMaintain["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, query, out DataTable queryIssueFabric);
@@ -378,7 +302,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
 
         private void SentToGensong_AutoWHFabric(bool isConfirmed)
         {
-            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkorderUkey");
+            DataTable dtDetail = ((DataTable)this.detailgridbs.DataSource).DefaultView.ToTable(true, "ID", "WorkOrderForPlanningUkey");
             Gensong_AutoWHFabric.SentCutplan_Detail(true, dtDetail, isConfirmed);
         }
 
@@ -430,55 +354,60 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
             }
 
             string cmdsql = string.Format(
-            @"select cd.id,cd.sewinglineid,cd.orderid,w.seq1,w.seq2,cd.StyleID,cd.cutref,cd.cutno,w.FabricCombo,w.FabricCode,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =cd.WorkOrderUkey 
-                
-                For XML path('')
-            ) as SizeCode,
-            (
-                Select distinct Article+'/ ' 
-	            From dbo.WorkOrder_Distribute b WITH (NOLOCK) 
-	            Where b.workorderukey = cd.WorkOrderUkey and b.article!=''
-                For XML path('')
-            ) as article,cd.colorid,
-            (
-                Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
-                From WorkOrder_SizeRatio c WITH (NOLOCK) 
-                Where  c.WorkOrderUkey =cd.WorkOrderUkey and c.WorkOrderUkey = w.Ukey
-               
-                For XML path('')
-            ) as CutQty,
-            cd.cons,isnull(f.DescDetail,'') as DescDetail
-            ,[EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate)
-            ,[Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , '')
-            ,[FabricIssued] = 
-            (
-                select val = iif(SUM(1) >= 1 ,'Y','N') 
-	            from Issue i WITH (NOLOCK)
-	            inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
-	            where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
-            )
-            ,cd.remark 
+@"select    cd.id,
+            cd.sewinglineid,
+            cd.orderid,
+            w.seq1,
+            w.seq2,
+            cd.StyleID,
+            cd.cutref,
+            cd.cutno,
+            w.FabricCombo,
+            w.FabricCode,
+            [SizeCode] = (
+                            Select c.sizecode+'/ '+convert(varchar(8),c.qty)+', ' 
+                            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                            Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey 
+                            For XML path('')
+                        ),
+            [Article] = stuff((Select distinct CONCAT('/ ', wpd.Article)
+                            From dbo.WorkOrderForPlanning_Distribute wpd WITH (NOLOCK) 
+                            Where wpd.WorkOrderForPlanningUkey = cd.WorkOrderForPlanningUkey and wpd.Article!=''
+                            For XML path('')),1,1,''),
+            cd.colorid,
+            [CutQty] = (
+                            Select c.sizecode+'/ '+convert(varchar(8),c.qty*w.layer)+', ' 
+                            From WorkOrderForPlanning_SizeRatio c WITH (NOLOCK) 
+                            Where  c.WorkOrderForPlanningUkey =cd.WorkOrderForPlanningUkey and c.WorkOrderForPlanningUkey = w.Ukey
+                            For XML path('')
+                        ),
+            cd.cons,
+            isnull(f.DescDetail,'') as DescDetail,
+            [EstCutDate] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.EstCutDate ,b.EstCutDate),
+            [Reason] = iif(isnull(IsCutPlan_IssueCutDate.val,0) = 1 , IsCutPlan_IssueCutDate.Reason , ''),
+            [FabricIssued] = (
+                                 select val = iif(SUM(1) >= 1 ,'Y','N') 
+                              from Issue i WITH (NOLOCK)
+                              inner join Issue_Summary iss WITH (NOLOCK) on i.id = iss.Id
+                              where i.CutplanID = cd.id and iss.SCIRefno = w.SCIRefno and iss.Colorid = cd.colorid and i.Status = 'Confirmed'
+                             ),
+            cd.remark 
             from Cutplan_Detail cd WITH (NOLOCK) 
             inner join Cutplan b WITH(NOLOCK) on cd.id = b.ID
-            inner join WorkOrder w on cd.WorkorderUkey = w.Ukey
+            inner join WorkOrderForPlanning w with (nolock) on cd.WorkOrderForPlanningUkey = w.Ukey
             left join Fabric f on f.SCIRefno = w.SCIRefno
-            OUTER APPLY
-            (
-	            select 
-	            [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0)
-	            ,[EstCutDate] = isnull(ci.EstCutDate,'')
-	            ,[Reason] = isnull(Reason.[Description],'')
-                ,[EditName] = isnull(ci.EditName,'')
-                ,[EditDate] = ci.EditDate
-                ,[RequestorRemark] = isnull(ci.RequestorRemark,'')
-	            from CutPlan_IssueCutDate ci WITH(NOLOCK)
-                LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
-	            where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
-            )IsCutPlan_IssueCutDate
+            OUTER APPLY (
+                         select 
+                         [val] = isnull(IIF(COUNT(*) OVER (PARTITION BY ci.id, ci.Refno, ci.colorid) >= 1, 1, 0),0),
+                         [EstCutDate] = isnull(ci.EstCutDate,''),
+                         [Reason] = isnull(Reason.[Description],''),
+                            [EditName] = isnull(ci.EditName,''),
+                            [EditDate] = ci.EditDate,
+                            [RequestorRemark] = isnull(ci.RequestorRemark,'')
+                         from CutPlan_IssueCutDate ci WITH(NOLOCK)
+                         LEFT JOIN CutReason Reason ON Reason.Junk = 0 AND Reason.type = 'RC' AND Reason.id = ci.Reason
+                         where ci.id = b.id and ci.Refno = w.Refno and ci.Colorid = cd.colorid
+                        )IsCutPlan_IssueCutDate
             where cd.id = '{0}'", this.CurrentDetailData["ID"]);
             DualResult dResult = DBProxy.Current.Select(null, cmdsql, out DataTable excelTb);
 
@@ -496,8 +425,7 @@ and o.ID=b.OrderID ", this.CurrentMaintain["ID"]);
                     objSheet.Cells[1, 1] = this.keyWord;   // 條件字串寫入excel
                     objSheet.Cells[3, 2] = this.dateCuttingDate.Text;
                     objSheet.Cells[3, 5] = this.CurrentMaintain["POID"].ToString();
-                    objSheet.Cells[3, 10] = this.CurrentMaintain["SpreadingNoID"].ToString();
-                    objSheet.Cells[3, 12] = this.CurrentMaintain["CutCellid"].ToString();
+                    objSheet.Cells[3, 10] = this.CurrentMaintain["CutCellid"].ToString();
                     objSheet.Cells[3, 15] = PublicPrg.Prgs.GetAddOrEditBy(this.loginID);
                     this.pathName = Class.MicrosoftFile.GetName("Cutting_Daily_Plan");
                     objBook.SaveAs(this.pathName);

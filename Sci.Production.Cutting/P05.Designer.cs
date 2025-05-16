@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.labelID = new Sci.Win.UI.Label();
-            this.labelCutplan = new Sci.Win.UI.Label();
             this.labelCuttingDate = new Sci.Win.UI.Label();
             this.labelCutCell = new Sci.Win.UI.Label();
             this.labelRequestedBy = new Sci.Win.UI.Label();
@@ -40,7 +39,6 @@
             this.displayCutCell = new Sci.Win.UI.DisplayBox();
             this.displayM = new Sci.Win.UI.DisplayBox();
             this.btnSendMail = new Sci.Win.UI.Button();
-            this.txtCutplan = new Sci.Win.UI.TextBox();
             this.labelLastSendDate = new Sci.Win.UI.Label();
             this.displayLastSendDate = new Sci.Win.UI.DisplayBox();
             this.label7 = new Sci.Win.UI.Label();
@@ -63,7 +61,6 @@
             this.masterpanel.Controls.Add(this.label7);
             this.masterpanel.Controls.Add(this.displayLastSendDate);
             this.masterpanel.Controls.Add(this.labelLastSendDate);
-            this.masterpanel.Controls.Add(this.txtCutplan);
             this.masterpanel.Controls.Add(this.btnSendMail);
             this.masterpanel.Controls.Add(this.displayM);
             this.masterpanel.Controls.Add(this.displayCutCell);
@@ -74,11 +71,9 @@
             this.masterpanel.Controls.Add(this.labelRequestedBy);
             this.masterpanel.Controls.Add(this.labelCutCell);
             this.masterpanel.Controls.Add(this.labelCuttingDate);
-            this.masterpanel.Controls.Add(this.labelCutplan);
             this.masterpanel.Controls.Add(this.labelID);
-            this.masterpanel.Size = new System.Drawing.Size(916, 111);
+            this.masterpanel.Size = new System.Drawing.Size(916, 79);
             this.masterpanel.Controls.SetChildIndex(this.labelID, 0);
-            this.masterpanel.Controls.SetChildIndex(this.labelCutplan, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCuttingDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelCutCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelRequestedBy, 0);
@@ -90,19 +85,18 @@
             this.masterpanel.Controls.SetChildIndex(this.displayCutCell, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayM, 0);
             this.masterpanel.Controls.SetChildIndex(this.btnSendMail, 0);
-            this.masterpanel.Controls.SetChildIndex(this.txtCutplan, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelLastSendDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayLastSendDate, 0);
             this.masterpanel.Controls.SetChildIndex(this.label7, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 111);
-            this.detailpanel.Size = new System.Drawing.Size(916, 307);
+            this.detailpanel.Location = new System.Drawing.Point(0, 79);
+            this.detailpanel.Size = new System.Drawing.Size(916, 339);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(771, 76);
+            this.gridicon.Location = new System.Drawing.Point(771, 44);
             // 
             // refresh
             // 
@@ -110,7 +104,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(916, 307);
+            this.detailgridcont.Size = new System.Drawing.Size(916, 339);
             // 
             // detail2
             // 
@@ -167,17 +161,9 @@
             this.labelID.TabIndex = 1;
             this.labelID.Text = "ID";
             // 
-            // labelCutplan
-            // 
-            this.labelCutplan.Location = new System.Drawing.Point(18, 45);
-            this.labelCutplan.Name = "labelCutplan";
-            this.labelCutplan.Size = new System.Drawing.Size(82, 23);
-            this.labelCutplan.TabIndex = 2;
-            this.labelCutplan.Text = "Cutplan#";
-            // 
             // labelCuttingDate
             // 
-            this.labelCuttingDate.Location = new System.Drawing.Point(18, 75);
+            this.labelCuttingDate.Location = new System.Drawing.Point(18, 45);
             this.labelCuttingDate.Name = "labelCuttingDate";
             this.labelCuttingDate.Size = new System.Drawing.Size(82, 23);
             this.labelCuttingDate.TabIndex = 3;
@@ -230,7 +216,7 @@
             // 
             this.dateCuttingDate.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "estcutdate", true));
             this.dateCuttingDate.IsSupportEditMode = false;
-            this.dateCuttingDate.Location = new System.Drawing.Point(103, 75);
+            this.dateCuttingDate.Location = new System.Drawing.Point(103, 45);
             this.dateCuttingDate.Name = "dateCuttingDate";
             this.dateCuttingDate.ReadOnly = true;
             this.dateCuttingDate.Size = new System.Drawing.Size(130, 23);
@@ -258,25 +244,13 @@
             // 
             // btnSendMail
             // 
-            this.btnSendMail.Location = new System.Drawing.Point(771, 68);
+            this.btnSendMail.Location = new System.Drawing.Point(812, 38);
             this.btnSendMail.Name = "btnSendMail";
             this.btnSendMail.Size = new System.Drawing.Size(95, 30);
             this.btnSendMail.TabIndex = 7;
             this.btnSendMail.Text = "Send Mail";
             this.btnSendMail.UseVisualStyleBackColor = true;
             this.btnSendMail.Click += new System.EventHandler(this.BtnSendMail_Click);
-            // 
-            // txtCutplan
-            // 
-            this.txtCutplan.BackColor = System.Drawing.Color.White;
-            this.txtCutplan.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "cutplanid", true));
-            this.txtCutplan.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCutplan.Location = new System.Drawing.Point(103, 45);
-            this.txtCutplan.Name = "txtCutplan";
-            this.txtCutplan.Size = new System.Drawing.Size(108, 23);
-            this.txtCutplan.TabIndex = 3;
-            this.txtCutplan.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCutplan_Validating);
-            this.txtCutplan.Validated += new System.EventHandler(this.TxtCutplan_Validated);
             // 
             // labelLastSendDate
             // 
@@ -322,6 +296,7 @@
             this.IsSupportUnconfirm = true;
             this.KeyField1 = "id";
             this.Name = "P05";
+            this.OnLineHelpID = "Sci.Win.Tems.Input6";
             this.Text = "P05.Bulk Marker Request";
             this.UnApvChkValue = "Confirmed";
             this.WorkAlias = "MarkerReq";
@@ -350,7 +325,6 @@
         private Win.UI.Label labelRequestedBy;
         private Win.UI.Label labelCutCell;
         private Win.UI.Label labelCuttingDate;
-        private Win.UI.Label labelCutplan;
         private Win.UI.Label labelID;
         private Win.UI.Button btnSendMail;
         private Win.UI.DisplayBox displayM;
@@ -361,7 +335,6 @@
         private Win.UI.Label labelM;
         private Win.UI.DisplayBox displayLastSendDate;
         private Win.UI.Label labelLastSendDate;
-        private Win.UI.TextBox txtCutplan;
         private Win.UI.Label label7;
     }
 }

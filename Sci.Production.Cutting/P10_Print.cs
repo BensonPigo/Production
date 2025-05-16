@@ -82,7 +82,7 @@ namespace Sci.Production.Cutting
 select  *
 from (
     select
-        [MarkerNo] = iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrder where  CutRef=@CutRef and id = @POID),'')
+        [MarkerNo] = iif(@CutRef <>'',(select top 1 MarkerNo from WorkOrderForOutput where  CutRef=@CutRef and id = @POID),'')
 		,[Group_right] = a.BundleGroup
         ,a.Tone
         ,[Barcode] = a.BundleNo
@@ -117,7 +117,7 @@ from (
         , a.BundleNo
         , b.SubCutNo
         , a.RFIDScan
-        , CutCell = (select top 1 CutCellID from workorder w where w.cutref = b.cutref)
+        , CutCell = (select top 1 CutCellID from WorkOrderForOutput w where w.cutref = b.cutref)
         , a.Dyelot
         , a.ID
         , a.PatternDesc
@@ -798,7 +798,7 @@ Qty: {data[i].Quantity}(#{no})  Item: {data[i].Item}";
             worksheet.Cells[3, 1] = "To Line: " + this.CurrentDataRow["sewinglineid"].ToString();
             worksheet.Cells[3, 3] = "Cell: " + this.CurrentDataRow["SewingCell"].ToString();
             worksheet.Cells[3, 4] = "Comb: " + this.CurrentDataRow["PatternPanel"].ToString();
-            string sqlcmd = $@"select top 1 MarkerNo from WorkOrder where  CutRef='{this.CurrentDataRow["cutref"]}' and id = '{this.CurrentDataRow["poid"]}'";
+            string sqlcmd = $@"select top 1 MarkerNo from WorkOrderForOutput where  CutRef='{this.CurrentDataRow["cutref"]}' and id = '{this.CurrentDataRow["poid"]}'";
             worksheet.Cells[3, 5] = "Marker No: " + (MyUtility.Check.Empty(this.CurrentDataRow["cutref"]) ? string.Empty : MyUtility.GetValue.Lookup(sqlcmd));
             worksheet.Cells[3, 7] = "Item: " + this.CurrentDataRow["item"].ToString();
             worksheet.Cells[3, 9] = "Article/Color: " + this.CurrentDataRow["article"].ToString() + "/ " + this.CurrentDataRow["colorid"].ToString();

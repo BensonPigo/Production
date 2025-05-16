@@ -38,6 +38,8 @@
             this.btnDetail = new Sci.Win.UI.Button();
             this.label3 = new Sci.Win.UI.Label();
             this.panelBasic = new Sci.Win.UI.Panel();
+            this.displayBoxMarkerType = new Sci.Win.UI.DisplayBox();
+            this.label4 = new Sci.Win.UI.Label();
             this.displayTypeCutting = new Sci.Win.UI.DisplayBox();
             this.label2 = new Sci.Win.UI.Label();
             this.displayCutWidth = new Sci.Win.UI.DisplayBox();
@@ -95,8 +97,6 @@
             this.labelApplyNo = new Sci.Win.UI.Label();
             this.displayCreateBy = new Sci.Win.UI.DisplayBox();
             this.btnSwitchtoWorkOrder = new Sci.Win.UI.Button();
-            this.displayBoxMarkerType = new Sci.Win.UI.DisplayBox();
-            this.label4 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
@@ -326,6 +326,26 @@
             this.panelBasic.Name = "panelBasic";
             this.panelBasic.Size = new System.Drawing.Size(622, 349);
             this.panelBasic.TabIndex = 0;
+            // 
+            // displayBoxMarkerType
+            // 
+            this.displayBoxMarkerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerTypeName", true));
+            this.displayBoxMarkerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.displayBoxMarkerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayBoxMarkerType.Location = new System.Drawing.Point(220, 102);
+            this.displayBoxMarkerType.Name = "displayBoxMarkerType";
+            this.displayBoxMarkerType.Size = new System.Drawing.Size(77, 21);
+            this.displayBoxMarkerType.TabIndex = 185;
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(143, 102);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 22);
+            this.label4.TabIndex = 184;
+            this.label4.Text = "MarkerType";
             // 
             // displayTypeCutting
             // 
@@ -922,26 +942,6 @@
             this.btnSwitchtoWorkOrder.Text = "Switch to WorkOrder";
             this.btnSwitchtoWorkOrder.UseVisualStyleBackColor = true;
             this.btnSwitchtoWorkOrder.Click += new System.EventHandler(this.BtnSwitchtoWorkOrder_Click);
-            // 
-            // displayBoxMarkerType
-            // 
-            this.displayBoxMarkerType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerType.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "MarkerTypeName", true));
-            this.displayBoxMarkerType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.displayBoxMarkerType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayBoxMarkerType.Location = new System.Drawing.Point(220, 102);
-            this.displayBoxMarkerType.Name = "displayBoxMarkerType";
-            this.displayBoxMarkerType.Size = new System.Drawing.Size(77, 21);
-            this.displayBoxMarkerType.TabIndex = 185;
-            // 
-            // label4
-            // 
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(143, 102);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(74, 22);
-            this.label4.TabIndex = 184;
-            this.label4.Text = "MarkerType";
             // 
             // EachConsumption
             // 

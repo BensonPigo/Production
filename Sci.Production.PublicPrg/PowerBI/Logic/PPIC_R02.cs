@@ -151,6 +151,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             if (model.IsPowerBI)
             {
                 biColumn = @"
+    ,sp.Ukey
     ,sp.Article
     ,sp.AddDate
     ,sp.EditDate

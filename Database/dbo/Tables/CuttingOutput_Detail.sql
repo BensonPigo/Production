@@ -1,15 +1,15 @@
 ﻿CREATE TABLE [dbo].[CuttingOutput_Detail] (
-    [ID]            VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_ID] DEFAULT ('') NOT NULL,
-    [CutRef]        VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_CutRef] DEFAULT ('') NOT NULL,
-    [CuttingID]     VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_CuttingID] DEFAULT ('') NOT NULL,
-    [Cutno]         NUMERIC (6)    CONSTRAINT [DF_CuttingOutput_Detail_Cutno] DEFAULT ('') NOT NULL,
-    [MarkerName]    VARCHAR (20)    CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
-    [MarkerLength]  VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_Marker] DEFAULT ('') NOT NULL,
-    [Layer]         NUMERIC (5)    CONSTRAINT [DF_CuttingOutput_Detail_Layers] DEFAULT ((0)) NOT NULL,
-    [Cons]          NUMERIC (9, 4) CONSTRAINT [DF_CuttingOutput_Detail_Cons] DEFAULT ((0)) NOT NULL,
-    [WorkOrderUkey] BIGINT         CONSTRAINT [DF_CuttingOutput_Detail_WorkOrderUkey] DEFAULT ((0)) NOT NULL,
-    [Colorid]       VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_Colorid] DEFAULT ('') NOT NULL,
-    [Ukey]          BIGINT         IDENTITY (1, 1) NOT NULL,
+    [ID]                     VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_ID] DEFAULT ('') NOT NULL,
+    [CutRef]                 VARCHAR (10)   CONSTRAINT [DF_CuttingOutput_Detail_CutRef] DEFAULT ('') NOT NULL,
+    [CuttingID]              VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_CuttingID] DEFAULT ('') NOT NULL,
+    [Cutno]                  NUMERIC (6)    CONSTRAINT [DF_CuttingOutput_Detail_Cutno] DEFAULT ('') NOT NULL,
+    [MarkerName]             VARCHAR (20)   CONSTRAINT [DF_CuttingOutput_Detail_MarkName] DEFAULT ('') NOT NULL,
+    [MarkerLength]           VARCHAR (13)   CONSTRAINT [DF_CuttingOutput_Detail_Marker] DEFAULT ('') NOT NULL,
+    [Layer]                  NUMERIC (5)    CONSTRAINT [DF_CuttingOutput_Detail_Layers] DEFAULT ((0)) NOT NULL,
+    [Cons]                   NUMERIC (9, 4) CONSTRAINT [DF_CuttingOutput_Detail_Cons] DEFAULT ((0)) NOT NULL,
+    [WorkOrderForOutputUkey] BIGINT         CONSTRAINT [DF_CuttingOutput_Detail_WorkOrderForOutputUkey] DEFAULT ((0)) NOT NULL,
+    [Colorid]                VARCHAR (6)    CONSTRAINT [DF_CuttingOutput_Detail_Colorid] DEFAULT ('') NOT NULL,
+    [Ukey]                   BIGINT         IDENTITY (1, 1) NOT NULL,
     CONSTRAINT [PK_CuttingOutput_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 );
 
@@ -63,7 +63,7 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'單件用�
 
 
 GO
-EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'WorkOrder Ukey', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail', @level2type = N'COLUMN', @level2name = N'WorkOrderUkey';
+EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'Output裁剪工單主鍵', @level0type = N'SCHEMA', @level0name = N'dbo', @level1type = N'TABLE', @level1name = N'CuttingOutput_Detail', @level2type = N'COLUMN', @level2name = N'WorkOrderForOutputUkey';
 
 
 GO
@@ -95,12 +95,12 @@ EXECUTE sp_addextendedproperty @name = N'MS_Description', @value = N'層數', @l
 
 
 GO
-CREATE NONCLUSTERED INDEX [WorkOrderUkey]
-    ON [dbo].[CuttingOutput_Detail]([WorkOrderUkey] ASC);
+CREATE NONCLUSTERED INDEX [WorkOrderForOutputUkey]
+    ON [dbo].[CuttingOutput_Detail]([WorkOrderForOutputUkey] ASC);
 
 
 GO
 CREATE NONCLUSTERED INDEX [ID]
     ON [dbo].[CuttingOutput_Detail]([ID] ASC)
-    INCLUDE([WorkOrderUkey]);
+    INCLUDE([WorkOrderForOutputUkey]);
 

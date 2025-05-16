@@ -403,7 +403,7 @@ BEGIN
 	[Seq1] [VARCHAR](3) NULL,	
 	[Seq2] [VARCHAR](2) NULL,	
 	[Refno] [VARCHAR](20) NULL,	
-	[Article] [VARCHAR](50) NULL,	
+	[Article] [VARCHAR](200) NULL,	
 	[ColorID] [VARCHAR](6) NULL,
 	[SizeCode] [VARCHAR](50) NULL,
 	[CmdTime] [DATETIME] NOT NULL,
@@ -719,29 +719,29 @@ USING(
 	,[GenSongUpdated] = 0
 	from  Production.dbo.Cutplan_Detail cp2
 	inner join Production.dbo.Cutplan cp1 on cp2.id = cp1.id
-	inner join Production.dbo.WorkOrder wo on cp2.POID = wo.ID and cp2.CutRef = wo.CutRef
+	inner join Production.dbo.WorkOrderForPlanning wo on cp2.POID = wo.ID and cp2.CutRef = wo.CutRef
 	outer apply(
 		select value = STUFF((
 			select CONCAT(',',SizeCode)
 			from(
-				select distinct SizeCode
-				from Production.dbo.WorkOrder_Distribute
-				where WorkOrderUkey = wo.Ukey
+				select distinct wfs.SizeCode
+				from Production.dbo.WorkOrderForPlanning_SizeRatio wfs
+				where wfs.WorkOrderForPlanningUkey = wo.Ukey
 				)s
 				for xml path('')
 			),1,1,'')
-	) SizeCode
+	) SizeCode	
 	outer apply(
 		select value = STUFF((
 			select CONCAT(',',Article)
 			from(
 				select distinct Article
-				from Production.dbo.WorkOrder_Distribute
-				where WorkOrderUkey = wo.Ukey
+				from Production.dbo.WorkOrderForPlanning_Distribute
+				where WorkOrderForPlanningUkey = wo.Ukey
 				and Article !=''
 				)s
-				for xml path('')
-			),1,1,'')
+		for xml path('')
+		),1,1,'')
 	) Article
 	where (convert(date,cp1.EditDate) = @Today or convert(date,cp1.AddDate) = @Today)
 	and exists(select 1 from Issue_Detail where cp2.ID = CutplanID)

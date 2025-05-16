@@ -200,6 +200,7 @@
     </Compile>
     <Compile Include="DualResultGeneric.cs" />
     <Compile Include="ExcelFileNameExtension.cs" />
+    <Compile Include="ExtendedMethods\DataTableExtensions.cs" />
     <Compile Include="ExtendedMethods\DBWarpperExtension.cs" />
     <Compile Include="ExtendedMethods\DataGridViewGenerator.cs" />
     <Compile Include="ExtendedMethods\MiscExtensions.cs" />
@@ -281,6 +282,18 @@
     </Compile>
     <Compile Include="Txtartworktype_fty.Designer.cs">
       <DependentUpon>Txtartworktype_fty.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DateEstCutDate.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DateEstCutDate.Designer.cs">
+      <DependentUpon>DateEstCutDate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TxtMarkerLength.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="TxtMarkerLength.Designer.cs">
+      <DependentUpon>TxtMarkerLength.cs</DependentUpon>
     </Compile>
     <Compile Include="TxtMtlType.cs">
       <SubType>Component</SubType>

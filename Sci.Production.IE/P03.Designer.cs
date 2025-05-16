@@ -53,7 +53,6 @@
             this.numTaktTimeIdeal = new Sci.Win.UI.NumericBox();
             this.numDailydemandshiftIdeal = new Sci.Win.UI.NumericBox();
             this.numTargetHrIdeal = new Sci.Win.UI.NumericBox();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.lineShape10 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape9 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.lineShape8 = new Microsoft.VisualBasic.PowerPacks.LineShape();
@@ -106,7 +105,6 @@
             this.txtFactory = new Sci.Production.Class.Txtfactory();
             this.lbGSDVersion = new Sci.Win.UI.Label();
             this.lbGSDStatus = new Sci.Win.UI.Label();
-            this.shapeContainer2 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.displayGSDStatus = new Sci.Win.UI.DisplayBox();
             this.displayGSDVersion = new Sci.Win.UI.DisplayBox();
             this.labVersionWarning = new System.Windows.Forms.Label();
@@ -114,11 +112,11 @@
             this.comboPhase = new Sci.Win.UI.ComboBox();
             this.txtSewingLine = new Sci.Win.UI.TextBox();
             this.label1 = new Sci.Win.UI.Label();
-            this.shapeContainer3 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
             this.numEstLBR = new Sci.Win.UI.NumericBox();
             this.btnPrintDetail = new Sci.Win.UI.Button();
             this.numOriTotalGSD = new Sci.Win.UI.NumericBox();
             this.label2 = new Sci.Win.UI.Label();
+            this.checkJukiIoTDataExchange = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -140,6 +138,7 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.checkJukiIoTDataExchange);
             this.masterpanel.Controls.Add(this.numOriTotalGSD);
             this.masterpanel.Controls.Add(this.label2);
             this.masterpanel.Controls.Add(this.btnPrintDetail);
@@ -214,9 +213,7 @@
             this.masterpanel.Controls.Add(this.labelStyle);
             this.masterpanel.Controls.Add(this.labelFactory);
             this.masterpanel.Controls.Add(this.labelVersion);
-            this.masterpanel.Controls.Add(this.shapeContainer1);
             this.masterpanel.Size = new System.Drawing.Size(1153, 206);
-            this.masterpanel.Controls.SetChildIndex(this.shapeContainer1, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelVersion, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelFactory, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelStyle, 0);
@@ -292,6 +289,7 @@
             this.masterpanel.Controls.SetChildIndex(this.btnPrintDetail, 0);
             this.masterpanel.Controls.SetChildIndex(this.label2, 0);
             this.masterpanel.Controls.SetChildIndex(this.numOriTotalGSD, 0);
+            this.masterpanel.Controls.SetChildIndex(this.checkJukiIoTDataExchange, 0);
             // 
             // detailpanel
             // 
@@ -693,15 +691,6 @@
             0,
             0,
             0});
-            // 
-            // shapeContainer1
-            // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Size = new System.Drawing.Size(1153, 206);
-            this.shapeContainer1.TabIndex = 27;
-            this.shapeContainer1.TabStop = false;
             // 
             // lineShape10
             // 
@@ -1380,6 +1369,7 @@
             this.txtFactory.Location = new System.Drawing.Point(58, 35);
             this.txtFactory.MDivision = null;
             this.txtFactory.Name = "txtFactory";
+            this.txtFactory.NeedInitialFactory = false;
             this.txtFactory.Size = new System.Drawing.Size(66, 21);
             this.txtFactory.TabIndex = 75;
             this.txtFactory.Validated += new System.EventHandler(this.TxtFactory_Validated);
@@ -1399,26 +1389,6 @@
             this.lbGSDStatus.Size = new System.Drawing.Size(80, 21);
             this.lbGSDStatus.TabIndex = 78;
             this.lbGSDStatus.Text = "GSD Status";
-            // 
-            // shapeContainer2
-            // 
-            this.shapeContainer2.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer2.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer2.Name = "shapeContainer2";
-            this.shapeContainer2.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape10,
-            this.lineShape9,
-            this.lineShape8,
-            this.lineShape7,
-            this.lineShape6,
-            this.lineShape5,
-            this.lineShape4,
-            this.lineShape3,
-            this.lineShape2,
-            this.lineShape1});
-            this.shapeContainer2.Size = new System.Drawing.Size(1153, 206);
-            this.shapeContainer2.TabIndex = 27;
-            this.shapeContainer2.TabStop = false;
             // 
             // displayGSDStatus
             // 
@@ -1500,15 +1470,6 @@
             this.label1.TabIndex = 246;
             this.label1.Text = "Est. LBR";
             // 
-            // shapeContainer3
-            // 
-            this.shapeContainer3.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer3.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer3.Name = "shapeContainer3";
-            this.shapeContainer3.Size = new System.Drawing.Size(1153, 206);
-            this.shapeContainer3.TabIndex = 27;
-            this.shapeContainer3.TabStop = false;
-            // 
             // numEstLBR
             // 
             this.numEstLBR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
@@ -1571,6 +1532,18 @@
             this.label2.Size = new System.Drawing.Size(112, 21);
             this.label2.TabIndex = 250;
             this.label2.Text = "Ori. Total GSD time";
+            // 
+            // checkJukiIoTDataExchange
+            // 
+            this.checkJukiIoTDataExchange.AutoSize = true;
+            this.checkJukiIoTDataExchange.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "JukiIoTDataExchange", true));
+            this.checkJukiIoTDataExchange.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJukiIoTDataExchange.Location = new System.Drawing.Point(342, 177);
+            this.checkJukiIoTDataExchange.Name = "checkJukiIoTDataExchange";
+            this.checkJukiIoTDataExchange.Size = new System.Drawing.Size(43, 19);
+            this.checkJukiIoTDataExchange.TabIndex = 252;
+            this.checkJukiIoTDataExchange.Text = "IoT";
+            this.checkJukiIoTDataExchange.UseVisualStyleBackColor = true;
             // 
             // P03
             // 
@@ -1710,5 +1683,6 @@
         private Win.UI.Button btnPrintDetail;
         private Win.UI.NumericBox numOriTotalGSD;
         private Win.UI.Label label2;
+        private Win.UI.CheckBox checkJukiIoTDataExchange;
     }
 }

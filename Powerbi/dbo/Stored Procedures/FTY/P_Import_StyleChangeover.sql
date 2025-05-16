@@ -30,13 +30,13 @@ BEGIN
 		where a.Inline >= ''''' + cast(@StartDate as varchar)  + '''''
 	'
 	set @SQLCMD2 = '	
-	insert into P_StyleChangeover([ID], [Factory], [SewingLine], [Inline], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [Category], [COPT(min)], [COT(min)])
+	insert into P_StyleChangeover([ID], [FactoryID], [SewingLine], [Inline], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [Category], [COPT(min)], [COT(min)])
 	select t.[ID], t.[Factory], t.[SewingLine], t.[Inline], t.[OldSP], t.[OldStyle], t.[OldComboType], t.[NewSP], t.[NewStyle], t.[NewComboType], t.[Category], t.[COPT(min)], t.[COT(min)]
 	from #tmp t
 	where not exists (select 1 from P_StyleChangeover p where p.[ID] = t.[ID])
 
 	update p
-		set p.[Factory] = t.[Factory]
+		set p.[FactoryID] = t.[Factory]
 			, p.[SewingLine] = t.[SewingLine]
 			, p.[Inline] = t.[Inline]
 			, p.[OldSP] = t.[OldSP]
@@ -73,14 +73,14 @@ BEGIN
 	if exists (select 1 from BITableInfo b where b.id = 'P_StyleChangeover')
 	begin
 		update b
-			set b.TransferDate = getdate(), IS_Trans = 1
+			set b.TransferDate = getdate()
 		from BITableInfo b
 		where b.id = 'P_StyleChangeover'
 	end
 	else 
 	begin
-		insert into BITableInfo(Id, TransferDate, IS_Trans)
-		values('P_StyleChangeover', getdate(), 1)
+		insert into BITableInfo(Id, TransferDate)
+		values('P_StyleChangeover', getdate())
 	end
 
 END

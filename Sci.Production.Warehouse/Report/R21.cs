@@ -1,6 +1,7 @@
 ﻿using Ict;
 using Sci.Data;
 using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
