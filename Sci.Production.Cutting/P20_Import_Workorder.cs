@@ -124,7 +124,7 @@ namespace Sci.Production.Cutting
             string cutRef = this.txtCutRef.Text;
             string sPNo = this.txtSP.Text;
             string factoryID = this.txtfactory.Text;
-            string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["Workorderukey"].ToString() : string.Empty) + "'"));
+            string condition = string.Join(",", this.currentdetailTable.Rows.OfType<DataRow>().Select(r => "'" + (r.RowState != DataRowState.Deleted ? r["WorkOrderForOutputUkey"].ToString() : string.Empty) + "'"));
             if (MyUtility.Check.Empty(condition))
             {
                 condition = @"''";
@@ -134,7 +134,7 @@ namespace Sci.Production.Cutting
 Select sel = 0,
 	a.*,
 	Cuttingid = a.id,
-	workorderukey = a.ukey,    
+	WorkOrderForOutputUkey = a.ukey,    
     OrderID = (
 		Select orderid+'/' 
 		From WorkOrderForOutput_Distribute c WITH (NOLOCK) 
@@ -236,7 +236,7 @@ and a.ukey not in ( {condition} ) ");
             {
                 foreach (DataRow dr in selDr)
                 {
-                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderForOutPutUkey={0}", dr["WorkorderUkey"]));
+                    DataRow[] exist = this.currentdetailTable.Select(string.Format("WorkorderForOutPutUkey={0}", dr["WorkOrderForOutputUkey"]));
                     if (exist.Length == 0)
                     {
                         DataRow ndr = this.currentdetailTable.NewRow();
@@ -256,7 +256,7 @@ and a.ukey not in ( {condition} ) ");
                         ndr["Colorid"] = dr["Colorid"];
                         ndr["cons"] = dr["cons"];
                         ndr["sizeRatio"] = dr["sizeRatio"];
-                        ndr["WorkorderForOutPutUkey"] = dr["WorkorderUkey"];
+                        ndr["WorkorderForOutPutUkey"] = dr["WorkOrderForOutputUkey"];
                         ndr["consPC"] = dr["consPC"];
                         ndr["sizeRatioQty"] = dr["sizeRatioQty"];
                         this.currentdetailTable.Rows.Add(ndr);
@@ -279,7 +279,7 @@ and a.ukey not in ( {condition} ) ");
                         exist[0]["Colorid"] = dr["Colorid"];
                         exist[0]["cons"] = dr["cons"];
                         exist[0]["sizeRatio"] = dr["sizeRatio"];
-                        exist[0]["WorkorderForOutPutUkey"] = dr["WorkorderUkey"];
+                        exist[0]["WorkorderForOutPutUkey"] = dr["WorkOrderForOutputUkey"];
                         exist[0]["ConsPC"] = dr["ConsPC"];
                         exist[0]["sizeRatioQty"] = dr["sizeRatioQty"];
                     }
