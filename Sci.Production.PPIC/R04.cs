@@ -237,7 +237,7 @@ order by MDivisionID,FactoryID",
             // 填各工廠的明細資料
             string xlsFactory = string.Empty;
             int xlsSheet = 1, ttlCount = 0, intRowsStart = 7;
-            object[,] objArray = new object[1, 20];
+            object[,] objArray = new object[1, 23];
             foreach (DataRow dr in this.printData.Rows)
             {
                 if (MyUtility.Convert.GetString(dr["FactoryID"]) != xlsFactory)
@@ -245,15 +245,15 @@ order by MDivisionID,FactoryID",
                     if (xlsSheet != 1)
                     {
                         worksheet.Cells[3, 5] = string.Format("=COUNTA(D7:D{0})", MyUtility.Convert.GetString(ttlCount + 6));
-                        worksheet.Cells[4, 5] = string.Format("=COUNTIF(R7:R{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-                        worksheet.Cells[3, 16] = string.Format("=SUM(M7:M{0})", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[4, 5] = string.Format("=COUNTIF(T7:T{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+                        worksheet.Cells[3, 17] = string.Format("=SUM(M7:M{0})", MyUtility.Convert.GetString(ttlCount + 6));
                     }
 
                     xlsSheet++;
                     worksheet = excel.ActiveWorkbook.Worksheets[xlsSheet];
                     worksheet.Name = MyUtility.Convert.GetString(dr["FactoryID"]);
-                    worksheet.Cells[3, 8] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd"));
-                    worksheet.Cells[4, 8] = this.comboLeadtime.Text;
+                    worksheet.Cells[3, 9] = string.Format("{0} ~ {1}", Convert.ToDateTime(this.date1).ToString("yyyy/MM/dd"), Convert.ToDateTime(this.date2).ToString("yyyy/MM/dd"));
+                    worksheet.Cells[4, 9] = this.comboLeadtime.Text;
                     xlsFactory = MyUtility.Convert.GetString(dr["FactoryID"]);
                     ttlCount = 0;
                     intRowsStart = 7;
@@ -266,29 +266,31 @@ order by MDivisionID,FactoryID",
                 objArray[0, 2] = dr["Department"];
                 objArray[0, 3] = dr["ID"];
                 objArray[0, 4] = dr["StyleID"];
-                objArray[0, 5] = dr["OrderID"];
-                objArray[0, 6] = dr["Seq"];
-                objArray[0, 7] = dr["ColorName"];
-                objArray[0, 8] = dr["Refno"];
-                objArray[0, 9] = dr["ApvDate"];
-                objArray[0, 10] = dr["RejectQty"];
-                objArray[0, 11] = dr["RequestQty"];
-                objArray[0, 12] = dr["IssueQty"];
-                objArray[0, 13] = dr["FinishedDate"];
-                objArray[0, 14] = dr["Type"];
-                objArray[0, 15] = dr["Process"];
-                objArray[0, 16] = dr["Description"];
-                objArray[0, 17] = dr["OnTime"];
-                objArray[0, 18] = dr["Remark"];
-                objArray[0, 19] = dr["DetailRemark"];
-
-                worksheet.Range[string.Format("A{0}:T{0}", intRowsStart)].Value2 = objArray;
+                objArray[0, 5] = dr["StyleName"];
+                objArray[0, 6] = dr["OrderID"];
+                objArray[0, 7] = dr["Seq"];
+                objArray[0, 8] = dr["ColorName"];
+                objArray[0, 9] = dr["Refno"];
+                objArray[0, 10] = dr["MaterialType"];
+                objArray[0, 11] = dr["ApvDate"];
+                objArray[0, 12] = dr["RejectQty"];
+                objArray[0, 13] = dr["RequestQty"];
+                objArray[0, 14] = dr["IssueQty"];
+                objArray[0, 15] = dr["FinishedDate"];
+                objArray[0, 16] = dr["Type"];
+                objArray[0, 17] = dr["Process"];
+                objArray[0, 18] = dr["Description"];
+                objArray[0, 19] = dr["OnTime"];
+                objArray[0, 20] = dr["Remark"];
+                objArray[0, 21] = dr["DetailRemark"];
+                objArray[0, 22] = dr["SewingQty"];
+                worksheet.Range[string.Format("A{0}:W{0}", intRowsStart)].Value2 = objArray;
                 intRowsStart++;
             }
 
             worksheet.Cells[3, 5] = string.Format("=COUNTA(D7:D{0})", MyUtility.Convert.GetString(ttlCount + 6));
-            worksheet.Cells[4, 5] = string.Format("=COUNTIF(R7:R{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
-            worksheet.Cells[3, 16] = string.Format("=SUM(M7:M{0})", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[4, 5] = string.Format("=COUNTIF(T7:T{0},\"=Y\")", MyUtility.Convert.GetString(ttlCount + 6));
+            worksheet.Cells[3, 17] = string.Format("=SUM(N7:N{0})", MyUtility.Convert.GetString(ttlCount + 6));
             for (int i = 2; i < xlsSheet + 1; i++)
             {
                 worksheet = excel.ActiveWorkbook.Worksheets[i];
