@@ -480,6 +480,12 @@
     <Compile Include="P08_FreightList.Designer.cs">
       <DependentUpon>P08_FreightList.cs</DependentUpon>
     </Compile>
+    <Compile Include="P26.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P26.Designer.cs">
+      <DependentUpon>P26.cs</DependentUpon>
+    </Compile>
     <Compile Include="P16.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1063,6 +1069,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P08_FreightList.resx">
       <DependentUpon>P08_FreightList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P26.resx">
+      <DependentUpon>P26.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P16.resx">
       <DependentUpon>P16.cs</DependentUpon>
