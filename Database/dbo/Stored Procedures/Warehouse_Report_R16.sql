@@ -114,12 +114,12 @@ begin
 		select cutref = stuff((
 			Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
 			from Cutplan_Detail cd WITH (NOLOCK)
-			inner join workorder w WITH (NOLOCK) on w.Ukey = cd.WorkorderUkey 
+			inner join WorkOrderForPlanning w WITH (NOLOCK) on w.Ukey = cd.WorkOrderForPlanningUkey 
 			outer apply(
 				select CutNo=stuff((
 					select concat(',',cd2.CutNo)
 					from Cutplan_Detail cd2 WITH (NOLOCK)
-					inner join workorder w2 WITH (NOLOCK) on w2.Ukey = cd2.WorkorderUkey 
+					inner join WorkOrderForPlanning w2 WITH (NOLOCK) on w2.Ukey = cd2.WorkOrderForPlanningUkey 
 					where cd2.ID=i.CutplanID and w2.FabricCombo=w.FabricCombo
 					group by cd2.CutNo
 	                order by cd2.CutNo
