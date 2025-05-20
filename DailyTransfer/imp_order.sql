@@ -119,7 +119,18 @@ else
 		Update a
 		set a.FactoryID = isnull( b.FTY_Group, '')
 			, a.MDivisionID = isnull( f.MDivisionID, '')
-		from Production.dbo.WorkOrder a
+		from Production.dbo.WorkOrderForPlanning a
+		inner join #TOrder b on a.ID = b.ID
+		inner join Production.dbo.Orders c on b.ID = c.ID 
+											  and a.FactoryID != b.FTY_Group
+		left join Production.dbo.Factory f on b.FTY_Group = f.ID
+		where 	(isnull(b.Junk,0) = 0 or (isnull(b.Junk,0) = 1 and b.NeedProduction=1))
+				and b.IsForecast = '0'
+
+		Update a
+		set a.FactoryID = isnull( b.FTY_Group, '')
+			, a.MDivisionID = isnull( f.MDivisionID, '')
+		from Production.dbo.WorkOrderForOutput a
 		inner join #TOrder b on a.ID = b.ID
 		inner join Production.dbo.Orders c on b.ID = c.ID 
 											  and a.FactoryID != b.FTY_Group
@@ -3572,9 +3583,15 @@ where not exists (select 1 from Order_PatternPanel where t.ID = ID and t.Article
 
 ----更新的判斷必須要依照#Torder的區間作更新
 Update b set b.MDivisionId='',FactoryID=''
-from Production.dbo.WorkOrder b
+from Production.dbo.WorkOrderForPlanning b
 where id in (select id from #tmpOrders as t 
 where not exists(select 1 from #TOrder as s where t.id=s.ID))
+
+Update b set b.MDivisionId='',FactoryID=''
+from Production.dbo.WorkOrderForOutput b
+where id in (select id from #tmpOrders as t 
+where not exists(select 1 from #TOrder as s where t.id=s.ID))
+
 
 
 ----刪除的判斷必須要依照#Torder的區間作刪除
