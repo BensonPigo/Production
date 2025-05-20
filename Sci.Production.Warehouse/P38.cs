@@ -185,7 +185,7 @@ namespace Sci.Production.Warehouse
                 .Text("Scale", header: "Shade Band\r\nScale", width: Widths.AnsiChars(5), iseditingreadonly: true)
                 .Text("Tone", header: "Shade Band\r\nTone/Grp", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Text("PointRate", header: "Point rate\n\rper 100yds", width: Widths.AnsiChars(2), iseditingreadonly: true)
-                .Text("WashLab Report", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("WashLabReport", header: "WashLab Report", width: Widths.AnsiChars(8), iseditingreadonly: true)
                 .Numeric("inqty", header: "In Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                 .Numeric("outqty", header: "Out Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
                 .Numeric("adjustqty", header: "Adjust Qty", width: Widths.AnsiChars(10), integer_places: 8, decimal_places: 2, iseditingreadonly: true)
@@ -373,6 +373,7 @@ select 0 as [selected]
         , fi.Remark
 		, psd.FabricType sFabricType
         , fi.Tone
+        , r.ID
 into #tmp_FtyInventory
 from dbo.FtyInventory fi WITH (NOLOCK) 
 left join dbo.PO_Supp_Detail psd WITH (NOLOCK) on psd.id = fi.POID and psd.seq1 = fi.seq1 and psd.seq2  = fi.Seq2
@@ -669,28 +670,55 @@ inner join fir f on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2
 inner join FIR_Shadebone fs on f.id=fs.ID AND F.ShadebondEncode=1 and fi.Dyelot =fs.Dyelot and fi.Roll=fs.Roll
 group by  f.POID,f.SEQ1,f.SEQ2,fi.Dyelot,fi.Roll ,fi.Tone
 
---#tmp_WashLab
-select distinct f.POID,f.SEQ1,f.SEQ2
-	,FLResult = case when fl >0 then 'Fail' when fl is null then null else 'Pass' end
-	,ovenResult = case when oven>1 then 'Fail' when oven is null then null else 'Pass' end
-	,cfResult = case when cf>1 then 'Fail' when cf is null then null else 'Pass' end
-into #tmp_WashLab
-from
-(
-	select f.POID,f.SEQ1,f.SEQ2
-		, round(convert(float, sum(iif(fl = 'Fail',1,0))) / convert(float,(count(*))),2) fl
-		, round(convert(float, sum(iif(oven = 'Fail',1,0))) / convert(float,(count(*))),2) oven
-		, round(convert(float, sum(iif(cf = 'Fail',1,0))) / convert(float,(count(*))),2) cf
-	from (
-		SELECT distinct f.POID,f.SEQ1,f.SEQ2,FL.Result as fl ,O.Result as oven ,C.Result as cf
-		FROM fir f
-		left join FIR_Laboratory FL on f.POID= fl.POID and f.seq1= fl.SEQ1 and f.seq2= fl.SEQ2
-		LEFT JOIN Oven O ON O.POID = FL.POID AND O.Status= 'Confirmed'
-		LEFT JOIN ColorFastness C ON C.POID = FL.POID AND C.Status= 'Confirmed' 
-		inner join #tmp_FtyInventory fi on f.POID= fi.POID	and f.SEQ1 =fi.Seq1 and f.SEQ2 = fi.Seq2 
-	) f
-	group by f.POID,f.SEQ1,f.SEQ2
-)f
+SELECT fi.ID, fi.POID, fi.SEQ1, fi.SEQ2, fi.Roll, fi.Dyelot, detail.Result, detail.Type
+  into #tmpDetial
+  FROM #tmp_FtyInventory fi
+  join FIR f on f.ReceivingID = fi.Id and f.SEQ1 = fi.SEQ1 and f.SEQ2 = fi.SEQ2
+  join FIR_Laboratory fl 
+    on fl.ID = f.ID
+OUTER APPLY (
+Select Roll, Dyelot, Result = iif(DM.nonCrocking = 1, 'Pass', D.Result), Type = 'Crocking'
+  from FIR_Laboratory DM
+  join FIR_Laboratory_Crocking D
+    on DM.ID = D.ID and fi.Roll = D.Roll and fi.Dyelot = D.Dyelot and DM.CrockingEncode = 1
+ where DM.ID = fl.ID
+union all
+Select Roll, Dyelot, Result = iif(fl.nonheat = 1, 'Pass', D.Result), Type = 'Heat'
+  from FIR_Laboratory DM
+  join FIR_Laboratory_Heat D
+    on DM.ID = D.ID and fi.Roll = D.Roll and fi.Dyelot = D.Dyelot and DM.HeatEncode = 1
+ where DM.ID = fl.ID
+union all
+Select Roll, Dyelot, Result = iif(fl.nonwash = 1, 'Pass', D.Result), Type = 'Wash'
+  from FIR_Laboratory DM
+  join FIR_Laboratory_Wash D
+    on DM.ID = D.ID and fi.Roll = D.Roll and fi.Dyelot = D.Dyelot and DM.WashEncode = 1
+ where DM.ID = fl.ID
+union all
+Select top 1 Roll, Dyelot, D.Result, Type = 'Oven'
+  from Oven_Detail D
+  join Oven DM
+    on DM.ID = d.ID
+ where fl.POID = DM.POID and D.SEQ1 = fi.SEQ1 and D.SEQ2 = fi.SEQ2 and fi.Roll = D.Roll and fi.Dyelot = D.Dyelot and dm.Status = 'Confirmed'
+order by isnull(DM.EditDate,DM.AddDate) desc,isnull(D.EditDate,D.AddDate) desc
+union all
+Select top 1 Roll, Dyelot, D.Result, Type = 'Color'
+  from ColorFastness_Detail D
+  join ColorFastness DM
+    on DM.ID = d.ID
+ where fl.POID = DM.POID and D.SEQ1 = fi.SEQ1 and D.SEQ2 = fi.SEQ2 and fi.Roll = D.Roll and fi.Dyelot = D.Dyelot and dm.Status = 'Confirmed'
+order by isnull(DM.EditDate,DM.AddDate) desc,isnull(D.EditDate,D.AddDate) desc
+) detail
+
+select *
+  into #tmp_WashLab
+  from (select distinct ID, POID, SEQ1, SEQ2, Roll, Dyelot, Type, Result
+          from #tmpDetial
+       ) Data
+       PIVOT 
+       (
+        Count(Type) For Type in ([Crocking],[Heat],[Wash],[Oven],[Color])
+       ) Data
 
 --#tmp_Air
 select distinct a.POID,a.SEQ1,a.SEQ2,a.Result
@@ -735,18 +763,20 @@ select distinct fi.*
     ,[Grade] = isnull(PointRate.Grade,'')
     ,[PointRatePerRoll]
 	,[PointRate]=IIF(fi.FabricType='Accessory','',PointRate.PointRate)
-	,[WashLab Report] = case when fi.sFabricType='A' then iif(Air_Lab.Result='','Blank',Air_Lab.Result)
-							when WashLab.FLResult='Fail' or WashLab.ovenResult='Fail' or WashLab.cfResult='Fail'
-								then 'Fail'
-							when WashLab.FLResult is null and WashLab.ovenResult is null and WashLab.cfResult is null 
-								then 'Blank'
-							else 'Pass' end 
+	,[WashLabReport] = case when FL.POID is null Then 'Blank'
+                            when WashLab_Blank.POID is not null Then 'Blank'
+                            when WashLab_Sum.Cnt < 5 Then 'Blank'
+                            when WashLab_Pass.Crocking > 0 and WashLab_Pass.Heat > 0 and WashLab_Pass.Wash > 0 and WashLab_Pass.Oven > 0 and WashLab_Pass.Color > 0 Then 'Pass'
+                            else 'Fail' End
     ,f3.Scale, f3.Tone
     ,[ForInspection] = IIf(rdValue.ForInspection = '1', 'Y', IIf(tdValue.ForInspection = '1', 'Y', ''))
 from #tmp_FtyInventory fi
+left join FIR_Laboratory FL on FL.POID = fi.POID and FL.SEQ1 = fi.SEQ1 and FL.SEQ2 = fi.SEQ2
 left join #tmp_FIR_Result1 FIR_Result1 on FIR_Result1.POID=fi.POID	and FIR_Result1.SEQ1 = fi.Seq1 and FIR_Result1.SEQ2 = fi.Seq2 and FIR_Result1.Dyelot=fi.Dyelot AND FIR_Result1.Roll=fi.Roll 
 left join #tmp_FIR_3 f3 on f3.POID=fi.POID	and f3.SEQ1 = fi.Seq1 and f3.SEQ2 = fi.Seq2 and f3.Dyelot=fi.Dyelot AND f3.Roll=fi.Roll
-left join #tmp_WashLab WashLab on WashLab.POID= fi.POID	and WashLab.SEQ1 =fi.Seq1 and WashLab.SEQ2 = fi.Seq2 
+left join #tmp_WashLab WashLab_Blank on fi.ID = WashLab_Blank.Id and WashLab_Blank.POID= fi.POID	and WashLab_Blank.SEQ1 =fi.Seq1 and WashLab_Blank.SEQ2 = fi.Seq2 and WashLab_Blank.Roll = fi.Roll and WashLab_Blank.Dyelot = fi.Dyelot and WashLab_Blank.Result is null
+left join #tmp_WashLab WashLab_Pass on fi.ID = WashLab_Pass.Id and WashLab_Pass.POID= fi.POID	and WashLab_Pass.SEQ1 =fi.Seq1 and WashLab_Pass.SEQ2 = fi.Seq2 and WashLab_Pass.Roll = fi.Roll and WashLab_Pass.Dyelot = fi.Dyelot and WashLab_Pass.Result = 'Pass'
+outer apply (select Cnt = sum(Crocking + Heat + Wash + Oven + Color) from #tmp_WashLab where ID = fi.ID and POID = fi.POID and SEQ1 = fi.SEQ1 and SEQ2 = fi.SEQ2 and Roll = fi.Roll and Dyelot = fi.Dyelot) WashLab_Sum
 left join #tmp_Air Air on Air.POID= fi.POID	and Air.SEQ1 =fi.Seq1 and Air.SEQ2 = fi.Seq2  
 left join #tmp_Air_Lab Air_Lab on Air_Lab.POID= fi.POID	and Air_Lab.SEQ1 =fi.Seq1 and Air_Lab.SEQ2 = fi.Seq2  
 left join #tmp_PointRate PointRate on PointRate.POID=fi.POID and PointRate.SEQ1 = fi.Seq1 and PointRate.SEQ2 = fi.Seq2 and PointRate.Roll=fi.Roll and PointRate.Dyelot=fi.Dyelot   
@@ -758,7 +788,7 @@ outer apply
 (	select top 1 [ForInspection] = isnull(ForInspection, '') from
 	TransferIn_Detail td  where td.POID=fi.POID and td.SEQ1 = fi.Seq1 and td.SEQ2 = fi.Seq2 and td.Roll=fi.Roll and td.Dyelot=fi.Dyelot and td.StockType = fi.stocktype 																																				  
 )tdValue
-drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate,#tmpFirDetail
+drop table #tmp_FtyInventory,#tmp_FIR_Result1,#tmp_WashLab,#tmp_Air,#tmp_Air_Lab,#tmp_PointRate,#tmpFirDetail,#tmpDetial,#tmp_FIR_3
 ");
 
             DualResult result;
