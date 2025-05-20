@@ -70,8 +70,8 @@ SELECT
     d.Colorid
 INTO dbo.CuttingOutput_Detail
 FROM Pms_To_Trade.dbo.CuttingOutput AS o
-INNER JOIN Production.dbo.CuttingOutput_Detail AS d¡@ON o.ID = d.ID
-LEFT JOIN Production.dbo.WorkOrderForOutput AS w¡@ON w.UKey = d.WorkOrderForOutputUkey;
+INNER JOIN Production.dbo.CuttingOutput_Detail AS d ON o.ID = d.ID
+LEFT JOIN Production.dbo.WorkOrderForOutput AS w ON w.UKey = d.WorkOrderForOutputUkey;
 
 SELECT CUT1.ID,CUT3.CuttingOutput_detailUkey,CUT3.CuttingID, CUT3.SizeCode,CUT3.Qty
 INTO  CuttingOutput_Detail_Detail
