@@ -221,10 +221,10 @@ INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #t
                 return;
             }
 
-            if (this.dateEstCut.Value < DateTime.Today.AddDays(1))
+            if (this.dateEstCut.Value < DateTime.Today)
             {
                 e.Cancel = true;
-                MyUtility.Msg.WarningBox("<Est. Cut Date> must be selected after tomorrow");
+                MyUtility.Msg.WarningBox("<Est. Cut Date> must be selected after today");
             }
         }
     }
