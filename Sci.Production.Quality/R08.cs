@@ -125,6 +125,9 @@ FROM dbo.GetQA_R08_Detail(@InspectionDateFrom, @InspectionDateTo, @Inspectors, @
             if (this.radioDetail.Checked)
             {
                 sqlCmd.Append($@"
+
+DECLARE @QASortOutStandard decimal(5,2) = (SELECT QASortOutStandard FROM [SYSTEM])
+
 select 
         [Inspected Date] ,[Inspector] ,[InspectorName] ,brandID
        ,FtyGroup ,StyleID ,[SP#] 
@@ -150,6 +153,7 @@ select
 	   ,[Total Defect Points]
        ,[Point Rate Per Roll]
        ,[Grade]
+       ,[Sort Out] = IIf ([Point Rate Per Roll] >= @QASortOutStandard , 'Y', 'N')
        ,[ActualInspectionTimeStart]
 	   ,[inspectionTimeStart] 
        ,[ActualInspectionTimeFinish]
