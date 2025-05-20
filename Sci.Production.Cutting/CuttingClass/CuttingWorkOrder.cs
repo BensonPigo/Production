@@ -1,6 +1,5 @@
 ﻿using Ict;
 using Ict.Win.UI;
-using Microsoft.Office.Core;
 using Sci.Andy;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
