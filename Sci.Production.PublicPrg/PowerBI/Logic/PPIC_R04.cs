@@ -53,6 +53,7 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 	,[SewingCell] = isnull(s.SewingCell,'')
     ,[Department] = isnull(l.Dept,'')
 	,[StyleID] = isnull(o.StyleID,'')
+    ,[StyleName] = isnull(sty.StyleName,'')
 	,[OrderID] = isnull(l.OrderID,'')
 	,[Seq] = concat(isnull(ld.Seq1,''),' ',isnull(ld.Seq2,''))
 	,[ColorName] = isnull(c.Name,'')
@@ -69,6 +70,13 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
     ,[Process] = isnull(ld.Process,'')
     ,[FabricType] = isnull(l.FabricType,'')
 	,[DetailRemark] = isnull(ld.Remark,'')
+    ,[MaterialType] = CASE 
+					  WHEN psd.FabricType = 'F' THEN 'Fabric-' + ISNULL(f.MtlTypeID, '')
+					  WHEN psd.FabricType = 'A' THEN 'Accessory-' + ISNULL(f.MtlTypeID, '')
+					  WHEN psd.FabricType = 'O' THEN 'Other-' + ISNULL(f.MtlTypeID, '')
+					  ELSE isnull(f.MtlTypeID,'')
+					  END
+    ,[SewingQty] = isnull(SewingQty.val,0)
     ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
     ,[BIInsertDate] = GETDATE()
     {(model.IsPowerBI ? tmpsql : string.Empty)}
@@ -76,11 +84,36 @@ from Lack l WITH (NOLOCK)
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID
 left join SewingLine s WITH (NOLOCK) on s.ID = l.SewingLineID AND S.FactoryID=L.FactoryID
 left join Orders o WITH (NOLOCK) on o.ID = l.OrderID
+left join Style sty WITH (NOLOCK) on sty.Ukey = o.StyleUkey
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = l.POID and psd.SEQ1 = ld.Seq1 and psd.SEQ2 = ld.Seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
+LEFT JOIN Fabric f WITH (NOLOCK) ON psd.SCIRefNo = f.SCIRefNo
 left join Color c WITH (NOLOCK) on c.BrandId = o.BrandID and c.ID = isnull(psdsC.SpecValue ,'')
 left join PPICReason pr WITH (NOLOCK) on pr.Type = 'FL' and (pr.ID = ld.PPICReasonID or pr.ID = concat('FR','0',ld.PPICReasonID))
 left join PPICReason pr1 WITH (NOLOCK) on pr1.Type = 'AL' and (pr1.ID = ld.PPICReasonID or pr1.ID = concat('AR','0',ld.PPICReasonID))
+OUTER APPLY
+(
+	SELECT 
+    val = SUM(minSewQty.val)
+	FROM
+	(
+		SELECT 
+			oq.Article,
+			oq.SizeCode,
+			sl.Location AS ComboType,
+			val = MIN(ISNULL(sdd.QAQty, 0))
+		FROM Orders oop WITH (NOLOCK) 
+		INNER JOIN Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
+		INNER JOIN Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
+		LEFT JOIN SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+			ON sdd.OrderId = oop.ID 
+			AND sdd.Article = oq.Article 
+			AND sdd.SizeCode = oq.SizeCode 
+			AND sdd.ComboType = sl.Location
+		WHERE oop.ID = o.ID
+		GROUP BY oq.Article, oq.SizeCode, sl.Location
+	) minSewQty
+)SewingQty 
 WHERE 1=1
 ");
 

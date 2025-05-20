@@ -95,6 +95,9 @@ SET
     ,t.[BIFactoryID] = s.[BIFactoryID]
     ,t.[BIInsertDate] = s.[BIInsertDate]
     ,t.[DetailRemark] = s.[DetailRemark]
+    ,t.[StyleName] = s.[StyleName]
+    ,t.[MaterialType] = s.[MaterialType]
+    ,t.[SewingQty] = s.[SewingQty]
 from P_FabricStatus_And_IssueFabricTracking t 
 inner join #tmp s on t.ReplacementID = s.ID 
 AND t.SP = s.OrderID 
@@ -110,6 +113,9 @@ insert into P_FabricStatus_And_IssueFabricTracking (
     ,[ReplacementFinishedDate]      ,[Type]
     ,[Process]      ,[Description]      ,[OnTime]      ,[Remark] ,BIFactoryID , BIInsertDate
     ,[DetailRemark]
+    ,[StyleName]
+    ,[MaterialType]
+    ,[SewingQty],[FactoryID]
 )
 select 	s.[SewingCell]      ,s.[SewingLineID]    ,s.[ID] ,s.[Department]
 		  ,s.[StyleID]    ,s.[OrderID]     ,s.[Seq]      ,s.[FabricType]
@@ -118,6 +124,9 @@ select 	s.[SewingCell]      ,s.[SewingLineID]    ,s.[ID] ,s.[Department]
 		  ,s.[FinishedDate]      ,s.[Type]
 		  ,s.[Process]      ,s.[Description]  ,s.[OnTime]      ,s.[Remark] ,s.BIFactoryID , s.BIInsertDate
         ,s.[DetailRemark]
+        ,s.[StyleName]
+        ,s.[MaterialType]
+        ,s.[SewingQty],[FactoryID]
 from #tmp s
 where not exists (
     select 1 from P_FabricStatus_And_IssueFabricTracking t 
@@ -125,6 +134,7 @@ where not exists (
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
+    and t.[FactoryID] = s.[FactoryID]
 )
 
 {tmp}
@@ -137,10 +147,11 @@ where not exists (
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
+and t.[FactoryID] = s.[FactoryID]
 )
 and t.ReplacementFinishedDate >= @SDate
 ";
-                sql += new Base().SqlBITableInfo("P_FabricStatus_And_IssueFabricTracking", false);
+                sql += new Base().SqlBITableInfo("P_FabricStatus_And_IssueFabricTracking", true);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

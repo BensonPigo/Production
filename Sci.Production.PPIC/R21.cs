@@ -43,6 +43,7 @@ namespace Sci.Production.PPIC
                 "Clog Receive From CFA",
                 "CFA Receive",
                 "CFA Return",
+                "M360 MD Scan",
         };
 
         /// <summary>
