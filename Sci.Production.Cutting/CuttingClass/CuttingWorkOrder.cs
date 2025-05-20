@@ -1,5 +1,6 @@
 ﻿using Ict;
 using Ict.Win.UI;
+using Microsoft.Office.Core;
 using Sci.Andy;
 using Sci.Andy.ExtensionMethods;
 using Sci.Data;
@@ -1004,6 +1005,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
             string cmdWhere = string.Empty;
             string outerApply = string.Empty;
             string nColumn = string.Empty;
+            string oColumn = string.Empty;
 
             string tableName = GetTableName(form);
             string tableKey = GetWorkOrderUkeyName(form);
@@ -1016,6 +1018,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                     where = string.Empty;
                     cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '')";
                     nColumn = string.Empty;
+                    oColumn = ", w.Seq";
                     outerApply = string.Empty;
                     break;
 
@@ -1025,6 +1028,7 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                     where = "And CanEdit = 1";
                     cmdWhere = "AND CutNo IS NOT NULL AND CutCellID <> ''";
                     nColumn = ", ws.SizeRatio";
+                    oColumn = string.Empty;
                     outerApply = $@"
 OUTER APPLY (
     SELECT STUFF((
@@ -1073,7 +1077,7 @@ WHERE (w.CutRef IS NULL OR w.CutRef = '')
         {where}
         {cmdWhere}
         AND w.id = '{cuttingID}' AND w.mDivisionid = '{mDivision}'
-ORDER BY w.FabricCombo, w.{colName}";
+ORDER BY w.FabricCombo, w.{colName}{oColumn}";
 
             cutRefresult = MyUtility.Tool.ProcessWithDatatable(dtWorkOrder, string.Empty, cmdsql, out DataTable workordertmp, "#tmpWorkOrder");
             if (!cutRefresult)
