@@ -83,7 +83,10 @@ begin
 			,[DispatchScanName] = CONCAT(id.DispatchScanner,'-',(select Name from Pass1 where Pass1.id =id.DispatchScanner ))
 			,[DispatchScanTime] = id.DispatchScanTime
 			,[RegisterTime] = m360.RegisterTime
+            ,[DispatchBy] = CONCAT(m360.DispatchName,'-',(select Name from Pass1 where Pass1.id =m360.DispatchName))
 			,[DispatchTime] = m360.DispatchTime
+            ,[DispatchReason] = wr.Description
+            ,[DispatchRemark] = id.M360MINDDispatchReasonRemark
 			,[FactoryReceivedName] = CONCAT(m360.FactoryReceivedName,'-',(select name from Pass1 where Pass1.ID = m360.FactoryReceivedName))
 			,[FactoryReceivedTime] = m360.FactoryReceivedTime
 			,[AddDate] = i.AddDate
@@ -109,17 +112,18 @@ begin
 	                                                and w.TransactionUkey = id.Ukey
 	                                                and w.Action = 'Confirm'
 	left join Fabric_UnrollandRelax fu with (nolock) on fu.Barcode = w.To_NewBarcode
-		left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fu.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
+    left join [ExtendServer].ManufacturingExecution.dbo.MachineIoT MIOT with (nolock) on MIOT.Ukey = fu.MachineIoTUkey and MIOT.MachineIoTType= 'unroll'
+    left join WhseReason wr on wr.ID = id.M360MINDDispatchReasonID and wr.Type = 'DR'
 	outer apply(
 		select cutref = stuff((
 			Select concat(' / ', w.FabricCombo,'-',x1.CutNo)
 			from Cutplan_Detail cd WITH (NOLOCK)
-			inner join workorder w WITH (NOLOCK) on w.Ukey = cd.WorkorderUkey 
+			inner join WorkOrderForPlanning w WITH (NOLOCK) on w.Ukey = cd.WorkOrderForPlanningUkey 
 			outer apply(
 				select CutNo=stuff((
 					select concat(',',cd2.CutNo)
 					from Cutplan_Detail cd2 WITH (NOLOCK)
-					inner join workorder w2 WITH (NOLOCK) on w2.Ukey = cd2.WorkorderUkey 
+					inner join WorkOrderForPlanning w2 WITH (NOLOCK) on w2.Ukey = cd2.WorkOrderForPlanningUkey 
 					where cd2.ID=i.CutplanID and w2.FabricCombo=w.FabricCombo
 					group by cd2.CutNo
 	                order by cd2.CutNo
