@@ -214,10 +214,10 @@ SELECT
    ,Fabeta
    ,Sewinline
    ,Actcutdate
-   ,MarkerLength_Mask = ''-- 4個_Mask欄位在下方 OnDetailEntered 會把實體欄位資訊格式化後填入
-   ,ActCuttingPerimeter_Mask = ''
-   ,StraightLength_Mask = ''
-   ,CurvedLength_Mask = ''
+   ,MarkerLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatMarkerLength(wo.MarkerLength)) -- 4個_Mask欄位在下方 OnDetailEntered 會把實體欄位資訊格式化後填入
+   ,ActCuttingPerimeter_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.ActCuttingPerimeter))
+   ,StraightLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.StraightLength))
+   ,CurvedLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.CurvedLength))
    ,AddUser = p1.Name
    ,EditUser = p2.Name
    ,FabricTypeRefNo = CONCAT(f.WeaveTypeID, ' /' + wo.RefNo)
@@ -367,7 +367,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.displayLastCreateCutRef.Text = this.DetailDatas.AsEnumerable().OrderByDescending(row => MyUtility.Convert.GetDate(row["LastCreateCutRefDate"]))
                 .ThenByDescending(row => MyUtility.Convert.GetString(row["CutRef"])).Select(row => MyUtility.Convert.GetString(row["CutRef"])).FirstOrDefault();
-            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
+            // this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.Sorting();
             this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
@@ -1345,8 +1345,7 @@ DEALLOCATE CURSOR_
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.CurrentDetailData["MarkerLength"] = this.txtMarkerLength.FullText;
-            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 將更新後的 MarkerLength ，按照格式回填表身 4 個_Mask 欄位 用來顯示用
-
+            Format4LengthColumn(this.CurrentDetailData); // 只重算這一筆
             this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
