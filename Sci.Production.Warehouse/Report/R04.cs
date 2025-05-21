@@ -118,7 +118,7 @@ select  operation = case a.type
         ,ETA = (select eta 
                 from Inventory WITH (NOLOCK) 
                 where Inventory.Ukey = a.InventoryUkey) 
-        ,cuttingInline = (select min(cutting.CutInLine) 
+        ,cuttingInline = (select min(cutting.CutForPlanningInLine) 
                           from Cutting WITH (NOLOCK) 
                           where id = a.InventoryPOID) 
         ,[Bulk Fty] = BulkFty.v
