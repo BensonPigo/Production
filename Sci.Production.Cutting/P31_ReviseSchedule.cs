@@ -163,7 +163,7 @@ VALUES ('{this.displayFactory.Text}', '{this.dateEstCut.Value.Value:yyyy/MM/dd}'
                     // 2.把勾選的表身複製過去, 並取出重編碼
                     sqlcmd = $@"
 INSERT INTO SpreadingSchedule_Detail (SpreadingScheduleUkey, CutRef, SpreadingSchdlSeq, IsAGVArrived, IsSuspend)
-SELECT {ukeyNew}, CutRef, 0, IsAGVArrived, IsSuspend
+SELECT distinct {ukeyNew}, CutRef, 0, IsAGVArrived, IsSuspend
 FROM #tmp
 
 {sqlUpdateSpreadingSchedule}
@@ -221,10 +221,10 @@ INNER JOIN #tmp ON #tmp.SpreadingScheduleUkey = ssd.SpreadingScheduleUkey AND #t
                 return;
             }
 
-            if (this.dateEstCut.Value < DateTime.Today.AddDays(1))
+            if (this.dateEstCut.Value < DateTime.Today)
             {
                 e.Cancel = true;
-                MyUtility.Msg.WarningBox("<Est. Cut Date> must be selected after tomorrow");
+                MyUtility.Msg.WarningBox("<Est. Cut Date> must be selected after today");
             }
         }
     }
