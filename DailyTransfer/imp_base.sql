@@ -60,6 +60,7 @@ SET
 	  ,a. UseRatioRule_Thick =isnull(b.UseRatioRule_Thick, '')
 	  ,a. Serial = isnull(b.Serial, 0)
 	  ,a. ShipTermID = isnull(b.ShipTermID, '')
+	  ,a. SampleGroup = isnull(b.SampleGroup, '')
 from Production.dbo.Brand as a inner join Trade_To_Pms.dbo.Brand as b ON a.id=b.id
 -------------------------- INSERT INTO §ì
 INSERT INTO Production.dbo.Brand
@@ -104,6 +105,7 @@ INSERT INTO Production.dbo.Brand
 	  ,UseRatioRule_Thick
 	  ,Serial
 	  ,ShipTermID
+	  ,SampleGroup
 )
 SELECT ID
       ,isnull(NameCH, '')
@@ -145,6 +147,7 @@ SELECT ID
 	  ,isnull(UseRatioRule_Thick, '')
 	  ,isnull(Serial, 0)
 	  ,isnull(ShipTermID,'')
+	  ,isnull(SampleGroup,'')
 from Trade_To_Pms.dbo.Brand as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Brand as a WITH (NOLOCK) where a.id = b.id)
 
