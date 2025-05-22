@@ -139,7 +139,7 @@ BEGIN
 			End;
 			Else
 			Begin
-				If IsNull(@KeywordID, '') = Upper('Color Descciption')
+				If IsNull(@KeywordID, '') = Upper('Color Descciption') or IsNull(@KeywordID, '') = Upper('Color Description')
 				Begin
 					Set @FabricPanelCode = '';
 
@@ -157,10 +157,7 @@ BEGIN
 						   And FabricPanelCode = @FabricPanelCode;
 					End;
 
-					If Upper(@KeywordID) = Upper('Color Descciption')
-					Begin
-						Set @KeyValue = Production.dbo.GetColorName(@BrandID, @KeyValue, '3', '');
-					End;
+					Set @KeyValue = Production.dbo.GetColorName(@BrandID, @KeyValue, '3', '');
 				End;
 				Else
 				Begin
