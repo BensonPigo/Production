@@ -66,7 +66,6 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSeq1.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSeq2.Enabled = this.editByUseCutRefToRequestFabric;
-            this.txtSpreadingNo.Enabled = this.editByUseCutRefToRequestFabric;
             if (this.form == CuttingForm.P02)
             {
                 this.chkShowEmptyCutRef.Checked = true;

@@ -75,7 +75,6 @@ namespace Sci.Production.Cutting
             this.txtActCuttingPerimeter.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtStraightLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtCurvedLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
-            this.txtSpreadingNo.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtDropDownList1.ReadOnly = !this.editByUseCutRefToRequestFabric;
 
             this.cmsSizeRatio.Enabled = this.editByUseCutRefToRequestFabric;

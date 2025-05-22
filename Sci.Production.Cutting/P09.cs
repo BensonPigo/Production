@@ -1411,8 +1411,7 @@ DEALLOCATE CURSOR_
                 UpdateConcatString(dr, this.dt_SizeRatio, this.formType);
                 dr.EndEdit();
             };
-
-            BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditData);
+            BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditNotWithUseCutRefToRequestFabric);
             BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditNotWithUseCutRefToRequestFabric);
 
             this.col_MarkerLength.CellValidating += (s, e) =>
@@ -1489,7 +1488,8 @@ DEALLOCATE CURSOR_
                         return true;
                     }
 
-                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("Tone") || columNname.EqualString("MarkerName") || columNname.EqualString("MarkerLength"))
+                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("Tone") || columNname.EqualString("MarkerName") || columNname.EqualString("MarkerLength")
+                        || columNname.EqualString("SpreadingNoID"))
                     {
                         return this.CanEditNotWithUseCutRefToRequestFabric(dr);
                     }

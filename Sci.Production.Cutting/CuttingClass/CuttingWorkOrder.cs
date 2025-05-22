@@ -5052,17 +5052,22 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
                             }
 
-                            arrayrow = (nDisCount / 2) + i;
-                            worksheet.Cells[nrow, 1] = workorderDisGroup[i].OrderID;
-                            worksheet.Cells[nrow, 4] = workorderDisGroup[i].Article;
-                            worksheet.Cells[nrow, 7] = workorderDisGroup[i].SizeCode;
-                            worksheet.Cells[nrow, 9] = workorderDisGroup[i].Qty.ToString();
-                            if (arrayrow + 1 < nDisCount)
+                            // 左側
+                            var left = workorderDisGroup[i];
+                            worksheet.Cells[nrow, 1] = left.OrderID;
+                            worksheet.Cells[nrow, 4] = left.Article;
+                            worksheet.Cells[nrow, 7] = left.SizeCode;
+                            worksheet.Cells[nrow, 9] = left.Qty.ToString();
+
+                            // 右側
+                            int rightIndex = i + (int)disRow;
+                            if (rightIndex < nDisCount)
                             {
-                                worksheet.Cells[nrow, 11] = workorderDisGroup[arrayrow + 1].OrderID;
-                                worksheet.Cells[nrow, 14] = workorderDisGroup[arrayrow + 1].Article;
-                                worksheet.Cells[nrow, 17] = workorderDisGroup[arrayrow + 1].SizeCode;
-                                worksheet.Cells[nrow, 19] = workorderDisGroup[arrayrow + 1].Qty.ToString();
+                                var right = workorderDisGroup[rightIndex];
+                                worksheet.Cells[nrow, 11] = right.OrderID;
+                                worksheet.Cells[nrow, 14] = right.Article;
+                                worksheet.Cells[nrow, 17] = right.SizeCode;
+                                worksheet.Cells[nrow, 19] = right.Qty.ToString();
                             }
                             else
                             {
