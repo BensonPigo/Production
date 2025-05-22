@@ -83,6 +83,15 @@ namespace Sci.Production.PPIC
                         {
                             ((Ict.Win.UI.TextBox)e.Control).InputRestrict = Ict.Win.UI.TextBoxInputsRestrict.Digit;
                         }
+
+                        if (this.gridLocalOrder.CurrentCellAddress.Y >= 1 && this.gridLocalOrder.CurrentCellAddress.X >= 1)
+                        {
+                            var tb = e.Control as Ict.Win.UI.TextBox;
+                            if (tb != null)
+                            {
+                                tb.MaxLength = 8;
+                            }
+                        }
                     }
                 };
 
