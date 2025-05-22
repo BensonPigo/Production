@@ -219,13 +219,36 @@ from (
 		, [Motion] = Motion.val
         , [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0)
         , ld.MachineID
+        , [OneShot] = CASE 
+						 WHEN EXISTS (
+							 SELECT 1
+							 FROM LineMapping_Detail ld2 WITH (NOLOCK)
+							 WHERE ld.ID = ld2.ID
+							   AND ld.MachineTypeID = ld2.MachineTypeID
+							   AND ld.MasterPlusGroup = ld2.MasterPlusGroup
+							   AND ISNULL(ld.Attachment, '') = ISNULL(ld2.Attachment, '')
+							   AND ld.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+							   AND ISNULL(ld.Template, '') = ISNULL(ld2.Template, '')
+							   AND ld.MachineID = ld2.MachineID
+							   AND ld2.MachineCount = 1
+							   AND ld2.MachineTypeID <> ''
+							   AND ld2.MasterPlusGroup <> ''
+							   AND ld2.No <> ''
+							 GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+									  ld2.Attachment, ld2.SewingMachineAttachmentID, 
+									  ld2.Template, ld2.MachineID
+							 HAVING COUNT(*) > 1
+						 ) 
+						 THEN ISNULL(ld.OneShot, cast(0 as bit))
+						 ELSE NULL
+					 END
     from LineMapping_Detail ld WITH (NOLOCK) 
+	INNER JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
+	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
     left join Employee e WITH (NOLOCK) on ld.EmployeeID = e.ID
     left join Operation o WITH (NOLOCK) on ld.OperationID = o.ID
     left join IEReasonLBRNotHit_Detail lbr WITH (NOLOCK) on ld.IEReasonLBRNotHit_DetailUkey = lbr.Ukey
     left join DropDownList d (NOLOCK) on d.ID=ld.PPA AND d.Type = 'PMS_IEPPA'
-	left JOIN LineMapping lm WITH(NOLOCK) on lm.id = ld.ID
-	INNER JOIN TimeStudy TS WITH(NOLOCK) ON TS.StyleID = lm.StyleID AND TS.SeasonID = lm.SeasonID AND TS.ComboType = lm.ComboType AND TS.BrandID = lm.BrandID
 	OUTER APPLY
 	(
 		SELECT TOP 1
@@ -1315,6 +1338,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             .CheckBox("MachineCount", header: "Machine\r\nCount", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
             .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2), p03: this)
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
+            .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operationID)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
@@ -1334,7 +1358,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             this.detailgrid.Columns["Cycle"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.Columns["MachineTypeID"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             this.detailgrid.RowPrePaint += (s, e) =>
-             {
+            {
                  if (e.RowIndex < 0)
                  {
                      return;
@@ -1357,7 +1381,35 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                      }
                  }
                  #endregion
-             };
+            };
+            this.detailgrid.CellFormatting += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.CellStyle.ForeColor = Color.DarkGray;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.Pink;
+                    }
+                }
+            };
+            this.detailgrid.CellBeginEdit += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                    // 只有當OneShot欄位為null時，不允許編輯
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+            };
 
             // [No.] 特殊排序規則 [Hide]有打勾-> [No.][PPA][Hide]皆空白-> [No.]為P開頭-> [No.]為一般數字
             int rowIndex = 0;
@@ -1878,6 +1930,43 @@ from LineMapping_Detail ld
 WHERE No = '{item["No"]}'
 and ID = {masterID}";
                 }
+
+                // 回補 OneShot
+                updCmd += $@"
+update ld
+	set ld.[OneShot] = ld2.OneShot
+from LineMapping_Detail ld
+inner join (
+	select ld.ID
+		, ld.No
+		, ld.Ukey
+		, [OneShot] = CASE 
+							 WHEN EXISTS (
+								 SELECT 1
+								 FROM LineMapping_Detail ld2 WITH (NOLOCK)
+								 WHERE ld.ID = ld2.ID
+								   AND ld.MachineTypeID = ld2.MachineTypeID
+								   AND ld.MasterPlusGroup = ld2.MasterPlusGroup
+								   AND ISNULL(ld.Attachment, '') = ISNULL(ld2.Attachment, '')
+								   AND ld.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+								   AND ISNULL(ld.Template, '') = ISNULL(ld2.Template, '')
+								   AND ld.MachineID = ld2.MachineID
+								   AND ld2.MachineCount = 1
+								   AND ld2.MachineTypeID <> ''
+								   AND ld2.MasterPlusGroup <> ''
+								   AND ld2.No <> ''
+								 GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+										  ld2.Attachment, ld2.SewingMachineAttachmentID, 
+										  ld2.Template, ld2.MachineID
+								 HAVING COUNT(*) > 1
+							 ) 
+							 THEN ISNULL(ld.OneShot, cast(0 as bit))
+							 ELSE NULL
+						 END
+	from LineMapping_Detail ld
+	where ld.ID = '{masterID}'
+) ld2 on ld.ID = ld2.ID and ld.No = ld2.No and ld.Ukey = ld2.Ukey and ISNULL(ld2.OneShot, 0) <> 1
+";
 
                 DualResult reusult = DBProxy.Current.Execute(null, updCmd);
                 if (!reusult)

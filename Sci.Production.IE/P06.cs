@@ -261,52 +261,75 @@ AND ALMCS.Junk = 0
                 FROM
                 (
                     SELECT 
-                    cast(0 as bit) as Selected
-                    ,[GroupNo]
-                    ,lmb.FactoryID
-                    ,ad.ukey
-                    ,ad.[ID]
-                    ,[No]
-                    ,ad.[Seq]
-                    ,[Location]
-                    ,[location1] =  REPLACE(ad.[location], '--', '')
-                    ,[Motion] = Motion.val
-                    ,[PPA]
-                    ,ad.[MachineTypeID]
-                    ,ad.[MasterPlusGroup]
-                    ,[OperationID]
-                    ,ad.[Annotation] 
-                    ,ad.[Attachment]
-                    ,[SewingMachineAttachmentID]
-                    ,[PartID] = PartID.val
-                    ,[Template]
-                    ,[GSD]
-                    ,[Cycle]
-                    ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
-                    ,[EffiPercentage] =  iif(([Cycle] * [SewerDiffPercentage]) > 0 , [GSD] /([Cycle] * [SewerDiffPercentage]),0)
-                    ,[SewerDiffPercentage]
-                    ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
-                    ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
-                    ,[TimeStudyDetailUkey]
-                    ,[ThreadComboID]
-                    ,[Notice]
-                    ,[EmployeeID]
-                    ,ad.[IsNonSewingLine]
-                    ,[IsAdd],
-                    [PPADesc] = isnull(d.Name, ''),
-                    [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-                    [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
-												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
-												 END,
-                    [EmployeeName] = e.LastName + ',' + e.FirstName,
-                    [EmployeeSkill] = e.Skill,
-                    [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
-                    [Junk] = e.junk,
-                    [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
-                    [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
-                    ad.MachineID
-                    ,ad.TimeStudySeq
+                        cast(0 as bit) as Selected
+                        ,[GroupNo]
+                        ,lmb.FactoryID
+                        ,ad.ukey
+                        ,ad.[ID]
+                        ,[No]
+                        ,ad.[Seq]
+                        ,[Location]
+                        ,[location1] =  REPLACE(ad.[location], '--', '')
+                        ,[Motion] = Motion.val
+                        ,[PPA]
+                        ,ad.[MachineTypeID]
+                        ,ad.[MasterPlusGroup]
+                        ,[OperationID]
+                        ,ad.[Annotation] 
+                        ,ad.[Attachment]
+                        ,[SewingMachineAttachmentID]
+                        ,[PartID] = PartID.val
+                        ,[Template]
+                        ,[GSD]
+                        ,[Cycle]
+                        ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
+                        ,[EffiPercentage] =  iif(([Cycle] * [SewerDiffPercentage]) > 0 , [GSD] /([Cycle] * [SewerDiffPercentage]),0)
+                        ,[SewerDiffPercentage]
+                        ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
+                        ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
+                        ,[TimeStudyDetailUkey]
+                        ,[ThreadComboID]
+                        ,[Notice]
+                        ,[EmployeeID]
+                        ,ad.[IsNonSewingLine]
+                        ,[IsAdd],
+                        [PPADesc] = isnull(d.Name, ''),
+                        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+                        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+                        [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
+												     ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
+												     END,
+                        [EmployeeName] = e.LastName + ',' + e.FirstName,
+                        [EmployeeSkill] = e.Skill,
+                        [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
+                        [Junk] = e.junk,
+                        [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
+                        [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
+                        ad.MachineID
+                        ,ad.TimeStudySeq
+	                    , [OneShot] = CASE 
+			                WHEN EXISTS (
+				                SELECT 1
+				                FROM LineMappingBalancing_Detail ld2 WITH (NOLOCK)
+				                WHERE ad.ID = ld2.ID
+				                AND ad.No = ld2.No
+				                AND ad.MachineTypeID = ld2.MachineTypeID
+				                AND ad.MasterPlusGroup = ld2.MasterPlusGroup
+				                AND ad.Attachment = ld2.Attachment
+				                AND ad.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+				                AND ad.Template = ld2.Template
+				                AND ad.MachineID = ld2.MachineID
+				                AND ld2.PPA <> 'C'
+				                AND ld2.IsNonSewingLine = 0
+				                AND ld2.MachineTypeID not like 'MM%'
+				                GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+						                ld2.Attachment, ld2.SewingMachineAttachmentID, 
+						                ld2.Template, ld2.MachineID
+				                HAVING COUNT(*) > 1
+			                ) 
+			                THEN ISNULL(ad.OneShot, cast(0 as bit))
+			                ELSE NULL
+		                END
                     --INTO #TMP
                     FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                     LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
@@ -1596,6 +1619,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
+               .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
@@ -1654,6 +1678,34 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             this.gridLineMappingRight.Columns["No"].Frozen = true;
             this.gridCentralizedPPARight.Columns["No"].Frozen = true;
 
+            this.detailgrid.CellFormatting += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.CellStyle.ForeColor = Color.DarkGray;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.Pink;
+                    }
+                }
+            };
+            this.detailgrid.CellBeginEdit += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                    // 只有當OneShot欄位為null時，不允許編輯
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+            };
             this.gridLineMappingRight.RowsAdded += (s, e) =>
             {
                 string art = string.Empty;
@@ -1726,6 +1778,63 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             }
 
             return base.ClickSavePre();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            if (this.detailgrid.DataSource != null)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+                string masterID = this.CurrentMaintain["ID"].ToString();
+                string updCmd = string.Empty;
+
+                // 回補 OneShot
+                updCmd += $@"
+update ld
+	set ld.[OneShot] = ld2.OneShot
+from LineMappingBalancing_Detail ld
+inner join (
+	select ld.ID
+		, ld.No
+		, ld.Ukey
+	    , [OneShot] = CASE 
+			            WHEN EXISTS (
+				            SELECT 1
+				            FROM LineMappingBalancing_Detail ld2 WITH (NOLOCK)
+				            WHERE ld.ID = ld2.ID
+				            AND ld.No = ld2.No
+				            AND ld.MachineTypeID = ld2.MachineTypeID
+				            AND ld.MasterPlusGroup = ld2.MasterPlusGroup
+				            AND ld.Attachment = ld2.Attachment
+				            AND ld.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+				            AND ld.Template = ld2.Template
+				            AND ld.MachineID = ld2.MachineID
+
+				            AND ld2.PPA <> 'C'
+				            AND ld2.IsNonSewingLine = 0
+				            AND ld2.MachineTypeID not like 'MM%'
+				            GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+						            ld2.Attachment, ld2.SewingMachineAttachmentID, 
+						            ld2.Template, ld2.MachineID
+				            HAVING COUNT(*) > 1
+			            ) 
+			            THEN ISNULL(ld.OneShot, cast(0 as bit))
+			            ELSE NULL
+		            END
+	from LineMappingBalancing_Detail ld
+	where ld.ID = '{masterID}'
+) ld2 on ld.ID = ld2.ID and ld.No = ld2.No and ld.Ukey = ld2.Ukey and ISNULL(ld2.OneShot, 0) <> 1
+";
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
