@@ -10,9 +10,11 @@ using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
@@ -1081,25 +1083,30 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
         }
 
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
+        #region 多線程更新 P20
+        private CancellationTokenSource _cts;
 
-            // 更新 P20
-            this.BackgroundWorker1.RunWorkerAsync();
-            this.OnRefreshClick();
-        }
-
-        private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void StartOrUpdateP20()
         {
             if (!this.ReUpdateP20)
             {
-                e.Cancel = true;
+                return;
             }
-            else
-            {
-                string sqlcmd = $@"
+
+            // 先取消舊的
+            this._cts?.Cancel();
+
+            // 建新的 TokenSource
+            this._cts = new CancellationTokenSource();
+            var token = this._cts.Token;
+
+            // 啟動新工作
+            Task.Run(() => this.DoWorkP20(token), token);
+        }
+
+        private void DoWorkP20(CancellationToken token)
+        {
+            string sqlcmd = $@"
 DECLARE @ID varchar(13),@cDate date,@Manpower  int,@ManHours numeric(5,1)
 DECLARE CURSOR_ CURSOR FOR
 SELECT DISTINCT co.ID,co.cDate,co.Manpower,co.ManHours
@@ -1119,8 +1126,20 @@ END
 CLOSE CURSOR_
 DEALLOCATE CURSOR_
 ";
-                DBProxy.Current.Execute(null, sqlcmd);
-            }
+            DBProxy.Current.Execute(null, sqlcmd);
+            this.ShowWaitMessage("Cutting P20 is updating...");
+        }
+        #endregion
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 若有異動則更新 P20
+            this.StartOrUpdateP20();
+
+            this.OnRefreshClick();
         }
         #endregion
 
