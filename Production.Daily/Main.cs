@@ -874,6 +874,10 @@ Region      Succeeded       Message
                 {
                     if (i == Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]))
                     {
+                        string subject = "PMS Export PMS_To_Trade Error";
+                        string desc = "Export PMS_To_Trade failed! Please check the DB TransLog for any error messages.";
+                        SendMail(subject, desc, isFail: true);
+                        this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, succeeded: false);
                         return new DualResult(false, "Export failed!");
                     }
                 }
@@ -1029,8 +1033,7 @@ Where TransRegion.Is_Export = 0";
 ---- Trade_To_PMS.dbo.DateInfo，Name = TransferDate 的資料的DateStart，必須是昨天或今天，是的話才進行後續的動作
 select 1 from Trade_To_PMS.dbo.DateInfo 
 where Name = 'TransferDate'
-AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DATE))
-	
+AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DATE))	
 ;";
             if (!MyUtility.Check.Seek(chkSqlcmd))
             {
@@ -1060,6 +1063,10 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
 
             if (!success)
             {
+                string subject = "PMS Import Trade_To_Pms Error";
+                string desc = "Import Trade_To_Pms failed! Please check the DB TransLog for any error messages.";
+                SendMail(subject, desc, isFail: true);
+                this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, succeeded: false);
                 return new DualResult(false, "Update failed!");
             }
             #endregion
