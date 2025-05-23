@@ -198,9 +198,9 @@ ISP20241140
 		(
 		select
 		FirstCutDate = min(CO.cDate), LastCutDate = max(CO.cDate) ,COD.CuttingID
-		FROM CuttingOutput_Detail COD
-		LEFT JOIN CuttingOutput CO on CO.ID=COD.ID
-		WHERE CO.Status <> 'New' and COD.CuttingID IN (SELECT CuttingID from CuttingOutput_Detail where id = @ID)
+		FROM CuttingOutput_Detail COD with (nolock)
+		LEFT JOIN CuttingOutput CO with (nolock) on CO.ID=COD.ID
+		WHERE CO.Status <> 'New' and COD.CuttingID IN (SELECT CuttingID from CuttingOutput_Detail with (nolock) where id = @ID)
 		group by COD.CuttingID
 		)a,Cutting c
 		where c.ID =a.CuttingID
