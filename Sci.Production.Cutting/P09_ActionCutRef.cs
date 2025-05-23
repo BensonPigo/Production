@@ -369,7 +369,7 @@ namespace Sci.Production.Cutting
             }
 
             this.txtSpreadingNo.Text = selectItem.GetSelectedString();
-            this.txtCell.Text = selectItem.GetSelecteds()[0]["CutCellID"].ToString();
+            //this.txtCell.Text = selectItem.GetSelecteds()[0]["CutCellID"].ToString();
         }
 
         private void TxtSpreadingNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -385,7 +385,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            this.txtCell.Text = MyUtility.Convert.GetString(drV["CutCellID"]);
+            //this.txtCell.Text = MyUtility.Convert.GetString(drV["CutCellID"]);
         }
 
         private void NumConsPC_Validated(object sender, EventArgs e)
