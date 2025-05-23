@@ -632,14 +632,17 @@ and a.CutRef != ''
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
+                DBProxy.Current.DefaultTimeout = 1800;
                 if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
+                    DBProxy.Current.DefaultTimeout = 300;
                     this.ShowErr(upResult);
                     return;
                 }
 
                 transactionscope.Complete();
+                DBProxy.Current.DefaultTimeout = 300;
             }
 
             MyUtility.Msg.InfoBox("Successfully");
@@ -668,14 +671,17 @@ and a.CutRef != ''
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
+                DBProxy.Current.DefaultTimeout = 1800;
                 if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
+                    DBProxy.Current.DefaultTimeout = 300;
                     this.ShowErr(upResult);
                     return;
                 }
 
                 transactionscope.Complete();
+                DBProxy.Current.DefaultTimeout = 300;
             }
 
             MyUtility.Msg.InfoBox("Successfully");
