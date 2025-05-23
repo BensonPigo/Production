@@ -4,10 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Ict;
 using Ict.Win;
@@ -15,11 +12,9 @@ using Sci.Data;
 using System.Net;
 using System.IO;
 using Sci;
-using System.Diagnostics;
 using System.Configuration;
 using PostJobLog;
 using System.Threading;
-using Microsoft.SqlServer.Server;
 
 namespace Production.Daily
 {
@@ -868,7 +863,7 @@ Region      Succeeded       Message
 
 
             #region Export_Pms_To_Trade(包含上傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
-            for (int i = 0; i < Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
+            for (int i = 1; i <= Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]); i++)
             {
                 if (!transferPMS.Export_Pms_To_Trade(Sftp_Path, sftpIP, sftpID, sftpPwd, _fromPath, exportRegion.DBName, sftpPort))
                 {
@@ -1040,36 +1035,17 @@ AND DateStart in (CAST(DATEADD(DAY,-1,GETDATE()) AS date), CAST(GETDATE() AS DAT
                 String subject = "PMS Trans Date Error";
                 String desc = "The DB transferdate is wrong!!,Pls Check File(" + region.RarName + ") is correct";
                 SendMail(subject, desc);
-                this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
+                this.CallJobLogApi("Daily transfer Trans Date error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, false);
                 return Ict.Result.F("Wrong transferdate!!,Pls Check File(" + region.RarName + ") is correct");
             }
 
             #endregion
 
-            #region Import_Trade_To_Pms(包含下傳功能)：續傳失敗，等待1.5秒後，在試1次(共5次)，用RetryTimes去判斷次數
-            int retryTimes = Convert.ToInt16(ConfigurationManager.AppSettings["RetryTimes"]);
-            int attempts = 0;
-            bool success;
-
-            do
+            if (!transferPMS.Import_Trade_To_Pms(Sftp_Path, sftpIP, sftpID, sftpPwd))
             {
-                success = transferPMS.Import_Trade_To_Pms(Sftp_Path, sftpIP, sftpID, sftpPwd);
-                if (success) break;
-
-                attempts++;
-                Thread.Sleep(2500);
-            }
-            while (attempts < retryTimes);
-
-            if (!success)
-            {
-                string subject = "PMS Import Trade_To_Pms Error";
-                string desc = "Import Trade_To_Pms failed! Please check the DB TransLog for any error messages.";
-                SendMail(subject, desc, isFail: true);
-                this.CallJobLogApi("Daily transfer Region error", desc, DateTime.Now.ToString("yyyyMMdd HH:mm"), DateTime.Now.ToString("yyyyMMdd HH:mm"), isTestJobLog, succeeded: false);
                 return new DualResult(false, "Update failed!");
             }
-            #endregion
+
             return Ict.Result.True;
         }
         #endregion
