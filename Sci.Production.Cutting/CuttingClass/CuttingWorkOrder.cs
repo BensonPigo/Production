@@ -1985,7 +1985,7 @@ AND Junk = 0
                     }
 
                     dr["SpreadingNoID"] = selectItem.GetSelectedString();
-                    dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
+                    //dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
                     dr.EndEdit();
                 }
             };
@@ -2006,7 +2006,7 @@ AND Junk = 0
                 dr["SpreadingNoID"] = e.FormattedValue;
                 if (drV != null)
                 {
-                    dr["CutCellID"] = drV["CutCellID"];
+                    //dr["CutCellID"] = drV["CutCellID"];
                 }
 
                 dr.EndEdit();

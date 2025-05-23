@@ -85,7 +85,6 @@
             this.btnEdit = new Sci.Win.UI.Button();
             this.btnAutoRef = new Sci.Win.UI.Button();
             this.btnAutoCut = new Sci.Win.UI.Button();
-            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.tableLayoutPanel_Button1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel_Button2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnRefresh = new System.Windows.Forms.Button();
@@ -916,12 +915,6 @@
             this.btnAutoCut.UseVisualStyleBackColor = true;
             this.btnAutoCut.Click += new System.EventHandler(this.BtnAutoCut_Click);
             // 
-            // BackgroundWorker1
-            // 
-            this.BackgroundWorker1.WorkerReportsProgress = true;
-            this.BackgroundWorker1.WorkerSupportsCancellation = true;
-            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-            // 
             // tableLayoutPanel_Button1
             // 
             this.tableLayoutPanel_Button1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1233,7 +1226,6 @@
         private Win.UI.ContextMenuStrip cmsSizeRatio;
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertSizeRatio;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteSizeRatio;
-        private System.ComponentModel.BackgroundWorker BackgroundWorker1;
         private Win.UI.NumericBox numCons;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Button1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
