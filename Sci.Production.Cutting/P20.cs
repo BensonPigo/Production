@@ -628,7 +628,7 @@ and a.CutRef != ''
             TransactionOptions oTranOpt = new TransactionOptions
             {
                 IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
-                Timeout = new TimeSpan(0, 5, 0),
+                Timeout = new TimeSpan(0, 32, 0),
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
@@ -667,7 +667,7 @@ and a.CutRef != ''
             TransactionOptions oTranOpt = new TransactionOptions
             {
                 IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
-                Timeout = new TimeSpan(0, 5, 0),
+                Timeout = new TimeSpan(0, 32, 0),
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
