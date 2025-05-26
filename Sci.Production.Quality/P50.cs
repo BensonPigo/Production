@@ -11,6 +11,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 
 namespace Sci.Production.Quality
 {
@@ -791,7 +792,7 @@ namespace Sci.Production.Quality
                 string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
                 string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync($"{PmsWebAPI.PMSAPApiUri}/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
@@ -872,7 +873,7 @@ namespace Sci.Production.Quality
             #endregion
 
             bool isEnable = MyUtility.Check.Empty(row["canModify"]) ? false : true;
-            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, isEnable, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA("UASentReport", id, isEnable, row, apiUrlFile: $"{PmsWebAPI.PMSAPApiUri}/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
@@ -1305,12 +1306,12 @@ from(
 
             if (this.chkUploadRecord.Checked)
             {
-                dt = dt.Select("Ukey > 0").TryCopyToDataTable(dt);
+                dt = MiscExtensions.TryCopyToDataTable(dt.Select("Ukey > 0"), dt);
             }
 
             if (this.chkNonValidDoc.Checked)
             {
-                dt = dt.Select("Ukey is null").TryCopyToDataTable(dt);
+                dt = MiscExtensions.TryCopyToDataTable(dt.Select("Ukey is null"), dt);
             }
 
             if (dt == null || dt.Rows.Count == 0)
@@ -1606,7 +1607,7 @@ from(
                 }
 
                 // call API上傳檔案到Trade
-                lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
+                lock (FileDownload_UpData.UploadFile($"{PmsWebAPI.PMSAPApiUri}/api/FileUpload/PostFile", saveFilePath, newFileName, ofdFileName.FileName))
                 {
                 }
             }

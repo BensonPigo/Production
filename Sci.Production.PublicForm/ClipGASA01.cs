@@ -17,6 +17,7 @@ using Sci.Data;
 using static Ict.Win.UI.DataGridView;
 using Ict.Win.Defs;
 using System.Diagnostics;
+using Sci.Production.Prg;
 
 namespace Sci.Production.PublicForm
 {
@@ -371,7 +372,7 @@ namespace Sci.Production.PublicForm
                 }
 
                 // call API上傳檔案到Trade
-                lock (FileDownload_UpData.UploadFile("http://pmsap.sportscity.com.tw:16888/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
+                lock (FileDownload_UpData.UploadFile($"{PmsWebAPI.PMSAPApiUri}/api/FileUpload/PostFile", saveFilePath, newFileName, it.LOCALFILE))
                 {
                 }
 
