@@ -2925,6 +2925,7 @@
     <Build Include="dbo\Functions\GetFirPhysicalGrade.sql" />
     <Build Include="dbo\Views\View_Order_Location_Top1Location.sql" />
     <Build Include="dbo\Views\View_SewingOutput_FarmInOutDate.sql" />
+    <Build Include="dbo\Functions\CalculateWorkDayByWorkHour.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
