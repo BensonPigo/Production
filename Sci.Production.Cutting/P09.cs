@@ -10,9 +10,11 @@ using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Sci.Production.Cutting.CuttingWorkOrder;
@@ -214,10 +216,10 @@ SELECT
    ,Fabeta
    ,Sewinline
    ,Actcutdate
-   ,MarkerLength_Mask = ''-- 4個_Mask欄位在下方 OnDetailEntered 會把實體欄位資訊格式化後填入
-   ,ActCuttingPerimeter_Mask = ''
-   ,StraightLength_Mask = ''
-   ,CurvedLength_Mask = ''
+   ,MarkerLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatMarkerLength(wo.MarkerLength)) -- 4個_Mask欄位在下方 OnDetailEntered 會把實體欄位資訊格式化後填入
+   ,ActCuttingPerimeter_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.ActCuttingPerimeter))
+   ,StraightLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.StraightLength))
+   ,CurvedLength_Mask = dbo.ConvertFullwidthToHalfwidth(dbo.FormatLengthData(wo.CurvedLength))
    ,AddUser = p1.Name
    ,EditUser = p2.Name
    ,FabricTypeRefNo = CONCAT(f.WeaveTypeID, ' /' + wo.RefNo)
@@ -367,7 +369,7 @@ Order by a.MarkerName,a.ColorID,a.Order_EachconsUkey
             this.displayBoxStyle.Text = MyUtility.GetValue.Lookup($"SELECT StyleID FROM Orders WITH(NOLOCK) WHERE ID = '{this.CurrentMaintain["ID"]}'");
             this.displayLastCreateCutRef.Text = this.DetailDatas.AsEnumerable().OrderByDescending(row => MyUtility.Convert.GetDate(row["LastCreateCutRefDate"]))
                 .ThenByDescending(row => MyUtility.Convert.GetString(row["CutRef"])).Select(row => MyUtility.Convert.GetString(row["CutRef"])).FirstOrDefault();
-            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
+            // this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 4 個_Mask 欄位 用來顯示用, 若有編輯會寫回原欄位
             this.GetAllDetailData();
             this.Sorting();
             this.dtDeleteUkey_HasGroup = ((DataTable)this.detailgridbs.DataSource).Clone();
@@ -1081,25 +1083,30 @@ WHERE wd.WorkOrderForOutputUkey IS NULL
             Task.Run(() => new Guozi_AGV().SentDeleteWorkOrder_Distribute(deleteWorkOrder_Distribute));
         }
 
-        /// <inheritdoc/>
-        protected override void ClickSaveAfter()
-        {
-            base.ClickSaveAfter();
+        #region 多線程更新 P20
+        private CancellationTokenSource _cts;
 
-            // 更新 P20
-            this.BackgroundWorker1.RunWorkerAsync();
-            this.OnRefreshClick();
-        }
-
-        private void BackgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void StartOrUpdateP20()
         {
             if (!this.ReUpdateP20)
             {
-                e.Cancel = true;
+                return;
             }
-            else
-            {
-                string sqlcmd = $@"
+
+            // 先取消舊的
+            this._cts?.Cancel();
+
+            // 建新的 TokenSource
+            this._cts = new CancellationTokenSource();
+            var token = this._cts.Token;
+
+            // 啟動新工作
+            Task.Run(() => this.DoWorkP20(token), token);
+        }
+
+        private void DoWorkP20(CancellationToken token)
+        {
+            string sqlcmd = $@"
 DECLARE @ID varchar(13),@cDate date,@Manpower  int,@ManHours numeric(5,1)
 DECLARE CURSOR_ CURSOR FOR
 SELECT DISTINCT co.ID,co.cDate,co.Manpower,co.ManHours
@@ -1119,8 +1126,20 @@ END
 CLOSE CURSOR_
 DEALLOCATE CURSOR_
 ";
-                DBProxy.Current.Execute(null, sqlcmd);
-            }
+            DBProxy.Current.Execute(null, sqlcmd);
+            this.ShowWaitMessage("Cutting P20 is updating...");
+        }
+        #endregion
+
+        /// <inheritdoc/>
+        protected override void ClickSaveAfter()
+        {
+            base.ClickSaveAfter();
+
+            // 若有異動則更新 P20
+            this.StartOrUpdateP20();
+
+            this.OnRefreshClick();
         }
         #endregion
 
@@ -1345,8 +1364,7 @@ DEALLOCATE CURSOR_
         private void TxtMarkerLength_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.CurrentDetailData["MarkerLength"] = this.txtMarkerLength.FullText;
-            this.DetailDatas.AsEnumerable().ToList().ForEach(row => Format4LengthColumn(row)); // 將更新後的 MarkerLength ，按照格式回填表身 4 個_Mask 欄位 用來顯示用
-
+            Format4LengthColumn(this.CurrentDetailData); // 只重算這一筆
             this.CurrentDetailData["ConsPC"] = CalculateConsPC(this.txtMarkerLength.FullText, this.CurrentDetailData, this.dt_SizeRatio, this.formType);
             this.CurrentDetailData["Cons"] = CalculateCons(this.CurrentDetailData, MyUtility.Convert.GetDecimal(this.CurrentDetailData["ConsPC"]), MyUtility.Convert.GetDecimal(this.CurrentDetailData["Layer"]), this.dt_SizeRatio, this.formType);
         }
@@ -1412,8 +1430,7 @@ DEALLOCATE CURSOR_
                 UpdateConcatString(dr, this.dt_SizeRatio, this.formType);
                 dr.EndEdit();
             };
-
-            BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditData);
+            BindGridSpreadingNo(this.col_SpreadingNoID, this.detailgrid, this.CanEditNotWithUseCutRefToRequestFabric);
             BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditNotWithUseCutRefToRequestFabric);
 
             this.col_MarkerLength.CellValidating += (s, e) =>
@@ -1490,7 +1507,8 @@ DEALLOCATE CURSOR_
                         return true;
                     }
 
-                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("Tone") || columNname.EqualString("MarkerName") || columNname.EqualString("MarkerLength"))
+                    if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("Tone") || columNname.EqualString("MarkerName") || columNname.EqualString("MarkerLength")
+                        || columNname.EqualString("SpreadingNoID"))
                     {
                         return this.CanEditNotWithUseCutRefToRequestFabric(dr);
                     }

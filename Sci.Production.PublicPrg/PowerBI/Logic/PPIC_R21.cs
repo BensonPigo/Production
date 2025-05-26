@@ -130,6 +130,12 @@ INNER JOIN CFAReturn a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNSt
 where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     sqlPKAuditWhere += "and CFAReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
                     break;
+                case "M360 MD Scan":
+                    sqlMdWhere += @" 
+INNER JOIN MDScan a on 	a.PackingListID = pld.ID and a.CTNStartNo = pld.CTNStartNo and a.OrderID = pld.OrderID 
+where	a.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    sqlPKAuditWhere += "and M360MDScanTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                    break;
                 default:
                     break;
             }

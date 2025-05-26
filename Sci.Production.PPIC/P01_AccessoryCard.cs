@@ -593,7 +593,7 @@ WHERE o.ID= @ID
                                 LEFT JOIN Fabric_Supp fs on fs.SCIRefno = boa.SCIRefno and fs.SuppID = boa.SuppID
                                 LEFT JOIN Order_ColorCombo oc on oc.Id = boa.Id and oc.FabricPanelCode = boa.FabricPanelCode
                                 LEFT JOIN Color C on OC.ColorID = C.ID and C.BrandId ='N.FACE'
-                                OUTER APPLY (Select dbo.GetKeyword(boa.ID,boa.ukey,boa.Keyword,'','','',1) as [value]) Keyword
+                                OUTER APPLY (Select dbo.GetKeyword_New(boa.ID,boa.ukey,boa.Keyword,'','','',1) as [value]) Keyword
                                 OUTER APPLY (
                                   SELECT
                                       NAME =

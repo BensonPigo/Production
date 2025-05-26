@@ -15,6 +15,9 @@ using System.IO;
 using System.Data.SqlClient;
 using System.Linq;
 
+using Sci.Production.Class;
+using Sci.Production.Class.Command;
+
 namespace Sci.Production.Quality
 {
     /// <inheritdoc/>
@@ -311,6 +314,8 @@ from Fabric with (nolock) where SCIRefno = '{this.maindr["SCIRefno"].ToString()}
                 }
             }
 
+            decimal qaSortOutStandard = DBProxy.Current.LookupEx<decimal>(@"select QASortOutStandard from System ").ExtendedData;
+
             base.OnRequeryPost(datas);
             datas.Columns.Add("Name", typeof(string));
             datas.Columns.Add("POID", typeof(string));
@@ -322,6 +327,8 @@ from Fabric with (nolock) where SCIRefno = '{this.maindr["SCIRefno"].ToString()}
             datas.Columns.Add("ActualWeight", typeof(decimal));
             datas.Columns.Add("Differential", typeof(decimal));
             datas.Columns.Add("ShowGrade", typeof(string));
+            datas.Columns.Add("SortOut", typeof(bool));
+
             int i = 0;
             foreach (DataRow dr in datas.Rows)
             {
@@ -332,6 +339,7 @@ from Fabric with (nolock) where SCIRefno = '{this.maindr["SCIRefno"].ToString()}
                 dr["SEQ1"] = this.maindr["SEQ1"];
                 dr["SEQ2"] = this.maindr["SEQ2"];
                 dr["LthOfDiff"] = MyUtility.Convert.GetDecimal(dr["ActualYds"]) - MyUtility.Convert.GetDecimal(dr["TicketYds"]);
+                dr["SortOut"] = (decimal)dr["pointRate"] >= qaSortOutStandard ? true : false;
 
                 // 新增Receiving_Detail & TransferIn_Detail來源
                 string sqlcmd = $@"
@@ -423,6 +431,7 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
                     def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
 
                     var filteredRows = this.Fir_physical_Defect.AsEnumerable()
+                     .Where(row => row.RowState != DataRowState.Deleted)
                      .Where(row =>
                      {
                          var locStr = row.Field<string>("DefectLocation");
@@ -950,7 +959,8 @@ and BrandID = '{this.displayBrand.Text}'
             .Numeric("fullwidth", header: "Full width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("actualwidth", header: "Actual Width", width: Widths.AnsiChars(7), integer_places: 5, decimal_places: 2)
             .Numeric("totalpoint", header: "Total Points", width: Widths.AnsiChars(7), integer_places: 6, iseditingreadonly: true, settings: totalPointcell)
-            .Numeric("pointRate", header: "Point Rate \nper 100yds", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6, decimal_places: 2)
+            .Numeric("pointRate", header: "Point Rate \n(Linear/Squared)", width: Widths.AnsiChars(5), iseditingreadonly: true, integer_places: 6, decimal_places: 2)
+            .CheckBox("Sortout", header: "Sort Out", width: Widths.AnsiChars(5), iseditable: false, trueValue: 1, falseValue: 0)
             .Text("Result", header: "Result", width: Widths.AnsiChars(5), iseditingreadonly: true)
             .CheckBox("ColorToneCheck", header: "Shade in roll fail", width: Widths.AnsiChars(5), iseditable: true, trueValue: 1, falseValue: 0, settings: tonecell)
             .Text("ShowGrade", header: "Grade", width: Widths.AnsiChars(1), iseditingreadonly: true)

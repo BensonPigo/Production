@@ -120,7 +120,6 @@ namespace Sci.Production.Cutting
                 ;
 
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingReasonDesc"].DefaultCellStyle.BackColor = Color.Pink;
-            this.gridCuttingReasonInput.Columns["Remark"].DefaultCellStyle.BackColor = Color.Pink;
             this.gridCuttingReasonInput.ColumnFrozen(this.gridCuttingReasonInput.Columns["Selected"].Index);
             this.gridCuttingReasonInput.Columns["UnfinishedCuttingRemark"].DefaultCellStyle.BackColor = Color.Pink;
         }
@@ -355,7 +354,7 @@ update WorkOrderForOutput set UnfinishedCuttingReason = '{needSaveItem["Unfinish
             {
                 currentRecord["UnfinishedCuttingReason"] = reasonID;
                 currentRecord["UnfinishedCuttingReasonDesc"] = reasonName;
-                currentRecord["Remark"] = remark;
+                currentRecord["UnfinishedCuttingRemark"] = remark;
                 currentRecord.EndEdit();
             }
 

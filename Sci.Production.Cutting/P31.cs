@@ -320,7 +320,7 @@ ORDER BY OrderID ,Cutno ,SpreadingSchdlSeq";
 
         private void BtnReviseScheduleEnable()
         {
-            if (!this.EditMode && this.dateEstCut.Value > DateTime.Today)
+            if (!this.EditMode)
             {
                 this.btnReviseSchedule.Enabled = true;
                 this.btnReviseSchedule.ForeColor = Color.Blue;
