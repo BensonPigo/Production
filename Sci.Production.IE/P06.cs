@@ -1631,7 +1631,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40))
-               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: setMachineID);
+               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: setMachineID);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)

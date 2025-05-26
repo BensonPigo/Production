@@ -1350,7 +1350,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(14), settings: notice)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
-            .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: setMachineID)
+            .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: setMachineID)
             ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
