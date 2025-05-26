@@ -75,7 +75,6 @@ namespace Sci.Production.Cutting
             this.txtActCuttingPerimeter.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtStraightLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtCurvedLength.ReadOnly = !this.editByUseCutRefToRequestFabric;
-            this.txtSpreadingNo.ReadOnly = !this.editByUseCutRefToRequestFabric;
             this.txtDropDownList1.ReadOnly = !this.editByUseCutRefToRequestFabric;
 
             this.cmsSizeRatio.Enabled = this.editByUseCutRefToRequestFabric;
@@ -370,7 +369,7 @@ namespace Sci.Production.Cutting
             }
 
             this.txtSpreadingNo.Text = selectItem.GetSelectedString();
-            this.txtCell.Text = selectItem.GetSelecteds()[0]["CutCellID"].ToString();
+            //this.txtCell.Text = selectItem.GetSelecteds()[0]["CutCellID"].ToString();
         }
 
         private void TxtSpreadingNo_Validating(object sender, System.ComponentModel.CancelEventArgs e)
@@ -386,7 +385,7 @@ namespace Sci.Production.Cutting
                 return;
             }
 
-            this.txtCell.Text = MyUtility.Convert.GetString(drV["CutCellID"]);
+            //this.txtCell.Text = MyUtility.Convert.GetString(drV["CutCellID"]);
         }
 
         private void NumConsPC_Validated(object sender, EventArgs e)

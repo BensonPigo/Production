@@ -52,6 +52,8 @@ namespace Sci.Production.Cutting
             this.dt_CurentDetail.Columns.Add("Selected", typeof(bool));
             this.GridSetup();
             this.detailgridbs.DataSource = this.dt_CurentDetail;
+            this.txtSpreadingNo.MDivision = Sci.Env.User.Keyword;
+            this.txtSpreadingNo.IncludeJunk = false;
 
             this.dtAllSEQ_FabricCode = GetAllSEQ_FabricCode(id); // 先準備用來驗證 Seq 全部資訊, 避免逐筆去DB撈資料驗證會很卡
             this.sp = this.dt_CurentDetail.DefaultView.ToTable(true, "OrderID"); // 用在 Filter 開窗選項
@@ -66,7 +68,6 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSeq1.Enabled = this.editByUseCutRefToRequestFabric;
             this.txtSeq2.Enabled = this.editByUseCutRefToRequestFabric;
-            this.txtSpreadingNo.Enabled = this.editByUseCutRefToRequestFabric;
             if (this.form == CuttingForm.P02)
             {
                 this.chkShowEmptyCutRef.Checked = true;
@@ -379,7 +380,7 @@ namespace Sci.Production.Cutting
             BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
             if (this.form == CuttingForm.P09)
             {
-                BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditData);
+                BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
             }
         }
         #endregion
@@ -392,7 +393,7 @@ namespace Sci.Production.Cutting
 
         private bool CanEditDataByGrid(Sci.Win.UI.Grid grid, DataRow dr, string columNname)
         {
-            if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID"))
+            if (columNname.EqualString("EstCutDate") || columNname.EqualString("CutCellID") || columNname.EqualString("SpreadingNoID"))
             {
                 return this.CanEditNotWithUseCutRefToRequestFabric(dr);
             }

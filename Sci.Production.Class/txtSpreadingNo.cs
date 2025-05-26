@@ -38,13 +38,13 @@ namespace Sci.Production.Class
             string sql;
             if (!string.IsNullOrWhiteSpace(this.MDivision))
             {
-                this.Where += $"AND MDivisionID = '{this.MDivision}'";
+                this.Where += $" AND MDivisionID = '{this.MDivision}'";
             }
 
             // 不包含Junk，因此去除Junk = 1 的資料
             if (!this.IncludeJunk)
             {
-                this.Where += $"AND junk = 0 ";
+                this.Where += $" AND junk = 0 ";
             }
 
             sql = "select distinct id,CutCell= CutCellID from SpreadingNo WITH (NOLOCK) " + this.Where;
