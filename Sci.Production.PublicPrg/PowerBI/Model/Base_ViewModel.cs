@@ -103,6 +103,11 @@ namespace Sci.Production.Prg.PowerBI.Model
         /// 執行清單
         /// </summary>
         public List<ExecutedList> ExecutedLists { get; set; }
+
+        /// <summary>
+        /// 是否下午執行
+        /// </summary>
+        public bool RunOnPM { get; set; }
     }
 
     /// <inheritdoc/>

@@ -527,6 +527,7 @@ select  f.MDivisionID
 		,[Category]=o.Category
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
+        ,[FabricCombo] = EachCons.FabricCombo
         ,PSD.Refno
         ,isnull(psdsS.SpecValue, '')
         ,Fabric.WeaveTypeID
@@ -584,6 +585,19 @@ left join dbo.MtlType mtl WITH (NOLOCK)  on mtl.ID = fabric.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 {sqlJoinSeparateByWK}
+OUTER APPLY(
+    SELECT [FabricCombo]=STUFF((
+        SELECT 
+        (
+            SELECT DISTINCT ','+ oec.FabricCombo 
+            From Order_EachCons oec
+            Inner JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.Id
+            Where bof.SCIRefno = psd.SciRefno 
+            and bof.ID = o.ID
+            FOR XML PATH('')
+        ))
+     ,1,1,'')
+)EachCons
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
 (
@@ -679,7 +693,7 @@ select wkno = stuff((
 )Wk
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and acc.Color = psdsC.SpecValue and acc.SuppID = ps.SuppID and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.Color = psdsC.SpecValue and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F' 
-left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue
+left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue and psd.Seq1 = thread.Seq1
 Where 1=1
 {where}
 ");
