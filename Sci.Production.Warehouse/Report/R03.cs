@@ -693,7 +693,7 @@ select wkno = stuff((
 )Wk
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and acc.Color = psdsC.SpecValue and acc.SuppID = ps.SuppID and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.Color = psdsC.SpecValue and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F' 
-left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue
+left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue and psd.Seq1 = thread.Seq1
 Where 1=1
 {where}
 ");
