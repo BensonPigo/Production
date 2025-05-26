@@ -858,7 +858,7 @@ select  [ID] = '{this.CurrentMaintain["ID"]}'
         ,TimeStudyDetailUkey
         ,isnull(ThreadComboID, '')
         ,IsNonSewingLine
-        ,TimeStudySeq
+        ,isnull(TimeStudySeq, '')
 from #tmp
 ";
                 result = MyUtility.Tool.ProcessWithDatatable(this.dtAutomatedLineMapping_DetailAuto, string.Empty, insertAutomatedLineMapping_DetailAuto, out dtEmpty);
@@ -917,7 +917,7 @@ select  '{this.CurrentMaintain["ID"]}'
         ,isnull(ThreadComboID, '')
         ,isnull(Notice, '')
         ,IsNonSewingLine
-        ,TimeStudySeq
+        ,isnull(TimeStudySeq, '')
 from #tmp
 ";
 
