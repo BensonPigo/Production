@@ -527,6 +527,7 @@ select  f.MDivisionID
 		,[Category]=o.Category
         ,supp = concat(PS.suppid,'-',S.NameEN )
         ,S.CountryID
+        ,[FabricCombo] = EachCons.FabricCombo
         ,PSD.Refno
         ,isnull(psdsS.SpecValue, '')
         ,Fabric.WeaveTypeID
@@ -584,6 +585,19 @@ left join dbo.MtlType mtl WITH (NOLOCK)  on mtl.ID = fabric.MtlTypeID
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
 left join PO_Supp_Detail_Spec psdsS WITH (NOLOCK) on psdsS.ID = psd.id and psdsS.seq1 = psd.seq1 and psdsS.seq2 = psd.seq2 and psdsS.SpecColumnID = 'Size'
 {sqlJoinSeparateByWK}
+OUTER APPLY(
+    SELECT [FabricCombo]=STUFF((
+        SELECT 
+        (
+            SELECT DISTINCT ','+ oec.FabricCombo 
+            From Order_EachCons oec
+            Inner JOIN Order_BOF BOF with(nolock) ON oec.FabricCode = BOF.FabricCode AND oec.ID = BOF.Id
+            Where bof.SCIRefno = psd.SciRefno 
+            and bof.ID = o.ID
+            FOR XML PATH('')
+        ))
+     ,1,1,'')
+)EachCons
 outer apply(select StyleID from dbo.orders WITH (NOLOCK) where id = PS.id) si
 outer apply
 (
