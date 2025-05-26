@@ -12,6 +12,7 @@ using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
 using Sci.Production.Prg;
+using Sci.Production.PublicPrg;
 
 namespace Sci.Production.Quality
 {
@@ -764,7 +765,7 @@ namespace Sci.Production.Quality
             }
 
             var id = row["UniqueKey"].ToString();
-            if (id.IsNullOrWhiteSpace())
+            if (MiscExtensions.IsNullOrWhiteSpace(id))
             {
                 return;
             }
@@ -1306,12 +1307,12 @@ from(
 
             if (this.chkUploadRecord.Checked)
             {
-                dt = MiscExtensions.TryCopyToDataTable(dt.Select("Ukey > 0"), dt);
+                dt = dt.Select("Ukey > 0").TryCopyToDataTable(dt);
             }
 
             if (this.chkNonValidDoc.Checked)
             {
-                dt = MiscExtensions.TryCopyToDataTable(dt.Select("Ukey is null"), dt);
+                dt = dt.Select("Ukey is null").TryCopyToDataTable(dt);
             }
 
             if (dt == null || dt.Rows.Count == 0)
@@ -1482,7 +1483,7 @@ from(
                 if (MyUtility.Convert.GetBool(r["sel"]))
                 {
                     string addUpdate = string.Empty;
-                    if (!dueSeason.IsNullOrWhiteSpace())
+                    if (!MiscExtensions.IsNullOrWhiteSpace(dueSeason))
                     {
                         addUpdate = ",DueSeason = @DueSeason";
                     }
