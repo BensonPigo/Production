@@ -86,7 +86,7 @@ o.FactoryID
 ,ShipQty = (select SUM(PackingList_Detail.ShipQty) 
 			from PackingList 
 			inner join PackingList_Detail on PackingList.ID=PackingList_Detail.ID 
-			where PackingList.INVNo=g.ID and PackingList_Detail.OrderID=pd.OrderID)
+			where PackingList.INVNo=g.ID and PackingList_Detail.OrderID=pd.OrderID )
 ,o.PoPrice
 ,g.CustCDID
 ,g.Shipper 

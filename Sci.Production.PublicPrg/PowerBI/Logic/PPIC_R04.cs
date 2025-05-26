@@ -91,7 +91,7 @@ OUTER APPLY
 			oq.Article,
 			oq.SizeCode,
 			sl.Location AS ComboType,
-			val = MIN(ISNULL(sdd.QAQty, 0))
+			val = sum(ISNULL(sdd.QAQty, 0))
 		FROM Orders oop WITH (NOLOCK) 
 		INNER JOIN Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
 		INNER JOIN Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
@@ -100,7 +100,7 @@ OUTER APPLY
 			AND sdd.Article = oq.Article 
 			AND sdd.SizeCode = oq.SizeCode 
 			AND sdd.ComboType = sl.Location
-		WHERE oop.ID = o.ID
+		WHERE oop.POID = o.POID
 		GROUP BY oq.Article, oq.SizeCode, sl.Location
 	) minSewQty
 )SewingQty 
