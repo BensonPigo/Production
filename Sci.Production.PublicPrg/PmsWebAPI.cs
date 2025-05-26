@@ -35,5 +35,17 @@ namespace Sci.Production.Prg
                 }
             }
         }
+
+        /// <summary>
+        /// PMSAP Url
+        /// 因為中國廠區禁用http 所以改用https
+        /// </summary>
+        public static string PMSAPApiUri
+        {
+            get
+            {
+                return ConfigurationManager.AppSettings["PMSAPWebAPI"];
+            }
+        }
     }
 }
