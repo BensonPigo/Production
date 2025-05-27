@@ -67,7 +67,7 @@ namespace Sci.Production.Tools
             }
 
             string cmd = $@"SELECT FormName FROM MenuDetail where Ukey = (select pkey from menu where MenuName = '{this.CurrentMaintain["MenuName"]}') ORDER BY ID";
-            DBProxy.Current.Select("ProductionTPE", cmd, out DataTable dt);
+            DBProxy.Current.Select("Production", cmd, out DataTable dt);
 
             Sci.Win.Tools.SelectItem item = new Sci.Win.Tools.SelectItem(dt, "FormName", "30", this.txtFormName.Text);
 
