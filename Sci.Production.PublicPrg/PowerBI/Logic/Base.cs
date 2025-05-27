@@ -69,6 +69,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ESG_Injury,
             P_CMPByDate,
             P_SewingDailyOutput,
+            P_ProdctionStatus,
         }
 
         /// <summary>
@@ -112,6 +113,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(this.IsTest());
             ukey = callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
             return ukey;
+        }
+
+        /// <summary>
+        /// Check Class Name
+        /// </summary>
+        /// <param name="biTableName">BI TABLE NAME</param>
+        /// <returns>bool</returns>
+        public bool CheckClassName(string biTableName)
+        {
+            return Enum.TryParse(biTableName, true, out ListName _);
         }
 
         /// <summary>
@@ -506,6 +517,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_CMPByDate().P_CMPByDate(item.SDate, item.EDate);
                 case ListName.P_SewingDailyOutput:
                     return new P_Import_SewingDailyOutput().P_SewingDailyOutput(item.SDate, item.EDate);
+                case ListName.P_ProdctionStatus:
+                    return new P_Import_ProductionStatus().P_ProductionStatus(item.SDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);
