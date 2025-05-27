@@ -163,6 +163,12 @@
     <Compile Include="AuthorityByPosition_History.Designer.cs">
       <DependentUpon>AuthorityByPosition_History.cs</DependentUpon>
     </Compile>
+    <Compile Include="Notification.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Notification.Designer.cs">
+      <DependentUpon>Notification.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,6 +198,12 @@
     </Compile>
     <Compile Include="P05.designer.cs">
       <DependentUpon>P05.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NotificationSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NotificationSetting.Designer.cs">
+      <DependentUpon>NotificationSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="PasswordByUser.cs">
       <SubType>Form</SubType>
@@ -232,6 +244,9 @@
     <EmbeddedResource Include="AuthorityByPosition_History.resx">
       <DependentUpon>AuthorityByPosition_History.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Notification.resx">
+      <DependentUpon>Notification.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01.resx">
       <DependentUpon>P01.cs</DependentUpon>
     </EmbeddedResource>
@@ -246,6 +261,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P05.resx">
       <DependentUpon>P05.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NotificationSetting.resx">
+      <DependentUpon>NotificationSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PasswordByUser.resx">
       <DependentUpon>PasswordByUser.cs</DependentUpon>

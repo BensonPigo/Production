@@ -172,9 +172,11 @@
     <Compile Include="ComboxMaterialTypeAndID.Designer.cs">
       <DependentUpon>ComboxMaterialTypeAndID.cs</DependentUpon>
     </Compile>
+    <Compile Include="Command\CommonPrg.cs" />
     <Compile Include="Command\DualDisposableResult.cs" />
     <Compile Include="Command\MachineCalendar.cs" />
     <Compile Include="Command\Mathtime.cs" />
+    <Compile Include="Command\NotificationPrg.cs" />
     <Compile Include="Command\ProductionEnv.cs" />
     <Compile Include="Command\ProductionSystem.cs" />
     <Compile Include="Command\SQL.cs" />
@@ -859,6 +861,7 @@
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data">
       <Private>True</Private>

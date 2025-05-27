@@ -9,6 +9,8 @@ using Ict;
 using Ict.Win;
 using System.Diagnostics;
 using System.IO;
+using Sci.Production.Class.Commons;
+using Sci.Production.Win;
 
 namespace Sci.Production
 {
@@ -80,6 +82,7 @@ namespace Sci.Production
                 this.BackgroundImageLayout = ImageLayout.Tile;
             }
 
+            this.Shown += this.Form_Shown;
             // }
         }
 
@@ -100,6 +103,24 @@ namespace Sci.Production
             }
 
             this.OnLineHelpID = "Production";
+        }
+
+        private void Form_Shown(object sender, EventArgs e)
+        {
+            using (var dlg = new Login(this))
+            {
+                if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                {
+                    this.Close();
+                    return;
+                }
+            }
+
+            // 載入設定檔Table
+            NotificationPrg.SetData sd = new NotificationPrg.SetData();
+            sd.SettingData = NotificationPrg.GetNotifyDataTable();
+
+            this.mainNotification1.LoadNotify(MainNotification.RefreshEnum.ByAuto);
         }
 
         /// <inheritdoc/>

@@ -221,6 +221,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SCHEMAS.xsd</DependentUpon>
     </Compile>
+    <Compile Include="Win\MainNotification.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Win\MainNotification.Designer.cs">
+      <DependentUpon>MainNotification.cs</DependentUpon>
+    </Compile>
     <Compile Include="Win\OTPVerification.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -247,6 +253,12 @@
     </Compile>
     <Compile Include="Win\SUBBASE.Designer.cs">
       <DependentUpon>SUBBASE.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Win\SubNotification.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Win\SubNotification.Designer.cs">
+      <DependentUpon>SubNotification.cs</DependentUpon>
     </Compile>
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
@@ -2121,6 +2133,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Win\MainNotification.resx">
+      <DependentUpon>MainNotification.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Win\OTPVerification.resx">
       <DependentUpon>OTPVerification.cs</DependentUpon>
     </EmbeddedResource>
@@ -2132,6 +2147,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Win\SUBBASE.resx">
       <DependentUpon>SUBBASE.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Win\SubNotification.resx">
+      <DependentUpon>SubNotification.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -2300,10 +2318,14 @@
     <Content Include="libxsltx64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\close.png" />
     <Content Include="Resources\CTN.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\image_icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\open.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\QA_Skewness3.png">
