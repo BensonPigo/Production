@@ -3,6 +3,7 @@ using Ict.Win;
 using Sci.Data;
 using Sci.Production.Class;
 using Sci.Production.Class.Command;
+using Sci.Production.Prg;
 using Sci.Win.Tools;
 using System;
 using System.Collections.Generic;
@@ -820,12 +821,12 @@ namespace Sci.Production.Quality
                 string yyyyMM = ((DateTime)dataRow["AddDate"]).ToString("yyyyMM");
                 string saveFilePath = Path.Combine(clippath, yyyyMM);
                 string fileName = dataRow["FileName"].ToString() + Path.GetExtension(dataRow["SourceFile"].ToString());
-                lock (FileDownload_UpData.DownloadFileAsync("http://pmsap.sportscity.com.tw:16888/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
+                lock (FileDownload_UpData.DownloadFileAsync($"{PmsWebAPI.PMSAPApiUri}/api/FileDownload/GetFile", filePath + "\\" + yyyyMM, fileName, saveFilePath))
                 {
                 }
             }
 
-            using (var dlg = new PublicForm.ClipGASA(tableName, id, false, row, apiUrlFile: "http://pmsap.sportscity.com.tw:16888/api/FileDelete/RemoveFile"))
+            using (var dlg = new PublicForm.ClipGASA(tableName, id, false, row, apiUrlFile: $"{PmsWebAPI.PMSAPApiUri}/api/FileDelete/RemoveFile"))
             {
                 dlg.ShowDialog();
 
