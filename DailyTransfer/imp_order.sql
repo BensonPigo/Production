@@ -3554,6 +3554,58 @@ SELECT isnull([id],          ''),
 from #Order_PatternPanel t
 where not exists (select 1 from Order_PatternPanel where t.ID = ID and t.Article = Article and t.SizeCode = SizeCode)
 
+---------------Order_FtyMtlStdCost-------------
+Delete a
+from Production.dbo.Order_FtyMtlStdCost as a
+inner join #Torder b on a.OrderID = b.id
+where not exists(select 1 from Trade_To_Pms.dbo.Order_FtyMtlStdCost 
+							where a.OrderID  = OrderID and a.SCIRefno = SCIRefno)
+---------------------------UPDATE 
+		
+UPDATE a
+SET	 a.PurchaseCompanyID	= b.PurchaseCompanyID			
+	,a.PurchasePrice		= isnull(b.PurchasePrice, 0)
+	,a.UsagePrice			= isnull(b.UsagePrice, 0)	
+	,a.CurrencyID			= b.CurrencyID		
+	,a.Cons					= b.Cons		
+	,a.UsageUnit			= b.UsageUnit
+	,a.PurchaseUnit			= b.PurchaseUnit
+	,a.AddName				= b.AddName
+	,a.AddDate				= b.AddDate
+from Production.dbo.Order_FtyMtlStdCost as a
+inner join #Torder o on a.OrderID = o.id
+inner join Trade_To_Pms.dbo.Order_FtyMtlStdCost as b ON a.OrderID = b.OrderID and a.SCIRefno = b.SCIRefno
+-------------------------- INSERT
+		
+INSERT INTO Production.dbo.Order_FtyMtlStdCost(
+	[OrderID]
+	, [SCIRefno]
+	, [PurchaseCompanyID]
+	, [PurchasePrice]
+	, [UsagePrice]
+	, [CurrencyID]
+	, [Cons]
+	, [UsageUnit]
+	, [PurchaseUnit]
+	, [AddName]
+	, [AddDate]
+)
+select b.[OrderID]
+	, b.[SCIRefno]
+	, b.[PurchaseCompanyID]
+	, [PurchasePrice] = isnull(b.[PurchasePrice], 0)
+	, [UsagePrice] = isnull(b.[UsagePrice], 0)
+	, b.[CurrencyID]
+	, b.[Cons]
+	, b.[UsageUnit]
+	, b.[PurchaseUnit]
+	, b.[AddName]
+	, b.[AddDate]
+from Trade_To_Pms.dbo.Order_FtyMtlStdCost as b WITH (NOLOCK)
+inner join #Torder o on b.OrderID = o.id
+where not exists(select 1 from Production.dbo.Order_FtyMtlStdCost as a WITH (NOLOCK) 
+					where a.OrderID = b.OrderID and a.SCIRefno = b.SCIRefno)
+
 ----------------ppaschedule-----------------
 
 ----若有跨M轉廠的訂單(orders.mdivisionid不同)。(例:PM1 to PM2)
