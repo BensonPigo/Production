@@ -871,6 +871,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             TxtMachineGroup.CelltxtMachineGroup colMachineTypeID = TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             DataGridViewGeneratorCheckBoxColumnSettings colSelected = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings coloneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorMaskedTextColumnSettings colPPANo = new DataGridViewGeneratorMaskedTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTime = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTimePPA = new DataGridViewGeneratorNumericColumnSettings();
@@ -1273,7 +1274,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
 
             colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
-
+            coloneShot.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             colSelected.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -1619,7 +1620,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
-               .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
+               .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: coloneShot)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))

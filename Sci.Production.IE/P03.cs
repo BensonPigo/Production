@@ -636,6 +636,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings ppa = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings hide = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings oneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
 
@@ -649,6 +650,7 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             };
 
             machineCount.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
+            oneShot.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             operationID.EditingMouseDown += (s, e) =>
             {
                 DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
@@ -1338,7 +1340,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             .CheckBox("MachineCount", header: "Machine\r\nCount", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: machineCount)
             .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2), p03: this)
             .Text("MasterPlusGroup", header: "Machine\r\nGroup", width: Widths.AnsiChars(1), settings: txtSubReason)
-            .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false)
+            .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: oneShot)
             .EditText("Description", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operationID)
             .EditText("Annotation", header: "Annotation", width: Widths.AnsiChars(30), iseditingreadonly: true)
             .Numeric("GSD", header: "GSD\r\nTime", width: Widths.AnsiChars(3), decimal_places: 2, iseditingreadonly: true)
