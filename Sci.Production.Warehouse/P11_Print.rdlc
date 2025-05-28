@@ -9,19 +9,22 @@
               <Width>2.40381cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>6.89591cm</Width>
+              <Width>6.84259cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.31902cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>1.52479cm</Width>
+              <Width>1.41367cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.40381cm</Width>
+              <Width>1.55441cm</Width>
             </TablixColumn>
             <TablixColumn>
-              <Width>2.44262cm</Width>
+              <Width>2.0498cm</Width>
+            </TablixColumn>
+            <TablixColumn>
+              <Width>1.4167cm</Width>
             </TablixColumn>
             <TablixColumn>
               <Width>1.1cm</Width>
@@ -181,6 +184,40 @@
                         </Paragraph>
                       </Paragraphs>
                       <rd:DefaultName>Textbox14</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
+                    <Textbox Name="Textbox3">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>Total Qty</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Center</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>Textbox3</rd:DefaultName>
                       <Style>
                         <Border>
                           <Style>Solid</Style>
@@ -792,6 +829,40 @@
                 </TablixCell>
                 <TablixCell>
                   <CellContents>
+                    <Textbox Name="TotalQty">
+                      <CanGrow>true</CanGrow>
+                      <KeepTogether>true</KeepTogether>
+                      <Paragraphs>
+                        <Paragraph>
+                          <TextRuns>
+                            <TextRun>
+                              <Value>=Fields!TotalQty.Value</Value>
+                              <Style>
+                                <FontSize>8pt</FontSize>
+                              </Style>
+                            </TextRun>
+                          </TextRuns>
+                          <Style>
+                            <TextAlign>Right</TextAlign>
+                          </Style>
+                        </Paragraph>
+                      </Paragraphs>
+                      <rd:DefaultName>TotalQty</rd:DefaultName>
+                      <Style>
+                        <Border>
+                          <Style>Solid</Style>
+                        </Border>
+                        <VerticalAlign>Middle</VerticalAlign>
+                        <PaddingLeft>2pt</PaddingLeft>
+                        <PaddingRight>2pt</PaddingRight>
+                        <PaddingTop>2pt</PaddingTop>
+                        <PaddingBottom>2pt</PaddingBottom>
+                      </Style>
+                    </Textbox>
+                  </CellContents>
+                </TablixCell>
+                <TablixCell>
+                  <CellContents>
                     <Textbox Name="TransferQTY">
                       <CanGrow>true</CanGrow>
                       <KeepTogether>true</KeepTogether>
@@ -1218,6 +1289,7 @@
             <TablixMember />
             <TablixMember />
             <TablixMember />
+            <TablixMember />
           </TablixMembers>
         </TablixColumnHierarchy>
         <TablixRowHierarchy>
@@ -1236,7 +1308,7 @@
         <Top>0.32287cm</Top>
         <Left>0.21506cm</Left>
         <Height>1.8cm</Height>
-        <Width>27.98996cm</Width>
+        <Width>28cm</Width>
         <Style>
           <Border>
             <Style>Solid</Style>
@@ -2196,6 +2268,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox39</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>0.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2231,6 +2304,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox40</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>7.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2268,6 +2342,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox41</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>14.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2305,6 +2380,7 @@
             </Paragraph>
           </Paragraphs>
           <rd:DefaultName>Textbox42</rd:DefaultName>
+          <Top>0cm</Top>
           <Left>21.21506cm</Left>
           <Height>0.6cm</Height>
           <Width>7cm</Width>
@@ -2416,6 +2492,10 @@
         </Field>
         <Field Name="Size9">
           <DataField>Size9</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="TotalQty">
+          <DataField>TotalQty</DataField>
           <rd:TypeName>System.String</rd:TypeName>
         </Field>
         <Field Name="TransferQTY">

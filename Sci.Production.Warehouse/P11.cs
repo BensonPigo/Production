@@ -1551,6 +1551,7 @@ select  a.Seq1 + '-' + a.Seq2 as SEQ
         ,dbo.Getlocation(fi.ukey) as Location
         ,s.*
         ,f.MtlTypeID
+        ,FI.InQty
 from(
     select * 
     from (
@@ -1733,6 +1734,7 @@ where b.id = a.CutplanID
                                                Color = row1["Color"].ToString().Trim(),
                                                Location = row1["Location"].ToString().Trim(),
                                                TransferQTY = row1["TransferQTY"].ToString().Trim(),
+                                               TotalQty = row1["InQty"].ToString().Trim(),
                                                Unit = row1["Unit"].ToString().Trim(),
                                                Size1 = row1[6].ToString().Trim(),
                                                Size2 = row1[7].ToString().Trim(),
