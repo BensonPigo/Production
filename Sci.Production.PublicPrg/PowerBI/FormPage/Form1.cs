@@ -36,7 +36,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <returns>FactoryTaskJobInfo Class</returns>
         public FactoryTaskJobInfo GetJobInfo()
         {
-            return new FactoryTaskJobInfo("Power BI", "1.3", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制");
+            return new FactoryTaskJobInfo("Power BI", "1.4", "工廠端BI執行, 增加群組機制, 調整排序, 重跑機制, 增加執行時段與單檔執行");
         }
 
         /// <summary>
@@ -50,9 +50,13 @@ namespace Sci.Production.Prg.PowerBI.FormPage
         /// <summary>
         /// 實際執行
         /// </summary>
-        public void TaskJobRun()
+        /// <param name="args">參數</param>
+        public void TaskJobRun(List<string> args)
         {
-            this.AutoExecute();
+            string arg = args.Count() == 1 ? "auto" : args[1];
+            bool isAfternoon = arg.EqualString("afternoon");
+            string biTable = new Logic.Base().CheckClassName(arg) ? arg : string.Empty;
+            this.AutoExecute(isAfternoon: isAfternoon, biTable: biTable);
         }
 
         private void AddControl()
@@ -68,7 +72,7 @@ namespace Sci.Production.Prg.PowerBI.FormPage
             }
         }
 
-        private void AutoExecute()
+        private void AutoExecute(bool isAfternoon = false, string biTable = "")
         {
             Logic.Base biBase = new Logic.Base();
             if (DateTime.Now.DayOfWeek != DayOfWeek.Sunday)
@@ -76,11 +80,22 @@ namespace Sci.Production.Prg.PowerBI.FormPage
                 this.executedList.RemoveAll(x => x.RunOnSunday);
             }
 
-            // 執行尚未跑的
-            this.executedList = this.executedList
-                .Where(x => !x.TransferDate.HasValue
-                            || x.TransferDate.Value < DateTime.Today)
-                .ToList();
+            if (isAfternoon)
+            {
+                this.executedList = this.executedList.Where(x => x.RunOnPM).ToList();
+            }
+            else if (!string.IsNullOrEmpty(biTable))
+            {
+                this.executedList = this.executedList.Where(x => x.ClassName == biTable).ToList();
+            }
+            else
+            {
+                // 執行尚未跑的
+                this.executedList = this.executedList
+                    .Where(x => !x.TransferDate.HasValue
+                                || x.TransferDate.Value < DateTime.Today)
+                    .ToList();
+            }
 
             biBase.ExecuteAll(this.executedList);
         }
