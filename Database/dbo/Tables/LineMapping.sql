@@ -36,6 +36,8 @@
     [LMMachineConfirmName] VARCHAR(10) NOT NULL DEFAULT (''), 
     [LMMachineConfirmDate] DATETIME NULL, 
     [JukiStyleDataSubmitDate] DATETIME NULL, 
+    [JukiProdPlanDataSubmitDate] DATETIME NULL, 
+    [JukiLayoutDataSubmitDate] DATETIME NULL, 
     CONSTRAINT [PK_LineMapping] PRIMARY KEY CLUSTERED 
 (
 	[StyleUKey] ASC,
@@ -266,3 +268,21 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMapping',
     @level2type = N'COLUMN',
     @level2name = N'JukiStyleDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiProdPlanDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMapping',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiLayoutDataSubmitDate'
