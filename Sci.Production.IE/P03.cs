@@ -1313,7 +1313,7 @@ inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLoca
 where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
 ";
 
-                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "10", null, null, null, null);
+                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "20", null, null, null, null);
 
                     DialogResult dialogResult = popupMachineID.ShowDialog(this);
                     if (dialogResult == DialogResult.Cancel)
