@@ -189,6 +189,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 bool hasStartDate2 = (bool)dr["HasStartDate2"];
                 bool hasEndDate2 = (bool)dr["HasEndDate2"];
                 bool runOnSunday = (bool)dr["RunOnSunday"];
+                bool runOnPM = (bool)dr["RunOnPM"];
                 int group = (int)dr["Group"];
                 int seq = (int)dr["SEQ"];
                 DateTime? sDate = hasStartDate ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault"].ToString())) : (DateTime?)null;
@@ -219,6 +220,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     SEQ = seq,
                     Source = source,
                     TransferDate = transferDate,
+                    RunOnPM = runOnPM,
                 };
 
                 executes.Add(model);
