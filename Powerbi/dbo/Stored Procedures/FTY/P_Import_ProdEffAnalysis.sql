@@ -32,48 +32,47 @@ BEGIN
 
 -- Main data
 Select
-[RS] = iif(ProductionUnit = 'TMS', 'CPU', iif(ProductionUnit = 'QTY', 'AMT','')),
-ArtworkTypeID = IIF(at.IsTtlTMS=1 , 'SEWING', otc.ArtworkTypeID),
-at.IsTtlTMS,
-o.ID, 
-o.ProgramID,
-o.StyleID,
-o.SeasonID
-, [BrandID] = case 
-		when o.BrandID != 'SUBCON-I' then o.BrandID
-		when Order2.BrandID is not null then Order2.BrandID
-		when StyleBrand.BrandID is not null then StyleBrand.BrandID
-		else o.BrandID end
-, o.FactoryID
-,o.POID 
-,o.Category
-,o.CdCodeID 
-,[CPU] = o.CPU
-,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),iif(at.ProductionUnit = 'QTY',4,3))) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,iif(at.ProductionUnit = 'QTY',4,3)))
-,CPURate = o.CPUFactor * o.CPU  
-,o.BuyerDelivery
-,o.SCIDelivery
-,so.SewingLineID 
-,[ManPower] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,so.ManPower)
-,sod.ComboType
-,[WorkHour] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,sod.WorkHour)
-,QAQty = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , sod.QAQty )
-,QARate = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,sod.QAQty * isnull(Production.dbo.[GetOrderLocation_Rate](o.id ,sod.ComboType)/100,1))
-,CDDesc = s.Description 
-,StyleDesc = s.Description
-,s.ModularParent,
-s.CPUAdjusted
-,OutputDate
-,Shift
-, Team
-,SCategory = so.Category
-,CPUFactor = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , o.CPUFactor)
-,[FtyZone]=f.FtyZone
-,orderid
-,Rate = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , isnull(Production.dbo.[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1))
-,ActManPower= iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,so.Manpower)
-, [MockupCPU] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , isnull(mo.Cpu,0))
-, [MockupCPUFactor] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,isnull(mo.CPUFactor,0))
+	[RS] = iif(ProductionUnit = 'TMS', 'CPU', iif(ProductionUnit = 'QTY', 'AMT','')),
+	ArtworkTypeID = IIF(at.IsTtlTMS=1 , 'SEWING', otc.ArtworkTypeID),
+	at.IsTtlTMS,
+	o.ID, 
+	o.ProgramID,
+	o.StyleID,
+	o.SeasonID
+	, [BrandID] = case 
+			when o.BrandID != 'SUBCON-I' then o.BrandID
+			when Order2.BrandID is not null then Order2.BrandID
+			when StyleBrand.BrandID is not null then StyleBrand.BrandID
+			else o.BrandID end
+	, o.FactoryID
+	,o.POID 
+	,o.Category
+	,[CPU] = o.CPU
+	,[ArtworkCPU] =  IIF(at.IsTtlTMS=1, sum(ROUND(iif(at.IsTtlTMS = 1, otc.Price,0),iif(at.ProductionUnit = 'QTY',4,3))) over (partition by sod.ID,sod.OrderId,sod.Article,sod.ComboType),ROUND(otc.Price,iif(at.ProductionUnit = 'QTY',4,3)))
+	,CPURate = o.CPUFactor * o.CPU  
+	,o.BuyerDelivery
+	,o.SCIDelivery
+	,so.SewingLineID 
+	,[ManPower] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,so.ManPower)
+	,sod.ComboType
+	,[WorkHour] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,sod.WorkHour)
+	,QAQty = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , sod.QAQty )
+	,QARate = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,sod.QAQty * isnull(Production.dbo.[GetOrderLocation_Rate](o.id ,sod.ComboType)/100,1))
+	,CDDesc = s.Description 
+	,StyleDesc = s.Description
+	,s.ModularParent,
+	s.CPUAdjusted
+	,OutputDate
+	,Shift
+	, Team
+	,SCategory = so.Category
+	,CPUFactor = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , o.CPUFactor)
+	,[FtyZone]=f.FtyZone
+	,orderid
+	,Rate = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , isnull(Production.dbo.[GetOrderLocation_Rate]( o.id ,sod.ComboType)/100,1))
+	,ActManPower= iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,so.Manpower)
+	, [MockupCPU] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 , isnull(mo.Cpu,0))
+	, [MockupCPUFactor] = iif(at.IsTtlTMS = 1 and  otc.ArtworkTypeID !='SEWING',0 ,isnull(mo.CPUFactor,0))
 into #stmp
 from Production.dbo.Orders o WITH (NOLOCK) 
 inner join Production.dbo.SewingOutput_Detail sod WITH (NOLOCK) on sod.OrderId = o.ID
@@ -109,7 +108,6 @@ a.ArtworkTypeID
     , a.FactoryID
     , a.POID
     , a.Category
-    , a.CdCodeID 
     , sty.CDCodeNew
     , sty.ProductType
     , sty.FabricType
@@ -205,7 +203,7 @@ ProgramID
             end),'-')
 into #tmp2
 from #tmpz 
-Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+Group BY EOMONTH(OutputDate),ArtworkTypeID,IsTtlTMS, RS, ProgramID,StyleID,FtyZone,FactoryID,BrandID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
 
 
 select * 
@@ -338,5 +336,6 @@ drop table #tmp2
 
 
 end
+
 
 GO
