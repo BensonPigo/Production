@@ -196,63 +196,7 @@ from #Trade_To_Pms_PO as b WITH (NOLOCK)
 where not exists(
 select id from Production.dbo.PO as a WITH (NOLOCK) where a.id = b.id )
 
---PO2
 
-------------------------------------------------------------------PO2 START
-----------------------刪除主TABLE多的資料
-Delete Production.dbo.PO_Supp
-from Production.dbo.PO_Supp as a 
-left join Trade_To_Pms.dbo.PO_Supp as b on a.id = b.id and a.SEQ1=b.SEQ1
-where b.id is null
---and  a.id in (select id from #Trade_To_Pms_PO)
-and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
-and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1)
----------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
-UPDATE a
-SET  
-       a.ID	          = isnull(b.ID	    ,'')
-      ,a.SEQ1	      = isnull(b.SEQ1	,'')
-      ,a.SuppID	      = isnull(b.SuppID	,'')
-      ,a.Remark	      = isnull(b.Remark	,'')
-      ,a.Description	      = isnull(b.Description	,'')
-      ,a.AddName	      = isnull(b.AddName	,'')
-      ,a.AddDate	      = b.AddDate	
-      ,a.EditName	      = isnull(b.EditName	,'')
-      ,a.EditDate	      =b.EditDate	
-
-from Production.dbo.PO_Supp as a inner join Trade_To_Pms.dbo.PO_Supp as b ON a.id=b.id and a.SEQ1=b.SEQ1
-inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
-
-
--------------------------- INSERT INTO 抓
-INSERT INTO Production.dbo.PO_Supp(
-       ID
-      ,SEQ1
-      ,SuppID
-      ,Remark
-      ,Description
-      ,AddName
-      ,AddDate
-      ,EditName
-      ,EditDate
-
-)
-select 
-       isnull(b.ID       ,'')
-      ,isnull(SEQ1       ,'')
-      ,isnull(SuppID     ,'')
-      ,isnull(Remark     ,'')
-      ,isnull(Description,'')
-      ,isnull(b.AddName,'')
-      ,b.AddDate
-      ,isnull(b.EditName,'')
-      ,b.EditDate
-
-from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
-where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.SEQ1)
-
-
-------------------------------------------------------------------PO2 END
 ------------------------------------------------------------------PO3 START
 --Po3 pms多的欄位
 --,[BrandId]
@@ -497,6 +441,61 @@ set po.StockUnit =isnull( Production.dbo.GetStockUnitBySPSeq(po.ID, po.SEQ1, po.
 from Production.dbo.PO_Supp_Detail po With(NoLock)
 WHERE po.StockUnit = '' OR po.StockUnit IS NULL
 ------------------------------------------------------------------PO3 END
+
+------------------------------------------------------------------PO2 START
+----------------------刪除主TABLE多的資料
+Delete Production.dbo.PO_Supp
+from Production.dbo.PO_Supp as a 
+left join Trade_To_Pms.dbo.PO_Supp as b on a.id = b.id and a.SEQ1=b.SEQ1
+where b.id is null
+--and  a.id in (select id from #Trade_To_Pms_PO)
+and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
+and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1)
+and not exists (select 1 from Production.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1 and ShipQty > 0) ---- 在PMS系統當中若有下一層的庫存數則不刪除
+---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
+UPDATE a
+SET  
+       a.ID	          = isnull(b.ID	    ,'')
+      ,a.SEQ1	      = isnull(b.SEQ1	,'')
+      ,a.SuppID	      = isnull(b.SuppID	,'')
+      ,a.Remark	      = isnull(b.Remark	,'')
+      ,a.Description	      = isnull(b.Description	,'')
+      ,a.AddName	      = isnull(b.AddName	,'')
+      ,a.AddDate	      = b.AddDate	
+      ,a.EditName	      = isnull(b.EditName	,'')
+      ,a.EditDate	      =b.EditDate	
+
+from Production.dbo.PO_Supp as a inner join Trade_To_Pms.dbo.PO_Supp as b ON a.id=b.id and a.SEQ1=b.SEQ1
+inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+
+-------------------------- INSERT INTO 抓
+INSERT INTO Production.dbo.PO_Supp(
+       ID
+      ,SEQ1
+      ,SuppID
+      ,Remark
+      ,Description
+      ,AddName
+      ,AddDate
+      ,EditName
+      ,EditDate
+
+)
+select 
+       isnull(b.ID       ,'')
+      ,isnull(SEQ1       ,'')
+      ,isnull(SuppID     ,'')
+      ,isnull(Remark     ,'')
+      ,isnull(Description,'')
+      ,isnull(b.AddName,'')
+      ,b.AddDate
+      ,isnull(b.EditName,'')
+      ,b.EditDate
+
+from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
+where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.SEQ1)
+
+------------------------------------------------------------------PO2 END
 
 ----PO_Supp_Detail_Spec
 Delete a 
