@@ -1,9 +1,5 @@
 ﻿using Ict;
 using Ict.Win;
-using Ict.Win.Tools;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Smo.Agent;
-using Microsoft.SqlServer.Management.Smo.Mail;
 using Sci.Data;
 using Sci.Production.CallPmsAPI;
 using Sci.Production.Class;
@@ -12,20 +8,13 @@ using Sci.Production.PublicForm;
 using Sci.Win.Tools;
 using Sci.Win.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Net.Mail;
-using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Web;
 using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using static Ict.Win.UI.DataGridView;
 using static Sci.Production.IE.AutoLineMappingGridSyncScroll;
 
 namespace Sci.Production.IE
@@ -256,6 +245,8 @@ AND ALMCS.Junk = 0
         {
             string masterID = (e.Master == null) ? string.Empty : e.Master["ID"].ToString();
             string factoryID = (e.Master == null) ? string.Empty : e.Master["FactoryID"].ToString();
+
+            // 備住 欄位: DivSewer, OriSewer 是實體欄位 不可 Null,會由底層控制更新, 取值時理應不該這樣寫, 給 null 後續肯定有地方處理才能存檔, 沒空去挖只是看到打一下註解, 若有 issue 改了把這行註解刪掉
             this.DetailSelectCommand = $@" 
              
             SELECT * 
@@ -270,51 +261,75 @@ AND ALMCS.Junk = 0
                 FROM
                 (
                     SELECT 
-                    cast(0 as bit) as Selected
-                    ,[GroupNo]
-                    ,lmb.FactoryID
-                    ,ad.ukey
-                    ,ad.[ID]
-                    ,[No]
-                    ,ad.[Seq]
-                    ,[Location]
-                    ,[location1] =  REPLACE(ad.[location], '--', '')
-                    ,[Motion] = Motion.val
-                    ,[PPA]
-                    ,ad.[MachineTypeID]
-                    ,ad.[MasterPlusGroup]
-                    ,[OperationID]
-                    ,ad.[Annotation] 
-                    ,ad.[Attachment]
-                    ,[SewingMachineAttachmentID]
-                    ,[PartID] = PartID.val
-                    ,[Template]
-                    ,[GSD]
-                    ,[Cycle]
-                    ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
-                    ,[EffiPercentage] =  iif(([Cycle] * [SewerDiffPercentage]) > 0 , [GSD] /([Cycle] * [SewerDiffPercentage]),0)
-                    ,[SewerDiffPercentage]
-                    ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
-                    ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
-                    ,[TimeStudyDetailUkey]
-                    ,[ThreadComboID]
-                    ,[Notice]
-                    ,[EmployeeID]
-                    ,ad.[IsNonSewingLine]
-                    ,[IsAdd],
-                    [PPADesc] = isnull(d.Name, ''),
-                    [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
-                    [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
-                    [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
-												 ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
-												 END,
-                    [EmployeeName] = e.LastName + ',' + e.FirstName,
-                    [EmployeeSkill] = e.Skill,
-                    [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
-                    [Junk] = e.junk,
-                    [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
-                    [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
-                    ad.MachineID
+                        cast(0 as bit) as Selected
+                        ,[GroupNo]
+                        ,lmb.FactoryID
+                        ,ad.ukey
+                        ,ad.[ID]
+                        ,[No]
+                        ,ad.[Seq]
+                        ,[Location]
+                        ,[location1] =  REPLACE(ad.[location], '--', '')
+                        ,[Motion] = Motion.val
+                        ,[PPA]
+                        ,ad.[MachineTypeID]
+                        ,ad.[MasterPlusGroup]
+                        ,[OperationID]
+                        ,ad.[Annotation] 
+                        ,ad.[Attachment]
+                        ,[SewingMachineAttachmentID]
+                        ,[PartID] = PartID.val
+                        ,[Template]
+                        ,[GSD]
+                        ,[Cycle]
+                        ,[TotalCycleTime] = [Cycle] * [SewerDiffPercentage]
+                        ,[EffiPercentage] =  iif(([Cycle] * [SewerDiffPercentage]) > 0 , [GSD] /([Cycle] * [SewerDiffPercentage]),0)
+                        ,[SewerDiffPercentage]
+                        ,[DivSewer]  = iif(isAdd = 1, null,[DivSewer])
+                        ,[OriSewer]  = iif(isAdd = 1, null,[OriSewer])
+                        ,[TimeStudyDetailUkey]
+                        ,[ThreadComboID]
+                        ,[Notice]
+                        ,[EmployeeID]
+                        ,ad.[IsNonSewingLine]
+                        ,[IsAdd],
+                        [PPADesc] = isnull(d.Name, ''),
+                        [OperationDesc] = iif(isnull(op.DescEN, '') = '', ad.OperationID, op.DescEN),
+                        [SewerDiffPercentageDesc] = round(ad.SewerDiffPercentage * 100, 0),
+                        [TimeStudyDetailUkeyCnt] = CASE WHEN TimeStudyDetailUkey = 0 AND OperationID IN ('PROCIPF00004', 'PROCIPF00003') THEN  COUNT(1) OVER (PARTITION BY OperationID,ad.GroupNo)
+												     ELSE COUNT(CASE WHEN TimeStudyDetailUkey <> 0 THEN TimeStudyDetailUkey ELSE NULL END) OVER (PARTITION BY TimeStudyDetailUkey,ad.GroupNo)
+												     END,
+                        [EmployeeName] = e.LastName + ',' + e.FirstName,
+                        [EmployeeSkill] = e.Skill,
+                        [IsNotShownInP06] = isnull(md.IsNotShownInP06,0),
+                        [Junk] = e.junk,
+                        [OperatorEffi] = CAST(0.00 AS NUMERIC(12, 4)) ,
+                        [IsResignationDate] = iif(ResignationDate is NOT NULL , 1,0),
+                        ad.MachineID
+                        ,ad.TimeStudySeq
+	                    , [OneShot] = CASE 
+			                WHEN EXISTS (
+				                SELECT 1
+				                FROM LineMappingBalancing_Detail ld2 WITH (NOLOCK)
+				                WHERE ad.ID = ld2.ID
+				                AND ad.No = ld2.No
+				                AND ad.MachineTypeID = ld2.MachineTypeID
+				                AND ad.MasterPlusGroup = ld2.MasterPlusGroup
+				                AND ad.Attachment = ld2.Attachment
+				                AND ad.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+				                AND ad.Template = ld2.Template
+				                AND ad.MachineID = ld2.MachineID
+				                AND ld2.PPA <> 'C'
+				                AND ld2.IsNonSewingLine = 0
+				                AND ld2.MachineTypeID not like 'MM%'
+				                GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+						                ld2.Attachment, ld2.SewingMachineAttachmentID, 
+						                ld2.Template, ld2.MachineID
+				                HAVING COUNT(*) > 1
+			                ) 
+			                THEN ISNULL(ad.OneShot, cast(0 as bit))
+			                ELSE NULL
+		                END
                     --INTO #TMP
                     FROM LineMappingBalancing_Detail ad WITH (NOLOCK)
                     LEFT JOIN DropDownList d WITH (NOLOCK) ON d.ID = ad.PPA AND d.Type = 'PMS_IEPPA'
@@ -701,7 +716,7 @@ where   ID = '{this.CurrentMaintain["ID"]}'
                 if (MyUtility.Check.Empty(this.CurrentMaintain["Reason"]))
                 {
                     if (noCount + MyUtility.Convert.GetInt(lml_Cnt) < this.DetailDatas.AsEnumerable().GroupBy(x => x["No"].ToString()).Count())
-                     {
+                    {
                         MyUtility.Msg.WarningBox("Please fill in <Reason> due to changes in operations!");
                         return false;
                     }
@@ -856,6 +871,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
 
             TxtMachineGroup.CelltxtMachineGroup colMachineTypeID = TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             DataGridViewGeneratorCheckBoxColumnSettings colSelected = new DataGridViewGeneratorCheckBoxColumnSettings();
+            DataGridViewGeneratorCheckBoxColumnSettings coloneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorMaskedTextColumnSettings colPPANo = new DataGridViewGeneratorMaskedTextColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTime = new DataGridViewGeneratorNumericColumnSettings();
             DataGridViewGeneratorNumericColumnSettings colCycleTimePPA = new DataGridViewGeneratorNumericColumnSettings();
@@ -1258,7 +1274,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
 
             colSelected.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
-
+            coloneShot.HeaderAction = DataGridViewGeneratorCheckBoxHeaderAction.None;
             colSelected.CellValidating += (s, e) =>
             {
                 if (!this.EditMode)
@@ -1307,7 +1323,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -1489,7 +1505,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
                 {
                     DataRow dr = sourceGrid.GetDataRow<DataRow>(e.RowIndex);
 
-                    this.GetEmployee(null,null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
+                    this.GetEmployee(null, null, this.CurrentMaintain["FactoryID"].ToString(), this.CurrentMaintain["SewingLineID"].ToString());
                     P03_Operator callNextForm = new P03_Operator(this.EmployeeData, MyUtility.Convert.GetString(this.CurrentMaintain["SewingLineID"]), MyUtility.Convert.GetString(this.CurrentMaintain["Team"]));
                     DialogResult result = callNextForm.ShowDialog(this);
                     if (result == DialogResult.Cancel)
@@ -1584,7 +1600,7 @@ inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLoca
 where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
 ";
 
-                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "10", null, null, null, null);
+                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "20", null, null, null, null);
 
                     DialogResult dialogResult = popupMachineID.ShowDialog(this);
                     if (dialogResult == DialogResult.Cancel)
@@ -1604,6 +1620,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Text("PPADesc", header: "PPA", width: Widths.AnsiChars(5), iseditingreadonly: true)
                .CellMachineType("MachineTypeID", "ST/MC\r\ntype", this, width: Widths.AnsiChars(2))
                .Text("MasterPlusGroup", header: "MC Group", width: Widths.AnsiChars(10), settings: colMachineTypeID)
+               .CheckBox("OneShot", header: "OneShot", width: Widths.AnsiChars(1), iseditable: true, trueValue: true, falseValue: false, settings: coloneShot)
                .Text("OperationDesc", header: "Operation", width: Widths.AnsiChars(13), iseditingreadonly: true, settings: operation)
                .Text("Annotation", header: "Annotation", width: Widths.AnsiChars(25), iseditingreadonly: true)
                .CellAttachment("Attachment", "Attachment", this, width: Widths.AnsiChars(10))
@@ -1615,7 +1632,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40))
-               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(10), iseditingreadonly: true, settings: setMachineID);
+               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: setMachineID);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
@@ -1637,7 +1654,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Numeric("TotalCycleTime", header: "Total Cycle " + Environment.NewLine + "Time by (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
                .Text("OperatorLoading", header: "Operator" + Environment.NewLine + "Loading (%)", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Text("EmployeeID", header: "Operator ID", width: Widths.AnsiChars(10), settings: colOperator_ID).Get(out this.col_color)
-               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10),settings: colOperator_Name).Get(out this.col_color1)
+               .Text("EmployeeName", header: "Operator" + Environment.NewLine + "Name", width: Widths.AnsiChars(10), settings: colOperator_Name).Get(out this.col_color1)
                //.Numeric("EstTotalCycleTime", header: "Est. Total Cycle Time", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                .Text("EmployeeSkill", header: "Skill", width: Widths.AnsiChars(10), iseditingreadonly: true)
                .Numeric("SumEffi", header: "Effi (%)", width: Widths.AnsiChars(10), decimal_places: 2, iseditingreadonly: true)
@@ -1662,6 +1679,34 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             this.gridLineMappingRight.Columns["No"].Frozen = true;
             this.gridCentralizedPPARight.Columns["No"].Frozen = true;
 
+            this.detailgrid.CellFormatting += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.CellStyle.ForeColor = Color.DarkGray;
+                    }
+                    else
+                    {
+                        e.CellStyle.BackColor = Color.Pink;
+                    }
+                }
+            };
+            this.detailgrid.CellBeginEdit += (s, e) =>
+            {
+                if (this.detailgrid.Columns[e.ColumnIndex].Name == "OneShot")
+                {
+                    DataRow dr = this.detailgrid.GetDataRow(e.RowIndex);
+
+                    // 只有當OneShot欄位為null時，不允許編輯
+                    if (dr["OneShot"] == DBNull.Value || dr["OneShot"] == null)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+            };
             this.gridLineMappingRight.RowsAdded += (s, e) =>
             {
                 string art = string.Empty;
@@ -1734,6 +1779,63 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             }
 
             return base.ClickSavePre();
+        }
+
+        /// <inheritdoc/>
+        protected override DualResult ClickSavePost()
+        {
+            if (this.detailgrid.DataSource != null)
+            {
+                DataTable detail = (DataTable)this.detailgridbs.DataSource;
+                string masterID = this.CurrentMaintain["ID"].ToString();
+                string updCmd = string.Empty;
+
+                // 回補 OneShot
+                updCmd += $@"
+update ld
+	set ld.[OneShot] = ld2.OneShot
+from LineMappingBalancing_Detail ld
+inner join (
+	select ld.ID
+		, ld.No
+		, ld.Ukey
+	    , [OneShot] = CASE 
+			            WHEN EXISTS (
+				            SELECT 1
+				            FROM LineMappingBalancing_Detail ld2 WITH (NOLOCK)
+				            WHERE ld.ID = ld2.ID
+				            AND ld.No = ld2.No
+				            AND ld.MachineTypeID = ld2.MachineTypeID
+				            AND ld.MasterPlusGroup = ld2.MasterPlusGroup
+				            AND ld.Attachment = ld2.Attachment
+				            AND ld.SewingMachineAttachmentID = ld2.SewingMachineAttachmentID
+				            AND ld.Template = ld2.Template
+				            AND ld.MachineID = ld2.MachineID
+
+				            AND ld2.PPA <> 'C'
+				            AND ld2.IsNonSewingLine = 0
+				            AND ld2.MachineTypeID not like 'MM%'
+				            GROUP BY ld2.No, ld2.MachineTypeID, ld2.MasterPlusGroup, 
+						            ld2.Attachment, ld2.SewingMachineAttachmentID, 
+						            ld2.Template, ld2.MachineID
+				            HAVING COUNT(*) > 1
+			            ) 
+			            THEN ISNULL(ld.OneShot, cast(0 as bit))
+			            ELSE NULL
+		            END
+	from LineMappingBalancing_Detail ld
+	where ld.ID = '{masterID}'
+) ld2 on ld.ID = ld2.ID and ld.No = ld2.No and ld.Ukey = ld2.Ukey and ISNULL(ld2.OneShot, 0) <> 1
+";
+
+                DualResult reusult = DBProxy.Current.Execute(null, updCmd);
+                if (!reusult)
+                {
+                    this.ShowErr(reusult);
+                }
+            }
+
+            return base.ClickSavePost();
         }
 
         /// <inheritdoc/>
@@ -2725,7 +2827,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
         }
 
         /// <inheritdoc/>
-        public decimal GetEffi_3Year(string factoryID = "", string employeeID = "", string machineType = "", string motion = "", string location = "" , string part = "", string attachment = "")
+        public decimal GetEffi_3Year(string factoryID = "", string employeeID = "", string machineType = "", string motion = "", string location = "", string part = "", string attachment = "")
         {
             string sqlcmd = $@"			                                
 			SELECT

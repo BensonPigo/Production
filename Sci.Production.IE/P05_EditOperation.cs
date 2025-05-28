@@ -262,6 +262,7 @@ namespace Sci.Production.IE
                     curRow["SewerDiffPercentageDesc"] = selectedResult["SewerDiffPercentageDesc"];
                     curRow["DivSewer"] = selectedResult["DivSewer"];
                     curRow["IsNotShownInP05"] = false;
+                    curRow["TimeStudySeq"] = selectedResult["TimeStudySeq"];
                 }
 
                 curRow.EndEdit();
