@@ -12,6 +12,8 @@
 
         public string TransferQTY { get; set; }
 
+        public string TotalQty { get; set; }
+
         public string Location { get; set; }
 
         public string Size1 { get; set; }
