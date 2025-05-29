@@ -139,9 +139,18 @@ where not exists (
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
-and t.[FactoryID] = s.[FactoryID]
+    AND t.[FactoryID] = s.[FactoryID]
 )
 and t.ReplacementFinishedDate >= @SDate
+
+Delete p
+from P_FabricStatus_And_IssueFabricTracking p
+where not exists(
+    select * from mainserver.production.dbo.lack_detail l
+     where p.replacementID = l.id
+     and (l.seq1+' '+l.Seq2) = p.seq
+ )
+
 ";
                 sql += new Base().SqlBITableInfo("P_FabricStatus_And_IssueFabricTracking", true);
                 finalResult = new Base_ViewModel()
