@@ -647,6 +647,9 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
             // 刪除 SizeRatio 之後重算 ConsPC
             BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, this.formType);
 
+            this.CurrentMaintain["CutForPlanningInline"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
+            this.CurrentMaintain["CutForPlanningOffLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("MAX(EstCutDate)", null);
+
             return base.ClickSaveBefore();
         }
 
