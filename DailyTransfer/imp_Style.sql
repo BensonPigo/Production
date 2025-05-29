@@ -149,6 +149,7 @@ a.Ukey	= isnull( b.Ukey             ,0)
 ,a.IsGSPPlus = isnull(b.IsGSPPlus, 0)
 ,a.TechConceptID = isnull(b.TechConceptID,'')
 ,a.CriticalStyle = isnull(b.CriticalStyle,'0')
+,a.JukiStyleDataLastEditDate = IIF(ISNULL(a.StyleName, '') <> ISNULL(b.StyleName, ''), GetDate(), null)
 from Production.dbo.Style as a 
 inner join Trade_To_Pms.dbo.Style as b ON a.ID	= b.ID AND a.BrandID	= b.BrandID AND a.SeasonID	= b.SeasonID
 
