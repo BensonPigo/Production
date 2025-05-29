@@ -1547,11 +1547,11 @@ select  a.Seq1 + '-' + a.Seq2 as SEQ
         ,dbo.getMtlDesc(a.poid,a.Seq1,a.Seq2,2,0) as Description
         ,Unit = isnull(psdsSU.SpecValue, '')
         ,Color = isnull(psdsC.SpecValue, '')
+        ,FI.InQty
         ,a.Qty as TransferQTY
         ,dbo.Getlocation(fi.ukey) as Location
         ,s.*
         ,f.MtlTypeID
-        ,FI.InQty
 from(
     select * 
     from (
@@ -1715,9 +1715,9 @@ where b.id = a.CutplanID
                 report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("preparedBy", preparedBy));
 
                 // 取得size欄位名稱
-                for (int i = 6; i < dtseq.Columns.Count; i++)
+                for (int i = 7; i < dtseq.Columns.Count; i++)
                 {
-                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("size" + (i - 5).ToString(), dtseq.Columns[i].ColumnName));
+                    report.ReportParameters.Add(new Microsoft.Reporting.WinForms.ReportParameter("size" + (i - 6).ToString(), dtseq.Columns[i].ColumnName));
                 }
 
                 // 將size的欄位加到10個
@@ -1736,16 +1736,16 @@ where b.id = a.CutplanID
                                                TransferQTY = row1["TransferQTY"].ToString().Trim(),
                                                TotalQty = row1["InQty"].ToString().Trim(),
                                                Unit = row1["Unit"].ToString().Trim(),
-                                               Size1 = row1[6].ToString().Trim(),
-                                               Size2 = row1[7].ToString().Trim(),
-                                               Size3 = row1[8].ToString().Trim(),
-                                               Size4 = row1[9].ToString().Trim(),
-                                               Size5 = row1[10].ToString().Trim(),
-                                               Size6 = row1[11].ToString().Trim(),
-                                               Size7 = row1[12].ToString().Trim(),
-                                               Size8 = row1[13].ToString().Trim(),
-                                               Size9 = row1[14].ToString().Trim(),
-                                               Size10 = row1[15].ToString().Trim(),
+                                               Size1 = row1[7].ToString().Trim(),
+                                               Size2 = row1[8].ToString().Trim(),
+                                               Size3 = row1[9].ToString().Trim(),
+                                               Size4 = row1[10].ToString().Trim(),
+                                               Size5 = row1[11].ToString().Trim(),
+                                               Size6 = row1[12].ToString().Trim(),
+                                               Size7 = row1[13].ToString().Trim(),
+                                               Size8 = row1[14].ToString().Trim(),
+                                               Size9 = row1[15].ToString().Trim(),
+                                               Size10 = row1[16].ToString().Trim(),
                                            }).ToList();
 
                 report.ReportDataSource = data;
