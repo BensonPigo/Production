@@ -143,12 +143,24 @@ where not exists (
 )
 and t.ReplacementFinishedDate >= @SDate
 
+--移除不存在的Production.lack_detail的資料
 Delete p
-from P_FabricStatus_And_IssueFabricTracking p
-where not exists(
+From P_FabricStatus_And_IssueFabricTracking p
+Where not exists(
     select * from mainserver.production.dbo.lack_detail l
      where p.replacementID = l.id
      and (l.seq1+' '+l.Seq2) = p.seq
+ )
+
+--移除不存在的Production.lack的資料
+Delete p
+From P_FabricStatus_And_IssueFabricTracking p
+Where 
+ Not exists
+ (
+	 Select 1 from  mainserver.production.dbo.Lack l
+	 where l.ID = p.replacementID
+	 and l.OrderID = p.SP
  )
 
 ";
