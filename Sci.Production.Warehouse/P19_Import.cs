@@ -105,6 +105,7 @@ select  0 as selected
 		, MDivisionID = '{this.M}'
         , [Grade] = phy.Grade
         , [FIRemark] = FI.Remark
+        , psd.SCIRefno
 FROM FtyInventory FI WITH (NOLOCK)
 LEFT JOIN View_WH_Orders O WITH (NOLOCK) ON O.ID = FI.POID
 LEFT JOIN Factory F WITH (NOLOCK) ON F.ID = O.FactoryID
@@ -121,6 +122,12 @@ outer apply
 Where ( F.MDivisionID = '{Env.User.Keyword}' OR o.MDivisionID= '{Env.User.Keyword}' )
         and FI.inqty - FI.outqty + FI.adjustqty - FI.ReturnQty > 0         
         and FI.stocktype = '{stocktype}'
+AND NOT EXISTS (--由工廠採購的物料是禁止轉出給其他廠(不管境內或跨國
+    SELECT 1
+    FROM Order_FtyMtlStdCost oc WITH (NOLOCK)
+    WHERE oc.OrderID = FI.POID
+    AND oc.SCIRefno = Fabric.SCIRefno
+)
 ");
 
             if (!MyUtility.Check.Empty(sp))
