@@ -25,6 +25,10 @@
     [IsNonSewingLine] BIT CONSTRAINT [DF_LineMappingBalancing_Detail_IsNonSewingLine] DEFAULT (0) NOT NULL, 
     [IsAdd] BIT NULL, 
     [GroupNo] INT NOT NULL DEFAULT (1), 
+    [MachineID] VARCHAR(16) NOT NULL DEFAULT (''), 
+    [TimeStudySeq] VARCHAR(4) NOT NULL DEFAULT (''), 
+    [OneShot] BIT NULL, 
+    [JukiBaseProcessDataSubmitDate] DATETIME NULL, 
     CONSTRAINT [PK_LineMappingBalancing_Detail] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
@@ -217,3 +221,50 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'LineMappingBalancing_Detail',
     @level2type = N'COLUMN',
     @level2name = N'GroupNo'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'機器號碼',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'MachineID'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始作工序號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudySeq'
+GO
+
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiLayoutDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'傳給SCI中間庫的時間',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'JukiBaseProcessDataSubmitDate'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'是否合併匯入Juki',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'LineMappingBalancing_Detail',
+    @level2type = N'COLUMN',
+    @level2name = N'OneShot'

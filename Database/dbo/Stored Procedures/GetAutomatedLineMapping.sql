@@ -1,4 +1,5 @@
-﻿CREATE PROCEDURE [dbo].[GetAutomatedLineMapping]
+﻿
+CREATE PROCEDURE [dbo].[GetAutomatedLineMapping]
 	@FactoryID varchar(8),
 	@StyleID varchar(15),
 	@SeasonID varchar(10),
@@ -528,7 +529,8 @@ select	[No] = isnull(RIGHT(REPLICATE('0', 2) + cast(tb.StationNo as varchar(3)),
 		[OperationDesc] = iif(isnull(o.DescEN, '') = '', td.OperationID, o.DescEN),
         [SewerDiffPercentageDesc] = iif(td.PPA = 'C', 1, round(Round(tb.DivSewer / tb.OriSewer, 2) * 100, 0)),
         [TimeStudyDetailUkeyCnt] = Count(TimeStudyDetailUkey) over (partition by TimeStudyDetailUkey, TotalSewer),
-		[IsNotShownInP05] = isnull(md.IsNotShownInP05,0) 
+		[IsNotShownInP05] = isnull(md.IsNotShownInP05,0)
+        ,TimeStudySeq = td.Seq
 into #tmpAutomatedLineMapping_Detail
 from  TimeStudy_Detail td
 left join #tmpReaultBase tb with (nolock) on tb.TimeStudyDetailUkey = td.Ukey

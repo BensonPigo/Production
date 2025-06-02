@@ -218,8 +218,8 @@ SET
       ,a.AddName	      = isnull(b.AddName	,'')
       ,a.AddDate	      = b.AddDate	
       ,a.EditName	      = isnull(b.EditName	,'')
-      ,a.EditDate	      =b.EditDate	
-
+      ,a.EditDate	      = b.EditDate	
+	  ,a.CompanyID	      = isnull(b.CompanyID	, 0)
 from Production.dbo.PO_Supp as a inner join Trade_To_Pms.dbo.PO_Supp as b ON a.id=b.id and a.SEQ1=b.SEQ1
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
 
@@ -235,7 +235,7 @@ INSERT INTO Production.dbo.PO_Supp(
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,CompanyID
 )
 select 
        isnull(b.ID       ,'')
@@ -247,7 +247,7 @@ select
       ,b.AddDate
       ,isnull(b.EditName,'')
       ,b.EditDate
-
+	  ,isnull(b.CompanyID	, 0)
 from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.SEQ1)
 

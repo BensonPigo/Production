@@ -23,6 +23,7 @@
     [ThreadComboID] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_ThreadComboID] DEFAULT ('') NOT NULL, 
     [Notice] NVARCHAR(200) CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_Notice] DEFAULT ('') NOT NULL, 
     [IsNonSewingLine] BIT CONSTRAINT [DF_AutomatedLineMapping_DetailTemp_IsNonSewingLine] DEFAULT (0) NOT NULL, 
+    [TimeStudySeq] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_AutomatedLineMapping_DetailTemp] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
@@ -206,3 +207,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'AutomatedLineMapping_DetailTemp',
     @level2type = N'COLUMN',
     @level2name = N'Quota'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始作工序號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AutomatedLineMapping_DetailTemp',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudySeq'
