@@ -94,6 +94,7 @@ namespace Sci.Production.Cutting
 	from WorkOrderForOutput wofo with (nolock)
 	where not exists (select 1 from MarkerReq_Detail mrd with (nolock) where mrd.CutRef = wofo.CutRef)
 	and wofo.MDivisionID = @MDivisionID
+    {where}
 )
 select Sel = cast(0 as bit), m.CutRef, Top1Data.POID, Top1Data.ID, Top1Data.FtyGroup, Top1Data.CutCellID, m.EstCutDate
 from main m
@@ -102,7 +103,6 @@ cross apply (
 	from WorkOrderForOutput wofo with (nolock)
 	left join Orders o with (nolock) on wofo.ID = o.ID
 	where wofo.CutRef = m.CutRef
-	{where}
 	order by wofo.CutCellID
 ) Top1Data
 order by EstCutDate, FtyGroup, CutCellID, CutRef";

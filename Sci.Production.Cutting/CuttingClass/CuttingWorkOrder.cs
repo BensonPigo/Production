@@ -1015,7 +1015,9 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                 case CuttingForm.P02:
                     colName = "CutPlanID";
                     where = string.Empty;
-                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '')";
+
+                    // Seq需有值，才能產出CutRef# ISP20250585
+                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '') and isnull(w.seq,'') <> ''";
                     nColumn = string.Empty;
                     oColumn = ", w.Seq";
                     outerApply = string.Empty;
