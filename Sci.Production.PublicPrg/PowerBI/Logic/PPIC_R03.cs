@@ -1006,7 +1006,7 @@ SELECT
                     WHEN 'S' THEN 'Sa. sample fc'
                 END
         END
-   ,[Order Company] = oc.NameEN
+   ,[Order Company] = isnull(oc.NameEN, '')
    ,[Est. download date] = IIF(o.isForecast = 0, '', o.BuyMonth)--和[Buy Month]相反
    ,[Buy Back] = IIF(EXISTS (SELECT 1 FROM Order_BuyBack WITH (NOLOCK) WHERE ID = o.ID), 'Y', '')
    ,[Cancelled] = IIF(o.Junk = 1, 'Y', '')

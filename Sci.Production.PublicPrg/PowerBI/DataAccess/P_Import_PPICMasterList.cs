@@ -271,7 +271,7 @@ update p
 		, p.[JokerTag] = ISNULL(t.[JokerTag], 0)
 		, p.[HeatSeal] = ISNULL(t.[HeatSeal], 0)
 		, p.[CriticalStyle] = ISNULL(t.[CriticalStyle],'')
-		, p.[OrderCompanyID] = ISNULL(t.[OrderCompanyID])
+		, p.[OrderCompanyID] = ISNULL(t.[OrderCompanyID], 0)
 from P_PPICMASTERLIST p 
 inner join #tmp t on p.[SPNO] = t.[SPNO]
 
@@ -481,7 +481,7 @@ select ISNULL(t.[M], '')
 	, ISNULL([JokerTag], 0)
 	, ISNULL([HeatSeal], 0)
     , ISNULL([CriticalStyle],'')
-	, ISNULL([OrderCompany], '')
+	, ISNULL([OrderCompanyID], 0)
 from #tmp t
 where not exists (select 1 from P_PPICMASTERLIST p where t.[SPNO] = p.[SPNO])
 
