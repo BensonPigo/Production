@@ -176,6 +176,42 @@ where   TransferExport_DetailUkey in ({whereTransferExport_DetailUkey}) and
 
             #endregion
 
+            #region 檢查 由工廠採購的物料是禁止轉出給其他廠(不管境內或跨國
+            if (this.DetailDatas.Count > 0)
+            {
+                string sqlcheck = $@"
+SELECT [POID], [SEQ1], [SEQ2], [Roll], [Dyelot], [StockType]
+FROM #tmp t
+WHERE EXISTS (--由工廠採購的物料是禁止轉出給其他廠(不管境內或跨國
+    SELECT 1
+    FROM Order_FtyMtlStdCost oc WITH (NOLOCK)
+    WHERE oc.OrderID = t.POID
+    AND oc.SCIRefno = t.SCIRefno
+)
+";
+                DataTable dtDetail = this.DetailDatas.CopyToDataTable();
+                DualResult dualResult = MyUtility.Tool.ProcessWithDatatable(dtDetail, string.Empty, sqlcheck, out DataTable dtCheck);
+                if (!dualResult)
+                {
+                    this.ShowErr(dualResult);
+                    return false;
+                }
+
+                if (dtCheck.Rows.Count > 0)
+                {
+                    string msg = "Transfer out of local procurement is prohibited!!";
+                    foreach (DataRow row in dtCheck.Rows)
+                    {
+                        msg += $"\r\nSP#: {row["POID"]} Seq#: {row["SEQ1"]}-{row["SEQ2"]} Roll#: {row["Roll"]} Dyelot: {row["Dyelot"]} StockType: {row["StockType"]}";
+                    }
+
+                    MyUtility.Msg.WarningBox(msg, "Warning");
+                    return false;
+                }
+            }
+
+            #endregion
+
             foreach (DataRow row in this.DetailDatas)
             {
                 // TransferExportID 不為空 允許 StockType, Roll, Dyelot 為空
@@ -964,6 +1000,7 @@ select a.*
 					else cast(iif(ISNULL(td.ActualWeight,0) > 0, td.ActualWeight, td.Weight) as varchar(20))
 					end							
 		end
+    ,psd.SCIRefno
 from dbo.TransferOut_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail psd WITH (NOLOCK) on psd.ID = a.PoId and psd.seq1 = a.SEQ1 and psd.SEQ2 = a.seq2
 left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = psd.id and psdsC.seq1 = psd.seq1 and psdsC.seq2 = psd.seq2 and psdsC.SpecColumnID = 'Color'
