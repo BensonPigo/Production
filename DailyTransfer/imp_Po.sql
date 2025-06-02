@@ -451,6 +451,7 @@ where b.id is null
 --and  a.id in (select id from #Trade_To_Pms_PO)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1)
+and not exists (select 1 from Production.dbo.PO_Supp_Detail psd where a.ID = psd.id and a.SEQ1 = psd.Seq1 and psd.ShipQty > 0)
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
