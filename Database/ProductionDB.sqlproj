@@ -2929,6 +2929,7 @@
     <Build Include="dbo\Functions\ConvertFullwidthToHalfwidth.sql" />
     <Build Include="dbo\Functions\FormatMarkerLength.sql" />
     <Build Include="dbo\Functions\FormatLengthData.sql" />
+    <Build Include="dbo\Tables\Order_FtyMtlStdCost.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ProductionDB.publish.xml" />
