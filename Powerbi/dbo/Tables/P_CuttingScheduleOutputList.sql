@@ -10,7 +10,7 @@
     [StyleID]               VARCHAR (15)    CONSTRAINT [DF_P_CuttingScheduleOutputList_StyleID] DEFAULT ('') NOT NULL,
     [FabRef]                VARCHAR (36)    CONSTRAINT [DF_P_CuttingScheduleOutputList_FabRef] DEFAULT ('') NOT NULL,
     [SwitchToWorkorderType] VARCHAR (11)    CONSTRAINT [DF_P_CuttingScheduleOutputList_SwitchToWorkorderType] DEFAULT ('') NOT NULL,
-    [CutRef]                VARCHAR (6)     CONSTRAINT [DF_P_CuttingScheduleOutputList_CutRef] DEFAULT ('') NOT NULL,
+    [CutRef]                VARCHAR (10)     CONSTRAINT [DF_P_CuttingScheduleOutputList_CutRef] DEFAULT ('') NOT NULL,
     [CutNo]                 NUMERIC (6)     CONSTRAINT [DF_P_CuttingScheduleOutputList_CutNo] DEFAULT ((0)) NOT NULL,
     [SpreadingNoID]         VARCHAR (5)     CONSTRAINT [DF_P_CuttingScheduleOutputList_SpreadingNoID] DEFAULT ('') NOT NULL,
     [CutCell]               VARCHAR (2)     CONSTRAINT [DF_P_CuttingScheduleOutputList_CutCell] DEFAULT ('') NOT NULL,
