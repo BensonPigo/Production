@@ -69,58 +69,59 @@ namespace Sci.Production.Shipping
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append(@"with cte as (
 Select 
-o.BuyerDelivery,o.OrigBuyerDelivery,o.ID,OrderCompany.NameEN
-,Category=IIF(o.Category = 'B', 'Bulk',IIF(o.Category = 'S','Sample','Forecast'))
-,o.OrderTypeID
-,o.CustPONo
-,o.Qty
-,[ShipQty] = ShipQty.value
-,[Balance Qty] = ''
-,[GMTCompleteCheck] = case isnull(o.GMTComplete,'') 
-	when 'C'  then 'Y'
-	when 'S' then 'Y'
-	when 'P' then ''
-	when '' then ''
-	end
---when 
-,[GMT Complete] = o.GMTComplete
-,[Cancel] = case o.Junk when 1 then 'Y' else '' end
-,o.CustCDID
-,o.StyleID
-,o.SeasonID
-,o.Dest
-,o.SCIDelivery
-,o.BrandID
-,o.FactoryID
-,ShipperID=isnull(fd1.ShipperID,fd2.ShipperID)
-,ROUND(o.CPU,3) as cpu
-,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
-,[StdSewingCost]= ROUND(o.CPU,3)  *   ROUND(isnull(cpucost.cpucost,0),3) --Std. Sewing Cost = CPU * CPU Cost
-,[Sub_Process_CPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
-,[Sub_Process_Cost]=ROUND(isnull(cpucost.cpucost,0),3)
-,[sub_Process_AMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
-,SubPSCost= ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3)
-,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
-From Orders o
+    o.BuyerDelivery,o.OrigBuyerDelivery,o.ID,OrderCompany.NameEN
+    ,Category=IIF(o.Category = 'B', 'Bulk',IIF(o.Category = 'S','Sample','Forecast'))
+    ,o.OrderTypeID
+    ,o.CustPONo
+    ,o.Qty
+    ,[ShipQty] = ShipQty.value
+    ,[Balance Qty] = ''
+    ,[GMTCompleteCheck] = case isnull(o.GMTComplete,'') 
+	    when 'C'  then 'Y'
+	    when 'S' then 'Y'
+	    when 'P' then ''
+	    when '' then ''
+	    end
+    --when 
+    ,[GMT Complete] = o.GMTComplete
+    ,[Cancel] = case o.Junk when 1 then 'Y' else '' end
+    ,o.CustCDID
+    ,o.StyleID
+    ,o.SeasonID
+    ,o.Dest
+    ,o.SCIDelivery
+    ,o.BrandID
+    ,o.FactoryID
+    ,ShipperID=isnull(fd1.ShipperID,fd2.ShipperID)
+    ,ROUND(o.CPU,3) as cpu
+    ,ROUND(isnull(cpucost.cpucost,0),3) as cpucost
+    ,[StdSewingCost]= ROUND(o.CPU,3)  *   ROUND(isnull(cpucost.cpucost,0),3) --Std. Sewing Cost = CPU * CPU Cost
+    ,[Sub_Process_CPU]= ROUND(Isnull(sub_Process_CPU.Value,0),3)
+    ,[Sub_Process_Cost]=ROUND(isnull(cpucost.cpucost,0),3)
+    ,[sub_Process_AMT]= ROUND(Isnull(sub_Process_AMT.Value,0),3)
+    ,[FtyPurchaseCost] = ROUND(Isnull(ofs.val,0),2)
+    ,SubPSCost= ROUND(Isnull(sub_Process_CPU.Value,0) * isnull(cpucost.cpucost,0) + Isnull(sub_Process_AMT.Value,0),3)
+    ,LocalPSCost= ROUND(IIF ((select LocalCMT from dbo.Factory where Factory.ID = o.FactoryID) = 1,dbo.GetLocalPurchaseStdCost(o.ID),0),3)
+From Orders o WITH (NOLOCK)
 left join OrderType ot WITH (NOLOCK) on ot.BrandID = o.BrandID and ot.id = o.OrderTypeID and isnull(ot.IsGMTMaster,0) != 1
-Left join Company OrderCompany on OrderCompany.ID = o.OrderCompanyID
+Left join Company OrderCompany WITH (NOLOCK) on OrderCompany.ID = o.OrderCompanyID
 outer apply(
 	select * 
-	from FtyShipper_Detail fd 
+	from FtyShipper_Detail fd WITH (NOLOCK)
 	where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID 
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate 
 	and fd.seasonID = o.seasonID
 )fd1
 outer apply(
 	select * 
-	from FtyShipper_Detail fd 
+	from FtyShipper_Detail fd WITH (NOLOCK)
 	where o.BrandID = fd.BrandID and fd.FactoryID = o.FactoryID 
 	and o.OrigBuyerDelivery between fd.BeginDate and fd.EndDate and fd.seasonID = ''
 )fd2
 outer apply
 (
     select top 1 ROUND(fcd.CpuCost,3) AS CpuCost
-    from dbo.FSRCpuCost_Detail fcd     
+    from dbo.FSRCpuCost_Detail fcd WITH (NOLOCK) 
     where fcd.ShipperID=fd1.ShipperID 
     and fcd.OrderCompanyID = o.OrderCompanyID
     and o.OrigBuyerDelivery between fd1.BeginDate and fd1.EndDate 
@@ -129,7 +130,7 @@ outer apply
 outer apply
 (
     select top 1 iif(fd1.ShipperID is not null,cpucost1.CpuCost, ROUND(fcd.CpuCost,3)) AS CpuCost
-    from dbo.FSRCpuCost_Detail fcd     
+    from dbo.FSRCpuCost_Detail fcd WITH (NOLOCK)     
     where fcd.ShipperID=fd2.ShipperID 
     and fcd.OrderCompanyID = o.OrderCompanyID
     and o.OrigBuyerDelivery between fd2.BeginDate and fd2.EndDate 
@@ -139,9 +140,15 @@ outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrd
 outer apply (select [Value] = sum(Isnull(Price,0)) from GetSubProcessDetailByOrderID(o.ID,'CPU')   ) sub_Process_CPU
 outer apply(
 	select value = sum(ShipQty) 
-	from Pullout_Detail 
+	from Pullout_Detail WITH (NOLOCK)
 	where OrderID = o.ID
 ) ShipQty
+outer apply (
+    select val = SUM(ofs.PurchasePrice * dbo.GetRate ('KP', ofs.CurrencyID, 'USD', o2.OrigBuyerDelivery))
+    from Orders o2 WITH (NOLOCK)
+	left join Order_FtyMtlStdCost ofs WITH (NOLOCK) on o2.ID = ofs.OrderID
+    where o.POID = o2.ID
+)ofs
 Where o.LocalOrder = 0 
 ");
 
@@ -253,7 +260,7 @@ Where o.LocalOrder = 0
             {
                 // 欄位[I] Balance Qty
                 objSheets.Cells[4 + i, 10] = $"=H{4 + i}-I{4 + i}";
-                objSheets.Cells[4 + i, 31] = $"=J{4 + i}*AD{4 + i}";
+                objSheets.Cells[4 + i, 32] = $"=J{4 + i}*AE{4 + i}";
             }
 
             #region Save & Show Excel

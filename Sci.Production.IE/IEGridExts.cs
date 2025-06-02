@@ -32,8 +32,9 @@ namespace Sci.Production.IE
         /// <param name="iseditable">is editable</param>
         /// <param name="iseditingreadonly">is editing readonly</param>
         /// <param name="alignment">DataGridView Content Alignment</param>
+        /// <param name="p03">IE P03</param>
         /// <returns>gen</returns>
-        public static IDataGridViewGenerator CellMachineType(this IDataGridViewGenerator gen, string propertyname, string header, InputMasterDetail mainForm, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null)
+        public static IDataGridViewGenerator CellMachineType(this IDataGridViewGenerator gen, string propertyname, string header, InputMasterDetail mainForm, IWidth width = null, bool? iseditable = null, bool? iseditingreadonly = null, DataGridViewContentAlignment? alignment = null, P03 p03 = null)
         {
             DataGridViewGeneratorTextColumnSettings settings = new DataGridViewGeneratorTextColumnSettings();
 
@@ -62,6 +63,11 @@ namespace Sci.Production.IE
                             if (dr.Table.Columns.Contains("MasterPlusGroup"))
                             {
                                 dr["MasterPlusGroup"] = string.Empty;
+                            }
+
+                            if (p03 != null)
+                            {
+                                p03.CalculateSewerDiffPercentage();
                             }
                         }
                     }
@@ -119,6 +125,11 @@ namespace Sci.Production.IE
                     {
                         dr["MachineTypeID"] = e.FormattedValue.ToString();
                         dr["MasterPlusGroup"] = string.Empty;
+                    }
+
+                    if (p03 != null)
+                    {
+                        p03.CalculateSewerDiffPercentage();
                     }
                 }
             };

@@ -451,7 +451,6 @@ where b.id is null
 --and  a.id in (select id from #Trade_To_Pms_PO)
 and exists (select 1 from #TransOrderList where #TransOrderList.POID=a.ID)
 and not exists (select 1 from Trade_To_Pms.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1)
-and not exists (select 1 from Production.dbo.PO_Supp_Detail where a.ID = id and a.SEQ1 = Seq1 and ShipQty > 0) ---- 在PMS系統當中若有下一層的庫存數則不刪除
 ---------------------------UPDATE 主TABLE跟來源TABLE 為一樣(主TABLE多的話 記起來 ~來源TABLE多的話不理會)
 UPDATE a
 SET  
@@ -463,10 +462,11 @@ SET
       ,a.AddName	      = isnull(b.AddName	,'')
       ,a.AddDate	      = b.AddDate	
       ,a.EditName	      = isnull(b.EditName	,'')
-      ,a.EditDate	      =b.EditDate	
-
+      ,a.EditDate	      = b.EditDate	
+	  ,a.CompanyID	      = isnull(b.CompanyID	, 0)
 from Production.dbo.PO_Supp as a inner join Trade_To_Pms.dbo.PO_Supp as b ON a.id=b.id and a.SEQ1=b.SEQ1
 inner join  #Trade_To_Pms_PO c ON b.ID = c.ID
+
 
 -------------------------- INSERT INTO 抓
 INSERT INTO Production.dbo.PO_Supp(
@@ -479,7 +479,7 @@ INSERT INTO Production.dbo.PO_Supp(
       ,AddDate
       ,EditName
       ,EditDate
-
+	  ,CompanyID
 )
 select 
        isnull(b.ID       ,'')
@@ -491,9 +491,10 @@ select
       ,b.AddDate
       ,isnull(b.EditName,'')
       ,b.EditDate
-
+	  ,isnull(b.CompanyID	, 0)
 from Trade_To_Pms.dbo.PO_Supp as b WITH (NOLOCK) inner join  #Trade_To_Pms_PO c WITH (NOLOCK) ON b.ID = c.ID
 where not exists(select id from Production.dbo.PO_Supp as a WITH (NOLOCK) where a.id = b.id and a.SEQ1=b.SEQ1)
+
 
 ------------------------------------------------------------------PO2 END
 
