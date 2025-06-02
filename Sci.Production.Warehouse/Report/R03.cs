@@ -815,15 +815,15 @@ Where 1=1
 
             if (this.chkSeparateByWK.Checked)
             {
-                objApp.Sheets[1].Cells[1, 48].Value = "WK No.";
-                objApp.Sheets[1].Cells[1, 49].Value = "WK ETA";
-                objApp.Sheets[1].Cells[1, 50].Value = "WK Arrive W/H Date";
-                objApp.Sheets[1].Cells[1, 51].Value = "WK ShipQty";
-                objApp.Sheets[1].Cells[1, 52].Value = "WK F.O.C";
+                objApp.Sheets[1].Cells[1, 50].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 51].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 52].Value = "WK Arrive W/H Date";
+                objApp.Sheets[1].Cells[1, 53].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 54].Value = "WK F.O.C";
             }
             else
             {
-                for (int colIndex = 52; colIndex >= 48; colIndex--)
+                for (int colIndex = 54; colIndex >= 50; colIndex--)
                 {
                     Excel.Range column = objApp.Columns[colIndex];
                     column.Delete();
