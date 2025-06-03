@@ -628,18 +628,21 @@ and a.CutRef != ''
             TransactionOptions oTranOpt = new TransactionOptions
             {
                 IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
-                Timeout = new TimeSpan(0, 5, 0),
+                Timeout = new TimeSpan(0, 32, 0),
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
+                DBProxy.Current.DefaultTimeout = 1800;
                 if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
+                    DBProxy.Current.DefaultTimeout = 300;
                     this.ShowErr(upResult);
                     return;
                 }
 
                 transactionscope.Complete();
+                DBProxy.Current.DefaultTimeout = 300;
             }
 
             MyUtility.Msg.InfoBox("Successfully");
@@ -664,18 +667,21 @@ and a.CutRef != ''
             TransactionOptions oTranOpt = new TransactionOptions
             {
                 IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted,
-                Timeout = new TimeSpan(0, 5, 0),
+                Timeout = new TimeSpan(0, 32, 0),
             };
             using (TransactionScope transactionscope = new TransactionScope(TransactionScopeOption.RequiresNew, oTranOpt))
             {
+                DBProxy.Current.DefaultTimeout = 1800;
                 if (!(upResult = DBProxy.Current.Execute(null, update)))
                 {
                     transactionscope.Dispose();
+                    DBProxy.Current.DefaultTimeout = 300;
                     this.ShowErr(upResult);
                     return;
                 }
 
                 transactionscope.Complete();
+                DBProxy.Current.DefaultTimeout = 300;
             }
 
             MyUtility.Msg.InfoBox("Successfully");

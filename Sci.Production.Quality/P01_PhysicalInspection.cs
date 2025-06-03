@@ -431,6 +431,7 @@ where fp.DetailUkey = '{dr["DetailUkey"]}'
                     def_locT = MyUtility.Convert.GetDouble(this.Fir_physical_Defect.Rows[i]["DefectLocation"].ToString().Split('-')[1]);
 
                     var filteredRows = this.Fir_physical_Defect.AsEnumerable()
+                     .Where(row => row.RowState != DataRowState.Deleted)
                      .Where(row =>
                      {
                          var locStr = row.Field<string>("DefectLocation");

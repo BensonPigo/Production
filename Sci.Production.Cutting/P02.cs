@@ -382,11 +382,12 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
 
             this.GridEventSet();
 
+            // 移除AutoSizeMode, 開放讓user可以自己調整欄位寬度 for ISP20250585
             // 設定所有欄位的 AutoSizeMode
-            foreach (DataGridViewColumn column in this.detailgrid.Columns)
-            {
-                column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
+            // foreach (DataGridViewColumn column in this.detailgrid.Columns)
+            // {
+            //    column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            // }
         }
 
         /// <inheritdoc/>
@@ -645,6 +646,9 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
 
             // 刪除 SizeRatio 之後重算 ConsPC
             BeforeSaveCalculateConsPC(this.DetailDatas, this.dt_SizeRatio, this.formType);
+
+            this.CurrentMaintain["CutForPlanningInline"] = ((DataTable)this.detailgridbs.DataSource).Compute("Min(EstCutDate)", null);
+            this.CurrentMaintain["CutForPlanningOffLine"] = ((DataTable)this.detailgridbs.DataSource).Compute("MAX(EstCutDate)", null);
 
             return base.ClickSaveBefore();
         }

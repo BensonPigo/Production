@@ -535,6 +535,7 @@ SELECT
    ,o.isForecast
    ,o.GMTComplete
    ,o.LocalMR
+   ,o.OrderCompanyID
 INTO #tmpOrders
 FROM #tmpOqs_Step s
 INNER JOIN Orders o WITH (NOLOCK) ON s.ID = o.ID
@@ -1007,6 +1008,7 @@ SELECT
                     WHEN 'S' THEN 'Sa. sample fc'
                 END
         END
+   ,[Order Company] = isnull(oc.NameEN, '')
    ,[Est. download date] = IIF(o.isForecast = 0, '', o.BuyMonth)--和[Buy Month]相反
    ,[Buy Back] = IIF(EXISTS (SELECT 1 FROM Order_BuyBack WITH (NOLOCK) WHERE ID = o.ID), 'Y', '')
    ,[Cancelled] = IIF(o.Junk = 1, 'Y', '')
@@ -1203,6 +1205,7 @@ LEFT JOIN TPEPass1 tp4 WITH (NOLOCK) ON PO.POHandle = tp4.ID
 LEFT JOIN TPEPass1 tp5 WITH (NOLOCK) ON PO.PCHandle = tp5.ID
 LEFT JOIN Pass1 p1 WITH (NOLOCK) ON o.MCHandle = p1.ID
 LEFT JOIN Pass1 p2 WITH (NOLOCK) ON o.LocalMR = p2.ID
+LEFT JOIN Company oc WITH (NOLOCK) ON o.OrderCompanyID = oc.ID
 outer apply (
   select Qty=sum(pd.ShipQty)
   from PackingList p with (nolock), PackingList_Detail pd with (nolock)

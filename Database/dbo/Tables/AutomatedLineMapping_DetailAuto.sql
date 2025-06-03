@@ -21,6 +21,7 @@
     [TimeStudyDetailUkey] BIGINT CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_TimeStudyDetailUkey] DEFAULT (0) NOT NULL, 
     [ThreadComboID] VARCHAR(10) CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_ThreadComboID] DEFAULT ('') NOT NULL, 
     [IsNonSewingLine] BIT CONSTRAINT [DF_AutomatedLineMapping_DetailAuto_IsNonSewingLine] DEFAULT (0) NOT NULL, 
+    [TimeStudySeq] VARCHAR(4) NOT NULL DEFAULT (''), 
     CONSTRAINT [PK_AutomatedLineMapping_DetailAuto] PRIMARY KEY CLUSTERED ([Ukey] ASC)
 )
 
@@ -195,3 +196,12 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'AutomatedLineMapping_DetailAuto',
     @level2type = N'COLUMN',
     @level2name = N'SewerManpower'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'原始作工序號',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'AutomatedLineMapping_DetailAuto',
+    @level2type = N'COLUMN',
+    @level2name = N'TimeStudySeq'

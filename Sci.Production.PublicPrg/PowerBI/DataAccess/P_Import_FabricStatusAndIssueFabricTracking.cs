@@ -147,9 +147,30 @@ where not exists (
     AND t.SP = s.OrderID 
     AND t.Seq = s.Seq 
     AND t.RefNo = s.RefNo
-and t.[FactoryID] = s.[FactoryID]
+    AND t.[FactoryID] = s.[FactoryID]
 )
 and t.ReplacementFinishedDate >= @SDate
+
+--移除不存在的Production.lack_detail的資料
+Delete p
+From P_FabricStatus_And_IssueFabricTracking p
+Where not exists(
+    select * from mainserver.production.dbo.lack_detail l
+     where p.replacementID = l.id
+     and (l.seq1+' '+l.Seq2) = p.seq
+ )
+
+--移除不存在的Production.lack的資料
+Delete p
+From P_FabricStatus_And_IssueFabricTracking p
+Where 
+ Not exists
+ (
+	 Select 1 from  mainserver.production.dbo.Lack l
+	 where l.ID = p.replacementID
+	 and l.OrderID = p.SP
+ )
+
 ";
                 sql += new Base().SqlBITableInfo("P_FabricStatus_And_IssueFabricTracking", true);
                 finalResult = new Base_ViewModel()

@@ -191,72 +191,120 @@ namespace Sci.Production.Quality
 
             this.cmd = string.Format(
                 @"
-select A.POID
-	,(A.seq1+'-'+A.seq2)SEQ
-	,x.FactoryID
-	,x.BrandID
-	,x.StyleID
-	,x.SeasonID
-    ,et.ShipModeID
-	,t.ExportId
-	,t.InvNo
-    ,x.SewInLine
-	,t.WhseArrival
-	,t.StockQty
-    ,total_t.InvStock
-    ,total_t.BulkStock
-    ,total_t.BalanceQty
-	,(Select MinSciDelivery from DBO.GetSCI(A.poid,x.Category))[MinSciDelivery]
-	,(Select MinBuyerDelivery from DBO.GetSCI(A.poid,x.Category))[MinBuyerDelivery]
-	,A.refno
-	,[Article] = Style.Article
-	,[MaterialType] = fabric.MtlTypeID
-	,MtlType.CategoryType
-	, [Color]  = isnull( psdsC.SpecValue,'')
-	, [Color Name] = c.Name
-	,SizeSpec= isnull(psdsS.SpecValue ,'')
-	,PS.stockunit
-	,(P.SuppID+'-'+s.AbbEN)Supplier
-	,[OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
-    ,m.ALocation
-	,A.Result
-	,[% of Inspection] = iif(isnull(A.InspQty,0) = 0 ,0 ,round((A.InspQty / A.ArriveQty)*100 ,2))
-    ,IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
-	,IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
-	,IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
-	,IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
-    ,Inspector2 = (select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id) 
-	,a.Remark
-	,[OvenEncode] = iif(AIRL.NonOven =1 and AIRL.NonWash =1, 'Y', '')
-    ,AIRL.Result
-	,[NonOven] = iif(AIRL.NonOven =1, 'Y', '')
-	,[Oven] = iif(AIRL.OvenEncode = 1, AIRL.Oven, null)
-	,[OvenScale] = iif(AIRL.OvenEncode = 1, AIRL.OvenScale, null) 
-	,[OvenDate] = iif(AIRL.OvenEncode = 1, AIRL.OvenDate, null)
-	,[NonWash] = iif(AIRL.NonWash =1, 'Y', '')
-	,[Wash] = iif(AIRL.WashEncode = 1, AIRL.Wash, null) 
-	,[WashScale] = iif(AIRL.WashEncode = 1, AIRL.WashScale, null)
-	,[WashDate] = iif(AIRL.WashEncode = 1, AIRL.WashDate, null)
-from dbo.AIR A WITH (NOLOCK) 
-inner join (
-		select r.WhseArrival,r.InvNo,r.ExportId,r.Id,r.PoId,r.seq1,r.seq2,r.StockQty 
-        from dbo.View_AllReceivingDetail r WITH (NOLOCK)   
-		{0}
-) t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID=a.ReceivingID
+IF Object_id('tempdb.dbo.#ViewAllReceivingDetail') IS NOT NULL
+BEGIN
+	DROP TABLE #ViewAllReceivingDetail
+END
+IF Object_id('tempdb.dbo.#DataSource') IS NOT NULL
+BEGIN
+	DROP TABLE #DataSource
+END
+IF Object_id('tempdb.dbo.#OrderInfo') IS NOT NULL
+BEGIN
+	DROP TABLE #OrderInfo
+END
+
+select r.WhseArrival
+	 , r.InvNo
+	 , r.ExportId
+	 , r.ID
+	 , r.PoId
+	 , r.Seq1
+	 , r.Seq2
+	 , r.StockQty
+into #ViewAllReceivingDetail
+from dbo.View_AllReceivingDetail r WITH (NOLOCK)
+{0}
+
+select A.ID
+	 , A.POID
+	 , A.SEQ1
+	 , A.SEQ2
+	 , A.Refno
+	 , A.Result
+	 , A.Inspector
+	 , A.InspQty
+	 , A.ArriveQty
+	 , A.RejectQty
+	 , A.InspDate
+	 , A.Status
+	 , A.Remark
+	 , A.Defect
+     , et.ShipModeID
+	 , t.ExportId
+	 , t.InvNo
+	 , t.WhseArrival
+	 , t.StockQty
+     , total_t.InvStock
+     , total_t.BulkStock
+     , total_t.BalanceQty
+into #DataSource
+from dbo.AIR A WITH (NOLOCK)
+inner join #ViewAllReceivingDetail t on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND T.ID = a.ReceivingID
 cross apply(
 	select [BalanceQty] = sum(fit.inqty - fit.outqty + fit.adjustqty - fit.ReturnQty)
-	,[InvStock] =  sum(iif(rd.StockType = 'I',RD.StockQty, 0))
-	,[BulkStock] = sum(iif(rd.StockType = 'B',RD.StockQty, 0))
+		 , [InvStock] =  sum(iif(rd.StockType = 'I',RD.StockQty, 0))
+		 , [BulkStock] = sum(iif(rd.StockType = 'B',RD.StockQty, 0))
 	from dbo.View_AllReceivingDetail rd WITH (NOLOCK) 
-    left join FtyInventory fit WITH (NOLOCK)  on fit.poid = rd.PoId and fit.seq1 = rd.seq1 and fit.seq2 = rd.Seq2 AND fit.StockType=rd.StockType and fit.Roll=rd.Roll and fit.Dyelot=rd.Dyelot
-	where rd.PoId = A.POID and rd.Seq1 = A.SEQ1 and rd.Seq2 = A.SEQ2 AND rd.Id=A.ReceivingID
+    left join FtyInventory fit WITH (NOLOCK)  on fit.POID = rd.PoId and fit.Seq1 = rd.Seq1 and fit.Seq2 = rd.Seq2 AND fit.StockType = rd.StockType and fit.Roll = rd.Roll and fit.Dyelot = rd.Dyelot
+	where rd.PoId = A.POID and rd.Seq1 = A.SEQ1 and rd.Seq2 = A.SEQ2 AND rd.ID = A.ReceivingID
 ) total_t
 left join Export et with (nolock) on et.ID = t.ExportId
-inner join (
-		select distinct id,O.factoryid,O.BrandID,O.StyleID,O.SeasonID,O.Category,O.StyleUkey ,o.SewInLine
-		from dbo.Orders o WITH (NOLOCK)  
-		{1}
-) x on x. id = A.POID
+
+select o.ID, O.FactoryID, O.BrandID, O.StyleID, O.SeasonID, O.Category, O.StyleUkey, o.SewInLine
+into #OrderInfo
+from dbo.Orders o WITH (NOLOCK)
+inner join (select distinct POID from #DataSource) d on o.ID = d.POID
+{1}
+
+select A.POID
+	 , SEQ = A.SEQ1 + '-' + A.SEQ2
+	 , x.FactoryID
+	 , x.BrandID
+	 , x.StyleID
+	 , x.SeasonID
+     , A.ShipModeID
+	 , A.ExportId
+	 , A.InvNo
+     , x.SewInLine
+	 , A.WhseArrival
+	 , A.StockQty
+     , A.InvStock
+     , A.BulkStock
+     , A.BalanceQty
+	 , (Select MinSciDelivery from DBO.GetSCI(A.POID,x.Category))[MinSciDelivery]
+	 , (Select MinBuyerDelivery from DBO.GetSCI(A.POID,x.Category))[MinBuyerDelivery]
+	 , A.Refno
+	 , [Article] = Style.Article
+	 , [MaterialType] = fabric.MtlTypeID
+	 , MtlType.CategoryType
+	 , [Color]  = isnull( psdsC.SpecValue,'')
+	 , [Color Name] = c.Name
+	 , SizeSpec= isnull(psdsS.SpecValue ,'')
+	 , PS.stockunit
+	 , (P.SuppID+'-'+s.AbbEN)Supplier
+	 , [OrderQty] = Round(dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
+     , m.ALocation
+	 , A.Result
+	 , [% of Inspection] = iif(isnull(A.InspQty,0) = 0 ,0 ,round((A.InspQty / A.ArriveQty)*100 ,2))
+     , IIF(A.Status='Confirmed',A.InspQty,NULL)[Inspected Qty]
+	 , IIF(A.Status='Confirmed',A.RejectQty,NULL)[Rejected Qty]
+	 , IIF(A.Status='Confirmed', DefectText.Val ,NULL)[Defect Type]
+	 , IIF(A.Status='Confirmed',A.InspDate,NULL)[Inspection Date]
+     , Inspector2 = (select Pass1.Name from Pass1 WITH (NOLOCK) where a.Inspector = pass1.id) 
+	 , a.Remark
+	 , [OvenEncode] = iif(AIRL.NonOven =1 and AIRL.NonWash =1, 'Y', '')
+     , AIRL.Result
+	 , [NonOven] = iif(AIRL.NonOven =1, 'Y', '')
+	 , [Oven] = iif(AIRL.OvenEncode = 1, AIRL.Oven, null)
+	 , [OvenScale] = iif(AIRL.OvenEncode = 1, AIRL.OvenScale, null) 
+	 , [OvenDate] = iif(AIRL.OvenEncode = 1, AIRL.OvenDate, null)
+	 , [NonWash] = iif(AIRL.NonWash =1, 'Y', '')
+	 , [Wash] = iif(AIRL.WashEncode = 1, AIRL.Wash, null) 
+	 , [WashScale] = iif(AIRL.WashEncode = 1, AIRL.WashScale, null)
+	 , [WashDate] = iif(AIRL.WashEncode = 1, AIRL.WashDate, null)
+from #DataSource A
+inner join #OrderInfo x on A.POID = x.ID
 inner join dbo.PO_Supp P WITH (NOLOCK) on P.id = A.POID and P.SEQ1 = A.SEQ1 
 inner join dbo.PO_Supp_Detail PS WITH (NOLOCK) on PS.ID = A.POID and PS.SEQ1 = A.SEQ1 and PS.SEQ2 = A.SEQ2
 inner join supp s WITH (NOLOCK) on s.id = P.SuppID

@@ -213,6 +213,7 @@ select  POID = rtrim(i.seq70poid)
 		, Color
 		, [AccuTransferred] = isnull(TransferOut.Qty,0)
 		, SizeSpec= isnull(psdsS.SpecValue, '')
+        , psd.SCIRefno
 into #tmp
 from dbo.Invtrans i WITH (NOLOCK) 
 inner join PO_Supp_Detail psd WITH (NOLOCK) on i.InventoryPOID = psd.ID
@@ -242,7 +243,13 @@ outer apply(
 where (i.type='2' or i.type='6')
 		and i.seq70poid = @IssueSP
 		and o.MDivisionID = @MDivisionID
-group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, psdsS.SpecValue,c.Color,TransferOut.Qty
+AND NOT EXISTS (--由工廠採購的物料是禁止轉出給其他廠(不管境內或跨國
+    SELECT 1
+    FROM Order_FtyMtlStdCost oc WITH (NOLOCK) 
+    WHERE oc.OrderID = psd.ID
+    AND oc.SCIRefno = psd.SCIRefno
+)
+group by i.seq70poid,rtrim(i.seq70poid), rtrim(i.seq70seq1), i.seq70seq2, i.InventoryPOID, i.InventorySeq1, i.InventorySeq2, psd.StockUnit, psd.FabricType,PSD.Refno, psdsS.SpecValue,c.Color,TransferOut.Qty, psd.SCIRefno
 
 select  selected = 0
 		, [ExportID] = Stuff((select distinct concat(',', r.ExportId)
@@ -283,6 +290,7 @@ select  selected = 0
         , fi.Tone
 		, #tmp.[AccuTransferred]
         , fi.Lock
+        , #tmp.SCIRefno
 into    #tmpDetailResult
 from    #tmp  
 left join dbo.FtyInventory fi WITH (NOLOCK) on fi.POID = InventoryPOID 
@@ -331,6 +339,7 @@ select  selected = cast(0 as bit)
         , Tone
 		, [AccuTransferred]
         , Lock
+        , SCIRefno
 into    #tmpDetail
 from    #tmpDetailResult
 
@@ -349,9 +358,10 @@ select  selected
 		, [AccuTransferred]
         , [TotalTransfer] = 0.00		
 		, [Balance] = TaipeiOutput-AccuTransferred
+        , SCIRefno
 from    #tmpDetail
 group by selected, ToPOID, ToSeq1, ToSeq2, ToFactory, InventoryPOID, Inventoryseq1, InventorySEQ2
-        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput, AccuTransferred
+        , FabricType, StockUnit, TaipeiLastOutput, TaipeiOutput, AccuTransferred, SCIRefno
 order by ToPOID, ToSeq1, ToSeq2;
 
 select  *

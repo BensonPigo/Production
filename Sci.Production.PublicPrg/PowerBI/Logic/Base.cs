@@ -97,6 +97,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             P_ProdEffAnalysis,
             P_StationHourlyOutput,
             P_StyleChangeover,
+            P_ProdctionStatus,
         }
 
         /// <summary>
@@ -140,6 +141,16 @@ namespace Sci.Production.Prg.PowerBI.Logic
             CallTPEWebAPI callTPEWebAPI = new CallTPEWebAPI(this.IsTest());
             ukey = callTPEWebAPI.CreateJobLogAsnc(jobLog, null);
             return ukey;
+        }
+
+        /// <summary>
+        /// Check Class Name
+        /// </summary>
+        /// <param name="biTableName">BI TABLE NAME</param>
+        /// <returns>bool</returns>
+        public bool CheckClassName(string biTableName)
+        {
+            return Enum.TryParse(biTableName, true, out ListName _);
         }
 
         /// <summary>
@@ -206,6 +217,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                 bool hasStartDate2 = (bool)dr["HasStartDate2"];
                 bool hasEndDate2 = (bool)dr["HasEndDate2"];
                 bool runOnSunday = (bool)dr["RunOnSunday"];
+                bool runOnPM = (bool)dr["RunOnPM"];
                 int group = (int)dr["Group"];
                 int seq = (int)dr["SEQ"];
                 DateTime? sDate = hasStartDate ? DateTime.Parse(this.GetSQLdate(dr["StartDateDefault"].ToString())) : (DateTime?)null;
@@ -236,6 +248,7 @@ ORDER BY [Group], [SEQ], [NAME]";
                     SEQ = seq,
                     Source = source,
                     TransferDate = transferDate,
+                    RunOnPM = runOnPM,
                 };
 
                 executes.Add(model);
@@ -575,6 +588,8 @@ ORDER BY [Group], [SEQ], [NAME]";
                     return new P_Import_StationHourlyOutput().P_StationHourlyOutput(item.SDate, item.EDate);
                 case ListName.P_StyleChangeover:
                     return new P_Import_StyleChangeover().P_StyleChangeover(item.SDate);
+                case ListName.P_ProdctionStatus:
+                    return new P_Import_ProductionStatus().P_ProductionStatus(item.SDate);
                 default:
                     // Execute all Stored Procedures
                     return this.ExecuteSP(item);

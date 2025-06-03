@@ -1015,7 +1015,9 @@ values({itemDistribute["Ukey"]}, '{id}', 'EXCESS', '', '{itemDistribute["SizeCod
                 case CuttingForm.P02:
                     colName = "CutPlanID";
                     where = string.Empty;
-                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '')";
+
+                    // Seq需有值，才能產出CutRef# ISP20250585
+                    cmdWhere = "AND (CutPlanID IS NULL OR CutPlanID = '') and isnull(w.seq,'') <> ''";
                     nColumn = string.Empty;
                     oColumn = ", w.Seq";
                     outerApply = string.Empty;
@@ -1985,7 +1987,7 @@ AND Junk = 0
                     }
 
                     dr["SpreadingNoID"] = selectItem.GetSelectedString();
-                    dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
+                    //dr["CutCellID"] = selectItem.GetSelecteds()[0]["CutCellID"];
                     dr.EndEdit();
                 }
             };
@@ -2006,7 +2008,7 @@ AND Junk = 0
                 dr["SpreadingNoID"] = e.FormattedValue;
                 if (drV != null)
                 {
-                    dr["CutCellID"] = drV["CutCellID"];
+                    //dr["CutCellID"] = drV["CutCellID"];
                 }
 
                 dr.EndEdit();
@@ -5052,17 +5054,22 @@ WHERE TABLE_NAME = N'{tableName}'";
                                 r.Insert(Excel.XlInsertShiftDirection.xlShiftDown, Excel.XlInsertFormatOrigin.xlFormatFromRightOrBelow); // 新增Row
                             }
 
-                            arrayrow = (nDisCount / 2) + i;
-                            worksheet.Cells[nrow, 1] = workorderDisGroup[i].OrderID;
-                            worksheet.Cells[nrow, 4] = workorderDisGroup[i].Article;
-                            worksheet.Cells[nrow, 7] = workorderDisGroup[i].SizeCode;
-                            worksheet.Cells[nrow, 9] = workorderDisGroup[i].Qty.ToString();
-                            if (arrayrow + 1 < nDisCount)
+                            // 左側
+                            var left = workorderDisGroup[i];
+                            worksheet.Cells[nrow, 1] = left.OrderID;
+                            worksheet.Cells[nrow, 4] = left.Article;
+                            worksheet.Cells[nrow, 7] = left.SizeCode;
+                            worksheet.Cells[nrow, 9] = left.Qty.ToString();
+
+                            // 右側
+                            int rightIndex = i + (int)disRow;
+                            if (rightIndex < nDisCount)
                             {
-                                worksheet.Cells[nrow, 11] = workorderDisGroup[arrayrow + 1].OrderID;
-                                worksheet.Cells[nrow, 14] = workorderDisGroup[arrayrow + 1].Article;
-                                worksheet.Cells[nrow, 17] = workorderDisGroup[arrayrow + 1].SizeCode;
-                                worksheet.Cells[nrow, 19] = workorderDisGroup[arrayrow + 1].Qty.ToString();
+                                var right = workorderDisGroup[rightIndex];
+                                worksheet.Cells[nrow, 11] = right.OrderID;
+                                worksheet.Cells[nrow, 14] = right.Article;
+                                worksheet.Cells[nrow, 17] = right.SizeCode;
+                                worksheet.Cells[nrow, 19] = right.Qty.ToString();
                             }
                             else
                             {
