@@ -35,19 +35,21 @@
             this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.comboPrint = new Sci.Win.UI.ComboBox();
             this.lbPrint = new Sci.Win.UI.Label();
+            this.comboSortBy = new Sci.Win.UI.ComboBox();
+            this.lbSortBy = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
             // 
-            this.print.Location = new System.Drawing.Point(348, 12);
+            this.print.Location = new System.Drawing.Point(356, 12);
             // 
             // toexcel
             // 
-            this.toexcel.Location = new System.Drawing.Point(348, 48);
+            this.toexcel.Location = new System.Drawing.Point(356, 48);
             // 
             // close
             // 
-            this.close.Location = new System.Drawing.Point(348, 84);
+            this.close.Location = new System.Drawing.Point(356, 84);
             // 
             // txtVersion
             // 
@@ -138,11 +140,35 @@
             this.lbPrint.Text = "Print:";
             this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
             // 
+            // comboSortBy
+            // 
+            this.comboSortBy.BackColor = System.Drawing.Color.White;
+            this.comboSortBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortBy.FormattingEnabled = true;
+            this.comboSortBy.IsSupportUnselect = true;
+            this.comboSortBy.Location = new System.Drawing.Point(230, 11);
+            this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.OldText = "";
+            this.comboSortBy.Size = new System.Drawing.Size(121, 24);
+            this.comboSortBy.TabIndex = 105;
+            // 
+            // lbSortBy
+            // 
+            this.lbSortBy.BackColor = System.Drawing.Color.Transparent;
+            this.lbSortBy.Location = new System.Drawing.Point(173, 12);
+            this.lbSortBy.Name = "lbSortBy";
+            this.lbSortBy.Size = new System.Drawing.Size(54, 23);
+            this.lbSortBy.TabIndex = 104;
+            this.lbSortBy.Text = "Sort By:";
+            this.lbSortBy.TextStyle.Color = System.Drawing.Color.Black;
+            // 
             // P19_Print
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(440, 155);
+            this.ClientSize = new System.Drawing.Size(448, 155);
+            this.Controls.Add(this.comboSortBy);
+            this.Controls.Add(this.lbSortBy);
             this.Controls.Add(this.comboPrint);
             this.Controls.Add(this.lbPrint);
             this.Controls.Add(this.comboType);
@@ -166,6 +192,8 @@
             this.Controls.SetChildIndex(this.comboType, 0);
             this.Controls.SetChildIndex(this.lbPrint, 0);
             this.Controls.SetChildIndex(this.comboPrint, 0);
+            this.Controls.SetChildIndex(this.lbSortBy, 0);
+            this.Controls.SetChildIndex(this.comboSortBy, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -180,5 +208,7 @@
         private Win.UI.RadioButton radioQRCodeSticker;
         private Win.UI.ComboBox comboPrint;
         private Win.UI.Label lbPrint;
+        private Win.UI.ComboBox comboSortBy;
+        private Win.UI.Label lbSortBy;
     }
 }
