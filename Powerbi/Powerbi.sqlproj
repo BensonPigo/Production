@@ -270,6 +270,7 @@
     <Build Include="dbo\Tables\P_ChangeoverCheckList_Histroy.sql" />
     <Build Include="dbo\Tables\P_ProdctionStatus.sql" />
     <Build Include="dbo\Tables\P_ProdctionStatus_History.sql" />
+    <Build Include="dbo\Tables\P_CartonStatusTrackingList_History.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Utility.dll" />
