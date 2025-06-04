@@ -139,7 +139,7 @@ WHERE Issue_DetailUkey IN ({ukeys})
                 return false;
             }
 
-            WH_Print p = new WH_Print(this.CurrentMaintain, "P13")
+            WH_Print p = new WH_Print(this.CurrentMaintain, "P13", true)
             {
                 CurrentDataRow = this.CurrentMaintain,
             };
@@ -193,35 +193,48 @@ WHERE Issue_DetailUkey IN ({ukeys})
                 report.ReportParameters.Add(new ReportParameter("preparedBy", preparedBy));
                 #endregion
                 #region -- 撈表身資料 --
+                string strorderby = string.Empty;
+                if (p.IssortbyLocationAndRoll == false)
+                {
+                    strorderby = "id.Dyelot,id.Roll";
+                }
+                else if (p.IssortbyLocationAndRoll == true)
+                {
+                    strorderby = $@"dbo.Getlocation(fi.ukey) 
+						,TRY_CAST(LEFT(id.Roll, PATINDEX('%[^0-9]%', id.Roll + 'X') - 1) AS INT)
+						,TRY_CAST(LEFT(id.Dyelot, PATINDEX('%[^0-9]%', id.Dyelot + 'X') - 1) AS INT)";
+                }
+
                 pars = new List<SqlParameter>
-            {
-                new SqlParameter("@ID", id),
-            };
-                string sqlcmd = @"
+                {
+                    new SqlParameter("@ID", id),
+                };
+                string sqlcmd = string.Format(
+                    @"
 select id.POID,
 	    id.seq1 +  '-'  + id.seq2 as SEQ,
         p.Scirefno,
 	    p.seq1,
 	    p.seq2,
-	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
+	    [desc] =IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))) 
 					,''
 					,dbo.getMtlDesc(id.poid,id.seq1,id.seq2,2,0)
 				)
 				------ + Tone------
-				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
+				 + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))) 
 					,''
 					,'Tone/Grp : '
                     ) + fi.Tone
 				------ + MDesc------
-                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))) 
+                    + char(10) + char(13) + IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(fi.Tone = lag(fi.Tone,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))) 
 					,''
 					,isnull(iif(p.FabricType='F', 'Relaxation Type：'+(select FabricRelaxationID from [dbo].[SciMES_RefnoRelaxtime] where Refno = p.Refno), ''),'')
                     ),
@@ -230,10 +243,10 @@ select id.POID,
 	    id.Qty,
 	    p.StockUnit,
         dbo.Getlocation(fi.ukey) [location],
-        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll) 
-					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
-					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll))
+        ContainerCode = IIF((p.ID = lag(p.ID,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}) 
+					AND(p.seq1 = lag(p.seq1,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(p.seq2 = lag(p.seq2,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
+					AND(fi.ContainerCode = lag(fi.ContainerCode,1,'')over (order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}))
 					) 
 					,''
 					,fi.ContainerCode),
@@ -283,8 +296,8 @@ Outer apply (
 	and p.FabricType = 'F'
 )td
 where id.id= @ID
-order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,id.Dyelot,id.Roll
-";
+order by id.POID,p.seq1,p.seq2,fi.Tone,fi.ContainerCode,{0}
+", strorderby);
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable dtDetail);
                 if (!result)
                 {
@@ -1160,6 +1173,25 @@ AND ID = @ID
                 MyUtility.Msg.WarningBox("Cutting Plan ID not found, or W/H Reason is not 00007.");
                 return;
             }
+        }
+
+        private int ExtractRollSortKey(string roll)
+        {
+            if (string.IsNullOrWhiteSpace(roll))
+            {
+                return int.MaxValue;
+            }
+
+            // 嘗試擷取開頭的數字部分
+            var match = System.Text.RegularExpressions.Regex.Match(roll, @"\d+");
+
+            if (match.Success && int.TryParse(match.Value, out int value))
+            {
+                return value;
+            }
+
+            // 無法解析數字的話放最後
+            return int.MaxValue;
         }
     }
 }

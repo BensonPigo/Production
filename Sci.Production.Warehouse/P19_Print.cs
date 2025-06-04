@@ -28,6 +28,7 @@ namespace Sci.Production.Warehouse
             this.mainCurrentMaintain = drMain;
             MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
             this.comboPrint.Text = "Sticker";
+            this.SetComboSortBy();
         }
 
         private void RadioTransferOutReport_CheckedChanged(object sender, EventArgs e)
@@ -47,6 +48,9 @@ namespace Sci.Production.Warehouse
             this.toexcel.Enabled = !isTransferOutOrQRCodeChecked;
             this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
             this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+
+            bool isTransferOutReportChecked = this.radioTransferOutReport.Checked;
+            this.comboSortBy.Enabled = isTransferOutReportChecked;
         }
 
         /// <inheritdoc/>
@@ -78,16 +82,43 @@ namespace Sci.Production.Warehouse
                 }
                 #endregion
                 #region  抓表身資料
+                string selectedValue = null;
+                string strorderby = string.Empty;
+
+                if (this.comboSortBy.InvokeRequired)
+                {
+                    this.comboSortBy.Invoke(new Action(() =>
+                    {
+                        selectedValue = this.comboSortBy.SelectedValue?.ToString();
+                    }));
+                }
+                else
+                {
+                    selectedValue = this.comboSortBy.SelectedValue?.ToString();
+                }
+
+                if (selectedValue == "1")
+                {
+                    strorderby = " a.Dyelot, Len(a.Roll), a.Roll";
+                }
+                else if (selectedValue == "2")
+                {
+                    strorderby = $@"dbo.Getlocation(fi.ukey) 
+						,TRY_CAST(LEFT(a.Roll, PATINDEX('%[^0-9]%', a.Roll + 'X') - 1) AS INT)
+						,TRY_CAST(LEFT(a.Dyelot, PATINDEX('%[^0-9]%', a.Dyelot + 'X') - 1) AS INT)";
+                }
+
                 pars = new List<SqlParameter>();
                 pars.Add(new SqlParameter("@ID", id));
 
-                string tmp = @"
+                string tmp = string.Format(
+                    @"
 select a.POID
     ,a.Seq1+'-'+a.seq2 as SEQ
 	,a.Roll,a.Dyelot
-	,[DESC] = IIF((b.ID =   lag(b.ID,1,'') over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll) 
-		AND(b.seq1 = lag(b.seq1,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))
-		AND(b.seq2 = lag(b.seq2,1,'')over (order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll))) 
+	,[DESC] = IIF((b.ID =   lag(b.ID,1,'') over (order by b.id, b.seq1, b.seq2, {0}) 
+		AND(b.seq1 = lag(b.seq1,1,'')over (order by b.id, b.seq1, b.seq2, {0}))
+		AND(b.seq2 = lag(b.seq2,1,'')over (order by b.id, b.seq1, b.seq2, {0}))) 
 		,'',dbo.getMtlDesc(a.poid,a.seq1,a.seq2,2,0))
     ,[ToPoid] = iif(a.ToPOID = '', '', 'TO POID: ' + a.ToPOID + ' , Seq: ' + a.ToSeq1 + '-' + a.ToSeq2)
 	,CASE a.stocktype
@@ -144,8 +175,8 @@ Outer apply (
 	and b.FabricType = 'F'
 )td
 where a.id= @ID
-order by b.id, b.seq1, b.seq2, a.Dyelot, Len(a.Roll), a.Roll
-";
+order by b.id, b.seq1, b.seq2, {0}
+", strorderby);
                 result = DBProxy.Current.Select(string.Empty, tmp, pars, out this.dtResult);
                 if (!result)
                 {
@@ -367,6 +398,40 @@ order by td.Dyelot, Len(td.Roll), td.Roll
             this.comboType.DataSource = null;
             MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
             this.comboType.Text = "Straight";
+        }
+
+        private void SetComboSortBy()
+        {
+            DataTable dtComboSortBy = new DataTable();
+            dtComboSortBy.Columns.Add("ID", typeof(int));
+            dtComboSortBy.Columns.Add("NAME", typeof(string));
+
+            dtComboSortBy.Rows.Add(1, string.Empty);
+            dtComboSortBy.Rows.Add(2, "Location, Roll");
+
+            this.comboSortBy.DataSource = dtComboSortBy;
+            this.comboSortBy.DisplayMember = "NAME";
+            this.comboSortBy.ValueMember = "ID";
+            this.comboSortBy.SelectedValue = 1;
+        }
+
+        private int ExtractRollSortKey(string roll)
+        {
+            if (string.IsNullOrWhiteSpace(roll))
+            {
+                return int.MaxValue;
+            }
+
+            // 嘗試擷取開頭的數字部分
+            var match = System.Text.RegularExpressions.Regex.Match(roll, @"\d+");
+
+            if (match.Success && int.TryParse(match.Value, out int value))
+            {
+                return value;
+            }
+
+            // 無法解析數字的話放最後
+            return int.MaxValue;
         }
     }
 }

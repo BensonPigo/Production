@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Sci.Production.Warehouse
@@ -40,6 +41,7 @@ namespace Sci.Production.Warehouse
             this.ButtonEnable();
             MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
             this.comboPrint.Text = "Sticker";
+            this.SetComboSortBy();
         }
 
         /// <inheritdoc/>
@@ -378,23 +380,38 @@ where id in (select distinct poid from issue_detail WITH (NOLOCK) where id = @ID
                 #endregion
 
                 #region  抓表身資料
-                pars = new List<SqlParameter> { new SqlParameter("@ID", id) };
-                sqlcmd = @"
-select  [Poid] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
+                string strorderby = string.Empty;
+                if (this.comboSortBy.SelectedValue?.ToString() == "1")
+                {
+                    strorderby = $@"t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
 			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
-			            AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+			            AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll)";
+                }
+                else if (this.comboSortBy.SelectedValue?.ToString() == "2")
+                {
+                    strorderby = $@"t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, dbo.Getlocation(b.ukey) 
+						    ,TRY_CAST(LEFT(t.Roll, PATINDEX('%[^0-9]%', t.Roll + 'X') - 1) AS INT)
+						    ,TRY_CAST(LEFT(t.Dyelot, PATINDEX('%[^0-9]%', t.Dyelot + 'X') - 1) AS INT)) 
+			            AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2,dbo.Getlocation(b.ukey) 
+						    ,TRY_CAST(LEFT(t.Roll, PATINDEX('%[^0-9]%', t.Roll + 'X') - 1) AS INT)
+						    ,TRY_CAST(LEFT(t.Dyelot, PATINDEX('%[^0-9]%', t.Dyelot + 'X') - 1) AS INT)))
+			            AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, dbo.Getlocation(b.ukey) 
+						    ,TRY_CAST(LEFT(t.Roll, PATINDEX('%[^0-9]%', t.Roll + 'X') - 1) AS INT)
+						    ,TRY_CAST(LEFT(t.Dyelot, PATINDEX('%[^0-9]%', t.Dyelot + 'X') - 1) AS INT))";
+                }
+
+                pars = new List<SqlParameter> { new SqlParameter("@ID", id) };
+                sqlcmd = string.Format(
+                    @"
+select  [Poid] = IIF (({0})) 
 			          , ''
                       , t.poid) 
-        , [Seq] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
-			             AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
-			             AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+        , [Seq] = IIF (({0})) 
 			            , ''
                         , t.seq1+ '-' +t.seq2)
         , [GroupPoid] = t.poid 
         , [GroupSeq] = t.seq1+ '-' +t.seq2 
-        , [desc] = IIF (( t.poid = lag (t.poid,1,'') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll) 
-			              AND (t.seq1 = lag (t.seq1, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))
-			              AND (t.seq2 = lag (t.seq2, 1, '') over (order by t.poid, t.seq1, t.seq2, t.Dyelot, t.Roll))) 
+        , [desc] = IIF (({0})) 
 				        , ''
                         ,( SELECT   Concat(stock7X.value
                                             , char(10)
@@ -437,7 +454,7 @@ outer apply
     where f.poid = t.POID and f.SEQ1 =t.Seq1 and f.SEQ2 =t.Seq2 and fp.Roll =t.Roll and fp.Dyelot =t.Dyelot
 ) as phy
 where t.id= @ID
-";
+", strorderby);
                 result = DBProxy.Current.Select(string.Empty, sqlcmd, pars, out DataTable bb);
                 if (!result)
                 {
@@ -501,7 +518,27 @@ where t.id= @ID
                         Qty = row1["Qty"].ToString().Trim(),
                         Total = row1["Total"].ToString().Trim(),
                         ActualWidth = row1["ActualWidth"].ToString().Trim(),
-                    }).OrderBy(s => s.GroupPoid).ThenBy(s => s.GroupSeq).ThenBy(s => s.Dyelot).ThenBy(s => s.Roll).ToList();
+                    }).ToList();
+
+                if (this.comboSortBy.SelectedValue?.ToString() == "1")
+                {
+                    data = data.OrderBy(s => s.GroupPoid)
+                               .ThenBy(s => s.GroupSeq)
+                               .ThenBy(s => s.Dyelot)
+                               .ThenBy(s => s.Roll)
+                               .ToList();
+                }
+                else if (this.comboSortBy.SelectedValue?.ToString() == "2")
+                {
+                    data = data.OrderBy(s => s.GroupPoid)
+                               .ThenBy(s => s.GroupSeq)
+                               .ThenBy(s => s.Location)
+                               .ThenBy(s => this.ExtractRollSortKey(s.Roll))
+                               .ThenBy(s => s.Roll)
+                               .ThenBy(s => this.ExtractRollSortKey(s.Dyelot))
+                               .ThenBy(s => s.Dyelot)
+                               .ToList();
+                }
 
                 report.ReportDataSource = data;
                 #endregion
@@ -571,6 +608,9 @@ where t.id= @ID
             this.toexcel.Enabled = isFabricsRelaxationLogsheetChecked;
             this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
             this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+
+            bool isTransferSlipChecked = this.radioTransferSlip.Checked;
+            this.comboSortBy.Enabled = isTransferSlipChecked;
         }
 
         private void ComboPrint_SelectedIndexChanged(object sender, EventArgs e)
@@ -617,6 +657,40 @@ where t.id= @ID
             this.comboType.DataSource = null;
             MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
             this.comboType.Text = "Straight";
+        }
+
+        private void SetComboSortBy()
+        {
+            DataTable dtComboSortBy = new DataTable();
+            dtComboSortBy.Columns.Add("ID", typeof(int));
+            dtComboSortBy.Columns.Add("NAME", typeof(string));
+
+            dtComboSortBy.Rows.Add(1, string.Empty);
+            dtComboSortBy.Rows.Add(2, "Location, Roll");
+
+            this.comboSortBy.DataSource = dtComboSortBy;
+            this.comboSortBy.DisplayMember = "NAME";
+            this.comboSortBy.ValueMember = "ID";
+            this.comboSortBy.SelectedValue = 1;
+        }
+
+        private int ExtractRollSortKey(string roll)
+        {
+            if (string.IsNullOrWhiteSpace(roll))
+            {
+                return int.MaxValue;
+            }
+
+            // 嘗試擷取開頭的數字部分
+            var match = System.Text.RegularExpressions.Regex.Match(roll, @"\d+");
+
+            if (match.Success && int.TryParse(match.Value, out int value))
+            {
+                return value;
+            }
+
+            // 無法解析數字的話放最後
+            return int.MaxValue;
         }
     }
 }
