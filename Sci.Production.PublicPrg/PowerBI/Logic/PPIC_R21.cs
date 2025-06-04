@@ -42,7 +42,19 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string sqlPKAuditWhere = string.Empty;
             string sqlPackWhere = string.Empty;
             string sqlProcessTime = string.Empty;
+            string sqlWhereStatus = string.Empty;
             List<string> processList = model.ComboProcess.Split(',').ToList();
+
+            // 過濾掉不用Status判斷的項目
+            var validProcess = processList.Where(p => p == "Scan & Pack" || p == "Hauling" || p == "M360 MD" || p == "Pullout").ToList();
+            if (validProcess.Any())
+            {
+                string inClause = string.Join(",", validProcess.Select(p => $"'{p}'"));
+                sqlWhereStatus += $" AND Status.val IN ({inClause}) ";
+            }
+
+            bool filterPulloutStatus = processList.Where(p => p == "Pullout").ToList().Any();
+			string sqlStatusPullout = filterPulloutStatus ? " when p.PulloutDate is not null then 'Pullout'" : string.Empty;
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -64,7 +76,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 sqlWhere += " and s.SCIDelivery <= @SCIDeliveryTo ";
             }
 
-			string joinType = model.IsPPICP26 ? "LEFT" : "INNER";
+            string joinType = model.IsPPICP26 ? "LEFT" : "INNER";
 
             foreach (var process in processList)
             {
@@ -179,8 +191,8 @@ and	pld.M360MDScanDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "Pullout":
                         sqlPackWhere += @" 
-and	pld.ClogPulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        sqlPKAuditWhere += "and pld.ClogPulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+and	p.PulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        sqlPKAuditWhere += "and p.PulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     default:
                         break;
@@ -882,9 +894,8 @@ outer apply(
 	)
 ) HeatSealName
 outer apply(
-select val = case 
-			when p.PulloutDate is not null
-					then 'Pullout'
+select val = case 			
+{sqlStatusPullout}
 			when HaulingScanTime.val is null 
 					and PackingAuditScanTime.val is null 
 					and M360MDScanTime.val is null
@@ -1081,6 +1092,7 @@ select val = case
 		else '' end 
 )Status
 where 1=1
+{sqlWhereStatus}
 ";
             if (!model.IsPPICP26)
             {
