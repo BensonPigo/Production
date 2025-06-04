@@ -295,7 +295,6 @@ select a.ID
     , a.FactoryID
     , a.POID
     , a.Category
-    , a.CdCodeID 
     , sty.CDCodeNew
     , sty.ProductType
     , sty.FabricType
@@ -333,7 +332,7 @@ Outer apply (
 	and s.SeasonID = a.SeasonID 
 	and s.BrandID = a.BrandID
 )sty
-group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category, a.CdCodeID ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
+group by a.ID, a.ProgramID, a.StyleID, a.SeasonID, a.BrandID , a.FactoryID, a.POID , a.Category ,a.BuyerDelivery, a.SCIDelivery, a.SewingLineID 
 , a.StyleDesc,a.ComboType,a.ModularParent, a.OutputDate, Category, Shift, SewingLineID, Team, orderid, ComboType, SCategory, FactoryID, ProgramID, CPU, CPUFactor, StyleID, Rate,FtyZone
 , sty.CDCodeNew, sty.ProductType, sty.FabricType, sty.Lining, sty.Gender, sty.Construction
 ";
@@ -430,7 +429,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                 string strStyle = string.Format(
                     @"
 {0} 
-Select StyleID, BrandID, CDCodeID, StyleDesc, SeasonID
+Select StyleID, BrandID, StyleDesc, SeasonID
 , QARate, TotalCPUOut,TotalManHour, ModularParent, CPUAdjusted, Category, OutputDate, SewingLineID, FtyZone, FactoryID
 , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ",
@@ -464,7 +463,7 @@ into #tmp_MaxOutputDate
 from #tmp 
 group by StyleID,BrandID,StyleDesc,SeasonID,FtyZone
 
-select StyleID,BrandID,CDCodeID
+select StyleID,BrandID
 , CDCodeNew
 , ProductType
 , FabricType
@@ -504,14 +503,14 @@ select StyleID,BrandID,CDCodeID
                 group by a.FtyZone FOR XML PATH(''))
         ,1,1,'') 
 from #tmp 
-Group BY StyleID,BrandID,CDCodeID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,StyleDesc,SeasonID,ModularParent,CPUAdjusted
-order by StyleID, BrandID, CDCodeID, StyleDesc";
+Group BY StyleID,BrandID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction,StyleDesc,SeasonID,ModularParent,CPUAdjusted
+order by StyleID, BrandID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData4o, string.Empty, sqlcmd, out this.gdtData4);
                 #endregion 4.   By Style
 
                 #region 5.  By CD
-                string strCdCodeID = string.Format(@"{0}  Select StyleDesc, CdCodeID, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
+                string strCdCodeID = string.Format(@"{0}  Select StyleDesc, QARate, TotalCPUOut,TotalManHour, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction FROM #tmpz ", strSQL);
                 DBProxy.Current.DefaultTimeout = 1800;
                 foreach (string conString in connectionString)
                 {
@@ -532,8 +531,7 @@ order by StyleID, BrandID, CDCodeID, StyleDesc";
 
                 DBProxy.Current.DefaultTimeout = 300;
                 sqlcmd = @"
-select CdCodeID
-    , CDCodeNew
+select CDCodeNew
     , ProductType
     , FabricType
     , Lining
@@ -544,8 +542,8 @@ select CdCodeID
     , F=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
     , G=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2)
 from #tmp 
-Group BY CdCodeID, StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
-order by CdCodeID";
+Group BY StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by CDCodeNew";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData5o, string.Empty, sqlcmd, out this.gdtData5);
                 #endregion 5.   By CD
@@ -582,7 +580,7 @@ from #tmp Group BY A,B,C order by A,B,C";
                 #region 7.  By Factory, Brand , CDCode
                 string strFBCDCode = string.Format(
                     @"{0}
-Select BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc, QARate, TotalCPUOut,TotalManHour
+Select BrandID, FtyZone, FactoryID, StyleDesc, QARate, TotalCPUOut,TotalManHour
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
                     strSQL);
@@ -609,7 +607,6 @@ FROM #tmpz  ",
 select BrandID
     , FtyZone
     , FactoryID
-    , CdCodeID
     , CDCodeNew
     , ProductType
     , FabricType
@@ -623,8 +620,8 @@ select BrandID
     , I=Round((Sum(TotalCPUOut) / case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end),2)
     , J=Round((Sum(TotalCPUOut) / (case when Sum(TotalManHour) is null or Sum(TotalManHour) = 0 then 1 else Sum(TotalManHour) end * 3600 / 1400) * 100),2) 
 from #tmp 
-Group BY BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
-order by BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc";
+Group BY BrandID, FtyZone, FactoryID, StyleDesc, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
+order by BrandID, FtyZone, FactoryID, StyleDesc";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData7o, string.Empty, sqlcmd, out this.gdtData7);
                 #endregion 7.   By Factory, Brand , CDCode
@@ -633,7 +630,7 @@ order by BrandID, FtyZone, FactoryID, CdCodeID, StyleDesc";
                 string strPOCombo = string.Format(
                     @"
 {0} 
-Select FtyZone, POID, StyleID, BrandID, CdCodeID, StyleDesc, SeasonID, ProgramID
+Select FtyZone, POID, StyleID, BrandID, StyleDesc, SeasonID, ProgramID
     , QARate, TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz  ",
@@ -669,7 +666,6 @@ select FtyZone
     , POID
     , StyleID
     , BrandID
-    , CdCodeID
     , CDCodeNew
     , ProductType
     , FabricType
@@ -704,7 +700,7 @@ select FtyZone
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY FtyZone,POID,StyleID,BrandID,CdCodeID,StyleDesc,SeasonID,ProgramID
+Group BY FtyZone,POID,StyleID,BrandID,StyleDesc,SeasonID,ProgramID
 	, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 order by FtyZone,POID,StyleID,BrandID";
 
@@ -715,7 +711,7 @@ order by FtyZone,POID,StyleID,BrandID";
                 string strProgram = string.Format(
                     @"
 {0}  
-Select ProgramID, StyleID, FtyZone, FactoryID, BrandID, CdCodeID
+Select ProgramID, StyleID, FtyZone, FactoryID, BrandID
     , StyleDesc, SeasonID, QARate,TotalCPUOut, TotalManHour, Category, OutputDate, SewingLineID 
     , CDCodeNew, ProductType, FabricType, Lining, Gender, Construction
 FROM #tmpz ", strSQL);
@@ -749,7 +745,6 @@ select ProgramID
     , FtyZone
     , FactoryID
     , BrandID
-    , CdCodeID
     , CDCodeNew
     , ProductType
     , FabricType
@@ -781,8 +776,8 @@ select ProgramID
 							FOR XML PATH('')) ,1,1,'')),'(',format(Max(OutputDate), 'yyyy/MM/dd'),')')
             end
 from #tmp 
-Group BY ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
-order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID";
+Group BY ProgramID,StyleID,FtyZone,FactoryID,BrandID,StyleDesc,SeasonID, CDCodeNew, ProductType, FabricType, Lining, Gender, Construction 
+order by ProgramID,StyleID,FtyZone,FactoryID,BrandID";
 
                 MyUtility.Tool.ProcessWithDatatable(this.gdtData9o, string.Empty, sqlcmd, out this.gdtData9);
                 #endregion 9.   By Program
@@ -905,29 +900,6 @@ order by ProgramID,StyleID,FtyZone,FactoryID,BrandID,CdCodeID";
                     wsSheet.Columns.AutoFit();
                 }
                 #endregion 9.   By Program
-
-                #region 刪除 CD Code
-
-                // By Style
-                wsSheet = this.excel.ActiveWorkbook.Worksheets[4];
-                wsSheet.get_Range("C:C").EntireColumn.Delete();
-
-                // By CD
-                wsSheet = this.excel.ActiveWorkbook.Worksheets[5];
-                wsSheet.get_Range("A:A").EntireColumn.Delete();
-
-                // By Brand Factory CD
-                wsSheet = this.excel.ActiveWorkbook.Worksheets[7];
-                wsSheet.get_Range("D:D").EntireColumn.Delete();
-
-                // By PO Combo
-                wsSheet = this.excel.ActiveWorkbook.Worksheets[8];
-                wsSheet.get_Range("E:E").EntireColumn.Delete();
-
-                // By Program
-                wsSheet = this.excel.ActiveWorkbook.Worksheets[9];
-                wsSheet.get_Range("F:F").EntireColumn.Delete();
-                #endregion
 
                 #region Save & Show Excel
                 this.excel.Visible = true;
