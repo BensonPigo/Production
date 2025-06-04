@@ -172,6 +172,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                             throw result.GetException();
                         }
                     }
+
+                    this.sqlConn.Close();
+                    this.sqlConn.Dispose();
                 }
 
                 finalResult.Result = new DualResult(true);
@@ -179,6 +182,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             catch (Exception ex)
             {
                 finalResult.Result = new DualResult(false, ex);
+                this.sqlConn.Close();
+                this.sqlConn.Dispose();
             }
 
             return finalResult;

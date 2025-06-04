@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿
+using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -51,18 +52,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                DataTable detailTable = resultReport.DtArr[0];
-                string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
-                detailTable.Columns.Add("BIFactoryID", typeof(string));
-                detailTable.Columns.Add("BIInsertDate", typeof(DateTime));
-                foreach (DataRow row in detailTable.AsEnumerable())
-                {
-                    row["BIFactoryID"] = factoryID;
-                    row["BIInsertDate"] = DateTime.Now;
-                }
-
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.DtArr[0], sDate.Value, eDate.Value);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -242,8 +233,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						t.EditDate = s.EditDate,
 						t.LastDownloadAPSDate = iif(u.LastDownloadAPSDate is not null, u.LastDownloadAPSDate, t.LastDownloadAPSDate),
 						t.SewingInlineCategory = s.SewingInlineCategory
-						,t.[BIFactoryID] = s.[BIFactoryID]
-						,t.[BIInsertDate] = s.[BIInsertDate]
+						,t.[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+						,t.[BIInsertDate] = GetDate()
 				from P_SewingLineSchedule t 
 				inner join #tmp s on t.APSNo = s.APSNo 
 								AND t.SewingDay = s.SewingDay 
@@ -277,7 +268,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					s.SewingCPU, s.BrandID, s.Orig_WorkHourPerDay, s.New_SwitchTime, s.FirststCuttingOutputDate, s.[TTL_PRINTING (PCS)],
 					s.[TTL_PRINTING PPU (PPU)], s.SubCon, s.CDCodeNew, s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 					s.[Subcon Qty],	s.[Std Qty for printing], s.StyleName, s.StdQtyEMB, s.EMBStitch, s.EMBStitchCnt, s.TtlQtyEMB,
-					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,s.[BIFactoryID],s.[BIInsertDate]
+					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),GetDate()
 				from #tmp s
 				where not exists (select 1 from P_SewingLineSchedule t WITH(NOLOCK) where t.APSNo = s.APSNo 
 																		AND t.SewingDay = s.SewingDay 
@@ -319,6 +310,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             return finalResult;

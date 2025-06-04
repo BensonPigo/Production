@@ -106,16 +106,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 Result = DBProxy.Current.Select("ManufacturingExecution", sql, listPar, out DataTable[] dataTables),
             };
 
-            string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
-
-            for (int i = 0; i < dataTables.Length; i++)
-            {
-                dataTables[i].Columns.Add("BIFactoryID", typeof(string));
-                dataTables[i].Columns.Add("BIInsertDate", typeof(DateTime));
-                dataTables[i].AsEnumerable().ToList().ForEach(r => r["BIFactoryID"] = factoryID);
-                dataTables[i].AsEnumerable().ToList().ForEach(r => r["BIInsertDate"] = DateTime.Now);
-            }
-
             if (!resultReport.Result)
             {
                 return resultReport;
@@ -148,10 +138,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             };
             using (transactionscope)
             {
+                DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                 try
                 {
                     DualResult result;
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                     using (sqlConn)
                     {
                         string sql = new Base().SqlBITableHistory("P_InlineDefectSummary", "P_InlineDefectSummary_History", "#tmpSummy", "FirstInspectedDate >= @SDate AND FirstInspectedDate < @EDate", needJoin: false, needExists: false) + Environment.NewLine;
@@ -215,8 +205,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                             ,isnull(t.[Reject Qty] ,0)
                             ,isnull(t.[Inline WFT(%)] ,0)
                             ,isnull(t.[Inline RFT(%)] ,0)
-                            ,isnull(t.BIFactoryID,'')
-                            ,t.BIInsertDate
+                            ,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			                , GetDate()
                         from #tmpSummy t";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
 
@@ -280,8 +270,8 @@ select
     , isnull(t.[DefectCodeID],'')
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
-    , isnull(t.BIFactoryID,'')
-    , t.BIInsertDate
+    , (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+	, GetDate()
 From #tmpDetail t
 ";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(detailTable, null, sqlcmd: sql, result: out DataTable dataTable2, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
@@ -290,6 +280,9 @@ From #tmpDetail t
                         {
                             throw result.GetException();
                         }
+
+                        sqlConn.Close();
+                        sqlConn.Dispose();
                     }
 
                     finalResult.Result = new DualResult(true);
@@ -299,9 +292,17 @@ From #tmpDetail t
                 {
                     finalResult.Result = new DualResult(false, ex);
                     transactionscope.Dispose();
+                    sqlConn.Close();
+                    sqlConn.Dispose();
                 }
                 finally
                 {
+                    if (sqlConn != null && sqlConn.State != ConnectionState.Closed)
+                    {
+                        sqlConn.Close();
+                        sqlConn.Dispose();
+                    }
+
                     transactionscope.Dispose();
                 }
             }

@@ -77,7 +77,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = $@" 
 	            insert into P_StyleChangeover([ID], [FactoryID], [SewingLine], [Inline], [OldSP], [OldStyle], [OldComboType], [NewSP], [NewStyle], [NewComboType], [Category], [COPT(min)], [COT(min)], [BIFactoryID], [BIInsertDate])
-	            select t.[ID], t.[Factory], t.[SewingLine], t.[Inline], t.[OldSP], t.[OldStyle], t.[OldComboType], t.[NewSP], t.[NewStyle], t.[NewComboType], t.[Category], t.[COPT(min)], t.[COT(min)], t.[BIFactoryID], t.[BIInsertDate]
+	            select t.[ID], t.[Factory], t.[SewingLine], t.[Inline], t.[OldSP], t.[OldStyle], t.[OldComboType], t.[NewSP], t.[NewStyle], t.[NewComboType], t.[Category], t.[COPT(min)], t.[COT(min)], (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), GetDate()
 	            from #tmp t
 	            where not exists (select 1 from P_StyleChangeover p where p.[ID] = t.[ID])
 
@@ -94,8 +94,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			            , p.[Category] = t.[Category]
 			            , p.[COPT(min)] = t.[COPT(min)]
 			            , p.[COT(min)] = t.[COT(min)]
-                        , p.[BIFactoryID]    = t.[BIFactoryID]
-                        , p.[BIInsertDate]   = t.[BIInsertDate]
+                        , p.[BIFactoryID]    = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                        , p.[BIInsertDate]   = GetDate()
 	            from P_StyleChangeover p
 	            inner join #tmp t on p.[ID] = t.[ID]";
 
@@ -107,6 +107,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	             and p.Inline >= @StartDate";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;

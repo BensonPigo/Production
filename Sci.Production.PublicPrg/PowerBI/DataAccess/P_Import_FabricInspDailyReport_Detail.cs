@@ -238,6 +238,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 											p.Dyelot = t.Dyelot)";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;
@@ -292,6 +294,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,ReceivingID
 			,AddDate
 			,EditDate
+			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIInsertDate] = GetDate()
 			from Production.dbo.GetQA_R08_Detail(null,null,'','','','','','',@Date_S, @Date_E)
 			where	ATA is not null and InspDate is not null
 			";

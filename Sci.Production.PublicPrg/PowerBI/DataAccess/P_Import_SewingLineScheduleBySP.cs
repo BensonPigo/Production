@@ -156,8 +156,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,p.TTL_PRINTING_PCS			= t.TTL_PRINTING_PCS
 				,p.TTL_PRINTING_PPU_PPU		= t.TTL_PRINTING_PPU_PPU
 				,p.SubCon					= t.SubCon			
-				,p.BIFactoryID = t.BIFactoryID
-				,p.BIInsertDate = t.BIInsertDate
+				,p.BIFactoryID =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				,p.BIInsertDate = GetDate()
 				from P_SewingLineScheduleBySP p
 				inner join #tmp t on p.ID = t.ID
 
@@ -269,14 +269,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,t.TTL_PRINTING_PCS
 				,t.TTL_PRINTING_PPU_PPU
 				,t.SubCon
-				,t.BIFactoryID
-				,t.BIInsertDate
+				,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				,GetDate()
 				from #tmp t
 				where not exists(	select 1 from P_SewingLineScheduleBySP p where	p.ID = t.ID)";
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             return finalResult;

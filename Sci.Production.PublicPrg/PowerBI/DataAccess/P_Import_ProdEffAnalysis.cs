@@ -143,6 +143,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 from #tmpMain t
 				 ";
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpMain");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;

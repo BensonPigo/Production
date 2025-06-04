@@ -29,7 +29,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 sDate = DateTime.Now.AddDays(-150);
             }
 
-
             try
             {
                 Base_ViewModel resultReport = this.GetIMtltoFTYAnalysis_Data((DateTime)sDate);
@@ -193,6 +192,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				where not exists (select 1 from P_MtltoFTYAnalysis p where p.WKID = t.WKID and p.OrderID = t.OrderID and p.Seq1 = t.Seq1 and p.Seq2 = t.Seq2)
                 ";
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#Final");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;

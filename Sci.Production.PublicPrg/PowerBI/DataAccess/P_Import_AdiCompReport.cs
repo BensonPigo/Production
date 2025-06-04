@@ -63,7 +63,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = string.Empty; // new Base().SqlBITableHistory("P_AdiCompReport", "P_AdiCompReport_History", "#tmp", string.Empty);
                 sql += $@"  
-               Truncate Table P_AdiCompReport";
+                Truncate Table P_AdiCompReport";
                 sql += $@"  
                insert into P_AdiCompReport  
                (  
@@ -135,6 +135,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                    [BIInsertDate]
                from #tmp t";
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;

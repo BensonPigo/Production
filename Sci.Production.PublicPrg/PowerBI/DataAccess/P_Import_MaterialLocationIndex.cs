@@ -149,6 +149,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            and s.StockType = t.StockType
 	            )";
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;

@@ -512,6 +512,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataTables, null, sql, out DataTable finalDataTable, conn: sqlConn);
                 resultReport.Dt = finalDataTable;
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             return resultReport;

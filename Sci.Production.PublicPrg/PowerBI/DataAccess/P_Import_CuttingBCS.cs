@@ -797,6 +797,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             return finalResult;

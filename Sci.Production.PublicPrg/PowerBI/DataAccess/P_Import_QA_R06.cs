@@ -211,6 +211,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                         AND t.POID = s.POID
                 )";
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#Final");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;
