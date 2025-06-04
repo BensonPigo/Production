@@ -54,7 +54,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             bool filterPulloutStatus = processList.Where(p => p == "Pullout").ToList().Any();
-			string sqlStatusPullout = filterPulloutStatus ? " when p.PulloutDate is not null then 'Pullout'" : string.Empty;
+            string sqlStatusPullout = (filterPulloutStatus || !processList.Any(s => !MyUtility.Check.Empty(s))) ? " when p.PulloutDate is not null then 'Pullout'" : string.Empty;
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -288,7 +288,8 @@ else null end
 ,[CustPONo] = o.CustPONo
 ,[Dest] = o.Dest
 ,[BuyerDelivery] = o.BuyerDelivery
-,[SCIDelivery] = o.SciDelivery" :
+,[SCIDelivery] = o.SciDelivery"
+:
 $@"
 select distinct [KPIGroup] = f.KPICode
 	, [FactoryID] = o.FactoryID
