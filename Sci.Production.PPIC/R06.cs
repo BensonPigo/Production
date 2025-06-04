@@ -162,16 +162,30 @@ outer apply (
 		(
 			select f.ProductionType
 				, psd.Complete
-			from PO_Supp_Detail psd
-			inner join PO_Supp_Detail_OrderList psdo on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			from PO_Supp_Detail psd WITH (NOLOCK) 
+			inner join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
 			outer apply (
 				select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
-				from Fabric f
-				left join MtlType m on f.MtlTypeID = m.ID
+				from Fabric f WITH (NOLOCK)
+				left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
 				where f.SCIRefno = psd.SCIRefno
-			)f  
+			) f  
 			where psdo.OrderID	= o.ID
 			and psd.Junk = 0
+            union all --PO_Supp_Detail_OrderList不存在的情況,表示該物料是要給全部子母單使用的
+			select f.ProductionType
+				, psd.Complete
+			from PO_Supp_Detail psd WITH (NOLOCK)
+			left join PO_Supp_Detail_OrderList psdo WITH (NOLOCK) on psd.ID = psdo.ID and psd.SEQ1 = psdo.SEQ1 and psd.SEQ2 = psdo.SEQ2
+			outer apply (
+				select [ProductionType] = iif(m.ProductionType = 'Packing', 'Packing', 'Sewing')
+				from Fabric f WITH (NOLOCK)
+				left join MtlType m WITH (NOLOCK) on f.MtlTypeID = m.ID
+				where f.SCIRefno = psd.SCIRefno
+			)f  
+			where psdo.ID is null
+			and psd.Junk = 0
+			and psd.id = o.POID
 		)f
 		group by f.ProductionType
 	)f
