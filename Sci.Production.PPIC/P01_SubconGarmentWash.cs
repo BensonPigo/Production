@@ -50,11 +50,13 @@ namespace Sci.Production.PPIC
 select OrderId, FarmOutDate, Qty = SUM(Qty)
 from View_SewingOutput_FarmInOutDate 
 where OrderId = @OrderID
+        and FarmOutDate < GetDate()
 group by OrderId, FarmOutDate
 
 select OrderId, FarmInDate, Qty = SUM(Qty)
 from View_SewingOutput_FarmInOutDate 
 where OrderId = @OrderID
+        and FarmInDate < GetDate()
 group by OrderId, FarmInDate";
 
             using (var result = DBProxy.Current.SelectEx<DataSet>(sqlcmd, false, "@OrderID", this.orderID))
