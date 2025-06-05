@@ -78,11 +78,14 @@ namespace Sci.Production.PPIC
             {
                 foreach (var size in sizes)
                 {
-                    // 如果是空的或轉換失敗，預設為 0
+                    // 如果是空的或轉換失敗或無存在sizes清單，預設為 0
                     int qty = 0;
-                    if (int.TryParse(row[size].ToString(), out int parsedQty))
+                    if (dtprintData.Columns.Contains(size))
                     {
-                        qty = parsedQty < 0 ? 0 : parsedQty;
+                        if (int.TryParse(row[size]?.ToString(), out int parsedQty))
+                        {
+                            qty = parsedQty < 0 ? 0 : parsedQty;
+                        }
                     }
 
                     DataRow newRow = resultTable.NewRow();
