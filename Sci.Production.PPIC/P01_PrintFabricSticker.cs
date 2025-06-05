@@ -78,16 +78,25 @@ namespace Sci.Production.PPIC
             {
                 foreach (var size in sizes)
                 {
-                    // 如果是空的或轉換失敗或無存在sizes清單，預設為 0
-                    int qty = 0;
-                    if (dtprintData.Columns.Contains(size))
+                    // 若欄位不存在，跳過
+                    if (!dtprintData.Columns.Contains(size))
                     {
-                        if (int.TryParse(row[size]?.ToString(), out int parsedQty))
-                        {
-                            qty = parsedQty < 0 ? 0 : parsedQty;
-                        }
+                        continue;
                     }
 
+                    // 若該欄位為 null 或空字串，跳過
+                    var rawValue = row[size]?.ToString().Trim();
+                    if (string.IsNullOrEmpty(rawValue))
+                    {
+                        continue;
+                    }
+
+                    if (!int.TryParse(rawValue, out int qty))
+                    {
+                        continue;
+                    }
+
+                    // 建立新資料列
                     DataRow newRow = resultTable.NewRow();
                     newRow["SP#"] = row["ID"].ToString();
                     newRow["PO#"] = row["CustPONo"].ToString();
