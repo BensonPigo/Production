@@ -187,8 +187,8 @@ group by sizeCode
             // patternTbOri,allpartTbOri 從 Garment 準備資料
             this.ProcessOriDatas();
 
-            // 有表身 & 沒 combine 才從前面帶入
-            if (detailTbCnt > 0 && this.bundle_Detail_CombineSubprocess.Rows.Count == 0)
+            // 有表身 & 沒 combine  & 不是ByToneGenerate 才從前面帶入
+            if (detailTbCnt > 0 && this.bundle_Detail_CombineSubprocess.Rows.Count == 0 && !this.ByToneGenerate)
             {
                 this.Exist_Table_Query();
             }
@@ -1848,15 +1848,15 @@ and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRe
                 DataTable dtCombine = this.bundle_Detail_CombineSubprocess_T.Copy();
                 this.bundle_Detail_CombineSubprocess_T.Clear();
 
-                int na = this.bundle_Detail_T.Select("PatternCode <> 'AllParts'").Length;
-                int a = this.bundle_Detail_T.Select("PatternCode = 'AllParts'").Length;
-                if (na > 0)
+                int notAllParts = this.bundle_Detail_T.Select("PatternCode <> 'AllParts'").Length;
+                int allParts = this.bundle_Detail_T.Select("PatternCode = 'AllParts'").Length;
+                if (notAllParts > 0)
                 {
                     dtDetail = this.bundle_Detail_T.Select("PatternCode <> 'AllParts'").OrderBy(o => MyUtility.Convert.GetLong(o["tmpSeq"])).CopyToDataTable();
                     dtDetail.Columns.Add("tmpNum", typeof(int));
                 }
 
-                if (a > 0)
+                if (allParts > 0)
                 {
                     dtAllPart = this.bundle_Detail_T.Select("PatternCode = 'AllParts'").CopyToDataTable();
                 }
@@ -1864,7 +1864,7 @@ and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRe
                 this.bundle_Detail_T.Clear();
 
                 int ukeytone = 1;
-                if (na > 0)
+                if (notAllParts > 0)
                 {
                     for (int i = 0; i < tone; i++)
                     {
@@ -1917,7 +1917,7 @@ and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRe
                 }
 
                 // 處理All Part筆數
-                if (a > 0)
+                if (allParts > 0)
                 {
                     int ttlAllPartQty = MyUtility.Convert.GetInt(this.displayTotalQty.Value);
                     int allpartPrintGroup = dtAllPart.AsEnumerable().Max(m => MyUtility.Convert.GetInt(m["PrintGroup"]));
@@ -1936,7 +1936,7 @@ and psd.Refno = (select top 1 wo.Refno from WorkOrderForOutput wo where wo.CutRe
                     }
 
                     // 重分每一筆拆的Qty
-                    if (na > 0)
+                    if (notAllParts > 0)
                     {
                         var da = dtAllPart2.AsEnumerable().Where(w => w.RowState != DataRowState.Deleted).
                             OrderBy(o => MyUtility.Convert.GetInt(o["PrintGroup"])).ToList();

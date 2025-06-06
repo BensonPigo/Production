@@ -338,6 +338,7 @@
             this.label6 = new Sci.Win.UI.Label();
             this.chkJokerTag = new Sci.Win.UI.CheckBox();
             this.chkHeatSeal = new Sci.Win.UI.CheckBox();
+            this.btnSubconGarmentWash = new Sci.Win.UI.Button();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -557,6 +558,7 @@
             // 
             this.tabPage1.AutoScroll = true;
             this.tabPage1.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage1.Controls.Add(this.btnSubconGarmentWash);
             this.tabPage1.Controls.Add(this.btnAccessory);
             this.tabPage1.Controls.Add(this.label8);
             this.tabPage1.Controls.Add(this.PCSMRText);
@@ -3751,6 +3753,7 @@
             this.comboCompany1.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
             this.comboCompany1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCompany1.FormattingEnabled = true;
+            this.comboCompany1.IsAddEmpty = false;
             this.comboCompany1.IsOrderCompany = null;
             this.comboCompany1.IsSupportUnselect = true;
             this.comboCompany1.Junk = null;
@@ -3795,6 +3798,16 @@
             this.chkHeatSeal.TabIndex = 262;
             this.chkHeatSeal.Text = "Heat Seal";
             this.chkHeatSeal.UseVisualStyleBackColor = true;
+            // 
+            // btnSubconGarmentWash
+            // 
+            this.btnSubconGarmentWash.Location = new System.Drawing.Point(797, 658);
+            this.btnSubconGarmentWash.Name = "btnSubconGarmentWash";
+            this.btnSubconGarmentWash.Size = new System.Drawing.Size(194, 27);
+            this.btnSubconGarmentWash.TabIndex = 245;
+            this.btnSubconGarmentWash.Text = "Subcon Garment Wash";
+            this.btnSubconGarmentWash.UseVisualStyleBackColor = true;
+            this.btnSubconGarmentWash.Click += new System.EventHandler(this.BtnSubconGarmentWash_Click);
             // 
             // P01
             // 
@@ -4143,5 +4156,6 @@
         private Win.UI.CheckBox chkHeatSeal;
         private Win.UI.CheckBox chkJokerTag;
         private Win.UI.Button btnAccessory;
+        private Win.UI.Button btnSubconGarmentWash;
     }
 }

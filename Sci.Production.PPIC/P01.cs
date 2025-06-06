@@ -480,6 +480,7 @@ isnull([dbo].getGarmentLT(o.StyleUkey,o.FactoryID),0) as GMTLT from Orders o WIT
             }
 
             this.GetIsDevSample();
+            this.BtnSubconGarmentWash_Visible();
         }
 
         /// <inheritdoc/>
@@ -1995,6 +1996,25 @@ FROM (
                     MyUtility.Msg.InfoBox("Trim Card can not downloaded without PF ETA.");
                 }
             }
+        }
+
+        private void BtnSubconGarmentWash_Click(object sender, EventArgs e)
+        {
+            using (var frm = new P01_SubconGarmentWash(this.CurrentMaintain["ID"].ToString()))
+            {
+                frm.ShowDialog();
+            }
+        }
+
+        private void BtnSubconGarmentWash_Visible()
+        {
+            var sqlcmd = @"select 1 from ArtworkType WITH (NOLOCK) where ID = 'GMT WASH' and SubconFarmInOutfromSewOutput = 1";
+            var dr = DBProxy.Current.SeekEx(sqlcmd, null).ExtendedData;
+            this.btnSubconGarmentWash.Visible = dr != null;
+
+            sqlcmd = "select 1 from View_SewingOutput_FarmInOutDate where OrderId = @ID";
+            dr = DBProxy.Current.SeekEx(sqlcmd, "@ID", this.CurrentMaintain["ID"].ToString()).ExtendedData;
+            this.btnSubconGarmentWash.ForeColor = dr != null ? Color.Blue : Color.Black;
         }
     }
 }

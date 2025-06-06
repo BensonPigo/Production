@@ -389,6 +389,12 @@
     <Compile Include="P01_ShippingMark.Designer.cs">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_SubconGarmentWash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_SubconGarmentWash.Designer.cs">
+      <DependentUpon>P01_SubconGarmentWash.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_Utility.cs" />
     <Compile Include="P02.cs">
       <SubType>Form</SubType>
@@ -1017,6 +1023,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ShippingMark.resx">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_SubconGarmentWash.resx">
+      <DependentUpon>P01_SubconGarmentWash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
