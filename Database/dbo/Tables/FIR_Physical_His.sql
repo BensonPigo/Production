@@ -24,7 +24,7 @@
     [EditName] VARCHAR(10) CONSTRAINT [DF_FIR_Physical_His_EditName] DEFAULT ('') NULL,
     [EditDate] DATETIME NULL,
     [QCTime] INT CONSTRAINT [DF_FIR_Physical_His_QCTime] DEFAULT (0) NOT NULL,
-    [IsQMS] BIT CONSTRAINT [DF_FIR_Physical_His_IsQMS] DEFAULT (0) NOT NULL,
+    [IsQMS] BIT CONSTRAINT [DF_FIR_Physical_His_IsQMS] DEFAULT (0) NULL,
     [Issue_DetailUkey] BIGINT CONSTRAINT [DF_FIR_Physical_His_Issue_DetailUkey] DEFAULT (0) NOT NULL,
     [QMSMachineID] VARCHAR(20) CONSTRAINT [DF_FIR_Physical_His_QMSMachineID] DEFAULT ('') NULL,
     [ColorToneCheck] BIT CONSTRAINT [DF_FIR_Physical_His_ColorToneCheck] DEFAULT (0) NOT NULL,

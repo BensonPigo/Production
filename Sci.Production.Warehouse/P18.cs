@@ -183,8 +183,16 @@ namespace Sci.Production.Warehouse
             {
                 foreach (DataRow dr in ((DataTable)this.detailgridbs.DataSource).Rows)
                 {
-                    if (dr.RowState == DataRowState.Deleted)
+                    if (dr.RowState == DataRowState.Deleted || dr.RowState == DataRowState.Modified)
                     {
+                        // Modified時如果原始值和目前值相同，則不處理
+                        if (dr.RowState == DataRowState.Modified &&
+                            dr["Roll", DataRowVersion.Original].ToString() == dr["Roll", DataRowVersion.Current].ToString() &&
+                            dr["Dyelot", DataRowVersion.Original].ToString() == dr["Dyelot", DataRowVersion.Current].ToString())
+                        {
+                            continue;
+                        }
+
                         string roll = dr["Roll", DataRowVersion.Original].ToString();
                         string dyelot = dr["Dyelot", DataRowVersion.Original].ToString();
                         long transferIn_DetailUkey = MyUtility.Convert.GetLong(dr["Ukey", DataRowVersion.Original]);

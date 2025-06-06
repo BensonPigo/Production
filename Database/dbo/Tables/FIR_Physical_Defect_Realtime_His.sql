@@ -1,12 +1,12 @@
 ﻿CREATE TABLE [dbo].[FIR_Physical_Defect_Realtime_His] (
     [Id] BIGINT NOT NULL,
     [InspSeq] INT NOT NULL,
-    [FIR_PhysicalDetailUKey] BIGINT NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_FIR_PhysicalDetailUKey] DEFAULT (0),
-    [Yards] NUMERIC(9,3) NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_Yards] DEFAULT (0),
-    [FabricdefectID] VARCHAR(2) NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_FabricdefectID] DEFAULT (''),
+    [FIR_PhysicalDetailUKey] BIGINT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_FIR_PhysicalDetailUKey] DEFAULT (0),
+    [Yards] NUMERIC(9,3) NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_Yards] DEFAULT (0),
+    [FabricdefectID] VARCHAR(2) NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_FabricdefectID] DEFAULT (''),
     [AddDate] DATETIME NULL,
     [T2] BIT NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_T2] DEFAULT (0),
-    [MachineIoTUkey] BIGINT NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_MachineIoTUkey] DEFAULT (0),
+    [MachineIoTUkey] BIGINT NULL CONSTRAINT [DF_FIR_Physical_Defect_Realtime_His_MachineIoTUkey] DEFAULT (0),
     CONSTRAINT [PK_FIR_Physical_Defect_Realtime_His] PRIMARY KEY CLUSTERED ([Id], [InspSeq])
 );
 GO

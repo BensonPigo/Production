@@ -3,8 +3,8 @@
     [DefectLocation] VARCHAR(7) NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_His_DefectLocation] DEFAULT (''),
     [ID] BIGINT NOT NULL,
     [InspSeq] INT NOT NULL,
-    [DefectRecord] VARCHAR(30) NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_His_DefectRecord] DEFAULT (''),
-    [Point] NUMERIC(3,0) NOT NULL CONSTRAINT [DF_FIR_Physical_Defect_His_Point] DEFAULT (0),
+    [DefectRecord] VARCHAR(30) NULL CONSTRAINT [DF_FIR_Physical_Defect_His_DefectRecord] DEFAULT (''),
+    [Point] NUMERIC(3,0) NULL CONSTRAINT [DF_FIR_Physical_Defect_His_Point] DEFAULT (0),
     [RealTimeInsert] BIT NULL
     CONSTRAINT [PK_FIR_Physical_Defect_His] PRIMARY KEY CLUSTERED ([FIR_PhysicalDetailUKey], [DefectLocation], [ID], [InspSeq])
 );
