@@ -450,7 +450,11 @@ select
     [InTime] = r.[InComing],
     [OutTime] = r.[Out (Time)],
     [POSupplier] = isnull(r.[POSupplier],''),
-    [AllocatedSubcon] = isnull(r.[AllocatedSubcon],''),
+    [AllocatedSubcon] = STUFF((
+    SELECT ',' + r2.[AllocatedSubcon]
+    FROM #result r2
+    WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] and r2.Artwork = r.Artwork and r2.Size = r.Size
+    FOR XML PATH('')), 1, 1, ''),
 	[AvgTime] = isnull(r.AvgTime,0),
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
@@ -486,7 +490,7 @@ r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],
 r.[Program],r.[Style],r.[Season],r.[Brand],r.[Comb],r.Cutno,r.[Fab_Panel Code],r.[Article],r.[Color],r.[Line],
 r.SewingLineID,r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],r.[Sub-process],
 r.[Post Sewing SubProcess],r.[No Bundle Card After Subprocess],r.LocationID,r.Cdate,r.[BuyerDelivery],
-r.[SewInLine],r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.[AllocatedSubcon],r.AvgTime,
+r.[SewInLine],r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.AvgTime,
 gcd.EstCutDate,gcd.CuttingOutputDate,r.Item,r.PanelNo,r.CutCellID,r.SpreadingNo,r.TimeRangeFail
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
