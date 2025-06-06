@@ -35,6 +35,12 @@ BEGIN
                     ELSE dbo.GetFirstPartBeforeSemicolon(lmd.Annotation)
                 END        
             ,[TargetTime] = lmd.GSD
+            ,ForProcessSeq = ROW_NUMBER() OVER(PARTITION BY lm.ID ORDER BY
+                            CASE WHEN lmd.No = '' THEN 1
+	                        WHEN left(lmd.No, 1) = 'P' THEN 2
+	                        ELSE 3 
+	                        END, 
+                            lmd.GroupKey)
     INTO #tmp
     FROM Production.dbo.LineMapping lm WITH(NOLOCK)
     INNER JOIN Production.dbo.LineMapping_Detail lmd WITH(NOLOCK) ON lmd.ID = lm.ID
@@ -80,6 +86,7 @@ BEGIN
                     ELSE dbo.GetFirstPartBeforeSemicolon(lmd.Annotation)
                 END        
             ,[TargetTime] = lmd.GSD
+            ,ForProcessSeq = ROW_NUMBER() OVER(PARTITION BY lm.ID ORDER BY IIF(lmd.No = '', 'ZZ', lmd.No), lmd.Seq)
     FROM Production.dbo.LineMappingBalancing lm WITH(NOLOCK)
     INNER JOIN Production.dbo.LineMappingBalancing_Detail lmd WITH(NOLOCK) ON lmd.ID = lm.ID
     INNER JOIN Production.dbo.Factory f WITH(NOLOCK) ON f.ID = lm.FactoryID
@@ -135,13 +142,51 @@ BEGIN
         ,[ComboType] = ISNULL([ComboType], '')
         ,[ProductType] = ISNULL(ProductType, '')
         ,[Construction] = ISNULL(Construction, '')
+        ,MachineID, [No], MachineTypeID, MasterPlusGroup, Attachment, SewingMachineAttachmentID, Template--表身要聚合的欄位
+        ,ForProcessSeq
         ,[ProcessCode] = STUFF((SELECT CONCAT('_', [ProcessCode_Before]) FROM #tmpbyKeyOnly1Header t WHERE t.GroupProcessCode = g.GroupProcessCode ORDER BY [ProcessCode_Before] FOR XML PATH(''), TYPE).value('.', 'nvarchar(max)'), 1, 1, '')
                         + (SELECT CONCAT('_', OperationID) FROM #tmpbyKeyOnly1Header t WHERE t.GroupProcessCode = g.GroupProcessCode ORDER BY [ProcessCode_Before] FOR XML PATH(''), TYPE).value('.', 'nvarchar(max)')
         ,[ProcessName] =  STUFF((SELECT CONCAT(N'_', [ProcessName]) FROM #tmpbyKeyOnly1Header t WHERE t.GroupProcessCode = G.GroupProcessCode ORDER BY [ProcessCode_Before] FOR XML PATH(''), TYPE).value('.', 'nvarchar(max)'), 1, 1, '')
         ,TargetTime = (SELECT SUM(TargetTime) FROM #tmpbyKeyOnly1Header t WHERE t.GroupProcessCode = G.GroupProcessCode)
-    INTO #tmpFINAL
-    FROM (SELECT DISTINCT TableName, ID, SampleGroup, StyleID, ComboType, SeasonID, ProductType, Construction, GroupProcessCode FROM #tmpbyKeyOnly1Header )g
+    INTO #tmpProcessSeq1
+    FROM (
+        SELECT TableName, ID, SampleGroup, StyleID, ComboType, SeasonID, ProductType, Construction, GroupProcessCode
+               ,MachineID, [No], MachineTypeID, MasterPlusGroup, Attachment, SewingMachineAttachmentID, Template--表身要聚合的欄位
+               ,ForProcessSeq = MIN(ForProcessSeq)
+        FROM #tmpbyKeyOnly1Header    
+        WHERE OneShot = 1
+        GROUP BY ID, TableName, ID, SampleGroup, StyleID, ComboType, SeasonID, ProductType, Construction, GroupProcessCode
+               ,MachineID, [No], MachineTypeID, MasterPlusGroup, Attachment, SewingMachineAttachmentID, Template--表身要聚合的欄位
+    )g
     
+    UNION ALL
+    SELECT 
+         TableName
+        ,ID
+        ,[SampleGroup] = ISNULL([SampleGroup], '')
+        ,[StyleID] = ISNULL([StyleID], '')
+        ,[SeasonID]= ISNULL([SeasonID], '')
+        ,[ComboType] = ISNULL([ComboType], '')
+        ,[ProductType] = ISNULL(ProductType, '')
+        ,[Construction] = ISNULL(Construction, '')
+        ,MachineID, [No], MachineTypeID, MasterPlusGroup, Attachment, SewingMachineAttachmentID, Template--表身要聚合的欄位
+        ,ForProcessSeq
+        ,[ProcessCode] = [ProcessCode_Before] + CONCAT('_', OperationID)
+        ,[ProcessName]
+        ,TargetTime
+    FROM #tmpbyKeyOnly1Header
+    WHERE ISNULL(OneShot, 0) = 0
+        
+    --編碼 ProcessSeq
+    SELECT *
+        ,ProcessSeq =
+            ROW_NUMBER() OVER (
+                PARTITION BY ID, TableName, MachineID, [No], MachineTypeID, MasterPlusGroup, Attachment, SewingMachineAttachmentID, Template
+                ORDER BY ForProcessSeq
+            )
+    INTO #tmpFINAL
+    FROM #tmpProcessSeq1
+
     SELECT t.*
     INTO #tmpExistsLast
     FROM(
