@@ -76,5 +76,6 @@
     <Build Include="dbo\Stored Procedures\Juki_P2H_ProdPlan.sql" />
     <Build Include="dbo\Stored Procedures\Juki_P2H_Layout.sql" />
     <Build Include="dbo\Stored Procedures\Juki_P2H_BaseProcess.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_P2H_SewMachine.sql" />
   </ItemGroup>
 </Project>
