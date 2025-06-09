@@ -148,8 +148,8 @@ BEGIN
             ,isnull(FP.Grade, '')
             ,[InspectionStartTime] = FP.StartTime
             ,[InspectionFinishTime] = fp.EditDate
-            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineRunTime.val
-            ,[MachineRunTime] = MachineRunTime.val
+            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineTime.RunTime
+            ,[MachineRunTime] = MachineTime.RunTime
             ,[Remark]=FP.Remark
             ,[MCHandle]= isnull(dbo.getPass1_ExtNo(o.MCHandle), '')
             ,isnull(Fabric.WeaveTypeID, '')
@@ -165,8 +165,7 @@ BEGIN
     LEFT JOIN Fabric with (nolock) on Fabric.SCIRefno  = f.SCIRefno
     LEFT JOIN Issue_Detail isd with (nolock) on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
     LEFT JOIN Pass1 with (nolock) on Pass1.ID = FP.Inspector
-    outer apply(SELECT [PrepareTime] = sum(iif(fpq.IsFirstInspection = 1, 1, 0)) * iif(Fabric.WeaveTypeID = 'Woven', @InspMachine_FabPrepareTime_Woven, @InspMachine_FabPrepareTime_Other),
-                       [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
+    outer apply(SELECT [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
                 from FIR_Physical_QCTime fpq with (nolock) 
                 where fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
                 ) MachineTime
@@ -175,13 +174,6 @@ BEGIN
                 where fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
                 order by fpq.ukey desc
                 ) MachineIoTUkey
-    outer apply(SELECT [val] = count(1) * @InspMachine_DefectPointTime
-                from FIR_Physical_Defect_Realtime fpdr with (nolock) 
-                where   fpdr.FIR_PhysicalDetailUkey = FP.DetailUkey and
-                        fpdr.AddDate is not null and
-                        fpdr.MachineIoTUkey is not null
-                ) DefectPointTime
-    outer apply(select [val] = MachineTime.PrepareTime + MachineTime.RunTime + DefectPointTime.val) MachineRunTime
     WHERE   (FP.InspDate >= @InspectionDateFrom or @InspectionDateFrom is null) and
             (FP.InspDate <= @InspectionDateTo or @InspectionDateTo is null) and
             (FP.EditDate >= @EditDateFrom or FP.AddDate >= @EditDateFrom or @EditDateFrom is null) and
@@ -226,8 +218,8 @@ BEGIN
             ,isnull(FP.Grade, '')
             ,[InspectionStartTime] = FP.StartTime
             ,[InspectionFinishTime] = fp.EditDate
-            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineRunTime.val
-            ,[MachineRunTime] = MachineRunTime.val
+            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineTime.RunTime
+            ,[MachineRunTime] = MachineTime.RunTime
             ,[Remark]=FP.Remark
             ,[MCHandle]= isnull(dbo.getPass1_ExtNo(o.MCHandle), '')
             ,isnull(Fabric.WeaveTypeID, '')
@@ -243,8 +235,7 @@ BEGIN
     LEFT JOIN Fabric with (nolock) on Fabric.SCIRefno  = f.SCIRefno
     LEFT JOIN Issue_Detail isd with (nolock) on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
     LEFT JOIN Pass1 with (nolock) on Pass1.ID = FP.Inspector
-    outer apply(SELECT [PrepareTime] = sum(iif(fpq.IsFirstInspection = 1, 1, 0)) * iif(Fabric.WeaveTypeID = 'Woven', @InspMachine_FabPrepareTime_Woven, @InspMachine_FabPrepareTime_Other),
-                       [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
+    outer apply(SELECT [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
                 from FIR_Physical_QCTime_His fpq with (nolock) 
                 where fpq.InspSeq = FP.InspSeq and fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
                 ) MachineTime
@@ -253,14 +244,6 @@ BEGIN
                 where fpq.InspSeq = FP.InspSeq and fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
                 order by fpq.ukey desc
                 ) MachineIoTUkey
-    outer apply(SELECT [val] = count(1) * @InspMachine_DefectPointTime
-                from FIR_Physical_Defect_Realtime_His fpdr with (nolock) 
-                where   fpdr.InspSeq = FP.InspSeq and 
-                        fpdr.FIR_PhysicalDetailUkey = FP.DetailUkey and
-                        fpdr.AddDate is not null and
-                        fpdr.MachineIoTUkey is not null
-                ) DefectPointTime
-    outer apply(select [val] = MachineTime.PrepareTime + MachineTime.RunTime + DefectPointTime.val) MachineRunTime
     WHERE   (FP.InspDate >= @InspectionDateFrom or @InspectionDateFrom is null) and
             (FP.InspDate <= @InspectionDateTo or @InspectionDateTo is null) and
             (FP.EditDate >= @EditDateFrom or FP.AddDate >= @EditDateFrom or @EditDateFrom is null) and
