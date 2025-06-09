@@ -65,6 +65,7 @@ namespace Sci.Production.Warehouse
             this.grid2Data.Columns.Add("MDivisionID", typeof(string));
             this.grid2Data.Columns.Add("Stocktype", typeof(string));
             this.grid2Data.Columns.Add("ftyinventoryukey", typeof(string));
+            this.grid2Data.Columns.Add("Weight", typeof(decimal));
 
             this.listControlBindingSource2.DataSource = this.grid2Data;
             this.gridPoid.DataSource = this.listControlBindingSource2;
@@ -77,6 +78,7 @@ namespace Sci.Production.Warehouse
                 .Text("Dyelot", header: "Dyelot", width: Widths.AnsiChars(8), iseditingreadonly: false)
                 .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: true)
                 .Text("Location", header: "Bulk Location", iseditingreadonly: false)
+                .Numeric("Weight", header: "Return Weight", width: Widths.AnsiChars(10), decimal_places: 2, integer_places: 10, iseditingreadonly: false)
                 .EditText("ErrMsg", header: "Error Message", width: Widths.AnsiChars(100), iseditingreadonly: true);
 
             for (int i = 0; i < this.gridPoid.ColumnCount; i++)
@@ -182,7 +184,7 @@ namespace Sci.Production.Warehouse
                 // 檢查Excel格式
                 Excel.Range range = worksheet.Range[string.Format("A{0}:AE{0}", 2)];
                 object[,] objCellArray = range.Value;
-                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location" };
+                string[] itemCheck = { "SP#", "SEQ1", "SEQ2", "Roll", "Dyelot", "Return Qty", "Bulk Location", "Weight" };
                 int[] itemPosition = new int[itemCheck.Length];
                 string[] excelItem = new string[intColumnsCount + 1];
 
@@ -306,6 +308,15 @@ namespace Sci.Production.Warehouse
                     if (MyUtility.Convert.GetInt(newRow["qty"].ToString()) > 999999999)
                     {
                         listColumnLengthErrMsg.Add("<Qty> value can't be more than 999,999,999");
+                    }
+
+                    if (!double.TryParse(objCellArray[1, itemPosition[7]].ToString(), out _))
+                    {
+                        listColumnLengthErrMsg.Add("For numerical input only!!");
+                    }
+                    else
+                    {
+                        newRow["Weight"] = MyUtility.Excel.GetExcelCellValue(objCellArray[1, itemPosition[7]], "N");
                     }
 
                     if (listColumnLengthErrMsg.Count > 0)
@@ -499,6 +510,7 @@ and f.MDivisionID = @MDivisionID ";
                         {
                             item["Qty"] = dr2["Qty"];
                             item["Location"] = dr2["Location"];
+                            item["Weight"] = dr2["Weight"];
                         }
                     }
                 }

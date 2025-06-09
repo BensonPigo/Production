@@ -29,6 +29,7 @@
     [IsGrandCCanUse] BIT NOT NULL DEFAULT ((0)), 
     [GrandCCanUseReason] NVARCHAR(300) NOT NULL DEFAULT (''), 
     [ColorToneCheck]  bit CONSTRAINT [DF_FIR_Physical_ColorToneCheck] DEFAULT((0)) NOT NULL, 
+    [InspSeq] INT CONSTRAINT [DF_FIR_Physical_InspSeq] DEFAULT((0)) NOT NULL, 
     CONSTRAINT [PK_FIR_Physical] PRIMARY KEY CLUSTERED ([DetailUkey] ASC)
 );
 
@@ -165,3 +166,13 @@ EXEC sp_addextendedproperty @name = N'MS_Description',
     @level1name = N'FIR_Physical',
     @level2type = N'COLUMN',
     @level2name = N'ColorToneCheck'
+GO
+EXEC sp_addextendedproperty @name = N'MS_Description',
+    @value = N'檢驗流水號
+By FIRID, Roll, Dyelot',
+    @level0type = N'SCHEMA',
+    @level0name = N'dbo',
+    @level1type = N'TABLE',
+    @level1name = N'FIR_Physical',
+    @level2type = N'COLUMN',
+    @level2name = N'InspSeq'

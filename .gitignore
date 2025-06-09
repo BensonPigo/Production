@@ -245,3 +245,5 @@ packages/Microsoft.SqlServer.Types.14.0.314.76/tools/uninstall.ps1
 /Sci.Production.Cutting/P02.cs
 /Sci.Production.Cutting/P02.Designer.cs
 /Sci.Production.Cutting/P02.resx
+PMSHistory/bin
+PMSHistory/obj
