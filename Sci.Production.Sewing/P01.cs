@@ -747,10 +747,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                             bool changed = newArticle != oldArticle;
                             dr["Article"] = newArticle;
                             dr["Color"] = colorData[0]["ColorID"];
-                            if (changed)
-                            {
-                                dr["QAOutput"] = string.Empty;
-                            }
 
                             dr.EndEdit();
                             if (changed)
@@ -761,6 +757,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                                 }
                                 else
                                 {
+                                    dr["QAOutput"] = string.Empty;
                                     this.DeleteSubDetailData(dr);
                                     this.CreateSubDetailDatas(dr);
                                 }
@@ -829,7 +826,6 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                         {
                             dr["Article"] = newArticle;
                             dr["Color"] = colorData.Rows[0]["ColorID"];
-                            dr["QAOutput"] = string.Empty;
                             dr.EndEdit();
                             if (this.IsUnlockFromMonthLock)
                             {
@@ -837,6 +833,7 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                             }
                             else
                             {
+                                dr["QAOutput"] = string.Empty;
                                 this.DeleteSubDetailData(dr);
                                 this.CreateSubDetailDatas(dr);
                             }
