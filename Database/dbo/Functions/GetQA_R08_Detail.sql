@@ -9,10 +9,14 @@
 	@RefNoTo varchar(36),
 	@BrandIDs varchar(200),
     @EditDateFrom date,
-	@EditDateTo date
+	@EditDateTo date,
+    @InspMachine_FabPrepareTime_Woven int = 0,
+    @InspMachine_FabPrepareTime_Other int = 0,
+    @InspMachine_DefectPointTime int = 0
 )
 RETURNS @returntable TABLE
 (
+    InspectionStatus varchar(10),
 	InspDate date,
     Inspector varchar(10),
     InspectorName nvarchar(30),
@@ -42,18 +46,15 @@ RETURNS @returntable TABLE
     TotalDefectPoints numeric(6, 0),
 	PointRatePerRoll numeric(8,2),
     Grade varchar(10),
-    ActInspTimeStart datetime,
-    CalculatedInspTimeStartFirstTime datetime,
-    ActInspTimeFinish datetime,
-    InspTimeFinishFirstTime datetime,
-    QCMachineStopTime int,
-    QCMachineRunTime int,
+    InspectionStartTime datetime,
+    InspectionFinishTime datetime,
+    MachineDownTime int,
+    MachineRunTime int,
     Remark nvarchar(60),
     MCHandle varchar(45),
     WeaveType varchar(20),
 	ReceivingID varchar(13),
-    AddDate datetime,
-    EditDate datetime
+    MachineIoTUkey bigint
 )
 AS
 BEGIN
@@ -74,7 +75,8 @@ BEGIN
     select  Data
     from SplitString(@BrandIDs, ',')
 
-	insert into @returntable( InspDate
+	insert into @returntable( InspectionStatus
+                             ,InspDate
                              ,Inspector
                              ,InspectorName
                              ,BrandID
@@ -103,20 +105,18 @@ BEGIN
                              ,TotalDefectPoints
 							 ,PointRatePerRoll
                              ,Grade
-                             ,ActInspTimeStart
-                             ,CalculatedInspTimeStartFirstTime
-                             ,ActInspTimeFinish
-                             ,InspTimeFinishFirstTime
-                             ,QCMachineStopTime
-                             ,QCMachineRunTime
+                             ,InspectionStartTime
+                             ,InspectionFinishTime 
+                             ,MachineDownTime
+                             ,MachineRunTime
                              ,Remark
                              ,MCHandle
                              ,WeaveType
-							 ,ReceivingID
-                             ,AddDate
-                             ,EditDate
+	                         ,ReceivingID 
+                             ,MachineIoTUkey
 )
-    SELECT   FP.InspDate
+    SELECT  'Lastest'
+            ,FP.InspDate
             ,FP.Inspector
             ,isnull(Pass1.Name, '')
             ,isnull(o.brandID  , '')
@@ -146,29 +146,34 @@ BEGIN
 	        ,FP.TotalPoint
 			,[PointRatePerRoll] = FP.PointRate
             ,isnull(FP.Grade, '')
-            ,[ActualInspectionTimeStart] = FP.StartTime
-	        ,[CalculatedInspTimeStartFirstTime] = DATEADD(second, FP.QCTime*-1, FP.AddDate)
-            ,[ActualInspectionTimeFinish] = fp.EditDate
-	        ,[InspTimeFinishFirstTime] = FP.AddDate
-            ,[QCMachineStopTime] = case when fp.AddDate is null or fp.StartTime is null then fp.QCTime
-		        						   else DATEDIFF(SECOND,fp.StartTime,fp.AddDate) - fp.QCTime end
-	        ,[QCMachineRunTime] = fp.QCTime
+            ,[InspectionStartTime] = FP.StartTime
+            ,[InspectionFinishTime] = fp.EditDate
+            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineTime.RunTime
+            ,[MachineRunTime] = MachineTime.RunTime
             ,[Remark]=FP.Remark
             ,[MCHandle]= isnull(dbo.getPass1_ExtNo(o.MCHandle), '')
             ,isnull(Fabric.WeaveTypeID, '')
 			,[ReceivingID] = isnull(RD.ID,'')
-            ,fp.AddDate
-	        ,fp.EditDate
-    FROM System, FIR_Physical AS FP
-    inner JOIN FIR AS F ON FP.ID=F.ID
-    LEFT JOIN View_AllReceivingDetail RD ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
+            ,MachineIoTUkey.val
+    FROM System, FIR_Physical AS FP with (nolock)
+    inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
+    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
     								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
-    LEFT join PO_Supp_Detail p on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
+    LEFT join PO_Supp_Detail p with (nolock) on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
     left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
-    LEFT join orders o on o.id=f.POID
-    LEFT JOIN Fabric on Fabric.SCIRefno  = f.SCIRefno
-    LEFT JOIN Issue_Detail isd on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
-    LEFT JOIN Pass1 on Pass1.ID = FP.Inspector
+    LEFT join orders o with (nolock) on o.id=f.POID
+    LEFT JOIN Fabric with (nolock) on Fabric.SCIRefno  = f.SCIRefno
+    LEFT JOIN Issue_Detail isd with (nolock) on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
+    LEFT JOIN Pass1 with (nolock) on Pass1.ID = FP.Inspector
+    outer apply(SELECT [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
+                from FIR_Physical_QCTime fpq with (nolock) 
+                where fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
+                ) MachineTime
+    outer apply(SELECT top 1 [val] = fpq.MachineIoTUkey
+                from FIR_Physical_QCTime fpq with (nolock) 
+                where fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
+                order by fpq.ukey desc
+                ) MachineIoTUkey
     WHERE   (FP.InspDate >= @InspectionDateFrom or @InspectionDateFrom is null) and
             (FP.InspDate <= @InspectionDateTo or @InspectionDateTo is null) and
             (FP.EditDate >= @EditDateFrom or FP.AddDate >= @EditDateFrom or @EditDateFrom is null) and
@@ -179,8 +184,76 @@ BEGIN
             (p.RefNo <= @RefNoTo or @RefNoTo = '') and
             (FP.Inspector in (select Inspector from @InspectorWhere) or @Inspectors = '') and
             (o.brandID in (select BrandID from @BrandWhere) or @BrandIDs = '') 
-    ORDER BY FP.InspDate, FP.Inspector, F.POID, F.SEQ1, F.SEQ2, fp.Roll, fp.Dyelot
-
+    union all
+    SELECT  'Historical'
+            ,FP.InspDate
+            ,FP.Inspector
+            ,isnull(Pass1.Name, '')
+            ,isnull(o.brandID  , '')
+            ,isnull(o.FtyGroup , '')
+            ,isnull(o.StyleID  , '')
+            ,F.POID
+            ,concat(RTRIM(F.SEQ1) ,'-',F.SEQ2)
+            ,[StockType]=iif(isnull(rd. StockType, '') = '', '', (select Name from DropDownList ddl  where ddl.id like '%'+rd. StockType+'%' and ddl.Type = 'Pms_StockType'))
+            ,[Wkno] = isnull(rd.ExportID, '')
+	        ,f.SuppID
+	        ,[SuppName]=(select AbbEN from Supp where id = f.SuppID)
+	        ,rd.WhseArrival
+            ,fp.Roll
+            ,fp.Dyelot
+	        ,RTRIM(isnull(p.RefNo, ''))
+	        ,[Color]= isnull(dbo.GetColorMultipleID(o.BrandID,isnull(psdsC.SpecValue ,'')), '')
+            ,[ArrivedYDS] = isnull(RD.StockQty, 0)
+            ,[ActualYDS] = FP.ActualYds
+            ,[LthOfDiff] = FP.ActualYds - FP.TicketYds
+	        ,isnull(FP.TransactionID, '')
+	        ,isnull(isd.Qty, 0)
+	        ,[QCIssueTransactionID] = isnull(isd.Id, '')
+            ,[CutWidth] = isnull(Fabric.width, 0)
+            ,[ActualWidth] = FP.ActualWidth
+            ,[Speed] = convert(numeric(10,2), IIF((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty) <= 0, 0,
+	                     Round(FP.ActualYds/((FP.QCTime- System.QCMachineDelayTime * FP.QCStopQty)/60),2)))
+	        ,FP.TotalPoint
+			,[PointRatePerRoll] = IIF(ISNULL(FP.ActualYds,0)=0,0,cast(FP.TotalPoint/FP.ActualYds * 100 as numeric(8,2)))
+            ,isnull(FP.Grade, '')
+            ,[InspectionStartTime] = FP.StartTime
+            ,[InspectionFinishTime] = fp.EditDate
+            ,[MachineDownTime] = DATEDIFF(SECOND, FP.StartTime, fp.EditDate) - MachineTime.RunTime
+            ,[MachineRunTime] = MachineTime.RunTime
+            ,[Remark]=FP.Remark
+            ,[MCHandle]= isnull(dbo.getPass1_ExtNo(o.MCHandle), '')
+            ,isnull(Fabric.WeaveTypeID, '')
+			,[ReceivingID] = isnull(RD.ID,'')
+            ,MachineIoTUkey.val
+    FROM System, FIR_Physical_His AS FP with (nolock)
+    inner JOIN FIR AS F with (nolock) ON FP.ID=F.ID
+    LEFT JOIN View_AllReceivingDetail RD with (nolock) ON RD.PoId= F.POID AND RD.Seq1 = F.SEQ1 AND RD.Seq2 = F.SEQ2
+    								AND RD.Roll = FP.Roll AND RD.Dyelot = FP.Dyelot
+    LEFT join PO_Supp_Detail p with (nolock) on p.ID = f.poid and p.seq1 = f.seq1 and p.seq2 = f.seq2
+    left join PO_Supp_Detail_Spec psdsC WITH (NOLOCK) on psdsC.ID = p.id and psdsC.seq1 = p.seq1 and psdsC.seq2 = p.seq2 and psdsC.SpecColumnID = 'Color'
+    LEFT join orders o with (nolock) on o.id=f.POID
+    LEFT JOIN Fabric with (nolock) on Fabric.SCIRefno  = f.SCIRefno
+    LEFT JOIN Issue_Detail isd with (nolock) on FP.Issue_DetailUkey = isd.ukey and isd.IsQMS = 1
+    LEFT JOIN Pass1 with (nolock) on Pass1.ID = FP.Inspector
+    outer apply(SELECT [RunTime] = sum(DATEDIFF(SECOND, fpq.StartTime, fpq.EndTime))
+                from FIR_Physical_QCTime_His fpq with (nolock) 
+                where fpq.InspSeq = FP.InspSeq and fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
+                ) MachineTime
+    outer apply(SELECT top 1 [val] = fpq.MachineIoTUkey
+                from FIR_Physical_QCTime_His fpq with (nolock) 
+                where fpq.InspSeq = FP.InspSeq and fpq.FIR_PhysicalDetailUkey = FP.DetailUkey
+                order by fpq.ukey desc
+                ) MachineIoTUkey
+    WHERE   (FP.InspDate >= @InspectionDateFrom or @InspectionDateFrom is null) and
+            (FP.InspDate <= @InspectionDateTo or @InspectionDateTo is null) and
+            (FP.EditDate >= @EditDateFrom or FP.AddDate >= @EditDateFrom or @EditDateFrom is null) and
+            (FP.EditDate <= @EditDateTo or FP.AddDate <= @EditDateTo or @EditDateTo is null) and
+            (F.POID >= @POIDFrom or @POIDFrom = '') and
+            (F.POID <= @POIDTo or @POIDTo = '') and
+            (p.RefNo >= @RefNoFrom or @RefNoFrom = '') and
+            (p.RefNo <= @RefNoTo or @RefNoTo = '') and
+            (FP.Inspector in (select Inspector from @InspectorWhere) or @Inspectors = '') and
+            (o.brandID in (select BrandID from @BrandWhere) or @BrandIDs = '')  
 
 	RETURN
 END
