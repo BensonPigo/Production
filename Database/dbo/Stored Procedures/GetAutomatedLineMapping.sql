@@ -661,7 +661,8 @@ BEGIN
 													OperationDesc,
 													SewerDiffPercentageDesc,
 													TimeStudyDetailUkeyCnt,
-													IsNotShownInP05)
+													IsNotShownInP05,
+                                                    TimeStudySeq)
 			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
 				   0,
 				   '',
@@ -684,7 +685,8 @@ BEGIN
 				   '**Pressing',
 				   @SewerDiffPercentage * 100,
 				   0,
-				   (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PR' and FactoryID = @FactoryID))
+				   (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PR' and FactoryID = @FactoryID),
+                   0)
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
@@ -722,7 +724,8 @@ BEGIN
 													OperationDesc,
 													SewerDiffPercentageDesc,
 													TimeStudyDetailUkeyCnt,
-													IsNotShownInP05)
+													IsNotShownInP05,
+                                                    TimeStudySeq)
 			values(RIGHT(REPLICATE('0', 2) + cast(@MaxNo as varchar(3)), 2),
 				   0,
 				   '',
@@ -745,7 +748,8 @@ BEGIN
 				   '**Packing',
 				   @SewerDiffPercentage * 100,
 				   0,
-				  (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PA' and FactoryID = @FactoryID))
+				  (SELECT IsNotShownInP05 FROM MachineType_Detail WHERE ID = 'MM2PA' and FactoryID = @FactoryID),
+                  0)
 	
 		set @SewerDiffPercentageRemaining = @SewerDiffPercentageRemaining - @SewerDiffPercentage
 		set @WhileCnt = @WhileCnt + 1
