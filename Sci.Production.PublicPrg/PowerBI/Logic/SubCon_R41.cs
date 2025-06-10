@@ -89,7 +89,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
                 if (!MyUtility.Check.Empty(model.SP1))
                 {
-                    sqlWhereFirstQuery.Append($@" and BDO.BundleNo in (Select BundleNo from View_Bundle_Detail_Order Where OrderID = @sp1)");
+                    sqlWhereFirstQuery.Append($@" and BDO.BundleNo in (Select BundleNo from Bundle_Detail_Order Where OrderID = @sp1)");
                 }
 
                 if (!MyUtility.Check.Empty(model.BundleCDate1))
