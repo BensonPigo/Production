@@ -5,7 +5,7 @@
     [CutCellid]                 VARCHAR (2)     CONSTRAINT [DF_P_ActualCutOutputReport_CutCellid] DEFAULT ('') NOT NULL,
     [SpreadingNoID]             VARCHAR (5)     CONSTRAINT [DF_P_ActualCutOutputReport_SpreadingNoID] DEFAULT ('') NOT NULL,
     [CutplanID]                 VARCHAR (13)    CONSTRAINT [DF_P_ActualCutOutputReport_CutplanID] DEFAULT ('') NOT NULL,
-    [CutRef]                    VARCHAR (6)     CONSTRAINT [DF_P_ActualCutOutputReport_CutRef] DEFAULT ('') NOT NULL,
+    [CutRef]                    VARCHAR (10)     CONSTRAINT [DF_P_ActualCutOutputReport_CutRef] DEFAULT ('') NOT NULL,
     [SP]                        VARCHAR (13)    CONSTRAINT [DF_P_ActualCutOutputReport_SP] DEFAULT ('') NOT NULL,
     [SubSP]                     NVARCHAR (MAX)  CONSTRAINT [DF_P_ActualCutOutputReport_SubSP] DEFAULT ('') NOT NULL,
     [StyleID]                   VARCHAR (15)    CONSTRAINT [DF_P_ActualCutOutputReport_StyleID] DEFAULT ('') NOT NULL,

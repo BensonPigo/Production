@@ -130,7 +130,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 alter table #tmp alter column POHandle           varchar (100)
                 alter table #tmp alter column POSMR              varchar (100)
                 alter table #tmp alter column Supplier           varchar (50)
-                alter table #tmp alter column VID                varchar (30)
+                alter table #tmp alter column VID                varchar (200)
                 alter table #tmp alter column AddDate            datetime
                 alter table #tmp alter column EditDate           datetime
                 alter table #tmp alter column Grade              varchar (10)
