@@ -672,6 +672,8 @@ where Factory.MDivisionID = '{0}' and ftyinventory.poid='{1}' and ftyinventory.s
             .Numeric("qty", header: "Return Qty", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10) // 6
             .Text("Location", header: "Bulk Location", settings: location_Col) // 7
             .Text("ContainerCode", header: "Container Code", iseditingreadonly: true).Get(out cbb_ContainerCode)
+            .Text("Tone", header: "Tone", width: Widths.AnsiChars(8), iseditingreadonly: true)
+            .Numeric("Weight", header: "Weight", width: Widths.AnsiChars(8), decimal_places: 2, integer_places: 10)
             ;
             #endregion 欄位設定
 
@@ -1156,6 +1158,8 @@ select a.id,a.PoId,a.Seq1,a.Seq2,concat(Ltrim(Rtrim(a.seq1)), ' ', a.Seq2) as se
 ,a.ukey
 ,Barcode = isnull(FI.barcode,'')
 ,fabrictype = isnull(p1.fabrictype,'')
+,FI.Tone
+,a.Weight
 from dbo.IssueReturn_Detail a WITH (NOLOCK) 
 left join PO_Supp_Detail p1 WITH (NOLOCK) on p1.ID = a.PoId and p1.seq1 = a.SEQ1 and p1.SEQ2 = a.seq2
 left join FtyInventory FI on a.Poid = FI.Poid and a.Seq1 = FI.Seq1 and a.Seq2 = FI.Seq2 and a.Dyelot = FI.Dyelot

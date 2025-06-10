@@ -44,6 +44,11 @@
             this.label1 = new Sci.Win.UI.Label();
             this.chkIsBoundedProcess = new Sci.Win.UI.CheckBox();
             this.checkBox1 = new Sci.Win.UI.CheckBox();
+            this.chkIsDisableMachineNoEntry = new Sci.Win.UI.CheckBox();
+            this.label2 = new Sci.Win.UI.Label();
+            this.label3 = new Sci.Win.UI.Label();
+            this.displayTPECreate = new Sci.Win.UI.DisplayBox();
+            this.displayTPEEdit = new Sci.Win.UI.DisplayBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.mtbs)).BeginInit();
             this.detail.SuspendLayout();
@@ -58,6 +63,11 @@
             // 
             // detailcont
             // 
+            this.detailcont.Controls.Add(this.displayTPEEdit);
+            this.detailcont.Controls.Add(this.displayTPECreate);
+            this.detailcont.Controls.Add(this.label3);
+            this.detailcont.Controls.Add(this.label2);
+            this.detailcont.Controls.Add(this.chkIsDisableMachineNoEntry);
             this.detailcont.Controls.Add(this.checkBox1);
             this.detailcont.Controls.Add(this.chkIsBoundedProcess);
             this.detailcont.Controls.Add(this.label1);
@@ -123,9 +133,11 @@
             // 
             this.checkJunk.AutoSize = true;
             this.checkJunk.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "junk", true));
-            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkJunk.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkJunk.IsSupportEditMode = false;
             this.checkJunk.Location = new System.Drawing.Point(315, 59);
             this.checkJunk.Name = "checkJunk";
+            this.checkJunk.ReadOnly = true;
             this.checkJunk.Size = new System.Drawing.Size(57, 21);
             this.checkJunk.TabIndex = 4;
             this.checkJunk.Text = "Junk";
@@ -135,9 +147,11 @@
             // 
             this.checkDisplayonreport.AutoSize = true;
             this.checkDisplayonreport.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDDefault", true));
-            this.checkDisplayonreport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkDisplayonreport.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkDisplayonreport.IsSupportEditMode = false;
             this.checkDisplayonreport.Location = new System.Drawing.Point(412, 112);
             this.checkDisplayonreport.Name = "checkDisplayonreport";
+            this.checkDisplayonreport.ReadOnly = true;
             this.checkDisplayonreport.Size = new System.Drawing.Size(121, 21);
             this.checkDisplayonreport.TabIndex = 7;
             this.checkDisplayonreport.Text = "Is RFID Default";
@@ -147,9 +161,11 @@
             // 
             this.checkSelected.AutoSize = true;
             this.checkSelected.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "isSelection", true));
-            this.checkSelected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkSelected.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkSelected.IsSupportEditMode = false;
             this.checkSelected.Location = new System.Drawing.Point(315, 112);
             this.checkSelected.Name = "checkSelected";
+            this.checkSelected.ReadOnly = true;
             this.checkSelected.Size = new System.Drawing.Size(82, 21);
             this.checkSelected.TabIndex = 6;
             this.checkSelected.Text = "Selected";
@@ -159,9 +175,11 @@
             // 
             this.checkProcess.AutoSize = true;
             this.checkProcess.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsRFIDProcess", true));
-            this.checkProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.checkProcess.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.checkProcess.IsSupportEditMode = false;
             this.checkProcess.Location = new System.Drawing.Point(412, 57);
             this.checkProcess.Name = "checkProcess";
+            this.checkProcess.ReadOnly = true;
             this.checkProcess.Size = new System.Drawing.Size(127, 21);
             this.checkProcess.TabIndex = 5;
             this.checkProcess.Text = "Is RFID Process";
@@ -189,22 +207,26 @@
             // 
             // txtShowSeq
             // 
-            this.txtShowSeq.BackColor = System.Drawing.Color.White;
+            this.txtShowSeq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtShowSeq.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "showseq", true));
-            this.txtShowSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtShowSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtShowSeq.IsSupportEditMode = false;
             this.txtShowSeq.Location = new System.Drawing.Point(162, 167);
             this.txtShowSeq.Name = "txtShowSeq";
+            this.txtShowSeq.ReadOnly = true;
             this.txtShowSeq.Size = new System.Drawing.Size(53, 23);
             this.txtShowSeq.TabIndex = 2;
             // 
             // txtBcsDate
             // 
-            this.txtBcsDate.BackColor = System.Drawing.Color.White;
+            this.txtBcsDate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtBcsDate.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "bcsdate", true));
-            this.txtBcsDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtBcsDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtBcsDate.IsSupportEditMode = false;
             this.txtBcsDate.Location = new System.Drawing.Point(162, 221);
             this.txtBcsDate.MaxLength = 2;
             this.txtBcsDate.Name = "txtBcsDate";
+            this.txtBcsDate.ReadOnly = true;
             this.txtBcsDate.Size = new System.Drawing.Size(66, 23);
             this.txtBcsDate.TabIndex = 3;
             // 
@@ -218,26 +240,30 @@
             // 
             // txtartworktype_ftyArtworkType
             // 
-            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.White;
+            this.txtartworktype_ftyArtworkType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtartworktype_ftyArtworkType.CClassify = "";
             this.txtartworktype_ftyArtworkType.CSubprocess = "t";
             this.txtartworktype_ftyArtworkType.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "artworktypeid", true));
-            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtartworktype_ftyArtworkType.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtartworktype_ftyArtworkType.IsSupportEditMode = false;
             this.txtartworktype_ftyArtworkType.Location = new System.Drawing.Point(162, 112);
             this.txtartworktype_ftyArtworkType.Name = "txtartworktype_ftyArtworkType";
+            this.txtartworktype_ftyArtworkType.ReadOnly = true;
             this.txtartworktype_ftyArtworkType.Size = new System.Drawing.Size(140, 23);
             this.txtartworktype_ftyArtworkType.TabIndex = 1;
             // 
             // combInOutRule
             // 
-            this.combInOutRule.BackColor = System.Drawing.Color.White;
+            this.combInOutRule.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.combInOutRule.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "InOutRule", true));
-            this.combInOutRule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.combInOutRule.EditMode = Sci.Win.UI.AdvEditModes.None;
+            this.combInOutRule.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.combInOutRule.FormattingEnabled = true;
             this.combInOutRule.IsSupportUnselect = true;
             this.combInOutRule.Location = new System.Drawing.Point(162, 273);
             this.combInOutRule.Name = "combInOutRule";
             this.combInOutRule.OldText = "";
+            this.combInOutRule.ReadOnly = true;
             this.combInOutRule.Size = new System.Drawing.Size(121, 24);
             this.combInOutRule.TabIndex = 17;
             // 
@@ -277,6 +303,52 @@
             this.checkBox1.Text = "Is Subprocess Inspection";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // chkIsDisableMachineNoEntry
+            // 
+            this.chkIsDisableMachineNoEntry.AutoSize = true;
+            this.chkIsDisableMachineNoEntry.DataBindings.Add(new System.Windows.Forms.Binding("Checked", this.mtbs, "IsDisableMachineNoEntry", true));
+            this.chkIsDisableMachineNoEntry.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkIsDisableMachineNoEntry.Location = new System.Drawing.Point(333, 248);
+            this.chkIsDisableMachineNoEntry.Name = "chkIsDisableMachineNoEntry";
+            this.chkIsDisableMachineNoEntry.Size = new System.Drawing.Size(343, 21);
+            this.chkIsDisableMachineNoEntry.TabIndex = 21;
+            this.chkIsDisableMachineNoEntry.Text = "Disable Machine# entry for Subprocess Inspection";
+            this.chkIsDisableMachineNoEntry.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(70, 317);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(89, 23);
+            this.label2.TabIndex = 22;
+            this.label2.Text = "TPE Create";
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(423, 317);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(89, 23);
+            this.label3.TabIndex = 23;
+            this.label3.Text = "TPE Edit";
+            // 
+            // displayTPECreate
+            // 
+            this.displayTPECreate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTPECreate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTPECreate.Location = new System.Drawing.Point(162, 317);
+            this.displayTPECreate.Name = "displayTPECreate";
+            this.displayTPECreate.Size = new System.Drawing.Size(258, 23);
+            this.displayTPECreate.TabIndex = 24;
+            // 
+            // displayTPEEdit
+            // 
+            this.displayTPEEdit.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.displayTPEEdit.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.displayTPEEdit.Location = new System.Drawing.Point(515, 317);
+            this.displayTPEEdit.Name = "displayTPEEdit";
+            this.displayTPEEdit.Size = new System.Drawing.Size(258, 23);
+            this.displayTPEEdit.TabIndex = 25;
+            // 
             // B01
             // 
             this.ClientSize = new System.Drawing.Size(836, 457);
@@ -286,7 +358,6 @@
             this.IsSupportClip = false;
             this.IsSupportCopy = false;
             this.IsSupportDelete = false;
-            this.IsSupportEdit = false;
             this.IsSupportNew = false;
             this.IsSupportPrint = false;
             this.Name = "B01";
@@ -324,5 +395,10 @@
         private Win.UI.Label label1;
         private Win.UI.CheckBox chkIsBoundedProcess;
         private Win.UI.CheckBox checkBox1;
+        private Win.UI.CheckBox chkIsDisableMachineNoEntry;
+        private Win.UI.DisplayBox displayTPEEdit;
+        private Win.UI.DisplayBox displayTPECreate;
+        private Win.UI.Label label3;
+        private Win.UI.Label label2;
     }
 }
