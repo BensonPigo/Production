@@ -29,12 +29,14 @@
         private void InitializeComponent()
         {
             this.radioPanel1 = new Sci.Win.UI.RadioPanel();
+            this.comboPrint = new Sci.Win.UI.ComboBox();
+            this.lbPrint = new Sci.Win.UI.Label();
             this.comboType = new Sci.Win.UI.ComboBox();
             this.label2 = new Sci.Win.UI.Label();
             this.radioQRCodeSticker = new Sci.Win.UI.RadioButton();
             this.radioPrint = new Sci.Win.UI.RadioButton();
-            this.comboPrint = new Sci.Win.UI.ComboBox();
-            this.lbPrint = new Sci.Win.UI.Label();
+            this.comboSortBy = new Sci.Win.UI.ComboBox();
+            this.lbSortBy = new Sci.Win.UI.Label();
             this.radioPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,6 +55,8 @@
             // 
             // radioPanel1
             // 
+            this.radioPanel1.Controls.Add(this.comboSortBy);
+            this.radioPanel1.Controls.Add(this.lbSortBy);
             this.radioPanel1.Controls.Add(this.comboPrint);
             this.radioPanel1.Controls.Add(this.lbPrint);
             this.radioPanel1.Controls.Add(this.comboType);
@@ -64,6 +68,29 @@
             this.radioPanel1.Size = new System.Drawing.Size(394, 128);
             this.radioPanel1.TabIndex = 94;
             this.radioPanel1.Value = "P/L Rcv Report";
+            // 
+            // comboPrint
+            // 
+            this.comboPrint.BackColor = System.Drawing.Color.White;
+            this.comboPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboPrint.FormattingEnabled = true;
+            this.comboPrint.IsSupportUnselect = true;
+            this.comboPrint.Location = new System.Drawing.Point(220, 58);
+            this.comboPrint.Name = "comboPrint";
+            this.comboPrint.OldText = "";
+            this.comboPrint.Size = new System.Drawing.Size(121, 24);
+            this.comboPrint.TabIndex = 8;
+            this.comboPrint.SelectedIndexChanged += new System.EventHandler(this.ComboPrint_SelectedIndexChanged);
+            // 
+            // lbPrint
+            // 
+            this.lbPrint.BackColor = System.Drawing.Color.Transparent;
+            this.lbPrint.Location = new System.Drawing.Point(178, 59);
+            this.lbPrint.Name = "lbPrint";
+            this.lbPrint.Size = new System.Drawing.Size(39, 23);
+            this.lbPrint.TabIndex = 7;
+            this.lbPrint.Text = "Print:";
+            this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // comboType
             // 
@@ -115,28 +142,27 @@
             this.radioPrint.Value = "P/L Rcv Report";
             this.radioPrint.CheckedChanged += new System.EventHandler(this.RadioPrint_CheckedChanged);
             // 
-            // comboPrint
+            // comboSortBy
             // 
-            this.comboPrint.BackColor = System.Drawing.Color.White;
-            this.comboPrint.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.comboPrint.FormattingEnabled = true;
-            this.comboPrint.IsSupportUnselect = true;
-            this.comboPrint.Location = new System.Drawing.Point(220, 58);
-            this.comboPrint.Name = "comboPrint";
-            this.comboPrint.OldText = "";
-            this.comboPrint.Size = new System.Drawing.Size(121, 24);
-            this.comboPrint.TabIndex = 8;
-            this.comboPrint.SelectedIndexChanged += new System.EventHandler(this.ComboPrint_SelectedIndexChanged);
+            this.comboSortBy.BackColor = System.Drawing.Color.White;
+            this.comboSortBy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboSortBy.FormattingEnabled = true;
+            this.comboSortBy.IsSupportUnselect = true;
+            this.comboSortBy.Location = new System.Drawing.Point(220, 23);
+            this.comboSortBy.Name = "comboSortBy";
+            this.comboSortBy.OldText = "";
+            this.comboSortBy.Size = new System.Drawing.Size(121, 24);
+            this.comboSortBy.TabIndex = 17;
             // 
-            // lbPrint
+            // lbSortBy
             // 
-            this.lbPrint.BackColor = System.Drawing.Color.Transparent;
-            this.lbPrint.Location = new System.Drawing.Point(178, 59);
-            this.lbPrint.Name = "lbPrint";
-            this.lbPrint.Size = new System.Drawing.Size(39, 23);
-            this.lbPrint.TabIndex = 7;
-            this.lbPrint.Text = "Print:";
-            this.lbPrint.TextStyle.Color = System.Drawing.Color.Black;
+            this.lbSortBy.BackColor = System.Drawing.Color.Transparent;
+            this.lbSortBy.Location = new System.Drawing.Point(163, 24);
+            this.lbSortBy.Name = "lbSortBy";
+            this.lbSortBy.Size = new System.Drawing.Size(54, 23);
+            this.lbSortBy.TabIndex = 16;
+            this.lbSortBy.Text = "Sort By:";
+            this.lbSortBy.TextStyle.Color = System.Drawing.Color.Black;
             // 
             // WH_Print
             // 
@@ -168,5 +194,7 @@
         private Win.UI.RadioButton radioQRCodeSticker;
         private Win.UI.ComboBox comboPrint;
         private Win.UI.Label lbPrint;
+        private Win.UI.ComboBox comboSortBy;
+        private Win.UI.Label lbSortBy;
     }
 }

@@ -737,19 +737,30 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                             }
 
                             IList<DataRow> colorData = item.GetSelecteds();
-                            bool changed = item.GetSelectedString() != MyUtility.Convert.GetString(dr["Article"]);
-                            dr["Article"] = item.GetSelectedString();
+
+                            // 先記下舊 Article
+                            string oldArticle = MyUtility.Convert.GetString(dr["Article"]);
+
+                            // 使用者選的新 Article
+                            string newArticle = item.GetSelectedString();
+
+                            bool changed = newArticle != oldArticle;
+                            dr["Article"] = newArticle;
                             dr["Color"] = colorData[0]["ColorID"];
-                            if (changed)
-                            {
-                                dr["QAOutput"] = string.Empty;
-                            }
 
                             dr.EndEdit();
                             if (changed)
                             {
-                                this.DeleteSubDetailData(dr);
-                                this.CreateSubDetailDatas(dr);
+                                if (this.IsUnlockFromMonthLock)
+                                {
+                                    this.CopyAndRemoveSubDetailData(dr, oldArticle, newArticle);
+                                }
+                                else
+                                {
+                                    dr["QAOutput"] = string.Empty;
+                                    this.DeleteSubDetailData(dr);
+                                    this.CreateSubDetailDatas(dr);
+                                }
                             }
                         }
                     }
@@ -767,6 +778,8 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                     }
 
                     DataRow dr = this.detailgrid.GetDataRow<DataRow>(e.RowIndex);
+                    string oldArticle = MyUtility.Convert.GetString(dr["Article"]);
+                    string newArticle = MyUtility.Convert.GetString(e.FormattedValue);
                     if (MyUtility.Convert.GetString(e.FormattedValue) != MyUtility.Convert.GetString(dr["Article"]))
                     {
                         // 資料有異動過就先刪除SubDetail資料
@@ -811,11 +824,19 @@ where o.ID = '{0}' and o.StyleUkey = sl.StyleUkey", MyUtility.Convert.GetString(
                         }
                         else
                         {
-                            dr["Article"] = MyUtility.Convert.GetString(e.FormattedValue);
+                            dr["Article"] = newArticle;
                             dr["Color"] = colorData.Rows[0]["ColorID"];
-                            dr["QAOutput"] = string.Empty;
                             dr.EndEdit();
-                            this.CreateSubDetailDatas(dr);
+                            if (this.IsUnlockFromMonthLock)
+                            {
+                                this.CopyAndRemoveSubDetailData(dr, oldArticle, newArticle);
+                            }
+                            else
+                            {
+                                dr["QAOutput"] = string.Empty;
+                                this.DeleteSubDetailData(dr);
+                                this.CreateSubDetailDatas(dr);
+                            }
                         }
                     }
                 }
@@ -1341,6 +1362,50 @@ order by a.OrderId,os.Seq",
                         subDetailData.Rows.Add(newDr);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// 將 dr 底下所有舊 Article (oldArticle) 的子明細列複製一份、改成 newArticle，
+        /// 再刪除所有屬於 oldArticle 的子明細。
+        /// </summary>
+        private void CopyAndRemoveSubDetailData(DataRow dr, string oldArticle, string newArticle)
+        {
+            // 先取得子明細資料表
+            DataTable subDetailData;
+            this.GetSubDetailDatas(dr, out subDetailData);
+
+            // 1. 收集所有屬於 oldArticle 的子明細列
+            var rowsToCopy = subDetailData.AsEnumerable()
+                .Where(r =>
+                    r["SewingOutput_DetailUkey"].EqualString(dr["UKey"]) &&
+                    r["Article"].EqualString(oldArticle)
+                )
+                .ToList();
+
+            // 2. 複製這些列，並把 Article 換成 newArticle
+            foreach (DataRow oldRow in rowsToCopy)
+            {
+                DataRow newRow = subDetailData.NewRow();
+                foreach (DataColumn col in subDetailData.Columns)
+                {
+                    newRow[col.ColumnName] = oldRow[col.ColumnName];
+                }
+                newRow["Article"] = newArticle;
+
+                // 如果有需要重設 QAQty、InlineQty、DefectQty，可以在這裡做：
+                // newRow["QAQty"] = 0;
+                // newRow["InlineQty"] = 0;
+                // newRow["DefectQty"] = 0;
+
+                subDetailData.Rows.Add(newRow);
+            }
+
+            // 3. 將所有原本 oldArticle 的子明細刪除
+            //    注意：直接在迴圈裡移除可能會出問題，先把要刪的 DataRow 收起來再刪
+            foreach (DataRow oldRow in rowsToCopy)
+            {
+                subDetailData.Rows.Remove(oldRow);
             }
         }
 

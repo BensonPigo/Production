@@ -21,17 +21,33 @@ namespace Sci.Production.Warehouse
 
         /// <inheritdoc/>
         public bool IsPrintRDLC = false;
+        public bool IssortbyLocationAndRoll = false;
+        public bool Isneedsortby = false;
 
         /// <inheritdoc/>
-        public WH_Print(DataRow currentMain, string formname)
+        public WH_Print(DataRow currentMain, string formname, bool needsortby = false)
         {
             this.InitializeComponent();
-            this.CheckControlEnable();
             this.curMain = currentMain;
             this.callFrom = formname;
             this.Text = formname + " " + this.curMain["ID"].ToString();
             MyUtility.Tool.SetupCombox(this.comboPrint, 1, 1, "Sticker,Paper");
             this.comboPrint.Text = "Sticker";
+
+            if (needsortby == false)
+            {
+                this.lbSortBy.Visible = false;
+                this.comboSortBy.Visible = false;
+            }
+            else
+            {
+                this.Isneedsortby = true;
+                this.lbSortBy.Visible = true;
+                this.comboSortBy.Visible = true;
+                this.SetComboSortBy();
+            }
+
+            this.CheckControlEnable();
         }
 
         /// <inheritdoc/>
@@ -208,6 +224,10 @@ drop table #tmp
         {
             this.comboPrint.Enabled = this.radioQRCodeSticker.Checked;
             this.comboType.Enabled = this.radioQRCodeSticker.Checked;
+            if (this.comboSortBy.Visible == true)
+            {
+                this.comboSortBy.Enabled = this.radioPrint.Checked;
+            }
         }
 
         /// <inheritdoc/>
@@ -217,6 +237,11 @@ drop table #tmp
             if (this.radioPrint.Checked)
             {
                 this.IsPrintRDLC = true;
+                if (this.Isneedsortby == true && this.comboSortBy.SelectedValue.ToString() == "2")
+                {
+                    this.IssortbyLocationAndRoll = true;
+                }
+
                 this.Close();
                 return true;
             }
@@ -301,6 +326,21 @@ drop table #tmp
             this.comboType.DataSource = null;
             MyUtility.Tool.SetupCombox(this.comboType, 1, 1, "Horizontal,Straight");
             this.comboType.Text = "Straight";
+        }
+
+        private void SetComboSortBy()
+        {
+            DataTable dtComboSortBy = new DataTable();
+            dtComboSortBy.Columns.Add("ID", typeof(int));
+            dtComboSortBy.Columns.Add("NAME", typeof(string));
+
+            dtComboSortBy.Rows.Add(1, string.Empty);
+            dtComboSortBy.Rows.Add(2, "Location, Roll");
+
+            this.comboSortBy.DataSource = dtComboSortBy;
+            this.comboSortBy.DisplayMember = "NAME";
+            this.comboSortBy.ValueMember = "ID";
+            this.comboSortBy.SelectedValue = 1;
         }
     }
 }
