@@ -42,6 +42,8 @@
             this.label4 = new Sci.Win.UI.Label();
             this.txtWKEnd = new Sci.Win.UI.TextBox();
             this.txtWKStart = new Sci.Win.UI.TextBox();
+            this.labBrand = new Sci.Win.UI.Label();
+            this.txtbrand = new Sci.Production.Class.Txtbrand();
             this.SuspendLayout();
             // 
             // print
@@ -63,7 +65,7 @@
             this.comboUpdateInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboUpdateInfo.FormattingEnabled = true;
             this.comboUpdateInfo.IsSupportUnselect = true;
-            this.comboUpdateInfo.Location = new System.Drawing.Point(123, 101);
+            this.comboUpdateInfo.Location = new System.Drawing.Point(123, 128);
             this.comboUpdateInfo.Name = "comboUpdateInfo";
             this.comboUpdateInfo.OldText = "";
             this.comboUpdateInfo.Size = new System.Drawing.Size(191, 24);
@@ -72,7 +74,7 @@
             // 
             // labelStockType
             // 
-            this.labelStockType.Location = new System.Drawing.Point(5, 103);
+            this.labelStockType.Location = new System.Drawing.Point(5, 130);
             this.labelStockType.Name = "labelStockType";
             this.labelStockType.Size = new System.Drawing.Size(115, 23);
             this.labelStockType.TabIndex = 148;
@@ -80,7 +82,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(5, 133);
+            this.label1.Location = new System.Drawing.Point(5, 160);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(115, 23);
             this.label1.TabIndex = 152;
@@ -92,7 +94,7 @@
             this.comboStatus.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboStatus.FormattingEnabled = true;
             this.comboStatus.IsSupportUnselect = true;
-            this.comboStatus.Location = new System.Drawing.Point(123, 131);
+            this.comboStatus.Location = new System.Drawing.Point(123, 158);
             this.comboStatus.Name = "comboStatus";
             this.comboStatus.OldText = "";
             this.comboStatus.Size = new System.Drawing.Size(157, 24);
@@ -217,9 +219,29 @@
             this.txtWKStart.Size = new System.Drawing.Size(130, 23);
             this.txtWKStart.TabIndex = 161;
             // 
+            // labBrand
+            // 
+            this.labBrand.Location = new System.Drawing.Point(5, 102);
+            this.labBrand.Name = "labBrand";
+            this.labBrand.Size = new System.Drawing.Size(115, 23);
+            this.labBrand.TabIndex = 163;
+            this.labBrand.Text = "Brand";
+            // 
+            // txtbrand
+            // 
+            this.txtbrand.BackColor = System.Drawing.Color.White;
+            this.txtbrand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtbrand.Location = new System.Drawing.Point(123, 102);
+            this.txtbrand.MyDocumentdName = null;
+            this.txtbrand.Name = "txtbrand";
+            this.txtbrand.Size = new System.Drawing.Size(130, 23);
+            this.txtbrand.TabIndex = 164;
+            // 
             // R40
             // 
-            this.ClientSize = new System.Drawing.Size(530, 203);
+            this.ClientSize = new System.Drawing.Size(530, 230);
+            this.Controls.Add(this.txtbrand);
+            this.Controls.Add(this.labBrand);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.txtWKEnd);
             this.Controls.Add(this.txtWKStart);
@@ -257,6 +279,8 @@
             this.Controls.SetChildIndex(this.txtWKStart, 0);
             this.Controls.SetChildIndex(this.txtWKEnd, 0);
             this.Controls.SetChildIndex(this.label4, 0);
+            this.Controls.SetChildIndex(this.labBrand, 0);
+            this.Controls.SetChildIndex(this.txtbrand, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -277,5 +301,7 @@
         private Win.UI.Label label4;
         private Win.UI.TextBox txtWKEnd;
         private Win.UI.TextBox txtWKStart;
+        private Win.UI.Label labBrand;
+        private Class.Txtbrand txtbrand;
     }
 }
