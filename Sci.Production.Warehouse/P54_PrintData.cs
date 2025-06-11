@@ -21,5 +21,7 @@
         public string QTY { get; set; }
 
         public string Total { get; set; }
+
+        public string Location { get; set; }
     }
 }
