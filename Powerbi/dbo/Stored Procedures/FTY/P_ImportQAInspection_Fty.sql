@@ -138,7 +138,7 @@ outer apply
 											   r.Team = so.Team AND
 											   r.Shift = so.Shift AND
 											   r.CDate = so.OutputDate
-    WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory
+    WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory And sod.Article = t.Article
 	and so.Shift= iif(t.Shift = ''Day'',''D'',''N'') 
 	and r.CDate = t.SewInLine
 )RftValue
