@@ -46,3 +46,9 @@ GO
 
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'驗布機運作時間明細' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'FIR_Physical_QCTime'
 GO
+
+CREATE NONCLUSTERED INDEX [IDX_FIR_Physical_QCTime_FIR_PhysicalDetailUkey] ON [dbo].[FIR_Physical_QCTime]
+(
+	[FIR_PhysicalDetailUkey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO

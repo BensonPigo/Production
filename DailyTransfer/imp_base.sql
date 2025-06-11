@@ -3355,10 +3355,10 @@ when matched then
 	t.IsRFIDDefault= isnull( s.IsRFIDDefault,					   0),
 	t.ShowSeq= isnull( s.ShowSeq,								   ''),
 	t.Junk= isnull( s.Junk,										   0),
-	t.AddName= isnull( s.AddName,								   ''),
-	t.AddDate=  s.AddDate,								  
-	t.EditName= isnull( s.EditName,								   ''),
-	t.EditDate=  s.EditDate,								
+	t.TPEAddName= isnull( s.AddName,								   ''),
+	t.TPEAddDate=  s.AddDate,								  
+	t.TPEEditName= isnull( s.EditName,								   ''),
+	t.TPEEditDate=  s.EditDate,								
 	t.BCSDate= isnull( s.BCSDate,								   0),
 	t.InOutRule  = isnull( s.InOutRule ,						   0),
 	t.FullName  = isnull( s.FullName ,							   ''),
@@ -3374,10 +3374,10 @@ when not matched by target then
 	,IsRFIDDefault
 	,ShowSeq
 	,Junk
-	,AddName
-	,AddDate
-	,EditName
-	,EditDate
+	,TPEAddName
+	,TPEAddDate
+	,TPEEditName
+	,TPEEditDate
 	,BCSDate
 	,InOutRule 
 	,FullName

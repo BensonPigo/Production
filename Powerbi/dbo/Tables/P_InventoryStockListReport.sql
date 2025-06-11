@@ -48,7 +48,7 @@
 	[POHandle] [varchar](100) NOT NULL,
 	[POSMR] [varchar](100) NOT NULL,
 	[Supplier] [varchar](50) NOT NULL,
-	[VID] [varchar](30) NOT NULL,
+	[VID] [varchar](200) NOT NULL,
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
 	[Grade] VARCHAR(10) NOT NULL, 

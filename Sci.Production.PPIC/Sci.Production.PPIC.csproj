@@ -91,6 +91,9 @@
     <Reference Include="log4net">
       <HintPath>..\_Dll\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=14.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_Dll\Microsoft.ReportViewer.Common.dll</HintPath>
@@ -323,6 +326,12 @@
     <Compile Include="P01_EConsMNoticeFailed.Designer.cs">
       <DependentUpon>P01_EConsMNoticeFailed.cs</DependentUpon>
     </Compile>
+    <Compile Include="P01_PrintFabricSticker.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_PrintFabricSticker.Designer.cs">
+      <DependentUpon>P01_PrintFabricSticker.cs</DependentUpon>
+    </Compile>
     <Compile Include="P01_ProductionKit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -388,6 +397,12 @@
     </Compile>
     <Compile Include="P01_ShippingMark.Designer.cs">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>
+    </Compile>
+    <Compile Include="P01_SubconGarmentWash.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P01_SubconGarmentWash.Designer.cs">
+      <DependentUpon>P01_SubconGarmentWash.cs</DependentUpon>
     </Compile>
     <Compile Include="P01_Utility.cs" />
     <Compile Include="P02.cs">
@@ -985,6 +1000,9 @@
     <EmbeddedResource Include="P01_EConsMNoticeFailed.resx">
       <DependentUpon>P01_EConsMNoticeFailed.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="P01_PrintFabricSticker.resx">
+      <DependentUpon>P01_PrintFabricSticker.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="P01_ProductionKit.resx">
       <DependentUpon>P01_ProductionKit.cs</DependentUpon>
     </EmbeddedResource>
@@ -1017,6 +1035,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P01_ShippingMark.resx">
       <DependentUpon>P01_ShippingMark.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="P01_SubconGarmentWash.resx">
+      <DependentUpon>P01_SubconGarmentWash.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="P02.resx">
       <DependentUpon>P02.cs</DependentUpon>
