@@ -145,20 +145,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					[BIInsertDate]
 				)
 				select	
-				t.POID, 
+				t.[POID], 
 				t.[SEQ], 
-				t.FactoryID, 
-				t.BrandID, 
-				t.StyleID, 
-				t.SeasonID, 
-				t.ShipModeID, 
-				t.ExportId, 
-				t.InvNo, 
-				t.WhseArrival, 
-				t.StockQty, 
-				t.InvStock, 
-				t.BulkStock, 
-				t.BalanceQty, 
+				t.[FactoryID], 
+				t.[BrandID], 
+				t.[StyleID], 
+				t.[SeasonID], 
+				t.[ShipModeID], 
+				t.[ExportId], 
+				t.[InvNo], 
+				t.[WhseArrival], 
+				t.[StockQty], 
+				t.[InvStock], 
+				t.[BulkStock], 
+				t.[BalanceQty], 
 				t.[MinSciDelivery], 
 				t.[MinBuyerDelivery], 
 				t.[Refno], 
@@ -170,13 +170,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.stockunit, 
 				t.[Supplier], 
 				t.[OrderQty], 
-				t.Result, 
+				t.[Result], 
 				t.[InspectedQty], 
 				t.[RejectedQty], 
 				t.[DefectType], 
 				t.[InspectionDate], 
 				t.[Inspector], 
-				t.Remark, 
+				t.[Remark], 
 				t.[OvenEncode], 
 				t.[LaboratoryOverallResult], 
 				t.[NonOven], 
@@ -187,12 +187,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				t.[Wash], 
 				t.[WashScale], 
 				t.[WashDate], 
-				t.ReceivingID, 
-				t.AddDate, 
-				t.EditDate,
-				t.CategoryType,
-				t.BIFactoryID,
-				t.BIInsertDate
+				t.[ReceivingID], 
+				t.[AddDate], 
+				t.[EditDate],
+				t.[CategoryType],
+				t.[BIFactoryID],
+				t.[BIInsertDate]
 				from #tmp t
 				where   not exists (select 1 from P_AccessoryInspLabStatus p where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
 				and ( 
@@ -288,6 +288,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 ";
 
                 result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
+                sqlConn.Close();
+                sqlConn.Dispose();
             }
 
             finalResult.Result = result;
@@ -303,36 +305,36 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 			select a.POID
 		    , [SEQ] = concat(a.SEQ1, '-', a.SEQ2)
-		    , x.FactoryID
-		    , x.BrandID
-		    , x.StyleID
-		    , x.SeasonID
+		    , [FactoryID] = x.FactoryID
+		    , [BrandID] = x.BrandID
+		    , [StyleID] = x.StyleID
+		    , [SeasonID] = x.SeasonID
 		    , [ShipModeID] = ISNULL(et.ShipModeID, '')
 		    , [ExportId] = ISNULL(t.ExportId, '')
 		    , [InvNo] = ISNULL(t.InvNo, '')
 		    , [WhseArrival] = ISNULL(t.WhseArrival, '')
 		    , [StockQty] = isnull(t.StockQty, 0)
-		    , total_t.InvStock
-		    , total_t.BulkStock
-		    , total_t.BalanceQty
+		    , [InvStock] = total_t.InvStock
+		    , [BulkStock] = total_t.BulkStock
+		    , [BalanceQty] = total_t.BalanceQty
 		    , [MinSciDelivery] = g.MinSciDelivery
 		    , [MinBuyerDelivery] = g.MinBuyerDelivery
-		    , a.Refno
+		    , [Refno] = a.Refno
 		    , [Article] = isnull(Style.Article, '')
 		    , [MaterialType] = isnull(fabric.MtlTypeID, '')
 		    , [Color]  = isnull(psdsC.SpecValue, '')
 		    , [ColorName] = isnull(c.Name, '')
 		    , [SizeSpec] = isnull(psdsS.SpecValue, '')
-		    , PS.stockunit
+		    , [stockunit] = PS.stockunit
 		    , [Supplier] = concat(P.SuppID, '-', s.AbbEN)
 		    , [OrderQty] = Round(Production.dbo.getUnitQty(PS.POUnit, PS.StockUnit, isnull(PS.Qty, 0)), 2)
-		    , a.Result
+		    , [Result] = a.Result
 		    , [InspectedQty] = IIF(a.Status = 'Confirmed',a.InspQty, 0)
 		    , [RejectedQty] = IIF(a.Status = 'Confirmed',a.RejectQty, 0)
 		    , [DefectType] = ISNULL(IIF(a.Status = 'Confirmed', DefectText.Val , ''), '')
 		    , [InspectionDate] = IIF(a.Status = 'Confirmed', a.InspDate,NULL)
 		    , [Inspector] = ISNULL((select Pass1.Name from Production.dbo.Pass1 WITH (NOLOCK) where a.Inspector = pass1.id), '')
-		    , a.Remark
+		    , [Remark] = a.Remark
 		    , [OvenEncode] = iif(AIRL.NonOven = 1 and AIRL.NonWash =1, 'Y', '')
 		    , [LaboratoryOverallResult] = isnull(AIRL.Result, '')
 		    , [NonOven] = iif(AIRL.NonOven = 1, 'Y', '')
@@ -343,9 +345,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		    , [Wash] = iif(AIRL.WashEncode = 1, AIRL.Wash, '') 
 		    , [WashScale] = iif(AIRL.WashEncode = 1, AIRL.WashScale, '')
 		    , [WashDate] = iif(AIRL.WashEncode = 1, AIRL.WashDate, null)
-		    , a.ReceivingID
-		    , a.AddDate
-		    , a.EditDate
+		    , [ReceivingID] = a.ReceivingID
+		    , [AddDate] = a.AddDate
+		    , [EditDate] = a.EditDate
 		    , [CategoryType] = isnull(MtlType.CategoryType, '')
 			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
             , [BIInsertDate] = GETDATE()   
