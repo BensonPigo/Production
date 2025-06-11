@@ -447,7 +447,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )MockupProgram
-where 1=1 {spQuery2}
+where o.SubconInSisterFty = 0  {spQuery2}
 
 select b.ID
 	,o.StyleUkey
@@ -475,7 +475,7 @@ inner join Factory c on a.FactoryID=c.ID
 inner join Orders o on b.OrderId = o.ID
 inner join Style s on o.StyleUkey = s.Ukey
 inner join #OrderInfo p on p.StyleUkey=  s.Ukey
-where 1=1
+where SubconInSisterFty = 0 
 {detailQuery}
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
 	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category,b.CumulateSimilar
@@ -513,7 +513,7 @@ INTO #P03MaxVer ---- P03
 from LineMapping lm 
 where exists(
 	select 1 from #BaseData a
-	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID /*and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team*/ and a.ComboType=lm.ComboType
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
 )
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
@@ -840,7 +840,7 @@ select
 
 	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
-	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( BeforeDataP03.TotalGSD - AfterDataP03.TotalCycle) / BeforeDataP03.TotalGSD )) * 100
+	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( BeforeDataP03.TotalGSD - AfterDataP03.TotalCycle) / AfterDataP03.TotalCycle )) * 100
 	,[By style] = IIF(AfterDataP03.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
@@ -877,7 +877,7 @@ Outer Apply(
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	from #FinalBeforeData lm
-	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType 
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 
 	and lm.SourceTable = 'IE P03'
 )BeforeDataP03
 outer apply(
@@ -972,7 +972,7 @@ select
 
 	,[Oprts Diff] = AfterDataP06.CurrentOperators - BeforeDataP05.CurrentOperators
 	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
-	,[Total % Time diff] = IIF(BeforeDataP05.TotalGSD = 0 , 0 , (( BeforeDataP05.TotalGSD - AfterDataP06.TotalCycle) / BeforeDataP05.TotalGSD )) * 100
+	,[Total % Time diff] = IIF(BeforeDataP05.TotalGSD = 0 , 0 , (( BeforeDataP05.TotalGSD - AfterDataP06.TotalCycle) / AfterDataP06.TotalCycle )) * 100
 	,[By style] = IIF( AfterDataP06.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
 	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
