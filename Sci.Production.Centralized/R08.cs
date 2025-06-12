@@ -621,10 +621,6 @@ where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
 )
-and exists(
-	select 1 from #P05MaxVer p05
-	where p05.ID = lm.AutomatedLineMappingID
-)
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
 ---- 4.  開始After Data準備
@@ -813,10 +809,10 @@ select a.*
 	,b.HighestCycle
 	,b.HighestGSD
     ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal(10,2))
-INTO #AllP03After
+INTO #AllAfter
 from #AllP03 a
 inner join LineMapping b on a.ID = b.ID
-
+UNION
 select a.*
 	,TotalGSD = b.TotalGSDTime
 	,TotalCycle = b.TotalCycleTime
@@ -824,7 +820,6 @@ select a.*
 	,HighestCycle = b.HighestCycleTime
 	,HighestGSD = b.HighestGSDTime
     ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
-INTO #AllP06After
 from #AllP06 a
 inner join LineMappingBalancing b on a.ID = b.ID
 
@@ -928,7 +923,7 @@ Outer Apply(
 	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-	from #AllP03After lm
+	from #AllAfter lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
 )AfterData
 Outer Apply(
@@ -1088,7 +1083,7 @@ Outer Apply(
 	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-	from #AllP06After lm
+	from #AllAfter lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
 )AfterData
 outer apply(
@@ -1138,8 +1133,7 @@ drop table #BaseData
 ,#AllP03
 ,#AllP05
 ,#AllP06
-,#AllP03After
-,#AllP06After
+,#AllAfter
 ");
 
             return cmd;
