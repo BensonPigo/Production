@@ -19,25 +19,207 @@ BEGIN
 
 			set @DateStart = CAST (@execuDatetime AS DATE)
 
-
-			--Get Data which is already in DB , must exclude it
 			
-			--#now_Sewing_Data
+		select a.MDivision
+				,a.FactoryID
+				,a.Shift
+				, [BeginTime] =  cast(convert(nvarchar(10),@DateStart,112) + ' ' + cast(a.BeginTime as varchar(8)) as datetime)
+				, [EndTime] = cast(convert(nvarchar(10),@DateStart,112) + ' ' + cast(a.EndTime as varchar(8)) as datetime)
+			into #ShiftByDate_Shift
+			from [ExtendServer].ManufacturingExecution.dbo.Shift a
+			inner join 
+			(
+				select MDivision, FactoryID, Shift, MAX(StartDate) StartDate
+				from [ExtendServer].ManufacturingExecution.dbo.Shift
+				where StartDate <= @DateStart
+				group by MDivision, FactoryID, Shift
+			) b on a.StartDate = b.StartDate and a.MDivision = b.MDivision and a.FactoryID = b.FactoryID and a.Shift = b.Shift
+
+			select
+				[MDivision] = a.MDivision
+				,[Factory] = isnull(b.FactoryID, a.FactoryID)
+				,[Shift] = a.Shift
+				,[Line] = b.Line
+				,[Team] = b.Team 
+				,[BeginTime] = isnull(b.BeginTime,a.BeginTime)
+				,[EndTime] = isnull(b.EndTime, a.EndTime)
+				,[startHour] = datepart(hour, isnull(b.BeginTime,a.BeginTime))
+			into #ShiftByDate_Efficiency
+			from #ShiftByDate_Shift a
+			left join 
+			(
+				select [MDivision] = f.MDivisionID
+				  , eff.Shift
+				  , eff.Team
+				  , eff.Line
+				  , eff.FactoryID
+				  , [BeginTime] =  cast(convert(nvarchar(10),@execuDatetime,112) + ' ' + cast(eff.BeginTime as varchar(8)) as datetime)
+				  , [EndTime] = cast(convert(nvarchar(10),@execuDatetime,112) + ' ' + cast(eff.EndTime as varchar(8)) as datetime)
+				  , [EndTimeHH] = DATEPART(Hour, eff.EndTime)
+				from [ExtendServer].ManufacturingExecution.dbo.Efficiency eff
+				inner join Factory f on f.ID = eff.FactoryID
+				where eff.Date = @DateStart 
+			)b on a.MDivision = b.MDivision and a.FactoryID = b.FactoryID and a.Shift = b.Shift 
+	
+			--select * from #ShiftByDate_Efficiency
+			--select * from #ShiftByDate_Shift
+
+			select distinct
+				[dDate] = convert(date, i.AddDate)
+				,[dTime] = convert(smalldatetime, case  
+								when Shift.cnt < 2 and i.AddDate >  s_HHmm.Shift_EndTime
+									then format(i.AddDate,'yyyy-MM-dd '+ FORMAT(s_HHmm.Shift_EndTime,'HH') + ':' + s_HHmm.Shift_mm +':00')
+								when Shift.cnt < 2 and i.AddDate <  s_HHmm.Shift_BeginTime
+									then format(i.AddDate,'yyyy-MM-dd '+ FORMAT(s_HHmm.Shift_BeginTime,'HH') + ':' + s_HHmm.Shift_mm +':00')
+								when s_HHmm.Shift_Minute <> 0 and DATEPART(MINUTE, i.AddDate) >= s_HHmm.Shift_Minute
+									then format(i.AddDate,'yyyy-MM-dd '
+									+ FORMAT(i.AddDate,'HH') 
+									+ ':' + s_HHmm.Shift_mm +':00')
+								when s_HHmm.Shift_Minute <> 0 
+									then format(i.AddDate,'yyyy-MM-dd '
+									 + FORMAT(dateAdd(Hour,-1, i.AddDate),'HH')
+									 + ':' + s_HHmm.Shift_mm +':00')					
+								else format(i.AddDate,'yyyy-MM-dd HH:00:00') 
+								end) 
+				,[BeginTime] = s_HHmm.Shift_BeginTime
+				,[EndTime] = s_HHmm.Shift_EndTime
+				,[MoNo] = i.OrderId+'-'+i.Location
+				,[ColorName] = i.Article
+				,[SizeName] = i.Size
+				,[FactoryID] = i.FactoryID
+				,[WorkShop]=''
+				,[WorkLine]=i.Line
+				,i.ID
+				,shift.cnt 
+				,i.Team
+			into #Output1
+			from [ExtendServer].ManufacturingExecution.dbo.inspection i
+			left join Production.dbo.Factory f on i.FactoryID=f.ID
+			left join #ShiftByDate_Efficiency s1 on s1.Factory =i.FactoryID and s1.Line = i.Line and s1.Team = i.Team
+			left join #ShiftByDate_Shift s2 on s2.MDivision=f.MDivisionID and s2.Shift=i.Shift
+			outer apply(select 
+				 Shift_BeginTime = isnull(s1.BeginTime,s2.BeginTime)
+				, Shift_EndTime = isnull(s1.EndTime,s2.EndTime)
+				, Shift_HH = FORMAT(isnull(s1.BeginTime,s2.BeginTime),'HH')
+				, Shift_mm = FORMAT(isnull(s1.BeginTime,s2.BeginTime),'mm')
+				, Shift_Hour = datepart(HOUR, isnull(s1.BeginTime,s2.BeginTime))
+				, Shift_Minute = DATEPART(MINUTE, isnull(s1.BeginTime,s2.BeginTime))  -- print '08'-1
+			) s_HHmm
+			outer apply(
+				select count(1) cnt from 
+				(
+					select distinct MDivision,Shift 
+					from [ExtendServer].ManufacturingExecution.dbo.Shift
+					where MDivision = f.MDivisionID 
+					and convert(date, StartDate) <= CONVERT(date,i.AddDate)
+				) a
+			)Shift
+			where CONVERT(date, i.AddDate) = @DateStart
+
+
+			select 
+			dDate,dTime,MoNo,ColorName,SizeName,FactoryID,WorkShop,WorkLine,Team
+			,[InputQty]= sum(InspQty.cnt)
+			,[OutputQty]= sum(OutputQty.cnt)
+			,[FailQty]= sum(FailQty.cnt)
+			into #tmpFinalAddDate
+			from #Output1 i
+			outer apply (
+				select cnt = count(1)
+				from [ExtendServer].ManufacturingExecution.dbo.inspection
+				where id=i.ID
+			)InspQty
+			outer apply(
+				select cnt = COUNT(1)
+				from [ExtendServer].ManufacturingExecution.dbo.inspection
+				where Status='Pass'
+				and id=i.ID
+			)OutputQty
+			outer apply(
+				select cnt = COUNT(1)
+				from [ExtendServer].ManufacturingExecution.dbo.Inspection insp
+				where insp.id=i.ID
+				and exists(select 1 from [ExtendServer].ManufacturingExecution.dbo.Inspection_Detail 
+				where id = insp.ID and Junk=0)
+			)FailQty
+			group by dDate,dTime,MoNo,ColorName,SizeName,FactoryID,WorkShop,WorkLine,Team 
+
+			select distinct
+				[dDate] = convert(date, i.EditDate)
+				,[dTime] = convert(smalldatetime,  case  
+								when Shift.cnt < 2 and i.EditDate >  s_HHmm.Shift_EndTime
+									then format(i.EditDate,'yyyy-MM-dd '+ FORMAT(s_HHmm.Shift_EndTime,'HH') + ':' + s_HHmm.Shift_mm +':00')
+								when Shift.cnt < 2 and i.EditDate < s_HHmm.Shift_BeginTime
+									then format(i.EditDate,'yyyy-MM-dd '+ FORMAT(s_HHmm.Shift_BeginTime,'HH')  + ':' + s_HHmm.Shift_mm +':00')
+								when s_HHmm.Shift_Minute <> 0 and DATEPART(MINUTE, i.EditDate) >= s_HHmm.Shift_Minute
+									then format(i.EditDate,'yyyy-MM-dd '+ FORMAT(i.EditDate,'HH') + ':' + s_HHmm.Shift_mm +':00')
+								when s_HHmm.Shift_Minute <> 0 
+									then format(i.EditDate,'yyyy-MM-dd '+ FORMAT(dateAdd(Hour,-1, i.EditDate),'HH') + ':' + s_HHmm.Shift_mm +':00')	
+								else format(i.EditDate,'yyyy-MM-dd HH:00:00') 
+								end)
+				,[BeginTime] = s_HHmm.Shift_BeginTime
+				,[EndTime] = s_HHmm.Shift_EndTime
+				,[MoNo] = i.OrderId+'-'+i.Location
+				,[ColorName] = i.Article
+				,[SizeName] = i.Size
+				,[FactoryID] = i.FactoryID
+				,[WorkShop]=''
+				,[WorkLine]=i.Line
+				,i.ID
+				,i.Status
+				,i.Team
+			into #Output2
+			from [ExtendServer].ManufacturingExecution.dbo.inspection i
+			left join Production.dbo.Factory f on i.FactoryID=f.ID
+			left join #ShiftByDate_Efficiency s1 on s1.Factory =i.FactoryID and s1.Line = i.Line and s1.Team = i.Team
+			left join #ShiftByDate_Shift s2 on s2.MDivision=f.MDivisionID and s2.Shift=i.Shift
+			outer apply(select 
+				 Shift_BeginTime = isnull(s1.BeginTime,s2.BeginTime)
+				, Shift_EndTime = isnull(s1.EndTime,s2.EndTime)
+				, Shift_HH = FORMAT(isnull(s1.BeginTime,s2.BeginTime),'HH')
+				, Shift_mm = FORMAT(isnull(s1.BeginTime,s2.BeginTime),'mm')
+				, Shift_Hour = datepart(HOUR, isnull(s1.BeginTime,s2.BeginTime))
+				, Shift_Minute = DATEPART(MINUTE, isnull(s1.BeginTime,s2.BeginTime))  -- print '08'-1
+			) s_HHmm
+			outer apply(
+				select count(1) cnt from 
+				(
+					select distinct MDivision,Shift 
+					from [ExtendServer].ManufacturingExecution.dbo.Shift
+					where MDivision = f.MDivisionID 
+					and convert(date, StartDate) <= CONVERT(date,i.EditDate)
+				) a
+			)Shift
+			where CONVERT(date, i.EditDate) = @DateStart
+			--and exists (select 1 from #AvailableLine temp where temp.Line = i.Line)
+
 			SELECT s.OutputDate,s.SewingLineID,sdd.OrderId,sdd.ComboType
 			INTO  #now_Sewing_Data
-			FROM SewingOutput s WITH(NOLOCK)
-			INNER JOIN SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
-			INNER JOIN SewingOutput_Detail_Detail sdd WITH(NOLOCK) 
+			FROM Production.dbo.SewingOutput s WITH(NOLOCK)
+			INNER JOIN Production.dbo.SewingOutput_Detail sd WITH(NOLOCK) ON s.ID=sd.ID
+			INNER JOIN Production.dbo.SewingOutput_Detail_Detail sdd WITH(NOLOCK) 
 			ON sd.ID=sdd.ID 
 					AND sd.UKey=sdd.SewingOutput_DetailUKey
 					AND sd.OrderId=sdd.OrderId
 					AND sd.ComboType=sdd.ComboType
 					AND sd.Article=sdd.Article
-			WHERE s.OutputDate=@DateStart
+			WHERE s.OutputDate= CONVERT(date, @execuDatetime)
 					AND s.[Shift] = 'D'
 					AND s.[Team] = 'A'
 					AND s.FactoryID='SNP'
-					AND s.[MDivisionID]=(SELECT TOP 1 ID FROM MDivision)
+					AND s.[MDivisionID]=(SELECT TOP 1 ID FROM Production.dbo.MDivision)
+
+			select 
+			dDate,dTime,MoNo,ColorName,SizeName,FactoryID,WorkShop,WorkLine,Team
+			,[InputQty]= 0
+			,[OutputQty]= COUNT(1)
+			,[FailQty]= 0
+			into #tmpFinalEditDate
+			from #Output2 i
+			where Status='Fixed'
+			group by dDate,dTime,MoNo,ColorName,SizeName,FactoryID,WorkShop,WorkLine,Team 
+			order by dDate,dTime,MoNo
+			--Get Data which is already in DB , must exclude it
 
 			--#now_Sewing_Data
 			SELECt r.OrderID,r.CDate,r.SewinglineID
@@ -53,26 +235,39 @@ BEGIN
 
 
 			----------[SUNRISE Tmp Table]
-
-			--#tOutputTotal
 			SELECT a.* 
 			INTO #tOutputTotal
 			FROM
 			(
-				SELECT *
-				FROM View_tOutputTotal
-				WHERE MONo LIKE '%-%' 
+				select [dDate]
+				,[dTime]
+				,[MoNo]
+				,[ColorName]
+				,[SizeName]
+				,[FactoryID]
+				,[WorkShop],[WorkLine]
+				,[InputQty] = sum([InputQty])
+				,[OutputQty] = sum([OutputQty])
+				,[FailQty] = sum([FailQty])
+				,[Team] = isnull(a.Team, '')
+				from 
+				(
+					select * from #tmpFinalAddDate
+					union all
+					select * from #tmpFinalEditDate
+				)A
+				group by [dDate],[dTime],[MoNo],[ColorName],[SizeName],[FactoryID]
+					,[WorkShop],[WorkLine],a.Team
 			)a
 			WHERE LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)) >=10 --Must Same as PMS DB Datatype
 			AND  LEN((SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=2)) =1    --Must Same as PMS DB Datatype
-			AND dDate = @DateStart
+			AND dDate = CAST (@DateStart AS DATE)
 			AND NOT EXISTS (
-
 				SELECT 1 FROM #now_Sewing_Data WHERE 
-											OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
-											AND SewingLineID  =a.WorkLine  
-											AND ComboType  = (SELECT TOP 1 Data FROM SplitString(a.Mono  ,'-') WHERE No=2)
-											AND OutputDate = @DateStart
+				OrderId=(SELECT TOP 1 Data FROM SplitString(a.Mono,'-') WHERE No=1)
+				AND SewingLineID  =a.WorkLine  
+				AND ComboType  = (SELECT TOP 1 Data FROM SplitString(a.Mono  ,'-') WHERE No=2)
+				AND OutputDate = CAST (@DateStart AS DATE)
 			)
 
 			--#tReworkTotal
@@ -393,7 +588,7 @@ BEGIN
 			, [SFCData]
 			, ISNULL([AddName] ,'')
 			, [AddDate] 
-			, [EditName]=''
+			, [EditName]='01910'
 			, [EditDate]=CAST([EditDate] AS DATETIME)
 			, ISNULL([SubconOutFty] ,'')
 			, ISNULL([SubConOutContractNumber] ,'')
@@ -746,4 +941,3 @@ BEGIN
 	END CATCH
 
 END
-Go
