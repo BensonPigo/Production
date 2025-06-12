@@ -45,14 +45,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string sqlWhereStatus = string.Empty;
             List<string> processList = model.ComboProcess.Split(',').ToList();
 
-            // 過濾掉不用Status判斷的項目
-            var validProcess = processList.Where(p => p == "Scan & Pack" || p == "Hauling" || p == "M360 MD" || p == "Pullout").ToList();
-            if (validProcess.Any())
-            {
-                string inClause = string.Join(",", validProcess.Select(p => $"'{p}'"));
-                sqlWhereStatus += $" AND Status.val IN ({inClause}) ";
-            }
-
             bool filterPulloutStatus = processList.Where(p => p == "Pullout").ToList().Any();
             string sqlStatusPullout = (filterPulloutStatus || !processList.Any(s => !MyUtility.Check.Empty(s))) ? " when p.PulloutDate is not null then 'Pullout'" : string.Empty;
 
@@ -77,9 +69,12 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             string joinType = model.IsPPICP26 ? "LEFT" : "INNER";
+            List<string> newProcessList = new List<string>();
 
             foreach (var process in processList)
             {
+                // 用來更改Status 來對應表身Status 欄位名稱
+                string statusChange = string.Empty;
                 switch (process)
                 {
                     case "Dry Room Receive":
@@ -136,6 +131,7 @@ where MDScan.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where TransferToClog.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and FtyTransferToClogTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Fty transit to CLOG";
                         break;
                     case "Clog Receive":
                         sqlMdWhere += $@" 
@@ -143,6 +139,7 @@ where TransferToClog.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                         sqlProcessTime += @"
 where ClogReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Clog";
                         break;
                     case "Clog Return":
                         sqlMdWhere += $@" 
@@ -150,6 +147,7 @@ where ClogReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where ClogReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Fty";
                         break;
                     case "Clog Transfer To CFA":
                         sqlMdWhere += $@" 
@@ -157,6 +155,7 @@ where ClogReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where TransferToCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogTransferToCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Clog";
                         break;
                     case "Clog Receive From CFA":
                         sqlMdWhere += $@" 
@@ -164,6 +163,7 @@ where TransferToCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo"
                         sqlProcessTime += @"
 where ClogReceiveCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReceiveFromCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Clog";
                         break;
                     case "CFA Receive":
                         sqlMdWhere += $@" 
@@ -171,6 +171,7 @@ where ClogReceiveCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                         sqlProcessTime += @"
 where CFAReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and CFAReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "CFA";
                         break;
                     case "CFA Return":
                         sqlMdWhere += $@" 
@@ -178,6 +179,7 @@ where CFAReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where CFAReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and CFAReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
+                        statusChange = "Fty";
                         break;
                     case "Hauling":
                         sqlPackWhere += @" 
@@ -197,6 +199,16 @@ and	p.PulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     default:
                         break;
                 }
+
+                newProcessList.Add(statusChange.Empty() ? process.ToString() : statusChange);
+            }
+
+            // P26對Status篩選資料
+            newProcessList = newProcessList .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
+            if (newProcessList.Count > 0)
+            {
+                string inClause = string.Join(",", newProcessList.Select(p => $"'{p}'"));
+                sqlWhereStatus += $" AND Status.val IN ({inClause}) ";
             }
 
             sqlMdWhere += " where 1=1";
