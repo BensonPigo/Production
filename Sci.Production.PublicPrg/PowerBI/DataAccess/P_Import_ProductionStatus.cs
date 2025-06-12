@@ -98,19 +98,14 @@ FROM dbo.P_SewingLineScheduleBySP sch WITH (NOLOCK)
 INNER JOIN Production.dbo.Orders ord WITH (NOLOCK) ON sch.SPNo = ord.ID
 INNER JOIN Production.dbo.Style sty WITH (NOLOCK) ON ord.StyleUkey = sty.Ukey
 OUTER APPLY (
-    SELECT TtlSewingQtyByComboType = SUM(s2.SewingQty)
+    SELECT TtlSewingQtyByComboType = MIN(s2.SewingQty)
     FROM dbo.P_SewingLineScheduleBySP s2 WITH (NOLOCK)
     WHERE sch.SPNo = s2.SPNo AND sch.ComboType = s2.ComboType
 ) schCombo
 OUTER APPLY (
-    SELECT s3.SPNo, TtlSewingQtyBySP = MIN(SewingQty)
-    FROM (
-        SELECT s3.SPNo, s3.ComboType, SewingQty = SUM(s3.SewingQty)
-        FROM dbo.P_SewingLineScheduleBySP s3 WITH (NOLOCK)
-        WHERE sch.SPNo = s3.SPNo AND sch.ComboType = s3.ComboType
-        GROUP BY s3.SPNo, s3.ComboType
-    ) s3
-    GROUP BY s3.SPNo
+   SELECT TtlSewingQtyBySP = MIN(s3.SewingQty)
+   FROM dbo.P_SewingLineScheduleBySP s3 WITH (NOLOCK)
+   WHERE sch.SPNo = s3.SPNo 
 ) schSP
 LEFT JOIN (
     SELECT 
@@ -125,28 +120,31 @@ LEFT JOIN (
 CROSS APPLY (
     SELECT 
         SewingBalance     = IIF(sch.AlloQty - sch.SewingQty < 0, 0, sch.AlloQty - sch.SewingQty),
-		TtlClogBalance	  = IIF(ord.Category = 'S' OR sch.OrderQty - schSP.TtlSewingQtyBySP < 0, 0, sch.OrderQty - schSP.TtlSewingQtyBySP),
+		TtlClogBalance	  = CASE WHEN ord.Category = 'S' THEN 0
+                                 WHEN sch.OrderQty - schSP.TtlSewingQtyBySP < 0 THEN 0
+                                 WHEN ord.PulloutComplete = 1 AND sch.ClogQty >= sch.OrderQty THEN 0
+                            ELSE sch.OrderQty - schSP.TtlSewingQtyBySP END,
         DaysOffToDDSched  = Production.dbo.CalculateWorkDayByWorkHour(sch.[Offline], sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
-        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(sch.BIInsertDate, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
+        DaysTodayToDD     = Production.dbo.CalculateWorkDayByWorkHour(GETDATE(), sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
         MaxOutput         = IIF(ISNULL(sewOutput.TotalOutputQty, 0) < 20, NULL, sewOutput.TotalOutputQty)
 ) t
 CROSS APPLY (
     SELECT 
         NeedQtyByStdOut       = CEILING(IIF(t.DaysTodayToDD > 0, t.SewingBalance * 1.0 / t.DaysTodayToDD, t.SewingBalance * 1.0)),
-        Pending               = IIF(sch.[Offline] < sch.BIInsertDate AND t.SewingBalance > 0, 'Y', 'N'),
+        Pending               = IIF(sch.[Offline] < GETDATE() AND t.SewingBalance > 0, 'Y', 'N'),
         DaysToDrainByStdOut   = CEILING(IIF(sch.TotalStandardOutput = 0, 0, t.SewingBalance * 1.0 / sch.TotalStandardOutput)),
         DaysToDrainByMaxOut   = CEILING(IIF(ISNULL(t.MaxOutput, 0) = 0, 0, t.SewingBalance * 1.0 / t.MaxOutput))
 ) t2
 CROSS APPLY (
     SELECT 
-        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByStdOut),
+        OfflineDateByStdOut = IIF(t2.DaysToDrainByStdOut > 30, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByStdOut, sch.FactoryID, sch.SewingLineID)),
         OfflineDateByMaxOut = IIF(t2.DaysToDrainByMaxOut > 30, sch.[Offline],
-                                  IIF(t.MaxOutput IS NULL, sch.[Offline], sch.BIInsertDate + t2.DaysToDrainByMaxOut))
+                                  IIF(t.MaxOutput IS NULL, sch.[Offline], Production.dbo.CalculateNextWorkDayByWorkHour(GETDATE(), t2.DaysToDrainByMaxOut, sch.FactoryID, sch.SewingLineID)))
 ) t3
 CROSS APPLY (
     SELECT 
-        DaysOffToDDByStdOut = DATEDIFF(DAY, t3.OfflineDateByStdOut, sch.BuyerDelivery) - 1,
-        DaysOffToDDByMaxOut = DATEDIFF(DAY, t3.OfflineDateByMaxOut, sch.BuyerDelivery) - 1
+		DaysOffToDDByStdOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByStdOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID),
+		DaysOffToDDByMaxOut = Production.dbo.CalculateWorkDayByWorkHour(t3.OfflineDateByMaxOut, sch.BuyerDelivery, sch.FactoryID, sch.SewingLineID)
 ) t4
 CROSS APPLY (
     SELECT 
