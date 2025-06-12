@@ -40,7 +40,8 @@ namespace Sci.Production.PPIC
         /// <param name="pOID">string POID</param>
         /// <param name="pOCombo">string POCombo</param>
         /// <param name="isPPIC_P01">isPPIC_P01</param>
-        public P01_Qty(string orderID, string pOID, string pOCombo, bool isPPIC_P01 = false)
+        /// <param name="isfromWH">isfromWH</param>
+        public P01_Qty(string orderID, string pOID, string pOCombo, bool isPPIC_P01 = false, bool isfromWH = false)
         {
             this.InitializeComponent();
             this.orderID = orderID;
@@ -55,6 +56,8 @@ namespace Sci.Production.PPIC
             // 預設TabPage 隱藏
             this.tabPage5.Parent = null;
             this.tabPage6.Parent = null;
+
+            this.btnPrint.Visible = isfromWH;
         }
 
         /// <inheritdoc/>
@@ -1765,6 +1768,14 @@ EXEC sp_executesql @sql", this.poID);
         private void GridQtyBDown_Scroll(object sender, System.Windows.Forms.ScrollEventArgs e)
         {
             this.gridqtybdownTop.HorizontalScrollingOffset = e.NewValue;
+        }
+
+        private void BtnPrint_Click(object sender, EventArgs e)
+        {
+            BindingSource bs = this.gridCombBySPNo.DataSource as BindingSource;
+            DataTable dtCombBySPNo = bs?.DataSource as DataTable;
+            P01_PrintFabricSticker frm = new P01_PrintFabricSticker(dtCombBySPNo);
+            frm.ShowDialog();
         }
     }
 }

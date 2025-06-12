@@ -638,7 +638,7 @@ where o.ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["ID"]))) ?
         // Quantity breakdown
         private void BtnQuantityBreakdown_Click(object sender, EventArgs e)
         {
-            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["poid"].ToString(), this.editPOCombo.Text);
+            PPIC.P01_Qty callNextForm = new PPIC.P01_Qty(this.CurrentMaintain["id"].ToString(), this.CurrentMaintain["poid"].ToString(), this.editPOCombo.Text, isfromWH: true);
             callNextForm.ShowDialog(this);
         }
 

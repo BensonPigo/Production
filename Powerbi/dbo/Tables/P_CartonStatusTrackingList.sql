@@ -16,7 +16,7 @@
 	[CtnNo] [varchar](6) NOT NULL,
 	[Size] [varchar](180) NOT NULL,
 	[CartonQty] [int] NOT NULL,
-	[Status] [varchar](20) NOT NULL,
+	[Status] [varchar](30) NOT NULL,
 	[HaulingScanTime] [datetime] NULL,
 	[HauledQty] [int] NOT NULL,
 	[DryRoomReceiveTime] [datetime] NULL,
