@@ -53,6 +53,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
+                string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
+                DataTable dataTable = resultReport.Dt;
+                dataTable.Columns.Add("BIFactoryID", typeof(string));
+                dataTable.Columns.Add("BIInsertDate", typeof(DateTime));
+                foreach (DataRow row in dataTable.AsEnumerable())
+                {
+                    row["BIFactoryID"] = factoryID;
+                    row["BIInsertDate"] = DateTime.Now;
+                }
+
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
                 if (!finalResult.Result)
@@ -135,7 +145,9 @@ update p set p.SewingLineID				= t.SewingLineID
 			,p.Remarks					= t.Remarks
 			,p.TTL_PRINTING_PCS			= t.TTL_PRINTING_PCS
 			,p.TTL_PRINTING_PPU_PPU		= t.TTL_PRINTING_PPU_PPU
-			,p.SubCon					= t.SubCon			
+			,p.SubCon					= t.SubCon
+			,p.BIFactoryID				= t.BIFactoryID			
+			,p.BIInsertDate				= t.BIInsertDate			
 from P_SewingLineScheduleBySP p
 inner join #tmp t on p.ID = t.ID
 
@@ -190,7 +202,10 @@ insert into P_SewingLineScheduleBySP(
 		,Remarks
 		,TTL_PRINTING_PCS
 		,TTL_PRINTING_PPU_PPU
-		,SubCon)
+		,SubCon
+		,BIFactoryID
+		,BIInsertDate
+)
 select	 t.ID
 		,t.SewingLineID
 		,t.MDivisionID
@@ -242,6 +257,8 @@ select	 t.ID
 		,t.TTL_PRINTING_PCS
 		,t.TTL_PRINTING_PPU_PPU
 		,t.SubCon
+		,t.BIFactoryID
+		,t.BIInsertDate
 from #tmp t
 where not exists(	select 1 
 					from P_SewingLineScheduleBySP p
