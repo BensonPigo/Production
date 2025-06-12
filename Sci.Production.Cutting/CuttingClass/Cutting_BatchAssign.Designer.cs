@@ -35,6 +35,12 @@
             this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.btnConfirm = new Sci.Win.UI.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkCutCell = new Sci.Win.UI.CheckBox();
+            this.chkMarkerLength = new Sci.Win.UI.CheckBox();
+            this.chkMarkerName = new Sci.Win.UI.CheckBox();
+            this.chkSeq = new Sci.Win.UI.CheckBox();
+            this.chkWKETA = new Sci.Win.UI.CheckBox();
+            this.chkEstCutDate = new Sci.Win.UI.CheckBox();
             this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
             this.txtCell = new Sci.Production.Class.TxtCell();
             this.label17 = new Sci.Win.UI.Label();
@@ -54,6 +60,7 @@
             this.txtSeq2 = new Sci.Win.UI.TextBox();
             this.txtSeq1 = new Sci.Win.UI.TextBox();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.chkShowEmptyCutRef = new Sci.Win.UI.CheckBox();
             this.labelSPNo = new Sci.Win.UI.Label();
             this.txtArticle = new Sci.Win.UI.TextBox();
             this.txtMarkerName_Filter = new Sci.Win.UI.TextBox();
@@ -68,7 +75,7 @@
             this.DateEstCutDate = new Sci.Win.UI.DateBox();
             this.txtSPNo = new Sci.Win.UI.TextBox();
             this.labelFabricCombo = new Sci.Win.UI.Label();
-            this.chkShowEmptyCutRef = new Sci.Win.UI.CheckBox();
+            this.chkSpreadingNo = new Sci.Win.UI.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridBatchAssign)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -140,6 +147,13 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.chkSpreadingNo);
+            this.panel1.Controls.Add(this.chkCutCell);
+            this.panel1.Controls.Add(this.chkMarkerLength);
+            this.panel1.Controls.Add(this.chkMarkerName);
+            this.panel1.Controls.Add(this.chkSeq);
+            this.panel1.Controls.Add(this.chkWKETA);
+            this.panel1.Controls.Add(this.chkEstCutDate);
             this.panel1.Controls.Add(this.txtMarkerLength);
             this.panel1.Controls.Add(this.txtCell);
             this.panel1.Controls.Add(this.label17);
@@ -161,31 +175,93 @@
             this.panel1.Size = new System.Drawing.Size(1006, 99);
             this.panel1.TabIndex = 50;
             // 
+            // chkCutCell
+            // 
+            this.chkCutCell.AutoSize = true;
+            this.chkCutCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkCutCell.Location = new System.Drawing.Point(273, 73);
+            this.chkCutCell.Name = "chkCutCell";
+            this.chkCutCell.Size = new System.Drawing.Size(15, 14);
+            this.chkCutCell.TabIndex = 83;
+            this.chkCutCell.UseVisualStyleBackColor = true;
+            // 
+            // chkMarkerLength
+            // 
+            this.chkMarkerLength.AutoSize = true;
+            this.chkMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkMarkerLength.Location = new System.Drawing.Point(273, 43);
+            this.chkMarkerLength.Name = "chkMarkerLength";
+            this.chkMarkerLength.Size = new System.Drawing.Size(15, 14);
+            this.chkMarkerLength.TabIndex = 82;
+            this.chkMarkerLength.UseVisualStyleBackColor = true;
+            // 
+            // chkMarkerName
+            // 
+            this.chkMarkerName.AutoSize = true;
+            this.chkMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkMarkerName.Location = new System.Drawing.Point(273, 14);
+            this.chkMarkerName.Name = "chkMarkerName";
+            this.chkMarkerName.Size = new System.Drawing.Size(15, 14);
+            this.chkMarkerName.TabIndex = 81;
+            this.chkMarkerName.UseVisualStyleBackColor = true;
+            // 
+            // chkSeq
+            // 
+            this.chkSeq.AutoSize = true;
+            this.chkSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSeq.Location = new System.Drawing.Point(11, 71);
+            this.chkSeq.Name = "chkSeq";
+            this.chkSeq.Size = new System.Drawing.Size(15, 14);
+            this.chkSeq.TabIndex = 80;
+            this.chkSeq.UseVisualStyleBackColor = true;
+            // 
+            // chkWKETA
+            // 
+            this.chkWKETA.AutoSize = true;
+            this.chkWKETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkWKETA.Location = new System.Drawing.Point(11, 43);
+            this.chkWKETA.Name = "chkWKETA";
+            this.chkWKETA.Size = new System.Drawing.Size(15, 14);
+            this.chkWKETA.TabIndex = 79;
+            this.chkWKETA.UseVisualStyleBackColor = true;
+            // 
+            // chkEstCutDate
+            // 
+            this.chkEstCutDate.AutoSize = true;
+            this.chkEstCutDate.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkEstCutDate.Location = new System.Drawing.Point(11, 14);
+            this.chkEstCutDate.Name = "chkEstCutDate";
+            this.chkEstCutDate.Size = new System.Drawing.Size(15, 14);
+            this.chkEstCutDate.TabIndex = 9;
+            this.chkEstCutDate.UseVisualStyleBackColor = true;
+            // 
             // txtMarkerLength
             // 
             this.txtMarkerLength.BackColor = System.Drawing.Color.White;
             this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(344, 34);
+            this.txtMarkerLength.Location = new System.Drawing.Point(397, 38);
             this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
             this.txtMarkerLength.Name = "txtMarkerLength";
             this.txtMarkerLength.Size = new System.Drawing.Size(108, 23);
             this.txtMarkerLength.TabIndex = 13;
             this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
+            this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
             // txtCell
             // 
             this.txtCell.BackColor = System.Drawing.Color.White;
             this.txtCell.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCell.Location = new System.Drawing.Point(344, 63);
+            this.txtCell.Location = new System.Drawing.Point(397, 67);
             this.txtCell.MDivisionID = "";
             this.txtCell.Name = "txtCell";
             this.txtCell.Size = new System.Drawing.Size(108, 23);
             this.txtCell.TabIndex = 14;
+            this.txtCell.Validating += new System.ComponentModel.CancelEventHandler(this.TxtCell_Validating);
             // 
             // label17
             // 
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label17.Location = new System.Drawing.Point(245, 63);
+            this.label17.Location = new System.Drawing.Point(298, 67);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(96, 23);
             this.label17.TabIndex = 78;
@@ -193,23 +269,25 @@
             // 
             // dateWKETA
             // 
-            this.dateWKETA.Location = new System.Drawing.Point(102, 34);
+            this.dateWKETA.Location = new System.Drawing.Point(124, 38);
             this.dateWKETA.Name = "dateWKETA";
             this.dateWKETA.Size = new System.Drawing.Size(130, 23);
             this.dateWKETA.TabIndex = 9;
+            this.dateWKETA.Validating += new System.ComponentModel.CancelEventHandler(this.DateWKETA_Validating);
             // 
             // dateBoxEstCutDate
             // 
-            this.dateBoxEstCutDate.Location = new System.Drawing.Point(102, 5);
+            this.dateBoxEstCutDate.Location = new System.Drawing.Point(124, 9);
             this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
             this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.dateBoxEstCutDate.TabIndex = 8;
+            this.dateBoxEstCutDate.Validated += new System.EventHandler(this.DateBoxEstCutDate_Validated);
             // 
             // panel_P09
             // 
             this.panel_P09.Controls.Add(this.label5);
             this.panel_P09.Controls.Add(this.txtSpreadingNo);
-            this.panel_P09.Location = new System.Drawing.Point(464, 63);
+            this.panel_P09.Location = new System.Drawing.Point(539, 67);
             this.panel_P09.Name = "panel_P09";
             this.panel_P09.Size = new System.Drawing.Size(374, 23);
             this.panel_P09.TabIndex = 75;
@@ -233,19 +311,21 @@
             this.txtSpreadingNo.Name = "txtSpreadingNo";
             this.txtSpreadingNo.Size = new System.Drawing.Size(108, 23);
             this.txtSpreadingNo.TabIndex = 15;
+            this.txtSpreadingNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtSpreadingNo_Validating);
             // 
             // txtMakerName
             // 
             this.txtMakerName.BackColor = System.Drawing.Color.White;
             this.txtMakerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMakerName.Location = new System.Drawing.Point(344, 5);
+            this.txtMakerName.Location = new System.Drawing.Point(397, 9);
             this.txtMakerName.Name = "txtMakerName";
             this.txtMakerName.Size = new System.Drawing.Size(108, 23);
             this.txtMakerName.TabIndex = 12;
+            this.txtMakerName.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMakerName_Validating);
             // 
             // label4
             // 
-            this.label4.Location = new System.Drawing.Point(245, 34);
+            this.label4.Location = new System.Drawing.Point(298, 38);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(96, 23);
             this.label4.TabIndex = 45;
@@ -253,7 +333,7 @@
             // 
             // label1
             // 
-            this.label1.Location = new System.Drawing.Point(245, 5);
+            this.label1.Location = new System.Drawing.Point(298, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 23);
             this.label1.TabIndex = 44;
@@ -261,7 +341,7 @@
             // 
             // labelBatchUpdateEstCutDate
             // 
-            this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(11, 5);
+            this.labelBatchUpdateEstCutDate.Location = new System.Drawing.Point(33, 9);
             this.labelBatchUpdateEstCutDate.Name = "labelBatchUpdateEstCutDate";
             this.labelBatchUpdateEstCutDate.Size = new System.Drawing.Size(88, 23);
             this.labelBatchUpdateEstCutDate.TabIndex = 21;
@@ -269,7 +349,7 @@
             // 
             // label3
             // 
-            this.label3.Location = new System.Drawing.Point(11, 34);
+            this.label3.Location = new System.Drawing.Point(33, 38);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(88, 23);
             this.label3.TabIndex = 43;
@@ -277,7 +357,7 @@
             // 
             // btnBatchUpdateEstCutDate
             // 
-            this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(494, 5);
+            this.btnBatchUpdateEstCutDate.Location = new System.Drawing.Point(547, 9);
             this.btnBatchUpdateEstCutDate.Name = "btnBatchUpdateEstCutDate";
             this.btnBatchUpdateEstCutDate.Size = new System.Drawing.Size(125, 30);
             this.btnBatchUpdateEstCutDate.TabIndex = 16;
@@ -287,7 +367,7 @@
             // 
             // labSeq
             // 
-            this.labSeq.Location = new System.Drawing.Point(11, 63);
+            this.labSeq.Location = new System.Drawing.Point(33, 67);
             this.labSeq.Name = "labSeq";
             this.labSeq.Size = new System.Drawing.Size(88, 23);
             this.labSeq.TabIndex = 27;
@@ -297,7 +377,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F);
-            this.label2.Location = new System.Drawing.Point(146, 58);
+            this.label2.Location = new System.Drawing.Point(168, 62);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(19, 25);
             this.label2.TabIndex = 29;
@@ -307,7 +387,7 @@
             // 
             this.txtSeq2.BackColor = System.Drawing.Color.White;
             this.txtSeq2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq2.Location = new System.Drawing.Point(168, 63);
+            this.txtSeq2.Location = new System.Drawing.Point(190, 67);
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(41, 23);
             this.txtSeq2.TabIndex = 11;
@@ -318,7 +398,7 @@
             // 
             this.txtSeq1.BackColor = System.Drawing.Color.White;
             this.txtSeq1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq1.Location = new System.Drawing.Point(102, 63);
+            this.txtSeq1.Location = new System.Drawing.Point(124, 67);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(41, 23);
             this.txtSeq1.TabIndex = 10;
@@ -349,6 +429,17 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(1006, 117);
             this.panel7.TabIndex = 49;
+            // 
+            // chkShowEmptyCutRef
+            // 
+            this.chkShowEmptyCutRef.AutoSize = true;
+            this.chkShowEmptyCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkShowEmptyCutRef.Location = new System.Drawing.Point(249, 91);
+            this.chkShowEmptyCutRef.Name = "chkShowEmptyCutRef";
+            this.chkShowEmptyCutRef.Size = new System.Drawing.Size(192, 21);
+            this.chkShowEmptyCutRef.TabIndex = 8;
+            this.chkShowEmptyCutRef.Text = "Only Show Empty CutRef#";
+            this.chkShowEmptyCutRef.UseVisualStyleBackColor = true;
             // 
             // labelSPNo
             // 
@@ -472,16 +563,15 @@
             this.labelFabricCombo.TabIndex = 5;
             this.labelFabricCombo.Text = "Fabric Panel Code";
             // 
-            // chkShowEmptyCutRef
+            // chkSpreadingNo
             // 
-            this.chkShowEmptyCutRef.AutoSize = true;
-            this.chkShowEmptyCutRef.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkShowEmptyCutRef.Location = new System.Drawing.Point(249, 91);
-            this.chkShowEmptyCutRef.Name = "chkShowEmptyCutRef";
-            this.chkShowEmptyCutRef.Size = new System.Drawing.Size(192, 21);
-            this.chkShowEmptyCutRef.TabIndex = 8;
-            this.chkShowEmptyCutRef.Text = "Only Show Empty CutRef#";
-            this.chkShowEmptyCutRef.UseVisualStyleBackColor = true;
+            this.chkSpreadingNo.AutoSize = true;
+            this.chkSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.chkSpreadingNo.Location = new System.Drawing.Point(518, 73);
+            this.chkSpreadingNo.Name = "chkSpreadingNo";
+            this.chkSpreadingNo.Size = new System.Drawing.Size(15, 14);
+            this.chkSpreadingNo.TabIndex = 84;
+            this.chkSpreadingNo.UseVisualStyleBackColor = true;
             // 
             // Cutting_BatchAssign
             // 
@@ -552,5 +642,12 @@
         private Win.UI.Label label17;
         private Class.TxtMarkerLength txtMarkerLength;
         private Win.UI.CheckBox chkShowEmptyCutRef;
+        private Win.UI.CheckBox chkCutCell;
+        private Win.UI.CheckBox chkMarkerLength;
+        private Win.UI.CheckBox chkMarkerName;
+        private Win.UI.CheckBox chkSeq;
+        private Win.UI.CheckBox chkWKETA;
+        private Win.UI.CheckBox chkEstCutDate;
+        private Win.UI.CheckBox chkSpreadingNo;
     }
 }

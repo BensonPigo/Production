@@ -199,29 +199,29 @@ namespace Sci.Production.Cutting
 
             foreach (DataRow dr in this.dt_CurentDetail.Select("Selected = 1"))
             {
-                if (!MyUtility.Check.Empty(this.dateBoxEstCutDate.Value))
+                if (this.chkEstCutDate.Checked)
                 {
-                    dr["EstCutDate"] = MyUtility.Convert.GetDate(this.dateBoxEstCutDate.Value);
+                    dr["EstCutDate"] = this.dateBoxEstCutDate.Value.HasValue ? (object)this.dateBoxEstCutDate.Value : DBNull.Value;
                 }
 
-                if (this.txtMarkerLength.HasValue)
+                if (this.chkMarkerLength.Checked)
                 {
                     dr["MarkerLength"] = dr["MarkerLength_Mask"] = this.txtMarkerLength.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtMakerName.Text))
+                if (this.chkMarkerName.Checked)
                 {
                     dr["MarkerName"] = this.txtMakerName.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtCell.Text))
+                if (this.chkCutCell.Checked)
                 {
                     dr["CutCellID"] = this.txtCell.Text;
                 }
 
                 if (this.form == CuttingForm.P09)
                 {
-                    if (!MyUtility.Check.Empty(this.txtSpreadingNo.Text))
+                    if (this.chkSpreadingNo.Checked)
                     {
                         dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
                     }
@@ -235,19 +235,19 @@ namespace Sci.Production.Cutting
             {
                 #region 驗證 Seq
                 // 先填入再驗證
-                if (!MyUtility.Check.Empty(this.txtSeq1.Text))
+                if (this.chkSeq.Checked)
                 {
                     dr["Seq1"] = this.txtSeq1.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.txtSeq2.Text))
+                if (this.chkSeq.Checked)
                 {
                     dr["Seq2"] = this.txtSeq2.Text;
                 }
 
-                if (!MyUtility.Check.Empty(this.dateWKETA.Value))
+                if (this.chkWKETA.Checked)
                 {
-                    dr["WKETA"] = this.dateWKETA.Value;
+                    dr["WKETA"] = this.dateWKETA.Value.HasValue ? (object)this.dateWKETA.Value : DBNull.Value;
                 }
 
                 // 驗證存在 dtAllSEQ_FabricCode
@@ -345,6 +345,8 @@ namespace Sci.Production.Cutting
 
             this.txtSeq1.Text = item.GetSelecteds()[0]["Seq1"].ToString();
             this.txtSeq2.Text = item.GetSelecteds()[0]["Seq2"].ToString();
+
+            this.TxtSeqCheck(this.txtSeq1.Text, this.txtSeq2.Text);
         }
 
         private void TxtSeq_Validating(object sender, CancelEventArgs e)
@@ -364,6 +366,7 @@ namespace Sci.Production.Cutting
                 e.Cancel = true;
                 return;
             }
+            this.TxtSeqCheck(this.txtSeq1.Text, this.txtSeq2.Text);
         }
         #endregion
 
@@ -406,5 +409,69 @@ namespace Sci.Production.Cutting
             return this.editByUseCutRefToRequestFabric;
         }
         #endregion
+
+        private void DateBoxEstCutDate_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.dateBoxEstCutDate.Value.HasValue)
+            {
+                this.chkEstCutDate.Checked = true;
+            }
+        }
+
+        private void DateWKETA_Validating(object sender, CancelEventArgs e)
+        {
+            if (this.dateWKETA.Value.HasValue)
+            {
+                this.chkWKETA.Checked = true;
+            }
+        }
+
+        private void TxtMakerName_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtMakerName.Text))
+            {
+                this.chkMarkerName.Checked = true;
+            }
+        }
+
+        private void TxtCell_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtCell.Text))
+            {
+                this.chkCutCell.Checked = true;
+            }
+        }
+
+        private void TxtMarkerLength_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtMarkerLength.Text))
+            {
+                this.chkMarkerLength.Checked = true;
+            }
+        }
+
+        private void TxtSeqCheck(string seq1, string seq2)
+        {
+            if (!string.IsNullOrEmpty(seq1) || !string.IsNullOrEmpty(seq2))
+            {
+                this.chkSeq.Checked = true;
+            }
+        }
+
+        private void DateBoxEstCutDate_Validated(object sender, EventArgs e)
+        {
+            if (this.dateBoxEstCutDate.Value.HasValue)
+            {
+                this.chkEstCutDate.Checked = true;
+            }
+        }
+
+        private void TxtSpreadingNo_Validating(object sender, CancelEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.txtSpreadingNo.Text))
+            {
+                this.chkSpreadingNo.Checked = true;
+            }
+        }
     }
 }
