@@ -809,6 +809,7 @@ select a.*
 	,b.HighestCycle
 	,b.HighestGSD
     ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal(10,2))
+	,SourceTable='IE P03'
 INTO #AllAfter
 from #AllP03 a
 inner join LineMapping b on a.ID = b.ID
@@ -820,6 +821,7 @@ select a.*
 	,HighestCycle = b.HighestCycleTime
 	,HighestGSD = b.HighestGSDTime
     ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
+	,SourceTable='IE P06'
 from #AllP06 a
 inner join LineMappingBalancing b on a.ID = b.ID
 
@@ -925,6 +927,7 @@ Outer Apply(
 	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
+	and SourceTable='IE P03'
 )AfterData
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
@@ -1085,6 +1088,7 @@ Outer Apply(
 	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
+	and SourceTable='IE P06'
 )AfterData
 outer apply(
 	select top 1 ct.Target
