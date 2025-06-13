@@ -894,9 +894,7 @@ select
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
-	,[History LBR] = CASE WHEN AfterData.EditDate IS NOT NULL and CAST(AfterData.EditDate as Date) = a.OutputDate THEN  AfterData.LBR
-						  ELSE NULL
-					 END
+	,[History LBR] = AfterData.LBR
     ,b.Category
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
@@ -917,7 +915,7 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P03'
 )AfterDataP03
 Outer Apply(
-	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	select top 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
 	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
@@ -926,8 +924,8 @@ Outer Apply(
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
-	and SourceTable='IE P03'
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	order by lm.EditDate desc
 )AfterData
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
@@ -1039,9 +1037,7 @@ select
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
-	,[History LBR] = CASE WHEN AfterData.EditDate IS NOT NULL and CAST(AfterData.EditDate as Date) = a.OutputDate THEN  AfterData.LBR
-						  ELSE NULL
-					 END
+	,[History LBR] = AfterData.LBR
     ,b.Category
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
@@ -1078,7 +1074,7 @@ Outer Apply(
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P06'
 )AfterDataP06
 Outer Apply(
-	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	select top 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
 	---- 公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
@@ -1087,8 +1083,8 @@ Outer Apply(
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #AllAfter lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType
-	and SourceTable='IE P06'
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	order by lm.EditDate desc
 )AfterData
 outer apply(
 	select top 1 ct.Target
