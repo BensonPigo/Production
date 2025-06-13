@@ -543,9 +543,9 @@ ORDER BY [Group], [SEQ], [NAME]";
                 case ListName.P_LoadingProductionOutput:
                     return new P_Import_LoadingProductionOutput().P_LoadingProductionOutput(item.SDate);
                 case ListName.P_DQSDefect_Summary:
-                    return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item.SDate);
+                    return new P_Import_DQSDefect_Summary().P_DQSDefect_Summary(item.SDate, item.EDate);
                 case ListName.P_DQSDefect_Detail:
-                    return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item.SDate);
+                    return new P_Import_DQSDefect_Detail().P_DQSDefect_Detail(item.SDate, item.EDate);
                 case ListName.P_CFAInline_Detail:
                     return new P_Import_CFAInline_Detail().P_CFAInline_Detail(item.SDate);
                 case ListName.P_CFAInspectionRecord_Detail:
