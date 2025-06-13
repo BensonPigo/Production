@@ -697,6 +697,25 @@ INTO #P03Rank
 FROM PhaseRankedTableP03
 WHERE RowNum = 1
 
+
+---- 處理P05的Prelim、Initial 優先度問題。
+;WITH PhaseRankedTableP05 AS (
+	select 
+        maxVer.*,
+        ROW_NUMBER() OVER (PARTITION BY maxVer.StyleUKey,maxVer.FactoryID,maxVer.SewingLineID,maxVer.Team,maxVer.ComboType ORDER BY 
+            CASE 
+                WHEN maxVer.Phase = 'Prelim' THEN 2
+                ELSE 1
+            END DESC) AS RowNum
+	from #P05MaxVer maxVer
+	inner join AutomatedLineMapping p05 on maxVer.ID = p05.ID
+	where maxVer.Phase IN ('Prelim','Initial')
+)
+
+SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
+INTO #P05Rank
+FROM PhaseRankedTableP05
+WHERE RowNum = 1
 --組合所有Before：P03 Before => P03 After；P05 Before => P06 After
 
 --P03的Before
@@ -705,12 +724,18 @@ select p03.*
 INTO #BeforeData
 from #P03Rank p03
 UNION
---P05的Before (必須在 P06.AutomatedLineMappingID 當中)
+--P05Before (有P06 After，從P06推導得出，必須在 P06.AutomatedLineMappingID 當中)
 select distinct p05.StyleUKey,p05.FactoryID,p05.SewingLineID,p05.Team,p05.ComboType,p05.Phase,p05.Version,p05.AddDate,p05.EditDate ,p05.ID
 ,SourceTable = 'IE P05'
 from #AfterData p06
 inner join  LineMappingBalancing lm on p06.ID = lm.ID
 inner join #P05MaxVer p05 on p05.ID = lm.AutomatedLineMappingID
+UNION
+--P05的Before (沒有P06 After)
+select p05.*
+,SourceTable = 'IE P05' ---- P05 沒有Line Team
+from #BaseData a
+INNER join #P05Rank p05 on p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType
 
 ---- 6. 前面已經鎖定了每一組 factory, brand, style, season, combo type, Line, Team ，對應到的兩個產線計畫(分別是Before和After)，最後可以去P03、P05、P06找出最終的那一筆，並取出需要的欄位就好
 select a.*,b.Status
