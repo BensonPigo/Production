@@ -196,6 +196,7 @@ select fac.Zone
 	, [DefectCodeID] = ind.GarmentDefectCodeID
 	, [DefectCodeLocalDesc] = iif(isnull(gdc.LocalDescription,'''') = '''',gdc.Description,gdc.LocalDescription)
 	, [IsCriticalDefect] = iif(isnull(IsCriticalDefect,0) = 0, '''', ''Y'')
+	, [InspectionDetailUkey] = ind.Ukey
 into #Final_DQSDefect_Detail
 from ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 inner join ['+@current_PMS_ServerName+'].Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
@@ -371,7 +372,7 @@ SELECT
 	,cd.Remark
 	,c.ID
 	,c.IsCombinePO
-	,[InsCtn]=IIF(c.stage in (''Final'' ,''Final Internal'') OR c.Stage =''3rd party'',
+	,[InsCtn]=IIF(c.stage = ''Final'' OR c.Stage =''3rd party'',
 	( 
 		SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
 		FROM ['+@current_PMS_ServerName+'].Production.dbo.CFAInspectionRecord cr
@@ -571,6 +572,7 @@ set @SqlFinal2 ='
            ,[GarmentDefectCodeID]
 		   ,[DefectCodeLocalDesc]
 		   ,[IsCriticalDefect])
+		   ,[InspectionDetailUkey]
  select [Zone] = isnull([Zone],'''')
     , Brand = isnull(Brand,'''')
 	, [Buyer Delivery Date]
@@ -595,6 +597,7 @@ set @SqlFinal2 ='
 	, [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'''')
 	, [Area] = isnull(Area,'''')
 	, [ReworkCardNo] = isnull(ReworkCardNo,''''), [DefectTypeID] = isnull(DefectTypeID,''''), [DefectCodeID] = isnull(DefectCodeID,''''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''''), [IsCriticalDefect] = isnull(IsCriticalDefect,'''')
+	, [InspectionDetailUkey] = isnull(InspectionDetailUkey,0)
  from #Final_DQSDefect_Detail  
 '
 
@@ -762,7 +765,7 @@ from BITableInfo b
 where b.id = ''P_CFAInspectionRecord_Detail'' 
 '
 
-SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal
+SET @SqlCmd_Combin = @SqlCmd1 + @SqlCmd1_1 + @SqlCmd2 + @SqlCmd3 + @SqlCmd4 + @SqlCmd5 + @SqlCmd6 + @SqlFinal1 + @SqlFinal2 + @SqlFinal3 + @SqlFinal
 /*
 print @SqlCmd1
 print @SqlCmd1_1
