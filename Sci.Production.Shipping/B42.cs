@@ -10,6 +10,8 @@ using Ict;
 using Sci.Data;
 using Sci.Production.PublicPrg;
 using System.Linq;
+using Sci.Andy.ExtensionMethods;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Shipping
 {
@@ -91,6 +93,8 @@ namespace Sci.Production.Shipping
             this.editColorway.Text = MyUtility.Check.Empty(colorWay) ? string.Empty : colorWay.Substring(0, colorWay.Length - 1);
             string sizeGroup = MyUtility.GetValue.Lookup(string.Format("select CONCAT(SizeCode, ',') from VNConsumption_SizeCode WITH (NOLOCK) where ID = '{0}' order by SizeCode for xml path('')", MyUtility.Convert.GetString(this.CurrentMaintain["ID"])));
             this.editSizeGroup.Text = MyUtility.Check.Empty(sizeGroup) ? string.Empty : sizeGroup.Substring(0, sizeGroup.Length - 1);
+
+            this.SetNewCustomSPLength();
         }
 
         private void ClearDetailDt(DataRow curDr)
@@ -433,15 +437,12 @@ where StartDate = (select   MAX(StartDate)
                             and Status = 'Confirmed')
 and IsSubConIn = 0
 ");
-            this.CurrentMaintain["CustomSP"] = "SP" + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(
-                @"
-select  CustomSP = isnull (MAX (CustomSP), 'SP000000') 
-from VNConsumption WITH (NOLOCK) 
-where VNContractID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]))).Substring(2)) + 1).PadLeft(6, '0');
-
             this.CurrentMaintain["VNMultiple"] = MyUtility.GetValue.Lookup(@"
 select  VNMultiple 
 from System WITH (NOLOCK) ");
+
+            this.CurrentMaintain["OrderCompanyID"] = 3;
+            this.SetNewCustomSP();
         }
 
         /// <inheritdoc/>
@@ -472,6 +473,7 @@ from System WITH (NOLOCK) ");
             this.txtCustomSPNo.ReadOnly = true;
             this.txtContractNo.ReadOnly = true;
             this.dateDate.ReadOnly = true;
+            this.comboCompany.ReadOnly = true;
         }
 
         /// <inheritdoc/>
@@ -504,6 +506,25 @@ from System WITH (NOLOCK) ");
             {
                 this.txtCustomSPNo.Focus();
                 MyUtility.Msg.WarningBox("Custom SP# can't empty!!");
+                return false;
+            }
+            else if (this.CurrentMaintain["OrderCompanyID"].ToString() == "1" && this.CurrentMaintain["CustomSP"].ToString().Length != 12)
+            {
+                this.txtCustomSPNo.Focus();
+                MyUtility.Msg.WarningBox("Custom SP# must be exactly 12 digits!");
+                return false;
+            }
+            else if (this.CurrentMaintain["OrderCompanyID"].ToString() == "3" && this.CurrentMaintain["CustomSP"].ToString().Length != 8)
+            {
+                this.txtCustomSPNo.Focus();
+                MyUtility.Msg.WarningBox("Custom SP# must be exactly 8 digits!");
+                return false;
+            }
+
+            if (MyUtility.Check.Empty(this.CurrentMaintain["OrderCompanyID"]))
+            {
+                this.txtCustomSPNo.Focus();
+                MyUtility.Msg.WarningBox("Order Company can't empty!!");
                 return false;
             }
 
@@ -697,6 +718,7 @@ from System WITH (NOLOCK) ");
             return base.ClickSavePost();
         }
 
+        /// <inheritdoc/>
         protected override void ClickSaveAfter()
         {
             base.ClickSaveAfter();
@@ -1241,6 +1263,59 @@ select NLCode from VNConsumption_Detail WITH (NOLOCK) where ID = '{1}'",
             {
                 MyUtility.Msg.WarningBox("Unconfirm fail!!\r\n" + result.ToString());
                 return;
+            }
+        }
+
+        private void ComboCompany_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.IsDetailInserting)
+            {
+                this.CurrentMaintain["OrderCompanyID"] = this.comboCompany.SelectedValue2;
+                this.SetNewCustomSP();
+                this.SetNewCustomSPLength();
+            }
+        }
+
+        private void SetNewCustomSP()
+        {
+            if (!this.IsDetailInserting)
+            {
+                return;
+            }
+
+            string startCustomSP = string.Empty;
+            string orderCompanyID = MyUtility.Convert.GetString(this.CurrentMaintain["OrderCompanyID"]);
+            if (orderCompanyID == "3")
+            {
+                startCustomSP = "SP";
+            }
+            else if (orderCompanyID == "1")
+            {
+                startCustomSP = "SCI-SP";
+            }
+
+            this.CurrentMaintain["CustomSP"] = startCustomSP + MyUtility.Convert.GetString(MyUtility.Convert.GetInt(MyUtility.GetValue.Lookup(string.Format(
+                                @"
+select  CustomSP = isnull (MAX (CustomSP), '{1}000000') 
+from VNConsumption WITH (NOLOCK) 
+where VNContractID = '{0}'
+and OrderCompanyID = '{2}'", MyUtility.Convert.GetString(this.CurrentMaintain["VNContractID"]), startCustomSP, orderCompanyID)).Substring(startCustomSP.Length)) + 1).PadLeft(6, '0');
+        }
+
+        private void SetNewCustomSPLength()
+        {
+            if (this.CurrentMaintain == null || !this.EditMode)
+            {
+                return;
+            }
+
+            if (this.CurrentMaintain["OrderCompanyID"].ToString() == "3")
+            {
+                this.txtCustomSPNo.MaxLength = 8;
+            }
+            else if (this.CurrentMaintain["OrderCompanyID"].ToString() == "1")
+            {
+                this.txtCustomSPNo.MaxLength = 12;
             }
         }
     }
