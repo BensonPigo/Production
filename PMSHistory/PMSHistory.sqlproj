@@ -70,6 +70,13 @@
     <Build Include="dbo\Tables\Bundle_Detail_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Art_History.sql" />
     <Build Include="dbo\Tables\Bundle_Detail_Allpart_History.sql" />
+    <Build Include="dbo\Tables\Juki_T_Operator.sql" />
+    <Build Include="dbo\Tables\Juki_T_Mechanic.sql" />
+    <Build Include="dbo\Tables\Juki_T_SewMachine.sql" />
+    <Build Include="dbo\Tables\Juki_T_BaseProcess.sql" />
+    <Build Include="dbo\Tables\Juki_T_Style.sql" />
+    <Build Include="dbo\Tables\Juki_T_ProdPlan.sql" />
+    <Build Include="dbo\Tables\Juki_T_Layout.sql" />
     <Build Include="dbo\Functions\RemoveLeadingTrailingZeros.sql" />
     <Build Include="dbo\Functions\GetFirstPartBeforeSemicolon.sql" />
     <Build Include="dbo\Stored Procedures\Juki_P2H_Style.sql" />
