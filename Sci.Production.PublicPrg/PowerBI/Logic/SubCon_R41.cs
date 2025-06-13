@@ -258,9 +258,9 @@ Select
     [PtnDesc] = bd.PatternDesc,
     [Group] = bd.BundleGroup,
     [Size] = bd.SizeCode,
-    [Artwork] = sub.sub,
+    [Artwork] = isnull(sub.sub,''),
     [Qty] = bd.Qty,
-    [Sub-process] = s.Id,
+    [Sub-process] = isnull(s.Id,''),
     [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
     [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
     bio.LocationID,
@@ -413,10 +413,12 @@ select
 	[FabricKind] = isnull(r.[FabricKind],''),
     [CutRef] = isnull(r.[Cut Ref#],'') ,
     [SP] = STUFF((
-    SELECT ',' + ISNULL(r2.[SP#], '')
-    FROM #result r2
-    WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] and r2.Artwork = r.Artwork and r2.Size = r.Size
-    FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''),
+        SELECT ',' + ISNULL(r2.[SP#], '')
+        FROM #result r2
+        WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] 
+        and r2.Artwork = r.Artwork and r2.Size = r.Size
+        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
+    ),
     [MasterSP] = isnull(r.[Master SP#],''),
     [M] = isnull(r.[M],''),
     [Factory] = isnull(r.[Factory],''),
