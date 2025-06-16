@@ -54,15 +54,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw resultReport.Result.GetException();
                 }
 
-                string factoryID = MyUtility.GetValue.Lookup("select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]");
                 DataTable dataTable = resultReport.Dt;
-                dataTable.Columns.Add("BIFactoryID", typeof(string));
-                dataTable.Columns.Add("BIInsertDate", typeof(DateTime));
-                foreach (DataRow row in dataTable.AsEnumerable())
-                {
-                    row["BIFactoryID"] = factoryID;
-                    row["BIInsertDate"] = DateTime.Now;
-                }
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(dataTable, sDate.Value, eDate.Value);
