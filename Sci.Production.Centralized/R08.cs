@@ -498,6 +498,7 @@ inner join #SewingOutput_Detail b on a.ID = b.ID
 ---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
 ---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 --P03
+---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -518,7 +519,7 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
----- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -559,6 +560,7 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,SewingLineID = ''
@@ -596,13 +598,14 @@ where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
 )
-and exists(
-	select 1 from #P05MaxVer p05
-	where p05.ID = lm.AutomatedLineMappingID
-)
+--and exists(
+--	select 1 from #P05MaxVer p05
+--	where p05.ID = lm.AutomatedLineMappingID
+--)
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
+---- Latest 用　
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -628,6 +631,7 @@ GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase
 
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -676,7 +680,7 @@ RankedTable AS (
             CASE 
                 WHEN EditDate IS NOT NULL THEN EditDate 
                 ELSE AddDate 
-            END DESC) AS RowNum
+            END DESC,Version DESC) AS RowNum
     FROM CombinedTable
 )
 
@@ -707,7 +711,7 @@ ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Versi
         p.EditDate,
         p.AddDate,
 		p.ID,
-		'P03' AS SourceTable
+		'IE P03' AS SourceTable
     FROM #P03MaxVer p
     WHERE p.Phase IN ('Prelim','Initial')
       AND EXISTS (
@@ -737,7 +741,7 @@ ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Versi
         m.EditDate,
         m.AddDate,
         m.ID,
-		'P05' AS SourceTable
+		'IE P05' AS SourceTable
     FROM #P05MaxVer m
     INNER JOIN AutomatedLineMapping p05
         ON m.ID = p05.ID
@@ -756,7 +760,7 @@ ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Versi
         p05.EditDate,
         p05.AddDate,
         p05.ID,
-		'P05' AS SourceTable
+		'IE P05' AS SourceTable
 	from #AfterData p06
 	inner join  LineMappingBalancing lm on p06.ID = lm.ID
 	inner join #P05MaxVer p05 on p05.ID = lm.AutomatedLineMappingID
@@ -772,7 +776,7 @@ SELECT
             c.Team,
             c.ComboType
         ORDER BY
-            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,
+            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,Version desc,
             ISNULL(c.EditDate, c.AddDate) DESC
     ) AS RowNum
 INTO #PhaseRankedTable
@@ -781,7 +785,6 @@ FROM Combined c
 select StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID,SourceTable
 INTO #BeforeData
 from #PhaseRankedTable
-where RowNum = 1
 
 select a.*,b.Status
 	,b.TotalGSD
@@ -1213,6 +1216,7 @@ drop table #BaseData
 ,#AllP05
 ,#AllP06
 ,#AllAfter
+
 ");
 
             return cmd;
