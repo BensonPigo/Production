@@ -611,6 +611,31 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P06MaxVerNoLine ---- P06 不看 SewingLine Team
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType
+)
+and exists(
+	select 1 from #P05MaxVer p05
+	where p05.ID = lm.AutomatedLineMappingID
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
 	,lm.Version
 	,lm.AddDate
 	,lm.EditDate
@@ -973,11 +998,16 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
 	select top 1 *
 	from (
 		select *
 		from (
 			select *,SourceTable='P03' from #P03MaxVer
+			union
+			select *,SourceTable='P05' from #P05MaxVer
+			union
+			select *,SourceTable='P06' from #P06MaxVerNoLine
 		)LastData
 		where b.StyleUkey = LastData.StyleUKey 
 			and a.FactoryID = LastData.FactoryID 
@@ -1120,13 +1150,16 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
 	select top 1 *
 	from (
 		select *
 		from (
+			select *,SourceTable='P03' from #P03MaxVer
+			union
 			select *,SourceTable='P05' from #P05MaxVer
 			union
-			select *,SourceTable='P06' from #P06MaxVer
+			select *,SourceTable='P06' from #P06MaxVerNoLine
 		)LastData
 		where b.StyleUkey = LastData.StyleUKey 
 			and a.FactoryID = LastData.FactoryID 
@@ -1143,11 +1176,14 @@ outer apply(
 )LastVersion
 WHERE BeforeDataP05.SourceTable IS NOT NULL
 
+
 drop table #BaseData
 ,#P03MaxVer
 ,#P05MaxVer
 ,#P06MaxVer
+,#P06MaxVerNoLine
 ,#P03Rank
+,#P05Rank
 ,#AfterData
 ,#BeforeData
 ,#FinalAfterData
