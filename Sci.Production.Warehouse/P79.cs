@@ -93,7 +93,7 @@ namespace Sci.Production.Warehouse
                 whereParams.Add("@FactoryID");
                 whereParams.Add(this.txtFactoryID.Text.Trim());
 
-                whereConditions.Add("o.FactoryID = @FactoryID");
+                whereConditions.Add("o.FtyGroup = @FactoryID");
             }
 
             if (!string.IsNullOrWhiteSpace(this.txtBrandID.Text))
@@ -267,7 +267,7 @@ END
             sqlcmd += @"
 
 select *
-	 , BalanceQty = sum(t.ArrivedQty - t.ReleasedQty + t.AdjustQty - t.ReturnQty) over (partition by t.POID, t.Seq1, t.Seq2 order by t.Date, t.ArrivedQty, t.TransactionID)
+	 , BalanceQty = sum(t.ArrivedQty - t.ReleasedQty + t.AdjustQty - t.ReturnQty) over (partition by t.POID, t.Seq1, t.Seq2 order by t.Date, t.ArrivedQty desc, t.TransactionID)
 into #TransactionDatas
 from (
 	select TransactionID = m.ID
@@ -547,7 +547,7 @@ where t.Date between @BeginDate and @EndDate";
             }
 
             sqlcmd += @"
-order by t.PoId, Seq, t.Date, t.ArrivedQty, t.TransactionID";
+order by t.PoId, Seq, t.Date, t.ArrivedQty desc, t.TransactionID";
             #endregion
 
             return sqlcmd;
