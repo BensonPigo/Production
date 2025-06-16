@@ -676,11 +676,11 @@ where 1=0
 RankedTable AS (
     SELECT 
         *,---- P03、P06交集，代表相同Key值有重複，因此判斷EditDate、AddDate
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY 
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY Version DESC,
             CASE 
                 WHEN EditDate IS NOT NULL THEN EditDate 
                 ELSE AddDate 
-            END DESC,Version DESC) AS RowNum
+            END DESC) AS RowNum
     FROM CombinedTable
 )
 
