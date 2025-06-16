@@ -536,7 +536,7 @@ select t.PoId
 from #TransactionDatas t
 inner join #OrderDatas o on t.PoId = o.POID
 inner join MDivisionPoDetail m with(nolock) on t.PoId = m.POID and t.Seq1 = m.Seq1 and t.Seq2 = m.Seq2
-inner join PO_Supp_Detail psd with(nolock) on t.PoId = psd.ID and t.Seq1 = psd.SEQ1 and t.Seq2 = psd.SEQ2
+inner join PO_Supp_Detail psd with(nolock) on t.PoId = psd.ID and t.Seq1 = psd.SEQ1 and t.Seq2 = psd.SEQ2 and psd.FabricType = 'F'
 inner join Fabric f with(nolock) on psd.SCIRefno = f.SCIRefno
 left join PO_Supp_Detail_Spec psds with(nolock) on psd.ID = psds.ID and psd.SEQ1 = psds.Seq1 and psd.SEQ2 = psds.Seq2 and psds.SpecColumnID = 'Color'";
 
