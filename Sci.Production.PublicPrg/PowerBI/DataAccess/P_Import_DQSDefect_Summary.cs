@@ -166,7 +166,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 														   r.Team = so.Team AND
 														   r.Shift = so.Shift AND
 														   r.CDate = so.OutputDate
-				WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory and sod.Article = t.Article
+				WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.FactoryID and sod.Article = t.Article
 				and so.Shift= iif(t.Shift = 'Day','D','N') 
 				and r.CDate = t.SewInLine
 			)RftValue
@@ -178,7 +178,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				and insp.Status <> 'Pass'
 				and t.InspectionDate = insp.InspectionDate
 				and t.FirstInspectionDate = cast(insp.AddDate as Date)
-				and t.Factory = insp.FactoryID
+				and t.FactoryID = insp.FactoryID
 				and t.[SP#] = insp.OrderId
 				and t.Article = insp.Article
 				and t.Size = insp.Size
@@ -218,7 +218,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 				UPDATE P SET
-				,P.[BrandID]			= isnull(T.Brand,'')
+				P.[BrandID]			= isnull(T.Brand,'')
 				,P.[StyleID]			= isnull(T.Style,'')
 				,P.[POID]				= isnull(T.[PO#], '')					
 				,P.[Destination]		= isnull(T.Destination, '')
