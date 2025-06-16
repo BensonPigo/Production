@@ -211,6 +211,12 @@
     <Compile Include="P55_PrintData.cs" />
     <Compile Include="P54_PrintData.cs" />
     <Compile Include="P21_PrintBarcode_Data.cs" />
+    <Compile Include="P79.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="P79.Designer.cs">
+      <DependentUpon>P79.cs</DependentUpon>
+    </Compile>
     <Compile Include="WH_FromTo_Print.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -1829,6 +1835,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="P54_Print.rdlc" />
     <EmbeddedResource Include="P55_Print.rdlc" />
+    <EmbeddedResource Include="P79.resx">
+      <DependentUpon>P79.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WH_FromTo_Print.resx">
       <DependentUpon>WH_FromTo_Print.cs</DependentUpon>
     </EmbeddedResource>
