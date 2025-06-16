@@ -1,10 +1,13 @@
 ﻿using Ict;
 using Ict.Win;
 using Sci.Data;
+using Sci.Production.PublicPrg;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Sci.Production.Warehouse
 {
@@ -15,6 +18,7 @@ namespace Sci.Production.Warehouse
         private DataTable dt_detail;
         private DataTable dtArtwork;
         private Ict.Win.UI.DataGridViewCheckBoxColumn col_chk;
+        private Dictionary<string, string> selectedLocation = new Dictionary<string, string>();
 
         /// <inheritdoc/>
         public P55_Import(DataRow master, DataTable detail)
@@ -38,6 +42,46 @@ namespace Sci.Production.Warehouse
                 }
             };
 
+            #region -- Location 右鍵開窗 --
+
+            DataGridViewGeneratorTextColumnSettings ts = new DataGridViewGeneratorTextColumnSettings();
+            ts.EditingMouseDown += (s, e) =>
+            {
+                if (this.EditMode && e.Button == MouseButtons.Right)
+                {
+                    DataRow dr_nowgridrow = this.grid1.GetDataRow(e.RowIndex);
+                    Win.Tools.SelectItem2 item = Prgs.SelectLocation(dr_nowgridrow["stocktype"].ToString(), dr_nowgridrow["location"].ToString());
+                    DialogResult result = item.ShowDialog();
+                    if (result == DialogResult.Cancel)
+                    {
+                        return;
+                    }
+
+                    this.grid1.GetDataRow(e.RowIndex)["location"] = item.GetSelectedString();
+                    this.grid1.GetDataRow(e.RowIndex).EndEdit();
+                }
+            };
+
+            ts.CellValidating += (s, e) =>
+            {
+                if (this.EditMode && e.FormattedValue != null)
+                {
+                    DataRow dr_nowgridrow = this.grid1.GetDataRow(e.RowIndex);
+
+                    // 去除錯誤的Location將正確的Location填回
+                    string newLocation = string.Empty;
+                    DualResult result = CheckDetailStockTypeLocation(dr_nowgridrow["stocktype"].ToString(), e.FormattedValue.ToString(), out newLocation);
+                    if (!result)
+                    {
+                        e.Cancel = true;
+                        MyUtility.Msg.WarningBox(result.Description);
+                    }
+
+                    /*dr_nowgridrow["Location"] = newLocation;*/
+                }
+            };
+            #endregion Location 右鍵開窗
+
             this.grid1.IsEditingReadOnly = false; // 開啟CheckBox圖示
             this.grid1.DataSource = this.listControlBindingSource1;
             this.Helper.Controls.Grid.Generator(this.grid1)
@@ -48,8 +92,9 @@ namespace Sci.Production.Warehouse
                 .Text("dyelot", header: "Dyelot", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 4
                 .Text("Refno", header: "Refno", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 5
                 .Numeric("ReceivingQty", header: "Receiving Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(15), integer_places: 10) // 6
-                .Numeric("Qty", header: "Transfer Out Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(15), integer_places: 10) // 7
-                .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 8
+                .Text("Location", header: "Location", iseditingreadonly: false, width: Widths.AnsiChars(20), settings: ts)　// 7
+                .Numeric("Qty", header: "Transfer Out Qty", decimal_places: 2, iseditingreadonly: true, width: Widths.AnsiChars(15), integer_places: 10) // 8
+                .Text("StockUnit", header: "Stock Unit", iseditingreadonly: true, width: Widths.AnsiChars(8)) // 9
                 .Text("Description", header: "Description", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 .Text("StockTypeDisplay", header: "Stock Type", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(5))
@@ -109,6 +154,7 @@ SELECT
    ,fir.Grade
    ,[RecvKG] = td.RecvKG
     ,o.StyleID
+    ,[Location] = ''
 FROM FtyInventory f WITH (NOLOCK)
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = f.POID
 LEFT JOIN PO_Supp_Detail psd WITH (NOLOCK) ON f.POID = psd.ID AND f.Seq1 = psd.SEQ1 AND f.Seq2 = psd.SEQ2
@@ -266,6 +312,95 @@ AND f.SubConStatus = '{strSubCon}'
             }
 
             this.Close();
+        }
+
+        /// <inheritdoc/>
+        public static DualResult CheckDetailStockTypeLocation(string stockType, string curLocation, out string newLocation)
+        {
+            newLocation = string.Empty;
+            string sqlcmd = string.Format(
+                @"
+SELECT  id
+        , Description
+        , StockType 
+FROM    DBO.MtlLocation WITH (NOLOCK) 
+WHERE   StockType='{0}'
+        and junk != '1'", stockType);
+            DataTable dt;
+            DBProxy.Current.Select(null, sqlcmd, out dt);
+            string[] getLocation = curLocation.Split(',').Distinct().ToArray();
+            bool selectId = true;
+            List<string> errLocation = new List<string>();
+            List<string> trueLocation = new List<string>();
+            foreach (string location in getLocation)
+            {
+                if (!dt.AsEnumerable().Any(row => row["id"].EqualString(location)) && !location.EqualString(string.Empty))
+                {
+                    selectId &= false;
+                    errLocation.Add(location);
+                }
+                else if (!location.EqualString(string.Empty))
+                {
+                    trueLocation.Add(location);
+                }
+            }
+
+            // 去除錯誤的Location將正確的Location填回
+            trueLocation.Sort();
+            newLocation = string.Join(",", trueLocation.ToArray());
+
+            if (!selectId)
+            {
+                return new DualResult(false, "Can't found location " + string.Join(",", errLocation.ToArray()));
+            }
+
+            return new DualResult(true);
+        }
+
+        private void TxtLocation_MouseDown(object sender, MouseEventArgs e)
+        {
+            Win.Tools.SelectItem2 item = PublicPrg.Prgs.SelectLocation(string.Empty, string.Empty);
+            DialogResult result = item.ShowDialog();
+            if (result == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            var select_result = item.GetSelecteds()
+                .GroupBy(s => new { StockType = s["StockType"].ToString(), StockTypeCode = s["StockTypeCode"].ToString() })
+                .Select(g => new { g.Key.StockType, g.Key.StockTypeCode, ToLocation = string.Join(",", g.Select(i => i["id"])) });
+
+            if (select_result.Count() > 0)
+            {
+                this.selectedLocation.Clear();
+                this.txtLocation.Text = string.Empty;
+            }
+
+            foreach (var result_item in select_result)
+            {
+                this.selectedLocation.Add(result_item.StockTypeCode, result_item.ToLocation);
+                this.txtLocation.Text += $"({result_item.StockType}:{result_item.ToLocation})";
+            }
+        }
+
+        private void BtnUpdateAllLocation_Click(object sender, EventArgs e)
+        {
+            this.listControlBindingSource1.EndEdit();
+            DataTable dt = (DataTable)this.listControlBindingSource1.DataSource;
+            if (dt == null || dt.Rows.Count == 0)
+            {
+                return;
+            }
+
+            DataRow[] drfound = dt.Select("selected = 1");
+
+            foreach (var item in drfound)
+            {
+                if (this.selectedLocation.ContainsKey(item["stocktype"].ToString()))
+                {
+                    item["Location"] = this.selectedLocation[item["stocktype"].ToString()];
+                }
+            }
         }
     }
 }

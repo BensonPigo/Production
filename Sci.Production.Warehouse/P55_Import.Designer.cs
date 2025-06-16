@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new Sci.Win.UI.GroupBox();
+            this.comboBoxStockType = new System.Windows.Forms.ComboBox();
+            this.label1 = new Sci.Win.UI.Label();
             this.dateTransferOutDate = new Sci.Win.UI.DateBox();
             this.lblTransferOutDate = new Sci.Win.UI.Label();
             this.txtRefno = new Sci.Win.UI.TextBox();
@@ -43,12 +45,13 @@
             this.btnCancel = new Sci.Win.UI.Button();
             this.btnImport = new Sci.Win.UI.Button();
             this.groupBox2 = new Sci.Win.UI.GroupBox();
+            this.btnUpdateAllLocation = new Sci.Win.UI.Button();
+            this.txtLocation = new Sci.Win.UI.TextBox();
+            this.label3 = new Sci.Win.UI.Label();
             this.displayTotal = new Sci.Win.UI.DisplayBox();
             this.labelTotal = new Sci.Win.UI.Label();
             this.listControlBindingSource1 = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.grid1 = new Sci.Win.UI.Grid();
-            this.comboBoxStockType = new System.Windows.Forms.ComboBox();
-            this.label1 = new Sci.Win.UI.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.listControlBindingSource1)).BeginInit();
@@ -75,6 +78,26 @@
             this.groupBox1.Size = new System.Drawing.Size(891, 92);
             this.groupBox1.TabIndex = 21;
             this.groupBox1.TabStop = false;
+            // 
+            // comboBoxStockType
+            // 
+            this.comboBoxStockType.FormattingEnabled = true;
+            this.comboBoxStockType.Items.AddRange(new object[] {
+            "",
+            "Bulk",
+            "Inventory"});
+            this.comboBoxStockType.Location = new System.Drawing.Point(647, 21);
+            this.comboBoxStockType.Name = "comboBoxStockType";
+            this.comboBoxStockType.Size = new System.Drawing.Size(121, 24);
+            this.comboBoxStockType.TabIndex = 2;
+            // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(570, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(74, 23);
+            this.label1.TabIndex = 142;
+            this.label1.Text = "Stock Type";
             // 
             // dateTransferOutDate
             // 
@@ -196,6 +219,9 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.btnUpdateAllLocation);
+            this.groupBox2.Controls.Add(this.txtLocation);
+            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.displayTotal);
             this.groupBox2.Controls.Add(this.labelTotal);
             this.groupBox2.Controls.Add(this.btnCancel);
@@ -207,12 +233,46 @@
             this.groupBox2.TabIndex = 22;
             this.groupBox2.TabStop = false;
             // 
+            // btnUpdateAllLocation
+            // 
+            this.btnUpdateAllLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateAllLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.btnUpdateAllLocation.Location = new System.Drawing.Point(272, 15);
+            this.btnUpdateAllLocation.Name = "btnUpdateAllLocation";
+            this.btnUpdateAllLocation.Size = new System.Drawing.Size(170, 30);
+            this.btnUpdateAllLocation.TabIndex = 12;
+            this.btnUpdateAllLocation.Text = "Update All Location";
+            this.btnUpdateAllLocation.UseVisualStyleBackColor = true;
+            this.btnUpdateAllLocation.Click += new System.EventHandler(this.BtnUpdateAllLocation_Click);
+            // 
+            // txtLocation
+            // 
+            this.txtLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLocation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
+            this.txtLocation.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.txtLocation.IsSupportEditMode = false;
+            this.txtLocation.Location = new System.Drawing.Point(81, 19);
+            this.txtLocation.Name = "txtLocation";
+            this.txtLocation.ReadOnly = true;
+            this.txtLocation.Size = new System.Drawing.Size(185, 23);
+            this.txtLocation.TabIndex = 11;
+            this.txtLocation.MouseDown += new System.Windows.Forms.MouseEventHandler(this.TxtLocation_MouseDown);
+            // 
+            // label3
+            // 
+            this.label3.Location = new System.Drawing.Point(9, 19);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(69, 23);
+            this.label3.TabIndex = 10;
+            this.label3.Text = "Location";
+            // 
             // displayTotal
             // 
             this.displayTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.displayTotal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayTotal.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayTotal.Location = new System.Drawing.Point(579, 20);
+            this.displayTotal.Location = new System.Drawing.Point(593, 19);
             this.displayTotal.Name = "displayTotal";
             this.displayTotal.Size = new System.Drawing.Size(100, 23);
             this.displayTotal.TabIndex = 4;
@@ -220,7 +280,7 @@
             // labelTotal
             // 
             this.labelTotal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelTotal.Location = new System.Drawing.Point(431, 20);
+            this.labelTotal.Location = new System.Drawing.Point(445, 19);
             this.labelTotal.Name = "labelTotal";
             this.labelTotal.Size = new System.Drawing.Size(145, 23);
             this.labelTotal.TabIndex = 3;
@@ -250,26 +310,6 @@
             this.grid1.Size = new System.Drawing.Size(891, 305);
             this.grid1.TabIndex = 7;
             this.grid1.TabStop = false;
-            // 
-            // comboBoxStockType
-            // 
-            this.comboBoxStockType.FormattingEnabled = true;
-            this.comboBoxStockType.Items.AddRange(new object[] {
-            "",
-            "Bulk",
-            "Inventory"});
-            this.comboBoxStockType.Location = new System.Drawing.Point(647, 21);
-            this.comboBoxStockType.Name = "comboBoxStockType";
-            this.comboBoxStockType.Size = new System.Drawing.Size(121, 24);
-            this.comboBoxStockType.TabIndex = 2;
-            // 
-            // label1
-            // 
-            this.label1.Location = new System.Drawing.Point(570, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 23);
-            this.label1.TabIndex = 142;
-            this.label1.Text = "Stock Type";
             // 
             // P55_Import
             // 
@@ -314,5 +354,8 @@
         private Win.UI.DateBox dateTransferOutDate;
         private System.Windows.Forms.ComboBox comboBoxStockType;
         private Win.UI.Label label1;
+        private Win.UI.Label label3;
+        private Win.UI.TextBox txtLocation;
+        private Win.UI.Button btnUpdateAllLocation;
     }
 }
