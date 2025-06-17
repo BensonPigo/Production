@@ -32,7 +32,7 @@ namespace Sci.Production.PPIC
 
             this.grid1.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.grid1)
-            .Date("ScanTime", header: "Scan Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
+            .DateTime("ScanTime", header: "Scan Time", width: Widths.AnsiChars(10), iseditingreadonly: true)
             .Text("Status", header: "Status", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("PackinglistID", header: "Pack ID", width: Widths.AnsiChars(15), iseditingreadonly: true)
             .Text("Factory", header: "Factory", width: Widths.AnsiChars(8), iseditingreadonly: true)

@@ -1,4 +1,5 @@
-﻿using Sci.Data;
+﻿using Ict.Win.Defs;
+using Sci.Data;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
@@ -45,8 +46,39 @@ namespace Sci.Production.Prg.PowerBI.Logic
             string sqlWhereStatus = string.Empty;
             List<string> processList = model.ComboProcess.Split(',').ToList();
 
-            bool filterPulloutStatus = processList.Where(p => p == "Pullout").ToList().Any();
-            string sqlStatusPullout = (filterPulloutStatus || !processList.Any(s => !MyUtility.Check.Empty(s))) ? " when p.PulloutDate is not null then 'Pullout'" : string.Empty;
+            // 過濾掉不用Status判斷的項目
+            var validProcess = processList
+                 .Select(p =>
+                 {
+                     string trimmed = p.Trim();
+                     if (string.IsNullOrEmpty(trimmed))
+                     {
+                         return null;
+                     }
+
+                     if (trimmed == "Clog Receive" || trimmed == "Clog Return" || trimmed == "Clog Receive From CFA")
+                     {
+                         return "Clog";
+                     }
+                     else if (trimmed == "Clog Transfer To CFA")
+                     {
+                         return "CLOG transit to CFA";
+                     }
+                     else if (trimmed == "CFA Receive")
+                     {
+                         return "CFA";
+                     }
+
+                     return trimmed;
+                 })
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .Distinct() // 可選：避免重複
+                .ToList();
+            if (validProcess.Any())
+            {
+                string inClause = string.Join(",", validProcess.Select(p => $"'{p}'"));
+                sqlWhereStatus += $" AND Status IN ({inClause}) ";
+            }
 
             if (model.BuyerDeliveryFrom.HasValue)
             {
@@ -69,12 +101,9 @@ namespace Sci.Production.Prg.PowerBI.Logic
             }
 
             string joinType = model.IsPPICP26 ? "LEFT" : "INNER";
-            List<string> newProcessList = new List<string>();
 
             foreach (var process in processList)
             {
-                // 用來更改Status 來對應表身Status 欄位名稱
-                string statusChange = string.Empty;
                 switch (process)
                 {
                     case "Dry Room Receive":
@@ -131,7 +160,6 @@ where MDScan.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where TransferToClog.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and FtyTransferToClogTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Fty transit to CLOG";
                         break;
                     case "Clog Receive":
                         sqlMdWhere += $@" 
@@ -139,7 +167,6 @@ where TransferToClog.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                         sqlProcessTime += @"
 where ClogReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Clog";
                         break;
                     case "Clog Return":
                         sqlMdWhere += $@" 
@@ -147,7 +174,6 @@ where ClogReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where ClogReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Fty";
                         break;
                     case "Clog Transfer To CFA":
                         sqlMdWhere += $@" 
@@ -155,7 +181,6 @@ where ClogReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where TransferToCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogTransferToCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Clog";
                         break;
                     case "Clog Receive From CFA":
                         sqlMdWhere += $@" 
@@ -163,7 +188,6 @@ where TransferToCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo"
                         sqlProcessTime += @"
 where ClogReceiveCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and ClogReceiveFromCFATime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Clog";
                         break;
                     case "CFA Receive":
                         sqlMdWhere += $@" 
@@ -171,7 +195,6 @@ where ClogReceiveCFA.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo
                         sqlProcessTime += @"
 where CFAReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and CFAReceiveTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "CFA";
                         break;
                     case "CFA Return":
                         sqlMdWhere += $@" 
@@ -179,11 +202,10 @@ where CFAReceive.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlProcessTime += @"
 where CFAReturn.AddDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and CFAReturnTime.val between @DateTimeProcessFrom and @DateTimeProcessTo";
-                        statusChange = "Fty";
                         break;
                     case "Hauling":
                         sqlPackWhere += @" 
-and	pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
+and	pld.HaulingDate betw	een @DateTimeProcessFrom and @DateTimeProcessTo";
                         sqlPKAuditWhere += "and pld.HaulingDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                         break;
                     case "M360 MD":
@@ -199,16 +221,6 @@ and	p.PulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                     default:
                         break;
                 }
-
-                newProcessList.Add(statusChange.Empty() ? process.ToString() : statusChange);
-            }
-
-            // P26對Status篩選資料
-            newProcessList = newProcessList .Where(p => !string.IsNullOrWhiteSpace(p)).ToList();
-            if (newProcessList.Count > 0)
-            {
-                string inClause = string.Join(",", newProcessList.Select(p => $"'{p}'"));
-                sqlWhereStatus += $" AND Status.val IN ({inClause}) ";
             }
 
             sqlMdWhere += " where 1=1";
@@ -266,43 +278,48 @@ and	p.PulloutDate between @DateTimeProcessFrom and @DateTimeProcessTo";
                 sqlMdWhere.ToString().Replace("INNER", "LEFT");
             }
 
-            string finalColumn = model.IsPPICP26 ? $@" 
-select distinct
-[ScanTime] = case status.val 
-	when 'Pullout' then p.PulloutDate 
-	when 'Fty' then null
-	when 'Fty' then null
-	when 'Hauling' then HaulingScanTime.val
-	when 'Packing Audit' then PackingAuditScanTime.val
-	when 'M360 MD' then M360MDScanTime.val
-	when 'Hanger Pack' then CTNHangerPackTime.val
-	when 'Joker Tag' then CTNJokerTagTime.val
-	when 'Heat Seal' then CTNHeatSealTime.val
-	when 'Dry Room Receive' then DryRoomReceiveTime.val
-	when 'Dry Room Transfer' then DryRoomTransferTime.val
-	when 'Transfer To Packing Error' then TransferToPackingErrorTime.val
-	when 'Confirm Packing Error Revise' then ConfirmPackingErrorReviseTime.val
-	when 'Scan & Pack' then  pld.ScanEditDate
-	when 'Clog' then ISNULL(ClogReceiveTime.val,ClogReceiveFromCFATime.val)
-	when 'CFA' then CFAReceiveTime.val
-	when 'CFA transit to CLOG' then pld.CFAReturnClogDate
-	when 'CLOG transit to CFA' then pld.TransferCFADate
-	when 'Fty transit to CLOG' then FtyTransferToClogTime.val
-else null end
-,[Status] = Status.val
-,[PackinglistID] = p.ID
-,[Factory] = p.FactoryID
-,[OrderID] = pld.OrderID
-,[CTNStartNo] = pld.CTNStartNo
-,[StyleID] = o.StyleID
-,[SeasonID] = o.SeasonID 
-,[BrandID] = o.BrandID
-,[CustPONo] = o.CustPONo
-,[Dest] = o.Dest
-,[BuyerDelivery] = o.BuyerDelivery
-,[SCIDelivery] = o.SciDelivery"
-:
-$@"
+            string finalColumn = string.Empty;
+            if (model.IsPPICP26)
+            {
+                finalColumn = $@" 
+with MaxValuesList as(
+	select 
+	PulloutDate = max(p.PulloutDate)
+	,TransferDate = max(pld.TransferDate)
+	,HaulingScanTime= max(HaulingScanTime.val)
+	,[Packing Audit] = max(PackingAuditScanTime.val)
+	,[M360 MD] = max(M360MDScanTime.val)
+	,[Hanger Pack] = max(CTNHangerPackTime.val)
+	,[Joker Tag] = max(CTNJokerTagTime.val)
+	,[Heat Seal] = max(CTNHeatSealTime.val)
+	,[Dry Room Receive] = max(DryRoomReceiveTime.val)
+	,[Dry Room Transfer] = max(DryRoomTransferTime.val)
+	,[Transfer To Packing Error] = max(TransferToPackingErrorTime.val)
+	,[Confirm Packing Error Revise] = max(ConfirmPackingErrorReviseTime.val)
+	,[Scan & Pack] = max(pld.ScanEditDate)
+	,[Clog] = max(ClogReceiveTime.val)
+	,[Clog2] = max(ClogReceiveFromCFATime.val)
+	,[CFA] = max(CFAReceiveTime.val)
+	,[CFA transit to CLOG] = max(pld.CFAReturnClogDate)
+	,[CLOG transit to CFA] = max(pld.TransferCFADate)
+	,[Fty transit to CLOG] = max(FtyTransferToClogTime.val)
+	--,[Status] = Status.val
+	,[PackinglistID] = p.ID
+	,[Factory] = p.FactoryID
+	,[OrderID] = pld.OrderID
+	,[CTNStartNo] = pld.CTNStartNo
+	,[StyleID] = o.StyleID
+	,[SeasonID] = o.SeasonID 
+	,[BrandID] = o.BrandID
+	,[CustPONo] = o.CustPONo
+	,[Dest] = o.Dest
+	,[BuyerDelivery] = o.BuyerDelivery
+	,[SCIDelivery] = o.SciDelivery
+";
+            }
+            else
+            {
+                finalColumn = @"
 select distinct [KPIGroup] = f.KPICode
 	, [FactoryID] = o.FactoryID
 	, [Line] = ISNULL(Reverse(stuff(Reverse(o.SewLine),1,1,'')), '')
@@ -389,6 +406,7 @@ select distinct [KPIGroup] = f.KPICode
     , [BIInsertDate] = GETDATE()
 ";
 
+            }
             string sql = $@"
 
 -- 先限縮資料量
@@ -732,7 +750,7 @@ outer apply(
 					pa.AddDate = PackingAuditScanTime.val)
 ) PackingAuditFailQty
 outer apply(
-	select [val] = (select max(pa.Status)
+	select [val] = (select max(pa.Status) 
 			from #CTNPackingAudit pa with (nolock)
 			where	pa.packingListID = pld.ID and
 					pa.SCICtnNo = pld.SCICtnNo)
@@ -908,7 +926,7 @@ outer apply(
 ) HeatSealName
 outer apply(
 select val = case 			
-{sqlStatusPullout}
+			when p.PulloutDate is not null then 'Pullout'
 			when HaulingScanTime.val is null 
 					and PackingAuditScanTime.val is null 
 					and M360MDScanTime.val is null
@@ -1105,9 +1123,79 @@ select val = case
 		else '' end 
 )Status
 where 1=1
-{sqlWhereStatus}
 ";
-            if (!model.IsPPICP26)
+            if (model.IsPPICP26)
+            {
+                sql += $@"
+
+	group by Status.val
+	, p.ID,p.FactoryID, pld.OrderID, pld.CTNStartNo, o.StyleID, o.SeasonID , o.BrandID, o.CustPONo
+	,o.Dest,o.BuyerDelivery, o.SciDelivery
+)
+select 
+Status = 
+        case 
+            when PulloutDate = [ScanTime] then 'Pullout'
+            when HaulingScanTime = [ScanTime] then 'Hauling'
+            when [Packing Audit] = [ScanTime] then 'Packing Audit'
+            when [M360 MD] = [ScanTime] then 'M360 MD'
+            when [Hanger Pack] = [ScanTime] then 'Hanger Pack'
+			when [Joker Tag] = [ScanTime] then 'Joker Tag'
+			when [Heat Seal] = [ScanTime] then 'Heat Seal'
+			when [Dry Room Receive] = [ScanTime] then 'Dry Room Receive'
+			when [Dry Room Transfer] = [ScanTime] then 'Dry Room Transfer'
+			when [Transfer To Packing Error] = [ScanTime] then 'Transfer To Packing Error'
+			when [Confirm Packing Error Revise] = [ScanTime] then 'Confirm Packing Error Revise'
+			when [Scan & Pack] = [ScanTime] then 'Scan & Pack'
+			when [Clog] = [ScanTime] then 'Clog'
+			when [Clog2] = [ScanTime] then 'Clog'
+			when [CFA] = [ScanTime] then 'CFA'
+			when [CFA transit to CLOG] = [ScanTime] then 'CFA transit to CLOG'
+			when [CLOG transit to CFA] = [ScanTime] then 'CLOG transit to CFA'
+			when [Fty transit to CLOG] = [ScanTime] then 'Fty Transfer To Clog'
+        end
+,*
+into #tmpP26Final
+from (
+select *,
+[ScanTime] = (
+		select max(v)
+		from (values 
+			(PulloutDate),
+			(TransferDate),
+			(HaulingScanTime),
+			([Packing Audit]),
+			([M360 MD]),
+			([Hanger Pack]),
+			([Joker Tag]),
+			([Heat Seal]),
+			([Dry Room Receive]),
+			([Dry Room Transfer]),
+			([Transfer To Packing Error]),
+			([Confirm Packing Error Revise]),
+			([Scan & Pack]),
+			([Clog]),
+			([Clog2]),
+			([CFA]),
+			([CFA transit to CLOG]),
+			([CLOG transit to CFA]),
+			([Fty transit to CLOG])
+		) as value_list(v)
+	)
+	from MaxValuesList
+) as t
+
+select * 
+from #tmpP26Final
+where 1=1
+{sqlWhereStatus}
+
+drop table #TransferToCFA,#CFAReceive,#CFAReturn,#ClogReceive,#ClogReceiveCFA,#ClogReturn,#CTNHangerPack
+,#CTNHauling,#CTNHeatSeal,#CTNJokerTag,#CTNPackingAudit,#DryReceive,#DryTransfer,#MDScan
+,#Orders,#PackErrCFM,#PackErrTransfer,#PackingList,#PackingList_Detail,#TransferToClog
+";
+            }
+            else
             {
                 sql += sqlPKAuditWhere;
             }
