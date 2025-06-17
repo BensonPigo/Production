@@ -495,10 +495,10 @@ inner join #SewingOutput_Detail b on a.ID = b.ID
 
 ----- 每個產線，會有Before 和 After兩個產線計畫，這兩個產線計畫的資料來源可能來自P03、P05、P06，以下步驟開始找出「這兩筆資料在哪裡」
 
-
 ---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
 ---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 --P03
+---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -519,7 +519,7 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
----- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -560,6 +560,7 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,SewingLineID = ''
@@ -597,13 +598,40 @@ where exists(
 	select 1 from #BaseData a
 	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
 )
+--and exists(
+--	select 1 from #P05MaxVer p05
+--	where p05.ID = lm.AutomatedLineMappingID
+--)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+---- Latest 用　
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P06MaxVerNoLine ---- P06 不看 SewingLine Team
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType
+)
 and exists(
 	select 1 from #P05MaxVer p05
 	where p05.ID = lm.AutomatedLineMappingID
 )
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -648,7 +676,7 @@ where 1=0
 RankedTable AS (
     SELECT 
         *,---- P03、P06交集，代表相同Key值有重複，因此判斷EditDate、AddDate
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY 
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY Version DESC,
             CASE 
                 WHEN EditDate IS NOT NULL THEN EditDate 
                 ELSE AddDate 
@@ -670,74 +698,94 @@ ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Versi
 ---- (2) P03找出Phase = Initial 或 Prelim 的產線計畫，處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
 ---- (3) P03每筆的Key值為 factory, brand, style, season, combo type,，before本來就不會知道會在哪一條線生產，不要加Line、Team、Sewer等等判斷
 
----- 處理P03的Prelim、Initial 優先度問題。
-;WITH PhaseRankedTableP03 AS (
-	select 
-        *,
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType ORDER BY 
-            CASE 
-                WHEN Phase = 'Prelim' THEN 2
-                ELSE 1
-            END DESC) AS RowNum
-	from #P03MaxVer p
-	where Phase IN ('Prelim','Initial')
-	and exists(
-		select 1 from #AfterData af
-		where SourceTable =  'IE P03'
-		and p.FactoryID	 = af.FactoryID
-		and p.StyleUKey	 = af.StyleUKey
-		--and p.SewingLineID	 = af.SewingLineID
-		--and p.Team	 = af.Team
-		and p.combotype	 = af.combotype
-	)
+;WITH Combined AS (
+    -- 來自 P03 的資料
+    SELECT
+        p.StyleUKey,
+        p.FactoryID,
+        p.SewingLineID,
+        p.Team,
+        p.ComboType,
+        p.Phase,
+        p.Version,
+        p.EditDate,
+        p.AddDate,
+		p.ID,
+		'IE P03' AS SourceTable
+    FROM #P03MaxVer p
+    WHERE p.Phase IN ('Prelim','Initial')
+      AND EXISTS (
+          SELECT 1
+          FROM #AfterData af
+          WHERE af.SourceTable = 'IE P03'
+            AND af.FactoryID   = p.FactoryID
+            AND af.StyleUKey   = p.StyleUKey
+            /* 如要加上其他 join 條件，可解開下面兩行：
+            AND af.SewingLineID = p.SewingLineID
+            AND af.Team         = p.Team
+            */
+            AND af.ComboType   = p.ComboType
+      )
+
+    UNION ALL
+
+    -- 來自 P05 的資料 (沒有P06 After)
+    SELECT
+        m.StyleUKey,
+        m.FactoryID,
+        m.SewingLineID,
+        m.Team,
+        m.ComboType,
+        m.Phase,
+        m.Version,
+        m.EditDate,
+        m.AddDate,
+        m.ID,
+		'IE P05' AS SourceTable
+    FROM #P05MaxVer m
+    INNER JOIN AutomatedLineMapping p05
+        ON m.ID = p05.ID
+    WHERE m.Phase IN ('Prelim','Initial')
+    UNION ALL
+
+    -- 來自 P05 的Before (有P06 After，從P06推導得出，必須在 P06.AutomatedLineMappingID 當中)
+    SELECT
+        p05.StyleUKey,
+        p05.FactoryID,
+        p05.SewingLineID,
+        p05.Team,
+        p05.ComboType,
+        p05.Phase,
+        p05.Version,
+        p05.EditDate,
+        p05.AddDate,
+        p05.ID,
+		'IE P05' AS SourceTable
+	from #AfterData p06
+	inner join  LineMappingBalancing lm on p06.ID = lm.ID
+	inner join #P05MaxVer p05 on p05.ID = lm.AutomatedLineMappingID
 )
 
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
-INTO #P03Rank
-FROM PhaseRankedTableP03
-WHERE RowNum = 1
-
-
----- 處理P05的Prelim、Initial 優先度問題。
-;WITH PhaseRankedTableP05 AS (
-	select 
-        maxVer.*,
-        ROW_NUMBER() OVER (PARTITION BY maxVer.StyleUKey,maxVer.FactoryID,maxVer.SewingLineID,maxVer.Team,maxVer.ComboType ORDER BY 
-            CASE 
-                WHEN maxVer.Phase = 'Prelim' THEN 2
-                ELSE 1
-            END DESC) AS RowNum
-	from #P05MaxVer maxVer
-	inner join AutomatedLineMapping p05 on maxVer.ID = p05.ID
-	where maxVer.Phase IN ('Prelim','Initial')
-)
-
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
-INTO #P05Rank
-FROM PhaseRankedTableP05
-WHERE RowNum = 1
---組合所有Before：P03 Before => P03 After；P05 Before => P06 After
-
---P03的Before
-select p03.*
-,SourceTable = 'IE P03'
+SELECT
+    c.*,
+    ROW_NUMBER() OVER (
+        PARTITION BY
+            c.StyleUKey,
+            c.FactoryID,
+            c.SewingLineID,
+            c.Team,
+            c.ComboType
+        ORDER BY
+            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,Version desc,
+            ISNULL(c.EditDate, c.AddDate) DESC
+    ) AS RowNum
+INTO #PhaseRankedTable
+FROM Combined c
+;
+select StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID,SourceTable
 INTO #BeforeData
-from #P03Rank p03
-UNION
---P05Before (有P06 After，從P06推導得出，必須在 P06.AutomatedLineMappingID 當中)
-select distinct p05.StyleUKey,p05.FactoryID,p05.SewingLineID,p05.Team,p05.ComboType,p05.Phase,p05.Version,p05.AddDate,p05.EditDate ,p05.ID
-,SourceTable = 'IE P05'
-from #AfterData p06
-inner join  LineMappingBalancing lm on p06.ID = lm.ID
-inner join #P05MaxVer p05 on p05.ID = lm.AutomatedLineMappingID
-UNION
---P05的Before (沒有P06 After)
-select p05.*
-,SourceTable = 'IE P05' ---- P05 沒有Line Team
-from #BaseData a
-INNER join #P05Rank p05 on p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType
+from #PhaseRankedTable
 
----- 6. 前面已經鎖定了每一組 factory, brand, style, season, combo type, Line, Team ，對應到的兩個產線計畫(分別是Before和After)，最後可以去P03、P05、P06找出最終的那一筆，並取出需要的欄位就好
 select a.*,b.Status
 	,b.TotalGSD
 	,b.TotalCycle
@@ -973,11 +1021,16 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
 	select top 1 *
 	from (
 		select *
 		from (
 			select *,SourceTable='P03' from #P03MaxVer
+			union
+			select *,SourceTable='P05' from #P05MaxVer
+			union
+			select *,SourceTable='P06' from #P06MaxVerNoLine
 		)LastData
 		where b.StyleUkey = LastData.StyleUKey 
 			and a.FactoryID = LastData.FactoryID 
@@ -992,7 +1045,7 @@ outer apply(
 	  END DESC,
 	  Version DESC
 )LastVersion
-WHERE BeforeDataP03.SourceTable IS NOT NULL
+WHERE AfterDataP03.SourceTable IS NOT NULL
 UNION
 select 
 	b.CountryID
@@ -1120,13 +1173,16 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
 	select top 1 *
 	from (
 		select *
 		from (
+			select *,SourceTable='P03' from #P03MaxVer
+			union
 			select *,SourceTable='P05' from #P05MaxVer
 			union
-			select *,SourceTable='P06' from #P06MaxVer
+			select *,SourceTable='P06' from #P06MaxVerNoLine
 		)LastData
 		where b.StyleUkey = LastData.StyleUKey 
 			and a.FactoryID = LastData.FactoryID 
@@ -1141,13 +1197,14 @@ outer apply(
 	  END DESC,
 	  Version DESC
 )LastVersion
-WHERE BeforeDataP05.SourceTable IS NOT NULL
+WHERE AfterDataP06.SourceTable IS NOT NULL
 
 drop table #BaseData
 ,#P03MaxVer
 ,#P05MaxVer
 ,#P06MaxVer
-,#P03Rank
+,#P06MaxVerNoLine
+,#PhaseRankedTable
 ,#AfterData
 ,#BeforeData
 ,#FinalAfterData
@@ -1159,6 +1216,7 @@ drop table #BaseData
 ,#AllP05
 ,#AllP06
 ,#AllAfter
+
 ");
 
             return cmd;
