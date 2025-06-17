@@ -61,9 +61,6 @@ BEGIN
 				where eff.Date = @DateStart 
 			)b on a.MDivision = b.MDivision and a.FactoryID = b.FactoryID and a.Shift = b.Shift 
 	
-			--select * from #ShiftByDate_Efficiency
-			--select * from #ShiftByDate_Shift
-
 			select distinct
 				[dDate] = convert(date, i.AddDate)
 				,[dTime] = convert(smalldatetime, case  
@@ -557,6 +554,7 @@ BEGIN
 				and s.Team = t.Team 
 				and s.Shift = t.Shift
 			)
+			AND T.SewingLineID !=''
 
 			
 
@@ -569,7 +567,7 @@ BEGIN
 			select 	
 			  [ID]
 			, [OutputDate]=CAST([OutputDate] AS DATE)
-			, [SewingLineID]=ISNULL(ProductionLineAllocation.SewingLineID,ts.[SewingLineID])
+			, [SewingLineID]=ISNULL(ProductionLineAllocation.SewingLineID,ISNULL(ts.[SewingLineID],''))
 			, ISNULL([QAQty] ,0)
 			, ISNULL([DefectQty] ,0)
 			, ISNULL([InlineQty] ,0)
@@ -588,7 +586,7 @@ BEGIN
 			, [SFCData]
 			, ISNULL([AddName] ,'')
 			, [AddDate] 
-			, [EditName]='01910'
+			, [EditName]=''
 			, [EditDate]=CAST([EditDate] AS DATETIME)
 			, ISNULL([SubconOutFty] ,'')
 			, ISNULL([SubConOutContractNumber] ,'')
