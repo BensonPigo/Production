@@ -104,7 +104,7 @@ OUTER APPLY (
     GROUP BY s2.SPNo, s2.ComboType
 ) schCombo
 OUTER APPLY (
-    SELECT [TtlSewingQtyByComboType] = MIN(s3.SewingQty)
+    SELECT [TtlSewingQtyBySP] = MIN(s3.SewingQty)
     FROM (
         SELECT s3.SPNo, s3.ComboType
             , [SewingQty] = SUM(s3.SewingQty)
