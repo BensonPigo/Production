@@ -378,6 +378,11 @@ namespace Sci.Production.Planning
                     loadingWheres.Add("o.BrandID = '" + this.BrandID + "'");
                 }
 
+                if (MyUtility.Check.Seek($"SELECT 1 FROM System WHERE NoRestrictOrdersDelivery = 0"))
+                {
+                    loadingWheres.Add("(o.IsForecast = 0 OR (o.IsForecast = 1 AND (o.SciDelivery <= DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 6) OR o.BuyerDelivery < DATEADD(m, DATEDIFF(m, 0, DATEADD(m, 5, GETDATE())), 0))))");
+                }
+
                 sqlWhere = string.Join(" and ", sqlWheres);
                 if (!sqlWhere.Empty())
                 {

@@ -28,6 +28,9 @@ namespace Sci.Production.Prg.PowerBI.Model
         public string UpdateInfo { get; set; }
 
         /// <inheritdoc/>
+        public string BrandID { get; set; }
+
+        /// <inheritdoc/>
         public string Status { get; set; }
 
         /// <inheritdoc/>
