@@ -96,6 +96,7 @@ namespace Sci.Production.Quality
                 {
                     this.sqlWherelist.Add("sii.Shift = @Shift");
                 }
+
                 this.lisSqlParameter.Add(new SqlParameter("@Shift", this.comboShift.SelectedValue));
             }
 
@@ -375,7 +376,7 @@ namespace Sci.Production.Quality
                 outer apply( select [count] = count(*) from SpreadingInspection_InsCutRef where  si.ID = ID  ) sic
                 outer apply 
                 (
-	                select distinct  w.ID,FactoryID,SCIRefno,MDivisionId
+	                select distinct  w.ID,FactoryID,SCIRefno,MDivisionId,w.Ukey
 	                from SciProduction_WorkOrderForOutput w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderForOutputUkey
 	                where so.id = si.id
