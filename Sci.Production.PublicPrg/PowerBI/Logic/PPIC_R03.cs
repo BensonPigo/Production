@@ -950,6 +950,7 @@ GROUP BY s.OrderID
     ,o.HeatSeal
     ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
     ,[BIInsertDate] = GETDATE()
+    ,[OrderCompanyID] = o.OrderCompanyID
 ";
             }
             else

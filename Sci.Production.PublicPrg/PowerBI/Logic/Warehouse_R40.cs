@@ -72,6 +72,13 @@ namespace Sci.Production.Prg.PowerBI.Logic
 				listPar.Add(new SqlParameter("@wkEnd", model.WKID2));
 			}
 
+			if (!MyUtility.Check.Empty(model.BrandID))
+			{
+				whereReceiving += " and o.BrandID = @BrandID ";
+				whereTransferIn += " and o.BrandID = @BrandID ";
+				listPar.Add(new SqlParameter("@BrandID", model.BrandID));
+			}
+
 			string whereReceivingAct = string.Empty;
 			string whereCutShadeband = string.Empty;
 			string whereFabricLab = string.Empty;
@@ -172,6 +179,7 @@ select * into #tmpResult
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
             ,rd.Checker
+			,fb.width
 		from  Receiving r with (nolock)
 		inner join Receiving_Detail rd with (nolock) on r.ID = rd.ID
 		inner join Orders o with (nolock) on o.ID = rd.POID 
@@ -214,6 +222,7 @@ select * into #tmpResult
 			,rd.Fabric2LabBy
 			,rd.Fabric2LabTime
             ,rd.Checker
+			,fb.width
 		FROM TransferIn r with (nolock)
 		INNER JOIN TransferIn_Detail rd with (nolock) ON r.ID = rd.ID
 		INNER JOIN Orders o with (nolock) ON o.ID = rd.POID
@@ -248,6 +257,7 @@ select  ReceivingID
 		,StockQty
 		,StockType
 		,Location
+		,width
 		,Weight
 		,ActualWeight
 from #tmpResult
@@ -270,6 +280,7 @@ select  ReceivingID
 		,StockQty
 		,StockType
 		,Location
+		,width
 		,Weight
 		,CutShadebandTime
 		,CutBy
@@ -293,6 +304,7 @@ select  ReceivingID
 		,StockQty
 		,StockType
 		,Location
+		,width
 		,Weight
 		,Fabric2LabTime
 		,Fabric2LabBy
@@ -316,6 +328,7 @@ select  ReceivingID
 		,StockQty
 		,StockType
 		,Location
+		,width
 		,Weight
 		,Checker
 from #tmpResult
@@ -349,6 +362,7 @@ select
 	,rd.StockQty
 	,StockType = isnull (ddl.Name, rd.StockType)
 	,Location= isnull(dbo.Getlocation(fi.Ukey),'')
+	,fb.width
 	,rd.Weight
 	,rd.ActualWeight
 	,[CutShadebandTime]=cutTime.CutTime
@@ -426,6 +440,7 @@ select
 	,[StockQty] = rd.Qty
 	,StockType = isnull (ddl.Name, rd.StockType)
 	,Location= isnull(dbo.Getlocation(fi.Ukey),'')
+	,fb.width
 	,rd.Weight
 	,rd.ActualWeight
 	,[CutShadebandTime]=cutTime.CutTime
@@ -487,6 +502,7 @@ select  ReceivingID = isnull(ReceivingID, '')
 		,StockQty = isnull(StockQty, 0)
 		,StockType = isnull(StockType, '')
 		,Location = isnull(Location, '')
+		,Width = isnull(width, '')
 		,Weight = isnull(Weight, 0)
         ,ActualWeight = isnull(ActualWeight, 0)
         ,IsQRCodeCreatedByPMS = isnull(IsQRCodeCreatedByPMS, '')

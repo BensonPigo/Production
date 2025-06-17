@@ -132,6 +132,8 @@ namespace Sci.Production.Warehouse
                 .Text("Tone", header: "Tone/Grp", width: Widths.AnsiChars(3), iseditingreadonly: true)
                 .Numeric("RecvKG", header: "Recv (Kg)", width: Widths.AnsiChars(5), decimal_places: 2, iseditingreadonly: true)
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(8), iseditingreadonly: true)
+                .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .Text("WK#", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 ;
             #endregion 欄位設定
         }
@@ -165,6 +167,8 @@ namespace Sci.Production.Warehouse
             ,fi.Tone
             ,[Total]=sum(td.Qty) OVER (PARTITION BY td.POID ,td.Seq1, td.Seq2 )
             ,o.StyleID
+            ,[Location] = Dbo.GetLocation(fi.Ukey)
+            ,[WK#] = WK.ExportId
             from TransferToSubcon tt with(nolock)
             inner join TransferToSubcon_Detail td with(nolock) on tt.ID = td.ID
             left join PO_Supp_Detail psd with(nolock) on td.POID =  psd.ID and td.Seq1 = psd.SEQ1 and td.Seq2 = psd.SEQ2
@@ -202,6 +206,20 @@ namespace Sci.Production.Warehouse
             (
 	            select val = dbo.getMtlDesc ( td.POID, td.Seq1, td.Seq2, 2, 0 )
             )tDescription
+            OUTER APPLY (
+                select ExportId = Stuff((
+                    select concat(',',ExportId)
+                    from (
+                            select distinct r.ExportId
+                            from Receiving_Detail rd WITH (NOLOCK)
+                            inner join Receiving r WITH (NOLOCK) on rd.Id = r.Id
+                            where td.POID = rd.PoId and td.Seq1 = rd.Seq1
+		                    and td.Seq2 = rd.Seq2 and td.Roll = rd.Roll
+		                    and td.Dyelot = rd.Dyelot and r.ExportId <> ''
+                        )s
+                    for xml path ('')
+                ) , 1, 1, '')
+            )WK
             where tt.id = '{masterID}'";
             return base.OnDetailSelectCommandPrepare(e);
         }
@@ -527,6 +545,7 @@ INNER JOIN #tmp td WITH (NOLOCK)
                     Unit = row1["StockUnit"].ToString().Trim(),
                     QTY = row1["QTY"].ToString().Trim(),
                     Total = row1["Total"].ToString().Trim(),
+                    Location = row1["Location"].ToString().Trim(),
                 }).ToList();
 
             report.ReportDataSource = data;
