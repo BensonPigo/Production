@@ -424,7 +424,7 @@ namespace Sci.Production.Cutting
                     string markerLength = string.Empty;
 
                     Regex specPattern = new Regex(
-@"^\d{2}Y\d{2}-(?:0/[1-9]|1/[2-9]|2/[3-9]|3/[4-9]|4/[5-9]|5/[6-9]|6/[7-9]|7/[8-9]|8/9)\+1\""$",   // ←注意 \" 表示字面上的 "
+@"^\d{2}Y\d{2}-(?:0/[1-9]|1/[2-9]|2/[3-9]|3/[4-9]|4/[5-9]|5/[6-9]|6/[7-9]|7/[8-9]|8/9)\+[1-9]\""$",   // ←注意 \" 表示字面上的 "
 RegexOptions.Compiled);
 
                     Dictionary<string, int> dicSizeRatio = new Dictionary<string, int>();
@@ -3789,7 +3789,7 @@ select oe.Id
 	, oes.SizeCode
     , oes.SizeGroup
     , oes.Seq
-	, oes.Qty
+	, Qty = cast( oec.OrderQty as int)
 	,ListSD.Refno
 	,ListSD.SCIRefno
 	,ob.FabricCode

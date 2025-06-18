@@ -147,7 +147,6 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.chkSpreadingNo);
             this.panel1.Controls.Add(this.chkCutCell);
             this.panel1.Controls.Add(this.chkMarkerLength);
             this.panel1.Controls.Add(this.chkMarkerName);
@@ -285,17 +284,18 @@
             // 
             // panel_P09
             // 
+            this.panel_P09.Controls.Add(this.chkSpreadingNo);
             this.panel_P09.Controls.Add(this.label5);
             this.panel_P09.Controls.Add(this.txtSpreadingNo);
-            this.panel_P09.Location = new System.Drawing.Point(539, 67);
+            this.panel_P09.Location = new System.Drawing.Point(511, 65);
             this.panel_P09.Name = "panel_P09";
-            this.panel_P09.Size = new System.Drawing.Size(374, 23);
+            this.panel_P09.Size = new System.Drawing.Size(278, 29);
             this.panel_P09.TabIndex = 75;
             this.panel_P09.Visible = false;
             // 
             // label5
             // 
-            this.label5.Location = new System.Drawing.Point(0, 0);
+            this.label5.Location = new System.Drawing.Point(26, 1);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(96, 23);
             this.label5.TabIndex = 72;
@@ -306,7 +306,7 @@
             this.txtSpreadingNo.BackColor = System.Drawing.Color.White;
             this.txtSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtSpreadingNo.IncludeJunk = true;
-            this.txtSpreadingNo.Location = new System.Drawing.Point(99, 0);
+            this.txtSpreadingNo.Location = new System.Drawing.Point(125, 1);
             this.txtSpreadingNo.MDivision = "";
             this.txtSpreadingNo.Name = "txtSpreadingNo";
             this.txtSpreadingNo.Size = new System.Drawing.Size(108, 23);
@@ -567,10 +567,10 @@
             // 
             this.chkSpreadingNo.AutoSize = true;
             this.chkSpreadingNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.chkSpreadingNo.Location = new System.Drawing.Point(518, 73);
+            this.chkSpreadingNo.Location = new System.Drawing.Point(8, 6);
             this.chkSpreadingNo.Name = "chkSpreadingNo";
             this.chkSpreadingNo.Size = new System.Drawing.Size(15, 14);
-            this.chkSpreadingNo.TabIndex = 84;
+            this.chkSpreadingNo.TabIndex = 85;
             this.chkSpreadingNo.UseVisualStyleBackColor = true;
             // 
             // Cutting_BatchAssign
