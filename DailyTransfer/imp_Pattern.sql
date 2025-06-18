@@ -370,7 +370,7 @@ select	pgl.PatternUKEY,
 		pgl.Article,
 		pgl.ArticleGroup,
 		pgl.SizeRange,
-		[SizeCode] = cast('' as varchar(20))
+		[SizeCode] = cast('' as varchar(25))
 into #tmpArticleGroup
 from Production.dbo.Pattern_GL_Article pgl with (nolock)
 where	exists(select 1 from #tmpOrder_PatternPanelList_step1 topp where topp.PatternUkey = pgl.PatternUkey) AND
