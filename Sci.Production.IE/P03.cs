@@ -638,7 +638,6 @@ and BrandID = '{this.CurrentMaintain["BrandID"]}'
             DataGridViewGeneratorCheckBoxColumnSettings machineCount = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorCheckBoxColumnSettings oneShot = new DataGridViewGeneratorCheckBoxColumnSettings();
             DataGridViewGeneratorTextColumnSettings operationID = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
 
             TxtMachineGroup.CelltxtMachineGroup txtSubReason = (TxtMachineGroup.CelltxtMachineGroup)TxtMachineGroup.CelltxtMachineGroup.GetGridCell();
             txtSubReason.CellValidating += (s, e) =>
@@ -1304,30 +1303,6 @@ and Name = @PPA
                 }
             };
 
-            setMachineID.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    string sqlGetMachine = $@"
-select MachineID =  m.id
-from Machine.dbo.Machine m with (nolock)
-inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLocationID and ml.MDivisionID = m.LocationM
-where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
-";
-
-                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "20", null, null, null, null);
-
-                    DialogResult dialogResult = popupMachineID.ShowDialog(this);
-                    if (dialogResult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    this.CurrentDetailData["MachineID"] = popupMachineID.GetSelecteds()[0]["MachineID"].ToString();
-                    this.CurrentDetailData.EndEdit();
-                }
-            };
-
             threadColor.MaxLength = 1;
             no.MaxLength = 4;
             notice.MaxLength = 600;
@@ -1352,7 +1327,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
             .Text("Notice", header: "Notice", width: Widths.AnsiChars(14), settings: notice)
             .Numeric("Efficiency", header: "Eff(%)", width: Widths.AnsiChars(6), decimal_places: 2, iseditingreadonly: true)
             .Numeric("EstCycleTime", header: "Est.\r\nCycle Time", width: Widths.AnsiChars(6), iseditingreadonly: true, decimal_places: 2)
-            .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: setMachineID)
+            .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true)
             ;
 
             this.detailgrid.Columns["OriNo"].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
@@ -1690,6 +1665,7 @@ and e.Junk = 0 and eas.P03 = 1 "
             this.CurrentMaintain["IEReasonID"] = string.Empty;
             this.CurrentMaintain["Status"] = "New";
             this.txtStyleComboType.BackColor = Color.White;
+            this.DetailDatas.ToList().ForEach(row => row["MachineID"] = string.Empty);
         }
 
         /// <summary>
