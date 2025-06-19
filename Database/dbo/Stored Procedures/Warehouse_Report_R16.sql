@@ -80,6 +80,7 @@ begin
 							when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is null) then 100
 							when (id.NeedUnroll = 1 and fu.UnrollStatus = 'Done' and fu.RelaxationStartTime is not null and fu.RelaxationEndTime <= GETDATE()) then 100
 							else 0 end
+			,[Rack] = m360.RackLocationID
 			,[DispatchScanName] = CONCAT(id.DispatchScanner,'-',(select Name from Pass1 where Pass1.id =id.DispatchScanner ))
 			,[DispatchScanTime] = id.DispatchScanTime
 			,[RegisterTime] = m360.RegisterTime
