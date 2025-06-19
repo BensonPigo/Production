@@ -67,6 +67,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+            DECLARE @StartDate as date = @sDate
+            DECLARE @EndDate as date = @eDate
+
             -- 更新
             update p set
             p.Category							= t.Category
@@ -146,6 +149,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.OrderType						= t.OrderType
             ,p.AddDate							= t.AddDate
             ,p.EditDate							= t.EditDate
+            ,p.[TotalYardageForInspection]      = t.TotalYardage
+            ,p.[ActualRemainingYardsForInspection]	= t.TotalYardageArrDate
 			from P_FabricInspLabSummaryReport p
 			inner join #tmp t on p.FactoryID = t.FactoryID 
 							 AND p.POID = t.POID 
@@ -170,7 +175,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType])
+	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection] )
             SELECT
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -188,7 +193,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType]
+	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
@@ -225,8 +230,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@sDate", sDate),
+                    new SqlParameter("@eDate", eDate),
                 };
                 finalResult = new Base_ViewModel()
                 {

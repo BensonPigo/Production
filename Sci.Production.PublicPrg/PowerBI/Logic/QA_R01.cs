@@ -117,10 +117,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,F.Physical
             ,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
             ,F.PhysicalDate
-            {(model.IsBI ? string.Empty :
-            $@"
             ,TotalYardage = TotalYardage.Val
-            ,TotalYardageArrDate = {(model.StartArriveWHDate.Empty() && model.EndArriveWHDate.Empty() ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}")}
+            ,TotalYardageArrDate = {(model.StartArriveWHDate.Empty() && model.EndArriveWHDate.Empty() ? "NULL" : "TotalYardageArrDate.Val - ActTotalYdsArrDate.ActualYds")}
             ,ftp.ActualYds
             ,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (ftp.ActualYds/t.StockQty AS FLOAT)) ,3)
             {(model.IsBI ? string.Empty : $@"
@@ -311,9 +309,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 where od.id=o.POID
             ) ps1
             outer apply(select TotalPoint = Sum(fp.TotalPoint) ,ActualYds = Sum(fp.ActualYds) from FIR_Physical fp WITH (NOLOCK) where fp.id=f.id) ftp
-            {(
-            model.IsBI ? string.Empty :
-            $@"
             outer apply
             (
 	            select Val = Sum(ISNULL(fi.InQty,0))
@@ -325,10 +320,14 @@ namespace Sci.Production.Prg.PowerBI.Logic
             (
                 {itemWhere.Item4}
             ) TotalYardageArrDate
-            outer apply
-            (
-                {itemWhere.Item5}
-            ) ActTotalYdsArrDate")}
+            {(
+            model.IsBI ? string.Empty :
+            $@"
+                outer apply
+                (
+                    {itemWhere.Item5}
+                ) ActTotalYdsArrDate"
+            )}
             outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp WITH (NOLOCK) where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
             outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp WITH (NOLOCK) where fp.id = f.id and fp.Grade = 'A') fpta
             outer apply
@@ -498,7 +497,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
             {(model.IsBI ? string.Empty : ",[A_Grade_TOP3Defects] = ISNULL(tf.[A_Grade_TOP3Defects], '')")}
             ,[PhysicalInspector] = ISNULL([PhysicalInspector], '')
             ,[PhysicalInspDate] = [PhysicalDate]
-            {(model.IsBI ? string.Empty : ",tf.TotalYardage  ,tf.TotalYardageArrDate")}
+            ,tf.TotalYardage
+            ,tf.TotalYardageArrDate
             ,[ActTtlYdsInspection] = ISNULL([ActualYds], 0)
             {(model.IsBI ? ",[InspectionPCT] = ISNULL(CAST([InspectionRate] * 100 AS NUMERIC(6,1)), 0)" : ",[InspectionRate] = isnull([InspectionRate] , 0)  ,[TotalLotNumber] = ISNULL([TotalLotNumber],0)  ,[InspectedLotNumber] = ISNULL([InspectedLotNumber], 0)")}
             ,[PhysicalInspDefectPoint] = ISNULL([TotalPoint], 0)

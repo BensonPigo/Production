@@ -81,7 +81,9 @@
 	[AddDate] [datetime] NULL,
 	[EditDate] [datetime] NULL,
 	[StockType] [varchar](1) NOT NULL,
- CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
+ [TotalYardageForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
+    [ActualRemainingYardsForInspection] NUMERIC(10, 2) NOT NULL DEFAULT ((0)), 
+    CONSTRAINT [pk_P_FabricInspLabSummaryReporte] PRIMARY KEY CLUSTERED 
 (
 	[POID] ASC,
 	[SEQ] ASC,
