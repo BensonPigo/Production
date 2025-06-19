@@ -67,6 +67,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+            DECLARE @StartDate as date = @sDate
+            DECLARE @EndDate as date = @eDate
+
             -- 更新
             update p set
             p.Category							= t.Category
@@ -227,8 +230,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@sDate", sDate),
+                    new SqlParameter("@eDate", eDate),
                 };
                 finalResult = new Base_ViewModel()
                 {
