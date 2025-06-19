@@ -5,6 +5,8 @@
 	@FactoryID varchar(8) = '',
 	@CutplanIDFrom varchar(13) = '',
 	@CutplanIDTo varchar(13) = '',
+	@SPFrom varchar(13) = '',
+	@SPTo varchar(13) = '',
 	@EditDateFrom date = null,
 	@EditDateTo date = null
 AS
@@ -24,6 +26,8 @@ begin
 			(i.CutplanID <= @CutplanIDTo or @CutplanIDTo = '') and
 			(o.FactoryID = @FactoryID or @FactoryID = '') and
 			(o.MDivisionID = @MDivisionID or @MDivisionID = '') And
+			(id.POID <=  RIGHT('0000000000' + @SPFrom, 10) or @SPFrom = '') And
+			(id.POID = RIGHT('ZZZZZZZZZZ' + @SPTo, 10) or @SPTo = '') And
 			(i.AddDate >= @EditDateFrom or i.EditDate >= @EditDateFrom or @EditDateFrom is null) and
 			(i.AddDate <= @EditDateTo or i.EditDate <= @EditDateTo or @EditDateTo is null) and
 			i.type = 'A' AND i.Status = 'Confirmed' 

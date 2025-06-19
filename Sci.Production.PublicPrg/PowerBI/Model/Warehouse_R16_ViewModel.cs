@@ -24,6 +24,12 @@ namespace Sci.Production.Prg.PowerBI.Model
         public string CutplanIDTo { get; set; }
 
         /// <inheritdoc/>
+        public string SPFrom { get; set; }
+
+        /// <inheritdoc/>
+        public string SPTo { get; set; }
+
+        /// <inheritdoc/>
         public DateTime? EditDateFrom { get; set; }
 
         /// <inheritdoc/>

@@ -16,6 +16,8 @@ namespace Sci.Production.Warehouse
         private string factory;
         private string request1;
         private string request2;
+        private string sp1;
+        private string sp2;
         private DateTime? issueDate1;
         private DateTime? issueDate2;
         private DataTable printData;
@@ -43,6 +45,8 @@ namespace Sci.Production.Warehouse
             this.factory = this.txtfactory.Text;
             this.request1 = this.txtRquest1.Text;
             this.request2 = this.txtRquest2.Text;
+            this.sp1 = this.txtSP1.Text;
+            this.sp2 = this.txtSP2.Text;
 
             return base.ValidateInput();
         }
@@ -58,6 +62,8 @@ namespace Sci.Production.Warehouse
                 FactoryID = this.factory,
                 CutplanIDFrom = this.request1,
                 CutplanIDTo = this.request2,
+                SPFrom = this.sp1,
+                SPTo = this.sp2,
                 EditDateFrom = null,
                 EditDateTo = null,
             };

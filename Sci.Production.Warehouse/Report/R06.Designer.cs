@@ -42,6 +42,10 @@
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.label1 = new Sci.Win.UI.Label();
             this.dateRequest = new Sci.Win.UI.DateRange();
+            this.txtSP2 = new Sci.Win.UI.TextBox();
+            this.label6 = new Sci.Win.UI.Label();
+            this.txtSP1 = new Sci.Win.UI.TextBox();
+            this.label2 = new Sci.Win.UI.Label();
             this.SuspendLayout();
             // 
             // print
@@ -61,7 +65,7 @@
             // 
             // buttonCustomized
             // 
-            this.buttonCustomized.Location = new System.Drawing.Point(187, 37);
+            this.buttonCustomized.Location = new System.Drawing.Point(393, 121);
             // 
             // dateIssueDate
             // 
@@ -87,7 +91,7 @@
             // 
             // labelFactory
             // 
-            this.labelFactory.Location = new System.Drawing.Point(14, 156);
+            this.labelFactory.Location = new System.Drawing.Point(14, 195);
             this.labelFactory.Name = "labelFactory";
             this.labelFactory.Size = new System.Drawing.Size(98, 23);
             this.labelFactory.TabIndex = 103;
@@ -95,7 +99,7 @@
             // 
             // labelFabricType
             // 
-            this.labelFabricType.Location = new System.Drawing.Point(14, 228);
+            this.labelFabricType.Location = new System.Drawing.Point(14, 267);
             this.labelFabricType.Name = "labelFabricType";
             this.labelFabricType.Size = new System.Drawing.Size(98, 23);
             this.labelFabricType.TabIndex = 118;
@@ -103,7 +107,7 @@
             // 
             // labelShift
             // 
-            this.labelShift.Location = new System.Drawing.Point(14, 192);
+            this.labelShift.Location = new System.Drawing.Point(14, 231);
             this.labelShift.Name = "labelShift";
             this.labelShift.Size = new System.Drawing.Size(98, 23);
             this.labelShift.TabIndex = 125;
@@ -112,7 +116,7 @@
             // comboFabricType
             // 
             this.comboFabricType.FormattingEnabled = true;
-            this.comboFabricType.Location = new System.Drawing.Point(115, 227);
+            this.comboFabricType.Location = new System.Drawing.Point(115, 266);
             this.comboFabricType.Name = "comboFabricType";
             this.comboFabricType.Size = new System.Drawing.Size(121, 24);
             this.comboFabricType.TabIndex = 6;
@@ -123,7 +127,7 @@
             this.txtdropdownlistShift.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.txtdropdownlistShift.FormattingEnabled = true;
             this.txtdropdownlistShift.IsSupportUnselect = true;
-            this.txtdropdownlistShift.Location = new System.Drawing.Point(115, 191);
+            this.txtdropdownlistShift.Location = new System.Drawing.Point(115, 230);
             this.txtdropdownlistShift.Name = "txtdropdownlistShift";
             this.txtdropdownlistShift.OldText = "";
             this.txtdropdownlistShift.Size = new System.Drawing.Size(121, 24);
@@ -174,7 +178,7 @@
             // 
             // labelM
             // 
-            this.labelM.Location = new System.Drawing.Point(14, 120);
+            this.labelM.Location = new System.Drawing.Point(14, 159);
             this.labelM.Name = "labelM";
             this.labelM.Size = new System.Drawing.Size(98, 23);
             this.labelM.TabIndex = 131;
@@ -183,9 +187,11 @@
             // txtMdivision
             // 
             this.txtMdivision.BackColor = System.Drawing.Color.White;
+            this.txtMdivision.DefaultValue = false;
             this.txtMdivision.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMdivision.Location = new System.Drawing.Point(115, 120);
+            this.txtMdivision.Location = new System.Drawing.Point(115, 159);
             this.txtMdivision.Name = "txtMdivision";
+            this.txtMdivision.NeedInitialMdivision = false;
             this.txtMdivision.Size = new System.Drawing.Size(66, 23);
             this.txtMdivision.TabIndex = 3;
             this.txtMdivision.Validated += new System.EventHandler(this.TxtMdivision_Validated);
@@ -196,11 +202,14 @@
             this.txtfactory.BoolFtyGroupList = true;
             this.txtfactory.FilteMDivision = false;
             this.txtfactory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtfactory.IsIE = false;
+            this.txtfactory.IsMultiselect = false;
             this.txtfactory.IsProduceFty = false;
             this.txtfactory.IssupportJunk = true;
-            this.txtfactory.Location = new System.Drawing.Point(115, 156);
+            this.txtfactory.Location = new System.Drawing.Point(115, 195);
             this.txtfactory.MDivision = null;
             this.txtfactory.Name = "txtfactory";
+            this.txtfactory.NeedInitialFactory = false;
             this.txtfactory.Size = new System.Drawing.Size(66, 23);
             this.txtfactory.TabIndex = 4;
             // 
@@ -236,9 +245,47 @@
             this.dateRequest.Size = new System.Drawing.Size(280, 23);
             this.dateRequest.TabIndex = 0;
             // 
+            // txtSP2
+            // 
+            this.txtSP2.BackColor = System.Drawing.Color.White;
+            this.txtSP2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP2.Location = new System.Drawing.Point(244, 121);
+            this.txtSP2.Name = "txtSP2";
+            this.txtSP2.Size = new System.Drawing.Size(100, 23);
+            this.txtSP2.TabIndex = 136;
+            // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(218, 121);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(23, 23);
+            this.label6.TabIndex = 138;
+            this.label6.Text = "～";
+            // 
+            // txtSP1
+            // 
+            this.txtSP1.BackColor = System.Drawing.Color.White;
+            this.txtSP1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSP1.Location = new System.Drawing.Point(115, 121);
+            this.txtSP1.Name = "txtSP1";
+            this.txtSP1.Size = new System.Drawing.Size(100, 23);
+            this.txtSP1.TabIndex = 135;
+            // 
+            // label2
+            // 
+            this.label2.Location = new System.Drawing.Point(14, 121);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(98, 23);
+            this.label2.TabIndex = 137;
+            this.label2.Text = "SP#";
+            // 
             // R06
             // 
-            this.ClientSize = new System.Drawing.Size(531, 283);
+            this.ClientSize = new System.Drawing.Size(531, 344);
+            this.Controls.Add(this.txtSP2);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.txtSP1);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dateRequest);
             this.Controls.Add(this.txtfactory);
@@ -277,6 +324,10 @@
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.dateRequest, 0);
             this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.label2, 0);
+            this.Controls.SetChildIndex(this.txtSP1, 0);
+            this.Controls.SetChildIndex(this.label6, 0);
+            this.Controls.SetChildIndex(this.txtSP2, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -298,5 +349,9 @@
         private Class.Txtfactory txtfactory;
         private Win.UI.Label label1;
         private Win.UI.DateRange dateRequest;
+        private Win.UI.TextBox txtSP2;
+        private Win.UI.Label label6;
+        private Win.UI.TextBox txtSP1;
+        private Win.UI.Label label2;
     }
 }
