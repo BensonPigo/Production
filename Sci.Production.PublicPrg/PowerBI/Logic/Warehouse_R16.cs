@@ -32,6 +32,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 new SqlParameter("@FactoryID", SqlDbType.VarChar) { Value = model.FactoryID },
                 new SqlParameter("@CutplanIDFrom", SqlDbType.VarChar) { Value = model.CutplanIDFrom },
                 new SqlParameter("@CutplanIDTo", SqlDbType.VarChar) { Value = model.CutplanIDTo },
+                new SqlParameter("@SPFrom", SqlDbType.VarChar) { Value = model.SPFrom },
+                new SqlParameter("@SPTo", SqlDbType.VarChar) { Value = model.SPTo },
                 new SqlParameter("@EditDateFrom", SqlDbType.Date) { Value = (object)model.EditDateFrom ?? DBNull.Value },
                 new SqlParameter("@EditDateTo", SqlDbType.Date) { Value = (object)model.EditDateTo ?? DBNull.Value },
             };
@@ -43,6 +45,8 @@ exec dbo.Warehouse_Report_R16  @IssueDateFrom,
                                @FactoryID,
                                @CutplanIDFrom,
                                @CutplanIDTo,
+                               @SPFrom,   
+                               @SPTo,
                                @EditDateFrom,
                                @EditDateTo
 ";
