@@ -41,7 +41,6 @@
             this.txtMdivision = new Sci.Production.Class.TxtMdivision();
             this.txtfactory = new Sci.Production.Class.Txtfactory();
             this.cbIncludeCencelOrder = new Sci.Win.UI.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comboProcess = new Sci.Win.UI.ComboBox();
             this.SuspendLayout();
             // 
@@ -216,14 +215,6 @@
             this.cbIncludeCencelOrder.Text = "Include Cancel Order";
             this.cbIncludeCencelOrder.UseVisualStyleBackColor = true;
             // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(355, 200);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 24);
-            this.comboBox1.TabIndex = 114;
-            // 
             // comboProcess
             // 
             this.comboProcess.BackColor = System.Drawing.Color.White;
@@ -242,7 +233,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(665, 278);
             this.Controls.Add(this.comboProcess);
-            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.cbIncludeCencelOrder);
             this.Controls.Add(this.txtfactory);
             this.Controls.Add(this.txtMdivision);
@@ -278,7 +268,6 @@
             this.Controls.SetChildIndex(this.txtMdivision, 0);
             this.Controls.SetChildIndex(this.txtfactory, 0);
             this.Controls.SetChildIndex(this.cbIncludeCencelOrder, 0);
-            this.Controls.SetChildIndex(this.comboBox1, 0);
             this.Controls.SetChildIndex(this.comboProcess, 0);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -300,7 +289,6 @@
         private Class.TxtMdivision txtMdivision;
         private Class.Txtfactory txtfactory;
         private Win.UI.CheckBox cbIncludeCencelOrder;
-        private System.Windows.Forms.ComboBox comboBox1;
         private Win.UI.ComboBox comboProcess;
     }
 }
