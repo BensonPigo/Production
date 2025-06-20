@@ -11,6 +11,9 @@ using Word = Microsoft.Office.Interop.Word;
 using Excel = Microsoft.Office.Interop.Excel;
 using Sci.Production.Prg;
 using Sci.Production.Class.Command;
+using System.Transactions;
+using System.Collections.Generic;
+using Sci.Production.Class.ExtendedMethods;
 
 namespace Sci.Production.Packing
 {
@@ -194,41 +197,46 @@ namespace Sci.Production.Packing
         /// <returns>bool</returns>
         protected override bool ToPrint()
         {
+            string printFunction = string.Empty;
             this.ValidateInput();
 
             this.ShowWaitMessage("Data Loading ...");
             DualResult result;
+            DataTable printData = new DataTable();
             if (this.radioNewBarcodePrint.Checked)
             {
-                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, "New", this.country);
+                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out printData, "New", this.country);
             }
             else if (this.radioBarcodePrint.Checked)
             {
-                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+                result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out printData);
             }
             else if (this.radioBarcodePrintOther.Checked)
             {
-                result = new PackingPrintBarcode().PrintBarcodeOtherSize(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+                result = new PackingPrintBarcode().PrintBarcodeOtherSize(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out printData);
             }
             else if (this.radioQRcodePrint.Checked)
             {
-                result = new PackingPrintBarcode().PrintQRcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, selectType: this.comboType.SelectedIndex);
+                result = new PackingPrintBarcode().PrintQRcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out printData, selectType: this.comboType.SelectedIndex);
             }
             else if (this.rdbtnShippingMarkToChina.Checked)
             {
                 result = this.PrintShippingmark_ToChina();
+                printData = this.printData;
             }
             else if (this.rdbtnShippingMarkToUsaInd.Checked)
             {
                 result = this.PrintShippingmark_ToUsaInd();
+                printData = this.printData;
             }
             else if (this.radioCustCTN.Checked)
             {
-                result = new PackingPrintBarcode().PrintCustCTN(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+                result = new PackingPrintBarcode().PrintCustCTN(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out printData);
             }
             else
             {
                 result = this.PrintShippingmark();
+                printData = this.printData;
             }
 
             if (result == false)
@@ -236,6 +244,8 @@ namespace Sci.Production.Packing
                 MyUtility.Msg.WarningBox(result.ToString());
                 return false;
             }
+
+            this.SetLog(printData);
 
             this.HideWaitMessage();
             return true;
@@ -249,6 +259,7 @@ namespace Sci.Production.Packing
         protected override bool OnToExcel(Win.ReportDefinition report)
         {
             this.ShowWaitMessage("Data Loading....");
+
             if (this.reportType == "1" || this.reportType == "2")
             {
                 DataTable dt = this.masterData.Table.AsEnumerable().Where(row => row["ID"].EqualString(this.masterData["id"])).CopyToDataTable();
@@ -273,30 +284,37 @@ namespace Sci.Production.Packing
                 {
                     PublicPrg.Prgs.PackingListToExcel_PackingListReport("\\Packing_P03_PackingListReport.xltx", dtTop1, this.reportType, dsPrintdata, dsctnDim, dsqtyBDown);
                 }
+
+                this.SetLog(this.printData);
             }
             else if (this.reportType == "3")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingGuideReport("\\Packing_P03_PackingGuideReport.xltx", this.printData, this.ctnDim, this.qtyCtn, this.articleSizeTtlShipQty, this.printGroupData, this.clipData, this.masterData, this.OrderQty, this.specialInstruction, false);
+                this.SetLog(this.printData);
             }
 
             if (this.reportType == "8")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingMDFormReport("\\Packing_P03_PackingMDFormReport.xltx", this.masterData, this.printDataA);
+                this.SetLog(this.printDataA);
             }
 
             if (this.reportType == "9")
             {
                 PublicPrg.Prgs.PackingListToExcel_PackingCartonWeighingReport("\\Packing_P03_PackingCartonWeighingForm.xltx", this.masterData, this.printDataA);
+                this.SetLog(this.printDataA);
             }
 
             if (this.reportType == "10")
             {
                 this.ShippingmarkLLLReport();
+                this.SetLog(this.printDataA[0]);
             }
 
             if (this.reportType == "11")
             {
                 this.HandheldMetalDetectionReport();
+                this.SetLog(this.printData);
             }
 
             this.HideWaitMessage();
@@ -1073,6 +1091,117 @@ order by RIGHT(REPLICATE('0', 8) + CTNStartno, 8)
             }
 
             this.txtSPNo.Text = item.GetSelectedString();
+        }
+
+        private string GetPrintFunction()
+        {
+            string printFunction = string.Empty;
+            foreach (Control ctrl in this.radioPanel1.Controls)
+            {
+                if (ctrl is RadioButton rb && rb.Checked)
+                {
+                    printFunction = rb.Text;
+                    break;
+                }
+            }
+
+            return printFunction;
+        }
+
+        /// <summary>
+        /// 新增列印記錄
+        /// </summary>
+        private void SetLog(DataTable[] printDataList)
+        {
+            if (printDataList.Count() == 0)
+            {
+                return;
+            }
+
+            string printFunction = this.GetPrintFunction();
+            foreach (DataTable dt in printDataList)
+            {
+                this.SetLog(dt, printFunction);
+            }
+        }
+
+        /// <summary>
+        /// 新增列印記錄
+        /// </summary>
+        private void SetLog(DataTable printData, string printFunction = "")
+        {
+            if (printData.Rows.Count == 0)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(printFunction))
+            {
+                printFunction = this.GetPrintFunction();
+            }
+
+            using (TransactionScope transaction = new TransactionScope())
+            {
+                try
+                {
+                    ITableSchema tableSchema;
+                    DualResult result = DBProxy.Current.GetTableSchema(null, "PackingList_SCICtnNo", out tableSchema);
+                    if (!result)
+                    {
+                        MyUtility.Msg.WarningBox(result.ToMessages().ToString());
+                        return;
+                    }
+
+                    DateTime currentDate = DateTime.Now;
+                    List<DataRow> insertList = new List<DataRow>();
+                    if (printData.Columns.Contains("SCICtnNo"))
+                    {
+                        insertList = (List<DataRow>)printData.AsEnumerable().Select(r => new
+                        {
+                            PackingListID = this.masterData["ID"].ToString(),
+                            PackingDetailUkey = r["Ukey"].ToString(),
+                            PrintFunction = printFunction,
+                            PrintName = Sci.Env.User.UserID,
+                            PrintDate = currentDate,
+                            PrintedSCICtnNo = r["SCICtnNo"].ToString(),
+                        }).LinqToDataTable().ToList();
+                    }
+                    else
+                    {
+                        DataTable packingList_SCICtnNoDT = new DataTable();
+                        string sql = $@"select * from PackingList_SCICtnNo where 1=2";
+                        result = DBProxy.Current.Select(null, sql, out packingList_SCICtnNoDT);
+                        if (!result)
+                        {
+                            transaction.Dispose();
+                            throw result.GetException();
+                        }
+
+                        packingList_SCICtnNoDT.Rows.Add(packingList_SCICtnNoDT.NewRow());
+                        DataRow sciCntNoRow = packingList_SCICtnNoDT.Rows[packingList_SCICtnNoDT.Rows.Count - 1];
+                        sciCntNoRow["PackingListID"] = this.masterData["ID"].ToString();
+                        sciCntNoRow["PrintFunction"] = printFunction;
+                        sciCntNoRow["PrintName"] = Sci.Env.User.UserID;
+                        sciCntNoRow["PrintDate"] = currentDate;
+                        insertList = packingList_SCICtnNoDT.AsEnumerable().ToList();
+                    }
+
+                    result = DBProxy.Current.Inserts(null, tableSchema, insertList);
+                    if (!result)
+                    {
+                        transaction.Dispose();
+                        throw result.GetException();
+                    }
+
+                    transaction.Complete();
+                    transaction.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Dispose();
+                    this.ShowErr("Commit transaction error.", ex);
+                }
+            }
         }
     }
 }

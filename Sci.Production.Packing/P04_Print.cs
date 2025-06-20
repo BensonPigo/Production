@@ -292,7 +292,7 @@ order by RefNo", MyUtility.Convert.GetString(this.masterData["ID"]));
             this.ValidateInput();
 
             this.ShowWaitMessage("Data Loading ...");
-            DualResult result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2);
+            DualResult result = new PackingPrintBarcode().PrintBarcode(this.masterData["ID"].ToString(), this.ctn1, this.ctn2, out DataTable printData);
 
             if (result == false)
             {
