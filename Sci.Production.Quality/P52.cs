@@ -711,6 +711,7 @@ namespace Sci.Production.Quality
                 ;
                     break;
                 case "3":
+                case "6":
                     this.grid_Report.IsEditingReadOnly = false;
                     this.Helper.Controls.Grid.Generator(this.grid_Report)
                     .Text("DocSeason", header: "Doc Season", width: Widths.AnsiChars(15), iseditingreadonly: true)
@@ -955,6 +956,8 @@ and  f.Type = '{this.comboMaterialType.SelectedValue.ToString()}'
 use Production
 IF OBJECT_ID('tempdb..#POList') IS NOT NULL
     DROP TABLE #POList
+IF OBJECT_ID('tempdb..#AllPOList') IS NOT NULL
+    DROP TABLE #AllPOList
 
 Select distinct
 o.FactoryID,
@@ -969,7 +972,7 @@ o.FactoryID,
        supplier = IIF(Isnull(su.AbbEN, '') = '', su.ID, Concat(su.ID, '-', su.AbbEN)),
        FinalETD=IsNull(p3.CfmETD, p3.SystemETD),
        p3.Refno,
-       Color = psds.SpecValue,
+       Color = po3Spec.Color,
        p3.Qty,
        p3.ShipQty,
        p3.ShipETA,
@@ -978,31 +981,77 @@ o.FactoryID,
        Season.Month,
        o.BrandID,
        Category = ddl.Name,
-       f.BrandRefno
+       f.WeaveTypeId,
+       f.BrandRefno,
+       All_POID = iif(p3.StockPOID = '', p3.ID, p3.StockPOID),  --為了撈PO與StockPO用
+       All_Seq1 = iif(p3.StockSeq1 = '', p3.Seq1, p3.StockSeq1), --為了撈PO與StockPO用
+       All_Seq2 = iif(p3.StockSeq2 = '', p3.Seq2, p3.StockSeq2), --為了撈PO與StockPO用
+       AllSuppIDInfo.All_SuppID --為了撈PO與StockPO用的資料的對應SuppID
 into #POList
 From Orders o with(nolock)
 inner Join dbo.PO_Supp p2 with(nolock) on p2.ID = o.ID
 inner Join dbo.PO_Supp_Detail p3 with(nolock) on p3.ID = p2.ID and p3.Seq1 = p2.SEQ1 
  	and IsNull(P3.Junk, 0) = 0 --作廢不顯示
 	and (IsNull(p3.Qty, 0) > 0 or IsNull(p3.foc, 0) > 0) --數量為0不顯示
-left join PO_Supp_Detail_spec  psds on psds.id = p3.ID and psds.Seq1 = p3.SEQ1 and psds.Seq2 = p3.SEQ2 and psds.SpecColumnID = 'Color'
 inner Join dbo.Supp su with(nolock) on su.ID = p2.SuppID
 Inner Join BrandRelation as bs WITH (NOLOCK) ON bs.BrandID = o.BrandID and bs.SuppID = su.ID
 Inner Join Supp s2 WITH (NOLOCK) on bs.SuppGroup = s2.ID
 inner join dbo.Fabric f with(nolock) on p3.SciRefno = f.SciRefno
 inner JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
 LEFT JOIN DropDownList ddl WITH (NOLOCK) on ddl.type ='Category' and o.Category = ddl.ID
+Outer apply(
+    select All_SuppID = isnull(tmpP2.SuppID,'')
+    from dbo.PO_Supp tmpP2 with(nolock)
+    inner join dbo.PO_Supp_Detail tmpP3 with(nolock) on tmpP2.ID = tmpP3.ID and tmpP2.Seq1 = tmpP3.Seq1
+    where tmpP2.ID = iif(p3.StockPOID = '', p3.ID, p3.StockPOID) and tmpP2.Seq1 = iif(p3.StockSeq1 = '', p3.Seq1, p3.StockSeq1)
+    	and tmpP3.Junk = 0 --作廢不顯示
+	    and (tmpP3.Qty > 0 or tmpP3.Foc > 0) --數量為0不顯示
+) AllSuppIDInfo
+Outer Apply(
+    SELECT Color FROM GetPo3Spec(p3.id,p3.Seq1,p3.Seq2) po3Spec
+)po3Spec
 where 1=1
 and f.BrandRefNo <> ''
 {where}
 
 
-select * from #POList
-Order by POID,Seq
+-- 撈出的表一
+select * from #POList Order by POID,Seq
 
-Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID, md.BrandID
+-- 表二的DocumentName，需要用POID跟StockPOID去找，所以重新再抓一次必要欄位(條件用)
+Select distinct
+       POID = p3.ID,
+       Seq = p3.Seq1 + '-' + p3.Seq2,
+       p3.Seq1,
+       p3.Seq2,
+       p2.SuppID,
+       o.ProgramID,
+       f.Type,
+       Season.Month,
+       o.BrandID,
+       Category = ddl.Name,
+       f.MtltypeId,
+       f.WeaveTypeId
+into #AllPOList
+From dbo.Orders o with(nolock)
+Inner Join #POList p1 with(nolock) on p1.All_POID = o.ID
+Inner Join dbo.PO_Supp p2 with(nolock) on p2.ID = p1.All_POID and p2.Seq1 = p1.All_Seq1
+Inner Join dbo.PO_Supp_Detail p3 with(nolock) on p3.ID = p2.ID and p3.Seq1 = p2.SEQ1
+	and P3.Junk = 0 --作廢不顯示
+	and (p3.Qty > 0 or p3.Foc > 0) --數量為0不顯示
+Inner Join dbo.Supp su with(nolock) on su.ID = p2.SuppID
+Inner join dbo.Fabric f with(nolock) on p3.SciRefno = f.SciRefno
+INNER JOIN Season WITH (NOLOCK) on o.SeasonID = Season.ID and o.BrandID = Season.BrandID
+Outer Apply(
+                SELECT Color FROM GetPo3Spec(p3.id,p3.Seq1,p3.Seq2) po3Spec
+)po3Spec
+LEFT JOIN  DropDownList ddl WITH (NOLOCK) on ddl.type ='Category' and o.Category = ddl.ID
+Order by p3.Seq1, p3.Seq2
+
+
+Select distinct md.DocumentName, md.FileRule, po.Seq, po.POID, po.Seq1, po.Seq2, md.BrandID
 FROM MaterialDocument md
-inner join #POList po on md.BrandID = po.BrandID or 
+inner join #AllPOList po on md.BrandID = po.BrandID or 
 exists (
 	select 1 from MaterialDocument_Brand mdb
 	where md.DocumentName = mdb.DocumentName
@@ -1038,8 +1087,6 @@ and (isnull(md.SupplierClude,'') = '' or isnull(supp.value,'') = ''
     )
 and (po.Category in (select data from splitstring(md.Category,',')))
 and md.junk=0
-IF OBJECT_ID('tempdb..#POList') IS NOT NULL
-DROP TABLE #POList
 
 ";
 
@@ -1058,10 +1105,11 @@ DROP TABLE #POList
             tmpSet.Tables.Add(dt1);
             tmpSet.Tables.Add(dt2);
 
+            tmpSet.EnforceConstraints = false;
             tmpSet.RelationDocument = new DataRelation(
              "DocSeq",
-             new DataColumn[] { tmpSet.PO.Columns["POID"], tmpSet.PO.Columns["seq"] },
-             new DataColumn[] { tmpSet.Document.Columns["POID"], tmpSet.Document.Columns["seq"] });
+             new DataColumn[] { tmpSet.PO.Columns["All_POID"], tmpSet.PO.Columns["All_Seq1"], tmpSet.PO.Columns["All_Seq2"] },
+             new DataColumn[] { tmpSet.Document.Columns["POID"], tmpSet.Document.Columns["Seq1"], tmpSet.Document.Columns["Seq2"] });
             return tmpSet;
         }
 
@@ -1476,7 +1524,7 @@ and (sr.BrandRefno = @BrandRefno  or sr.BrandRefno = @Refno)
 and sr.BrandID = @BrandID
 and sr.DocumentName = @DocumentName
                     ";
-                    parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
+                    parmes.Add(new SqlParameter("@SuppID", mainrow["All_SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
@@ -1509,7 +1557,7 @@ and sr.ColorID = @ColorID
 and sr.BrandID = @BrandID
 and sr.DocumentName = @DocumentName 
                     ";
-                    parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
+                    parmes.Add(new SqlParameter("@SuppID", mainrow["All_SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", row["BrandID"].ToString()));
@@ -1562,7 +1610,7 @@ and ((@FactoryID = 'SPR' and f.TestDocFactoryGroup in ('SPR', 'SPX'))
     or (@FactoryID != 'SPR' and f.TestDocFactoryGroup = @FactoryID))
 and f.deleteColumn = 0
 Order by f.SeasonID desc";
-                    parmes.Add(new SqlParameter("@SuppID", mainrow["SuppID"]));
+                    parmes.Add(new SqlParameter("@SuppID", mainrow["All_SuppID"]));
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
                     parmes.Add(new SqlParameter("@BrandID", row["BrandID"]));
@@ -1587,9 +1635,9 @@ Select Ukey
 FROM NewSentReport 
 WHERE PoID = @PoID and Seq1 = @Seq1 and Seq2 = @Seq2 and BrandID = @BrandID and DocumentName = @DocumentName
                     ";
-                    parmes.Add(new SqlParameter("@POID", mainrow["POID"]));
-                    parmes.Add(new SqlParameter("@Seq1", mainrow["Seq1"]));
-                    parmes.Add(new SqlParameter("@Seq2", mainrow["Seq2"]));
+                    parmes.Add(new SqlParameter("@POID", mainrow["All_POID"]));
+                    parmes.Add(new SqlParameter("@Seq1", mainrow["All_Seq1"]));
+                    parmes.Add(new SqlParameter("@Seq2", mainrow["All_Seq2"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
@@ -1623,9 +1671,58 @@ and exists(
                     ";
                     parmes.Add(new SqlParameter("@BrandRefno", mainrow["BrandRefno"]));
                     parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
-                    parmes.Add(new SqlParameter("@POID", mainrow["POID"]));
+                    parmes.Add(new SqlParameter("@POID", mainrow["All_POID"]));
                     parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
                     parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
+                    parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
+                    break;
+                case "6":
+                    sql = @"
+if object_id('tempdb..#probablySeasonList') is not null 
+Drop Table #probablySeasonList
+
+Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
+Into #probablySeasonList
+FROM(
+    Select DISTINCT Month, ID
+    From dbo.Season where BrandID = @brandID or BrandID in (select BrandID From MaterialDocument_Brand Where DocumentName = @documentName and MergedBrand = @BrandID)
+)a
+
+Select DocSeason = f.SeasonID
+, f.Period 
+, f.TestDocFactoryGroup
+, f.ReceivedRemark
+, f.FirstDyelot
+, f.AWBNO
+, AddName = AddName.IdAndNameAndExt
+, f.AddDate
+, EditName = EditName.IdAndNameAndExt
+, f.EditDate
+, Remark =''
+, FileRule = '3'
+FROM TrimApproval f
+LEFT JOIN GetName AddName on f.AddName = AddName.ID
+LEFT JOIN GetName EditName on f.EditName = EditName.ID
+INNER JOIN #probablySeasonList season ON f.SeasonID = season.ID
+INNER JOIN #probablySeasonList seasonSCI ON seasonSCI.ID = @SeasonID
+WHERE exists (
+    select 1
+    from BrandRelation b
+    where b.BrandID = f.BrandID
+    and b.SuppGroup = f.SuppID
+    and b.SuppID = @SuppID)
+and f.Refno = @Refno
+and f.ColorID = @ColorID
+and (f.BrandID = @BrandID or f.BrandID in (select BrandID From MaterialDocument_Brand Where DocumentName = @DocumentName and MergedBrand = @BrandID))
+and f.DocumentName = @DocumentName
+AND (seasonSCI.RowNo - season.RowNo) >= 0
+AND (seasonSCI.RowNo - season.RowNo) < ISNULL(f.Period, 0)
+Order by f.SeasonID desc";
+                    parmes.Add(new SqlParameter("@SuppID", mainrow["All_SuppID"]));
+                    parmes.Add(new SqlParameter("@Refno", mainrow["Refno"]));
+                    parmes.Add(new SqlParameter("@BrandID", mainrow["BrandID"]));
+                    parmes.Add(new SqlParameter("@ColorID", mainrow["Color"]));
+                    parmes.Add(new SqlParameter("@SeasonID", mainrow["Season"]));
                     parmes.Add(new SqlParameter("@DocumentName", row["DocumentName"]));
                     break;
             }

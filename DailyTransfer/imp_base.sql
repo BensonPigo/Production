@@ -5704,9 +5704,6 @@ on a.DocumentName = b.DocumentName and a.BrandID = b.BrandID and a.MtltypeId = b
 where b.DocumentName is null
 	and b.BrandID is null 
 	and b.MtltypeId is null
-	and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
-
-
 -------------------------- INSERT INTO
 INSERT INTO [Production].[dbo].MaterialDocument_MtlType
  (
@@ -5766,7 +5763,6 @@ where
 b.DocumentName is null 
 and b.BrandID is null
 and b.SuppID is null
-and exists(select 1 from [Trade_To_Pms].[dbo].[MaterialDocument] t where t.DocumentName = b.DocumentName  and t.BrandID = b.BrandID) 
 -------------------------- INSERT INTO 
 INSERT INTO [Production].[dbo].MaterialDocument_Supplier
  (
