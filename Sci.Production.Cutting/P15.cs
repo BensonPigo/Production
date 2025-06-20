@@ -320,7 +320,25 @@ where FactoryID in (select ID from Factory WITH (NOLOCK) where MDivisionID='{thi
             DataGridViewGeneratorNumericColumnSettings cutoutput = new DataGridViewGeneratorNumericColumnSettings();
             cutoutput.CellValidating += (s, e) =>
             {
+                if (e.RowIndex == -1)
+                {
+                    return;
+                }
+
                 DataRow dr = this.gridArticleSize.GetDataRow(e.RowIndex);
+                if (MyUtility.Convert.GetInt(e.FormattedValue) == MyUtility.Convert.GetInt(dr["cutOutput"]))
+                {
+                    return;
+                }
+
+                if (string.IsNullOrWhiteSpace(dr["OrderID"].ToString()))
+                {
+                    MyUtility.Msg.ErrorBox("[Sub-SP#] can't be empty, please select fisrt.");
+                    dr["cutOutput"] = DBNull.Value;
+                    dr.EndEdit();
+                    return;
+                }
+
                 int oldValue = MyUtility.Convert.GetInt(dr["cutOutput"]);
                 if (this.GetBalancebyDistribute(dr, MyUtility.Convert.GetInt(e.FormattedValue)) > 0)
                 {
