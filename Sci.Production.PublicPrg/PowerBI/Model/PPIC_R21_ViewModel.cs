@@ -36,5 +36,23 @@ namespace Sci.Production.Prg.PowerBI.Model
 
         /// <inheritdoc/>
         public bool IsBI { get; set; }
+
+        /// <inheritdoc/>
+        public bool IsPPICP26 { get; set; }
+
+        /// <inheritdoc/>
+        public string OrderID { get; set; }
+
+        /// <inheritdoc/>
+        public string PackID { get; set; }
+
+        /// <inheritdoc/>
+        public string PO { get; set; }
+
+        /// <inheritdoc/>
+        public DateTime? SCIDeliveryFrom { get; set; }
+
+        /// <inheritdoc/>
+        public DateTime? SCIDeliveryTo { get; set; }
     }
 }
