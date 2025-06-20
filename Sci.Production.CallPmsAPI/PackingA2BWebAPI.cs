@@ -15,11 +15,71 @@ using static Sci.Production.CallPmsAPI.PackingA2BWebAPI_Model;
 
 namespace Sci.Production.CallPmsAPI
 {
+    public interface IEnvironmentResolver
+    {
+        string GetWebAPIUrl(string systemName, bool isLAN = false);
+        string GetConnRegion(string systemName);
+    }
+
+    // 預設實作，放原先的GetWebAPIUrl與GetConnRegion邏輯
+    public sealed class DefaultEnvironmentResolver : IEnvironmentResolver
+    {
+        public string GetWebAPIUrl(string systemName, bool isLAN = false)
+        {
+            // 原先的GetWebAPIUrl程式碼
+            string environment = string.Empty;
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING")
+                || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB")
+                || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
+            {
+                return "http://172.17.3.97:16888/";
+            }
+            if (DBProxy.Current.DefaultModuleName.Contains("Training"))
+            {
+                environment = "Training";
+            }
+            if (DBProxy.Current.DefaultModuleName.Contains("Dummy"))
+            {
+                environment = "Dummy";
+            }
+            if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
+            {
+                environment = "Formal";
+            }
+            if (isLAN)
+            {
+                environment = "BI";
+            }
+            return MyUtility.GetValue.Lookup(
+              $"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'"
+            );
+        }
+
+        public string GetConnRegion(string systemName)
+        {
+            // 原先的GetConnRegion程式碼
+            string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING")
+                || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
+            {
+                return "TESTING_" + finalDBName;
+            }
+            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
+            {
+                return "PMSDB_" + finalDBName;
+            }
+            return string.Empty;
+        }
+    }
+
     /// <summary>
     /// PackingA2BWebAPI
     /// </summary>
     public static class PackingA2BWebAPI
     {
+        // 預設使用上面的 DefaultEnvironmentResolver，可被其他程式替換
+        public static IEnvironmentResolver EnvironmentResolver { get; set; } = new DefaultEnvironmentResolver();
+
         private static WebApiBaseResult webApiBaseResult;
         public class PackingA2BResult : DualResult
         {
@@ -113,50 +173,12 @@ namespace Sci.Production.CallPmsAPI
         /// <returns>string</returns>
         public static string GetWebAPIUrl(string systemName, bool isLAN = false)
         {
-            string environment = string.Empty;
-
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
-            {
-                return "http://172.17.3.97:16888/";
-            }
-
-            if (DBProxy.Current.DefaultModuleName.Contains("Training"))
-            {
-                environment = "Training";
-            }
-
-            if (DBProxy.Current.DefaultModuleName.Contains("Dummy"))
-            {
-                environment = "Dummy";
-            }
-
-            if (DBProxy.Current.DefaultModuleName.Contains("Formal"))
-            {
-                environment = "Formal";
-            }
-
-            if (isLAN)
-            {
-                environment = "BI";
-            }
-
-            return MyUtility.GetValue.Lookup($"select URL from SystemWebAPIURL with (nolock) where SystemName = '{systemName}' and Environment = '{environment}'");
+            return EnvironmentResolver.GetWebAPIUrl(systemName, isLAN);
         }
 
         public static string GetConnRegion(string systemName)
         {
-            string finalDBName = systemName.ToUpper() == "PHI" ? "PH1" : systemName.ToUpper();
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("TESTING") || DBProxy.Current.DefaultModuleName.ToUpper().Contains("BIN"))
-            {
-                return "TESTING_" + finalDBName;
-            }
-
-            if (DBProxy.Current.DefaultModuleName.ToUpper().Contains("PMSDB"))
-            {
-                return "PMSDB_" + finalDBName;
-            }
-
-            return string.Empty;
+            return EnvironmentResolver.GetConnRegion(systemName);
         }
 
         public static string GetWebApiBaseResultError(WebApiBaseResult webApiBaseResult)
