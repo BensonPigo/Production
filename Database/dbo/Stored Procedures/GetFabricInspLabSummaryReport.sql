@@ -66,7 +66,7 @@ BEGIN
 		,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
 		,F.PhysicalDate
 		,TotalYardage = TotalYardage.Val
-		,TotalYardageArrDate  = TotalYardageArrDate.Val
+		,TotalYardageArrDate  = TotalYardage.Val -ActTotalYds.ActualYds
 		,fta.ActualYds
 		,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
 		,ftp.TotalPoint
@@ -220,22 +220,30 @@ BEGIN
 		)CFD2
 		Outer apply(
 			select (A.id+' - '+ A.name + ' #'+A.extno) LocalMR 
-			from orders od 
-			inner join pass1 a on a.id=od.LocalMR 
+			from orders od with(nolock)
+			inner join pass1 a with(nolock) on a.id=od.LocalMR 
 			where od.id=o.POID
 		) ps1
 		outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id=f.id) ftp
 		outer apply
 		(
 			select Val = Sum(ISNULL(fi.InQty,0))
-			from FtyInventory fi
-			inner join Receiving_Detail rd on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
+			from FtyInventory fi with(nolock)
+			inner join Receiving_Detail rd with(nolock) on rd.PoId = fi.POID and rd.Seq1 = fi.Seq1 and rd.Seq2 = fi.Seq2 AND fi.StockType=rd.StockType and rd.Roll = fi.Roll and rd.Dyelot = fi.Dyelot
 			where fi.POID = f.POID AND fi.Seq1 = f.Seq1 AND fi.Seq2 = f.Seq2 AND rd.Id=f.ReceivingID AND rd.ForInspection=1
 		) TotalYardage
 		outer apply
 		(
-			select Val = 0.0 
-		) TotalYardageArrDate
+			select ActualYds = Sum(fp.ActualYds) 
+			from FIR_Physical fp with(nolock) 
+			where fp.ID = f.ID and EXISTS(
+			select 1
+			from Receiving r with(nolock)
+			where r.Id=f.ReceivingID
+			AND r.WhseArrival >= t.WhseArrival
+			AND r.WhseArrival <= t.WhseArrival
+		)
+		) ActTotalYds
 		outer apply(select ActualYds = Sum(fp.ActualYds) from FIR_Physical fp where fp.id=f.id) fta
 		outer apply(select TicketYds = Sum(fp.TicketYds), TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and (fp.Grade = 'B' or fp.Grade = 'C')) fptbc
 		outer apply(select TotalPoint = Sum(fp.TotalPoint) from FIR_Physical fp where fp.id = f.id and fp.Grade = 'A') fpta
