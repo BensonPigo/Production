@@ -66,7 +66,7 @@ BEGIN
 		,[PhysicalInspector] = (select name from Pass1 where id = f.PhysicalInspector)
 		,F.PhysicalDate
 		,TotalYardage = TotalYardage.Val
-		,TotalYardageArrDate  = TotalYardageArrDate.Val
+		,TotalYardageArrDate  = TotalYardage.Val -ActTotalYds.ActualYds
 		,fta.ActualYds
 		,[InspectionRate] = ROUND(iif(t.StockQty = 0,0,CAST (fta.ActualYds/t.StockQty AS FLOAT)) ,3)
 		,ftp.TotalPoint
