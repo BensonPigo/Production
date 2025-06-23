@@ -92,6 +92,7 @@ namespace Sci.Production.Cutting
             this.txtRefNo.DataBindings.Add(new Binding("Text", bindingSource, "RefNo", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtColor.DataBindings.Add(new Binding("Text", bindingSource, "ColorID", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtTone.DataBindings.Add(new Binding("Text", bindingSource, "Tone", true, DataSourceUpdateMode.OnPropertyChanged));
+            this.txtSeq.DataBindings.Add(new Binding("Text", bindingSource, "Seq", true, DataSourceUpdateMode.OnPropertyChanged));
             this.numConsPC.DataBindings.Add(new Binding("Value", bindingSource, "ConsPC", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtMarkerName.DataBindings.Add(new Binding("Text", bindingSource, "MarkerName", true, DataSourceUpdateMode.OnPropertyChanged));
             this.txtMarkerNo.DataBindings.Add(new Binding("Text", bindingSource, "MarkerNo", true, DataSourceUpdateMode.OnPropertyChanged));
@@ -175,6 +176,7 @@ namespace Sci.Production.Cutting
             this.CurrentDetailData_Ori["RefNo"] = this.CurrentDetailData["RefNo"];
             this.CurrentDetailData_Ori["ColorID"] = this.CurrentDetailData["ColorID"];
             this.CurrentDetailData_Ori["Tone"] = this.CurrentDetailData["Tone"];
+            this.CurrentDetailData_Ori["Seq"] = this.CurrentDetailData["Seq"];
             this.CurrentDetailData_Ori["ConsPC"] = this.CurrentDetailData["ConsPC"];
             this.CurrentDetailData_Ori["MarkerName"] = this.CurrentDetailData["MarkerName"];
             this.CurrentDetailData_Ori["MarkerNo"] = this.CurrentDetailData["MarkerNo"];

@@ -86,7 +86,7 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
-            // P09_ExcludeSetting
+            // P02_ExcludeSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -94,9 +94,9 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.grid1);
-            this.Name = "P09_ExcludeSetting";
+            this.Name = "P02_ExcludeSetting";
             this.OnLineHelpID = "Sci.Win.Tems.QueryForm";
-            this.Text = "P09. Exclude Setting";
+            this.Text = "P02. Exclude Setting";
             this.Controls.SetChildIndex(this.grid1, 0);
             this.Controls.SetChildIndex(this.btnSave, 0);
             this.Controls.SetChildIndex(this.btnCancel, 0);

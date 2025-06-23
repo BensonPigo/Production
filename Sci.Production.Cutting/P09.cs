@@ -1243,14 +1243,17 @@ DEALLOCATE CURSOR_
                 AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_Distribute, this.formType);
                 AddThirdDatas(this.CurrentDetailData, oldRow, this.dt_PatternPanel, this.formType);
             }
-
-            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
-            if (result == DialogResult.Cancel)
+            else
             {
-                this.OnDetailGridDelete();
-            }
+                // 僅有按 + 新增才需要開窗
+                DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
+                if (result == DialogResult.Cancel)
+                {
+                    this.OnDetailGridDelete();
+                }
 
-            this.OnDetailGridRowChanged();
+                this.OnDetailGridRowChanged();
+            }
         }
 
         private DialogResult ShowDialogActionCutRef(DialogAction action)
