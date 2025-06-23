@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -448,6 +449,7 @@ RegexOptions.Compiled);
                             if (string.IsNullOrEmpty(markerLength))
                             {
                                 markerLength = $"{layerYDS:00}Y{Math.Floor(layerInch).ToString().PadLeft(2, '0')}-{inchFraction}+1\"";
+                                layerYDS += layerInch * this.inchToYdsRate;
                             }
                             else
                             {
@@ -456,9 +458,10 @@ RegexOptions.Compiled);
                                 {
                                     throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
                                 }
+
+                                layerYDS += MarkerLengthToYds(markerLength);
                             }
 
-                            layerYDS += layerInch * this.inchToYdsRate;
                             break;
                         }
 
@@ -3393,6 +3396,88 @@ DROP TABLE #tmp";
 
             return dtQtyBreakDown;
         }
+
+        /// <summary>
+        /// 轉換類似「1Y5-3/4+6&quot;」的長度字串為碼 (yards)。
+        /// 對應 SQL [dbo].[MarkerLengthToYDS] 函式。
+        /// </summary>
+        /// <param name="markerLength">原始長度字串</param>
+        /// <returns>等值碼數 (保留 4 位小數)</returns>
+        public static decimal MarkerLengthToYds(string markerLength)
+        {
+            if (string.IsNullOrWhiteSpace(markerLength))
+            {
+                return 0m;
+            }
+
+            markerLength = markerLength.Trim();
+
+            // 取得各符號位置；IndexOf 回傳 -1 代表不存在
+            int locateY = markerLength.IndexOf('Y');
+            int locateIn = markerLength.IndexOf('-');
+            int locateS1 = markerLength.IndexOf('/');   // 分子與分母分隔
+            int locateS2 = markerLength.IndexOf('+');   // 額外英吋
+            int locateS3 = markerLength.IndexOf('"');   // 結尾雙引號
+            if (locateS3 < 0)
+            {
+                locateS3 = markerLength.Length; // 與 SQL Len()+1 等價
+            }
+
+            // 安全解析數字；失敗時回傳 0
+            decimal ParsePart(string s)
+            {
+                decimal val;
+                return decimal.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out val)
+                        ? val : 0m;
+            }
+
+            // 依 SQL 分段
+            decimal yds = (locateY > 0)
+                ? ParsePart(markerLength.Substring(0, locateY))
+                : 0m;
+
+            decimal inch = (locateY >= 0 && locateIn > locateY)
+                ? ParsePart(markerLength.Substring(locateY + 1, locateIn - locateY - 1))
+                : 0m;
+
+            decimal m1 = 0m, m2 = 0m, m3 = 0m;
+
+            // M1 -----------------------------------------------------------
+            if (locateIn + 1 != locateS2 && locateS1 > locateIn && locateS1 > 0)
+            {
+                m1 = ParsePart(markerLength.Substring(locateIn + 1, locateS1 - locateIn - 1));
+            }
+
+            // M2 / M3 ------------------------------------------------------
+            if (locateS2 < 0) // 無 '+'
+            {
+                if (locateIn + 1 != locateS2 && locateS1 > 0)
+                {
+                    m2 = ParsePart(markerLength.Substring(locateS1 + 1, locateS3 - locateS1 - 1));
+                }
+                // m3 保持 0
+            }
+            else // 有 '+'
+            {
+                if (locateIn + 1 != locateS2 && locateS1 > 0)
+                {
+                    m2 = ParsePart(markerLength.Substring(locateS1 + 1, locateS2 - locateS1 - 1));
+                }
+
+                m3 = ParsePart(markerLength.Substring(locateS2 + 1, locateS3 - locateS2 - 1));
+            }
+
+            // 組合為英吋 → 碼 (1 碼 = 36 吋)
+            decimal totalInch = (yds * 36m) + inch + m3;
+            if (m2 != 0m)
+            {
+                totalInch += m1 / m2;
+            }
+
+            decimal result = Math.Round(totalInch / 36m, 4, MidpointRounding.AwayFromZero);
+            return result;
+        }
+
         #endregion
 
         #region CutPartCheck
