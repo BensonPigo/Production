@@ -77,6 +77,8 @@ namespace Sci.Production.Cutting
             this.MenuItemDeleteDistribute = new System.Windows.Forms.ToolStripMenuItem();
             this.distributebs = new Sci.Win.UI.ListControlBindingSource(this.components);
             this.txtMarkerLength = new Sci.Production.Class.TxtMarkerLength();
+            this.label1 = new Sci.Win.UI.Label();
+            this.txtSeq = new Sci.Win.UI.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).BeginInit();
             this.cmsPatternPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).BeginInit();
@@ -91,7 +93,7 @@ namespace Sci.Production.Cutting
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label2.Location = new System.Drawing.Point(9, 78);
+            this.label2.Location = new System.Drawing.Point(9, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(123, 23);
             this.label2.TabIndex = 18;
@@ -101,7 +103,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtSeq1.BackColor = System.Drawing.Color.White;
             this.txtSeq1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq1.Location = new System.Drawing.Point(135, 140);
+            this.txtSeq1.Location = new System.Drawing.Point(135, 165);
             this.txtSeq1.Name = "txtSeq1";
             this.txtSeq1.Size = new System.Drawing.Size(96, 23);
             this.txtSeq1.TabIndex = 21;
@@ -111,7 +113,7 @@ namespace Sci.Production.Cutting
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label3.Location = new System.Drawing.Point(9, 140);
+            this.label3.Location = new System.Drawing.Point(9, 165);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(123, 23);
             this.label3.TabIndex = 20;
@@ -121,7 +123,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtSeq2.BackColor = System.Drawing.Color.White;
             this.txtSeq2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSeq2.Location = new System.Drawing.Point(135, 174);
+            this.txtSeq2.Location = new System.Drawing.Point(135, 199);
             this.txtSeq2.Name = "txtSeq2";
             this.txtSeq2.Size = new System.Drawing.Size(96, 23);
             this.txtSeq2.TabIndex = 23;
@@ -131,7 +133,7 @@ namespace Sci.Production.Cutting
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label4.Location = new System.Drawing.Point(9, 174);
+            this.label4.Location = new System.Drawing.Point(9, 199);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(123, 23);
             this.label4.TabIndex = 22;
@@ -141,7 +143,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtRefNo.BackColor = System.Drawing.Color.White;
             this.txtRefNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtRefNo.Location = new System.Drawing.Point(135, 208);
+            this.txtRefNo.Location = new System.Drawing.Point(135, 233);
             this.txtRefNo.Name = "txtRefNo";
             this.txtRefNo.Size = new System.Drawing.Size(114, 23);
             this.txtRefNo.TabIndex = 25;
@@ -150,7 +152,7 @@ namespace Sci.Production.Cutting
             // label5
             // 
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label5.Location = new System.Drawing.Point(9, 208);
+            this.label5.Location = new System.Drawing.Point(9, 233);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(123, 23);
             this.label5.TabIndex = 24;
@@ -160,7 +162,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtColor.BackColor = System.Drawing.Color.White;
             this.txtColor.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtColor.Location = new System.Drawing.Point(135, 242);
+            this.txtColor.Location = new System.Drawing.Point(135, 267);
             this.txtColor.Name = "txtColor";
             this.txtColor.Size = new System.Drawing.Size(96, 23);
             this.txtColor.TabIndex = 27;
@@ -169,7 +171,7 @@ namespace Sci.Production.Cutting
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label6.Location = new System.Drawing.Point(9, 242);
+            this.label6.Location = new System.Drawing.Point(9, 267);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(123, 23);
             this.label6.TabIndex = 26;
@@ -179,7 +181,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtTone.BackColor = System.Drawing.Color.White;
             this.txtTone.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtTone.Location = new System.Drawing.Point(135, 276);
+            this.txtTone.Location = new System.Drawing.Point(135, 301);
             this.txtTone.Name = "txtTone";
             this.txtTone.Size = new System.Drawing.Size(96, 23);
             this.txtTone.TabIndex = 29;
@@ -187,7 +189,7 @@ namespace Sci.Production.Cutting
             // label7
             // 
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label7.Location = new System.Drawing.Point(9, 276);
+            this.label7.Location = new System.Drawing.Point(9, 301);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(123, 23);
             this.label7.TabIndex = 28;
@@ -196,7 +198,7 @@ namespace Sci.Production.Cutting
             // label8
             // 
             this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label8.Location = new System.Drawing.Point(9, 310);
+            this.label8.Location = new System.Drawing.Point(9, 335);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(123, 23);
             this.label8.TabIndex = 30;
@@ -206,7 +208,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtMarkerName.BackColor = System.Drawing.Color.White;
             this.txtMarkerName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerName.Location = new System.Drawing.Point(135, 344);
+            this.txtMarkerName.Location = new System.Drawing.Point(135, 369);
             this.txtMarkerName.Name = "txtMarkerName";
             this.txtMarkerName.Size = new System.Drawing.Size(114, 23);
             this.txtMarkerName.TabIndex = 33;
@@ -214,7 +216,7 @@ namespace Sci.Production.Cutting
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label9.Location = new System.Drawing.Point(9, 344);
+            this.label9.Location = new System.Drawing.Point(9, 369);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(123, 23);
             this.label9.TabIndex = 32;
@@ -224,7 +226,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtMarkerNo.BackColor = System.Drawing.Color.White;
             this.txtMarkerNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerNo.Location = new System.Drawing.Point(135, 378);
+            this.txtMarkerNo.Location = new System.Drawing.Point(135, 403);
             this.txtMarkerNo.Name = "txtMarkerNo";
             this.txtMarkerNo.Size = new System.Drawing.Size(114, 23);
             this.txtMarkerNo.TabIndex = 35;
@@ -234,7 +236,7 @@ namespace Sci.Production.Cutting
             // label10
             // 
             this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label10.Location = new System.Drawing.Point(9, 378);
+            this.label10.Location = new System.Drawing.Point(9, 403);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(123, 23);
             this.label10.TabIndex = 34;
@@ -243,7 +245,7 @@ namespace Sci.Production.Cutting
             // label11
             // 
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label11.Location = new System.Drawing.Point(9, 412);
+            this.label11.Location = new System.Drawing.Point(9, 437);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(123, 23);
             this.label11.TabIndex = 36;
@@ -252,7 +254,7 @@ namespace Sci.Production.Cutting
             // label15
             // 
             this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label15.Location = new System.Drawing.Point(9, 11);
+            this.label15.Location = new System.Drawing.Point(9, 40);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(102, 23);
             this.label15.TabIndex = 44;
@@ -260,7 +262,7 @@ namespace Sci.Production.Cutting
             // 
             // dateBoxEstCutDate
             // 
-            this.dateBoxEstCutDate.Location = new System.Drawing.Point(114, 11);
+            this.dateBoxEstCutDate.Location = new System.Drawing.Point(114, 40);
             this.dateBoxEstCutDate.Name = "dateBoxEstCutDate";
             this.dateBoxEstCutDate.Size = new System.Drawing.Size(130, 23);
             this.dateBoxEstCutDate.TabIndex = 47;
@@ -404,7 +406,7 @@ namespace Sci.Production.Cutting
             this.numLayers.BackColor = System.Drawing.Color.White;
             this.numLayers.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.numLayers.IsSupportNegative = false;
-            this.numLayers.Location = new System.Drawing.Point(135, 78);
+            this.numLayers.Location = new System.Drawing.Point(135, 103);
             this.numLayers.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -430,7 +432,7 @@ namespace Sci.Production.Cutting
             this.numConsPC.BackColor = System.Drawing.Color.White;
             this.numConsPC.DecimalPlaces = 4;
             this.numConsPC.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.numConsPC.Location = new System.Drawing.Point(135, 310);
+            this.numConsPC.Location = new System.Drawing.Point(135, 335);
             this.numConsPC.Name = "numConsPC";
             this.numConsPC.NullValue = new decimal(new int[] {
             0,
@@ -449,7 +451,7 @@ namespace Sci.Production.Cutting
             // label16
             // 
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label16.Location = new System.Drawing.Point(9, 46);
+            this.label16.Location = new System.Drawing.Point(9, 71);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(102, 23);
             this.label16.TabIndex = 65;
@@ -458,7 +460,7 @@ namespace Sci.Production.Cutting
             // label12
             // 
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.label12.Location = new System.Drawing.Point(9, 109);
+            this.label12.Location = new System.Drawing.Point(9, 134);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(123, 23);
             this.label12.TabIndex = 67;
@@ -468,7 +470,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtSP.BackColor = System.Drawing.Color.White;
             this.txtSP.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtSP.Location = new System.Drawing.Point(135, 109);
+            this.txtSP.Location = new System.Drawing.Point(135, 134);
             this.txtSP.Name = "txtSP";
             this.txtSP.Size = new System.Drawing.Size(109, 23);
             this.txtSP.TabIndex = 68;
@@ -479,7 +481,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtWKETA.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.txtWKETA.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.txtWKETA.Location = new System.Drawing.Point(114, 46);
+            this.txtWKETA.Location = new System.Drawing.Point(114, 71);
             this.txtWKETA.Name = "txtWKETA";
             this.txtWKETA.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.Any;
             this.txtWKETA.ReadOnly = true;
@@ -549,7 +551,7 @@ namespace Sci.Production.Cutting
             // 
             this.txtMarkerLength.BackColor = System.Drawing.Color.White;
             this.txtMarkerLength.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtMarkerLength.Location = new System.Drawing.Point(135, 412);
+            this.txtMarkerLength.Location = new System.Drawing.Point(135, 437);
             this.txtMarkerLength.Mask = "00Y00-0/0+0\"";
             this.txtMarkerLength.Name = "txtMarkerLength";
             this.txtMarkerLength.Size = new System.Drawing.Size(114, 23);
@@ -557,9 +559,29 @@ namespace Sci.Production.Cutting
             this.txtMarkerLength.TextMaskFormat = System.Windows.Forms.MaskFormat.IncludePromptAndLiterals;
             this.txtMarkerLength.Validating += new System.ComponentModel.CancelEventHandler(this.TxtMarkerLength_Validating);
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.label1.Location = new System.Drawing.Point(9, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(102, 23);
+            this.label1.TabIndex = 73;
+            this.label1.Text = "Seq";
+            // 
+            // txtSeq
+            // 
+            this.txtSeq.BackColor = System.Drawing.Color.White;
+            this.txtSeq.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.txtSeq.Location = new System.Drawing.Point(114, 9);
+            this.txtSeq.Name = "txtSeq";
+            this.txtSeq.Size = new System.Drawing.Size(96, 23);
+            this.txtSeq.TabIndex = 74;
+            // 
             // P02_ActionCutRef
             // 
             this.ClientSize = new System.Drawing.Size(739, 477);
+            this.Controls.Add(this.txtSeq);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtMarkerLength);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.gridDistributeToSP);
@@ -632,6 +654,8 @@ namespace Sci.Production.Cutting
             this.Controls.SetChildIndex(this.gridDistributeToSP, 0);
             this.Controls.SetChildIndex(this.label21, 0);
             this.Controls.SetChildIndex(this.txtMarkerLength, 0);
+            this.Controls.SetChildIndex(this.label1, 0);
+            this.Controls.SetChildIndex(this.txtSeq, 0);
             ((System.ComponentModel.ISupportInitialize)(this.gridPatternPanel)).EndInit();
             this.cmsPatternPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.patternpanelbs)).EndInit();
@@ -693,5 +717,7 @@ namespace Sci.Production.Cutting
         private System.Windows.Forms.ToolStripMenuItem MenuItemInsertDistribute;
         private System.Windows.Forms.ToolStripMenuItem MenuItemDeleteDistribute;
         private TxtMarkerLength txtMarkerLength;
+        private Win.UI.Label label1;
+        private Win.UI.TextBox txtSeq;
     }
 }
