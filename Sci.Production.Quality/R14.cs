@@ -96,6 +96,7 @@ namespace Sci.Production.Quality
                 {
                     this.sqlWherelist.Add("sii.Shift = @Shift");
                 }
+
                 this.lisSqlParameter.Add(new SqlParameter("@Shift", this.comboShift.SelectedValue));
             }
 
@@ -302,12 +303,14 @@ namespace Sci.Production.Quality
                 )size
                 outer apply
                 (
-	                select val = stuff((select concat(';',tmp.Roll)
-	                from
-	                (
-                        select Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
-	                ) 
-	                tmp for xml path('')),1,1,'')
+                    select val = stuff((select concat(';','(' + tmp.Roll + ')(' + tmp.Dyelot + ')(' + Seq1 + ' ' + tmp.Seq2 + ')')
+                    from
+                    (
+                        select sif.Roll, sid.Dyelot, sid.Seq1, sid.Seq2 from SpreadingInspection_InsCutRef_Fabric sif
+                        Left join SciProduction_Issue_Detail sid on sid.Ukey = sif.IssueDetailUkey
+                        where sif.SpreadingInspectionInsCutRefUkey = si.Ukey
+                    ) 
+                    tmp for xml path('')),1,1,'')
                 )FabricRoll
                 {this.strSQLWhere}
                 Group by pms_wo.FactoryID,m.CutNo,oui.[ouiCutRef],si.CutRef,soc.[count],sic.[count],RFT.val,sii.Shift,SP.val,sty.StyleID,m.MarkerNo,pms_f.[Description]
@@ -373,7 +376,7 @@ namespace Sci.Production.Quality
                 outer apply( select [count] = count(*) from SpreadingInspection_InsCutRef where  si.ID = ID  ) sic
                 outer apply 
                 (
-	                select distinct  w.ID,FactoryID,SCIRefno,MDivisionId
+	                select distinct  w.ID,FactoryID,SCIRefno,MDivisionId,w.Ukey
 	                from SciProduction_WorkOrderForOutput w 
 	                left join SpreadingInspection_OriCutRef so with(nolock) on  w.Ukey = so.WorkOrderForOutputUkey
 	                where so.id = si.id
@@ -449,12 +452,14 @@ namespace Sci.Production.Quality
                 )size
                 outer apply
                 (
-                select val = stuff((select concat(';',tmp.Roll)
-                from
-                (
-                    select Roll from SpreadingInspection_InsCutRef_Fabric where SpreadingInspectionInsCutRefUkey = si.Ukey
-                ) 
-                tmp for xml path('')),1,1,'')
+                    select val = stuff((select concat(';','(' + tmp.Roll + ')(' + tmp.Dyelot + ')(' + Seq1 + ' ' + tmp.Seq2 + ')')
+                    from
+                    (
+                        select sif.Roll, sid.Dyelot, sid.Seq1, sid.Seq2 from SpreadingInspection_InsCutRef_Fabric sif
+                        Left join SciProduction_Issue_Detail sid on sid.Ukey = sif.IssueDetailUkey
+                        where sif.SpreadingInspectionInsCutRefUkey = si.Ukey
+                    ) 
+                    tmp for xml path('')),1,1,'')
                 )FabricRoll
                 outer apply
                 (
