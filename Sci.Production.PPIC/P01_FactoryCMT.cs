@@ -91,7 +91,7 @@ select  [SubProcessCPU] = Round(@subProcessCPU,3),
             this.numSubProcessAMT.Value = MyUtility.Convert.GetDecimal(drSubprocessCost["SubProcessAMT"]);
             this.numSubProcessCPU.Value = MyUtility.Convert.GetDecimal(drSubprocessCost["SubProcessCPU"]);
             this.CalculatedLocalCMT();
-            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(((this.numSewingCPU.Value + this.numSubProcessCPU.Value) * this.numCPUCost.Value) + this.numSubProcessAMT.Value + this.numLocalPurchase.Value), 3);
+            this.numStdFtyCMP.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(((this.numSewingCPU.Value + this.numSubProcessCPU.Value) * this.numCPUCost.Value) + this.numSubProcessAMT.Value + this.numLocalPurchase.Value), 2);
         }
 
         private void Init()
