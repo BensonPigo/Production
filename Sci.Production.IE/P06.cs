@@ -564,6 +564,7 @@ delete LineMappingBalancing_NotHitTargetReason where ID = '{this.CurrentMaintain
             {
                 dr["ID"] = DBNull.Value;
                 dr["Ukey"] = DBNull.Value;
+                dr["MachineID"] = string.Empty;
             }
 
             this.CurrentMaintain["Status"] = "New";
@@ -878,7 +879,7 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             DataGridViewGeneratorTextColumnSettings colOperator_ID = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings colOperator_Name = new DataGridViewGeneratorTextColumnSettings();
             DataGridViewGeneratorTextColumnSettings operation = new DataGridViewGeneratorTextColumnSettings();
-            DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
+            //DataGridViewGeneratorTextColumnSettings setMachineID = new DataGridViewGeneratorTextColumnSettings();
 
             DataGridViewGeneratorNumericColumnSettings percentage = new DataGridViewGeneratorNumericColumnSettings();
 
@@ -1589,30 +1590,6 @@ where   FactoryID = '{this.CurrentMaintain["FactoryID"]}' and
             };
             #endregion
 
-            setMachineID.EditingMouseDown += (s, e) =>
-            {
-                if (this.EditMode && e.Button == MouseButtons.Right)
-                {
-                    string sqlGetMachine = $@"
-select MachineID =  m.id
-from Machine.dbo.Machine m with (nolock)
-inner join Machine.dbo.MachineLocation ml with (nolock) on ml.ID = m.MachineLocationID and ml.MDivisionID = m.LocationM
-where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
-";
-
-                    SelectItem popupMachineID = new SelectItem(sqlGetMachine, "20", null, null, null, null);
-
-                    DialogResult dialogResult = popupMachineID.ShowDialog(this);
-                    if (dialogResult == DialogResult.Cancel)
-                    {
-                        return;
-                    }
-
-                    this.CurrentDetailData["MachineID"] = popupMachineID.GetSelecteds()[0]["MachineID"].ToString();
-                    this.CurrentDetailData.EndEdit();
-                }
-            };
-
             this.Helper.Controls.Grid.Generator(this.detailgrid)
                .Text("No", header: "No", width: Widths.AnsiChars(4), iseditingreadonly: true)
                .CheckBox("Selected", string.Empty, trueValue: true, falseValue: false, iseditable: true, settings: colSelected)
@@ -1632,7 +1609,7 @@ where ml.FactoryID='{Env.User.Factory}' and m.Junk = 0 and m.Status = 'Good'
                .Numeric("SewerDiffPercentageDesc", header: "%", width: Widths.AnsiChars(5), iseditingreadonly: false, settings: percentage)
                .CellThreadComboID("ThreadComboID", "Thread" + Environment.NewLine + "Combination", this, width: Widths.AnsiChars(10))
                .EditText("Notice", header: "Notice", width: Widths.AnsiChars(40))
-               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true, settings: setMachineID);
+               .Text("MachineID", header: "Machine ID", width: Widths.AnsiChars(20), iseditingreadonly: true);
 
             this.Helper.Controls.Grid.Generator(this.gridCentralizedPPALeft)
                .MaskedText("No", "##", header: "PPA No.", width: Widths.AnsiChars(4), settings: colPPANo)
