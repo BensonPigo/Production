@@ -26,7 +26,7 @@ namespace Sci.Production.Cutting
         private CuttingForm form;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq1;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Seq2;
-        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID; // P09 才有
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNoID;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID; // P09 才有
         private DataTable dtAllSEQ_FabricCode;
 #pragma warning restore SA1600 // Elements should be documented
@@ -43,7 +43,6 @@ namespace Sci.Production.Cutting
         {
             this.InitializeComponent();
 
-            this.panel_P09.Visible = form == CuttingForm.P09;
             this.Text = form.ToString() + ". Batch Assign";
             this.ID = id;
             this.form = form;
@@ -134,6 +133,7 @@ namespace Sci.Production.Cutting
                 .Date("Fabeta", header: "Fabric Arr Date", width: Widths.AnsiChars(10), iseditingreadonly: true)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
+                .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNoID)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .MarkerNo("MarkerNo", "Pattern No.", Ict.Win.Widths.AnsiChars(12), this.CanEditData)
                 ;
@@ -219,12 +219,9 @@ namespace Sci.Production.Cutting
                     dr["CutCellID"] = this.txtCell.Text;
                 }
 
-                if (this.form == CuttingForm.P09)
+                if (this.chkSpreadingNo.Checked)
                 {
-                    if (this.chkSpreadingNo.Checked)
-                    {
-                        dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
-                    }
+                    dr["SpreadingNoID"] = this.txtSpreadingNo.Text;
                 }
             }
 
@@ -298,11 +295,11 @@ namespace Sci.Production.Cutting
                 detaildr["Seq1"] = dr["Seq1"];
                 detaildr["Seq2"] = dr["Seq2"];
                 detaildr["CutCellID"] = dr["CutCellID"];
+                detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
 
                 if (this.form == CuttingForm.P09)
                 {
                     detaildr["CutNo"] = dr["CutNo"];
-                    detaildr["SpreadingNoID"] = dr["SpreadingNoID"];
                 }
 
                 if (this.form == CuttingForm.P02)
@@ -381,10 +378,7 @@ namespace Sci.Production.Cutting
             ConfigureSeqColumnEvents(this.col_Seq2, this.gridBatchAssign, this.CanEditData);
 
             BindGridCutCell(this.col_CutCellID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
-            if (this.form == CuttingForm.P09)
-            {
-                BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
-            }
+            BindGridSpreadingNo(this.col_SpreadingNoID, this.gridBatchAssign, this.CanEditNotWithUseCutRefToRequestFabric);
         }
         #endregion
 

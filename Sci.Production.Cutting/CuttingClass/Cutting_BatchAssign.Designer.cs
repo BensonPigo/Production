@@ -291,7 +291,7 @@
             this.panel_P09.Name = "panel_P09";
             this.panel_P09.Size = new System.Drawing.Size(278, 29);
             this.panel_P09.TabIndex = 75;
-            this.panel_P09.Visible = false;
+            this.panel_P09.Visible = true;
             // 
             // label5
             // 
