@@ -167,7 +167,7 @@ UPDATE p
 	 SET p.SewingQty = SewingQty.val
 		, p.BIInsertDate = GETDATE()
 FROM P_FabricStatus_And_IssueFabricTracking p
-INNER JOIN Mainserver.Production.dbo.Orders o ON p.[SP] = o.id
+INNER JOIN Production.dbo.Orders o ON p.[SP] = o.id
 OUTER APPLY
 (
 	SELECT 
@@ -179,10 +179,10 @@ OUTER APPLY
 			oq.SizeCode,
 			sl.Location AS ComboType,
 			val = sum(ISNULL(sdd.QAQty, 0))
-		FROM Mainserver.Production.dbo.Orders oop WITH (NOLOCK) 
-		INNER JOIN Mainserver.Production.dbo.Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
-		INNER JOIN Mainserver.Production.dbo.Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
-		LEFT JOIN Mainserver.Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+		FROM Production.dbo.Orders oop WITH (NOLOCK) 
+		INNER JOIN Production.dbo.Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
+		INNER JOIN Production.dbo.Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
+		LEFT JOIN Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
 			ON sdd.OrderId = oop.ID 
 			AND sdd.Article = oq.Article 
 			AND sdd.SizeCode = oq.SizeCode 
