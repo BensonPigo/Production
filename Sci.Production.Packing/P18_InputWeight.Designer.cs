@@ -31,6 +31,7 @@
             this.numWeight = new Sci.Win.UI.NumericBox();
             this.lbWeight = new Sci.Win.UI.Label();
             this.btn_Save = new Sci.Win.UI.Button();
+            this.btnReadWeight = new Sci.Win.UI.Button();
             this.SuspendLayout();
             // 
             // numWeight
@@ -71,11 +72,22 @@
             this.btn_Save.UseVisualStyleBackColor = true;
             this.btn_Save.Click += new System.EventHandler(this.Btn_Save_Click);
             // 
+            // btnReadWeight
+            // 
+            this.btnReadWeight.Location = new System.Drawing.Point(106, 51);
+            this.btnReadWeight.Name = "btnReadWeight";
+            this.btnReadWeight.Size = new System.Drawing.Size(111, 30);
+            this.btnReadWeight.TabIndex = 115;
+            this.btnReadWeight.Text = "Read Weight";
+            this.btnReadWeight.UseVisualStyleBackColor = true;
+            this.btnReadWeight.Click += new System.EventHandler(this.BtnReadWeight_Click);
+            // 
             // P18_InputWeight
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(321, 93);
+            this.Controls.Add(this.btnReadWeight);
             this.Controls.Add(this.btn_Save);
             this.Controls.Add(this.numWeight);
             this.Controls.Add(this.lbWeight);
@@ -92,5 +104,6 @@
         private Win.UI.NumericBox numWeight;
         private Win.UI.Label lbWeight;
         private Win.UI.Button btn_Save;
+        private Win.UI.Button btnReadWeight;
     }
 }
