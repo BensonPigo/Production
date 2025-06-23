@@ -18,9 +18,8 @@ namespace Sci.Production.Packing
     internal class PackingPrintBarcode
     {
         /// <inheritdoc/>
-        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        public DualResult PrintBarcode(string packingID, string ctn1, string ctn2, out DataTable printData, string print_type = "", bool country = false)
         {
-            DataTable printData;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
             {
@@ -262,9 +261,8 @@ namespace Sci.Production.Packing
         }
 
         /// <inheritdoc/>
-        public DualResult PrintBarcodeOtherSize(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        public DualResult PrintBarcodeOtherSize(string packingID, string ctn1, string ctn2, out DataTable printData, string print_type = "", bool country = false)
         {
-            DataTable printData;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
             {
@@ -374,13 +372,13 @@ namespace Sci.Production.Packing
         /// <param name="packingID">packingID</param>
         /// <param name="ctn1">ctn1</param>
         /// <param name="ctn2">ctn2</param>
+        /// <param name="printData">printData</param>
         /// <param name="print_type">print_type</param>
         /// <param name="country">country</param>
         /// <param name="selectType">selectType</param>
         /// <returns>DualResult</returns>
-        public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false, int selectType = 0)
+        public DualResult PrintQRcode(string packingID, string ctn1, string ctn2, out DataTable printData, string print_type = "", bool country = false, int selectType = 0)
         {
-            DataTable printData;
             int pageItemCount = 1;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
@@ -499,9 +497,8 @@ namespace Sci.Production.Packing
         }
 
         /// <inheritdoc/>
-        public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, string print_type = "", bool country = false)
+        public DualResult PrintCustCTN(string packingID, string ctn1, string ctn2, out DataTable printData, string print_type = "", bool country = false)
         {
-            DataTable printData;
             DualResult result = PublicPrg.Prgs.PackingBarcodePrint(MyUtility.Convert.GetString(packingID), ctn1, ctn2, out printData);
             if (!result)
             {

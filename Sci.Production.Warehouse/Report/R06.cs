@@ -185,6 +185,11 @@ where (a.Status ='Received' or a.Status = 'Confirmed')
                 }
             }
 
+            if (!MyUtility.Check.Empty(this.txtSP1) || !MyUtility.Check.Empty(this.txtSP2))
+            {
+                sqlCmd.Append(string.Format($@" and a.OrderID >= '{this.txtSP1.Text.PadRight(10, '0').ToString()}' and a.OrderID <= '{this.txtSP2.Text.PadRight(10, 'Z').ToString()}' "));
+            }
+
             if (!MyUtility.Check.Empty(this.mdivisionid))
             {
                 sqlCmd.Append(" and A.MDivisionid = @mdivision");

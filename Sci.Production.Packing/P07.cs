@@ -169,7 +169,7 @@ select 1 as selected,* from tmpPackingData where NOT EXISTS (select 1 from Multi
             {
                 foreach (DataRow dr in selectList)
                 {
-                    DualResult result = new PackingPrintBarcode().PrintBarcodeOtherSize(MyUtility.Convert.GetString(dr["ID"]), string.Empty, string.Empty);
+                    DualResult result = new PackingPrintBarcode().PrintBarcodeOtherSize(MyUtility.Convert.GetString(dr["ID"]), string.Empty, string.Empty, out DataTable printData);
                     if (!result)
                     {
                         this.HideWaitMessage();
