@@ -223,7 +223,6 @@ namespace Sci.Production.PPIC
 
             this.displaySampleReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_reMakeSample' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["SampleReason"])));
             this.displayUpdateDeliveryReason.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Order_BuyerDelivery' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["KPIChangeReason"])));
-            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format(@"select Name from Style_SpecialMark sp WITH(NOLOCK) where exists (select 1 from Style s WITH(NOLOCK) where s.Ukey = '{0}' and sp.ID = s.SpecialMark and sp.BrandID = s.BrandID) and sp.Junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"])));
             this.numCPUAmt.Value = MyUtility.Math.Round(MyUtility.Convert.GetDecimal(this.CurrentMaintain["CPU"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["CPUFactor"]) * MyUtility.Convert.GetDecimal(this.CurrentMaintain["Qty"]), 3);
             this.displayMTLCmpltSP.Value = MyUtility.Convert.GetString(this.CurrentMaintain["MTLComplete"]).ToUpper() == "TRUE" ? "Y" : string.Empty;
             this.displayOutstandingReason2.Value = MyUtility.GetValue.Lookup(string.Format("select Name from Reason WITH (NOLOCK) where ReasonTypeID = 'Delivery_OutStand' and ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["OutstandingReason"])));
@@ -233,69 +232,7 @@ namespace Sci.Production.PPIC
             this.checkOrganicCotton.Checked = isOrganicCotton;
 
             #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
-            string sqlCmd = string.Format(
-                @"
-select s.Description
-    , s.ExpectionForm
-    , s.FTYRemark
-    , s.ApvDate
-    , s.ExpectionFormRemark 
-    , [ProductType] = r2.Name
-	, [FabricType] = r1.Name
-	, s.Lining
-	, s.Gender
-	, [Construction] = d1.Name
-    , s.CDCodeNew
-    , [NewCO]  = iif(s.NewCO ='2','True','False')
-    , s.TeamWear
-from Style s WITH (NOLOCK) 
-left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
-left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
-left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
-where s.Ukey = '{0}'",
-                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
-            if (MyUtility.Check.Seek(sqlCmd, out DataRow styleData))
-            {
-                this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
-                this.checkExceptionForm.Value = MyUtility.Convert.GetString(styleData["ExpectionForm"]);
-                this.editFtyRemark.Text = MyUtility.Convert.GetString(styleData["FTYRemark"]);
-                this.displayCDCodeNew.Text = MyUtility.Convert.GetString(styleData["CDCodeNew"]);
-                this.chbStyleCarryover.Value = MyUtility.Convert.GetString(styleData["NewCO"]);
-                if (MyUtility.Check.Empty(styleData["ApvDate"]))
-                {
-                    this.dateStyleApv.Value = null;
-                }
-                else
-                {
-                    this.dateStyleApv.Value = MyUtility.Convert.GetDate(styleData["ApvDate"]);
-                }
-
-                if (MyUtility.Check.Empty(styleData["ExpectionFormRemark"]))
-                {
-                    this.btnExpectionFormRemark.Enabled = false;
-                }
-                else
-                {
-                    this.btnExpectionFormRemark.Enabled = true;
-                }
-
-                this.displayProductType.Value = styleData["ProductType"].ToString();
-                this.displayFabricType.Value = styleData["FabricType"].ToString();
-                this.displayLining.Value = styleData["Lining"].ToString();
-                this.displayGender.Value = styleData["Gender"].ToString();
-                this.displayConstruction.Value = styleData["Construction"].ToString();
-                this.checkTeamWear.Checked = MyUtility.Convert.GetBool(styleData["TeamWear"]);
-            }
-            else
-            {
-                this.btnExpectionFormRemark.Enabled = false;
-                this.displayDescription.Value = string.Empty;
-                this.checkExceptionForm.Value = "false";
-                this.editFtyRemark.Text = string.Empty;
-                this.dateStyleApv.Value = null;
-                this.checkTeamWear.Checked = false;
-            }
-
+            this.ShowStyleRelationValue();
             #endregion
             #region 填Buyer欄位值, 修改Special id1, Special id2, Special id3顯示值
             if (MyUtility.Check.Seek(string.Format("select ID,Customize1,Customize2,Customize3,BuyerID from Brand WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["BrandID"])), out DataRow brandData))
@@ -315,7 +252,7 @@ where s.Ukey = '{0}'",
 
             #endregion
             #region 填PO SMR, PO Handle欄位值
-            sqlCmd = string.Format("select PCSMR,POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
+            string sqlCmd = string.Format("select PCSMR,POSMR,POHandle,PCHandle from PO WITH (NOLOCK) where ID = '{0}'", MyUtility.Convert.GetString(this.CurrentMaintain["POID"]));
             if (MyUtility.Check.Seek(sqlCmd, out DataRow pOData))
             {
                 this.txttpeuser3.DisplayBox1Binding = MyUtility.Convert.GetString(pOData["POSMR"]);
@@ -902,6 +839,8 @@ WHERE o.ID='{this.CurrentMaintain["ID"]}'
                         this.SetStyleColumn(this.txtStyle.Text);
                     }
                 }
+
+                this.ShowStyleRelationValue();
             }
 
             this.chkpopup = false;
@@ -2015,6 +1954,95 @@ FROM (
             sqlcmd = "select 1 from View_SewingOutput_FarmInOutDate where OrderId = @ID";
             dr = DBProxy.Current.SeekEx(sqlcmd, "@ID", this.CurrentMaintain["ID"].ToString()).ExtendedData;
             this.btnSubconGarmentWash.ForeColor = dr != null ? Color.Blue : Color.Black;
+        }
+
+        private void ShowStyleRelationValue()
+        {
+            if (string.IsNullOrWhiteSpace(this.CurrentMaintain["StyleID"].ToString()))
+            {
+                this.displayCDCodeNew.Text = string.Empty;
+                this.chbStyleCarryover.Value = string.Empty;
+                this.btnExpectionFormRemark.Enabled = false;
+                this.displayDescription.Value = string.Empty;
+                this.checkExceptionForm.Value = "false";
+                this.editFtyRemark.Text = string.Empty;
+                this.dateStyleApv.Value = null;
+                this.checkTeamWear.Checked = false;
+                this.displayProductType.Value = string.Empty;
+                this.displayFabricType.Value = string.Empty;
+                this.displayLining.Value = string.Empty;
+                this.displayGender.Value = string.Empty;
+                this.displayConstruction.Value = string.Empty;
+                return;
+            }
+
+            #region 填Description, Exception Form, Fty Remark, Style Apv欄位值
+            string sqlCmd = string.Format(
+                @"
+select s.Description
+    , s.ExpectionForm
+    , s.FTYRemark
+    , s.ApvDate
+    , s.ExpectionFormRemark 
+    , [ProductType] = r2.Name
+	, [FabricType] = r1.Name
+	, s.Lining
+	, s.Gender
+	, [Construction] = d1.Name
+    , s.CDCodeNew
+    , [NewCO]  = iif(s.NewCO ='2','True','False')
+    , s.TeamWear
+from Style s WITH (NOLOCK) 
+left join DropDownList d1 WITH(NOLOCK) on d1.type= 'StyleConstruction' and d1.ID = s.Construction
+left join Reason r1 WITH(NOLOCK) on r1.ReasonTypeID= 'Fabric_Kind' and r1.ID = s.FabricType
+left join Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
+where s.Ukey = '{0}'",
+                MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"]));
+            if (MyUtility.Check.Seek(sqlCmd, out DataRow styleData))
+            {
+                this.displayDescription.Value = MyUtility.Convert.GetString(styleData["Description"]);
+                this.checkExceptionForm.Value = MyUtility.Convert.GetString(styleData["ExpectionForm"]);
+                this.editFtyRemark.Text = MyUtility.Convert.GetString(styleData["FTYRemark"]);
+                this.displayCDCodeNew.Text = MyUtility.Convert.GetString(styleData["CDCodeNew"]);
+                this.chbStyleCarryover.Value = MyUtility.Convert.GetString(styleData["NewCO"]);
+                if (MyUtility.Check.Empty(styleData["ApvDate"]))
+                {
+                    this.dateStyleApv.Value = null;
+                }
+                else
+                {
+                    this.dateStyleApv.Value = MyUtility.Convert.GetDate(styleData["ApvDate"]);
+                }
+
+                if (MyUtility.Check.Empty(styleData["ExpectionFormRemark"]))
+                {
+                    this.btnExpectionFormRemark.Enabled = false;
+                }
+                else
+                {
+                    this.btnExpectionFormRemark.Enabled = true;
+                }
+
+                this.displayProductType.Value = styleData["ProductType"].ToString();
+                this.displayFabricType.Value = styleData["FabricType"].ToString();
+                this.displayLining.Value = styleData["Lining"].ToString();
+                this.displayGender.Value = styleData["Gender"].ToString();
+                this.displayConstruction.Value = styleData["Construction"].ToString();
+                this.checkTeamWear.Checked = MyUtility.Convert.GetBool(styleData["TeamWear"]);
+            }
+            else
+            {
+                this.btnExpectionFormRemark.Enabled = false;
+                this.displayDescription.Value = string.Empty;
+                this.checkExceptionForm.Value = "false";
+                this.editFtyRemark.Text = string.Empty;
+                this.dateStyleApv.Value = null;
+                this.checkTeamWear.Checked = false;
+            }
+
+            #endregion
+
+            this.displaySpecialMark.Value = MyUtility.GetValue.Lookup(string.Format(@"select Name from Style_SpecialMark sp WITH(NOLOCK) where exists (select 1 from Style s WITH(NOLOCK) where s.Ukey = '{0}' and sp.ID = s.SpecialMark and sp.BrandID = s.BrandID) and sp.Junk = 0", MyUtility.Convert.GetString(this.CurrentMaintain["StyleUkey"])));
         }
     }
 }
