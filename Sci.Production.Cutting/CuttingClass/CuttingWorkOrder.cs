@@ -459,7 +459,7 @@ RegexOptions.Compiled);
                                     throw new Exception("Marker Length format does not match the spec." + Environment.NewLine + "Correct example: 09Y04-7/8+1\"");
                                 }
 
-                                layerYDS += MarkerLengthToYds(markerLength);
+                                layerYDS = MarkerLengthToYds(markerLength);
                             }
 
                             break;
@@ -486,7 +486,7 @@ RegexOptions.Compiled);
                     string seqCutRefno = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 2, markerRow);
                     string tone = this.GetSubRangeCellValue(data, subRangeBaseRow, subRangeBaseCol, 3, markerRow);
                     int garmentCount = dicSizeRatio.Sum(s => s.Value);
-                    decimal consPC = garmentCount == 0 ? 0 : layerYDS / garmentCount;
+                    decimal consPC = garmentCount == 0 ? 0 : Math.Round(layerYDS / garmentCount, 4);
 
                     workOrder.ConsPC = consPC;
                     workOrder.ExcelLayer = totalLayer;
