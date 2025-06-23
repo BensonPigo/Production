@@ -329,6 +329,13 @@ where Junk = 0 and Environment = 'Formal'", "Production");
 ---- 只保留十天內的資料，全刪除之後再重新轉
 Delete p
 from POWERBIReportData.dbo.P_RTLStatusByDay p
+left join #tmp t on t.TransferDate = p.TransferDate and t.FactoryID = p.FactoryID
+where t.TransferDate is null
+
+UPDATE a
+SET  a.CurrentWIPDays	= isnull( b.CurrentWIPDays,	0)
+FROM POWERBIReportData.dbo.P_RTLStatusByDay a 
+INNER JOIN #tmp b ON a.TransferDate = b.TransferDate and a.FactoryID = b.FactoryID
 
 
 Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate )
@@ -338,6 +345,11 @@ select TransferDate
     , (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
     , GetDate()
 from #tmp t 
+WHERE NOT EXISTS(
+	SELECT  1
+	FROM POWERBIReportData.dbo.P_RTLStatusByDay a WITH (NOLOCK)
+	WHERE t.TransferDate = a.TransferDate and t.FactoryID = a.FactoryID
+)
 
 if exists (select 1 from BITableInfo b where b.id = 'P_RTLStatusByDay')
 begin
