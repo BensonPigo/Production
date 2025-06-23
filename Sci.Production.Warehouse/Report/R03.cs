@@ -270,6 +270,37 @@ left join Export ex with (nolock) on ex.ID = exd.ID
                 where += $" and wk.wkno like '{this.wkNo2}%'";
             }
 
+            if (this.chkBulk.Checked || this.chkSample.Checked || this.chkMaterial.Checked || this.chkSMTL.Checked || this.chkGarment.Checked)
+            {
+                List<string> categories = new List<string>();
+                if (this.chkBulk.Checked)
+                {
+                    categories.Add("'B'");
+                }
+
+                if (this.chkSample.Checked)
+                {
+                    categories.Add("'S'");
+                }
+
+                if (this.chkMaterial.Checked)
+                {
+                    categories.Add("'M'");
+                }
+
+                if (this.chkSMTL.Checked)
+                {
+                    categories.Add("'T'");
+                }
+
+                if (this.chkGarment.Checked)
+                {
+                    categories.Add("'G'");
+                }
+
+                where += $" and o.Category in ({string.Join(",", categories)})";
+            }
+
             StringBuilder sqlCmd = new StringBuilder();
             sqlCmd.Append($@"
 --輔料們
@@ -522,7 +553,11 @@ select  f.MDivisionID
         ,style = si.StyleID
 		,o.BrandID
         ,PSD.FinalETD
+        ,WkShipMode.ShipModeID
+        ,[ActETD]=PSD.CFMETD
 		,[ActETA]=PSD.FinalETA
+        ,[Sup Delivery Rvsd ShipMode]=PSD.ShipModeID
+        ,[Sup Delivery Rvsd ETD]=PSD.RevisedETD
 		,[Sup Delivery Rvsd ETA]=PSD.RevisedETA
 		,[Category]=o.Category
         ,supp = concat(PS.suppid,'-',S.NameEN )
@@ -694,6 +729,12 @@ select wkno = stuff((
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and acc.Color = psdsC.SpecValue and acc.SuppID = ps.SuppID and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.Color = psdsC.SpecValue and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F' 
 left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue and psd.Seq1 = thread.Seq1
+outer apply(
+	select distinct ex.ShipModeID
+	from Export_Detail exd with (nolock) 
+    inner join Export ex with (nolock) on ex.ID = exd.ID
+	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+)WkShipMode
 Where 1=1
 {where}
 ");
@@ -815,15 +856,15 @@ Where 1=1
 
             if (this.chkSeparateByWK.Checked)
             {
-                objApp.Sheets[1].Cells[1, 50].Value = "WK No.";
-                objApp.Sheets[1].Cells[1, 51].Value = "WK ETA";
-                objApp.Sheets[1].Cells[1, 52].Value = "WK Arrive W/H Date";
-                objApp.Sheets[1].Cells[1, 53].Value = "WK ShipQty";
-                objApp.Sheets[1].Cells[1, 54].Value = "WK F.O.C";
+                objApp.Sheets[1].Cells[1, 54].Value = "WK No.";
+                objApp.Sheets[1].Cells[1, 55].Value = "WK ETA";
+                objApp.Sheets[1].Cells[1, 56].Value = "WK Arrive W/H Date";
+                objApp.Sheets[1].Cells[1, 57].Value = "WK ShipQty";
+                objApp.Sheets[1].Cells[1, 58].Value = "WK F.O.C";
             }
             else
             {
-                for (int colIndex = 54; colIndex >= 50; colIndex--)
+                for (int colIndex = 58; colIndex >= 54; colIndex--)
                 {
                     Excel.Range column = objApp.Columns[colIndex];
                     column.Delete();
