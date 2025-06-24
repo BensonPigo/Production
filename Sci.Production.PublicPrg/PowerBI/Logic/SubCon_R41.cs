@@ -407,22 +407,16 @@ where r.[Cut Ref#] <> ''
 group by r.[Cut Ref#],r.M
 
 select
-    [Bundleno] = isnull(r.[Bundleno],'') ,
+ [Bundleno] = isnull(r.[Bundleno],'') ,
     [RFIDProcessLocationID] = isnull(r.[RFIDProcessLocationID],''),
 	[EXCESS] = isnull(r.[EXCESS],''),
 	[FabricKind] = isnull(r.[FabricKind],''),
     [CutRef] = isnull(r.[Cut Ref#],'') ,
-    [SP] = STUFF((
-        SELECT ',' + ISNULL(r2.[SP#], '')
-        FROM #result r2
-        WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] 
-        and r2.Artwork = r.Artwork and r2.Size = r.Size
-        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
-    ),
+    [SP] = ISNULL(SP.val,''),
     [MasterSP] = isnull(r.[Master SP#],''),
     [M] = isnull(r.[M],''),
     [Factory] = isnull(r.[Factory],''),
-	[Category] = isnull(r.[Category],''),
+	[Category] = isnull(category.val,''),
 	[Program] = isnull(r.[Program],''),
     [Style] = isnull(r.[Style],''),
     [Season] = isnull(r.[Season],''),
@@ -446,17 +440,13 @@ select
     [NoBundleCardAfterSubprocess] = isnull(r.[No Bundle Card After Subprocess],''),
     [Location] = isnull(r.LocationID,''),
     [BundleCreateDate] = r.Cdate,
-    [BuyerDeliveryDate] = r.[BuyerDelivery],
+    [BuyerDeliveryDate] = BuyerDelivery.val,
     [SewingInline] = r.[SewInLine],
     [SubprocessQAInspectionDate] = r.[InspectionDate],
     [InTime] = r.[InComing],
     [OutTime] = r.[Out (Time)],
-    [POSupplier] = isnull(r.[POSupplier],''),
-    [AllocatedSubcon] = STUFF((
-    SELECT ',' + r2.[AllocatedSubcon]
-    FROM #result r2
-    WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] and r2.Artwork = r.Artwork and r2.Size = r.Size
-    FOR XML PATH('')), 1, 1, ''),
+    [POSupplier] = isnull([POSupplier].val,''),
+    [AllocatedSubcon] = [AllocatedSubcon].val,
 	[AvgTime] = isnull(r.AvgTime,0),
     [TimeRange] = case	when TimeRangeFail <> '' then TimeRangeFail
                         when AvgTime < 0 then 'Not Valid'
@@ -486,14 +476,75 @@ left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and
                                 tsi.Article = r.[Article]     and
                                 tsi.SizeCode  = r.[Size]   and
                                 (tsi.ComboType = r.BundleLocation or tsi.ComboType = r.Pattern)
+outer apply(
+	select val = Stuff((
+		select concat(',',Category)
+		from (
+				select 	distinct Category
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) category
+outer apply(
+	select val = Stuff((
+		select concat(',',[SP#])
+		from (
+				select 	distinct [SP#]
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+				and s.[Sub-process] = r.[Sub-process]
+				and s.Artwork = r.Artwork 
+				and s.Size = r.Size
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) SP
+outer apply(
+	select val = Stuff((
+		select concat(',',val)
+		from (
+				select 	distinct val= case when isnull([POSupplier],'') != '' then CONCAT('(',[SP#],')','(',[POSupplier],')')
+				else '' end
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) POSupplier
+outer apply(
+	select val = Stuff((
+		select concat(',',val)
+		from (
+				select 	distinct val= case when isnull(s.BuyerDelivery,'') != '' then CONCAT('(',[SP#],')','(',BuyerDelivery,')')
+				else '' end 
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) BuyerDelivery
+outer apply(
+	select val = Stuff((
+		select concat(',',[AllocatedSubcon])
+		from (
+				select 	distinct [AllocatedSubcon]
+				from dbo.#result s
+				WHERE s.Bundleno = r.Bundleno and s.[Sub-process] = r.[Sub-process] and s.Artwork = r.Artwork and s.Size = r.Size
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) [AllocatedSubcon]
 where 1 = 1 {whereSewDate}
 group by r.Bundleno,
-r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],r.[M],r.[Factory],r.[Category],
+r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],r.[M],r.[Factory],
 r.[Program],r.[Style],r.[Season],r.[Brand],r.[Comb],r.Cutno,r.[Fab_Panel Code],r.[Article],r.[Color],r.[Line],
-r.SewingLineID,r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],r.[Sub-process],
-r.[Post Sewing SubProcess],r.[No Bundle Card After Subprocess],r.LocationID,r.Cdate,r.[BuyerDelivery],
+r.SewingLineID,r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],
+r.[Post Sewing SubProcess],r.[No Bundle Card After Subprocess],r.LocationID,r.Cdate,
 r.[SewInLine],r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.AvgTime,
-gcd.EstCutDate,gcd.CuttingOutputDate,r.Item,r.PanelNo,r.CutCellID,r.SpreadingNo,r.TimeRangeFail
+gcd.EstCutDate,gcd.CuttingOutputDate,r.Item,r.PanelNo,r.CutCellID,r.SpreadingNo,r.TimeRangeFail,
+category.val,SP.val,POSupplier.val,BuyerDelivery.val,r.[Sub-process],[AllocatedSubcon].val
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
