@@ -83,8 +83,9 @@ SET @ErrorMessage = ''
 --06) P_ImportQAInspection_Fty
 BEGIN TRY
 	set @Stime = getdate()
-	set @StartDate = '2020-01-01'
-	EXEC P_ImportQAInspection_Fty @StartDate
+	set @StartDate = FORMAT(DATEADD(day, -7, GETDATE()), 'yyyy/MM/dd')
+	set @EndDate = FORMAT(GETDATE(), 'yyyy/MM/dd')
+	EXEC P_ImportQAInspection_Fty @StartDate,@EndDate
 	set @Etime = getdate()
 END TRY
 
