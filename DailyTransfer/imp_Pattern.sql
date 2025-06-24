@@ -1,4 +1,4 @@
-
+ï»¿
 -- =============================================
 -- Author:		LEO
 -- Create date: 20160903
@@ -13,9 +13,9 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 --Imp_pattern
---ªíÀYPattern
+--è¡¨é ­Pattern
 
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
       a.BrandID	      = isnull(b.BrandID                ,'')
@@ -41,7 +41,7 @@ SET
       ,a.EditName	      = isnull(b.EditName           ,'')
       ,a.EditDate	      =b.EditDate
 from Production.dbo.Pattern as a inner join Trade_To_Pms.dbo.Pattern as b ON a.id=b.id and a.Version=b.Version
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Pattern(
 ID
       ,Version
@@ -97,15 +97,15 @@ select
 from Trade_To_Pms.dbo.Pattern as b WITH (NOLOCK)
 where not exists(select id from Production.dbo.Pattern as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version)
 
---ªí¨­
+--è¡¨èº«
 --Pattern_GL
 
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Pattern_GL
 from Production.dbo.Pattern_GL as a inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 left join Trade_To_Pms.dbo.Pattern_GL as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
       a.PatternUKEY	      = isnull(b.PatternUKEY    ,0)
@@ -121,7 +121,7 @@ SET
 from Production.dbo.Pattern_GL as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 inner join Trade_To_Pms.dbo.Pattern_GL as b ON a.id=b.id and a.Version=b.Version and a.SEQ=b.SEQ
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Pattern_GL(
        ID
       ,Version
@@ -154,16 +154,16 @@ select
 from Trade_To_Pms.dbo.Pattern_GL as b WITH (NOLOCK) inner join Trade_To_Pms.dbo.Pattern as c WITH (NOLOCK) on b.ID=c.ID and b.Version=c.Version
 where not exists(select id from Production.dbo.Pattern_GL as a WITH (NOLOCK) where a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ)
 
---ªí¨­Pattern_GL_LectraCode
+--è¡¨èº«Pattern_GL_LectraCode
 
 
- ----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+ ----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Pattern_GL_LectraCode
 from Production.dbo.Pattern_GL_LectraCode as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 left join Trade_To_Pms.dbo.Pattern_GL_LectraCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  
       a.PatternUKEY	      = isnull(b.PatternUKEY            ,0)
@@ -177,7 +177,7 @@ SET
 from Production.dbo.Pattern_GL_LectraCode as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 inner join Trade_To_Pms.dbo.Pattern_GL_LectraCode as b on a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Pattern_GL_LectraCode(
 ID
       ,Version
@@ -205,14 +205,14 @@ from Trade_To_Pms.dbo.Pattern_GL_LectraCode as b WITH (NOLOCK) inner join Trade_
 where not exists(select id from Production.dbo.Pattern_GL_LectraCode as a WITH (NOLOCK) where  a.id = b.id and a.Version=b.Version and a.SEQ=b.SEQ and a.ArticleGroup=b.ArticleGroup)
 
 
---ªí¨­Pattern_GL_Article
-----------------------§R°£¥DTABLE¦hªº¸ê®Æ
+--è¡¨èº«Pattern_GL_Article
+----------------------åˆªé™¤ä¸»TABLEå¤šçš„è³‡æ–™
 Delete Production.dbo.Pattern_GL_Article
 from Production.dbo.Pattern_GL_Article as a
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 left join Trade_To_Pms.dbo.Pattern_GL_Article as b on a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article
 where b.id is null
----------------------------UPDATE ¥DTABLE¸ò¨Ó·½TABLE ¬°¤@¼Ë(¥DTABLE¦hªº¸Ü °O°_¨Ó ~¨Ó·½TABLE¦hªº¸Ü¤£²z·|)
+---------------------------UPDATE ä¸»TABLEè·Ÿä¾†æºTABLE ç‚ºä¸€æ¨£(ä¸»TABLEå¤šçš„è©± è¨˜èµ·ä¾† ~ä¾†æºTABLEå¤šçš„è©±ä¸ç†æœƒ)
 UPDATE a
 SET  	
       a.PatternUKEY	      = isnull(b.PatternUKEY		,0)
@@ -226,7 +226,7 @@ SET
 from Production.dbo.Pattern_GL_Article as a 
 inner join Trade_To_Pms.dbo.Pattern as c on a.ID=c.ID and a.Version=c.Version
 inner join Trade_To_Pms.dbo.Pattern_GL_Article as b ON a.id = b.id and a.SEQ=b.SEQ and a.Version=b.Version and a.ArticleGroup=b.ArticleGroup and a.Article=b.Article
--------------------------- INSERT INTO §ì
+-------------------------- INSERT INTO æŠ“
 INSERT INTO Production.dbo.Pattern_GL_Article(
 ID
       ,Seq
@@ -299,6 +299,190 @@ SET a.IsBoundedProcess  = isnull(b.Combine,0)
 FROM Production.dbo.SubProcess a WITH (NOLOCK)
 INNER JOIN Production.dbo.Pattern_Annotation_Artwork b  WITH (NOLOCK) ON a.ID=b.ID
 ------------------------------------------------------------------------------------------
+
+------------Order_PatternPanelList--------------------
+--æ‰¾å‡ºã€è£å‰ªæ¯å–®æ¸…å–®ã€‘
+select distinct CuttingSP 
+into #tmpCuttingSP
+from Trade_To_Pms.dbo.orders where EachConsApv is not null
+
+
+--åˆ—å‡ºè£å‰ªæ¯å–®ä¸‹é ˆè¦æ‰¾çš„ã€è‰²çµ„èˆ‡å°ºå¯¸ã€‘æ¸…å–® 
+SELECT	DISTINCT	o.CuttingSP,
+					oq.Article,
+					oq.SizeCode,
+					[PatternUkey] = cast(0 as BIGINT),
+					[ArticleGroup] = cast('' as varchar(6)),
+					[FabricPanelCode] = cast('' as varchar(2)),
+					[PatternPanel] = cast('' as varchar(2)),
+					o.StyleUkey
+INTO	#tmpOrder_PatternPanelList_step1
+from #tmpCuttingSP cs
+inner join Production.dbo.Orders o with (nolock) on o.CuttingSP = cs.CuttingSP
+inner join Production.dbo.Order_Qty oq with (nolock) on oq.ID = o.ID
+where o.Junk = 0 and o.Category in ('B', 'S')
+
+--æ›´æ–°ã€PatternUkeyã€‘
+SELECT  distinct
+		cs.CuttingSP,
+		[Article] = isnull(oea.Article, ''),
+		oes.SizeCode,
+		[PatternUkey] = p.UKey
+into #tmpPatternUkey
+from #tmpCuttingSP cs
+inner join Production.dbo.Order_EachCons oe with (nolock) on oe.ID = cs.CuttingSP
+inner join Production.dbo.Marker m with (nolock) on m.ID = oe.SMNoticeID and m.Version = oe.MarkerVersion
+left join Production.dbo.Order_EachCons_Article oea with (nolock) on oea.Order_EachConsUkey = oe.Ukey
+inner join Production.dbo.Order_EachCons_SizeQty oes with (nolock) on oes.Order_EachConsUkey = oe.Ukey
+inner join Production.dbo.Pattern p with (nolock) on p.ID = m.PatternID and p.Version = m.PatternVersion
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.Article = topp.Article and tpu.SizeCode = topp.SizeCode
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.Article = '' and tpu.SizeCode = topp.SizeCode
+where topp.PatternUkey = 0
+
+--é‚„æœªå–åˆ°PatternUkeyè³‡æ–™ï¼Œå¾Production.dbo.GetPatternUkeyå–å¾—
+SELECT	a.StyleUkey,
+		a.CuttingSP,
+		a.SizeCode,
+		[PatternUkey] = PatternUkey.val
+into #tmpFromGetPatternUkey
+from (	select distinct StyleUkey, CuttingSP, SizeCode
+		from #tmpOrder_PatternPanelList_step1 where PatternUkey = 0) a
+inner join Production.dbo.Orders o with (nolock) on o.ID = a.CuttingSP
+outer APPLY (	select top 1 [val] = os.SizeGroup
+				from Production.dbo.Order_SizeCode os with (nolock)
+				where os.ID = o.POID and os.SizeCode = a.SizeCode) SizeGroup
+outer APPLY (	select top 1 [val] = gp.PatternUkey	from Production.dbo.GetPatternUkey(a.CuttingSP, '', '', a.StyleUkey, SizeGroup.val) gp) PatternUkey
+
+update topp set topp.PatternUkey = tpu.PatternUkey
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpFromGetPatternUkey tpu on tpu.CuttingSP = topp.CuttingSP and tpu.SizeCode = topp.SizeCode
+where topp.PatternUkey = 0
+
+--update ArticleGroup drop table #tmpArticleGroup
+--å› ç‚ºåŒä¸€å€‹PatternUkey+Articleæœƒæœ‰å¤šç­†ï¼Œå…ˆæ‰¾ç¬¬ä¸€ç­†å†updateå›temp table
+select	pgl.PatternUKEY,
+		pgl.Article,
+		pgl.ArticleGroup,
+		pgl.SizeRange,
+		[SizeCode] = cast('' as varchar(25))
+into #tmpArticleGroup
+from Production.dbo.Pattern_GL_Article pgl with (nolock)
+where	exists(select 1 from #tmpOrder_PatternPanelList_step1 topp where topp.PatternUkey = pgl.PatternUkey) AND
+		pgl.App in ('', '0') AND
+		pgl.ArticleGroup in (select max(pgl2.ArticleGroup) 
+							from Production.dbo.Pattern_GL_Article pgl2 with (nolock) 
+							where	pgl.PatternUKEY = pgl2.PatternUKEY and pgl.Article = pgl2.Article  AND
+									pgl2.App in ('', '0'))
+
+--å°‡SizeRangeæ‹†åˆ†å¾Œå¡é€²#tmpArticleGroup.Size 
+insert into #tmpArticleGroup(PatternUKEY, Article, ArticleGroup, SizeRange, SizeCode)
+SELECT PatternUKEY, Article, ArticleGroup, SizeRange, SizeCode.Data
+from #tmpArticleGroup t
+outer apply (select * from dbo.SplitString(t.SizeRange, ',')) SizeCode
+where sizerange <> ''
+
+--Aricle Group åŒæ™‚æœ‰æŒ‡å®š Aritcle èˆ‡ Size Range
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.Article = topp.Article and tar.SizeCode = topp.SizeCode
+where tar.SizeCode <> ''
+
+--Aricle Group åªæœ‰æŒ‡å®š Aritcle
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.Article = topp.Article and tar.SizeCode = ''
+where topp.ArticleGroup = ''
+
+--Aricle Group åªæœ‰æŒ‡å®š Size Range
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.SizeCode = topp.SizeCode
+where topp.ArticleGroup = '' and tar.SizeCode <> ''
+
+--Aricle Group éƒ½æ²’æœ‰æŒ‡å®š ( æ²’æœ‰ç‰¹åˆ¥æŒ‡å®šçš„çš†ä½¿ç”¨æ­¤ Article Group )
+UPDATE topp set topp.ArticleGroup = tar.ArticleGroup
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpArticleGroup tar on tar.PatternUKEY = topp.PatternUKEY and tar.Article = '' and tar.SizeCode = ''
+where topp.ArticleGroup = ''
+
+--update FabricPanelCode select * from #tmpFabricPanelCode
+select	distinct	pgl.PatternUKEY,
+					pgl.ArticleGroup,
+					pgl.FabricPanelCode
+into #tmpFabricPanelCode
+from Production.dbo.Pattern_GL_LectraCode pgl with (nolock)
+where	exists(select 1 from #tmpOrder_PatternPanelList_step1 topp where topp.PatternUkey = pgl.PatternUKEY and topp.ArticleGroup = pgl.ArticleGroup) AND
+		pgl.FabricPanelCode like '[A-Z]' and LEN(pgl.FabricPanelCode) = 1
+
+-- å› ç‚ºåŒPatternUKEY, ArticleGroupä¸‹æœƒæœ‰å¤šå€‹FabricPanelCodeï¼Œæ‰€ä»¥ä¸Šé¢å…ˆdistinctå¾Œï¼Œé€™é‚Šé‡æ–°joinç”¢ç”Ÿæœ€çµ‚çš„çµæœ
+SELECT	topp.CuttingSP,
+		topp.Article,
+		topp.SizeCode,
+		topp.PatternUkey,
+		topp.ArticleGroup,
+		tfp.FabricPanelCode,
+		topp.PatternPanel
+into #tmpOrder_PatternPanelList
+from #tmpOrder_PatternPanelList_step1 topp
+inner join #tmpFabricPanelCode tfp on tfp.PatternUKEY = topp.PatternUKEY and tfp.ArticleGroup = topp.ArticleGroup
+
+
+--update PatternPanel 
+UPDATE topp set topp.PatternPanel = oc.PatternPanel
+from #tmpOrder_PatternPanelList topp
+inner join Production.dbo.Order_ColorCombo oc with (nolock) on	oc.ID = topp.CuttingSP and
+																oc.Article = topp.Article and
+																oc.FabricPanelCode = topp.FabricPanelCode and
+																oc.FabricType = 'F'
+
+--æ›´æ–°Order_PatternPanelList select * from #tmpOrder_PatternPanelList
+--delete
+DELETE oppl
+from Order_PatternPanelList oppl
+where	exists(select 1 from #tmpCuttingSP tcs where tcs.CuttingSP = oppl.CuttingSP) AND
+		not exists(select 1 from #tmpOrder_PatternPanelList topp 
+					where oppl.CuttingSP = topp.CuttingSP
+					and oppl.Article = topp.Article
+					and oppl.SizeCode = topp.SizeCode
+					and oppl.PatternUkey = topp.PatternUkey
+					and oppl.ArticleGroup = topp.ArticleGroup
+					and oppl.FabricPanelCode = topp.FabricPanelCode
+					and oppl.PatternPanel = topp.PatternPanel
+					)
+
+insert into Order_PatternPanelList(CuttingSP
+									,Article
+									,SizeCode
+									,FabricPanelCode
+									,PatternPanel
+									,PatternUkey
+									,ArticleGroup)
+SELECT	topp.CuttingSP
+		,topp.Article
+		,topp.SizeCode
+		,topp.FabricPanelCode
+		,topp.PatternPanel
+		,topp.PatternUkey
+		,topp.ArticleGroup
+from #tmpOrder_PatternPanelList topp
+WHERE	not exists(select 1 from Order_PatternPanelList oppl with (nolock) 
+					where oppl.CuttingSP = topp.CuttingSP
+					and oppl.Article = topp.Article
+					and oppl.SizeCode = topp.SizeCode
+					and oppl.PatternUkey = topp.PatternUkey
+					and oppl.ArticleGroup = topp.ArticleGroup
+					and oppl.FabricPanelCode = topp.FabricPanelCode
+					and oppl.PatternPanel = topp.PatternPanel)
+
+
+drop table #tmpCuttingSP, #tmpOrder_PatternPanelList_step1, #tmpOrder_PatternPanelList, #tmpPatternUkey, #tmpFromGetPatternUkey, #tmpFabricPanelCode, #tmpArticleGroup
+------------Order_PatternPanelList END--------------------
 
 END
 
