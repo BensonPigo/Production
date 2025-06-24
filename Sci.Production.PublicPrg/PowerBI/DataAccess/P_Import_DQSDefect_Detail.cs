@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using static System.Windows.Forms.AxHost;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -18,7 +19,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_DQSDefect_Detail(DateTime? sDate)
+        public Base_ViewModel P_DQSDefect_Detail(DateTime? sDate, DateTime? eDate)
         {
             this.DBProxy = new DBProxy()
             {
@@ -32,9 +33,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 sDate = DateTime.Parse(DateTime.Now.Year.ToString());
             }
 
+            if (!eDate.HasValue)
+            {
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+            }
+
             try
             {
-                Base_ViewModel resultReport = this.GetDQSDefect_Detail_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetDQSDefect_Detail_Data((DateTime)sDate, (DateTime)eDate);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -59,16 +65,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetDQSDefect_Detail_Data(DateTime sdate)
+        private Base_ViewModel GetDQSDefect_Detail_Data(DateTime sdate, DateTime edate)
         {
             string sqlcmd = $@" 
 			declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
+            declare @eDate varchar(20) = '{edate.ToString("yyyy/MM/dd")}'
 			select 
 			  fac.Zone
 			, [Brand] = ord.BrandID
 			, [Buyer Delivery Date] = ord.BuyerDelivery
 			, ins.Line
-			, [Factory] = ins.FactoryID
+			, [FactoryID] = ins.FactoryID
 			, ins.Team 
 			, ins.Shift
  			, [PO#] = ord.custpono  
@@ -99,6 +106,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [IsCriticalDefect] = iif(isnull(IsCriticalDefect,0) = 0, '', 'Y')
             , [BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
 			, [BIInsertDate] = GetDate()
+            , [InspectionDetailUkey] = IND.UKEY
 			from [ExtendServer].ManufacturingExecution.dbo.Inspection ins WITH(NOLOCK)
 			inner join Production.dbo.orders ord WITH(NOLOCK) on ins.OrderId=ord.id
 			inner join Production.dbo.Factory fac WITH(NOLOCK) on ins.FactoryID=fac.ID
@@ -109,7 +117,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			outer apply(select name from [ExtendServer].ManufacturingExecution.dbo.pass1 p WITH(NOLOCK) where p.id= ins.EditName) Inspection_fixQC
 			where ins.Adddate >= @sDate
 			and ins.Status <> 'Pass'
-			Order by Zone,[Brand],[Factory],Line,Team,[SP#],Article,[ProductType],Size,[DefectTypeID],[DefectCodeID]
+			Order by Zone,[Brand],[FactoryID],Line,Team,[SP#],Article,[ProductType],Size,[DefectTypeID],[DefectCodeID]
 			";
             Base_ViewModel resultReport = new Base_ViewModel
             {
@@ -139,7 +147,38 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
 				FROM P_DQSDefect_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
-				DELETE T FROM P_DQSDefect_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+                UPDATE P SET
+                 P.[FtyZon]          		  = isnull(T.[Zone],'')
+                ,P.[BrandID]				  = isnull(T.Brand,'')
+                ,P.[BuyerDelivery]			  = T.[Buyer Delivery Date]
+                ,P.[Line]					  = isnull(T.Line,'')
+                ,P.[Team]					  = isnull(T.Team,'')
+                ,P.[Shift]				      = isnull(T.[Shift],'')
+                ,P.[POID]					  = isnull(T.[PO#],'')
+                ,P.[StyleID]				  = isnull(T.Style,'')
+                ,P.[SPNO]					  = isnull(T.[SP#],'')
+                ,P.[Article]				  = isnull(T.Article,'')
+                ,P.[Status]				      = isnull(T.[Status],'')
+                ,P.[FixType]				  = isnull(T.FixType,'') 
+                ,P.[FirstInspectDate]		  = T.[FirstInspectionDate]
+                ,P.[FirstInspectTime]		  = T.[FirstInspectedTime]
+                ,P.[InspectQCName]		      = isnull(T.[Inspected QC],'')
+                ,P.[FixedTime]			      = isnull(T.[Fixed Time],'')
+                ,P.[FixedQCName]			  = isnull(T.[Fixed QC],'')
+                ,P.[ProductType]			  = isnull(T.ProductType,'')
+                ,P.[SizeCode]				  = isnull(T.Size,'')
+                ,P.[DefectTypeDesc]			  = isnull(T.[DefectTypeDescritpion],'')
+                ,P.[DefectCodeDesc]			  = isnull(T.[DefectCodeDescritpion],'')
+                ,P.[AreaCode]				  = isnull(T.Area,'')
+                ,P.[ReworkCardNo]			  = isnull(T.ReworkCardNo,'')
+                ,P.[GarmentDefectTypeID]	  = isnull(T.DefectTypeID,'')
+                ,P.[GarmentDefectCodeID]	  = isnull(T.DefectCodeID,'')
+                ,P.[DefectCodeLocalDesc]	  = isnull(T.DefectCodeLocalDesc,'')
+                ,P.[IsCriticalDefect]		  = isnull(T.IsCriticalDefect,'')
+                ,P.[InspectionDetailUkey]     = T.[InspectionDetailUkey]
+                FROM P_DQSDefect_Detail P 
+                INNER JOIN #Final_DQSDefect_Detail T ON P.[FactoryID] = T.[FactoryID] AND
+										                P.[InspectionDetailUkey] = T.[InspectionDetailUkey]
 
 				INSERT INTO [dbo].[P_DQSDefect_Detail]
                 (
@@ -172,14 +211,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            ,[DefectCodeLocalDesc]
 		            ,[IsCriticalDefect]
                     ,[BIFactoryID]
-                    ,[BIInsertDate]   
+                    ,[BIInsertDate] 
+                    ,[InspectionDetailUkey]
                 )
                 select 
                   [Zone] = isnull([Zone],'')
                 , Brand = isnull(Brand,'')
 	            , [Buyer Delivery Date]
 	            , Line = isnull(Line,'')
-	            , [Factory] = isnull(Factory,'')
+	            , [FactoryID] = isnull(FactoryID,'')
 	            , Team = isnull(Team,'')
 	            , [Shift] = isnull([Shift],'')
  	            , [PO#] = isnull([PO#],'')
@@ -198,10 +238,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            , [DefectTypeDescritpion] = isnull([DefectTypeDescritpion],'')
 	            , [DefectCodeDescritpion] = isnull([DefectCodeDescritpion],'')
 	            , [Area] = isnull(Area,'')
-	            , [ReworkCardNo] = isnull(ReworkCardNo,''), [DefectTypeID] = isnull(DefectTypeID,''), [DefectCodeID] = isnull(DefectCodeID,''), DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,''), [IsCriticalDefect] = isnull(IsCriticalDefect,'')
+	            , [ReworkCardNo] = isnull(ReworkCardNo,'')
+                , [DefectTypeID] = isnull(DefectTypeID,'')
+                , [DefectCodeID] = isnull(DefectCodeID,'')
+                , DefectCodeLocalDesc = isnull(DefectCodeLocalDesc,'')
+                , [IsCriticalDefect] = isnull(IsCriticalDefect,'')
                 ,[BIFactoryID]
-                ,[BIInsertDate]   
-                from #Final_DQSDefect_Detail  
+                ,[BIInsertDate]  
+                ,[InspectionDetailUkey]
+                from #Final_DQSDefect_Detail  t
+                where not exists 
+                (
+					select 1 from P_DQSDefect_Detail P 
+					where
+					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]	
+				)
+
+                Delete p
+				from P_DQSDefect_Detail p
+				where not exists 
+				(
+					select 1 from #Final_DQSDefect_Detail t 
+					where
+					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]		
+				)
 
                 update b set b.TransferDate = getdate(), b.IS_Trans = 1
                 from BITableInfo b

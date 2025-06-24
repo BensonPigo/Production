@@ -17,7 +17,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_DQSDefect_Summary(DateTime? sDate)
+        public Base_ViewModel P_DQSDefect_Summary(DateTime? sDate, DateTime? eDate)
         {
             this.DBProxy = new DBProxy()
             {
@@ -28,12 +28,17 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             if (!sDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.Year.ToString());
+                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+            }
+
+            if (!eDate.HasValue)
+            {
+                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetDQSDefect_Summary_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetDQSDefect_Summary_Data((DateTime)sDate, (DateTime)eDate);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -58,14 +63,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetDQSDefect_Summary_Data(DateTime sdate)
+        private Base_ViewModel GetDQSDefect_Summary_Data(DateTime sdate, DateTime edate)
         {
             string sqlcmd = $@" 
 			declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
+			declare @eDate varchar(20) = '{edate.ToString("yyyy/MM/dd")}'
 			select 
 			 [InspectionDate] = ins.InspectionDate
 			,[FirstInspectionDate] = cast(Ins.AddDate as date)
-			,[Factory] = ins.FactoryID
+			,[FactoryID] = ins.FactoryID
 			,[Brand] = ord.BrandID
 			,[Style] = ord.styleid
 			,[PO#] = ord.custpono
@@ -111,7 +117,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				left join Production.dbo.Reason r2 WITH(NOLOCK) on r2.ReasonTypeID= 'Style_Apparel_Type' and r2.ID = s.ApparelType
 				where s.Ukey = ord.StyleUkey
 			)sty
-			where ins.Adddate >= @sDate
+			where ((ins.EditDate >= @sDate and ins.EditDate <= @eDate) or (ins.Adddate >= @sDate and ins.Adddate <= @eDate))  
 			group by ins.InspectionDate, cast(Ins.AddDate as date), ins.FactoryID, ord.BrandID, ord.styleid, ord.custpono, 
 			ins.OrderId, ins.Article, ins.Size, Cou.Alias, ord.CdCodeID, cdc.ProductionFamilyID,
 			ins.Team, ins.AddName, ins.Shift, ins.Line, s.SewingCell, sty.CDCodeNew,
@@ -120,7 +126,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 			select t.InspectionDate 
 				, t.FirstInspectionDate
-				, t.Factory
+				, t.FactoryID
 				, t.Brand
 				, t.Style
 				, t.[PO#]
@@ -160,7 +166,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 														   r.Team = so.Team AND
 														   r.Shift = so.Shift AND
 														   r.CDate = so.OutputDate
-				WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.Factory
+				WHERE sod.OrderId = t.[SP#] and so.SewinglineID = t.Line and so.FactoryID = t.FactoryID and sod.Article = t.Article
 				and so.Shift= iif(t.Shift = 'Day','D','N') 
 				and r.CDate = t.SewInLine
 			)RftValue
@@ -172,7 +178,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				and insp.Status <> 'Pass'
 				and t.InspectionDate = insp.InspectionDate
 				and t.FirstInspectionDate = cast(insp.AddDate as Date)
-				and t.Factory = insp.FactoryID
+				and t.FactoryID = insp.FactoryID
 				and t.[SP#] = insp.OrderId
 				and t.Article = insp.Article
 				and t.Size = insp.Size
@@ -211,7 +217,36 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
 				FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
-				DELETE T FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
+				UPDATE P SET
+				P.[BrandID]			= isnull(T.Brand,'')
+				,P.[StyleID]			= isnull(T.Style,'')
+				,P.[POID]				= isnull(T.[PO#], '')					
+				,P.[Destination]		= isnull(T.Destination, '')
+				,P.[CDCode]				= isnull(T.CdCodeID, '')
+				,P.[ProductionFamilyID]	= isnull(T.ProductionFamilyID,'')
+				,P.[Team]				= isnull(T.Team, '')
+				,P.[Cell]				= isnull(T.SewingCell, '')	
+				,P.[InspectQty]			= isnull(T.TtlQty, 0)
+				,P.[RejectQty]			= isnull(T.RejectAndFixedQty, 0)
+				,P.[WFT]				= isnull(T.[EndlineWFT], 0) 
+				,P.[RFT]				= isnull(T.[Endline RFT(%)], 0) 
+				,P.[CDCodeNew]			= isnull(T.CDCodeNew, '')
+				,P.[ProductType]		= isnull(T.ProductType,'')
+				,P.[FabricType]			= isnull(T.FabricType, '')
+				,P.[Lining]				= isnull(T.Lining,'')
+				,P.[Gender]				= isnull(T.Gender,'')
+				,P.[Construction]		= isnull(T.Construction,'')
+				,P.[DefectQty]			= isnull(T.DefectQty, 0)
+				FROM P_DQSDefect_Summary P 
+				INNER JOIN #Final_DQSDefect_Summary T ON P.[FirstInspectDate] = T.FirstInspectionDate AND 
+														 P.[SPNO] = T.[SP#] AND 
+														 P.[Article] = T.[Article] AND
+														 P.[SizeCode] = T.[Size] AND
+														 P.[QCName] = T.[AddName] AND
+														 P.[Shift] = T.[Shift] AND
+														 P.[Line] = T.[Line] AND
+														 P.[InspectionDate] = T.[InspectionDate] AND
+														 P.[FactoryID] = T.[FactoryID]													
 
 
 				INSERT INTO [dbo].[P_DQSDefect_Summary]
@@ -250,7 +285,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				select　
 				  InspectionDate 
 				, FirstInspectionDate
-				, isnull(Factory,'')
+				, isnull(FactoryID,'')
 				, isnull(Brand,'')
 				, isnull(Style,'')
 				, isnull([PO#], '')
@@ -278,7 +313,37 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, isnull(DefectQty, 0)
 				, ISNULL(BIFactoryID, '')
                 , ISNULL(BIInsertDate, GetDate())
-				from #Final_DQSDefect_Summary
+				from #Final_DQSDefect_Summary T
+				where not exists (
+					select 1 from P_DQSDefect_Summary P 
+					where
+					P.[FirstInspectDate] = T.FirstInspectionDate AND 
+					P.[SPNO] = T.[SP#] AND
+					P.[Article] = T.[Article] AND
+					P.[SizeCode] = T.[Size] AND
+					P.[QCName] = T.[AddName] AND
+					P.[Shift] = T.[Shift] AND
+					P.[Line] = T.[Line] AND
+					P.[InspectionDate] = T.[InspectionDate] AND
+					P.[FactoryID] = T.[FactoryID]	
+				)
+
+				Delete p
+				from P_DQSDefect_Summary p
+				where not exists 
+				(
+					select 1 from #Final_DQSDefect_Summary t 
+					where
+					P.[FirstInspectDate] = T.FirstInspectionDate AND 
+					P.[SPNO] = T.[SP#] AND
+					P.[Article] = T.[Article] AND
+					P.[SizeCode] = T.[Size] AND
+					P.[QCName] = T.[AddName] AND
+					P.[Shift] = T.[Shift] AND
+					P.[Line] = T.[Line] AND
+					P.[InspectionDate] = T.[InspectionDate] AND
+					P.[FactoryID] = T.[FactoryID]	
+				)
 
 				update b set b.TransferDate = getdate(), b.IS_Trans = 1
 				from BITableInfo b
