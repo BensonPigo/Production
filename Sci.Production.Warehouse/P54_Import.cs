@@ -55,6 +55,8 @@ namespace Sci.Production.Warehouse
                 .Text("Tone", header: "Tone/Grp", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Text("Grade", header: "Grade", iseditingreadonly: true, width: Widths.AnsiChars(5))
                 .Text("RecvKg", header: "Recv (Kg)", iseditingreadonly: true, width: Widths.AnsiChars(5))
+                .Text("Location", header: "Location", iseditingreadonly: true, width: Widths.AnsiChars(25))
+                .Text("WK#", header: "WK#", iseditingreadonly: true, width: Widths.AnsiChars(25))
                 ;
         }
 
@@ -113,6 +115,8 @@ SELECT
                     ELSE IIF(ISNULL(td.ActualWeight, 0) > 0, td.ActualWeight, td.Weight)
                 END
         END
+    ,[Location] = Dbo.GetLocation(f.Ukey)
+    ,[WK#] = WK.ExportId
     ,o.StyleID
 FROM FtyInventory f WITH (NOLOCK)
 INNER JOIN Orders o WITH (NOLOCK) ON o.ID = f.POID
@@ -179,6 +183,20 @@ OUTER APPLY (
     AND f.StockType = td.StockType
     AND psd.FabricType = 'F'
 ) td
+OUTER APPLY (
+    select ExportId = Stuff((
+        select concat(',',ExportId)
+        from (
+                select distinct r.ExportId
+                from Receiving_Detail rd WITH (NOLOCK)
+                inner join Receiving r WITH (NOLOCK) on rd.Id = r.Id
+                where f.POID = rd.PoId AND f.Seq1 = rd.Seq1
+                AND f.Seq2 = rd.Seq2 AND f.Roll = rd.Roll
+                AND f.Dyelot = rd.Dyelot and r.ExportId <> ''
+            )s
+        for xml path ('')
+    ) , 1, 1, '')
+)WK
 
 WHERE NOT EXISTS (
     SELECT 1

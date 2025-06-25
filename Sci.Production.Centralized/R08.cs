@@ -447,7 +447,7 @@ OUTER APPLY(
 		FOR XML PATH('')
 	),1,1,'')
 )MockupProgram
-where 1=1 {spQuery2}
+where o.SubconInSisterFty = 0  {spQuery2}
 
 select b.ID
 	,o.StyleUkey
@@ -475,7 +475,7 @@ inner join Factory c on a.FactoryID=c.ID
 inner join Orders o on b.OrderId = o.ID
 inner join Style s on o.StyleUkey = s.Ukey
 inner join #OrderInfo p on p.StyleUkey=  s.Ukey
-where 1=1
+where SubconInSisterFty = 0 
 {detailQuery}
 GROUP BY b.ID,o.StyleUkey,b.ComboType,c.CountryID,o.BrandID,o.StyleID,s.Lining
 	,s.Gender,s.SeasonID,s.CPU,s.ApparelType,s.FabricType,s.Construction,p.Program,p.Category,b.CumulateSimilar
@@ -495,8 +495,10 @@ inner join #SewingOutput_Detail b on a.ID = b.ID
 
 ----- 每個產線，會有Before 和 After兩個產線計畫，這兩個產線計畫的資料來源可能來自P03、P05、P06，以下步驟開始找出「這兩筆資料在哪裡」
 
-
 ---- 3.  找出P03、P05、P06產線計畫每種Phase的最新版本：
+---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
+--P03
+---- 注意 P03 Before不會知道要在哪個 SewingLineID、Team
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -517,6 +519,7 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
 select lm.StyleUKey
 	,lm.FactoryID
 	,lm.SewingLineID
@@ -524,19 +527,19 @@ select lm.StyleUKey
 	,lm.ComboType
 	,lm.Phase
     ,lm.Status
-	,Version = MAX(lm.Version)
-	,AddDate = MAX(lm.AddDate)
-	,EditDate  = MAX(lm.EditDate )
-	,ID  = MAX(lm.ID )
-INTO #P06MaxVer ---- P06
-from LineMappingBalancing lm 
+	,lm.Version
+	,lm.AddDate
+	,lm.EditDate
+	,lm.ID
+INTO #AllP03 ---- P03
+from LineMapping lm 
 where exists(
 	select 1 from #BaseData a
-	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID /*and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team*/ and a.ComboType=lm.ComboType
 )
-GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
 
+--P05
 select lm.StyleUKey
 	,lm.FactoryID
 	,SewingLineID = ''
@@ -557,6 +560,97 @@ where exists(
 GROUP BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 
+---- [History LBR]用
+select lm.StyleUKey
+	,lm.FactoryID
+	,SewingLineID = ''
+	,Team = ''
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
+	,lm.Version
+	,lm.AddDate
+	,lm.EditDate
+	,lm.ID
+INTO #AllP05 ---- P05
+from AutomatedLineMapping lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType 
+)
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
+
+-- P06：P05(AutomatedLineMapping)   > P06 (LineMappingBalancing.AutomatedLineMappingID)，所以找出P05衍生出的P06即可
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P06MaxVer ---- P06
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+)
+--and exists(
+--	select 1 from #P05MaxVer p05
+--	where p05.ID = lm.AutomatedLineMappingID
+--)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+---- Latest 用　
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
+	,Version = MAX(lm.Version)
+	,AddDate = MAX(lm.AddDate)
+	,EditDate  = MAX(lm.EditDate )
+	,ID  = MAX(lm.ID )
+INTO #P06MaxVerNoLine ---- P06 不看 SewingLine Team
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and a.ComboType=lm.ComboType
+)
+and exists(
+	select 1 from #P05MaxVer p05
+	where p05.ID = lm.AutomatedLineMappingID
+)
+GROUP BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
+---- [History LBR]用
+select lm.StyleUKey
+	,lm.FactoryID
+	,lm.SewingLineID
+	,lm.Team
+	,lm.ComboType
+	,lm.Phase
+    ,lm.Status
+	,lm.Version
+	,lm.AddDate
+	,lm.EditDate
+	,lm.ID
+INTO #AllP06 ---- P06
+from LineMappingBalancing lm 
+where exists(
+	select 1 from #BaseData a
+	where lm.StyleUKey = a.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and a.ComboType=lm.ComboType
+)
+ORDER BY lm.StyleUKey,lm.FactoryID,lm.SewingLineID,lm.Team,lm.ComboType,lm.Phase,lm.Status
+
 ---- 4.  開始After Data準備
 ---- After Data的找法：
 ---- (1) 資料來源只有P03、P06 (其中P06是從P05轉過去的)
@@ -564,48 +658,25 @@ ORDER BY lm.StyleUKey,lm.FactoryID,lm.ComboType,lm.Phase,lm.Status
 ---- (3) 每筆的Key值為 factory, brand, style, season, combo type, Line, Team，從P03或P06取一個
 ---- (4) 取的方式：如果這組只有P03或P06有就直接取；P03、P06 同時有則取 EditDate 大的那邊 (若皆無 EditDate 則比較 AddDate) 
 
---P03有 && P06沒有、P03沒有 && P06有
-select p03.*
-,SourceTable = 'IE P03'
+--取column結構
+select top 1 p03.*,SourceTable = 'IE P03'
 INTO #AfterData
-from #BaseData a
-INNER join #P03MaxVer p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType 
-where not exists(
-	select 1
-	from #P06MaxVer p06 
-	where p06.StyleUKey = a.StyleUkey and a.FactoryID=p06.FactoryID and p06.SewingLineID = a.SewingLineID and a.Team=p06.Team and a.ComboType=p06.ComboType and p06.Phase='Final'
-) and p03.Phase='Final'
-UNION
-select p06.*
-,SourceTable = 'IE P06'
-from #BaseData a
-INNER join #P06MaxVer p06 on p06.StyleUKey = a.StyleUkey and a.FactoryID=p06.FactoryID and p06.SewingLineID = a.SewingLineID and a.Team=p06.Team and a.ComboType=p06.ComboType
-where not exists(
-	select 1
-	from #P03MaxVer p03 
-	where p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and p03.SewingLineID = a.SewingLineID and a.Team=p03.Team and a.ComboType=p03.ComboType and p03.Phase='Final'
-)and p06.Phase='Final'
+from #P03MaxVer p03
+where 1=0
 
---P03有 && P06有
 ;WITH CombinedTable AS (
     SELECT *,'IE P03' AS SourceTable
     FROM #P03MaxVer a
-	where not exists(---- 須排除P03、P06差集，因為差集資料已經加入了
-		select 1 from #AfterData b
-		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
-	) and Phase='Final'
+	where Phase='Final'
     UNION ALL
     SELECT *,'IE P06' AS SourceTabl
     FROM #P06MaxVer a
-	where not exists(---- 須排除P03、P06差集，因為差集資料已經加入了
-		select 1 from #AfterData b
-		where b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType
-	) and Phase='Final'
+	where Phase='Final'
 ),
 RankedTable AS (
     SELECT 
         *,---- P03、P06交集，代表相同Key值有重複，因此判斷EditDate、AddDate
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY 
+        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase ORDER BY Version DESC,
             CASE 
                 WHEN EditDate IS NOT NULL THEN EditDate 
                 ELSE AddDate 
@@ -615,84 +686,106 @@ RankedTable AS (
 
 --SELECT * FROM RankedTable WHERE RowNum = 1;
 INSERT INTO #AfterData (StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID,Status)
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID,Status
-FROM RankedTable
+SELECT a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,Phase,Version,AddDate,EditDate ,SourceTable,ID,Status
+FROM RankedTable a
+INNER JOIN #BaseData b on b.StyleUKey = a.StyleUkey and a.FactoryID=b.FactoryID and b.SewingLineID = a.SewingLineID and a.Team=b.Team and a.ComboType=b.ComboType 
 WHERE RowNum = 1
-ORDER BY StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate 
+ORDER BY a.StyleUKey,a.FactoryID,a.SewingLineID,a.Team,a.ComboType,a.Phase,Version,AddDate,EditDate 
 
 ---- 5. 開始Before Data準備
 ---- Before Data的找法：
 ---- (1) 資料來源只有P03、P05 (因為P06是從P05轉過去的，所以只需要找出P06來源的P05即可)
----- (2) P03、P05找出Phase = Initial 或 Prelim 的產線計畫
+---- (2) P03找出Phase = Initial 或 Prelim 的產線計畫，處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
 ---- (3) P03每筆的Key值為 factory, brand, style, season, combo type,，before本來就不會知道會在哪一條線生產，不要加Line、Team、Sewer等等判斷
----- (4) P03、P05先各自處理內部Phase的優先度問題，優先度：Prelim > Initial，先找出每個Key的Phase要用哪一種
----- (5) 再從P03或P05取一個，取的方式： 若After為 P06 ，Before 只需要找 P05；若After為 P03 ，Before 只需要找 P03
 
----- 先處理P03、P05的Prelim、Initial 優先度問題。
-;WITH PhaseRankedTableP03 AS (
-	select 
-        *,
-        ROW_NUMBER() OVER (PARTITION BY StyleUKey,FactoryID,SewingLineID,Team,ComboType ORDER BY 
-            CASE 
-                WHEN Phase = 'Prelim' THEN 2
-                ELSE 1
-            END DESC) AS RowNum
-	from #P03MaxVer
-	where Phase IN ('Prelim','Initial')
+;WITH Combined AS (
+    -- 來自 P03 的資料
+    SELECT
+        p.StyleUKey,
+        p.FactoryID,
+        p.SewingLineID,
+        p.Team,
+        p.ComboType,
+        p.Phase,
+        p.Version,
+        p.EditDate,
+        p.AddDate,
+		p.ID,
+		'IE P03' AS SourceTable
+    FROM #P03MaxVer p
+    WHERE p.Phase IN ('Prelim','Initial')
+      AND EXISTS (
+          SELECT 1
+          FROM #AfterData af
+          WHERE af.SourceTable = 'IE P03'
+            AND af.FactoryID   = p.FactoryID
+            AND af.StyleUKey   = p.StyleUKey
+            /* 如要加上其他 join 條件，可解開下面兩行：
+            AND af.SewingLineID = p.SewingLineID
+            AND af.Team         = p.Team
+            */
+            AND af.ComboType   = p.ComboType
+      )
+
+    UNION ALL
+
+    -- 來自 P05 的資料 (沒有P06 After)
+    SELECT
+        m.StyleUKey,
+        m.FactoryID,
+        m.SewingLineID,
+        m.Team,
+        m.ComboType,
+        m.Phase,
+        m.Version,
+        m.EditDate,
+        m.AddDate,
+        m.ID,
+		'IE P05' AS SourceTable
+    FROM #P05MaxVer m
+    INNER JOIN AutomatedLineMapping p05
+        ON m.ID = p05.ID
+    WHERE m.Phase IN ('Prelim','Initial')
+    UNION ALL
+
+    -- 來自 P05 的Before (有P06 After，從P06推導得出，必須在 P06.AutomatedLineMappingID 當中)
+    SELECT
+        p05.StyleUKey,
+        p05.FactoryID,
+        p05.SewingLineID,
+        p05.Team,
+        p05.ComboType,
+        p05.Phase,
+        p05.Version,
+        p05.EditDate,
+        p05.AddDate,
+        p05.ID,
+		'IE P05' AS SourceTable
+	from #AfterData p06
+	inner join  LineMappingBalancing lm on p06.ID = lm.ID
+	inner join #P05MaxVer p05 on p05.ID = lm.AutomatedLineMappingID
 )
 
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
-INTO #P03Rank
-FROM PhaseRankedTableP03
-WHERE RowNum = 1
-
----- P05必須與P06的SewerManpower一致
-;WITH PhaseRankedTableP05 AS (
-	select 
-        maxVer.*,
-        ROW_NUMBER() OVER (PARTITION BY maxVer.StyleUKey,maxVer.FactoryID,maxVer.SewingLineID,maxVer.Team,maxVer.ComboType ORDER BY 
-            CASE 
-                WHEN maxVer.Phase = 'Prelim' THEN 2
-                ELSE 1
-            END DESC) AS RowNum
-	from #P05MaxVer maxVer
-	inner join AutomatedLineMapping p05 on maxVer.ID = p05.ID
-	where maxVer.Phase IN ('Prelim','Initial')
-	/*and exists(
-		select p06.SewerManpower
-		from #AfterData a
-		inner join LineMappingBalancing p06 on a.ID = p06.ID
-		where a.SourceTable='IE P06' 
-			and a.StyleUKey = maxVer.StyleUKey
-			and a.FactoryID = maxVer.FactoryID  
-			and a.ComboType = maxVer.ComboType  
-	)*/
-)
-
-SELECT StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID
-INTO #P05Rank
-FROM PhaseRankedTableP05
-WHERE RowNum = 1
-
---找出所Before：P03 Before => P03 After；P05 Before => P06 After
-
---P03的Before
-select p03.*
-,SourceTable = 'IE P03'
+SELECT
+    c.*,
+    ROW_NUMBER() OVER (
+        PARTITION BY
+            c.StyleUKey,
+            c.FactoryID,
+            c.SewingLineID,
+            c.Team,
+            c.ComboType
+        ORDER BY
+            CASE WHEN c.Phase = 'Prelim' THEN 2 ELSE 1 END DESC,Version desc,
+            ISNULL(c.EditDate, c.AddDate) DESC
+    ) AS RowNum
+INTO #PhaseRankedTable
+FROM Combined c
+;
+select StyleUKey,FactoryID,SewingLineID,Team,ComboType,Phase,Version,AddDate,EditDate ,ID,SourceTable
 INTO #BeforeData
-from #BaseData a
-INNER join #P03Rank p03 on p03.StyleUKey = a.StyleUkey and a.FactoryID=p03.FactoryID and a.ComboType=p03.ComboType
-UNION
---P05的Before (必須在 P06.AutomatedLineMappingID 當中)
-select p05.*
-,SourceTable = 'IE P05' ---- P05 沒有Line Team
-from #BaseData a
-INNER join #P05Rank p05 on p05.StyleUKey = a.StyleUkey and a.FactoryID=p05.FactoryID and a.ComboType=p05.ComboType
-where exists(
-	select 1 from LineMappingBalancing p06 where p06.AutomatedLineMappingID = p05.ID
-)
+from #PhaseRankedTable
 
----- 6. 前面已經鎖定了每一組 factory, brand, style, season, combo type, Line, Team ，對應到的兩個產線計畫(分別是Before和After)，最後可以去P03、P05、P06找出最終的那一筆，並取出需要的欄位就好
 select a.*,b.Status
 	,b.TotalGSD
 	,b.TotalCycle
@@ -779,11 +872,33 @@ select a.*
     ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
 from #AfterData a
 inner join LineMappingBalancing b on a.ID = b.ID ---- P06
-
 WHERE a.SourceTable='IE P06'
 
+---- 7. History LBR 需要從所有的After 篩選，所以準備所有的After
+select a.*
+	,b.TotalGSD
+	,b.TotalCycle
+	,b.CurrentOperators
+	,b.HighestCycle
+	,b.HighestGSD
+    ,[Ori. Total GSD Time] = Cast(b.OriTotalGSD as decimal(10,2))
+	,SourceTable='IE P03'
+INTO #AllAfter
+from #AllP03 a
+inner join LineMapping b on a.ID = b.ID
+UNION
+select a.*
+	,TotalGSD = b.TotalGSDTime
+	,TotalCycle = b.TotalCycleTime
+	,CurrentOperators = b.SewerManpower
+	,HighestCycle = b.HighestCycleTime
+	,HighestGSD = b.HighestGSDTime
+    ,[Ori. Total GSD Time] =  Cast(b.OriTotalGSDTime as decimal(10,2))
+	,SourceTable='IE P06'
+from #AllP06 a
+inner join LineMappingBalancing b on a.ID = b.ID
 
----- 7. 開始兜報表的欄位
+---- 8. 開始兜報表的欄位，把P03 to P03 、 P05 to P06兩種分開寫
 select 
 	b.CountryID
     --,b.StyleUkey
@@ -814,48 +929,45 @@ select
 	,[Cumulate Of Days] = b.CumulateSimilar
 	,[Inline Category] = CONCAT(a.SewingReasonIDForTypeIC, '-' + sr.Description) 
 	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
+    ,[Std. SMV] = BeforeDataP03.[Std. SMV]
+    ,[GSD Style]= BeforeDataP03.[GSD Style]
+    ,[GSD Season]= BeforeDataP03.[GSD Season]
+    ,[GSD BrandID]= BeforeDataP03.[GSD BrandID]
 	------------------------------------------------After ------------------------------------------------
-    ,[Std. SMV] = ISNULL(BeforeDataP03.[Std. SMV], BeforeDataP05.[Std. SMV])
-    ,[GSD Style]= ISNULL(BeforeDataP03.[GSD Style],BeforeDataP05.[GSD Style])
-    ,[GSD Season]= ISNULL(BeforeDataP03.[GSD Season],BeforeDataP05.[GSD Season])
-    ,[GSD BrandID]= ISNULL(BeforeDataP03.[GSD BrandID],BeforeDataP05.[GSD BrandID])
-	,[Phase after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Phase, AfterDataP03.Phase)
-	,[Version after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Version, AfterDataP03.Version)
-	,[Optrs after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.CurrentOperators, AfterDataP03.CurrentOperators)
-    ,[Ori. Total GSD Time] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.[Ori. Total GSD Time] , AfterDataP03.[Ori. Total GSD Time] )
-	,[Cycle Time] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.TotalCycle, AfterDataP03.TotalCycle)
-	,[Avg. Cycle] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.AvgCycle, AfterDataP03.AvgCycle)
-	,[LBR after inline] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.LBR, AfterDataP03.LBR)
+	,[Phase after inline] = AfterDataP03.Phase
+	,[Version after inline] = AfterDataP03.Version
+	,[Oprts after inline] = AfterDataP03.CurrentOperators
+    ,[Ori. Total GSD Time] =  AfterDataP03.[Ori. Total GSD Time] 
+	,[Cycle Time] =  AfterDataP03.TotalCycle
+	,[Avg. Cycle] =  AfterDataP03.AvgCycle
+	,[LBR after inline] = AfterDataP03.LBR
 	,[Target LBR] = LinebalancingTarget.Target 
-	,[After inline Is From] =  ISNULL(AfterDataP03.SourceTable,AfterDataP06.SourceTable)
-	,[After inline Status] =  IIF(BeforeDataP03.Version IS NULL, AfterDataP06.Status, AfterDataP03.Status)
-	,[Est. PPH] = IIF(BeforeDataP03.Version IS NULL, AfterDataP06.EstPPH, AfterDataP03.EstPPH)
+	,[After inline Is From] = AfterDataP03.SourceTable
+	,[After inline Status] =  AfterDataP03.Status
+	,[Est. PPH] = AfterDataP03.EstPPH
 	------------------------------------------------After ------------------------------------------------
 
 	------------------------------------------------Before ------------------------------------------------
-	,[Phase before inline] = ISNULL(BeforeDataP03.Phase, BeforeDataP05.Phase)
-	,[Version before inline] = ISNULL(BeforeDataP03.Version, BeforeDataP05.Version)
-	,[Optrs before inline] = ISNULL(BeforeDataP03.CurrentOperators, BeforeDataP05.CurrentOperators)
-	,[GSD time] = ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD)
-	,[Takt time] = ISNULL(BeforeDataP03.Takt, BeforeDataP05.Takt)
+	,[Phase before inline] =   BeforeDataP03.Phase 
+	,[Version before inline] = BeforeDataP03.Version
+	,[Oprts before inline] = BeforeDataP03.CurrentOperators
+	,[GSD time] = BeforeDataP03.TotalGSD
+	,[Takt time] = BeforeDataP03.Takt
 
-	,[LBR before inline] = ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Before inline Is From] = ISNULL(BeforeDataP03.SourceTable,BeforeDataP05.SourceTable) 
-	,[Before inline Status] = ISNULL(BeforeDataP03.Status,BeforeDataP05.Status) 
+	,[LBR before inline] = BeforeDataP03.LBR
+	,[Before inline Is From] = BeforeDataP03.SourceTable
+	,[Before inline Status] = BeforeDataP03.Status
 	------------------------------------------------Before ------------------------------------------------
 
-	,[Optrs Diff] = ISNULL(AfterDataP03.CurrentOperators,AfterDataP06.CurrentOperators) - ISNULL(BeforeDataP03.CurrentOperators,BeforeDataP05.CurrentOperators) 
-	,[LBR Diff (%)] = ISNULL(AfterDataP03.LBR,AfterDataP06.LBR) - ISNULL(BeforeDataP03.LBR,BeforeDataP05.LBR) 
-	,[Total % Time diff] = IIF(ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) = 0 , 0 , ( ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) - ISNULL(AfterDataP03.TotalCycle, AfterDataP06.TotalCycle) / ISNULL(BeforeDataP03.TotalGSD, BeforeDataP05.TotalGSD) )) * 100
-	,[By style] = IIF(AfterDataP03.Status = 'Confirmed'  OR AfterDataP06.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
-	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed' OR AfterDataP06.Status = 'Confirmed','Y','N')
+	,[Oprts Diff] = AfterDataP03.CurrentOperators - BeforeDataP03.CurrentOperators
+	,[LBR Diff (%)] = AfterDataP03.LBR - BeforeDataP03.LBR
+	,[Total % Time diff] = IIF(BeforeDataP03.TotalGSD = 0 , 0 , (( BeforeDataP03.TotalGSD - AfterDataP03.TotalCycle) / AfterDataP03.TotalCycle )) * 100
+	,[By style] = IIF(AfterDataP03.Status = 'Confirmed' OR BeforeDataP03.Status = 'Confirmed','Y','N')
+	,[By Line] = IIF(AfterDataP03.Status = 'Confirmed','Y','N')
 	,[Last Version From] = LastVersion.SourceTable
 	,[Last Version Phase] = LastVersion.Phase
 	,[Last Version Status] = LastVersion.Status
-	,[History LBR] = IIF(AfterDataP03.EditDate IS NOT NULL and CAST(AfterDataP03.EditDate as Date) = a.OutputDate
-			, AfterDataP03.LBR
-			, AfterDataP06.LBR
-		) 
+	,[History LBR] = AfterData.LBR
     ,b.Category
 from #SewingOutput a 
 inner join #SewingOutput_Detail b on a.ID = b.ID
@@ -865,56 +977,41 @@ left join DropDownList ddl on ddl.Type= 'StyleConstruction' and ddl.ID = b.Const
 left join SewingReason sr on  sr.ID = a.SewingReasonIDForTypeIC and sr.Type='IC'
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
-	---- Avg. Cycle 公式: [Total Cycle Time] / [Optrs after inline]
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
-	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
+	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
 	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
-	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
+	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
 	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
 	from #FinalAfterData lm
 	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P03'
 )AfterDataP03
 Outer Apply(
-	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
-	---- Avg. Cycle 公式: [Total Cycle Time] / [Optrs after inline]
+	select top 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
-	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Optrs] * 100
+	---- P03公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
 	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
-	---- 公式: [ELOR] × [CPU /PC] / [Optrs after inline]
+	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
 	--- EOLR公式：3600 / [Highest Cycle Time]
-	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
-	from #FinalAfterData lm
-	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P06'
-)AfterDataP06
+	,[EstPPH] = IIF (lm.HighestCycle = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
+	from #AllAfter lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	order by lm.EditDate desc
+)AfterData
 Outer Apply(
 	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
 	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
 	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P03' THEN lm.TaktTime
 				   ELSE 0 END AS DECIMAL(7,2))
-	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
+	------ 公式: [Total cycle time] / [Highest cycle time] / [Oprts after inline] * 100
 	,[LBR] = CASE WHEN lm.SourceTable = 'IE P03' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
 			 ELSE 0 END
 	from #FinalBeforeData lm
-	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType 
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID and b.ComboType=lm.ComboType
 	and lm.SourceTable = 'IE P03'
 )BeforeDataP03
-Outer Apply(
-	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
-	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
-	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.CurrentOperators  = 0 OR lm.TotalGSD = 0 OR lm.TotalGSD = 0 OR ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour ) = 0 
-														,0
-														,( 3600 * lm.WorkHour ) / ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour )
-													)
-				   ELSE 0 END AS DECIMAL(7,2))
-	------ 公式: [Total cycle time] / [Highest cycle time] / [Optrs after inline] * 100
-	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
-			 ELSE 0 END
-	from #FinalBeforeData lm
-	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID --and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 
-	and b.ComboType=lm.ComboType 
-	and lm.SourceTable = 'IE P05'
-)BeforeDataP05
 outer apply(
 	select top 1 ct.Target
 	from factory f
@@ -924,6 +1021,7 @@ outer apply(
 	order by EffectiveDate desc
 )LinebalancingTarget 
 outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
 	select top 1 *
 	from (
 		select *
@@ -932,7 +1030,7 @@ outer apply(
 			union
 			select *,SourceTable='P05' from #P05MaxVer
 			union
-			select *,SourceTable='P06' from #P06MaxVer
+			select *,SourceTable='P06' from #P06MaxVerNoLine
 		)LastData
 		where b.StyleUkey = LastData.StyleUKey 
 			and a.FactoryID = LastData.FactoryID 
@@ -947,13 +1045,166 @@ outer apply(
 	  END DESC,
 	  Version DESC
 )LastVersion
+WHERE AfterDataP03.SourceTable IS NOT NULL
+UNION
+select 
+	b.CountryID
+    --,b.StyleUkey
+	,a.FactoryID
+	,a.OutputDate
+	,b.BrandID
+	,b.StyleID
+	,b.ComboType
+    ,b.Program
+	,ProductType = r1.Name
+	,FabricType = r2.Name
+	,b.Lining
+	,b.Gender
+	,Construction = ddl.Name
+	,b.SeasonID
+	,a.SewingLineID
+	,a.Team
+	,[Act. Manpower] = a.Manpower
+	,[No.of Hours] = b.WorkHour
+
+	---- 公式 [Act. Manpower] * [No.of Hours]
+	,[Total Manhours] = a.Manpower * b.WorkHour
+	,[CPU/piece] = b.CPU
+	,[Prod. Output] = b.InlineQty
+
+	---- 公式 [CPU/piece] * [Total Output]
+	,[Total CPU] = b.CPU * b.QAQty
+	,[Cumulate Of Days] = b.CumulateSimilar
+	,[Inline Category] = CONCAT(a.SewingReasonIDForTypeIC, '-' + sr.Description) 
+	,[New Style/Repeat style] = (select dbo.IsRepeatStyleBySewingOutput(a.FactoryID, a.OutputDate, a.SewinglineID, a.Team, b.StyleUkey))
+    ,[Std. SMV] = BeforeDataP05.[Std. SMV]
+    ,[GSD Style]= BeforeDataP05.[GSD Style]
+    ,[GSD Season]= BeforeDataP05.[GSD Season]
+    ,[GSD BrandID]= BeforeDataP05.[GSD BrandID]
+	------------------------------------------------After ------------------------------------------------
+	,[Phase after inline] = AfterDataP06.Phase
+	,[Version after inline] = AfterDataP06.Version
+	,[Oprts after inline] = AfterDataP06.CurrentOperators
+    ,[Ori. Total GSD Time] = AfterDataP06.[Ori. Total GSD Time]
+	,[Cycle Time] = AfterDataP06.TotalCycle
+	,[Avg. Cycle] = AfterDataP06.AvgCycle
+	,[LBR after inline] = AfterDataP06.LBR
+	,[Target LBR] = LinebalancingTarget.Target 
+	,[After inline Is From] =  AfterDataP06.SourceTable
+	,[After inline Status] =   AfterDataP06.Status
+	,[Est. PPH] = AfterDataP06.EstPPH
+	------------------------------------------------After ------------------------------------------------
+
+	------------------------------------------------Before ------------------------------------------------
+	,[Phase before inline] = BeforeDataP05.Phase
+	,[Version before inline] = BeforeDataP05.Version
+	,[Oprts before inline] = BeforeDataP05.CurrentOperators
+	,[GSD time] = BeforeDataP05.TotalGSD
+	,[Takt time] = BeforeDataP05.Takt
+
+	,[LBR before inline] =BeforeDataP05.LBR
+	,[Before inline Is From] = BeforeDataP05.SourceTable
+	,[Before inline Status] = BeforeDataP05.Status
+	------------------------------------------------Before ------------------------------------------------
+
+	,[Oprts Diff] = AfterDataP06.CurrentOperators - BeforeDataP05.CurrentOperators
+	,[LBR Diff (%)] = AfterDataP06.LBR - BeforeDataP05.LBR
+	,[Total % Time diff] = IIF(BeforeDataP05.TotalGSD = 0 , 0 , (( BeforeDataP05.TotalGSD - AfterDataP06.TotalCycle) / AfterDataP06.TotalCycle )) * 100
+	,[By style] = IIF( AfterDataP06.Status = 'Confirmed' OR BeforeDataP05.Status = 'Confirmed','Y','N')
+	,[By Line] = IIF( AfterDataP06.Status = 'Confirmed','Y','N')
+	,[Last Version From] = LastVersion.SourceTable
+	,[Last Version Phase] = LastVersion.Phase
+	,[Last Version Status] = LastVersion.Status
+	,[History LBR] = AfterData.LBR
+    ,b.Category
+from #SewingOutput a 
+inner join #SewingOutput_Detail b on a.ID = b.ID
+left join Reason r1 on r1.ReasonTypeID= 'Style_Apparel_Type' and r1.ID = b.ApparelType
+left join Reason r2 on r2.ReasonTypeID= 'Fabric_Kind' and r2.ID = b.FabricType
+left join DropDownList ddl on ddl.Type= 'StyleConstruction' and ddl.ID = b.Construction
+left join SewingReason sr on  sr.ID = a.SewingReasonIDForTypeIC and sr.Type='IC'
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	,[Takt] = CAST( CASE  WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.CurrentOperators  = 0 OR lm.TotalGSD = 0 OR lm.TotalGSD = 0 OR ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour ) = 0 
+														,0
+														,( 3600 * lm.WorkHour ) / ( ( 3600 * lm.CurrentOperators / lm.TotalGSD) * lm.WorkHour )
+													)
+				   ELSE 0 END AS DECIMAL(7,2))
+	------ 公式: [Total cycle time] / [Highest cycle time] / [Oprts after inline] * 100
+	,[LBR] = CASE WHEN lm.SourceTable = 'IE P05' THEN IIF( lm.HighestGSD =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalGSD / lm.HighestGSD / lm.CurrentOperators * 100 )
+			 ELSE 0 END
+	from #FinalBeforeData lm
+	where lm.StyleUKey =b.StyleUkey and a.FactoryID=lm.FactoryID --and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team 
+	and b.ComboType=lm.ComboType 
+	and lm.SourceTable = 'IE P05'
+)BeforeDataP05
+Outer Apply(
+	select TOP 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	---- 公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
+	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
+	--- EOLR公式：3600 / [Highest Cycle Time]
+	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
+	from #FinalAfterData lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType and lm.SourceTable = 'IE P06'
+)AfterDataP06
+Outer Apply(
+	select top 1 * ---- 因為產線計畫不會有 OutputDate 的區別，因此都會長得一樣，取Top 1即可
+	---- Avg. Cycle 公式: [Total Cycle Time] / [Oprts after inline]
+	,[AvgCycle] = IIF(lm.CurrentOperators = 0 ,0 , 1.0 * lm.TotalCycle / lm.CurrentOperators)
+	---- 公式: [Total Cycle Time] / [Highest cycle time of operator in shift] / [Current No of Oprts] * 100
+	,[LBR] = IIF( lm.HighestCycle =0 OR lm.CurrentOperators = 0, 0,  1.0 * lm.TotalCycle / lm.HighestCycle / lm.CurrentOperators * 100 )
+	---- 公式: [ELOR] × [CPU /PC] / [Oprts after inline]
+	--- EOLR公式：3600 / [Highest Cycle Time]
+	,[EstPPH] =  IIF(lm.HighestGSD = 0  or lm.CurrentOperators = 0, 0,  (1.0 * 3600 / lm.HighestCycle) * b.CPU / lm.CurrentOperators )
+	from #AllAfter lm
+	where lm.StyleUKey = b.StyleUkey and a.FactoryID=lm.FactoryID and lm.SewingLineID = a.SewingLineID and a.Team=lm.Team and b.ComboType=lm.ComboType AND CAST(lm.EditDate as Date) = a.OutputDate
+	order by lm.EditDate desc
+)AfterData
+outer apply(
+	select top 1 ct.Target
+	from factory f
+	left join ChgOverTarget ct on ct.MDivisionID= f.MDivisionID 
+				and ct. Type ='LBR'
+	where f.id = a.FactoryID
+	order by EffectiveDate desc
+)LinebalancingTarget 
+outer apply(
+    ---- ：不分P03 P05 P06，根據Factory + Brand + ComboType + Style + Season，找出最大的版本
+	select top 1 *
+	from (
+		select *
+		from (
+			select *,SourceTable='P03' from #P03MaxVer
+			union
+			select *,SourceTable='P05' from #P05MaxVer
+			union
+			select *,SourceTable='P06' from #P06MaxVerNoLine
+		)LastData
+		where b.StyleUkey = LastData.StyleUKey 
+			and a.FactoryID = LastData.FactoryID 
+			and b.ComboType = LastData.ComboType 
+	)aa
+	ORDER BY 
+	  CASE Phase
+		WHEN 'Final' THEN 3
+		WHEN 'Prelim' THEN 2
+		WHEN 'Initial' THEN 1
+		ELSE 0
+	  END DESC,
+	  Version DESC
+)LastVersion
+WHERE AfterDataP06.SourceTable IS NOT NULL
 
 drop table #BaseData
 ,#P03MaxVer
 ,#P05MaxVer
 ,#P06MaxVer
-,#P03Rank
-,#P05Rank
+,#P06MaxVerNoLine
+,#PhaseRankedTable
 ,#AfterData
 ,#BeforeData
 ,#FinalAfterData
@@ -961,6 +1212,10 @@ drop table #BaseData
 ,#SewingOutput_Detail
 ,#SewingOutput
 ,#OrderInfo
+,#AllP03
+,#AllP05
+,#AllP06
+,#AllAfter
 
 ");
 
