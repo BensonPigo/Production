@@ -91,5 +91,7 @@
     <Build Include="dbo\Stored Procedures\Juki_H2J_ProdPlan.sql" />
     <Build Include="dbo\Stored Procedures\Juki_H2J_SewMachine.sql" />
     <Build Include="dbo\Stored Procedures\Juki_H2J_Style.sql" />
+    <Build Include="dbo\Functions\SplitString_Unicode.sql" />
+    <Build Include="dbo\Functions\GetFirstName.sql" />
   </ItemGroup>
 </Project>
