@@ -386,7 +386,7 @@ namespace Sci.Production.Cutting
                 string[] seqParts = seq.Split('-');
                 string seq1 = seqParts.Length >= 2 ? seqParts[0] : string.Empty;
                 string seq2 = seqParts.Length >= 2 ? seqParts[1] : string.Empty;
-                string[] colorInfo = this.GetCellValueFromData(data, 2, panelCodeRow + 1).Split('-');
+                string[] colorInfo = this.GetCellValueFromData(data, 4, panelCodeRow + 1).Split('-');
                 string tmpColorId = colorInfo.Length >= 1 ? colorInfo[0] : string.Empty;
 
                 // 定義子範圍（模擬原本的 rangeSizeRatio）  
