@@ -129,6 +129,20 @@ namespace Sci.Production.Warehouse
             #region Separate By WK
             string sqlColSeparateByWK = string.Empty;
             string sqlJoinSeparateByWK = string.Empty;
+            string sqlExportShipMode = @"
+outer apply(
+    select ShipModeID = stuff((
+        select concat(',',ShipModeID)
+        from (
+            select distinct ex.ShipModeID
+            from Export ex with (nolock) 
+            inner join Export_Detail exd with (nolock) on ex.ID = exd.ID  
+            where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
+        ) as WkShipMode
+        for xml path('')
+	),1,1,'')
+) ex";
+
             if (this.chkSeparateByWK.Checked)
             {
                 sqlColSeparateByWK = @"
@@ -142,6 +156,7 @@ namespace Sci.Production.Warehouse
 left join Export_Detail exd with (nolock) on exd.POID = psd.id and exd.Seq1 = psd.SEQ1 and exd.Seq2 = psd.SEQ2
 left join Export ex with (nolock) on ex.ID = exd.ID
 ";
+                sqlExportShipMode = string.Empty;
             }
             #endregion
             #region -- sql parameters declare --
@@ -553,7 +568,7 @@ select  f.MDivisionID
         ,style = si.StyleID
 		,o.BrandID
         ,PSD.FinalETD
-        ,WkShipMode.ShipModeID
+        ,ex.ShipModeID
         ,[ActETD]=PSD.CFMETD
 		,[ActETA]=PSD.FinalETA
         ,[Sup Delivery Rvsd ShipMode]=PSD.ShipModeID
@@ -719,7 +734,7 @@ outer apply
 outer apply(select string=concat(iif(isnull(ds3.string,'')='','',ds3.string+CHAR(10)),IIF(IsNull(ds.ZipperName,'') = '','','Spec:'+ ds.ZipperName+Char(10)),RTrim(ds.Spec)))ds4
 outer apply(select string=replace(replace(replace(replace(ds4.string,char(13),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)),char(10)+char(10),char(10)))ds5
 outer apply(
-select wkno = stuff((
+    select wkno = stuff((
 	    select concat(char(10),ID)
 	    from Export_Detail with (nolock) 
 	    where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
@@ -729,12 +744,7 @@ select wkno = stuff((
 left join #tmpAccessory acc on acc.id = PSD.ID and acc.scirefno = PSD.sciRefno and acc.seq1 = psd.Seq1 and acc.Color = psdsC.SpecValue and acc.SuppID = ps.SuppID and psd.FabricType = 'A' and PSD.SEQ1 not like 'T%' 
 left join #tmpFabric fab on fab.id = PSD.ID and fab.Color = psdsC.SpecValue and fab.scirefno = PSD.sciRefno and psd.FabricType = 'F' 
 left join #tmpThread thread on thread.id = PSD.ID and thread.scirefno = PSD.sciRefno and thread.SuppID = ps.SuppID and thread.Color = psdsC.SpecValue and psd.Seq1 = thread.Seq1
-outer apply(
-	select distinct ex.ShipModeID
-	from Export_Detail exd with (nolock) 
-    inner join Export ex with (nolock) on ex.ID = exd.ID
-	where POID = psd.id and Seq1 = psd.SEQ1 and Seq2 = psd.SEQ2
-)WkShipMode
+{sqlExportShipMode}
 Where 1=1
 {where}
 ");
