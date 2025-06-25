@@ -84,5 +84,12 @@
     <Build Include="dbo\Stored Procedures\Juki_P2H_Layout.sql" />
     <Build Include="dbo\Stored Procedures\Juki_P2H_BaseProcess.sql" />
     <Build Include="dbo\Stored Procedures\Juki_P2H_SewMachine.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_BaseProces.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Layout.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Mechanic.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Operator.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_ProdPlan.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_SewMachine.sql" />
+    <Build Include="dbo\Stored Procedures\Juki_H2J_Style.sql" />
   </ItemGroup>
 </Project>
