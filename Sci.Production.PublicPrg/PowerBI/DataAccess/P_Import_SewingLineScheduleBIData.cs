@@ -83,8 +83,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 };
 
                 string sql = @"	
-				select 
-				s.*
+				select s.*
 				into #Update
 				from P_SewingLineSchedule t 
 				inner join #tmp s on t.APSNo = s.APSNo 
@@ -272,9 +271,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 																		AND t.SewingDay = s.SewingDay 
 																		AND t.SewingLineID = s.SewingLineID  
 																		AND t.Sewer = s.Sewer 
-																		AND t.FactoryID = s.FactoryID)";
-                sql += new Base().SqlBITableHistory("P_SewingLineSchedule", "P_SewingLineSchedule_History", "#tmp", "((p.AddDate >= @SDate and  p.AddDate <= @EDate) or (p.EditDate >= @SDate and p.EditDate <= @EDate) or (p.SewingOffline >= @SDate and p.SewingOffline <= @EDate))", needJoin: false) + Environment.NewLine;
-                sql += $@"
+																		AND t.FactoryID = s.FactoryID)
+
+                INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
+                SELECT t.[FactoryID], t.[Ukey], t.BIFactoryID, GETDATE()  
+				from P_SewingLineSchedule t
+				where not exists (select 1 from #tmp s where t.APSNo = s.APSNo 
+														AND t.SewingDay = s.SewingDay 
+														AND t.SewingLineID = s.SewingLineID  
+														AND t.Sewer = s.Sewer 
+														AND t.FactoryID = s.FactoryID)
+				and ((t.AddDate >= @SDate and  t.AddDate <= @EDate)
+					or (t.EditDate >= @SDate and t.EditDate <= @EDate)
+					or (t.SewingOffline >= @SDate and t.SewingOffline <= @EDate)
+				)
+
                 delete t
 				from P_SewingLineSchedule t
 				where not exists (select 1 from #tmp s where t.APSNo = s.APSNo 
@@ -299,9 +310,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 														AND t.FactoryID = s.FactoryID)
 				and((t.AddDate >= @SDate and  t.AddDate <= @EDate)
 					or(t.EditDate >= @SDate and t.EditDate <= @EDate)
-					or(t.SewingOffline >= @SDate and t.SewingOffline <= @EDate))";
-                sql += new Base().SqlBITableHistory("P_SewingLineSchedule", "P_SewingLineSchedule_History", "#Del", "ukey IN(SELECT ukey FROM #Del WHERE rn > 1)", needJoin: false, needExists: false) + Environment.NewLine;
-                sql += $@"
+					or(t.SewingOffline >= @SDate and t.SewingOffline <= @EDate))
+
+				INSERT INTO P_SewingLineSchedule_History([FactoryID], [Ukey], BIFactoryID, BIInsertDate)   
+				SELECT p.[FactoryID], p.[Ukey], p.BIFactoryID, GETDATE()  
+				FROM P_SewingLineSchedule p 
+				WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)
+
 				DELETE FROM P_SewingLineSchedule
 				WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)";
 

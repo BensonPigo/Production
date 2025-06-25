@@ -258,9 +258,9 @@ Select
     [PtnDesc] = bd.PatternDesc,
     [Group] = bd.BundleGroup,
     [Size] = bd.SizeCode,
-    [Artwork] = sub.sub,
+    [Artwork] = isnull(sub.sub,''),
     [Qty] = bd.Qty,
-    [Sub-process] = s.Id,
+    [Sub-process] = isnull(s.Id,''),
     [Post Sewing SubProcess]= iif(ps.sub = 1,N'✔',''),
     [No Bundle Card After Subprocess]= iif(nbs.sub= 1,N'✔',''),
     bio.LocationID,
@@ -270,13 +270,13 @@ Select
     [InComing] = bio.InComing,
     [Out (Time)] = bio.OutGoing,
     [POSupplier] = iif(PoSuppFromOrderID.Value = '',PoSuppFromPOID.Value,PoSuppFromOrderID.Value),
-    [AllocatedSubcon]=isnull(Stuff((					
+    [AllocatedSubcon]=Stuff((					
 					select concat(',',ls.abb)
 					from order_tmscost ot
 					inner join LocalSupp ls on ls.id = ot.LocalSuppID
 					 where ot.id = o.id and ot.ArtworkTypeID=s.ArtworkTypeId 
 					for xml path('')
-					),1,1,''),''),
+					),1,1,''),
 	AvgTime = case  when s.InOutRule = 1 then iif(bio.InComing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.InComing,''))/24.0,2))
 					when s.InOutRule = 2 then iif(bio.OutGoing is null, null, round(Datediff(Hour,isnull(b.Cdate,''),isnull(bio.OutGoing,''))/24.0,2))
 					when s.InOutRule in (3,4) and bio.OutGoing is null and bio.InComing is null then null
@@ -413,10 +413,12 @@ select
 	[FabricKind] = isnull(r.[FabricKind],''),
     [CutRef] = isnull(r.[Cut Ref#],'') ,
     [SP] = STUFF((
-    SELECT ',' + ISNULL(r2.[SP#], '')
-    FROM #result r2
-    WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] and r2.Artwork = r.Artwork and r2.Size = r.Size
-    FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''),
+        SELECT ',' + ISNULL(r2.[SP#], '')
+        FROM #result r2
+        WHERE r2.Bundleno = r.Bundleno and r2.[Sub-process] = r.[Sub-process] 
+        and r2.Artwork = r.Artwork and r2.Size = r.Size
+        FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, ''
+    ),
     [MasterSP] = isnull(r.[Master SP#],''),
     [M] = isnull(r.[M],''),
     [Factory] = isnull(r.[Factory],''),
@@ -476,8 +478,8 @@ select
 	,[PanelNo] = isnull(r.PanelNo,'')
 	,[CutCellID] = isnull(r.CutCellID,'')
     ,[SpreadingNo] = isnull(r.SpreadingNo,'')
-    ,[LastSewDate] = tsi.LastSewDate
-    ,[SewQty] = isnull(tsi.SewQty,0)
+    ,[LastSewDate] = MAX(tsi.LastSewDate)
+    ,[SewQty] = isnull(Sum(tsi.SewQty),0)
 from #result r
 left join #tmpGetCutDateTmp gcd on r.[Cut Ref#] = gcd.[Cut Ref#] and r.M = gcd.M 
 left join #tmpSewingInfo tsi on tsi.OrderId =   r.[SP#] and 

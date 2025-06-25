@@ -139,8 +139,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 string sql = $@" 
 
-				Insert Into P_CFAInline_Detail_History
-				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				Insert Into P_CFAInline_Detail_History (Ukey, FactoryID, BIFactoryID, BIInsertDate)
+				Select Ukey, FactoryID, BIFactoryID, GETDATE()
 				FROM P_CFAInline_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 				DELETE T FROM P_CFAInline_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)

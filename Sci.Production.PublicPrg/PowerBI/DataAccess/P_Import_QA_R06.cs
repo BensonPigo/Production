@@ -96,8 +96,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", item.SDate),
-                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@SDate", item.SDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@EDate", item.EDate.Value.ToString("yyyy/MM/dd")),
                 new SqlParameter("@BIFactoryID", item.RgCode),
             };
 

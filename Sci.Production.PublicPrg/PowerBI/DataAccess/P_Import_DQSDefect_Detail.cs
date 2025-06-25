@@ -1,5 +1,10 @@
-﻿using Sci.Production.Prg.PowerBI.Logic;
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -25,9 +30,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 item.SDate = DateTime.Parse(DateTime.Now.Year.ToString());
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
@@ -247,8 +252,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					P.[FactoryID] = T.[FactoryID] AND P.[InspectionDetailUkey] = T.[InspectionDetailUkey]	
 				)
 
-				Insert Into P_DQSDefect_Detail_History([FactoryID], [InspectionDetailUkey], [BIFactoryID], [BIInsertDate])
-				Select FactoryID, InspectionDetailUkey, BIFactoryID, GETDATE()
+				Insert Into P_DQSDefect_Detail_History([FactoryID], [Ukey], [InspectionDetailUkey], [BIFactoryID], [BIInsertDate])
+				Select FactoryID, Ukey, InspectionDetailUkey, BIFactoryID, GETDATE()
 				FROM P_DQSDefect_Detail p
                 where not exists 
 				(

@@ -184,18 +184,6 @@ WHERE s.OutputDate BETWEEN DATEADD(MONTH, -3, sdate.OutputDate) AND sdate.Output
 GROUP BY sdate.OutputDate, o.StyleID, s.FactoryID, o.BrandID
 
 
-SELECT o.StyleID, 
-       s.FactoryID,
-       o.BrandID,
-       md.OutputDate,
-       MIN(s.SewingLineID) AS SewingLineID
-INTO #tmp_MinSewingID
-FROM SewingOutput s with (nolock)
-INNER JOIN SewingOutput_Detail sd with (nolock) ON s.ID = sd.ID
-INNER JOIN Orders o with (nolock) ON sd.OrderId = o.ID
-INNER JOIN #tmp_MaxDates md ON o.StyleID = md.StyleID AND s.FactoryID = md.FactoryID AND s.OutputDate = md.MaxOutputDate AND md.BrandID = o.BrandID
-GROUP BY o.StyleID, s.FactoryID, o.BrandID, md.OutputDate
-
 SELECT 
     o.StyleID, 
     s.FactoryID,
@@ -206,11 +194,10 @@ INTO #tmp_MinSewingID
 FROM SewingOutput s WITH (NOLOCK)
 JOIN SewingOutput_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 JOIN Orders o WITH (NOLOCK) ON sd.OrderId = o.ID
-JOIN #tmp_MaxDates md 
-    ON o.StyleID = md.StyleID 
-   AND s.FactoryID = md.FactoryID 
-   AND s.OutputDate = md.MaxOutputDate 
-   AND o.BrandID = md.BrandID
+JOIN #tmp_MaxDates md ON o.StyleID = md.StyleID 
+                       AND s.FactoryID = md.FactoryID 
+                       AND s.OutputDate = md.MaxOutputDate 
+                       AND o.BrandID = md.BrandID
 GROUP BY o.StyleID, s.FactoryID, o.BrandID, md.OutputDate
 
 
@@ -225,11 +212,10 @@ INTO #tmp_childstyle
 FROM SewingOutput s WITH (NOLOCK)
 JOIN SewingOutput_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 JOIN Orders o WITH (NOLOCK) ON sd.OrderId = o.ID
-JOIN #tmp_SewingDate sda 
-    ON sda.StyleID = o.StyleID 
-   AND sda.BrandID = o.BrandID 
-   AND sda.FactoryID = s.FactoryID 
-   AND sda.OutputDate = s.OutputDate
+JOIN #tmp_SewingDate sda ON sda.StyleID = o.StyleID 
+                       AND sda.BrandID = o.BrandID 
+                       AND sda.FactoryID = s.FactoryID 
+                       AND sda.OutputDate = s.OutputDate
 OUTER APPLY (
     SELECT DISTINCT MasterBrandID, MasterStyleID
     FROM (
@@ -263,10 +249,9 @@ INTO #tmp_childMaxDates
 FROM SewingOutput s WITH (NOLOCK)
 JOIN SewingOutput_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 JOIN Orders o WITH (NOLOCK) ON sd.OrderId = o.ID
-JOIN #tmp_childstyle cs 
-    ON cs.MasterBrandID = o.BrandID 
-   AND cs.FactoryID = s.FactoryID 
-   AND cs.MasterStyleID = o.StyleID
+JOIN #tmp_childstyle cs ON cs.MasterBrandID = o.BrandID 
+                       AND cs.FactoryID = s.FactoryID 
+                       AND cs.MasterStyleID = o.StyleID
 WHERE s.OutputDate < cs.OutputDate
 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID, cs.OutputDate
 
@@ -281,11 +266,10 @@ INTO #tmp_childMinSewingID
 FROM SewingOutput s WITH (NOLOCK)
 JOIN SewingOutput_Detail sd WITH (NOLOCK) ON s.ID = sd.ID
 JOIN Orders o WITH (NOLOCK) ON sd.OrderId = o.ID
-JOIN #tmp_childMaxDates cs 
-    ON o.StyleID = cs.MasterStyleID 
-   AND s.FactoryID = cs.FactoryID 
-   AND s.OutputDate = cs.MaxOutputDate 
-   AND o.BrandID = cs.MasterBrandID
+JOIN #tmp_childMaxDates cs ON o.StyleID = cs.MasterStyleID 
+                           AND s.FactoryID = cs.FactoryID 
+                           AND s.OutputDate = cs.MaxOutputDate 
+                           AND o.BrandID = cs.MasterBrandID
 GROUP BY cs.MasterStyleID, s.FactoryID, cs.MasterBrandID, cs.OutputDate
 
 SELECT 
@@ -304,36 +288,31 @@ SELECT
     BIFactoryID = @BIFactoryID,
     BIInsertDate = GETDATE()
 FROM #tmp_SewingDate s
-LEFT JOIN #tmp_MaxDates MaxDates 
-       ON s.StyleID = MaxDates.StyleID 
-      AND s.FactoryID = MaxDates.FactoryID
-      AND s.BrandID = MaxDates.BrandID
-      AND s.OutputDate = MaxDates.OutputDate
-LEFT JOIN #tmp_MinSewingID MinSewingID 
-       ON MaxDates.StyleID = MinSewingID.StyleID 
-      AND s.FactoryID = MinSewingID.FactoryID
-      AND s.OutputDate = MinSewingID.OutputDate
-      AND MinSewingID.BrandID = s.BrandID
-LEFT JOIN #tmp_childstyle cs 
-       ON cs.OutputDate = s.OutputDate 
-      AND cs.FactoryID = s.FactoryID 
-      AND cs.BrandID = s.BrandID 
-      AND cs.MainStyleID = s.StyleID
+LEFT JOIN #tmp_MaxDates MaxDates ON s.StyleID = MaxDates.StyleID 
+                                  AND s.FactoryID = MaxDates.FactoryID
+                                  AND s.BrandID = MaxDates.BrandID
+                                  AND s.OutputDate = MaxDates.OutputDate
+LEFT JOIN #tmp_MinSewingID MinSewingID ON MaxDates.StyleID = MinSewingID.StyleID 
+                                      AND s.FactoryID = MinSewingID.FactoryID
+                                      AND s.OutputDate = MinSewingID.OutputDate
+                                      AND MinSewingID.BrandID = s.BrandID
+LEFT JOIN #tmp_childstyle cs ON cs.OutputDate = s.OutputDate 
+                             AND cs.FactoryID = s.FactoryID 
+                             AND cs.BrandID = s.BrandID 
+                             AND cs.MainStyleID = s.StyleID
 OUTER APPLY (
     SELECT Rr = STUFF((
         SELECT DISTINCT 
             ',' + cd.MasterStyleID + '→' + csid.SewingLineID + '(' + CONVERT(VARCHAR, cd.MaxOutputDate, 111) + ')'
         FROM #tmp_childMaxDates cd
-        JOIN #tmp_childMinSewingID csid 
-             ON cd.OutputDate = csid.OutputDate
-            AND cd.FactoryID = csid.FactoryID 
-            AND cd.MasterBrandID = csid.MasterBrandID
-            AND cd.MasterStyleID = csid.MasterStyleID 
-        JOIN #tmp_childstyle cs 
-             ON cd.OutputDate = cs.OutputDate 
-            AND cd.FactoryID = cs.FactoryID 
-            AND cd.MasterBrandID = cs.MasterBrandID 
-            AND cs.MasterStyleID = cd.MasterStyleID
+        JOIN #tmp_childMinSewingID csid ON cd.OutputDate = csid.OutputDate
+                                        AND cd.FactoryID = csid.FactoryID 
+                                        AND cd.MasterBrandID = csid.MasterBrandID
+                                        AND cd.MasterStyleID = csid.MasterStyleID 
+        JOIN #tmp_childstyle cs ON cd.OutputDate = cs.OutputDate 
+                                AND cd.FactoryID = cs.FactoryID 
+                                AND cd.MasterBrandID = cs.MasterBrandID 
+                                AND cs.MasterStyleID = cd.MasterStyleID
         WHERE cd.FactoryID = s.FactoryID
           AND cd.MasterBrandID = s.BrandID
           AND cd.MasterStyleID != s.StyleID
@@ -359,7 +338,7 @@ ORDER BY s.OutputDate DESC
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paras, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlCmd.ToString(), paras, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -367,7 +346,7 @@ ORDER BY s.OutputDate DESC
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }
