@@ -606,7 +606,7 @@ RegexOptions.Compiled);
             List<long> listWorkOrderUkey = new List<long>();
             string tableName = GetTableName(form);
             string keyColumn = GetWorkOrderUkeyName(form);
-            string colSeqNoOrCutRef = tableName == "WorkOrderForPlanning" ? colSeqNoOrCutRef = "SEQ" : colSeqNoOrCutRef = "CutNo";
+            string colSeqNoOrCutRef = tableName == "WorkOrderForPlanning" ? colSeqNoOrCutRef = ",SEQ" : colSeqNoOrCutRef = ",CutNo";
 
             foreach (var wk in workOrders)
             {
@@ -615,6 +615,16 @@ RegexOptions.Compiled);
 
                 // sheet 序號
                 int markerSerNo = 1;
+
+                // 若excel為空白則填入NULL，不能補0
+                if (string.IsNullOrEmpty(wk.SeqNoOrCutRef))
+                {
+                    wk.SeqNoOrCutRef = ",NULL";
+                }
+                else
+                {
+                    wk.SeqNoOrCutRef = $",'{wk.SeqNoOrCutRef}'";
+                }
 
                 // WorkOrder_PatternPanel
                 string sqlInsertWorkOrder_PatternPanel = string.Empty;
@@ -694,7 +704,7 @@ ID
 ,Tone
 ,OrderID
 ,IsCreateByUser 
-,{colSeqNoOrCutRef} 
+{colSeqNoOrCutRef} 
 )
 values
 (
@@ -721,7 +731,7 @@ values
 ,'{wk.Tone}'
 ,'{wk.ID}'
 ,1
-,'{wk.SeqNoOrCutRef}'
+{wk.SeqNoOrCutRef}
 )
 
 DECLARE @newWorkOrderUkey as bigint = (select @@IDENTITY)
