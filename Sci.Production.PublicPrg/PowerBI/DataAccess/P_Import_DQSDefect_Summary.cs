@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Ict;
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
@@ -17,7 +16,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_DQSDefect_Summary(DateTime? sDate)
+        public Base_ViewModel P_DQSDefect_Summary(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -26,20 +25,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.Year.ToString());
+                item.SDate = DateTime.Parse(DateTime.Now.Year.ToString());
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetDQSDefect_Summary_Data((DateTime)sDate);
-                if (!resultReport.Result)
+                finalResult = this.GetDQSDefect_Summary_Data(item);
+                if (!finalResult.Result)
                 {
-                    throw resultReport.Result.GetException();
+                    throw finalResult.Result.GetException();
                 }
 
-                DataTable dataTable = resultReport.Dt;
+                DataTable dataTable = finalResult.Dt;
 
                 // insert into PowerBI
                 finalResult = this.UpdateBIData(dataTable);
@@ -48,7 +47,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -58,10 +57,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetDQSDefect_Summary_Data(DateTime sdate)
+        private Base_ViewModel GetDQSDefect_Summary_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@" 
-			declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
+
 			select 
 			 [InspectionDate] = ins.InspectionDate
 			,[FirstInspectionDate] = cast(Ins.AddDate as date)
@@ -146,7 +151,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, t.Gender
 				, t.Construction
 				, detail.DefectQty
-				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIFactoryID] = @BIFactoryID
 				, [BIInsertDate] = GETDATE()
 			from #tmp_summy_first t
 			outer apply
@@ -185,7 +190,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			drop table #tmp_summy_first";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -193,22 +198,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
 
         private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             using (sqlConn)
             {
                 string sql = $@" 
 
-				Insert Into P_DQSDefect_Summary_History
-				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
+				Insert Into P_DQSDefect_Summary_History([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+				Select Ukey, FactoryID, BIFactoryID, GETDATE()
 				FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
 				DELETE T FROM P_DQSDefect_Summary T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
@@ -279,15 +283,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, ISNULL(BIFactoryID, '')
                 , ISNULL(BIInsertDate, GetDate())
 				from #Final_DQSDefect_Summary
+";
 
-				update b set b.TransferDate = getdate(), b.IS_Trans = 1
-				from BITableInfo b
-				where b.id = 'P_DQSDefect_Summary'";
-
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Summary");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_DQSDefect_Summary");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

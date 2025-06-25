@@ -1,10 +1,10 @@
-﻿using Sci.Production.Prg.PowerBI.Logic;
+﻿using Sci.Data;
+using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
-using System.Data.SqlClient;
 using System;
-using Sci.Data;
+using System.Collections.Generic;
 using System.Data;
-using Ict;
+using System.Data.SqlClient;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -14,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_LoadingvsCapacity(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_LoadingvsCapacity(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -23,22 +23,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
                 var today = DateTime.Now;
                 var lastYearStart = new DateTime(today.Year - 1, 1, 1);
-                sDate = lastYearStart.AddDays(7);
+                item.SDate = lastYearStart.AddDays(7);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
                 var currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-                eDate = currentYearStart.AddYears(3).AddDays(6);
+                item.EDate = currentYearStart.AddYears(3).AddDays(6);
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetLoadingvsCapacity_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetLoadingvsCapacity_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -53,7 +53,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -63,11 +63,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetLoadingvsCapacity_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetLoadingvsCapacity_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@Date_S", item.SDate),
+                new SqlParameter("@Date_E", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @Date_S date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @Date_E date ='{edate.ToString("yyyy/MM/dd")}'
             declare @YearMonth_S date =  DATEADD(YEAR,-1,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0))
             declare @YearMonth_E date = DATEADD(YEAR,3,DATEADD(YEAR,DATEDIFF(YEAR,0,getdate()),0)) -1
 
@@ -249,7 +254,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,[CapacityCPU]
 			,[LoadingCPU]
 			,[TransferBIDate] 
-            ,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIFactoryID] =  @BIFactoryID
             ,[BIInsertDate] = GetDate()
 			From
 			(
@@ -280,7 +285,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			order by mdivisionID,kpicode,[Halfkey],ArtworkTypeID";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -288,33 +293,36 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
 
         private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             using (sqlConn)
             {
                 string sql = $@" 
+				insert into P_LoadingvsCapacity_History([MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], [BIInsertDate])
+				select [MDivisionID], [FactoryID], [Key], [Halfkey], [ArtworkTypeID], [BIFactoryID], GETDATE()
+				from P_LoadingvsCapacity
+
 				delete P_LoadingvsCapacity
 
 				insert into P_LoadingvsCapacity
 				select 
-				t.[MDivisionID],
-				t.[KpiCode],
-				t.[Key],
-				t.[Halfkey],
-				t.[ArtworkTypeID],
-				t.[CapacityCPU],
-				t.[LoadingCPU],
-				t.[TransferBIDate],
-				t.[BIFactoryID],
-				t.[BIInsertDate]    
+					t.[MDivisionID],
+					t.[KpiCode],
+					t.[Key],
+					t.[Halfkey],
+					t.[ArtworkTypeID],
+					t.[CapacityCPU],
+					t.[LoadingCPU],
+					t.[TransferBIDate],
+					t.[BIFactoryID],
+					t.[BIInsertDate]    
 				from #tmp t
 				where not exists
 				(
@@ -327,25 +335,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					p.[ArtworkTypeID]	= t.[ArtworkTypeID] 
 				)
 				order by [MDivisionID],[KpiCode],[Halfkey] asc,[ArtworkTypeID]
-
-				IF EXISTS (select 1 from BITableInfo b where b.id = 'P_LoadingvsCapacity')
-				BEGIN
-					update b
-						set b.TransferDate = getdate()
-					from BITableInfo b
-					where b.id = 'P_LoadingvsCapacity'
-				END
-				ELSE 
-				BEGIN
-					insert into BITableInfo(Id, TransferDate)
-					values('P_LoadingvsCapacity', getdate())
-				END
 				";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

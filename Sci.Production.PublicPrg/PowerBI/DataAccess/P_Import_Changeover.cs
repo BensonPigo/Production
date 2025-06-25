@@ -1,5 +1,4 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -15,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_Changeover(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_Changeover(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -24,40 +23,34 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddMonths(-7);
+                item.SDate = DateTime.Now.AddMonths(-7);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now.AddMonths(7);
+                item.EDate = DateTime.Now.AddMonths(7);
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetChangeover_Data((DateTime)sDate, (DateTime)eDate);
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
-
-                DataTable dataTable = resultReport.Dt;
-
-                // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.GetChangeover_Data(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                if (resultReport.Result)
+                DataTable dataTable = finalResult.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(dataTable, item);
+                if (!finalResult.Result)
                 {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_Changeover", false);
+                    throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -67,15 +60,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@SDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EDate", edate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+            };
 
             using (sqlConn)
             {
@@ -134,22 +128,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						where t.FactoryID = s.FactoryID 
 						and t.TransferDate = s.TransferDate
 				  )";
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetChangeover_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetChangeover_Data(ExecutedList item)
         {
-            string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate date ='{edate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
+            string sqlcmd = $@"
 			-- 遞迴取出今天-7天包含今日 共8天日期
 			DECLARE  @t TABLE
 			(
@@ -234,7 +228,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				AND DATEADD(DAY, -1, CONVERT(DATE, d.Dates))
 				and s.FactoryID = d.FactoryID
 			),0)
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIFactoryID] = @BIFactoryID
             , [BIInsertDate] = GetDate()
 			from #tmpAllDate d
 			where CONVERT(DATE, d.Dates) <= CONVERT(date,GETDATE())
@@ -242,7 +236,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("PowerBI", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("PowerBI", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -250,7 +244,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

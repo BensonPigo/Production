@@ -44,8 +44,8 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             if (model.IsPowerBI == false)
             {
-				if (!MyUtility.Check.Empty(model.ArriveWHDate1))
-				{
+                if (!MyUtility.Check.Empty(model.ArriveWHDate1))
+                {
                     where1 += $"and R.WhseArrival >= @Date1" + Environment.NewLine;
                     where2 += $"and T.IssueDate >= @Date1" + Environment.NewLine;
                 }
@@ -282,9 +282,7 @@ select
 	RFT = iif(SUM(t.ArriveQty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.ArriveQty)),
 	TotalDefectyds = Sum(TotalDefectyds),
 	Inspection = iif(SUM(t.ArriveQty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.ArriveQty)),
-	t.Physical,
-	[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
-    [BIInsertDate] = GETDATE()
+	t.Physical
 from #tmp1 t
 Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
 	t.Dyelot,t.Width,t.Weight,t.Composition,t.Description,t.ConstructionID,t.FactoryID,t.Physical
@@ -314,9 +312,7 @@ select
 	RFT = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TotalDefectyds), 0) / SUM(t.Qty)),
 	TotalDefectyds = Sum(TotalDefectyds),
 	Inspection  = iif(SUM(t.Qty) = 0, 0, isnull(SUM(TicketYds), 0) / SUM(t.Qty)),
-	t.Physical,
-	[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
-    [BIInsertDate] = GETDATE()
+	t.Physical
 from #tmp2 t
 Group by t.POID,t.SEQ,t.WK,t.ReceivingID,t.StyleID,t.Brandid,t.Supplier,t.Refno,t.ColorID,t.ArriveWHDate,t.WeaveTypeID,
 	t.Dyelot,t.Width,t.Weight,t.Composition,t.Description,t.ConstructionID,t.FactoryID,t.Physical
@@ -465,8 +461,6 @@ SELECT
 	ArriveWHDate,ArriveQty,WeaveTypeID,Dyelot, CUTWIDTH = Width,Weight,Composition,
 	[DESC] = [Description],[FABRICCONSTRUCTIONID] = ConstructionID,Roll,InspDate,Result,Grade,[DefectCode] = DefectRecord,
 	[DefectType] = [Type],[DEFECTDESC] = DescriptionEN,[T2 Points] = T2Points,[Factory Points] = FactoryPoints,[Points] = point,Defectrate,Inspector {biColumn}
-	,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    ,[BIInsertDate] = GETDATE()
 FROM #Sheet2
 where RowCnt = 1
 
@@ -493,9 +487,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd'),
-	[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
-    [BIInsertDate] = GETDATE()
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp1 t
 where t.InspDate is not null
 
@@ -522,9 +514,7 @@ select
 	t.TicketYds,
 	t.ActualYds,
 	LackingYard = isnull(t.TicketYds, 0) - isnull(t.ActualYds, 0),
-	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd'),
-	[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
-	[BIInsertDate] = GETDATE()
+	[InspDate] = FORMAT(t.InspDate, 'yyyy/MM/dd')
 from #tmp2 t
 where t.InspDate is not null
 
@@ -620,9 +610,7 @@ SELECT
 	AlreadyInspecetedDyelot,
 	InspectionPercentage,
 	DefectCode,
-	TotalPoints = SUM(TotalPoints),
-	[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
-    [BIInsertDate] = GETDATE()
+	TotalPoints = SUM(TotalPoints)
 FROM #DefectSummary
 GROUP BY POID,SEQ,WK,ReceivingID,StyleID,BrandID,Supplier,Refno,ColorID,ArriveWHDate,ArriveQty,WeaveTypeID,
 	SCIRefno,Name,ArriveRoll,NonPhysical,HowManyDyelotArrived,AlreadyInspecetedDyelot,InspectionPercentage,DefectCode

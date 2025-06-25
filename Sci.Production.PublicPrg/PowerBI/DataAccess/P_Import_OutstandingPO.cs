@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
     /// <inheritdoc/>
@@ -18,26 +17,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_OutstandingPO(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_OutstandingPO(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R16 biModel = new PPIC_R16();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-150).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-150).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(30).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(30).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 PPIC_R16_ViewModel model = new PPIC_R16_ViewModel()
                 {
-                    BuyerDeliveryFrom = sDate.Value,
-                    BuyerDeliveryTo = eDate.Value,
+                    BuyerDeliveryFrom = item.SDate.Value,
+                    BuyerDeliveryTo = item.EDate.Value,
                     MDivisionID = string.Empty,
                     FactoryID = string.Empty,
                     BrandID = string.Empty,
@@ -56,13 +55,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -72,7 +71,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -80,8 +79,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 string sql = @"
@@ -122,8 +122,8 @@ alter table #tmp alter column Seq varchar(2)
 	            t.[3rdPartyInspection]				= ISNULL(s.[3rdPartyInspection],''),
 	            t.[3rdPartyInspectionResult]		= ISNULL(s.[3rdPartyInspectionResult],''),
 	            t.LastCartonReceivedDate			= s.LastCartonReceivedDate,
-                t.BIFactoryID                       = s.BIFactoryID,
-                t.BIInsertDate                      = s.BIInsertDate
+                t.BIFactoryID                       = @BIFactoryID,
+                t.BIInsertDate                      = GETDATE()
                 from P_OustandingPO t
                 inner join #tmp s  
 		                ON t.FactoryID = s.FactoryID
@@ -169,8 +169,8 @@ alter table #tmp alter column Seq varchar(2)
 		        [3rdPartyInspectionResult]				= ISNULL(s.[3rdPartyInspectionResult],''),
 		        [BookingSP]								= ISNULL(s.BookingSP,''),
 		        [LastCartonReceivedDate]				= s.LastCartonReceivedDate,
-                [BIFactoryID]                           = s.BIFactoryID,
-                [BIInsertDate]                          = s.BIInsertDate
+                [BIFactoryID]                           = @BIFactoryID,
+                [BIInsertDate]                          = GETDATE()
                 from #tmp s
                 where not exists(
 	                select 1 from P_OustandingPO t 
@@ -212,12 +212,6 @@ alter table #tmp alter column Seq varchar(2)
 
                 delete P_OustandingPO
                 where BuyerDelivery > @EndDate
-
-                update b
-                    set b.TransferDate = getdate()
-		                , b.IS_Trans = 1
-                from BITableInfo b
-                where b.id = 'P_OustandingPO'
                 ";
 
                 finalResult = new Base_ViewModel()

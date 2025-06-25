@@ -172,8 +172,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
             ,F.AddDate
             ,F.EditDate
             ,t.StockType
-            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]) 
-            ,[BIInsertDate] = GETDATE()
 " :
             $@"
             ,[C_Grade_TOP3Defects] = isnull(CGradT3.Value,'')

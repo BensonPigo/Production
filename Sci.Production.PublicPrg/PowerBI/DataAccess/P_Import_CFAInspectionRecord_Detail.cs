@@ -3,9 +3,9 @@ using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -17,7 +17,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CFAInspectionRecord_Detail(DateTime? sDate)
+        public Base_ViewModel P_CFAInspectionRecord_Detail(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -26,14 +26,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.Year.ToString());
+                item.SDate = DateTime.Parse(DateTime.Now.Year.ToString());
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetDQSDefect_Summary_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetCFAInspectionRecord_Detail_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -48,7 +48,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -58,206 +58,166 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetDQSDefect_Summary_Data(DateTime sdate)
+        private Base_ViewModel GetCFAInspectionRecord_Detail_Data(ExecutedList item)
         {
-            string sqlcmd = $@" 
-			declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
-			SELECT 
-			c.[ID]
-			,c.[AuditDate]
-			,c.[FactoryID]
-			,c.[MDivisionid]
-			,c.[SewingLineID]
-			,c.[Team]
-			,c.[Shift]
-			,c.[Stage]
-			,co.[Carton]
-			,c.[InspectQty]
-			,c.[DefectQty]
-			,c.[ClogReceivedPercentage]
-			,c.[Result]
-			,c.[CFA]
-			,c.[Status]
-			,c.[Remark]
-			,c.[AddName]
-			,c.[AddDate]
-			,c.[EditName]
-			,c.[EditDate]
-			,c.[IsCombinePO]
-			,c.[FirstInspection]
-			,co.OrderID,co.SEQ
-			INTO #MainData1
-			From Production.dbo.CFAInspectionRecord c WITH(NOLOCK)
-			INNER JOIN Production.dbo.CFAInspectionRecord_OrderSEQ co WITH(NOLOCK) ON c.ID = co.ID
-			INNER JOIN Production.dbo.Orders O WITH(NOLOCK) ON o.ID = co.OrderID
-			WHERE 1=1
-			AND c.AuditDate >= @sDate
+            string sqlcmd = $@"
 
-			SELECT 
-			 c.[ID]
-			,c.[AuditDate]
-			,c.[FactoryID]
-			,c.[MDivisionid]
-			,c.[SewingLineID]
-			,c.[Team]
-			,c.[Shift]
-			,c.[Stage]
-			,co.[Carton]
-			,c.[InspectQty]
-			,c.[DefectQty]
-			,c.[ClogReceivedPercentage]
-			,c.[Result]
-			,c.[CFA]
-			,c.[Status]
-			,c.[Remark]
-			,c.[AddName]
-			,c.[AddDate]
-			,c.[EditName]
-			,c.[EditDate]
-			,c.[IsCombinePO]
-			,c.[FirstInspection]
-			,co.OrderID
-			,co.SEQ
-			,[InspectedSP] = cfos.OrderID
-			,[InspectedSeq] = cfos.Seq
-			,[ReInspection] =  iif(c.ReInspection =1, 1, 0)
-			INTO #MainData
-			From Production.dbo.CFAInspectionRecord  c
-			INNER JOIN Production.dbo.CFAInspectionRecord_OrderSEQ co ON c.ID = co.ID
-			outer apply (
-				select top 1 OrderID, Seq
-				from  Production.dbo.CFAInspectionRecord_OrderSEQ cfos 
-				where c.ID = cfos.ID
-				ORDER BY Ukey
-			) cfos
-			WHERE c.ID IN (SELECT ID FROM #MainData1)
+-- Step 1: 初步資料過濾
+SELECT 
+    c.[ID], c.[AuditDate], c.[FactoryID], c.[MDivisionid], c.[SewingLineID],
+    c.[Team], c.[Shift], c.[Stage], co.[Carton], c.[InspectQty], c.[DefectQty],
+    c.[ClogReceivedPercentage], c.[Result], c.[CFA], c.[Status], c.[Remark],
+    c.[AddName], c.[AddDate], c.[EditName], c.[EditDate], c.[IsCombinePO],
+    c.[FirstInspection], co.OrderID, co.SEQ
+INTO #MainData1
+FROM Production.dbo.CFAInspectionRecord c WITH (NOLOCK)
+JOIN Production.dbo.CFAInspectionRecord_OrderSEQ co WITH (NOLOCK) ON c.ID = co.ID
+JOIN Production.dbo.Orders o WITH (NOLOCK) ON o.ID = co.OrderID
+WHERE c.AuditDate >= @sDate
 
-			SELECT 
-			 c.AuditDate
-			,BuyerDelivery = (SELECT BuyerDelivery FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,c.OrderID
-			,CustPoNo = (SELECT CustPoNo FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,StyleID = (SELECT StyleID FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,BrandID = (SELECT BrandID FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,Dest = (SELECT Dest FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,Seq = (SELECT Seq FROM Production.dbo.Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
-			,c.SewingLineID
-			,[VasShas]= (SELECT IIF(VasShas=1,'Y','N')  FROM Production.dbo.Orders WHERE ID = c.OrderID)
-			,c.ClogReceivedPercentage
-			,c.MDivisionid
-			,c.FactoryID
-			,c.Shift
-			,c.Team
-			,Qty = (SELECT Qty FROM Production.dbo.Order_QtyShip WHERE ID = c.OrderID AND Seq = c.SEQ)
-			,c.Status
-			,[Carton] = IIF(c.Carton ='' AND c.Stage = '3rd party','N/A',c.Carton)
-			,[CfA] = isnull((select CONCAT(c.CFA, ':', Name) from Production.dbo.Pass1  WITH (NOLOCK) where ID = c.CFA),'')
-			,c.stage
-			,c.Result
-			,c.InspectQty
-			,c.DefectQty
-			,[SQR] = IIF( c.InspectQty = 0,0 , (c.DefectQty * 1.0 / c.InspectQty) * 100)
-			,[DefectDescription] = g.Description
-			,[AreaCodeDesc] = cd.CFAAreaID + ' - ' + CfaArea.Description
-			,[NoOfDefect] = cd.Qty
-			,cd.Remark
-			,c.ID
-			,c.IsCombinePO
-			,[InsCtn]=IIF(c.stage in ('Final' ,'Final Internal') OR c.Stage ='3rd party',
-			( 
-				SELECT [Val]= COUNT(DISTINCT cr.ID) + 1
-				FROM Production.dbo.CFAInspectionRecord cr
-				INNER JOIN Production.dbo.CFAInspectionRecord_OrderSEQ crd ON cr.ID = crd.ID
-				WHERE crd.OrderID=c.OrderID AND crd.SEQ=c.SEQ
-				AND cr.Status = 'Confirmed'
-				AND cr.Stage=c.Stage
-				AND cr.AuditDate <= c.AuditDate
-				AND cr.ID  != c.ID
-			)
-			,NULL)
-			,[Action]= cd.Action
-			,[CFAInspectionRecord_Detail_Key]= concat(c.ID,iif(isnull(cd.GarmentDefectCodeID, '') = '', concat(row_Number()over(order by c.ID),''), cd.GarmentDefectCodeID))
-			,c.FirstInspection
-			,c.[InspectedSP]
-			,c.[InspectedSeq] 
-			,c.[ReInspection]
-			INTO #tmp
-			FROm #MainData  c
-			LEFT JOIN Production.dbo.CFAInspectionRecord_Detail cd ON c.ID = cd.ID
-			LEFT JOIN Production.dbo.GarmentDefectCode g ON g.ID = cd.GarmentDefectCodeID
-			LEFT JOIN Production.dbo.CfaArea ON CfaArea.ID = cd.CFAAreaID
+-- Step 2: 進一步展開資料，加入 ReInspection, InspectedSP/Seq
+SELECT 
+    c.[ID], c.[AuditDate], c.[FactoryID], c.[MDivisionid], c.[SewingLineID],
+    c.[Team], c.[Shift], c.[Stage], co.[Carton], c.[InspectQty], c.[DefectQty],
+    c.[ClogReceivedPercentage], c.[Result], c.[CFA], c.[Status], c.[Remark],
+    c.[AddName], c.[AddDate], c.[EditName], c.[EditDate], c.[IsCombinePO],
+    c.[FirstInspection], co.OrderID, co.SEQ,
+    [InspectedSP] = cfos.OrderID,
+    [InspectedSeq] = cfos.Seq,
+    [ReInspection] = IIF(c.ReInspection = 1, 1, 0)
+INTO #MainData
+FROM Production.dbo.CFAInspectionRecord c WITH (NOLOCK)
+JOIN Production.dbo.CFAInspectionRecord_OrderSEQ co WITH (NOLOCK) ON c.ID = co.ID
+OUTER APPLY (
+    SELECT TOP 1 OrderID, Seq
+    FROM Production.dbo.CFAInspectionRecord_OrderSEQ cfos WITH (NOLOCK)
+    WHERE c.ID = cfos.ID
+    ORDER BY Ukey
+) cfos
+WHERE c.ID IN (SELECT ID FROM #MainData1)
 
-			SELECT pd.*
-			INTO #PackingList_Detail
-			FROM Production.dbo.PackingList_Detail pd
-			WHERE EXISTS (SELECT 1 FROM #tmp t WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ) 
+-- Step 3: 加入明細資料與缺陷資訊
+SELECT 
+    c.AuditDate,
+    o.BuyerDelivery,
+    c.OrderID,
+    o.CustPoNo,
+    o.StyleID,
+    o.BrandID,
+    o.Dest,
+    oqs.Seq,
+    c.SewingLineID,
+    [VasShas] = IIF(o.VasShas = 1, 'Y', 'N'),
+    c.ClogReceivedPercentage,
+    c.MDivisionid,
+    c.FactoryID,
+    c.Shift,
+    c.Team,
+    oqs.Qty,
+    c.Status,
+    [Carton] = IIF(c.Carton = '' AND c.Stage = '3rd party', 'N/A', c.Carton),
+    [CfA] = ISNULL(CONCAT(c.CFA, ':', p1.Name), ''),
+    c.Stage,
+    c.Result,
+    c.InspectQty,
+    c.DefectQty,
+    [SQR] = IIF(c.InspectQty = 0, 0, (c.DefectQty * 1.0 / c.InspectQty) * 100),
+    [DefectDescription] = g.Description,
+    [AreaCodeDesc] = cd.CFAAreaID + ' - ' + ca.Description,
+    [NoOfDefect] = cd.Qty,
+    cd.Remark,
+    c.ID,
+    c.IsCombinePO,
+    [InsCtn] = IIF(
+        c.Stage IN ('Final', 'Final Internal', '3rd party'),
+        (
+            SELECT COUNT(DISTINCT cr.ID) + 1
+            FROM Production.dbo.CFAInspectionRecord cr WITH (NOLOCK)
+            JOIN Production.dbo.CFAInspectionRecord_OrderSEQ crd WITH (NOLOCK) ON cr.ID = crd.ID
+            WHERE crd.OrderID = c.OrderID AND crd.SEQ = c.SEQ
+              AND cr.Status = 'Confirmed'
+              AND cr.Stage = c.Stage
+              AND cr.AuditDate <= c.AuditDate
+              AND cr.ID != c.ID
+        ),
+        NULL
+    ),
+    [Action] = cd.Action,
+    [CFAInspectionRecord_Detail_Key] = CONCAT(
+        c.ID,
+        IIF(ISNULL(cd.GarmentDefectCodeID, '') = '', CONCAT(ROW_NUMBER() OVER (ORDER BY c.ID), ''), cd.GarmentDefectCodeID)
+    ),
+    c.FirstInspection,
+    c.[InspectedSP],
+    c.[InspectedSeq],
+    c.[ReInspection]
+INTO #tmp
+FROM #MainData c
+LEFT JOIN Production.dbo.Orders o WITH (NOLOCK) ON c.OrderID = o.ID
+LEFT JOIN Production.dbo.Order_QtyShip oqs WITH (NOLOCK) ON c.OrderID = oqs.ID AND c.SEQ = oqs.Seq
+LEFT JOIN Production.dbo.Pass1 p1 WITH (NOLOCK) ON c.CFA = p1.ID
+LEFT JOIN Production.dbo.CFAInspectionRecord_Detail cd WITH (NOLOCK) ON c.ID = cd.ID
+LEFT JOIN Production.dbo.GarmentDefectCode g WITH (NOLOCK) ON g.ID = cd.GarmentDefectCodeID
+LEFT JOIN Production.dbo.CfaArea ca WITH (NOLOCK) ON ca.ID = cd.CFAAreaID
 
-			SELECT  
-			Action
-			,AreaCodeDesc
-			,AuditDate
-			,BrandID
-			,BuyerDelivery
-			,CFA
-			,ClogReceivedPercentage
-			,DefectDescription
-			,DefectQty
-			,Dest
-			,FactoryID
-			,Carton
-			,[Inspected Ctn] = InspectedCtn.Val
-			,[Inspected PoQty]=InspectedPoQty.Val
-			,Stage
-			,SewingLineID
-			,MDivisionid
-			,NoOfDefect
-			,Qty
-			,CustPoNo
-			,Remark
-			,Result
-			,InspectQty
-			,Seq
-			,Shift
-			,OrderID
-			,SQR
-			,Status
-			,StyleID
-			,Team
-			,[TTL CTN] = TtlCtn.Val
-			,VasShas
-			,FirstInspection  = IIF(FirstInspection = 1, 'Y','')
-			,t.[InspectedSP]
-			,t.[InspectedSeq] 
-			,t.[ReInspection]
-            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-            ,[BIInsertDate] = GETDATE()
-			FROM  #tmp t
-			OUTER APPLY(
-				SELECT [Val] = COUNT(1)
-				FROM #PackingList_Detail pd
-				WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq 
-				AND pd.CTNQty > 0 AND pd.CTNStartNo != ''
-			)TtlCtn
-			OUTER APPLY(
-				SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
-				FROM #PackingList_Detail pd
-				WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-				AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
-				AND pd.CTNQty=1
-			)InspectedCtn
-			OUTER APPLY(
-				SELECT [Val] = SUM(pd.ShipQty)
-				FROM #PackingList_Detail pd
-				WHERE pd.OrderID = t.OrderID  AND pd.OrderShipmodeSeq = t.Seq
-				AND (',' + t.Carton + ',') like ('%,' + pd.CTNStartNo + ',%')
-			)InspectedPoQty
-			Order by id
+-- Step 4: 取得包裝明細
+SELECT pd.*
+INTO #PackingList_Detail
+FROM Production.dbo.PackingList_Detail pd WITH (NOLOCK)
+WHERE EXISTS (
+    SELECT 1
+    FROM #tmp t
+    WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.SEQ
+)
 
-			DROP TABLE #tmp ,#PackingList_Detail ,#MainData ,#MainData1";
+-- Step 5: 最終報表輸出
+SELECT  
+    Action, AreaCodeDesc, AuditDate, BrandID, BuyerDelivery, CFA, ClogReceivedPercentage,
+    DefectDescription, DefectQty, Dest, FactoryID, Carton,
+    [Inspected Ctn] = InspectedCtn.Val,
+    [Inspected PoQty] = InspectedPoQty.Val,
+    Stage, SewingLineID, MDivisionid, NoOfDefect, Qty, CustPoNo,
+    Remark, Result, InspectQty, Seq, Shift, OrderID, SQR, Status,
+    StyleID, Team,
+    [TTL CTN] = TtlCtn.Val, VasShas,
+    FirstInspection = IIF(FirstInspection = 1, 'Y', ''),
+    t.[InspectedSP], t.[InspectedSeq], t.[ReInspection],
+    [BIFactoryID] = @BIFactoryID,
+    [BIInsertDate] = GETDATE()
+FROM #tmp t
+OUTER APPLY (
+    SELECT [Val] = COUNT(1)
+    FROM #PackingList_Detail pd
+    WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq 
+      AND pd.CTNQty > 0 AND pd.CTNStartNo != ''
+) TtlCtn
+OUTER APPLY (
+    SELECT [Val] = COUNT(DISTINCT pd.CTNStartNo)
+    FROM #PackingList_Detail pd
+    WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq
+      AND (',' + t.Carton + ',') LIKE ('%,' + pd.CTNStartNo + ',%')
+      AND pd.CTNQty = 1
+) InspectedCtn
+OUTER APPLY (
+    SELECT [Val] = SUM(pd.ShipQty)
+    FROM #PackingList_Detail pd
+    WHERE pd.OrderID = t.OrderID AND pd.OrderShipmodeSeq = t.Seq
+      AND (',' + t.Carton + ',') LIKE ('%,' + pd.CTNStartNo + ',%')
+) InspectedPoQty
+ORDER BY ID
+
+-- 清除暫存表
+DROP TABLE #tmp, #PackingList_Detail, #MainData, #MainData1
+";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dataTables),
             };
 
             if (!resultReport.Result)
@@ -272,13 +232,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             using (sqlConn)
             {
                 string sql = $@" 
-				Insert Into P_CFAInspectionRecord_Detail_History
+				Insert Into P_CFAInspectionRecord_Detail_History(Ukey, FactoryID, BIFactoryID, BIInsertDate)
 				Select Ukey, FactoryID, BIFactoryID, BIInsertDate
 				FROM P_CFAInspectionRecord_Detail T WHERE EXISTS(SELECT * FROM Production.dbo.factory S WHERE T.FactoryID = S.ID)
 
@@ -364,16 +323,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,[ReInspection]
 					,isnull(BIFactoryID, '')
 					,isnull(BIInsertDate, GetDate())
-					from #Final_P_CFAInspectionRecord_Detail
+					from #Final_P_CFAInspectionRecord_Detail";
 
-					update b set b.TransferDate = getdate(), b.IS_Trans = 1
-					from BITableInfo b
-					where b.id = 'P_CFAInspectionRecord_Detail'";
-
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInspectionRecord_Detail");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

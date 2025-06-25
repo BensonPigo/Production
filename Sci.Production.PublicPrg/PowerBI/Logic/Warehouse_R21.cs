@@ -758,8 +758,6 @@ or
                 string columns = @"
 	, [AddDate] = o.AddDate
 	, [EditDate] =o.EditDate
-    , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    , [BIInsertDate] = GETDATE()
 ";
                 sql = this.sqlcolumn + columns + sqlcmd.ToString();
             }

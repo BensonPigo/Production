@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Transactions;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -16,45 +15,40 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_LineMapping(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_LineMapping(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
                 DefaultTimeout = 1800,
             };
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetLineMapping_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetLineMapping_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.DtArr, item);
                 if (!finalResult.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                if (resultReport.Result)
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_LineMapping", true);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_LineMapping_Detail", true);
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_LineMapping_Detail";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -64,188 +58,290 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetLineMapping_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetLineMapping_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate date ='{edate.ToString("yyyy/MM/dd")}'
+-- P_LineMapping 匯總（含 P03 / P06）
 
-			-- P_LineMapping
-			select 
-			*
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-			, [BIInsertDate] = getdate()
-			from (
-				select 
-				[FactoryID] = isnull(l.FactoryID ,'')
-				,[StyleUKey] = isnull(l.StyleUKey,0)
-				,[ComboType] = isnull(l.ComboType,'')
-				,[Version] = isnull(l.Version,'')
-				,[Phase] = ISNULL(l.Phase,'')
-				,[SewingLine] = l.SewingLineID
-				,[isFrom] = 'IE P03'
-				,[ID] = isnull(l.ID,'')
-				,[Style] = ISNULL(l.StyleID,'')
-				,[Season] = ISNULL(l.SeasonID,'')
-				,[Brand] = isnull(l.BrandID,'')
-				,[Team] = isnull(l.Team,'')
-				,[Desc.] = isnull(s.Description,'')
-				,[CPU/PC] = isnull(s.CPU,0)
-				,[No. of Sewer] = isnull(l.CurrentOperators,0)
-				,[LBR By GSD Time(%)] = 
-				case when isnull(l.HighestGSD,0) = 0 then 0.00
-				when ISNULL(l.CurrentOperators,0) = 0 then 0.00
-				else round(convert(float,l.TotalGSD)/convert(float,l.HighestGSD)/convert(float,l.CurrentOperators) * 100,2) 
-				end
-				,[Total GSD Time] = isnull(l.TotalGSD,0)
-				,[Avg. GSD Time] = 
-				case when isnull(l.CurrentOperators,0) = 0 then 0
-				else round(CONVERT(float,l.TotalGSD) / convert(float,l.CurrentOperators),2)
-				end
-				,[Highest GSD Time] = isnull(l.HighestGSD,0)
-				,[LBR By Cycle Time(%)] = 
-				case when isnull(l.HighestCycle,0) = 0 then 0.00
-				when ISNULL(l.CurrentOperators,0) = 0 then 0.00
-				else round(convert(float,l.TotalCycle)/convert(float,l.HighestCycle)/convert(float,l.CurrentOperators) * 100,2) 
-				end
-				,[Total Cycle Time] = isnull(l.TotalCycle,0)
-				,[Avg. Cycle Time] = 
-				case when ISNULL(l.CurrentOperators,0) = 0 then 0
-				else round(CONVERT(float,l.TotalCycle) / CONVERT(float,l.CurrentOperators),2)
-				end
-				,[Highest Cycle Time] = isnull(l.HighestCycle,0)
-				,[Total % Time Diff(%)] =
-				case when ISNULL(l.TotalCycle,0) = 0 then 0
-				else round( convert(float, (l.TotalGSD - l.TotalCycle)) / CONVERT(float,l.TotalCycle) * 100 ,0) 
-				end
-				,[No. of Hours] = isnull(l.WorkHour,0)
-				,[Oprts of Presser] = 0 --P03沒有
-				,[Oprts of Packer] = 0 --P03沒有
-				,[Ttl Sew Line Oprts] = isnull( l.CurrentOperators,0)
-				,[Target / Hr.(100%)] =
-				case when isnull( l.TotalCycle,0) = 0 then 0
-				else round(3600 * CONVERT(float,  l.CurrentOperators) / convert(float, l.TotalCycle),0)
-				end
-				,[Daily Demand / Shift] = 
-				case when ISNULL(l.TotalCycle,0) = 0 then 0
-				else round(3600 * CONVERT(float,  l.CurrentOperators) / convert(float, l.TotalCycle),0) *  l.WorkHour
-				end
-				,[Takt Time] = 
-				case when ISNULL( l.CurrentOperators,0) = 0 then 0
-				when ISNULL(l.TotalCycle,0) = 0 then 0
-				else round((3600 * convert(float,l.WorkHour)) / (round(3600 * CONVERT(float,  l.CurrentOperators) / convert(float, l.TotalCycle),0) *  l.WorkHour),2)
-				end
-				,[EOLR] = 
-				case when ISNULL(l.HighestCycle,0) = 0 then 0
-				else ROUND(3600 / convert(float,l.HighestCycle) ,2)
-				end
-				,[PPH] = case when ISNULL(l.CurrentOperators,0) = 0 then 0
-				when ISNULL(l.HighestCycle,0) = 0 then 0
-				else ROUND(3600 / convert(float,l.HighestCycle) * s.CPU / convert(float,l.CurrentOperators),2) end
-				,[GSD Status] = l.TimeStudyPhase
-				,[GSD Version] = l.TimeStudyVersion
-				,[Status] = isnull(l.Status,'')
-				,[Add Name] = l.AddName
-				,[Add Date] = l.AddDate
-				,[Edit Name] = l.EditName
-				,[Edit Date] = l.EditDate
-				from Production.dbo.LineMapping l with(nolock)
-				left join Production.dbo.Style s with(nolock) on s.Ukey = l.StyleUKey
-				where 1=1
-				and (
-					l.AddDate between @SDate and @EDate
-					or
-					l.EditDate between @SDate and @EDate
-				)
+-- P03
+SELECT 
+    FactoryID              = ISNULL(l.FactoryID, ''),
+    StyleUKey              = ISNULL(l.StyleUKey, 0),
+    ComboType              = ISNULL(l.ComboType, ''),
+    Version                = ISNULL(l.Version, ''),
+    Phase                  = ISNULL(l.Phase, ''),
+    SewingLine             = l.SewingLineID,
+    isFrom                 = 'IE P03',
+    ID                     = ISNULL(l.ID, ''),
+    Style                  = ISNULL(l.StyleID, ''),
+    Season                 = ISNULL(l.SeasonID, ''),
+    Brand                  = ISNULL(l.BrandID, ''),
+    Team                   = ISNULL(l.Team, ''),
+    [Desc.]                = ISNULL(s.Description, ''),
+    [CPU/PC]               = ISNULL(s.CPU, 0),
+    [No. of Sewer]         = ISNULL(l.CurrentOperators, 0),
+    [LBR By GSD Time(%)]   = 
+        CASE 
+            WHEN ISNULL(l.HighestGSD, 0) = 0 OR ISNULL(l.CurrentOperators, 0) = 0 THEN 0.00
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSD) / NULLIF(CONVERT(FLOAT, l.HighestGSD) * CONVERT(FLOAT, l.CurrentOperators), 0) * 100, 2)
+        END,
+    [Total GSD Time]       = ISNULL(l.TotalGSD, 0),
+    [Avg. GSD Time]        = 
+        CASE 
+            WHEN ISNULL(l.CurrentOperators, 0) = 0 THEN 0 
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSD) / NULLIF(CONVERT(FLOAT, l.CurrentOperators), 0), 2)
+        END,
+    [Highest GSD Time]     = ISNULL(l.HighestGSD, 0),
+    [LBR By Cycle Time(%)] = 
+        CASE 
+            WHEN ISNULL(l.HighestCycle, 0) = 0 OR ISNULL(l.CurrentOperators, 0) = 0 THEN 0.00
+            ELSE ROUND(CONVERT(FLOAT, l.TotalCycle) / NULLIF(CONVERT(FLOAT, l.HighestCycle) * CONVERT(FLOAT, l.CurrentOperators), 0) * 100, 2)
+        END,
+    [Total Cycle Time]     = ISNULL(l.TotalCycle, 0),
+    [Avg. Cycle Time]      = 
+        CASE 
+            WHEN ISNULL(l.CurrentOperators, 0) = 0 THEN 0 
+            ELSE ROUND(CONVERT(FLOAT, l.TotalCycle) / NULLIF(CONVERT(FLOAT, l.CurrentOperators), 0), 2)
+        END,
+    [Highest Cycle Time]   = ISNULL(l.HighestCycle, 0),
+    [Total % Time Diff(%)] = 
+        CASE 
+            WHEN ISNULL(l.TotalCycle, 0) = 0 THEN 0
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSD - l.TotalCycle) / NULLIF(CONVERT(FLOAT, l.TotalCycle), 0) * 100, 0)
+        END,
+    [No. of Hours]         = ISNULL(l.WorkHour, 0),
+    [Oprts of Presser]     = 0,
+    [Oprts of Packer]      = 0,
+    [Ttl Sew Line Oprts]   = ISNULL(l.CurrentOperators, 0),
+    [Target / Hr.(100%)]   = 
+        CASE 
+            WHEN ISNULL(l.TotalCycle, 0) = 0 THEN 0 
+            ELSE ROUND(3600 * CONVERT(FLOAT, l.CurrentOperators) / NULLIF(CONVERT(FLOAT, l.TotalCycle), 0), 0)
+        END,
+    [Daily Demand / Shift] = 
+        CASE 
+            WHEN ISNULL(l.TotalCycle, 0) = 0 THEN 0 
+            ELSE ROUND(3600 * CONVERT(FLOAT, l.CurrentOperators) / NULLIF(CONVERT(FLOAT, l.TotalCycle), 0), 0) * l.WorkHour
+        END,
+    [Takt Time] = 
+        CASE 
+            WHEN ISNULL(l.CurrentOperators, 0) = 0 OR ISNULL(l.TotalCycle, 0) = 0 THEN 0
+            ELSE ROUND((3600 * l.WorkHour) / NULLIF((3600 * CONVERT(FLOAT, l.CurrentOperators) / CONVERT(FLOAT, l.TotalCycle)) * l.WorkHour, 0), 2)
+        END,
+    [EOLR] = 
+        CASE 
+            WHEN ISNULL(l.HighestCycle, 0) = 0 THEN 0 
+            ELSE ROUND(3600 / CONVERT(FLOAT, l.HighestCycle), 2)
+        END,
+    [PPH] = 
+        CASE 
+            WHEN ISNULL(l.CurrentOperators, 0) = 0 OR ISNULL(l.HighestCycle, 0) = 0 THEN 0
+            ELSE ROUND((3600 / CONVERT(FLOAT, l.HighestCycle)) * s.CPU / NULLIF(CONVERT(FLOAT, l.CurrentOperators), 0), 2)
+        END,
+    [GSD Status] = l.TimeStudyPhase,
+    [GSD Version] = l.TimeStudyVersion,
+    [Status] = ISNULL(l.Status, ''),
+    [Add Name] = l.AddName,
+    [Add Date] = l.AddDate,
+    [Edit Name] = l.EditName,
+    [Edit Date] = l.EditDate,
+    BIFactoryID = @BIFactoryID,
+    BIInsertDate = GETDATE()
+INTO #tmpMain
+FROM Production.dbo.LineMapping l WITH (NOLOCK)
+LEFT JOIN Production.dbo.Style s WITH (NOLOCK) ON s.Ukey = l.StyleUKey
+WHERE (l.AddDate BETWEEN @SDate AND @EDate OR l.EditDate BETWEEN @SDate AND @EDate)
 
-				union all
+UNION ALL
 
-				select [FactoryID] = isnull(l.FactoryID,'')
-				,[StyleUKey] = isnull(StyleUKey,0)
-				,[ComboType] = isnull(l.ComboType,'')
-				,[Version] = isnull(l.Version,'')
-				,[Phase] = isnull(l.Phase,'')
-				,[SewingLine] = isnull(l.SewingLineID,'')
-				,[isFrom] = 'IE P06'
-				,[ID] = isnull(l.ID,'')
-				,[Style] = isnull(l.StyleID,'')
-				,[Season] = isnull(l.SeasonID,'')
-				,[Brand] = isnull(l.BrandID,'')
-				,[Team] = isnull(l.Team,'')
-				,[Desc.] = isnull(s.Description,'')
-				,[CPU/PC] = isnull(s.CPU,0)
-				,[No. of Sewer] = l.SewerManpower
-				,[LBR By GSD Time(%)] =  
-				case when isnull(l.HighestGSDTime,0) = 0 then 0.00
-				when ISNULL(l.SewerManpower,0) = 0 then 0.00
-				else round(convert(float,l.TotalGSDTime)/convert(float,l.HighestGSDTime)/convert(float,l.SewerManpower) * 100,2) 
-				end
-				,[Total GSD Time] = l.TotalGSDTime
-				,[Avg. GSD Time] = 
-				case when isnull(l.SewerManpower,0) = 0 then 0
-				else round(CONVERT(float,l.TotalGSDTime) / convert(float,l.SewerManpower),2)
-				end
-				,[Highest GSD Time] = l.HighestGSDTime
-				,[LBR By Cycle Time(%)] = 
-				case when isnull(l.HighestCycleTime,0) = 0 then 0.00
-				when isnull(l.SewerManpower,0) = 0 then 0.00
-				else round(convert(float,l.TotalCycleTime)/convert(float,l.HighestCycleTime)/convert(float,l.SewerManpower) * 100,2) 
-				end
-				,[Total Cycle Time] = l.TotalCycleTime 
-				,[Avg. Cycle Time] = 
-				case when isnull(l.SewerManpower,0) = 0 then 0
-				else round(CONVERT(float,l.TotalCycleTime) / convert(float,l.SewerManpower),2)
-				end
-				,[Highest Cycle Time] = l.HighestCycleTime
-				,[Total % Time Diff(%)] = 
-				case when isnull(l.TotalCycleTime,0) = 0 then 0
-				else round( convert(float, (l.TotalGSDTime - l.TotalCycleTime)) / CONVERT(float,l.TotalCycleTime) * 100 ,0) 
-				end
-				,[No. of Hours] = l.WorkHour
-				,[Oprts of Presser] = l.PresserManpower
-				,[Oprts of Packer] = l.PackerManpower
-				,[Ttl Sew Line Oprts] = l.SewerManpower + l.PresserManpower + l.PackerManpower 
-				,[Target / Hr.(100%)] =
-				case when isnull(l.TotalCycleTime,0) = 0 then 0
-				else round(3600 * CONVERT(float, l.SewerManpower) / convert(float, l.TotalCycleTime),0)
-				end
-				,[Daily Demand / Shift] = 
-				case when isnull(l.TotalCycleTime,0) = 0 then 0
-				else round(3600 * CONVERT(float,  l.SewerManpower) / convert(float, l.TotalCycleTime),0) * l.WorkHour
-				end
-				,[Takt Time] = 
-				case when isnull(l.TotalCycleTime,0) = 0 then 0
-				else round((3600 * l.WorkHour) / (round(3600 * CONVERT(float,  l.SewerManpower) / convert(float, l.TotalCycleTime),0) * l.WorkHour),2)
-				end
-				,[EOLR] = 
-				case when isnull(l.HighestCycleTime,0) = 0 then 0
-				else round(3600 / convert(float,l.HighestCycleTime),2)
-				end
-				,[PPH] = 
-				case when isnull(l.HighestCycleTime,0) = 0 then 0
-				when ISNULL(l.SewerManpower,0) = 0 then 0
-				else round( (3600 / convert(float,l.HighestCycleTime)) * isnull(s.CPU,0) / CONVERT(float,l.SewerManpower),2)
-				end
-				,[GSD Status] = l.TimeStudyStatus
-				,[GSD Version] = l.TimeStudyVersion
-				,[Status] = l.Status
-				,[Add Name] = l.AddName
-				,[Add Date] = l.AddDate
-				,[Edit Name] = l.EditName
-				,[Edit Date] = l.EditDate
-				from Production.dbo.LineMappingBalancing l with(nolock)
-				left join Production.dbo.Style s with(nolock) on s.Ukey = l.StyleUKey
-				where l.Status='Confirmed'
-				and (
-					l.AddDate between @SDate and @EDate
-					or
-					l.EditDate between @SDate and @EDate
-				)
-			) a";
+-- P06
+SELECT 
+    FactoryID              = ISNULL(l.FactoryID, ''),
+    StyleUKey              = ISNULL(l.StyleUKey, 0),
+    ComboType              = ISNULL(l.ComboType, ''),
+    Version                = ISNULL(l.Version, ''),
+    Phase                  = ISNULL(l.Phase, ''),
+    SewingLine             = ISNULL(l.SewingLineID, ''),
+    isFrom                 = 'IE P06',
+    ID                     = ISNULL(l.ID, ''),
+    Style                  = ISNULL(l.StyleID, ''),
+    Season                 = ISNULL(l.SeasonID, ''),
+    Brand                  = ISNULL(l.BrandID, ''),
+    Team                   = ISNULL(l.Team, ''),
+    [Desc.]                = ISNULL(s.Description, ''),
+    [CPU/PC]               = ISNULL(s.CPU, 0),
+    [No. of Sewer]         = l.SewerManpower,
+    [LBR By GSD Time(%)]   = 
+        CASE 
+            WHEN ISNULL(l.HighestGSDTime, 0) = 0 OR ISNULL(l.SewerManpower, 0) = 0 THEN 0.00
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSDTime) / NULLIF(CONVERT(FLOAT, l.HighestGSDTime) * CONVERT(FLOAT, l.SewerManpower), 0) * 100, 2)
+        END,
+    [Total GSD Time]       = l.TotalGSDTime,
+    [Avg. GSD Time]        = 
+        CASE 
+            WHEN ISNULL(l.SewerManpower, 0) = 0 THEN 0 
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSDTime) / NULLIF(CONVERT(FLOAT, l.SewerManpower), 0), 2)
+        END,
+    [Highest GSD Time]     = l.HighestGSDTime,
+    [LBR By Cycle Time(%)] = 
+        CASE 
+            WHEN ISNULL(l.HighestCycleTime, 0) = 0 OR ISNULL(l.SewerManpower, 0) = 0 THEN 0.00
+            ELSE ROUND(CONVERT(FLOAT, l.TotalCycleTime) / NULLIF(CONVERT(FLOAT, l.HighestCycleTime) * CONVERT(FLOAT, l.SewerManpower), 0) * 100, 2)
+        END,
+    [Total Cycle Time]     = l.TotalCycleTime,
+    [Avg. Cycle Time]      = 
+        CASE 
+            WHEN ISNULL(l.SewerManpower, 0) = 0 THEN 0
+            ELSE ROUND(CONVERT(FLOAT, l.TotalCycleTime) / NULLIF(CONVERT(FLOAT, l.SewerManpower), 0), 2)
+        END,
+    [Highest Cycle Time]   = l.HighestCycleTime,
+    [Total % Time Diff(%)] = 
+        CASE 
+            WHEN ISNULL(l.TotalCycleTime, 0) = 0 THEN 0
+            ELSE ROUND(CONVERT(FLOAT, l.TotalGSDTime - l.TotalCycleTime) / NULLIF(CONVERT(FLOAT, l.TotalCycleTime), 0) * 100, 0)
+        END,
+    [No. of Hours]         = l.WorkHour,
+    [Oprts of Presser]     = l.PresserManpower,
+    [Oprts of Packer]      = l.PackerManpower,
+    [Ttl Sew Line Oprts]   = l.SewerManpower + l.PresserManpower + l.PackerManpower,
+    [Target / Hr.(100%)]   = 
+        CASE 
+            WHEN ISNULL(l.TotalCycleTime, 0) = 0 THEN 0
+            ELSE ROUND(3600 * CONVERT(FLOAT, l.SewerManpower) / NULLIF(CONVERT(FLOAT, l.TotalCycleTime), 0), 0)
+        END,
+    [Daily Demand / Shift] = 
+        CASE 
+            WHEN ISNULL(l.TotalCycleTime, 0) = 0 THEN 0
+            ELSE ROUND(3600 * CONVERT(FLOAT, l.SewerManpower) / NULLIF(CONVERT(FLOAT, l.TotalCycleTime), 0), 0) * l.WorkHour
+        END,
+    [Takt Time] = 
+        CASE 
+            WHEN ISNULL(l.TotalCycleTime, 0) = 0 THEN 0
+            ELSE ROUND((3600 * l.WorkHour) / NULLIF((3600 * CONVERT(FLOAT, l.SewerManpower) / CONVERT(FLOAT, l.TotalCycleTime)) * l.WorkHour, 0), 2)
+        END,
+    [EOLR] = 
+        CASE 
+            WHEN ISNULL(l.HighestCycleTime, 0) = 0 THEN 0
+            ELSE ROUND(3600 / CONVERT(FLOAT, l.HighestCycleTime), 2)
+        END,
+    [PPH] = 
+        CASE 
+            WHEN ISNULL(l.SewerManpower, 0) = 0 OR ISNULL(l.HighestCycleTime, 0) = 0 THEN 0
+            ELSE ROUND((3600 / CONVERT(FLOAT, l.HighestCycleTime)) * ISNULL(s.CPU, 0) / NULLIF(CONVERT(FLOAT, l.SewerManpower), 0), 2)
+        END,
+    [GSD Status] = l.TimeStudyStatus,
+    [GSD Version] = l.TimeStudyVersion,
+    [Status] = l.Status,
+    [Add Name] = l.AddName,
+    [Add Date] = l.AddDate,
+    [Edit Name] = l.EditName,
+    [Edit Date] = l.EditDate,
+    BIFactoryID = @BIFactoryID,
+    BIInsertDate = GETDATE()
+FROM Production.dbo.LineMappingBalancing l WITH (NOLOCK)
+LEFT JOIN Production.dbo.Style s WITH (NOLOCK) ON s.Ukey = l.StyleUKey
+WHERE l.Status = 'Confirmed'
+  AND (l.AddDate BETWEEN @SDate AND @EDate OR l.EditDate BETWEEN @SDate AND @EDate)
+
+
+-- 建立 #tmpDetail 暫存表
+SELECT 
+    [ID]                  = ld.ID,
+    [IsFrom]              = 'IE P03',
+    [No]                  = ISNULL(ld.No, ''),
+    [Seq]                 = 0,
+    [Location]            = '',
+    [ST/MC Type]          = ld.MachineTypeID,
+    [MC Group]            = ld.MasterPlusGroup,
+    [OperationID]         = ISNULL(ld.OperationID, ''),
+    [Operation]           = ISNULL(o.DescEN, ''),
+    [Annotation]          = ISNULL(ld.Annotation, ''),
+    [Attachment]          = ISNULL(ld.Attachment, ''),
+    [PartID]              = ld.SewingMachineAttachmentID,
+    [Template]            = ISNULL(ld.Template, ''),
+    [GSD Time]            = ISNULL(ld.GSD, 0),
+    [Cycle Time]          = ISNULL(ld.Cycle, 0),
+    [%]                   = 0,
+    [Div. Sewer]          = 0,
+    [Ori. Sewer]          = 0,
+    [Thread Combination]  = ISNULL(ld.ThreadColor, ''),
+    [Notice]              = ISNULL(ld.Notice, ''),
+    [OperatorID]          = ISNULL(ld.EmployeeID, ''),
+    [OperatorName]        = ISNULL(e.Name, ''),
+    [Skill]               = ISNULL(e.Skill, ''),
+    [Ukey]                = ld.Ukey,
+    [FactoryID]           = l.FactoryID,
+    BIFactoryID           = @BIFactoryID,
+    BIInsertDate          = GETDATE()
+INTO #tmpDetail
+FROM [MainServer].Production.dbo.LineMapping_Detail ld WITH (NOLOCK)
+INNER JOIN [MainServer].Production.dbo.LineMapping l WITH (NOLOCK) ON l.ID = ld.ID
+LEFT JOIN [MainServer].Production.dbo.Operation o WITH (NOLOCK) ON o.ID = ld.OperationID
+LEFT JOIN [MainServer].Production.dbo.Employee e WITH (NOLOCK) 
+       ON e.ID = ld.EmployeeID AND e.FactoryID = l.FactoryID
+WHERE EXISTS (
+    SELECT 1 
+    FROM #tmpMain s 
+    WHERE s.ID = ld.ID AND s.isFrom = 'IE P03'
+)
+
+UNION ALL
+
+-- P06
+SELECT 
+    [ID]                  = ld.ID,
+    [IsFrom]              = 'IE P06',
+    [No]                  = ISNULL(ld.No, ''),
+    [Seq]                 = ld.Seq,
+    [Location]            = ld.Location,
+    [ST/MC Type]          = ld.MachineTypeID,
+    [MC Group]            = ld.MasterPlusGroup,
+    [OperationID]         = ISNULL(ld.OperationID, ''),
+    [Operation]           = ISNULL(o.DescEN, ''),
+    [Annotation]          = ISNULL(ld.Annotation, ''),
+    [Attachment]          = ISNULL(ld.Attachment, ''),
+    [PartID]              = ld.SewingMachineAttachmentID,
+    [Template]            = ISNULL(ld.Template, ''),
+    [GSD Time]            = ISNULL(ld.GSD, 0),
+    [Cycle Time]          = ISNULL(ld.Cycle, 0),
+    [%]                   = ld.SewerDiffPercentage,
+    [Div. Sewer]          = ld.DivSewer,
+    [Ori. Sewer]          = ld.OriSewer,
+    [Thread Combination]  = ld.ThreadComboID,
+    [Notice]              = ld.Notice,
+    [OperatorID]          = ISNULL(ld.EmployeeID, ''),
+    [OperatorName]        = ISNULL(e.Name, ''),
+    [Skill]               = ISNULL(e.Skill, ''),
+    [Ukey]                = ld.Ukey,
+    [FactoryID]           = l.FactoryID,
+    BIFactoryID           = @BIFactoryID,
+    BIInsertDate          = GETDATE()
+FROM [MainServer].Production.dbo.LineMappingBalancing_Detail ld WITH (NOLOCK)
+INNER JOIN [MainServer].Production.dbo.LineMappingBalancing l WITH (NOLOCK) ON l.ID = ld.ID
+LEFT JOIN [MainServer].Production.dbo.Operation o WITH (NOLOCK) ON o.ID = ld.OperationID
+LEFT JOIN [MainServer].Production.dbo.Employee e WITH (NOLOCK) 
+       ON e.ID = ld.EmployeeID AND e.FactoryID = l.FactoryID
+WHERE EXISTS (
+    SELECT 1 
+    FROM #tmpMain s 
+    WHERE s.ID = ld.ID AND s.isFrom = 'IE P06'
+)
+
+
+SELECT * FROM #tmpMain
+SELECT * FROM #tmpDetail
+";
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable[] datatables),
             };
 
             if (!resultReport.Result)
@@ -253,73 +349,28 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.DtArr = datatables;
 
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable[] dataTables, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             var paramters = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", sDate),
-                new SqlParameter("@EDate", eDate),
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
             };
 
-            string strTmpName_Summary = "#tmpMain";
-            string strTmpName_Detail = "#tmpDetail";
             try
             {
                 DualResult result;
                 DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                 using (sqlConn)
                 {
-                    string sql = $@"
-					alter table {strTmpName_Summary} alter column [FactoryID] varchar (8)
-					alter table {strTmpName_Summary} alter column [StyleUKey] bigint
-					alter table {strTmpName_Summary} alter column [ComboType] varchar (1)
-					alter table {strTmpName_Summary} alter column [Version] tinyint
-					alter table {strTmpName_Summary} alter column [Phase] varchar (7)
-					alter table {strTmpName_Summary} alter column [SewingLine] varchar (8)
-					alter table {strTmpName_Summary} alter column [IsFrom] varchar (6)
-					alter table {strTmpName_Summary} alter column [Team] varchar (8)
-					alter table {strTmpName_Summary} alter column [ID] bigint
-					alter table {strTmpName_Summary} alter column [Style] varchar (15)
-					alter table {strTmpName_Summary} alter column [Season] varchar (10)
-					alter table {strTmpName_Summary} alter column [Brand] varchar (8)
-					alter table {strTmpName_Summary} alter column [Desc.] varchar (100)
-					alter table {strTmpName_Summary} alter column [CPU/PC] decimal
-					alter table {strTmpName_Summary} alter column [No. of Sewer] tinyint
-					alter table {strTmpName_Summary} alter column [LBR By GSD Time(%)] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Total GSD Time] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Avg. GSD Time] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Highest GSD Time] numeric (12, 2)
-					alter table {strTmpName_Summary} alter column [LBR By Cycle Time(%)] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Total Cycle Time] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Avg. Cycle Time] numeric (7, 2)
-					alter table {strTmpName_Summary} alter column [Highest Cycle Time] numeric (6, 2)
-					alter table {strTmpName_Summary} alter column [Total % Time Diff(%)] int
-					alter table {strTmpName_Summary} alter column [No. of Hours] numeric (3, 1)
-					alter table {strTmpName_Summary} alter column [Oprts of Presser] tinyint
-					alter table {strTmpName_Summary} alter column [Oprts of Packer] tinyint
-					alter table {strTmpName_Summary} alter column [Ttl Sew Line Oprts] tinyint
-					alter table {strTmpName_Summary} alter column [Target / Hr.(100%)] int
-					alter table {strTmpName_Summary} alter column [Daily Demand / Shift] numeric (7, 1)
-					alter table {strTmpName_Summary} alter column [Takt Time] numeric (6, 2)
-					alter table {strTmpName_Summary} alter column [EOLR] numeric (6, 2)
-					alter table {strTmpName_Summary} alter column [PPH] numeric (6, 2)
-					alter table {strTmpName_Summary} alter column [GSD Status] varchar (15)
-					alter table {strTmpName_Summary} alter column [GSD Version] varchar (2)
-					alter table {strTmpName_Summary} alter column [Status] varchar (9)
-					alter table {strTmpName_Summary} alter column [Add Name] varchar (10)
-					alter table {strTmpName_Summary} alter column [Add Date] datetime
-					alter table {strTmpName_Summary} alter column [Edit Name] varchar (10)
-					alter table {strTmpName_Summary} alter column [Edit Date] datetime
-					alter table {strTmpName_Summary} alter column [BIFactoryID] varchar (8)
-					alter table {strTmpName_Summary} alter column [BIInsertDate] datetime
-					";
-                    sql += new Base().SqlBITableHistory("P_LineMapping", "P_LineMapping_History", "#tmpMain", "((p.[Add Date] between @SDate and @EDate) OR (p.[Edit Date] between @SDate and @EDate))", needJoin: false) + Environment.NewLine;
+                    string sql = new Base().SqlBITableHistory("P_LineMapping", "P_LineMapping_History", "#tmpMain", "((p.[Add Date] between @SDate and @EDate) OR (p.[Edit Date] between @SDate and @EDate))", needJoin: false) + Environment.NewLine;
+
                     sql += $@"
 					delete t
 					from P_LineMapping t
@@ -342,39 +393,39 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 					update t 
 					set t.Style	= s.Style					
-					,t.Season = s.Season					
-					,t.Brand = s.Brand					
-					,t.Team	= s.Team					
-					,t.[Desc.] = s.[Desc.]					
-					,t.[CPU/PC]	 = s.[CPU/PC]				
-					,t.[No. of Sewer] = s.[No. of Sewer]
-					,t.[LBR By GSD Time(%)] = s.[LBR By GSD Time(%)]					
-					,t.[Total GSD Time] = s.[Total GSD Time]			
-					,t.[Avg. GSD Time] = s.[Avg. GSD Time]
-					,t.[Highest GSD Time] = s.[Highest GSD Time]
-					,t.[LBR By Cycle Time(%)] = s.[LBR By Cycle Time(%)]
-					,t.[Total Cycle Time] = s.[Total Cycle Time]
-					,t.[Avg. Cycle Time] = s.[Avg. Cycle Time]
-					,t.[Highest Cycle Time] = s.[Highest Cycle Time]
-					,t.[Total % Time Diff(%)] = s.[Total % Time Diff(%)]
-					,t.[No. of Hours] = s.[No. of Hours]
-					,t.[Oprts of Presser] = s.[Oprts of Presser]
-					,t.[Oprts of Packer] = s.[Oprts of Packer]
-					,t.[Ttl Sew Line Oprts] = s.[Ttl Sew Line Oprts]
-					,t.[Target / Hr.(100%)] = s.[Target / Hr.(100%)]
-					,t.[Daily Demand / Shift] = s.[Daily Demand / Shift]
-					,t.[Takt Time] = s.[Takt Time]
-					,t.[EOLR] = s.[EOLR]
-					,t.[PPH] = s.[PPH]
-					,t.[GSD Status] = s.[GSD Status]
-					,t.[GSD Version] = s.[GSD Version]
-					,t.[Status] = s.[Status]
-					,t.[Add Date] = s.[Add Date]
-					,t.[Add Name] = s.[Add Name]
-					,t.[Edit Date] = s.[Edit Date]
-					,t.[Edit Name] = s.[Edit Name]
-					,t.[BIFactoryID] = s.[BIFactoryID]
-					,t.[BIInsertDate] = s.[BIInsertDate]
+					    ,t.Season = s.Season					
+					    ,t.Brand = s.Brand					
+					    ,t.Team	= s.Team					
+					    ,t.[Desc.] = s.[Desc.]					
+					    ,t.[CPU/PC]	 = s.[CPU/PC]				
+					    ,t.[No. of Sewer] = s.[No. of Sewer]
+					    ,t.[LBR By GSD Time(%)] = s.[LBR By GSD Time(%)]					
+					    ,t.[Total GSD Time] = s.[Total GSD Time]			
+					    ,t.[Avg. GSD Time] = s.[Avg. GSD Time]
+					    ,t.[Highest GSD Time] = s.[Highest GSD Time]
+					    ,t.[LBR By Cycle Time(%)] = s.[LBR By Cycle Time(%)]
+					    ,t.[Total Cycle Time] = s.[Total Cycle Time]
+					    ,t.[Avg. Cycle Time] = s.[Avg. Cycle Time]
+					    ,t.[Highest Cycle Time] = s.[Highest Cycle Time]
+					    ,t.[Total % Time Diff(%)] = s.[Total % Time Diff(%)]
+					    ,t.[No. of Hours] = s.[No. of Hours]
+					    ,t.[Oprts of Presser] = s.[Oprts of Presser]
+					    ,t.[Oprts of Packer] = s.[Oprts of Packer]
+					    ,t.[Ttl Sew Line Oprts] = s.[Ttl Sew Line Oprts]
+					    ,t.[Target / Hr.(100%)] = s.[Target / Hr.(100%)]
+					    ,t.[Daily Demand / Shift] = s.[Daily Demand / Shift]
+					    ,t.[Takt Time] = s.[Takt Time]
+					    ,t.[EOLR] = s.[EOLR]
+					    ,t.[PPH] = s.[PPH]
+					    ,t.[GSD Status] = s.[GSD Status]
+					    ,t.[GSD Version] = s.[GSD Version]
+					    ,t.[Status] = s.[Status]
+					    ,t.[Add Date] = s.[Add Date]
+					    ,t.[Add Name] = s.[Add Name]
+					    ,t.[Edit Date] = s.[Edit Date]
+					    ,t.[Edit Name] = s.[Edit Name]
+					    ,t.[BIFactoryID] = s.[BIFactoryID]
+					    ,t.[BIInsertDate] = s.[BIInsertDate]
 					from P_LineMapping t
 					inner join #tmpMain s on t.FactoryID = s.FactoryID
 						and t.StyleUKey = s.StyleUKey
@@ -386,7 +437,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						and t.Team = s.Team
 				
 					insert into P_LineMapping(
-					[FactoryID]
+							[FactoryID]
 							,[StyleUKey]
 							,[ComboType]
 							,[Version]
@@ -483,116 +534,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						and t.IsFrom = s.isFrom
 						and t.Team = s.Team
 					)";
-                    sql += $@"
-					select *
-					,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-					,[BIInsertDate] = getdate()
-					into #tmpDetail
-					from
-					(
-						select 
-						[ID] = ld.ID
-						,[IsFrom] = 'IE P03'
-						,[No] = isnull(ld.No,'')
-						,[Seq] = 0
-						,[Location] = ''
-						,[ST/MC Type] = ld.MachineTypeID
-						,[MC Group] = ld.MasterPlusGroup
-						,[OperationID] = isnull(ld.OperationID,'')
-						,[Operation] = isnull(o.DescEN,'')
-						,[Annotation] = isnull(ld.Annotation,'')
-						,[Attachment] = isnull(ld.Attachment,'')
-						,[PartID] = ld.SewingMachineAttachmentID
-						,[Template] = isnull(ld.Template,'')
-						,[GSD Time] = isnull(ld.GSD,0)
-						,[Cycle Time] = isnull(ld.Cycle,0)
-						,[%] = 0
-						,[Div. Sewer] = 0
-						,[Ori. Sewer] = 0
-						,[Thread Combination] = isnull(ld.ThreadColor,'')
-						,[Notice] = isnull(ld.Notice,'')
-						,[OperatorID] = isnull(ld.EmployeeID,'')
-						,[OperatorName] = isnull(e.Name,'')
-						,[Skill] = isnull(e.Skill,'')
-						,[Ukey] = ld.Ukey
-						,[FactoryID] = l.FactoryID
-						from [MainServer].Production.dbo.LineMapping_Detail ld with(nolock)
-						inner join [MainServer].Production.dbo.LineMapping l with(nolock) on l.ID = ld.ID
-						left join [MainServer].Production.dbo.Operation o with(nolock) on o.ID = ld.OperationID
-						left join [MainServer].Production.dbo.Employee e with(nolock) on e.ID = ld.EmployeeID and e.FactoryID = l.FactoryID
-						where exists(
-							select 1 from #tmpMain s
-							where s.ID = ld.ID	
-							and s.isFrom = 'IE P03'
-						)
-						union all
-						select 
-						[ID] = ld.ID
-						,[IsFrom] = 'IE P06'
-						,[No] = isnull(ld.No,'')
-						,[Seq] = ld.Seq
-						,[Location] = ld.Location
-						,[ST/MC Type] = ld.MachineTypeID
-						,[MC Group] = ld.MasterPlusGroup
-						,[OperationID] = isnull(ld.OperationID,'')
-						,[Operation] = isnull(o.DescEN,'')
-						,[Annotation] = isnull(ld.Annotation,'')
-						,[Attachment] = isnull(ld.Attachment,'')
-						,[PartID] = ld.SewingMachineAttachmentID
-						,[Template] = isnull(ld.Template,'')
-						,[GSD Time] = isnull(ld.GSD,0)
-						,[Cycle Time] = isnull(ld.Cycle,0)
-						,[%] = ld.SewerDiffPercentage
-						,[Div. Sewer] = ld.DivSewer
-						,[Ori. Sewer] = ld.OriSewer
-						,[Thread Combination] = ld.ThreadComboID
-						,[Notice] = ld.Notice
-						,[OperatorID] = isnull(ld.EmployeeID,'')
-						,[OperatorName] = isnull(e.Name,'')
-						,[Skill] = isnull(e.Skill,'')
-						,[Ukey] = ld.Ukey
-						,[FactoryID] = l.FactoryID
-						from [MainServer].Production.dbo.LineMappingBalancing_Detail ld with(nolock)
-						inner join [MainServer].Production.dbo.LineMappingBalancing l with(nolock) on l.ID = ld.ID
-						left join [MainServer].Production.dbo.Operation o with(nolock) on o.ID = ld.OperationID
-						left join [MainServer].Production.dbo.Employee e with(nolock) on e.ID = ld.EmployeeID and e.FactoryID = l.FactoryID
-						where exists(
-							select 1 from #tmpMain s
-							where s.ID = ld.ID	
-							and s.isFrom = 'IE P06'
-						)
-					) a
-					";
-                    sql += $@"
-					alter table {strTmpName_Detail} alter column [ID] bigint
-					alter table {strTmpName_Detail} alter column [Ukey] bigint
-					alter table {strTmpName_Detail} alter column [IsFrom] varchar (6)
-					alter table {strTmpName_Detail} alter column [No] varchar (4)
-					alter table {strTmpName_Detail} alter column [Seq] smallint
-					alter table {strTmpName_Detail} alter column [Location] varchar (20)
-					alter table {strTmpName_Detail} alter column [ST/MC Type] varchar (10)
-					alter table {strTmpName_Detail} alter column [MC Group] varchar (4)
-					alter table {strTmpName_Detail} alter column [OperationID] varchar (20)
-					alter table {strTmpName_Detail} alter column [Operation] nvarchar (500)
-					alter table {strTmpName_Detail} alter column [Annotation] nvarchar (200)
-					alter table {strTmpName_Detail} alter column [Attachment] varchar (100)
-					alter table {strTmpName_Detail} alter column [PartID] varchar (200)
-					alter table {strTmpName_Detail} alter column [Template] varchar (100)
-					alter table {strTmpName_Detail} alter column [GSD Time] numeric (6, 2)
-					alter table {strTmpName_Detail} alter column [Cycle Time] numeric (6, 2)
-					alter table {strTmpName_Detail} alter column [%] numeric (3, 2)
-					alter table {strTmpName_Detail} alter column [Div. Sewer] numeric (5, 4)
-					alter table {strTmpName_Detail} alter column [Ori. Sewer] numeric (5, 4)
-					alter table {strTmpName_Detail} alter column [Thread Combination] varchar (10)
-					alter table {strTmpName_Detail} alter column [Notice] nvarchar (200)
-					alter table {strTmpName_Detail} alter column [OperatorID] varchar (10)
-					alter table {strTmpName_Detail} alter column [OperatorName] nvarchar (50)
-					alter table {strTmpName_Detail} alter column [Skill] nvarchar (200)
-					alter table {strTmpName_Detail} alter column [FactoryID] varchar (8)
-					alter table {strTmpName_Detail} alter column [BIFactoryID] varchar (8)
-					alter table {strTmpName_Detail} alter column [BIInsertDate] datetime
-					";
-                    sql += new Base().SqlBITableHistory("P_LineMapping_Detail", "P_LineMapping_Detail_History", "#tmpDetail", "exists (select 1 from #tmpMain s where p.ID = s.ID)", needJoin: false) + Environment.NewLine;
+                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataTables[0], null, sqlcmd: sql, result: out DataTable tmpMain, temptablename: "#tmpMain", conn: sqlConn, paramters: paramters);
+
+                    sql = new Base().SqlBITableHistory("P_LineMapping_Detail", "P_LineMapping_Detail_History", "#tmpDetail", "exists (select 1 from #tmpDetail s where p.ID = s.ID)", needJoin: false) + Environment.NewLine;
                     sql += $@"
 					delete t
 					from P_LineMapping_Detail t
@@ -602,7 +546,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						and t.IsFrom = s.isFrom
 					)
 					and exists (
-						select 1 from #tmpMain s where t.ID = s.ID
+						select 1 from #tmpDetail s where t.ID = s.ID
 					)
 
 					update t 
@@ -628,6 +572,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					,t.[OperatorID] = s.[OperatorID]
 					,t.[OperatorName] = s.[OperatorName]
 					,t.[Skill] = s.[Skill]
+                    ,t.[BIFactoryID] = s.[BIFactoryID]
+					,t.[BIInsertDate] = s.[BIInsertDate]
 					from P_LineMapping_Detail t
 					inner join #tmpDetail s on t.Ukey = s.Ukey
 					and t.IsFrom = s.isFrom
@@ -657,6 +603,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,[OperatorID]
 						,[OperatorName]
 						,[Skill]
+                        ,[BIFactoryID]
+						,[BIInsertDate]
 					)
 					select 
 						[ID]
@@ -683,16 +631,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						,[OperatorID]
 						,[OperatorName]
 						,[Skill]
+                        ,[BIFactoryID]
+						,[BIInsertDate]
 					from #tmpDetail t
 					where not exists(
 						select 1 from P_LineMapping_Detail s
 						where t.Ukey = s.Ukey
 						and t.IsFrom = s.isFrom
 					)
-					drop table #tmpMain;
-					drop table #tmpDetail;
 					";
-                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable1, temptablename: "#tmpMain", conn: sqlConn, paramters: paramters);
+                    result = TransactionClass.ProcessWithDatatableWithTransactionScope(dataTables[1], null, sqlcmd: sql, result: out DataTable tmpDetail, temptablename: "#tmpDetail", conn: sqlConn, paramters: paramters);
 
                     if (!result.Result)
                     {

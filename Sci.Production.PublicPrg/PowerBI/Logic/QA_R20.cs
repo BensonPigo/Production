@@ -103,7 +103,6 @@ select
 	[Over] = isnull(A.Status, ''),
 	[QC] = isnull(C.CPUFactor * C.CPU * A.RejectQty, 0),
     [Remark] = isnull(A.Remark, '')
-{(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 From DBO.Rft A WITH (NOLOCK) 
 INNER JOIN DBO.ORDERS C ON C.ID = A.OrderID
 INNEr JOIN Country ct WITH (NOLOCK)  ON ct.ID=c.Dest
@@ -134,7 +133,7 @@ Order by [Factory], [CDate], [OrderID]
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out DataTable dataTables),
+                Result = DBProxy.Current.Select("Production", sqlCmd, listPar, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -142,7 +141,7 @@ Order by [Factory], [CDate], [OrderID]
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }

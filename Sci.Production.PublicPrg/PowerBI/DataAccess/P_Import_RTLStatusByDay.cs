@@ -10,9 +10,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -54,9 +51,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <summary>
         /// BI資料表 P_RTLStatusByDay 寫入，只保留十天份的資料
         /// </summary>
-        /// <param name="inputkDate">inputkDate</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel P_RTLStatusByDay(DateTime? inputkDate)
+        public Base_ViewModel P_RTLStatusByDay(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel()
             {
@@ -65,7 +62,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             try
             {
-                finalResult = this.CreateTaskAPI(inputkDate);
+                finalResult = this.CreateTaskAPI(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -76,7 +73,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw new Exception("No Data Found");
                 }
 
-                finalResult = this.UpdateData(finalResult.Dt);
+                finalResult = this.UpdateData(finalResult.Dt, item);
             }
             catch (Exception ex)
             {
@@ -89,18 +86,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <summary>
         /// 取得查詢範圍，Call API 取得所有資料，
         /// </summary>
-        /// <param name="inputkDate">inputkDate</param>
+        /// <param name="item">Executed List</param>
         /// <returns>None</returns>
-        public Base_ViewModel CreateTaskAPI(DateTime? inputkDate)
+        public Base_ViewModel CreateTaskAPI(ExecutedList item)
         {
             Base_ViewModel result = new Base_ViewModel()
             {
                 Dt = this.CreateDataTable(),
             };
 
-            if (!inputkDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                inputkDate = DateTime.Now.AddDays(-10);
+                item.SDate = DateTime.Now.AddDays(-10);
             }
 
             try
@@ -124,7 +121,7 @@ where Junk = 0 and Environment = 'Formal'", "Production");
                 // 10 days, each Fty
                 for (int i = 0; i < 10; i++)
                 {
-                    DateTime transferDate = inputkDate.Value.AddDays(i);
+                    DateTime transferDate = item.SDate.Value.AddDays(i);
                     var models = ftyTb.AsEnumerable()
                         .AsParallel()
                         .WithDegreeOfParallelism(3) // 3 thread
@@ -320,41 +317,36 @@ where Junk = 0 and Environment = 'Formal'", "Production");
         /// </summary>
         /// <param name="dt">DataTable</param>
         /// <returns>Base_ViewModel</returns>
-        private Base_ViewModel UpdateData(DataTable dt)
+        private Base_ViewModel UpdateData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
             string sql = @"	
 ---- 只保留十天內的資料，全刪除之後再重新轉
+insert into P_RTLStatusByDay_History([TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], [BIInsertDate])
+select [TransferDate], [FactoryID], [CurrentWIPDays], [BIFactoryID], GETDATE()
+from POWERBIReportData.dbo.P_RTLStatusByDay p
+
 Delete p
 from POWERBIReportData.dbo.P_RTLStatusByDay p
 
 
-Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate )
+Insert Into POWERBIReportData.dbo.P_RTLStatusByDay ( TransferDate, FactoryID ,CurrentWIPDays, BIFactoryID, BIInsertDate)
 select TransferDate
 	, ISNULL(t.FactoryID, '')
 	, ISNULL(t.CurrentWIPDays, 0)
-    , (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , @BIFactoryID
     , GetDate()
 from #tmp t 
 
-if exists (select 1 from BITableInfo b where b.id = 'P_RTLStatusByDay')
-begin
-    update b
-        set b.TransferDate = getdate()
-    from BITableInfo b
-    where b.id = 'P_RTLStatusByDay'
-end
-else 
-begin
-    insert into BITableInfo(Id, TransferDate)
-    values('P_RTLStatusByDay', getdate())
-end
 ";
             finalResult = new Base_ViewModel()
             {
-                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn),
+                Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
             };
 
             return finalResult;

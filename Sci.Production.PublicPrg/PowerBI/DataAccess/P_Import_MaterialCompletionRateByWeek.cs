@@ -1,5 +1,4 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -16,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_MaterialCompletionRateByWeek(DateTime? sDate)
+        public Base_ViewModel P_MaterialCompletionRateByWeek(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -25,14 +24,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetMaterialCompletionRateByWeek((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetMaterialCompletionRateByWeek(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -41,13 +40,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, (DateTime)sDate);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -57,14 +56,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@Date", sdate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@Date", item.SDate),
+            };
 
             using (sqlConn)
             {
@@ -104,8 +104,8 @@ Where not exists ( select 1
 				   and p.FactoryID = t.FactoryID
                 )
 
-Insert into P_MaterialCompletionRateByWeek_History
-Select [FactoryID],[WeekNo],[Year],[BIFactoryID],[BIInsertDate] = GetDate()
+Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
+Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
 From P_MaterialCompletionRateByWeek
 Where Not exists ( select 1 
 				   from #tmp t
@@ -127,8 +127,8 @@ Where Not exists ( select 1
 And P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And WeekNo Between DATEPART(WEEK, @Date) And DATEPART(WEEK, @Date) + 3
 
-Insert into P_MaterialCompletionRateByWeek_History
-Select [FactoryID],[WeekNo],[Year],[BIFactoryID],[BIInsertDate] = GetDate()
+Insert into P_MaterialCompletionRateByWeek_History([Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate])
+Select [Year], [WeekNo], [FactoryID], [BIFactoryID], [BIInsertDate] = GetDate()
 From P_MaterialCompletionRateByWeek
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
@@ -136,27 +136,15 @@ And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
 Delete P_MaterialCompletionRateByWeek 
 Where P_MaterialCompletionRateByWeek.Year <= YEAR(@Date)
 And P_MaterialCompletionRateByWeek.WeekNo < DATEPART(WEEK, @Date)
-
-if exists(select 1 from BITableInfo where Id = 'P_MaterialCompletionRateByWeek')
-begin
-	update BITableInfo set TransferDate = getdate()
-	where Id = 'P_MaterialCompletionRateByWeek'
-end
-else
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans) values('P_MaterialCompletionRateByWeek', GETDATE(), 0)
-end
 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql,  out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetMaterialCompletionRateByWeek(DateTime sdate)
+        private Base_ViewModel GetMaterialCompletionRateByWeek(ExecutedList item)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
@@ -170,7 +158,7 @@ Select 	Year = YEAR(inline),
         MaterialCompletionRate = CONVERT(numeric(5, 2), iif(isnull(TTL.TTLSPNo,0) = 0, 0, round((CONVERT(numeric(5, 2),isnull(MTLCMP.MTLCMP_SPNo, 0))/(CONVERT(numeric(5, 2),TTL.TTLSPNo)))*　100, 2))) ,
         MTLCMP_SPNo = isnull(MTLCMP.MTLCMP_SPNo, ''),
         TTLSPNo = isnull(TTL.TTLSPNo, ''),
-        [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+        [BIFactoryID] = @BIFactoryID,
         [BIInsertDate] = GETDATE()
 From [P_SewingLineScheduleBySP] psb with (nolock)
 Outer Apply(
@@ -197,12 +185,15 @@ Group by  YEAR(psb.inline),DATEPART(WEEK, psb.inline),FactoryID, MTLCMP.MTLCMP_S
 
             #endregion
 
-            List<SqlParameter> paras = new List<SqlParameter>();
-            paras.Add(new SqlParameter("@Date", sdate));
+            List<SqlParameter> paras = new List<SqlParameter>
+            {
+                new SqlParameter("@Date", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable dataTables),
+                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -210,7 +201,7 @@ Group by  YEAR(psb.inline),DATEPART(WEEK, psb.inline),FactoryID, MTLCMP.MTLCMP_S
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }

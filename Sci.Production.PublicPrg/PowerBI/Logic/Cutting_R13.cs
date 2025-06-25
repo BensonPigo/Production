@@ -74,52 +74,52 @@ namespace Sci.Production.Prg.PowerBI.Logic
 
             string sqlCmd = $@"
             select [M] = wo.MDivisionID,
-            [Factory] = wo.FactoryID,
-            [Fabrication] = f.WeaveTypeID,
-            [Est.Cutting Date]= wo.EstCutDate,
-            [Act.Cutting Date] = MincDate.MincoDate,
-            [Earliest Sewing Inline] = c.SewInLine,
-            [Master SP#] = wo.ID, 
-            [Brand]=o.BrandID,
-            [Style#] = o.StyleID,
-            [FabRef#] = wo.Refno,
-            [Switch to Workorder] = iif(c.WorkType='1','Combination',Iif(c.WorkType='2','By SP#','')),
-            [Ref#] = wo.CutRef,
-            [Cut#] = wo.Cutno,
-            [SpreadingNoID]=wo.SpreadingNoID,
-            [Cut Cell] = wo.CutCellID,
-            [Combination] = wo.FabricCombo,
-            [Layers] = sum(wo.Layer),
-            [LackingLayers] = isnull(acc.val,0),
-            [Ratio] = stuff(SQty.val,1,1,''),
-            [Consumption] = sum(wo.cons) ,
-            [Marker Name] = wo.Markername,
-            [Marker No.] = wo.MarkerNo,
-            [Marker Length] = wo.MarkerLength
+                [Factory] = wo.FactoryID,
+                [Fabrication] = f.WeaveTypeID,
+                [Est.Cutting Date]= wo.EstCutDate,
+                [Act.Cutting Date] = MincDate.MincoDate,
+                [Earliest Sewing Inline] = c.SewInLine,
+                [Master SP#] = wo.ID, 
+                [Brand]=o.BrandID,
+                [Style#] = o.StyleID,
+                [FabRef#] = wo.Refno,
+                [Switch to Workorder] = iif(c.WorkType='1','Combination',Iif(c.WorkType='2','By SP#','')),
+                [Ref#] = wo.CutRef,
+                [Cut#] = wo.Cutno,
+                [SpreadingNoID]=wo.SpreadingNoID,
+                [Cut Cell] = wo.CutCellID,
+                [Combination] = wo.FabricCombo,
+                [Layers] = sum(wo.Layer),
+                [LackingLayers] = isnull(acc.val,0),
+                [Ratio] = stuff(SQty.val,1,1,''),
+                [Consumption] = sum(wo.cons) ,
+                [Marker Name] = wo.Markername,
+                [Marker No.] = wo.MarkerNo,
+                [Marker Length] = wo.MarkerLength
             into #tmp
             from WorkOrderForOutput wo
             left join Orders o WITH (NOLOCK) on o.id = wo.ID
             left join Cutting c WITH (NOLOCK) on c.ID = o.CuttingSP
             left join fabric f WITH (NOLOCK) on f.SCIRefno = wo.SCIRefno
             outer apply(
-            select val = sum(aa.Layer) 
-            from cuttingoutput_Detail aa WITH (NOLOCK)
-            inner join CuttingOutput c WITH (NOLOCK) on aa.ID = c.ID
-            where aa.CutRef = wo.CutRef and wo.CutRef <> ''
+                select val = sum(aa.Layer) 
+                from cuttingoutput_Detail aa WITH (NOLOCK)
+                inner join CuttingOutput c WITH (NOLOCK) on aa.ID = c.ID
+                where aa.CutRef = wo.CutRef and wo.CutRef <> ''
             )acc
             outer apply(
                 Select MincoDate = MIN(co.cdate)
-            From cuttingoutput co WITH (NOLOCK) 
-            inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
-            Where cod.CutRef = wo.CutRef and co.Status != 'New' and co.FactoryID = wo.FactoryID and wo.CutRef <> ''
+                From cuttingoutput co WITH (NOLOCK) 
+                inner join cuttingoutput_detail cod WITH (NOLOCK) on co.id = cod.id
+                Where cod.CutRef = wo.CutRef and co.Status != 'New' and co.FactoryID = wo.FactoryID and wo.CutRef <> ''
             )MincDate
             outer apply(
-            select val = (
-	            select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty))
-	            from WorkOrderForOutput_SizeRatio WITH (NOLOCK) 
-	            where WorkOrderForOutputUkey = wo.UKey
-	            for xml path('')
-            )
+                select val = (
+	                select distinct concat(',',SizeCode+'/'+Convert(varchar,Qty))
+	                from WorkOrderForOutput_SizeRatio WITH (NOLOCK) 
+	                where WorkOrderForOutputUkey = wo.UKey
+	                for xml path('')
+                )
             )as SQty
             where 1=1 
             {strWhere}

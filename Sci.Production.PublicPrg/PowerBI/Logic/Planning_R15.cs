@@ -232,7 +232,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
 		                             and HT_i.v = 1 and HT_o.v = 1
                                      {subProcessStatusOtherWithBI}
 		                             then 'Y' end
-{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 
 ";
 
@@ -829,8 +828,7 @@ namespace Sci.Production.Prg.PowerBI.Logic
                                 and sp.Junk = 0) 
                 , t.GFR
                 , t.SampleReason
-                , [TMS] = (select s.StdTms * t.CPU  from System s WITH (NOLOCK)) 
-{(model.IsBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
+                , [TMS] = (select s.StdTms * t.CPU  from System s WITH (NOLOCK))
 ";
             }
 
@@ -1292,7 +1290,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
                 , SampleReason
                 , [TMS]
                 {ars}
-                {(model.IsBI ? " ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
                from #lasttmp t
                 outer apply(
 	                select article_list = stuff((

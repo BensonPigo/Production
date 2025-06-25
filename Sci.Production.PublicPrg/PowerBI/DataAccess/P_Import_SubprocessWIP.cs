@@ -12,20 +12,20 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SubprocessWIP
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_SubprocessWIP(DateTime? sDate)
+        public Base_ViewModel P_SubprocessWIP(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             SubCon_R41 biModel = new SubCon_R41();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 SubCon_R41_ViewModel subProcessWIP = new SubCon_R41_ViewModel()
                 {
-                    BIEditDate = sDate,
+                    BIEditDate = item.SDate,
                     IsPowerBI = true,
                 };
 
@@ -38,26 +38,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
                 // 用P_SubprocessWIP來更新SubprocessBCSByDays & SubprocessBCSByMonth
-                finalResult = new P_Import_SubprocessBCSByDays().UpdateBIData();
+                finalResult = new P_Import_SubprocessBCSByDays().UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult = new P_Import_SubprocessBCSByMonth().UpdateBIData();
+                finalResult = new P_Import_SubprocessBCSByMonth().UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_SubprocessBCSByDays";
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_SubprocessBCSByMonth";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -67,7 +71,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             string where = @"  not exists (select 1 from #tmp t where p.[SP] = t.[SP] and p.[SeqNo] = t.[SeqNo] and p.[PackingListID] = t.[PackingListID] and p.[CtnNo] = t.[CtnNo])
                                and p.Buyerdelivery  >= @StartDate";
@@ -80,7 +84,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = @"	
 UPDATE t
@@ -133,8 +138,8 @@ SET
       ,t.[SpreadingNo] = s.SpreadingNo
       ,t.[LastSewDate] = s.LastSewDate
       ,t.[SewQty] = s.SewQty
-      ,t.[BIFactoryID] = s.BIFactoryID
-      ,t.[BIInsertDate] = s.BIInsertDate
+      ,t.[BIFactoryID] = @BIFactoryID
+      ,t.[BIInsertDate] = GETDATE()
 from P_SubprocessWIP t 
 inner join #tmp s on t.Bundleno = s.Bundleno
 AND t.RFIDProcessLocationID = s.RFIDProcessLocationID 
@@ -159,7 +164,7 @@ select 	 s.[Bundleno] ,s.[RFIDProcessLocationID] ,s.[EXCESS] ,s.[FabricKind] ,s.
     s.[PostSewingSubProcess] ,s.[NoBundleCardAfterSubprocess] ,s.[Location] ,s.[BundleCreateDate],
     s.[BuyerDeliveryDate],s.[SewingInline],s.[SubprocessQAInspectionDate],s.[InTime],s.[OutTime],s.[POSupplier] ,
     s.[AllocatedSubcon] ,s.AvgTime ,s.[TimeRange],s.[EstimatedCutDate],s.CuttingOutputDate,	s.Item 
-	,s.PanelNo	,s.CutCellID     ,s.SpreadingNo     ,s.[LastSewDate]     ,s.[SewQty] ,s.[BIFactoryID], s.[BIInsertDate]
+	,s.PanelNo	,s.CutCellID     ,s.SpreadingNo     ,s.[LastSewDate]     ,s.[SewQty] , @BIFactoryID, GETDATE()
 from #tmp s
 where not exists (
     select 1 from P_SubprocessWIP t 
@@ -174,8 +179,8 @@ where not exists (
 WHILE 1 = 1
 BEGIN
 
-    INSERT INTO P_SubprocessWIP_History 
-    SELECT TOP (300000) Bundleno, Pattern, RFIDProcessLocationID, Sp, SubprocessID, BIFactoryID, BIInsertDate = GetDate()
+    INSERT INTO P_SubprocessWIP_History([Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate])
+    SELECT TOP (300000) [Bundleno], [RFIDProcessLocationID], [Sp], [Pattern], [SubprocessID], [BIFactoryID], [BIInsertDate] = GetDate()
     FROM P_SubprocessWIP ps WITH (NOLOCK)
     WHERE NOT EXISTS (
         SELECT 1 FROM Production.dbo.Bundle_Detail bd WITH (NOLOCK) 
@@ -192,19 +197,6 @@ BEGIN
     IF @@ROWCOUNT = 0
         BREAK;
 END
-
-if exists (select 1 from BITableInfo b where b.id = 'P_SubprocessWIP')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_SubprocessWIP'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_SubprocessWIP', getdate())
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

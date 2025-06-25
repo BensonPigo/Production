@@ -12,35 +12,29 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ProductionStatus
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ProductionStatus(DateTime? sDate)
+        public Base_ViewModel P_ProductionStatus(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetProductionStatus_Data(sDate);
+                Base_ViewModel resultReport = this.GetProductionStatus_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult = new Base().UpdateBIData("P_ProdctionStatus", false);
-                if (!finalResult.Result)
-                {
-                    throw finalResult.Result.GetException();
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -50,11 +44,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetProductionStatus_Data(DateTime? sDate)
+        private Base_ViewModel GetProductionStatus_Data(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@StartDate", sDate),
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -92,7 +87,7 @@ SELECT
     [DaysOffToDDByMaxOut] = IIF(ISNULL(t.TtlClogBalance, 0) = 0, 'X', CAST(t4.DaysOffToDDByMaxOut AS VARCHAR(8))),
     [TightByMaxOut] = ISNULL(t5.TightByMaxOut, ''),
     [TightByStdOut] = ISNULL(t5.TightByStdOut, ''),
-    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    [BIFactoryID] = @BIFactoryID,
     [BIInsertDate] = GETDATE()
 FROM dbo.P_SewingLineScheduleBySP sch WITH (NOLOCK)
 INNER JOIN Production.dbo.Orders ord WITH (NOLOCK) ON sch.SPNo = ord.ID
@@ -171,7 +166,7 @@ AND NOT EXISTS (SELECT 1 FROM Production.dbo.Factory f WITH (NOLOCK) WHERE f.ID 
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);

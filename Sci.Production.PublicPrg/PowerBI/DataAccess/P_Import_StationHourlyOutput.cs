@@ -18,7 +18,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_StationHourlyOutput(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_StationHourlyOutput(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -27,19 +27,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddMinutes(-3);
+                item.SDate = DateTime.Now.AddMinutes(-3);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetStationHourlyOutput_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetStationHourlyOutput_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -48,18 +48,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable[] dataTable = resultReport.DtArr;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_StationHourlyOutput", false);
-                }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_StationHourlyOutput_Detail";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -69,20 +66,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable[] dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable[] dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             TransactionScope transactionscope = new TransactionScope();
             DataTable dtSummray = dt[0];
             DataTable dtDetail = dt[1];
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@StartDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EndDate", edate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@EndDate", item.EDate),
+            };
+
             using (transactionscope)
             {
                 try
                 {
-                    DualResult result;
                     DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
                     string sql = string.Empty;
                     using (sqlConn)
@@ -156,6 +155,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						, s.[BIInsertDate]	  = t.[BIInsertDate]
 						From dbo.P_StationHourlyOutput s
 						Inner Join #tmpStationHourlyOutput t On t.FactoryID = s.FactoryID and t.Ukey = s.Ukey";
+
                         sql += new Base().SqlBITableHistory("P_StationHourlyOutput", "P_StationHourlyOutput_History", "#tmpStationHourlyOutput", "p.Date Between @StartDate and @EndDate", needJoin: false) + Environment.NewLine;
                         sql += $@"
 						Delete s
@@ -177,10 +177,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,[BIInsertDate]
 						)
 						Select
-						 p.[FactoryID]   
-						,p.[Ukey]		  
-						,p.[BIFactoryID] 
-						,GETDATE()
+							 p.[FactoryID]   
+							,p.[Ukey]		  
+							,p.[BIFactoryID] 
+							,GETDATE()
 						From P_StationHourlyOutput_Detail p
 						Where Exists (
 							Select 1
@@ -198,11 +198,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							Where t.FactoryID = s.FactoryID
 							And t.Ukey = s.StationHourlyOutputUkey
 						)";
-                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(dtSummray, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpStationHourlyOutput");
-                        if (!result.Result)
+                        finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dtSummray, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpStationHourlyOutput");
+                        if (!finalResult.Result)
                         {
                             transactionscope.Dispose();
-                            throw result.GetException();
+                            throw finalResult.Result.GetException();
                         }
 
                         sql = $@"
@@ -231,15 +231,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							And s.Ukey = t.Ukey 
 						)";
 
-                        result = TransactionClass.ProcessWithDatatableWithTransactionScope(dtDetail, null, sql, out DataTable dataTable1, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpStationHourlyOutput_Detail");
-                        if (!result.Result)
+                        finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dtDetail, null, sql, out DataTable dataTable1, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpStationHourlyOutput_Detail");
+                        if (!finalResult.Result)
                         {
                             transactionscope.Dispose();
-                            throw result.GetException();
+                            throw finalResult.Result.GetException();
                         }
                     }
 
-                    finalResult.Result = result;
                     transactionscope.Complete();
                 }
                 catch (Exception ex)
@@ -247,20 +246,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     finalResult.Result = new DualResult(false, ex);
                     transactionscope.Dispose();
                 }
-                finally
-                {
-                    transactionscope.Dispose();
-                }
             }
 
             return finalResult;
         }
 
-        private Base_ViewModel GetStationHourlyOutput_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetStationHourlyOutput_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@EndDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @StartDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EndDate date ='{edate.ToString("yyyy/MM/dd")}'
 
 			Select 
 	        [FactoryID]
@@ -279,7 +279,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [StyleID] = Isnull(styleid.val, '')
 	        , [OrderID] = Isnull(OrderID.val, '')
             , [Problems4MSDesc] = Isnull(ps.Description, '')
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIFactoryID] = @BIFactoryID
 			, [BIInsertDate] = GETDATE()
 			into #tmpStationHourlyOutput
 	        From ManufacturingExecution.dbo.StationHourlyOutput sho With(Nolock)
@@ -323,14 +323,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [Oclock] = shod.Oclock
 			, [Qty] = shod.Qty
 			, [FactoryID] = sho.FactoryID
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIFactoryID] = @BIFactoryID
 			, [BIInsertDate] = GETDATE()
 			From [ExtendServer].ManufacturingExecution.dbo.StationHourlyOutput_Detail shod With(Nolock)
 			Inner join #tmpStationHourlyOutput sho On sho.Ukey = shod.StationHourlyOutputUkey";
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("ManufacturingExecution", sqlcmd, out DataTable[] dataTables),
+                Result = this.DBProxy.Select("ManufacturingExecution", sqlcmd, sqlParameters, out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)

@@ -19,7 +19,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricInspDailyReport_Detail(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_FabricInspDailyReport_Detail(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -28,19 +28,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddMonths(-3);
+                item.SDate = DateTime.Now.AddMonths(-3);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetFabricInspDailyReport_Detail_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetFabricInspDailyReport_Detail_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -49,18 +49,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_FabricInspDailyReport_Detail", false);
-                }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -70,15 +65,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@StartDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EndDate", edate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@EndDate", item.EDate),
+            };
 
             using (sqlConn)
             {
@@ -86,8 +82,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 sql += $@" 
                 delete p
 				from P_FabricInspDailyReport_Detail p
-				where	((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate)) and
-						not exists(select 1 from #tmpP_FabricInspDailyReport_Detail t 
+				where	((p.AddDate >= @StartDate and p.AddDate <= @EndDate) or (p.EditDate >= @StartDate and p.EditDate <= @EndDate))
+				and not exists(select 1 from #tmpP_FabricInspDailyReport_Detail t 
 											where	p.InspDate = t.InspDate and
 													p.Inspector = t.Inspector and
 													p.POID = t.POID and
@@ -129,8 +125,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,p.ReceivingID							= t.ReceivingID
 							,p.AddDate								= t.AddDate							
 							,p.EditDate								= t.EditDate	
-							,p.[BIFactoryID]			= t.[BIFactoryID]
-							,p.[BIInsertDate]			= t.[BIInsertDate]
+							,p.[BIFactoryID]						= t.[BIFactoryID]
+							,p.[BIInsertDate]						= t.[BIInsertDate]
 				from P_FabricInspDailyReport_Detail p
 				inner join #tmpP_FabricInspDailyReport_Detail t on	p.InspDate = t.InspDate and
 																p.Inspector = t.Inspector and
@@ -237,21 +233,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 											p.Roll = t.Roll and
 											p.Dyelot = t.Dyelot)";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpP_FabricInspDailyReport_Detail");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetFabricInspDailyReport_Detail_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetFabricInspDailyReport_Detail_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@Date_S", item.SDate),
+                new SqlParameter("@Date_E", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @Date_S date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @Date_E date ='{edate.ToString("yyyy/MM/dd")}'
 
 			select 
 			 InspDate
@@ -294,7 +291,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,ReceivingID
 			,AddDate
 			,EditDate
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIFactoryID] = @BIFactoryID
 			, [BIInsertDate] = GetDate()
 			from Production.dbo.GetQA_R08_Detail(null,null,'','','','','','',@Date_S, @Date_E)
 			where	ATA is not null and InspDate is not null
@@ -302,7 +299,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -310,7 +307,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

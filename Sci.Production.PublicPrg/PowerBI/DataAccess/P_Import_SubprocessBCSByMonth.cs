@@ -1,6 +1,7 @@
 ﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
@@ -9,7 +10,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SubprocessBCSByMonth
     {
         /// <inheritdoc/>
-        public Base_ViewModel UpdateBIData()
+        public Base_ViewModel UpdateBIData(ExecutedList item)
         {
             string where = @"  not exists(
 	select 1 from #tmpByMonth t
@@ -20,6 +21,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             string tmp = new Base().SqlBITableHistory("P_SubprocessBCSByMonth", "P_SubprocessBCSByMonth_History", "#tmp", where, false, false);
 
             Base_ViewModel finalResult;
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
@@ -46,7 +51,7 @@ select a.[Month], a.FactoryID
 	end
 ,[TTLLoadedBundle]
 ,[TTLBundle]
-,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+,[BIFactoryID] = @BIFactoryID
 ,[BIInsertDate] = GetDate()
 into #tmpByMonth
 from TTLBD a
@@ -80,25 +85,12 @@ where not exists(
 	and t.[Month] = s.[Month]
 )
 
-if exists (select 1 from BITableInfo b where b.id = 'P_SubprocessBCSByMonth')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_SubprocessBCSByMonth'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_SubprocessBCSByMonth', getdate())
-end
-
 drop table #tmpByMonth
 ";
                 DBProxy.Current.DefaultTimeout = 1800;
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ExecuteTransactionScope("PowerBI", cmdtext: sql),
+                    Result = TransactionClass.ExecuteTransactionScope("PowerBI", cmdtext: sql, parameters: sqlParameters),
                 };
             }
 

@@ -1,12 +1,10 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -16,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_AccessoryInspLabStatus(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_AccessoryInspLabStatus(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -25,34 +23,34 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddMonths(-90);
+                item.SDate = DateTime.Now.AddMonths(-90);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetAccessoryInspLabStatus_Data((DateTime)sDate, (DateTime)eDate);
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
-
-                DataTable dataTable = resultReport.Dt;
-
-                // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.GetAccessoryInspLabStatus_Data(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                DataTable dataTable = finalResult.Dt;
+
+                // insert into PowerBI
+                finalResult = this.UpdateBIData(dataTable, item);
+                if (!finalResult.Result)
+                {
+                    throw finalResult.Result.GetException();
+                }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -62,19 +60,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             string where = @" 	 ((p.AddDate >=  @SDate and p.AddDate <= @EDate) or (p.EditDate >=  @SDate and p.EditDate <=  @EDate))";
             string tmp = new Base().SqlBITableHistory("P_AccessoryInspLabStatus", "P_AccessoryInspLabStatus_History", "#tmp", where, false, true);
 
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+            };
+
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@SDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EDate", edate));
-
             using (sqlConn)
             {
                 string sql = $@" 
@@ -265,44 +263,30 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				 from P_AccessoryInspLabStatus p
 				 inner join  #tmp t on p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID
 
-{tmp}
+				{tmp}
 
 				 delete p
 				 from P_AccessoryInspLabStatus p
 				 where not exists (select 1 from #tmp t where p.POID = t.POID and p.SEQ = t.SEQ and p.ReceivingID = t.ReceivingID)
 				 and ((p.AddDate >=  @SDate and p.AddDate <= @EDate) 
 					or (p.EditDate >=  @SDate and p.EditDate <=  @EDate))
-
-				if exists (select 1 from BITableInfo b where b.id = 'P_AccessoryInspLabStatus')
-				begin
-					update b
-						set b.TransferDate = getdate()
-					from BITableInfo b
-					where b.id = 'P_AccessoryInspLabStatus'
-				end
-				else 
-				begin
-					insert into BITableInfo(Id, TransferDate)
-					values('P_AccessoryInspLabStatus', getdate())
-				end
                 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetAccessoryInspLabStatus_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetAccessoryInspLabStatus_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
             string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate date ='{edate.ToString("yyyy/MM/dd")}'
-
 			select a.POID
 		    , [SEQ] = concat(a.SEQ1, '-', a.SEQ2)
 		    , [FactoryID] = x.FactoryID
@@ -349,7 +333,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		    , [AddDate] = a.AddDate
 		    , [EditDate] = a.EditDate
 		    , [CategoryType] = isnull(MtlType.CategoryType, '')
-			, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			, [BIFactoryID] = @BIFactoryID
             , [BIInsertDate] = GETDATE()   
 	        from Production.dbo.AIR a WITH (NOLOCK) 
 	        inner join Production.dbo.View_AllReceivingDetail t WITH (NOLOCK) on t.PoId = A.POID and t.Seq1 = A.SEQ1 and t.Seq2 = A.SEQ2 AND t.ID = a.ReceivingID
@@ -408,7 +392,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -416,7 +400,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

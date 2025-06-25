@@ -155,8 +155,6 @@ namespace Sci.Production.Prg.PowerBI.Logic
     ,sp.Article
     ,sp.AddDate
     ,sp.EditDate
-    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    ,[BIInsertDate] = GETDATE()
 ";
             }
 

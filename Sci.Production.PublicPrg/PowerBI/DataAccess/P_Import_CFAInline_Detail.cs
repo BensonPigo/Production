@@ -1,12 +1,10 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -18,7 +16,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CFAInline_Detail(DateTime? sDate)
+        public Base_ViewModel P_CFAInline_Detail(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -27,14 +25,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.Year.ToString());
+                item.SDate = DateTime.Parse(DateTime.Now.Year.ToString());
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetCFAInline_Detail_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetCFAInline_Detail_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -49,7 +47,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -59,10 +57,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetCFAInline_Detail_Data(DateTime sdate)
+        private Base_ViewModel GetCFAInline_Detail_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@" 
-			declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
 			select DISTINCT
 			[Action]= b.Action
 			,[Area]= b.CFAAreaID +' - '+ar.Description
@@ -104,7 +107,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			,c.StyleID
 			,a.Team
 			,[VAS/SHAS]= iif(c.VasShas=0,'','v') 
-            ,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            ,[BIFactoryID] = @BIFactoryID
             ,[BIInsertDate] = GetDate()
 			from Production.dbo.Cfa a WITH (NOLOCK) 
 			inner join Production.dbo.Cfa_Detail b WITH (NOLOCK) on b.id = a.ID 
@@ -115,7 +118,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			where a.Status = 'Confirmed' and a.cDate >= @sDate";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -123,14 +126,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
 
         private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             using (sqlConn)
@@ -201,16 +203,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            ,isnull([VAS/SHAS], '') 
                 ,isnull(BIFactoryID, '')
                 ,isnull(BIInsertDate, GetDate())
-                from #Final_P_CFAInline_Detail
+                from #Final_P_CFAInline_Detail";
 
-                update b set b.TransferDate = getdate() , b.IS_Trans = 1
-                from BITableInfo b
-                where b.id = 'P_CFAInline_Detail'";
-
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInline_Detail");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#Final_P_CFAInline_Detail");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

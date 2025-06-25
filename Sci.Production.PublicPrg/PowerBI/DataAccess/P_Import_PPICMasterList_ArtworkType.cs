@@ -3,6 +3,7 @@ using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_PPICMasterList_ArtworkType(DateTime? sDate, DateTime? eDate, DateTime? yearMonth_S, DateTime? yearMonth_E)
+        public Base_ViewModel P_PPICMasterList_ArtworkType(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -24,37 +25,37 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
                 var currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-                sDate = currentYearStart.AddYears(-1).AddDays(7);
+                item.SDate = currentYearStart.AddYears(-1).AddDays(7);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
                 var currentYearStart = new DateTime(DateTime.Now.Year, 1, 1);
-                eDate = currentYearStart.AddYears(3).AddDays(6);
+                item.EDate = currentYearStart.AddYears(3).AddDays(6);
             }
 
-            if (!yearMonth_S.HasValue)
+            if (!item.SDate2.HasValue)
             {
-                yearMonth_S = new DateTime(DateTime.Now.Year - 1, 1, 1);
+                item.SDate2 = new DateTime(DateTime.Now.Year - 1, 1, 1);
             }
 
-            if (!yearMonth_E.HasValue)
+            if (!item.EDate2.HasValue)
             {
-                yearMonth_E = new DateTime(DateTime.Now.Year + 3, 1, 1).AddDays(-1);
+                item.EDate2 = new DateTime(DateTime.Now.Year + 3, 1, 1).AddDays(-1);
             }
 
             try
             {
-                finalResult = this.GetP_PPICMasterList_ArtworkType_Data((DateTime)sDate, (DateTime)eDate, (DateTime)yearMonth_S, (DateTime)yearMonth_E);
+                finalResult = this.GetP_PPICMasterList_ArtworkType_Data(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -64,15 +65,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetP_PPICMasterList_ArtworkType_Data(DateTime sdate, DateTime edate, DateTime yearMonth_S, DateTime yearMonth_E)
+        private Base_ViewModel GetP_PPICMasterList_ArtworkType_Data(ExecutedList item)
         {
-            string sqlcmd = $@" 
-			DECLARE @Date_S VARCHAR(10) = '{sdate.ToString("yyyy/MM/dd")}'
-            DECLARE @Date_E VARCHAR(10) = '{edate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@Date_S", item.SDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@Date_E", item.EDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@YearMonth_S", item.SDate2.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@YearMonth_E", item.EDate2.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
-			DECLARE @YearMonth_S VARCHAR(10) = '{yearMonth_S.ToString("yyyy/MM/dd")}'
-            DECLARE @YearMonth_E VARCHAR(10) = '{yearMonth_E.ToString("yyyy/MM/dd")}'
-
+            string sqlcmd = $@"
             -- 撈取ArtworkType相關資訊---
 	        select *
 	        into #UseArtworkType
@@ -107,7 +111,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
 			-- Order_TmsCost
 			Select *
-			,[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+			,[BIFactoryID] = @BIFactoryID
             ,[BIInsertDate] = GetDate()
 			INTO #tmp
 			FROM 
@@ -253,23 +257,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			where not exists (select 1 from P_PPICMasterList_ArtworkType p where t.ID = p.[SP#] and t.SubconInType = p.[SubconInTypeID] and t.ArtworkTypeKey = p.[ArtworkTypeKey])
 			order by ID, ArtworkType, SEQ
 
-
-			IF EXISTS (select 1 from BITableInfo b where b.id = 'P_PPICMasterList_ArtworkType')
-			BEGIN
-				update b
-					set b.TransferDate = getdate()
-				from BITableInfo b
-				where b.id = 'P_PPICMasterList_ArtworkType'
-			END
-			ELSE 
-			BEGIN
-				insert into BITableInfo(Id, TransferDate)
-				values('P_PPICMasterList_ArtworkType', getdate())
-			END
 			";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("PowerBI", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("PowerBI", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -277,7 +268,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }

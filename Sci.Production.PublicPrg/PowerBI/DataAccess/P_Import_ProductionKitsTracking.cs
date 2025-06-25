@@ -12,18 +12,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ProductionKitsTracking
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ProductionKitsTracking(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_ProductionKitsTracking(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R02 biModel = new PPIC_R02();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
@@ -31,8 +31,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 PPIC_R02_ViewModel ppic_R02 = new PPIC_R02_ViewModel()
                 {
                     IsPowerBI = true,
-                    Date1 = sDate,
-                    Date2 = eDate,
+                    Date1 = item.SDate,
+                    Date2 = item.EDate,
                 };
 
                 Base_ViewModel resultReport = biModel.GetPPIC_R02(ppic_R02);
@@ -44,11 +44,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -58,7 +60,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
 
@@ -81,8 +83,9 @@ OR (EditDate >= @StartDate AND EditDate <= @EndDate))
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = $@"
 UPDATE p
@@ -114,8 +117,8 @@ SET p.BrandID = ISNULL(t.BrandID, '')
    ,p.EditDate = t.EditDate
    ,p.AWBNO = ISNULL(t.AWBNO, '')
    ,p.Reject = ISNULL(t.Reject, '')
-   ,p.BIFactoryID = isnull(t.BIFactoryID, '')
-   ,p.BIInsertDate = isnull(t.BIInsertDate, GetDate())
+   ,p.BIFactoryID = @BIFactoryID
+   ,p.BIInsertDate = GetDate()
 FROM P_ProductionKitsTracking p
 INNER JOIN #tmp t
     ON  t.FactoryID = p.FactoryID
@@ -184,8 +187,8 @@ SELECT
    ,t.EditDate
    ,ISNULL(t.AWBNO, '')
    ,ISNULL(t.Reject, '')
-   ,isnull(t.BIFactoryID, '')
-   ,isnull(t.BIInsertDate, GetDate())
+   ,@BIFactoryID
+   ,GetDate()
 FROM #tmp t
 WHERE NOT EXISTS (
     SELECT 1
@@ -196,7 +199,7 @@ WHERE NOT EXISTS (
 
 {tmp}
 
-DELETE P_ProductionKitsTracking
+DELETE p
 FROM P_ProductionKitsTracking p WITH(NOLOCK)
 WHERE NOT EXISTS (
     SELECT 1
@@ -207,7 +210,7 @@ WHERE NOT EXISTS (
 AND ((AddDate >= @StartDate AND AddDate <= @EndDate)
   OR (EditDate >= @StartDate AND EditDate <= @EndDate))
 ";
-                sql += new Base().SqlBITableInfo("P_ProductionKitsTracking", true);
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

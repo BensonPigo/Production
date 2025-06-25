@@ -1,5 +1,4 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -15,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_IMtltoFTYAnalysis(DateTime? sDate)
+        public Base_ViewModel P_IMtltoFTYAnalysis(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -24,14 +23,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddDays(-150);
+                item.SDate = DateTime.Now.AddDays(-150);
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetIMtltoFTYAnalysis_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetIMtltoFTYAnalysis_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -40,19 +39,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                if (resultReport.Result)
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_IMtltoFTYAnalysis", false);
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -62,14 +55,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@SDate", sdate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", item.SDate),
+            };
 
             using (sqlConn)
             {
@@ -186,25 +180,27 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MaterialConfirm]
 				, [SupplierGroup]
 				, [TransferBIDate]
-				,[BIFactoryID]
-				,[BIInsertDate]
+				, [BIFactoryID]
+				, [BIInsertDate]
 				from #Final t
 				where not exists (select 1 from P_MtltoFTYAnalysis p where p.WKID = t.WKID and p.OrderID = t.OrderID and p.Seq1 = t.Seq1 and p.Seq2 = t.Seq2)
                 ";
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#Final");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#Final");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetIMtltoFTYAnalysis_Data(DateTime sdate)
+        private Base_ViewModel GetIMtltoFTYAnalysis_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
+
 			Select [Factory] = ISNULL(main.FactoryID, '')
 				, [Country] = ISNULL(Factory.CountryID, '')
 				, [Brand] = ISNULL(main.BrandID, '')
@@ -259,7 +255,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [MaterialConfirm] = iif(main.Confirm = 1, 'Y', 'N')
 				, [SupplierGroup] = ISNULL(Supp.SuppGroupFabric, '')
 				, [TransferBIDate] = GETDATE()
-				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIFactoryID] = @BIFactoryID
 				, [BIInsertDate] = GetDate()
 			From (
 				SELECT Orders.FactoryID
@@ -343,7 +339,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -351,7 +347,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

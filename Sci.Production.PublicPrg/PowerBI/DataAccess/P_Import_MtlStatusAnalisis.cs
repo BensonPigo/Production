@@ -21,22 +21,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_MtlStatusAnalisis(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_MtlStatusAnalisis(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             try
             {
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
-                    sDate = DateTime.Now.AddDays(-60);
+                    item.SDate = DateTime.Now.AddDays(-60);
                 }
 
-                if (!eDate.HasValue)
+                if (!item.EDate.HasValue)
                 {
-                    eDate = DateTime.Now.AddDays(30);
+                    item.EDate = DateTime.Now.AddDays(30);
                 }
 
-                Base_ViewModel resultReport = this.GetMtlStatusAnalisisData(sDate, eDate);
+                Base_ViewModel resultReport = this.GetMtlStatusAnalisisData(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -49,7 +49,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -59,7 +59,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetMtlStatusAnalisisData(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetMtlStatusAnalisisData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("Production", out SqlConnection sqlConn);
@@ -67,8 +67,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@CloseDate_S", sDate),
-                    new SqlParameter("@CloseDate_E", eDate),
+                    new SqlParameter("@CloseDate_S", item.SDate),
+                    new SqlParameter("@CloseDate_E", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 string sql = @"	
@@ -323,12 +324,12 @@ Order by e.ID, ed.POID
 
 
 Select *, 
-[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+[BIFactoryID] = @BIFactoryID, 
 [BIInsertDate] = GETDATE()
 From #tmpGarment
 UNION
 Select *,
-[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), 
+[BIFactoryID] = @BIFactoryID, 
 [BIInsertDate] = GETDATE()
 From #tmpMMS
 
@@ -353,8 +354,8 @@ drop table #tmpGarment, #tmpMMS
             using (sqlConn)
             {
                 string sql = @"	
-insert into P_MtlStatusAnalisis_History ([SPNo],[FactoryID],[IsProduceFty],BIFactoryID,BIInsertDate)
-Select p.SPNo, f.ID, f.IsProduceFty, p.BIFactoryID, GetDate()
+insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
+Select p.Ukey, p.BIFactoryID, GetDate()
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 inner join [MainServer].[Production].[dbo].[Orders] o on p.SPNo = o.ID
 inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
@@ -367,8 +368,8 @@ inner join [MainServer].[Production].[dbo].[Factory] f on o.FactoryID = f.ID
 where f.IsProduceFty = 0
 
 
-insert into P_MtlStatusAnalisis_History ([SPNo], [Close_Date], BIFactoryID, BIInsertDate)
-Select p.SPNo, p.[Close_Date], p.BIFactoryID, GetDate()
+insert into P_MtlStatusAnalisis_History ([Ukey],BIFactoryID,BIInsertDate)
+Select p.Ukey, p.BIFactoryID, GetDate()
 from POWERBIReportData.dbo.P_MtlStatusAnalisis p
 where exists (select 1 from #tmp t where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
 
@@ -451,19 +452,6 @@ select ISNULL(t.ID, '')
 	, t.[BIInsertDate]
 from #tmp t 
 where not exists (select 1 from POWERBIReportData.dbo.P_MtlStatusAnalisis p with(nolock) where t.PoID = p.[SPNo] and t.CloseDate = p.[Close_Date])
-
-if exists (select 1 from BITableInfo b where b.id = 'P_MtlStatusAnalisis')
-begin
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_MtlStatusAnalisis'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate)
-	values('P_MtlStatusAnalisis', getdate())
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

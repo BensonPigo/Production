@@ -1,12 +1,10 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -16,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_ProdEfficiencyByFactorySewingLine(DateTime? sDate)
+        public Base_ViewModel P_ProdEfficiencyByFactorySewingLine(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -25,15 +23,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
                 var today = DateTime.Today;
-                sDate = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
+                item.SDate = new DateTime(today.Year, today.Month, 1).AddMonths(-1);
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetProdEfficiencyByFactorySewingLine_Data((DateTime)sDate);
+                Base_ViewModel resultReport = this.GetProdEfficiencyByFactorySewingLine_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -42,13 +40,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -58,17 +56,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             string where = @"  p.[Year-Month] >= @StartDate";
             string tmp = new Base().SqlBITableHistory("P_ProdEfficiencyByFactorySewingLine", "P_ProdEfficiencyByFactorySewingLine_History", "#tmp", where, false, true);
 
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@StartDate", sdate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@StartDate", item.SDate),
+            };
 
             using (sqlConn)
             {
@@ -97,19 +96,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	             and p.[Year-Month] >= @StartDate
                 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmp");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetProdEfficiencyByFactorySewingLine_Data(DateTime sdate)
+        private Base_ViewModel GetProdEfficiencyByFactorySewingLine_Data(ExecutedList item)
         {
-            string sqlcmd = $@"
-            declare @StartDate date = '{sdate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
+            string sqlcmd = $@"
 			select  [Year-Month]
 			, FtyZone 
 			, [Factory] = FactoryID
@@ -119,7 +120,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [TotalManhours] = TtlManhour
 			, [PPH] = IIF(TtlManhour = 0,0,Round(TtlCPU/TtlManhour, 2))
 			, [EFF] = IIF(TtlManhour = 0,0,Round(TtlCPU/(TtlManhour*3600/(select StdTMS from  Production.dbo.System WITH (NOLOCK) ))*100, 2)) 
-            , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIFactoryID] = @BIFactoryID
             , [BIInsertDate] = GETDATE()   
 	        from 
             (
@@ -163,7 +164,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -171,7 +172,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

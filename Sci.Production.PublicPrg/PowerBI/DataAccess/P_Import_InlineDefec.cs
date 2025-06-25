@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
@@ -17,26 +14,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_InlineDefec
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_InlineDefecBIData(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_InlineDefecBIData(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R01 biModel = new PPIC_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(1).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Inline_R08_ViewModel inline_R08_ViewModel = new Inline_R08_ViewModel()
                 {
-                    SDate = sDate.Value,
-                    EDate = eDate.Value,
+                    SDate = item.SDate.Value,
+                    EDate = item.EDate.Value,
                     OrderID1 = string.Empty,
                     OrderID2 = string.Empty,
                     BrandID = string.Empty,
@@ -53,19 +50,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.DtArr, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.DtArr, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_InlineDefectSummary", true);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_InlineDefectDetail", true);
-                }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
+                item.ClassName = "P_InlineDefectDetail";
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -125,7 +118,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable[] dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable[] dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DataTable detailTable = dt[0];
@@ -133,8 +126,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             TransactionScope transactionscope = new TransactionScope();
             var paramters = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", sDate),
-                new SqlParameter("@EDate", eDate),
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
             using (transactionscope)
             {
@@ -205,7 +199,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                             ,isnull(t.[Reject Qty] ,0)
                             ,isnull(t.[Inline WFT(%)] ,0)
                             ,isnull(t.[Inline RFT(%)] ,0)
-                            ,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                            , @BIFactoryID
 			                , GetDate()
                         from #tmpSummy t";
                         result = TransactionClass.ProcessWithDatatableWithTransactionScope(summaryTable, null, sqlcmd: sql, result: out DataTable dataTable, temptablename: "#tmpSummy", conn: sqlConn, paramters: paramters);
@@ -270,7 +264,7 @@ select
     , isnull(t.[DefectCodeID],'')
     , isnull(t.[DefectCodeDescritpion],'')  
     , isnull(t.IsCriticalDefect,'') 
-    , (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+    , @BIFactoryID
 	, GetDate()
 From #tmpDetail t
 ";
@@ -280,9 +274,6 @@ From #tmpDetail t
                         {
                             throw result.GetException();
                         }
-
-                        sqlConn.Close();
-                        sqlConn.Dispose();
                     }
 
                     finalResult.Result = new DualResult(true);
@@ -292,8 +283,6 @@ From #tmpDetail t
                 {
                     finalResult.Result = new DualResult(false, ex);
                     transactionscope.Dispose();
-                    sqlConn.Close();
-                    sqlConn.Dispose();
                 }
                 finally
                 {

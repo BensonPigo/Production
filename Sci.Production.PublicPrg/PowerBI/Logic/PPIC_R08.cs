@@ -171,7 +171,6 @@ select
     PCSMR = [dbo].[getTPEPass1_ExtNo](PO.PCSMR),
 	rr.TransferResponsible,
 	rr.TransferNo
-{(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 from ReplacementReport rr WITH (NOLOCK) 
 left join Orders o WITH (NOLOCK)  on o.ID = rr.POID
 left join PO with(nolock) on PO.ID = rr.POID
@@ -268,7 +267,6 @@ select
 	rrd.Suggested,
 	rrd.PurchaseID,
 	NewSeq =iif(isnull(rrd.NewSeq1,'') = '','', CONCAT(rrd.NewSeq1,'-',rrd.NewSeq2))
-    {(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
 left join ReplacementReport_Detail rrd with(nolock) on rrd.ID = rr.ID
@@ -349,7 +347,6 @@ select
     PCHandle = isnull([dbo].[getTPEPass1_ExtNo](PO.PCHandle),''),
     Prepared = isnull([dbo].[getPass1_ExtNo](rr.ApplyName),''),
     [PPIC/Factory mgr] = isnull([dbo].[getPass1_ExtNo](rr.ApvName),'')
-{(model.IsPowerBI ? ", [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), [BIInsertDate] = GETDATE() " : string.Empty)}
 from ReplacementReport rr with(nolock)
 inner join Orders o with(nolock) on o.ID = rr.POID
 left join PO with(nolock) on PO.ID = rr.POID

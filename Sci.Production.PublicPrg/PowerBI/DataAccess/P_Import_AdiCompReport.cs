@@ -3,6 +3,7 @@ using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -14,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_AdiCompReport()
+        public Base_ViewModel P_AdiCompReport(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -24,7 +25,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             Base_ViewModel finalResult = new Base_ViewModel();
             try
             {
-                Base_ViewModel resultReport = this.GetAdiCompReport_Data();
+                Base_ViewModel resultReport = this.GetAdiCompReport_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -38,13 +39,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_AdiCompReport", false);
-                }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -57,11 +53,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private Base_ViewModel UpdateBIData(DataTable dt)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = string.Empty; // new Base().SqlBITableHistory("P_AdiCompReport", "P_AdiCompReport_History", "#tmp", string.Empty);
+                string sql = string.Empty;
                 sql += $@"  
                 Truncate Table P_AdiCompReport";
                 sql += $@"  
@@ -134,18 +129,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                    [BIFactoryID],
                    [BIInsertDate]
                from #tmp t";
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmp");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetAdiCompReport_Data()
+        private Base_ViewModel GetAdiCompReport_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
 			Select 
 			[Year] = Year(a.StartDate)
@@ -178,7 +174,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, DefectSub = concat(dd.ID, '-', dd.SubName)
 			, ad.Responsibility
 			, f.MDivisionID
-            , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIFactoryID] = @BIFactoryID
             , [BIInsertDate] = GetDate()
 			From Production.dbo.ADIDASComplain a With(Nolock)
 			Left join Production.dbo.ADIDASComplain_Detail ad With(Nolock) on a.ID = ad.ID
@@ -196,7 +192,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -204,7 +200,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

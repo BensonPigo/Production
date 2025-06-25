@@ -15,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_MaterialLocationIndex(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_MaterialLocationIndex(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -24,19 +24,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddMonths(-3);
+                item.SDate = DateTime.Now.AddMonths(-3);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetMaterialLocationIndex_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetMaterialLocationIndex_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -45,19 +45,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                if (resultReport.Result)
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_MaterialLocationIndex", false);
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -67,15 +61,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@SDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EDate", edate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+            };
 
             using (sqlConn)
             {
@@ -128,19 +123,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ,[BIInsertDate]
 	            )
 	            select
-                [ID]
-                ,[StockType]
-                ,[Junk]
-                ,[Description]
-	            ,LocationType
-                ,[IsWMS]
-                ,[Capacity]
-                ,[AddName]
-                ,[AddDate]
-                ,[EditName]
-                ,[EditDate]
-                ,[BIFactoryID]
-                ,[BIInsertDate]
+                    [ID]
+                    ,[StockType]
+                    ,[Junk]
+                    ,[Description]
+	                ,LocationType
+                    ,[IsWMS]
+                    ,[Capacity]
+                    ,[AddName]
+                    ,[AddDate]
+                    ,[EditName]
+                    ,[EditDate]
+                    ,[BIFactoryID]
+                    ,[BIInsertDate]
 	            from #tmpFinal t
 	            where not exists
                 (
@@ -148,35 +143,36 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 		            where s.ID = t.ID
 		            and s.StockType = t.StockType
 	            )";
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpFinal");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetMaterialLocationIndex_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetMaterialLocationIndex_Data(ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate date ='{edate.ToString("yyyy/MM/dd")}'
 
 			select [ID]
-            ,[StockType]
-            ,[Junk]
-            ,[Description]
-            ,[LocationType]
-            ,[AddName]
-            ,[AddDate]
-            ,[EditName]
-            ,[EditDate]
-            ,[IsWMS]
-            ,[Capacity]
-            ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-            ,[BIInsertDate] = GETDATE()
+                ,[StockType]
+                ,[Junk]
+                ,[Description]
+                ,[LocationType]
+                ,[AddName]
+                ,[AddDate]
+                ,[EditName]
+                ,[EditDate]
+                ,[IsWMS]
+                ,[Capacity]
+                ,[BIFactoryID] = @BIFactoryID
+                ,[BIInsertDate] = GETDATE()
 	        from [MainServer].Production.dbo.MtlLocation
 	        where 1=1
 	        and 
@@ -188,7 +184,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -196,7 +192,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

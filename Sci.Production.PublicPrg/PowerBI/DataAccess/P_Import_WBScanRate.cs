@@ -11,24 +11,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_WBScanRate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_WBScanRate(DateTime? sDate)
+        public Base_ViewModel P_WBScanRate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             DateTime now = DateTime.Now;
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = MyUtility.Convert.GetDate(now);
+                item.SDate = MyUtility.Convert.GetDate(now);
             }
 
             try
             {
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(sDate.Value);
+                finalResult = this.UpdateBIData(item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -39,7 +41,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel UpdateBIData(DateTime sDate)
+        private Base_ViewModel UpdateBIData(ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -54,7 +56,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	            , [WBScanRate] = CAST(IIF(ISNULL(SUM(p.SewQty), 0) = 0, 0, (SUM(p.RFIDSewingLineInQty) * 1.0 / SUM(p.SewQty)) * 100) AS DECIMAL(5, 2))
 	            , [TTLRFIDSewInlineQty] = SUM(p.RFIDSewingLineInQty)
 	            , [TTLSewQty] = SUM(p.SewQty)
-                , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+                , [BIFactoryID] = @BIFactoryID
                 , [BIInsertDate] = GetDate()
             INTO #tmp_P_WBScanRate
             FROM P_WIP p
@@ -81,12 +83,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Drop Table #tmp_P_WBScanRate
             ";
-            sqlcmd += new Base().SqlBITableInfo("P_WBScanRate", true);
+
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate.ToString("yyyy/MM/dd")),
+                    new SqlParameter("@StartDate", item.SDate.Value.ToString("yyyy/MM/dd")),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 finalResult = new Base_ViewModel()

@@ -15,19 +15,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_CMPByDate
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_CMPByDate(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CMPByDate(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Base biBase = new Base();
             Sewing_R02 biModel = new Sewing_R02();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/01"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-7).ToString("yyyy/MM/01"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Parse(DateTime.Now.AddMonths(1).ToString("yyyy/MM/01")).AddDays(-1).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Parse(DateTime.Now.AddMonths(1).ToString("yyyy/MM/01")).AddDays(-1).ToString("yyyy/MM/dd"));
             }
 
             try
@@ -56,7 +56,7 @@ where f.ID in (
                 {
                     string mDivisionID = x.Field<string>("MDivisionID");
                     string factory = x.Field<string>("ID");
-                    for (DateTime date = sDate.Value; date <= eDate.Value; date = date.AddDays(1))
+                    for (DateTime date = item.SDate.Value; date <= item.EDate.Value; date = date.AddDays(1))
                     {
                         Sewing_R02_ViewModel sewing_R02_Model = new Sewing_R02_ViewModel()
                         {
@@ -144,13 +144,13 @@ where f.ID in (
                 });
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(p_CMPByDates.ToDataTable());
+                finalResult = this.UpdateBIData(p_CMPByDates.ToDataTable(), item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -160,25 +160,18 @@ where f.ID in (
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
-                string sql = $@"	
-INSERT INTO P_CMPByDate_History  
-              (  
-                  [OutputDate],[FactoryID] ,   
-                  BIFactoryID,   
-                  BIInsertDate  
-              )   
-              SELECT   
-              p.[OutputDate],p.[FactoryID] ,   
-              (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
-              GETDATE()  
-              FROM P_CMPByDate p  
-              INNER JOIN #tmp t ON  t.[OutputDate] = p.[OutputDate] and t.[FactoryID] = p.[FactoryID] 
+                List<SqlParameter> sqlParameters = new List<SqlParameter>()
+                {
+                    new SqlParameter("@BIFactoryID", item.RgCode),
+                };
+
+                string sql = $@"
 
 update p set p.GPHCPU				    = t.GPHCPU
 			,p.SPHCPU				    = t.SPHCPU
@@ -193,24 +186,20 @@ update p set p.GPHCPU				    = t.GPHCPU
             ,p.TotalActiveHeadcount		= IIF(t.TotalActiveHeadcount = 0, p.TotalActiveHeadcount, t.TotalActiveHeadcount)
             ,p.RevenumDeptHeadcount		= IIF(t.RevenumDeptHeadcount = 0, p.RevenumDeptHeadcount, t.RevenumDeptHeadcount)
             ,p.ManpowerRatio		    = IIF(t.ManpowerRatio = 0, p.ManpowerRatio, t.ManpowerRatio)
-            ,BIFactoryID                = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-            ,BIInsertDate               = getDate()
+            ,BIFactoryID                = @BIFactoryID
+            ,BIInsertDate               = GetDate()
 from P_CMPByDate p
 inner join #tmp t on p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate
 
 insert into P_CMPByDate([FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], BIFactoryID, BIInsertDate)
-select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio],
-(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]), getDate()
+select [FactoryID], [OutputDate], [GPHCPU], [SPHCPU], [VPHCPU], [GPHManhours], [SPHManhours], [VPHManhours], [GPH], [SPH], [VPH], [ManhoursRatio], [TotalActiveHeadcount], [RevenumDeptHeadcount], [ManpowerRatio], @BIFactoryID, GetDate()
 from #tmp t
 where not exists(select 1 from P_CMPByDate p where p.FactoryID = t.FactoryID and p.OutputDate = t.OutputDate)
 
 ";
-
-                sql += new Base().SqlBITableInfo("P_CMPByDate", true);
-
                 finalResult = new Base_ViewModel()
                 {
-                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: null),
+                    Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
             }
 

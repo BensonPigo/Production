@@ -12,27 +12,27 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_WIP
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_WIP(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_WIP(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Planning_R15 planning_R15 = new Planning_R15();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.AddDays(+30).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(+30).ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 Planning_R15_ViewModel r15_vm = new Planning_R15_ViewModel()
                 {
-                    StartSciDelivery = sDate,
-                    EndSciDelivery = eDate,
+                    StartSciDelivery = item.SDate,
+                    EndSciDelivery = item.EDate,
                     Category = "'B'",
                     OrderBy = "orderId",
                     SummaryBy = "1",
@@ -50,13 +50,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.DtArr[0];
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             string where = @" p.SciDelivery between @StartDate and @EndDate and NOT EXISTS(SELECT 1 FROM #tmp t WHERE P.SPNO = T.OrderID)";
             string tmp = new Base().SqlBITableHistory("P_WIP", "P_WIP_History", "#tmp", where, false, false);
@@ -177,8 +177,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,P.[GlobalFoundationRange]			=	ISNULL(T.[GFR],0)
             ,P.[SampleReason]					=	ISNULL(T.[SampleReason],'')
             ,P.[TMS]							=	ISNULL(T.[TMS],0)
-            ,P.BIFactoryID                      =   ISNULL(T.BIFactoryID, '')
-            ,P.BIInsertDate                     =   ISNULL(T.BIInsertDate, GetDate())
+            ,P.BIFactoryID                      =   @BIFactoryID
+            ,P.BIInsertDate                     =   GetDate()
             FROM P_WIP P						
             INNER JOIN #tmp T ON P.SPNO = T.OrderID 
 
@@ -393,8 +393,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,ISNULL(T.[GFR],0)
             ,ISNULL(T.[SampleReason],'')
             ,ISNULL(T.[TMS],0) 
-            ,ISNULL(BIFactoryID, '')
-            ,ISNULL(BIInsertDate, GetDate())
+            ,@BIFactoryID
+            ,GetDate()
             FROM #tmp T
             WHERE NOT EXISTS(SELECT 1 FROM P_WIP P WHERE P.SPNO = T.OrderID)
 
@@ -406,26 +406,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             where  p.SciDelivery between @StartDate and @EndDate
             and NOT EXISTS(SELECT 1 FROM #tmp t WHERE P.SPNO = T.OrderID)
 
-            IF EXISTS (select 1 from BITableInfo b where b.id = 'P_WIP')
-            BEGIN
-	            update b
-		            set b.TransferDate = getdate()
-	            from BITableInfo b
-	            where b.id = 'P_WIP'
-            END
-            ELSE 
-            BEGIN
-	            insert into BITableInfo(Id, TransferDate)
-	            values('P_WIP', getdate())
-            END";
+";
 
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
             using (sqlConn)
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@StartDate", sDate),
-                    new SqlParameter("@EndDate", eDate),
+                    new SqlParameter("@StartDate", item.SDate),
+                    new SqlParameter("@EndDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 finalResult = new Base_ViewModel()

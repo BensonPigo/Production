@@ -18,38 +18,35 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CuttingBCS(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CuttingBCS(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-15).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-15).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(15).ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.AddDays(15).ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetCuttingBCS_Data(sDate, eDate);
+                Base_ViewModel resultReport = this.GetCuttingBCS_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_CuttingBCS", true);
-                }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -59,12 +56,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetCuttingBCS_Data(DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetCuttingBCS_Data(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@StartDate", sDate),
-                new SqlParameter("@EndDate", eDate),
+                new SqlParameter("@StartDate", item.SDate),
+                new SqlParameter("@EndDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -670,7 +668,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				, [BalanceCutQtyByLine] = ISNULL(BalanceCutQtyByLine, 0)
 				, [SupplyCutQtyVSStdQty] = ISNULL(SupplyCutQtyVSStdQty, 0)
 				, [SupplyCutQtyVSStdQtyByLine] = ISNULL(SupplyCutQtyVSStdQtyByLine, 0)
-				, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				, [BIFactoryID] = @BIFactoryID
 				, [BIInsertDate] = GetDate()
 			FROM #tmp_EstCutQty_END;
 
@@ -695,7 +693,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -703,8 +701,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
                 };
                 string sql = @"
 				update b 
@@ -797,8 +795,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
-                sqlConn.Close();
-                sqlConn.Dispose();
             }
 
             return finalResult;

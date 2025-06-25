@@ -1,11 +1,10 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -17,7 +16,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_QA_P09(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_QA_P09(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -26,21 +25,21 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
                 var today = DateTime.Now;
                 var firstDayOfCurrentMonth = new DateTime(today.Year, today.Month, 1);
-                sDate = firstDayOfCurrentMonth.AddMonths(-6);
+                item.SDate = firstDayOfCurrentMonth.AddMonths(-6);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now.AddMonths(3).Date;
+                item.EDate = DateTime.Now.AddMonths(3).Date;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.Get_QA_P09_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.Get_QA_P09_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -49,13 +48,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -65,11 +64,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel Get_QA_P09_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel Get_QA_P09_Data(ExecutedList item)
         {
-            string sqlcmd = $@" 
-            declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @eDate varchar(20) = '{edate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
+            string sqlcmd = $@"
 
             ----準備基礎資料
 	        Select RowNo = ROW_NUMBER() OVER(ORDER by Month), ID 
@@ -220,7 +224,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        a.[bitRefnoColor], 
 	        a.[FactoryID], 
 	        a.Consignee,  
-			[BIFactoryID] =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+			[BIFactoryID] = @BIFactoryID,
             [BIInsertDate] = GetDate()
 	        from #tmpBasic a
 	        inner join 
@@ -261,7 +265,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ";
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -269,21 +273,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@sDate", item.SDate.Value.ToString("yyyy/MM/dd")),
+                new SqlParameter("@eDate", item.EDate.Value.ToString("yyyy/MM/dd")),
+            };
             using (sqlConn)
             {
-                string sql = $@" 
-				declare @sDate varchar(20) = '{sdate.ToString("yyyy/MM/dd")}'
-				declare @eDate varchar(20) = '{edate.ToString("yyyy/MM/dd")}'
+                string sql = $@"
 
                 -----開始Merge 
 				MERGE INTO dbo.P_QA_P09 t
@@ -338,8 +343,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 							,s.FactoryID, s.Consignee
 							);
 
-				Insert Into P_QA_P09_History
-				Select t.Ukey, t.FactoryID, t.BIFactoryID, t.BIInsertDate
+				Insert Into P_QA_P09_History ([Ukey], [FactoryID], [BIFactoryID], [BIInsertDate])
+				Select t.Ukey, t.FactoryID, t.BIFactoryID, GETDATE()
 				FROM P_QA_P09 T 
 				left join #tmpFinal s on t.WK#=s.WK#  AND t.SP#=s.SP# AND t.Seq# = s.Seq#
 				where s.WK# is null
@@ -352,16 +357,10 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				and T.ETA between @sDate and @eDate
 
 					DROP TABLE #tmpFinal
-
-				update b set b.TransferDate = getdate(), b.IS_Trans = 1
-				from BITableInfo b 
-				where b.id = 'P_QA_P09'
                 ";
 
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmpFinal");
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, temptablename: "#tmpFinal", paramters: sqlParameters);
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }

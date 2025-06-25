@@ -12,26 +12,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_ReplacementReport
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_ReplacementReport(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_ReplacementReport(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R08 biModel = new PPIC_R08();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse("2020/01/01");
+                item.SDate = DateTime.Parse("2020/01/01");
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse("2999/01/01");
+                item.EDate = DateTime.Parse("2999/01/01");
             }
 
             try
             {
                 PPIC_R08_ViewModel ppic_R08 = new PPIC_R08_ViewModel()
                 {
-                    CDate1 = sDate,
-                    CDate2 = eDate,
+                    CDate1 = item.SDate,
+                    CDate2 = item.EDate,
                     IsPowerBI = true,
                     ReportType = "Resp. Dept. List",
                     Status = "ALL",
@@ -46,7 +46,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.DtArr[0];
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
@@ -62,7 +62,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             string where = @" p.Cdate >= @SDate and p.Cdate <= @EDate";
             string tmp = new Base().SqlBITableHistory("P_ReplacementReport", "P_ReplacementReport_History", "#tmp", where, false, true);
@@ -73,8 +73,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = $@"
 UPDATE t
@@ -106,8 +107,8 @@ SET   　t.[Type] = s.[Type]
 ,t.[PCHandle] = s.[PCHandle]
 ,t.[Prepared] = s.[Prepared]
 ,t.[PPIC/Factory mgr] = s.[PPIC/Factory mgr]
-,t.[BIFactoryID] = s.BIFactoryID
-,t.[BIInsertDate] = s.BIInsertDate
+,t.[BIFactoryID] = @BIFactoryID
+,t.[BIInsertDate] = GETDATE()
 from P_ReplacementReport t 
 inner join #tmp s on t.ID = s.ID 
 AND t.FactoryID = s.FactoryID 
@@ -128,7 +129,7 @@ select 	s.[ID],s.[Type],s.[MDivisionID],s.[FactoryID],s.[SPNo],s.[Style]
 ,s.[Responsibility],s.[TtlEstReplacementAMT]
 ,s.[RMtlUS],s.[ActFreightUS],s.[EstFreightUS],s.[SurchargeUS],s.[TotalUS],s.[ResponsibilityFty]
 ,s.[ResponsibilityDept],s.[ResponsibilityPercent],s.[ShareAmount],s.[VoucherNo],s.[VoucherDate]
-,s.[POSMR],s.[POHandle],s.[PCSMR],s.[PCHandle],s.[Prepared],s.[PPIC/Factory mgr], s.BIFactoryID, s.BIInsertDate
+,s.[POSMR],s.[POHandle],s.[PCSMR],s.[PCHandle],s.[Prepared],s.[PPIC/Factory mgr], @BIFactoryID, GETDATE()
 from #tmp s
 where not exists (
     select 1 from P_ReplacementReport t 
@@ -151,17 +152,6 @@ where not exists (
 )
 and t.Cdate >= @SDate 
 and t.Cdate <= @EDate
-
-if exists (select 1 from BITableInfo where Id = 'P_ReplacementReport')
-begin
-	update BITableInfo set TransferDate = getdate(), IS_Trans = 0
-	where Id = 'P_ReplacementReport'
-end
-else 
-begin
-	insert into BITableInfo(Id, TransferDate, IS_Trans)
-	values('P_ReplacementReport', getdate(), 0)
-end
 ";
                 finalResult = new Base_ViewModel()
                 {

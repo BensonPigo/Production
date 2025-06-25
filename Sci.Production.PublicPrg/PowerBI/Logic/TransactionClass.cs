@@ -1,4 +1,5 @@
 ﻿using Ict;
+using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -181,17 +182,17 @@ namespace Sci.Production.Prg.PowerBI.Logic
         /// update BI Table Info data with transaction scope
         /// </summary>
         /// <param name="conn">conn</param>
-        /// <param name="biTableInfoID">biTableInfoID</param>
+        /// <param name="item">biTableInfoID</param>
         /// <param name="is_Trans">is_Trans</param>
         /// <param name="defaultTimeoutInSeconds">defaultTimeoutInSeconds</param>
         /// <returns>dualResult</returns>
-        public static DualResult UpatteBIDataTransactionScope(SqlConnection conn, string biTableInfoID, bool is_Trans, int defaultTimeoutInSeconds = 60 * 60)
+        public static DualResult UpatteBIDataTransactionScope(SqlConnection conn, ExecutedList item, bool is_Trans, int defaultTimeoutInSeconds = 60 * 60)
         {
             DualResult dualResult;
             using (TransactionScope transactionScope = new TransactionScope(TransactionScopeOption.Required, new TimeSpan(0, 0, defaultTimeoutInSeconds)))
             {
                 Data.DBProxy.Current.DefaultTimeout = defaultTimeoutInSeconds;
-                string sql = new Base().SqlBITableInfo(biTableInfoID, is_Trans);
+                string sql = new Base().SqlBITableInfo(item);
                 dualResult = Data.DBProxy.Current.ExecuteByConn(conn, sql);
 
                 if (!dualResult)

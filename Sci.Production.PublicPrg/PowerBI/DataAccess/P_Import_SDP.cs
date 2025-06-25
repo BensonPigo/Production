@@ -5,10 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -22,33 +18,35 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         }
 
         /// <inheritdoc/>
-        public Base_ViewModel P_SDP(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SDP(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddYears(-1).ToString("yyyy/01/01"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddYears(-1).ToString("yyyy/01/01"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetSDPData(sDate, eDate);
+                Base_ViewModel resultReport = this.GetSDPData(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.Dt, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.Dt, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -58,12 +56,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel GetSDPData (DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel GetSDPData(ExecutedList item)
         {
             List<SqlParameter> listPar = new List<SqlParameter>
             {
-                new SqlParameter("@sDate", sDate),
-                new SqlParameter("@eDate", eDate),
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             string sql = @"
@@ -256,7 +255,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	where NOT exists (select 1 from #tmp_CReceive c where c.OrderID = t.OrderID and c.Seq = t.Seq)
 
 	select *
-	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+	, [BIFactoryID] = @BIFactoryID
 	, [BIInsertDate] = GETDATE()
 	from 
 	(
@@ -457,7 +456,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return resultReport;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime? sDate, DateTime? eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -465,8 +464,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
                 };
                 string sql = $@"
 	/************* 更新P_SDP的資料*************/
@@ -625,14 +624,14 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			   t.[Pullouttimes] = s.[Pullouttimes]
 	)
 
-insert into [P_SDP_History]
+	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
 	Select a.[FactoryID],
-	a.[Pullouttimes], 
-	a.[Seq],
-	a.[SPNo],
-	a.[Style],
-	a.[BIFactoryID],
-	[BIInsertDate] = getDate()
+		a.[SPNo], 
+		a.[Style],
+		a.[Seq],
+		a.[Pullouttimes],
+		a.[BIFactoryID],
+		[BIInsertDate] = getDate()
 	from P_SDP a
 	where not exists
 	(
@@ -659,14 +658,14 @@ insert into [P_SDP_History]
 	)
 	and exists(select 1 from #tmp b where a.SPNo = b.SPNo)
 
-	insert into [P_SDP_History]
+	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
 	Select p.[FactoryID],
-	p.[Pullouttimes], 
-	p.[Seq],
-	p.[SPNo],
-	p.[Style],
-	p.[BIFactoryID],
-	[BIInsertDate] = getDate()
+		p.[SPNo], 
+		p.[Style],
+		p.[Seq],
+		p.[Pullouttimes],
+		p.[BIFactoryID],
+		[BIInsertDate] = getDate()
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
@@ -679,14 +678,14 @@ insert into [P_SDP_History]
 	inner join MainServer.Production.dbo.OrderType ot with(nolock) on o.OrderTypeID = ot.ID and o.BrandID = ot.BrandID and o.BrandID = ot.BrandID
 	where ot.IsGMTMaster = 1
 
-	insert into [P_SDP_History]
+	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
 	Select p.[FactoryID],
-	p.[Pullouttimes], 
-	p.[Seq],
-	p.[SPNo],
-	p.[Style],
-	p.[BIFactoryID],
-	[BIInsertDate] = getDate()
+		p.[SPNo], 
+		p.[Style],
+		p.[Seq],
+		p.[Pullouttimes],
+		p.[BIFactoryID],
+		[BIInsertDate] = getDate()
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
@@ -699,14 +698,14 @@ insert into [P_SDP_History]
 	inner join Production.dbo.Factory f with(nolock) on o.FactoryID = f.ID
 	where f.IsProduceFty = 0
 
-	insert into [P_SDP_History]
+	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
 	Select p.[FactoryID],
-	p.[Pullouttimes], 
-	p.[Seq],
-	p.[SPNo],
-	p.[Style],
-	p.[BIFactoryID],
-	[BIInsertDate] = getDate()
+		p.[SPNo], 
+		p.[Style],
+		p.[Seq],
+		p.[Pullouttimes],
+		p.[BIFactoryID],
+		[BIInsertDate] = getDate()
 	from P_SDP p
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.Junk = 1
@@ -717,14 +716,14 @@ insert into [P_SDP_History]
 	inner join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.Junk = 1
 
-	insert into [P_SDP_History]
+	insert into [P_SDP_History]([FactoryID], [SPNo], [Style], [Seq], [Pullouttimes], [BIFactoryID], [BIInsertDate])
 	Select p.[FactoryID],
-	p.[Pullouttimes], 
-	p.[Seq],
-	p.[SPNo],
-	p.[Style],
-	p.[BIFactoryID],
-	[BIInsertDate] = getDate()
+		p.[SPNo], 
+		p.[Style],
+		p.[Seq],
+		p.[Pullouttimes],
+		p.[BIFactoryID],
+		[BIInsertDate] = getDate()
 	from P_SDP p
 	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.id is null
@@ -734,7 +733,7 @@ insert into [P_SDP_History]
 	left join Production.dbo.Orders o with(nolock) on p.SPNo = o.ID
 	where o.id is null
 ";
-                sql += new Base().SqlBITableInfo("P_SDP", true);
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

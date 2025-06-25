@@ -2,13 +2,9 @@
 using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -20,49 +16,54 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <summary>
         /// P_QA_CFAMasterList
         /// </summary>
-        /// <param name="sDate">sDate</param>
+        /// <param name="item">Executed List</param>
         /// <returns>Base_ViewModel</returns>
-        public Base_ViewModel P_QA_CFAMasterList(DateTime? sDate)
+        public Base_ViewModel P_QA_CFAMasterList(ExecutedList item)
         {
             QA_R31_ViewModel biPar = new QA_R31_ViewModel()
             {
                 IsPowerBI = true,
-                BIFilterDate = sDate,
+                BIFilterDate = item.SDate,
                 CategoryList = new List<string>() { "B", "S", "G" },
             };
 
-            Base_ViewModel base_ViewModel = new QA_R31().GetCFAMasterListReport(biPar);
+            Base_ViewModel finalResult = new QA_R31().GetCFAMasterListReport(biPar);
 
-            if (!base_ViewModel.Result)
+            if (!finalResult.Result)
             {
-                return base_ViewModel;
+                return finalResult;
             }
 
-            DataTable dtUpdateSource = base_ViewModel.DtArr[0];
-            DataTable dtDeleteSource = base_ViewModel.DtArr[1];
+            DataTable dtUpdateSource = finalResult.DtArr[0];
+            DataTable dtDeleteSource = finalResult.DtArr[1];
 
             if (dtUpdateSource.Rows.Count > 0)
             {
-                base_ViewModel.Result = this.UpdateData(dtUpdateSource);
+                finalResult.Result = this.UpdateData(dtUpdateSource, item);
             }
 
-            if (!base_ViewModel.Result)
+            if (!finalResult.Result)
             {
-                return base_ViewModel;
+                return finalResult;
             }
 
             if (dtDeleteSource.Rows.Count > 0)
             {
-                base_ViewModel.Result = this.DeleteData(dtDeleteSource);
+                finalResult.Result = this.DeleteData(dtDeleteSource);
             }
 
-            this.UpdateBITableInfo();
+            finalResult = new Base().UpdateBIData(item);
 
-            return base_ViewModel;
+            return finalResult;
         }
 
-        private DualResult UpdateData(DataTable dtUpdateSource)
+        private DualResult UpdateData(DataTable dtUpdateSource, ExecutedList item)
         {
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
+
             string sqlUpdate = $@"
 alter table #tmp alter column ID varchar(13)
 alter table #tmp alter column Seq varchar(2)
@@ -101,8 +102,8 @@ update  p set   p.FinalInsp            = t.CFAFinalInspectResult
                 ,p.FinalInspDate       = t.CFAFinalInspectDate
                 ,p.Last3rdInspDate     = t.CFA3rdInspectDate
                 ,p.Remark              = t.CFARemark
-                ,p.BIFactoryID         = t.BIFactoryID
-                ,p.BIInsertDate        = t.BIInsertDate
+                ,p.BIFactoryID         = @BIFactoryID
+                ,p.BIInsertDate        = GETDATE()
 from P_QA_CFAMasterList p
 inner join  #tmp t on t.ID = p.OrderID and t.Seq = p.ShipSeq
 
@@ -178,8 +179,8 @@ select  t.ID
         ,t.CFAFinalInspectDate
         ,t.CFA3rdInspectDate
         ,t.CFARemark
-        ,t.BIFactoryID
-        ,t.BIInsertDate
+        ,@BIFactoryID
+        ,GETDATE()
 from    #tmp t
 where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID = p.OrderID and t.Seq = p.ShipSeq)
 ";
@@ -189,7 +190,7 @@ where   not exists(select 1 from P_QA_CFAMasterList p with (nolock) where t.ID =
 
             using (connBI)
             {
-                result = MyUtility.Tool.ProcessWithDatatable(dtUpdateSource, null, sqlUpdate, out DataTable dtEmpty, conn: connBI);
+                result = MyUtility.Tool.ProcessWithDatatable(dtUpdateSource, null, sqlUpdate, out DataTable dtEmpty, conn: connBI, paramters: sqlParameters);
             }
 
             return result;
@@ -231,35 +232,6 @@ where	exists(select 1 from #tmp tt where tt.OrderID = p.OrderID)  AND
             using (connBI)
             {
                 result = MyUtility.Tool.ProcessWithDatatable(dtDeleteSource, null, sqlDelete, out DataTable dtEmpty, conn: connBI);
-            }
-
-            return result;
-        }
-
-        private DualResult UpdateBITableInfo()
-        {
-            string sql = @"
-IF EXISTS (select 1 from BITableInfo b where b.id = 'P_QA_CFAMasterList')
-BEGIN
-	update b
-		set b.TransferDate = getdate()
-	from BITableInfo b
-	where b.id = 'P_QA_CFAMasterList'
-END
-ELSE 
-BEGIN
-	insert into BITableInfo(Id, TransferDate)
-	values('P_QA_CFAMasterList', getdate())
-END
-";
-
-            SqlConnection connBI;
-            DBProxy.Current.OpenConnection("PowerBI", out connBI);
-            DualResult result = new DualResult(true);
-
-            using (connBI)
-            {
-                result = TransactionClass.ExecuteByConnTransactionScope(conn: connBI, cmdtext: sql);
             }
 
             return result;

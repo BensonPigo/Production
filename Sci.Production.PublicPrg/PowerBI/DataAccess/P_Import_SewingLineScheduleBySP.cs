@@ -1,13 +1,9 @@
-﻿using Sci.Data;
-using Sci.Production.Prg.PowerBI.Logic;
+﻿using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -15,18 +11,18 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SewingLineScheduleBySP
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_SewingLineScheduleBySP(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SewingLineScheduleBySP(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R01 biModel = new PPIC_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Now.AddDays(-60);
+                item.SDate = DateTime.Now.AddDays(-60);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now.AddDays(120);
+                item.EDate = DateTime.Now.AddDays(120);
             }
 
             PPIC_R01bySP_ViewModel model = new PPIC_R01bySP_ViewModel()
@@ -35,8 +31,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 FactoryID = string.Empty,
                 SewingLineIDFrom = string.Empty,
                 SewingLineIDTo = string.Empty,
-                SewingDateFrom = sDate,
-                SewingDateTo = eDate,
+                SewingDateFrom = item.SDate,
+                SewingDateTo = item.EDate,
                 BuyerDeliveryFrom = null,
                 BuyerDeliveryTo = null,
                 SciDeliveryFrom = null,
@@ -57,16 +53,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_SewingLineScheduleBySP", true);
-                }
+
+                finalResult = new Base().UpdateBIData(item);
 
             }
             catch (Exception ex)
@@ -77,7 +70,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             Data.DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -85,8 +78,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = new Base().SqlBITableHistory("P_SewingLineScheduleBySP", "P_SewingLineScheduleBySP_History", "#tmp", "(convert(date, p.Inline) >= @SDate or (@SDate between convert(date,p.Inline) and convert(date,p.Offline))) and (convert(date, p.Offline) <= @EDate or (@EDate between convert(date,p.Inline) and convert(date,p.Offline)))", needJoin: false) + Environment.NewLine;
                 sql += @"	
@@ -148,8 +142,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,p.TTL_PRINTING_PCS			= t.TTL_PRINTING_PCS
 				,p.TTL_PRINTING_PPU_PPU		= t.TTL_PRINTING_PPU_PPU
 				,p.SubCon					= t.SubCon			
-				,p.BIFactoryID =  (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-				,p.BIInsertDate = GetDate()
+				,p.BIFactoryID				= @BIFactoryID
+				,p.BIInsertDate				= GetDate()
 				from P_SewingLineScheduleBySP p
 				inner join #tmp t on p.ID = t.ID
 
@@ -261,7 +255,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 				,t.TTL_PRINTING_PCS
 				,t.TTL_PRINTING_PPU_PPU
 				,t.SubCon
-				,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+				,@BIFactoryID
 				,GetDate()
 				from #tmp t
 				where not exists(	select 1 from P_SewingLineScheduleBySP p where	p.ID = t.ID)";
@@ -269,8 +263,6 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
-                sqlConn.Close();
-                sqlConn.Dispose();
             }
 
             return finalResult;

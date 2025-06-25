@@ -1,14 +1,10 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -18,7 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_ProdEffAnalysis(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_ProdEffAnalysis(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -27,23 +23,23 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
                 var now = DateTime.Now;
-                sDate = (now.Day < 4)
+                item.SDate = (now.Day < 4)
                     ? new DateTime(now.Year, now.Month, 1).AddMonths(-1)
                     : new DateTime(now.Year, now.Month, 1);
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
                 var now = DateTime.Now;
-                eDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
+                item.EDate = new DateTime(now.Year, now.Month, 1).AddMonths(1).AddDays(-1);
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetProdEffAnalysis_Data((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetProdEffAnalysis_Data(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -52,19 +48,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable dataTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(dataTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(dataTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                if (resultReport.Result)
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_Import_ProdEffAnalysis", false);
-                }
-
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -74,15 +64,16 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
-            List<SqlParameter> lisSqlParameter = new List<SqlParameter>();
-            lisSqlParameter.Add(new SqlParameter("@SDate", sdate));
-            lisSqlParameter.Add(new SqlParameter("@EDate", edate));
+            List<SqlParameter> lisSqlParameter = new List<SqlParameter>
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+            };
 
             using (sqlConn)
             {
@@ -142,22 +133,22 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                       ,[BIInsertDate]
                 from #tmpMain t
 				 ";
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpMain");
-                sqlConn.Close();
-                sqlConn.Dispose();
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter, temptablename: "#tmpMain");
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetProdEffAnalysis_Data(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetProdEffAnalysis_Data(ExecutedList item)
         {
-            string sqlcmd = $@"
-            declare @SDate date = '{sdate.ToString("yyyy/MM/dd")}'
-            declare @EDate date ='{edate.ToString("yyyy/MM/dd")}'
+            List<SqlParameter> sqlParameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
+            };
 
+            string sqlcmd = $@"
             -- Main data
             Select
             [RS] = iif(ProductionUnit = 'TMS', 'CPU', iif(ProductionUnit = 'QTY', 'AMT','')),
@@ -337,7 +328,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             select 
             * 
-            , [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+            , [BIFactoryID] = @BIFactoryID
             , [BIInsertDate] = GetDate()
             from 
             (
@@ -406,7 +397,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("Production", sqlcmd, out DataTable dataTables),
+                Result = this.DBProxy.Select("Production", sqlcmd, sqlParameters, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -414,7 +405,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
 
             return resultReport;
         }

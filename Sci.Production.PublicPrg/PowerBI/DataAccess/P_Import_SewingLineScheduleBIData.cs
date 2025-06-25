@@ -13,26 +13,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_SewingLineScheduleBIData
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_SewingLineScheduleBIData(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_SewingLineScheduleBIData(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             PPIC_R01 biModel = new PPIC_R01();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/01"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/01"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Now;
+                item.EDate = DateTime.Now;
             }
 
             try
             {
                 PPIC_R01_ViewModel pIC_R01_ViewModel = new PPIC_R01_ViewModel()
                 {
-                    Inline = sDate,
-                    Offline = eDate,
+                    Inline = item.SDate,
+                    Offline = item.EDate,
                     Line1 = string.Empty,
                     Line2 = string.Empty,
                     MDivisionID = string.Empty,
@@ -53,16 +53,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(resultReport.DtArr[0], sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(resultReport.DtArr[0], item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
-                else
-                {
-                    DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
-                    TransactionClass.UpatteBIDataTransactionScope(sqlConn, "P_SewingLineSchedule", true);
-                }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -72,7 +69,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -80,8 +77,9 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
 
                 string sql = @"	
@@ -233,7 +231,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 						t.EditDate = s.EditDate,
 						t.LastDownloadAPSDate = iif(u.LastDownloadAPSDate is not null, u.LastDownloadAPSDate, t.LastDownloadAPSDate),
 						t.SewingInlineCategory = s.SewingInlineCategory
-						,t.[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
+						,t.[BIFactoryID] = @BIFactoryID
 						,t.[BIInsertDate] = GetDate()
 				from P_SewingLineSchedule t 
 				inner join #tmp s on t.APSNo = s.APSNo 
@@ -268,7 +266,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 					s.SewingCPU, s.BrandID, s.Orig_WorkHourPerDay, s.New_SwitchTime, s.FirststCuttingOutputDate, s.[TTL_PRINTING (PCS)],
 					s.[TTL_PRINTING PPU (PPU)], s.SubCon, s.CDCodeNew, s.ProductType, s.FabricType, s.Lining, s.Gender, s.Construction,
 					s.[Subcon Qty],	s.[Std Qty for printing], s.StyleName, s.StdQtyEMB, s.EMBStitch, s.EMBStitchCnt, s.TtlQtyEMB,
-					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,(select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),GetDate()
+					s.PrintPcs, s.InlineCategory, s.StyleSeason, s.AddDate, s.EditDate, s.LastDownloadAPSDate, s.SewingInlineCategory,@BIFactoryID,GetDate()
 				from #tmp s
 				where not exists (select 1 from P_SewingLineSchedule t WITH(NOLOCK) where t.APSNo = s.APSNo 
 																		AND t.SewingDay = s.SewingDay 
@@ -306,12 +304,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 sql += $@"
 				DELETE FROM P_SewingLineSchedule
 				WHERE ukey IN(SELECT ukey FROM #Del WHERE rn > 1)";
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),
                 };
-                sqlConn.Close();
-                sqlConn.Dispose();
             }
 
             return finalResult;

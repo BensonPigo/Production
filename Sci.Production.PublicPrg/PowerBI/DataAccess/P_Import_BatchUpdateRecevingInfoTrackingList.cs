@@ -12,7 +12,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_BatchUpdateRecevingInfoTrackingList
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_BatchUpdateRecevingInfoTrackingList(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_BatchUpdateRecevingInfoTrackingList(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             Warehouse_R40 biModel = new Warehouse_R40();
@@ -31,19 +31,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     IsPowerBI = true,
                 };
 
-                if (!sDate.HasValue)
+                if (!item.SDate.HasValue)
                 {
                     warehouse_R40.ArriveDateStart = firstDate;
                     warehouse_R40.AddEditDateEnd = null;
-                    sDate = firstDate;
-                    eDate = DateTime.Now.AddYears(100);
+                    item.SDate = firstDate;
+                    item.EDate = DateTime.Now.AddYears(100);
                 }
                 else
                 {
-                    warehouse_R40.AddEditDateStart = sDate;
-                    if (eDate.HasValue)
+                    warehouse_R40.AddEditDateStart = item.SDate;
+                    if (item.EDate.HasValue)
                     {
-                        warehouse_R40.AddEditDateEnd = eDate;
+                        warehouse_R40.AddEditDateEnd = item.EDate;
                     }
                 }
 
@@ -56,11 +56,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -70,7 +72,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.DefaultTimeout = 10800;
@@ -83,8 +85,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
                 };
                 string sql = $@"	
 UPDATE t
@@ -178,7 +180,6 @@ and (
     (t.EditDate >= @SDate and t.EditDate <= @EDate)
 )
 ";
-                sql += new Base().SqlBITableInfo("P_BatchUpdateRecevingInfoTrackingList", false);
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sql, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

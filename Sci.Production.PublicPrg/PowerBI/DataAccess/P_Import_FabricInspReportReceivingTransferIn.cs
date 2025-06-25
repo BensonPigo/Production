@@ -12,26 +12,26 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_FabricInspReportReceivingTransferIn
     {
         /// <inheritdoc/>
-        public Base_ViewModel P_FabricInspReportReceivingTransferIn(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_FabricInspReportReceivingTransferIn(ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
             QA_R11 biModel = new QA_R11();
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddMonths(-3).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
                 QA_R11_ViewModel qa_R11 = new QA_R11_ViewModel()
                 {
-                    ArriveWHDate1 = sDate,
-                    ArriveWHDate2 = eDate,
+                    ArriveWHDate1 = item.SDate,
+                    ArriveWHDate2 = item.EDate,
                     SP1 = string.Empty,
                     SP2 = string.Empty,
                     Brand = string.Empty,
@@ -47,19 +47,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 }
 
                 DataTable detailTable = resultReport.DtArr[1];
-                if (!resultReport.Result)
-                {
-                    throw resultReport.Result.GetException();
-                }
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, sDate.Value, eDate.Value);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
 
-                finalResult.Result = new Ict.DualResult(true);
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -69,7 +65,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sDate, DateTime eDate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
@@ -93,8 +89,9 @@ and
             {
                 List<SqlParameter> sqlParameters = new List<SqlParameter>()
                 {
-                    new SqlParameter("@SDate", sDate),
-                    new SqlParameter("@EDate", eDate),
+                    new SqlParameter("@SDate", item.SDate),
+                    new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = $@"	
 UPDATE t
@@ -121,9 +118,9 @@ SET
       ,t.[Points]                   = ISNULL(s.[Points], 0)
       ,t.[DefectRate]               = ISNULL(s.[DefectRate], 0)
       ,t.[Inspector]                = ISNULL(s.[Inspector], '')
-      ,t.[EditDate]                = s.[EditDate]
-     , t.[BIFactoryID] = s.[BIFactoryID]
-     , t.[BIInsertDate] = s.[BIInsertDate]
+      ,t.[EditDate]                 = s.[EditDate]
+     , t.[BIFactoryID]              = @BIFactoryID
+     , t.[BIInsertDate]             = GETDATE()
 from P_FabricInspReport_ReceivingTransferIn t 
 inner join #tmp s on t.POID = s.POID
 	and t.SEQ = s.SEQ
@@ -168,8 +165,8 @@ select s.[POID]
     , [Inspector]               = ISNULL(s.[Inspector], '')
     , s.[AddDate]
     , s.[EditDate]
-    , s.[BIFactoryID]
-    , s.[BIInsertDate]
+    , @BIFactoryID
+    , GETDATE()
 from #tmp s
 where not exists (
     select 1 from P_FabricInspReport_ReceivingTransferIn t 
@@ -195,21 +192,6 @@ and
 	or
 	(T.EditDate between @SDate and @EDate)
 )
-
-
-if exists (select 1 from BITableInfo b where b.id = 'P_FabricInspReport_ReceivingTransferIn')
-	begin
-		update b
-			set b.TransferDate = getdate()
-		from BITableInfo b
-		where b.id = 'P_FabricInspReport_ReceivingTransferIn'
-	end
-	else 
-	begin
-		insert into BITableInfo(Id, TransferDate)
-		values('P_FabricInspReport_ReceivingTransferIn', getdate())
-	end
-
 ";
                 finalResult = new Base_ViewModel()
                 {

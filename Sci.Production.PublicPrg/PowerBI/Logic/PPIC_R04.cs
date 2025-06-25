@@ -77,8 +77,6 @@ select distinct MDivisionID = isnull(l.MDivisionID,'')
 					  ELSE isnull(f.MtlTypeID,'')
 					  END
     ,[SewingQty] = isnull(SewingQty.val,0)
-    ,[BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    ,[BIInsertDate] = GETDATE()
     {(model.IsPowerBI ? tmpsql : string.Empty)}
 from Lack l WITH (NOLOCK) 
 inner join Lack_Detail ld WITH (NOLOCK) on l.ID = ld.ID

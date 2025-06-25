@@ -1,5 +1,4 @@
-﻿using Ict;
-using Sci.Data;
+﻿using Sci.Data;
 using Sci.Production.Prg.PowerBI.Logic;
 using Sci.Production.Prg.PowerBI.Model;
 using System;
@@ -7,7 +6,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
-using static System.Windows.Forms.AxHost;
 
 namespace Sci.Production.Prg.PowerBI.DataAccess
 {
@@ -17,7 +15,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         private DBProxy DBProxy;
 
         /// <inheritdoc/>
-        public Base_ViewModel P_CuttingOutputStatistic(DateTime? sDate, DateTime? eDate)
+        public Base_ViewModel P_CuttingOutputStatistic(ExecutedList item)
         {
             this.DBProxy = new DBProxy()
             {
@@ -26,19 +24,19 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             Base_ViewModel finalResult = new Base_ViewModel();
 
-            if (!sDate.HasValue)
+            if (!item.SDate.HasValue)
             {
-                sDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/dd"));
+                item.SDate = DateTime.Parse(DateTime.Now.AddDays(-90).ToString("yyyy/MM/dd"));
             }
 
-            if (!eDate.HasValue)
+            if (!item.EDate.HasValue)
             {
-                eDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
+                item.EDate = DateTime.Parse(DateTime.Now.ToString("yyyy/MM/dd"));
             }
 
             try
             {
-                Base_ViewModel resultReport = this.GetCuttingOutputStatistic((DateTime)sDate, (DateTime)eDate);
+                Base_ViewModel resultReport = this.GetCuttingOutputStatistic(item);
                 if (!resultReport.Result)
                 {
                     throw resultReport.Result.GetException();
@@ -47,11 +45,13 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 DataTable detailTable = resultReport.Dt;
 
                 // insert into PowerBI
-                finalResult = this.UpdateBIData(detailTable, (DateTime)sDate, (DateTime)eDate);
+                finalResult = this.UpdateBIData(detailTable, item);
                 if (!finalResult.Result)
                 {
                     throw finalResult.Result.GetException();
                 }
+
+                finalResult = new Base().UpdateBIData(item);
             }
             catch (Exception ex)
             {
@@ -61,16 +61,15 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             return finalResult;
         }
 
-        private Base_ViewModel UpdateBIData(DataTable dt, DateTime sdate, DateTime edate)
+        private Base_ViewModel UpdateBIData(DataTable dt, ExecutedList item)
         {
             Base_ViewModel finalResult = new Base_ViewModel();
-            DualResult result;
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             List<SqlParameter> lisSqlParameter = new List<SqlParameter>
             {
-                new SqlParameter("@sDate", sdate.ToString("yyyy-MM-dd")),
-                new SqlParameter("@eDate", edate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@sDate", item.SDate),
+                new SqlParameter("@eDate", item.EDate),
             };
 
             string where = @"  p.TransferDate Between @sDate and @eDate";
@@ -133,16 +132,13 @@ Where Not exists ( select 1
 And P_CuttingOutputStatistic.TransferDate Between @sDate and @eDate
 
 ";
-                sql += new Base().SqlBITableInfo("P_CuttingOutputStatistic", true);
-                result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
+                finalResult.Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sql, out DataTable dataTable, conn: sqlConn, paramters: lisSqlParameter);
             }
-
-            finalResult.Result = result;
 
             return finalResult;
         }
 
-        private Base_ViewModel GetCuttingOutputStatistic(DateTime sdate, DateTime edate)
+        private Base_ViewModel GetCuttingOutputStatistic(ExecutedList item)
         {
             StringBuilder sqlCmd = new StringBuilder();
 
@@ -160,7 +156,7 @@ SELECT
     CutOutputByDate = ISNULL(psCutOutputByDate.value, 0),
     CutOutputIn7Days = ISNULL(psByWeek.ActConsOutput, 0),
     CutDelayIn7Days = ISNULL(psByWeek.BalanceCons, 0),
-    [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System]),
+    [BIFactoryID] = @BIFactoryID,
     [BIInsertDate] = GETDATE()
 FROM (
     SELECT distinct  psol.EstCuttingDate,
@@ -217,13 +213,14 @@ ORDER BY psol.FactoryID, psol.EstCuttingDate ASC
 
             List<SqlParameter> paras = new List<SqlParameter>
             {
-                new SqlParameter("@SDate", sdate.ToString("yyyy-MM-dd")),
-                new SqlParameter("@EDate", edate.ToString("yyyy-MM-dd")),
+                new SqlParameter("@SDate", item.SDate),
+                new SqlParameter("@EDate", item.EDate),
+                new SqlParameter("@BIFactoryID", item.RgCode),
             };
 
             Base_ViewModel resultReport = new Base_ViewModel
             {
-                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable dataTables),
+                Result = this.DBProxy.Select("PowerBI", sqlCmd.ToString(), paras, out DataTable dt),
             };
 
             if (!resultReport.Result)
@@ -231,7 +228,7 @@ ORDER BY psol.FactoryID, psol.EstCuttingDate ASC
                 return resultReport;
             }
 
-            resultReport.Dt = dataTables;
+            resultReport.Dt = dt;
             return resultReport;
         }
     }
