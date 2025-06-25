@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnCalculate = new Sci.Win.UI.Button();
             this.btnSketch = new Sci.Win.UI.Button();
             this.editSizeGroup = new Sci.Win.UI.EditBox();
@@ -52,6 +53,8 @@
             this.labelSizeGroup = new Sci.Win.UI.Label();
             this.labelVer = new Sci.Win.UI.Label();
             this.displayVer = new Sci.Win.UI.DisplayBox();
+            this.comboCompany = new Sci.Production.Class.ComboCompany(this.components);
+            this.label5 = new Sci.Win.UI.Label();
             ((System.ComponentModel.ISupportInitialize)(this.detailgridbs)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.detailgrid2bs)).BeginInit();
             this.masterpanel.SuspendLayout();
@@ -68,6 +71,8 @@
             // 
             // masterpanel
             // 
+            this.masterpanel.Controls.Add(this.comboCompany);
+            this.masterpanel.Controls.Add(this.label5);
             this.masterpanel.Controls.Add(this.displayVer);
             this.masterpanel.Controls.Add(this.labelVer);
             this.masterpanel.Controls.Add(this.labelSizeGroup);
@@ -92,7 +97,8 @@
             this.masterpanel.Controls.Add(this.labelSize);
             this.masterpanel.Controls.Add(this.txtStyle);
             this.masterpanel.Controls.Add(this.txtCustomSPNo);
-            this.masterpanel.Size = new System.Drawing.Size(927, 195);
+            this.masterpanel.Size = new System.Drawing.Size(927, 220);
+            this.masterpanel.Title = " ";
             this.masterpanel.Controls.SetChildIndex(this.txtCustomSPNo, 0);
             this.masterpanel.Controls.SetChildIndex(this.txtStyle, 0);
             this.masterpanel.Controls.SetChildIndex(this.labelSize, 0);
@@ -118,15 +124,17 @@
             this.masterpanel.Controls.SetChildIndex(this.labelVer, 0);
             this.masterpanel.Controls.SetChildIndex(this.displayVer, 0);
             this.masterpanel.Controls.SetChildIndex(this.gridicon, 0);
+            this.masterpanel.Controls.SetChildIndex(this.label5, 0);
+            this.masterpanel.Controls.SetChildIndex(this.comboCompany, 0);
             // 
             // detailpanel
             // 
-            this.detailpanel.Location = new System.Drawing.Point(0, 195);
-            this.detailpanel.Size = new System.Drawing.Size(927, 235);
+            this.detailpanel.Location = new System.Drawing.Point(0, 220);
+            this.detailpanel.Size = new System.Drawing.Size(927, 241);
             // 
             // gridicon
             // 
-            this.gridicon.Location = new System.Drawing.Point(700, 160);
+            this.gridicon.Location = new System.Drawing.Point(700, 185);
             this.gridicon.TabIndex = 6;
             // 
             // refresh
@@ -135,7 +143,7 @@
             // 
             // detailgridcont
             // 
-            this.detailgridcont.Size = new System.Drawing.Size(927, 235);
+            this.detailgridcont.Size = new System.Drawing.Size(927, 241);
             // 
             // detail2
             // 
@@ -151,24 +159,24 @@
             // 
             // detail
             // 
-            this.detail.Size = new System.Drawing.Size(927, 468);
+            this.detail.Size = new System.Drawing.Size(927, 499);
             // 
             // detailcont
             // 
-            this.detailcont.Size = new System.Drawing.Size(927, 430);
+            this.detailcont.Size = new System.Drawing.Size(927, 461);
             // 
             // detailbtm
             // 
-            this.detailbtm.Location = new System.Drawing.Point(0, 430);
+            this.detailbtm.Location = new System.Drawing.Point(0, 461);
             this.detailbtm.Size = new System.Drawing.Size(927, 38);
             // 
             // browse
             // 
-            this.browse.Size = new System.Drawing.Size(927, 468);
+            this.browse.Size = new System.Drawing.Size(927, 499);
             // 
             // tabs
             // 
-            this.tabs.Size = new System.Drawing.Size(935, 497);
+            this.tabs.Size = new System.Drawing.Size(935, 528);
             // 
             // createby
             // 
@@ -221,7 +229,7 @@
             this.editSizeGroup.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editSizeGroup.ReadOnly = true;
             this.editSizeGroup.Size = new System.Drawing.Size(150, 66);
-            this.editSizeGroup.TabIndex = 53;
+            this.editSizeGroup.TabIndex = 10;
             this.editSizeGroup.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditSizeGroup_PopUp);
             // 
             // editColorway
@@ -229,13 +237,13 @@
             this.editColorway.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.editColorway.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.editColorway.IsSupportEditMode = false;
-            this.editColorway.Location = new System.Drawing.Point(92, 116);
+            this.editColorway.Location = new System.Drawing.Point(118, 142);
             this.editColorway.Multiline = true;
             this.editColorway.Name = "editColorway";
             this.editColorway.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.editColorway.ReadOnly = true;
             this.editColorway.Size = new System.Drawing.Size(204, 66);
-            this.editColorway.TabIndex = 52;
+            this.editColorway.TabIndex = 5;
             this.editColorway.PopUp += new System.EventHandler<Sci.Win.UI.EditBoxPopUpEventArgs>(this.EditColorway_PopUp);
             // 
             // txtSize
@@ -249,7 +257,7 @@
             this.txtSize.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtSize.ReadOnly = true;
             this.txtSize.Size = new System.Drawing.Size(60, 23);
-            this.txtSize.TabIndex = 4;
+            this.txtSize.TabIndex = 9;
             this.txtSize.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtSize_PopUp);
             // 
             // txtContractNo
@@ -260,7 +268,7 @@
             this.txtContractNo.Location = new System.Drawing.Point(482, 7);
             this.txtContractNo.Name = "txtContractNo";
             this.txtContractNo.Size = new System.Drawing.Size(150, 23);
-            this.txtContractNo.TabIndex = 1;
+            this.txtContractNo.TabIndex = 6;
             this.txtContractNo.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtContractNo_PopUp);
             this.txtContractNo.Validating += new System.ComponentModel.CancelEventHandler(this.TxtContractNo_Validating);
             // 
@@ -271,11 +279,11 @@
             this.comboCategory.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
             this.comboCategory.FormattingEnabled = true;
             this.comboCategory.IsSupportUnselect = true;
-            this.comboCategory.Location = new System.Drawing.Point(92, 86);
+            this.comboCategory.Location = new System.Drawing.Point(118, 112);
             this.comboCategory.Name = "comboCategory";
             this.comboCategory.OldText = "";
             this.comboCategory.Size = new System.Drawing.Size(80, 24);
-            this.comboCategory.TabIndex = 3;
+            this.comboCategory.TabIndex = 4;
             // 
             // displayBrand
             // 
@@ -285,17 +293,17 @@
             this.displayBrand.Location = new System.Drawing.Point(482, 61);
             this.displayBrand.Name = "displayBrand";
             this.displayBrand.Size = new System.Drawing.Size(90, 23);
-            this.displayBrand.TabIndex = 44;
+            this.displayBrand.TabIndex = 8;
             // 
             // displaySeason
             // 
             this.displaySeason.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displaySeason.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "SeasonID", true));
             this.displaySeason.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displaySeason.Location = new System.Drawing.Point(92, 61);
+            this.displaySeason.Location = new System.Drawing.Point(118, 87);
             this.displaySeason.Name = "displaySeason";
             this.displaySeason.Size = new System.Drawing.Size(80, 23);
-            this.displaySeason.TabIndex = 43;
+            this.displaySeason.TabIndex = 3;
             // 
             // txtStyle
             // 
@@ -303,12 +311,12 @@
             this.txtStyle.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "StyleID", true));
             this.txtStyle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
             this.txtStyle.IsSupportEditMode = false;
-            this.txtStyle.Location = new System.Drawing.Point(92, 34);
+            this.txtStyle.Location = new System.Drawing.Point(118, 60);
             this.txtStyle.Name = "txtStyle";
             this.txtStyle.PopUpMode = Sci.Win.UI.TextBoxPopUpMode.EditModeAndReadOnly;
             this.txtStyle.ReadOnly = true;
             this.txtStyle.Size = new System.Drawing.Size(150, 23);
-            this.txtStyle.TabIndex = 42;
+            this.txtStyle.TabIndex = 2;
             this.txtStyle.PopUp += new System.EventHandler<Sci.Win.UI.TextBoxPopUpEventArgs>(this.TxtStyle_PopUp);
             // 
             // txtCustomSPNo
@@ -316,9 +324,9 @@
             this.txtCustomSPNo.BackColor = System.Drawing.Color.White;
             this.txtCustomSPNo.DataBindings.Add(new System.Windows.Forms.Binding("Text", this.mtbs, "CustomSP", true));
             this.txtCustomSPNo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.txtCustomSPNo.Location = new System.Drawing.Point(92, 7);
+            this.txtCustomSPNo.Location = new System.Drawing.Point(118, 7);
             this.txtCustomSPNo.Name = "txtCustomSPNo";
-            this.txtCustomSPNo.Size = new System.Drawing.Size(80, 23);
+            this.txtCustomSPNo.Size = new System.Drawing.Size(102, 23);
             this.txtCustomSPNo.TabIndex = 0;
             // 
             // labelSize
@@ -355,33 +363,33 @@
             // 
             // labelColorway
             // 
-            this.labelColorway.Location = new System.Drawing.Point(6, 116);
+            this.labelColorway.Location = new System.Drawing.Point(5, 142);
             this.labelColorway.Name = "labelColorway";
-            this.labelColorway.Size = new System.Drawing.Size(82, 23);
+            this.labelColorway.Size = new System.Drawing.Size(110, 23);
             this.labelColorway.TabIndex = 34;
             this.labelColorway.Text = "Color way";
             // 
             // labelCategory
             // 
-            this.labelCategory.Location = new System.Drawing.Point(6, 88);
+            this.labelCategory.Location = new System.Drawing.Point(5, 114);
             this.labelCategory.Name = "labelCategory";
-            this.labelCategory.Size = new System.Drawing.Size(82, 23);
+            this.labelCategory.Size = new System.Drawing.Size(110, 23);
             this.labelCategory.TabIndex = 32;
             this.labelCategory.Text = "Category";
             // 
             // labelSeason
             // 
-            this.labelSeason.Location = new System.Drawing.Point(6, 61);
+            this.labelSeason.Location = new System.Drawing.Point(5, 87);
             this.labelSeason.Name = "labelSeason";
-            this.labelSeason.Size = new System.Drawing.Size(82, 23);
+            this.labelSeason.Size = new System.Drawing.Size(110, 23);
             this.labelSeason.TabIndex = 31;
             this.labelSeason.Text = "Season";
             // 
             // labelStyle
             // 
-            this.labelStyle.Location = new System.Drawing.Point(6, 34);
+            this.labelStyle.Location = new System.Drawing.Point(5, 60);
             this.labelStyle.Name = "labelStyle";
-            this.labelStyle.Size = new System.Drawing.Size(82, 23);
+            this.labelStyle.Size = new System.Drawing.Size(110, 23);
             this.labelStyle.TabIndex = 30;
             this.labelStyle.Text = "Style";
             // 
@@ -389,7 +397,7 @@
             // 
             this.labelCustomSPNo.Location = new System.Drawing.Point(6, 7);
             this.labelCustomSPNo.Name = "labelCustomSPNo";
-            this.labelCustomSPNo.Size = new System.Drawing.Size(82, 23);
+            this.labelCustomSPNo.Size = new System.Drawing.Size(109, 23);
             this.labelCustomSPNo.TabIndex = 29;
             this.labelCustomSPNo.Text = "Custom SP#";
             // 
@@ -399,7 +407,7 @@
             this.dateDate.Location = new System.Drawing.Point(482, 34);
             this.dateDate.Name = "dateDate";
             this.dateDate.Size = new System.Drawing.Size(130, 23);
-            this.dateDate.TabIndex = 2;
+            this.dateDate.TabIndex = 7;
             // 
             // labelSizeGroup
             // 
@@ -411,7 +419,7 @@
             // 
             // labelVer
             // 
-            this.labelVer.Location = new System.Drawing.Point(197, 7);
+            this.labelVer.Location = new System.Drawing.Point(223, 7);
             this.labelVer.Name = "labelVer";
             this.labelVer.Size = new System.Drawing.Size(30, 23);
             this.labelVer.TabIndex = 7;
@@ -422,15 +430,40 @@
             this.displayVer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(227)))), ((int)(((byte)(255)))));
             this.displayVer.DataBindings.Add(new System.Windows.Forms.Binding("Value", this.mtbs, "Version", true));
             this.displayVer.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.displayVer.Location = new System.Drawing.Point(231, 7);
+            this.displayVer.Location = new System.Drawing.Point(257, 7);
             this.displayVer.Name = "displayVer";
             this.displayVer.Size = new System.Drawing.Size(42, 23);
             this.displayVer.TabIndex = 58;
             // 
+            // comboCompany
+            // 
+            this.comboCompany.BackColor = System.Drawing.Color.White;
+            this.comboCompany.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.mtbs, "OrderCompanyID", true));
+            this.comboCompany.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.comboCompany.FormattingEnabled = true;
+            this.comboCompany.IsAddEmpty = false;
+            this.comboCompany.IsOrderCompany = true;
+            this.comboCompany.IsSupportUnselect = true;
+            this.comboCompany.Junk = false;
+            this.comboCompany.Location = new System.Drawing.Point(118, 33);
+            this.comboCompany.Name = "comboCompany";
+            this.comboCompany.OldText = "";
+            this.comboCompany.Size = new System.Drawing.Size(214, 24);
+            this.comboCompany.TabIndex = 1;
+            this.comboCompany.SelectedIndexChanged += new System.EventHandler(this.ComboCompany_SelectedIndexChanged);
+            // 
+            // label5
+            // 
+            this.label5.Location = new System.Drawing.Point(5, 33);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(110, 22);
+            this.label5.TabIndex = 86;
+            this.label5.Text = "Order Company";
+            // 
             // B42
             // 
             this.ApvChkValue = "New";
-            this.ClientSize = new System.Drawing.Size(935, 530);
+            this.ClientSize = new System.Drawing.Size(935, 561);
             this.DefaultControl = "txtCustomSPNo";
             this.DefaultControlForEdit = "txtCustomSPNo";
             this.DefaultOrder = "VNContractID,CustomSP";
@@ -493,5 +526,7 @@
         private Win.UI.Label labelSizeGroup;
         private Win.UI.DisplayBox displayVer;
         private Win.UI.Label labelVer;
+        private Class.ComboCompany comboCompany;
+        private Win.UI.Label label5;
     }
 }
