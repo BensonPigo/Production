@@ -407,7 +407,7 @@ where r.[Cut Ref#] <> ''
 group by r.[Cut Ref#],r.M
 
 select
- [Bundleno] = isnull(r.[Bundleno],'') ,
+    [Bundleno] = isnull(r.[Bundleno],'') ,
     [RFIDProcessLocationID] = isnull(r.[RFIDProcessLocationID],''),
 	[EXCESS] = isnull(r.[EXCESS],''),
 	[FabricKind] = isnull(r.[FabricKind],''),
@@ -415,9 +415,9 @@ select
     [SP] = ISNULL(SP.val,''),
     [MasterSP] = isnull(r.[Master SP#],''),
     [M] = isnull(r.[M],''),
-    [Factory] = isnull(r.[Factory],''),
+    [Factory] = isnull(Factory.val,''),
 	[Category] = isnull(category.val,''),
-	[Program] = isnull(r.[Program],''),
+	[Program] = isnull([Program].val,''),
     [Style] = isnull(r.[Style],''),
     [Season] = isnull(r.[Season],''),
     [Brand] = isnull(r.[Brand],''),
@@ -441,7 +441,7 @@ select
     [Location] = isnull(r.LocationID,''),
     [BundleCreateDate] = r.Cdate,
     [BuyerDeliveryDate] = BuyerDelivery.val,
-    [SewingInline] = r.[SewInLine],
+    [SewingInline] = [SewInLine].val,
     [SubprocessQAInspectionDate] = r.[InspectionDate],
     [InTime] = r.[InComing],
     [OutTime] = r.[Out (Time)],
@@ -536,20 +536,55 @@ outer apply(
 		for xml path ('')
 	) , 1, 1, '')
 ) [AllocatedSubcon]
+outer apply(
+	select val = Stuff((
+		select concat(',',factory)
+		from (
+				select 	distinct factory
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Factory
+outer apply(
+	select val = Stuff((
+		select concat(',',SewInLine)
+		from (
+				select 	distinct SewInLine
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) SewInLine
+outer apply(
+	select val = Stuff((
+		select concat(',',Program)
+		from (
+				select 	distinct Program
+				from dbo.#result s
+				where s.Bundleno = r.Bundleno
+			) s
+		for xml path ('')
+	) , 1, 1, '')
+) Program
 where 1 = 1 {whereSewDate}
 group by r.Bundleno,
-r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],r.[M],r.[Factory],
-r.[Program],r.[Style],r.[Season],r.[Brand],r.[Comb],r.Cutno,r.[Fab_Panel Code],r.[Article],r.[Color],r.[Line],
-r.SewingLineID,r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],
+r.[RFIDProcessLocationID],r.[EXCESS],r.[FabricKind],r.[Cut Ref#],r.[Master SP#],r.[M],
+r.[Style],r.[Season],r.[Brand],r.[Comb],r.Cutno,r.[Fab_Panel Code],r.[Article],r.[Color],r.[Line],
+r.[Cell],r.[Pattern],r.[PtnDesc],r.[Group],r.[Size],r.[Artwork],r.[Qty],r.SewingLineID,
 r.[Post Sewing SubProcess],r.[No Bundle Card After Subprocess],r.LocationID,r.Cdate,
-r.[SewInLine],r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.AvgTime,
+r.[InspectionDate],r.[InComing],r.[Out (Time)],r.[POSupplier],r.AvgTime,
 gcd.EstCutDate,gcd.CuttingOutputDate,r.Item,r.PanelNo,r.CutCellID,r.SpreadingNo,r.TimeRangeFail,
-category.val,SP.val,POSupplier.val,BuyerDelivery.val,r.[Sub-process],[AllocatedSubcon].val
+category.val,SP.val,POSupplier.val,BuyerDelivery.val,r.[Sub-process],[AllocatedSubcon].val,
+Factory.val,Program.val,SewInLine.val
 order by [Bundleno],[Sub-process],[RFIDProcessLocationID] 
 
 drop table #result
 drop table #tmp_Workorder
 drop table #tmpGetCutDateTmp
+drop table #tmpSewingInfo
 ");
             base_ViewModel.Result = this.DBProxy.Select("Production", sqlCmd.ToString(), listPar, out DataTable dtResult);
             if (!base_ViewModel.Result)
