@@ -31,6 +31,12 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     ComboProcess = string.Empty,
                     MDivisionID = string.Empty,
                     FactoryID = string.Empty,
+                    OrderID = string.Empty,
+                    PO = string.Empty,
+                    PackID = string.Empty,
+                    SCIDeliveryFrom = null,
+                    SCIDeliveryTo = null,
+                    IsPPICP26 = false,
                     ExcludeSisterTransferOut = false,
                     IsBI = true,
                 };

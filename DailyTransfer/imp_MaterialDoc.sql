@@ -224,4 +224,88 @@ BEGIN
 		and a.BrandID = b.BrandID
 	)
 
+/*TrimApproval*/
+----------------------Delete
+Delete a
+from [Production].[dbo].TrimApproval as a 
+left join [Trade_To_Pms].[dbo].TrimApproval  as b
+	on a.SuppID = b.SuppID and a.TestDocFactoryGroup = b.TestDocFactoryGroup and a.Refno = b.Refno
+	and a.ColorID = b.ColorID and a.SeasonID = b.SeasonID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+	and a.LOT = b.LOT
+where b.ColorID is null 
+and b.SeasonID is null
+and b.DocumentName is null
+and b.BrandID is null
+and b.SuppID is null
+and b.TestDocFactoryGroup is null
+and b.Refno is null
+---------------------------UPDATE 
+UPDATE a
+SET a.Period = b.Period
+	,a.FirstDyelot = isnull(b.FirstDyelot, '')
+	,a.AWBno = isnull(b.AWBno, '')
+	,a.FTYReceivedReport = isnull(b.FTYReceivedReport, '')
+	,a.ReceivedDate = b.ReceivedDate
+	,a.ReceivedRemark = isnull(b.ReceivedRemark, '')
+	,a.AddDate = b.AddDate
+	,a.AddName = isnull(b.AddName, '')
+	,a.EditDate = b.EditDate
+	,a.EditName = isnull(b.EditName, '')
+	,a.Junk = isnull(b.Junk, 0)
+from [Production].[dbo].TrimApproval as a 
+inner join [Trade_To_Pms].[dbo].TrimApproval  as b
+	on a.SuppID = b.SuppID and a.TestDocFactoryGroup = b.TestDocFactoryGroup and a.Refno = b.Refno
+	and a.ColorID = b.ColorID and a.SeasonID = b.SeasonID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+	and a.LOT = b.LOT
+-------------------------- INSERT INTO 
+INSERT INTO [Production].[dbo].TrimApproval
+ (
+	 [SuppID]
+      ,[TestDocFactoryGroup]
+      ,[Refno]
+      ,[ColorID]
+      ,[SeasonID]
+      ,[Period]
+      ,[FirstDyelot]
+      ,[AWBno]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[FTYReceivedReport]
+      ,[ReceivedDate]
+      ,[ReceivedRemark]
+      ,[DocumentName]
+      ,[BrandID]
+      ,[Junk]
+      ,[LOT]
+)
+SELECT
+	 [SuppID]
+      ,[TestDocFactoryGroup]
+      ,[Refno]
+      ,[ColorID]
+      ,[SeasonID]
+      ,[Period]
+      ,[FirstDyelot]
+      ,[AWBno]
+      ,[AddName]
+      ,[AddDate]
+      ,[EditName]
+      ,[EditDate]
+      ,[FTYReceivedReport]
+      ,[ReceivedDate]
+      ,[ReceivedRemark]
+      ,[DocumentName]
+      ,[BrandID]
+      ,[Junk]
+      ,[LOT]
+from [Trade_To_Pms].[dbo].TrimApproval as b WITH (NOLOCK)
+where not exists(
+	select 1 from [Production].[dbo].TrimApproval as a WITH (NOLOCK) 
+	where a.SuppID = b.SuppID and a.TestDocFactoryGroup = b.TestDocFactoryGroup and a.Refno = b.Refno
+	and a.ColorID = b.ColorID and a.SeasonID = b.SeasonID and a.DocumentName = b.DocumentName and a.BrandID = b.BrandID
+	and a.LOT = b.LOT
+)
+
 end

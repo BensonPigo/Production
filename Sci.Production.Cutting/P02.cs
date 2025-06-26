@@ -30,6 +30,7 @@ namespace Sci.Production.Cutting
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Tone;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_Layer;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_CutCellID;
+        private Ict.Win.UI.DataGridViewTextBoxColumn col_SpreadingNo;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_SizeRatio_Size;
         private Ict.Win.UI.DataGridViewNumericBoxColumn col_SizeRatio_Qty;
         private Ict.Win.UI.DataGridViewTextBoxColumn col_Distribute_SP;
@@ -351,6 +352,7 @@ ORDER BY wd.OrderID, wd.Article, wd.SizeCode
                 .Date("Fabeta", header: "Fabric Arr Date", width: Ict.Win.Widths.AnsiChars(10), iseditingreadonly: true)
                 .WorkOrderWKETA("WKETA", "WK ETA", Ict.Win.Widths.AnsiChars(10), true, this.CanEditData)
                 .EstCutDate("EstCutDate", "Est. Cut Date", Ict.Win.Widths.AnsiChars(10), this.CanEditData)
+                .Text("SpreadingNoID", header: "Spreading No", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_SpreadingNo)
                 .Text("CutCellID", header: "Cut Cell", width: Ict.Win.Widths.AnsiChars(2)).Get(out this.col_CutCellID)
                 .Text("CutPlanID", header: "Cut Plan", width: Ict.Win.Widths.AnsiChars(13), iseditingreadonly: true)
                 .Text("Edituser", header: "Edit Name", width: Ict.Win.Widths.AnsiChars(15), iseditingreadonly: true)
@@ -1026,14 +1028,17 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
                     }
                 }
             }
-
-            DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
-            if (result == DialogResult.Cancel)
+            else
             {
-                this.OnDetailGridDelete();
-            }
+                // 僅有按 + 新增才需要開窗
+                DialogResult result = this.ShowDialogActionCutRef(DialogAction.Create);
+                if (result == DialogResult.Cancel)
+                {
+                    this.OnDetailGridDelete();
+                }
 
-            this.OnDetailGridRowChanged();
+                this.OnDetailGridRowChanged();
+            }
         }
 
         protected override void OnDetailGridDelete()
@@ -1121,6 +1126,7 @@ WHERE wd.WorkOrderForPlanningUkey IS NULL
 
             // Cut Cell
             BindGridCutCell(this.col_CutCellID, this.detailgrid, this.CanEditData);
+            BindGridSpreadingNo(this.col_SpreadingNo, this.detailgrid, this.CanEditData);
 
             this.col_Layer.CellValidating += (s, e) =>
             {

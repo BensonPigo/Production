@@ -93,16 +93,18 @@ FROM dbo.P_SewingLineScheduleBySP sch WITH (NOLOCK)
 INNER JOIN Production.dbo.Orders ord WITH (NOLOCK) ON sch.SPNo = ord.ID
 INNER JOIN Production.dbo.Style sty WITH (NOLOCK) ON ord.StyleUkey = sty.Ukey
 OUTER APPLY (
-    SELECT TtlSewingQtyByComboType = SUM(s2.SewingQty)
+    SELECT [TtlSewingQtyByComboType] = SUM(s2.SewingQty)
     FROM dbo.P_SewingLineScheduleBySP s2 WITH (NOLOCK)
     WHERE sch.SPNo = s2.SPNo AND sch.ComboType = s2.ComboType
+    GROUP BY s2.SPNo, s2.ComboType
 ) schCombo
 OUTER APPLY (
-    SELECT s3.SPNo, TtlSewingQtyBySP = MIN(SewingQty)
+    SELECT [TtlSewingQtyBySP] = MIN(s3.SewingQty)
     FROM (
-        SELECT s3.SPNo, s3.ComboType, SewingQty = SUM(s3.SewingQty)
+        SELECT s3.SPNo, s3.ComboType
+            , [SewingQty] = SUM(s3.SewingQty)
         FROM dbo.P_SewingLineScheduleBySP s3 WITH (NOLOCK)
-        WHERE sch.SPNo = s3.SPNo AND sch.ComboType = s3.ComboType
+        WHERE sch.SPNo = s3.SPNo
         GROUP BY s3.SPNo, s3.ComboType
     ) s3
     GROUP BY s3.SPNo

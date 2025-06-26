@@ -223,6 +223,35 @@ OUTER APPLY (
 ) SewingQty
 WHERE p.SewingQty <> SewingQty.val
 
+UPDATE p
+	 SET p.SewingQty = SewingQty.val
+		, p.BIInsertDate = GETDATE()
+FROM P_FabricStatus_And_IssueFabricTracking p
+INNER JOIN Production.dbo.Orders o ON p.[SP] = o.id
+OUTER APPLY
+(
+	SELECT 
+    val = SUM(minSewQty.val)
+	FROM
+	(
+		SELECT 
+			oq.Article,
+			oq.SizeCode,
+			sl.Location AS ComboType,
+			val = sum(ISNULL(sdd.QAQty, 0))
+		FROM Production.dbo.Orders oop WITH (NOLOCK) 
+		INNER JOIN Production.dbo.Order_Location sl WITH (NOLOCK) ON sl.OrderId =oop.ID
+		INNER JOIN Production.dbo.Order_Qty oq WITH (NOLOCK) ON oq.ID = oop.ID
+		LEFT JOIN Production.dbo.SewingOutput_Detail_Detail sdd WITH (NOLOCK) 
+			ON sdd.OrderId = oop.ID 
+			AND sdd.Article = oq.Article 
+			AND sdd.SizeCode = oq.SizeCode 
+			AND sdd.ComboType = sl.Location
+		WHERE oop.POID = o.POID
+		GROUP BY oq.Article, oq.SizeCode, sl.Location
+	) minSewQty
+)SewingQty
+WHERE p.SewingQty <> SewingQty.val
 ";
 
                 finalResult = new Base_ViewModel()

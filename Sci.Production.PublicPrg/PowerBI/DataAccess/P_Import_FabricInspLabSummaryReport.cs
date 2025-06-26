@@ -72,6 +72,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             DBProxy.Current.OpenConnection("PowerBI", out SqlConnection sqlConn);
 
             string sqlcmd = $@"
+
             -- 更新
             update p set
             p.Category							= t.Category
@@ -151,6 +152,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
             ,p.OrderType						= t.OrderType
             ,p.AddDate							= t.AddDate
             ,p.EditDate							= t.EditDate
+            ,p.[TotalYardageForInspection]      = t.TotalYardage
+            ,p.[ActualRemainingYardsForInspection]	= t.TotalYardageArrDate
             ,p.[BIFactoryID]                    = @BIFactoryID
             ,p.[BIInsertDate]                   = GETDATE()
 			from P_FabricInspLabSummaryReport p
@@ -177,7 +180,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType], [BIFactoryID], [BIInsertDate])
+	        , [EditDate], [StockType],[TotalYardageForInspection],[ActualRemainingYardsForInspection], [BIFactoryID], [BIInsertDate])
             SELECT
               [Category], [POID], [SEQ], [FactoryID], [BrandID]
 	        , [StyleID], [SeasonID], [Wkno], [InvNo], [CuttingDate], [ArriveWHDate], [ArriveQty]
@@ -195,7 +198,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 	        , [HeatShrinkageInspector], [HeatShrinkageTestDate], [NAWashShrinkage], [WashShrinkageTestResult]
 	        , [WashShrinkageInspector], [WashShrinkageTestDate], [OvenTestResult], [OvenTestInspector]
 	        , [ColorFastnessResult], [ColorFastnessInspector], [LocalMR], [OrderType], [ReceivingID], [AddDate]
-	        , [EditDate], [StockType], @BIFactoryID, GETDATE()
+	        , [EditDate], [StockType],t.TotalYardage,t.TotalYardageArrDate, @BIFactoryID, GETDATE()
             from #tmp t
 	        where not exists (select 1 from P_FabricInspLabSummaryReport p where p.FactoryID = t.FactoryID 
 																	         and p.POID = t.POID 
@@ -224,6 +227,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                     new SqlParameter("@EndDate", item.EDate),
                     new SqlParameter("@BIFactoryID", item.RgCode),
                 };
+
                 finalResult = new Base_ViewModel()
                 {
                     Result = TransactionClass.ProcessWithDatatableWithTransactionScope(dt, null, sqlcmd: sqlcmd, result: out DataTable dataTable, conn: sqlConn, paramters: sqlParameters),

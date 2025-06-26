@@ -9,6 +9,8 @@ using Ict;
 using Sci.Data;
 using System.Transactions;
 using Sci.Production.PublicPrg;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Sci.Production.Shipping
 {
@@ -115,12 +117,24 @@ namespace Sci.Production.Shipping
             };
             #endregion
 
+            #region OrderCompany的按右鍵與validating
+            DataTable companyDt = new DataTable();
+            DBProxy.Current.Select(null, "select ID,NameEN from Company WITH (NOLOCK) where IsOrderCompany=1 and Junk=0", out companyDt);
+            DataGridViewGeneratorComboBoxColumnSettings orderCompanyIDCol = new DataGridViewGeneratorComboBoxColumnSettings
+            {
+                DataSource = new System.Windows.Forms.BindingSource(companyDt, null),
+                ValueMember = companyDt.Columns["ID"].ToString(),
+                DisplayMember = companyDt.Columns["NameEN"].ToString(),
+            };
+            #endregion
+
             this.gridBatchCreate.IsEditingReadOnly = false;
             this.Helper.Controls.Grid.Generator(this.gridBatchCreate)
                 .CheckBox("Selected", header: string.Empty, width: Widths.AnsiChars(3), iseditable: true, trueValue: 1, falseValue: 0).Get(out this.col_chk)
-                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(8)).Get(out this.col_CustomSP)
+                .Text("CustomSP", header: "Custom SP#", width: Widths.AnsiChars(12)).Get(out this.col_CustomSP)
                 .Text("CurrentCustomSP", header: "Current Custom", width: Widths.AnsiChars(8), settings: this.currentcustom, iseditingreadonly: true)
                 .Text("VNContractID", header: "Contract no", width: Widths.AnsiChars(15), settings: this.vncontract)
+                .ComboBox("OrderCompanyID", header: "Order Company", width: Widths.AnsiChars(30), settings: orderCompanyIDCol)
                 .Date("CDate", header: "Date", width: Widths.AnsiChars(10))
                 .Text("StyleID", header: "Style", width: Widths.AnsiChars(15), iseditingreadonly: true)
                 .Text("SeasonID", header: "Season", width: Widths.AnsiChars(10), iseditingreadonly: true)
@@ -131,7 +145,7 @@ namespace Sci.Production.Shipping
                 .Numeric("Qty", header: "Qty", width: Widths.AnsiChars(6))
                 .Text("Consumption", header: "Consumption", width: Widths.AnsiChars(40), settings: this.consumption, iseditingreadonly: true);
 
-            this.col_CustomSP.MaxLength = 8;
+            this.col_CustomSP.MaxLength = 12;
             this.listControlBindingSource1.DataSource = gridData;
         }
 
@@ -235,7 +249,8 @@ DECLARE @tempCombColor TABLE (
    SizeCode VARCHAR(8),
    GMTQty INT,
    StyleCPU NUMERIC(5,3),
-   CustomSP VARCHAR(8),
+   CustomSP VARCHAR(12),
+   OrderCompanyID NUMERIC(2,0),
    VNContractID VARCHAR(15),
    StyleUkey BIGINT
 )
@@ -558,6 +573,7 @@ and v.IsSubconIn = 0", out necessaryItem);
                 newrow["Selected"] = 0;
                 newrow["CustomSP"] = string.Empty;
                 newrow["CurrentCustomSP"] = dr["CustomSP"];
+                newrow["OrderCompanyID"] = 3; // 預設值
                 newrow["VNContractID"] = dr["VNContractID"];
                 newrow["CDate"] = DateTime.Today;
                 newrow["StyleID"] = dr["StyleID"];
@@ -582,7 +598,7 @@ and v.IsSubconIn = 0", out necessaryItem);
         {
             this.gridBatchCreate.ValidateControl();
             DataTable customSP;
-            DualResult result = DBProxy.Current.Select(null, "select VNContractID,MAX(CustomSP) as CustomSP from VNConsumption WITH (NOLOCK) group by VNContractID", out customSP);
+            DualResult result = DBProxy.Current.Select(null, "select VNContractID,OrderCompanyID,MAX(CustomSP) as CustomSP from VNConsumption WITH (NOLOCK) group by VNContractID,OrderCompanyID", out customSP);
             if (!result)
             {
                 MyUtility.Msg.WarningBox("Query data fail, please try again.\r\n" + result.ToString());
@@ -591,15 +607,34 @@ and v.IsSubconIn = 0", out necessaryItem);
 
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
-                if (MyUtility.Convert.GetString(dr["Selected"]) == "1" && !MyUtility.Check.Empty(dr["VNContractID"]))
+                if (MyUtility.Convert.GetString(dr["Selected"]) != "1")
                 {
-                    DataRow[] findCustom = customSP.Select(string.Format("VNContractID = '{0}'", MyUtility.Convert.GetString(dr["VNContractID"])));
+                    continue;
+                }
+
+                if (!MyUtility.Check.Empty(dr["VNContractID"]) && !MyUtility.Check.Empty(dr["OrderCompanyID"]))
+                {
+                    string orderCompanyID = MyUtility.Convert.GetString(dr["OrderCompanyID"]);
+                    string startCustomSP = string.Empty;
+                    int maxLength = 0;
+                    if (orderCompanyID == "3")
+                    {
+                        startCustomSP = "SP";
+                        maxLength = 8;
+                    }
+                    else if (orderCompanyID == "1")
+                    {
+                        startCustomSP = "SCI-SP";
+                        maxLength = 12;
+                    }
+
+                    DataRow[] findCustom = customSP.Select(string.Format("VNContractID = '{0}' and OrderCompanyID = '{1}'", MyUtility.Convert.GetString(dr["VNContractID"]), orderCompanyID));
                     if (findCustom.Length > 0)
                     {
-                        string lastCustomsp = "SP" + (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(findCustom[0]["CustomSP"]).Substring(2)) + 1).ToString("000000");
-                        if (lastCustomsp.Length > 8)
+                        string lastCustomsp = startCustomSP + (MyUtility.Convert.GetInt(MyUtility.Convert.GetString(findCustom[0]["CustomSP"]).Substring(startCustomSP.Length)) + 1).ToString("000000");
+                        if (lastCustomsp.Length > maxLength)
                         {
-                            MyUtility.Msg.InfoBox(string.Format("<CustomSP : {0}>  length can't be more than 8 Characters", lastCustomsp));
+                            MyUtility.Msg.InfoBox(string.Format("<CustomSP : {0}>  length can't be more than {1} Characters", lastCustomsp, maxLength));
                             return;
                         }
 
@@ -610,9 +645,10 @@ and v.IsSubconIn = 0", out necessaryItem);
                     {
                         DataRow newrow = customSP.NewRow();
                         newrow["VNContractID"] = MyUtility.Convert.GetString(dr["VNContractID"]);
-                        newrow["CustomSP"] = "SP000001";
+                        newrow["OrderCompanyID"] = orderCompanyID;
+                        newrow["CustomSP"] = startCustomSP + "000001";
                         customSP.Rows.Add(newrow);
-                        dr["CustomSP"] = "SP000001";
+                        dr["CustomSP"] = startCustomSP + "000001";
                     }
                 }
             }
@@ -692,16 +728,42 @@ order by StartDate", "15,10,10", this.txtVNContractID.Text, headercaptions: "Con
             #region 檢查必輸欄位
             foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
             {
-                if (MyUtility.Convert.GetString(dr["Selected"]) == "1" && (MyUtility.Check.Empty(dr["CustomSP"]) || MyUtility.Check.Empty(dr["VNContractID"]) || MyUtility.Check.Empty(dr["CDate"])))
+                if (MyUtility.Convert.GetString(dr["Selected"]) != "1")
                 {
-                    MyUtility.Msg.WarningBox("Custom SP# or Contract no. or Date can't empty!!");
+                    continue;
+                }
+
+                if (MyUtility.Check.Empty(dr["CustomSP"]) || MyUtility.Check.Empty(dr["OrderCompanyID"]) || MyUtility.Check.Empty(dr["VNContractID"]) || MyUtility.Check.Empty(dr["CDate"]))
+                {
+                    MyUtility.Msg.WarningBox("Custom SP# or Order Company or Contract no. or Date can't empty!!");
+                    return;
+                }
+
+                if (dr["OrderCompanyID"].ToString() == "1" && dr["CustomSP"].ToString().Length != 12)
+                {
+                    MyUtility.Msg.WarningBox($"Custom SP#:{dr["CustomSP"].ToString()} must be exactly 12 digits!");
+                    return;
+                }
+                else if (dr["OrderCompanyID"].ToString() == "1" && !Regex.IsMatch(dr["CustomSP"].ToString(), @"^SCI-SP\d{6}$"))
+                {
+                    MyUtility.Msg.WarningBox("Custom SP#<CustomSP> has a different format than the Order Company!\r\nPlease click the [Auto Custom SP#] button again before pressing [Create]");
+                    return;
+                }
+                else if (dr["OrderCompanyID"].ToString() == "3" && dr["CustomSP"].ToString().Length != 8)
+                {
+                    MyUtility.Msg.WarningBox($"Custom SP#:{dr["CustomSP"].ToString()} must be exactly 8 digits!");
+                    return;
+                }
+                else if (dr["OrderCompanyID"].ToString() == "3" && !Regex.IsMatch(dr["CustomSP"].ToString(), @"^SP\d{6}$"))
+                {
+                    MyUtility.Msg.WarningBox("Custom SP#<CustomSP> has a different format than the Order Company!\r\nPlease click the [Auto Custom SP#] button again before pressing [Create]");
                     return;
                 }
             }
             #endregion
 
             #region 檢查合約是否合法，Custom SP#是否有重複
-            DataTable errorData;
+            DataTable[] errorDataList;
             try
             {
                 string strSQL = @"
@@ -726,7 +788,7 @@ where Contract = '' or CustomSPNo <> ''";
                     (DataTable)this.listControlBindingSource1.DataSource,
                     "Selected,CustomSP,VNContractID,CDate",
                     strSQL,
-                    out errorData);
+                    out errorDataList);
             }
             catch (Exception ex)
             {
@@ -734,16 +796,16 @@ where Contract = '' or CustomSPNo <> ''";
                 return;
             }
 
-            if (errorData.Rows.Count > 0)
+            if (errorDataList[0].Rows.Count > 0)
             {
-                if (MyUtility.Check.Empty(errorData.Rows[0]["Contract"]))
+                if (MyUtility.Check.Empty(errorDataList[0].Rows[0]["Contract"]))
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Custom SP# {0}'s contract can't use.", MyUtility.Convert.GetString(errorData.Rows[0]["CustomSP"])));
+                    MyUtility.Msg.WarningBox(string.Format("Custom SP# {0}'s contract can't use.", MyUtility.Convert.GetString(errorDataList[0].Rows[0]["CustomSP"])));
                     return;
                 }
                 else
                 {
-                    MyUtility.Msg.WarningBox(string.Format("Custom SP# {0} already exist!!", MyUtility.Convert.GetString(errorData.Rows[0]["CustomSP"])));
+                    MyUtility.Msg.WarningBox(string.Format("Custom SP# {0} already exist!!", MyUtility.Convert.GetString(errorDataList[0].Rows[0]["CustomSP"])));
                     return;
                 }
             }
@@ -770,12 +832,12 @@ Insert into VNConsumption (
 	ID 			, CustomSP 	, VNContractID 	, CDate 		, StyleID
 	, StyleUKey , SeasonID 	, BrandID 		, Category 		, SizeCode
 	, Qty 		, Version 	, CPU 			, VNMultiple 	, Status
-	, AddName 	, AddDate
+	, AddName 	, AddDate   , OrderCompanyID
 ) Values (
 	'{0}' 		, '{1}' 	, '{2}' 		, '{3}' 		, '{4}'
 	, {5} 		, '{6}' 	, '{7}' 		, '{8}' 		, '{9}'
 	, {10} 		, '{11}' 	, {12} 			, {13} 			, 'Confirmed'
-	, '{14}' 	,GETDATE()
+	, '{14}' 	,GETDATE()  , {15}
 );",
                             newID,
                             MyUtility.Convert.GetString(dr["CustomSP"]),
@@ -791,7 +853,8 @@ Insert into VNConsumption (
                             MyUtility.Convert.GetString(MyUtility.Convert.GetInt(maxVersion) + 1).PadLeft(3, '0'),
                             MyUtility.Convert.GetString(dr["CPU"]),
                             vnMultiple,
-                            Env.User.UserID));
+                            Env.User.UserID,
+                            MyUtility.Convert.GetString(dr["OrderCompanyID"])));
 
                         insertCmds.Add(string.Format(
                             @"
@@ -977,6 +1040,18 @@ inner join (
             if (!result)
             {
                 MyUtility.Msg.WarningBox(result.ToString(), "Warning");
+            }
+        }
+
+        private void PicModifyOrderCompany_Click(object sender, EventArgs e)
+        {
+            this.gridBatchCreate.ValidateControl();
+            foreach (DataRow dr in ((DataTable)this.listControlBindingSource1.DataSource).Rows)
+            {
+                if (MyUtility.Convert.GetString(dr["Selected"]) == "1")
+                {
+                    dr["OrderCompanyID"] = this.comboCompany.SelectedValue;
+                }
             }
         }
     }
