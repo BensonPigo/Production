@@ -33,6 +33,8 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 FactoryID = string.Empty,
                 CutplanIDFrom = string.Empty,
                 CutplanIDTo = string.Empty,
+                SPFrom = string.Empty,
+                SPTo = string.Empty,
                 EditDateFrom = item.SDate,
                 EditDateTo = item.EDate,
             };

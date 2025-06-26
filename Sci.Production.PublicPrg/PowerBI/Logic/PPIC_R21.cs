@@ -406,8 +406,6 @@ select distinct [KPIGroup] = f.KPICode
 	, pld.DisposeDate
 	, [PulloutComplete] = IIF(o.PulloutComplete = 1, 'Y', 'N')
 	, p.PulloutDate
-	, [BIFactoryID] = (select top 1 IIF(RgCode = 'PHI', 'PH1', RgCode) from Production.dbo.[System])
-    , [BIInsertDate] = GETDATE()
 ";
 
             }

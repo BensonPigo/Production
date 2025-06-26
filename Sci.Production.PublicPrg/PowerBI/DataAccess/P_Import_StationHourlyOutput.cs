@@ -325,7 +325,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 			, [FactoryID] = sho.FactoryID
 			, [BIFactoryID] = @BIFactoryID
 			, [BIInsertDate] = GETDATE()
-			From [ExtendServer].ManufacturingExecution.dbo.StationHourlyOutput_Detail shod With(Nolock)
+			From ManufacturingExecution.dbo.StationHourlyOutput_Detail shod With(Nolock)
 			Inner join #tmpStationHourlyOutput sho On sho.Ukey = shod.StationHourlyOutputUkey";
 
             Base_ViewModel resultReport = new Base_ViewModel

@@ -87,6 +87,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
                 {
                     new SqlParameter("@SDate", item.SDate),
                     new SqlParameter("@EDate", item.EDate),
+                    new SqlParameter("@BIFactoryID", item.RgCode),
                 };
                 string sql = $@"	
 UPDATE t
@@ -130,8 +131,8 @@ SET
 , t.Remark = s.Remark
 , t.AddDate = s.AddDate
 , t.EditDate = s.EditDate
-, t.BIFactoryID = s.BIFactoryID
-, t.BIInsertDate = s.BIInsertDate
+, t.BIFactoryID = @BIFactoryID
+, t.BIInsertDate = GETDATE()
 from P_BatchUpdateRecevingInfoTrackingList t 
 inner join #tmp s on t.ReceivingID = s.ReceivingID
 AND t.Poid = s.Poid 
@@ -150,7 +151,7 @@ insert into P_BatchUpdateRecevingInfoTrackingList (
 select 	s.ReceivingID,s.ExportID,s.FtyGroup,s.Packages,s.ArriveDate,s.Poid,s.Seq,s.BrandID,s.StyleID,s.refno,s.WeaveTypeID,s.Color,s.Roll
 ,s.Dyelot,s.StockQty,StockType = s.rdStockType,s.Location,s.Weight,s.ActualWeight,s.CutShadebandTime,s.CutBy,s.Fabric2LabTime,s.Fabric2LabBy
 ,s.Checker,s.IsQRCodeCreatedByPMS,s.LastP26RemarkData,s.MINDChecker,s.QRCode_PrintDate,s.MINDCheckAddDate,s.MINDCheckEditDate
-,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate, s.colorName,  BIFactoryID, BIInsertDate
+,s.AbbEN,s.ForInspection,s.ForInspectionTime,s.OneYardForWashing,s.Hold,s.Remark,s.AddDate,s.EditDate, s.colorName,  @BIFactoryID, GETDATE()
 from #tmp s
 where not exists (
     select 1 from P_BatchUpdateRecevingInfoTrackingList t 

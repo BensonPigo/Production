@@ -506,8 +506,8 @@ where (p.SCIDlv >= @sDate
 and not exists (select 1 from #tmp t where t.[SPNO] = p.[SPNO])
 
 
-Insert into P_PPICMasterList_ArtworkType_History (Ukey, BIFactoryID, BIInsertDate)
-Select p.[Ukey], p.BIFactoryID, [BIInsertDate]=GetDate()
+Insert into P_PPICMasterList_ArtworkType_History ([SP#], [SubconInTypeID], [ArtworkTypeKey], BIFactoryID, BIInsertDate)
+Select p.[SP#], p.[SubconInTypeID], p.[ArtworkTypeKey], p.BIFactoryID, [BIInsertDate]=GetDate()
 From P_PPICMasterList_ArtworkType p
 Where not exists (select 1 from P_PPICMASTERLIST t where t.SPNO = p.[SP#])
 

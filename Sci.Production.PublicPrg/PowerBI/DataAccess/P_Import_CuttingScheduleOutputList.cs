@@ -165,8 +165,8 @@ select
 	, [CurvedLength] = isnull([Curved Length],'')
 	, [DelayReason] = isnull([Delay Reason],'')
 	, [Remark] = isnull([Remark],'')
-	, [BIFactoryID]
-	, [BIInsertDate]
+	, @BIFactoryID
+	, GETDATE()
 from #tmp
 
 /************* 更新ActCuttingDate、LackingLayers欄位前的整合資料*************/
@@ -242,8 +242,8 @@ FROM
 		,[LackingLayers] = t.[LackingLayers]
 		,[cDate] = t.[Act.Cutting Date]
 		,[FactoryID] = t.[Factory]
-		,[BIFactoryID] = t.[BIFactoryID]
-		,[BIInsertDate] = t.[BIInsertDate]
+		,[BIFactoryID] = @BIFactoryID
+		,[BIInsertDate] = GETDATE()
 	from #tmp t
 )aa
 
