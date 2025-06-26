@@ -272,57 +272,71 @@ ORDER BY [Group], [SEQ], [NAME]";
             return MyUtility.GetValue.Lookup(sql, connectionName: "Production");
         }
 
+        // Pseudocode:
+        // 1. 檢查清單中是否有 ClassName (若無則結束).
+        // 2. 紀錄起始時間.
+        // 3. 建立三個集合:
+        //    - executedListEnd: 存放所有執行結果 (成功或失敗).
+        //    - executedListException: 存放在過程中丟出異常的執行項目.
+        //    - executedListGroupLevelError: 存放整個群組因逾時或其他原因中斷時的錯誤.
+        // 4. 建立 SemaphoreSlim(8), 限制同時並行數量為 8.
+        // 5. 以 .GroupBy(x => x.Group) 分組後, 各組照 x.SEQ 排序, 逐一平行執行流程, 除Group = 0之外
+        //    5.1 為每組建立 Group-Level CancellationToken, 避免該組執行逾時.
+        //    5.2 逐個執行項目時先 semaphore.Wait() 等待可用, 執行完畢後 semaphore.Release().
+        //    5.3 使用 .TakeWhile() 保證只要上個項目發生失敗就中斷該組後續執行.
+        // 6. 若整組逾時或發生例外, 將錯誤加入 executedListGroupLevelError.
+        // 7. 蒐集所有執行結果放入 executedListEnd.
+        // 8. 檢查哪些項目甚至未執行, 創建新的失敗資訊並補進 executedListEnd.
+        // 9. 呼叫 this.UpdateJobLogAndSendMail(...) 寫入記錄及後續處理.
+
         /// <summary>
         /// Execute all BI List And Use Thread
         /// </summary>
         /// <param name="executedList">ExecutedList</param>
         public void ExecuteAll(List<ExecutedList> executedList)
         {
-            if (executedList.Where(x => !string.IsNullOrEmpty(x.ClassName)).Count() == 0)
+            if (executedList.All(x => string.IsNullOrEmpty(x.ClassName)))
             {
                 return;
             }
 
-            DateTime stratExecutedTime = DateTime.Now;
-            List<ExecutedList> executedListEnd = new List<ExecutedList>();
-            List<ExecutedList> executedListException = new List<ExecutedList>();
-            List<ExecutedList> executedListGroupLevelError = new List<ExecutedList>();
-            var semaphore = new SemaphoreSlim(8); // 全局共享, 限制同時執行 8 筆
+            DateTime startExecutedTime = DateTime.Now;
+            var executedListEnd = new List<ExecutedList>();
+            var executedListException = new List<ExecutedList>();
+            var executedListGroupLevelError = new List<ExecutedList>();
+            var semaphore = new SemaphoreSlim(8);
             double timeout = this.GetTimeout();
-            var results = executedList
-                .GroupBy(x => x.Group)
-                .AsParallel()
-                .Select(item =>
+
+            // 將執行結果封裝為方法，減少重複
+            Func<IGrouping<int, ExecutedList>, IEnumerable<ExecutedList>> executeGroup = groupItem =>
+            {
+                if (groupItem is null)
                 {
-                    var executedListDetail = new ConcurrentBag<ExecutedList>();
-                    using (var groupCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(timeout * 0.8)))
+                    throw new ArgumentNullException(nameof(groupItem));
+                }
+
+                var executedListDetail = new ConcurrentBag<ExecutedList>();
+                using (var groupCts = new CancellationTokenSource(TimeSpan.FromSeconds(timeout * 0.8)))
+                {
+                    try
                     {
-                        try
+                        var orderedItems = groupItem.OrderBy(x => x.SEQ).ToList();
+                        if (groupItem.Key == 0)
                         {
-                            var results_detail = item
-                                .OrderBy(x => x.SEQ)
+                            // Group 0: 全部平行
+                            orderedItems
                                 .AsParallel()
-                                .WithCancellation(groupCancellationTokenSource.Token)
-                                .AsSequential()
-                                .Select(detail =>
+                                .WithCancellation(groupCts.Token)
+                                .ForAll(detail =>
                                 {
-                                    // this.WriteTranslog(detail.ClassName, "begin to wait");
-                                    semaphore.Wait(); // 等待取得執行許可
+                                    semaphore.Wait();
                                     try
                                     {
-                                        // this.WriteTranslog(detail.ClassName, "start");
-                                        ExecutedList detailResult = this.ExecuteSingle(detail);
-                                        // this.WriteTranslog(detail.ClassName, "end");
-                                        lock (executedListDetail)
-                                        {
-                                            executedListDetail.Add(detailResult);
-                                        }
-
-                                        return detailResult;
+                                        var detailResult = this.ExecuteSingle(detail);
+                                        executedListDetail.Add(detailResult);
                                     }
                                     catch (Exception ex)
                                     {
-                                        // this.WriteTranslog(detail.ClassName, "error " + ex.Message);
                                         detail.Success = false;
                                         detail.ErrorMsg = ex.Message;
                                         lock (executedListException)
@@ -330,42 +344,80 @@ ORDER BY [Group], [SEQ], [NAME]";
                                             executedListException.Add(detail);
                                         }
 
-                                        return detail;
+                                        executedListDetail.Add(detail);
                                     }
                                     finally
                                     {
-                                        semaphore.Release(); // 釋放執行許可
+                                        semaphore.Release();
                                     }
-                                })
-                                .TakeWhile(model => model.Group == 0 || model.Success) // 只保留成功的结果
-                                .ToList();
+                                });
                         }
-                        catch (OperationCanceledException)
+                        else
                         {
-                            executedListGroupLevelError.Add(new ExecutedList
+                            // 其他群組: 順序執行，遇失敗中斷
+                            foreach (var detail in orderedItems)
                             {
-                                ErrorMsg = "GroupLevel_Timeout, Time out cancel",
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            executedListGroupLevelError.Add(new ExecutedList
-                            {
-                                ErrorMsg = "GroupLevel_Other, " + ex.Message,
-                            });
+                                semaphore.Wait();
+                                try
+                                {
+                                    var detailResult = this.ExecuteSingle(detail);
+                                    executedListDetail.Add(detailResult);
+                                    if (!detailResult.Success)
+                                    {
+                                        break;
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    detail.Success = false;
+                                    detail.ErrorMsg = ex.Message;
+                                    lock (executedListException)
+                                    {
+                                        executedListException.Add(detail);
+                                    }
+
+                                    executedListDetail.Add(detail);
+                                    break;
+                                }
+                                finally
+                                {
+                                    semaphore.Release();
+                                }
+                            }
                         }
                     }
+                    catch (OperationCanceledException)
+                    {
+                        executedListGroupLevelError.Add(new ExecutedList
+                        {
+                            Group = groupItem.Key,
+                            ErrorMsg = "GroupLevel_Timeout, Time out cancel",
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        executedListGroupLevelError.Add(new ExecutedList
+                        {
+                            Group = groupItem.Key,
+                            ErrorMsg = "GroupLevel_Other, " + ex.Message,
+                        });
+                    }
+                }
+                return executedListDetail;
+            };
 
-                    return executedListDetail;
-                })
+            // 平行處理每個群組
+            var results = executedList
+                .GroupBy(x => x.Group)
+                .AsParallel()
+                .SelectMany(executeGroup)
                 .ToList();
 
-            foreach (var item in results)
-            {
-                executedListEnd.AddRange(item);
-            }
+            executedListEnd.AddRange(results);
 
-            foreach (var item in executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName)))
+            // 處理未執行的項目
+            var notExecuted = executedList.Where(x => !executedListEnd.Any(y => y.ClassName == x.ClassName));
+            foreach (var item in notExecuted)
             {
                 var executedListError = new ExecutedList()
                 {
@@ -377,33 +429,32 @@ ORDER BY [Group], [SEQ], [NAME]";
                     ExecuteEDate = DateTime.Now,
                     ErrorMsg = "沒有執行",
                 };
-                var executedGroupLevelError = executedListGroupLevelError.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
-                var executedException = executedListException.Where(currException => currException.ClassName == item.ClassName).FirstOrDefault();
+                var groupLevelErr = executedListGroupLevelError.FirstOrDefault(exGrp => exGrp.Group == item.Group);
+                var executedException = executedListException.FirstOrDefault(exItem => exItem.ClassName == item.ClassName);
+
                 if (executedException != null)
                 {
-                    // 如果是Throw Exception的話，紀錄Exception訊息
                     executedListError.ErrorMsg = executedException.ErrorMsg;
                 }
-                else if (executedGroupLevelError != null)
+                else if (groupLevelErr != null)
                 {
-                    executedListError.ErrorMsg = executedGroupLevelError.ErrorMsg;
+                    executedListError.ErrorMsg = groupLevelErr.ErrorMsg;
                 }
                 else
                 {
-                    // 只有Group不為0的錯誤訊息要Show前面的執行階層
-                    var queryErrorGroup = item.Group == 0
-                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && x.Success == false)
-                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && x.Success == false);
-                    if (queryErrorGroup.Any())
+                    var sameGroupErr = item.Group == 0
+                        ? executedListEnd.Where(x => x.ClassName == item.ClassName && !x.Success)
+                        : executedListEnd.Where(x => x.Group == item.Group && x.SEQ < item.SEQ && !x.Success);
+                    if (sameGroupErr.Any())
                     {
-                        executedListError.ErrorMsg = string.Join(",", queryErrorGroup.Select(x => x.ClassName)) + " 執行失敗";
+                        executedListError.ErrorMsg = string.Join(",", sameGroupErr.Select(x => x.ClassName)) + " 執行失敗";
                     }
                 }
 
                 executedListEnd.Add(executedListError);
             }
 
-            this.UpdateJobLogAndSendMail(executedListEnd, stratExecutedTime);
+            this.UpdateJobLogAndSendMail(executedListEnd, startExecutedTime);
         }
 
         /// <summary>

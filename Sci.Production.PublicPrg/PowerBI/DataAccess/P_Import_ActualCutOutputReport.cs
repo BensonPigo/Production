@@ -339,8 +339,9 @@ select MDivisionID,FactoryID,EstCutDate,ActCutDate,CutCellid,SpreadingNoID,Cutpl
 	[WindowTime_min],
 	[TotalSpreadingTime_min] =isnull([PreparationTime_min],0)+isnull([ChangeoverTime_min],0)+isnull([SpreadingSetupTime_min],0)+
 							  isnull([MachineSpreadingTime_min],0)+isnull([Separatortime_min],0)+isnull([ForwardTime_min],0)						 ,
-	[TotalCuttingTime_min] = isnull([CuttingSetupTime_min],0)+isnull([MachCuttingTime_min],0)+isnull([WindowTime_min],0)					   
-into #detail
+	[TotalCuttingTime_min] = isnull([CuttingSetupTime_min],0)+isnull([MachCuttingTime_min],0)+isnull([WindowTime_min],0),
+	[BIFactoryID] = @BIFactoryID,
+	[BIInsertDate] = GETDATE()
 from #tmp3
 outer apply(select PerimeterM_num=iif(isnumeric(PerimeterM)=1,cast(PerimeterM as numeric(20,4)),0))p
 outer apply(select [PreparationTime_min]=Round(PreparationTime * iif(Layer=0,0,Cons/Layer)/60.0,2))cal1
@@ -374,7 +375,7 @@ outer apply(select [WindowTime_min]=Round(Windowtime * iif(isnull(Layer,0)=0 or 
             using (sqlConn)
             {
                 string sql = $@" 
-insert into P_ActualCutOutputReport_Histroy(Ukey, BIFactoryID, BIInsertDate)
+insert into P_ActualCutOutputReport_History(Ukey, BIFactoryID, BIInsertDate)
 select p.Ukey, p.BIFactoryID, GETDATE()
 from P_ActualCutOutputReport p
 WHERE p.SP IN (SELECT ID FROM #detail)
@@ -458,7 +459,7 @@ select
 	,ISNULL([MachCuttingTime_min], 0)
 	,ISNULL([WindowTime_min], 0)
 	,ISNULL([TotalSpreadingTime_min], 0)
-	,ISNULL([TotalCuttingTime_min], 0)'
+	,ISNULL([TotalCuttingTime_min], 0)
 	,ISNULL([BIFactoryID], '')
 	,ISNULL([BIInsertDate], GETDATE())
 from #detail d

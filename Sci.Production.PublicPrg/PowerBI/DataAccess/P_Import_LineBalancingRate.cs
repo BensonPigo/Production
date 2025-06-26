@@ -14,6 +14,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
     public class P_Import_LineBalancingRate
     {
         private List<DateTime> _lineBalancingRates;
+        private DBProxy DBProxy;
 
         /// <summary>
         /// 寫入 P_LineBalancingRate
@@ -22,6 +23,11 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
         /// <returns>Base_ViewModel</returns>
         public Base_ViewModel P_LineBalancingRate(ExecutedList item)
         {
+            this.DBProxy = new DBProxy()
+            {
+                DefaultTimeout = 1800,
+            };
+
             Base_ViewModel finalResult = new Base_ViewModel();
 
             if (!item.SDate.HasValue)
@@ -72,7 +78,7 @@ namespace Sci.Production.Prg.PowerBI.DataAccess
 
             var resultReport = new Base_ViewModel
             {
-                Result = DBProxy.Current.Select("PowerBI", sb.ToString(), out DataTable[] dataTables),
+                Result = this.DBProxy.Select("PowerBI", sb.ToString(), out DataTable[] dataTables),
             };
 
             if (!resultReport.Result)
